@@ -117,7 +117,7 @@ visualSuite('WebGL', function() {
       'Object with different texture coordinates per use of vertex keeps the coordinates intact',
       async function(p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
-        const tex = await new Promise(resolve => p5.loadImage('/unit/assets/cat.jpg', resolve));
+        const tex = await p5.loadImage('/unit/assets/cat.jpg');
         const cube = await new Promise(resolve => p5.loadModel('/unit/assets/cube-textures.obj', resolve));
         cube.normalize();
         p5.background(255);
@@ -226,4 +226,106 @@ visualSuite('WebGL', function() {
       }
     );
   });
+
+  visualSuite('ShaderFunctionality', function() {
+    visualTest('FillShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/unit/assets/cat.jpg');
+      const fillShader = p5.createShader(
+        `
+      attribute vec3 aPosition;
+      void main() {
+        gl_Position = vec4(aPosition, 1.0);
+      }
+      `,
+        `
+      precision mediump float;
+      void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+      `
+      );
+      p5.shader(fillShader);
+      p5.lights();
+      p5.texture(img);
+      p5.noStroke();
+      p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height);
+      screenshot();
+    });
+
+    visualTest('StrokeShader', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // Create a stroke shader with a fading effect based on distance
+      const strokeshader = p5.baseStrokeShader().modify({
+        'Inputs getPixelInputs': `(Inputs inputs) {
+        float opacity = 1.0 - smoothstep(
+          0.0,
+          15.0,
+          length(inputs.position - inputs.center)
+        );
+        inputs.color *= opacity;
+        return inputs;
+      }`
+      });
+
+      p5.strokeShader(strokeshader);
+      p5.strokeWeight(15);
+      p5.line(
+        -p5.width / 3,
+        p5.sin(0.2) * p5.height / 4,
+        p5.width / 3,
+        p5.sin(1.2) * p5.height / 4
+      );
+      screenshot();
+    });
+
+    visualTest('ImageShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/unit/assets/cat.jpg');
+      const imgShader = p5.createShader(
+        `
+      precision mediump float;
+      attribute vec3 aPosition;
+      attribute vec2 aTexCoord;
+      varying vec2 vTexCoord;
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+
+      void main() {
+        vTexCoord = aTexCoord;
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+      }
+      `,
+        `
+      precision mediump float;
+      varying vec2 vTexCoord;
+      uniform sampler2D uTexture;
+
+      void main() {
+        vec4 texColor = texture2D(uTexture, vTexCoord);
+        gl_FragColor = texColor * vec4(1.5, 0.5, 0.5, 1.0);
+      }
+      `
+      );
+
+      p5.imageShader(imgShader);
+      imgShader.setUniform('uTexture', img);
+      p5.noStroke();
+      p5.image(img, -p5.width / 2, -p5.height / 2, p5.width, p5.height);
+      screenshot();
+    });
+  });
+
+  visualSuite('Strokes', function() {
+    visualTest('Strokes do not cut into fills in ortho mode', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(220);
+      p5.stroke(8);
+      p5.ortho();
+      p5.rotateX(p5.PI/4);
+      p5.rotateY(p5.PI/4);
+      p5.box(30);
+      screenshot();
+    })
+  })
 });

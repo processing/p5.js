@@ -7,7 +7,7 @@
  *   Reference/Global_Objects/SIMD
  */
 
-import p5 from '../core/main';
+import { Vector } from '../math/p5.Vector';
 
 let GLMAT_ARRAY_TYPE = Array;
 let isMatrixArray = x => Array.isArray(x);
@@ -16,22 +16,15 @@ if (typeof Float32Array !== 'undefined') {
   isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
 }
 
-/**
- * A class to describe a 4×4 matrix
- * for model and view matrix manipulation in the p5js webgl renderer.
- * @class p5.Matrix
- * @private
- * @param {Array} [mat4] column-major array literal of our 4×4 matrix
- */
-p5.Matrix = class Matrix {
+class Matrix {
   constructor(...args){
 
     // This is default behavior when object
     // instantiated using createMatrix()
     // @todo implement createMatrix() in core/math.js
-    if (args.length && args[args.length - 1] instanceof p5) {
-      this.p5 = args[args.length - 1];
-    }
+    // if (args.length && args[args.length - 1] instanceof p5) {
+    //   this.p5 = args[args.length - 1];
+    // }
 
     if (args[0] === 'mat3') {
       this.mat3 = Array.isArray(args[1])
@@ -72,7 +65,7 @@ p5.Matrix = class Matrix {
  */
   set(inMatrix) {
     let refArray = arguments;
-    if (inMatrix instanceof p5.Matrix) {
+    if (inMatrix instanceof Matrix) {
       refArray = inMatrix.mat4;
     } else if (isMatrixArray(inMatrix)) {
       refArray = inMatrix;
@@ -96,7 +89,7 @@ p5.Matrix = class Matrix {
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
   get() {
-    return new p5.Matrix(this.mat4, this.p5);
+    return new Matrix(this.mat4, this.p5);
   }
 
   /**
@@ -108,7 +101,7 @@ p5.Matrix = class Matrix {
  */
   copy() {
     if (this.mat3 !== undefined) {
-      const copied3x3 = new p5.Matrix('mat3', this.p5);
+      const copied3x3 = new Matrix('mat3', this.p5);
       copied3x3.mat3[0] = this.mat3[0];
       copied3x3.mat3[1] = this.mat3[1];
       copied3x3.mat3[2] = this.mat3[2];
@@ -120,7 +113,7 @@ p5.Matrix = class Matrix {
       copied3x3.mat3[8] = this.mat3[8];
       return copied3x3;
     }
-    const copied = new p5.Matrix(this.p5);
+    const copied = new Matrix(this.p5);
     copied.mat4[0] = this.mat4[0];
     copied.mat4[1] = this.mat4[1];
     copied.mat4[2] = this.mat4[2];
@@ -149,7 +142,7 @@ p5.Matrix = class Matrix {
  * @return {p5.Matrix}   the result matrix
  */
   static identity(pInst){
-    return new p5.Matrix(pInst);
+    return new Matrix(pInst);
   }
 
   /**
@@ -160,7 +153,7 @@ p5.Matrix = class Matrix {
  */
   transpose(a) {
     let a01, a02, a03, a12, a13, a23;
-    if (a instanceof p5.Matrix) {
+    if (a instanceof Matrix) {
       a01 = a.mat4[1];
       a02 = a.mat4[2];
       a03 = a.mat4[3];
@@ -221,7 +214,7 @@ p5.Matrix = class Matrix {
   invert(a) {
     let a00, a01, a02, a03, a10, a11, a12, a13;
     let a20, a21, a22, a23, a30, a31, a32, a33;
-    if (a instanceof p5.Matrix) {
+    if (a instanceof Matrix) {
       a00 = a.mat4[0];
       a01 = a.mat4[1];
       a02 = a.mat4[2];
@@ -434,7 +427,7 @@ p5.Matrix = class Matrix {
 
     if (multMatrix === this || multMatrix === this.mat4) {
       _src = this.copy().mat4; // only need to allocate in this rare case
-    } else if (multMatrix instanceof p5.Matrix) {
+    } else if (multMatrix instanceof Matrix) {
       _src = multMatrix.mat4;
     } else if (isMatrixArray(multMatrix)) {
       _src = multMatrix;
@@ -489,7 +482,7 @@ p5.Matrix = class Matrix {
 
     if (multMatrix === this || multMatrix === this.mat4) {
       _src = this.copy().mat4; // only need to allocate in this rare case
-    } else if (multMatrix instanceof p5.Matrix) {
+    } else if (multMatrix instanceof Matrix) {
       _src = multMatrix.mat4;
     } else if (isMatrixArray(multMatrix)) {
       _src = multMatrix;
@@ -547,7 +540,7 @@ p5.Matrix = class Matrix {
  * @chainable
  */
   scale(x, y, z) {
-    if (x instanceof p5.Vector) {
+    if (x instanceof Vector) {
     // x is a vector, extract the components from it.
       y = x.y;
       z = x.z;
@@ -583,7 +576,7 @@ p5.Matrix = class Matrix {
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
   rotate(a, x, y, z) {
-    if (x instanceof p5.Vector) {
+    if (x instanceof Vector) {
     // x is a vector, extract the components from it.
       y = x.y;
       z = x.z;
@@ -766,7 +759,7 @@ p5.Matrix = class Matrix {
  */
   multiplyPoint({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 1);
-    return new p5.Vector(array[0], array[1], array[2]);
+    return new Vector(array[0], array[1], array[2]);
   }
 
   /**
@@ -783,7 +776,7 @@ p5.Matrix = class Matrix {
     array[0] /= array[3];
     array[1] /= array[3];
     array[2] /= array[3];
-    return new p5.Vector(array[0], array[1], array[2]);
+    return new Vector(array[0], array[1], array[2]);
   }
 
   /**
@@ -797,7 +790,7 @@ p5.Matrix = class Matrix {
  */
   multiplyDirection({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 0);
-    return new p5.Vector(array[0], array[1], array[2]);
+    return new Vector(array[0], array[1], array[2]);
   }
 
   /**
@@ -816,7 +809,7 @@ p5.Matrix = class Matrix {
 
     if (multMatrix === this || multMatrix === this.mat3) {
       _src = this.copy().mat3; // only need to allocate in this rare case
-    } else if (multMatrix instanceof p5.Matrix) {
+    } else if (multMatrix instanceof Matrix) {
       _src = multMatrix.mat3;
     } else if (isMatrixArray(multMatrix)) {
       _src = multMatrix;
@@ -859,7 +852,7 @@ p5.Matrix = class Matrix {
  * @return {p5.Vector}
  */
   column(columnIndex) {
-    return new p5.Vector(
+    return new Vector(
       this.mat3[3 * columnIndex],
       this.mat3[3 * columnIndex + 1],
       this.mat3[3 * columnIndex + 2]
@@ -874,7 +867,7 @@ p5.Matrix = class Matrix {
  * @return {p5.Vector}
  */
   row(rowIndex) {
-    return new p5.Vector(
+    return new Vector(
       this.mat3[rowIndex],
       this.mat3[rowIndex + 3],
       this.mat3[rowIndex + 6]
@@ -922,7 +915,7 @@ p5.Matrix = class Matrix {
  * @return {p5.Matrix}
  */
   createSubMatrix3x3() {
-    const result = new p5.Matrix('mat3');
+    const result = new Matrix('mat3');
     result.mat3[0] = this.mat4[0];
     result.mat3[1] = this.mat4[1];
     result.mat3[2] = this.mat4[2];
@@ -981,4 +974,21 @@ p5.Matrix = class Matrix {
 //  0.0,0.0,0.0,1.0
 //];
 };
-export default p5.Matrix;
+
+function matrix(p5, fn){
+  /**
+   * A class to describe a 4×4 matrix
+   * for model and view matrix manipulation in the p5js webgl renderer.
+   * @class p5.Matrix
+   * @private
+   * @param {Array} [mat4] column-major array literal of our 4×4 matrix
+   */
+  p5.Matrix = Matrix
+}
+
+export default matrix;
+export { Matrix };
+
+if(typeof p5 !== 'undefined'){
+  matrix(p5, p5.prototype);
+}

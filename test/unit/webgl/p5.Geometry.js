@@ -19,7 +19,7 @@ suite('p5.Geometry', function() {
     let geom;
 
     beforeEach(function() {
-      geom = new p5.Geometry();
+      geom = new p5.Geometry(undefined, undefined, undefined, myp5._renderer);
       vi.spyOn(geom, '_addCap');
       vi.spyOn(geom, '_addJoin');
       vi.spyOn(geom, '_addSegment');

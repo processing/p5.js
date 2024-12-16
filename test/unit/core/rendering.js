@@ -116,8 +116,10 @@ suite('Rendering', function() {
       glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
+      const prevRatio = window.devicePixelRatio;
+      window.devicePixelRatio = 1;
       myp5.createCanvas(200, 200, myp5.WEBGL);
-      myp5.pixelDensity(1);
+      window.devicePixelRatio = prevRatio;
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });

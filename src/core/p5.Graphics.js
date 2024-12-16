@@ -4,312 +4,240 @@
  * @for p5
  */
 
-import p5 from './main';
+// import p5 from './main';
 import * as constants from './constants';
+import primitives2D from '../shape/2d_primitives';
+import attributes from '../shape/attributes';
+import curves from '../shape/curves';
+import vertex from '../shape/vertex';
+import setting from '../color/setting';
+import image from '../image/image';
+import loadingDisplaying from '../image/loading_displaying';
+import pixels from '../image/pixels';
+import transform from './transform';
+import { Framebuffer } from '../webgl/p5.Framebuffer';
 
-/**
- * A class to describe a drawing surface that's separate from the main canvas.
- *
- * Each `p5.Graphics` object provides a dedicated drawing surface called a
- * *graphics buffer*. Graphics buffers are helpful when drawing should happen
- * offscreen. For example, separate scenes can be drawn offscreen and
- * displayed only when needed.
- *
- * `p5.Graphics` objects have nearly all the drawing features of the main
- * canvas. For example, calling the method `myGraphics.circle(50, 50, 20)`
- * draws to the graphics buffer. The resulting image can be displayed on the
- * main canvas by passing the `p5.Graphics` object to the
- * <a href="#/p5/image">image()</a> function, as in `image(myGraphics, 0, 0)`.
- *
- * Note: <a href="#/p5/createGraphics">createGraphics()</a> is the recommended
- * way to create an instance of this class.
- *
- * @class p5.Graphics
- * @extends p5.Element
- * @param {Number} w            width width of the graphics buffer in pixels.
- * @param {Number} h            height height of the graphics buffer in pixels.
- * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
- * @param {p5} [pInst]          sketch instance.
- * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
- *
- * @example
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(50, 50);
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(100);
- *   pg.circle(25, 25, 20);
- *
- *   describe('A dark gray square with a white circle at its center drawn on a gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, 25, 25);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Click the canvas to display the graphics buffer.
- *
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(50, 50);
- *
- *   describe('A square appears on a gray background when the user presses the mouse. The square cycles between white and black.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Calculate the background color.
- *   let bg = frameCount % 255;
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(bg);
- *
- *   // Display the p5.Graphics object while
- *   // the user presses the mouse.
- *   if (mouseIsPressed === true) {
- *     image(pg, 25, 25);
- *   }
- * }
- * </code>
- * </div>
- */
-p5.Graphics = class Graphics extends p5.Element {
+import primitives3D from '../webgl/3d_primitives';
+import light from '../webgl/light';
+import material from '../webgl/material';
+import creatingReading from '../color/creating_reading';
+import trigonometry from '../math/trigonometry';
+import { renderers } from './rendering';
+
+class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
-    let canvasTemp;
-    if (canvas) {
-      canvasTemp = canvas;
-    } else {
-      canvasTemp = document.createElement('canvas');
-    }
-
-    super(canvasTemp, pInst);
-    this.canvas = canvasTemp;
-
     const r = renderer || constants.P2D;
 
-    const node = pInst._userNode || document.body;
-    if (!canvas) {
-      node.appendChild(this.canvas);
-    }
+    this._pInst = pInst;
+    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
 
-    // bind methods and props of p5 to the new object
-    for (const p in p5.prototype) {
-      if (!this[p]) {
-        if (typeof p5.prototype[p] === 'function') {
-          this[p] = p5.prototype[p].bind(this);
-        } else {
-          this[p] = p5.prototype[p];
-        }
-      }
-    }
+    this._initializeInstanceVariables(this);
 
-    p5.prototype._initializeInstanceVariables.apply(this);
-    this.width = w;
-    this.height = h;
-    this._pixelDensity = pInst._pixelDensity;
-    this._renderer = new p5.renderers[r](this.canvas, this, false);
-
-    // if (r === constants.WEBGL) {
-    //   this._renderer = new p5.RendererGL(this.canvas, this, false);
-    //   const { adjustedWidth, adjustedHeight } =
-    //     this._renderer._adjustDimensions(w, h);
-    //   w = adjustedWidth;
-    //   h = adjustedHeight;
-    // } else {
-    //   this._renderer = new p5.Renderer2D(this.canvas, this, false);
-    // }
-
-    pInst._elements.push(this);
-
-    Object.defineProperty(this, 'deltaTime', {
-      get() {
-        return this._pInst.deltaTime;
-      }
-    });
-
-    this._renderer.resize(w, h);
     this._renderer._applyDefaults();
     return this;
   }
 
+  get deltaTime(){
+    return this._pInst.deltaTime;
+  }
+
+  get canvas(){
+    return this._renderer?.canvas;
+  }
+
+  get drawingContext(){
+    return this._renderer.drawingContext;
+  }
+
+  get width(){
+    return this._renderer?.width;
+  }
+
+  get height(){
+    return this._renderer?.height;
+  }
+
+  get pixels(){
+    return this._renderer?.pixels;
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._renderer._pixelDensity) {
+        this._renderer._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
+    } else {
+      returnValue = this._renderer._pixelDensity;
+    }
+    return returnValue;
+  }
+
+  resizeCanvas(w, h){
+    this._renderer.resize(w, h);
+  }
+
   /**
- * Resets the graphics buffer's transformations and lighting.
- *
- * By default, the main canvas resets certain transformation and lighting
- * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
- * objects must reset these values manually by calling `myGraphics.reset()`.
- *
- *
- * @example
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(60, 60);
- *
- *   describe('A white circle moves downward slowly within a dark square. The circle resets at the top of the dark square when the user presses the mouse.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Translate the p5.Graphics object's coordinate system.
- *   // The translation accumulates; the white circle moves.
- *   pg.translate(0, 0.1);
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(100);
- *   pg.circle(30, 0, 10);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, 20, 20);
- *
- *   // Translate the main canvas' coordinate system.
- *   // The translation doesn't accumulate; the dark
- *   // square is always in the same place.
- *   translate(0, 0.1);
- *
- *   // Reset the p5.Graphics object when the
- *   // user presses the mouse.
- *   if (mouseIsPressed === true) {
- *     pg.reset();
- *   }
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(60, 60);
- *
- *   describe('A white circle at the center of a dark gray square. The image is drawn on a light gray background.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Translate the p5.Graphics object's coordinate system.
- *   pg.translate(30, 30);
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(100);
- *   pg.circle(0, 0, 10);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, 20, 20);
- *
- *   // Reset the p5.Graphics object automatically.
- *   pg.reset();
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object using WebGL mode.
- *   pg = createGraphics(100, 100, WEBGL);
- *
- *   describe("A sphere lit from above with a red light. The sphere's surface becomes glossy while the user clicks and holds the mouse.");
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Add a red point light from the top-right.
- *   pg.pointLight(255, 0, 0, 50, -100, 50);
- *
- *   // Style the sphere.
- *   // It should appear glossy when the
- *   // lighting values are reset.
- *   pg.noStroke();
- *   pg.specularMaterial(255);
- *   pg.shininess(100);
- *
- *   // Draw the sphere.
- *   pg.sphere(30);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, -50, -50);
- *
- *   // Reset the p5.Graphics object when
- *   // the user presses the mouse.
- *   if (mouseIsPressed === true) {
- *     pg.reset();
- *   }
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object using WebGL mode.
- *   pg = createGraphics(100, 100, WEBGL);
- *
- *   describe('A sphere with a glossy surface is lit from the top-right by a red light.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Add a red point light from the top-right.
- *   pg.pointLight(255, 0, 0, 50, -100, 50);
- *
- *   // Style the sphere.
- *   pg.noStroke();
- *   pg.specularMaterial(255);
- *   pg.shininess(100);
- *
- *   // Draw the sphere.
- *   pg.sphere(30);
- *
- *   // Display the p5.Graphics object.
- *   image(pg, 0, 0);
- *
- *   // Reset the p5.Graphics object automatically.
- *   pg.reset();
- * }
- * </code>
- * </div>
- */
+   * Resets the graphics buffer's transformations and lighting.
+   *
+   * By default, the main canvas resets certain transformation and lighting
+   * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
+   * objects must reset these values manually by calling `myGraphics.reset()`.
+   *
+   *
+   * @example
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(60, 60);
+   *
+   *   describe('A white circle moves downward slowly within a dark square. The circle resets at the top of the dark square when the user presses the mouse.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Translate the p5.Graphics object's coordinate system.
+   *   // The translation accumulates; the white circle moves.
+   *   pg.translate(0, 0.1);
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(100);
+   *   pg.circle(30, 0, 10);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 20, 20);
+   *
+   *   // Translate the main canvas' coordinate system.
+   *   // The translation doesn't accumulate; the dark
+   *   // square is always in the same place.
+   *   translate(0, 0.1);
+   *
+   *   // Reset the p5.Graphics object when the
+   *   // user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     pg.reset();
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(60, 60);
+   *
+   *   describe('A white circle at the center of a dark gray square. The image is drawn on a light gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Translate the p5.Graphics object's coordinate system.
+   *   pg.translate(30, 30);
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(100);
+   *   pg.circle(0, 0, 10);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 20, 20);
+   *
+   *   // Reset the p5.Graphics object automatically.
+   *   pg.reset();
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object using WebGL mode.
+   *   pg = createGraphics(100, 100, WEBGL);
+   *
+   *   describe("A sphere lit from above with a red light. The sphere's surface becomes glossy while the user clicks and holds the mouse.");
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Add a red point light from the top-right.
+   *   pg.pointLight(255, 0, 0, 50, -100, 50);
+   *
+   *   // Style the sphere.
+   *   // It should appear glossy when the
+   *   // lighting values are reset.
+   *   pg.noStroke();
+   *   pg.specularMaterial(255);
+   *   pg.shininess(100);
+   *
+   *   // Draw the sphere.
+   *   pg.sphere(30);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, -50, -50);
+   *
+   *   // Reset the p5.Graphics object when
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     pg.reset();
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object using WebGL mode.
+   *   pg = createGraphics(100, 100, WEBGL);
+   *
+   *   describe('A sphere with a glossy surface is lit from the top-right by a red light.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Add a red point light from the top-right.
+   *   pg.pointLight(255, 0, 0, 50, -100, 50);
+   *
+   *   // Style the sphere.
+   *   pg.noStroke();
+   *   pg.specularMaterial(255);
+   *   pg.shininess(100);
+   *
+   *   // Draw the sphere.
+   *   pg.sphere(30);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 0, 0);
+   *
+   *   // Reset the p5.Graphics object automatically.
+   *   pg.reset();
+   * }
+   * </code>
+   * </div>
+   */
   reset() {
     this._renderer.resetMatrix();
     if (this._renderer.isP3D) {
@@ -318,80 +246,68 @@ p5.Graphics = class Graphics extends p5.Element {
   }
 
   /**
- * Removes the graphics buffer from the web page.
- *
- * Calling `myGraphics.remove()` removes the graphics buffer's
- * `&lt;canvas&gt;` element from the web page. The graphics buffer also uses
- * a bit of memory on the CPU that can be freed like so:
- *
- * ```js
- * // Remove the graphics buffer from the web page.
- * myGraphics.remove();
- *
- * // Delete the graphics buffer from CPU memory.
- * myGraphics = undefined;
- * ```
- *
- * Note: All variables that reference the graphics buffer must be assigned
- * the value `undefined` to delete the graphics buffer from CPU memory. If any
- * variable still refers to the graphics buffer, then it won't be garbage
- * collected.
- *
- * @example
- * <div>
- * <code>
- * // Double-click to remove the p5.Graphics object.
- *
- * let pg;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Create a p5.Graphics object.
- *   pg = createGraphics(60, 60);
- *
- *   // Draw to the p5.Graphics object.
- *   pg.background(100);
- *   pg.circle(30, 30, 20);
- *
- *   describe('A white circle at the center of a dark gray square disappears when the user double-clicks.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Display the p5.Graphics object if
- *   // it's available.
- *   if (pg) {
- *     image(pg, 20, 20);
- *   }
- * }
- *
- * // Remove the p5.Graphics object when the
- * // the user double-clicks.
- * function doubleClicked() {
- *   // Remove the p5.Graphics object from the web page.
- *   pg.remove();
- *   pg = undefined;
- * }
- * </code>
- * </div>
- */
+   * Removes the graphics buffer from the web page.
+   *
+   * Calling `myGraphics.remove()` removes the graphics buffer's
+   * `&lt;canvas&gt;` element from the web page. The graphics buffer also uses
+   * a bit of memory on the CPU that can be freed like so:
+   *
+   * ```js
+   * // Remove the graphics buffer from the web page.
+   * myGraphics.remove();
+   *
+   * // Delete the graphics buffer from CPU memory.
+   * myGraphics = undefined;
+   * ```
+   *
+   * Note: All variables that reference the graphics buffer must be assigned
+   * the value `undefined` to delete the graphics buffer from CPU memory. If any
+   * variable still refers to the graphics buffer, then it won't be garbage
+   * collected.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to remove the p5.Graphics object.
+   *
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(60, 60);
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(100);
+   *   pg.circle(30, 30, 20);
+   *
+   *   describe('A white circle at the center of a dark gray square disappears when the user double-clicks.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display the p5.Graphics object if
+   *   // it's available.
+   *   if (pg) {
+   *     image(pg, 20, 20);
+   *   }
+   * }
+   *
+   * // Remove the p5.Graphics object when the
+   * // the user double-clicks.
+   * function doubleClicked() {
+   *   // Remove the p5.Graphics object from the web page.
+   *   pg.remove();
+   *   pg = undefined;
+   * }
+   * </code>
+   * </div>
+   */
   remove() {
-    if (this.elt.parentNode) {
-      this.elt.parentNode.removeChild(this.elt);
-    }
-    const idx = this._pInst._elements.indexOf(this);
-    if (idx !== -1) {
-      this._pInst._elements.splice(idx, 1);
-    }
-    for (const elt_ev in this._events) {
-      this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
-    }
-
+    this._renderer.remove();
     this._renderer = undefined;
-    this.canvas = undefined;
-    this.elt = undefined;
   }
 
 
@@ -637,8 +553,147 @@ p5.Graphics = class Graphics extends p5.Element {
    * </div>
    */
   createFramebuffer(options) {
-    return new p5.Framebuffer(this, options);
+    return new Framebuffer(this._renderer, options);
+  }
+
+  _assert3d(name) {
+    if (!this._renderer.isP3D)
+      throw new Error(
+        `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
+      );
+  };
+
+  _initializeInstanceVariables() {
+    this._accessibleOutputs = {
+      text: false,
+      grid: false,
+      textLabel: false,
+      gridLabel: false
+    };
+
+    this._styles = [];
+
+    this._bezierDetail = 20;
+    this._curveDetail = 20;
+
+    this._colorMode = constants.RGB;
+    this._colorMaxes = {
+      rgb: [255, 255, 255, 255],
+      hsb: [360, 100, 100, 1],
+      hsl: [360, 100, 100, 1]
+    };
+
+    this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 };
 
-export default p5.Graphics;
+function graphics(p5, fn){
+  /**
+   * A class to describe a drawing surface that's separate from the main canvas.
+   *
+   * Each `p5.Graphics` object provides a dedicated drawing surface called a
+   * *graphics buffer*. Graphics buffers are helpful when drawing should happen
+   * offscreen. For example, separate scenes can be drawn offscreen and
+   * displayed only when needed.
+   *
+   * `p5.Graphics` objects have nearly all the drawing features of the main
+   * canvas. For example, calling the method `myGraphics.circle(50, 50, 20)`
+   * draws to the graphics buffer. The resulting image can be displayed on the
+   * main canvas by passing the `p5.Graphics` object to the
+   * <a href="#/p5/image">image()</a> function, as in `image(myGraphics, 0, 0)`.
+   *
+   * Note: <a href="#/p5/createGraphics">createGraphics()</a> is the recommended
+   * way to create an instance of this class.
+   *
+   * @class p5.Graphics
+   * @extends p5.Element
+   * @param {Number} w            width width of the graphics buffer in pixels.
+   * @param {Number} h            height height of the graphics buffer in pixels.
+   * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
+   * @param {p5} [pInst]          sketch instance.
+   * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(50, 50);
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(100);
+   *   pg.circle(25, 25, 20);
+   *
+   *   describe('A dark gray square with a white circle at its center drawn on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Display the p5.Graphics object.
+   *   image(pg, 25, 25);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Click the canvas to display the graphics buffer.
+   *
+   * let pg;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Graphics object.
+   *   pg = createGraphics(50, 50);
+   *
+   *   describe('A square appears on a gray background when the user presses the mouse. The square cycles between white and black.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Calculate the background color.
+   *   let bg = frameCount % 255;
+   *
+   *   // Draw to the p5.Graphics object.
+   *   pg.background(bg);
+   *
+   *   // Display the p5.Graphics object while
+   *   // the user presses the mouse.
+   *   if (mouseIsPressed === true) {
+   *     image(pg, 25, 25);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  p5.Graphics = Graphics;
+
+  // Shapes
+  primitives2D(p5, p5.Graphics.prototype);
+  attributes(p5, p5.Graphics.prototype);
+  curves(p5, p5.Graphics.prototype);
+  vertex(p5, p5.Graphics.prototype);
+
+  setting(p5, p5.Graphics.prototype);
+  loadingDisplaying(p5, p5.Graphics.prototype);
+  image(p5, p5.Graphics.prototype);
+  pixels(p5, p5.Graphics.prototype);
+
+  transform(p5, p5.Graphics.prototype);
+
+  primitives3D(p5, p5.Graphics.prototype);
+  light(p5, p5.Graphics.prototype);
+  material(p5, p5.Graphics.prototype);
+  creatingReading(p5, p5.Graphics.prototype);
+  trigonometry(p5, p5.Graphics.prototype);
+}
+
+export default graphics;
+export { Graphics };

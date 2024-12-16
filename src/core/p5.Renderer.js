@@ -4,22 +4,19 @@
  * @for p5
  */
 
-import p5 from './main';
 import * as constants from '../core/constants';
+import { Image } from '../image/p5.Image';
 
-/**
- * Main graphics and rendering context, as well as the base API
- * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respectively.
- *
- * @class p5.Renderer
- * @param {HTMLElement} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
- * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
- */
-p5.Renderer = class Renderer {
-  constructor(elt, pInst, isMainCanvas) {
-    this._pInst = this._pixelsState = pInst;
+class Renderer {
+  constructor(pInst, w, h, isMainCanvas) {
+    this._pInst = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    this.width = w;
+    this.height = h;
+
     this._events = {};
 
     if (isMainCanvas) {
@@ -36,14 +33,22 @@ p5.Renderer = class Renderer {
       imageMode: constants.CORNER,
       rectMode: constants.CORNER,
       ellipseMode: constants.CENTER,
+
       textFont: 'sans-serif',
       textLeading: 15,
       leadingSet: false,
       textSize: 12,
       textAlign: constants.LEFT,
       textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
-      textWrap: constants.WORD
+      textWrap: constants.WORD,
+
+      // added v2.0
+      fontStyle: constants.NORMAL, // v1: textStyle
+      fontStretch: constants.NORMAL,
+      fontWeight: constants.NORMAL,
+      lineHeight: constants.NORMAL,
+      fontVariant: constants.NORMAL,
+      direction: 'inherit'
     };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -54,11 +59,22 @@ p5.Renderer = class Renderer {
     this._curveTightness = 0;
   }
 
-  createCanvas(w, h) {
-    this.width = w;
-    this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
+  remove() {
+
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
   }
 
   // Makes a shallow copy of the current states
@@ -101,27 +117,22 @@ p5.Renderer = class Renderer {
   }
 
   /**
- * Resize our canvas element.
- */
+   * Resize our canvas element.
+   */
   resize(w, h) {
     this.width = w;
     this.height = h;
-    if (this._isMainCanvas) {
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    }
   }
 
   get(x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
       x = y = 0;
-      w = pixelsState.width;
-      h = pixelsState.height;
+      w = this.width;
+      h = this.height;
     } else {
       x *= pd;
       y *= pd;
@@ -137,13 +148,27 @@ p5.Renderer = class Renderer {
     // get(x,y,w,h)
     }
 
-    const region = new p5.Image(w*pd, h*pd);
+    const region = new Image(w*pd, h*pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')
       .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
 
     return region;
+  }
+
+  scale(x, y){
+
+  }
+
+  fill() {
+    this.states.fillSet = true;
+    this.states.doFill = true;
+  }
+
+  stroke() {
+    this.states.strokeSet = true;
+    this.states.doStroke = true;
   }
 
   textSize(s) {
@@ -177,13 +202,13 @@ p5.Renderer = class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
@@ -510,6 +535,20 @@ p5.Renderer = class Renderer {
   }
 };
 
+function renderer(p5, fn){
+  /**
+   * Main graphics and rendering context, as well as the base API
+   * implementation for p5.js "core". To be used as the superclass for
+   * Renderer2D and Renderer3D classes, respectively.
+   *
+   * @class p5.Renderer
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+   * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   */
+  p5.Renderer = Renderer;
+}
+
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
@@ -529,4 +568,5 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 
-export default p5.Renderer;
+export default renderer;
+export { Renderer };

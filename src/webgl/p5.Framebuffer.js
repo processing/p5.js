@@ -3,23 +3,18 @@
  * @requires constants
  */
 
-import p5 from '../core/main';
 import * as constants from '../core/constants';
 import { checkWebGLCapabilities } from './p5.Texture';
 import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
+import { Camera } from './p5.Camera';
+import { Texture } from './p5.Texture';
+import { Image } from '../image/p5.Image';
 
-/**
- * A <a href="#/p5.Camera">p5.Camera</a> attached to a
- * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
- *
- * @class p5.FramebufferCamera
- * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
- * attached to
- * @private
- */
-p5.FramebufferCamera = class FramebufferCamera extends p5.Camera {
+const constrain = (n, low, high) => Math.max(Math.min(n, high), low);
+
+class FramebufferCamera extends Camera {
   constructor(framebuffer) {
-    super(framebuffer.target._renderer);
+    super(framebuffer.renderer);
     this.fbo = framebuffer;
 
     // WebGL textures are upside-down compared to textures that come from
@@ -35,20 +30,9 @@ p5.FramebufferCamera = class FramebufferCamera extends p5.Camera {
     this.defaultCameraFOV =
       2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
-};
+}
 
-/**
- * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
- * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
- *
- * @class p5.FramebufferTexture
- * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
- * texture
- * @param {String} property The property of the framebuffer represented by
- * this texture, either `color` or `depth`
- * @private
- */
-p5.FramebufferTexture = class FramebufferTexture {
+class FramebufferTexture {
   constructor(framebuffer, property) {
     this.framebuffer = framebuffer;
     this.property = property;
@@ -65,40 +49,12 @@ p5.FramebufferTexture = class FramebufferTexture {
   rawTexture() {
     return this.framebuffer[this.property];
   }
-};
+}
 
-/**
- * A class to describe a high-performance drawing surface for textures.
- *
- * Each `p5.Framebuffer` object provides a dedicated drawing surface called
- * a *framebuffer*. They're similar to
- * <a href="#/p5.Graphics">p5.Graphics</a> objects but can run much faster.
- * Performance is improved because the framebuffer shares the same WebGL
- * context as the canvas used to create it.
- *
- * `p5.Framebuffer` objects have all the drawing features of the main
- * canvas. Drawing instructions meant for the framebuffer must be placed
- * between calls to
- * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
- * <a href="#/p5.Framebuffer/end">myBuffer.end()</a>. The resulting image
- * can be applied as a texture by passing the `p5.Framebuffer` object to the
- * <a href="#/p5/texture">texture()</a> function, as in `texture(myBuffer)`.
- * It can also be displayed on the main canvas by passing it to the
- * <a href="#/p5/image">image()</a> function, as in `image(myBuffer, 0, 0)`.
- *
- * Note: <a href="#/p5/createFramebuffer">createFramebuffer()</a> is the
- * recommended way to create an instance of this class.
- *
- * @class p5.Framebuffer
- * @param {p5.Graphics|p5} target sketch instance or
- *                                <a href="#/p5.Graphics">p5.Graphics</a>
- *                                object.
- * @param {Object} [settings] configuration options.
- */
-p5.Framebuffer = class Framebuffer {
-  constructor(target, settings = {}) {
-    this.target = target;
-    this.target._renderer.framebuffers.add(this);
+class Framebuffer {
+  constructor(renderer, settings = {}) {
+    this.renderer = renderer;
+    this.renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
 
@@ -106,7 +62,7 @@ p5.Framebuffer = class Framebuffer {
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
-      target._renderer._pInst._glAttributes.alpha
+      this.renderer._pInst._glAttributes.alpha
         ? constants.RGBA
         : constants.RGB
     );
@@ -114,7 +70,7 @@ p5.Framebuffer = class Framebuffer {
     this.depthFormat = settings.depthFormat || constants.FLOAT;
     this.textureFiltering = settings.textureFiltering || constants.LINEAR;
     if (settings.antialias === undefined) {
-      this.antialiasSamples = target._renderer._pInst._glAttributes.antialias
+      this.antialiasSamples = this.renderer._pInst._glAttributes.antialias
         ? 2
         : 0;
     } else if (typeof settings.antialias === 'number') {
@@ -123,16 +79,16 @@ p5.Framebuffer = class Framebuffer {
       this.antialiasSamples = settings.antialias ? 2 : 0;
     }
     this.antialias = this.antialiasSamples > 0;
-    if (this.antialias && target.webglVersion !== constants.WEBGL2) {
+    if (this.antialias && this.renderer.webglVersion !== constants.WEBGL2) {
       console.warn('Antialiasing is unsupported in a WebGL 1 context');
       this.antialias = false;
     }
-    this.density = settings.density || target.pixelDensity();
-    const gl = target._renderer.GL;
+    this.density = settings.density || this.renderer._pixelDensity;
+    const gl = this.renderer.GL;
     this.gl = gl;
     if (settings.width && settings.height) {
       const dimensions =
-        target._renderer._adjustDimensions(settings.width, settings.height);
+        this.renderer._adjustDimensions(settings.width, settings.height);
       this.width = dimensions.adjustedWidth;
       this.height = dimensions.adjustedHeight;
       this._autoSized = false;
@@ -144,8 +100,8 @@ p5.Framebuffer = class Framebuffer {
             'of its canvas.'
         );
       }
-      this.width = target.width;
-      this.height = target.height;
+      this.width = this.renderer.width;
+      this.height = this.renderer.height;
       this._autoSized = true;
     }
     this._checkIfFormatsAvailable();
@@ -169,12 +125,12 @@ p5.Framebuffer = class Framebuffer {
 
     this._recreateTextures();
 
-    const prevCam = this.target._renderer.states.curCamera;
+    const prevCam = this.renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.target._renderer.states.curCamera = prevCam;
+    this.renderer.states.curCamera = prevCam;
 
-    this.draw(() => this.target.clear());
+    this.draw(() => this.renderer.clear());
   }
 
   /**
@@ -227,7 +183,7 @@ p5.Framebuffer = class Framebuffer {
   resize(width, height) {
     this._autoSized = false;
     const dimensions =
-      this.target._renderer._adjustDimensions(width, height);
+      this.renderer._adjustDimensions(width, height);
     width = dimensions.adjustedWidth;
     height = dimensions.adjustedHeight;
     this.width = width;
@@ -420,7 +376,7 @@ p5.Framebuffer = class Framebuffer {
 
     if (
       this.useDepth &&
-      this.target.webglVersion === constants.WEBGL &&
+      this.renderer.webglVersion === constants.WEBGL &&
       !gl.getExtension('WEBGL_depth_texture')
     ) {
       console.warn(
@@ -432,7 +388,7 @@ p5.Framebuffer = class Framebuffer {
 
     if (
       this.useDepth &&
-      this.target.webglVersion === constants.WEBGL &&
+      this.renderer.webglVersion === constants.WEBGL &&
       this.depthFormat === constants.FLOAT
     ) {
       console.warn(
@@ -465,7 +421,7 @@ p5.Framebuffer = class Framebuffer {
       this.depthFormat = constants.FLOAT;
     }
 
-    const support = checkWebGLCapabilities(this.target._renderer);
+    const support = checkWebGLCapabilities(this.renderer);
     if (!support.float && this.format === constants.FLOAT) {
       console.warn(
         'This environment does not support FLOAT textures. ' +
@@ -624,32 +580,32 @@ p5.Framebuffer = class Framebuffer {
     }
 
     if (this.useDepth) {
-      this.depth = new p5.FramebufferTexture(this, 'depthTexture');
+      this.depth = new FramebufferTexture(this, 'depthTexture');
       const depthFilter = gl.NEAREST;
-      this.depthP5Texture = new p5.Texture(
-        this.target._renderer,
+      this.depthP5Texture = new Texture(
+        this.renderer,
         this.depth,
         {
           minFilter: depthFilter,
           magFilter: depthFilter
         }
       );
-      this.target._renderer.textures.set(this.depth, this.depthP5Texture);
+      this.renderer.textures.set(this.depth, this.depthP5Texture);
     }
 
-    this.color = new p5.FramebufferTexture(this, 'colorTexture');
+    this.color = new FramebufferTexture(this, 'colorTexture');
     const filter = this.textureFiltering === constants.LINEAR
       ? gl.LINEAR
       : gl.NEAREST;
-    this.colorP5Texture = new p5.Texture(
-      this.target._renderer,
+    this.colorP5Texture = new Texture(
+      this.renderer,
       this.color,
       {
         minFilter: filter,
         magFilter: filter
       }
     );
-    this.target._renderer.textures.set(this.color, this.colorP5Texture);
+    this.renderer.textures.set(this.color, this.colorP5Texture);
 
     gl.bindTexture(gl.TEXTURE_2D, prevBoundTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, prevBoundFramebuffer);
@@ -677,7 +633,7 @@ p5.Framebuffer = class Framebuffer {
     if (this.format === constants.FLOAT) {
       type = gl.FLOAT;
     } else if (this.format === constants.HALF_FLOAT) {
-      type = this.target.webglVersion === constants.WEBGL2
+      type = this.renderer.webglVersion === constants.WEBGL2
         ? gl.HALF_FLOAT
         : gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES;
     } else {
@@ -690,7 +646,7 @@ p5.Framebuffer = class Framebuffer {
       format = gl.RGB;
     }
 
-    if (this.target.webglVersion === constants.WEBGL2) {
+    if (this.renderer.webglVersion === constants.WEBGL2) {
       // https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
       const table = {
         [gl.FLOAT]: {
@@ -737,7 +693,7 @@ p5.Framebuffer = class Framebuffer {
     if (this.useStencil) {
       if (this.depthFormat === constants.FLOAT) {
         type = gl.FLOAT_32_UNSIGNED_INT_24_8_REV;
-      } else if (this.target.webglVersion === constants.WEBGL2) {
+      } else if (this.renderer.webglVersion === constants.WEBGL2) {
         type = gl.UNSIGNED_INT_24_8;
       } else {
         type = gl.getExtension('WEBGL_depth_texture').UNSIGNED_INT_24_8_WEBGL;
@@ -759,12 +715,12 @@ p5.Framebuffer = class Framebuffer {
     if (this.useStencil) {
       if (this.depthFormat === constants.FLOAT) {
         internalFormat = gl.DEPTH32F_STENCIL8;
-      } else if (this.target.webglVersion === constants.WEBGL2) {
+      } else if (this.renderer.webglVersion === constants.WEBGL2) {
         internalFormat = gl.DEPTH24_STENCIL8;
       } else {
         internalFormat = gl.DEPTH_STENCIL;
       }
-    } else if (this.target.webglVersion === constants.WEBGL2) {
+    } else if (this.renderer.webglVersion === constants.WEBGL2) {
       if (this.depthFormat === constants.FLOAT) {
         internalFormat = gl.DEPTH_COMPONENT32F;
       } else {
@@ -785,9 +741,9 @@ p5.Framebuffer = class Framebuffer {
    */
   _updateSize() {
     if (this._autoSized) {
-      this.width = this.target.width;
-      this.height = this.target.height;
-      this.density = this.target.pixelDensity();
+      this.width = this.renderer.width;
+      this.height = this.renderer.height;
+      this.density = this.renderer._pixelDensity;
     }
   }
 
@@ -945,10 +901,10 @@ p5.Framebuffer = class Framebuffer {
    * </div>
    */
   createCamera() {
-    const cam = new p5.FramebufferCamera(this);
+    const cam = new FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
     cam._setDefaultCamera();
-    this.target._renderer.states.curCamera = cam;
+    this.renderer.states.curCamera = cam;
     return cam;
   }
 
@@ -963,7 +919,7 @@ p5.Framebuffer = class Framebuffer {
     const gl = this.gl;
     gl.deleteTexture(texture.rawTexture());
 
-    this.target._renderer.textures.delete(texture);
+    this.renderer.textures.delete(texture);
   }
 
   /**
@@ -1048,7 +1004,7 @@ p5.Framebuffer = class Framebuffer {
     if (this.colorRenderbuffer) {
       gl.deleteRenderbuffer(this.colorRenderbuffer);
     }
-    this.target._renderer.framebuffers.delete(this);
+    this.renderer.framebuffers.delete(this);
   }
 
   /**
@@ -1099,22 +1055,27 @@ p5.Framebuffer = class Framebuffer {
    * </div>
    */
   begin() {
-    this.prevFramebuffer = this.target._renderer.activeFramebuffer();
+    this.prevFramebuffer = this.renderer.activeFramebuffer();
     if (this.prevFramebuffer) {
       this.prevFramebuffer._beforeEnd();
     }
-    this.target._renderer.activeFramebuffers.push(this);
+    this.renderer.activeFramebuffers.push(this);
     this._beforeBegin();
-    this.target.push();
+    this.renderer.push();
     // Apply the framebuffer's camera. This does almost what
     // RendererGL.reset() does, but this does not try to clear any buffers;
     // it only sets the camera.
-    this.target.setCamera(this.defaultCamera);
-    this.target.resetMatrix();
-    this.target._renderer.states.uViewMatrix
-      .set(this.target._renderer.states.curCamera.cameraMatrix);
-    this.target._renderer.states.uModelMatrix.reset();
-    this.target._renderer._applyStencilTestIfClipping();
+    // this.renderer.setCamera(this.defaultCamera);
+    this.renderer.states.curCamera = this.defaultCamera;
+    // set the projection matrix (which is not normally updated each frame)
+    this.renderer.states.uPMatrix.set(this.defaultCamera.projMatrix);
+    this.renderer.states.uViewMatrix.set(this.defaultCamera.cameraMatrix);
+
+    this.renderer.resetMatrix();
+    this.renderer.states.uViewMatrix
+      .set(this.renderer.states.curCamera.cameraMatrix);
+    this.renderer.states.uModelMatrix.reset();
+    this.renderer._applyStencilTestIfClipping();
   }
 
   /**
@@ -1145,7 +1106,7 @@ p5.Framebuffer = class Framebuffer {
   _beforeBegin() {
     const gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebufferToBind());
-    this.target._renderer.viewport(
+    this.renderer.viewport(
       this.width * this.density,
       this.height * this.density
     );
@@ -1231,8 +1192,8 @@ p5.Framebuffer = class Framebuffer {
    */
   end() {
     const gl = this.gl;
-    this.target.pop();
-    const fbo = this.target._renderer.activeFramebuffers.pop();
+    this.renderer.pop();
+    const fbo = this.renderer.activeFramebuffers.pop();
     if (fbo !== this) {
       throw new Error("It looks like you've called end() while another Framebuffer is active.");
     }
@@ -1241,12 +1202,12 @@ p5.Framebuffer = class Framebuffer {
       this.prevFramebuffer._beforeBegin();
     } else {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      this.target._renderer.viewport(
-        this.target._renderer._origViewport.width,
-        this.target._renderer._origViewport.height
+      this.renderer.viewport(
+        this.renderer._origViewport.width,
+        this.renderer._origViewport.height
       );
     }
-    this.target._renderer._applyStencilTestIfClipping();
+    this.renderer._applyStencilTestIfClipping();
   }
 
   /**
@@ -1359,7 +1320,7 @@ p5.Framebuffer = class Framebuffer {
    */
   loadPixels() {
     const gl = this.gl;
-    const prevFramebuffer = this.target._renderer.activeFramebuffer();
+    const prevFramebuffer = this.renderer.activeFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     const colorFormat = this._glColorFormat();
     this.pixels = readPixelsWebGL(
@@ -1416,7 +1377,7 @@ p5.Framebuffer = class Framebuffer {
    * @return {Number[]}  color of the pixel at `(x, y)` as an array of color values `[R, G, B, A]`.
    */
   get(x, y, w, h) {
-    p5._validateParameters('p5.Framebuffer.get', arguments);
+    // p5._validateParameters('p5.Framebuffer.get', arguments);
     const colorFormat = this._glColorFormat();
     if (x === undefined && y === undefined) {
       x = 0;
@@ -1428,8 +1389,8 @@ p5.Framebuffer = class Framebuffer {
         console.warn(
           'The x and y values passed to p5.Framebuffer.get are outside of its range and will be clamped.'
         );
-        x = this.target.constrain(x, 0, this.width - 1);
-        y = this.target.constrain(y, 0, this.height - 1);
+        x = constrain(x, 0, this.width - 1);
+        y = constrain(y, 0, this.height - 1);
       }
 
       return readPixelWebGL(
@@ -1442,10 +1403,10 @@ p5.Framebuffer = class Framebuffer {
       );
     }
 
-    x = this.target.constrain(x, 0, this.width - 1);
-    y = this.target.constrain(y, 0, this.height - 1);
-    w = this.target.constrain(w, 1, this.width - x);
-    h = this.target.constrain(h, 1, this.height - y);
+    x = constrain(x, 0, this.width - 1);
+    y = constrain(y, 0, this.height - 1);
+    w = constrain(w, 1, this.width - x);
+    h = constrain(h, 1, this.height - y);
 
     const rawData = readPixelsWebGL(
       undefined,
@@ -1488,7 +1449,7 @@ p5.Framebuffer = class Framebuffer {
     }
 
     // Create an image from the data
-    const region = new p5.Image(w * this.density, h * this.density);
+    const region = new Image(w * this.density, h * this.density);
     region.imageData = region.canvas.getContext('2d').createImageData(
       region.width,
       region.height
@@ -1583,7 +1544,7 @@ p5.Framebuffer = class Framebuffer {
     );
     this.colorP5Texture.unbindTexture();
 
-    const prevFramebuffer = this.target._renderer.activeFramebuffer();
+    const prevFramebuffer = this.renderer.activeFramebuffer();
     if (this.antialias) {
       // We need to make sure the antialiased framebuffer also has the updated
       // pixels so that if more is drawn to it, it goes on top of the updated
@@ -1593,13 +1554,23 @@ p5.Framebuffer = class Framebuffer {
       // to use image() to put the framebuffer texture onto the antialiased
       // framebuffer.
       this.begin();
-      this.target.push();
-      this.target.imageMode(this.target.CENTER);
-      this.target.resetMatrix();
-      this.target.noStroke();
-      this.target.clear();
-      this.target.image(this, 0, 0);
-      this.target.pop();
+      this.renderer.push();
+      // this.renderer.imageMode(constants.CENTER);
+      this.renderer.states.imageMode = constants.CORNER;
+      this.renderer.setCamera(this.filterCamera);
+      this.renderer.resetMatrix();
+      this.renderer.states.doStroke = false;
+      this.renderer.clear();
+      this.renderer._drawingFilter = true;
+      this.renderer.image(
+        this,
+        0, 0,
+        this.width, this.height,
+        -this.renderer.width / 2, -this.renderer.height / 2,
+        this.renderer.width, this.renderer.height
+      );
+      this.renderer._drawingFilter = false;
+      this.renderer.pop();
       if (this.useDepth) {
         gl.clearDepth(1);
         gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -1621,213 +1592,274 @@ p5.Framebuffer = class Framebuffer {
       }
     }
   }
-};
+}
 
-/**
- * An object that stores the framebuffer's color data.
- *
- * Each framebuffer uses a
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
- * object internally to store its color data. The `myBuffer.color` property
- * makes it possible to pass this data directly to other functions. For
- * example, calling `texture(myBuffer.color)` or
- * `myShader.setUniform('colorTexture', myBuffer.color)`  may be helpful for
- * advanced use cases.
- *
- * Note: By default, a framebuffer's y-coordinates are flipped compared to
- * images and videos. It's easy to flip a framebuffer's y-coordinates as
- * needed when applying it as a texture. For example, calling
- * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
- *
- * @property {p5.FramebufferTexture} color
- * @for p5.Framebuffer
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   background(200);
- *
- *   // Create a p5.Framebuffer object.
- *   let myBuffer = createFramebuffer();
- *
- *   // Start drawing to the p5.Framebuffer object.
- *   myBuffer.begin();
- *
- *   triangle(-25, 25, 0, -25, 25, 25);
- *
- *   // Stop drawing to the p5.Framebuffer object.
- *   myBuffer.end();
- *
- *   // Use the p5.Framebuffer object's WebGLTexture.
- *   texture(myBuffer.color);
- *
- *   // Style the plane.
- *   noStroke();
- *
- *   // Draw the plane.
- *   plane(myBuffer.width, myBuffer.height);
- *
- *   describe('A white triangle on a gray background.');
- * }
- * </code>
- * </div>
- */
+function framebuffer(p5, fn){
+  /**
+   * A <a href="#/p5.Camera">p5.Camera</a> attached to a
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+   *
+   * @class p5.FramebufferCamera
+   * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
+   * attached to
+   * @private
+   */
+  p5.FramebufferCamera = FramebufferCamera;
 
-/**
- * An object that stores the framebuffer's dpeth data.
- *
- * Each framebuffer uses a
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
- * object internally to store its depth data. The `myBuffer.depth` property
- * makes it possible to pass this data directly to other functions. For
- * example, calling `texture(myBuffer.depth)` or
- * `myShader.setUniform('depthTexture', myBuffer.depth)`  may be helpful for
- * advanced use cases.
- *
- * Note: By default, a framebuffer's y-coordinates are flipped compared to
- * images and videos. It's easy to flip a framebuffer's y-coordinates as
- * needed when applying it as a texture. For example, calling
- * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
- *
- * @property {p5.FramebufferTexture} depth
- * @for p5.Framebuffer
- *
- * @example
- * <div>
- * <code>
- * // Note: A "uniform" is a global variable within a shader program.
- *
- * // Create a string with the vertex shader program.
- * // The vertex shader is called for each vertex.
- * let vertSrc = `
- * precision highp float;
- * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * uniform mat4 uModelViewMatrix;
- * uniform mat4 uProjectionMatrix;
- * varying vec2 vTexCoord;
- *
- * void main() {
- *   vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * viewModelPosition;
- *   vTexCoord = aTexCoord;
- * }
- * `;
- *
- * // Create a string with the fragment shader program.
- * // The fragment shader is called for each pixel.
- * let fragSrc = `
- * precision highp float;
- * varying vec2 vTexCoord;
- * uniform sampler2D depth;
- *
- * void main() {
- *   // Get the pixel's depth value.
- *   float depthVal = texture2D(depth, vTexCoord).r;
- *
- *   // Set the pixel's color based on its depth.
- *   gl_FragColor = mix(
- *     vec4(0., 0., 0., 1.),
- *     vec4(1., 0., 1., 1.),
- *     depthVal);
- * }
- * `;
- *
- * let myBuffer;
- * let myShader;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Framebuffer object.
- *   myBuffer = createFramebuffer();
- *
- *   // Create a p5.Shader object.
- *   myShader = createShader(vertSrc, fragSrc);
- *
- *   // Compile and apply the shader.
- *   shader(myShader);
- *
- *   describe('The shadow of a box rotates slowly against a magenta background.');
- * }
- *
- * function draw() {
- *   // Draw to the p5.Framebuffer object.
- *   myBuffer.begin();
- *   background(255);
- *   rotateX(frameCount * 0.01);
- *   box(20, 20, 80);
- *   myBuffer.end();
- *
- *   // Set the shader's depth uniform using
- *   // the framebuffer's depth texture.
- *   myShader.setUniform('depth', myBuffer.depth);
- *
- *   // Style the plane.
- *   noStroke();
- *
- *   // Draw the plane.
- *   plane(myBuffer.width, myBuffer.height);
- * }
- * </code>
- * </div>
- */
+  /**
+   * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+   *
+   * @class p5.FramebufferTexture
+   * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
+   * texture
+   * @param {String} property The property of the framebuffer represented by
+   * this texture, either `color` or `depth`
+   * @private
+   */
+  p5.FramebufferTexture = FramebufferTexture;
 
-/**
- * An array containing the color of each pixel in the framebuffer.
- *
- * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
- * called before accessing the `myBuffer.pixels` array.
- * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
- * must be called after any changes are made.
- *
- * Note: Updating pixels via this property is slower than drawing to the
- * framebuffer directly. Consider using a
- * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
- * `myBuffer.pixels`.
- *
- * @property {Number[]} pixels
- * @for p5.Framebuffer
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   background(200);
- *
- *   // Create a p5.Framebuffer object.
- *   let myBuffer = createFramebuffer();
- *
- *   // Load the pixels array.
- *   myBuffer.loadPixels();
- *
- *   // Get the number of pixels in the
- *   // top half of the framebuffer.
- *   let numPixels = myBuffer.pixels.length / 2;
- *
- *   // Set the framebuffer's top half to pink.
- *   for (let i = 0; i < numPixels; i += 4) {
- *     myBuffer.pixels[i] = 255;
- *     myBuffer.pixels[i + 1] = 102;
- *     myBuffer.pixels[i + 2] = 204;
- *     myBuffer.pixels[i + 3] = 255;
- *   }
- *
- *   // Update the pixels array.
- *   myBuffer.updatePixels();
- *
- *   // Draw the p5.Framebuffer object to the canvas.
- *   image(myBuffer, -50, -50);
- *
- *   describe('A pink rectangle above a gray rectangle.');
- * }
- * </code>
- * </div>
- */
+  /**
+   * A class to describe a high-performance drawing surface for textures.
+   *
+   * Each `p5.Framebuffer` object provides a dedicated drawing surface called
+   * a *framebuffer*. They're similar to
+   * <a href="#/p5.Graphics">p5.Graphics</a> objects but can run much faster.
+   * Performance is improved because the framebuffer shares the same WebGL
+   * context as the canvas used to create it.
+   *
+   * `p5.Framebuffer` objects have all the drawing features of the main
+   * canvas. Drawing instructions meant for the framebuffer must be placed
+   * between calls to
+   * <a href="#/p5.Framebuffer/begin">myBuffer.begin()</a> and
+   * <a href="#/p5.Framebuffer/end">myBuffer.end()</a>. The resulting image
+   * can be applied as a texture by passing the `p5.Framebuffer` object to the
+   * <a href="#/p5/texture">texture()</a> function, as in `texture(myBuffer)`.
+   * It can also be displayed on the main canvas by passing it to the
+   * <a href="#/p5/image">image()</a> function, as in `image(myBuffer, 0, 0)`.
+   *
+   * Note: <a href="#/p5/createFramebuffer">createFramebuffer()</a> is the
+   * recommended way to create an instance of this class.
+   *
+   * @class p5.Framebuffer
+   * @param {p5.Graphics|p5} target sketch instance or
+   *                                <a href="#/p5.Graphics">p5.Graphics</a>
+   *                                object.
+   * @param {Object} [settings] configuration options.
+   */
+  p5.Framebuffer = Framebuffer;
 
-export default p5.Framebuffer;
+  /**
+   * An object that stores the framebuffer's color data.
+   *
+   * Each framebuffer uses a
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
+   * object internally to store its color data. The `myBuffer.color` property
+   * makes it possible to pass this data directly to other functions. For
+   * example, calling `texture(myBuffer.color)` or
+   * `myShader.setUniform('colorTexture', myBuffer.color)`  may be helpful for
+   * advanced use cases.
+   *
+   * Note: By default, a framebuffer's y-coordinates are flipped compared to
+   * images and videos. It's easy to flip a framebuffer's y-coordinates as
+   * needed when applying it as a texture. For example, calling
+   * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
+   *
+   * @property {p5.FramebufferTexture} color
+   * @for p5.Framebuffer
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   let myBuffer = createFramebuffer();
+   *
+   *   // Start drawing to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *
+   *   triangle(-25, 25, 0, -25, 25, 25);
+   *
+   *   // Stop drawing to the p5.Framebuffer object.
+   *   myBuffer.end();
+   *
+   *   // Use the p5.Framebuffer object's WebGLTexture.
+   *   texture(myBuffer.color);
+   *
+   *   // Style the plane.
+   *   noStroke();
+   *
+   *   // Draw the plane.
+   *   plane(myBuffer.width, myBuffer.height);
+   *
+   *   describe('A white triangle on a gray background.');
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * An object that stores the framebuffer's dpeth data.
+   *
+   * Each framebuffer uses a
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture" target="_blank">WebGLTexture</a>
+   * object internally to store its depth data. The `myBuffer.depth` property
+   * makes it possible to pass this data directly to other functions. For
+   * example, calling `texture(myBuffer.depth)` or
+   * `myShader.setUniform('depthTexture', myBuffer.depth)`  may be helpful for
+   * advanced use cases.
+   *
+   * Note: By default, a framebuffer's y-coordinates are flipped compared to
+   * images and videos. It's easy to flip a framebuffer's y-coordinates as
+   * needed when applying it as a texture. For example, calling
+   * `plane(myBuffer.width, -myBuffer.height)` will flip the framebuffer.
+   *
+   * @property {p5.FramebufferTexture} depth
+   * @for p5.Framebuffer
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Note: A "uniform" is a global variable within a shader program.
+   *
+   * // Create a string with the vertex shader program.
+   * // The vertex shader is called for each vertex.
+   * let vertSrc = `
+   * precision highp float;
+   * attribute vec3 aPosition;
+   * attribute vec2 aTexCoord;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   * varying vec2 vTexCoord;
+   *
+   * void main() {
+   *   vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
+   *   gl_Position = uProjectionMatrix * viewModelPosition;
+   *   vTexCoord = aTexCoord;
+   * }
+   * `;
+   *
+   * // Create a string with the fragment shader program.
+   * // The fragment shader is called for each pixel.
+   * let fragSrc = `
+   * precision highp float;
+   * varying vec2 vTexCoord;
+   * uniform sampler2D depth;
+   *
+   * void main() {
+   *   // Get the pixel's depth value.
+   *   float depthVal = texture2D(depth, vTexCoord).r;
+   *
+   *   // Set the pixel's color based on its depth.
+   *   gl_FragColor = mix(
+   *     vec4(0., 0., 0., 1.),
+   *     vec4(1., 0., 1., 1.),
+   *     depthVal);
+   * }
+   * `;
+   *
+   * let myBuffer;
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   myBuffer = createFramebuffer();
+   *
+   *   // Create a p5.Shader object.
+   *   myShader = createShader(vertSrc, fragSrc);
+   *
+   *   // Compile and apply the shader.
+   *   shader(myShader);
+   *
+   *   describe('The shadow of a box rotates slowly against a magenta background.');
+   * }
+   *
+   * function draw() {
+   *   // Draw to the p5.Framebuffer object.
+   *   myBuffer.begin();
+   *   background(255);
+   *   rotateX(frameCount * 0.01);
+   *   box(20, 20, 80);
+   *   myBuffer.end();
+   *
+   *   // Set the shader's depth uniform using
+   *   // the framebuffer's depth texture.
+   *   myShader.setUniform('depth', myBuffer.depth);
+   *
+   *   // Style the plane.
+   *   noStroke();
+   *
+   *   // Draw the plane.
+   *   plane(myBuffer.width, myBuffer.height);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * An array containing the color of each pixel in the framebuffer.
+   *
+   * <a href="#/p5.Framebuffer/loadPixels">myBuffer.loadPixels()</a> must be
+   * called before accessing the `myBuffer.pixels` array.
+   * <a href="#/p5.Framebuffer/updatePixels">myBuffer.updatePixels()</a>
+   * must be called after any changes are made.
+   *
+   * Note: Updating pixels via this property is slower than drawing to the
+   * framebuffer directly. Consider using a
+   * <a href="#/p5.Shader">p5.Shader</a> object instead of looping over
+   * `myBuffer.pixels`.
+   *
+   * @property {Number[]} pixels
+   * @for p5.Framebuffer
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Framebuffer object.
+   *   let myBuffer = createFramebuffer();
+   *
+   *   // Load the pixels array.
+   *   myBuffer.loadPixels();
+   *
+   *   // Get the number of pixels in the
+   *   // top half of the framebuffer.
+   *   let numPixels = myBuffer.pixels.length / 2;
+   *
+   *   // Set the framebuffer's top half to pink.
+   *   for (let i = 0; i < numPixels; i += 4) {
+   *     myBuffer.pixels[i] = 255;
+   *     myBuffer.pixels[i + 1] = 102;
+   *     myBuffer.pixels[i + 2] = 204;
+   *     myBuffer.pixels[i + 3] = 255;
+   *   }
+   *
+   *   // Update the pixels array.
+   *   myBuffer.updatePixels();
+   *
+   *   // Draw the p5.Framebuffer object to the canvas.
+   *   image(myBuffer, -50, -50);
+   *
+   *   describe('A pink rectangle above a gray rectangle.');
+   * }
+   * </code>
+   * </div>
+   */
+}
+
+export default framebuffer;
+export { FramebufferTexture, FramebufferCamera, Framebuffer };
+
+if(typeof p5 !== 'undefined'){
+  framebuffer(p5, p5.prototype);
+}

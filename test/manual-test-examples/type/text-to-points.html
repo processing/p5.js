@@ -1,0 +1,67 @@
+<html>
+
+<!-- 
+CSS-style font properties (preferred, but doesn't support custom axes):
+  font-weight: 650;
+  font-style: oblique 80deg;  (must add deg)
+  font-stretch: 75%;          (only accepts percentage with %)  
+  font-optical-sizing: auto;  (only allows for 'auto' or 'none')
+Font-variation style properties:
+  font-variations-settings: 'wght' 650, 'slnt' 80, 'wdth' 75, 'opsz' 100;
+-->
+
+<head>
+  <meta charset='UTF-8'>
+  <!-- <script language="javascript" type="text/javascript" src="./lib/Typr.js"></script>
+  <script language="javascript" type="text/javascript" src="./lib/Typr.U.js"></script> -->
+
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type='module'>
+    import p5 from '../../../src/app.js';
+    let sketch = async function (p) {
+      let f;
+      p.setup = async function () {
+        p.createCanvas(750, 350);
+        p.background(255);
+        p.textFont(f = await p.loadFont('./font/LiberationSans-Bold.ttf'), 300);
+        p.fill('#E92D55');
+
+        let paths = f.textToPaths('p5*js', 5, 250);
+        f.drawPaths(p.drawingContext, paths, { fill: '#E92D55' });
+        f.textToPoints('p5*js', 5, 250, { sampleFactor: .1 }).forEach((pt, i) => {
+          p.fill(0);
+          p.circle(pt.x, pt.y, 5);
+        });
+      }
+    }
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>
