@@ -1,5 +1,6 @@
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
+const toArray = (typedArray) => Array.from(typedArray);
 
 suite('p5.RendererGL', function() {
   var myp5;
@@ -928,7 +929,7 @@ suite('p5.RendererGL', function() {
       // cam1 is applied right now so technically this is redundant
       myp5.setCamera(cam1);
       const cam1Matrix = cam1.cameraMatrix.copy();
-      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uViewMatrix.mat4), toArray(cam1Matrix.mat4));
 
       // Translation only changes the model matrix
       myp5.translate(100, 0, 0);
@@ -936,12 +937,12 @@ suite('p5.RendererGL', function() {
         myp5._renderer.states.uModelMatrix.mat4,
         origModelMatrix.mat4
       );
-      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uViewMatrix.mat4), toArray(cam1Matrix.mat4));
 
       // Switchnig cameras only changes the view matrix
       const transformedModel = myp5._renderer.states.uModelMatrix.copy();
       myp5.setCamera(cam2);
-      assert.deepEqual(myp5._renderer.states.uModelMatrix.mat4, transformedModel.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uModelMatrix.mat4), toArray(transformedModel.mat4));
       assert.notDeepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
     });
   });

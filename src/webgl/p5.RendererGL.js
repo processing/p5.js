@@ -1,7 +1,7 @@
 import * as constants from "../core/constants";
 import GeometryBuilder from "./GeometryBuilder";
 import { Renderer } from "../core/p5.Renderer";
-import { Matrix } from "./p5.Matrix";
+import { Matrix } from "../math/p5.Matrix";
 import { Camera } from "./p5.Camera";
 import { Vector } from "../math/p5.Vector";
 import { RenderBuffer } from "./p5.RenderBuffer";
@@ -175,12 +175,12 @@ class RendererGL extends Renderer {
     this.geometryBuilder = undefined;
 
     // Push/pop state
-    this.states.uModelMatrix = new Matrix();
-    this.states.uViewMatrix = new Matrix();
-    this.states.uMVMatrix = new Matrix();
-    this.states.uPMatrix = new Matrix();
-    this.states.uNMatrix = new Matrix("mat3");
-    this.states.curMatrix = new Matrix("mat3");
+    this.states.uModelMatrix = new Matrix(4);
+    this.states.uViewMatrix = new Matrix(4);
+    this.states.uMVMatrix = new Matrix(4);
+    this.states.uPMatrix = new Matrix(4);
+    this.states.uNMatrix = new Matrix(3);
+    this.states.curMatrix = new Matrix(3);
 
     this.states.curCamera = new Camera(this);
 
@@ -1609,6 +1609,7 @@ class RendererGL extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
+      // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
     } else {
       this.states.uModelMatrix.apply([
@@ -1668,7 +1669,7 @@ class RendererGL extends Renderer {
     if (typeof axis === "undefined") {
       return this.rotateZ(rad);
     }
-    Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
+    Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
 
@@ -1738,14 +1739,11 @@ class RendererGL extends Renderer {
     if (!this.sphereMapping) {
       this.sphereMapping = this._pInst.createFilterShader(sphereMapping);
     }
-    this.states.uNMatrix.inverseTranspose(this.states.uViewMatrix);
-    this.states.uNMatrix.invert3x3(this.states.uNMatrix);
+    this.states.uNMatrix.inverseTranspose4x4(this.states.uViewMatrix);
+    this.states.uNMatrix.invert(this.states.uNMatrix); // uNMMatrix is 3x3
     this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
     this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
-    this.sphereMapping.setUniform(
-      "uNewNormalMatrix",
-      this.states.uNMatrix.mat3,
-    );
+    this.sphereMapping.setUniform("uNewNormalMatrix", this.states.uNMatrix.mat3);
     this.sphereMapping.setUniform("uSampler", img);
     return this.sphereMapping;
   }
@@ -2212,11 +2210,11 @@ class RendererGL extends Renderer {
       modelViewProjectionMatrix.mat4,
     );
     if (shader.uniforms.uNormalMatrix) {
-      this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
+      this.states.uNMatrix.inverseTranspose4x4(this.states.uMVMatrix);
       shader.setUniform("uNormalMatrix", this.states.uNMatrix.mat3);
     }
     if (shader.uniforms.uCameraRotation) {
-      this.states.curMatrix.inverseTranspose(this.states.uViewMatrix);
+      this.states.curMatrix.inverseTranspose4x4(this.states.uViewMatrix);
       shader.setUniform("uCameraRotation", this.states.curMatrix.mat3);
     }
     shader.setUniform("uViewport", this._viewport);

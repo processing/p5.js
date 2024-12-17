@@ -4,7 +4,7 @@
  * @requires core
  */
 
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Vector } from '../math/p5.Vector';
 import { Quat } from './p5.Quat';
 import { RendererGL } from './p5.RendererGL';
@@ -15,8 +15,8 @@ class Camera {
 
     this.cameraType = 'default';
     this.useLinePerspective = true;
-    this.cameraMatrix = new Matrix();
-    this.projMatrix = new Matrix();
+    this.cameraMatrix = new Matrix(4);
+    this.projMatrix = new Matrix(4);
     this.yScale = 1;
   }
   /**
@@ -1236,7 +1236,7 @@ class Camera {
     this.cameraNear = near;
     this.cameraFar = far;
 
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = new Matrix(4);
 
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
@@ -1428,7 +1428,7 @@ class Camera {
     const tx = -(right + left) / w;
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = new Matrix(4);
     /* eslint-disable indent */
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
@@ -1564,7 +1564,7 @@ class Camera {
     const ty = (top + bottom) / h;
     const tz = -(far + near) / d;
 
-    this.projMatrix = Matrix.identity();
+    this.projMatrix = new Matrix(4);
 
     /* eslint-disable indent */
     this.projMatrix.set(x, 0, 0, 0,
@@ -1599,8 +1599,8 @@ class Camera {
     centerY -= this.eyeY;
     centerZ -= this.eyeZ;
 
-    const rotation = Matrix.identity(this._renderer._pInst);
-    rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
+    const rotation = new Matrix(4); // TODO Maybe pass p5
+    rotation.rotate4x4(this._renderer._pInst._toRadians(a), x, y, z);
 
     /* eslint-disable max-len */
     const rotatedCenter = [
@@ -2566,12 +2566,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-      this.projMatrix.mat4[0] =
-        cam0.projMatrix.mat4[0] *
-        Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt);
-      this.projMatrix.mat4[5] =
-        cam0.projMatrix.mat4[5] *
-        Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt);
+        this.projMatrix.setElement(
+          0,
+          cam0.projMatrix.mat4[0] *
+            Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
+        );
+        this.projMatrix.setElement(
+          5,
+          cam0.projMatrix.mat4[5] *
+            Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
+        );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
@@ -2640,7 +2644,7 @@ class Camera {
     // and multiply it to mat1 from the right.
     // This matrix represents the difference between the two.
     // 'deltaRot' means 'difference of rotation matrices'.
-    const deltaRot = rotMat1.mult3x3(rotMat0.copy().transpose3x3());
+    const deltaRot = rotMat1.mult(rotMat0.copy().transpose()); // mat1 is 3x3
 
     // Calculate the trace and from it the cos value of the angle.
     // An orthogonal matrix is just an orthonormal basis. If this is not the identity
@@ -2716,7 +2720,8 @@ class Camera {
     const ab = a * b;
     const bc = b * c;
     const ca = c * a;
-    const lerpedRotMat = new Matrix('mat3', [
+    // 3x3
+    const lerpedRotMat = new Matrix( [
       cosAngle + oneMinusCosAngle * a * a,
       oneMinusCosAngle * ab + sinAngle * c,
       oneMinusCosAngle * ca - sinAngle * b,
@@ -2730,12 +2735,12 @@ class Camera {
 
     // Multiply this to mat0 from left to get the interpolated front vector.
     // calculate newEye, newCenter with newFront vector.
-    lerpedRotMat.multiplyVec3(front0, newFront);
+    lerpedRotMat.multiplyVec(front0, newFront); // this is vec3
 
     newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
     newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
 
-    lerpedRotMat.multiplyVec3(up0, newUp);
+    lerpedRotMat.multiplyVec(up0, newUp); // this is vec3
 
     // We also get the up vector in the same way and set the camera.
     // The eye position and center position are calculated based on the front vector.
