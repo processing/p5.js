@@ -70,6 +70,23 @@ visualSuite('WebGL', function() {
         screenshot();
       }
     );
+
+    for (const mode of ['webgl', '2d']) {
+      visualSuite(`In ${mode} mode`, function() {
+        visualTest('It can combine multiple filter passes', function(p5, screenshot) {
+          p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+          if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+          p5.background(255);
+          p5.fill(0);
+          p5.noStroke();
+          p5.circle(15, 15, 20);
+          p5.circle(30, 30, 20);
+          p5.filter(p5.BLUR, 5);
+          p5.filter(p5.THRESHOLD);
+          screenshot();
+        });
+      });
+    }
   });
 
   visualSuite('Lights', function() {
