@@ -14,6 +14,7 @@ import { Graphics } from "../core/p5.Graphics";
 import { Element } from "../dom/p5.Element";
 import { ShapeBuilder } from "./ShapeBuilder";
 import { GeometryBufferCache } from "./GeometryBufferCache";
+import { filterParamDefaults } from '../image/const';
 
 import lightingShader from "./shaders/lighting.glsl";
 import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
@@ -1146,13 +1147,8 @@ class RendererGL extends Renderer {
     let operation = undefined;
     if (typeof args[0] === "string") {
       operation = args[0];
-      let defaults = {
-        [constants.BLUR]: 3,
-        [constants.POSTERIZE]: 4,
-        [constants.THRESHOLD]: 0.5,
-      };
-      let useDefaultParam = operation in defaults && args[1] === undefined;
-      filterParameter = useDefaultParam ? defaults[operation] : args[1];
+      let useDefaultParam = operation in filterParamDefaults && args[1] === undefined;
+      filterParameter = useDefaultParam ? filterParamDefaults[operation] : args[1];
 
       // Create and store shader for constants once on initial filter call.
       // Need to store multiple in case user calls different filters,

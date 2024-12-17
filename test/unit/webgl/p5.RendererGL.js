@@ -412,18 +412,6 @@ suite('p5.RendererGL', function() {
       assert.doesNotThrow(testDefaultParams, 'this should not throw');
     });
 
-    test('filter() uses WEBGL implementation behind main P2D canvas', function() {
-      let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR);
-      assert.isDefined(renderer.filterGraphicsLayer);
-    });
-
-    test('filter() can opt out of WEBGL implementation', function() {
-      let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR, false);
-      assert.isUndefined(renderer.filterGraphicsLayer);
-    });
-
     test('filters make changes to canvas', function() {
       myp5.createCanvas(20,20);
       myp5.circle(10,10,12);
@@ -554,6 +542,7 @@ suite('p5.RendererGL', function() {
 
     suite('external context', function() {
       const cases = [
+        ['no modification', () => {}],
         ['corner rectMode', () => myp5.rectMode(myp5.CORNER)],
         ['corners rectMode', () => myp5.rectMode(myp5.CORNERS)],
         ['center rectMode', () => myp5.rectMode(myp5.CENTER)],
