@@ -13,11 +13,18 @@ export default defineWorkspace([
   {
     plugins,
     publicDir: './test',
+    bench: {
+      name: 'bench',
+      root: './',
+      include: [
+        './test/bench/**/*.js'
+      ],
+    },
     test: {
       name: 'unit',
       root: './',
       include: [
-        './test/unit/**/*.js'
+        './test/unit/**/*.js',
       ],
       exclude: [
         './test/unit/spec.js',
