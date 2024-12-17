@@ -1,6 +1,6 @@
 import { visualSuite, visualTest } from "../visualTest";
 
-visualSuite("Type", function () {
+visualSuite("Typography", function () {
   visualSuite("textFont", function () {
     visualTest("with the default font", function (p5, screenshot) {
       p5.createCanvas(50, 50);
@@ -18,6 +18,98 @@ visualSuite("Type", function () {
       p5.text("test", 0, 0);
       screenshot();
     });
+
+    visualTest("with a Google Font URL", async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text("p5*js", 0, 10, p5.width);
+      screenshot();
+    });
+
+    visualTest("with a font file", async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text("p5*js", 0, 10, p5.width);
+      screenshot();
+    });
+
+    visualTest("with a font file in WebGL", async function (p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text("p5*js", -p5.width / 2, -p5.height / 2 + 10, p5.width);
+      screenshot();
+    });
+  });
+
+  visualSuite("textWeight", function () {
+    visualTest(
+      "can control non-variable fonts",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont(
+          "https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&display=swap"
+        );
+
+        for (const weight of [400, 800]) {
+          p5.background(255);
+          p5.textFont(font);
+          p5.textAlign(p5.LEFT, p5.TOP);
+          p5.textSize(35);
+          p5.textWeight(weight);
+          p5.text("p5*js", 0, 10, p5.width);
+          screenshot();
+        }
+      }
+    );
+
+    visualTest("can control variable fonts", async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      );
+
+      for (let weight = 400; weight <= 800; weight += 100) {
+        p5.background(255);
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.textWeight(weight);
+        p5.text("p5*js", 0, 10, p5.width);
+        screenshot();
+      }
+    });
+
+    visualTest(
+      "can control variable fonts from files",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont(
+          "/unit/assets/BricolageGrotesque-Variable.ttf",
+          { weight: "200 800" }
+        );
+
+        for (let weight = 400; weight <= 800; weight += 100) {
+          p5.background(255);
+          p5.textFont(font);
+          p5.textAlign(p5.LEFT, p5.TOP);
+          p5.textSize(35);
+          p5.textWeight(weight);
+          p5.text("p5*js", 0, 10, p5.width);
+          screenshot();
+        }
+      }
+    );
   });
 
   visualSuite("textAlign", function () {
@@ -265,6 +357,8 @@ visualSuite("Type", function () {
     );
   });
 
+  // (Previous content continues...)
+
   visualSuite("textBaseline", function () {
     visualTest(
       "baseline alignment with different font sizes",
@@ -369,6 +463,96 @@ visualSuite("Type", function () {
     });
   });
 
+  visualSuite("textToPoints", function () {
+    visualTest(
+      "Fonts can be converted to points",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+        p5.background(255);
+        p5.strokeWeight(2);
+        p5.textSize(50);
+        const pts = font.textToPoints("p5*js", 0, 50);
+        p5.beginShape(p5.POINTS);
+        for (const { x, y } of pts) p5.vertex(x, y);
+        p5.endShape();
+        screenshot();
+      }
+    );
+
+    visualTest(
+      "Sampling density can be changed",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+        p5.background(255);
+        p5.strokeWeight(2);
+        p5.textSize(50);
+        const pts = font.textToPoints("p5*js", 0, 50, { sampleFactor: 0.5 });
+        p5.beginShape(p5.POINTS);
+        for (const { x, y } of pts) p5.vertex(x, y);
+        p5.endShape();
+        screenshot();
+      }
+    );
+  });
+
+  visualSuite("textToContours", function () {
+    visualTest(
+      "Fonts can be converted to points grouped by contour",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+        p5.background(200);
+        p5.strokeWeight(2);
+        p5.textSize(50);
+        const contours = font.textToContours("p5*js", 0, 50, {
+          sampleFactor: 0.5,
+        });
+        p5.beginShape();
+        for (const pts of contours) {
+          p5.beginContour();
+          for (const { x, y } of pts) p5.vertex(x, y);
+          p5.endContour(p5.CLOSE);
+        }
+        p5.endShape();
+        screenshot();
+      }
+    );
+  });
+
+  visualSuite("textToPaths", function () {
+    visualTest(
+      "Fonts can be converted to drawing context commands",
+      async function (p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont("/unit/assets/Inconsolata-Bold.ttf");
+        p5.background(200);
+        p5.strokeWeight(2);
+        p5.textSize(50);
+        const cmds = font.textToPaths("p5*js", 0, 50);
+        p5.drawingContext.beginPath();
+        for (const [type, ...args] of cmds) {
+          if (type === "M") {
+            p5.drawingContext.moveTo(...args);
+          } else if (type === "L") {
+            p5.drawingContext.lineTo(...args);
+          } else if (type === "C") {
+            p5.drawingContext.bezierCurveTo(...args);
+          } else if (type === "Q") {
+            p5.drawingContext.quadraticCurveTo(...args);
+          } else if (type === "Z") {
+            p5.drawingContext.closePath();
+          }
+        }
+        p5.drawingContext.fill();
+        p5.drawingContext.stroke();
+        screenshot();
+      }
+    );
+  });
+
+  // New sections from the second file
   visualSuite("fontProperties", function () {
     visualTest("font stretch values", function (p5, screenshot) {
       p5.createCanvas(400, 300);
