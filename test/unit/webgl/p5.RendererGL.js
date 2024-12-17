@@ -1316,7 +1316,7 @@ suite('p5.RendererGL', function() {
         );
       };
 
-      for (const alpha of [255, 200]) {
+      for (const alpha of [1, 200/255]) {
         const red = myp5.color('#F53');
         const blue = myp5.color('#13F');
         red.setAlpha(alpha);

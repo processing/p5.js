@@ -21,6 +21,9 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
  * @final
  */
 export const P2D = Symbol('p2d');
+
+export const P2DHDR = 'p2d-hdr';
+
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
@@ -841,7 +844,7 @@ export const MITER = 'miter';
  * @property {RGB} RGB
  * @final
  */
-export const RGB = 'rgb';
+// export const RGB = 'rgb';
 /**
  * HSB (hue, saturation, brightness) is a type of color model.
  * You can learn more about it at
@@ -851,13 +854,19 @@ export const RGB = 'rgb';
  * @property {HSB} HSB
  * @final
  */
-export const HSB = 'hsb';
+// export const HSB = 'hsb';
 /**
  * @typedef {'hsl'} HSL
  * @property {HSL} HSL
  * @final
  */
-export const HSL = 'hsl';
+// export const HSL = 'hsl';
+/**
+ * @typedef {'rgba'} RGBA
+ * @property {RGBA} RGBA
+ * @final
+ */
+// export const RGBA = 'rgba';
 
 // DOM EXTENSION
 /**
@@ -1336,13 +1345,6 @@ export const FLOAT = 'float';
  * @final
  */
 export const HALF_FLOAT = 'half-float';
-
-/**
- * @typedef {'rgba'} RGBA
- * @property {RGBA} RGBA
- * @final
- */
-export const RGBA = 'rgba';
 
 /**
  * The `splineEnds` mode where splines curve through

@@ -413,14 +413,6 @@ class p5 {
     };
 
     this._styles = [];
-
-    this._colorMode = constants.RGB;
-    this._colorMaxes = {
-      rgb: [255, 255, 255, 255],
-      hsb: [360, 100, 100, 1],
-      hsl: [360, 100, 100, 1]
-    };
-
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 }

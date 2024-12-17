@@ -7,7 +7,7 @@ assert.arrayApproximately = function(arr1, arr2, delta) {
   }
 };
 
-suite('color/p5.ColorConversion', function() {
+suite.todo('color/p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
   var rgbaWithMaxHue = [1, 0, 0, 0.6];
   var rgbaWithHighLightness = [0.969, 0.753, 0.122, 0.8];

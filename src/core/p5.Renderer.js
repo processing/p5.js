@@ -11,6 +11,37 @@ import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
 
 class Renderer {
+  static states = {
+    strokeColor: null,
+    strokeSet: false,
+    fillColor: null,
+    fillSet: false,
+    tint: null,
+
+    imageMode: constants.CORNER,
+    rectMode: constants.CORNER,
+    ellipseMode: constants.CENTER,
+    strokeWeight: 1,
+
+    textFont: { family: 'sans-serif' },
+    textLeading: 15,
+    leadingSet: false,
+    textSize: 12,
+    textAlign: constants.LEFT,
+    textBaseline: constants.BASELINE,
+    bezierOrder: 3,
+    splineEnds: constants.INCLUDE,
+    textWrap: constants.WORD,
+
+    // added v2.0
+    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStretch: constants.NORMAL,
+    fontWeight: constants.NORMAL,
+    lineHeight: constants.NORMAL,
+    fontVariant: constants.NORMAL,
+    direction: 'inherit'
+  }
+
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
@@ -27,36 +58,19 @@ class Renderer {
     }
 
     // Renderer state machine
-    this.states = {
-      strokeColor: new Color([0, 0, 0]),
-      strokeSet: false,
-      fillColor: new Color([255, 255, 255]),
-      fillSet: false,
-      tint: null,
-      imageMode: constants.CORNER,
-      rectMode: constants.CORNER,
-      ellipseMode: constants.CENTER,
-      strokeWeight: 1,
+    this.states = Object.assign({}, Renderer.states);
+    // Clone properties that support it
+    for (const key in this.states) {
+      if (this.states[key] instanceof Array) {
+        this.states[key] = this.states[key].slice();
+      } else if (this.states[key] && this.states[key].clone instanceof Function) {
+        this.states[key] = this.states[key].clone();
+      }
+    }
 
-      textFont: { family: 'sans-serif' },
-      textLeading: 15,
-      leadingSet: false,
-      textSize: 12,
-      textAlign: constants.LEFT,
-      textBaseline: constants.BASELINE,
-      bezierOrder: 3,
-      splineEnds: constants.INCLUDE,
+    this.states.strokeColor = new Color([0, 0, 0]);
+    this.states.fillColor = new Color([255, 255, 255]);
 
-      textWrap: constants.WORD,
-
-      // added v2.0
-      fontStyle: constants.NORMAL, // v1: textStyle
-      fontStretch: constants.NORMAL,
-      fontWeight: constants.NORMAL,
-      lineHeight: constants.NORMAL,
-      fontVariant: constants.NORMAL,
-      direction: 'inherit'
-    };
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
     this._pushPopDepth = 0;

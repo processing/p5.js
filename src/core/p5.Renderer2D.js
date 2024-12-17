@@ -5,9 +5,8 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
-
+import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
-
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 
@@ -15,7 +14,7 @@ const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
 class Renderer2D extends Renderer {
-  constructor(pInst, w, h, isMainCanvas, elt) {
+  constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
     super(pInst, w, h, isMainCanvas);
 
     this.canvas = this.elt = elt || document.createElement('canvas');
@@ -33,7 +32,6 @@ class Renderer2D extends Renderer {
     this.elt.classList.add('p5Canvas');
 
     // Extend renderer with methods of p5.Element with getters
-    // this.wrappedElt = new p5.Element(elt, pInst);
     for (const p of Object.getOwnPropertyNames(Element.prototype)) {
       if (p !== 'constructor' && p[0] !== '_') {
         Object.defineProperty(this, p, {
@@ -65,7 +63,10 @@ class Renderer2D extends Renderer {
     }
 
     // Get and store drawing context
-    this.drawingContext = this.canvas.getContext('2d');
+    this.drawingContext = this.canvas.getContext('2d', attributes);
+    if(attributes.colorSpace === 'display-p3'){
+      this.states.colorMode = RGBHDR;
+    }
     if (isMainCanvas) {
       this._pInst.drawingContext = this.drawingContext;
     }
@@ -181,7 +182,7 @@ class Renderer2D extends Renderer {
 
       //accessible Outputs
       if (this._pInst._addAccsOutput()) {
-        this._pInst._accsBackground(color.levels);
+        this._pInst._accsBackground(color._getRGBA([255, 255, 255, 255]));
       }
 
       const newFill = color.toString();
@@ -216,7 +217,7 @@ class Renderer2D extends Renderer {
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('fill', color.levels);
+      this._pInst._accsCanvasColors('fill', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -227,7 +228,7 @@ class Renderer2D extends Renderer {
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('stroke', color.levels);
+      this._pInst._accsCanvasColors('stroke', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -580,10 +581,7 @@ class Renderer2D extends Renderer {
         }
       } else if (imgOrCol instanceof p5.Color) {
         if (idx < this.pixels.length) {
-          r = imgOrCol.levels[0];
-          g = imgOrCol.levels[1];
-          b = imgOrCol.levels[2];
-          a = imgOrCol.levels[3];
+          [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
         }
       }
@@ -1224,6 +1222,11 @@ function renderer2D(p5, fn){
    */
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
+  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+    construct(target, [pInst, w, h, isMainCanvas, elt]){
+      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
+    }
+  })
 }
 
 export default renderer2D;

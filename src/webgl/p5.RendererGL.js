@@ -1003,11 +1003,7 @@ class RendererGL extends Renderer {
    */
   background(...args) {
     const _col = this._pInst.color(...args);
-    const _r = _col.levels[0] / 255;
-    const _g = _col.levels[1] / 255;
-    const _b = _col.levels[2] / 255;
-    const _a = _col.levels[3] / 255;
-    this.clear(_r, _g, _b, _a);
+    this.clear(..._col._getRGBA());
   }
 
   // Combines the model and view matrices to get the uMVMatrix
