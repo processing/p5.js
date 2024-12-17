@@ -12,6 +12,7 @@ import filterOpaqueFrag from '../webgl/shaders/filters/opaque.frag';
 import filterInvertFrag from '../webgl/shaders/filters/invert.frag';
 import filterThresholdFrag from '../webgl/shaders/filters/threshold.frag';
 import filterShaderVert from '../webgl/shaders/filters/default.vert';
+import { filterParamDefaults } from "./const";
 
 class FilterRenderer2D {
   /**
@@ -99,6 +100,12 @@ class FilterRenderer2D {
   setOperation(operation, filterParameter, customShader = null) {
     this.operation = operation;
     this.filterParameter = filterParameter;
+
+    let useDefaultParam = operation in filterParamDefaults && filterParameter === undefined;
+    if (useDefaultParam) {
+      this.filterParameter = filterParamDefaults[operation];
+    }
+
     this.customShader = customShader;
     this._initializeShader();
   }
@@ -148,6 +155,13 @@ class FilterRenderer2D {
     gl.bufferData(target, values, gl.STATIC_DRAW);
   }
 
+  get canvasTexture() {
+    if (!this._canvasTexture) {
+      this._canvasTexture = new Texture(this._renderer, this.pInst.wrappedElt);
+    }
+    return this._canvasTexture;
+  }
+
   /**
    * Prepares and runs the full-screen quad draw call.
    */
@@ -161,7 +175,7 @@ class FilterRenderer2D {
       1 / (this.pInst.height * pixelDensity)
     ];
 
-    const canvasTexture = new Texture(this._renderer, this.pInst.wrappedElt);
+    const canvasTexture = this.canvasTexture;
 
     // Set uniforms for the shader
     this._shader.setUniform('tex0', canvasTexture);
@@ -186,15 +200,17 @@ class FilterRenderer2D {
     // Bind and enable vertex attributes
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     this._shader.enableAttrib(this._shader.attributes.aPosition, 2);
-    
+
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
     this._shader.enableAttrib(this._shader.attributes.aTexCoord, 2);
-    
+
+    this._shader.bindTextures();
+    this._shader.disableRemainingAttributes();
+
     // Draw the quad
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     // Unbind the shader
     this._shader.unbindShader();
-    
   }
 
   /**
@@ -206,6 +222,8 @@ class FilterRenderer2D {
       console.error("Cannot apply filter: shader not initialized.");
       return;
     }
+    this.pInst.push();
+    this.pInst.resetMatrix();
     // For blur, we typically do two passes: one horizontal, one vertical.
     if (this.operation === constants.BLUR && !this.customShader) {
       // Horizontal pass
@@ -230,9 +248,10 @@ class FilterRenderer2D {
       // con
       this.pInst.blendMode(constants.BLEND);
 
-      
+
       this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
     }
+    this.pInst.pop();
   }
 }
 

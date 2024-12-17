@@ -749,18 +749,16 @@ function pixels(p5, fn){
     if (this._renderer.isP3D) {
       this._renderer.filter(operation, value);
     }
-    
-    // when this is P2D renderer, create/use hidden webgl renderer
-    else {      
 
-      this._renderer.resetMatrix();
+    // when this is P2D renderer, create/use hidden webgl renderer
+    else {
 
       if (shader) {
         this._renderer.filterRenderer.setOperation(operation, value, shader);
       } else {
         this._renderer.filterRenderer.setOperation(operation, value);
       }
-      
+
       this._renderer.filterRenderer.applyFilter();
     }
   };
