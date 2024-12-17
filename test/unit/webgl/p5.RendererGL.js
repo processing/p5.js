@@ -542,6 +542,7 @@ suite('p5.RendererGL', function() {
 
     suite('external context', function() {
       const cases = [
+        ['no modification', () => {}],
         ['corner rectMode', () => myp5.rectMode(myp5.CORNER)],
         ['corners rectMode', () => myp5.rectMode(myp5.CORNERS)],
         ['center rectMode', () => myp5.rectMode(myp5.CENTER)],
