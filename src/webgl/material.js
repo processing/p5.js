@@ -651,7 +651,7 @@ function material(p5, fn){
     if (this._renderer.GL) {
       shader.ensureCompiledOnContext(this._renderer);
     } else {
-      shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer()._renderer);
+      shader.ensureCompiledOnContext(this);
     }
     return shader;
   };
