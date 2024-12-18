@@ -500,14 +500,15 @@ visualSuite('WebGL', function() {
         '/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
-      p5.textAlign(p5.CENTER, p5.TOP);
       const geom = font.textToModel('p5*js', 0, 0, {
         sampleFactor: 2
       });
+      geom.normalize();
       p5.background(255);
       p5.normalMaterial();
       p5.rotateX(p5.PI*0.1);
       p5.rotateY(p5.PI*0.1);
+      p5.scale(50/200);
       p5.model(geom);
       screenshot();
     });
@@ -518,15 +519,16 @@ visualSuite('WebGL', function() {
         '/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
-      p5.textAlign(p5.CENTER, p5.TOP);
       const geom = font.textToModel('p5*js', 0, 0, {
         extrude: 10,
         sampleFactor: 2
       });
+      geom.normalize();
       p5.background(255);
       p5.normalMaterial();
       p5.rotateX(p5.PI*0.1);
       p5.rotateY(p5.PI*0.1);
+      p5.scale(50/200);
       p5.model(geom);
       screenshot();
     });
