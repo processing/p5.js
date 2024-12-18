@@ -1739,7 +1739,7 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'Vertex getWorldInputs': `(Inputs inputs) {
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
    *       inputs.position.y +=
    *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
@@ -1937,6 +1937,7 @@ function material(p5, fn){
    *         inputs.position.y*0.01
    *       ));
    *       inputs.weight *= scale;
+   *       return inputs;
    *     }`
    *   });
    * }
