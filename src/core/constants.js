@@ -20,7 +20,7 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
  * @property {P2D} P2D
  * @final
  */
-export const P2D = Symbol('p2d');
+export const P2D = 'p2d';
 
 export const P2DHDR = 'p2d-hdr';
 

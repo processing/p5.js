@@ -398,7 +398,7 @@ function vertex(p5, fn){
    * </div>
    */
   fn.beginShape = function(kind) {
-    p5._validateParameters('beginShape', arguments);
+    // p5._validateParameters('beginShape', arguments);
     this._renderer.beginShape(...arguments);
   };
 
@@ -1061,7 +1061,7 @@ function vertex(p5, fn){
    * </div>
    */
   fn.curveVertex = function(...args) {
-    p5._validateParameters('curveVertex', args);
+    // p5._validateParameters('curveVertex', args);
     this._renderer.splineVertex(...args);
     return this;
   };
@@ -1230,7 +1230,7 @@ function vertex(p5, fn){
    * </div>
    */
   fn.endShape = function(mode, count = 1) {
-    p5._validateParameters('endShape', arguments);
+    // p5._validateParameters('endShape', arguments);
     if (count < 1) {
       console.log('🌸 p5.js says: You can not have less than one instance');
       count = 1;
@@ -1487,7 +1487,7 @@ function vertex(p5, fn){
     } else {
       [x1, y1, z1, x2, y2, z2] = args;
     }
-    p5._validateParameters('quadraticVertex', args);
+    // p5._validateParameters('quadraticVertex', args);
     const prevOrder = this.bezierOrder();
     this.bezierOrder(2);
     this.bezierVertex(x1, y1, z1);
@@ -1680,7 +1680,7 @@ function vertex(p5, fn){
    */
   fn.normal = function(x, y, z) {
     this._assert3d('normal');
-    p5._validateParameters('normal', arguments);
+    // p5._validateParameters('normal', arguments);
     this._renderer.normal(...arguments);
 
     return this;
@@ -1854,7 +1854,7 @@ function vertex(p5, fn){
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');
-    // p5._validateParameters('vertexProperty', arguments);
+    p5._validateParameters('vertexProperty', arguments);
     this._renderer.vertexProperty(attributeName, data);
   };
 }

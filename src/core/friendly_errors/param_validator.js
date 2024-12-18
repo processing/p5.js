@@ -2,12 +2,11 @@
  * @for p5
  * @requires core
  */
-import p5 from '../main.js';
 import * as constants from '../constants.js';
-import { z } from 'zod';
+import * as z from 'zod';
 import dataDoc from '../../../docs/parameterData.json';
 
-function validateParams(p5, fn) {
+function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
 
@@ -19,7 +18,7 @@ function validateParams(p5, fn) {
   // and so on.
   const p5Constructors = {};
 
-  fn.loadP5Constructors = function () {
+  function loadP5Constructors() {
     // Make a list of all p5 classes to be used for argument validation
     // This must be done only when everything has loaded otherwise we get
     // an empty array
@@ -447,6 +446,10 @@ function validateParams(p5, fn) {
       return; // skip FES
     }
 
+    if (!Array.isArray(args)) {
+      args = Array.from(args);
+    }
+
     // An edge case: even when all arguments are optional and therefore,
     // theoretically allowed to stay undefined and valid, it is likely that the
     // user intended to call the function with non-undefined arguments. Skip
@@ -482,11 +485,26 @@ function validateParams(p5, fn) {
       };
     }
   };
+
+  lifecycles.presetup = function(){
+    loadP5Constructors();
+
+    const excludes = ['validate'];
+    for(const f in this){
+      if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
+        const copy = this[f];
+        this[f] = (...args) => {
+          // if (f === 'arc') this.validate(f, args);
+          this.validate(f, args);
+          return copy.call(this, ...args);
+        };
+      }
+    }
+  };
 }
 
 export default validateParams;
 
 if (typeof p5 !== 'undefined') {
   validateParams(p5, p5.prototype);
-  p5.prototype.loadP5Constructors();
 }

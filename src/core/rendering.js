@@ -126,7 +126,7 @@ function rendering(p5, fn){
    * @return {p5.Renderer}
    */
   p5.prototype.createCanvas = function (w, h, renderer, ...args) {
-    p5._validateParameters('createCanvas', arguments);
+    // p5._validateParameters('createCanvas', arguments);
     //optional: renderer, otherwise defaults to p2d
 
     let selectedRenderer = constants.P2D
@@ -242,7 +242,7 @@ function rendering(p5, fn){
    * </div>
    */
   p5.prototype.resizeCanvas = function (w, h, noRedraw) {
-    p5._validateParameters('resizeCanvas', arguments);
+    // p5._validateParameters('resizeCanvas', arguments);
     if (this._renderer) {
       // Make sure width and height are updated before the renderer resizes so
       // that framebuffers updated from the resize read the correct size
@@ -403,7 +403,7 @@ function rendering(p5, fn){
       args[1] = args[0];
       args[0] = constants.P2D;
     }
-    p5._validateParameters('createGraphics', arguments);
+    // p5._validateParameters('createGraphics', arguments);
     return new p5.Graphics(w, h, args[0], this, args[1]);
   };
 

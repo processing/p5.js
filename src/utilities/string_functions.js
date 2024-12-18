@@ -47,7 +47,7 @@ function stringFunctions(p5, fn){
    * </div>
    */
   fn.join = function(list, separator) {
-    p5._validateParameters('join', arguments);
+    // p5._validateParameters('join', arguments);
     return list.join(separator);
   };
 
@@ -106,7 +106,7 @@ function stringFunctions(p5, fn){
    * </div>
    */
   fn.match = function(str, reg) {
-    p5._validateParameters('match', arguments);
+    // p5._validateParameters('match', arguments);
     return str.match(reg);
   };
 
@@ -176,7 +176,7 @@ function stringFunctions(p5, fn){
    * </div>
    */
   fn.matchAll = function(str, reg) {
-    p5._validateParameters('matchAll', arguments);
+    // p5._validateParameters('matchAll', arguments);
     const re = new RegExp(reg, 'g');
     let match = re.exec(str);
     const matches = [];
@@ -269,7 +269,7 @@ function stringFunctions(p5, fn){
    * @return {String[]} formatted strings.
    */
   fn.nf = function(nums, left, right) {
-    p5._validateParameters('nf', arguments);
+    // p5._validateParameters('nf', arguments);
     if (nums instanceof Array) {
       return nums.map(x => doNf(x, left, right));
     } else {
@@ -402,7 +402,7 @@ function stringFunctions(p5, fn){
    * @return {String[]} formatted strings.
    */
   fn.nfc = function(num, right) {
-    p5._validateParameters('nfc', arguments);
+    // p5._validateParameters('nfc', arguments);
     if (num instanceof Array) {
       return num.map(x => doNfc(x, right));
     } else {
@@ -544,7 +544,7 @@ function stringFunctions(p5, fn){
    * @return {String[]} formatted strings.
    */
   fn.nfp = function(...args) {
-    p5._validateParameters('nfp', args);
+    // p5._validateParameters('nfp', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfp);
@@ -661,7 +661,7 @@ function stringFunctions(p5, fn){
    * @return {String[]} formatted strings.
    */
   fn.nfs = function(...args) {
-    p5._validateParameters('nfs', args);
+    // p5._validateParameters('nfs', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfs);
@@ -731,7 +731,7 @@ function stringFunctions(p5, fn){
    * </div>
    */
   fn.split = function(str, delim) {
-    p5._validateParameters('split', arguments);
+    // p5._validateParameters('split', arguments);
     return str.split(delim);
   };
 
@@ -874,7 +874,7 @@ function stringFunctions(p5, fn){
    * </div>
    */
   fn.splitTokens = function(value, delims) {
-    p5._validateParameters('splitTokens', arguments);
+    // p5._validateParameters('splitTokens', arguments);
     let d;
     if (typeof delims !== 'undefined') {
       let str = delims;
@@ -974,7 +974,7 @@ function stringFunctions(p5, fn){
    * @return {String[]} trimmed strings.
    */
   fn.trim = function(str) {
-    p5._validateParameters('trim', arguments);
+    // p5._validateParameters('trim', arguments);
     if (str instanceof Array) {
       return str.map(this.trim);
     } else {

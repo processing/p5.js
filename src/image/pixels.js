@@ -275,7 +275,7 @@ function pixels(p5, fn){
    * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
   fn.blend = function(...args) {
-    p5._validateParameters('blend', args);
+    // p5._validateParameters('blend', args);
     if (this._renderer) {
       this._renderer.blend(...args);
     } else {
@@ -352,7 +352,7 @@ function pixels(p5, fn){
    * @param  {Integer} dh
    */
   fn.copy = function(...args) {
-    p5._validateParameters('copy', args);
+    // p5._validateParameters('copy', args);
 
     let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if (args.length === 9) {
@@ -721,7 +721,7 @@ function pixels(p5, fn){
    *                                   frag shader using a `tex0` uniform.
    */
   fn.filter = function(...args) {
-    p5._validateParameters('filter', args);
+    // p5._validateParameters('filter', args);
 
     let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
 
@@ -916,7 +916,7 @@ function pixels(p5, fn){
    * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
    */
   fn.get = function(x, y, w, h) {
-    p5._validateParameters('get', arguments);
+    // p5._validateParameters('get', arguments);
     return this._renderer.get(...arguments);
   };
 
@@ -967,7 +967,7 @@ function pixels(p5, fn){
    * </div>
    */
   fn.loadPixels = function(...args) {
-    p5._validateParameters('loadPixels', args);
+    // p5._validateParameters('loadPixels', args);
     this._renderer.loadPixels();
   };
 
@@ -1147,7 +1147,7 @@ function pixels(p5, fn){
    * </div>
    */
   fn.updatePixels = function(x, y, w, h) {
-    p5._validateParameters('updatePixels', arguments);
+    // p5._validateParameters('updatePixels', arguments);
     // graceful fail - if loadPixels() or set() has not been called, pixel
     // array will be empty, ignore call to updatePixels()
     if (this.pixels.length === 0) {
