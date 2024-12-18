@@ -345,4 +345,58 @@ visualSuite('WebGL', function() {
       screenshot();
     })
   })
+
+  visualSuite('Opacity', function() {
+    visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.fill(255, 0, 0, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors have opacity applied correctly when lights are used', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.ambientLight(255);
+      p5.fill(255, 0, 0, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in shader hooks have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify({
+        'Inputs getPixelInputs': `(Inputs inputs) {
+          inputs.color = vec4(1., 0., 0., 100./255.);
+          return inputs;
+        }`
+      })
+      p5.background(255);
+      p5.shader(myShader);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in textures have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = p5.createFramebuffer();
+      tex.draw(() => p5.background(255, 0, 0, 100));
+      p5.background(255);
+      p5.texture(tex);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in tinted textures have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = p5.createFramebuffer();
+      tex.draw(() => p5.background(255, 0, 0, 255));
+      p5.background(255);
+      p5.texture(tex);
+      p5.tint(255, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+  });
 });
