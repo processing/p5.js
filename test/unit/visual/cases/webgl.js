@@ -500,7 +500,7 @@ visualSuite('WebGL', function() {
         '/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
-      p5.textAlign(p5.CENTER, p5.CENTER);
+      p5.textAlign(p5.CENTER, p5.TOP);
       const geom = font.textToModel('p5*js', 0, 0, {
         sampleFactor: 2
       });
@@ -518,7 +518,7 @@ visualSuite('WebGL', function() {
         '/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
-      p5.textAlign(p5.CENTER, p5.CENTER);
+      p5.textAlign(p5.CENTER, p5.TOP);
       const geom = font.textToModel('p5*js', 0, 0, {
         extrude: 10,
         sampleFactor: 2
