@@ -139,7 +139,7 @@ function font(p5, fn) {
       }, []);
     }
 
-    textToContours(str, x, y, width, height, options) {
+    textToContours(str, x = 0, y = 0, width, height, options) {
       ({ width, height, options } = this._parseArgs(width, height, options));
 
       const cmds = this.textToPaths(str, x, y, width, height, options);
@@ -152,6 +152,60 @@ function font(p5, fn) {
       }
 
       return cmdContours.map((commands) => pathToPoints(commands, options));
+    }
+
+    textToModel(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      const extrude = options?.extrude || 0;
+      const contours = this.textToContours(str, x, y, width, height, options);
+      const geom = this._pInst.buildGeometry(() => {
+        if (extrude === 0) {
+          this._pInst.beginShape();
+          this._pInst.normal(0, 0, 1);
+          for (const contour of contours) {
+            this._pInst.beginContour();
+            for (const { x, y } of contour) {
+              this._pInst.vertex(x, y);
+            }
+            this._pInst.endContour(this._pInst.CLOSE);
+          }
+          this._pInst.endShape();
+        } else {
+          // Draw front faces
+          for (const side of [1, -1]) {
+            this._pInst.beginShape();
+            for (const contour of contours) {
+              this._pInst.beginContour();
+              for (const { x, y } of contour) {
+                this._pInst.vertex(x, y, side * extrude * 0.5);
+              }
+              this._pInst.endContour(this._pInst.CLOSE);
+            }
+            this._pInst.endShape();
+            this._pInst.beginShape();
+          }
+          // Draw sides
+          for (const contour of contours) {
+            this._pInst.beginShape(this._pInst.QUAD_STRIP);
+            for (const v of contour) {
+              for (const side of [-1, 1]) {
+                this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
+              }
+            }
+            this._pInst.endShape();
+          }
+        }
+      });
+      if (extrude !== 0) {
+        geom.computeNormals();
+        for (const face of geom.faces) {
+          if (face.every((idx) => geom.vertices[idx].z <= -extrude * 0.5 + 0.1)) {
+            for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
+            face.reverse();
+          }
+        }
+      }
+      return geom;
     }
 
     static async list(log = false) { // tmp
@@ -370,7 +424,7 @@ function font(p5, fn) {
 
     _measureTextDefault(renderer, str) {
       let { textAlign, textBaseline } = renderer.states;
-      let ctx = renderer.drawingContext;
+      let ctx = renderer.textDrawingContext();
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       let metrics = ctx.measureText(str);

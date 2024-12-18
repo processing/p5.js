@@ -492,4 +492,43 @@ visualSuite('WebGL', function() {
       });
     }
   });
+
+  visualSuite('textToModel', () => {
+    visualTest('Flat', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textSize(20);
+      p5.textAlign(p5.CENTER, p5.CENTER);
+      const geom = font.textToModel('p5*js', 0, 0, {
+        sampleFactor: 2
+      });
+      p5.background(255);
+      p5.normalMaterial();
+      p5.rotateX(p5.PI*0.1);
+      p5.rotateY(p5.PI*0.1);
+      p5.model(geom);
+      screenshot();
+    });
+
+    visualTest('Extruded', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textSize(20);
+      p5.textAlign(p5.CENTER, p5.CENTER);
+      const geom = font.textToModel('p5*js', 0, 0, {
+        extrude: 10,
+        sampleFactor: 2
+      });
+      p5.background(255);
+      p5.normalMaterial();
+      p5.rotateX(p5.PI*0.1);
+      p5.rotateY(p5.PI*0.1);
+      p5.model(geom);
+      screenshot();
+    });
+  });
 });
