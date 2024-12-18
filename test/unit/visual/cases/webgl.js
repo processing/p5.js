@@ -399,4 +399,97 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('Hooks coordinate spaces', () => {
+    for (const base of ['baseMaterialShader', 'baseColorShader', 'baseNormalShader']) {
+      visualSuite(base, () => {
+        visualTest('Object space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getObjectInputs': `(Vertex inputs) {
+              inputs.position.x += 0.25;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('World space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getWorldInputs': `(Vertex inputs) {
+              inputs.position.x += 10.;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('Camera space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getCameraInputs': `(Vertex inputs) {
+              inputs.position.x += 10.;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('Combined vs split matrices', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+            for (const space of ['Object', 'World', 'Camera']) {
+              const myShader = p5[base]().modify({
+                [`Vertex get${space}Inputs`]: `(Vertex inputs) {
+                  // No-op
+                  return inputs;
+                }`
+              });
+              p5.background(255);
+              p5.push();
+              p5.lights();
+              p5.fill('red');
+              p5.noStroke();
+              p5.translate(20, -10, 5);
+              p5.rotate(p5.PI * 0.1);
+              p5.camera(-800, 0, 0, 0, 0, 0);
+              p5.shader(myShader);
+              p5.box(30);
+              p5.pop();
+              screenshot();
+            }
+        });
+      });
+    }
+  });
 });

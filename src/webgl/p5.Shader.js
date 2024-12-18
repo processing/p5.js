@@ -54,9 +54,10 @@ class Shader {
 
   shaderSrc(src, shaderType) {
     const main = 'void main';
-    const [preMain, postMain] = src.split(main);
+    let [preMain, postMain] = src.split(main);
 
     let hooks = '';
+    let defines = '';
     for (const key in this.hooks.uniforms) {
       hooks += `uniform ${key};\n`;
     }
@@ -76,14 +77,22 @@ class Shader {
       // Add a #define so that if the shader wants to use preprocessor directives to
       // optimize away the extra function calls in main, it can do so
       if (this.hooks.modified[shaderType][hookDef]) {
-        hooks += '#define AUGMENTED_HOOK_' + hookName + '\n';
+        defines += '#define AUGMENTED_HOOK_' + hookName + '\n';
       }
 
       hooks +=
         hookType + ' HOOK_' + hookName + this.hooks[shaderType][hookDef] + '\n';
     }
 
-    return preMain + hooks + main + postMain;
+    // Allow shaders to specify the location of hook #define statements. Normally these
+    // go after function definitions, but one might want to have them defined earlier
+    // in order to only conditionally make uniforms.
+    if (preMain.indexOf('#define HOOK_DEFINES') !== -1) {
+      preMain = preMain.replace('#define HOOK_DEFINES', '\n' + defines + '\n');
+      defines = '';
+    }
+
+    return preMain + '\n' + defines + hooks + main + postMain;
   }
 
   /**
@@ -365,7 +374,7 @@ class Shader {
         if (typeof IS_MINIFIED !== 'undefined') {
           console.error(glError);
         } else {
-          throw(glError);
+          throw glError;
           p5._friendlyError(
             `Yikes! An error occurred compiling the vertex shader:${glError}`
           );
@@ -383,6 +392,7 @@ class Shader {
         if (typeof IS_MINIFIED !== 'undefined') {
           console.error(glError);
         } else {
+          throw glError;
           p5._friendlyError(
             `Darn! An error occurred compiling the fragment shader:${glError}`
           );

@@ -37,7 +37,7 @@ class GeometryBuilder {
     if (!this.hasTransform) return normals;
 
     return normals.map(
-      v => this.renderer.states.uNMatrix.multiplyVec(v) // this is a vec3
+      v => this.renderer.scratchMat3.multiplyVec(v) // this is a vec3
     );
   }
 
@@ -51,7 +51,7 @@ class GeometryBuilder {
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.states.uNMatrix.inverseTranspose4x4(this.renderer.states.uModelMatrix);
+      this.renderer.scratchMat3.inverseTranspose4x4(this.renderer.states.uModelMatrix);
     }
 
     let startIdx = this.geometry.vertices.length;
