@@ -47,13 +47,13 @@ void main(void) {
   inputs.texCoord = vTexCoord;
   inputs.ambientLight = vAmbientColor;
   inputs.color = isTexture
-      // Textures come in with premultiplied alpha. To apply tint and still have
-      // premultiplied alpha output, we need to multiply the RGB channels by the
-      // tint RGB, and all channels by the tint alpha.
-      ? TEXTURE(uSampler, vTexCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
-      // Colors come in with unmultiplied alpha, so we need to multiply the RGB
-      // channels by alpha to convert it to premultiplied alpha.
-      : vec4(vColor.rgb * vColor.a, vColor.a);
+      ? TEXTURE(uSampler, vTexCoord) * uTint/255.
+      : vColor;
+  if (isTexture) {
+    // Textures come in with premultiplied alpha. Temporarily unpremultiply it
+    // so hooks users don't have to think about premultiplied alpha.
+    inputs.color.rgb /= inputs.color.a;
+  }
   inputs.shininess = uShininess;
   inputs.metalness = uMetallic;
   inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
@@ -79,5 +79,6 @@ void main(void) {
   c.specular = specular;
   c.emissive = inputs.emissiveMaterial;
   OUT_COLOR = HOOK_getFinalColor(HOOK_combineColors(c));
+  OUT_COLOR.rgb *= OUT_COLOR.a; // Premultiply alpha before rendering
   HOOK_afterFragment();
 }
