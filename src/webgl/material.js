@@ -1945,7 +1945,6 @@ function material(p5, fn){
    * function draw() {
    *   background(255);
    *   strokeShader(myShader);
-   *   noStroke();
    *   myShader.setUniform('time', millis());
    *   strokeWeight(10);
    *   beginShape();
