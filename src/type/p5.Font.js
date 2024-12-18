@@ -667,9 +667,17 @@ function font(p5, fn) {
     let points = [];
 
     for (let i = 0; i < totalPoints; i++) {
-      points.push(
-        path.getPointAtLength(path.getTotalLength() * (i / (totalPoints - 1)))
-      );
+      const length = path.getTotalLength() * (i / (totalPoints - 1));
+      points.push({
+        ...path.getPointAtLength(length),
+        get angle() {
+          return path.getAngleAtLength(length) * 180 / Math.PI;
+        },
+        // For backwards compatibility
+        get alpha() {
+          return this.angle;
+        }
+      });
     }
 
     if (opts.simplifyThreshold) {
