@@ -61,6 +61,8 @@ webgl(p5);
 import type from './type'
 type(p5);
 
-import './core/init';
+import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
+Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
 
 export default p5;
+

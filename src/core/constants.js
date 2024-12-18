@@ -45,7 +45,7 @@ export const P2DHDR = 'p2d-hdr';
  * @property {WEBGL} WEBGL
  * @final
  */
-export const WEBGL = Symbol('webgl');
+export const WEBGL = 'webgl';
 /**
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment
@@ -54,7 +54,7 @@ export const WEBGL = Symbol('webgl');
  * @property {WEBGL2} WEBGL2
  * @final
  */
-export const WEBGL2 = Symbol('webgl2');
+export const WEBGL2 = 'webgl2';
 
 // ENVIRONMENT
 /**

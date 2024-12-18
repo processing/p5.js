@@ -1854,7 +1854,7 @@ function vertex(p5, fn){
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');
-    p5._validateParameters('vertexProperty', arguments);
+    // p5._validateParameters('vertexProperty', arguments);
     this._renderer.vertexProperty(attributeName, data);
   };
 }

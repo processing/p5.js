@@ -131,6 +131,8 @@ function validateParams(p5, fn, lifecycles) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = dataDoc[funcClass][funcName];
 
+    if(!funcInfo) return;
+
     let overloads = [];
     if (funcInfo.hasOwnProperty('overloads')) {
       overloads = funcInfo.overloads;
@@ -466,6 +468,7 @@ function validateParams(p5, fn, lifecycles) {
     let funcSchemas = schemaRegistry.get(func);
     if (!funcSchemas) {
       funcSchemas = fn.generateZodSchemasForFunc(func);
+      if (!funcSchemas) return;
       schemaRegistry.set(func, funcSchemas);
     }
 
