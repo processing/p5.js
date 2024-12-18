@@ -1809,12 +1809,9 @@ class RendererGL extends Renderer {
           {
             vertex: {
               "void beforeVertex": "() {}",
-              "vec3 getLocalPosition": "(vec3 position) { return position; }",
-              "vec3 getWorldPosition": "(vec3 position) { return position; }",
-              "vec3 getLocalNormal": "(vec3 normal) { return normal; }",
-              "vec3 getWorldNormal": "(vec3 normal) { return normal; }",
-              "vec2 getUV": "(vec2 uv) { return uv; }",
-              "vec4 getVertexColor": "(vec4 color) { return color; }",
+              "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
+              "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
+              "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
               "void afterVertex": "() {}",
             },
             fragment: {

@@ -365,6 +365,7 @@ class Shader {
         if (typeof IS_MINIFIED !== 'undefined') {
           console.error(glError);
         } else {
+          throw(glError);
           p5._friendlyError(
             `Yikes! An error occurred compiling the vertex shader:${glError}`
           );
@@ -629,8 +630,8 @@ class Shader {
       this.init();
     }
   }
-  
-  
+
+
   /**
    * Queries the active attributes for this shader and loads
    * their names and locations into the attributes array.

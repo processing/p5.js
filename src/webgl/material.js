@@ -1195,56 +1195,34 @@ function material(p5, fn){
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalPosition`
+   * `Vertex getObjectInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getWorldPosition`
+   * `Vertex getWorldInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalNormal`
+   * `Vertex getCameraInputs`
    *
    * </td><td>
    *
-   * Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec3 getWorldNormal`
-   *
-   * </td><td>
-   *
-   * Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getUV`
-   *
-   * </td><td>
-   *
-   * Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getVertexColor`
-   *
-   * </td><td>
-   *
-   * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
@@ -1342,9 +1320,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
