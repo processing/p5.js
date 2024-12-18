@@ -1,10 +1,10 @@
 // core
 import p5 from './core/main';
-import './core/friendly_errors/stacktrace';
+// import './core/friendly_errors/stacktrace';
 // import './core/friendly_errors/validate_params';
-import './core/friendly_errors/file_errors';
-import './core/friendly_errors/fes_core';
-import './core/friendly_errors/sketch_reader';
+// import './core/friendly_errors/file_errors';
+// import './core/friendly_errors/fes_core';
+// import './core/friendly_errors/sketch_reader';
 import shape from './shape';
 shape(p5);
 
