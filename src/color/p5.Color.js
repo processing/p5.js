@@ -107,6 +107,9 @@ class Color {
         }else if(vals.length === 1){
           mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes);
           mappedVals.push(1);
+        }else{
+          console.error('Invalid color');
+          return;
         }
       }else{
         mappedVals = vals;

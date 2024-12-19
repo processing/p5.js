@@ -496,8 +496,8 @@ function validateParams(p5, fn, lifecycles) {
     for(const f in this){
       if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
         const copy = this[f];
-        this[f] = (...args) => {
-          // if (f === 'arc') this.validate(f, args);
+
+        this[f] = function(...args) {
           this.validate(f, args);
           return copy.call(this, ...args);
         };
