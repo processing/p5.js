@@ -441,15 +441,25 @@ p5.prototype.keyCode = 0;
  * </div>
  */
 p5.prototype._onkeydown = function(e) {
-  if (this._downKeys[e.which]) {
-    // prevent multiple firings
+  if (e.repeat) {
+    // Ignore repeated key events when holding down a key
     return;
   }
+
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
   this._downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
+
+  // Track keys pressed with meta key
+  if (e.metaKey) {
+    if (!this._metaKeys) {
+      this._metaKeys = [];
+    }
+    this._metaKeys.push(e.which);
+  }
+
   const context = this._isGlobal ? window : this;
   if (typeof context.keyPressed === 'function' && !e.charCode) {
     const executeDefault = context.keyPressed(e);
@@ -458,6 +468,7 @@ p5.prototype._onkeydown = function(e) {
     }
   }
 };
+
 /**
  * A function that's called once when any key is released.
  *
@@ -615,17 +626,20 @@ p5.prototype._onkeydown = function(e) {
  * </div>
  */
 p5.prototype._onkeyup = function(e) {
+  this._setProperty('isKeyPressed', false);
+  this._setProperty('keyIsPressed', false);
+  this._setProperty('_lastKeyCodePressed', this._keyCode);
   this._downKeys[e.which] = false;
 
-  if (!this._areDownKeys()) {
-    this._setProperty('isKeyPressed', false);
-    this._setProperty('keyIsPressed', false);
+  if (e.which === 91 || e.which === 93) { // Meta key codes
+    // When meta key is released, clear all keys pressed with it
+    if (this._metaKeys) {
+      this._metaKeys.forEach(key => {
+        this._downKeys[key] = false;
+      });
+      this._metaKeys = [];
+    }
   }
-
-  this._setProperty('_lastKeyCodeTyped', null);
-
-  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-  this._setProperty('keyCode', e.which);
 
   const context = this._isGlobal ? window : this;
   if (typeof context.keyReleased === 'function') {
