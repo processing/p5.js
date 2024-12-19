@@ -553,7 +553,7 @@ function fesCore(p5, fn){
 
         // get the function just above the topmost frame in the friendlyStack.
         // i.e the name of the library function called from user's code
-        const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
+        const func = stacktrace[friendlyStack[0].frameIndex - 2].functionName
           .split('.')
           .slice(-1)[0];
 

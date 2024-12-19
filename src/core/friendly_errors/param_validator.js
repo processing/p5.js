@@ -331,7 +331,7 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {String} The friendly error message.
    */
   fn.friendlyParamError = function (zodErrorObj, func) {
-    let message;
+    let message = '🌸 p5.js says: ';
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
     // always print the first error so that user can work through the errors
@@ -392,16 +392,16 @@ function validateParams(p5, fn, lifecycles) {
       }
       case 'too_small': {
         const minArgs = currentError.minimum;
-        message = `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
+        message += `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
         break;
       }
       case 'invalid_type': {
-        message = buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
+        message += buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
         break;
       }
       case 'too_big': {
         const maxArgs = currentError.maximum;
-        message = `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
+        message += `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
         break;
       }
       default: {
