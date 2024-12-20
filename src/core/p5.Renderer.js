@@ -390,9 +390,9 @@ class Renderer extends p5.Element {
               line = `${chars[charIndex]}`;
             }
           }
+          nlines.push(line);
         }
 
-        nlines.push(line);
         let offset = 0;
         if (this._textBaseline === constants.CENTER) {
           offset = (nlines.length - 1) * p.textLeading() / 2;
@@ -423,16 +423,16 @@ class Renderer extends p5.Element {
               line = `${chars[charIndex]}`;
             }
           }
+          this._renderText(
+            p,
+            line.trim(),
+            x,
+            y - offset,
+            finalMaxHeight,
+            finalMinHeight
+          );
+          y += p.textLeading();
         }
-        this._renderText(
-          p,
-          line.trim(),
-          x,
-          y - offset,
-          finalMaxHeight,
-          finalMinHeight
-        );
-        y += p.textLeading();
       }
     } else {
     // Offset to account for vertically centering multiple lines of text - no
