@@ -631,7 +631,7 @@ p5.prototype._onkeyup = function(e) {
   this._setProperty('_lastKeyCodePressed', this._keyCode);
   this._downKeys[e.which] = false;
 
-  if (e.which === 91 || e.which === 93) { // Meta key codes
+  if (e.key === 'Meta') { // Meta key codes
     // When meta key is released, clear all keys pressed with it
     if (this._metaKeys) {
       this._metaKeys.forEach(key => {
