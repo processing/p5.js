@@ -151,7 +151,7 @@ function font(p5, fn) {
         cmdContours[cmdContours.length - 1].push(cmd);
       }
 
-      return cmdContours.map((commands) => pathToPoints(commands, options));
+      return cmdContours.map((commands) => pathToPoints(commands, options, this));
     }
 
     textToModel(str, x, y, width, height, options) {
@@ -678,7 +678,7 @@ function font(p5, fn) {
     return path;
   };
 
-  function pathToPoints(cmds, options) {
+  function pathToPoints(cmds, options, font) {
 
     const parseOpts = (options, defaults) => {
       if (typeof options !== 'object') {
@@ -720,12 +720,19 @@ function font(p5, fn) {
     const totalPoints = Math.ceil(path.getTotalLength() * opts.sampleFactor);
     let points = [];
 
+    const mode = font._pInst.angleMode();
+    const DEGREES = font._pInst.DEGREES;
     for (let i = 0; i < totalPoints; i++) {
       const length = path.getTotalLength() * (i / (totalPoints - 1));
       points.push({
         ...path.getPointAtLength(length),
         get angle() {
-          return path.getAngleAtLength(length) * 180 / Math.PI;
+          const angle = path.getAngleAtLength(length);
+          if (mode === DEGREES) {
+            return angle * 180 / Math.PI;
+          } else {
+            return angle;
+          }
         },
         // For backwards compatibility
         get alpha() {
