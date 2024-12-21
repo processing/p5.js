@@ -32,14 +32,6 @@
 import Typr from './lib/Typr.js';
 import { createFromCommands } from '@davepagurek/bezier-path';
 
-function unquote(name) {
-  // Unquote name from CSS
-  if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
-    return name.slice(1, -1).replace(/\/(['"])/g, '$1');
-  }
-  return name;
-}
-
 function font(p5, fn) {
 
   const pathArgCounts = { M: 2, L: 2, C: 6, Q: 4 };
@@ -101,14 +93,18 @@ function font(p5, fn) {
       return meta;
     }
 
-    fontBounds(...args) { // alias for p5.fontBounds
-      if (!this._pInst) throw Error('p5 required for fontBounds()');
-      return this._pInst.fontBounds(...args);
+    fontBounds(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      let renderer = options?.graphics?._renderer || this._pInst._renderer;
+      if (!renderer) throw Error('p5 or graphics required for fontBounds()');
+      return renderer.fontBounds(str, x, y, width, height);
     }
 
-    textBounds(...args) { // alias for p5.textBounds
-      if (!this._pInst) throw Error('p5 required for textBounds()'); // TODO:
-      return this._pInst.textBounds(...args);
+    textBounds(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      let renderer = options?.graphics?._renderer || this._pInst._renderer;
+      if (!renderer) throw Error('p5 or graphics required for fontBounds()');
+      return renderer.textBounds(str, x, y, width, height);
     }
 
     textToPaths(str, x, y, width, height, options) {
@@ -579,7 +575,7 @@ function font(p5, fn) {
 
       // parse the font data
       let fonts = Typr.parse(result);
-      console.log(fonts[0])
+
       // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
@@ -633,6 +629,14 @@ function font(p5, fn) {
 
     // return a p5.Font instance
     return new p5.Font(pInst, face, name, path, rawFont);
+  }
+
+  function unquote(name) {
+    // Unquote name from CSS
+    if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+      return name.slice(1, -1).replace(/\/(['"])/g, '$1');
+    }
+    return name;
   }
 
   function createFontFace(name, path, descriptors, rawFont) {
