@@ -556,7 +556,6 @@ function loading(p5, fn){
     // Map from source index → Map of material → destination index
     const usedVerts = {}; // Track colored vertices
     let currentMaterial = null;
-    const coloredVerts = new Set(); //unique vertices with color
     let hasColoredVertices = false;
     let hasColorlessVertices = false;
     for (let line = 0; line < lines.length; ++line) {
@@ -622,8 +621,15 @@ function loading(p5, fn){
                 if (currentMaterial
                   && materials[currentMaterial]
                   && materials[currentMaterial].diffuseColor) {
-                  // Mark this vertex as colored
-                  coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
+                  hasColoredVertices = true;
+                  const materialDiffuseColor =
+                    materials[currentMaterial].diffuseColor;
+                  model.vertexColors.push(materialDiffuseColor[0]);
+                  model.vertexColors.push(materialDiffuseColor[1]);
+                  model.vertexColors.push(materialDiffuseColor[2]);
+                  model.vertexColors.push(1);
+                } else {
+                  hasColorlessVertices = true;
                 }
               } else {
                 face.push(usedVerts[vertString][currentMaterial]);
@@ -636,24 +642,6 @@ function loading(p5, fn){
               face[1] !== face[2]
             ) {
               model.faces.push(face);
-              //same material for all vertices in a particular face
-              if (currentMaterial
-                && materials[currentMaterial]
-                && materials[currentMaterial].diffuseColor) {
-                hasColoredVertices = true;
-                //flag to track color or no color model
-                hasColoredVertices = true;
-                const materialDiffuseColor =
-                  materials[currentMaterial].diffuseColor;
-                for (let i = 0; i < face.length; i++) {
-                  model.vertexColors.push(materialDiffuseColor[0]);
-                  model.vertexColors.push(materialDiffuseColor[1]);
-                  model.vertexColors.push(materialDiffuseColor[2]);
-                  model.vertexColors.push(1);
-                }
-              } else {
-                hasColorlessVertices = true;
-              }
             }
           }
         }
