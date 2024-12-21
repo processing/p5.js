@@ -1329,6 +1329,7 @@ class RendererGL extends Renderer {
       // Restore blend mode
       this.states.curBlendMode = this.preEraseBlend;
       this.blendMode(this.preEraseBlend);
+      console.log(this.preEraseBlend, this._cachedBlendMode)
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
       this._applyBlendMode();

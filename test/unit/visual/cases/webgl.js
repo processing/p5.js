@@ -533,4 +533,33 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('erase()', () => {
+    visualTest('on the main canvas', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(0);
+      p5.fill('red');
+      p5.rect(-20, -20, 40, 40);
+      p5.erase();
+      p5.circle(0, 0, 10);
+      p5.noErase();
+      screenshot();
+    });
+
+    visualTest('on a framebuffer', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(0);
+      const fbo = p5.createFramebuffer();
+      fbo.begin();
+      p5.fill('red');
+      p5.rect(-20, -20, 40, 40);
+      p5.erase();
+      p5.circle(0, 0, 10);
+      p5.noErase();
+      fbo.end();
+      p5.imageMode(p5.CENTER);
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
+  });
 });
