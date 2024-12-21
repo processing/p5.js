@@ -1250,7 +1250,7 @@ function text2d(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?.verticalAlign(textSize) || 0;
+      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     }

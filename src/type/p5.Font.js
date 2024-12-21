@@ -54,45 +54,6 @@ function font(p5, fn) {
       this.face = fontFace;
     }
 
-    verticalAlign(size) {
-      const { sCapHeight } = this.data?.['OS/2'] || {};
-      const { unitsPerEm = 1000 } = this.data?.head || {};
-      const { ascender = 0, descender = 0 } = this.data?.hhea || {};
-      const current = ascender / 2;
-      const target = (sCapHeight || (ascender + descender)) / 2;
-      const offset = target - current;
-      return offset * size / unitsPerEm;
-    }
-
-    variations() {
-      let vars = {};
-      if (this.data) {
-        let axes = this.face?.axes;
-        if (axes) {
-          axes.forEach(ax => {
-            vars[ax.tag] = ax.value;
-          });
-        }
-      }
-      fontFaceVariations.forEach(v => {
-        let val = this.face[v];
-        if (val !== 'normal') {
-          vars[v] = vars[v] || val;
-        }
-      });
-      return vars;
-    }
-
-    metadata() {
-      let meta = this.data?.name || {};
-      for (let p in this.face) {
-        if (!/^load/.test(p)) {
-          meta[p] = meta[p] || this.face[p];
-        }
-      }
-      return meta;
-    }
-
     fontBounds(str, x, y, width, height, options) {
       ({ width, height, options } = this._parseArgs(width, height, options));
       let renderer = options?.graphics?._renderer || this._pInst._renderer;
@@ -204,6 +165,35 @@ function font(p5, fn) {
       return geom;
     }
 
+    variations() {
+      let vars = {};
+      if (this.data) {
+        let axes = this.face?.axes;
+        if (axes) {
+          axes.forEach(ax => {
+            vars[ax.tag] = ax.value;
+          });
+        }
+      }
+      fontFaceVariations.forEach(v => {
+        let val = this.face[v];
+        if (val !== 'normal') {
+          vars[v] = vars[v] || val;
+        }
+      });
+      return vars;
+    }
+
+    metadata() {
+      let meta = this.data?.name || {};
+      for (let p in this.face) {
+        if (!/^load/.test(p)) {
+          meta[p] = meta[p] || this.face[p];
+        }
+      }
+      return meta;
+    }
+
     static async list(log = false) { // tmp
       if (log) {
         console.log('There are', document.fonts.size, 'font-faces\n');
@@ -224,6 +214,16 @@ function font(p5, fn) {
     }
 
     /////////////////////////////// HELPERS ////////////////////////////////
+    
+    _verticalAlign(size) {
+      const { sCapHeight } = this.data?.['OS/2'] || {};
+      const { unitsPerEm = 1000 } = this.data?.head || {};
+      const { ascender = 0, descender = 0 } = this.data?.hhea || {};
+      const current = ascender / 2;
+      const target = (sCapHeight || (ascender + descender)) / 2;
+      const offset = target - current;
+      return offset * size / unitsPerEm;
+    }
 
     /*
       Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
