@@ -3683,9 +3683,7 @@ function material(p5, fn){
         );
         break;
     }
-    if (!this._isErasing) {
-      this._cachedBlendMode = this.states.curBlendMode;
-    }
+    this._cachedBlendMode = this.states.curBlendMode;
   };
 
   RendererGL.prototype.shader = function(s) {
