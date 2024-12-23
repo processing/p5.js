@@ -513,6 +513,112 @@ function material(p5, fn){
     p5._validateParameters('createShader', arguments);
     return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
+  /**
+   * Creates and loads a filter shader from an external file.
+   *
+   * @method loadFilterShader
+   * @param {String} fragFilename path to the fragment shader file
+   * @param {Function} [successCallback] callback to be called once the shader is
+   *                                     loaded. Will be passed the
+   *                                     <a href="#/p5.Shader">p5.Shader</a> object.
+   * @param {Function} [failureCallback] callback to be called if there is an error
+   *                                     loading the shader. Will be passed the
+   *                                     error event.
+   * @return {Promise<p5.Shader>} a promise that resolves with a shader object
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * async function setup() {
+   *    myShader = await loadFilterShader('assets/shader.frag');
+   *   createCanvas(100, 100, WEBGL);
+   *   noStroke();
+   * }
+   *
+   * function draw() {
+   *   // shader() sets the active shader with our shader
+   *   shader(myShader);
+   *
+   *   // rect gives us some geometry on the screen
+   *   rect(0, 0, width, height);
+   * }
+   * </code>
+   * </div>
+   * @alt
+   * A rectangle with a shader applied to it.
+   */
+  p5.prototype.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+    p5._validateParameters('loadFilterShader', arguments);
+
+    const loadedShader = new p5.Shader();
+
+    try {
+      // Define the default vertex shaders for different WebGL versions
+      const defaultVertV1 = `
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
+        attribute vec3 aPosition;
+        attribute vec2 aTexCoord;
+        varying vec2 vTexCoord;
+
+        void main() {
+          vTexCoord = aTexCoord;
+          vec4 positionVec4 = vec4(aPosition, 1.0);
+          gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+        }
+      `;
+
+      const defaultVertV2 = `#version 300 es
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
+        in vec3 aPosition;
+        in vec2 aTexCoord;
+        out vec2 vTexCoord;
+
+        void main() {
+          vTexCoord = aTexCoord;
+          vec4 positionVec4 = vec4(aPosition, 1.0);
+          gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+        }
+      `;
+
+      // Load the fragment shader
+      loadedShader._fragSrc = await this.loadStrings(fragFilename);
+      loadedShader._fragSrc = await loadedShader._fragSrc.join('\n');
+
+      // Determine if we're using WebGL 2
+      const isWebGL2 = this._renderer.GL instanceof WebGL2RenderingContext;
+
+      // Set the appropriate vertex shader based on WebGL version
+      loadedShader._vertSrc = isWebGL2 ? defaultVertV2 : defaultVertV1;
+
+      // Add version directive to fragment shader if it's not present
+      if (!loadedShader._fragSrc.match(/^\s*#version\s+/)) {
+        loadedShader._fragSrc = (isWebGL2 ? '#version 300 es\n' : '#version 100\n') + loadedShader._fragSrc;
+      }
+
+      // For WebGL 2, ensure we have a precision statement in the fragment shader
+      if (isWebGL2 && !loadedShader._fragSrc.match(/^\s*precision\s+/)) {
+        loadedShader._fragSrc = 'precision highp float;\n' + loadedShader._fragSrc;
+      }
+
+      if (successCallback) {
+        successCallback(loadedShader);
+      }
+
+      return loadedShader;
+    } catch (err) {
+      if (failureCallback) {
+        failureCallback(err);
+      } else {
+        console.error(err);
+      }
+    }
+  };
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
