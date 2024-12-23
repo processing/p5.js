@@ -6,6 +6,8 @@
     "dev": "vite preview/",
     "dev:global": "concurrently -n build,server \"rollup -c -w\" \"npx vite preview/global/\"",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
+    "bench": "vitest bench",
+    "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."

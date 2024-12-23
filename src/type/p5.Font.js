@@ -54,14 +54,115 @@ function font(p5, fn) {
       this.face = fontFace;
     }
 
-    verticalAlign(size) {
-      const { sCapHeight } = this.data?.['OS/2'] || {};
-      const { unitsPerEm = 1000 } = this.data?.head || {};
-      const { ascender = 0, descender = 0 } = this.data?.hhea || {};
-      const current = ascender / 2;
-      const target = (sCapHeight || (ascender + descender)) / 2;
-      const offset = target - current;
-      return offset * size / unitsPerEm;
+    fontBounds(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      let renderer = options?.graphics?._renderer || this._pInst._renderer;
+      if (!renderer) throw Error('p5 or graphics required for fontBounds()');
+      return renderer.fontBounds(str, x, y, width, height);
+    }
+
+    textBounds(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      let renderer = options?.graphics?._renderer || this._pInst._renderer;
+      if (!renderer) throw Error('p5 or graphics required for fontBounds()');
+      return renderer.textBounds(str, x, y, width, height);
+    }
+
+    textToPaths(str, x, y, width, height, options) {
+
+      ({ width, height, options } = this._parseArgs(width, height, options));
+
+      if (!this.data) {
+        throw Error('No font data available for "' + this.name
+          + '"\nTry downloading a local copy of the font file');
+      }
+
+      // lineate and get glyphs/paths for each line
+      let lines = this._lineateAndPathify(str, x, y, width, height, options);
+
+      // flatten into a single array containing all the glyphs
+      let glyphs = lines.map(o => o.glyphs).flat();
+
+      // flatten into a single array with all the path commands
+      return glyphs.map(g => g.path.commands).flat();
+    }
+
+    textToPoints(str, x, y, width, height, options) {
+      // By segmenting per contour, pointAtLength becomes much faster
+      const contourPoints = this.textToContours(str, x, y, width, height, options);
+      return contourPoints.reduce((acc, next) => {
+        acc.push(...next);
+        return acc;
+      }, []);
+    }
+
+    textToContours(str, x = 0, y = 0, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+
+      const cmds = this.textToPaths(str, x, y, width, height, options);
+      const cmdContours = [];
+      for (const cmd of cmds) {
+        if (cmd[0] === 'M') {
+          cmdContours.push([]);
+        }
+        cmdContours[cmdContours.length - 1].push(cmd);
+      }
+
+      return cmdContours.map((commands) => pathToPoints(commands, options, this));
+    }
+
+    textToModel(str, x, y, width, height, options) {
+      ({ width, height, options } = this._parseArgs(width, height, options));
+      const extrude = options?.extrude || 0;
+      const contours = this.textToContours(str, x, y, width, height, options);
+      const geom = this._pInst.buildGeometry(() => {
+        if (extrude === 0) {
+          this._pInst.beginShape();
+          this._pInst.normal(0, 0, 1);
+          for (const contour of contours) {
+            this._pInst.beginContour();
+            for (const { x, y } of contour) {
+              this._pInst.vertex(x, y);
+            }
+            this._pInst.endContour(this._pInst.CLOSE);
+          }
+          this._pInst.endShape();
+        } else {
+          // Draw front faces
+          for (const side of [1, -1]) {
+            this._pInst.beginShape();
+            for (const contour of contours) {
+              this._pInst.beginContour();
+              for (const { x, y } of contour) {
+                this._pInst.vertex(x, y, side * extrude * 0.5);
+              }
+              this._pInst.endContour(this._pInst.CLOSE);
+            }
+            this._pInst.endShape();
+            this._pInst.beginShape();
+          }
+          // Draw sides
+          for (const contour of contours) {
+            this._pInst.beginShape(this._pInst.QUAD_STRIP);
+            for (const v of contour) {
+              for (const side of [-1, 1]) {
+                this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
+              }
+            }
+            this._pInst.endShape();
+          }
+        }
+      });
+      if (extrude !== 0) {
+        geom.computeNormals();
+        for (const face of geom.faces) {
+          if (face.every((idx) => geom.vertices[idx].z <= -extrude * 0.5 + 0.1)) {
+            for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
+            face.reverse();
+          }
+        }
+      }
+      return geom;
     }
 
     variations() {
@@ -93,59 +194,6 @@ function font(p5, fn) {
       return meta;
     }
 
-    fontBounds(...args) { // alias for p5.fontBounds
-      if (!this._pInst) throw Error('p5 required for fontBounds()');
-      return this._pInst.fontBounds(...args);
-    }
-
-    textBounds(...args) { // alias for p5.textBounds
-      if (!this._pInst) throw Error('p5 required for textBounds()'); // TODO:
-      return this._pInst.textBounds(...args);
-    }
-
-    textToPaths(str, x, y, width, height, options) {
-
-      ({ width, height, options } = this._parseArgs(width, height, options));
-
-      if (!this.data) {
-        throw Error('No font data available for "' + this.name
-          + '"\nTry downloading a local copy of the font file');
-      }
-
-      // lineate and get glyphs/paths for each line
-      let lines = this._lineateAndPathify(str, x, y, width, height, options);
-
-      // flatten into a single array containing all the glyphs
-      let glyphs = lines.map(o => o.glyphs).flat();
-
-      // flatten into a single array with all the path commands
-      return glyphs.map(g => g.path.commands).flat();
-    }
-
-    textToPoints(str, x, y, width, height, options) {
-      // By segmenting per contour, pointAtLength becomes much faster
-      const contourPoints = this.textToContours(str, x, y, width, height, options);
-      return contourPoints.reduce((acc, next) => {
-        acc.push(...next);
-        return acc;
-      }, []);
-    }
-
-    textToContours(str, x, y, width, height, options) {
-      ({ width, height, options } = this._parseArgs(width, height, options));
-
-      const cmds = this.textToPaths(str, x, y, width, height, options);
-      const cmdContours = [];
-      for (const cmd of cmds) {
-        if (cmd[0] === 'M') {
-          cmdContours.push([]);
-        }
-        cmdContours[cmdContours.length - 1].push(cmd);
-      }
-
-      return cmdContours.map((commands) => pathToPoints(commands, options));
-    }
-
     static async list(log = false) { // tmp
       if (log) {
         console.log('There are', document.fonts.size, 'font-faces\n');
@@ -166,6 +214,16 @@ function font(p5, fn) {
     }
 
     /////////////////////////////// HELPERS ////////////////////////////////
+    
+    _verticalAlign(size) {
+      const { sCapHeight } = this.data?.['OS/2'] || {};
+      const { unitsPerEm = 1000 } = this.data?.head || {};
+      const { ascender = 0, descender = 0 } = this.data?.hhea || {};
+      const current = ascender / 2;
+      const target = (sCapHeight || (ascender + descender)) / 2;
+      const offset = target - current;
+      return offset * size / unitsPerEm;
+    }
 
     /*
       Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
@@ -362,7 +420,7 @@ function font(p5, fn) {
 
     _measureTextDefault(renderer, str) {
       let { textAlign, textBaseline } = renderer.states;
-      let ctx = renderer.drawingContext;
+      let ctx = renderer.textDrawingContext();
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       let metrics = ctx.measureText(str);
@@ -517,7 +575,7 @@ function font(p5, fn) {
 
       // parse the font data
       let fonts = Typr.parse(result);
-      console.log(fonts[0])
+
       // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
@@ -573,6 +631,14 @@ function font(p5, fn) {
     return new p5.Font(pInst, face, name, path, rawFont);
   }
 
+  function unquote(name) {
+    // Unquote name from CSS
+    if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+      return name.slice(1, -1).replace(/\/(['"])/g, '$1');
+    }
+    return name;
+  }
+
   function createFontFace(name, path, descriptors, rawFont) {
     let fontArg = rawFont?._data;
     if (!fontArg) {
@@ -616,7 +682,7 @@ function font(p5, fn) {
     return path;
   };
 
-  function pathToPoints(cmds, options) {
+  function pathToPoints(cmds, options, font) {
 
     const parseOpts = (options, defaults) => {
       if (typeof options !== 'object') {
@@ -657,10 +723,25 @@ function font(p5, fn) {
     const totalPoints = Math.ceil(path.getTotalLength() * opts.sampleFactor);
     let points = [];
 
+    const mode = font._pInst.angleMode();
+    const DEGREES = font._pInst.DEGREES;
     for (let i = 0; i < totalPoints; i++) {
-      points.push(
-        path.getPointAtLength(path.getTotalLength() * (i / (totalPoints - 1)))
-      );
+      const length = path.getTotalLength() * (i / (totalPoints - 1));
+      points.push({
+        ...path.getPointAtLength(length),
+        get angle() {
+          const angle = path.getAngleAtLength(length);
+          if (mode === DEGREES) {
+            return angle * 180 / Math.PI;
+          } else {
+            return angle;
+          }
+        },
+        // For backwards compatibility
+        get alpha() {
+          return this.angle;
+        }
+      });
     }
 
     if (opts.simplifyThreshold) {

@@ -195,7 +195,7 @@ suite('Validate Params', function () {
     });
   });
 
-  suite('validateParams: web API objects', function () {
+  suite('validateParams: web API objects', function () { // TODO: fix this p5 error
     const audioContext = new AudioContext();
     const gainNode = audioContext.createGain();
 

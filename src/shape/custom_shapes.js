@@ -650,17 +650,15 @@ class Shape {
     } else if (original instanceof Vector) {
       return new Vector(queue.shift(), queue.shift(), queue.shift());
     } else if (original instanceof Color) {
+      // NOTE: Not sure what intention here is, `Color` constructor signature
+      // has changed so needed to be reviewed
       const array = [
         queue.shift(),
         queue.shift(),
         queue.shift(),
         queue.shift()
       ];
-      return new Color(
-        array.map((v, i) => v * original.maxes[original.mode][i]),
-        original.mode,
-        original.maxes
-      );
+      return new Color(array);
     }
   }
 

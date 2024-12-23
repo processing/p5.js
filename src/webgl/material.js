@@ -651,7 +651,7 @@ function material(p5, fn){
     if (this._renderer.GL) {
       shader.ensureCompiledOnContext(this._renderer);
     } else {
-      shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer()._renderer);
+      shader.ensureCompiledOnContext(this);
     }
     return shader;
   };
@@ -1195,56 +1195,34 @@ function material(p5, fn){
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalPosition`
+   * `Vertex getObjectInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getWorldPosition`
+   * `Vertex getWorldInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalNormal`
+   * `Vertex getCameraInputs`
    *
    * </td><td>
    *
-   * Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec3 getWorldNormal`
-   *
-   * </td><td>
-   *
-   * Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getUV`
-   *
-   * </td><td>
-   *
-   * Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getVertexColor`
-   *
-   * </td><td>
-   *
-   * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
@@ -1342,9 +1320,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1492,19 +1471,86 @@ function material(p5, fn){
    * You can call <a href="#/p5.Shader/modify">`baseNormalShader().modify()`</a>
    * and change any of the following hooks:
    *
-   * Hook | Description
-   * -----|------------
-   * `void beforeVertex` | Called at the start of the vertex shader.
-   * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
-   * `void afterVertex` | Called at the end of the vertex shader.
-   * `void beforeFragment` | Called at the start of the fragment shader.
-   * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   * `void afterFragment` | Called at the end of the fragment shader.
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `void beforeVertex`
+   *
+   * </td><td>
+   *
+   * Called at the start of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getObjectInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getWorldInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getCameraInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterVertex`
+   *
+   * </td><td>
+   *
+   * Called at the end of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void beforeFragment`
+   *
+   * </td><td>
+   *
+   * Called at the start of the fragment shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `vec4 getFinalColor`
+   *
+   * </td><td>
+   *
+   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterFragment`
+   *
+   * </td><td>
+   *
+   * Called at the end of the fragment shader.
+   *
+   * </td></tr>
+   * </table>
    *
    * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
    * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1527,9 +1573,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1551,7 +1598,10 @@ function material(p5, fn){
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseNormalShader().modify({
-   *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
+   *     'Vertex getCameraInputs': `(Vertex inputs) {
+   *       inputs.normal = abs(inputs.normal);
+   *       return inputs;
+   *     }`,
    *     'vec4 getFinalColor': `(vec4 color) {
    *       // Map the r, g, and b values of the old normal to new colors
    *       // instead of just red, green, and blue:
@@ -1587,19 +1637,86 @@ function material(p5, fn){
    * You can call <a href="#/p5.Shader/modify">`baseColorShader().modify()`</a>
    * and change any of the following hooks:
    *
-   * Hook | Description
-   * -------|-------------
-   * `void beforeVertex` | Called at the start of the vertex shader.
-   * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
-   * `void afterVertex` | Called at the end of the vertex shader.
-   * `void beforeFragment` | Called at the start of the fragment shader.
-   * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   * `void afterFragment` | Called at the end of the fragment shader.
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `void beforeVertex`
+   *
+   * </td><td>
+   *
+   * Called at the start of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getObjectInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getWorldInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getCameraInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterVertex`
+   *
+   * </td><td>
+   *
+   * Called at the end of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void beforeFragment`
+   *
+   * </td><td>
+   *
+   * Called at the start of the fragment shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `vec4 getFinalColor`
+   *
+   * </td><td>
+   *
+   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterFragment`
+   *
+   * </td><td>
+   *
+   * Called at the end of the fragment shader.
+   *
+   * </td></tr>
+   * </table>
    *
    * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
    * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1622,9 +1739,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1663,56 +1781,35 @@ function material(p5, fn){
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalPosition`
+   * `StrokeVertex getObjectInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * Update the vertex data of the stroke being drawn before any positioning has been applied. It takes in a `StrokeVertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 tangentIn`, the tangent coming in to the vertex
+   * - `vec3 tangentOut`, the tangent coming out of the vertex. In straight segments, this will be the same as `tangentIn`. In joins, it will be different. In caps, one of the tangents will be 0.
+   * - `vec4 color`, the per-vertex color
+   * - `float weight`, the stroke weight
+   * The struct can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getWorldPosition`
+   * `StrokeVertex getWorldInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `float getStrokeWeight`
+   * `StrokeVertex getCameraInputs`
    *
    * </td><td>
    *
-   * Update the stroke weight. It takes in `float weight` and pust return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getLineCenter`
-   *
-   * </td><td>
-   *
-   * Update the center of the line. It takes in `vec2 center` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getLinePosition`
-   *
-   * </td><td>
-   *
-   * Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getVertexColor`
-   *
-   * </td><td>
-   *
-   * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
@@ -1831,20 +1928,16 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     declarations: 'vec3 myPosition;',
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       myPosition = pos;
-   *       return pos;
-   *     }`,
-   *     'float getStrokeWeight': `(float w) {
+   *     'StrokeVertex getWorldInputs': `(StrokeVertex inputs) {
    *       // Add a somewhat random offset to the weight
    *       // that varies based on position and time
    *       float scale = 0.8 + 0.2*sin(10.0 * sin(
    *         floor(time/250.) +
-   *         myPosition.x*0.01 +
-   *         myPosition.y*0.01
+   *         inputs.position.x*0.01 +
+   *         inputs.position.y*0.01
    *       ));
-   *       return w * scale;
+   *       inputs.weight *= scale;
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1852,7 +1945,6 @@ function material(p5, fn){
    * function draw() {
    *   background(255);
    *   strokeShader(myShader);
-   *   noStroke();
    *   myShader.setUniform('time', millis());
    *   strokeWeight(10);
    *   beginShape();
@@ -3626,7 +3718,7 @@ function material(p5, fn){
     this.states.drawMode = constants.TEXTURE;
     this.states._useNormalMaterial = false;
     this.states._tex = tex;
-    this.states.fillColor = new Color(255);
+    this.states.fillColor = new Color([1, 1, 1]);
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
@@ -3635,7 +3727,7 @@ function material(p5, fn){
     this.states._useEmissiveMaterial = false;
     this.states._useNormalMaterial = true;
     this.states.curFillColor = [1, 1, 1, 1];
-    this.states.fillColor = new Color(255);
+    this.states.fillColor = new Color([1, 1, 1]);
     this.states.strokeColor = null;
   }
 

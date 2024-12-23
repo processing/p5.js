@@ -70,6 +70,23 @@ visualSuite('WebGL', function() {
         screenshot();
       }
     );
+
+    for (const mode of ['webgl', '2d']) {
+      visualSuite(`In ${mode} mode`, function() {
+        visualTest('It can combine multiple filter passes', function(p5, screenshot) {
+          p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+          if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+          p5.background(255);
+          p5.fill(0);
+          p5.noStroke();
+          p5.circle(15, 15, 20);
+          p5.circle(30, 30, 20);
+          p5.filter(p5.BLUR, 5);
+          p5.filter(p5.THRESHOLD);
+          screenshot();
+        });
+      });
+    }
   });
 
   visualSuite('Lights', function() {
@@ -328,4 +345,192 @@ visualSuite('WebGL', function() {
       screenshot();
     })
   })
+
+  visualSuite('Opacity', function() {
+    visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.fill(255, 0, 0, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors have opacity applied correctly when lights are used', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.ambientLight(255);
+      p5.fill(255, 0, 0, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in shader hooks have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify({
+        'Inputs getPixelInputs': `(Inputs inputs) {
+          inputs.color = vec4(1., 0., 0., 100./255.);
+          return inputs;
+        }`
+      })
+      p5.background(255);
+      p5.shader(myShader);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in textures have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = p5.createFramebuffer();
+      tex.draw(() => p5.background(255, 0, 0, 100));
+      p5.background(255);
+      p5.texture(tex);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('Colors in tinted textures have opacity applied correctly', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = p5.createFramebuffer();
+      tex.draw(() => p5.background(255, 0, 0, 255));
+      p5.background(255);
+      p5.texture(tex);
+      p5.tint(255, 100);
+      p5.circle(0, 0, 50);
+      screenshot();
+    });
+  });
+
+  visualSuite('Hooks coordinate spaces', () => {
+    for (const base of ['baseMaterialShader', 'baseColorShader', 'baseNormalShader']) {
+      visualSuite(base, () => {
+        visualTest('Object space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getObjectInputs': `(Vertex inputs) {
+              inputs.position.x += 0.25;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('World space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getWorldInputs': `(Vertex inputs) {
+              inputs.position.x += 10.;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('Camera space', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const myShader = p5[base]().modify({
+            'Vertex getCameraInputs': `(Vertex inputs) {
+              inputs.position.x += 10.;
+              inputs.normal.x += 0.5 * sin(inputs.position.y * 2.);
+              inputs.normal = normalize(inputs.normal);
+              return inputs;
+            }`
+          });
+          p5.background(255);
+          p5.lights();
+          p5.fill('red');
+          p5.noStroke();
+          p5.rotateY(p5.PI/2);
+          p5.camera(-800, 0, 0, 0, 0, 0);
+          p5.shader(myShader);
+          p5.sphere(20);
+          screenshot();
+        });
+
+        visualTest('Combined vs split matrices', (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+            for (const space of ['Object', 'World', 'Camera']) {
+              const myShader = p5[base]().modify({
+                [`Vertex get${space}Inputs`]: `(Vertex inputs) {
+                  // No-op
+                  return inputs;
+                }`
+              });
+              p5.background(255);
+              p5.push();
+              p5.lights();
+              p5.fill('red');
+              p5.noStroke();
+              p5.translate(20, -10, 5);
+              p5.rotate(p5.PI * 0.1);
+              p5.camera(-800, 0, 0, 0, 0, 0);
+              p5.shader(myShader);
+              p5.box(30);
+              p5.pop();
+              screenshot();
+            }
+        });
+      });
+    }
+  });
+
+  visualSuite('textToModel', () => {
+    visualTest('Flat', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textSize(20);
+      const geom = font.textToModel('p5*js', 0, 0, {
+        sampleFactor: 2
+      });
+      geom.normalize();
+      p5.background(255);
+      p5.normalMaterial();
+      p5.rotateX(p5.PI*0.1);
+      p5.rotateY(p5.PI*0.1);
+      p5.scale(50/200);
+      p5.model(geom);
+      screenshot();
+    });
+
+    visualTest('Extruded', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+      p5.textSize(20);
+      const geom = font.textToModel('p5*js', 0, 0, {
+        extrude: 10,
+        sampleFactor: 2
+      });
+      geom.normalize();
+      p5.background(255);
+      p5.normalMaterial();
+      p5.rotateX(p5.PI*0.1);
+      p5.rotateY(p5.PI*0.1);
+      p5.scale(50/200);
+      p5.model(geom);
+      screenshot();
+    });
+  });
 });

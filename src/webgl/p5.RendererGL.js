@@ -1,7 +1,7 @@
 import * as constants from "../core/constants";
 import GeometryBuilder from "./GeometryBuilder";
 import { Renderer } from "../core/p5.Renderer";
-import { Matrix } from "./p5.Matrix";
+import { Matrix } from "../math/p5.Matrix";
 import { Camera } from "./p5.Camera";
 import { Vector } from "../math/p5.Vector";
 import { RenderBuffer } from "./p5.RenderBuffer";
@@ -14,6 +14,7 @@ import { Graphics } from "../core/p5.Graphics";
 import { Element } from "../dom/p5.Element";
 import { ShapeBuilder } from "./ShapeBuilder";
 import { GeometryBufferCache } from "./GeometryBufferCache";
+import { filterParamDefaults } from '../image/const';
 
 import lightingShader from "./shaders/lighting.glsl";
 import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
@@ -174,12 +175,9 @@ class RendererGL extends Renderer {
     this.geometryBuilder = undefined;
 
     // Push/pop state
-    this.states.uModelMatrix = new Matrix();
-    this.states.uViewMatrix = new Matrix();
-    this.states.uMVMatrix = new Matrix();
-    this.states.uPMatrix = new Matrix();
-    this.states.uNMatrix = new Matrix("mat3");
-    this.states.curMatrix = new Matrix("mat3");
+    this.states.uModelMatrix = new Matrix(4);
+    this.states.uViewMatrix = new Matrix(4);
+    this.states.uPMatrix = new Matrix(4);
 
     this.states.curCamera = new Camera(this);
 
@@ -415,6 +413,8 @@ class RendererGL extends Renderer {
 
     this._curShader = undefined;
     this.drawShapeCount = 1;
+
+    this.scratchMat3 = new Matrix(3);
   }
 
   //////////////////////////////////////////////
@@ -1002,11 +1002,7 @@ class RendererGL extends Renderer {
    */
   background(...args) {
     const _col = this._pInst.color(...args);
-    const _r = _col.levels[0] / 255;
-    const _g = _col.levels[1] / 255;
-    const _b = _col.levels[2] / 255;
-    const _a = _col.levels[3] / 255;
-    this.clear(_r, _g, _b, _a);
+    this.clear(..._col._getRGBA());
   }
 
   // Combines the model and view matrices to get the uMVMatrix
@@ -1150,13 +1146,8 @@ class RendererGL extends Renderer {
     let operation = undefined;
     if (typeof args[0] === "string") {
       operation = args[0];
-      let defaults = {
-        [constants.BLUR]: 3,
-        [constants.POSTERIZE]: 4,
-        [constants.THRESHOLD]: 0.5,
-      };
-      let useDefaultParam = operation in defaults && args[1] === undefined;
-      filterParameter = useDefaultParam ? defaults[operation] : args[1];
+      let useDefaultParam = operation in filterParamDefaults && args[1] === undefined;
+      filterParameter = useDefaultParam ? filterParamDefaults[operation] : args[1];
 
       // Create and store shader for constants once on initial filter call.
       // Need to store multiple in case user calls different filters,
@@ -1617,6 +1608,7 @@ class RendererGL extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     if (arguments.length === 16) {
+      // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
     } else {
       this.states.uModelMatrix.apply([
@@ -1676,7 +1668,7 @@ class RendererGL extends Renderer {
     if (typeof axis === "undefined") {
       return this.rotateZ(rad);
     }
-    Matrix.prototype.rotate.apply(this.states.uModelMatrix, arguments);
+    Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
 
@@ -1746,14 +1738,11 @@ class RendererGL extends Renderer {
     if (!this.sphereMapping) {
       this.sphereMapping = this._pInst.createFilterShader(sphereMapping);
     }
-    this.states.uNMatrix.inverseTranspose(this.states.uViewMatrix);
-    this.states.uNMatrix.invert3x3(this.states.uNMatrix);
+    this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
+    this.scratchMat3.invert(this.scratchMat3); // uNMMatrix is 3x3
     this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
     this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
-    this.sphereMapping.setUniform(
-      "uNewNormalMatrix",
-      this.states.uNMatrix.mat3,
-    );
+    this.sphereMapping.setUniform("uNewNormalMatrix", this.scratchMat3.mat3);
     this.sphereMapping.setUniform("uSampler", img);
     return this.sphereMapping;
   }
@@ -1819,12 +1808,9 @@ class RendererGL extends Renderer {
           {
             vertex: {
               "void beforeVertex": "() {}",
-              "vec3 getLocalPosition": "(vec3 position) { return position; }",
-              "vec3 getWorldPosition": "(vec3 position) { return position; }",
-              "vec3 getLocalNormal": "(vec3 normal) { return normal; }",
-              "vec3 getWorldNormal": "(vec3 normal) { return normal; }",
-              "vec2 getUV": "(vec2 uv) { return uv; }",
-              "vec4 getVertexColor": "(vec4 color) { return color; }",
+              "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
+              "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
+              "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
               "void afterVertex": "() {}",
             },
             fragment: {
@@ -1873,12 +1859,9 @@ class RendererGL extends Renderer {
         {
           vertex: {
             "void beforeVertex": "() {}",
-            "vec3 getLocalPosition": "(vec3 position) { return position; }",
-            "vec3 getWorldPosition": "(vec3 position) { return position; }",
-            "vec3 getLocalNormal": "(vec3 normal) { return normal; }",
-            "vec3 getWorldNormal": "(vec3 normal) { return normal; }",
-            "vec2 getUV": "(vec2 uv) { return uv; }",
-            "vec4 getVertexColor": "(vec4 color) { return color; }",
+            "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
+            "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
+            "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
             "void afterVertex": "() {}",
           },
           fragment: {
@@ -1908,12 +1891,9 @@ class RendererGL extends Renderer {
         {
           vertex: {
             "void beforeVertex": "() {}",
-            "vec3 getLocalPosition": "(vec3 position) { return position; }",
-            "vec3 getWorldPosition": "(vec3 position) { return position; }",
-            "vec3 getLocalNormal": "(vec3 normal) { return normal; }",
-            "vec3 getWorldNormal": "(vec3 normal) { return normal; }",
-            "vec2 getUV": "(vec2 uv) { return uv; }",
-            "vec4 getVertexColor": "(vec4 color) { return color; }",
+            "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
+            "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
+            "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
             "void afterVertex": "() {}",
           },
           fragment: {
@@ -1999,12 +1979,9 @@ class RendererGL extends Renderer {
         {
           vertex: {
             "void beforeVertex": "() {}",
-            "vec3 getLocalPosition": "(vec3 position) { return position; }",
-            "vec3 getWorldPosition": "(vec3 position) { return position; }",
-            "float getStrokeWeight": "(float weight) { return weight; }",
-            "vec2 getLineCenter": "(vec2 center) { return center; }",
-            "vec2 getLinePosition": "(vec2 position) { return position; }",
-            "vec4 getVertexColor": "(vec4 color) { return color; }",
+            "StrokeVertex getObjectInputs": "(StrokeVertex inputs) { return inputs; }",
+            "StrokeVertex getWorldInputs": "(StrokeVertex inputs) { return inputs; }",
+            "StrokeVertex getCameraInputs": "(StrokeVertex inputs) { return inputs; }",
             "void afterVertex": "() {}",
           },
           fragment: {
@@ -2201,11 +2178,7 @@ class RendererGL extends Renderer {
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
     const projectionMatrix = this.states.uPMatrix;
-    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
-    this.states.uMVMatrix = this.calculateCombinedMatrix();
-
-    const modelViewProjectionMatrix = modelViewMatrix.copy();
-    modelViewProjectionMatrix.mult(projectionMatrix);
+    const modelViewMatrix = this.calculateCombinedMatrix();
 
     shader.setUniform(
       "uPerspective",
@@ -2215,17 +2188,29 @@ class RendererGL extends Renderer {
     shader.setUniform("uProjectionMatrix", projectionMatrix.mat4);
     shader.setUniform("uModelMatrix", modelMatrix.mat4);
     shader.setUniform("uModelViewMatrix", modelViewMatrix.mat4);
-    shader.setUniform(
-      "uModelViewProjectionMatrix",
-      modelViewProjectionMatrix.mat4,
-    );
+    if (shader.uniforms.uModelViewProjectionMatrix) {
+      const modelViewProjectionMatrix = modelViewMatrix.copy();
+      modelViewProjectionMatrix.mult(projectionMatrix);
+      shader.setUniform(
+        "uModelViewProjectionMatrix",
+        modelViewProjectionMatrix.mat4,
+      );
+    }
     if (shader.uniforms.uNormalMatrix) {
-      this.states.uNMatrix.inverseTranspose(this.states.uMVMatrix);
-      shader.setUniform("uNormalMatrix", this.states.uNMatrix.mat3);
+      this.scratchMat3.inverseTranspose4x4(modelViewMatrix);
+      shader.setUniform("uNormalMatrix", this.scratchMat3.mat3);
+    }
+    if (shader.uniforms.uModelNormalMatrix) {
+      this.scratchMat3.inverseTranspose4x4(this.states.uModelMatrix);
+      shader.setUniform("uModelNormalMatrix", this.scratchMat3.mat3);
+    }
+    if (shader.uniforms.uCameraNormalMatrix) {
+      this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
+      shader.setUniform("uCameraNormalMatrix", this.scratchMat3.mat3);
     }
     if (shader.uniforms.uCameraRotation) {
-      this.states.curMatrix.inverseTranspose(this.states.uViewMatrix);
-      shader.setUniform("uCameraRotation", this.states.curMatrix.mat3);
+      this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
+      shader.setUniform("uCameraRotation", this.scratchMat3.mat3);
     }
     shader.setUniform("uViewport", this._viewport);
   }

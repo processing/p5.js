@@ -1,5 +1,6 @@
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
+const toArray = (typedArray) => Array.from(typedArray);
 
 suite('p5.RendererGL', function() {
   var myp5;
@@ -412,18 +413,6 @@ suite('p5.RendererGL', function() {
       assert.doesNotThrow(testDefaultParams, 'this should not throw');
     });
 
-    test('filter() uses WEBGL implementation behind main P2D canvas', function() {
-      let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR);
-      assert.isDefined(renderer.filterGraphicsLayer);
-    });
-
-    test('filter() can opt out of WEBGL implementation', function() {
-      let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR, false);
-      assert.isUndefined(renderer.filterGraphicsLayer);
-    });
-
     test('filters make changes to canvas', function() {
       myp5.createCanvas(20,20);
       myp5.circle(10,10,12);
@@ -554,6 +543,7 @@ suite('p5.RendererGL', function() {
 
     suite('external context', function() {
       const cases = [
+        ['no modification', () => {}],
         ['corner rectMode', () => myp5.rectMode(myp5.CORNER)],
         ['corners rectMode', () => myp5.rectMode(myp5.CORNERS)],
         ['center rectMode', () => myp5.rectMode(myp5.CENTER)],
@@ -939,7 +929,7 @@ suite('p5.RendererGL', function() {
       // cam1 is applied right now so technically this is redundant
       myp5.setCamera(cam1);
       const cam1Matrix = cam1.cameraMatrix.copy();
-      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uViewMatrix.mat4), toArray(cam1Matrix.mat4));
 
       // Translation only changes the model matrix
       myp5.translate(100, 0, 0);
@@ -947,12 +937,12 @@ suite('p5.RendererGL', function() {
         myp5._renderer.states.uModelMatrix.mat4,
         origModelMatrix.mat4
       );
-      assert.deepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uViewMatrix.mat4), toArray(cam1Matrix.mat4));
 
       // Switchnig cameras only changes the view matrix
       const transformedModel = myp5._renderer.states.uModelMatrix.copy();
       myp5.setCamera(cam2);
-      assert.deepEqual(myp5._renderer.states.uModelMatrix.mat4, transformedModel.mat4);
+      assert.deepEqual(toArray(myp5._renderer.states.uModelMatrix.mat4), toArray(transformedModel.mat4));
       assert.notDeepEqual(myp5._renderer.states.uViewMatrix.mat4, cam1Matrix.mat4);
     });
   });
@@ -1327,7 +1317,7 @@ suite('p5.RendererGL', function() {
         );
       };
 
-      for (const alpha of [255, 200]) {
+      for (const alpha of [1, 200/255]) {
         const red = myp5.color('#F53');
         const blue = myp5.color('#13F');
         red.setAlpha(alpha);

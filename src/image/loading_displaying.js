@@ -1293,7 +1293,7 @@ function loadingDisplaying(p5, fn){
   fn.tint = function(...args) {
     p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer.states.tint = c.levels;
+    this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
   };
 
   /**

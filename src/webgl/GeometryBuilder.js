@@ -1,5 +1,5 @@
 import * as constants from '../core/constants';
-import { Matrix } from './p5.Matrix';
+import { Matrix } from '../math/p5.Matrix';
 import { Geometry } from './p5.Geometry';
 
 /**
@@ -11,8 +11,8 @@ class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     renderer._pInst.push();
-    this.identityMatrix = new Matrix();
-    renderer.states.uModelMatrix = new Matrix();
+    this.identityMatrix = new Matrix(4);
+    renderer.states.uModelMatrix = new Matrix(4);
     this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
@@ -37,7 +37,7 @@ class GeometryBuilder {
     if (!this.hasTransform) return normals;
 
     return normals.map(
-      v => this.renderer.states.uNMatrix.multiplyVec3(v)
+      v => this.renderer.scratchMat3.multiplyVec(v) // this is a vec3
     );
   }
 
@@ -51,7 +51,7 @@ class GeometryBuilder {
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.states.uNMatrix.inverseTranspose(this.renderer.states.uModelMatrix);
+      this.renderer.scratchMat3.inverseTranspose4x4(this.renderer.states.uModelMatrix);
     }
 
     let startIdx = this.geometry.vertices.length;

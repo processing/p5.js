@@ -207,7 +207,7 @@ class Texture {
         // flag for update in a future frame.
         // if we don't do this, a paused video, for example, may not
         // send the first frame to texture memory.
-        data.setModified(true);
+        data.setModified && data.setModified(true);
       }
     } else if (this.isSrcP5Image) {
       // for an image, we only update if the modified field has been set,

@@ -17,7 +17,7 @@ suite('local storage', function() {
 
   beforeAll(function() {
     storage(mockP5, mockP5Prototype);
-    p5Color(mockP5, mockP5Prototype);
+    p5Color(mockP5, mockP5Prototype, {});
     creatingReading(mockP5, mockP5Prototype);
     p5Vector(mockP5, mockP5Prototype);
     math(mockP5, mockP5Prototype);

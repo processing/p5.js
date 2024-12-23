@@ -440,6 +440,33 @@ visualSuite("Typography", function () {
       p5.endShape();
       screenshot();
     });
+
+    for (const mode of ['RADIANS', 'DEGREES']) {
+      visualTest(`Fonts point angles work in ${mode} mode`, async function(p5, screenshot) {
+        p5.createCanvas(100, 100);
+        const font = await p5.loadFont(
+          '/unit/assets/Inconsolata-Bold.ttf'
+        );
+        p5.background(255);
+        p5.strokeWeight(2);
+        p5.textSize(50);
+        p5.angleMode(p5[mode]);
+        const pts = font.textToPoints('p5*js', 0, 50, { sampleFactor: 0.25 });
+        p5.beginShape(p5.LINES);
+        for (const { x, y, angle } of pts) {
+          p5.vertex(
+            x - 5 * p5.cos(angle),
+            y - 5 * p5.sin(angle)
+          );
+          p5.vertex(
+            x + 5 * p5.cos(angle),
+            y + 5 * p5.sin(angle)
+          );
+        }
+        p5.endShape();
+        screenshot();
+      });
+    }
   });
 
   visualSuite('textToContours', function() {

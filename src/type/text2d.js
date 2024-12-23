@@ -91,7 +91,6 @@ function text2d(p5, fn) {
       }
       return this._renderer[func](...args);
     };
-    // do the same for p5.Graphics prototype
     p5.Graphics.prototype[func] = function (...args) {
       return this._renderer[func](...args);
     };
@@ -156,7 +155,7 @@ function text2d(p5, fn) {
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
-    // delegate to _textBoundsSingle measure function
+    // delegate to _textBoundsSingle for measuring
     return this._computeBounds(fn._TEXT_BOUNDS, str, x, y, width, height).bounds;
   };
 
@@ -170,7 +169,7 @@ function text2d(p5, fn) {
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
-    // delegate to _fontBoundsSingle measure function
+    // delegate to _fontBoundsSingle for measuring
     return this._computeBounds(fn._FONT_BOUNDS, str, x, y, width, height).bounds;
   };
 
@@ -251,6 +250,10 @@ function text2d(p5, fn) {
       vertical: this.states.textBaseline
     };
   };
+
+  Renderer.prototype._currentTextFont = function () {
+    return this.states.textFont.font || this.states.textFont.family;
+  }
 
   /**
    * Set the font and [size] and [options] for rendering text
@@ -1082,7 +1085,7 @@ function text2d(p5, fn) {
   };
 
   if (p5.Renderer2D) {
-    p5.Renderer2D.prototype.textDrawingContext = function() {
+    p5.Renderer2D.prototype.textDrawingContext = function () {
       return this.drawingContext;
     };
     p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY) {
@@ -1179,7 +1182,7 @@ function text2d(p5, fn) {
   }
 
   if (p5.RendererGL) {
-    p5.RendererGL.prototype.textDrawingContext = function() {
+    p5.RendererGL.prototype.textDrawingContext = function () {
       if (!this._textDrawingContext) {
         this._textCanvas = document.createElement('canvas');
         this._textCanvas.width = 1;
@@ -1244,7 +1247,7 @@ function text2d(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?.verticalAlign(textSize) || 0;
+      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     }

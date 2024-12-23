@@ -320,10 +320,10 @@ function interaction(p5, fn){
         this._renderer.executeZoom = false;
       }
       if (this.mouseIsPressed) {
-        if (this.mouseButton === this.LEFT) {
+        if (this.mouseButton.left) {
           deltaTheta = -sensitivityX * this.movedX / scaleFactor;
           deltaPhi = sensitivityY * this.movedY / scaleFactor;
-        } else if (this.mouseButton === this.RIGHT) {
+        } else if (this.mouseButton.right) {
           moveDeltaX = this.movedX;
           moveDeltaY =  this.movedY * cam.yScale;
         }
