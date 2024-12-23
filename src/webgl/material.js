@@ -551,61 +551,15 @@ function material(p5, fn){
    */
   p5.prototype.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
     p5._validateParameters('loadFilterShader', arguments);
-
-    const loadedShader = new p5.Shader();
-
     try {
       // Define the default vertex shaders for different WebGL versions
-      const defaultVertV1 = `
-        uniform mat4 uModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
 
-        attribute vec3 aPosition;
-        attribute vec2 aTexCoord;
-        varying vec2 vTexCoord;
-
-        void main() {
-          vTexCoord = aTexCoord;
-          vec4 positionVec4 = vec4(aPosition, 1.0);
-          gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-        }
-      `;
-
-      const defaultVertV2 = `#version 300 es
-        uniform mat4 uModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
-
-        in vec3 aPosition;
-        in vec2 aTexCoord;
-        out vec2 vTexCoord;
-
-        void main() {
-          vTexCoord = aTexCoord;
-          vec4 positionVec4 = vec4(aPosition, 1.0);
-          gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-        }
-      `;
-
-      // Load the fragment shader
-      loadedShader._fragSrc = await this.loadStrings(fragFilename);
-      loadedShader._fragSrc = await loadedShader._fragSrc.join('\n');
-
-      // Determine if we're using WebGL 2
-      const isWebGL2 = this._renderer.GL instanceof WebGL2RenderingContext;
-
-      // Set the appropriate vertex shader based on WebGL version
-      loadedShader._vertSrc = isWebGL2 ? defaultVertV2 : defaultVertV1;
-
-      // Add version directive to fragment shader if it's not present
-      if (!loadedShader._fragSrc.match(/^\s*#version\s+/)) {
-        loadedShader._fragSrc = (isWebGL2 ? '#version 300 es\n' : '#version 100\n') + loadedShader._fragSrc;
-      }
-
-      // For WebGL 2, ensure we have a precision statement in the fragment shader
-      if (isWebGL2 && !loadedShader._fragSrc.match(/^\s*precision\s+/)) {
-        loadedShader._fragSrc = 'precision highp float;\n' + loadedShader._fragSrc;
-      }
-
+      const fragSrc = await this.loadStrings(fragFilename);
+      const fragString = await fragSrc.join('\n');
+  
+      // Create the shader using createFilterShader
+      const loadedShader = this.createFilterShader(fragString);
+  
       if (successCallback) {
         successCallback(loadedShader);
       }
