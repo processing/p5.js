@@ -1935,3 +1935,5 @@ Typr["T"].HVAR = {
 		return [regs,dfs];
 	}
 };
+
+export default Typr;
