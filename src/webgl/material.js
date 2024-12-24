@@ -558,13 +558,7 @@ function material(p5, fn){
 
       // Create the shader using createFilterShader
       const loadedShader = this.createFilterShader(fragString, true);
-
-      if (this._renderer.GL) {
-        loadedShader.ensureCompiledOnContext(this._renderer);
-      } else {
-        loadedShader.ensureCompiledOnContext(this);
-      }
-      
+        
       if (successCallback) {
         successCallback(loadedShader);
       }
