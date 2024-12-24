@@ -549,17 +549,22 @@ function material(p5, fn){
    * @alt
    * A rectangle with a shader applied to it.
    */
-  p5.prototype.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) { 
     p5._validateParameters('loadFilterShader', arguments);
     try {
-      // Define the default vertex shaders for different WebGL versions
-
+      // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
       const fragString = await fragSrc.join('\n');
-  
+
       // Create the shader using createFilterShader
-      const loadedShader = this.createFilterShader(fragString);
-  
+      const loadedShader = this.createFilterShader(fragString, true);
+
+      if (this._renderer.GL) {
+        loadedShader.ensureCompiledOnContext(this._renderer);
+      } else {
+        loadedShader.ensureCompiledOnContext(this);
+      }
+      
       if (successCallback) {
         successCallback(loadedShader);
       }
@@ -569,7 +574,7 @@ function material(p5, fn){
       if (failureCallback) {
         failureCallback(err);
       } else {
-        console.error(err);
+        console.error(err); 
       }
     }
   };
@@ -664,7 +669,7 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.createFilterShader = function (fragSrc) {
+  fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
@@ -708,10 +713,12 @@ function material(p5, fn){
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
-    if (this._renderer.GL) {
-      shader.ensureCompiledOnContext(this._renderer);
-    } else {
-      shader.ensureCompiledOnContext(this);
+    if (!skipContextCheck) {
+      if (this._renderer.GL) {
+        shader.ensureCompiledOnContext(this._renderer);
+      } else {
+        shader.ensureCompiledOnContext(this);
+      }
     }
     return shader;
   };
