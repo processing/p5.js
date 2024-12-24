@@ -532,7 +532,7 @@ function material(p5, fn){
    * let myShader;
    *
    * async function setup() {
-   *    myShader = await loadFilterShader('assets/shader.frag');
+   *   myShader = await loadFilterShader('assets/shader.frag');
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    * }
