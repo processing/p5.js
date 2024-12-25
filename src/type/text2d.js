@@ -291,7 +291,12 @@ function text2d(p5, fn) {
     }
 
     // check for font-string with size in first arg
-    if (typeof size === 'undefined' && /^[.0-9]+(%|em|p[xt])/.test(family)) {
+    console.log('family: ', family, 'size: ', size);
+    
+    // removed ^ from regex to allow direct set of font strings including size
+    if (typeof size === 'undefined' && /[.0-9]+(%|em|p[xt])/.test(family)) {
+      console.log('direct font string: ', family);
+      
       ({ family, size } = this._directSetFontString(family));
     }
 

@@ -571,7 +571,7 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
-      console.log('result:', result);
+      //console.log('result:', result);
       
       if (!result) {
         throw Error('Failed to load font data');
@@ -583,15 +583,13 @@ function font(p5, fn) {
       // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
-        throw Error('Unable to parse font data');
+        throw Error('parsing font data');
       }
 
       // make sure we have a valid name
       if (!name) {
         name = extractFontName(fonts[0], path);
-        if (name.includes(' ')) {
-          name = name.replace(/ /g, '_');
-        }
+        if (name.includes(' ')) name = name.replace(/ /g, '_');
       }
 
       // create a FontFace object and pass it to the p5.Font constructor
@@ -599,23 +597,19 @@ function font(p5, fn) {
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
-      console.warn('Failed to parse font data:', err);
+      let ident = name || path.substring(path.lastIndexOf('/') + 1); 
+      console.warn(`WARNING: No font data for '${ident}'`);
       try {
         // create a FontFace object and pass it to p5.Font
-        let ident = name || path.substring(path.lastIndexOf('/') + 1); 
         console.log(`Retrying '${ident}' without font-data: '${path}'`);
         pfont = await create(this, name, path, descriptors);
       }
       catch (err) {
-        if (error) {
-          error(err);
-        }
+        if (error) error(err);
         throw err;
       }
     }
-    if (success) {
-      success(pfont);
-    }
+    if (success) success(pfont);
 
     return pfont;
   }
