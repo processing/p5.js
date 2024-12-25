@@ -29,16 +29,18 @@
  * This module defines the <a href="#/p5.Font">p5.Font</a> class and p5 methods for
  * loading fonts from files and urls, and extracting points from their paths.
  */
+
+// import Typr
 import Typr from './lib/Typr.js';
 import { createFromCommands } from '@davepagurek/bezier-path';
 
 function font(p5, fn) {
 
   const pathArgCounts = { M: 2, L: 2, C: 6, Q: 4 };
-  const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+  const validFontTypes = ['ttf', 'otf', 'woff'];//, 'woff2'];
   const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
   const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
-  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
+  const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; // and WOFF2
   const fontFaceVariations = ['weight', 'stretch', 'style'];
 
   p5.Font = class Font {
@@ -214,7 +216,7 @@ function font(p5, fn) {
     }
 
     /////////////////////////////// HELPERS ////////////////////////////////
-    
+
     _verticalAlign(size) {
       const { sCapHeight } = this.data?.['OS/2'] || {};
       const { unitsPerEm = 1000 } = this.data?.head || {};
@@ -569,6 +571,8 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
+      console.log('result:', result);
+      
       if (!result) {
         throw Error('Failed to load font data');
       }
@@ -579,7 +583,7 @@ function font(p5, fn) {
       // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
-        throw Error(23);
+        throw Error('Unable to parse font data');
       }
 
       // make sure we have a valid name
@@ -598,7 +602,8 @@ function font(p5, fn) {
       console.warn('Failed to parse font data:', err);
       try {
         // create a FontFace object and pass it to p5.Font
-        console.log(`Retrying '${name}' without font-data: '${path}'`);
+        let ident = name || path.substring(path.lastIndexOf('/') + 1); 
+        console.log(`Retrying '${ident}' without font-data: '${path}'`);
         pfont = await create(this, name, path, descriptors);
       }
       catch (err) {

@@ -43,6 +43,19 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
+    visualTest('with a woff font file', async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      const font = await p5.loadFont(
+        '/unit/assets/Lato-Regular.woff'
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textSize(35);
+      p5.text('p5*js', 0, 10, p5.width);
+      screenshot();
+    });
+
+
     visualTest('with a font file in WebGL', async function(p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
