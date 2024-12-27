@@ -30,8 +30,8 @@
  * loading fonts from files and urls, and extracting points from their paths.
  */
 
-// import Typr
 import Typr from './lib/Typr.js';
+
 import { createFromCommands } from '@davepagurek/bezier-path';
 
 function font(p5, fn) {
@@ -598,10 +598,9 @@ function font(p5, fn) {
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
       let ident = name || path.substring(path.lastIndexOf('/') + 1); 
-      console.warn(`WARNING: No font data for '${ident}'`);
+      console.warn(`WARN: No glyph data for '${ident}', retrying as FontFace`);
       try {
         // create a FontFace object and pass it to p5.Font
-        console.log(`Retrying '${ident}' without font-data: '${path}'`);
         pfont = await create(this, name, path, descriptors);
       }
       catch (err) {
@@ -619,9 +618,7 @@ function font(p5, fn) {
     let face = createFontFace(name, path, descriptors, rawFont);
 
     // load if we need to
-    if (face.status !== 'loaded') {
-      await face.load();
-    }
+    if (face.status !== 'loaded') await face.load();
 
     // add it to the document
     document.fonts.add(face);

@@ -179,7 +179,7 @@ function text2d(p5, fn) {
    * @returns - the width of the text in pixels
    */
   Renderer.prototype.textWidth = function (theText) {
-    let lines = this._processLines(theText, null, null);
+    let lines = this._processLines(theText);
     // return the max width of the lines (using tight bounds)
     return Math.max(...lines.map(l => this._textWidthSingle(l)));
   };
@@ -191,7 +191,7 @@ function text2d(p5, fn) {
    */
   Renderer.prototype.fontWidth = function (theText) {
     // return the max width of the lines (using loose bounds)
-    let lines = this._processLines(theText, null, null);
+    let lines = this._processLines(theText);
     return Math.max(...lines.map(l => this._fontWidthSingle(l)));
   };
 
@@ -279,25 +279,20 @@ function text2d(p5, fn) {
         family += '-' + font.name.fontSubfamily;
       }
     }
-
-    if (typeof family !== 'string') {
-      throw Error('null font passed to textFont', font);
+    else if (typeof font === 'string') {
+      // direct set the font-string if it contains size
+      if (typeof size === 'undefined' && /[.0-9]+(%|em|p[xt])/.test(family)) {
+        //console.log('direct set font-string: ', family);
+        ({ family, size } = this._directSetFontString(family));
+      }
     }
+
+    if (typeof family !== 'string') throw Error('null font in textFont()');
 
     // handle two-arg case: textFont(font, options)
     if (arguments.length === 2 && typeof size === 'object') {
       options = size;
       size = undefined;
-    }
-
-    // check for font-string with size in first arg
-    console.log('family: ', family, 'size: ', size);
-    
-    // removed ^ from regex to allow direct set of font strings including size
-    if (typeof size === 'undefined' && /[.0-9]+(%|em|p[xt])/.test(family)) {
-      console.log('direct font string: ', family);
-      
-      ({ family, size } = this._directSetFontString(family));
     }
 
     // update font properties in this.states
@@ -313,7 +308,7 @@ function text2d(p5, fn) {
       this.textProperties(options);
     }
 
-   return this._applyTextProperties();
+    return this._applyTextProperties();
   }
 
   Renderer.prototype._directSetFontString = function (font, debug = 0) {
@@ -323,7 +318,7 @@ function text2d(p5, fn) {
       props[p] = RendererTextProps[p].default;
       return props;
     }, {});
-    
+
     let el = this._cachedDiv(defaults);
     el.style.font = font;
     let style = getComputedStyle(el);
@@ -331,10 +326,10 @@ function text2d(p5, fn) {
       this.states[prop] = style[prop];
       if (debug) console.log('  this.states.' + prop + '="' + style[prop] + '"');
     });
-    
+
     if (debug) console.log('  this.states.textFont="' + style.fontFamily + '"');
     if (debug) console.log('  this.states.textSize="' + style.fontSize + '"');
-    
+
     return { family: style.fontFamily, size: style.fontSize };
   }
 
