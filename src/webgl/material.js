@@ -513,6 +513,65 @@ function material(p5, fn){
     p5._validateParameters('createShader', arguments);
     return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
+  /**
+   * Creates and loads a filter shader from an external file.
+   *
+   * @method loadFilterShader
+   * @param {String} fragFilename path to the fragment shader file
+   * @param {Function} [successCallback] callback to be called once the shader is
+   *                                     loaded. Will be passed the
+   *                                     <a href="#/p5.Shader">p5.Shader</a> object.
+   * @param {Function} [failureCallback] callback to be called if there is an error
+   *                                     loading the shader. Will be passed the
+   *                                     error event.
+   * @return {Promise<p5.Shader>} a promise that resolves with a shader object
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * async function setup() {
+   *   myShader = await loadFilterShader('assets/shader.frag');
+   *   createCanvas(100, 100, WEBGL);
+   *   noStroke();
+   * }
+   *
+   * function draw() {
+   *   // shader() sets the active shader with our shader
+   *   shader(myShader);
+   *
+   *   // rect gives us some geometry on the screen
+   *   rect(0, 0, width, height);
+   * }
+   * </code>
+   * </div>
+   * @alt
+   * A rectangle with a shader applied to it.
+   */
+  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) { 
+    p5._validateParameters('loadFilterShader', arguments);
+    try {
+      // Load the fragment shader
+      const fragSrc = await this.loadStrings(fragFilename);
+      const fragString = await fragSrc.join('\n');
+
+      // Create the shader using createFilterShader
+      const loadedShader = this.createFilterShader(fragString, true);
+        
+      if (successCallback) {
+        successCallback(loadedShader);
+      }
+
+      return loadedShader;
+    } catch (err) {
+      if (failureCallback) {
+        failureCallback(err);
+      } else {
+        console.error(err); 
+      }
+    }
+  };
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
@@ -604,7 +663,7 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.createFilterShader = function (fragSrc) {
+  fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
@@ -648,10 +707,12 @@ function material(p5, fn){
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
-    if (this._renderer.GL) {
-      shader.ensureCompiledOnContext(this._renderer);
-    } else {
-      shader.ensureCompiledOnContext(this);
+    if (!skipContextCheck) {
+      if (this._renderer.GL) {
+        shader.ensureCompiledOnContext(this._renderer);
+      } else {
+        shader.ensureCompiledOnContext(this);
+      }
     }
     return shader;
   };
@@ -3683,9 +3744,7 @@ function material(p5, fn){
         );
         break;
     }
-    if (!this._isErasing) {
-      this._cachedBlendMode = this.states.curBlendMode;
-    }
+    this._cachedBlendMode = this.states.curBlendMode;
   };
 
   RendererGL.prototype.shader = function(s) {
