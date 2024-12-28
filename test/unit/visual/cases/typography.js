@@ -19,7 +19,7 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
-    visualTest('with a Google Font URL', async function(p5, screenshot) {
+    visualTest('with a Google Font URL', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap'
@@ -31,7 +31,7 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
-    visualTest('with a font file', async function(p5, screenshot) {
+    visualTest('with a font file', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
@@ -55,8 +55,14 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
+    visualTest('with a directly set font string', async function (p5, screenshot) {
+      p5.createCanvas(100, 100);
+      p5.textFont("italic bold 32px Georgia");
+      p5.text('p5*js', 0, 10, p5.width);
+      screenshot();
+    });
 
-    visualTest('with a font file in WebGL', async function(p5, screenshot) {
+    visualTest('with a font file in WebGL', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
@@ -64,12 +70,12 @@ visualSuite("Typography", function () {
       p5.textFont(font);
       p5.textAlign(p5.LEFT, p5.TOP);
       p5.textSize(35);
-      p5.text('p5*js', -p5.width/2, -p5.height/2 + 10, p5.width);
+      p5.text('p5*js', -p5.width / 2, -p5.height / 2 + 10, p5.width);
       screenshot();
     });
   });
 
-  visualSuite('textWeight', function() {
+  visualSuite('textWeight', function () {
     visualTest('can control non-variable fonts', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
@@ -109,7 +115,6 @@ visualSuite("Typography", function () {
         '/unit/assets/BricolageGrotesque-Variable.ttf',
         { weight: '200 800' }
       );
-
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.background(255);
         p5.textFont(font);
@@ -422,8 +427,8 @@ visualSuite("Typography", function () {
     });
   });
 
-  visualSuite('textToPoints', function() {
-    visualTest('Fonts can be converted to points', async function(p5, screenshot) {
+  visualSuite('textToPoints', function () {
+    visualTest('Fonts can be converted to points', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
@@ -438,7 +443,7 @@ visualSuite("Typography", function () {
       screenshot();
     });
 
-    visualTest('Sampling density can be changed', async function(p5, screenshot) {
+    visualTest('Sampling density can be changed', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
@@ -454,7 +459,7 @@ visualSuite("Typography", function () {
     });
 
     for (const mode of ['RADIANS', 'DEGREES']) {
-      visualTest(`Fonts point angles work in ${mode} mode`, async function(p5, screenshot) {
+      visualTest(`Fonts point angles work in ${mode} mode`, async function (p5, screenshot) {
         p5.createCanvas(100, 100);
         const font = await p5.loadFont(
           '/unit/assets/Inconsolata-Bold.ttf'
@@ -481,8 +486,8 @@ visualSuite("Typography", function () {
     }
   });
 
-  visualSuite('textToContours', function() {
-    visualTest('Fonts can be converted to points grouped by contour', async function(p5, screenshot) {
+  visualSuite('textToContours', function () {
+    visualTest('Fonts can be converted to points grouped by contour', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
@@ -502,8 +507,8 @@ visualSuite("Typography", function () {
     });
   });
 
-  visualSuite('textToPaths', function() {
-    visualTest('Fonts can be converted to drawing context commands', async function(p5, screenshot) {
+  visualSuite('textToPaths', function () {
+    visualTest('Fonts can be converted to drawing context commands', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/Inconsolata-Bold.ttf'
