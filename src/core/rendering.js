@@ -9,8 +9,6 @@ import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 let renderers;
 function rendering(p5, fn){
-  let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
-  const defaultClass = 'p5Canvas';
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
   renderers = p5.renderers = {};
 
