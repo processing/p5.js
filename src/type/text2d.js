@@ -1057,14 +1057,15 @@ function text2d(p5, fn) {
     this._applyFontString();
 
     // set these after the font so they're not overridden
-    this.textDrawingContext().direction = this.states.direction;
-    this.textDrawingContext().textAlign = this.states.textAlign;
-    this.textDrawingContext().textBaseline = this.states.textBaseline;
+    let context = this.textDrawingContext();
+    context.direction = this.states.direction;
+    context.textAlign = this.states.textAlign;
+    context.textBaseline = this.states.textBaseline;
 
     // set manually as (still) not fully supported as part of font-string
     let stretch = this.states.fontStretch;
-    if (FontStretchKeys.includes(stretch) && this.textDrawingContext().fontStretch !== stretch) {
-      this.textDrawingContext().fontStretch = stretch;
+    if (FontStretchKeys.includes(stretch) && context.fontStretch !== stretch) {
+      context.fontStretch = stretch;
     }
 
     // apply each property in queue after the font so they're not overridden
@@ -1072,12 +1073,12 @@ function text2d(p5, fn) {
 
       let [prop, val] = contextQueue.shift();
       if (debug) console.log('apply context property "' + prop + '" = "' + val + '"');
-      this.textDrawingContext()[prop] = val;
+      context[prop] = val;
 
       // check if the value was set successfully
-      if (this.textDrawingContext()[prop] !== val) {
+      if (context[prop] !== val) {
         console.warn(`Unable to set '${prop}' property on context2d. It may not be supported.`); // FES?
-        console.log('Expected "' + val + '" but got: "' + this.textDrawingContext()[prop] + '"');
+        console.log('Expected "' + val + '" but got: "' + context[prop] + '"');
       }
     }
 
