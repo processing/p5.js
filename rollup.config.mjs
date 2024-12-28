@@ -122,9 +122,7 @@ export default [
       }
     ],
     treeshake: {
-      preset: 'smallest',
-      // NOTE: remove after we stopped using side effects
-      moduleSideEffects: true
+      preset: 'smallest'
     },
     plugins: [
       ...plugins
