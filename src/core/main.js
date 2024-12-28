@@ -42,6 +42,10 @@ class p5 {
     remove: []
   };
 
+  // FES stub
+  static _checkForUserDefinedFunctions = () => {};
+  static _friendlyFileLoadError = () => {};
+
   constructor(sketch, node) {
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
