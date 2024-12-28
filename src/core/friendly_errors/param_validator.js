@@ -2,12 +2,11 @@
  * @for p5
  * @requires core
  */
-import p5 from '../main.js';
 import * as constants from '../constants.js';
-import { z } from 'zod';
+import * as z from 'zod';
 import dataDoc from '../../../docs/parameterData.json';
 
-function validateParams(p5, fn) {
+function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
 
@@ -19,7 +18,7 @@ function validateParams(p5, fn) {
   // and so on.
   const p5Constructors = {};
 
-  fn.loadP5Constructors = function () {
+  function loadP5Constructors() {
     // Make a list of all p5 classes to be used for argument validation
     // This must be done only when everything has loaded otherwise we get
     // an empty array
@@ -131,6 +130,8 @@ function validateParams(p5, fn) {
 
     const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = dataDoc[funcClass][funcName];
+
+    if(!funcInfo) return;
 
     let overloads = [];
     if (funcInfo.hasOwnProperty('overloads')) {
@@ -330,7 +331,7 @@ function validateParams(p5, fn) {
    * @returns {String} The friendly error message.
    */
   fn.friendlyParamError = function (zodErrorObj, func) {
-    let message;
+    let message = '🌸 p5.js says: ';
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
     // always print the first error so that user can work through the errors
@@ -391,16 +392,16 @@ function validateParams(p5, fn) {
       }
       case 'too_small': {
         const minArgs = currentError.minimum;
-        message = `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
+        message += `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
         break;
       }
       case 'invalid_type': {
-        message = buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
+        message += buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
         break;
       }
       case 'too_big': {
         const maxArgs = currentError.maximum;
-        message = `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
+        message += `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
         break;
       }
       default: {
@@ -447,6 +448,10 @@ function validateParams(p5, fn) {
       return; // skip FES
     }
 
+    if (!Array.isArray(args)) {
+      args = Array.from(args);
+    }
+
     // An edge case: even when all arguments are optional and therefore,
     // theoretically allowed to stay undefined and valid, it is likely that the
     // user intended to call the function with non-undefined arguments. Skip
@@ -463,6 +468,7 @@ function validateParams(p5, fn) {
     let funcSchemas = schemaRegistry.get(func);
     if (!funcSchemas) {
       funcSchemas = fn.generateZodSchemasForFunc(func);
+      if (!funcSchemas) return;
       schemaRegistry.set(func, funcSchemas);
     }
 
@@ -482,11 +488,26 @@ function validateParams(p5, fn) {
       };
     }
   };
+
+  lifecycles.presetup = function(){
+    loadP5Constructors();
+
+    const excludes = ['validate'];
+    for(const f in this){
+      if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
+        const copy = this[f];
+
+        this[f] = function(...args) {
+          this.validate(f, args);
+          return copy.call(this, ...args);
+        };
+      }
+    }
+  };
 }
 
 export default validateParams;
 
 if (typeof p5 !== 'undefined') {
   validateParams(p5, p5.prototype);
-  p5.prototype.loadP5Constructors();
 }

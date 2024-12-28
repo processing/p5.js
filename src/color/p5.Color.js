@@ -89,7 +89,7 @@ class Color {
         this._color = to(this._color, this._color.spaceId);
       }catch(err){
         // TODO: Invalid color string
-        console.error('Invalid color string');
+        throw new Error('Invalid color string');
       }
 
     }else{
@@ -107,6 +107,8 @@ class Color {
         }else if(vals.length === 1){
           mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes);
           mappedVals.push(1);
+        }else{
+          throw new Error('Invalid color');
         }
       }else{
         mappedVals = vals;

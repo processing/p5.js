@@ -309,7 +309,8 @@ function primitives(p5, fn){
    * </div>
    */
   fn.arc = function(x, y, w, h, start, stop, mode, detail) {
-    p5._validateParameters('arc', arguments);
+    // this.validate("p5.arc", arguments);
+    // p5._validateParameters('arc', arguments);
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
@@ -480,7 +481,7 @@ function primitives(p5, fn){
    *                         draw a stroke for a detail of more than 50.
    */
   fn.ellipse = function(x, y, w, h, detailX) {
-    p5._validateParameters('ellipse', arguments);
+    // p5._validateParameters('ellipse', arguments);
     return this._renderEllipse(...arguments);
   };
 
@@ -530,7 +531,7 @@ function primitives(p5, fn){
    * </div>
    */
   fn.circle = function(...args) {
-    p5._validateParameters('circle', args);
+    // p5._validateParameters('circle', args);
     const argss = args.slice( 0, 2);
     argss.push(args[2], args[2]);
     return this._renderEllipse(...argss);
@@ -710,7 +711,7 @@ function primitives(p5, fn){
    * @chainable
    */
   fn.line = function(...args) {
-    p5._validateParameters('line', args);
+    // p5._validateParameters('line', args);
 
     if (this._renderer.states.strokeColor) {
       this._renderer.line(...args);
@@ -894,7 +895,7 @@ function primitives(p5, fn){
    * @chainable
    */
   fn.point = function(...args) {
-    p5._validateParameters('point', args);
+    // p5._validateParameters('point', args);
 
     if (this._renderer.states.strokeColor) {
       if (args.length === 1 && args[0] instanceof p5.Vector) {
@@ -1055,7 +1056,7 @@ function primitives(p5, fn){
    * @chainable
    */
   fn.quad = function(...args) {
-    p5._validateParameters('quad', args);
+    // p5._validateParameters('quad', args);
 
     if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       if (this._renderer.isP3D && args.length < 12) {
@@ -1213,7 +1214,7 @@ function primitives(p5, fn){
    * @chainable
    */
   fn.rect = function(...args) {
-    p5._validateParameters('rect', args);
+    // p5._validateParameters('rect', args);
     return this._renderRect(...args);
   };
 
@@ -1327,7 +1328,7 @@ function primitives(p5, fn){
    * </div>
    */
   fn.square = function(x, y, s, tl, tr, br, bl) {
-    p5._validateParameters('square', arguments);
+    // p5._validateParameters('square', arguments);
     // duplicate width for height in case of square
     return this._renderRect.call(this, x, y, s, s, tl, tr, br, bl);
   };
@@ -1431,7 +1432,7 @@ function primitives(p5, fn){
    * </div>
    */
   fn.triangle = function(...args) {
-    p5._validateParameters('triangle', args);
+    // p5._validateParameters('triangle', args);
 
     if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       this._renderer.triangle(args);

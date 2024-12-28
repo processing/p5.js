@@ -741,7 +741,7 @@ function trigonometry(p5, fn){
    * @return {(RADIANS|DEGREES)} mode either RADIANS or DEGREES
    */
   fn.angleMode = function(mode) {
-    p5._validateParameters('angleMode', arguments);
+    // p5._validateParameters('angleMode', arguments);
     if (typeof mode === 'undefined') {
       return this._angleMode;
     } else if (mode === DEGREES || mode === RADIANS) {

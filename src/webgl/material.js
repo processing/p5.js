@@ -125,7 +125,7 @@ function material(p5, fn){
     successCallback,
     failureCallback
   ) {
-    p5._validateParameters('loadShader', arguments);
+    // p5._validateParameters('loadShader', arguments);
 
     const loadedShader = new Shader();
 
@@ -510,7 +510,7 @@ function material(p5, fn){
    * </div>
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
-    p5._validateParameters('createShader', arguments);
+    // p5._validateParameters('createShader', arguments);
     return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
   /**
@@ -549,7 +549,7 @@ function material(p5, fn){
    * @alt
    * A rectangle with a shader applied to it.
    */
-  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) { 
+  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
     p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
@@ -558,7 +558,7 @@ function material(p5, fn){
 
       // Create the shader using createFilterShader
       const loadedShader = this.createFilterShader(fragString, true);
-        
+
       if (successCallback) {
         successCallback(loadedShader);
       }
@@ -568,7 +568,7 @@ function material(p5, fn){
       if (failureCallback) {
         failureCallback(err);
       } else {
-        console.error(err); 
+        console.error(err);
       }
     }
   };
@@ -663,8 +663,8 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
-    p5._validateParameters('createFilterShader', arguments);
+  fn.createFilterShader = function (fragSrc) {
+    // p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
@@ -899,7 +899,7 @@ function material(p5, fn){
    */
   fn.shader = function (s) {
     this._assert3d('shader');
-    p5._validateParameters('shader', arguments);
+    // p5._validateParameters('shader', arguments);
 
     this._renderer.shader(s);
 
@@ -1072,7 +1072,7 @@ function material(p5, fn){
    */
   fn.strokeShader = function (s) {
     this._assert3d('strokeShader');
-    p5._validateParameters('strokeShader', arguments);
+    // p5._validateParameters('strokeShader', arguments);
 
     this._renderer.strokeShader(s);
 
@@ -1229,7 +1229,7 @@ function material(p5, fn){
    */
   fn.imageShader = function (s) {
     this._assert3d('imageShader');
-    p5._validateParameters('imageShader', arguments);
+    // p5._validateParameters('imageShader', arguments);
 
     this._renderer.imageShader(s);
 
@@ -2334,7 +2334,7 @@ function material(p5, fn){
    */
   fn.texture = function (tex) {
     this._assert3d('texture');
-    p5._validateParameters('texture', arguments);
+    // p5._validateParameters('texture', arguments);
 
     // NOTE: make generic or remove need for
     if (tex.gifProperties) {
@@ -2848,7 +2848,7 @@ function material(p5, fn){
    */
   fn.normalMaterial = function (...args) {
     this._assert3d('normalMaterial');
-    p5._validateParameters('normalMaterial', args);
+    // p5._validateParameters('normalMaterial', args);
 
     this._renderer.normalMaterial(...args);
 
@@ -3075,7 +3075,7 @@ function material(p5, fn){
    */
   fn.ambientMaterial = function (v1, v2, v3) {
     this._assert3d('ambientMaterial');
-    p5._validateParameters('ambientMaterial', arguments);
+    // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states._hasSetAmbient = true;
@@ -3171,7 +3171,7 @@ function material(p5, fn){
    */
   fn.emissiveMaterial = function (v1, v2, v3, a) {
     this._assert3d('emissiveMaterial');
-    p5._validateParameters('emissiveMaterial', arguments);
+    // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states.curEmissiveColor = color._array;
@@ -3426,7 +3426,7 @@ function material(p5, fn){
    */
   fn.specularMaterial = function (v1, v2, v3, alpha) {
     this._assert3d('specularMaterial');
-    p5._validateParameters('specularMaterial', arguments);
+    // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states.curSpecularColor = color._array;
@@ -3499,7 +3499,7 @@ function material(p5, fn){
    */
   fn.shininess = function (shine) {
     this._assert3d('shininess');
-    p5._validateParameters('shininess', arguments);
+    // p5._validateParameters('shininess', arguments);
 
     this._renderer.shininess(shine);
 
