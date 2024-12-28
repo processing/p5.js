@@ -451,7 +451,7 @@ function acceleration(p5, fn){
    */
 
   fn.setMoveThreshold = function (val) {
-    p5._validateParameters('setMoveThreshold', arguments);
+    // p5._validateParameters('setMoveThreshold', arguments);
     move_threshold = val;
   };
 
@@ -493,7 +493,7 @@ function acceleration(p5, fn){
    */
 
   fn.setShakeThreshold = function (val) {
-    p5._validateParameters('setShakeThreshold', arguments);
+    // p5._validateParameters('setShakeThreshold', arguments);
     shake_threshold = val;
   };
 

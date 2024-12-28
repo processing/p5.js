@@ -40,7 +40,7 @@ function typedDict(p5, fn){
    */
 
   fn.createStringDict = function (key, value) {
-    p5._validateParameters('createStringDict', arguments);
+    // p5._validateParameters('createStringDict', arguments);
     return new p5.StringDict(key, value);
   };
 
@@ -74,7 +74,7 @@ function typedDict(p5, fn){
    */
 
   fn.createNumberDict = function (key, value) {
-    p5._validateParameters('createNumberDict', arguments);
+    // p5._validateParameters('createNumberDict', arguments);
     return new p5.NumberDict(key, value);
   };
 

@@ -147,7 +147,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.constrain = function(n, low, high) {
-    p5._validateParameters('constrain', arguments);
+    // p5._validateParameters('constrain', arguments);
     return Math.max(Math.min(n, high), low);
   };
 
@@ -216,7 +216,7 @@ function calculation(p5, fn){
    * @return {Number}    distance between the two points.
    */
   fn.dist = function(...args) {
-    p5._validateParameters('dist', args);
+    // p5._validateParameters('dist', args);
     if (args.length === 4) {
       //2D
       return Math.hypot(args[2] - args[0], args[3] - args[1]);
@@ -417,7 +417,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.lerp = function(start, stop, amt) {
-    p5._validateParameters('lerp', arguments);
+    // p5._validateParameters('lerp', arguments);
     return amt * (stop - start) + start;
   };
 
@@ -528,7 +528,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.mag = function(x, y) {
-    p5._validateParameters('mag', arguments);
+    // p5._validateParameters('mag', arguments);
     return Math.hypot(x, y);
   };
 
@@ -604,7 +604,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
-    p5._validateParameters('map', arguments);
+    // p5._validateParameters('map', arguments);
     const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
     if (!withinBounds) {
       return newval;
@@ -821,7 +821,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.norm = function(n, start, stop) {
-    p5._validateParameters('norm', arguments);
+    // p5._validateParameters('norm', arguments);
     return this.map(n, start, stop, 0, 1);
   };
 
@@ -1094,7 +1094,7 @@ function calculation(p5, fn){
    * </div>
    */
   fn.fract = function(toConvert) {
-    p5._validateParameters('fract', arguments);
+    // p5._validateParameters('fract', arguments);
     let sign = 0;
     let num = Number(toConvert);
     if (isNaN(num) || Math.abs(num) === Infinity) {

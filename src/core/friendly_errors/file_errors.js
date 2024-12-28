@@ -2,12 +2,9 @@
  * @for p5
  * @requires core
  */
-import p5 from '../main';
 import { translator } from '../internationalization';
 
-if (typeof IS_MINIFIED !== 'undefined') {
-  p5._friendlyFileLoadError = () => {};
-} else {
+function fileErrors(p5, fn){
   // mapping used by `_friendlyFileLoadError`
   const fileLoadErrorCases = (num, filePath) => {
     const suggestion = translator('fes.fileLoadError.suggestion', {
@@ -76,6 +73,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         };
     }
   };
+
   /**
    * Called internally if there is an error during file loading.
    *
@@ -93,4 +91,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 }
 
-export default p5;
+export default fileErrors;
+
+if (typeof p5 !== 'undefined') {
+  fileErrors(p5, p5.prototype);
+}
