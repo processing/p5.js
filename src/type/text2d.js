@@ -103,8 +103,6 @@ function text2d(p5, fn) {
     textLeading: { default: 15 },
     textSize: { default: 12 },
     textWrap: { default: fn.WORD },
-
-    // added v2.0
     fontStretch: { default: fn.NORMAL, isShorthand: true },  // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
     fontWeight: { default: fn.NORMAL, isShorthand: true },   // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
     lineHeight: { default: fn.NORMAL, isShorthand: true },   // line-height: { default:  normal | number | length | percentage }
@@ -456,17 +454,28 @@ function text2d(p5, fn) {
       return this._pInst;
     }
 
-    // getter: get props from this.textDrawingContext()
+    // getter: get props from drawingContext
+    let context = this.textDrawingContext();
     properties = ContextTextProps.reduce((props, p) => {
-      props[p] = this.textDrawingContext()[p];
+      props[p] = context[p];
       return props;
     }, {});
 
-    // add renderer.states props
+    // add renderer props
     Object.keys(RendererTextProps).forEach(p => {
-      properties[p] = this.states[p];
       if (RendererTextProps[p]?.type === 'Context2d') {
-        properties[p] = this.textDrawingContext()[p];
+        properties[p] = context[p];
+      }
+      else { // a renderer.states property
+        if (p === 'textFont') {
+          // avoid circular ref. inside textFont
+          properties[p] = Object.assign({}, this._currentTextFont());
+          delete properties[p]._pInst;
+          console.log('textFont: ', properties[p]);
+        }
+        else {
+          properties[p] = this.states[p];
+        }
       }
     });
 
