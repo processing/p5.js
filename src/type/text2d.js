@@ -475,8 +475,12 @@ function text2d(p5, fn) {
       else { // a renderer.states property
         if (p === 'textFont') {
           // avoid circular ref. inside textFont
-          properties[p] = Object.assign({}, this._currentTextFont());
-          delete properties[p]._pInst;
+          let current = this._currentTextFont();
+          if (typeof current === 'object' && '_pInst' in current) {
+            current = Object.assign({}, current);
+            delete current._pInst;
+          }
+          properties[p] = current;
         }
         else {
           properties[p] = this.states[p];
