@@ -2,6 +2,8 @@
  * @for p5
  * @requires core
  */
+import p5 from '../main';
+
 // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
 // minor modifications. The license for the same and the code is included below
 
@@ -239,14 +241,7 @@ function ErrorStackParser() {
 // End borrow
 
 // wrapper exposing ErrorStackParser
-function stacktrace(p5, fn){
-  p5._getErrorStackParser = function getErrorStackParser() {
-    return new ErrorStackParser();
-  };
-}
-
-export default stacktrace;
-
-if (typeof p5 !== 'undefined') {
-  stacktrace(p5, p5.prototype);
-}
+p5._getErrorStackParser = function getErrorStackParser() {
+  return new ErrorStackParser();
+};
+export default p5;

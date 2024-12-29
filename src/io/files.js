@@ -291,7 +291,7 @@ function files(p5, fn){
    * </div>
    */
   fn.loadJSON = async function (path, successCallback, errorCallback) {
-    // p5._validateParameters('loadJSON', arguments);
+    p5._validateParameters('loadJSON', arguments);
 
     try{
       const { data } = await request(path, 'json');
@@ -438,7 +438,7 @@ function files(p5, fn){
    * </div>
    */
   fn.loadStrings = async function (path, successCallback, errorCallback) {
-    // p5._validateParameters('loadStrings', arguments);
+    p5._validateParameters('loadStrings', arguments);
 
     try{
       let { data } = await request(path, 'text');
@@ -853,7 +853,7 @@ function files(p5, fn){
    * @return {Promise}
    */
   fn.httpGet = async function (path, datatype='text', successCallback, errorCallback) {
-    // p5._validateParameters('httpGet', arguments);
+    p5._validateParameters('httpGet', arguments);
 
     if (typeof datatype === 'function') {
       errorCallback = successCallback;
@@ -950,7 +950,7 @@ function files(p5, fn){
    * @return {Promise}
    */
   fn.httpPost = async function (path, data, datatype='text', successCallback, errorCallback) {
-    // p5._validateParameters('httpPost', arguments);
+    p5._validateParameters('httpPost', arguments);
 
     // This behave similarly to httpGet and additional options should be passed
     // as a `Request`` to path. Both method and body will be overridden.
@@ -1812,7 +1812,7 @@ function files(p5, fn){
    * </div>
    */
   fn.saveJSON = function (json, filename, optimize) {
-    // p5._validateParameters('saveJSON', arguments);
+    p5._validateParameters('saveJSON', arguments);
     let stringify;
     if (optimize) {
       stringify = JSON.stringify(json);
@@ -1956,7 +1956,7 @@ function files(p5, fn){
    * </div>
    */
   fn.saveStrings = function (list, filename, extension, isCRLF) {
-    // p5._validateParameters('saveStrings', arguments);
+    p5._validateParameters('saveStrings', arguments);
     const ext = extension || 'txt';
     const pWriter = new p5.PrintWriter(filename, ext);
     for (let item of list) {
@@ -2018,7 +2018,7 @@ function files(p5, fn){
    * </code></div>
    */
   fn.saveTable = function (table, filename, options) {
-    // p5._validateParameters('saveTable', arguments);
+    p5._validateParameters('saveTable', arguments);
     let ext;
     if (options === undefined) {
       ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);

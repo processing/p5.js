@@ -148,7 +148,7 @@ function image(p5, fn){
    * </div>
    */
   fn.createImage = function(width, height) {
-    // p5._validateParameters('createImage', arguments);
+    p5._validateParameters('createImage', arguments);
     return new p5.Image(width, height);
   };
 
@@ -272,7 +272,7 @@ function image(p5, fn){
    *  @param  {String} [extension]
    */
   fn.saveCanvas = function(...args) {
-    // p5._validateParameters('saveCanvas', args);
+    p5._validateParameters('saveCanvas', args);
 
     // copy arguments to array
     let htmlCanvas, filename, extension, temporaryGraphics;
@@ -658,7 +658,7 @@ function image(p5, fn){
    * </div>
    */
   fn.saveFrames = function(fName, ext, _duration, _fps, callback) {
-    // p5._validateParameters('saveFrames', arguments);
+    p5._validateParameters('saveFrames', arguments);
     let duration = _duration || 3;
     duration = Math.max(Math.min(duration, 15), 0);
     duration = duration * 1000;

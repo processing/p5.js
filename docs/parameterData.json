@@ -374,7 +374,7 @@
         [
           "Number?",
           "Number?",
-          "String?",
+          "P2D|WEBGL?",
           "HTMLCanvasElement?"
         ],
         [

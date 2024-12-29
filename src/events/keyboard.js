@@ -903,7 +903,7 @@ function keyboard(p5, fn){
    * </div>
    */
   fn.keyIsDown = function(code) {
-    // p5._validateParameters('keyIsDown', arguments);
+    p5._validateParameters('keyIsDown', arguments);
     return this._downKeys[code] || false;
   };
 

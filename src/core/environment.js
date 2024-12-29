@@ -407,7 +407,7 @@ function environment(p5, fn){
    * @return {Number}       current frame rate.
    */
   fn.frameRate = function(fps) {
-    // p5._validateParameters('frameRate', arguments);
+    p5._validateParameters('frameRate', arguments);
     if (typeof fps !== 'number' || fps < 0) {
       return this._frameRate;
     } else {
@@ -992,7 +992,7 @@ function environment(p5, fn){
    * </div>
    */
   fn.fullscreen = function(val) {
-    // p5._validateParameters('fullscreen', arguments);
+    p5._validateParameters('fullscreen', arguments);
     // no arguments, return fullscreen or not
     if (typeof val === 'undefined') {
       return (
@@ -1070,7 +1070,7 @@ function environment(p5, fn){
    * @returns {Number} current pixel density of the sketch.
    */
   fn.pixelDensity = function(val) {
-    // p5._validateParameters('pixelDensity', arguments);
+    p5._validateParameters('pixelDensity', arguments);
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._renderer._pixelDensity) {

@@ -191,7 +191,7 @@ function light(p5, fn){
    */
   fn.ambientLight = function (v1, v2, v3, a) {
     this._assert3d('ambientLight');
-    // p5._validateParameters('ambientLight', arguments);
+    p5._validateParameters('ambientLight', arguments);
 
     this._renderer.ambientLight(...arguments);
 
@@ -442,7 +442,7 @@ function light(p5, fn){
    */
   fn.specularColor = function (v1, v2, v3) {
     this._assert3d('specularColor');
-    // p5._validateParameters('specularColor', arguments);
+    p5._validateParameters('specularColor', arguments);
 
     this._renderer.specularColor(...arguments);
 
@@ -629,7 +629,7 @@ function light(p5, fn){
    */
   fn.directionalLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('directionalLight');
-    // p5._validateParameters('directionalLight', arguments);
+    p5._validateParameters('directionalLight', arguments);
 
     //@TODO: check parameters number
     this._renderer.directionalLight(...arguments);
@@ -872,7 +872,7 @@ function light(p5, fn){
    */
   fn.pointLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('pointLight');
-    // p5._validateParameters('pointLight', arguments);
+    p5._validateParameters('pointLight', arguments);
 
     //@TODO: check parameters number
     this._renderer.pointLight(...arguments);
@@ -1151,7 +1151,7 @@ function light(p5, fn){
     quadraticAttenuation
   ) {
     this._assert3d('lightFalloff');
-    // p5._validateParameters('lightFalloff', arguments);
+    p5._validateParameters('lightFalloff', arguments);
 
     this._renderer.lightFalloff(
       constantAttenuation,
@@ -1378,7 +1378,7 @@ function light(p5, fn){
     concentration
   ) {
     this._assert3d('spotLight');
-    // p5._validateParameters('spotLight', arguments);
+    p5._validateParameters('spotLight', arguments);
 
     this._renderer.spotLight(...arguments);
 
@@ -1445,7 +1445,7 @@ function light(p5, fn){
    */
   fn.noLights = function (...args) {
     this._assert3d('noLights');
-    // p5._validateParameters('noLights', args);
+    p5._validateParameters('noLights', args);
 
     this._renderer.noLights();
 

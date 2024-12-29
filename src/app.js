@@ -1,10 +1,10 @@
 // core
 import p5 from './core/main';
-// import './core/friendly_errors/stacktrace';
-// import './core/friendly_errors/validate_params';
-// import './core/friendly_errors/file_errors';
-// import './core/friendly_errors/fes_core';
-// import './core/friendly_errors/sketch_reader';
+import './core/friendly_errors/stacktrace';
+import './core/friendly_errors/validate_params';
+import './core/friendly_errors/file_errors';
+import './core/friendly_errors/fes_core';
+import './core/friendly_errors/sketch_reader';
 import shape from './shape';
 shape(p5);
 
@@ -61,8 +61,6 @@ webgl(p5);
 import type from './type'
 type(p5);
 
-import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
-Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+import './core/init';
 
 export default p5;
-

@@ -85,7 +85,7 @@ function attributes(p5, fn){
    * </div>
    */
   fn.ellipseMode = function(m) {
-    // p5._validateParameters('ellipseMode', arguments);
+    p5._validateParameters('ellipseMode', arguments);
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -288,7 +288,7 @@ function attributes(p5, fn){
    * </div>
    */
   fn.rectMode = function(m) {
-    // p5._validateParameters('rectMode', arguments);
+    p5._validateParameters('rectMode', arguments);
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -427,7 +427,7 @@ function attributes(p5, fn){
    * </div>
    */
   fn.strokeCap = function(cap) {
-    // p5._validateParameters('strokeCap', arguments);
+    p5._validateParameters('strokeCap', arguments);
     if (
       cap === constants.ROUND ||
       cap === constants.SQUARE ||
@@ -526,7 +526,7 @@ function attributes(p5, fn){
    * </div>
    */
   fn.strokeJoin = function(join) {
-    // p5._validateParameters('strokeJoin', arguments);
+    p5._validateParameters('strokeJoin', arguments);
     if (
       join === constants.ROUND ||
       join === constants.BEVEL ||
@@ -593,7 +593,7 @@ function attributes(p5, fn){
    * </div>
    */
   fn.strokeWeight = function(w) {
-    // p5._validateParameters('strokeWeight', arguments);
+    p5._validateParameters('strokeWeight', arguments);
     this._renderer.strokeWeight(w);
     return this;
   };

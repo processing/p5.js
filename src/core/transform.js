@@ -461,7 +461,7 @@ function transform(p5, fn){
    * </div>
    */
   fn.rotate = function(angle, axis) {
-    // p5._validateParameters('rotate', arguments);
+    p5._validateParameters('rotate', arguments);
     this._renderer.rotate(this._toRadians(angle), axis);
     return this;
   };
@@ -597,7 +597,7 @@ function transform(p5, fn){
    */
   fn.rotateX = function(angle) {
     this._assert3d('rotateX');
-    // p5._validateParameters('rotateX', arguments);
+    p5._validateParameters('rotateX', arguments);
     this._renderer.rotateX(this._toRadians(angle));
     return this;
   };
@@ -733,7 +733,7 @@ function transform(p5, fn){
    */
   fn.rotateY = function(angle) {
     this._assert3d('rotateY');
-    // p5._validateParameters('rotateY', arguments);
+    p5._validateParameters('rotateY', arguments);
     this._renderer.rotateY(this._toRadians(angle));
     return this;
   };
@@ -869,7 +869,7 @@ function transform(p5, fn){
    */
   fn.rotateZ = function(angle) {
     this._assert3d('rotateZ');
-    // p5._validateParameters('rotateZ', arguments);
+    p5._validateParameters('rotateZ', arguments);
     this._renderer.rotateZ(this._toRadians(angle));
     return this;
   };
@@ -1041,7 +1041,7 @@ function transform(p5, fn){
    * @chainable
    */
   fn.scale = function(x, y, z) {
-    // p5._validateParameters('scale', arguments);
+    p5._validateParameters('scale', arguments);
     // Only check for Vector argument type if Vector is available
     if (x instanceof p5.Vector) {
       const v = x;
@@ -1136,7 +1136,7 @@ function transform(p5, fn){
    * </div>
    */
   fn.shearX = function(angle) {
-    // p5._validateParameters('shearX', arguments);
+    p5._validateParameters('shearX', arguments);
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
     return this;
@@ -1213,7 +1213,7 @@ function transform(p5, fn){
    * </div>
    */
   fn.shearY = function(angle) {
-    // p5._validateParameters('shearY', arguments);
+    p5._validateParameters('shearY', arguments);
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
     return this;
@@ -1396,7 +1396,7 @@ function transform(p5, fn){
    * @chainable
    */
   fn.translate = function(x, y, z) {
-    // p5._validateParameters('translate', arguments);
+    p5._validateParameters('translate', arguments);
     if (this._renderer.isP3D) {
       this._renderer.translate(x, y, z);
     } else {

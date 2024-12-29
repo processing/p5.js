@@ -169,7 +169,7 @@ function interaction(p5, fn){
     options
   ) {
     this._assert3d('orbitControl');
-    // p5._validateParameters('orbitControl', arguments);
+    p5._validateParameters('orbitControl', arguments);
 
     const cam = this._renderer.states.curCamera;
 
@@ -687,7 +687,7 @@ function interaction(p5, fn){
 
   fn.debugMode = function(...args) {
     this._assert3d('debugMode');
-    // p5._validateParameters('debugMode', args);
+    p5._validateParameters('debugMode', args);
 
     // start by removing existing 'post' registered debug methods
     for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {

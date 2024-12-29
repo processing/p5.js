@@ -335,7 +335,7 @@ function loading(p5, fn){
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
   fn.loadModel = async function (path, fileType, normalize, successCallback, failureCallback) {
-    // p5._validateParameters('loadModel', arguments);
+    p5._validateParameters('loadModel', arguments);
 
     let flipU = false;
     let flipV = false;
@@ -1086,7 +1086,7 @@ function loading(p5, fn){
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');
-    // p5._validateParameters('model', arguments);
+    p5._validateParameters('model', arguments);
     if (model.vertices.length > 0) {
       if (!this._renderer.geometryInHash(model.gid)) {
 

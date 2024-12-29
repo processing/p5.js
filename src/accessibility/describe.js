@@ -118,7 +118,7 @@ function describe(p5, fn){
    */
 
   fn.describe = function(text, display) {
-    // p5._validateParameters('describe', arguments);
+    p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
     }
@@ -244,7 +244,7 @@ function describe(p5, fn){
    */
 
   fn.describeElement = function(name, text, display) {
-    // p5._validateParameters('describeElement', arguments);
+    p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
     }

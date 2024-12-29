@@ -949,7 +949,7 @@ function setting(p5, fn){
    * @return {String}      The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
-    // p5._validateParameters('colorMode', arguments);
+    p5._validateParameters('colorMode', arguments);
     if (
       [
         RGB,
@@ -2184,7 +2184,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.blendMode = function (mode) {
-    // p5._validateParameters('blendMode', arguments);
+    p5._validateParameters('blendMode', arguments);
     if (mode === constants.NORMAL) {
       // Warning added 3/26/19, can be deleted in future (1.0 release?)
       console.warn(

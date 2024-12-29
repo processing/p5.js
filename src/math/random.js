@@ -261,7 +261,7 @@ function random(p5, fn){
    * @return {*} random element from the array.
    */
   fn.random = function(min, max) {
-    // p5._validateParameters('random', arguments);
+    p5._validateParameters('random', arguments);
     let rand;
 
     if (this[randomStateProp] != null) {

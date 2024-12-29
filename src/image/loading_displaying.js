@@ -107,7 +107,7 @@ function loadingDisplaying(p5, fn){
     successCallback,
     failureCallback
   ) {
-    // p5._validateParameters('loadImage', arguments);
+    p5._validateParameters('loadImage', arguments);
 
     try{
       let pImg = new p5.Image(1, 1, this);
@@ -1063,7 +1063,7 @@ function loadingDisplaying(p5, fn){
   ) {
     // set defaults per spec: https://goo.gl/3ykfOq
 
-    // p5._validateParameters('image', arguments);
+    p5._validateParameters('image', arguments);
 
     let defW = img.width;
     let defH = img.height;
@@ -1291,7 +1291,7 @@ function loadingDisplaying(p5, fn){
    * @param  {p5.Color}      color   the tint color
    */
   fn.tint = function(...args) {
-    // p5._validateParameters('tint', args);
+    p5._validateParameters('tint', args);
     const c = this.color(...args);
     this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
   };
@@ -1445,7 +1445,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.imageMode = function(m) {
-    // p5._validateParameters('imageMode', arguments);
+    p5._validateParameters('imageMode', arguments);
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||

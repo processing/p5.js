@@ -99,7 +99,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.select = function (e, p) {
-    // p5._validateParameters('select', arguments);
+    p5._validateParameters('select', arguments);
     const container = this._getContainer(p);
     const res = container.querySelector(e);
     if (res) {
@@ -193,7 +193,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.selectAll = function (e, p) {
-    // p5._validateParameters('selectAll', arguments);
+    p5._validateParameters('selectAll', arguments);
     const arr = [];
     const container = this._getContainer(p);
     const res = container.querySelectorAll(e);
@@ -306,7 +306,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createElement = function (tag, content) {
-    // p5._validateParameters('createElement', arguments);
+    p5._validateParameters('createElement', arguments);
     const elt = document.createElement(tag);
     if (typeof content !== 'undefined') {
       elt.innerHTML = content;
@@ -381,7 +381,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.removeElements = function (e) {
-    // p5._validateParameters('removeElements', arguments);
+    p5._validateParameters('removeElements', arguments);
     // el.remove splices from this._elements, so don't mix iteration with it
     const isNotCanvasElement = el => !(el.elt instanceof HTMLCanvasElement);
     const removeableElements = this._elements.filter(isNotCanvasElement);
@@ -613,7 +613,7 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    */
   fn.createImg = function () {
-    // p5._validateParameters('createImg', arguments);
+    p5._validateParameters('createImg', arguments);
     const elt = document.createElement('img');
     const args = arguments;
     let self;
@@ -689,7 +689,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createA = function (href, html, target) {
-    // p5._validateParameters('createA', arguments);
+    p5._validateParameters('createA', arguments);
     const elt = document.createElement('a');
     elt.href = href;
     elt.innerHTML = html;
@@ -819,7 +819,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createSlider = function (min, max, value, step) {
-    // p5._validateParameters('createSlider', arguments);
+    p5._validateParameters('createSlider', arguments);
     const elt = document.createElement('input');
     elt.type = 'range';
     elt.min = min;
@@ -910,7 +910,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createButton = function (label, value) {
-    // p5._validateParameters('createButton', arguments);
+    p5._validateParameters('createButton', arguments);
     const elt = document.createElement('button');
     elt.innerHTML = label;
     if (value) elt.value = value;
@@ -1014,7 +1014,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createCheckbox = function (...args) {
-    // p5._validateParameters('createCheckbox', args);
+    p5._validateParameters('createCheckbox', args);
 
     // Create a container element
     const elt = document.createElement('div');
@@ -1241,7 +1241,7 @@ function dom(p5, fn){
    */
 
   fn.createSelect = function (...args) {
-    // p5._validateParameters('createSelect', args);
+    p5._validateParameters('createSelect', args);
     let self;
     let arg = args[0];
     if (arg instanceof Element && arg.elt instanceof HTMLSelectElement) {
@@ -1715,7 +1715,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createColorPicker = function (value) {
-    // p5._validateParameters('createColorPicker', arguments);
+    p5._validateParameters('createColorPicker', arguments);
     // TODO: This implementation needs to be rechecked or reimplemented
     // The way it worked with color is a bit too complex
     const elt = document.createElement('input');
@@ -1826,7 +1826,7 @@ function dom(p5, fn){
    * @return {p5.Element}
    */
   fn.createInput = function (value = '', type = 'text') {
-    // p5._validateParameters('createInput', arguments);
+    p5._validateParameters('createInput', arguments);
     let elt = document.createElement('input');
     elt.setAttribute('value', value);
     elt.setAttribute('type', type);
@@ -1936,7 +1936,7 @@ function dom(p5, fn){
    * </div>
    */
   fn.createFileInput = function (callback, multiple = false) {
-    // p5._validateParameters('createFileInput', arguments);
+    p5._validateParameters('createFileInput', arguments);
 
     const handleFileSelect = function (event) {
       for (const file of event.target.files) {

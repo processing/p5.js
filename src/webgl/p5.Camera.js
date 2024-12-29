@@ -3182,7 +3182,7 @@ function camera(p5, fn){
    */
   fn.camera = function (...args) {
     this._assert3d('camera');
-    // p5._validateParameters('camera', args);
+    p5._validateParameters('camera', args);
     this._renderer.camera(...args);
     return this;
   };
@@ -3313,7 +3313,7 @@ function camera(p5, fn){
    */
   fn.perspective = function (...args) {
     this._assert3d('perspective');
-    // p5._validateParameters('perspective', args);
+    p5._validateParameters('perspective', args);
     this._renderer.perspective(...args);
     return this;
   };
@@ -3437,7 +3437,7 @@ function camera(p5, fn){
    */
 
   fn.linePerspective = function (enable) {
-    // p5._validateParameters('linePerspective', arguments);
+    p5._validateParameters('linePerspective', arguments);
     if (!(this._renderer instanceof RendererGL)) {
       throw new Error('linePerspective() must be called in WebGL mode.');
     }
@@ -3550,7 +3550,7 @@ function camera(p5, fn){
    */
   fn.ortho = function (...args) {
     this._assert3d('ortho');
-    // p5._validateParameters('ortho', args);
+    p5._validateParameters('ortho', args);
     this._renderer.ortho(...args);
     return this;
   };
@@ -3662,7 +3662,7 @@ function camera(p5, fn){
    */
   fn.frustum = function (...args) {
     this._assert3d('frustum');
-    // p5._validateParameters('frustum', args);
+    p5._validateParameters('frustum', args);
     this._renderer.frustum(...args);
     return this;
   };

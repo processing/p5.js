@@ -554,7 +554,7 @@ function primitives3D(p5, fn){
     detailY = 1
   ) {
     this._assert3d('plane');
-    // p5._validateParameters('plane', arguments);
+    p5._validateParameters('plane', arguments);
 
     this._renderer.plane(width, height, detailX, detailY);
     return this;
@@ -691,7 +691,7 @@ function primitives3D(p5, fn){
    */
   fn.box = function(width, height, depth, detailX, detailY) {
     this._assert3d('box');
-    // p5._validateParameters('box', arguments);
+    p5._validateParameters('box', arguments);
 
     this._renderer.box(width, height, depth, detailX, detailY);
 
@@ -823,7 +823,7 @@ function primitives3D(p5, fn){
    */
   fn.sphere = function(radius = 50, detailX = 24, detailY = 16) {
     this._assert3d('sphere');
-    // p5._validateParameters('sphere', arguments);
+    p5._validateParameters('sphere', arguments);
 
     this._renderer.sphere(radius, detailX, detailY);
 
@@ -1051,7 +1051,7 @@ function primitives3D(p5, fn){
     topCap = true
   ) {
     this._assert3d('cylinder');
-    // p5._validateParameters('cylinder', arguments);
+    p5._validateParameters('cylinder', arguments);
 
     this._renderer.cylinder(radius, height, detailX, detailY, bottomCap, topCap);
 
@@ -1271,7 +1271,7 @@ function primitives3D(p5, fn){
     cap = true
   ) {
     this._assert3d('cone');
-    // p5._validateParameters('cone', arguments);
+    p5._validateParameters('cone', arguments);
 
     this._renderer.cone(radius, height, detailX, detailY, cap);
 
@@ -1454,7 +1454,7 @@ function primitives3D(p5, fn){
     detailY = 16
   ) {
     this._assert3d('ellipsoid');
-    // p5._validateParameters('ellipsoid', arguments);
+    p5._validateParameters('ellipsoid', arguments);
 
     this._renderer.ellipsoid(radiusX, radiusY, radiusZ, detailX, detailY);
 
@@ -1613,7 +1613,7 @@ function primitives3D(p5, fn){
    */
   fn.torus = function(radius, tubeRadius, detailX, detailY) {
     this._assert3d('torus');
-    // p5._validateParameters('torus', arguments);
+    p5._validateParameters('torus', arguments);
 
     this._renderer.torus(radius, tubeRadius, detailX, detailY);
 
