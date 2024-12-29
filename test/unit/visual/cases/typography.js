@@ -118,8 +118,6 @@ visualSuite("Typography", function () {
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.background(255);
         p5.textFont(font);
-        console.log(p5.textProperties());
-        
         p5.textAlign(p5.LEFT, p5.TOP);
         p5.textSize(35);
         p5.textWeight(weight);

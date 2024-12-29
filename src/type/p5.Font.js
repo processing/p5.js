@@ -526,6 +526,7 @@ function font(p5, fn) {
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
    */
+
   p5.prototype.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
     let { path, name, success, error, descriptors } = parseCreateArgs(...args);
@@ -572,7 +573,7 @@ function font(p5, fn) {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
       //console.log('result:', result);
-      
+
       if (!result) {
         throw Error('Failed to load font data');
       }
@@ -597,11 +598,15 @@ function font(p5, fn) {
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
-      let ident = name || path.substring(path.lastIndexOf('/') + 1); 
+      let ident = name || path
+        .substring(path.lastIndexOf('/') + 1)
+        .replace(/\.[^/.]+$/, "");
+
       console.warn(`WARN: No glyph data for '${ident}', retrying as FontFace`);
+
       try {
         // create a FontFace object and pass it to p5.Font
-        pfont = await create(this, name, path, descriptors);
+        pfont = await create(this, ident, path, descriptors);
       }
       catch (err) {
         if (error) error(err);
