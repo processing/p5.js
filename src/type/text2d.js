@@ -446,6 +446,10 @@ function text2d(p5, fn) {
    * Batch set/get text properties for the renderer.
    * The properties can be either on `states` or `drawingContext`
    */
+  /**
+   * Batch set/get text properties for the renderer.
+   * The properties can be either on `states` or `drawingContext`
+   */
   Renderer.prototype.textProperties = function (properties) {
 
     // setter
@@ -456,17 +460,27 @@ function text2d(p5, fn) {
       return this._pInst;
     }
 
-    // getter: get props from this.textDrawingContext()
+    // getter: get props from drawingContext
+    let context = this.textDrawingContext();
     properties = ContextTextProps.reduce((props, p) => {
-      props[p] = this.textDrawingContext()[p];
+      props[p] = context[p];
       return props;
     }, {});
 
-    // add renderer.states props
+    // add renderer props
     Object.keys(RendererTextProps).forEach(p => {
-      properties[p] = this.states[p];
       if (RendererTextProps[p]?.type === 'Context2d') {
-        properties[p] = this.textDrawingContext()[p];
+        properties[p] = context[p];
+      }
+      else { // a renderer.states property
+        if (p === 'textFont') {
+          // avoid circular ref. inside textFont
+          properties[p] = Object.assign({}, this._currentTextFont());
+          delete properties[p]._pInst;
+        }
+        else {
+          properties[p] = this.states[p];
+        }
       }
     });
 
