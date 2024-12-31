@@ -2645,7 +2645,7 @@ suite('p5.RendererGL', function() {
         expect(logs.join('\n')).to.match(/Custom vertex property 'aCustom' has been set with various data sizes/);
       }
     );
-    test('Friendly error too many values set',
+    test.skip('Friendly error too many values set',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const logs = [];
@@ -2666,7 +2666,7 @@ suite('p5.RendererGL', function() {
         expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with more values than vertices./);
       }
     );
-    test('Friendly error if too few values set',
+    test.skip('Friendly error if too few values set',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const logs = [];

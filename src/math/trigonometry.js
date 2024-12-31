@@ -9,8 +9,8 @@
 import * as constants from '../core/constants';
 
 function trigonometry(p5, fn){
-  const DEGREES = fn.DEGREES = Symbol('degrees');
-  const RADIANS = fn.RADIANS = Symbol('radians');
+  const DEGREES = fn.DEGREES = 'degrees';
+  const RADIANS = fn.RADIANS = 'radians';
 
   /*
    * all DEGREES/RADIANS conversion should be done in the p5 instance
