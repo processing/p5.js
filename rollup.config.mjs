@@ -3,7 +3,7 @@ import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
 import dayjs from 'dayjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
