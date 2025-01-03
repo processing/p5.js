@@ -26,6 +26,8 @@ import './p5.Geometry';
  * `loadModel('assets/model.obj')`. URLs such as
  * `'https://example.com/model.obj'` may be blocked due to browser security.
  *
+ * Note: Currently there is no support for `.lib` files. Only `.mtl` files are supported for defining materials.
+ * 
  * The first way to call `loadModel()` has three optional parameters after the
  * file path. The first optional parameter, `successCallback`, is a function
  * to call once the model loads. For example,
