@@ -8,8 +8,8 @@ class ComputeShader {
     }
 
     this.particleCount = config.particleCount || 1000;
-    this.particleStruct = config.particleStruct;
-    this.computeFunction = config.computeFunction;
+    this.particleStruct = config.particleStruct || {};
+    this.computeFunction = config.computeFunction || '';
     
     this._initCapabilities();
     this._initShaders();
@@ -69,6 +69,11 @@ class ComputeShader {
       struct Particle {
 ${structFields}
       };
+
+      // Custom random function for the shader
+      float rand(vec2 co) {
+        return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+      }
 
       ${this._generateReadParticleFunction(floatsPerParticle, pixelsPerParticle)}
       ${this._generateWriteParticleFunction(floatsPerParticle, pixelsPerParticle)}
@@ -154,8 +159,8 @@ ${structFields}
   _initFramebuffers() {
     const floatsPerParticle = Object.values(this.particleStruct).reduce((sum, type) => sum + (type === 'float' ? 1 : parseInt(type.slice(3))), 0);
     const pixelsPerParticle = Math.ceil(floatsPerParticle / 4);
-    this.textureWidth = Math.ceil(Math.sqrt(this.particleCount * pixelsPerParticle));
-    this.textureHeight = Math.ceil((this.particleCount * pixelsPerParticle) / this.textureWidth);
+    this.textureWidth = this.particleCount * pixelsPerParticle;
+    this.textureHeight = 1;
 
     const options = {
       format: this.p5.RGBA,
@@ -251,7 +256,7 @@ ${structFields}
     
     return particles;
   }
-}
+} 
 
 function computeShaderAdditions(p5, fn) {
   p5.ComputeShader = ComputeShader;
