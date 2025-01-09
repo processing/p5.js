@@ -46,7 +46,7 @@ import p5 from '../core/main';
  * ```glsl
  * void main() {
  *   HOOK_beforeVertex();
- *   // Add the rest ofy our shader code here!
+ *   // Add the rest of our shader code here!
  * }
  * ```
  *
