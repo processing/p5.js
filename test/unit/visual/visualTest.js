@@ -86,7 +86,7 @@ export async function checkMatch(actual, expected, p5) {
   // Long screenshots end up super tiny when fit to a small square, so we
   // can double the max side length for these
   const ratio = expected.width / expected.height;
-  const narrow = ratio < 0.5 || ratio > 2;
+  const narrow = ratio !== 1;
   if (narrow) {
     scale *= 2;
   }
