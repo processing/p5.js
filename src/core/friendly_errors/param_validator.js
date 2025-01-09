@@ -16,7 +16,16 @@ function validateParams(p5, fn, lifecycles) {
   //   - Graphics: f()
   //   - Vector: f()
   // and so on.
-  const p5Constructors = {};
+  // const p5Constructors = {};
+  // NOTE: This is a tempt fix for unit test but is not correct
+  // Attaced constructors are `undefined`
+  const p5Constructors = Object.keys(dataDoc).reduce((acc, val) => {
+    if (val !== 'p5') {
+      const className = val.substring(3);
+      acc[className] = p5[className];
+    }
+    return acc;
+  }, {});
 
   function loadP5Constructors() {
     // Make a list of all p5 classes to be used for argument validation
@@ -379,7 +388,7 @@ function validateParams(p5, fn, lifecycles) {
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
         const position = error.path.join('.');
 
-        message = buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+        message += buildTypeMismatchMessage(actualType, expectedTypesStr, position);
       }
 
       return message;
@@ -457,7 +466,7 @@ function validateParams(p5, fn, lifecycles) {
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
     if (Array.isArray(args) && args.every(arg => arg === undefined)) {
-      const undefinedErrorMessage = `All arguments for ${func}() are undefined. There is likely an error in the code.`;
+      const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
         success: false,

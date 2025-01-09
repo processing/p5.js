@@ -403,7 +403,7 @@
         [
           "Number",
           "Number",
-          "P2D|WEBGL?",
+          "String?",
           "HTMLCanvasElement?"
         ],
         [
@@ -1564,7 +1564,7 @@
           "String",
           "Number",
           "Number",
-          "undefined?"
+          "Function?"
         ]
       ]
     },
@@ -1572,8 +1572,8 @@
       "overloads": [
         [
           "String",
-          "undefined?",
-          "undefined?"
+          "Function?",
+          "Function?"
         ]
       ]
     },
@@ -2982,21 +2982,21 @@
         [
           "String",
           "Boolean",
-          "undefined?",
-          "undefined?",
+          "Function?",
+          "Function?",
           "String?"
         ],
         [
           "String",
-          "undefined?",
-          "undefined?",
+          "Function?",
+          "Function?",
           "String?"
         ],
         [
           "String",
           "Object?",
-          "undefined?",
-          "undefined?",
+          "Function?",
+          "Function?",
           "String?",
           "Boolean?",
           "Boolean?",

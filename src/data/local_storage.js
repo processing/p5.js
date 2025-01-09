@@ -296,7 +296,7 @@ function storage(p5, fn){
           value = JSON.parse(value);
           break;
         case 'p5.Color':
-          value = this.color(value);
+          value = this.color(JSON.parse(value));
           break;
         case 'p5.Vector':
           value = JSON.parse(value);

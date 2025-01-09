@@ -663,7 +663,7 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.createFilterShader = function (fragSrc) {
+  fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     // p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;

@@ -35,6 +35,7 @@
     "pako": "^2.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -43,7 +44,6 @@
     "@vitest/browser": "^2.1.5",
     "all-contributors-cli": "^6.19.0",
     "concurrently": "^8.2.2",
-    "connect-modrewrite": "^0.10.1",
     "dayjs": "^1.11.10",
     "documentation": "^14.0.3",
     "eslint": "^8.54.0",
@@ -55,8 +55,6 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
-    "typescript": "^5.5.4",
-    "unplugin-swc": "^1.4.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.1.5",
