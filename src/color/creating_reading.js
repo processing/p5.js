@@ -349,7 +349,7 @@ function creatingReading(p5, fn){
    * @return {p5.Color}
    */
   fn.color = function(...args) {
-    p5._validateParameters('color', args);
+    // p5._validateParameters('color', args);
     if (args[0] instanceof Color) {
       // TODO: perhaps change color mode to match instance mode?
       return args[0]; // Do nothing if argument is already a color object.
@@ -495,7 +495,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.red = function(c) {
-    p5._validateParameters('red', arguments);
+    // p5._validateParameters('red', arguments);
     // Get current red max
     return this.color(c)._getRed();
   };
@@ -632,7 +632,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.green = function(c) {
-    p5._validateParameters('green', arguments);
+    // p5._validateParameters('green', arguments);
     // Get current green max
     return this.color(c)._getGreen();
   };
@@ -769,7 +769,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.blue = function(c) {
-    p5._validateParameters('blue', arguments);
+    // p5._validateParameters('blue', arguments);
     // Get current blue max
     return this.color(c)._getBlue();
   };
@@ -871,7 +871,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.alpha = function(c) {
-    p5._validateParameters('alpha', arguments);
+    // p5._validateParameters('alpha', arguments);
     // Get current alpha max
     return this.color(c)._getAlpha();
   };
@@ -993,7 +993,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.hue = function(c) {
-    p5._validateParameters('hue', arguments);
+    // p5._validateParameters('hue', arguments);
     return this.color(c)._getHue();
   };
 
@@ -1170,7 +1170,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.saturation = function(c) {
-    p5._validateParameters('saturation', arguments);
+    // p5._validateParameters('saturation', arguments);
     return this.color(c)._getSaturation();
   };
 
@@ -1315,7 +1315,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.brightness = function(c) {
-    p5._validateParameters('brightness', arguments);
+    // p5._validateParameters('brightness', arguments);
     return this.color(c)._getBrightness();
   };
 
@@ -1460,7 +1460,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.lightness = function(c) {
-    p5._validateParameters('lightness', arguments);
+    // p5._validateParameters('lightness', arguments);
     return this.color(c)._getLightness();
   };
 
@@ -1524,7 +1524,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.lerpColor = function(c1, c2, amt) {
-    p5._validateParameters('lerpColor', arguments);
+    // p5._validateParameters('lerpColor', arguments);
     return c1.lerp(c2, amt, this._renderer.states.colorMode);
   };
 }

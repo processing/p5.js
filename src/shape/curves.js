@@ -201,7 +201,7 @@ function curves(p5, fn){
    * @chainable
    */
   fn.bezier = function(...args) {
-    p5._validateParameters('bezier', args);
+    // p5._validateParameters('bezier', args);
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
@@ -312,7 +312,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.bezierDetail = function(d) {
-    p5._validateParameters('bezierDetail', arguments);
+    // p5._validateParameters('bezierDetail', arguments);
     this._bezierDetail = d;
     return this;
   };
@@ -432,7 +432,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.bezierPoint = function(a, b, c, d, t) {
-    p5._validateParameters('bezierPoint', arguments);
+    // p5._validateParameters('bezierPoint', arguments);
 
     const adjustedT = 1 - t;
     return (
@@ -550,7 +550,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.bezierTangent = function(a, b, c, d, t) {
-    p5._validateParameters('bezierTangent', arguments);
+    // p5._validateParameters('bezierTangent', arguments);
 
     const adjustedT = 1 - t;
     return (
@@ -756,7 +756,7 @@ function curves(p5, fn){
    * @chainable
    */
   fn.curve = function(...args) {
-    p5._validateParameters('curve', args);
+    // p5._validateParameters('curve', args);
 
     if (this._renderer.states.strokeColor) {
       this._renderer.curve(...args);
@@ -815,7 +815,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.curveTightness = function(t) {
-    p5._validateParameters('curveTightness', arguments);
+    // p5._validateParameters('curveTightness', arguments);
     this._renderer._curveTightness = t;
     return this;
   };
@@ -933,7 +933,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.curvePoint = function(a, b, c, d, t) {
-    p5._validateParameters('curvePoint', arguments);
+    // p5._validateParameters('curvePoint', arguments);
     const s = this._renderer._curveTightness,
       t3 = t * t * t,
       t2 = t * t,
@@ -1049,7 +1049,7 @@ function curves(p5, fn){
    * </div>
    */
   fn.curveTangent = function(a, b, c, d, t) {
-    p5._validateParameters('curveTangent', arguments);
+    // p5._validateParameters('curveTangent', arguments);
 
     const s = this._renderer._curveTightness,
       tt3 = t * t * 3,

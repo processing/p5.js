@@ -122,7 +122,7 @@ function outputs(p5, fn){
    */
 
   fn.textOutput = function(display) {
-    p5._validateParameters('textOutput', arguments);
+    // p5._validateParameters('textOutput', arguments);
     //if textOutput is already true
     if (this._accessibleOutputs.text) {
       return;
@@ -257,7 +257,7 @@ function outputs(p5, fn){
    */
 
   fn.gridOutput = function(display) {
-    p5._validateParameters('gridOutput', arguments);
+    // p5._validateParameters('gridOutput', arguments);
     //if gridOutput is already true
     if (this._accessibleOutputs.grid) {
       return;

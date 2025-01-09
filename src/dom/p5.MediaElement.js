@@ -1459,7 +1459,7 @@ function media(p5, fn){
    * </div>
    */
   fn.createVideo = function (src, callback) {
-    p5._validateParameters('createVideo', arguments);
+    // p5._validateParameters('createVideo', arguments);
     return createMedia(this, 'video', src, callback);
   };
 
@@ -1507,7 +1507,7 @@ function media(p5, fn){
    * </div>
    */
   fn.createAudio = function (src, callback) {
-    p5._validateParameters('createAudio', arguments);
+    // p5._validateParameters('createAudio', arguments);
     return createMedia(this, 'audio', src, callback);
   };
 
@@ -1668,7 +1668,7 @@ function media(p5, fn){
    * </div>
    */
   fn.createCapture = function (...args) {
-    p5._validateParameters('createCapture', args);
+    // p5._validateParameters('createCapture', args);
 
     // return if getUserMedia is not supported by the browser
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
