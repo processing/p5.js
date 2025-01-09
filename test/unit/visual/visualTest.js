@@ -15,7 +15,7 @@ const SHIFT_THRESHOLD = 1;
 
 // The max side length to shrink test images down to before
 // comparing, for performance.
-const MAX_SIDE = 80;
+const MAX_SIDE = 50;
 
 // The background color to composite test cases onto before
 // diffing. This is used because canvas DIFFERENCE blend mode
