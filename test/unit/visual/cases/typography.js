@@ -155,14 +155,15 @@ visualSuite("Typography", function () {
       p5.createCanvas(300, 80);
       p5.textSize(60);
       alignments.forEach((alignment) => {
+        p5.background(255);
         p5.textAlign(alignment.alignX, alignment.alignY);
         p5.text("Single Line", 0, 0);
         const bb = p5.textBounds("Single Line", 0, 0);
         p5.noFill();
         p5.stroke("red");
         p5.rect(bb.x, bb.y, bb.w, bb.h);
+        screenshot();
       })
-      screenshot();
     });
 
     visualTest("all alignments with single line", function (p5, screenshot) {
@@ -181,14 +182,15 @@ visualSuite("Typography", function () {
       p5.createCanvas(300, 80);
       p5.textSize(60);
       alignments.forEach((alignment) => {
+        p5.background(255);
         p5.textAlign(alignment.alignX, alignment.alignY);
         p5.text("Single Line", 0, 0);
         const bb = p5.textBounds("Single Line", 0, 0);
         p5.noFill();
         p5.stroke("red");
         p5.rect(bb.x, bb.y, bb.w, bb.h);
+        screenshot();
       });
-      screenshot();
     });
 
     visualTest("all alignments with multi-lines and wrap word",
@@ -205,7 +207,7 @@ visualSuite("Typography", function () {
           { alignX: p5.RIGHT, alignY: p5.BOTTOM },
         ];
 
-        p5.createCanvas(300, 200);
+        p5.createCanvas(150, 100);
         p5.textSize(20);
         p5.textWrap(p5.WORD);
 
@@ -215,11 +217,7 @@ visualSuite("Typography", function () {
         const boxHeight = 60;
 
         alignments.forEach((alignment, i) => {
-          if (i % 3 === 0 && i !== 0) {
-            yPos += 70;
-            xPos = 20;
-          }
-
+          p5.background(255);
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -245,9 +243,8 @@ visualSuite("Typography", function () {
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
 
-          xPos += 120;
+          screenshot();
         });
-        screenshot();
       }
     );
 
@@ -266,7 +263,7 @@ visualSuite("Typography", function () {
           { alignX: p5.RIGHT, alignY: p5.BOTTOM },
         ];
 
-        p5.createCanvas(300, 200);
+        p5.createCanvas(150, 100);
         p5.textSize(20);
         p5.textWrap(p5.CHAR);
 
@@ -276,11 +273,6 @@ visualSuite("Typography", function () {
         const boxHeight = 60;
 
         alignments.forEach((alignment, i) => {
-          if (i % 3 === 0 && i !== 0) {
-            yPos += 70;
-            xPos = 20;
-          }
-
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -306,9 +298,8 @@ visualSuite("Typography", function () {
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
 
-          xPos += 120;
+          screenshot();
         });
-        screenshot();
       }
     );
 
@@ -327,7 +318,7 @@ visualSuite("Typography", function () {
           { alignX: p5.RIGHT, alignY: p5.BOTTOM },
         ];
 
-        p5.createCanvas(300, 200);
+        p5.createCanvas(150, 100);
         p5.textSize(20);
 
         let xPos = 20;
@@ -336,11 +327,6 @@ visualSuite("Typography", function () {
         const boxHeight = 60;
 
         alignments.forEach((alignment, i) => {
-          if (i % 3 === 0 && i !== 0) {
-            yPos += 70;
-            xPos = 20;
-          }
-
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -360,16 +346,15 @@ visualSuite("Typography", function () {
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
 
-          xPos += 120;
+          screenshot();
         });
-        screenshot();
       }
     );
   });
 
   visualSuite("textStyle", function () {
     visualTest("all text styles", function (p5, screenshot) {
-      p5.createCanvas(300, 100);
+      p5.createCanvas(150, 150);
       p5.textSize(20);
       p5.textAlign(p5.LEFT, p5.TOP);
 
@@ -426,14 +411,14 @@ visualSuite("Typography", function () {
 
   visualSuite("textWidth", function () {
     visualTest("verify width of a string", function (p5, screenshot) {
-      p5.createCanvas(300, 100);
+      p5.createCanvas(100, 100);
       p5.textSize(20);
       const text = "Width Test";
       const width = p5.textWidth(text);
-      p5.text(text, 0, 50);
+      p5.text(text, 0, 30);
       p5.noFill();
       p5.stroke("red");
-      p5.rect(0, 50 - 20, width, 20);
+      p5.rect(0, 30 - 20, width, 20);
       screenshot();
     });
   });
