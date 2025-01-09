@@ -81,7 +81,15 @@ export function visualSuite(
 }
 
 export async function checkMatch(actual, expected, p5) {
-  const scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+
+  // Long screenshots end up super tiny when fit to a small square, so we
+  // can double the max side length for these
+  const ratio = expected.width / expected.height;
+  const narrow = ratio < 0.5 || ratio > 2;
+  if (narrow) {
+    scale *= 2;
+  }
 
   for (const img of [actual, expected]) {
     img.resize(
