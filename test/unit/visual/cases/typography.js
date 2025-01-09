@@ -63,6 +63,7 @@ visualSuite("Typography", function () {
       document.head.appendChild(link);
       try {
         await document.fonts.ready;
+        await new Promise((res) => setTimeout(res, 500))
 
         p5.createCanvas(100, 100);
         p5.textFont(`italic bold 32px "EB Garamond"`);
@@ -152,16 +153,18 @@ visualSuite("Typography", function () {
         { alignX: p5.RIGHT, alignY: p5.BOTTOM },
       ];
 
-      p5.createCanvas(300, 80);
+      p5.createCanvas(300, 300);
       p5.textSize(60);
       alignments.forEach((alignment) => {
         p5.background(255);
         p5.textAlign(alignment.alignX, alignment.alignY);
-        p5.text("Single Line", 0, 0);
-        const bb = p5.textBounds("Single Line", 0, 0);
+        p5.text("Single Line", p5.width / 2, p5.height / 2);
+        const bb = p5.textBounds("Single Line", p5.width / 2, p5.height / 2);
+        p5.push();
         p5.noFill();
         p5.stroke("red");
         p5.rect(bb.x, bb.y, bb.w, bb.h);
+        p5.pop();
         screenshot();
       })
     });
@@ -179,16 +182,18 @@ visualSuite("Typography", function () {
         { alignX: p5.RIGHT, alignY: p5.BOTTOM },
       ];
 
-      p5.createCanvas(300, 80);
-      p5.textSize(60);
+      p5.createCanvas(300, 300);
+      p5.textSize(45);
       alignments.forEach((alignment) => {
         p5.background(255);
         p5.textAlign(alignment.alignX, alignment.alignY);
-        p5.text("Single Line", 0, 0);
-        const bb = p5.textBounds("Single Line", 0, 0);
+        p5.text("Single Line", p5.width / 2, p5.height / 2);
+        const bb = p5.textBounds("Single Line", p5.width / 2, p5.height / 2);
+        p5.push();
         p5.noFill();
         p5.stroke("red");
         p5.rect(bb.x, bb.y, bb.w, bb.h);
+        p5.pop();
         screenshot();
       });
     });
@@ -218,6 +223,7 @@ visualSuite("Typography", function () {
 
         alignments.forEach((alignment, i) => {
           p5.background(255);
+          p5.push();
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -242,6 +248,7 @@ visualSuite("Typography", function () {
           p5.noFill();
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
+          p5.pop();
 
           screenshot();
         });
@@ -273,6 +280,8 @@ visualSuite("Typography", function () {
         const boxHeight = 60;
 
         alignments.forEach((alignment, i) => {
+          p5.background(255);
+          p5.push();
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -297,6 +306,7 @@ visualSuite("Typography", function () {
           p5.noFill();
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
+          p5.pop();
 
           screenshot();
         });
@@ -327,6 +337,8 @@ visualSuite("Typography", function () {
         const boxHeight = 60;
 
         alignments.forEach((alignment, i) => {
+          p5.background(255);
+          p5.push();
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
@@ -345,6 +357,7 @@ visualSuite("Typography", function () {
           p5.noFill();
           p5.stroke("red");
           p5.rect(bb.x, bb.y, bb.w, bb.h);
+          p5.pop();
 
           screenshot();
         });

@@ -88,7 +88,7 @@ export async function checkMatch(actual, expected, p5) {
   const ratio = expected.width / expected.height;
   const narrow = ratio < 0.5 || ratio > 2;
   if (narrow) {
-    scale *= Math.max(ratio, 1/ratio);
+    scale *= 2;
   }
 
   for (const img of [actual, expected]) {
