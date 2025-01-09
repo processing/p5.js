@@ -56,10 +56,21 @@ visualSuite("Typography", function () {
     });
 
     visualTest('with a directly set font string', async function (p5, screenshot) {
-      p5.createCanvas(100, 100);
-      p5.textFont("italic bold 32px Georgia");
-      p5.text('p5*js', 0, 10, p5.width);
-      screenshot();
+      const link = document.createElement('link');
+      link.id = 'font';
+      link.href = 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+      try {
+        await document.fonts.ready;
+
+        p5.createCanvas(100, 100);
+        p5.textFont(`italic bold 32px "EB Garamond"`);
+        p5.text('p5*js', 0, 10, p5.width);
+        screenshot();
+      } finally {
+        document.head.removeChild(link);
+      }
     });
 
     visualTest('with a font file in WebGL', async function (p5, screenshot) {
