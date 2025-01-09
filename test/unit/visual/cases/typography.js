@@ -215,10 +215,12 @@ visualSuite("Typography", function () {
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
+          p5.strokeWeight(2);
           p5.stroke(200);
           p5.rect(xPos, yPos, boxWidth, boxHeight);
 
           p5.fill(0);
+          p5.noStroke();
           p5.text(
             "A really long text that should wrap automatically as it reaches the end of the box",
             xPos,
@@ -273,10 +275,12 @@ visualSuite("Typography", function () {
           p5.textAlign(alignment.alignX, alignment.alignY);
 
           p5.noFill();
+          p5.strokeWeight(2);
           p5.stroke(200);
           p5.rect(xPos, yPos, boxWidth, boxHeight);
 
           p5.fill(0);
+          p5.noStroke();
           p5.text(
             "A really long text that should wrap automatically as it reaches the end of the box",
             xPos,
@@ -331,9 +335,11 @@ visualSuite("Typography", function () {
 
           p5.noFill();
           p5.stroke(200);
+          p5.strokeWeight(2);
           p5.rect(xPos, yPos, boxWidth, boxHeight);
 
           p5.fill(0);
+          p5.noStroke();
           p5.text("Line 1\nLine 2\nLine 3", xPos, yPos, boxWidth, boxHeight);
           const bb = p5.textBounds(
             "Line 1\nLine 2\nLine 3",
