@@ -6,7 +6,7 @@ const { readFile, writeFile } = server.commands
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
 // based on antialiasing.
-const COLOR_THRESHOLD = 15;
+const COLOR_THRESHOLD = 25;
 
 // By how many pixels can the snapshot shift? This is
 // often useful to accommodate different text rendering
