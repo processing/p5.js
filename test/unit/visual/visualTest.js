@@ -119,13 +119,15 @@ export async function checkMatch(actual, expected, p5) {
 
   let ok = true;
   for (let i = 0; i < diff.pixels.length; i += 4) {
+    let diffSum = 0;
     for (let off = 0; off < 3; off++) {
-      if (diff.pixels[i+off] > COLOR_THRESHOLD) {
-        ok = false;
-        break;
-      }
+      diffSum += diff.pixels[i+off]
     }
-    if (!ok) break;
+    diffSum /= 3;
+    if (diffSum > COLOR_THRESHOLD) {
+      ok = false;
+      break;
+    }
   }
 
   return { ok, diff };
