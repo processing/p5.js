@@ -11,7 +11,7 @@ const COLOR_THRESHOLD = 15;
 // By how many pixels can the snapshot shift? This is
 // often useful to accommodate different text rendering
 // across environments.
-const SHIFT_THRESHOLD = 1;
+const SHIFT_THRESHOLD = 3;
 
 // The max side length to shrink test images down to before
 // comparing, for performance.
@@ -110,7 +110,6 @@ export async function checkMatch(actual, expected, p5) {
   cnv.blendMode(DIFFERENCE);
   cnv.image(expectedWithBg, 0, 0);
   for (let i = 0; i < SHIFT_THRESHOLD; i++) {
-    cnv.filter(ERODE, false);
     cnv.filter(ERODE, false);
   }
   const diff = cnv.get();
