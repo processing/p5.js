@@ -31,7 +31,8 @@
     "file-saver": "^1.3.8",
     "gifenc": "^1.0.3",
     "libtess": "^1.2.2",
-    "omggif": "^1.0.10"
+    "omggif": "^1.0.10",
+    "pako": "^2.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.1.1",

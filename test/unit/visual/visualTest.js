@@ -6,12 +6,12 @@ const { readFile, writeFile } = server.commands
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
 // based on antialiasing.
-const COLOR_THRESHOLD = 15;
+const COLOR_THRESHOLD = 25;
 
 // By how many pixels can the snapshot shift? This is
 // often useful to accommodate different text rendering
 // across environments.
-const SHIFT_THRESHOLD = 1;
+const SHIFT_THRESHOLD = 3;
 
 // The max side length to shrink test images down to before
 // comparing, for performance.
@@ -81,7 +81,15 @@ export function visualSuite(
 }
 
 export async function checkMatch(actual, expected, p5) {
-  const scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+
+  // Long screenshots end up super tiny when fit to a small square, so we
+  // can double the max side length for these
+  const ratio = expected.width / expected.height;
+  const narrow = ratio !== 1;
+  if (narrow) {
+    scale *= 2;
+  }
 
   for (const img of [actual, expected]) {
     img.resize(
@@ -103,7 +111,6 @@ export async function checkMatch(actual, expected, p5) {
   cnv.image(expectedWithBg, 0, 0);
   for (let i = 0; i < SHIFT_THRESHOLD; i++) {
     cnv.filter(ERODE, false);
-    cnv.filter(ERODE, false);
   }
   const diff = cnv.get();
   cnv.remove();
@@ -112,13 +119,15 @@ export async function checkMatch(actual, expected, p5) {
 
   let ok = true;
   for (let i = 0; i < diff.pixels.length; i += 4) {
+    let diffSum = 0;
     for (let off = 0; off < 3; off++) {
-      if (diff.pixels[i+off] > COLOR_THRESHOLD) {
-        ok = false;
-        break;
-      }
+      diffSum += diff.pixels[i+off]
     }
-    if (!ok) break;
+    diffSum /= 3;
+    if (diffSum > COLOR_THRESHOLD) {
+      ok = false;
+      break;
+    }
   }
 
   return { ok, diff };

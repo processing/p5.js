@@ -26,19 +26,21 @@
 */
 
 /**
- * This module defines the <a href="#/p5.Font">p5.Font</a> class and P5 methods for
+ * This module defines the <a href="#/p5.Font">p5.Font</a> class and p5 methods for
  * loading fonts from files and urls, and extracting points from their paths.
  */
+
 import Typr from './lib/Typr.js';
+
 import { createFromCommands } from '@davepagurek/bezier-path';
 
 function font(p5, fn) {
 
   const pathArgCounts = { M: 2, L: 2, C: 6, Q: 4 };
-  const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+  const validFontTypes = ['ttf', 'otf', 'woff'];//, 'woff2'];
   const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
   const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
-  const invalidFontError = 'Sorry, only TTF, OTF, WOFF and WOFF2 files are supported.';
+  const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; // and WOFF2
   const fontFaceVariations = ['weight', 'stretch', 'style'];
 
   p5.Font = class Font {
@@ -214,7 +216,7 @@ function font(p5, fn) {
     }
 
     /////////////////////////////// HELPERS ////////////////////////////////
-    
+
     _verticalAlign(size) {
       const { sCapHeight } = this.data?.['OS/2'] || {};
       const { unitsPerEm = 1000 } = this.data?.head || {};
@@ -524,6 +526,7 @@ function font(p5, fn) {
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
    */
+
   p5.prototype.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
     let { path, name, success, error, descriptors } = parseCreateArgs(...args);
@@ -569,6 +572,8 @@ function font(p5, fn) {
     try {
       // load the raw font bytes
       let result = await fn.loadBytes(path);
+      //console.log('result:', result);
+
       if (!result) {
         throw Error('Failed to load font data');
       }
@@ -579,15 +584,13 @@ function font(p5, fn) {
       // TODO: generate descriptors from font in the future
 
       if (fonts.length !== 1 || fonts[0].cmap === undefined) {
-        throw Error(23);
+        throw Error('parsing font data');
       }
 
       // make sure we have a valid name
       if (!name) {
         name = extractFontName(fonts[0], path);
-        if (name.includes(' ')) {
-          name = name.replace(/ /g, '_');
-        }
+        if (name.includes(' ')) name = name.replace(/ /g, '_');
       }
 
       // create a FontFace object and pass it to the p5.Font constructor
@@ -595,22 +598,22 @@ function font(p5, fn) {
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
-      console.warn('Failed to parse font data:', err);
+      let ident = name || path
+        .substring(path.lastIndexOf('/') + 1)
+        .replace(/\.[^/.]+$/, "");
+
+      console.warn(`WARN: No glyph data for '${ident}', retrying as FontFace`);
+
       try {
         // create a FontFace object and pass it to p5.Font
-        console.log(`Retrying '${name}' without font-data: '${path}'`);
-        pfont = await create(this, name, path, descriptors);
+        pfont = await create(this, ident, path, descriptors);
       }
       catch (err) {
-        if (error) {
-          error(err);
-        }
+        if (error) error(err);
         throw err;
       }
     }
-    if (success) {
-      success(pfont);
-    }
+    if (success) success(pfont);
 
     return pfont;
   }
@@ -620,9 +623,7 @@ function font(p5, fn) {
     let face = createFontFace(name, path, descriptors, rawFont);
 
     // load if we need to
-    if (face.status !== 'loaded') {
-      await face.load();
-    }
+    if (face.status !== 'loaded') await face.load();
 
     // add it to the document
     document.fonts.add(face);
@@ -720,7 +721,6 @@ function font(p5, fn) {
       simplifyThreshold: 0
     });
 
-
     const totalPoints = Math.ceil(path.getTotalLength() * opts.sampleFactor);
     let points = [];
 
@@ -751,6 +751,15 @@ function font(p5, fn) {
 
     return points;
   }
+
+  function unquote(name) {
+    // Unquote name from CSS
+    if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+      return name.slice(1, -1).replace(/\/(['"])/g, '$1');
+    }
+    return name;
+  }
+
 };
 
 // Convert arrays to named objects
