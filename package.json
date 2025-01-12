@@ -10,7 +10,8 @@
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "generate-types": "npm run docs && node utils/generate-types"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
