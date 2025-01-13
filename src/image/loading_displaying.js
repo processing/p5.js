@@ -854,6 +854,26 @@ function loadingDisplaying(p5, fn){
    * destination image's top left corner. See
    * <a href="#/p5/imageMode">imageMode()</a> for other ways to position images.
    *
+   * ```js, example
+   * let img;
+   *
+   * // Load the image.
+   * function preload() {
+   *   img = loadImage('assets/laDefense.jpg');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(50);
+   *
+   *   // Draw the image.
+   *   image(img, 0, 0);
+   *
+   *   describe('An image of the underside of a white umbrella with a gridded ceiling above.');
+   * }
+   * ```
+   *
    * Here's a diagram that explains how optional parameters work in `image()`:
    *
    * <img src="assets/drawImage.png"></img>
@@ -892,28 +912,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}   [height] height to draw the image.
    *
    * @example
-   * <div>
-   * <code>
-   * let img;
-   *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(50);
-   *
-   *   // Draw the image.
-   *   image(img, 0, 0);
-   *
-   *   describe('An image of the underside of a white umbrella with a gridded ceiling above.');
-   * }
-   * </code>
-   * </div>
-   *
    * <div>
    * <code>
    * let img;
