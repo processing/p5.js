@@ -565,7 +565,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
  * an object with its file type, file name, and image data as a string. For
  * example, the first saved frame might have the following properties:
  *
- * `{ ext: 'png', filenmame: 'frame0', imageData: 'data:image/octet-stream;base64, abc123' }`.
+ * `{ ext: 'png', filename: 'frame0', imageData: 'data:image/octet-stream;base64, abc123' }`.
  *
  * The first parameter, `filename`, sets the prefix for the file names. For
  * example, setting the prefix to `'frame'` would generate the image files
