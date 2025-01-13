@@ -2044,9 +2044,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
       this._defaultFontShader = new p5.Shader(
         this,
-        this._webGL2CompatibilityPrefix('vert', 'mediump') +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
         defaultShaders.fontVert,
-        this._webGL2CompatibilityPrefix('frag', 'mediump') +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
         defaultShaders.fontFrag
       );
     }

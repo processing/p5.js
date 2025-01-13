@@ -6013,7 +6013,9 @@
       "profile": "https://aboutmonica.com",
       "contributions": [
         "talk",
-        "example"
+        "example",
+        "doc",
+        "bug"
       ]
     },
     {
@@ -6412,6 +6414,26 @@
       "profile": "https://github.com/Dhanush111",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "mahaidong",
+      "name": "ma haidong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5458532?v=4",
+      "profile": "http://caad.xyz",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "Rishab87",
+      "name": "Rishab Kumar Jha",
+      "avatar_url": "https://avatars.githubusercontent.com/u/138858208?v=4",
+      "profile": "https://github.com/Rishab87",
+      "contributions": [
+        "bug",
+        "code"
       ]
     }
   ],
