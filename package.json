@@ -22,7 +22,7 @@
       "node ./utils/sample-linter.mjs"
     ]
   },
-  "version": "1.9.4",
+  "version": "2.0.0-beta.1",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "acorn": "^8.12.1",
