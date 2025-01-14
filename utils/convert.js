@@ -51,7 +51,7 @@ function descriptionString(node, parent) {
     if (classes.length > 0) {
       attrs=` class="${classes.join(' ')}"`;
     }
-    return `<code${attrs}>${node.value}</code>`;
+    return `<pre><code${attrs}>${node.value}</code></pre>`;
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
