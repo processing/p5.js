@@ -854,7 +854,7 @@ function loadingDisplaying(p5, fn){
    * destination image's top left corner. See
    * <a href="#/p5/imageMode">imageMode()</a> for other ways to position images.
    *
-   * ```js, example
+   * ```js example
    * let img;
    *
    * // Load the image.

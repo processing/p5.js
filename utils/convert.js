@@ -39,6 +39,19 @@ function descriptionString(node, parent) {
     const content = node.children.map(n => descriptionString(n, node)).join('');
     if (parent && parent.children.length === 1) return content;
     return '<p>' + content + '</p>\n';
+  } else if (node.type === 'code') {
+    let classes = [];
+    let attrs = '';
+    if (node.lang) {
+      classes.push(`language-${node.lang}`);
+    }
+    if (node.meta) {
+      classes.push(node.meta);
+    }
+    if (classes.length > 0) {
+      attrs=` class="${classes.join(' ')}"`;
+    }
+    return `<code${attrs}>${node.value}</code>`;
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
