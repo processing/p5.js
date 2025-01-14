@@ -28,7 +28,7 @@ import './p5.Geometry';
  *
  * Note: When loading a `.obj` file that references materials stored in
  * `.mtl` files, p5.js will attempt to load and apply those materials.
- * To ensure that the `.obj` file reads the `.mtl` file correctly include the 
+ * To ensure that the `.obj` file reads the `.mtl` file correctly include the
  * `.mtl` file alongside it.
  * 
  * The first way to call `loadModel()` has three optional parameters after the
