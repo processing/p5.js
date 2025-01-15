@@ -1078,6 +1078,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://caad.xyz"><img src="https://avatars.githubusercontent.com/u/5458532?v=4?s=120" width="120px;" alt="ma haidong"/><br /><sub><b>ma haidong</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amahaidong" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=mahaidong" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Rishab87"><img src="https://avatars.githubusercontent.com/u/138858208?v=4?s=120" width="120px;" alt="Rishab Kumar Jha"/><br /><sub><b>Rishab Kumar Jha</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ARishab87" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Rishab87" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ImRAJAS-SAMSE"><img src="https://avatars.githubusercontent.com/u/122066293?v=4?s=120" width="120px;" alt="Rajas Samse"/><br /><sub><b>Rajas Samse</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
