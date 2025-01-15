@@ -901,7 +901,44 @@ function keyboard(p5, fn){
    * }
    * </code>
    * </div>
-   */
+   * <div>
+  * <code>
+  * let x = 100;
+  * let y = 100;
+  * 
+  * function setup() {
+  *   createCanvas(200, 200);
+  *   textSize(16);
+  * }
+  * 
+  * function draw() {
+  *   background(220);
+  *   
+  *   // Move left/right with A/D keys
+  *   if (keyIsDown('a')) {
+  *     x -= 5;
+  *   }
+  *   if (keyIsDown('d')) {
+  *     x += 5;
+  *   }
+  *   
+  *   // Move up/down with W/S keys
+  *   if (keyIsDown('w')) {
+  *     y -= 5;
+  *   }
+  *   if (keyIsDown('s')) {
+  *     y += 5;
+  *   }
+  *   
+  *   // Draw circle at current position
+  *   circle(x, y, 50);
+  *   
+  *   // Display instructions
+  *   text('Use WASD keys to move', 20, 20);
+  * }
+  * </code>
+  * </div>
+  */
   fn.keyIsDown = function(code) {
     // p5._validateParameters('keyIsDown', arguments);
     if (typeof code === 'string' && code.length === 1) {
