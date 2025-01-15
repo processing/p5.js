@@ -904,6 +904,9 @@ function keyboard(p5, fn){
    */
   fn.keyIsDown = function(code) {
     // p5._validateParameters('keyIsDown', arguments);
+    if (typeof code === 'string' && code.length === 1) {
+      code = code.toUpperCase().charCodeAt(0);
+    }
     return this._downKeys[code] || false;
   };
 
