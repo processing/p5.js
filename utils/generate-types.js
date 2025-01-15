@@ -22,16 +22,17 @@ function getEntries(entry) {
 function getAllEntries(arr) {
   return arr.flatMap(getEntries);
 }
-
-// Organize data into structured format
-function organizeData(data) {
-  const allData = getAllEntries(data);
-  const organized = {
+const organized = {
     modules: {},
     classes: {},
     classitems: [],
     consts: {}
   };
+
+// Organize data into structured format
+function organizeData(data) {
+  const allData = getAllEntries(data);
+  
 
   // Process modules first
   allData.forEach(entry => {
@@ -52,8 +53,9 @@ function organizeData(data) {
   allData.forEach(entry => {
     if (entry.kind === 'class') {
       const { module, submodule } = getModuleInfo(entry);
-      organized.classes[entry.name] = {
-        name: entry.name,
+      const className = entry.name;
+      organized.classes[className] = {
+        name: className,
         description: extractDescription(entry.description),
         params: (entry.params || []).map(param => ({
           name: param.name,
@@ -70,9 +72,11 @@ function organizeData(data) {
   allData.forEach(entry => {
     if (entry.kind === 'function' || entry.kind === 'property') {
       const { module, submodule, forEntry } = getModuleInfo(entry);
-      const className = forEntry || 'p5';
-
-      if (!organized.classes[className]) return;
+      // Use memberof if available, fallback to forEntry, then default to 'p5'
+      const className = entry.memberof || forEntry || 'p5';
+     
+      // Create the class entry if it doesn't exist
+      // if (!organized.classes[className]) {console.log(`returning for ${className}`); return};
       
       // Check for static methods - directly check path[0].scope
       // Todo: handle static methods
@@ -117,6 +121,7 @@ function organizeData(data) {
         class: forEntry || 'p5'
       };
     }
+    fs.writeFileSync("./consts.json", JSON.stringify(organized.consts, null, 2), 'utf8');
   });
 
   return organized;
@@ -308,10 +313,6 @@ function generateClassDeclaration(classDoc, organizedData) {
     output += ' */\n';
   }
 
-  // Generate class declaration
-  const isAbstract = classDoc.tags?.some(t => t.title === 'abstract');
-  output += `${isAbstract ? 'abstract ' : ''}class ${classDoc.name.replace('p5.', '')} {\n`;
-
   // Add constructor if there are parameters
   if (classDoc.params?.length > 0) {
     output += '  constructor(';
@@ -322,8 +323,8 @@ function generateClassDeclaration(classDoc, organizedData) {
   }
 
   // Get all class items for this class
-  const classItems = organizedData.classitems.filter(item => item.class === classDoc.name);
-  
+  const classDocName = classDoc.name.startsWith('p5.') ? classDoc.name.substring(3) : classDoc.name;
+  const classItems = organizedData.classitems.filter(item => item.class === classDocName);
   
   // Separate static and instance members
   const staticItems = classItems.filter(item => item.isStatic);
@@ -362,14 +363,14 @@ function generateClassDeclaration(classDoc, organizedData) {
           const returnType = overload.returns?.[0]?.type 
             ? generateTypeFromTag(overload.returns[0])
             : 'void';
-          output += `  static function ${item.name}(${params}): ${returnType};\n`;
+          output += `  static ${item.name}(${params}): ${returnType};\n`;
         });
         output += '\n';
       } else {
         const params = (item.params || [])
           .map(param => generateParamDeclaration(param))
           .join(', ');
-        output += `  static function ${item.name}(${params}): ${item.returnType};\n\n`;
+        output += `  static ${item.name}(${params}): ${item.returnType};\n\n`;
       }
     } else {
       output += `  static ${item.name}: ${item.returnType};\n\n`;
@@ -538,7 +539,7 @@ function generateAllDeclarationFiles() {
     );
     
     // Generate the declaration file content
-    const declarationContent = generateDeclarationFile(items, filePath, organizedData);
+    const declarationContent = generateDeclarationFile(items, filePath, organized);
     
     // Create directory if it doesn't exist
     fs.mkdirSync(path.dirname(dtsPath), { recursive: true });
