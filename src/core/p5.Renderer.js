@@ -10,6 +10,18 @@ import { Image } from '../image/p5.Image';
 import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
 
+class ClonableObject {
+  constructor(obj = {}) {
+    for (const key in obj) {
+      this[key] = obj[key];
+    }
+  }
+
+  clone() {
+    return new ClonableObject(this);
+  }
+};
+
 class Renderer {
   static states = {
     strokeColor: null,
@@ -30,7 +42,7 @@ class Renderer {
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
     bezierOrder: 3,
-    splineEnds: constants.INCLUDE,
+    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
     textWrap: constants.WORD,
 
     // added v2.0
@@ -77,7 +89,6 @@ class Renderer {
 
     this._clipping = false;
     this._clipInvert = false;
-    this._curveTightness = 0;
 
     this._currentShape = undefined; // Lazily generate current shape
   }
@@ -150,11 +161,11 @@ class Renderer {
     this.currentShape.bezierVertex(position, textureCoordinates);
   }
 
-  splineEnds(mode) {
-    if (mode === undefined) {
-      return this.states.splineEnds;
+  splineProperty(key, value) {
+    if (value === undefined) {
+      return this.states.splineProperties[key];
     } else {
-      this.states.splineEnds = mode;
+      this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();
   }
@@ -305,7 +316,8 @@ class Renderer {
 
   updateShapeProperties() {
     this.currentShape.bezierOrder(this.states.bezierOrder);
-    this.currentShape.splineEnds(this.states.splineEnds);
+    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
+    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
   }
 
   updateShapeVertexProperties() {

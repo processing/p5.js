@@ -407,8 +407,6 @@ class RendererGL extends Renderer {
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
-    this._curveTightness = 6;
-
     this.fontInfos = {};
 
     this._curShader = undefined;
@@ -2408,34 +2406,6 @@ class RendererGL extends Renderer {
    */
   _vToNArray(arr) {
     return arr.flatMap((item) => [item.x, item.y, item.z]);
-  }
-
-  // function to calculate BezierVertex Coefficients
-  _bezierCoefficients(t) {
-    const t2 = t * t;
-    const t3 = t2 * t;
-    const mt = 1 - t;
-    const mt2 = mt * mt;
-    const mt3 = mt2 * mt;
-    return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
-  }
-
-  // function to calculate QuadraticVertex Coefficients
-  _quadraticCoefficients(t) {
-    const t2 = t * t;
-    const mt = 1 - t;
-    const mt2 = mt * mt;
-    return [mt2, 2 * mt * t, t2];
-  }
-
-  // function to convert Bezier coordinates to Catmull Rom Splines
-  _bezierToCatmull(w) {
-    const p1 = w[1];
-    const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
-    const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
-    const p4 = w[2];
-    const p = [p1, p2, p3, p4];
-    return p;
   }
 }
 
