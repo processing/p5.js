@@ -1,0 +1,81 @@
+name: 📃 p5.js 2.0 Beta Bug Report
+description: This template is for submitting a bug report for bugs found in the p5.js 2.0 beta releases.
+title: "[p5.js 2.0 Beta Bug Report]: "
+labels: [p5.js 2.0]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### What falls under this category?
+        There has been many changes to p5.js in 2.0 that is currently released as beta versions. If you suspect there may be a bug, please follow the below steps before opening a bug report using this template:
+
+        1. There are some differences in behavior between p5.js 1.x and 2.0 beta, please check the changelog and/or [proposal list](https://github.com/orgs/processing/projects/21) to see if the difference in behavior is intended. If in doubt, feel free to open the issue anyway and ask.
+        2. Breaking changes may still happen between beta versions, please make sure to include the full beta version number and use the latest beta release where possible.
+        3. We are not considering any new proposal for p5.js 2.0 at this stage and if you would like to request new features, please use the "New feature request" issue template.
+        4. The documentation and examples may be outdated at this stage while we work on updating them.
+  - type: checkboxes
+    id: sub-area
+    attributes:
+      label: Most appropriate sub-area of p5.js?
+      description: You may select more than one.
+      options:
+          - label: Accessibility
+          - label: Color
+          - label: Core/Environment/Rendering
+          - label: Data
+          - label: DOM
+          - label: Events
+          - label: Image
+          - label: IO
+          - label: Math
+          - label: Typography
+          - label: Utilities
+          - label: WebGL
+          - label: Build process
+          - label: Unit testing
+          - label: Internationalization
+          - label: Friendly errors
+          - label: Other (specify if possible)
+  - type: input
+    attributes:
+      label: p5.js version
+      description: You can find this in the first line of the p5.js file.
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Web browser and version
+      description: In the address bar, on Chrome enter "chrome://version", on Firefox enter "about:support". On Safari, use "About Safari".
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Operating system
+      description: "Ex: Windows/MacOSX/Linux/Android/iOS along with version"
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Steps to reproduce this
+      description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
+      value: "### Steps:
+
+        1.
+
+        2.
+
+        3.
+
+
+        ### Snippet:
+
+
+        ```js
+
+
+          // Paste your code here :)
+
+
+        ```"
+    validations:
+      required: true
