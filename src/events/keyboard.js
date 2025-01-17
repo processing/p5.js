@@ -97,6 +97,8 @@ function keyboard(p5, fn){
    */
   fn.isKeyPressed = false;
   fn.keyIsPressed = false; // khan
+  fn._code = null;
+  fn.key = '';
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -440,14 +442,14 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
+    this._code = e.code;
+    // Check for repeat key events
     if (this._downKeys[e.code]) {
-      // prevent multiple firings
       return;
     }
     this.isKeyPressed = true;
     this.keyIsPressed = true;
     this.keyCode = e.which;
-    this._code = e.code;
     this.key = e.key;
     this._downKeys[e.code] = true;
     const context = this._isGlobal ? window : this;
@@ -615,17 +617,18 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-    this._downKeys[e.which] = false;
+    delete this._downKeys[e.code];
 
-    if (!this._areDownKeys()) {
+    if (Object.keys(this._downKeys).length === 0) {
       this.isKeyPressed = false;
       this.keyIsPressed = false;
+      this.key = '';
+      this._code = null;
+    } else {
+      // If other keys are still pressed, update code to the last pressed key
+      const lastPressedKey = Object.keys(this._downKeys).pop();
+      this._code = lastPressedKey;
     }
-
-    this._lastKeyCodeTyped = null;
-
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
-    this.keyCode = e.which;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyReleased === 'function') {
