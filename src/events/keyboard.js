@@ -440,15 +440,16 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    if (this._downKeys[e.which]) {
+    if (this._downKeys[e.code]) {
       // prevent multiple firings
       return;
     }
     this.isKeyPressed = true;
     this.keyIsPressed = true;
     this.keyCode = e.which;
-    this._downKeys[e.which] = true;
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
+    this._code = e.code;
+    this.key = e.key;
+    this._downKeys[e.code] = true;
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);

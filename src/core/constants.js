@@ -879,92 +879,104 @@ export const MITER = 'miter';
  * @final
  */
 export const AUTO = 'auto';
-
+// INPUT
 /**
- * @typedef {18} ALT
+ * @typedef {'AltLeft' | 'AltRight'} ALT
  * @property {ALT} ALT
  * @final
  */
-// INPUT
-export const ALT = 18;
+export const ALT = 'AltLeft';
+
 /**
- * @typedef {8} BACKSPACE
+ * @typedef {'Backspace'} BACKSPACE
  * @property {BACKSPACE} BACKSPACE
  * @final
  */
-export const BACKSPACE = 8;
+export const BACKSPACE = 'Backspace';
+
 /**
- * @typedef {17} CONTROL
+ * @typedef {'ControlLeft' | 'ControlRight'} CONTROL
  * @property {CONTROL} CONTROL
  * @final
  */
-export const CONTROL = 17;
+export const CONTROL = 'ControlLeft';
+
 /**
- * @typedef {46} DELETE
+ * @typedef {'Delete'} DELETE
  * @property {DELETE} DELETE
  * @final
  */
-export const DELETE = 46;
+export const DELETE = 'Delete';
+
 /**
- * @typedef {40} DOWN_ARROW
+ * @typedef {'ArrowDown'} DOWN_ARROW
  * @property {DOWN_ARROW} DOWN_ARROW
  * @final
  */
-export const DOWN_ARROW = 40;
+export const DOWN_ARROW = 'ArrowDown';
+
 /**
- * @typedef {13} ENTER
+ * @typedef {'Enter'} ENTER
  * @property {ENTER} ENTER
  * @final
  */
-export const ENTER = 13;
+export const ENTER = 'Enter';
+
 /**
- * @typedef {27} ESCAPE
+ * @typedef {'Escape'} ESCAPE
  * @property {ESCAPE} ESCAPE
  * @final
  */
-export const ESCAPE = 27;
+export const ESCAPE = 'Escape';
+
 /**
- * @typedef {37} LEFT_ARROW
+ * @typedef {'ArrowLeft'} LEFT_ARROW
  * @property {LEFT_ARROW} LEFT_ARROW
  * @final
  */
-export const LEFT_ARROW = 37;
+export const LEFT_ARROW = 'ArrowLeft';
+
 /**
- * @typedef {18} OPTION
+ * @typedef {'AltLeft' | 'AltRight'} OPTION
  * @property {OPTION} OPTION
  * @final
  */
-export const OPTION = 18;
+export const OPTION = 'AltLeft';
+
 /**
- * @typedef {13} RETURN
+ * @typedef {'Enter'} RETURN
  * @property {RETURN} RETURN
  * @final
  */
-export const RETURN = 13;
+export const RETURN = 'Enter';
+
 /**
- * @typedef {39} RIGHT_ARROW
+ * @typedef {'ArrowRight'} RIGHT_ARROW
  * @property {RIGHT_ARROW} RIGHT_ARROW
  * @final
  */
-export const RIGHT_ARROW = 39;
+export const RIGHT_ARROW = 'ArrowRight';
+
 /**
- * @typedef {16} SHIFT
+ * @typedef {'ShiftLeft' | 'ShiftRight'} SHIFT
  * @property {SHIFT} SHIFT
  * @final
  */
-export const SHIFT = 16;
+export const SHIFT = 'ShiftLeft';
+
 /**
- * @typedef {9} TAB
+ * @typedef {'Tab'} TAB
  * @property {TAB} TAB
  * @final
  */
-export const TAB = 9;
+export const TAB = 'Tab';
+
 /**
- * @typedef {38} UP_ARROW
+ * @typedef {'ArrowUp'} UP_ARROW
  * @property {UP_ARROW} UP_ARROW
  * @final
  */
-export const UP_ARROW = 38;
+export const UP_ARROW = 'ArrowUp';
 
 // RENDERING
 /**
