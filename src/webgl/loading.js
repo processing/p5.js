@@ -441,6 +441,7 @@ function loading(p5, fn){
         if (flipV) {
           model.flipV();
         }
+        model._makeTriangleEdges();
 
         if (successCallback) {
           return successCallback(model);
@@ -464,6 +465,7 @@ function loading(p5, fn){
         if (flipV) {
           model.flipV();
         }
+        model._makeTriangleEdges();
 
         if (successCallback) {
           return successCallback(model);
