@@ -906,11 +906,32 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.keyIsDown = function(code) {
-    // p5._validateParameters('keyIsDown', arguments);
-    return this._downKeys[code] || false;
+    p5.prototype.keyIsDown = function(code) {
+    console.log('Current _downKeys:', this._downKeys);
+    console.log('Current key:', this.key);
+    
+    // For backward compatibility - if code is a number
+    if (typeof code === 'number') {
+      return this._downKeys[code] || false;
+    }
+    
+    // For string inputs (new functionality)
+    if (typeof code === 'string') {
+      // Handle single character inputs
+      if (code.length === 1) {
+        if (/[A-Za-z]/.test(code)) {
+          // For letters, we need to check the actual key value
+          return this.key === code;
+        } else if (/[0-9]/.test(code)) {
+          return this._downKeys[`Digit${code}`] || false;
+        }
+      }
+      // Handle direct code inputs (e.g., 'KeyA', 'ArrowLeft', etc.)
+      return this._downKeys[code] || false;
+    }
+  
+    return false;
   };
-
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.
