@@ -586,6 +586,21 @@ class RendererGL extends Renderer {
     this.updateShapeVertexProperties();
   }
 
+  model(model, count = 1) {
+    if (model.vertices.length > 0) {
+      if (this.geometryBuilder) {
+        this.geometryBuilder.addRetained(model);
+      } else {
+        if (!this.geometryInHash(model.gid)) {
+          model._edgesToVertices();
+          this._getOrMakeCachedBuffers(model);
+        }
+
+        this._drawGeometry(model, { count });
+      }
+    }
+  }
+
   //////////////////////////////////////////////
   // Rendering
   //////////////////////////////////////////////

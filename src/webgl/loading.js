@@ -1087,19 +1087,7 @@ function loading(p5, fn){
   fn.model = function (model, count = 1) {
     this._assert3d('model');
     // p5._validateParameters('model', arguments);
-    if (model.vertices.length > 0) {
-      if (!this._renderer.geometryInHash(model.gid)) {
-
-        if (model.edges.length === 0) {
-          model._makeTriangleEdges();
-        }
-
-        model._edgesToVertices();
-        this._renderer._getOrMakeCachedBuffers(model);
-      }
-
-      this._renderer._drawGeometry(model, { count });
-    }
+    this._renderer.model(model, count);
   };
 }
 

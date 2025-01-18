@@ -562,4 +562,24 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('buildGeometry()', () => {
+    visualTest('can draw models', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const sphere = p5.buildGeometry(() => {
+        p5.scale(0.25);
+        p5.sphere();
+      });
+
+      const geom = p5.buildGeometry(() => {
+        p5.model(sphere);
+      });
+
+      p5.background(255);
+      p5.lights();
+      p5.model(geom);
+      screenshot();
+    });
+  });
 });
