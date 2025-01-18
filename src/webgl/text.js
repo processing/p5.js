@@ -665,7 +665,7 @@ function text(p5, fn){
       console.log(
         'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported'
       );
-      return p;
+      return;
     }
 
     this.push(); // fix to #803
