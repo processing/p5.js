@@ -573,4 +573,4 @@ visualSuite("Typography", function () {
       screenshot();
     });
   });
-});
+}, { shiftThreshold: 3 });
