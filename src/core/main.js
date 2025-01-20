@@ -182,6 +182,10 @@ class p5 {
     }
   }
 
+  get pixels(){
+    return this._renderer.pixels;
+  }
+
   static registerAddon(addon) {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);

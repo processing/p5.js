@@ -123,7 +123,7 @@ function rendering(p5, fn){
    * @param  {HTMLCanvasElement} [canvas]
    * @return {p5.Renderer}
    */
-  p5.prototype.createCanvas = function (w, h, renderer, ...args) {
+  fn.createCanvas = function (w, h, renderer, ...args) {
     // p5._validateParameters('createCanvas', arguments);
     //optional: renderer, otherwise defaults to p2d
 
@@ -239,7 +239,7 @@ function rendering(p5, fn){
    * </code>
    * </div>
    */
-  p5.prototype.resizeCanvas = function (w, h, noRedraw) {
+  fn.resizeCanvas = function (w, h, noRedraw) {
     // p5._validateParameters('resizeCanvas', arguments);
     if (this._renderer) {
       // Make sure width and height are updated before the renderer resizes so
@@ -274,7 +274,7 @@ function rendering(p5, fn){
    * </code>
    * </div>
    */
-  p5.prototype.noCanvas = function () {
+  fn.noCanvas = function () {
     if (this.canvas) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
@@ -392,7 +392,7 @@ function rendering(p5, fn){
    * @param  {HTMLCanvasElement} [canvas]
    * @return {p5.Graphics}
    */
-  p5.prototype.createGraphics = function (w, h, ...args) {
+  fn.createGraphics = function (w, h, ...args) {
     /**
       * args[0] is expected to be renderer
       * args[1] is expected to be canvas
@@ -541,7 +541,7 @@ function rendering(p5, fn){
    * </code>
    * </div>
    */
-  p5.prototype.createFramebuffer = function (options) {
+  fn.createFramebuffer = function (options) {
     return new Framebuffer(this._renderer, options);
   };
 
@@ -625,7 +625,7 @@ function rendering(p5, fn){
    * </code>
    * </div>
    */
-  p5.prototype.clearDepth = function (depth) {
+  fn.clearDepth = function (depth) {
     this._assert3d('clearDepth');
     this._renderer.clearDepth(depth);
   };
