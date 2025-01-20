@@ -1272,8 +1272,8 @@ p5.Geometry = class Geometry {
  * console.log(myGeometry.uvs);
  *
  * // Notice the swaps:
- * // Left vertices: [0, 0] <--> [1, 0]
- * // Right vertices: [1, 0] <--> [1, 1]
+ * // Left vertices: [0, 0] &lt;--&gt; [1, 0]
+ * // Right vertices: [1, 0] &lt;--&gt; [1, 1]
  * ```
  *
  * @method flipV
