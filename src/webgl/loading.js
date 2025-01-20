@@ -26,6 +26,11 @@ import './p5.Geometry';
  * `loadModel('assets/model.obj')`. URLs such as
  * `'https://example.com/model.obj'` may be blocked due to browser security.
  *
+ * Note: When loading a `.obj` file that references materials stored in
+ * `.mtl` files, p5.js will attempt to load and apply those materials.
+ * To ensure that the `.obj` file reads the `.mtl` file correctly include the
+ * `.mtl` file alongside it.
+ *
  * The first way to call `loadModel()` has three optional parameters after the
  * file path. The first optional parameter, `successCallback`, is a function
  * to call once the model loads. For example,
