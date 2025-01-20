@@ -46,7 +46,7 @@ import p5 from '../core/main';
  * ```glsl
  * void main() {
  *   HOOK_beforeVertex();
- *   // Add the rest ofy our shader code here!
+ *   // Add the rest of your shader code here!
  * }
  * ```
  *
@@ -333,10 +333,7 @@ p5.Shader = class {
     console.log('');
     console.log('==== Helper functions: ====');
     for (const key in this.hooks.helpers) {
-      console.log(
-        key +
-        this.hooks.helpers[key]
-      );
+      console.log(key + this.hooks.helpers[key]);
     }
   }
 
@@ -946,7 +943,7 @@ p5.Shader = class {
     const modelMatrix = this._renderer.uModelMatrix;
     const viewMatrix = this._renderer.uViewMatrix;
     const projectionMatrix = this._renderer.uPMatrix;
-    const modelViewMatrix = (modelMatrix.copy()).mult(viewMatrix);
+    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
     this._renderer.uMVMatrix = modelViewMatrix;
 
     const modelViewProjectionMatrix = modelViewMatrix.copy();
@@ -1334,15 +1331,14 @@ p5.Shader = class {
           ) {
             console.log(
               '🌸 p5.js says: ' +
-              'You\'re trying to use a number as the data for a texture.' +
-              'Please use a texture.'
+                "You're trying to use a number as the data for a texture." +
+                'Please use a texture.'
             );
             return this;
           }
           gl.activeTexture(data);
           gl.uniform1i(location, data);
-        }
-        else {
+        } else {
           gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
           uniform.texture =
             data instanceof p5.Texture ? data : this._renderer.getTexture(data);
@@ -1376,8 +1372,8 @@ p5.Shader = class {
         ) {
           console.log(
             '🌸 p5.js says: ' +
-            'You\'re trying to use a number as the data for a texture.' +
-            'Please use a texture.'
+              "You're trying to use a number as the data for a texture." +
+              'Please use a texture.'
           );
           break;
         }
