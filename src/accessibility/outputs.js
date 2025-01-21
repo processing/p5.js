@@ -122,7 +122,7 @@ function outputs(p5, fn){
    */
 
   fn.textOutput = function(display) {
-    p5._validateParameters('textOutput', arguments);
+    // p5._validateParameters('textOutput', arguments);
     //if textOutput is already true
     if (this._accessibleOutputs.text) {
       return;
@@ -257,7 +257,7 @@ function outputs(p5, fn){
    */
 
   fn.gridOutput = function(display) {
-    p5._validateParameters('gridOutput', arguments);
+    // p5._validateParameters('gridOutput', arguments);
     //if gridOutput is already true
     if (this._accessibleOutputs.grid) {
       return;
@@ -543,12 +543,12 @@ function outputs(p5, fn){
   fn._getPos = function (x, y) {
     const untransformedPosition = new DOMPointReadOnly(x, y);
     const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.states.uMVMatrix.mat4) :
+      new DOMMatrix(this._renderer.calculateCombinedMatrix()) :
       this.drawingContext.getTransform();
     const { x: transformedX, y: transformedY } = untransformedPosition
       .matrixTransform(currentTransform);
-    const canvasWidth = this.width * this._pixelDensity;
-    const canvasHeight = this.height * this._pixelDensity;
+    const canvasWidth = this.width * this._renderer._pixelDensity;
+    const canvasHeight = this.height * this._renderer._pixelDensity;
     if (transformedX < 0.4 * canvasWidth) {
       if (transformedY < 0.4 * canvasHeight) {
         return 'top left';
@@ -653,8 +653,8 @@ function outputs(p5, fn){
       // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
     }
     //  Store the positions of the canvas corners
-    const canvasWidth = this.width * this._pixelDensity;
-    const canvasHeight = this.height * this._pixelDensity;
+    const canvasWidth = this.width * this._renderer._pixelDensity;
+    const canvasHeight = this.height * this._renderer._pixelDensity;
     const canvasCorners = [
       new DOMPoint(0, 0),
       new DOMPoint(canvasWidth, 0),

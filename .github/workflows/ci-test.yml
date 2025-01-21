@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev-2.0
   pull_request:
     branches:
       - '*'

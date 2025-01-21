@@ -10,6 +10,8 @@
  * for drawing images to the main display canvas.
  */
 import * as omggif from 'omggif';
+import { Element } from '../dom/p5.Element';
+import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 function image(p5, fn){
   /**
@@ -146,7 +148,7 @@ function image(p5, fn){
    * </div>
    */
   fn.createImage = function(width, height) {
-    p5._validateParameters('createImage', arguments);
+    // p5._validateParameters('createImage', arguments);
     return new p5.Image(width, height);
   };
 
@@ -270,7 +272,7 @@ function image(p5, fn){
    *  @param  {String} [extension]
    */
   fn.saveCanvas = function(...args) {
-    p5._validateParameters('saveCanvas', args);
+    // p5._validateParameters('saveCanvas', args);
 
     // copy arguments to array
     let htmlCanvas, filename, extension, temporaryGraphics;
@@ -278,10 +280,10 @@ function image(p5, fn){
     if (args[0] instanceof HTMLCanvasElement) {
       htmlCanvas = args[0];
       args.shift();
-    } else if (args[0] instanceof p5.Element) {
+    } else if (args[0] instanceof Element) {
       htmlCanvas = args[0].elt;
       args.shift();
-    } else if (args[0] instanceof p5.Framebuffer) {
+    } else if (args[0] instanceof Framebuffer) {
       const framebuffer = args[0];
       temporaryGraphics = this.createGraphics(framebuffer.width,
         framebuffer.height);
@@ -656,12 +658,12 @@ function image(p5, fn){
    * </div>
    */
   fn.saveFrames = function(fName, ext, _duration, _fps, callback) {
-    p5._validateParameters('saveFrames', arguments);
+    // p5._validateParameters('saveFrames', arguments);
     let duration = _duration || 3;
-    duration = fn.constrain(duration, 0, 15);
+    duration = Math.max(Math.min(duration, 15), 0);
     duration = duration * 1000;
     let fps = _fps || 15;
-    fps = fn.constrain(fps, 0, 22);
+    fps = Math.max(Math.min(fps, 22), 0);
     let count = 0;
 
     const makeFrame = fn._makeFrame;

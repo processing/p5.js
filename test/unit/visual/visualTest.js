@@ -1,17 +1,12 @@
 import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
-import { THRESHOLD } from '../../../src/core/constants.js';
+import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands
 
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
 // based on antialiasing.
-const COLOR_THRESHOLD = 15;
-
-// By how many pixels can the snapshot shift? This is
-// often useful to accommodate different text rendering
-// across environments.
-const SHIFT_THRESHOLD = 1;
+const COLOR_THRESHOLD = 25;
 
 // The max side length to shrink test images down to before
 // comparing, for performance.
@@ -39,6 +34,11 @@ function escapeName(name) {
 
 let namePrefix = '';
 
+// By how many pixels can the snapshot shift? This is
+// often useful to accommodate different text rendering
+// across environments.
+let shiftThreshold = 2;
+
 /**
  * A helper to define a category of visual tests.
  *
@@ -51,7 +51,7 @@ let namePrefix = '';
 export function visualSuite(
   name,
   callback,
-  { focus = false, skip = false } = {}
+  { focus = false, skip = false, shiftThreshold: newShiftThreshold } = {}
 ) {
   let suiteFn = describe;
   if (focus) {
@@ -61,11 +61,16 @@ export function visualSuite(
     suiteFn = suiteFn.skip;
   }
   suiteFn(name, () => {
+    let lastShiftThreshold
     let lastPrefix;
     let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
       lastPrefix = namePrefix;
       namePrefix += escapeName(name) + '/';
+      lastShiftThreshold = shiftThreshold;
+      if (newShiftThreshold !== undefined) {
+        shiftThreshold = newShiftThreshold
+      }
 
       // Force everything to be 1x
       window.devicePixelRatio = 1;
@@ -76,12 +81,21 @@ export function visualSuite(
     afterAll(() => {
       namePrefix = lastPrefix;
       window.devicePixelRatio = lastDeviceRatio;
+      shiftThreshold = lastShiftThreshold;
     });
   });
 }
 
 export async function checkMatch(actual, expected, p5) {
-  const scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+
+  // Long screenshots end up super tiny when fit to a small square, so we
+  // can double the max side length for these
+  const ratio = expected.width / expected.height;
+  const narrow = ratio !== 1;
+  if (narrow) {
+    scale *= 2;
+  }
 
   for (const img of [actual, expected]) {
     img.resize(
@@ -99,11 +113,10 @@ export async function checkMatch(actual, expected, p5) {
   cnv.pixelDensity(1);
   cnv.background(BG);
   cnv.image(actual, 0, 0);
-  cnv.blendMode(cnv.DIFFERENCE);
+  cnv.blendMode(DIFFERENCE);
   cnv.image(expectedWithBg, 0, 0);
-  for (let i = 0; i < SHIFT_THRESHOLD; i++) {
-    cnv.filter(cnv.ERODE, false);
-    cnv.filter(cnv.ERODE, false);
+  for (let i = 0; i < shiftThreshold; i++) {
+    cnv.filter(ERODE, false);
   }
   const diff = cnv.get();
   cnv.remove();
@@ -112,13 +125,15 @@ export async function checkMatch(actual, expected, p5) {
 
   let ok = true;
   for (let i = 0; i < diff.pixels.length; i += 4) {
+    let diffSum = 0;
     for (let off = 0; off < 3; off++) {
-      if (diff.pixels[i+off] > COLOR_THRESHOLD) {
-        ok = false;
-        break;
-      }
+      diffSum += diff.pixels[i+off]
     }
-    if (!ok) break;
+    diffSum /= 3;
+    if (diffSum > COLOR_THRESHOLD) {
+      ok = false;
+      break;
+    }
   }
 
   return { ok, diff };

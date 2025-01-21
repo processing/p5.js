@@ -5,8 +5,8 @@
  * @requires constants
  */
 
-// Core needs the PVariables object
 import * as constants from './constants';
+
 /**
  * This is the p5 instance constructor.
  *
@@ -42,15 +42,16 @@ class p5 {
     remove: []
   };
 
+  // FES stub
+  static _checkForUserDefinedFunctions = () => {};
+  static _friendlyFileLoadError = () => {};
+
   constructor(sketch, node) {
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    // for handling hidpi
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
-    this._maxAllowedPixelDimensions = 0;
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
@@ -62,9 +63,9 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      mousemove: null,
-      mousedown: null,
-      mouseup: null,
+      pointerdown: null,
+      pointerup: null,
+      pointermove: null,
       dragend: null,
       dragover: null,
       click: null,
@@ -75,22 +76,15 @@ class p5 {
       keyup: null,
       keypress: null,
       wheel: null,
-      touchstart: null,
-      touchmove: null,
-      touchend: null,
       resize: null,
       blur: null
     };
     this._millisStart = -1;
     this._recording = false;
-    this._touchstart = false;
-    this._touchend = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
     this._gaussian_previous = false; // NOTE: move to random.js
-
-    this._loadingScreenId = 'p5_loading';
 
     if (window.DeviceOrientationEvent) {
       this._events.deviceorientation = null;
@@ -188,6 +182,10 @@ class p5 {
     }
   }
 
+  get pixels(){
+    return this._renderer.pixels;
+  }
+
   static registerAddon(addon) {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);
@@ -237,6 +235,14 @@ class p5 {
 
     // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
+
+    // Apply touchAction = 'none' to canvases if pointer events exist
+    if (Object.keys(this._events).some(event => event.startsWith('pointer'))) {
+      for (const k of canvases) {
+        k.style.touchAction = 'none';
+      }
+    }
+
 
     for (const k of canvases) {
       if (k.dataset.hidden === 'true') {
@@ -351,10 +357,7 @@ class p5 {
     if(this._startListener){
       window.removeEventListener('load', this._startListener, false);
     }
-    const loadingScreen = document.getElementById(this._loadingScreenId);
-    if (loadingScreen) {
-      loadingScreen.parentNode.removeChild(loadingScreen);
-    }
+
     if (this._curElement) {
       // stop draw
       this._loop = false;
@@ -418,22 +421,11 @@ class p5 {
     };
 
     this._styles = [];
-
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
-    this._colorMode = constants.RGB;
-    this._colorMaxes = {
-      rgb: [255, 255, 255, 255],
-      hsb: [360, 100, 100, 1],
-      hsl: [360, 100, 100, 1]
-    };
-
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 }
 
-// attach constants to p5 prototype
+// Attach constants to p5 prototype
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
@@ -665,5 +657,21 @@ for (const k in constants) {
  * </div>
  */
 p5.disableFriendlyErrors = false;
+
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+import graphics from './p5.Graphics';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
+p5.registerAddon(graphics);
 
 export default p5;

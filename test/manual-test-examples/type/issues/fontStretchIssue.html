@@ -1,0 +1,45 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <script language="javascript" type="text/javascript" src="img/../../../../lib/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="img/sketch.js"></script> -->
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import p5 from '../../../../src/app.js';
+
+    // Font-stretch works but is not accepted as the font-string (see warning in the console)
+    const sketch = function (p) {
+
+      let url = 'url(https://fonts.gstatic.com/s/inconsolata/v31/QlddNThLqRwH-OJ1UHjlKENVzlm-WkL3GZQmAwPyya15.woff2) format("woff2")';
+      p.setup = async function () {
+        p.createCanvas(900, 50);
+        let f = await p.loadFont(url, 'Inconsolata');
+        p.textFont(f, "2em", { fontStretch: 'ultra-expanded' });
+        p.text(`Hello world (default: normal)`, 5, 35);
+      };
+
+    };
+
+    new p5(sketch);
+
+  </script>
+
+</body>
+
+
+</html>

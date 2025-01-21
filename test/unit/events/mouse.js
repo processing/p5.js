@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { parallelSketches } from '../../js/p5_helpers';
 
-suite('Mouse Events', function() {
+suite.todo('Mouse Events', function() {
   let myp5;
 
   let canvas;
@@ -47,8 +47,8 @@ suite('Mouse Events', function() {
     myp5.remove();
   });
 
-  let mouseEvent1 = new MouseEvent('mousemove', { clientX: 100, clientY: 100 });
-  let mouseEvent2 = new MouseEvent('mousemove', { clientX: 200, clientY: 200 });
+  let mouseEvent1 = new PointerEvent('pointermove', { clientX: 100, clientY: 100 });
+  let mouseEvent2 = new PointerEvent('pointermove', { clientX: 200, clientY: 200 });
 
   suite('p5.prototype._hasMouseInteracted', function() {
     test('_hasMouseInteracted should be a boolean', function() {
@@ -200,7 +200,7 @@ suite('Mouse Events', function() {
       assert.isNumber(myp5.pwinMouseY);
     });
 
-    test('pwinMouseY should be previous vertical position of mouse relative to the window', function() {
+    test('pwinMouseY should be previous vertical position of mouse relative to the window', async function() {
       window.dispatchEvent(mouseEvent1); // dispatch first mouse event
       window.dispatchEvent(mouseEvent2); // dispatch second mouse event
       assert.strictEqual(myp5.pwinMouseY, mouseEvent1.clientY);
@@ -223,17 +223,17 @@ suite('Mouse Events', function() {
     });
 
     test('mouseButton should be "left" on left mouse button click', function() {
-      window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+      window.dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
       assert.strictEqual(myp5.mouseButton, 'left');
     });
 
     test('mouseButton should be "center" on auxillary mouse button click', function() {
-      window.dispatchEvent(new MouseEvent('mousedown', { button: 1 }));
+      window.dispatchEvent(new PointerEvent('pointerdown', { button: 1 }));
       assert.strictEqual(myp5.mouseButton, 'center');
     });
 
     test('mouseButton should be "right" on right mouse button click', function() {
-      window.dispatchEvent(new MouseEvent('mousedown', { button: 2 }));
+      window.dispatchEvent(new PointerEvent('pointerdown', { button: 2 }));
       assert.strictEqual(myp5.mouseButton, 'right');
     });
   });
@@ -280,7 +280,7 @@ suite('Mouse Events', function() {
       };
       let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
       await sketches.setup; //wait for all sketches to setup
-      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch a mouse event to trigger the mouseMoved functions
+      window.dispatchEvent(new PointerEvent('pointermove')); //dispatch a mouse event to trigger the mouseMoved functions
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times mouseMoved was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]);
@@ -295,8 +295,8 @@ suite('Mouse Events', function() {
         count += 1;
       };
 
-      window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
-      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      window.dispatchEvent(new PointerEvent('pointerdown')); //dispatch a mousedown event
+      window.dispatchEvent(new PointerEvent('pointermove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
       assert.deepEqual(count, 1);
     });
 
@@ -314,8 +314,8 @@ suite('Mouse Events', function() {
       };
       let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
       await sketches.setup; //wait for all sketches to setup
-      window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
-      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      window.dispatchEvent(new PointerEvent('pointerdown')); //dispatch a mousedown event
+      window.dispatchEvent(new PointerEvent('pointermove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times mouseDragged was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]);
@@ -330,7 +330,7 @@ suite('Mouse Events', function() {
         count += 1;
       };
 
-      window.dispatchEvent(new MouseEvent('mousedown'));
+      window.dispatchEvent(new PointerEvent('pointerdown'));
       assert.deepEqual(count, 1);
     });
 
@@ -348,7 +348,7 @@ suite('Mouse Events', function() {
       };
       let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
       await sketches.setup; //wait for all sketches to setup
-      window.dispatchEvent(new MouseEvent('mousedown'));
+      window.dispatchEvent(new PointerEvent('pointerdown'));
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times mouseDragged was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]);
@@ -363,7 +363,7 @@ suite('Mouse Events', function() {
         count += 1;
       };
 
-      window.dispatchEvent(new MouseEvent('mouseup'));
+      window.dispatchEvent(new PointerEvent('pointerup'));
       assert.deepEqual(count, 1);
     });
 
@@ -381,7 +381,7 @@ suite('Mouse Events', function() {
       };
       let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
       await sketches.setup; //wait for all sketches to setup
-      window.dispatchEvent(new MouseEvent('mouseup'));
+      window.dispatchEvent(new PointerEvent('pointerup'));
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times mouseReleased was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]);

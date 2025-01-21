@@ -6,15 +6,17 @@ import material from './material';
 import text from './text';
 import renderBuffer from './p5.RenderBuffer';
 import quat from './p5.Quat';
-import matrix from './p5.Matrix';
+import matrix from '../math/p5.Matrix';
 import geometry from './p5.Geometry';
 import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
 import shader from './p5.Shader';
 import camera from './p5.Camera';
 import texture from './p5.Texture';
+import rendererGL from './p5.RendererGL';
 
 export default function(p5){
+  rendererGL(p5, p5.prototype);
   primitives3D(p5, p5.prototype);
   interaction(p5, p5.prototype);
   light(p5, p5.prototype);

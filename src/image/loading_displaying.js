@@ -7,6 +7,7 @@
 
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
+import { request } from '../io/files';
 import * as omggif from 'omggif';
 import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
@@ -19,28 +20,31 @@ function loadingDisplaying(p5, fn){
    * files should be relative, such as `'assets/thundercat.jpg'`. URLs such as
    * `'https://example.com/thundercat.jpg'` may be blocked due to browser
    * security. Raw image data can also be passed as a base64 encoded image in
-   * the form `'data:image/png;base64,arandomsequenceofcharacters'`.
+   * the form `'data:image/png;base64,arandomsequenceofcharacters'`. The `path`
+   * parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
+   * object for more advanced usage.
    *
    * The second parameter is optional. If a function is passed, it will be
    * called once the image has loaded. The callback function can optionally use
-   * the new <a href="#/p5.Image">p5.Image</a> object.
+   * the new <a href="#/p5.Image">p5.Image</a> object. The return value of the
+   * function will be used as the final return value of `loadImage()`.
    *
    * The third parameter is also optional. If a function is passed, it will be
    * called if the image fails to load. The callback function can optionally use
-   * the event error.
+   * the event error. The return value of the function will be used as the final
+   * return value of `loadImage()`.
    *
-   * Images can take time to load. Calling `loadImage()` in
-   * <a href="#/p5/preload">preload()</a> ensures images load before they're
-   * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * @method loadImage
-   * @param  {String} path path of the image to be loaded or base64 encoded image.
+   * @param  {String|Request}      path  path of the image to be loaded or base64 encoded image.
    * @param  {function(p5.Image)} [successCallback] function called with
    *                               <a href="#/p5.Image">p5.Image</a> once it
    *                               loads.
    * @param  {function(Event)}    [failureCallback] function called with event
    *                               error if the image fails to load.
-   * @return {p5.Image}            the <a href="#/p5.Image">p5.Image</a> object.
+   * @return {Promise<p5.Image>}   the <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
    * <div>
@@ -48,11 +52,8 @@ function loadingDisplaying(p5, fn){
    * let img;
    *
    * // Load the image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/laDefense.jpg');
    *   createCanvas(100, 100);
    *
    *   // Draw the image.
@@ -106,111 +107,61 @@ function loadingDisplaying(p5, fn){
     successCallback,
     failureCallback
   ) {
-    p5._validateParameters('loadImage', arguments);
-    const pImg = new p5.Image(1, 1, this);
-    const self = this;
+    // p5._validateParameters('loadImage', arguments);
 
-    const req = new Request(path, {
-      method: 'GET',
-      mode: 'cors'
-    });
+    try{
+      let pImg = new p5.Image(1, 1, this);
 
-    return fetch(path, req)
-      .then(async response => {
-        // GIF section
-        const contentType = response.headers.get('content-type');
-        if (contentType === null) {
-          console.warn(
-            'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
-          );
-        }
-        if (contentType && contentType.includes('image/gif')) {
-          await response.arrayBuffer().then(
-            arrayBuffer => new Promise((resolve, reject) => {
-              if (arrayBuffer) {
-                const byteArray = new Uint8Array(arrayBuffer);
-                try{
-                  _createGif(
-                    byteArray,
-                    pImg,
-                    successCallback,
-                    failureCallback,
-                    (pImg => {
-                      resolve(pImg);
-                    }).bind(self)
-                  );
-                }catch(e){
-                  console.error(e.toString(), e.stack);
-                  if (typeof failureCallback === 'function') {
-                    failureCallback(e);
-                  } else {
-                    console.error(e);
-                  }
-                  reject(e);
-                }
-              }
-            })
-          ).catch(
-            e => {
-              if (typeof failureCallback === 'function') {
-                failureCallback(e);
-              } else {
-                console.error(e);
-              }
-            }
-          );
-        } else {
-          // Non-GIF Section
-          const img = new Image();
-
-          await new Promise((resolve, reject) => {
-            img.onload = () => {
-              pImg.width = pImg.canvas.width = img.width;
-              pImg.height = pImg.canvas.height = img.height;
-
-              // Draw the image into the backing canvas of the p5.Image
-              pImg.drawingContext.drawImage(img, 0, 0);
-              pImg.modified = true;
-              if (typeof successCallback === 'function') {
-                successCallback(pImg);
-              }
-              resolve();
-            };
-
-            img.onerror = e => {
-              p5._friendlyFileLoadError(0, img.src);
-              if (typeof failureCallback === 'function') {
-                failureCallback(e);
-              } else {
-                console.error(e);
-              }
-              reject();
-            };
-
-            // Set crossOrigin in case image is served with CORS headers.
-            // This will let us draw to the canvas without tainting it.
-            // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-            // When using data-uris the file will be loaded locally
-            // so we don't need to worry about crossOrigin with base64 file types.
-            if (path.indexOf('data:image/') !== 0) {
-              img.crossOrigin = 'Anonymous';
-            }
-            // start loading the image
-            img.src = path;
-          });
-        }
-        pImg.modified = true;
-        return pImg;
-      })
-      .catch(e => {
-        p5._friendlyFileLoadError(0, path);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
+      const req = new Request(path, {
+        method: 'GET',
+        mode: 'cors'
       });
-    // return pImg;
+
+      const { data, headers } = await request(req, 'bytes');
+
+      // GIF section
+      const contentType = headers.get('content-type');
+
+      if (contentType === null) {
+        console.warn(
+          'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
+        );
+      }
+
+      if (contentType && contentType.includes('image/gif')) {
+        await _createGif(
+          data,
+          pImg
+        );
+
+      } else {
+        // Non-GIF Section
+        const blob = new Blob([data]);
+        const img = await createImageBitmap(blob);
+
+        pImg.width = pImg.canvas.width = img.width;
+        pImg.height = pImg.canvas.height = img.height;
+
+        // Draw the image into the backing canvas of the p5.Image
+        pImg.drawingContext.drawImage(img, 0, 0);
+      }
+
+      pImg.modified = true;
+
+      if(successCallback){
+        return successCallback(pImg);
+      }else{
+        return pImg;
+      }
+
+    } catch(err) {
+      p5._friendlyFileLoadError(0, path);
+      if (typeof failureCallback === 'function') {
+        return failureCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
@@ -375,7 +326,7 @@ function loadingDisplaying(p5, fn){
     let frameIterator = nFramesDelay;
     this.frameCount = frameIterator;
 
-    const lastPixelDensity = this._pixelDensity;
+    const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
 
     // We first take every frame that we are going to use for the animation
@@ -651,31 +602,25 @@ function loadingDisplaying(p5, fn){
   /**
    * Helper function for loading GIF-based images
    */
-  function _createGif(
-    arrayBuffer,
-    pImg,
-    successCallback,
-    failureCallback,
-    finishCallback
-  ) {
+  async function _createGif(arrayBuffer, pImg) {
+    // TODO: Replace with ImageDecoder once it is widely available
+    // https://developer.mozilla.org/en-US/docs/Web/API/ImageDecoder
     const gifReader = new omggif.GifReader(arrayBuffer);
     pImg.width = pImg.canvas.width = gifReader.width;
     pImg.height = pImg.canvas.height = gifReader.height;
     const frames = [];
     const numFrames = gifReader.numFrames();
     let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+
     const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
         p5._friendlyFileLoadError(8, pImg.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
+        throw e;
       }
     };
+
     for (let j = 0; j < numFrames; j++) {
       const frameInfo = gifReader.frameInfo(j);
       const prevFrameData = pImg.drawingContext.getImageData(
@@ -764,10 +709,7 @@ function loadingDisplaying(p5, fn){
       };
     }
 
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
-    }
-    finishCallback();
+    return pImg;
   }
 
   /**
@@ -1121,7 +1063,7 @@ function loadingDisplaying(p5, fn){
   ) {
     // set defaults per spec: https://goo.gl/3ykfOq
 
-    p5._validateParameters('image', arguments);
+    // p5._validateParameters('image', arguments);
 
     let defW = img.width;
     let defH = img.height;
@@ -1349,9 +1291,9 @@ function loadingDisplaying(p5, fn){
    * @param  {p5.Color}      color   the tint color
    */
   fn.tint = function(...args) {
-    p5._validateParameters('tint', args);
+    // p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer.states.tint = c.levels;
+    this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
   };
 
   /**
@@ -1401,8 +1343,8 @@ function loadingDisplaying(p5, fn){
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
    */
-  fn._getTintedImageCanvas =
-    p5.Renderer2D.prototype._getTintedImageCanvas;
+  // fn._getTintedImageCanvas =
+  //   p5.Renderer2D.prototype._getTintedImageCanvas;
 
   /**
    * Changes the location from which images are drawn when
@@ -1503,7 +1445,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.imageMode = function(m) {
-    p5._validateParameters('imageMode', arguments);
+    // p5._validateParameters('imageMode', arguments);
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||

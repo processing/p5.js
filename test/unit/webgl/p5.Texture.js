@@ -8,8 +8,11 @@ suite('p5.Texture', function() {
   var imgElementNotPowerOfTwo;
   var imgElementPowerOfTwo;
   var canvas;
+  let prevPixelRatio;
 
   beforeEach(function() {
+    prevPixelRatio = window.devicePixelRatio;
+    window.devicePixelRatio = 1;
     return new Promise(done => {
       myp5 = new p5(function(p) {
         p.setup = async function() {
@@ -42,19 +45,22 @@ suite('p5.Texture', function() {
   });
 
   afterEach(function() {
+    window.devicePixelRatio = prevPixelRatio;
     myp5.remove();
   });
 
   var testTextureSet = function(src) {
     var lightShader = myp5._renderer._getLightShader();
     var selectedShader = myp5._renderer._getFillShader();
+    console.log('first');
     assert(
       lightShader === selectedShader,
       "_renderer's retain mode shader was not light shader " +
         'after call to texture()'
     );
-
+    console.log('second');
     var tex = myp5._renderer.getTexture(src);
+    console.log('third');
     assert(tex !== undefined, 'texture was undefined');
     assert(tex instanceof p5.Texture, 'texture was not a p5.Texture object');
     assert(tex.src === src, 'texture did not have expected image as source');
@@ -127,11 +133,11 @@ suite('p5.Texture', function() {
     );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.NORMAL);
     });
     test('Set textureMode to IMAGE', function() {
       myp5.textureMode(myp5.IMAGE);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.IMAGE);
     });
     test('Set global wrap mode to clamp', function() {
       myp5.textureWrap(myp5.CLAMP);

@@ -1,4 +1,5 @@
-precision mediump int;
+precision highp int;
+precision highp float;
 
 uniform vec4 uMaterialColor;
 uniform int uStrokeCap;

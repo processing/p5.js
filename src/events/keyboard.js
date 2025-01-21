@@ -95,8 +95,7 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.isKeyPressed = false;
-  fn.keyIsPressed = false; // khan
+  fn.keyIsPressed = false;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -444,7 +443,6 @@ function keyboard(p5, fn){
       // prevent multiple firings
       return;
     }
-    this.isKeyPressed = true;
     this.keyIsPressed = true;
     this.keyCode = e.which;
     this._downKeys[e.which] = true;
@@ -617,7 +615,6 @@ function keyboard(p5, fn){
     this._downKeys[e.which] = false;
 
     if (!this._areDownKeys()) {
-      this.isKeyPressed = false;
       this.keyIsPressed = false;
     }
 
@@ -903,7 +900,7 @@ function keyboard(p5, fn){
    * </div>
    */
   fn.keyIsDown = function(code) {
-    p5._validateParameters('keyIsDown', arguments);
+    // p5._validateParameters('keyIsDown', arguments);
     return this._downKeys[code] || false;
   };
 

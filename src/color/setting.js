@@ -7,6 +7,7 @@
  */
 
 import * as constants from '../core/constants';
+import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 function setting(p5, fn){
   /**
@@ -944,20 +945,29 @@ function setting(p5, fn){
    * @param {Number} max3     range for the blue or brightness/lightness
    *                              depending on the current color mode.
    * @param {Number} [maxA]   range for the alpha.
-   * @chainable
+   *
+   * @return {String}      The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
-    p5._validateParameters('colorMode', arguments);
+    // p5._validateParameters('colorMode', arguments);
     if (
-      mode === constants.RGB ||
-      mode === constants.HSB ||
-      mode === constants.HSL
+      [
+        RGB,
+        RGBHDR,
+        HSB,
+        HSL,
+        HWB,
+        LAB,
+        LCH,
+        OKLAB,
+        OKLCH
+      ].includes(mode)
     ) {
       // Set color mode.
-      this._colorMode = mode;
+      this._renderer.states.colorMode = mode;
 
       // Set color maxes.
-      const maxes = this._colorMaxes[mode];
+      const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red
         maxes[1] = max1; // Green
@@ -975,7 +985,7 @@ function setting(p5, fn){
       }
     }
 
-    return this;
+    return this._renderer.states.colorMode;
   };
 
   /**
@@ -1209,8 +1219,6 @@ function setting(p5, fn){
    * @chainable
    */
   fn.fill = function(...args) {
-    this._renderer.states.fillSet = true;
-    this._renderer.states.doFill = true;
     this._renderer.fill(...args);
     return this;
   };
@@ -1271,7 +1279,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noFill = function() {
-    this._renderer.states.doFill = false;
+    this._renderer.noFill();
     return this;
   };
 
@@ -1327,7 +1335,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer.states.doStroke = false;
+    this._renderer.states.strokeColor = null;
     return this;
   };
 
@@ -1579,10 +1587,7 @@ function setting(p5, fn){
    * @param  {p5.Color}      color   the stroke color.
    * @chainable
    */
-
   fn.stroke = function(...args) {
-    this._renderer.states.strokeSet = true;
-    this._renderer.states.doStroke = true;
     this._renderer.stroke(...args);
     return this;
   };
@@ -1712,6 +1717,482 @@ function setting(p5, fn){
   fn.noErase = function() {
     this._renderer.noErase();
     return this;
+  };
+
+  /**
+   * Sets the way colors blend when added to the canvas.
+   *
+   * By default, drawing with a solid color paints over the current pixel values
+   * on the canvas. `blendMode()` offers many options for blending colors.
+   *
+   * Shapes, images, and text can be used as sources for drawing to the canvas.
+   * A source pixel changes the color of the canvas pixel where it's drawn. The
+   * final color results from blending the source pixel's color with the canvas
+   * pixel's color. RGB color values from the source and canvas pixels are
+   * compared, added, subtracted, multiplied, and divided to create different
+   * effects. Red values with red values, greens with greens, and blues with
+   * blues.
+   *
+   * The parameter, `mode`, sets the blend mode. For example, calling
+   * `blendMode(ADD)` sets the blend mode to `ADD`. The following blend modes
+   * are available in both 2D and WebGL mode:
+   *
+   * - `BLEND`: color values from the source overwrite the canvas. This is the default mode.
+   * - `ADD`: color values from the source are added to values from the canvas.
+   * - `DARKEST`: keeps the darkest color value.
+   * - `LIGHTEST`: keeps the lightest color value.
+   * - `EXCLUSION`: similar to `DIFFERENCE` but with less contrast.
+   * - `MULTIPLY`: color values from the source are multiplied with values from the canvas. The result is always darker.
+   * - `SCREEN`: all color values are inverted, then multiplied, then inverted again. The result is always lighter. (Opposite of `MULTIPLY`)
+   * - `REPLACE`: the last source drawn completely replaces the rest of the canvas.
+   * - `REMOVE`: overlapping pixels are removed by making them completely transparent.
+   *
+   * The following blend modes are only available in 2D mode:
+   *
+   * - `DIFFERENCE`: color values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive.
+   * - `OVERLAY`: combines `MULTIPLY` and `SCREEN`. Dark values in the canvas get darker and light values get lighter.
+   * - `HARD_LIGHT`: combines `MULTIPLY` and `SCREEN`. Dark values in the source get darker and light values get lighter.
+   * - `SOFT_LIGHT`: a softer version of `HARD_LIGHT`.
+   * - `DODGE`: lightens light tones and increases contrast. Divides the canvas color values by the inverted color values from the source.
+   * - `BURN`: darkens dark tones and increases contrast. Divides the source color values by the inverted color values from the canvas, then inverts the result.
+   *
+   * The following blend modes are only available in WebGL mode:
+   *
+   * - `SUBTRACT`: RGB values from the source are subtracted from the values from the canvas. If the difference is a negative number, it's made positive. Alpha (transparency) values from the source and canvas are added.
+   *
+   * @method blendMode
+   * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)} mode blend mode to set.
+   *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
+   *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+   *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Use the default blend mode.
+   *   blendMode(BLEND);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A blue line and a red line form an X on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(ADD);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(DARKEST);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(LIGHTEST);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(EXCLUSION);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(MULTIPLY);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(SCREEN);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(REPLACE);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A diagonal red line.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(REMOVE);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('The silhouette of an X is missing from a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(DIFFERENCE);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(OVERLAY);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is bright magenta.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(HARD_LIGHT);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A blue line and a red line form an X on a gray background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(SOFT_LIGHT);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is violet.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(DODGE);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint violet.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(BURN);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the blend mode.
+   *   blendMode(SUBTRACT);
+   *
+   *   // Style the lines.
+   *   strokeWeight(30);
+   *
+   *   // Draw the blue line.
+   *   stroke('blue');
+   *   line(25, 25, 75, 75);
+   *
+   *   // Draw the red line.
+   *   stroke('red');
+   *   line(75, 25, 25, 75);
+   *
+   *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.blendMode = function (mode) {
+    // p5._validateParameters('blendMode', arguments);
+    if (mode === constants.NORMAL) {
+      // Warning added 3/26/19, can be deleted in future (1.0 release?)
+      console.warn(
+        'NORMAL has been deprecated for use in blendMode. defaulting to BLEND instead.'
+      );
+      mode = constants.BLEND;
+    }
+    this._renderer.blendMode(mode);
   };
 }
 

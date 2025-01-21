@@ -20,7 +20,10 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
  * @property {P2D} P2D
  * @final
  */
-export const P2D = Symbol('p2d');
+export const P2D = 'p2d';
+
+export const P2DHDR = 'p2d-hdr';
+
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
@@ -42,7 +45,7 @@ export const P2D = Symbol('p2d');
  * @property {WEBGL} WEBGL
  * @final
  */
-export const WEBGL = Symbol('webgl');
+export const WEBGL = 'webgl';
 /**
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment
@@ -51,7 +54,7 @@ export const WEBGL = Symbol('webgl');
  * @property {WEBGL2} WEBGL2
  * @final
  */
-export const WEBGL2 = Symbol('webgl2');
+export const WEBGL2 = 'webgl2';
 
 // ENVIRONMENT
 /**
@@ -60,6 +63,18 @@ export const WEBGL2 = Symbol('webgl2');
  * @final
  */
 export const ARROW = 'default';
+
+/**
+ * @property {String} SIMPLE
+ * @final
+ */
+export const SIMPLE = 'simple';
+/**
+ * @property {String} FULL
+ * @final
+ */
+export const FULL = 'full';
+
 /**
  * @typedef {'crosshair'} CROSS
  * @property {CROSS} CROSS
@@ -757,6 +772,18 @@ export const QUAD_STRIP = 'quad_strip';
  */
 export const TESS = 'tess';
 /**
+ * @typedef {0x0007} EMPTY_PATH
+ * @property {EMPTY_PATH} EMPTY_PATH
+ * @final
+ */
+export const EMPTY_PATH = 0x0007;
+/**
+ * @typedef {0x0008} PATH
+ * @property {PATH} PATH
+ * @final
+ */
+export const PATH = 0x0008;
+/**
  * @typedef {'close'} CLOSE
  * @property {CLOSE} CLOSE
  * @final
@@ -817,7 +844,7 @@ export const MITER = 'miter';
  * @property {RGB} RGB
  * @final
  */
-export const RGB = 'rgb';
+// export const RGB = 'rgb';
 /**
  * HSB (hue, saturation, brightness) is a type of color model.
  * You can learn more about it at
@@ -827,13 +854,19 @@ export const RGB = 'rgb';
  * @property {HSB} HSB
  * @final
  */
-export const HSB = 'hsb';
+// export const HSB = 'hsb';
 /**
  * @typedef {'hsl'} HSL
  * @property {HSL} HSL
  * @final
  */
-export const HSL = 'hsl';
+// export const HSL = 'hsl';
+/**
+ * @typedef {'rgba'} RGBA
+ * @property {RGBA} RGBA
+ * @final
+ */
+// export const RGBA = 'rgba';
 
 // DOM EXTENSION
 /**
@@ -1314,8 +1347,29 @@ export const FLOAT = 'float';
 export const HALF_FLOAT = 'half-float';
 
 /**
- * @typedef {'rgba'} RGBA
- * @property {RGBA} RGBA
+ * The `splineProperty('ends')` mode where splines curve through
+ * their first and last points.
+ * @typedef {unique symbol} INCLUDE
+ * @property {INCLUDE} INCLUDE
  * @final
  */
-export const RGBA = 'rgba';
+export const INCLUDE = Symbol('include');
+
+/**
+ * The `splineProperty('ends')` mode where the first and last points in a spline
+ * affect the direction of the curve, but are not rendered.
+ * @typedef {unique symbol} EXCLUDE
+ * @property {EXCLUDE} EXCLUDE
+ * @final
+ */
+export const EXCLUDE = Symbol('exclude');
+
+/**
+ * The `splineProperty('ends')` mode where the spline loops back to its first point.
+ * Only used internally.
+ * @typedef {unique symbol} JOIN
+ * @property {JOIN} JOIN
+ * @final
+ * @private
+ */
+export const JOIN = Symbol('join');

@@ -41,11 +41,12 @@ jobs:
         run: npm ci
         env:
           CI: true
-      - name: Run build
+      - name: Run test
         run: npm test
         env:
           CI: true
-      - run: rm ./lib/p5-test.js ./lib/p5.pre-min.js
+      - name: Run build
+        run: npm run build
 
       # 2. Prepare release files
       - run: mkdir release && mkdir p5 && cp -r ./lib/* p5/

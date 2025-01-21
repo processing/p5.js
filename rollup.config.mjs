@@ -3,10 +3,11 @@ import json from '@rollup/plugin-json';
 import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
 import dayjs from 'dayjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
 
 const plugins = [
   commonjs(),
@@ -99,7 +100,19 @@ export default [
         plugins: [
           bundleSize('p5.esm.js')
         ]
-      },
+      }
+    ],
+    treeshake: {
+      preset: 'smallest'
+    },
+    plugins: [
+      ...plugins
+    ]
+  },
+  //// Minified build ////
+  {
+    input: 'src/app.js',
+    output: [
       {
         file: './lib/p5.min.js',
         format: 'iife',
@@ -122,14 +135,17 @@ export default [
       }
     ],
     treeshake: {
-      preset: 'smallest',
-      // NOTE: remove after we stopped using side effects
-      moduleSideEffects: true
+      preset: 'smallest'
     },
     plugins: [
+      alias({
+        entries: [
+          { find: './core/friendly_errors', replacement: './core/noop' }
+        ]
+      }),
       ...plugins
     ]
-  },
+  }
   // NOTE: comment to NOT build standalone math module
   // ...generateModuleBuild()
 ];

@@ -5,6 +5,10 @@
  * @requires core
  */
 
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+import { Color } from '../color/p5.Color';
+
 function light(p5, fn){
   /**
    * Creates a light that shines from all directions.
@@ -187,16 +191,9 @@ function light(p5, fn){
    */
   fn.ambientLight = function (v1, v2, v3, a) {
     this._assert3d('ambientLight');
-    p5._validateParameters('ambientLight', arguments);
-    const color = this.color(...arguments);
+    // p5._validateParameters('ambientLight', arguments);
 
-    this._renderer.states.ambientLightColors.push(
-      color._array[0],
-      color._array[1],
-      color._array[2]
-    );
-
-    this._renderer.states._enableLighting = true;
+    this._renderer.ambientLight(...arguments);
 
     return this;
   };
@@ -445,14 +442,9 @@ function light(p5, fn){
    */
   fn.specularColor = function (v1, v2, v3) {
     this._assert3d('specularColor');
-    p5._validateParameters('specularColor', arguments);
-    const color = this.color(...arguments);
+    // p5._validateParameters('specularColor', arguments);
 
-    this._renderer.states.specularColors = [
-      color._array[0],
-      color._array[1],
-      color._array[2]
-    ];
+    this._renderer.specularColor(...arguments);
 
     return this;
   };
@@ -637,43 +629,10 @@ function light(p5, fn){
    */
   fn.directionalLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('directionalLight');
-    p5._validateParameters('directionalLight', arguments);
+    // p5._validateParameters('directionalLight', arguments);
 
     //@TODO: check parameters number
-    let color;
-    if (v1 instanceof p5.Color) {
-      color = v1;
-    } else {
-      color = this.color(v1, v2, v3);
-    }
-
-    let _x, _y, _z;
-    const v = arguments[arguments.length - 1];
-    if (typeof v === 'number') {
-      _x = arguments[arguments.length - 3];
-      _y = arguments[arguments.length - 2];
-      _z = arguments[arguments.length - 1];
-    } else {
-      _x = v.x;
-      _y = v.y;
-      _z = v.z;
-    }
-
-    // normalize direction
-    const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
-    this._renderer.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
-
-    this._renderer.states.directionalLightDiffuseColors.push(
-      color._array[0],
-      color._array[1],
-      color._array[2]
-    );
-    Array.prototype.push.apply(
-      this._renderer.states.directionalLightSpecularColors,
-      this._renderer.states.specularColors
-    );
-
-    this._renderer.states._enableLighting = true;
+    this._renderer.directionalLight(...arguments);
 
     return this;
   };
@@ -913,40 +872,10 @@ function light(p5, fn){
    */
   fn.pointLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('pointLight');
-    p5._validateParameters('pointLight', arguments);
+    // p5._validateParameters('pointLight', arguments);
 
     //@TODO: check parameters number
-    let color;
-    if (v1 instanceof p5.Color) {
-      color = v1;
-    } else {
-      color = this.color(v1, v2, v3);
-    }
-
-    let _x, _y, _z;
-    const v = arguments[arguments.length - 1];
-    if (typeof v === 'number') {
-      _x = arguments[arguments.length - 3];
-      _y = arguments[arguments.length - 2];
-      _z = arguments[arguments.length - 1];
-    } else {
-      _x = v.x;
-      _y = v.y;
-      _z = v.z;
-    }
-
-    this._renderer.states.pointLightPositions.push(_x, _y, _z);
-    this._renderer.states.pointLightDiffuseColors.push(
-      color._array[0],
-      color._array[1],
-      color._array[2]
-    );
-    Array.prototype.push.apply(
-      this._renderer.states.pointLightSpecularColors,
-      this._renderer.states.specularColors
-    );
-
-    this._renderer.states._enableLighting = true;
+    this._renderer.pointLight(...arguments);
 
     return this;
   };
@@ -1010,10 +939,7 @@ function light(p5, fn){
    * </div>
    */
   fn.imageLight = function (img) {
-    // activeImageLight property is checked by _setFillUniforms
-    // for sending uniforms to the fillshader
-    this._renderer.states.activeImageLight = img;
-    this._renderer.states._enableLighting = true;
+    this._renderer.imageLight(img);
   };
 
   /**
@@ -1150,9 +1076,7 @@ function light(p5, fn){
   fn.lights = function () {
     this._assert3d('lights');
     // Both specify gray by default.
-    const grayColor = this.color('rgb(128,128,128)');
-    this.ambientLight(grayColor);
-    this.directionalLight(grayColor, 0, 0, -1);
+    this._renderer.lights();
     return this;
   };
 
@@ -1227,42 +1151,13 @@ function light(p5, fn){
     quadraticAttenuation
   ) {
     this._assert3d('lightFalloff');
-    p5._validateParameters('lightFalloff', arguments);
+    // p5._validateParameters('lightFalloff', arguments);
 
-    if (constantAttenuation < 0) {
-      constantAttenuation = 0;
-      console.warn(
-        'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (linearAttenuation < 0) {
-      linearAttenuation = 0;
-      console.warn(
-        'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (quadraticAttenuation < 0) {
-      quadraticAttenuation = 0;
-      console.warn(
-        'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
-      );
-    }
-
-    if (
-      constantAttenuation === 0 &&
-      (linearAttenuation === 0 && quadraticAttenuation === 0)
-    ) {
-      constantAttenuation = 1;
-      console.warn(
-        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
-      );
-    }
-
-    this._renderer.states.constantAttenuation = constantAttenuation;
-    this._renderer.states.linearAttenuation = linearAttenuation;
-    this._renderer.states.quadraticAttenuation = quadraticAttenuation;
+    this._renderer.lightFalloff(
+      constantAttenuation,
+      linearAttenuation,
+      quadraticAttenuation
+    );
 
     return this;
   };
@@ -1483,200 +1378,9 @@ function light(p5, fn){
     concentration
   ) {
     this._assert3d('spotLight');
-    p5._validateParameters('spotLight', arguments);
+    // p5._validateParameters('spotLight', arguments);
 
-    let color, position, direction;
-    const length = arguments.length;
-
-    switch (length) {
-      case 11:
-      case 10:
-        color = this.color(v1, v2, v3);
-        position = new p5.Vector(x, y, z);
-        direction = new p5.Vector(nx, ny, nz);
-        break;
-
-      case 9:
-        if (v1 instanceof p5.Color) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
-          angle = ny;
-          concentration = nz;
-        } else if (x instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = new p5.Vector(y, z, nx);
-          angle = ny;
-          concentration = nz;
-        } else if (nx instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
-          direction = nx;
-          angle = ny;
-          concentration = nz;
-        } else {
-          color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
-          direction = new p5.Vector(nx, ny, nz);
-        }
-        break;
-
-      case 8:
-        if (v1 instanceof p5.Color) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
-          angle = ny;
-        } else if (x instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = new p5.Vector(y, z, nx);
-          angle = ny;
-        } else {
-          color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
-          direction = nx;
-          angle = ny;
-        }
-        break;
-
-      case 7:
-        if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
-          color = v1;
-          position = v2;
-          direction = new p5.Vector(v3, x, y);
-          angle = z;
-          concentration = nx;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = y;
-          angle = z;
-          concentration = nx;
-        } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = y;
-          angle = z;
-          concentration = nx;
-        } else if (v1 instanceof p5.Color) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = new p5.Vector(y, z, nx);
-        } else if (x instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = new p5.Vector(y, z, nx);
-        } else {
-          color = this.color(v1, v2, v3);
-          position = new p5.Vector(x, y, z);
-          direction = nx;
-        }
-        break;
-
-      case 6:
-        if (x instanceof p5.Vector && y instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = y;
-          angle = z;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = y;
-          angle = z;
-        } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
-          color = v1;
-          position = v2;
-          direction = new p5.Vector(v3, x, y);
-          angle = z;
-        }
-        break;
-
-      case 5:
-        if (
-          v1 instanceof p5.Color &&
-          v2 instanceof p5.Vector &&
-          v3 instanceof p5.Vector
-        ) {
-          color = v1;
-          position = v2;
-          direction = v3;
-          angle = x;
-          concentration = y;
-        } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
-          color = this.color(v1, v2, v3);
-          position = x;
-          direction = y;
-        } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
-          color = v1;
-          position = new p5.Vector(v2, v3, x);
-          direction = y;
-        } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
-          color = v1;
-          position = v2;
-          direction = new p5.Vector(v3, x, y);
-        }
-        break;
-
-      case 4:
-        color = v1;
-        position = v2;
-        direction = v3;
-        angle = x;
-        break;
-
-      case 3:
-        color = v1;
-        position = v2;
-        direction = v3;
-        break;
-
-      default:
-        console.warn(
-          `Sorry, input for spotlight() is not in prescribed format. Too ${
-            length < 3 ? 'few' : 'many'
-          } arguments were provided`
-        );
-        return this;
-    }
-    this._renderer.states.spotLightDiffuseColors = [
-      color._array[0],
-      color._array[1],
-      color._array[2]
-    ];
-
-    this._renderer.states.spotLightSpecularColors = [
-      ...this._renderer.states.specularColors
-    ];
-
-    this._renderer.states.spotLightPositions = [position.x, position.y, position.z];
-    direction.normalize();
-    this._renderer.states.spotLightDirections = [
-      direction.x,
-      direction.y,
-      direction.z
-    ];
-
-    if (angle === undefined) {
-      angle = Math.PI / 3;
-    }
-
-    if (concentration !== undefined && concentration < 1) {
-      concentration = 1;
-      console.warn(
-        'Value of concentration needs to be greater than 1. Setting it to 1'
-      );
-    } else if (concentration === undefined) {
-      concentration = 100;
-    }
-
-    angle = this._renderer._pInst._toRadians(angle);
-    this._renderer.states.spotLightAngle = [Math.cos(angle)];
-    this._renderer.states.spotLightConc = [concentration];
-
-    this._renderer.states._enableLighting = true;
+    this._renderer.spotLight(...arguments);
 
     return this;
   };
@@ -1741,37 +1445,396 @@ function light(p5, fn){
    */
   fn.noLights = function (...args) {
     this._assert3d('noLights');
-    p5._validateParameters('noLights', args);
+    // p5._validateParameters('noLights', args);
 
-    this._renderer.states.activeImageLight = null;
-    this._renderer.states._enableLighting = false;
-
-    this._renderer.states.ambientLightColors.length = 0;
-    this._renderer.states.specularColors = [1, 1, 1];
-
-    this._renderer.states.directionalLightDirections.length = 0;
-    this._renderer.states.directionalLightDiffuseColors.length = 0;
-    this._renderer.states.directionalLightSpecularColors.length = 0;
-
-    this._renderer.states.pointLightPositions.length = 0;
-    this._renderer.states.pointLightDiffuseColors.length = 0;
-    this._renderer.states.pointLightSpecularColors.length = 0;
-
-    this._renderer.states.spotLightPositions.length = 0;
-    this._renderer.states.spotLightDirections.length = 0;
-    this._renderer.states.spotLightDiffuseColors.length = 0;
-    this._renderer.states.spotLightSpecularColors.length = 0;
-    this._renderer.states.spotLightAngle.length = 0;
-    this._renderer.states.spotLightConc.length = 0;
-
-    this._renderer.states.constantAttenuation = 1;
-    this._renderer.states.linearAttenuation = 0;
-    this._renderer.states.quadraticAttenuation = 0;
-    this._renderer.states._useShininess = 1;
-    this._renderer.states._useMetalness = 0;
+    this._renderer.noLights();
 
     return this;
   };
+
+
+  RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
+    const color = this._pInst.color(...arguments);
+
+    this.states.ambientLightColors.push(
+      color._array[0],
+      color._array[1],
+      color._array[2]
+    );
+
+    this.states.enableLighting = true;
+  }
+
+  RendererGL.prototype.specularColor = function(v1, v2, v3) {
+    const color = this._pInst.color(...arguments);
+
+    this.states.specularColors = [
+      color._array[0],
+      color._array[1],
+      color._array[2]
+    ];
+  }
+
+  RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+    let color;
+    if (v1 instanceof Color) {
+      color = v1;
+    } else {
+      color = this._pInst.color(v1, v2, v3);
+    }
+
+    let _x, _y, _z;
+    const v = arguments[arguments.length - 1];
+    if (typeof v === 'number') {
+      _x = arguments[arguments.length - 3];
+      _y = arguments[arguments.length - 2];
+      _z = arguments[arguments.length - 1];
+    } else {
+      _x = v.x;
+      _y = v.y;
+      _z = v.z;
+    }
+
+    // normalize direction
+    const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+    this.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
+
+    this.states.directionalLightDiffuseColors.push(
+      color._array[0],
+      color._array[1],
+      color._array[2]
+    );
+    Array.prototype.push.apply(
+      this.states.directionalLightSpecularColors,
+      this.states.specularColors
+    );
+
+    this.states.enableLighting = true;
+  }
+
+  RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+    let color;
+    if (v1 instanceof Color) {
+      color = v1;
+    } else {
+      color = this._pInst.color(v1, v2, v3);
+    }
+
+    let _x, _y, _z;
+    const v = arguments[arguments.length - 1];
+    if (typeof v === 'number') {
+      _x = arguments[arguments.length - 3];
+      _y = arguments[arguments.length - 2];
+      _z = arguments[arguments.length - 1];
+    } else {
+      _x = v.x;
+      _y = v.y;
+      _z = v.z;
+    }
+
+    this.states.pointLightPositions.push(_x, _y, _z);
+    this.states.pointLightDiffuseColors.push(
+      color._array[0],
+      color._array[1],
+      color._array[2]
+    );
+    Array.prototype.push.apply(
+      this.states.pointLightSpecularColors,
+      this.states.specularColors
+    );
+
+    this.states.enableLighting = true;
+  }
+
+  RendererGL.prototype.imageLight = function(img) {
+    // activeImageLight property is checked by _setFillUniforms
+    // for sending uniforms to the fillshader
+    this.states.activeImageLight = img;
+    this.states.enableLighting = true;
+  }
+
+  RendererGL.prototype.lights = function() {
+    const grayColor = this._pInst.color('rgb(128,128,128)');
+    this.ambientLight(grayColor);
+    this.directionalLight(grayColor, 0, 0, -1);
+  }
+
+  RendererGL.prototype.lightFalloff = function(
+    constantAttenuation,
+    linearAttenuation,
+    quadraticAttenuation
+  ) {
+    if (constantAttenuation < 0) {
+      constantAttenuation = 0;
+      console.warn(
+        'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (linearAttenuation < 0) {
+      linearAttenuation = 0;
+      console.warn(
+        'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (quadraticAttenuation < 0) {
+      quadraticAttenuation = 0;
+      console.warn(
+        'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+      );
+    }
+
+    if (
+      constantAttenuation === 0 &&
+      (linearAttenuation === 0 && quadraticAttenuation === 0)
+    ) {
+      constantAttenuation = 1;
+      console.warn(
+        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+      );
+    }
+
+    this.states.constantAttenuation = constantAttenuation;
+    this.states.linearAttenuation = linearAttenuation;
+    this.states.quadraticAttenuation = quadraticAttenuation;
+  }
+
+  RendererGL.prototype.spotLight = function(
+    v1,
+    v2,
+    v3,
+    x,
+    y,
+    z,
+    nx,
+    ny,
+    nz,
+    angle,
+    concentration
+  ) {
+    let color, position, direction;
+    const length = arguments.length;
+
+    switch (length) {
+      case 11:
+      case 10:
+        color = this._pInst.color(v1, v2, v3);
+        position = new Vector(x, y, z);
+        direction = new Vector(nx, ny, nz);
+        break;
+
+      case 9:
+        if (v1 instanceof Color) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
+          angle = ny;
+          concentration = nz;
+        } else if (x instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = new Vector(y, z, nx);
+          angle = ny;
+          concentration = nz;
+        } else if (nx instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = new Vector(x, y, z);
+          direction = nx;
+          angle = ny;
+          concentration = nz;
+        } else {
+          color = this._pInst.color(v1, v2, v3);
+          position = new Vector(x, y, z);
+          direction = new Vector(nx, ny, nz);
+        }
+        break;
+
+      case 8:
+        if (v1 instanceof Color) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
+          angle = ny;
+        } else if (x instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = new Vector(y, z, nx);
+          angle = ny;
+        } else {
+          color = this._pInst.color(v1, v2, v3);
+          position = new Vector(x, y, z);
+          direction = nx;
+          angle = ny;
+        }
+        break;
+
+      case 7:
+        if (v1 instanceof Color && v2 instanceof Vector) {
+          color = v1;
+          position = v2;
+          direction = new Vector(v3, x, y);
+          angle = z;
+          concentration = nx;
+        } else if (v1 instanceof Color && y instanceof Vector) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = y;
+          angle = z;
+          concentration = nx;
+        } else if (x instanceof Vector && y instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = y;
+          angle = z;
+          concentration = nx;
+        } else if (v1 instanceof Color) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = new Vector(y, z, nx);
+        } else if (x instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = new Vector(y, z, nx);
+        } else {
+          color = this._pInst.color(v1, v2, v3);
+          position = new Vector(x, y, z);
+          direction = nx;
+        }
+        break;
+
+      case 6:
+        if (x instanceof Vector && y instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = y;
+          angle = z;
+        } else if (v1 instanceof Color && y instanceof Vector) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = y;
+          angle = z;
+        } else if (v1 instanceof Color && v2 instanceof Vector) {
+          color = v1;
+          position = v2;
+          direction = new Vector(v3, x, y);
+          angle = z;
+        }
+        break;
+
+      case 5:
+        if (
+          v1 instanceof Color &&
+          v2 instanceof Vector &&
+          v3 instanceof Vector
+        ) {
+          color = v1;
+          position = v2;
+          direction = v3;
+          angle = x;
+          concentration = y;
+        } else if (x instanceof Vector && y instanceof Vector) {
+          color = this._pInst.color(v1, v2, v3);
+          position = x;
+          direction = y;
+        } else if (v1 instanceof Color && y instanceof Vector) {
+          color = v1;
+          position = new Vector(v2, v3, x);
+          direction = y;
+        } else if (v1 instanceof Color && v2 instanceof Vector) {
+          color = v1;
+          position = v2;
+          direction = new Vector(v3, x, y);
+        }
+        break;
+
+      case 4:
+        color = v1;
+        position = v2;
+        direction = v3;
+        angle = x;
+        break;
+
+      case 3:
+        color = v1;
+        position = v2;
+        direction = v3;
+        break;
+
+      default:
+        console.warn(
+          `Sorry, input for spotlight() is not in prescribed format. Too ${
+            length < 3 ? 'few' : 'many'
+          } arguments were provided`
+        );
+        return;
+    }
+    this.states.spotLightDiffuseColors = [
+      color._array[0],
+      color._array[1],
+      color._array[2]
+    ];
+
+    this.states.spotLightSpecularColors = [
+      ...this.states.specularColors
+    ];
+
+    this.states.spotLightPositions = [position.x, position.y, position.z];
+    direction.normalize();
+    this.states.spotLightDirections = [
+      direction.x,
+      direction.y,
+      direction.z
+    ];
+
+    if (angle === undefined) {
+      angle = Math.PI / 3;
+    }
+
+    if (concentration !== undefined && concentration < 1) {
+      concentration = 1;
+      console.warn(
+        'Value of concentration needs to be greater than 1. Setting it to 1'
+      );
+    } else if (concentration === undefined) {
+      concentration = 100;
+    }
+
+    angle = this._pInst._toRadians(angle);
+    this.states.spotLightAngle = [Math.cos(angle)];
+    this.states.spotLightConc = [concentration];
+
+    this.states.enableLighting = true;
+  }
+
+  RendererGL.prototype.noLights = function() {
+    this.states.activeImageLight = null;
+    this.states.enableLighting = false;
+
+    this.states.ambientLightColors.length = 0;
+    this.states.specularColors = [1, 1, 1];
+
+    this.states.directionalLightDirections.length = 0;
+    this.states.directionalLightDiffuseColors.length = 0;
+    this.states.directionalLightSpecularColors.length = 0;
+
+    this.states.pointLightPositions.length = 0;
+    this.states.pointLightDiffuseColors.length = 0;
+    this.states.pointLightSpecularColors.length = 0;
+
+    this.states.spotLightPositions.length = 0;
+    this.states.spotLightDirections.length = 0;
+    this.states.spotLightDiffuseColors.length = 0;
+    this.states.spotLightSpecularColors.length = 0;
+    this.states.spotLightAngle.length = 0;
+    this.states.spotLightConc.length = 0;
+
+    this.states.constantAttenuation = 1;
+    this.states.linearAttenuation = 0;
+    this.states.quadraticAttenuation = 0;
+    this.states._useShininess = 1;
+    this.states._useMetalness = 0;
+  }
 }
 
 export default light;

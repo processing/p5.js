@@ -6,6 +6,10 @@
  */
 
 import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
+import { Shader } from './p5.Shader';
+import { request } from '../io/files';
+import { Color } from '../color/p5.Color';
 
 function material(p5, fn){
   /**
@@ -32,26 +36,27 @@ function material(p5, fn){
    * The third parameter, `successCallback`, is optional. If a function is
    * passed, it will be called once the shader has loaded. The callback function
    * can use the new <a href="#/p5.Shader">p5.Shader</a> object as its
-   * parameter.
+   * parameter. The return value of the `successCallback()` function will be used
+   * as the final return value of `loadShader()`.
    *
    * The fourth parameter, `failureCallback`, is also optional. If a function is
    * passed, it will be called if the shader fails to load. The callback
-   * function can use the event error as its parameter.
+   * function can use the event error as its parameter. The return value of the `
+   * failureCallback()` function will be used as the final return value of `loadShader()`.
    *
-   * Shaders can take time to load. Calling `loadShader()` in
-   * <a href="#/p5/preload">preload()</a> ensures shaders load before they're
-   * used in <a href="#/p5/setup">setup()</a> or <a href="#/p5/draw">draw()</a>.
+   * This function returns a `Promise` and should be used in an `async` setup with
+   * `await`. See the examples for the usage syntax.
    *
    * Note: Shaders can only be used in WebGL mode.
    *
    * @method loadShader
-   * @param {String} vertFilename path of the vertex shader to be loaded.
-   * @param {String} fragFilename path of the fragment shader to be loaded.
+   * @param {String|Request} vertFilename path of the vertex shader to be loaded.
+   * @param {String|Request} fragFilename path of the fragment shader to be loaded.
    * @param {Function} [successCallback] function to call once the shader is loaded. Can be passed the
    *                                     <a href="#/p5.Shader">p5.Shader</a> object.
    * @param {Function} [failureCallback] function to call if the shader fails to load. Can be passed an
    *                                     `Error` event object.
-   * @return {p5.Shader} new shader created from the vertex and fragment shader files.
+   * @return {Promise<p5.Shader>} new shader created from the vertex and fragment shader files.
    *
    * @example
    * <div modernizr='webgl'>
@@ -61,11 +66,9 @@ function material(p5, fn){
    * let mandelbrot;
    *
    * // Load the shader and create a p5.Shader object.
-   * function preload() {
-   *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
-   * }
+   * async function setup() {
+   *   mandelbrot = await loadShader('assets/shader.vert', 'assets/shader.frag');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Compile and apply the p5.Shader object.
@@ -92,11 +95,9 @@ function material(p5, fn){
    * let mandelbrot;
    *
    * // Load the shader and create a p5.Shader object.
-   * function preload() {
-   *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
-   * }
+   * async function setup() {
+   *   mandelbrot = await loadShader('assets/shader.vert', 'assets/shader.frag');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Use the p5.Shader object.
@@ -118,55 +119,32 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadShader = function (
+  fn.loadShader = async function (
     vertFilename,
     fragFilename,
     successCallback,
     failureCallback
   ) {
-    p5._validateParameters('loadShader', arguments);
-    if (!failureCallback) {
-      failureCallback = console.error;
-    }
+    // p5._validateParameters('loadShader', arguments);
 
-    const loadedShader = new p5.Shader();
+    const loadedShader = new Shader();
 
-    const self = this;
-    let loadedFrag = false;
-    let loadedVert = false;
+    try {
+      loadedShader._vertSrc = await request(vertFilename, 'text');
+      loadedShader._fragSrc = await request(fragFilename, 'text');
 
-    const onLoad = () => {
-      self._decrementPreload();
       if (successCallback) {
-        successCallback(loadedShader);
+        return successCallback(loadedShader);
+      } else {
+        return loadedShader
       }
-    };
-
-    this.loadStrings(
-      vertFilename,
-      result => {
-        loadedShader._vertSrc = result.join('\n');
-        loadedVert = true;
-        if (loadedFrag) {
-          onLoad();
-        }
-      },
-      failureCallback
-    );
-
-    this.loadStrings(
-      fragFilename,
-      result => {
-        loadedShader._fragSrc = result.join('\n');
-        loadedFrag = true;
-        if (loadedVert) {
-          onLoad();
-        }
-      },
-      failureCallback
-    );
-
-    return loadedShader;
+    } catch(err) {
+      if (failureCallback) {
+        return failureCallback(err);
+      } else {
+        throw err;
+      }
+    }
   };
 
   /**
@@ -532,8 +510,67 @@ function material(p5, fn){
    * </div>
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
-    p5._validateParameters('createShader', arguments);
-    return new p5.Shader(this._renderer, vertSrc, fragSrc, options);
+    // p5._validateParameters('createShader', arguments);
+    return new Shader(this._renderer, vertSrc, fragSrc, options);
+  };
+  /**
+   * Creates and loads a filter shader from an external file.
+   *
+   * @method loadFilterShader
+   * @param {String} fragFilename path to the fragment shader file
+   * @param {Function} [successCallback] callback to be called once the shader is
+   *                                     loaded. Will be passed the
+   *                                     <a href="#/p5.Shader">p5.Shader</a> object.
+   * @param {Function} [failureCallback] callback to be called if there is an error
+   *                                     loading the shader. Will be passed the
+   *                                     error event.
+   * @return {Promise<p5.Shader>} a promise that resolves with a shader object
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * async function setup() {
+   *   myShader = await loadFilterShader('assets/shader.frag');
+   *   createCanvas(100, 100, WEBGL);
+   *   noStroke();
+   * }
+   *
+   * function draw() {
+   *   // shader() sets the active shader with our shader
+   *   shader(myShader);
+   *
+   *   // rect gives us some geometry on the screen
+   *   rect(0, 0, width, height);
+   * }
+   * </code>
+   * </div>
+   * @alt
+   * A rectangle with a shader applied to it.
+   */
+  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+    p5._validateParameters('loadFilterShader', arguments);
+    try {
+      // Load the fragment shader
+      const fragSrc = await this.loadStrings(fragFilename);
+      const fragString = await fragSrc.join('\n');
+
+      // Create the shader using createFilterShader
+      const loadedShader = this.createFilterShader(fragString, true);
+
+      if (successCallback) {
+        successCallback(loadedShader);
+      }
+
+      return loadedShader;
+    } catch (err) {
+      if (failureCallback) {
+        failureCallback(err);
+      } else {
+        console.error(err);
+      }
+    }
   };
 
   /**
@@ -626,8 +663,8 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-  fn.createFilterShader = function (fragSrc) {
-    p5._validateParameters('createFilterShader', arguments);
+  fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
+    // p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
@@ -669,11 +706,13 @@ function material(p5, fn){
       }
     `;
     let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
-    const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
-    if (this._renderer.GL) {
-      shader.ensureCompiledOnContext(this);
-    } else {
-      shader.ensureCompiledOnContext(this._renderer.getFilterGraphicsLayer());
+    const shader = new Shader(this._renderer, vertSrc, fragSrc);
+    if (!skipContextCheck) {
+      if (this._renderer.GL) {
+        shader.ensureCompiledOnContext(this._renderer);
+      } else {
+        shader.ensureCompiledOnContext(this);
+      }
     }
     return shader;
   };
@@ -860,14 +899,9 @@ function material(p5, fn){
    */
   fn.shader = function (s) {
     this._assert3d('shader');
-    p5._validateParameters('shader', arguments);
+    // p5._validateParameters('shader', arguments);
 
-    s.ensureCompiledOnContext(this);
-
-    // Always set the shader as a fill shader
-    this._renderer.states.userFillShader = s;
-    this._renderer.states._useNormalMaterial = false;
-    s.setDefaultUniforms();
+    this._renderer.shader(s);
 
     return this;
   };
@@ -1038,17 +1072,12 @@ function material(p5, fn){
    */
   fn.strokeShader = function (s) {
     this._assert3d('strokeShader');
-    p5._validateParameters('strokeShader', arguments);
+    // p5._validateParameters('strokeShader', arguments);
 
-    s.ensureCompiledOnContext(this);
-
-    this._renderer.states.userStrokeShader = s;
-
-    s.setDefaultUniforms();
+    this._renderer.strokeShader(s);
 
     return this;
   };
-
 
   /**
    * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply for images.
@@ -1198,16 +1227,11 @@ function material(p5, fn){
    * </code>
    * </div>
    */
-
   fn.imageShader = function (s) {
     this._assert3d('imageShader');
-    p5._validateParameters('imageShader', arguments);
+    // p5._validateParameters('imageShader', arguments);
 
-    s.ensureCompiledOnContext(this);
-
-    this._renderer.states.userImageShader = s;
-
-    s.setDefaultUniforms();
+    this._renderer.imageShader(s);
 
     return this;
   };
@@ -1232,56 +1256,34 @@ function material(p5, fn){
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalPosition`
+   * `Vertex getObjectInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getWorldPosition`
+   * `Vertex getWorldInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalNormal`
+   * `Vertex getCameraInputs`
    *
    * </td><td>
    *
-   * Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec3 getWorldNormal`
-   *
-   * </td><td>
-   *
-   * Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getUV`
-   *
-   * </td><td>
-   *
-   * Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getVertexColor`
-   *
-   * </td><td>
-   *
-   * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
@@ -1379,9 +1381,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1529,19 +1532,86 @@ function material(p5, fn){
    * You can call <a href="#/p5.Shader/modify">`baseNormalShader().modify()`</a>
    * and change any of the following hooks:
    *
-   * Hook | Description
-   * -----|------------
-   * `void beforeVertex` | Called at the start of the vertex shader.
-   * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
-   * `void afterVertex` | Called at the end of the vertex shader.
-   * `void beforeFragment` | Called at the start of the fragment shader.
-   * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   * `void afterFragment` | Called at the end of the fragment shader.
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `void beforeVertex`
+   *
+   * </td><td>
+   *
+   * Called at the start of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getObjectInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getWorldInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getCameraInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterVertex`
+   *
+   * </td><td>
+   *
+   * Called at the end of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void beforeFragment`
+   *
+   * </td><td>
+   *
+   * Called at the start of the fragment shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `vec4 getFinalColor`
+   *
+   * </td><td>
+   *
+   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterFragment`
+   *
+   * </td><td>
+   *
+   * Called at the end of the fragment shader.
+   *
+   * </td></tr>
+   * </table>
    *
    * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
    * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1564,9 +1634,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1588,7 +1659,10 @@ function material(p5, fn){
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseNormalShader().modify({
-   *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
+   *     'Vertex getCameraInputs': `(Vertex inputs) {
+   *       inputs.normal = abs(inputs.normal);
+   *       return inputs;
+   *     }`,
    *     'vec4 getFinalColor': `(vec4 color) {
    *       // Map the r, g, and b values of the old normal to new colors
    *       // instead of just red, green, and blue:
@@ -1624,19 +1698,86 @@ function material(p5, fn){
    * You can call <a href="#/p5.Shader/modify">`baseColorShader().modify()`</a>
    * and change any of the following hooks:
    *
-   * Hook | Description
-   * -------|-------------
-   * `void beforeVertex` | Called at the start of the vertex shader.
-   * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
-   * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
-   * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
-   * `void afterVertex` | Called at the end of the vertex shader.
-   * `void beforeFragment` | Called at the start of the fragment shader.
-   * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   * `void afterFragment` | Called at the end of the fragment shader.
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `void beforeVertex`
+   *
+   * </td><td>
+   *
+   * Called at the start of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getObjectInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 normal`, the direction facing out of the surface
+   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec4 color`, the per-vertex color
+   * The struct can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getWorldInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `Vertex getCameraInputs`
+   *
+   * </td><td>
+   *
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterVertex`
+   *
+   * </td><td>
+   *
+   * Called at the end of the vertex shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void beforeFragment`
+   *
+   * </td><td>
+   *
+   * Called at the start of the fragment shader.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `vec4 getFinalColor`
+   *
+   * </td><td>
+   *
+   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+   *
+   * </td></tr>
+   * <tr><td>
+   *
+   * `void afterFragment`
+   *
+   * </td><td>
+   *
+   * Called at the end of the fragment shader.
+   *
+   * </td></tr>
+   * </table>
    *
    * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
    * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
@@ -1659,9 +1800,10 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1700,56 +1842,35 @@ function material(p5, fn){
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getLocalPosition`
+   * `StrokeVertex getObjectInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+   * Update the vertex data of the stroke being drawn before any positioning has been applied. It takes in a `StrokeVertex` struct, which includes:
+   * - `vec3 position`, the position of the vertex
+   * - `vec3 tangentIn`, the tangent coming in to the vertex
+   * - `vec3 tangentOut`, the tangent coming out of the vertex. In straight segments, this will be the same as `tangentIn`. In joins, it will be different. In caps, one of the tangents will be 0.
+   * - `vec4 color`, the per-vertex color
+   * - `float weight`, the stroke weight
+   * The struct can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `vec3 getWorldPosition`
+   * `StrokeVertex getWorldInputs`
    *
    * </td><td>
    *
-   * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
    *
-   * `float getStrokeWeight`
+   * `StrokeVertex getCameraInputs`
    *
    * </td><td>
    *
-   * Update the stroke weight. It takes in `float weight` and pust return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getLineCenter`
-   *
-   * </td><td>
-   *
-   * Update the center of the line. It takes in `vec2 center` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec2 getLinePosition`
-   *
-   * </td><td>
-   *
-   * Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getVertexColor`
-   *
-   * </td><td>
-   *
-   * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
    *
    * </td></tr>
    * <tr><td>
@@ -1868,20 +1989,16 @@ function material(p5, fn){
    *     uniforms: {
    *       'float time': () => millis()
    *     },
-   *     declarations: 'vec3 myPosition;',
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       myPosition = pos;
-   *       return pos;
-   *     }`,
-   *     'float getStrokeWeight': `(float w) {
+   *     'StrokeVertex getWorldInputs': `(StrokeVertex inputs) {
    *       // Add a somewhat random offset to the weight
    *       // that varies based on position and time
    *       float scale = 0.8 + 0.2*sin(10.0 * sin(
    *         floor(time/250.) +
-   *         myPosition.x*0.01 +
-   *         myPosition.y*0.01
+   *         inputs.position.x*0.01 +
+   *         inputs.position.y*0.01
    *       ));
-   *       return w * scale;
+   *       inputs.weight *= scale;
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -1889,7 +2006,6 @@ function material(p5, fn){
    * function draw() {
    *   background(255);
    *   strokeShader(myShader);
-   *   noStroke();
    *   myShader.setUniform('time', millis());
    *   strokeWeight(10);
    *   beginShape();
@@ -2040,10 +2156,7 @@ function material(p5, fn){
    * </div>
    */
   fn.resetShader = function () {
-    this._renderer.states.userFillShader = null;
-    this._renderer.states.userStrokeShader = null;
-    this._renderer.states.userImageShader = null;
-
+    this._renderer.resetShader();
     return this;
   };
 
@@ -2221,15 +2334,14 @@ function material(p5, fn){
    */
   fn.texture = function (tex) {
     this._assert3d('texture');
-    p5._validateParameters('texture', arguments);
+    // p5._validateParameters('texture', arguments);
+
+    // NOTE: make generic or remove need for
     if (tex.gifProperties) {
       tex._animateGif(this);
     }
 
-    this._renderer.states.drawMode = constants.TEXTURE;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._tex = tex;
-    this._renderer.states.doFill = true;
+    this._renderer.texture(tex);
 
     return this;
   };
@@ -2409,7 +2521,7 @@ function material(p5, fn){
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.textureMode = mode;
+      this._renderer.states.textureMode = mode;
     }
   };
 
@@ -2688,8 +2800,8 @@ function material(p5, fn){
    * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.textureWrapX = wrapX;
-    this._renderer.textureWrapY = wrapY;
+    this._renderer.states.textureWrapX = wrapX;
+    this._renderer.states.textureWrapY = wrapY;
 
     for (const texture of this._renderer.textures.values()) {
       texture.setWrapMode(wrapX, wrapY);
@@ -2736,14 +2848,10 @@ function material(p5, fn){
    */
   fn.normalMaterial = function (...args) {
     this._assert3d('normalMaterial');
-    p5._validateParameters('normalMaterial', args);
-    this._renderer.states.drawMode = constants.FILL;
-    this._renderer.states._useSpecularMaterial = false;
-    this._renderer.states._useEmissiveMaterial = false;
-    this._renderer.states._useNormalMaterial = true;
-    this._renderer.states.curFillColor = [1, 1, 1, 1];
-    this._renderer.states.doFill = true;
-    this.noStroke();
+    // p5._validateParameters('normalMaterial', args);
+
+    this._renderer.normalMaterial(...args);
+
     return this;
   };
 
@@ -2967,14 +3075,14 @@ function material(p5, fn){
    */
   fn.ambientMaterial = function (v1, v2, v3) {
     this._assert3d('ambientMaterial');
-    p5._validateParameters('ambientMaterial', arguments);
+    // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states._hasSetAmbient = true;
     this._renderer.states.curAmbientColor = color._array;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
-    this._renderer.states.doFill = true;
+    this._renderer.states.enableLighting = true;
+    this._renderer.states.fillColor = true;
     return this;
   };
 
@@ -3063,13 +3171,13 @@ function material(p5, fn){
    */
   fn.emissiveMaterial = function (v1, v2, v3, a) {
     this._assert3d('emissiveMaterial');
-    p5._validateParameters('emissiveMaterial', arguments);
+    // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states.curEmissiveColor = color._array;
     this._renderer.states._useEmissiveMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -3318,13 +3426,13 @@ function material(p5, fn){
    */
   fn.specularMaterial = function (v1, v2, v3, alpha) {
     this._assert3d('specularMaterial');
-    p5._validateParameters('specularMaterial', arguments);
+    // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
     this._renderer.states.curSpecularColor = color._array;
     this._renderer.states._useSpecularMaterial = true;
     this._renderer.states._useNormalMaterial = false;
-    this._renderer.states._enableLighting = true;
+    this._renderer.states.enableLighting = true;
 
     return this;
   };
@@ -3391,12 +3499,10 @@ function material(p5, fn){
    */
   fn.shininess = function (shine) {
     this._assert3d('shininess');
-    p5._validateParameters('shininess', arguments);
+    // p5._validateParameters('shininess', arguments);
 
-    if (shine < 1) {
-      shine = 1;
-    }
-    this._renderer.states._useShininess = shine;
+    this._renderer.shininess(shine);
+
     return this;
   };
 
@@ -3511,10 +3617,12 @@ function material(p5, fn){
    */
   fn.metalness = function (metallic) {
     this._assert3d('metalness');
-    const metalMix = 1 - Math.exp(-metallic / 100);
-    this._renderer.states._useMetalness = metalMix;
+
+    this._renderer.metalness(metallic);
+
     return this;
   };
+
 
   /**
    * @private blends colors according to color components.
@@ -3525,7 +3633,7 @@ function material(p5, fn){
    * transparency internally, e.g. via vertex colors
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
+  RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
     const gl = this.GL;
 
     const isTexture = this.states.drawMode === constants.TEXTURE;
@@ -3561,7 +3669,7 @@ function material(p5, fn){
    * @param  {Number[]} color [description]
    * @return {Number[]}  Normalized numbers array
    */
-  p5.RendererGL.prototype._applyBlendMode = function () {
+  RendererGL.prototype._applyBlendMode = function () {
     if (this._cachedBlendMode === this.states.curBlendMode) {
       return;
     }
@@ -3636,10 +3744,72 @@ function material(p5, fn){
         );
         break;
     }
-    if (!this._isErasing) {
-      this._cachedBlendMode = this.states.curBlendMode;
-    }
+    this._cachedBlendMode = this.states.curBlendMode;
   };
+
+  RendererGL.prototype.shader = function(s) {
+    // Always set the shader as a fill shader
+    this.states.userFillShader = s;
+    this.states._useNormalMaterial = false;
+    s.ensureCompiledOnContext(this);
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.strokeShader = function(s) {
+    this.states.userStrokeShader = s;
+    s.ensureCompiledOnContext(this);
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.imageShader = function(s) {
+    this.states.userImageShader = s;
+    s.ensureCompiledOnContext(this);
+    s.setDefaultUniforms();
+  }
+
+  RendererGL.prototype.resetShader = function() {
+    this.states.userFillShader = null;
+    this.states.userStrokeShader = null;
+    this.states.userImageShader = null;
+  }
+
+  RendererGL.prototype.texture = function(tex) {
+    this.states.drawMode = constants.TEXTURE;
+    this.states._useNormalMaterial = false;
+    this.states._tex = tex;
+    this.states.fillColor = new Color([1, 1, 1]);
+  };
+
+  RendererGL.prototype.normalMaterial = function(...args) {
+    this.states.drawMode = constants.FILL;
+    this.states._useSpecularMaterial = false;
+    this.states._useEmissiveMaterial = false;
+    this.states._useNormalMaterial = true;
+    this.states.curFillColor = [1, 1, 1, 1];
+    this.states.fillColor = new Color([1, 1, 1]);
+    this.states.strokeColor = null;
+  }
+
+  // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
+  // }
+
+  // RendererGL.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+  // }
+
+  // RendererGL.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+  // }
+
+  RendererGL.prototype.shininess = function(shine) {
+    if (shine < 1) {
+      shine = 1;
+    }
+    this.states._useShininess = shine;
+  }
+
+  RendererGL.prototype.metalness = function(metallic) {
+    const metalMix = 1 - Math.exp(-metallic / 100);
+    this.states._useMetalness = metalMix;
+  }
 }
 
 export default material;

@@ -25,21 +25,21 @@ suite('Rendering', function() {
 
   suite('p5.prototype.createCanvas', function() {
     test('should have correct initial colors', function() {
-      var white = myp5.color(255, 255, 255).levels;
-      var black = myp5.color(0, 0, 0).levels;
-      assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
-      assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
-      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
+      var white = myp5.color(255, 255, 255)._array;
+      var black = myp5.color(0, 0, 0)._array;
+      assert.deepEqual(myp5.color(myp5._renderer._getFill())._array, white);
+      assert.deepEqual(myp5.color(myp5._renderer._getStroke())._array, black);
+      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle)._array, white);
       assert.deepEqual(
-        myp5.color(myp5.drawingContext.strokeStyle).levels,
+        myp5.color(myp5.drawingContext.strokeStyle)._array,
         black
       );
       myp5.createCanvas(100, 100);
-      assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
-      assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
-      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
+      assert.deepEqual(myp5.color(myp5._renderer._getFill())._array, white);
+      assert.deepEqual(myp5.color(myp5._renderer._getStroke())._array, black);
+      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle)._array, white);
       assert.deepEqual(
-        myp5.color(myp5.drawingContext.strokeStyle).levels,
+        myp5.color(myp5.drawingContext.strokeStyle)._array,
         black
       );
     });
@@ -116,8 +116,10 @@ suite('Rendering', function() {
       glStub = vi.spyOn(p5.RendererGL.prototype, '_getMaxTextureSize');
       const fakeMaxTextureSize = 100;
       glStub.mockReturnValue(fakeMaxTextureSize);
+      const prevRatio = window.devicePixelRatio;
+      window.devicePixelRatio = 1;
       myp5.createCanvas(200, 200, myp5.WEBGL);
-      myp5.pixelDensity(1);
+      window.devicePixelRatio = prevRatio;
       assert.equal(myp5.width, 100);
       assert.equal(myp5.height, 100);
     });

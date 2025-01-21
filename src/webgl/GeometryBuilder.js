@@ -1,5 +1,6 @@
-import p5 from '../core/main';
 import * as constants from '../core/constants';
+import { Matrix } from '../math/p5.Matrix';
+import { Geometry } from './p5.Geometry';
 
 /**
  * @private
@@ -10,9 +11,9 @@ class GeometryBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     renderer._pInst.push();
-    this.identityMatrix = new p5.Matrix();
-    renderer.states.uModelMatrix = new p5.Matrix();
-    this.geometry = new p5.Geometry();
+    this.identityMatrix = new Matrix(4);
+    renderer.states.uModelMatrix = new Matrix(4);
+    this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
     this.hasTransform = false;
@@ -36,7 +37,7 @@ class GeometryBuilder {
     if (!this.hasTransform) return normals;
 
     return normals.map(
-      v => this.renderer.states.uNMatrix.multiplyVec3(v)
+      v => this.renderer.scratchMat3.multiplyVec(v) // this is a vec3
     );
   }
 
@@ -50,7 +51,7 @@ class GeometryBuilder {
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.states.uNMatrix.inverseTranspose(this.renderer.states.uModelMatrix);
+      this.renderer.scratchMat3.inverseTranspose4x4(this.renderer.states.uModelMatrix);
     }
 
     let startIdx = this.geometry.vertices.length;
@@ -86,12 +87,12 @@ class GeometryBuilder {
       this.geometry.vertexProperty(propName, data, size);
     }
 
-    if (this.renderer.states.doFill) {
+    if (this.renderer.states.fillColor) {
       this.geometry.faces.push(
         ...input.faces.map(f => f.map(idx => idx + startIdx))
       );
     }
-    if (this.renderer.states.doStroke) {
+    if (this.renderer.states.strokeColor) {
       this.geometry.edges.push(
         ...input.edges.map(edge => edge.map(idx => idx + startIdx))
       );
@@ -107,12 +108,10 @@ class GeometryBuilder {
    * Adds geometry from the renderer's immediate mode into the builder's
    * combined geometry.
    */
-  addImmediate() {
-    const geometry = this.renderer.immediateMode.geometry;
-    const shapeMode = this.renderer.immediateMode.shapeMode;
+  addImmediate(geometry, shapeMode) {
     const faces = [];
 
-    if (this.renderer.states.doFill) {
+    if (this.renderer.states.fillColor) {
       if (
         shapeMode === constants.TRIANGLE_STRIP ||
         shapeMode === constants.QUAD_STRIP
@@ -142,7 +141,7 @@ class GeometryBuilder {
    * combined geometry.
    */
   addRetained(geometry) {
-    this.addGeometry(geometry.model);
+    this.addGeometry(geometry);
   }
 
   /**

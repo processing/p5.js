@@ -4,22 +4,65 @@
  * @for p5
  */
 
-import p5 from './main';
+import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
+import { Image } from '../image/p5.Image';
+import { Vector } from '../math/p5.Vector';
+import { Shape } from '../shape/custom_shapes';
 
-/**
- * Main graphics and rendering context, as well as the base API
- * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respectively.
- *
- * @class p5.Renderer
- * @param {HTMLElement} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
- * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
- */
-p5.Renderer = class Renderer {
-  constructor(elt, pInst, isMainCanvas) {
-    this._pInst = this._pixelsState = pInst;
+class ClonableObject {
+  constructor(obj = {}) {
+    for (const key in obj) {
+      this[key] = obj[key];
+    }
+  }
+
+  clone() {
+    return new ClonableObject(this);
+  }
+};
+
+class Renderer {
+  static states = {
+    strokeColor: null,
+    strokeSet: false,
+    fillColor: null,
+    fillSet: false,
+    tint: null,
+
+    imageMode: constants.CORNER,
+    rectMode: constants.CORNER,
+    ellipseMode: constants.CENTER,
+    strokeWeight: 1,
+
+    textFont: { family: 'sans-serif' },
+    textLeading: 15,
+    leadingSet: false,
+    textSize: 12,
+    textAlign: constants.LEFT,
+    textBaseline: constants.BASELINE,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
+    textWrap: constants.WORD,
+
+    // added v2.0
+    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStretch: constants.NORMAL,
+    fontWeight: constants.NORMAL,
+    lineHeight: constants.NORMAL,
+    fontVariant: constants.NORMAL,
+    direction: 'inherit'
+  }
+
+  constructor(pInst, w, h, isMainCanvas) {
+    this._pInst = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    this.width = w;
+    this.height = h;
+
     this._events = {};
 
     if (isMainCanvas) {
@@ -27,38 +70,52 @@ p5.Renderer = class Renderer {
     }
 
     // Renderer state machine
-    this.states = {
-      doStroke: true,
-      strokeSet: false,
-      doFill: true,
-      fillSet: false,
-      tint: null,
-      imageMode: constants.CORNER,
-      rectMode: constants.CORNER,
-      ellipseMode: constants.CENTER,
-      textFont: 'sans-serif',
-      textLeading: 15,
-      leadingSet: false,
-      textSize: 12,
-      textAlign: constants.LEFT,
-      textBaseline: constants.BASELINE,
-      textStyle: constants.NORMAL,
-      textWrap: constants.WORD
-    };
+    this.states = Object.assign({}, Renderer.states);
+    // Clone properties that support it
+    for (const key in this.states) {
+      if (this.states[key] instanceof Array) {
+        this.states[key] = this.states[key].slice();
+      } else if (this.states[key] && this.states[key].clone instanceof Function) {
+        this.states[key] = this.states[key].clone();
+      }
+    }
+
+    this.states.strokeColor = new Color([0, 0, 0]);
+    this.states.fillColor = new Color([255, 255, 255]);
+
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
     this._pushPopDepth = 0;
 
     this._clipping = false;
     this._clipInvert = false;
-    this._curveTightness = 0;
+
+    this._currentShape = undefined; // Lazily generate current shape
   }
 
-  createCanvas(w, h) {
-    this.width = w;
-    this.height = h;
-    this._pInst.width = this.width;
-    this._pInst.height = this.height;
+  get currentShape() {
+    if (!this._currentShape) {
+      this._currentShape = new Shape(this.getCommonVertexProperties());
+    }
+    return this._currentShape;
+  }
+
+  remove() {
+
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
   }
 
   // Makes a shallow copy of the current states
@@ -83,6 +140,80 @@ p5.Renderer = class Renderer {
   pop() {
     this._pushPopDepth--;
     Object.assign(this.states, this._pushPopStack.pop());
+    this.updateShapeVertexProperties();
+    this.updateShapeProperties();
+  }
+
+  bezierOrder(order) {
+    if (order === undefined) {
+      return this.states.bezierOrder;
+    } else {
+      this.states.bezierOrder = order;
+      this.updateShapeProperties();
+    }
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  splineProperty(key, value) {
+    if (value === undefined) {
+      return this.states.splineProperties[key];
+    } else {
+      this.states.splineProperties[key] = value;
+    }
+    this.updateShapeProperties();
+  }
+
+  splineVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.splineVertex(position, textureCoordinates);
+  }
+
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
+  beginShape(...args) {
+    this.currentShape.reset();
+    this.currentShape.beginShape(...args);
+  }
+
+  endShape(...args) {
+    this.currentShape.endShape(...args);
+    this.drawShape(this.currentShape);
+  }
+
+  beginContour(shapeKind) {
+    this.currentShape.beginContour(shapeKind);
+  }
+
+  endContour(mode) {
+    this.currentShape.endContour(mode);
+  }
+
+  drawShape(shape, count) {
+    throw new Error('Unimplemented')
+  }
+
+  vertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.vertex(position, textureCoordinates);
   }
 
   beginClip(options = {}) {
@@ -101,27 +232,22 @@ p5.Renderer = class Renderer {
   }
 
   /**
- * Resize our canvas element.
- */
+   * Resize our canvas element.
+   */
   resize(w, h) {
     this.width = w;
     this.height = h;
-    if (this._isMainCanvas) {
-      this._pInst.width = this.width;
-      this._pInst.height = this.height;
-    }
   }
 
   get(x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
       x = y = 0;
-      w = pixelsState.width;
-      h = pixelsState.height;
+      w = this.width;
+      h = this.height;
     } else {
       x *= pd;
       y *= pd;
@@ -137,13 +263,68 @@ p5.Renderer = class Renderer {
     // get(x,y,w,h)
     }
 
-    const region = new p5.Image(w*pd, h*pd);
+    const region = new Image(w*pd, h*pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')
       .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
 
     return region;
+  }
+
+  scale(x, y){
+
+  }
+
+  fill(...args) {
+    this.states.fillSet = true;
+    this.states.fillColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
+  }
+
+  noFill() {
+    this.states.fillColor = null;
+  }
+
+  strokeWeight(w) {
+    if (w === undefined) {
+      return this.states.strokeWeight;
+    } else {
+      this.states.strokeWeight = w;
+    }
+  }
+
+  stroke(...args) {
+    this.states.strokeSet = true;
+    this.states.strokeColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
+  }
+
+  noStroke() {
+    this.states.strokeColor = null;
+  }
+
+  getCommonVertexProperties() {
+    return {}
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: false,
+    }
+  }
+
+  updateShapeProperties() {
+    this.currentShape.bezierOrder(this.states.bezierOrder);
+    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
+    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
+  }
+
+  updateShapeVertexProperties() {
+    const props = this.getCommonVertexProperties();
+    for (const key in props) {
+      this.currentShape[key](props[key]);
+    }
   }
 
   textSize(s) {
@@ -177,13 +358,13 @@ p5.Renderer = class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.textStyle = s;
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this.states.textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
@@ -237,7 +418,7 @@ p5.Renderer = class Renderer {
     // fix for #5785 (top of bounding box)
     let finalMinHeight = y;
 
-    if (!(this.states.doFill || this.states.doStroke)) {
+    if (!(this.states.fillColor || this.states.strokeColor)) {
       return;
     }
 
@@ -460,8 +641,8 @@ p5.Renderer = class Renderer {
   /**
  * Helper function to check font type (system or otf)
  */
-  _isOpenType(f = this.states.textFont) {
-    return typeof f === 'object' && f.font && f.font.supported;
+  _isOpenType({ font: f } = this.states.textFont) {
+    return typeof f === 'object' && f.data;
   }
 
   _updateTextMetrics() {
@@ -510,6 +691,20 @@ p5.Renderer = class Renderer {
   }
 };
 
+function renderer(p5, fn){
+  /**
+   * Main graphics and rendering context, as well as the base API
+   * implementation for p5.js "core". To be used as the superclass for
+   * Renderer2D and Renderer3D classes, respectively.
+   *
+   * @class p5.Renderer
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+   * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   */
+  p5.Renderer = Renderer;
+}
+
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
@@ -529,4 +724,5 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 
-export default p5.Renderer;
+export default renderer;
+export { Renderer };

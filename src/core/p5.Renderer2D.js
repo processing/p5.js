@@ -1,24 +1,23 @@
-import p5 from './main';
 import * as constants from './constants';
+import p5 from './main';
+import { Renderer } from './p5.Renderer';
+import { Graphics } from './p5.Graphics';
+import { Image } from '../image/p5.Image';
+import { Element } from '../dom/p5.Element';
+import { MediaElement } from '../dom/p5.MediaElement';
+import { RGBHDR } from '../color/creating_reading';
+import FilterRenderer2D from '../image/filterRenderer2D';
+import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
-import Renderer from './p5.Renderer';
 
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
-/**
- * p5.Renderer2D
- * The 2D graphics canvas renderer class.
- * extends p5.Renderer
- * @private
- */
 class Renderer2D extends Renderer {
-  constructor(elt, pInst, isMainCanvas) {
-    super(elt, pInst, isMainCanvas);
-    this.elt = elt;
-    this.canvas = elt;
-    this.drawingContext = this.canvas.getContext('2d');
-    this._pInst.drawingContext = this.drawingContext;
+  constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
+    super(pInst, w, h, isMainCanvas);
+
+    this.canvas = this.elt = elt || document.createElement('canvas');
 
     if (isMainCanvas) {
       // for pixel method sharing with pimage
@@ -29,9 +28,11 @@ class Renderer2D extends Renderer {
       this.canvas.style.display = 'none';
     }
 
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
+
     // Extend renderer with methods of p5.Element with getters
-    this.wrappedElt = new p5.Element(elt, pInst);
-    for (const p of Object.getOwnPropertyNames(p5.Element.prototype)) {
+    for (const p of Object.getOwnPropertyNames(Element.prototype)) {
       if (p !== 'constructor' && p[0] !== '_') {
         Object.defineProperty(this, p, {
           get() {
@@ -40,32 +41,61 @@ class Renderer2D extends Renderer {
         })
       }
     }
+
+    // Set canvas size
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    // Get and store drawing context
+    this.drawingContext = this.canvas.getContext('2d', attributes);
+    if(attributes.colorSpace === 'display-p3'){
+      this.states.colorMode = RGBHDR;
+    }
+    if (isMainCanvas) {
+      this._pInst.drawingContext = this.drawingContext;
+    }
+    this.scale(this._pixelDensity, this._pixelDensity);
+
+    if(!this.filterRenderer){
+      this.filterRenderer = new FilterRenderer2D(this);
+    }
+    // Set and return p5.Element
+    this.wrappedElt = new Element(this.elt, this._pInst);
+
+    this.clipPath = null;
   }
 
-  // NOTE: renderer won't be created until instance createCanvas was called
-  // This createCanvas should handle the HTML stuff while other createCanvas
-  // be generic
-  createCanvas(w, h, canvas) {
-    super.createCanvas(w, h);
-    // this.canvas = this.elt = canvas || document.createElement('canvas');
-    // this.drawingContext = this.canvas.getContext('2d');
-    // this._pInst.drawingContext = this.drawingContext;
-
-    return this.wrappedElt;
+  remove(){
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
   }
 
   getFilterGraphicsLayer() {
     // create hidden webgl renderer if it doesn't exist
     if (!this.filterGraphicsLayer) {
-      // the real _pInst is buried when this is a secondary p5.Graphics
-      const pInst =
-        this._pInst instanceof p5.Graphics ?
-          this._pInst._pInst :
-          this._pInst;
+      const pInst = this._pInst;
 
       // create secondary layer
       this.filterGraphicsLayer =
-        new p5.Graphics(
+        new Graphics(
           this.width,
           this.height,
           constants.WEBGL,
@@ -84,6 +114,7 @@ class Renderer2D extends Renderer {
     ) {
       this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
     }
+
     return this.filterGraphicsLayer;
   }
 
@@ -98,14 +129,33 @@ class Renderer2D extends Renderer {
 
   resize(w, h) {
     super.resize(w, h);
-    this.canvas.width = w * this._pInst._pixelDensity;
-    this.canvas.height = h * this._pInst._pixelDensity;
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
+    }
   }
 
   //////////////////////////////////////////////
@@ -116,7 +166,7 @@ class Renderer2D extends Renderer {
     this.drawingContext.save();
     this.resetMatrix();
 
-    if (args[0] instanceof p5.Image) {
+    if (args[0] instanceof Image) {
       if (args[1] >= 0) {
         // set transparency of background
         const img = args[0];
@@ -132,7 +182,7 @@ class Renderer2D extends Renderer {
 
       //accessible Outputs
       if (this._pInst._addAccsOutput()) {
-        this._pInst._accsBackground(color.levels);
+        this._pInst._accsBackground(color._getRGBA([255, 255, 255, 255]));
       }
 
       const newFill = color.toString();
@@ -161,22 +211,24 @@ class Renderer2D extends Renderer {
   }
 
   fill(...args) {
-    const color = this._pInst.color(...args);
+    super.fill(...args);
+    const color = this.states.fillColor;
     this._setFill(color.toString());
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('fill', color.levels);
+      this._pInst._accsCanvasColors('fill', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
   stroke(...args) {
-    const color = this._pInst.color(...args);
+    super.stroke(...args);
+    const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
     //accessible Outputs
     if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('stroke', color.levels);
+      this._pInst._accsCanvasColors('stroke', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -211,6 +263,21 @@ class Renderer2D extends Renderer {
     }
   }
 
+  drawShape(shape) {
+    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
+    shape.accept(visitor);
+    if (this._clipping) {
+      this.clipPath.addPath(visitor.path);
+    } else {
+      if (this.states.fillColor) {
+        this.drawingContext.fill(visitor.path);
+      }
+      if (this.states.strokeColor) {
+        this.drawingContext.stroke(visitor.path);
+      }
+    }
+  }
+
   beginClip(options = {}) {
     super.beginClip(options);
 
@@ -229,36 +296,37 @@ class Renderer2D extends Renderer {
     this.blendMode(constants.BLEND);
     this._cachedBlendMode = tempBlendMode;
 
+    // Since everything must be in one path, create a new single Path2D to chain all shapes onto.
     // Start a new path. Everything from here on out should become part of this
     // one path so that we can clip to the whole thing.
-    this.drawingContext.beginPath();
+    this.clipPath = new Path2D();
 
     if (this._clipInvert) {
       // Slight hack: draw a big rectangle over everything with reverse winding
       // order. This is hopefully large enough to cover most things.
-      this.drawingContext.moveTo(
+      this.clipPath.moveTo(
         -2 * this.width,
         -2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         -2 * this.width,
         2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         2 * this.width,
         2 * this.height
       );
-      this.drawingContext.lineTo(
+      this.clipPath.lineTo(
         2 * this.width,
         -2 * this.height
       );
-      this.drawingContext.closePath();
+      this.clipPath.closePath();
     }
   }
 
   endClip() {
-    this._doFillStrokeClose();
-    this.drawingContext.clip();
+    this.drawingContext.clip(this.clipPath);
+    this.clipPath = null;
 
     super.endClip();
 
@@ -289,7 +357,7 @@ class Renderer2D extends Renderer {
     }
 
     try {
-      if (p5.MediaElement && img instanceof p5.MediaElement) {
+      if (img instanceof MediaElement) {
         img._ensureCanvas();
       }
       if (this.states.tint && img.canvas) {
@@ -305,6 +373,7 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this.blendMode(this._cachedBlendMode);
       }
+
       this.drawingContext.drawImage(
         cnv,
         s * sx,
@@ -453,29 +522,26 @@ class Renderer2D extends Renderer {
   }
 
   loadPixels() {
-    const pixelsState = this._pixelsState; // if called by p5.Image
-
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     const w = this.width * pd;
     const h = this.height * pd;
     const imageData = this.drawingContext.getImageData(0, 0, w, h);
     // @todo this should actually set pixels per object, so diff buffers can
     // have diff pixel arrays.
-    pixelsState.imageData = imageData;
-    pixelsState.pixels = imageData.data;
+    this.imageData = imageData;
+    this.pixels = imageData.data;
   }
 
   set(x, y, imgOrCol) {
     // round down to get integer numbers
     x = Math.floor(x);
     y = Math.floor(y);
-    const pixelsState = this._pixelsState;
-    if (imgOrCol instanceof p5.Image) {
+    if (imgOrCol instanceof Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
       this.drawingContext.scale(
-        pixelsState._pixelDensity,
-        pixelsState._pixelDensity
+        this._pixelDensity,
+        this._pixelDensity
       );
       this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
@@ -488,14 +554,14 @@ class Renderer2D extends Renderer {
       let idx =
         4 *
         (y *
-          pixelsState._pixelDensity *
-          (this.width * pixelsState._pixelDensity) +
-          x * pixelsState._pixelDensity);
-      if (!pixelsState.imageData) {
-        pixelsState.loadPixels();
+          this._pixelDensity *
+          (this.width * this._pixelDensity) +
+          x * this._pixelDensity);
+      if (!this.imageData) {
+        this.loadPixels();
       }
       if (typeof imgOrCol === 'number') {
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol;
           g = imgOrCol;
           b = imgOrCol;
@@ -506,7 +572,7 @@ class Renderer2D extends Renderer {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
-        if (idx < pixelsState.pixels.length) {
+        if (idx < this.pixels.length) {
           r = imgOrCol[0];
           g = imgOrCol[1];
           b = imgOrCol[2];
@@ -514,36 +580,32 @@ class Renderer2D extends Renderer {
           //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
-        if (idx < pixelsState.pixels.length) {
-          r = imgOrCol.levels[0];
-          g = imgOrCol.levels[1];
-          b = imgOrCol.levels[2];
-          a = imgOrCol.levels[3];
+        if (idx < this.pixels.length) {
+          [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
         }
       }
       // loop over pixelDensity * pixelDensity
-      for (let i = 0; i < pixelsState._pixelDensity; i++) {
-        for (let j = 0; j < pixelsState._pixelDensity; j++) {
+      for (let i = 0; i < this._pixelDensity; i++) {
+        for (let j = 0; j < this._pixelDensity; j++) {
           // loop over
           idx =
             4 *
-            ((y * pixelsState._pixelDensity + j) *
+            ((y * this._pixelDensity + j) *
               this.width *
-              pixelsState._pixelDensity +
-              (x * pixelsState._pixelDensity + i));
-          pixelsState.pixels[idx] = r;
-          pixelsState.pixels[idx + 1] = g;
-          pixelsState.pixels[idx + 2] = b;
-          pixelsState.pixels[idx + 3] = a;
+              this._pixelDensity +
+              (x * this._pixelDensity + i));
+          this.pixels[idx] = r;
+          this.pixels[idx + 1] = g;
+          this.pixels[idx + 2] = b;
+          this.pixels[idx + 3] = a;
         }
       }
     }
   }
 
   updatePixels(x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+    const pd = this._pixelDensity;
     if (
       x === undefined &&
       y === undefined &&
@@ -562,10 +624,10 @@ class Renderer2D extends Renderer {
 
     if (this.gifProperties) {
       this.gifProperties.frames[this.gifProperties.displayIndex].image =
-        pixelsState.imageData;
+        this.imageData;
     }
 
-    this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   }
 
   //////////////////////////////////////////////
@@ -609,14 +671,14 @@ class Renderer2D extends Renderer {
   }
 
   /*
- * This function requires that:
- *
- *   0 <= start < TWO_PI
- *
- *   start <= stop < start + TWO_PI
- */
+   * This function requires that:
+   *
+   *   0 <= start < TWO_PI
+   *
+   *   start <= stop < start + TWO_PI
+   */
   arc(x, y, w, h, start, stop, mode) {
-    const ctx = this.drawingContext;
+    const ctx = this.clipPa || this.drawingContext;
     const rx = w / 2.0;
     const ry = h / 2.0;
     const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
@@ -634,7 +696,7 @@ class Renderer2D extends Renderer {
     }
 
     // Fill curves
-    if (this.states.doFill) {
+    if (this.states.fillColor) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -654,7 +716,7 @@ class Renderer2D extends Renderer {
     }
 
     // Stroke curves
-    if (this.states.doStroke) {
+    if (this.states.strokeColor) {
       if (!this._clipping) ctx.beginPath();
       curves.forEach((curve, index) => {
         if (index === 0) {
@@ -678,9 +740,9 @@ class Renderer2D extends Renderer {
   }
 
   ellipse(args) {
-    const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const ctx = this.clipPath || this.drawingContext;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
       y = parseFloat(args[1]),
       w = parseFloat(args[2]),
@@ -711,8 +773,8 @@ class Renderer2D extends Renderer {
   }
 
   line(x1, y1, x2, y2) {
-    const ctx = this.drawingContext;
-    if (!this.states.doStroke) {
+    const ctx = this.clipPath || this.drawingContext;
+    if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -725,8 +787,8 @@ class Renderer2D extends Renderer {
   }
 
   point(x, y) {
-    const ctx = this.drawingContext;
-    if (!this.states.doStroke) {
+    const ctx = this.clipPath || this.drawingContext;
+    if (!this.states.strokeColor) {
       return this;
     } else if (this._getStroke() === styleEmpty) {
       return this;
@@ -746,9 +808,9 @@ class Renderer2D extends Renderer {
   }
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-    const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const ctx = this.clipPath || this.drawingContext;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -782,9 +844,9 @@ class Renderer2D extends Renderer {
     let tr = args[5];
     let br = args[6];
     let bl = args[7];
-    const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const ctx = this.clipPath || this.drawingContext;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     if (doFill && !doStroke) {
       if (this._getFill() === styleEmpty) {
         return this;
@@ -853,10 +915,10 @@ class Renderer2D extends Renderer {
       ctx.arcTo(x, y, x + w, y, tl);
       ctx.closePath();
     }
-    if (!this._clipping && this.states.doFill) {
+    if (!this._clipping && this.states.fillColor) {
       ctx.fill();
     }
-    if (!this._clipping && this.states.doStroke) {
+    if (!this._clipping && this.states.strokeColor) {
       ctx.stroke();
     }
     return this;
@@ -864,9 +926,9 @@ class Renderer2D extends Renderer {
 
 
   triangle(args) {
-    const ctx = this.drawingContext;
-    const doFill = this.states.doFill,
-      doStroke = this.states.doStroke;
+    const ctx = this.clipPath || this.drawingContext;
+    const doFill = !!this.states.fillColor,
+      doStroke = this.states.strokeColor;
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -895,270 +957,6 @@ class Renderer2D extends Renderer {
     }
   }
 
-  endShape(
-    mode,
-    vertices,
-    isCurve,
-    isBezier,
-    isQuadratic,
-    isContour,
-    shapeKind
-  ) {
-    if (vertices.length === 0) {
-      return this;
-    }
-    if (!this.states.doStroke && !this.states.doFill) {
-      return this;
-    }
-    const closeShape = mode === constants.CLOSE;
-    let v;
-    if (closeShape && !isContour) {
-      vertices.push(vertices[0]);
-    }
-    let i, j;
-    const numVerts = vertices.length;
-    if (isCurve && shapeKind === null) {
-      if (numVerts > 3) {
-        const b = [],
-          s = 1 - this._curveTightness;
-        if (!this._clipping) this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
-        for (i = 1; i + 2 < numVerts; i++) {
-          v = vertices[i];
-          b[0] = [v[0], v[1]];
-          b[1] = [
-            v[0] + (s * vertices[i + 1][0] - s * vertices[i - 1][0]) / 6,
-            v[1] + (s * vertices[i + 1][1] - s * vertices[i - 1][1]) / 6
-          ];
-          b[2] = [
-            vertices[i + 1][0] +
-            (s * vertices[i][0] - s * vertices[i + 2][0]) / 6,
-            vertices[i + 1][1] +
-            (s * vertices[i][1] - s * vertices[i + 2][1]) / 6
-          ];
-          b[3] = [vertices[i + 1][0], vertices[i + 1][1]];
-          this.drawingContext.bezierCurveTo(
-            b[1][0],
-            b[1][1],
-            b[2][0],
-            b[2][1],
-            b[3][0],
-            b[3][1]
-          );
-        }
-        if (closeShape) {
-          this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
-        }
-        this._doFillStrokeClose(closeShape);
-      }
-    } else if (
-      isBezier &&
-      shapeKind === null
-    ) {
-      if (!this._clipping) this.drawingContext.beginPath();
-      for (i = 0; i < numVerts; i++) {
-        if (vertices[i].isVert) {
-          if (vertices[i].moveTo) {
-            this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
-          } else {
-            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
-          }
-        } else {
-          this.drawingContext.bezierCurveTo(
-            vertices[i][0],
-            vertices[i][1],
-            vertices[i][2],
-            vertices[i][3],
-            vertices[i][4],
-            vertices[i][5]
-          );
-        }
-      }
-      this._doFillStrokeClose(closeShape);
-    } else if (
-      isQuadratic &&
-      shapeKind === null
-    ) {
-      if (!this._clipping) this.drawingContext.beginPath();
-      for (i = 0; i < numVerts; i++) {
-        if (vertices[i].isVert) {
-          if (vertices[i].moveTo) {
-            this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
-          } else {
-            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
-          }
-        } else {
-          this.drawingContext.quadraticCurveTo(
-            vertices[i][0],
-            vertices[i][1],
-            vertices[i][2],
-            vertices[i][3]
-          );
-        }
-      }
-      this._doFillStrokeClose(closeShape);
-    } else {
-      if (shapeKind === constants.POINTS) {
-        for (i = 0; i < numVerts; i++) {
-          v = vertices[i];
-          if (this.states.doStroke) {
-            this._pInst.stroke(v[6]);
-          }
-          this._pInst.point(v[0], v[1]);
-        }
-      } else if (shapeKind === constants.LINES) {
-        for (i = 0; i + 1 < numVerts; i += 2) {
-          v = vertices[i];
-          if (this.states.doStroke) {
-            this._pInst.stroke(vertices[i + 1][6]);
-          }
-          this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
-        }
-      } else if (shapeKind === constants.TRIANGLES) {
-        for (i = 0; i + 2 < numVerts; i += 3) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(v[0], v[1]);
-          this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
-          this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-          this.drawingContext.closePath();
-          if (!this._clipping && this.states.doFill) {
-            this._pInst.fill(vertices[i + 2][5]);
-            this.drawingContext.fill();
-          }
-          if (!this._clipping && this.states.doStroke) {
-            this._pInst.stroke(vertices[i + 2][6]);
-            this.drawingContext.stroke();
-          }
-        }
-      } else if (shapeKind === constants.TRIANGLE_STRIP) {
-        for (i = 0; i + 1 < numVerts; i++) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
-          this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.doStroke) {
-            this._pInst.stroke(vertices[i + 1][6]);
-          }
-          if (!this._clipping && this.states.doFill) {
-            this._pInst.fill(vertices[i + 1][5]);
-          }
-          if (i + 2 < numVerts) {
-            this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (!this._clipping && this.states.doStroke) {
-              this._pInst.stroke(vertices[i + 2][6]);
-            }
-            if (!this._clipping && this.states.doFill) {
-              this._pInst.fill(vertices[i + 2][5]);
-            }
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.TRIANGLE_FAN) {
-        if (numVerts > 2) {
-          // For performance reasons, try to batch as many of the
-          // fill and stroke calls as possible.
-          if (!this._clipping) this.drawingContext.beginPath();
-          for (i = 2; i < numVerts; i++) {
-            v = vertices[i];
-            this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-            this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
-            this.drawingContext.lineTo(v[0], v[1]);
-            this.drawingContext.lineTo(vertices[0][0], vertices[0][1]);
-            // If the next colour is going to be different, stroke / fill now
-            if (i < numVerts - 1) {
-              if (
-                (this.states.doFill && v[5] !== vertices[i + 1][5]) ||
-                (this.states.doStroke && v[6] !== vertices[i + 1][6])
-              ) {
-                if (!this._clipping && this.states.doFill) {
-                  this._pInst.fill(v[5]);
-                  this.drawingContext.fill();
-                  this._pInst.fill(vertices[i + 1][5]);
-                }
-                if (!this._clipping && this.states.doStroke) {
-                  this._pInst.stroke(v[6]);
-                  this.drawingContext.stroke();
-                  this._pInst.stroke(vertices[i + 1][6]);
-                }
-                this.drawingContext.closePath();
-                if (!this._clipping) this.drawingContext.beginPath(); // Begin the next one
-              }
-            }
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.QUADS) {
-        for (i = 0; i + 3 < numVerts; i += 4) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(v[0], v[1]);
-          for (j = 1; j < 4; j++) {
-            this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
-          }
-          this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this.states.doFill) {
-            this._pInst.fill(vertices[i + 3][5]);
-          }
-          if (!this._clipping && this.states.doStroke) {
-            this._pInst.stroke(vertices[i + 3][6]);
-          }
-          this._doFillStrokeClose(closeShape);
-        }
-      } else if (shapeKind === constants.QUAD_STRIP) {
-        if (numVerts > 3) {
-          for (i = 0; i + 1 < numVerts; i += 2) {
-            v = vertices[i];
-            if (!this._clipping) this.drawingContext.beginPath();
-            if (i + 3 < numVerts) {
-              this.drawingContext.moveTo(
-                vertices[i + 2][0], vertices[i + 2][1]);
-              this.drawingContext.lineTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-              this.drawingContext.lineTo(
-                vertices[i + 3][0], vertices[i + 3][1]);
-              if (!this._clipping && this.states.doFill) {
-                this._pInst.fill(vertices[i + 3][5]);
-              }
-              if (!this._clipping && this.states.doStroke) {
-                this._pInst.stroke(vertices[i + 3][6]);
-              }
-            } else {
-              this.drawingContext.moveTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-            }
-            this._doFillStrokeClose(closeShape);
-          }
-        }
-      } else {
-        if (!this._clipping) this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-        for (i = 1; i < numVerts; i++) {
-          v = vertices[i];
-          if (v.isVert) {
-            if (v.moveTo) {
-              if (closeShape) this.drawingContext.closePath();
-              this.drawingContext.moveTo(v[0], v[1]);
-            } else {
-              this.drawingContext.lineTo(v[0], v[1]);
-            }
-          }
-        }
-        this._doFillStrokeClose(closeShape);
-      }
-    }
-    isCurve = false;
-    isBezier = false;
-    isQuadratic = false;
-    isContour = false;
-    if (closeShape) {
-      vertices.pop();
-    }
-
-    return this;
-  }
   //////////////////////////////////////////////
   // SHAPE | Attributes
   //////////////////////////////////////////////
@@ -1186,6 +984,7 @@ class Renderer2D extends Renderer {
   }
 
   strokeWeight(w) {
+    super.strokeWeight(w);
     if (typeof w === 'undefined' || w === 0) {
       // hack because lineWidth 0 doesn't work
       this.drawingContext.lineWidth = 0.0001;
@@ -1236,28 +1035,12 @@ class Renderer2D extends Renderer {
 
   curve(x1, y1, x2, y2, x3, y3, x4, y4) {
     this._pInst.beginShape();
-    this._pInst.curveVertex(x1, y1);
-    this._pInst.curveVertex(x2, y2);
-    this._pInst.curveVertex(x3, y3);
-    this._pInst.curveVertex(x4, y4);
+    this._pInst.splineVertex(x1, y1);
+    this._pInst.splineVertex(x2, y2);
+    this._pInst.splineVertex(x3, y3);
+    this._pInst.splineVertex(x4, y4);
     this._pInst.endShape();
     return this;
-  }
-
-  //////////////////////////////////////////////
-  // SHAPE | Vertex
-  //////////////////////////////////////////////
-
-  _doFillStrokeClose(closeShape) {
-    if (closeShape) {
-      this.drawingContext.closePath();
-    }
-    if (!this._clipping && this.states.doFill) {
-      this.drawingContext.fill();
-    }
-    if (!this._clipping && this.states.doStroke) {
-      this.drawingContext.stroke();
-    }
   }
 
   //////////////////////////////////////////////
@@ -1271,8 +1054,8 @@ class Renderer2D extends Renderer {
   resetMatrix() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
+      this._pixelDensity,
+      this._pixelDensity
     );
     return this;
   }
@@ -1314,11 +1097,11 @@ class Renderer2D extends Renderer {
       // a system/browser font
 
       // no stroke unless specified by user
-      if (this.states.doStroke && this.states.strokeSet) {
+      if (this.states.strokeColor && this.states.strokeSet) {
         this.drawingContext.strokeText(line, x, y);
       }
 
-      if (!this._clipping && this.states.doFill) {
+      if (!this._clipping && this.states.fillColor) {
         // if fill hasn't been set by user, use default text fill
         if (!this.states.fillSet) {
           this._setFill(constants._DEFAULT_TEXT_FILL);
@@ -1344,7 +1127,30 @@ class Renderer2D extends Renderer {
     return this.drawingContext.measureText(s).width;
   }
 
-  _applyTextProperties() {
+  text(str, x, y, maxWidth, maxHeight) {
+    let baselineHacked;
+
+    // baselineHacked: (HACK)
+    // A temporary fix to conform to Processing's implementation
+    // of BASELINE vertical alignment in a bounding box
+
+    if (typeof maxWidth !== 'undefined') {
+      if (this.drawingContext.textBaseline === constants.BASELINE) {
+        baselineHacked = true;
+        this.drawingContext.textBaseline = constants.TOP;
+      }
+    }
+
+    const p = super.text(...arguments);
+
+    if (baselineHacked) {
+      this.drawingContext.textBaseline = constants.BASELINE;
+    }
+
+    return p;
+  }
+
+  /*_applyTextProperties() {
     let font;
     const p = this._pInst;
 
@@ -1374,7 +1180,7 @@ class Renderer2D extends Renderer {
     }
 
     return p;
-  }
+  }*/
 
   //////////////////////////////////////////////
   // STRUCTURE
@@ -1407,30 +1213,21 @@ class Renderer2D extends Renderer {
   }
 }
 
-// Fix test
-Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
-  let baselineHacked;
-
-  // baselineHacked: (HACK)
-  // A temporary fix to conform to Processing's implementation
-  // of BASELINE vertical alignment in a bounding box
-
-  if (typeof maxWidth !== 'undefined') {
-    if (this.drawingContext.textBaseline === constants.BASELINE) {
-      baselineHacked = true;
-      this.drawingContext.textBaseline = constants.TOP;
+function renderer2D(p5, fn){
+  /**
+   * p5.Renderer2D
+   * The 2D graphics canvas renderer class.
+   * extends p5.Renderer
+   * @private
+   */
+  p5.Renderer2D = Renderer2D;
+  p5.renderers[constants.P2D] = Renderer2D;
+  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+    construct(target, [pInst, w, h, isMainCanvas, elt]){
+      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
     }
-  }
+  })
+}
 
-  const p = Renderer.prototype.text.apply(this, arguments);
-
-  if (baselineHacked) {
-    this.drawingContext.textBaseline = constants.BASELINE;
-  }
-
-  return p;
-};
-
-p5.Renderer2D = Renderer2D;
-
-export default p5.Renderer2D;
+export default renderer2D;
+export { Renderer2D };

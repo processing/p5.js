@@ -6,6 +6,7 @@
  */
 
 import * as constants from '../core/constants';
+import { Vector } from '../math/p5.Vector';
 
 function interaction(p5, fn){
   /**
@@ -168,7 +169,7 @@ function interaction(p5, fn){
     options
   ) {
     this._assert3d('orbitControl');
-    p5._validateParameters('orbitControl', arguments);
+    // p5._validateParameters('orbitControl', arguments);
 
     const cam = this._renderer.states.curCamera;
 
@@ -319,10 +320,10 @@ function interaction(p5, fn){
         this._renderer.executeZoom = false;
       }
       if (this.mouseIsPressed) {
-        if (this.mouseButton === this.LEFT) {
+        if (this.mouseButton.left) {
           deltaTheta = -sensitivityX * this.movedX / scaleFactor;
           deltaPhi = sensitivityY * this.movedY / scaleFactor;
-        } else if (this.mouseButton === this.RIGHT) {
+        } else if (this.mouseButton.right) {
           moveDeltaX = this.movedX;
           moveDeltaY =  this.movedY * cam.yScale;
         }
@@ -428,7 +429,7 @@ function interaction(p5, fn){
       const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
 
       // position vector of the center.
-      let cv = new p5.Vector(cam.centerX, cam.centerY, cam.centerZ);
+      let cv = new Vector(cam.centerX, cam.centerY, cam.centerZ);
 
       // Calculate the normalized device coordinates of the center.
       cv = cam.cameraMatrix.multiplyPoint(cv);
@@ -686,7 +687,7 @@ function interaction(p5, fn){
 
   fn.debugMode = function(...args) {
     this._assert3d('debugMode');
-    p5._validateParameters('debugMode', args);
+    // p5._validateParameters('debugMode', args);
 
     // start by removing existing 'post' registered debug methods
     for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {

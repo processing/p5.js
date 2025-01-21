@@ -18,22 +18,24 @@
 <body>
   <script type="module">
     import p5 from '../src/app.js';
-    // import calculation from './src/math/calculation.js';
-
-    // p5.registerAddon(calculation);
 
     const sketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(200, 200);
+      let font, geom;
+      p.setup = async function () {
+        font = await p.loadFont('font/Lato-Black.ttf');
+        p.createCanvas(400, 400, p.WEBGL);
+        p.textSize(120);
+        p.textAlign(p.CENTER)
+        geom = font.textToModel('p5*js', 0, 0, { extrude: 20 });
       };
 
       p.draw = function () {
-        p.background(0, 50, 50);
-        p.circle(100, 100, 50);
-
-        p.fill('white');
-        p.textSize(30);
-        p.text('hello', 10, 30);
+        p.background(200);
+        p.normalMaterial();
+        p.drawingContext.enable(p.drawingContext.CULL_FACE);
+        p.drawingContext.cullFace(p.drawingContext.FRONT);
+        p.orbitControl();
+        p.model(geom);
       };
     };
 
