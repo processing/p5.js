@@ -1,52 +1,49 @@
 import { parse } from 'acorn';
 import { simple as walk } from 'acorn-walk';
 import * as constants from '../constants';
-import { loadP5Constructors } from './friendly_errors_utils';
 
-/**
- * @for p5
- * @requires core
- */
-function sketchVerifier(p5, fn) {
-  // List of functions to ignore as they either are meant to be re-defined or
-  // generate false positive outputs.
-  const ignoreFunction = [
-    'setup',
-    'draw',
-    'preload',
-    'deviceMoved',
-    'deviceTurned',
-    'deviceShaken',
-    'doubleClicked',
-    'mousePressed',
-    'mouseReleased',
-    'mouseMoved',
-    'mouseDragged',
-    'mouseClicked',
-    'mouseWheel',
-    'touchStarted',
-    'touchMoved',
-    'touchEnded',
-    'keyPressed',
-    'keyReleased',
-    'keyTyped',
-    'windowResized',
-    'name',
-    'parent',
-    'toString',
-    'print',
-    'stop',
-    'onended'
-  ];
+// List of functions to ignore as they either are meant to be re-defined or
+// generate false positive outputs.
+const ignoreFunction = [
+  'setup',
+  'draw',
+  'preload',
+  'deviceMoved',
+  'deviceTurned',
+  'deviceShaken',
+  'doubleClicked',
+  'mousePressed',
+  'mouseReleased',
+  'mouseMoved',
+  'mouseDragged',
+  'mouseClicked',
+  'mouseWheel',
+  'touchStarted',
+  'touchMoved',
+  'touchEnded',
+  'keyPressed',
+  'keyReleased',
+  'keyTyped',
+  'windowResized',
+  // 'name',
+  // 'parent',
+  // 'toString',
+  // 'print',
+  // 'stop',
+  // 'onended'
+];
+
+export const verifierUtils = {
 
   /**
    * Fetches the contents of a script element in the user's sketch.
-   * 
+   *
+   * @private
    * @method fetchScript
    * @param {HTMLScriptElement} script
    * @returns {Promise<string>}
-   */
-  fn.fetchScript = async function (script) {
+ */
+  fetchScript: async function (script) {
     if (script.src) {
       try {
         const contents = await fetch(script.src).then((res) => res.text());
@@ -59,37 +56,20 @@ function sketchVerifier(p5, fn) {
     } else {
       return script.textContent;
     }
-  }
-
-  /**
-   * Extracts the user's code from the script fetched. Note that this method
-   * assumes that the user's code is always the last script element in the
-   * sketch.
-   * 
-   * @method getUserCode
-   * @returns {Promise<string>} The user's code as a string.
-   */
-  fn.getUserCode = async function () {
-    // TODO: think of a more robust way to get the user's code. Refer to
-    // https://github.com/processing/p5.js/pull/7293.
-    const scripts = document.querySelectorAll('script');
-    const userCodeScript = scripts[scripts.length - 1];
-    const userCode = await fn.fetchScript(userCodeScript);
-
-    return userCode;
-  }
+  },
 
   /**
    * Extracts the user-defined variables and functions from the user code with
    * the help of Espree parser.
-   * 
+   *
+   * @private
    * @method extractUserDefinedVariablesAndFuncs
    * @param {string} code - The code to extract variables and functions from.
    * @returns {Object} An object containing the user's defined variables and functions.
    * @returns {Array<{name: string, line: number}>} [userDefinitions.variables] Array of user-defined variable names and their line numbers.
    * @returns {Array<{name: string, line: number}>} [userDefinitions.functions] Array of user-defined function names and their line numbers.
    */
-  fn.extractUserDefinedVariablesAndFuncs = function (code) {
+  extractUserDefinedVariablesAndFuncs: function (code) {
     const userDefinitions = {
       variables: [],
       functions: []
@@ -142,26 +122,27 @@ function sketchVerifier(p5, fn) {
     }
 
     return userDefinitions;
-  }
+  },
 
   /**
    * Checks user-defined variables and functions for conflicts with p5.js
    * constants and global functions.
-   * 
+   *
    * This function performs two main checks:
    * 1. Verifies if any user definition conflicts with p5.js constants.
    * 2. Checks if any user definition conflicts with global functions from
    * p5.js renderer classes.
-   * 
+   *
    * If a conflict is found, it reports a friendly error message and halts
    * further checking.
-   * 
+   *
+   * @private
    * @param {Object} userDefinitions - An object containing user-defined variables and functions.
    * @param {Array<{name: string, line: number}>} userDefinitions.variables - Array of user-defined variable names and their line numbers.
    * @param {Array<{name: string, line: number}>} userDefinitions.functions - Array of user-defined function names and their line numbers.
    * @returns {boolean} - Returns true if a conflict is found, false otherwise.
    */
-  fn.checkForConstsAndFuncs = function (userDefinitions, p5Constructors) {
+  checkForConstsAndFuncs: function (userDefinitions, p5) {
     const allDefinitions = [
       ...userDefinitions.variables,
       ...userDefinitions.functions
@@ -172,74 +153,81 @@ function sketchVerifier(p5, fn) {
     // redefinition, the line number in user's code, and a link to its
     // reference on the p5.js website.
     function generateFriendlyError(errorType, name, line) {
-      const url = `https://p5js.org/reference/#/p5/${name}`;
-      const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. JavaScript does not support declaring a ${errorType.toLowerCase()} more than once. p5.js reference: ${url}.`;
+      const url = `https://p5js.org/reference/p5/${name}`;
+      const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. p5.js reference: ${url}`;
       return message;
-    }
-
-    // Helper function that checks if a user definition has already been defined
-    // in the p5.js library, either as a constant or as a function.
-    function checkForRedefinition(name, libValue, line, type) {
-      try {
-        const userValue = eval("name");
-        if (libValue !== userValue) {
-          let message = generateFriendlyError(type, name, line);
-          console.log(message);
-          return true;
-        }
-      } catch (e) {
-        // If eval fails, the function hasn't been redefined
-        return false;
-      }
-      return false;
     }
 
     // Checks for constant redefinitions.
     for (let { name, line } of allDefinitions) {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
-        if (checkForRedefinition(name, libDefinition, line, "Constant")) {
-          return true;
-        }
+        const message = generateFriendlyError('Constant', name, line);
+        console.log(message);
+        return true;
       }
     }
 
     // The new rules for attaching anything to global are (if true for both of
     // the following):
-    //    - It is a member of p5.prototype
+    //   - It is a member of p5.prototype
     //   - Its name does not start with `_`
     const globalFunctions = new Set(
-      Object.keys(p5.prototype).filter(key => !key.startsWith('_'))
+      Object.getOwnPropertyNames(p5.prototype)
+        .filter(key => !key.startsWith('_') && key !== 'constructor')
     );
 
     for (let { name, line } of allDefinitions) {
       if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
-        const prototypeFunc = p5.prototype[name];
-        if (prototypeFunc && checkForRedefinition(name, prototypeFunc, line, "Function")) {
-          return true;
-        }
+        const message = generateFriendlyError('Function', name, line);
+        console.log(message);
+        return true;
       }
     }
 
     return false;
+  },
+
+  /**
+   * Extracts the user's code from the script fetched. Note that this method
+   * assumes that the user's code is always the last script element in the
+   * sketch.
+   *
+   * @private
+   * @method getUserCode
+   * @returns {Promise<string>} The user's code as a string.
+   */
+  getUserCode: async function () {
+    // TODO: think of a more robust way to get the user's code. Refer to
+    // https://github.com/processing/p5.js/pull/7293.
+    const scripts = document.querySelectorAll('script');
+    const userCodeScript = scripts[scripts.length - 1];
+    const userCode = await verifierUtils.fetchScript(userCodeScript);
+
+    return userCode;
+  },
+
+  /**
+   * @private
+   */
+  runFES: async function (p5) {
+    const userCode = await verifierUtils.getUserCode();
+    const userDefinedVariablesAndFuncs = verifierUtils.extractUserDefinedVariablesAndFuncs(userCode);
+
+    verifierUtils.checkForConstsAndFuncs(userDefinedVariablesAndFuncs, p5);
   }
+};
 
-  fn.run = async function () {
-    const p5Constructors = await new Promise(resolve => {
-      if (document.readyState === 'complete') {
-        resolve(loadP5Constructors(p5));
-      } else {
-        window.addEventListener('load', () => resolve(loadP5Constructors(p5)));
-      }
-    });
-
-    const userCode = await fn.getUserCode();
-    const userDefinedVariablesAndFuncs = fn.extractUserDefinedVariablesAndFuncs(userCode);
-
-    if (fn.checkForConstsAndFuncs(userDefinedVariablesAndFuncs, p5Constructors)) {
-      return;
+/**
+ * @for p5
+ * @requires core
+ */
+function sketchVerifier(p5, _fn, lifecycles) {
+  lifecycles.presetup = async function() {
+    if (!p5.disableFriendlyErrors) {
+      verifierUtils.runFES(p5);
     }
-  }
+  };
 }
 
 export default sketchVerifier;
