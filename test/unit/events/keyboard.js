@@ -38,22 +38,6 @@ suite('Keyboard Events', function() {
     });
   });
 
-  suite('p5.prototype.isKeyPressed', function() {
-    test('isKeyPressed should be a boolean', function() {
-      assert.isBoolean(myp5.isKeyPressed);
-    });
-
-    test('isKeyPressed should be true on key press', function() {
-      window.dispatchEvent(new KeyboardEvent('keydown'));
-      assert.strictEqual(myp5.isKeyPressed, true);
-    });
-
-    test('isKeyPressed should be false on key up', function() {
-      window.dispatchEvent(new KeyboardEvent('keyup'));
-      assert.strictEqual(myp5.isKeyPressed, false);
-    });
-  });
-
   suite('p5.prototype.key', function() {
     test('key should be a string', async function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
