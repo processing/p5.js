@@ -46,6 +46,7 @@ import filterInvertFrag from "./shaders/filters/invert.frag";
 import filterThresholdFrag from "./shaders/filters/threshold.frag";
 import filterShaderVert from "./shaders/filters/default.vert";
 import { PrimitiveToVerticesConverter } from "../shape/custom_shapes";
+import { Color } from "../color/p5.Color";
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -438,8 +439,8 @@ class RendererGL extends Renderer {
       );
     }
     this.geometryBuilder = new GeometryBuilder(this);
-    this.geometryBuilder.prevFillColor = [...this.states.curFillColor];
-    this.states.curFillColor = [-1, -1, -1, -1];
+    this.geometryBuilder.prevFillColor = this.states.fillColor;
+    this.fill(new Color([-1, -1, -1, -1]));
   }
 
   /**
@@ -458,7 +459,7 @@ class RendererGL extends Renderer {
       );
     }
     const geometry = this.geometryBuilder.finish();
-    this.states.curFillColor = this.geometryBuilder.prevFillColor;
+    this.fill(this.geometryBuilder.prevFillColor);
     this.geometryBuilder = undefined;
     return geometry;
   }
