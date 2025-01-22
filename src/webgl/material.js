@@ -570,6 +570,494 @@ function material(p5, fn){
       } else {
         console.error(err);
       }
+<<<<<<< HEAD
+=======
+    },
+    failureCallback
+  );
+
+  return loadedShader;
+};
+
+/**
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
+ *
+ * Shaders are programs that run on the graphics processing unit (GPU). They
+ * can process many pixels at the same time, making them fast for many
+ * graphics tasks. They’re written in a language called
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+ * and run along with the rest of the code in a sketch.
+ *
+ * Once the <a href="#/p5.Shader">p5.Shader</a> object is created, it can be
+ * used with the <a href="#/p5/shader">shader()</a> function, as in
+ * `shader(myShader)`. A shader program consists of two parts, a vertex shader
+ * and a fragment shader. The vertex shader affects where 3D geometry is drawn
+ * on the screen and the fragment shader affects color.
+ *
+ * The first parameter, `vertSrc`, sets the vertex shader. It’s a string that
+ * contains the vertex shader program written in GLSL.
+ *
+ * The second parameter, `fragSrc`, sets the fragment shader. It’s a string
+ * that contains the fragment shader program written in GLSL.
+ *
+ * A shader can optionally describe *hooks,* which are functions in GLSL that
+ * users may choose to provide to customize the behavior of the shader using the
+ * <a href="#/p5.Shader/modify">`modify()`</a> method of `p5.Shader`. These are added by
+ * describing the hooks in a third parameter, `options`, and referencing the hooks in
+ * your `vertSrc` or `fragSrc`. Hooks for the vertex or fragment shader are described under
+ * the `vertex` and `fragment` keys of `options`. Each one is an object. where each key is
+ * the type and name of a hook function, and each value is a string with the
+ * parameter list and default implementation of the hook. For example, to let users
+ * optionally run code at the start of the vertex shader, the options object could
+ * include:
+ *
+ * ```js
+ * {
+ *   vertex: {
+ *     'void beforeVertex': '() {}'
+ *   }
+ * }
+ * ```
+ *
+ * Then, in your vertex shader source, you can run a hook by calling a function
+ * with the same name prefixed by `HOOK_`. If you want to check if the default
+ * hook has been replaced, maybe to avoid extra overhead, you can check if the
+ * same name prefixed by `AUGMENTED_HOOK_` has been defined:
+ *
+ * ```glsl
+ * void main() {
+ *   // In most cases, just calling the hook is fine:
+ *   HOOK_beforeVertex();
+ *
+ *   // Alternatively, for more efficiency:
+ *   #ifdef AUGMENTED_HOOK_beforeVertex
+ *   HOOK_beforeVertex();
+ *   #endif
+ *
+ *   // Add the rest of your shader code here!
+ * }
+ * ```
+ *
+ * Note: Only filter shaders can be used in 2D mode. All shaders can be used
+ * in WebGL mode.
+ *
+ * @method createShader
+ * @param {String} vertSrc source code for the vertex shader.
+ * @param {String} fragSrc source code for the fragment shader.
+ * @param {Object} [options] An optional object describing how this shader can
+ * be augmented with hooks. It can include:
+ *  - `vertex`: An object describing the available vertex shader hooks.
+ *  - `fragment`: An object describing the available frament shader hooks.
+ * @returns {p5.Shader} new shader object created from the
+ * vertex and fragment shaders.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ *
+ * void main() {
+ *   // Set each pixel's RGBA value to yellow.
+ *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let shaderProgram = createShader(vertSrc, fragSrc);
+ *
+ *   // Compile and apply the p5.Shader object.
+ *   shader(shaderProgram);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A yellow square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec2 p;
+ * uniform float r;
+ * const int numIterations = 500;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vec2 c = p + gl_FragCoord.xy * r;
+ *   vec2 z = c;
+ *   float n = 0.0;
+ *
+ *   for (int i = numIterations; i > 0; i--) {
+ *     if (z.x * z.x + z.y * z.y > 4.0) {
+ *       n = float(i) / float(numIterations);
+ *       break;
+ *     }
+ *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+ *   }
+ *
+ *   gl_FragColor = vec4(
+ *     0.5 - cos(n * 17.0) / 2.0,
+ *     0.5 - cos(n * 13.0) / 2.0,
+ *     0.5 - cos(n * 23.0) / 2.0,
+ *     1.0
+ *   );
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   let mandelbrot = createShader(vertSrc, fragSrc);
+ *
+ *   // Compile and apply the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   // p is the center point of the Mandelbrot image.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   // Set the shader uniform r to 0.005.
+ *   // r is the size of the image in Mandelbrot-space.
+ *   mandelbrot.setUniform('r', 0.005);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ *
+ *   describe('A black fractal image on a magenta background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Note: A "uniform" is a global variable within a shader program.
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vTexCoord = aTexCoord;
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a string with the fragment shader program.
+ * // The fragment shader is called for each pixel.
+ * let fragSrc = `
+ * precision highp float;
+ * uniform vec2 p;
+ * uniform float r;
+ * const int numIterations = 500;
+ * varying vec2 vTexCoord;
+ *
+ * void main() {
+ *   vec2 c = p + gl_FragCoord.xy * r;
+ *   vec2 z = c;
+ *   float n = 0.0;
+ *
+ *   for (int i = numIterations; i > 0; i--) {
+ *     if (z.x * z.x + z.y * z.y > 4.0) {
+ *       n = float(i) / float(numIterations);
+ *       break;
+ *     }
+ *
+ *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+ *   }
+ *
+ *   gl_FragColor = vec4(
+ *     0.5 - cos(n * 17.0) / 2.0,
+ *     0.5 - cos(n * 13.0) / 2.0,
+ *     0.5 - cos(n * 23.0) / 2.0,
+ *     1.0
+ *   );
+ * }
+ * `;
+ *
+ * let mandelbrot;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create a p5.Shader object.
+ *   mandelbrot = createShader(vertSrc, fragSrc);
+ *
+ *   // Apply the p5.Shader object.
+ *   shader(mandelbrot);
+ *
+ *   // Set the shader uniform p to an array.
+ *   // p is the center point of the Mandelbrot image.
+ *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *
+ *   describe('A fractal image zooms in and out of focus.');
+ * }
+ *
+ * function draw() {
+ *   // Set the shader uniform r to a value that oscillates
+ *   // between 0 and 0.005.
+ *   // r is the size of the image in Mandelbrot-space.
+ *   let radius = 0.005 * (sin(frameCount * 0.01) + 1);
+ *   mandelbrot.setUniform('r', radius);
+ *
+ *   // Style the drawing surface.
+ *   noStroke();
+ *
+ *   // Add a plane as a drawing surface.
+ *   plane(100, 100);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // A shader with hooks.
+ * let myShader;
+ *
+ * // A shader with modified hooks.
+ * let modifiedShader;
+ *
+ * // Create a string with the vertex shader program.
+ * // The vertex shader is called for each vertex.
+ * let vertSrc = `
+ * precision highp float;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ *
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ *
+ * void main() {
+ *   vec4 positionVec4 = vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+ * }
+ * `;
+ *
+ * // Create a fragment shader that uses a hook.
+ * let fragSrc = `
+ * precision highp float;
+ * void main() {
+ *   // Let users override the color
+ *   gl_FragColor = HOOK_getColor(vec4(1., 0., 0., 1.));
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(50, 50, WEBGL);
+ *
+ *   // Create a shader with hooks
+ *   myShader = createShader(vertSrc, fragSrc, {
+ *     fragment: {
+ *       'vec4 getColor': '(vec4 color) { return color; }'
+ *     }
+ *   });
+ *
+ *   // Make a version of the shader with a hook overridden
+ *   modifiedShader = myShader.modify({
+ *     'vec4 getColor': `(vec4 color) {
+ *       return vec4(0., 0., 1., 1.);
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   noStroke();
+ *
+ *   push();
+ *   shader(myShader);
+ *   translate(-width/3, 0);
+ *   sphere(10);
+ *   pop();
+ *
+ *   push();
+ *   shader(modifiedShader);
+ *   translate(width/3, 0);
+ *   sphere(10);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.createShader = function (vertSrc, fragSrc, options) {
+  p5._validateParameters('createShader', arguments);
+  return new p5.Shader(this._renderer, vertSrc, fragSrc, options);
+};
+
+/**
+ * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
+ * <a href="#/p5/filter">filter()</a> function.
+ *
+ * `createFilterShader()` works like
+ * <a href="#/p5/createShader">createShader()</a> but has a default vertex
+ * shader included. `createFilterShader()` is intended to be used along with
+ * <a href="#/p5/filter">filter()</a> for filtering the contents of a canvas.
+ * A filter shader will be applied to the whole canvas instead of just
+ * <a href="#/p5.Geometry">p5.Geometry</a> objects.
+ *
+ * The parameter, `fragSrc`, sets the fragment shader. It’s a string that
+ * contains the fragment shader program written in
+ * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+ *
+ * The <a href="#/p5.Shader">p5.Shader</a> object that's created has some
+ * uniforms that can be set:
+ * - `sampler2D tex0`, which contains the canvas contents as a texture.
+ * - `vec2 canvasSize`, which is the width and height of the canvas, not including pixel density.
+ * - `vec2 texelSize`, which is the size of a physical pixel including pixel density. This is calculated as `1.0 / (width * density)` for the pixel width and `1.0 / (height * density)` for the pixel height.
+ *
+ * The <a href="#/p5.Shader">p5.Shader</a> that's created also provides
+ * `varying vec2 vTexCoord`, a coordinate with values between 0 and 1.
+ * `vTexCoord` describes where on the canvas the pixel will be drawn.
+ *
+ * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
+ * or the <a href="https://p5js.org/tutorials/intro-to-shaders/">Introduction to Shaders</a> tutorial.
+ *
+ * @method createFilterShader
+ * @param {String} fragSrc source code for the fragment shader.
+ * @returns {p5.Shader} new shader object created from the fragment shader.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *   void main() {
+ *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   let s = createFilterShader(fragSrc);
+ *   filter(s);
+ *   describe('a yellow canvas');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div modernizr='webgl'>
+ * <code>
+ * let img, s;
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ * function setup() {
+ *   let fragSrc = `precision highp float;
+ *
+ *   // x,y coordinates, given from the vertex shader
+ *   varying vec2 vTexCoord;
+ *
+ *   // the canvas contents, given from filter()
+ *   uniform sampler2D tex0;
+ *   // other useful information from the canvas
+ *   uniform vec2 texelSize;
+ *   uniform vec2 canvasSize;
+ *   // a custom variable from this sketch
+ *   uniform float darkness;
+ *
+ *   void main() {
+ *     // get the color at current pixel
+ *     vec4 color = texture2D(tex0, vTexCoord);
+ *     // set the output color
+ *     color.b = 1.0;
+ *     color *= darkness;
+ *     gl_FragColor = vec4(color.rgb, 1.0);
+ *   }`;
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *   s = createFilterShader(fragSrc);
+ * }
+ * function draw() {
+ *   image(img, -50, -50);
+ *   s.setUniform('darkness', 0.5);
+ *   filter(s);
+ *   describe('a image of bricks tinted dark blue');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.createFilterShader = function (fragSrc) {
+  p5._validateParameters('createFilterShader', arguments);
+  let defaultVertV1 = `
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    attribute vec3 aPosition;
+    // texcoords only come from p5 to vertex shader
+    // so pass texcoords on to the fragment shader in a varying variable
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+
+    void main() {
+      // transferring texcoords for the frag shader
+      vTexCoord = aTexCoord;
+
+      // copy position with a fourth coordinate for projection (1.0 is normal)
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+
+      // project to 3D space
+      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+>>>>>>> main
     }
   };
 
@@ -1076,6 +1564,7 @@ function material(p5, fn){
 
     this._renderer.strokeShader(s);
 
+<<<<<<< HEAD
     return this;
   };
 
@@ -1235,6 +1724,749 @@ function material(p5, fn){
 
     return this;
   };
+=======
+/**
+ * Get the default shader used with lights, materials,
+ * and textures.
+ *
+ * You can call <a href="#/p5.Shader/modify">`baseMaterialShader().modify()`</a>
+ * and change any of the following hooks:
+ *
+ * <table>
+ * <tr><th>Hook</th><th>Description</th></tr>
+ * <tr><td>
+ *
+ * `void beforeVertex`
+ *
+ * </td><td>
+ *
+ * Called at the start of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalNormal`
+ *
+ * </td><td>
+ *
+ * Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldNormal`
+ *
+ * </td><td>
+ *
+ * Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getUV`
+ *
+ * </td><td>
+ *
+ * Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getVertexColor`
+ *
+ * </td><td>
+ *
+ * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterVertex`
+ *
+ * </td><td>
+ *
+ * Called at the end of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void beforeFragment`
+ *
+ * </td><td>
+ *
+ * Called at the start of the fragment shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `Inputs getPixelInputs`
+ *
+ * </td><td>
+ *
+ * Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes:
+ * - `vec3 normal`, the direction pointing out of the surface
+ * - `vec2 texCoord`, a vector where `x` and `y` are between 0 and 1 describing the spot on a texture the pixel is mapped to, as a fraction of the texture size
+ * - `vec3 ambientLight`, the ambient light color on the vertex
+ * - `vec4 color`, the base material color of the pixel
+ * - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
+ * - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
+ * - `vec3 emissiveMaterial`, the light color emitted by the pixel
+ * - `float shininess`, a number representing how sharp specular reflections should be, from 1 to infinity
+ * - `float metalness`, a number representing how mirrorlike the material should be, between 0 and 1
+ * The struct can be modified and returned.
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 combineColors`
+ *
+ * </td><td>
+ *
+ * Take in a `ColorComponents` struct containing all the different components of light, and combining them into
+ * a single final color. The struct contains:
+ * - `vec3 baseColor`, the base color of the pixel
+ * - `float opacity`, the opacity between 0 and 1 that it should be drawn at
+ * - `vec3 ambientColor`, the color of the pixel when affected by ambient light
+ * - `vec3 specularColor`, the color of the pixel when affected by specular reflections
+ * - `vec3 diffuse`, the amount of diffused light hitting the pixel
+ * - `vec3 ambient`, the amount of ambient light hitting the pixel
+ * - `vec3 specular`, the amount of specular reflection hitting the pixel
+ * - `vec3 emissive`, the amount of light emitted by the pixel
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getFinalColor`
+ *
+ * </td><td>
+ *
+ * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterFragment`
+ *
+ * </td><td>
+ *
+ * Called at the end of the fragment shader.
+ *
+ * </td></tr>
+ * </table>
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
+ * Call `baseMaterialShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method baseMaterialShader
+ * @beta
+ * @returns {p5.Shader} The material shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify({
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20.0 * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify({
+ *     declarations: 'vec3 myNormal;',
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       myNormal = inputs.normal;
+ *       return inputs;
+ *     }`,
+ *     'vec4 getFinalColor': `(vec4 color) {
+ *       return mix(
+ *         vec4(1.0, 1.0, 1.0, 1.0),
+ *         color,
+ *         abs(dot(myNormal, vec3(0.0, 0.0, 1.0)))
+ *       );
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   rotateY(millis() * 0.001);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   torus(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * let environment;
+ *
+ * function preload() {
+ *   environment = loadImage('assets/outdoor_spheremap.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify({
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       float factor =
+ *         sin(
+ *           inputs.texCoord.x * ${TWO_PI} +
+ *           inputs.texCoord.y * ${TWO_PI}
+ *         ) * 0.4 + 0.5;
+ *       inputs.shininess = mix(1., 100., factor);
+ *       inputs.metalness = factor;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   panorama(environment);
+ *   ambientLight(100);
+ *   imageLight(environment);
+ *   rotateY(millis() * 0.001);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill(255);
+ *   specularMaterial(150);
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify({
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       vec3 newNormal = inputs.normal;
+ *       // Simple bump mapping: adjust the normal based on position
+ *       newNormal.x += 0.2 * sin(
+ *           sin(
+ *             inputs.texCoord.y * ${TWO_PI} * 10.0 +
+ *             inputs.texCoord.x * ${TWO_PI} * 25.0
+ *           )
+ *         );
+ *       newNormal.y += 0.2 * sin(
+ *         sin(
+ *             inputs.texCoord.x * ${TWO_PI} * 10.0 +
+ *             inputs.texCoord.y * ${TWO_PI} * 25.0
+ *           )
+ *       );
+ *       inputs.normal = normalize(newNormal);
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   ambientLight(150);
+ *   pointLight(
+ *     255, 255, 255,
+ *     100*cos(frameCount*0.04), -50, 100*sin(frameCount*0.04)
+ *   );
+ *   noStroke();
+ *   fill('red');
+ *   shininess(200);
+ *   specularMaterial(255);
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.baseMaterialShader = function() {
+  this._assert3d('baseMaterialShader');
+  return this._renderer.baseMaterialShader();
+};
+
+/**
+ * Get the shader used by <a href="#/p5/normalMaterial">`normalMaterial()`</a>.
+ *
+ * You can call <a href="#/p5.Shader/modify">`baseNormalShader().modify()`</a>
+ * and change any of the following hooks:
+ *
+ * Hook | Description
+ * -----|------------
+ * `void beforeVertex` | Called at the start of the vertex shader.
+ * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * `void afterVertex` | Called at the end of the vertex shader.
+ * `void beforeFragment` | Called at the start of the fragment shader.
+ * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * `void afterFragment` | Called at the end of the fragment shader.
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
+ * Call `baseNormalShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method baseNormalShader
+ * @beta
+ * @returns {p5.Shader} The `normalMaterial` shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseNormalShader().modify({
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   noStroke();
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseNormalShader().modify({
+ *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
+ *     'vec4 getFinalColor': `(vec4 color) {
+ *       // Map the r, g, and b values of the old normal to new colors
+ *       // instead of just red, green, and blue:
+ *       vec3 newColor =
+ *         color.r * vec3(89.0, 240.0, 232.0) / 255.0 +
+ *         color.g * vec3(240.0, 237.0, 89.0) / 255.0 +
+ *         color.b * vec3(205.0, 55.0, 222.0) / 255.0;
+ *       newColor = newColor / (color.r + color.g + color.b);
+ *       return vec4(newColor, 1.0) * color.a;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   noStroke();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.015);
+ *   box(100);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.baseNormalShader = function() {
+  this._assert3d('baseNormalShader');
+  return this._renderer.baseNormalShader();
+};
+
+/**
+ * Get the shader used when no lights or materials are applied.
+ *
+ * You can call <a href="#/p5.Shader/modify">`baseColorShader().modify()`</a>
+ * and change any of the following hooks:
+ *
+ * Hook | Description
+ * -------|-------------
+ * `void beforeVertex` | Called at the start of the vertex shader.
+ * `vec3 getLocalPosition` | Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ * `vec3 getWorldPosition` | Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ * `vec3 getLocalNormal` | Update the normal before transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec3 getWorldNormal` | Update the normal after transforms are applied. It takes in `vec3 normal` and must return a modified version.
+ * `vec2 getUV` | Update the texture coordinates. It takes in `vec2 uv` and must return a modified version.
+ * `vec4 getVertexColor` | Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ * `void afterVertex` | Called at the end of the vertex shader.
+ * `void beforeFragment` | Called at the start of the fragment shader.
+ * `vec4 getFinalColor` | Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ * `void afterFragment` | Called at the end of the fragment shader.
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
+ * Call `baseColorShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method baseColorShader
+ * @beta
+ * @returns {p5.Shader} The color shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify({
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
+ *       return pos;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('red');
+ *   circle(0, 0, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.baseColorShader = function() {
+  this._assert3d('baseColorShader');
+  return this._renderer.baseColorShader();
+};
+
+/**
+ * Get the shader used when drawing the strokes of shapes.
+ *
+ * You can call <a href="#/p5.Shader/modify">`baseStrokeShader().modify()`</a>
+ * and change any of the following hooks:
+ *
+ * <table>
+ * <tr><th>Hook</th><th>Description</th></tr>
+ * <tr><td>
+ *
+ * `void beforeVertex`
+ *
+ * </td><td>
+ *
+ * Called at the start of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getLocalPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec3 getWorldPosition`
+ *
+ * </td><td>
+ *
+ * Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `float getStrokeWeight`
+ *
+ * </td><td>
+ *
+ * Update the stroke weight. It takes in `float weight` and pust return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getLineCenter`
+ *
+ * </td><td>
+ *
+ * Update the center of the line. It takes in `vec2 center` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec2 getLinePosition`
+ *
+ * </td><td>
+ *
+ * Update the position of each vertex on the edge of the line. It takes in `vec2 position` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getVertexColor`
+ *
+ * </td><td>
+ *
+ * Update the color of each vertex. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterVertex`
+ *
+ * </td><td>
+ *
+ * Called at the end of the vertex shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void beforeFragment`
+ *
+ * </td><td>
+ *
+ * Called at the start of the fragment shader.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `Inputs getPixelInputs`
+ *
+ * </td><td>
+ *
+ * Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes:
+ * - `vec4 color`, the color of the stroke
+ * - `vec2 tangent`, the direction of the stroke in screen space
+ * - `vec2 center`, the coordinate of the center of the stroke in screen space p5.js pixels
+ * - `vec2 position`, the coordinate of the current pixel in screen space p5.js pixels
+ * - `float strokeWeight`, the thickness of the stroke in p5.js pixels
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `bool shouldDiscard`
+ *
+ * </td><td>
+ *
+ * Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `vec4 getFinalColor`
+ *
+ * </td><td>
+ *
+ * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
+ *
+ * </td></tr>
+ * <tr><td>
+ *
+ * `void afterFragment`
+ *
+ * </td><td>
+ *
+ * Called at the end of the fragment shader.
+ *
+ * </td></tr>
+ * </table>
+ *
+ * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+ * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
+ *
+ * Call `baseStrokeShader().inspectHooks()` to see all the possible hooks and
+ * their default implementations.
+ *
+ * @method baseStrokeShader
+ * @beta
+ * @returns {p5.Shader} The stroke shader
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify({
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       float opacity = 1.0 - smoothstep(
+ *         0.0,
+ *         15.0,
+ *         length(inputs.position - inputs.center)
+ *       );
+ *       inputs.color *= opacity;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   strokeWeight(30);
+ *   line(
+ *     -width/3,
+ *     sin(millis()*0.001) * height/4,
+ *     width/3,
+ *     sin(millis()*0.001 + 1) * height/4
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify({
+ *     uniforms: {
+ *       'float time': () => millis()
+ *     },
+ *     declarations: 'vec3 myPosition;',
+ *     'vec3 getWorldPosition': `(vec3 pos) {
+ *       myPosition = pos;
+ *       return pos;
+ *     }`,
+ *     'float getStrokeWeight': `(float w) {
+ *       // Add a somewhat random offset to the weight
+ *       // that varies based on position and time
+ *       float scale = 0.8 + 0.2*sin(10.0 * sin(
+ *         floor(time/250.) +
+ *         myPosition.x*0.01 +
+ *         myPosition.y*0.01
+ *       ));
+ *       return w * scale;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   strokeWeight(10);
+ *   beginShape();
+ *   for (let i = 0; i <= 50; i++) {
+ *     let r = map(i, 0, 50, 0, width/3);
+ *     let x = r*cos(i*0.2);
+ *     let y = r*sin(i*0.2);
+ *     vertex(x, y);
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify({
+ *     'float random': `(vec2 p) {
+ *       vec3 p3  = fract(vec3(p.xyx) * .1031);
+ *       p3 += dot(p3, p3.yzx + 33.33);
+ *       return fract((p3.x + p3.y) * p3.z);
+ *     }`,
+ *     'Inputs getPixelInputs': `(Inputs inputs) {
+ *       // Replace alpha in the color with dithering by
+ *       // randomly setting pixel colors to 0 based on opacity
+ *       float a = inputs.color.a;
+ *       inputs.color.a = 1.0;
+ *       inputs.color *= random(inputs.position.xy) > a ? 0.0 : 1.0;
+ *       return inputs;
+ *     }`
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   strokeWeight(10);
+ *   beginShape();
+ *   for (let i = 0; i <= 50; i++) {
+ *     stroke(
+ *       0,
+ *       255
+ *         * map(i, 0, 20, 0, 1, true)
+ *         * map(i, 30, 50, 1, 0, true)
+ *     );
+ *     vertex(
+ *       map(i, 0, 50, -1, 1) * width/3,
+ *       50 * sin(i/10 + frameCount/100)
+ *     );
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.baseStrokeShader = function() {
+  this._assert3d('baseStrokeShader');
+  return this._renderer.baseStrokeShader();
+};
+>>>>>>> main
 
   /**
    * Get the default shader used with lights, materials,

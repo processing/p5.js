@@ -19,6 +19,7 @@ function environment(p5, fn){
   const _windowPrint = window.print;
   let windowPrintDisabled = false;
 
+<<<<<<< HEAD
   /**
    * Displays text in the web browser's console.
    *
@@ -311,6 +312,43 @@ function environment(p5, fn){
         // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
         coords = `${x} ${y}`;
       }
+=======
+/**
+ * Displays text in the web browser's console.
+ *
+ * `print()` is helpful for printing values while debugging. Each call to
+ * `print()` creates a new line of text.
+ *
+ * Note: Call `print('\n')` to print a blank line. Calling `print()` without
+ * an argument opens the browser's dialog for printing documents.
+ *
+ * @method print
+ * @param {Any} contents content to print to the console.
+ * @example
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   // Prints "hello, world" to the console.
+ *   print('hello, world');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   let name = 'ada';
+ *   // Prints "hello, ada" to the console.
+ *   print(`hello, ${name}`);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.print = function(...args) {
+  if (!args.length) {
+    if (!windowPrintDisabled) {
+      _windowPrint();
+>>>>>>> main
       if (
         type.substring(0, 7) === 'http://' ||
         type.substring(0, 8) === 'https://'
@@ -1413,3 +1451,116 @@ export default environment;
 if(typeof p5 !== 'undefined'){
   environment(p5, p5.prototype);
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * Returns the sketch's current
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL" target="_blank">URL</a>
+ * as a `String`.
+ *
+ * @method getURL
+ * @return {String} url
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   background(200);
+ *
+ *   // Get the sketch's URL
+ *   // and display it.
+ *   let url = getURL();
+ *   textWrap(CHAR);
+ *   text(url, 0, 40, 100);
+ *
+ *   describe('The URL "https://p5js.org/reference/p5/getURL" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.getURL = () => location.href;
+
+/**
+ * Returns the current
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#path_to_resource" target="_blank">URL</a>
+ * path as an `Array` of `String`s.
+ *
+ * For example, consider a sketch hosted at the URL
+ * `https://example.com/sketchbook`. Calling `getURLPath()` returns
+ * `['sketchbook']`. For a sketch hosted at the URL
+ * `https://example.com/sketchbook/monday`, `getURLPath()` returns
+ * `['sketchbook', 'monday']`.
+ *
+ * @method getURLPath
+ * @return {String[]} path components.
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   background(200);
+ *
+ *   // Get the sketch's URL path
+ *   // and display the first
+ *   // part.
+ *   let path = getURLPath();
+ *   text(path[0], 25, 54);
+ *
+ *   describe('The word "reference" written in black on a gray background.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.getURLPath = () =>
+  location.pathname.split('/').filter(v => v !== '');
+
+/**
+ * Returns the current
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#parameters" target="_blank">URL parameters</a>
+ * in an `Object`.
+ *
+ * For example, calling `getURLParams()` in a sketch hosted at the URL
+ * `http://p5js.org?year=2014&month=May&day=15` returns
+ * `{ year: 2014, month: 'May', day: 15 }`.
+ *
+ * @method getURLParams
+ * @return {Object} URL params
+ * @example
+ * <div class='norender notest'>
+ * <code>
+ * // Imagine this sketch is hosted at the following URL:
+ * // https://p5js.org?year=2014&month=May&day=15
+ *
+ * function setup() {
+ *   background(200);
+ *
+ *   // Get the sketch's URL
+ *   // parameters and display
+ *   // them.
+ *   let params = getURLParams();
+ *   text(params.day, 10, 20);
+ *   text(params.month, 10, 40);
+ *   text(params.year, 10, 60);
+ *
+ *   describe('The text "15", "May", and "2014" written in black on separate lines.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * This example does not render anything.
+ */
+p5.prototype.getURLParams = function() {
+  const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+  let m;
+  const v = {};
+  while ((m = re.exec(location.search)) != null) {
+    if (m.index === re.lastIndex) {
+      re.lastIndex++;
+    }
+    v[m[1]] = m[2];
+  }
+  return v;
+};
+
+export default p5;
+>>>>>>> main

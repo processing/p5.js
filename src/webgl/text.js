@@ -1,9 +1,20 @@
 import * as constants from '../core/constants';
 
+<<<<<<< HEAD
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { arrayCommandsToObjects } from '../type/p5.Font';
+=======
+// Text/Typography
+// @TODO:
+p5.RendererGL.prototype._applyTextProperties = function() {
+  //@TODO finish implementation
+  //console.error('text commands not yet implemented in webgl');
+  this._setProperty('_textAscent', null);
+  this._setProperty('_textDescent', null);
+};
+>>>>>>> main
 
 function text(p5, fn){
   // Text/Typography

@@ -391,7 +391,7 @@ git commit -m "Add documentation example to circle() function"
 
 ### इनलाइन दस्तावेज़ीकरण
 
-यदि आप इनलाइन दस्तावेज़ीकरण पर काम करने जा रहे हैं, तो कृपया [यहां](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md) देखें।
+यदि आप इनलाइन दस्तावेज़ीकरण पर काम करने जा रहे हैं, तो कृपया [यहां](https://p5js.org/contribute/contributing_to_the_p5js_reference/) देखें।
 
 ### अभिगम्यता
 

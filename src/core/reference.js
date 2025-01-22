@@ -1428,7 +1428,7 @@
  *   // Assign the frog variable a new Frog object.
  *   fifi = new Frog(50, 50, 20);
  *
- *   describe('A frog face drawn on a gray background.');
+ *   describe('A frog face drawn on a blue background.');
  * }
  *
  * function draw() {
@@ -1467,7 +1467,7 @@
  *   frog1 = new Frog(25, 50, 10);
  *   frog2 = new Frog(75, 50, 20);
  *
- *   describe('Two frog faces drawn next to each other on a gray background.');
+ *   describe('Two frog faces drawn next to each other on a blue background.');
  * }
  *
  * function draw() {
@@ -1510,7 +1510,7 @@
  *   // Slow the frame rate.
  *   frameRate(1);
  *
- *   describe('Two frog faces on a gray background. The frogs hop around randomly.');
+ *   describe('Two frog faces on a blue background. The frogs hop around randomly.');
  * }
  *
  * function draw() {
@@ -1566,46 +1566,6 @@
  *
  * <div>
  * <code>
- * // Declare two frog variables.
- * let frog1;
- * let frog2;
- *
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   // Assign the frog variables a new Frog object.
- *   frog1 = new Frog(25, 50, 10);
- *   frog2 = new Frog(75, 50, 20);
- *
- *   describe('Two frog faces drawn next to each other on a gray background.');
- * }
- *
- * function draw() {
- *   background('cornflowerblue');
- *
- *   // Show the frogs.
- *   frog1.show();
- *   frog2.show();
- * }
- *
- * class Frog {
- *   constructor(x, y, size) {
- *     this.x = x;
- *     this.y = y;
- *     this.size = size;
- *   }
- *
- *   show() {
- *     textAlign(CENTER, CENTER);
- *     textSize(this.size);
- *     text('🐸', this.x, this.y);
- *   }
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
  * // Create an array that will hold frogs.
  * let frogs = [];
  *
@@ -1630,7 +1590,7 @@
  *   frameRate(1);
  *
  *   describe(
- *     'Five frog faces on a gray background. The frogs hop around randomly.'
+ *     'Five frog faces on a blue background. The frogs hop around randomly.'
  *   );
  * }
  *

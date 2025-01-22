@@ -396,7 +396,7 @@ Si vas a trabajar en pruebas unitarias, por favor consulta [aquí](https://githu
 
 ### Documentación en línea
 
-Si vas a trabajar en la documentación en línea, por favor consulta [aquí](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md).
+Si vas a trabajar en la documentación en línea, por favor consulta [aquí](https://p5js.org/contribute/contributing_to_the_p5js_reference/).
 
 ### Accesibilidad
 

@@ -303,9 +303,8 @@ p5.prototype.myMethod = function(){
 
 **Contributed libraries are hosted, documented, and maintained by their creators.** This could be on GitHub, a separate website, or elsewhere. We only feature addon libraries that are fully open source.
 
-**Documentation is key!** The documentation for your library should be easy to find. The documentation for contributed libraries won’t be included in the main p5.js reference, but you may want to follow a similar format. See these examples of a [library overview page](http://p5js.org/reference/#/libraries/p5.sound), [class overview page](http://p5js.org/reference/#/p5.Vector), and [method page](http://p5js.org/reference/#/p5/arc).
+**Documentation is key!** The documentation for your library should be easy to find. The documentation for contributed libraries won’t be included in the main p5.js reference, but you may want to follow a similar format. See these examples of a [library overview page](https://p5js.org/reference/p5.sound), [class overview page](https://p5js.org/reference/p5/p5.Vector), and [method page](https://p5js.org/reference/p5/arc).
 
 **Examples are great, too!** They show people what your library can do. Because this is all JavaScript, people can see them running online before they download anything.[ ](http://jsfiddle.net/) You can create a collection of examples on the p5.js web editor to showcase how your library works.
 
-**Let us know!** Once your library is ready for distribution, send an email to hello\@p5js.org with a link and some info. We'll include it on the [libraries page](http://p5js.org/libraries/)! If you have created a library and would like to have it included on the [p5js.org/libraries](https://p5js.org/libraries) page, please fill in [this form](https://docs.google.com/forms/d/e/1FAIpQLSdWWb95cfvosaIFI7msA7XC5zOEVsNruaA5klN1jH95ESJVcw/viewform).
-
+**Submit your library!** Once your library is ready for distribution and you’d like it included on the [p5js.org/libraries](https://p5js.org/libraries) page, please submit a pull request on the p5.js website GitHub repository following [this intruction](https://github.com/processing/p5.js-website/blob/main/docs/contributing_libraries.md)!

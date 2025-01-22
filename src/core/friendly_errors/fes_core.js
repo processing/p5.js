@@ -145,6 +145,7 @@ function fesCore(p5, fn){
         const funcName =
           methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
+<<<<<<< HEAD
         //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
         funcName.startsWith('p5.')  ?
           msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` :
@@ -152,6 +153,15 @@ function fesCore(p5, fn){
       }
       return msgWithReference;
     };
+=======
+      //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
+      funcName.startsWith('p5.')  ?
+        msgWithReference = `${message} (http://p5js.org/reference/${referenceSection}.${funcName})` :
+        msgWithReference = `${message} (http://p5js.org/reference/${referenceSection}/${funcName})`;
+    }
+    return msgWithReference;
+  };
+>>>>>>> main
 
     /**
      * Prints out a fancy, colorful message to the console log
@@ -1081,6 +1091,539 @@ function fesCore(p5, fn){
             })
           );
         }
+<<<<<<< HEAD
+=======
+        stacktraceMsg += frameMsg;
+      });
+      log(stacktraceMsg);
+    }
+  };
+
+  /**
+   * Takes a stacktrace array and filters out all frames that show internal p5
+   * details.
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.wrongPreload", "fes.libraryError".
+   *
+   * The processed stack is used to find whether the error happened internally
+   * within the library, and if the error was due to a non-loadX() method
+   * being used in preload.
+   *
+   * "Internally" here means that the exact location of the error (the top of
+   * the stack) is a piece of code written in the p5.js library (which may or
+   * may not have been called from the user's sketch).
+   *
+   * @method processStack
+   * @private
+   * @param {Error} error
+   * @param {Array} stacktrace
+   *
+   * @returns {Array} An array with two elements, [isInternal, friendlyStack]
+   *                 isInternal: a boolean value indicating whether the error
+   *                             happened internally
+   *                 friendlyStack: the filtered (simplified) stacktrace
+   */
+  const processStack = (error, stacktrace) => {
+    // cannot process a stacktrace that doesn't exist
+    if (!stacktrace) return [false, null];
+
+    stacktrace.forEach(frame => {
+      frame.functionName = frame.functionName || '';
+    });
+
+    // isInternal - Did this error happen inside the library
+    let isInternal = false;
+    let p5FileName, friendlyStack, currentEntryPoint;
+
+    // Intentionally throw an error that we catch so that we can check the name
+    // of the current file. Any errors we see from this file, we treat as
+    // internal errors.
+    try {
+      throw new Error();
+    } catch (testError) {
+      const testStacktrace = p5._getErrorStackParser().parse(testError);
+      p5FileName = testStacktrace[0].fileName;
+    }
+
+    for (let i = stacktrace.length - 1; i >= 0; i--) {
+      let splitted = stacktrace[i].functionName.split('.');
+      if (entryPoints.includes(splitted[splitted.length - 1])) {
+        // remove everything below an entry point function (setup, draw, etc).
+        // (it's usually the internal initialization calls)
+        friendlyStack = stacktrace.slice(0, i + 1);
+        currentEntryPoint = splitted[splitted.length - 1];
+        // We call the error "internal" if the source of the error was a
+        // function from within the p5.js library file, but called from the
+        // user's code directly. We only need to check the topmost frame in
+        // the stack trace since any function internal to p5 should pass this
+        // check, not just public p5 functions.
+        if (stacktrace[0].fileName === p5FileName) {
+          isInternal = true;
+          break;
+        }
+        break;
+      }
+    }
+
+    // in some cases ( errors in promises, callbacks, etc), no entry-point
+    // function may be found in the stacktrace. In that case just use the
+    // entire stacktrace for friendlyStack
+    if (!friendlyStack) friendlyStack = stacktrace;
+
+    if (isInternal) {
+      // the frameIndex property is added before the filter, so frameIndex
+      // corresponds to the index of a frame in the original stacktrace.
+      // Then we filter out all frames which belong to the file that contains
+      // the p5 library
+      friendlyStack = friendlyStack
+        .map((frame, index) => {
+          frame.frameIndex = index;
+          return frame;
+        })
+        .filter(frame => frame.fileName !== p5FileName);
+
+      // a weird case, if for some reason we can't identify the function called
+      // from user's code
+      if (friendlyStack.length === 0) return [true, null];
+
+      // get the function just above the topmost frame in the friendlyStack.
+      // i.e the name of the library function called from user's code
+      const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
+        .split('.')
+        .slice(-1)[0];
+
+      // Try and get the location (line no.) from the top element of the stack
+      let locationObj;
+      if (
+        friendlyStack[0].fileName &&
+        friendlyStack[0].lineNumber &&
+        friendlyStack[0].columnNumber
+      ) {
+        locationObj = {
+          location: `${friendlyStack[0].fileName}:${
+            friendlyStack[0].lineNumber
+          }:${friendlyStack[0].columnNumber}`,
+          file: friendlyStack[0].fileName.split('/').slice(-1),
+          line: friendlyStack[0].lineNumber
+        };
+
+        // if already handled by another part of the FES, don't handle again
+        if (p5._fesLogCache[locationObj.location]) return [true, null];
+      }
+
+      // Check if the error is due to a non loadX method being used incorrectly
+      // in preload
+      if (
+        currentEntryPoint === 'preload' &&
+        p5.prototype._preloadMethods[func] == null
+      ) {
+        p5._friendlyError(
+          translator('fes.wrongPreload', {
+            func,
+            location: locationObj
+              ? translator('fes.location', locationObj)
+              : '',
+            error: error.message
+          }),
+          'preload'
+        );
+      } else {
+        // Library error
+        p5._friendlyError(
+          translator('fes.libraryError', {
+            func,
+            location: locationObj
+              ? translator('fes.location', locationObj)
+              : '',
+            error: error.message
+          }),
+          func
+        );
+      }
+
+      // Finally, if it's an internal error, print the friendlyStack
+      // ( fesErrorMonitor won't handle this error )
+      if (friendlyStack && friendlyStack.length) {
+        printFriendlyStack(friendlyStack);
+      }
+    }
+    return [isInternal, friendlyStack];
+  };
+
+  /**
+   * Handles "global" errors that the browser catches.
+   *
+   * Called when an error event happens and detects the type of error.
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.globalErrors.syntax.[*]", "fes.globalErrors.reference.[*]",
+   * "fes.globalErrors.type.[*]".
+   *
+   * @method fesErrorMonitor
+   * @private
+   * @param {*} e  Event object to extract error details from
+   */
+  const fesErrorMonitor = e => {
+    if (p5.disableFriendlyErrors) return;
+    // Try to get the error object from e
+    let error;
+    if (e instanceof Error) {
+      error = e;
+    } else if (e instanceof ErrorEvent) {
+      error = e.error;
+    } else if (e instanceof PromiseRejectionEvent) {
+      error = e.reason;
+      if (!(error instanceof Error)) return;
+    }
+    if (!error) return;
+
+    let stacktrace = p5._getErrorStackParser().parse(error);
+    // process the stacktrace from the browser and simplify it to give
+    // friendlyStack.
+    let [isInternal, friendlyStack] = processStack(error, stacktrace);
+
+    // if this is an internal library error, the type of the error is not relevant,
+    // only the user code that lead to it is.
+    if (isInternal) {
+      return;
+    }
+
+    const errList = errorTable[error.name];
+    if (!errList) return; // this type of error can't be handled yet
+    let matchedError;
+    for (const obj of errList) {
+      let string = obj.msg;
+      // capture the primary symbol mentioned in the error
+      string = string.replace(new RegExp('{{}}', 'g'), '([a-zA-Z0-9_]+)');
+      string = string.replace(new RegExp('{{.}}', 'g'), '(.+)');
+      string = string.replace(new RegExp('{}', 'g'), '(?:[a-zA-Z0-9_]+)');
+      let matched = error.message.match(string);
+
+      if (matched) {
+        matchedError = Object.assign({}, obj);
+        matchedError.match = matched;
+        break;
+      }
+    }
+
+    if (!matchedError) return;
+
+    // Try and get the location from the top element of the stack
+    let locationObj;
+    if (
+      stacktrace &&
+      stacktrace[0].fileName &&
+      stacktrace[0].lineNumber &&
+      stacktrace[0].columnNumber
+    ) {
+      locationObj = {
+        location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+          stacktrace[0].columnNumber
+        }`,
+        file: stacktrace[0].fileName.split('/').slice(-1),
+        line: friendlyStack[0].lineNumber
+      };
+    }
+
+    switch (error.name) {
+      case 'SyntaxError': {
+        // We can't really do much with syntax errors other than try to use
+        // a simpler framing of the error message. The stack isn't available
+        // for syntax errors
+        switch (matchedError.type) {
+          case 'INVALIDTOKEN': {
+            //Error if there is an invalid or unexpected token that doesn't belong at this position in the code
+            //let x = “not a string”; -> string not in proper quotes
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.invalidToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'UNEXPECTEDTOKEN': {
+            //Error if a specific language construct(, { ; etc) was expected, but something else was provided
+            //for (let i = 0; i < 5,; ++i) -> a comma after i<5 instead of a semicolon
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.unexpectedToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'REDECLAREDVARIABLE': {
+            //Error if a variable is redeclared by the user. Example=>
+            //let a = 10;
+            //let a = 100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.redeclaredVariable', {
+                symbol: errSym,
+                url
+              })
+            );
+            break;
+          }
+          case 'MISSINGINITIALIZER': {
+            //Error if a const variable is not initialized during declaration
+            //Example => const a;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.missingInitializer', {
+                url
+              })
+            );
+            break;
+          }
+          case 'BADRETURNORYIELD': {
+            //Error when a return statement is misplaced(usually outside of a function)
+            // const a = function(){
+            //  .....
+            //  }
+            //  return; -> misplaced return statement
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.badReturnOrYield', {
+                url
+              })
+            );
+            break;
+          }
+        }
+        break;
+      }
+      case 'ReferenceError': {
+        switch (matchedError.type) {
+          case 'NOTDEFINED': {
+            //Error if there is a non-existent variable referenced somewhere
+            //let a = 10;
+            //console.log(x);
+            let errSym = matchedError.match[1];
+
+            if (errSym && handleMisspelling(errSym, error)) {
+              break;
+            }
+
+            // if the flow gets this far, this is likely not a misspelling
+            // of a p5 property/function
+            let url = 'https://p5js.org/tutorials/variables-and-change/';
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.notDefined', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CANNOTACCESS': {
+            //Error if a lexical variable was accessed before it was initialized
+            //console.log(a); -> variable accessed before it was initialized
+            //let a=100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.cannotAccess', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+        }
+        break;
+      }
+
+      case 'TypeError': {
+        switch (matchedError.type) {
+          case 'NOTFUNC': {
+            //Error when some code expects you to provide a function, but that didn't happen
+            //let a = document.getElementByID('foo'); -> getElementById instead of getElementByID
+            let errSym = matchedError.match[1];
+            let splitSym = errSym.split('.');
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+
+            // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
+            let translationObj = {
+              url,
+              symbol: splitSym[splitSym.length - 1],
+              obj: splitSym.slice(0, splitSym.length - 1).join('.'),
+              location: locationObj
+                ? translator('fes.location', locationObj)
+                : ''
+            };
+
+            // There are two cases to handle here. When the function is called
+            // as a property of an object and when it's called independently.
+            // Both have different explanations.
+            if (splitSym.length > 1) {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfuncObj', translationObj)
+              );
+            } else {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfunc', translationObj)
+              );
+            }
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READNULL': {
+            //Error if a property of null is accessed
+            //let a = null;
+            //console.log(a.property); -> a is null
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            /*let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';*/
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromNull', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READUDEFINED': {
+            //Error if a property of undefined is accessed
+            //let a; -> default value of a is undefined
+            //console.log(a.property); -> a is undefined
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            /*let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';*/
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromUndefined', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CONSTASSIGN': {
+            //Error when a const variable is reassigned a value
+            //const a = 100;
+            //a=10;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.constAssign', {
+                url,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+        }
+      }
+    }
+  };
+
+  p5._fesErrorMonitor = fesErrorMonitor;
+  p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
+
+  // logger for testing purposes.
+  p5._fesLogger = null;
+  p5._fesLogCache = {};
+
+  window.addEventListener('load', checkForUserDefinedFunctions, false);
+  window.addEventListener('error', p5._fesErrorMonitor, false);
+  window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
+
+  /**
+   * Prints out all the colors in the color pallete with white text.
+   * For color blindness testing.
+   */
+  /* function testColors() {
+    const str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
+    p5._friendlyError(str, 'print', '#ED225D'); // p5.js magenta
+    p5._friendlyError(str, 'print', '#2D7BB6'); // p5.js blue
+    p5._friendlyError(str, 'print', '#EE9900'); // p5.js orange
+    p5._friendlyError(str, 'print', '#A67F59'); // p5.js light brown
+    p5._friendlyError(str, 'print', '#704F21'); // p5.js gold
+    p5._friendlyError(str, 'print', '#1CC581'); // auto cyan
+    p5._friendlyError(str, 'print', '#FF6625'); // auto orange
+    p5._friendlyError(str, 'print', '#79EB22'); // auto green
+    p5._friendlyError(str, 'print', '#B40033'); // p5.js darkened magenta
+    p5._friendlyError(str, 'print', '#084B7F'); // p5.js darkened blue
+    p5._friendlyError(str, 'print', '#945F00'); // p5.js darkened orange
+    p5._friendlyError(str, 'print', '#6B441D'); // p5.js darkened brown
+    p5._friendlyError(str, 'print', '#2E1B00'); // p5.js darkened gold
+    p5._friendlyError(str, 'print', '#008851'); // auto dark cyan
+    p5._friendlyError(str, 'print', '#C83C00'); // auto dark orange
+    p5._friendlyError(str, 'print', '#4DB200'); // auto dark green
+  } */
+}
+
+// This is a lazily-defined list of p5 symbols that may be
+// misused by beginners at top-level code, outside of setup/draw. We'd like
+// to detect these errors and help the user by suggesting they move them
+// into setup/draw.
+//
+// For more details, see https://github.com/processing/p5.js/issues/1121.
+misusedAtTopLevelCode = null;
+const FAQ_URL =
+  'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
+
+/**
+ * A helper function for populating misusedAtTopLevel list.
+ *
+ * @method defineMisusedAtTopLevelCode
+ * @private
+ */
+defineMisusedAtTopLevelCode = () => {
+  const uniqueNamesFound = {};
+
+  const getSymbols = obj =>
+    Object.getOwnPropertyNames(obj)
+      .filter(name => {
+        if (name[0] === '_') {
+          return false;
+        }
+        if (name in uniqueNamesFound) {
+          return false;
+        }
+
+        uniqueNamesFound[name] = true;
+
+>>>>>>> main
         return true;
       }
     });

@@ -18,8 +18,8 @@ Resolves #[Add issue number here]
 -->
 
 - [ ] `npm run lint` passes
-- [ ] [Inline documentation] is included / updated
+- [ ] [Inline reference] is included / updated
 - [ ] [Unit tests] are included / updated
 
-[Inline documentation]: https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md
+[Inline reference]: https://p5js.org/contribute/contributing_to_the_p5js_reference/
 [Unit tests]: https://github.com/processing/p5.js/tree/main/contributor_docs#unit-tests

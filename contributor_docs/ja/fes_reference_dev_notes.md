@@ -23,15 +23,15 @@
 `_report()` は、エラーヘルパーメッセージの出力をコンソールに直接印刷する主要な関数です。
 `_fesLogger` が設定されている場合（つまり、テストを実行している場合）、`_report` は console.log の代わりに `_fesLogger` を呼び出します。
 ##### 语法
-````JavaScript
+```javascript
 _report(message)
-````
-````JavaScript
+```
+```javascript
 _report(message, func)
-````
-````JavaScript
+```
+```javascript
 _report(message, func, color)
-````
+```
 ##### 引数
 ```
 @param  {String}        message   出力するメッセージ
@@ -70,15 +70,15 @@ _friendlyError
 
 
 ##### 構文
-````JavaScript
+```javascript
 _friendlyError(message)
-````
-````JavaScript
+```
+```javascript
 _friendlyError(message, func)
-````
-````JavaScript
+```
+```javascript
 _friendlyError(message, func, color)
-````
+```
 ##### 引数
 ```
 @param  {String}        message   出力するメッセージ
@@ -113,9 +113,9 @@ _friendlyFileLoadError
   _report
 ```
 ##### 構文
-````JavaScript
+```javascript
 _friendlyFileLoadError(errorType, filePath)
-````
+```
 ##### 引数
 ```
 @param  {Number}  errorType   ファイル読み込みエラータイプの数値
@@ -123,7 +123,7 @@ _friendlyFileLoadError(errorType, filePath)
 ```
 ##### 例
 <ins>ファイル読み込みエラーの例</ins>
-````JavaScript
+```javascript
 /// missing font file
 let myFont;
 function preload() {
@@ -136,7 +136,7 @@ function setup() {
   text('p5*js', 10, 50);
 };
 function draw() {};
-````
+```
 FESはコンソールに次のメッセージを生成します：
 > 🌸 p5.jsが言っています: フォントファイルの読み込み中に問題が発生したようです。ファイルパス [assets/OpenSans-Regular.ttf] が正しいか確認し、フォントファイルをオンラインサーバーにホストするか、またはローカルサーバーを実行してみてください。[https://github.com/processing/p5.js/wiki/Local-server]
 
@@ -199,9 +199,9 @@ validateParameters
         friendlyWelcome
 ```
 ##### 文法
-````JavaScript
+```javascript
 _validateParameters(func, args)
-````
+```
 ##### 引数
 ```
 @param  {String}  func    関数名
@@ -209,18 +209,18 @@ _validateParameters(func, args)
 ```
 ##### 例
 <ins>欠落パラメータの例</ins>
-````JavaScript
+```javascript
 arc(1, 1, 10.5, 10);
-````
+```
 FESはコンソールに以下のメッセージを生成します：
 > 🌸 p5.jsが言うには、arc()は位置#4（ゼロベースのインデックス）で空の変数を受け取ったようです。これが意図的でない場合、通常はスコープの問題です：[https://p5js.org/examples/data-variable-scope.html]。[http://p5js.org/reference/#p5/arc]
 
 > 🌸 p5.jsが言うには、arc()は位置#5（ゼロベースのインデックス）で空の変数を受け取ったようです。これが意図的でない場合、通常はスコープの問題です：[https://p5js.org/examples/data-variable-scope.html]。[http://p5js.org/reference/#p5/arc]
 
 <ins>型の不一致の例</ins>
-````JavaScript
+```javascript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
-````
+```
 FESはコンソールに以下のメッセージを生成します：
 > 🌸 p5.jsが言うには、arc()はパラメータ#0（ゼロベースのインデックス）でNumberを期待していましたが、文字列を受け取りました。[http://p5js.org/reference/#/p5/arc]
 ##### 位置
@@ -259,16 +259,16 @@ try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
        printFriendlyStack
 ```
 ##### 文法
-````JavaScript
+```javascript
 fesErrorMonitor(event)
-````
+```
 ##### パラメータ
 ```
 @param {*}  e     エラーイベント
 ```
 ### 例
 <ins>内部エラーの例 1</ins>
-```JavaScript
+```javascript
 function preload() {
   // プリロードでのbackground()の呼び出しにより発生します。
   // 間違い
@@ -279,7 +279,7 @@ FES将在控制台中生成以下消息：
 > 🌸 p5.jsが言うには、backgroundを呼び出したとき（sketch.jsの4行目[http://localhost:8000/lib/empty-example/sketch.js:4:3]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'background'を読み取れません」です。（特に説明がない限り、これはpreloadからbackgroundが呼び出されたためかもしれません。preload関数内にはload関数（loadImage、loadJSON、loadFont、loadStringsなど）以外は含まれていないべきです。）（http://p5js.org/reference/#/p5/preload）
 
 <ins>内部エラーの例 2</ins>
-```JavaScript
+```javascript
 function setup() {
   cnv = createCanvas(200, 200);
   cnv.mouseClicked();
@@ -289,7 +289,7 @@ FES将在控制台中生成以下消息：
 > 🌸 p5.jsが言うには、mouseClickedを呼び出したとき（sketch.jsの3行目[http://localhost:8000/lib/empty-example/sketch.js:3:7]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'bind'を読み取れません」です。（特に説明がない限り、これはmouseClickedへの引数に問題がある可能性があります。）（http://p5js.org/reference/#/p5/mouseClicked）
 
 <ins>ユーザー例のスコープエラーの例</ins>
-```JavaScript
+```javascript
 function setup() {
   let b = 1;
 }
@@ -300,7 +300,7 @@ function draw() {
 > 🌸 p5.jsが言うには、「b」が現在のスコープ内で定義されていないため、エラーが発生しました（sketch.jsの5行目[http://localhost:8000/lib/empty-example/sketch.js:5:3]）。コード内で定義している場合は、そのスコープ、綴り、大文字と小文字を確認してください（JavaScriptは大文字と小文字を区別します）。さらに情報：https://p5js.org/examples/data-variable-scope.html https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
 
 <ins>ユーザー例のタイプミスの例</ins>
-```JavaScript
+```javascript
 function setup() {
   colour(1, 2, 3);
 }
@@ -327,22 +327,22 @@ core/friendly_errors/fes_core.js
 
 ##### 例
 <ins>p5.j​​sの保持定数を再定義する例</ins>
-````JavaScript
+```javascript
 function setup() {
   // PI は p5.js の予約定数です
   let PI = 100;
 }
-````
+```
 FESはコンソールに以下のメッセージを生成します：
 > 🌸 p5.jsのヒント：p5.jsの予約された変数「PI」を使用しています。変数名を他の名前に変更してください。(https://p5js.org/reference/#/p5/PI)
 
 <ins>p5.j​​sの予約関数の再定義例</ins>
-````JavaScript
+```javascript
 function setup() {
   // text は p5.js の予約関数です
   let text = 100;
 }
-````
+```
 FESはコンソールに以下のメッセージを生成します：
 > 🌸 p5.jsのヒント：p5.jsの予約された関数「text」を使用しています。関数名を他の名前に変更してください。
 
@@ -357,20 +357,20 @@ core/friendly_errors/sketch_reader.js
 `fes.checkUserDefinedFns` タイプのわかりやすいエラー メッセージを生成して出力します。
 
 ##### 文法
-````JavaScript
+```javascript
 checkForUserDefinedFunctions(context)
-````
+```
 ##### 引数
 ```
 @param {*} context  現在のデフォルトのコンテキスト。
                    「グローバル モード」ではウィンドウに設定し、「インスタンス モード」では p5 インスタンスに設定します。
 ```
 ##### 例
-````JavaScript
+```javascript
 function preLoad() {
   loadImage('myimage.png');
 }
-````
+```
 FESはコンソールに以下のメッセージを生成します：
 > 🌸 p5.jsのヒント：preLoadと書くべきところをpreloadと誤って書いているようです。これが意図していない場合は、訂正してください。(http://p5js.org/reference/#/p5/preload)
 
@@ -413,7 +413,7 @@ p5.newObject = function(parameter) {
    this.parameter = 'some parameter';
    this.name = 'p5.newObject';
 };
-````
+```
 * インラインドキュメント：許可されるパラメータタイプには`Boolean`、`Number`、`String`、およびオブジェクトの名前が含まれます（上記の箇条書きを参照）。任意の配列パラメータには`Array`を使用してください。必要に応じて、説明部分で許可される特定のタイプの配列パラメータ（例：`Number[]`、`String[]`）を解説できます。
 * 現在サポートされているクラスタイプ（それぞれの`name`パラメータを持つ）：`p5.Color`、`p5.Element`、`p5.Graphics`、`p5.Renderer`、`p5.Renderer2D`、`p5.Image`、`p5.Table`、`p5.TableRow`、`p5.XML`、`p5.Vector`、`p5.Font`、`p5.Geometry`、`p5.Matrix`、`p5.RendererGL`。
 
@@ -424,7 +424,7 @@ p5.newObject = function(parameter) {
 この機能を無効にするには、コードの先頭に次の行を追加します：
 
 
-```JavaScript
+```javascript
 p5.disableFriendlyErrors = true; // FESを無効にする
 
 function setup() {
@@ -441,7 +441,7 @@ function draw() {
 ## 既知の制限
 
 * FESはまだ偽陰性の状況を引き起こす可能性があります。これは通常、設計と実際の使用状況の間の不一致によって引き起こされます（例えば、描画関数は2Dおよび3D設定で交換可能に使用できるように最初に設計されましたが）、例えば：
-```JavaScript
+```javascript
 
 const x3; // 未定義
 line(0, 0, 100, 100, x3, Math.PI);
@@ -470,7 +470,7 @@ line(0, 0, 100, 100, x3, Math.PI);
 * `sketch_reader.js`のコードの読み取りと変数/関数名の抽出機能を改善する（コード内で宣言された関数と変数名を抽出する）。例えば、すべてのコードが一行に書かれている場合、`sketch_reader.js`は正しく変数/関数名を抽出できません。これらの"逃げ"ケースをすべて識別し、それらをキャッチするための単体テストを追加するための将来の提案を歓迎します。
 
 * `sketch_reader.js`は拡張可能で、新しい機能を追加することができます（例：ユーザーが`draw()`関数内で変数を宣言したときに警告を発する）。ユーザーをよりよく支援するためです。
-```JavaScript
+```javascript
 // 这段代码片段使用新函数包装了 window.console 方法，以修改其功能
 // 目前尚未实现，但可以使用它来提供更好格式的错误消息
 const original = window.console;

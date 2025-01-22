@@ -1531,6 +1531,7 @@ function dom(p5, fn){
     const isLabelElement = el => el instanceof HTMLLabelElement;
     const isSpanElement = el => el instanceof HTMLSpanElement;
 
+<<<<<<< HEAD
     self._getOptionsArray = function () {
       return Array.from(this.elt.children)
         .filter(
@@ -1544,6 +1545,293 @@ function dom(p5, fn){
     self.option = function (value, label) {
       // return an option with this value, create if not exists.
       let optionEl;
+=======
+/**
+ * Creates a radio button element.
+ *
+ * The parameter is optional. If a string is passed, as in
+ * `let myRadio = createSelect('food')`, then each radio option will
+ * have `"food"` as its `name` parameter: `&lt;input name="food"&gt;`.
+ * If an existing `&lt;div&gt;&lt;/div&gt;` or `&lt;span&gt;&lt;/span&gt;`
+ * element is passed, as in `let myRadio = createSelect(container)`, it will
+ * become the radio button's parent element.
+ *
+ * Radio buttons extend the <a href="#/p5.Element">p5.Element</a> class with a few
+ * helpful methods for managing options:
+ * - `myRadio.option(value, [label])` adds an option to the menu. The first parameter, `value`, is a string that sets the option's value and label. The second parameter, `label`, is optional. If provided, it sets the label displayed for the `value`. If an option with `value` already exists, its label is changed and its value is returned.
+ * - `myRadio.value()` returns the currently-selected option's value.
+ * - `myRadio.selected()` returns the currently-selected option.
+ * - `myRadio.selected(value)` selects the given option and returns it as an <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement" target="_blank">`HTMLInputElement`</a>.
+ * - `myRadio.disable(shouldDisable)` Disables the radio button if `true` is passed, and enables it if `false` is passed.
+ *
+ * @method createRadio
+ * @param  {Object} [containerElement] container HTML Element, either a `&lt;div&gt;&lt;/div&gt;`
+ * or `&lt;span&gt;&lt;/span&gt;`.
+ * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let style = document.createElement('style');
+ * style.innerHTML = `
+ * .p5-radio label {
+ *    display: flex;
+ *    align-items: center;
+ *  }
+ *  .p5-radio input {
+ *    margin-right: 5px;
+ *  }
+ *  `;
+ * document.head.appendChild(style);
+ *
+ * let myRadio;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a radio button element and place it
+ *   // in the top-left corner.
+ *   myRadio = createRadio();
+ *   myRadio.position(0, 0);
+ *   myRadio.class('p5-radio');
+ *   myRadio.size(60);
+ *
+ *   // Add a few color options.
+ *   myRadio.option('red');
+ *   myRadio.option('yellow');
+ *   myRadio.option('blue');
+ *
+ *   // Choose a default option.
+ *   myRadio.selected('yellow');
+ *
+ *   describe('A yellow square with three color options listed, "red", "yellow", and "blue". The square changes color when the user selects a new option.');
+ * }
+ *
+ * function draw() {
+ *   // Set the background color using the radio button.
+ *   let g = myRadio.value();
+ *   background(g);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myRadio;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a radio button element and place it
+ *   // in the top-left corner.
+ *   myRadio = createRadio();
+ *   myRadio.position(0, 0);
+ *   myRadio.size(50);
+ *
+ *   // Add a few color options.
+ *   // Color values are labeled with
+ *   // emotions they evoke.
+ *   myRadio.option('red', 'love');
+ *   myRadio.option('yellow', 'joy');
+ *   myRadio.option('blue', 'trust');
+ *
+ *   // Choose a default option.
+ *   myRadio.selected('yellow');
+ *
+ *   describe('A yellow square with three options listed, "love", "joy", and "trust". The square changes color when the user selects a new option.');
+ * }
+ *
+ * function draw() {
+ *   // Set the background color using the radio button.
+ *   let c = myRadio.value();
+ *   background(c);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let myRadio;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a radio button element and place it
+ *   // in the top-left corner.
+ *   myRadio = createRadio();
+ *   myRadio.position(0, 0);
+ *   myRadio.class('p5-radio');
+ *   myRadio.size(50);
+ *
+ *   // Add a few color options.
+ *   myRadio.option('red');
+ *   myRadio.option('yellow');
+ *   myRadio.option('blue');
+ *
+ *   // Choose a default option.
+ *   myRadio.selected('yellow');
+ *
+ *   // Create a button and place it beneath the canvas.
+ *   let btn = createButton('disable');
+ *   btn.position(0, 100);
+ *
+ *   // Call disableRadio() when btn is pressed.
+ *   btn.mousePressed(disableRadio);
+ *
+ *   describe('A yellow square with three options listed, "red", "yellow", and "blue". The square changes color when the user selects a new option. A "disable" button beneath the canvas disables the color options when pressed.');
+ * }
+ *
+ * function draw() {
+ *   // Set the background color using the radio button.
+ *   let c = myRadio.value();
+ *   background(c);
+ * }
+ *
+ * // Disable myRadio.
+ * function disableRadio() {
+ *   myRadio.disable(true);
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method createRadio
+ * @param {String} [name] name parameter assigned to each option's `&lt;input&gt;&lt;/input&gt;` element.
+ * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ */
+/**
+ * @method createRadio
+ * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ */
+
+//counter for unique names on radio button
+let counter = 0;
+p5.prototype.createRadio = function(...args) {
+  // Creates a div, adds each option as an individual input inside it.
+  // If already given with a containerEl, will search for all input[radio]
+  // it, create a p5.Element out of it, add options to it and return the p5.Element.
+
+  let self;
+  let radioElement;
+  let name;
+  const arg0 = args[0];
+  if (
+    arg0 instanceof p5.Element &&
+    (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
+  ) {
+    // If given argument is p5.Element of div/span type
+    self = arg0;
+    this.elt = arg0.elt;
+  } else if (
+    // If existing radio Element is provided as argument 0
+    arg0 instanceof HTMLDivElement ||
+    arg0 instanceof HTMLSpanElement
+  ) {
+    self = addElement(arg0, this);
+    this.elt = arg0;
+    radioElement = arg0;
+    if (typeof args[1] === 'string') name = args[1];
+  } else {
+    if (typeof arg0 === 'string') name = arg0;
+    radioElement = document.createElement('div');
+    self = addElement(radioElement, this);
+    this.elt = radioElement;
+  }
+
+  // Generate a unique name for each radio group if not provided
+  self._name = name || `radioOption_${counter++}`;
+  // setup member functions
+  const isRadioInput = el =>
+    el instanceof HTMLInputElement && el.type === 'radio';
+  const isLabelElement = el => el instanceof HTMLLabelElement;
+  const isSpanElement = el => el instanceof HTMLSpanElement;
+
+  self._getOptionsArray = function () {
+    return Array.from(this.elt.children)
+      .filter(
+        el =>
+          isRadioInput(el) ||
+          (isLabelElement(el) && isRadioInput(el.firstElementChild))
+      )
+      .map(el => (isRadioInput(el) ? el : el.firstElementChild));
+  };
+
+  self.option = function (value, label) {
+    // return an option with this value, create if not exists.
+    let optionEl;
+    for (const option of self._getOptionsArray()) {
+      if (option.value === value) {
+        optionEl = option;
+        break;
+      }
+    }
+
+    // Create a new option, add it to radioElement and return it.
+    if (optionEl === undefined) {
+      optionEl = document.createElement('input');
+      optionEl.setAttribute('type', 'radio');
+      optionEl.setAttribute('value', value);
+    }
+    optionEl.setAttribute('name', self._name);
+
+    // Check if label element exists, else create it
+    let labelElement;
+    if (!isLabelElement(optionEl.parentElement)) {
+      labelElement = document.createElement('label');
+      labelElement.insertAdjacentElement('afterbegin', optionEl);
+    } else {
+      labelElement = optionEl.parentElement;
+    }
+
+    // Check if span element exists, else create it
+    let spanElement;
+    if (!isSpanElement(labelElement.lastElementChild)) {
+      spanElement = document.createElement('span');
+      optionEl.insertAdjacentElement('afterend', spanElement);
+    } else {
+      spanElement = labelElement.lastElementChild;
+    }
+
+    // Set the innerHTML of span element as the label text
+    spanElement.innerHTML = label === undefined ? value : label;
+
+    // Append the label element, which includes option element and
+    // span element to the radio container element
+    this.elt.appendChild(labelElement);
+
+    return optionEl;
+  };
+
+  self.remove = function (value) {
+    for (const optionEl of self._getOptionsArray()) {
+      if (optionEl.value === value) {
+        if (isLabelElement(optionEl.parentElement)) {
+          // Remove parent label which also removes children elements
+          optionEl.parentElement.remove();
+        } else {
+          // Remove the option input if parent label does not exist
+          optionEl.remove();
+        }
+        return;
+      }
+    }
+  };
+
+  self.value = function () {
+    let result = '';
+    for (const option of self._getOptionsArray()) {
+      if (option.checked) {
+        result = option.value;
+        break;
+      }
+    }
+    return result;
+  };
+
+  self.selected = function (value) {
+    let result = null;
+    if (value === undefined) {
+>>>>>>> main
       for (const option of self._getOptionsArray()) {
         if (option.value === value) {
           optionEl = option;
@@ -1568,11 +1856,1259 @@ function dom(p5, fn){
         labelElement = optionEl.parentElement;
       }
 
+<<<<<<< HEAD
       // Check if span element exists, else create it
       let spanElement;
       if (!isSpanElement(labelElement.lastElementChild)) {
         spanElement = document.createElement('span');
         optionEl.insertAdjacentElement('afterend', spanElement);
+=======
+    console.error(e);
+  });
+
+  const videoEl = addElement(domElement, this, true);
+  videoEl.loadedmetadata = false;
+  // set width and height onload metadata
+  domElement.addEventListener('loadedmetadata', function () {
+    domElement.play();
+    if (domElement.width) {
+      videoEl.width = domElement.width;
+      videoEl.height = domElement.height;
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
+      }
+    } else {
+      videoEl.width = videoEl.elt.width = domElement.videoWidth;
+      videoEl.height = videoEl.elt.height = domElement.videoHeight;
+    }
+    videoEl.loadedmetadata = true;
+
+    if (callback) callback(domElement.srcObject);
+  });
+  videoEl.flipped=flipped;
+  return videoEl;
+};
+
+
+/**
+ * Creates a new <a href="#/p5.Element">p5.Element</a> object.
+ *
+ * The first parameter, `tag`, is a string an HTML tag such as `'h5'`.
+ *
+ * The second parameter, `content`, is optional. It's a string that sets the
+ * HTML content to insert into the new element. New elements have no content
+ * by default.
+ *
+ * @method createElement
+ * @param  {String} tag tag for the new element.
+ * @param  {String} [content] HTML content to insert into the element.
+ * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an h5 element with nothing in it.
+ *   createElement('h5');
+ *
+ *   describe('A gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an h5 element with the content "p5*js".
+ *   let h5 = createElement('h5', 'p5*js');
+ *
+ *   // Set the element's style and position.
+ *   h5.style('color', 'deeppink');
+ *   h5.position(30, 15);
+ *
+ *   describe('The text "p5*js" written in pink in the middle of a gray square.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.createElement = function (tag, content) {
+  p5._validateParameters('createElement', arguments);
+  const elt = document.createElement(tag);
+  if (typeof content !== 'undefined') {
+    elt.innerHTML = content;
+  }
+  return addElement(elt, this);
+};
+
+// =============================================================================
+//                         p5.Element additions
+// =============================================================================
+/**
+ *
+ * Adds a class to the element.
+ *
+ * @for p5.Element
+ * @method addClass
+ * @param  {String} class name of class to add.
+ * @chainable
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
+ *   let div = createDiv('div');
+ *
+ *   // Add a class to the div.
+ *   div.addClass('myClass');
+ *
+ *   describe('A gray square.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.addClass = function (c) {
+  if (this.elt.className) {
+    if (!this.hasClass(c)) {
+      this.elt.className = this.elt.className + ' ' + c;
+    }
+  } else {
+    this.elt.className = c;
+  }
+  return this;
+};
+
+/**
+ * Removes a class from the element.
+ *
+ * @method removeClass
+ * @param  {String} class name of class to remove.
+ * @chainable
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // In this example, a class is set when the div is created
+ * // and removed when mouse is pressed. This could link up
+ * // with a CSS style rule to toggle style properties.
+ *
+ * let div;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
+ *   div = createDiv('div');
+ *
+ *   // Add a class to the div.
+ *   div.addClass('myClass');
+ *
+ *   describe('A gray square.');
+ * }
+ *
+ * // Remove 'myClass' from the div when the user presses the mouse.
+ * function mousePressed() {
+ *   div.removeClass('myClass');
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.removeClass = function (c) {
+  // Note: Removing a class that does not exist does NOT throw an error in classList.remove method
+  this.elt.classList.remove(c);
+  return this;
+};
+
+/**
+ * Checks if a class is already applied to element.
+ *
+ * @method hasClass
+ * @returns {boolean} a boolean value if element has specified class.
+ * @param c {String} name of class to check.
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let div;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
+ *   div = createDiv('div');
+ *
+ *   // Add the class 'show' to the div.
+ *   div.addClass('show');
+ *
+ *   describe('A gray square.');
+ * }
+ *
+ * // Toggle the class 'show' when the mouse is pressed.
+ * function mousePressed() {
+ *   if (div.hasClass('show')) {
+ *     div.addClass('show');
+ *   } else {
+ *     div.removeClass('show');
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.hasClass = function (c) {
+  return this.elt.classList.contains(c);
+};
+
+/**
+ * Toggles whether a class is applied to the element.
+ *
+ * @method toggleClass
+ * @param c {String} class name to toggle.
+ * @chainable
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let div;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a div element.
+ *   div = createDiv('div');
+ *
+ *   // Add the 'show' class to the div.
+ *   div.addClass('show');
+ *
+ *   describe('A gray square.');
+ * }
+ *
+ * // Toggle the 'show' class when the mouse is pressed.
+ * function mousePressed() {
+ *   div.toggleClass('show');
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.toggleClass = function (c) {
+  // classList also has a toggle() method, but we cannot use that yet as support is unclear.
+  // See https://github.com/processing/p5.js/issues/3631
+  // this.elt.classList.toggle(c);
+  if (this.elt.classList.contains(c)) {
+    this.elt.classList.remove(c);
+  } else {
+    this.elt.classList.add(c);
+  }
+  return this;
+};
+
+/**
+ * Attaches the element as a child of another element.
+ *
+ * `myElement.child()` accepts either a string ID, DOM node, or
+ * <a href="#/p5.Element">p5.Element</a>. For example,
+ * `myElement.child(otherElement)`. If no argument is provided, an array of
+ * children DOM nodes is returned.
+ *
+ * @method child
+ * @returns {Node[]} an array of child nodes.
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *   let div1 = createDiv('Child');
+ *
+ *   // Make div1 the child of div0
+ *   // using the p5.Element.
+ *   div0.child(div1);
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *   let div1 = createDiv('Child');
+ *
+ *   // Give div1 an ID.
+ *   div1.id('apples');
+ *
+ *   // Make div1 the child of div0
+ *   // using its ID.
+ *   div0.child('apples');
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender notest'>
+ * <code>
+ * // This example assumes there is a div already on the page
+ * // with id "myChildDiv".
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div elements.
+ *   let div0 = createDiv('Parent');
+ *
+ *   // Select the child element by its ID.
+ *   let elt = document.getElementById('myChildDiv');
+ *
+ *   // Make div1 the child of div0
+ *   // using its HTMLElement object.
+ *   div0.child(elt);
+ *
+ *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method child
+ * @param  {String|p5.Element} [child] the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
+ *                         to add to the current element
+ * @chainable
+ */
+p5.Element.prototype.child = function (childNode) {
+  if (typeof childNode === 'undefined') {
+    return this.elt.childNodes;
+  }
+  if (typeof childNode === 'string') {
+    if (childNode[0] === '#') {
+      childNode = childNode.substring(1);
+    }
+    childNode = document.getElementById(childNode);
+  } else if (childNode instanceof p5.Element) {
+    childNode = childNode.elt;
+  }
+
+  if (childNode instanceof HTMLElement) {
+    this.elt.appendChild(childNode);
+  }
+  return this;
+};
+
+/**
+ * Centers the element either vertically, horizontally, or both.
+ *
+ * `center()` will center the element relative to its parent or according to
+ * the page's body if the element has no parent.
+ *
+ * If no argument is passed, as in `myElement.center()` the element is aligned
+ * both vertically and horizontally.
+ *
+ * @method center
+ * @param  {String} [align] passing 'vertical', 'horizontal' aligns element accordingly
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element and style it.
+ *   let div = createDiv('');
+ *   div.size(10, 10);
+ *   div.style('background-color', 'orange');
+ *
+ *   // Center the div relative to the page's body.
+ *   div.center();
+ *
+ *   describe('A gray square and an orange rectangle. The rectangle is at the center of the page.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.center = function (align) {
+  const style = this.elt.style.display;
+  const hidden = this.elt.style.display === 'none';
+  const parentHidden = this.parent().style.display === 'none';
+  const pos = { x: this.elt.offsetLeft, y: this.elt.offsetTop };
+
+  if (hidden) this.show();
+  if (parentHidden) this.parent().show();
+  this.elt.style.display = 'block';
+
+  this.position(0, 0);
+  const wOffset = Math.abs(this.parent().offsetWidth - this.elt.offsetWidth);
+  const hOffset = Math.abs(this.parent().offsetHeight - this.elt.offsetHeight);
+
+  if (align === 'both' || align === undefined) {
+    this.position(
+      wOffset / 2 + this.parent().offsetLeft,
+      hOffset / 2 + this.parent().offsetTop
+    );
+  } else if (align === 'horizontal') {
+    this.position(wOffset / 2 + this.parent().offsetLeft, pos.y);
+  } else if (align === 'vertical') {
+    this.position(pos.x, hOffset / 2 + this.parent().offsetTop);
+  }
+
+  this.style('display', style);
+  if (hidden) this.hide();
+  if (parentHidden) this.parent().hide();
+
+  return this;
+};
+
+/**
+ * Sets the inner HTML of the element, replacing any existing HTML.
+ *
+ * The second parameter, `append`, is optional. If `true` is passed, as in
+ * `myElement.html('hi', true)`, the HTML is appended instead of replacing
+ * existing HTML.
+ *
+ * If no arguments are passed, as in `myElement.html()`, the element's inner
+ * HTML is returned.
+ *
+ * @for p5.Element
+ * @method html
+ * @returns {String} the inner HTML of the element
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create the div element and set its size.
+ *   let div = createDiv('');
+ *   div.size(100, 100);
+ *
+ *   // Set the inner HTML to "hi".
+ *   div.html('hi');
+ *
+ *   describe('A gray square with the word "hi" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element and set its size.
+ *   let div = createDiv('Hello ');
+ *   div.size(100, 100);
+ *
+ *   // Append "World" to the div's HTML.
+ *   div.html('World', true);
+ *
+ *   describe('A gray square with the text "Hello World" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create the div element.
+ *   let div = createDiv('Hello');
+ *
+ *   // Prints "Hello" to the console.
+ *   print(div.html());
+ *
+ *   describe('A gray square with the word "Hello!" written beneath it.');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method html
+ * @param  {String} [html] the HTML to be placed inside the element
+ * @param  {boolean} [append] whether to append HTML to existing
+ * @chainable
+ */
+p5.Element.prototype.html = function(...args) {
+  if (args.length === 0) {
+    return this.elt.innerHTML;
+  } else if (args[1]) {
+    this.elt.insertAdjacentHTML('beforeend', args[0]);
+    return this;
+  } else {
+    this.elt.innerHTML = args[0];
+    return this;
+  }
+};
+
+/**
+ * Sets the element's position.
+ *
+ * The first two parameters, `x` and `y`, set the element's position relative
+ * to the top-left corner of the web page.
+ *
+ * The third parameter, `positionType`, is optional. It sets the element's
+ * <a target="_blank"
+ * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
+ * `positionType` is a string that can be either `'static'`, `'fixed'`,
+ * `'relative'`, `'sticky'`, `'initial'`, or `'inherit'`.
+ *
+ * If no arguments passed, as in `myElement.position()`, the method returns
+ * the element's position in an object, as in `{ x: 0, y: 0 }`.
+ *
+ * @method position
+ * @returns {Object} object of form `{ x: 0, y: 0 }` containing the element's position.
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Positions the canvas 50px to the right and 100px
+ *   // below the top-left corner of the window.
+ *   cnv.position(50, 100);
+ *
+ *   describe('A gray square that is 50 pixels to the right and 100 pixels down from the top-left corner of the web page.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Positions the canvas at the top-left corner
+ *   // of the window with a 'fixed' position type.
+ *   cnv.position(0, 0, 'fixed');
+ *
+ *   describe('A gray square in the top-left corner of the web page.');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method position
+ * @param  {Number} [x] x-position relative to top-left of window (optional)
+ * @param  {Number} [y] y-position relative to top-left of window (optional)
+ * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
+ * @chainable
+ */
+p5.Element.prototype.position = function(...args) {
+  if (args.length === 0) {
+    return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
+  } else {
+    let positionType = 'absolute';
+    if (
+      args[2] === 'static' ||
+      args[2] === 'fixed' ||
+      args[2] === 'relative' ||
+      args[2] === 'sticky' ||
+      args[2] === 'initial' ||
+      args[2] === 'inherit'
+    ) {
+      positionType = args[2];
+    }
+    this.elt.style.position = positionType;
+    this.elt.style.left = args[0] + 'px';
+    this.elt.style.top = args[1] + 'px';
+    this.x = args[0];
+    this.y = args[1];
+    return this;
+  }
+};
+
+/* Helper method called by p5.Element.style() */
+p5.Element.prototype._translate = function(...args) {
+  this.elt.style.position = 'absolute';
+  // save out initial non-translate transform styling
+  let transform = '';
+  if (this.elt.style.transform) {
+    transform = this.elt.style.transform.replace(/translate3d\(.*\)/g, '');
+    transform = transform.replace(/translate[X-Z]?\(.*\)/g, '');
+  }
+  if (args.length === 2) {
+    this.elt.style.transform =
+      'translate(' + args[0] + 'px, ' + args[1] + 'px)';
+  } else if (args.length > 2) {
+    this.elt.style.transform =
+      'translate3d(' +
+      args[0] +
+      'px,' +
+      args[1] +
+      'px,' +
+      args[2] +
+      'px)';
+    if (args.length === 3) {
+      this.elt.parentElement.style.perspective = '1000px';
+    } else {
+      this.elt.parentElement.style.perspective = args[3] + 'px';
+    }
+  }
+  // add any extra transform styling back on end
+  this.elt.style.transform += transform;
+  return this;
+};
+
+/* Helper method called by p5.Element.style() */
+p5.Element.prototype._rotate = function(...args) {
+  // save out initial non-rotate transform styling
+  let transform = '';
+  if (this.elt.style.transform) {
+    transform = this.elt.style.transform.replace(/rotate3d\(.*\)/g, '');
+    transform = transform.replace(/rotate[X-Z]?\(.*\)/g, '');
+  }
+
+  if (args.length === 1) {
+    this.elt.style.transform = 'rotate(' + args[0] + 'deg)';
+  } else if (args.length === 2) {
+    this.elt.style.transform =
+      'rotate(' + args[0] + 'deg, ' + args[1] + 'deg)';
+  } else if (args.length === 3) {
+    this.elt.style.transform = 'rotateX(' + args[0] + 'deg)';
+    this.elt.style.transform += 'rotateY(' + args[1] + 'deg)';
+    this.elt.style.transform += 'rotateZ(' + args[2] + 'deg)';
+  }
+  // add remaining transform back on
+  this.elt.style.transform += transform;
+  return this;
+};
+
+/**
+ * Applies a style to the element by adding a
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Syntax" target="_blank">CSS declaration</a>.
+ *
+ * The first parameter, `property`, is a string. If the name of a style
+ * property is passed, as in `myElement.style('color')`, the method returns
+ * the current value as a string or `null` if it hasn't been set. If a
+ * `property:style` string is passed, as in
+ * `myElement.style('color:deeppink')`, the method sets the style `property`
+ * to `value`.
+ *
+ * The second parameter, `value`, is optional. It sets the property's value.
+ * `value` can be a string, as in
+ * `myElement.style('color', 'deeppink')`, or a
+ * <a href="#/p5.Color">p5.Color</a> object, as in
+ * `myElement.style('color', myColor)`.
+ *
+ * @method style
+ * @param  {String} property style property to set.
+ * @returns {String} value of the property.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a paragraph element and set its font color to "deeppink".
+ *   let p = createP('p5*js');
+ *   p.position(25, 20);
+ *   p.style('color', 'deeppink');
+ *
+ *   describe('The text p5*js written in pink on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a p5.Color object.
+ *   let c = color('deeppink');
+ *
+ *   // Create a paragraph element and set its font color using a p5.Color object.
+ *   let p = createP('p5*js');
+ *   p.position(25, 20);
+ *   p.style('color', c);
+ *
+ *   describe('The text p5*js written in pink on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a paragraph element and set its font color to "deeppink"
+ *   // using property:value syntax.
+ *   let p = createP('p5*js');
+ *   p.position(25, 20);
+ *   p.style('color:deeppink');
+ *
+ *   describe('The text p5*js written in pink on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create an empty paragraph element and set its font color to "deeppink".
+ *   let p = createP();
+ *   p.position(5, 5);
+ *   p.style('color', 'deeppink');
+ *
+ *   // Get the element's color as an  RGB color string.
+ *   let c = p.style('color');
+ *
+ *   // Set the element's inner HTML using the RGB color string.
+ *   p.html(c);
+ *
+ *   describe('The text "rgb(255, 20, 147)" written in pink on a gray background.');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method style
+ * @param  {String} property
+ * @param  {String|p5.Color} value value to assign to the property.
+ * @return {String} value of the property.
+ * @chainable
+ */
+p5.Element.prototype.style = function (prop, val) {
+  const self = this;
+
+  if (val instanceof p5.Color) {
+    val =
+      'rgba(' +
+      val.levels[0] +
+      ',' +
+      val.levels[1] +
+      ',' +
+      val.levels[2] +
+      ',' +
+      val.levels[3] / 255 +
+      ')';
+  }
+
+  if (typeof val === 'undefined') {
+    if (prop.indexOf(':') === -1) {
+      // no value set, so assume requesting a value
+      let styles = window.getComputedStyle(self.elt);
+      let style = styles.getPropertyValue(prop);
+      return style;
+    } else {
+      // value set using `:` in a single line string
+      const attrs = prop.split(';');
+      for (let i = 0; i < attrs.length; i++) {
+        const parts = attrs[i].split(':');
+        if (parts[0] && parts[1]) {
+          this.elt.style[parts[0].trim()] = parts[1].trim();
+        }
+      }
+    }
+  } else {
+    // input provided as key,val pair
+    this.elt.style[prop] = val;
+    if (
+      prop === 'width' ||
+      prop === 'height' ||
+      prop === 'left' ||
+      prop === 'top'
+    ) {
+      let styles = window.getComputedStyle(self.elt);
+      let styleVal = styles.getPropertyValue(prop);
+      let numVal = styleVal.replace(/[^\d.]/g, '');
+      this[prop] = Math.round(parseFloat(numVal, 10));
+    }
+  }
+  return this;
+};
+
+/**
+ * Adds an
+ * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started#attributes" target="_blank">attribute</a>
+ * to the element.
+ *
+ * This method is useful for advanced tasks. Most commonly-used attributes,
+ * such as `id`, can be set with their dedicated methods. For example,
+ * `nextButton.id('next')` sets an element's `id` attribute. Calling
+ * `nextButton.attribute('id', 'next')` has the same effect.
+ *
+ * The first parameter, `attr`, is the attribute's name as a string. Calling
+ * `myElement.attribute('align')` returns the attribute's current value as a
+ * string or `null` if it hasn't been set.
+ *
+ * The second parameter, `value`, is optional. It's a string used to set the
+ * attribute's value. For example, calling
+ * `myElement.attribute('align', 'center')` sets the element's horizontal
+ * alignment to `center`.
+ *
+ * @method attribute
+ * @return {String} value of the attribute.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a container div element and place it at the top-left corner.
+ *   let container = createDiv();
+ *   container.position(0, 0);
+ *
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "left".
+ *   let p1 = createP('hi');
+ *   p1.parent(container);
+ *   p1.attribute('align', 'left');
+ *
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "center".
+ *   let p2 = createP('hi');
+ *   p2.parent(container);
+ *   p2.attribute('align', 'center');
+ *
+ *   // Create a paragraph element and place it within the container.
+ *   // Set its horizontal alignment to "right".
+ *   let p3 = createP('hi');
+ *   p3.parent(container);
+ *   p3.attribute('align', 'right');
+ *
+ *   describe('A gray square with the text "hi" written on three separate lines, each placed further to the right.');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method attribute
+ * @param  {String} attr       attribute to set.
+ * @param  {String} value      value to assign to the attribute.
+ * @chainable
+ */
+p5.Element.prototype.attribute = function (attr, value) {
+  //handling for checkboxes and radios to ensure options get
+  //attributes not divs
+  if (
+    this.elt.firstChild != null &&
+    (this.elt.firstChild.type === 'checkbox' ||
+      this.elt.firstChild.type === 'radio')
+  ) {
+    if (typeof value === 'undefined') {
+      return this.elt.firstChild.getAttribute(attr);
+    } else {
+      for (let i = 0; i < this.elt.childNodes.length; i++) {
+        this.elt.childNodes[i].setAttribute(attr, value);
+      }
+    }
+  } else if (typeof value === 'undefined') {
+    return this.elt.getAttribute(attr);
+  } else {
+    this.elt.setAttribute(attr, value);
+    return this;
+  }
+};
+
+/**
+ * Removes an attribute from the element.
+ *
+ * The parameter `attr` is the attribute's name as a string. For example,
+ * calling `myElement.removeAttribute('align')` removes its `align`
+ * attribute if it's been set.
+ *
+ * @method removeAttribute
+ * @param  {String} attr       attribute to remove.
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * let p;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a paragraph element and place it in the center of the canvas.
+ *   // Set its "align" attribute to "center".
+ *   p = createP('hi');
+ *   p.position(0, 20);
+ *   p.attribute('align', 'center');
+ *
+ *   describe('The text "hi" written in black at the center of a gray square. The text moves to the left edge when double-clicked.');
+ * }
+ *
+ * // Remove the 'align' attribute when the user double-clicks the paragraph.
+ * function doubleClicked() {
+ *   p.removeAttribute('align');
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.removeAttribute = function (attr) {
+  if (
+    this.elt.firstChild != null &&
+    (this.elt.firstChild.type === 'checkbox' ||
+      this.elt.firstChild.type === 'radio')
+  ) {
+    for (let i = 0; i < this.elt.childNodes.length; i++) {
+      this.elt.childNodes[i].removeAttribute(attr);
+    }
+  }
+  this.elt.removeAttribute(attr);
+  return this;
+};
+
+/**
+ * Returns or sets the element's value.
+ *
+ * Calling `myElement.value()` returns the element's current value.
+ *
+ * The parameter, `value`, is an optional number or string. If provided,
+ * as in `myElement.value(123)`, it's used to set the element's value.
+ *
+ * @method value
+ * @return {String|Number} value of the element.
+ *
+ * @example
+ * <div>
+ * <code>
+ * let input;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
+ *   input = createInput('hello');
+ *   input.position(0, 100);
+ *
+ *   describe('The text from an input box is displayed on a gray square.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Use the input's value to display a message.
+ *   let msg = input.value();
+ *   text(msg, 0, 55);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let input;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Create a text input and place it beneath the canvas.
+ *   // Set its default value to "hello".
+ *   input = createInput('hello');
+ *   input.position(0, 100);
+ *
+ *   describe('The text from an input box is displayed on a gray square. The text resets to "hello" when the user double-clicks the square.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Use the input's value to display a message.
+ *   let msg = input.value();
+ *   text(msg, 0, 55);
+ * }
+ *
+ * // Reset the input's value.
+ * function doubleClicked() {
+ *   input.value('hello');
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method value
+ * @param  {String|Number}     value
+ * @chainable
+ */
+p5.Element.prototype.value = function(...args) {
+  if (args.length > 0) {
+    this.elt.value = args[0];
+    return this;
+  } else {
+    if (this.elt.type === 'range') {
+      return parseFloat(this.elt.value);
+    } else return this.elt.value;
+  }
+};
+
+/**
+ * Shows the current element.
+ *
+ * @method show
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * let p;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a paragraph element and hide it.
+ *   p = createP('p5*js');
+ *   p.position(10, 10);
+ *   p.hide();
+ *
+ *   describe('A gray square. The text "p5*js" appears when the user double-clicks the square.');
+ * }
+ *
+ * // Show the paragraph when the user double-clicks.
+ * function doubleClicked() {
+ *   p.show();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.show = function () {
+  this.elt.style.display = 'block';
+  return this;
+};
+
+/**
+ * Hides the current element.
+ *
+ * @method hide
+ * @chainable
+ *
+ * @example
+ * let p;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a paragraph element.
+ *   p = createP('p5*js');
+ *   p.position(10, 10);
+ *
+ *   describe('The text "p5*js" at the center of a gray square. The text disappears when the user double-clicks the square.');
+ * }
+ *
+ * // Hide the paragraph when the user double-clicks.
+ * function doubleClicked() {
+ *   p.hide();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Element.prototype.hide = function () {
+  this.elt.style.display = 'none';
+  return this;
+};
+
+/**
+ * Sets the element's width and height.
+ *
+ * Calling `myElement.size()` without an argument returns the element's size
+ * as an object with the properties `width` and `height`. For example,
+ *  `{ width: 20, height: 10 }`.
+ *
+ * The first parameter, `width`, is optional. It's a number used to set the
+ * element's width. Calling `myElement.size(10)`
+ *
+ * The second parameter, 'height`, is also optional. It's a
+ * number used to set the element's height. For example, calling
+ * `myElement.size(20, 10)` sets the element's width to 20 pixels and height
+ * to 10 pixels.
+ *
+ * The constant `AUTO` can be used to adjust one dimension at a time while
+ * maintaining the aspect ratio, which is `width / height`. For example,
+ * consider an element that's 200 pixels wide and 100 pixels tall. Calling
+ * `myElement.size(20, AUTO)` sets the width to 20 pixels and height to 10
+ * pixels.
+ *
+ * Note: In the case of elements that need to load data, such as images, wait
+ * to call `myElement.size()` until after the data loads.
+ *
+ * @method size
+ * @return {Object} width and height of the element in an object.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a pink div element and place it at the top-left corner.
+ *   let div = createDiv();
+ *   div.position(10, 10);
+ *   div.style('background-color', 'deeppink');
+ *
+ *   // Set the div's width to 80 pixels and height to 20 pixels.
+ *   div.size(80, 20);
+ *
+ *   describe('A gray square with a pink rectangle near its top.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Create a pink div element and place it at the top-left corner.
+ *   let div = createDiv();
+ *   div.position(10, 10);
+ *   div.style('background-color', 'deeppink');
+ *
+ *   // Set the div's width to 80 pixels and height to 40 pixels.
+ *   div.size(80, 40);
+ *
+ *   // Get the div's size as an object.
+ *   let s = div.size();
+ *
+ *   // Display the div's dimensions.
+ *   div.html(`${s.width} x ${s.height}`);
+ *
+ *   describe('A gray square with a pink rectangle near its top. The text "80 x 40" is written within the rectangle.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img1;
+ * let img2;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Load an image of an astronaut on the moon
+ *   // and place it at the top-left of the canvas.
+ *   img1 = createImg(
+ *     'assets/moonwalk.jpg',
+ *     'An astronaut walking on the moon',
+ *     ''
+ *   );
+ *   img1.position(0, 0);
+ *
+ *   // Load an image of an astronaut on the moon
+ *   // and place it at the top-left of the canvas.
+ *   // Resize the image once it's loaded.
+ *   img2 = createImg(
+ *     'assets/moonwalk.jpg',
+ *     'An astronaut walking on the moon',
+ *     '',
+ *     resizeImage
+ *   );
+ *   img2.position(0, 0);
+ *
+ *   describe('A gray square two copies of a space image at the top-left. The copy in front is smaller.');
+ * }
+ *
+ * // Resize img2 and keep its aspect ratio.
+ * function resizeImage() {
+ *   img2.size(50, AUTO);
+ * }
+ * </code>
+ * </div>
+ */
+/**
+ * @method size
+ * @param  {Number|Constant} [w]   width of the element, either AUTO, or a number.
+ * @param  {Number|Constant} [h] height of the element, either AUTO, or a number.
+ * @chainable
+ */
+p5.Element.prototype.size = function (w, h) {
+  if (arguments.length === 0) {
+    return { width: this.elt.offsetWidth, height: this.elt.offsetHeight };
+  } else {
+    let aW = w;
+    let aH = h;
+    const AUTO = p5.prototype.AUTO;
+    if (aW !== AUTO || aH !== AUTO) {
+      if (aW === AUTO) {
+        aW = h * this.width / this.height;
+      } else if (aH === AUTO) {
+        aH = w * this.height / this.width;
+      }
+      // set diff for cnv vs normal div
+      if (this.elt instanceof HTMLCanvasElement) {
+        const j = {};
+        const k = this.elt.getContext('2d');
+        let prop;
+        for (prop in k) {
+          j[prop] = k[prop];
+        }
+        this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
+        this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
+        this.elt.style.width = aW + 'px';
+        this.elt.style.height = aH + 'px';
+        this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+        for (prop in j) {
+          this.elt.getContext('2d')[prop] = j[prop];
+        }
+>>>>>>> main
       } else {
         spanElement = labelElement.lastElementChild;
       }

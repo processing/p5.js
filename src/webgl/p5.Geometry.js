@@ -632,6 +632,7 @@ class Geometry {
   }
 
   /**
+<<<<<<< HEAD
    * Flips the geometry’s texture v-coordinates.
    *
    * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
@@ -715,6 +716,92 @@ class Geometry {
    * </code>
    * </div>
    */
+=======
+ * Flips the geometry’s texture v-coordinates.
+ *
+ * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
+ * needs a way to map the points on its surface to the pixels in a rectangular
+ * image that's used as a texture. The geometry's vertex at coordinates
+ * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
+ *
+ * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
+ * `(u, v)` coordinates for each vertex in the order it was added to the
+ * geometry. Calling `myGeometry.flipV()` flips a geometry's v-coordinates
+ * so that the texture appears mirrored vertically.
+ *
+ * For example, a plane's four vertices are added clockwise starting from the
+ * top-left corner. Here's how calling `myGeometry.flipV()` would change a
+ * plane's texture coordinates:
+ *
+ * ```js
+ * // Print the original texture coordinates.
+ * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
+ * console.log(myGeometry.uvs);
+ *
+ * // Flip the v-coordinates.
+ * myGeometry.flipV();
+ *
+ * // Print the flipped texture coordinates.
+ * // Output: [0, 1, 1, 1, 0, 0, 1, 0]
+ * console.log(myGeometry.uvs);
+ *
+ * // Notice the swaps:
+ * // Left vertices: [0, 0] &lt;--&gt; [1, 0]
+ * // Right vertices: [1, 0] &lt;--&gt; [1, 1]
+ * ```
+ *
+ * @method flipV
+ * @for p5.Geometry
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   background(200);
+ *
+ *   // Create p5.Geometry objects.
+ *   let geom1 = buildGeometry(createShape);
+ *   let geom2 = buildGeometry(createShape);
+ *
+ *   // Flip geom2's V texture coordinates.
+ *   geom2.flipV();
+ *
+ *   // Left (original).
+ *   push();
+ *   translate(-25, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   model(geom1);
+ *   pop();
+ *
+ *   // Right (flipped).
+ *   push();
+ *   translate(25, 0, 0);
+ *   texture(img);
+ *   noStroke();
+ *   model(geom2);
+ *   pop();
+ *
+ *   describe(
+ *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
+ *   );
+ * }
+ *
+ * function createShape() {
+ *   plane(40);
+ * }
+ * </code>
+ * </div>
+ */
+>>>>>>> main
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
@@ -1379,6 +1466,12 @@ class Geometry {
       const currEdge = this.edges[i];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
+      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
+        ? this.vertexStrokeColors.slice(
+          prevEdge[1] * 4,
+          (prevEdge[1] + 1) * 4
+        )
+        : [0, 0, 0, 0];
       const fromColor = this.vertexStrokeColors.length > 0
         ? this.vertexStrokeColors.slice(
           currEdge[0] * 4,
@@ -1465,15 +1558,27 @@ class Geometry {
               end,
               dir,
               existingCap.dir.copy().mult(-1),
+<<<<<<< HEAD
               toColor
+=======
+              prevColor
+>>>>>>> main
             );
             potentialCaps.delete(currEdge[1]);
             connected.add(currEdge[1]);
           } else {
+<<<<<<< HEAD
             potentialCaps.set(currEdge[1], {
               point: end,
               dir,
               color: toColor
+=======
+            // Close off the last segment with a cap
+            potentialCaps.set(prevEdge[1], {
+              point: this.vertices[prevEdge[1]],
+              dir: lastValidDir,
+              color: prevColor
+>>>>>>> main
             });
           }
         }

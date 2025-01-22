@@ -407,7 +407,7 @@ git commit -m "Add documentation example to circle() function"
 
 ### 인라인 문서 (Inline documentation)
 
-인라인 문서 작업을 계획하고 있다면, [여기](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md)를 참조하세요.
+인라인 문서 작업을 계획하고 있다면, [여기](https://p5js.org/contribute/contributing_to_the_p5js_reference/)를 참조하세요.
 
 
 ### 접근성 (Accessibility)

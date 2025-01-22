@@ -28,7 +28,7 @@ Before we begin, identify which one of the following cases describes your case b
 
 ### Step 1 – Double-check your inline documentation
 
-First, ensure your method has [inline documentation](https://github.com/processing/p5.js/blob/main/contributor_docs/contributing_to_the_p5.js_reference.md) with the full list of your parameters.
+First, ensure your method has [inline documentation](./contributing_to_the_p5js_reference.md) with the full list of your parameters.
 
 For example, the `circle()` method has the following inline documentation that starts with a description of the method, followed by a parameter list, and then code for an example:
 
@@ -189,7 +189,7 @@ In the example above, anything in double angle brackets (`{{}}`) is something th
 
 After adding your case, you can now call `p5._friendlyFileLoadError([case number], [file path])` inside your error handling statements.
 
-For example, please take a look at `loadStrings()` method loading a string-based file (which corresponds to `case 3` from `fileLoadErrorCases`). The  `loadStrings()` method uses [`httpDo.call()`](https://p5js.org/reference/#/p5/httpDo) with a custom callback method that is executed in the case of a file error:
+For example, please take a look at `loadStrings()` method loading a string-based file (which corresponds to `case 3` from `fileLoadErrorCases`). The  `loadStrings()` method uses [`httpDo.call()`](https://p5js.org/reference/p5/httpDo) with a custom callback method that is executed in the case of a file error:
 
 ```js
 p5.prototype.httpDo.call(
@@ -282,8 +282,8 @@ The above parameter validation message will be shown in Korean if the browser is
 
 Please consider adding unit tests for your new FE messages to detect bugs early and to ensure your code is delivering intended messages to our users. Also, unit tests are a good way to make sure other contributor’s new code does not accidentally break or interfere with the functionality of your code. Here are a few good guides on unit testing:
 
-- [Unit Testing and Test Driven Development](https://docs.google.com/document/d/1iw60L1abRJZDn1zUViO9A0j6Fco4yFoQ9LXIlEEroN8/edit?usp=sharing) by Andy Timmons
-- [Contributors Doc: Unit Testing](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md)
+- [Unit Testing and Test Driven Development](https://archive.p5js.org/learn/tdd.html) by Andy Timmons
+- [Contributors Doc: Unit Testing](./unit_testing.md)
 
 
 
@@ -313,4 +313,4 @@ Additionally, we are excited to share insights from our community through the FE
 - [21-22 FES Survey Report Comic](https://almchung.github.io/p5jsFESsurvey/)
 - [21-22 FES Survey Full Report](https://observablehq.com/@almchung/p5-fes-21-survey)
 
-For more in-depth information about the design and technical aspects of FES, please refer to the [FES README document](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md). This document provides detailed explanations and development notes, which are beneficial for those seeking a deeper understanding of FES.
+For more in-depth information about the design and technical aspects of FES, please refer to the [FES README document](./friendly_error_system.md). This document provides detailed explanations and development notes, which are beneficial for those seeking a deeper understanding of FES.

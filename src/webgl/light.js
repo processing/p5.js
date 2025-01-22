@@ -601,6 +601,7 @@ function light(p5, fn){
    * </div>
    */
 
+<<<<<<< HEAD
   /**
    * @method directionalLight
    * @param  {Number}    v1
@@ -610,6 +611,160 @@ function light(p5, fn){
    *                               <a href="#/p5.Vector">p5.Vector</a> object.
    * @chainable
    */
+=======
+/**
+ * Creates a light that shines in one direction.
+ *
+ * Directional lights don’t shine from a specific point. They’re like a sun
+ * that shines from somewhere offscreen. The light’s direction is set using
+ * three `(x, y, z)` values between -1 and 1. For example, setting a light’s
+ * direction as `(1, 0, 0)` will light <a href="#/p5.Geometry">p5.Geometry</a>
+ * objects from the left since the light faces directly to the right. A
+ * maximum of 5 directional lights can be active at once.
+ *
+ * There are four ways to call `directionalLight()` with parameters to set the
+ * light’s color and direction.
+ *
+ * The first way to call `directionalLight()` has six parameters. The first
+ * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
+ * current <a href="#/p5/colorMode">colorMode()</a>. The last three
+ * parameters, `x`, `y`, and `z`, set the light’s direction. For example,
+ * `directionalLight(255, 0, 0, 1, 0, 0)` creates a red `(255, 0, 0)` light
+ * that shines to the right `(1, 0, 0)`.
+ *
+ * The second way to call `directionalLight()` has four parameters. The first
+ * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
+ * current <a href="#/p5/colorMode">colorMode()</a>. The last parameter,
+ * `direction` sets the light’s direction using a
+ * <a href="#/p5.Geometry">p5.Geometry</a> object. For example,
+ * `directionalLight(255, 0, 0, lightDir)` creates a red `(255, 0, 0)` light
+ * that shines in the direction the `lightDir` vector points.
+ *
+ * The third way to call `directionalLight()` has four parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * last three parameters, `x`, `y`, and `z`, set the light’s direction. For
+ * example, `directionalLight(myColor, 1, 0, 0)` creates a light that shines
+ * to the right `(1, 0, 0)` with the color value of `myColor`.
+ *
+ * The fourth way to call `directionalLight()` has two parameters. The first
+ * parameter, `color`, sets the light’s color using a
+ * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
+ * second parameter, `direction`, sets the light’s direction using a
+ * <a href="#/p5.Color">p5.Color</a> object. For example,
+ * `directionalLight(myColor, lightDir)` creates a light that shines in the
+ * direction the `lightDir` vector points with the color value of `myColor`.
+ *
+ * @method directionalLight
+ * @param  {Number}    v1 red or hue value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v2 green or saturation value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    v3 blue, brightness, or lightness value in the current
+ *                        <a href="#/p5/colorMode">colorMode()</a>.
+ * @param  {Number}    x  x-component of the light's direction between -1 and 1.
+ * @param  {Number}    y  y-component of the light's direction between -1 and 1.
+ * @param  {Number}    z  z-component of the light's direction between -1 and 1.
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * // Double-click to turn on the directional light.
+ *
+ * let isLit = false;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. A red light starts shining from above when the user double-clicks.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Control the light.
+ *   if (isLit === true) {
+ *     // Add a red directional light from above.
+ *     // Use RGB values and XYZ directions.
+ *     directionalLight(255, 0, 0, 0, 1, 0);
+ *   }
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red directional light from above.
+ *   // Use a p5.Color object and XYZ directions.
+ *   let c = color(255, 0, 0);
+ *   directionalLight(c, 0, 1, 0);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A sphere drawn on a gray background. The top of the sphere appears bright red. The color gets darker toward the bottom.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Add a red directional light from above.
+ *   // Use a p5.Color object and a p5.Vector object.
+ *   let c = color(255, 0, 0);
+ *   let lightDir = createVector(0, 1, 0);
+ *   directionalLight(c, lightDir);
+ *
+ *   // Style the sphere.
+ *   noStroke();
+ *
+ *   // Draw the sphere.
+ *   sphere(30);
+ * }
+ * </code>
+ * </div>
+ */
+>>>>>>> main
 
   /**
    * @method directionalLight

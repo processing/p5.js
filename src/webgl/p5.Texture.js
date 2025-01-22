@@ -98,9 +98,16 @@ class Texture {
       this.isSrcHTMLElement
     ) {
     // if param is a video HTML element
+<<<<<<< HEAD
       textureData = this.src.elt;
     } else if (this.isSrcP5Graphics || this.isSrcP5Renderer) {
       textureData = this.src.canvas;
+=======
+      if (this.src._ensureCanvas) {
+        this.src._ensureCanvas();
+      }
+      textureData = this.src.canvas || this.src.elt;
+>>>>>>> main
     } else if (this.isImageData) {
       textureData = this.src;
     }

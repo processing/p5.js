@@ -15,7 +15,7 @@ suite('helpers/modeAdjust', function() {
   });
   test('should set mode to corners', function() {
     result = helpers.modeAdjust(a, b, c, d, constants.CORNERS);
-    expect(result).to.eql({ x: 100, y: 200, w: -50, h: -50 });
+    expect(result).to.eql({ x: 50, y: 150, w: 50, h: 50 });
   });
   test('should set mode to radius', function() {
     result = helpers.modeAdjust(a, b, c, d, constants.RADIUS);

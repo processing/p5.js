@@ -16,6 +16,9 @@ void main() {
     float angleX = mix(uFovX/2.0, -uFovX/2.0, vTexCoord.x);
     vec3 rotatedNormal = vec3( angleX, angleY, 1.0 );
     rotatedNormal = uNewNormalMatrix * normalize(rotatedNormal);
+    float temp = rotatedNormal.z;
+    rotatedNormal.z = rotatedNormal.x;
+    rotatedNormal.x = -temp;
     vec2 suv;
     suv.y = 0.5 + 0.5 * (-rotatedNormal.y);
     suv.x = atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * PI) + 0.5;
