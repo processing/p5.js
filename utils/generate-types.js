@@ -77,9 +77,7 @@ function organizeData(data) {
      
       // Create the class entry if it doesn't exist
       // if (!organized.classes[className]) {console.log(`returning for ${className}`); return};
-      
-      // Check for static methods - directly check path[0].scope
-      // Todo: handle static methods
+
       const isStatic = entry.path?.[0]?.scope === 'static';
       // Handle overloads
       const overloads = entry.overloads?.map(overload => ({
@@ -122,7 +120,7 @@ function organizeData(data) {
       };
     }
     fs.writeFileSync("./consts.json", JSON.stringify(organized.consts, null, 2), 'utf8');
-  });
+  }); 
 
   return organized;
 }
@@ -193,11 +191,12 @@ function normalizeTypeName(type) {
   const primitiveTypes = {
     'String': 'string',
     'Number': 'number',
+    'Integer': 'number',
     'Boolean': 'boolean',
     'Void': 'void',
     'Object': 'object',
-    'Array': 'array',
-    'Function': 'function'
+    'Array': 'Array',
+    'Function': 'Function'
   };
   
   return primitiveTypes[type] || type;
@@ -226,8 +225,10 @@ function generateTypeFromTag(param) {
       return 'any';
     case 'RecordType':
       return 'object';
-    case 'ObjectType':
-      return 'object';
+    case 'StringLiteralType':
+      return `'${param.type.value}'`;
+    case 'UndefinedLiteralType':
+      return 'undefined';
     default:
       return 'any';
   }
@@ -288,6 +289,60 @@ function generateFunctionDeclaration(funcDoc) {
   return output;
 }
 
+// Helper function to generate method declarations
+function generateMethodDeclarations(item, isStatic = false) {
+  let output = '';
+  
+  // Add JSDoc comment
+  if (item.description) {
+    output += '  /**\n';
+    const itemDesc = extractDescription(item.description);
+    output += formatJSDocComment(itemDesc, 2) + '\n';
+    if (item.params?.length > 0) {
+      output += ' *\n';
+      item.params.forEach(param => {
+        const paramDesc = extractDescription(param.description);
+        output += formatJSDocComment(`@param ${paramDesc}`, 2) + '\n';
+      });
+    }
+    if (item.returns) {
+      output += ' *\n';
+      const returnDesc = extractDescription(item.returns[0]?.description);
+      output += formatJSDocComment(`@return ${returnDesc}`, 2) + '\n';
+    }
+    output += '   */\n';
+  }
+
+  if (item.kind === 'function') {
+    const staticPrefix = isStatic ? 'static ' : '';
+    
+    // If there are overloads, generate all overload signatures first
+    if (item.overloads?.length > 0) {
+      item.overloads.forEach(overload => {
+        const params = (overload.params || [])
+          .map(param => generateParamDeclaration(param))
+          .join(', ');
+        const returnType = overload.returns?.[0]?.type 
+          ? generateTypeFromTag(overload.returns[0])
+          : 'void';
+        output += `  ${staticPrefix}${item.name}(${params}): ${returnType};\n`;
+      });
+    }
+    
+    // Generate the implementation signature
+    const params = (item.params || [])
+      .map(param => generateParamDeclaration(param))
+      .join(', ');
+    output += `  ${staticPrefix}${item.name}(${params}): ${item.returnType};\n\n`;
+  } else {
+    // Handle properties
+    const staticPrefix = isStatic ? 'static ' : '';
+    output += `  ${staticPrefix}${item.name}: ${item.returnType};\n\n`;
+  }
+  
+  return output;
+}
+
 // Generate class declaration
 function generateClassDeclaration(classDoc, organizedData) {
   let output = '';
@@ -324,102 +379,21 @@ function generateClassDeclaration(classDoc, organizedData) {
 
   // Get all class items for this class
   const classDocName = classDoc.name.startsWith('p5.') ? classDoc.name.substring(3) : classDoc.name;
+ 
   const classItems = organizedData.classitems.filter(item => item.class === classDocName);
   
   // Separate static and instance members
   const staticItems = classItems.filter(item => item.isStatic);
-  
   const instanceItems = classItems.filter(item => !item.isStatic);
 
-  // Add static methods first
+  // Generate static members
   staticItems.forEach(item => {
-
-    if (item.description) {
-      output += '  /**\n';
-      const itemDesc = extractDescription(item.description);
-      output += formatJSDocComment(itemDesc, 2) + '\n';
-      if (item.params?.length > 0) {
-        output += ' *\n';
-        item.params.forEach(param => {
-          const paramDesc = extractDescription(param.description);
-          output += formatJSDocComment(`@param ${paramDesc}`, 2) + '\n';
-        });
-      }
-      if (item.returns) {
-        output += ' *\n';
-        const returnDesc = extractDescription(item.returns[0]?.description);
-        output += formatJSDocComment(`@return ${returnDesc}`, 2) + '\n';
-      }
-      output += '   */\n';
-    }
-
-    if (item.kind === 'function') {
-      // Handle function overloads
-      if (item.overloads) {
-        item.overloads.forEach(overload => {
-          const params = (overload.params || [])
-            .map(param => generateParamDeclaration(param))
-            .join(', ');
-          const returnType = overload.returns?.[0]?.type 
-            ? generateTypeFromTag(overload.returns[0])
-            : 'void';
-          output += `  static ${item.name}(${params}): ${returnType};\n`;
-        });
-        output += '\n';
-      } else {
-        const params = (item.params || [])
-          .map(param => generateParamDeclaration(param))
-          .join(', ');
-        output += `  static ${item.name}(${params}): ${item.returnType};\n\n`;
-      }
-    } else {
-      output += `  static ${item.name}: ${item.returnType};\n\n`;
-    }
+    output += generateMethodDeclarations(item, true);
   });
 
-  // Add instance members
+  // Generate instance members
   instanceItems.forEach(item => {
-    if (item.description) {
-      output += '  /**\n';
-      const itemDesc = extractDescription(item.description);
-      output += formatJSDocComment(itemDesc, 2) + '\n';
-      if (item.params?.length > 0) {
-        output += ' *\n';
-        item.params.forEach(param => {
-          const paramDesc = extractDescription(param.description);
-          output += formatJSDocComment(`@param ${paramDesc}`, 2) + '\n';
-        });
-      }
-      if (item.returns) {
-        output += ' *\n';
-        const returnDesc = extractDescription(item.returns[0]?.description);
-        output += formatJSDocComment(`@return ${returnDesc}`, 2) + '\n';
-      }
-      output += '   */\n';
-    }
-
-    if (item.kind === 'function') {
-      // Handle function overloads
-      if (item.overloads) {
-        item.overloads.forEach(overload => {
-          const params = (overload.params || [])
-            .map(param => generateParamDeclaration(param))
-            .join(', ');
-          const returnType = overload.returns?.[0]?.type 
-            ? generateTypeFromTag(overload.returns[0])
-            : 'void';
-          output += `  ${item.name}(${params}): ${returnType};\n`;
-        });
-        output += '\n';
-      } else {
-        const params = (item.params || [])
-          .map(param => generateParamDeclaration(param))
-          .join(', ');
-        output += `  ${item.name}(${params}): ${item.returnType};\n\n`;
-      }
-    } else {
-      output += `  ${item.name}: ${item.returnType};\n\n`;
-    }
+    output += generateMethodDeclarations(item, false);
   });
 
   output += '}\n\n';
@@ -468,29 +442,68 @@ function generateDeclarationFile(items, filePath, organizedData) {
   // Begin module declaration
   output += `declare module '${moduleName}' {\n`;
   
-  // Add all item declarations
+  // Find the class documentation if it exists
+  const classDoc = items.find(item => item.kind === 'class');
+  if (classDoc) {
+    const classDocName = classDoc.name.startsWith('p5.') ? classDoc.name.substring(3) : classDoc.name;
+    
+    // Start class declaration
+    output += `  class ${classDocName} {\n`;
+    
+    // Add constructor if there are parameters
+    if (classDoc.params?.length > 0) {
+      output += '    constructor(';
+      output += classDoc.params
+        .map(param => generateParamDeclaration(param))
+        .join(', ');
+      output += ');\n\n';
+    }
+    
+    // Get all members that belong to this class
+    const classItems = organizedData.classitems.filter(item => 
+      item.memberof === classDoc.name || item.class === classDocName
+    );
+    
+    // Separate static and instance members
+    const staticItems = classItems.filter(item => item.isStatic);
+    const instanceItems = classItems.filter(item => !item.isStatic);
+    
+    // Generate static members
+    staticItems.forEach(item => {
+      output += generateMethodDeclarations(item, true);
+    });
+    
+    // Generate instance members
+    instanceItems.forEach(item => {
+      output += generateMethodDeclarations(item, false);
+    });
+    
+    // Close class declaration
+    output += '  }\n\n';
+  }
+  
+  // Add remaining items that aren't part of the class
   items.forEach(item => {
-    switch (item.kind) {
-      case 'class':
-        output += generateClassDeclaration(item, organizedData);
-        break;
-      case 'function':
-        output += generateFunctionDeclaration(item);
-        break;
-      case 'constant':
-      case 'typedef':
-        const constData = organizedData.consts[item.name];
-        if (constData) {
-          if (constData.description) {
-            output += `  /**\n   * ${constData.description}\n   */\n`;
+    if (item.kind !== 'class' && (!item.memberof || item.memberof !== classDoc?.name)) {
+      switch (item.kind) {
+        case 'function':
+          output += generateFunctionDeclaration(item);
+          break;
+        case 'constant':
+        case 'typedef':
+          const constData = organizedData.consts[item.name];
+          if (constData) {
+            if (constData.description) {
+              output += `  /**\n   * ${constData.description}\n   */\n`;
+            }
+            if (constData.kind === 'constant') {
+              output += `  const ${constData.name}: ${constData.type};\n\n`;
+            } else {
+              output += `  type ${constData.name} = ${constData.type};\n\n`;
+            }
           }
-          if (constData.kind === 'constant') {
-            output += `  const ${constData.name}: ${constData.type};\n\n`;
-          } else {
-            output += `  type ${constData.name} = ${constData.type};\n\n`;
-          }
-        }
-        break;
+          break;
+      }
     }
   });
   
@@ -539,7 +552,7 @@ function generateAllDeclarationFiles() {
     );
     
     // Generate the declaration file content
-    const declarationContent = generateDeclarationFile(items, filePath, organized);
+    const declarationContent = generateDeclarationFile(items, filePath, organizedData);
     
     // Create directory if it doesn't exist
     fs.mkdirSync(path.dirname(dtsPath), { recursive: true });
