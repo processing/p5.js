@@ -97,8 +97,7 @@ function keyboard(p5, fn){
    */
   fn.isKeyPressed = false;
   fn.keyIsPressed = false; // khan
-  fn._code = null;
-  fn.key = '';
+  fn.code = null;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -442,8 +441,6 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    this._code = e.code;
-    // Check for repeat key events
     if (this._downKeys[e.code]) {
       return;
     }
@@ -451,7 +448,9 @@ function keyboard(p5, fn){
     this.keyIsPressed = true;
     this.keyCode = e.which;
     this.key = e.key;
-    this._downKeys[e.code] = true;
+    this.code = e.code;
+    this._downKeyCodes[e.code] = true;
+    this._downKeys[e.key] = true;
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);
@@ -617,17 +616,18 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-    delete this._downKeys[e.code];
+    delete this._downKeyCodes[e.code];
+    delete this._downKeys[e.key];
 
     if (Object.keys(this._downKeys).length === 0) {
       this.isKeyPressed = false;
       this.keyIsPressed = false;
       this.key = '';
-      this._code = null;
+      this.code = null;
     } else {
       // If other keys are still pressed, update code to the last pressed key
       const lastPressedKey = Object.keys(this._downKeys).pop();
-      this._code = lastPressedKey;
+      this.code = lastPressedKey;
     }
 
     const context = this._isGlobal ? window : this;
@@ -814,7 +814,7 @@ function keyboard(p5, fn){
    * <a href="https://keycode.info" target="_blank">keycode.info</a>.
    *
    * @method keyIsDown
-   * @param {Number}          code key to check.
+   * @param {Number || String}          code key to check.
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
@@ -906,32 +906,27 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-    p5.prototype.keyIsDown = function(code) {
-    console.log('Current _downKeys:', this._downKeys);
-    console.log('Current key:', this.key);
-    
-    // For backward compatibility - if code is a number
-    if (typeof code === 'number') {
-      return this._downKeys[code] || false;
+  function isCode(input) {
+    if (typeof input !== 'string') {
+      return false;
     }
     
-    // For string inputs (new functionality)
-    if (typeof code === 'string') {
-      // Handle single character inputs
-      if (code.length === 1) {
-        if (/[A-Za-z]/.test(code)) {
-          // For letters, we need to check the actual key value
-          return this.key === code;
-        } else if (/[0-9]/.test(code)) {
-          return this._downKeys[`Digit${code}`] || false;
-        }
-      }
-      // Handle direct code inputs (e.g., 'KeyA', 'ArrowLeft', etc.)
-      return this._downKeys[code] || false;
+    // If it's a single digit, it should be treated as a code (with "Digit" prefix)
+    if (input.length === 1 && /[0-9]/.test(input)) {
+      return true;
     }
-  
-    return false;
-  };
+    
+    // If it's longer than 1 character, it's a code
+    return input.length > 1;
+  }
+  fn.keyIsDown = function(input) {
+    if (isCode(input)) {
+      const key = input.length === 1 ? `Digit${input}` : input;
+      return this._downKeyCodes[key] || this._downKeys[key];
+    } else {
+      return this._downKeys[input] || this._downKeyCodes[input];
+    }
+  }
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.

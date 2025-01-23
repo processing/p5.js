@@ -418,6 +418,7 @@ class p5 {
 
     this._styles = [];
     this._downKeys = {}; //Holds the key codes of currently pressed keys
+    this._downKeyCodes = {};
   }
 }
 
