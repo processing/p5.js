@@ -119,16 +119,21 @@ function font(p5, fn) {
       const contours = this.textToContours(str, x, y, width, height, options);
       const geom = this._pInst.buildGeometry(() => {
         if (extrude === 0) {
+          this._pInst.push();
+          this._pInst.rotateX(this._pInst.PI);
+          this._pInst.rotateZ(-this._pInst.HALF_PI);
           this._pInst.beginShape();
           this._pInst.normal(0, 0, 1);
           for (const contour of contours) {
             this._pInst.beginContour();
             for (const { x, y } of contour) {
-              this._pInst.vertex(x, y);
+              this._pInst.vertex(y, x);
             }
             this._pInst.endContour(this._pInst.CLOSE);
           }
           this._pInst.endShape();
+          this._pInst.pop();
+    
         } else {
           // Draw front faces
           for (const side of [1, -1]) {
@@ -136,23 +141,30 @@ function font(p5, fn) {
             for (const contour of contours) {
               this._pInst.beginContour();
               for (const { x, y } of contour) {
-                this._pInst.vertex(x, y, side * extrude * 0.5);
+                this._pInst.vertex(y, x, side * extrude * 0.5);
               }
               this._pInst.endContour(this._pInst.CLOSE);
             }
+            this._pInst.push();
+            this._pInst.rotateX(this._pInst.PI);
+            this._pInst.rotateZ(-this._pInst.HALF_PI);
             this._pInst.endShape();
-            this._pInst.beginShape();
+            this._pInst.pop();
           }
           // Draw sides
+          this._pInst.push();   
+          this._pInst.rotateX(this._pInst.PI);
+          this._pInst.rotateZ(-this._pInst.HALF_PI);
           for (const contour of contours) {
             this._pInst.beginShape(this._pInst.QUAD_STRIP);
             for (const v of contour) {
               for (const side of [-1, 1]) {
-                this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
+                this._pInst.vertex(v.y, v.x, side * extrude * 0.5);
               }
             }
             this._pInst.endShape();
           }
+          this._pInst.pop();
         }
       });
       if (extrude !== 0) {
