@@ -75,8 +75,8 @@ Current Lead/Mentor
 * [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
-* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-2024
+* [@lmccart](https://github.com/lmccart) - p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present (on leave)
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
