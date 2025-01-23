@@ -1080,6 +1080,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ImRAJAS-SAMSE"><img src="https://avatars.githubusercontent.com/u/122066293?v=4?s=120" width="120px;" alt="Rajas Samse"/><br /><sub><b>Rajas Samse</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lirenjie95"><img src="https://avatars.githubusercontent.com/u/17038472?v=4?s=120" width="120px;" alt="Renjie Li"/><br /><sub><b>Renjie Li</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lirenjie95" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=lirenjie95" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
