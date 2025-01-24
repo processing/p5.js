@@ -627,11 +627,7 @@ class Renderer2D extends Renderer {
         this.imageData;
     }
 
-<<<<<<< HEAD
-    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
-=======
-    this.drawingContext.putImageData(pixelsState.imageData, 0, 0, x, y, w, h);
->>>>>>> main
+    this.drawingContext.putImageData(this.imageData, 0, 0, x, y, w, h);
   }
 
   //////////////////////////////////////////////
@@ -646,16 +642,12 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-<<<<<<< HEAD
     const ctx = this.clipPa || this.drawingContext;
     const rx = w / 2.0;
     const ry = h / 2.0;
     const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
     let arcToDraw = 0;
     const curves = [];
-=======
-    const ctx = this.drawingContext;
->>>>>>> main
 
     const centerX = x + w / 2,
       centerY = y + h / 2,
@@ -671,13 +663,8 @@ class Renderer2D extends Renderer {
       (stop - start) % constants.TWO_PI === 0
     );
 
-<<<<<<< HEAD
     // Fill curves
     if (this.states.fillColor) {
-=======
-    // Fill
-    if (this._doFill) {
->>>>>>> main
       if (!this._clipping) ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
       if (createPieSlice) ctx.lineTo(centerX, centerY);
@@ -685,13 +672,8 @@ class Renderer2D extends Renderer {
       if (!this._clipping) ctx.fill();
     }
 
-<<<<<<< HEAD
     // Stroke curves
     if (this.states.strokeColor) {
-=======
-    // Stroke
-    if (this._doStroke) {
->>>>>>> main
       if (!this._clipping) ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
 
