@@ -1,5 +1,6 @@
 import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
+import pixelmatch from 'pixelmatch'
 import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands
 
@@ -104,39 +105,22 @@ export async function checkMatch(actual, expected, p5) {
     );
   }
 
-  const expectedWithBg = p5.createGraphics(expected.width, expected.height);
-  expectedWithBg.pixelDensity(1);
-  expectedWithBg.background(BG);
-  expectedWithBg.image(expected, 0, 0);
+  const diffData = actual.drawingContext.createImageData(actual.width, actual.height);
+  const diffCount = pixelmatch(
+    actual.drawingContext.getImageData(0, 0, actual.width, actual.height).data,
+    expected.drawingContext.getImageData(0, 0, actual.width, actual.height).data,
+    diffData.data,
+    actual.width,
+    actual.height,
+    { threshold: 0.4 }
+  );
 
   const cnv = p5.createGraphics(actual.width, actual.height);
-  cnv.pixelDensity(1);
-  cnv.background(BG);
-  cnv.image(actual, 0, 0);
-  cnv.blendMode(DIFFERENCE);
-  cnv.image(expectedWithBg, 0, 0);
-  for (let i = 0; i < shiftThreshold; i++) {
-    cnv.filter(ERODE, false);
-  }
-  const diff = cnv.get();
+  cnv.drawingContext.putImageData(diffData, 0, 0)
+  const diff = cnv.get()
   cnv.remove();
-  diff.loadPixels();
-  expectedWithBg.remove();
 
-  let ok = true;
-  for (let i = 0; i < diff.pixels.length; i += 4) {
-    let diffSum = 0;
-    for (let off = 0; off < 3; off++) {
-      diffSum += diff.pixels[i+off]
-    }
-    diffSum /= 3;
-    if (diffSum > COLOR_THRESHOLD) {
-      ok = false;
-      break;
-    }
-  }
-
-  return { ok, diff };
+  return { ok: diffCount === 0, diff };
 }
 
 /**
