@@ -325,10 +325,6 @@ function primitives(p5, fn){
     start = this._toRadians(start);
     stop = this._toRadians(stop);
 
-    // p5 supports negative width and heights for ellipses
-    w = Math.abs(w);
-    h = Math.abs(h);
-
     const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
     const angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
 
@@ -545,16 +541,9 @@ function primitives(p5, fn){
       return this;
     }
 
-    // p5 supports negative width and heights for rects
-    if (w < 0) {
-      w = Math.abs(w);
-    }
-
+    // Duplicate 3rd argument if only 3 given.
     if (typeof h === 'undefined') {
-      // Duplicate 3rd argument if only 3 given.
       h = w;
-    } else if (h < 0) {
-      h = Math.abs(h);
     }
 
     const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
@@ -1347,6 +1336,15 @@ function primitives(p5, fn){
         arguments[3],
         this._renderer.states.rectMode
       );
+
+      // For the default rectMode (CORNER), restore a possible negative width/height
+      // removed by modeAdjust(). This results in flipped/mirrored rendering,
+      // which is especially noticable when using WEGBL rendering and texture().
+      // Note that this behavior only applies to rect(), NOT to ellipse() and arc().
+      if (this._renderer.states.rectMode === constants.CORNER) {
+        vals.w = arguments[2];
+        vals.h = arguments[3];
+      }
 
       const args = [vals.x, vals.y, vals.w, vals.h];
       // append the additional arguments (either cornder radii, or

@@ -695,7 +695,7 @@ function vertex(p5, fn){
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
    *
-   * <code>
+   * ```js
    * beginShape();
    *
    * // Add the first control point.
@@ -709,14 +709,14 @@ function vertex(p5, fn){
    * splineVertex(32, 91);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * The code snippet above would only draw the curve between the anchor points,
    * similar to the <a href="#/p5/curve">curve()</a> function. The segments
    * between the control and anchor points can be drawn by calling
    * `splineVertex()` with the coordinates of the control points:
    *
-   * <code>
+   * ```js
    * beginShape();
    *
    * // Add the first control point and draw a segment to it.
@@ -734,7 +734,7 @@ function vertex(p5, fn){
    * // splineVertex(32, 91);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * The first two parameters, `x` and `y`, set the vertex’s location. For
    * example, calling `splineVertex(10, 10)` adds a point to the curve at
@@ -1084,7 +1084,7 @@ function vertex(p5, fn){
    * The `count` parameter tells WebGL mode how many copies to draw. For
    * example, calling `endShape(CLOSE, 400)` after drawing a custom shape will
    * make it efficient to draw 400 copies. This feature requires
-   * <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html" target="_blank">writing a custom shader</a>.
+   * <a href="https://p5js.org/tutorials/intro-to-shaders/" target="_blank">writing a custom shader</a>.
    *
    * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
    * built by calling <a href="#/p5/vertex">vertex()</a>,
@@ -1524,7 +1524,7 @@ function vertex(p5, fn){
    * `normal()` will affect all following vertices until `normal()` is called
    * again:
    *
-   * <code>
+   * ```js
    * beginShape();
    *
    * // Set the vertex normal.
@@ -1547,7 +1547,7 @@ function vertex(p5, fn){
    * vertex(-30, 30, 0);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * @method normal
    * @param  {p5.Vector} vector vertex normal as a <a href="#/p5.Vector">p5.Vector</a> object.
