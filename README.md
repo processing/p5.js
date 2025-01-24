@@ -36,7 +36,7 @@ function draw() {
 
 ## About
 
-p5.js is built and organized to prioritize [accessibility, inclusivity, community, and joy](https://p5js.org/community). Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [documentation](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/learn/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
+p5.js is built and organized to prioritize [accessibility, inclusivity, community, and joy](https://p5js.org/community). Similar to sketching, p5.js has a full set of tools to draw. It also supports creating audio-visual, interactive, experimental, and generative works for the web. p5.js enables thinking of a web page as your sketch. p5.js is accessible in multiple languages and has an expansive [documentation](https://p5js.org/reference/) with visual examples. You can find [tutorials](https://p5js.org/tutorials/) on the p5.js website and start coding right now in the [p5.js web editor](https://editor.p5js.org/). You can extend p5.js with many community-created [libraries](https://p5js.org/libraries/) that bring different capabilities. Its community provides endless inspiration and support for creators.
 
 p5.js encourages iterative and exploratory code for creative expression. Its friendly, diverse community shares art, code, and learning resources to help elevate all voices. We share our values in open source and access for all, to learn, create, imagine, design, share and code freely.
 
@@ -75,8 +75,8 @@ Current Lead/Mentor
 * [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
-* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-2024
+* [@lmccart](https://github.com/lmccart) - p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-present (on leave)
 * [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
 * [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
   
@@ -1081,6 +1081,8 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ImRAJAS-SAMSE"><img src="https://avatars.githubusercontent.com/u/122066293?v=4?s=120" width="120px;" alt="Rajas Samse"/><br /><sub><b>Rajas Samse</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ImRAJAS-SAMSE" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://jordanphilyaw.com"><img src="https://avatars.githubusercontent.com/u/37485853?v=4?s=120" width="120px;" alt="Jordan Philyaw"/><br /><sub><b>Jordan Philyaw</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=philyawj" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lirenjie95"><img src="https://avatars.githubusercontent.com/u/17038472?v=4?s=120" width="120px;" alt="Renjie Li"/><br /><sub><b>Renjie Li</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lirenjie95" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=lirenjie95" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://oliverthurley.co.uk"><img src="https://avatars.githubusercontent.com/u/22343302?v=4?s=120" width="120px;" alt="oliver thurley"/><br /><sub><b>oliver thurley</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=thrly" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=thrly" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
