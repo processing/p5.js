@@ -988,7 +988,6 @@ function setting(p5, fn){
     return this._renderer.states.colorMode;
   };
 
-<<<<<<< HEAD
   /**
    * Sets the color used to fill shapes.
    *
@@ -1010,7 +1009,7 @@ function setting(p5, fn){
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
    * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
-   * @param  {Number}        [alpha]
+   * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
    * @chainable
    * @example
    * <div>
@@ -1193,212 +1192,6 @@ function setting(p5, fn){
    * </code>
    * </div>
    */
-=======
-/**
- * Sets the color used to fill shapes.
- *
- * Calling `fill(255, 165, 0)` or `fill('orange')` means all shapes drawn
- * after the fill command will be filled with the color orange.
- *
- * The version of `fill()` with one parameter interprets the value one of
- * three ways. If the parameter is a `Number`, it's interpreted as a grayscale
- * value. If the parameter is a `String`, it's interpreted as a CSS color
- * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
- * set the fill color.
- *
- * The version of `fill()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current
- * <a href="#/p5/colorMode">colorMode()</a>. The default color space is RGB,
- * with each value in the range from 0 to 255.
- *
- * @method fill
- * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
- * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
- * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
- * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A grayscale value.
- *   fill(51);
- *   square(20, 20, 60);
- *
- *   describe('A dark charcoal gray square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // R, G & B values.
- *   fill(255, 204, 0);
- *   square(20, 20, 60);
- *
- *   describe('A yellow square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(100);
- *
- *   // Use HSB color.
- *   colorMode(HSB);
- *
- *   // H, S & B values.
- *   fill(255, 204, 100);
- *   square(20, 20, 60);
- *
- *   describe('A royal blue square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A CSS named color.
- *   fill('red');
- *   square(20, 20, 60);
- *
- *   describe('A red square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Three-digit hex RGB notation.
- *   fill('#fae');
- *   square(20, 20, 60);
- *
- *   describe('A pink square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Six-digit hex RGB notation.
- *   fill('#A251FA');
- *   square(20, 20, 60);
- *
- *   describe('A purple square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Integer RGB notation.
- *   fill('rgb(0, 255, 0)');
- *   square(20, 20, 60);
- *
- *   describe('A bright green square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Integer RGBA notation.
- *   fill('rgba(0, 255, 0, 0.25)');
- *   square(20, 20, 60);
- *
- *   describe('A soft green rectange with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Percentage RGB notation.
- *   fill('rgb(100%, 0%, 10%)');
- *   square(20, 20, 60);
- *
- *   describe('A red square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Percentage RGBA notation.
- *   fill('rgba(100%, 0%, 100%, 0.5)');
- *   square(20, 20, 60);
- *
- *   describe('A dark fuchsia square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A p5.Color object.
- *   let c = color(0, 0, 255);
- *   fill(c);
- *   square(20, 20, 60);
- *
- *   describe('A blue square with a black outline.');
- * }
- * </code>
- * </div>
- */
->>>>>>> main
 
   /**
    * @method fill
@@ -1546,7 +1339,6 @@ function setting(p5, fn){
     return this;
   };
 
-<<<<<<< HEAD
   /**
    * Sets the color used to draw points, lines, and the outlines of shapes.
    *
@@ -1575,7 +1367,7 @@ function setting(p5, fn){
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
    * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
-   * @param  {Number}        [alpha]
+   * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
    * @chainable
    *
    * @example
@@ -1696,7 +1488,7 @@ function setting(p5, fn){
    *   strokeWeight(4);
    *   square(20, 20, 60);
    *
-   *   describe('A whiite square with a bright green outline.');
+   *   describe('A white square with a bright green outline.');
    * }
    * </code>
    * </div>
@@ -1769,230 +1561,6 @@ function setting(p5, fn){
    * </code>
    * </div>
    */
-=======
-/**
- * Sets the color used to draw points, lines, and the outlines of shapes.
- *
- * Calling `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn
- * after calling `stroke()` will be filled with the color orange. The way
- * these parameters are interpreted may be changed with the
- * <a href="#/p5/colorMode">colorMode()</a> function.
- *
- * The version of `stroke()` with one parameter interprets the value one of
- * three ways. If the parameter is a `Number`, it's interpreted as a grayscale
- * value. If the parameter is a `String`, it's interpreted as a CSS color
- * string. A <a href="#/p5.Color">p5.Color</a> object can also be provided to
- * set the stroke color.
- *
- * The version of `stroke()` with two parameters interprets the first one as a
- * grayscale value. The second parameter sets the alpha (transparency) value.
- *
- * The version of `stroke()` with three parameters interprets them as RGB, HSB,
- * or HSL colors, depending on the current `colorMode()`.
- *
- * The version of `stroke()` with four parameters interprets them as RGBA, HSBA,
- * or HSLA colors, depending on the current `colorMode()`. The last parameter
- * sets the alpha (transparency) value.
- *
- * @method stroke
- * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
- * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
- * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
- * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
- * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A grayscale value.
- *   strokeWeight(4);
- *   stroke(51);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a dark charcoal gray outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // R, G & B values.
- *   stroke(255, 204, 0);
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a yellow outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Use HSB color.
- *   colorMode(HSB);
- *
- *   // H, S & B values.
- *   strokeWeight(4);
- *   stroke(255, 204, 100);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a royal blue outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A CSS named color.
- *   stroke('red');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a red outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Three-digit hex RGB notation.
- *   stroke('#fae');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a pink outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Six-digit hex RGB notation.
- *   stroke('#222222');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a black outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Integer RGB notation.
- *   stroke('rgb(0, 255, 0)');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A whiite square with a bright green outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Integer RGBA notation.
- *   stroke('rgba(0, 255, 0, 0.25)');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a soft green outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Percentage RGB notation.
- *   stroke('rgb(100%, 0%, 10%)');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a red outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Percentage RGBA notation.
- *   stroke('rgba(100%, 0%, 100%, 0.5)');
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a dark fuchsia outline.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // A p5.Color object.
- *   stroke(color(0, 0, 255));
- *   strokeWeight(4);
- *   square(20, 20, 60);
- *
- *   describe('A white square with a blue outline.');
- * }
- * </code>
- * </div>
- */
->>>>>>> main
 
   /**
    * @method stroke

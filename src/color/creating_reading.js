@@ -49,7 +49,6 @@ function creatingReading(p5, fn){
     [LAB]: [100, [-125, 125], [-125, 125], 1],
     [LCH]: [100, 150, 360, 1],
 
-<<<<<<< HEAD
     [OKLAB]: [100, [-125, 125], [-125, 125], 1],
     [OKLCH]: [100, 150, 360, 1],
     clone: function(){
@@ -60,241 +59,6 @@ function creatingReading(p5, fn){
         }else{
           ret[key] = this[key];
         }
-=======
-/**
- * Gets the hue value of a color.
- *
- * `hue()` extracts the hue value from a
- * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
- * a CSS color string.
- *
- * Hue describes a color's position on the color wheel. By default, `hue()`
- * returns a color's HSL hue in the range 0 to 360. If the
- * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the hue
- * value in the given mode.
- *
- * @method hue
- * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
- *                                         color components, or CSS color string.
- * @return {Number} the hue value.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a p5.Color object.
- *   let c = color(0, 50, 100);
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 20, 35, 60);
- *
- *   // Set 'hueValue' to 0.
- *   let hueValue = hue(c);
- *
- *   // Draw the right rectangle.
- *   fill(hueValue);
- *   rect(50, 20, 35, 60);
- *
- *   describe(
- *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
- *   );
- * }
- * </code>
- * </div>
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a color array.
- *   let c = [0, 50, 100];
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 20, 35, 60);
- *
- *   // Set 'hueValue' to 0.
- *   let hueValue = hue(c);
- *
- *   // Draw the right rectangle.
- *   fill(hueValue);
- *   rect(50, 20, 35, 60);
- *
- *   describe(
- *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
- *   );
- * }
- * </code>
- * </div>
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a CSS color string.
- *   let c = 'rgb(255, 128, 128)';
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 20, 35, 60);
- *
- *   // Set 'hueValue' to 0.
- *   let hueValue = hue(c);
- *
- *   // Draw the right rectangle.
- *   fill(hueValue);
- *   rect(50, 20, 35, 60);
- *
- *   describe(
- *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
- *   );
- * }
- * </code>
- * </div>
- */
-p5.prototype.hue = function(c) {
-  p5._validateParameters('hue', arguments);
-  return this.color(c)._getHue();
-};
-
-/**
- * Blends two colors to find a third color between them.
- *
- * The `amt` parameter specifies the amount to interpolate between the two
- * values. 0 is equal to the first color, 0.1 is very near the first color,
- * 0.5 is halfway between the two colors, and so on. Negative numbers are set
- * to 0. Numbers greater than 1 are set to 1. This differs from the behavior of
- * <a href="#/p5/lerp">lerp</a>. It's necessary because numbers outside of the
- * interval [0, 1] will produce strange and unexpected colors.
- *
- * The way that colors are interpolated depends on the current
- * <a href="#/p5/colorMode">colorMode()</a>.
- *
- * @method lerpColor
- * @param  {p5.Color} c1  interpolate from this color (any value created by the color() function).
- * @param  {p5.Color} c2  interpolate to this color (any value created by the color() function).
- * @param  {Number}   amt number between 0 and 1.
- * @return {p5.Color}     interpolated color.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create p5.Color objects to interpolate between.
- *   let from = color(218, 165, 32);
- *   let to = color(72, 61, 139);
- *
- *   // Create intermediate colors.
- *   let interA = lerpColor(from, to, 0.33);
- *   let interB = lerpColor(from, to, 0.66);
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(from);
- *   rect(10, 20, 20, 60);
- *
- *   // Draw the left-center rectangle.
- *   fill(interA);
- *   rect(30, 20, 20, 60);
- *
- *   // Draw the right-center rectangle.
- *   fill(interB);
- *   rect(50, 20, 20, 60);
- *
- *   // Draw the right rectangle.
- *   fill(to);
- *   rect(70, 20, 20, 60);
- *
- *   describe(
- *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
- *   );
- * }
- * </code>
- * </div>
- */
-p5.prototype.lerpColor = function(c1, c2, amt) {
-  p5._validateParameters('lerpColor', arguments);
-
-  if (!(c1 instanceof p5.Color)) {
-    c1 = color(c1);
-  }
-  if (!(c2 instanceof p5.Color)) {
-    c2 = color(c2);
-  }
-
-  const mode = this._colorMode;
-  const maxes = this._colorMaxes;
-  let l0, l1, l2, l3;
-  let fromArray, toArray;
-
-  if (mode === constants.RGB) {
-    fromArray = c1.levels.map(level => level / 255);
-    toArray = c2.levels.map(level => level / 255);
-  } else if (mode === constants.HSB) {
-    c1._getBrightness(); // Cache hsba so it definitely exists.
-    c2._getBrightness();
-    fromArray = c1.hsba;
-    toArray = c2.hsba;
-  } else if (mode === constants.HSL) {
-    c1._getLightness(); // Cache hsla so it definitely exists.
-    c2._getLightness();
-    fromArray = c1.hsla;
-    toArray = c2.hsla;
-  } else {
-    throw new Error(`${mode} cannot be used for interpolation.`);
-  }
-
-  // Prevent extrapolation.
-  amt = Math.max(Math.min(amt, 1), 0);
-
-  // Define lerp here itself if user isn't using math module.
-  // Maintains the definition as found in math/calculation.js
-  if (typeof this.lerp === 'undefined') {
-    this.lerp = (start, stop, amt) => amt * (stop - start) + start;
-  }
-
-  // Perform interpolation.
-  if (mode === constants.RGB) {
-    l0 = this.lerp(fromArray[0], toArray[0], amt);
-  }
-  // l0 (hue) has to wrap around (and it's between 0 and 1)
-  else {
-    // find shortest path in the color wheel
-    if (Math.abs(fromArray[0] - toArray[0]) > 0.5) {
-      if (fromArray[0] > toArray[0]) {
-        toArray[0] += 1;
-      } else {
-        fromArray[0] += 1;
->>>>>>> main
       }
       return ret;
     }
@@ -566,213 +330,11 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
    * @return {p5.Color}
    */
 
-<<<<<<< HEAD
   /**
    * @method color
    * @param  {String}        value   a color string.
    * @return {p5.Color}
    */
-=======
-/**
- * Blends multiple colors to find a color between them.
- *
- * The `amt` parameter specifies the amount to interpolate between the color
- * stops which are colors at each `amt` value "location" with `amt` values
- * that are between 2 color stops interpolating between them based on its relative
- * distance to both.
- *
- * The way that colors are interpolated depends on the current
- * <a href="#/colorMode">colorMode()</a>.
- *
- * @method paletteLerp
- * @param  {[p5.Color, Number][]} colors_stops color stops to interpolate from
- * @param  {Number} amt number to use to interpolate relative to color stops
- * @return {p5.Color} interpolated color.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(400, 400);
- * }
- *
- * function draw() {
- *   // The background goes from white to red to green to blue fill
- *   background(paletteLerp([
- *     ['white', 0],
- *     ['red', 0.05],
- *     ['green', 0.25],
- *     ['blue', 1]
- *   ], millis() / 10000 % 1));
- * }
- * </code>
- * </div>
- */
-p5.prototype.paletteLerp = function(color_stops, amt) {
-  const first_color_stop = color_stops[0];
-  if (amt < first_color_stop[1])
-    return this.color(first_color_stop[0]);
-
-  for (let i = 1; i < color_stops.length; i++) {
-    const color_stop = color_stops[i];
-    if (amt < color_stop[1]) {
-      const prev_color_stop = color_stops[i - 1];
-      return this.lerpColor(
-        this.color(prev_color_stop[0]),
-        this.color(color_stop[0]),
-        (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
-      );
-    }
-  }
-
-  return this.color(color_stops[color_stops.length - 1][0]);
-};
-
-/**
- * Gets the lightness value of a color.
- *
- * `lightness()` extracts the HSL lightness value from a
- * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
- * a CSS color string.
- *
- * By default, `lightness()` returns a color's HSL lightness in the range 0
- * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSL, it
- * returns the lightness value in the given range.
- *
- * @method lightness
- * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
- *                                         color components, or CSS color string.
- * @return {Number} the lightness value.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(50);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a p5.Color object using HSL values.
- *   let c = color(0, 100, 75);
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 15, 35, 70);
- *
- *   // Set 'lightValue' to 75.
- *   let lightValue = lightness(c);
- *
- *   // Draw the right rectangle.
- *   fill(lightValue);
- *   rect(50, 15, 35, 70);
- *
- *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
- * }
- * </code>
- * </div>
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(50);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a color array.
- *   let c = [0, 100, 75];
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 15, 35, 70);
- *
- *   // Set 'lightValue' to 75.
- *   let lightValue = lightness(c);
- *
- *   // Draw the right rectangle.
- *   fill(lightValue);
- *   rect(50, 15, 35, 70);
- *
- *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
- * }
- * </code>
- * </div>
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(50);
- *
- *   // Use HSL color.
- *   colorMode(HSL);
- *
- *   // Create a CSS color string.
- *   let c = 'rgb(255, 128, 128)';
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 15, 35, 70);
- *
- *   // Set 'lightValue' to 75.
- *   let lightValue = lightness(c);
- *
- *   // Draw the right rectangle.
- *   fill(lightValue);
- *   rect(50, 15, 35, 70);
- *
- *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
- * }
- * </code>
- * </div>
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(50);
- *
- *   // Use HSL color with values in the range 0-255.
- *   colorMode(HSL, 255);
- *
- *   // Create a p5.Color object using HSL values.
- *   let c = color(0, 255, 191.5);
- *
- *   // Draw the left rectangle.
- *   noStroke();
- *   fill(c);
- *   rect(15, 15, 35, 70);
- *
- *   // Set 'lightValue' to 191.5.
- *   let lightValue = lightness(c);
- *
- *   // Draw the right rectangle.
- *   fill(lightValue);
- *   rect(50, 15, 35, 70);
- *
- *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
- * }
- * </code>
- * </div>
- */
-p5.prototype.lightness = function(c) {
-  p5._validateParameters('lightness', arguments);
-  return this.color(c)._getLightness();
-};
->>>>>>> main
 
   /**
    * @method color
@@ -1964,6 +1526,61 @@ p5.prototype.lightness = function(c) {
   fn.lerpColor = function(c1, c2, amt) {
     // p5._validateParameters('lerpColor', arguments);
     return c1.lerp(c2, amt, this._renderer.states.colorMode);
+  };
+
+  /**
+   * Blends multiple colors to find a color between them.
+   *
+   * The `amt` parameter specifies the amount to interpolate between the color
+   * stops which are colors at each `amt` value "location" with `amt` values
+   * that are between 2 color stops interpolating between them based on its relative
+   * distance to both.
+   *
+   * The way that colors are interpolated depends on the current
+   * <a href="#/colorMode">colorMode()</a>.
+   *
+   * @method paletteLerp
+   * @param  {[p5.Color, Number][]} colors_stops color stops to interpolate from
+   * @param  {Number} amt number to use to interpolate relative to color stops
+   * @return {p5.Color} interpolated color.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(400, 400);
+   * }
+   *
+   * function draw() {
+   *   // The background goes from white to red to green to blue fill
+   *   background(paletteLerp([
+   *     ['white', 0],
+   *     ['red', 0.05],
+   *     ['green', 0.25],
+   *     ['blue', 1]
+   *   ], millis() / 10000 % 1));
+   * }
+   * </code>
+   * </div>
+   */
+  fn.paletteLerp = function(color_stops, amt) {
+    const first_color_stop = color_stops[0];
+    if (amt < first_color_stop[1])
+      return this.color(first_color_stop[0]);
+
+    for (let i = 1; i < color_stops.length; i++) {
+      const color_stop = color_stops[i];
+      if (amt < color_stop[1]) {
+        const prev_color_stop = color_stops[i - 1];
+        return this.lerpColor(
+          this.color(prev_color_stop[0]),
+          this.color(color_stop[0]),
+          (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
+        );
+      }
+    }
+
+    return this.color(color_stops[color_stops.length - 1][0]);
   };
 }
 
