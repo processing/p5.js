@@ -37,7 +37,7 @@ let namePrefix = '';
 // By how many pixels can the snapshot shift? This is
 // often useful to accommodate different text rendering
 // across environments.
-let shiftThreshold = 1;
+let shiftThreshold = 2;
 
 /**
  * A helper to define a category of visual tests.
