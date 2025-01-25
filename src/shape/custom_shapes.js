@@ -1968,6 +1968,7 @@ function customShapes(p5, fn) {
    * counter-clockwise order.
    *
    * @method endContour
+   * @param {OPEN|CLOSE} [mode=OPEN]
    *
    * @example
    * <div>
