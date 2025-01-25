@@ -69,8 +69,7 @@ function typeObject(node) {
     const { type: typeName } = typeObject(node.expression);
     if (
       typeName === 'Array' &&
-      node.applications.length === 1 &&
-      node.applications[0].type === 'NameExpression'
+      node.applications.length === 1
     ) {
       return {
         type: `${typeObject(node.applications[0]).type}[]`
@@ -78,10 +77,18 @@ function typeObject(node) {
     }
     const args = node.applications.map(n => typeObject(n).type);
     return {
-      type: `${typeName}&lt;${args.join(', ')}&gt;`
+      type: `${typeName}<${args.join(', ')}>`
     };
   } else if (node.type === 'UndefinedLiteral') {
     return { type: 'undefined' };
+  } else if (node.type === 'FunctionType') {
+    let signature = `function(${node.params.map(p => typeObject(p).type).join(', ')})`;
+    if (node.result) {
+      signature += `: ${typeObject(node.result).type}`;
+    }
+    return { type: signature };
+  } else if (node.type === 'ArrayType') {
+    return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
   } else {
     // TODO
     // - handle record types
@@ -192,7 +199,11 @@ function getModuleInfo(entry) {
   const entryForTagValue = entryForTag && entryForTag.description;
   const file = entry.context.file;
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
-  forEntry = entry.memberof || entryForTagValue || forEntry;
+  let memberof = entry.memberof;
+  if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
+    memberof = 'p5.' + memberof;
+  }
+  forEntry = memberof || entryForTagValue || forEntry;
   return { module, submodule, forEntry };
 }
 
@@ -335,7 +346,10 @@ for (const entry of allData) {
   const { module, submodule, forEntry } = getModuleInfo(entry);
   const propTag = entry.tags.find(tag => tag.title === 'property');
   const forTag = entry.tags.find(tag => tag.title === 'for');
-  const memberof = entry.memberof;
+  let memberof = entry.memberof;
+  if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
+    memberof = 'p5.' + memberof;
+  }
   if (!propTag || (!forEntry && !forTag && !memberof)) continue;
 
   const forName = memberof || (forTag && forTag.description) || forEntry;
@@ -379,14 +393,19 @@ for (const entry of allData) {
   if (entry.kind === 'function' && entry.properties.length === 0) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
+    let memberof = entry.memberof;
+    if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
+      memberof = 'p5.' + memberof;
+    }
+
     // Ignore functions that aren't methods
     if (entry.tags.some(tag => tag.title === 'function')) continue;
 
     // If a previous version of this same method exists, then this is probably
     // an overload on that method
-    const prevItem = (classMethods[entry.memberof] || {})[entry.name] || {};
+    const prevItem = (classMethods[memberof] || {})[entry.name] || {};
 
-    const className = entry.memberof || prevItem.class || forEntry;
+    const className = memberof || prevItem.class || forEntry;
 
     // Ignore methods of private classes
     if (!converted.classes[className]) continue;
@@ -442,8 +461,8 @@ for (const entry of allData) {
       submodule
     };
 
-    classMethods[entry.memberof] = classMethods[entry.memberof] || {};
-    classMethods[entry.memberof][entry.name] = item;
+    classMethods[memberof] = classMethods[memberof] || {};
+    classMethods[memberof][entry.name] = item;
   }
 }
 for (const className in classMethods) {
