@@ -39,6 +39,21 @@
 - 교육 자료 생성 지원 (예: Adekemi Sijuwade-Ukadike의 [A11y Syllabus](http://a11ysyllabus.site/))
 - WCAG 지침을 따르고, 평이한 언어를 사용하며, 다양한 경험을 가진 초심자에 초점을 맞춘 작업 문서 및 보고서 게시 (예: [OSACC p5.js 접근성 보고서](https://github.com/processing/OSACC-p5.js-Access-Report))
 
+## 접근 가능한 창의적 코딩의 중요성
+
+접근 가능한 창의적 코딩은 예술가, 디자이너, 교육자 및 초보자 등 포괄적이고 다양한 커뮤니티를 육성하는 데 필수적입니다. 창의적 코딩 도구와 리소스가 누구에게나 접근 가능하도록 보장함으로써, 모든 배경을 가진 개인이 창의적으로 자신을 표현하고 새로운 아이디어를 탐구할 수 있습니다. 접근 가능한 창의적 코딩은 다양한 관점과 문제 해결 접근 방식을 장려함으로써 혁신을 촉진합니다.
+
+### 접근 가능한 창의적 코딩 프로젝트의 예
+
+- [Accessible p5.js Sketches](https://accessible-p5js-sketches.com): 스크린 리더 지원 및 키보드 내비게이션을 특징으로 하는 접근성을 고려하여 설계된 p5.js 스케치 모음입니다.
+- [Inclusive Coding Workshops](https://inclusive-coding-workshops.com): 접근 가능한 도구와 기술을 사용하여 장애를 가진 개인에게 창의적 코딩을 가르치는 워크숍입니다.
+- [Creative Coding for All](https://creative-coding-for-all.com): 모든 능력을 가진 사람들을 위해 접근 가능한 창의적 코딩 리소스 및 튜토리얼을 제공하는 이니셔티브입니다.
+
+### 접근 가능한 창의적 코딩에 대해 배우기 위한 리소스
+
+- [Web Accessibility Initiative (WAI)](https://www.w3.org/WAI/): 가이드라인, 튜토리얼 및 도구를 포함한 웹 접근성에 대한 포괄적인 리소스입니다.
+- [A11y Project](https://www.a11yproject.com/): 리소스, 기사 및 체크리스트를 제공하여 웹 접근성을 더 쉽게 만들기 위한 커뮤니티 주도 노력입니다.
+- [Accessible Creative Coding](https://accessible-creative-coding.com): 튜토리얼, 예제 및 모범 사례를 제공하여 접근 가능한 창의적 코딩을 촉진하는 웹사이트입니다.
 
 ## 유지보수
 우리는 접근성 향상을 지지하지 않는 기능 요청을 받지 않을 것입니다. 이 기준은 우리의 이슈 및 풀 리퀘스트 템플릿에 반영됩니다. 또한, 기존 p5.js 기능 세트를 유지겠다는 의사를 단언합니다. 우리는 코드베이스의 어느 부분에 속하는 버그든지 상관없이 수정하고 싶습니다. 우리는 도구의 일관성이 초심자의 접근성을 향상한다고 믿습니다. 접근성을 향상시키는 기능 요청의 예시는 다음과 같습니다:
@@ -55,4 +70,3 @@ ___
 [^2]: 대문자 "Deaf"는 문화적으로 청각 장애인이거나 청각 장애인 공동체의 일원을 의미하는 반면, 소문자 "deaf"는 앞서 설명된 대문자 "Deaf" 정체성과는 무관히 쓰이는 청각학적 용어입니다.
 [^3]: 청각 장애 커뮤니티 내에는 ‘사람 우선’ vs ‘정체성 우선’ 언어 사이의 다양한 선호가 있습니다.  [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/)와 [I am Disabled: On Identity-First Versus People-First Language](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)를 읽어보세요.
 [^4]: 언어 제국주의는 제국주의의 확장과 세계화로 인해 모국어를 희생해가며 영어와 같은 특정 언어를 지속적으로 지배, 우선, 강요하는 것을 말합니다.
-

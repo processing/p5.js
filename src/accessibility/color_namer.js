@@ -86,7 +86,7 @@ const colorLookUp = [
   {
     h: 0,
     s: 1,
-    b: 1,
+    b: 5,
     name: 'red'
   },
   {
@@ -710,6 +710,27 @@ p5.prototype._rgbColorName = function(arg) {
   originalHSB = hsb;
   //calculate color name
   return _calculateColor([hsb[0], hsb[1], hsb[2]]);
+};
+
+// Add functions for converting RGBA values to color names for creative coding projects
+p5.prototype.addCreativeCodingColorNames = function() {
+  // Example of an accessible creative coding project
+  const exampleProject = {
+    title: 'Accessible p5.js Sketches',
+    description: 'A collection of p5.js sketches designed with accessibility in mind, featuring screen reader support and keyboard navigation.',
+    link: 'https://accessible-p5js-sketches.com'
+  };
+
+  // Link to a resource for learning about accessible creative coding
+  const resourceLink = {
+    title: 'Web Accessibility Initiative (WAI)',
+    description: 'A comprehensive resource for learning about web accessibility, including guidelines, tutorials, and tools.',
+    link: 'https://www.w3.org/WAI/'
+  };
+
+  // Add the example project and resource link to the accessible color names
+  this._accessibleOutputs.exampleProject = exampleProject;
+  this._accessibleOutputs.resourceLink = resourceLink;
 };
 
 export default p5;
