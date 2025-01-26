@@ -4,7 +4,17 @@
  * @for p5
  * @requires core
  */
+export function isCode(input) {
+  if (typeof input !== 'string') {
+    return false;
+  }
 
+  if (input.length === 1 && /[0-9]/.test(input)) {
+    return true;
+  }
+  
+  return input.length > 1;
+}
 function keyboard(p5, fn){
   /**
    * A `Boolean` system variable that's `true` if any key is currently pressed
@@ -814,7 +824,7 @@ function keyboard(p5, fn){
    * <a href="https://keycode.info" target="_blank">keycode.info</a>.
    *
    * @method keyIsDown
-   * @param {Number || String}          code key to check.
+   * @param {Number|String}   code key to check.
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
@@ -910,21 +920,17 @@ function keyboard(p5, fn){
     if (typeof input !== 'string') {
       return false;
     }
-    
-    // If it's a single digit, it should be treated as a code (with "Digit" prefix)
     if (input.length === 1 && /[0-9]/.test(input)) {
       return true;
     }
-    
-    // If it's longer than 1 character, it's a code
     return input.length > 1;
   }
+
   fn.keyIsDown = function(input) {
     if (isCode(input)) {
-      const key = input.length === 1 ? `Digit${input}` : input;
-      return this._downKeyCodes[key] || this._downKeys[key];
+      return this._downKeyCodes[input] || this._downKeys[input] || false;
     } else {
-      return this._downKeys[input] || this._downKeyCodes[input];
+      return this._downKeys[input] || this._downKeyCodes[input] || false;
     }
   }
   /**
