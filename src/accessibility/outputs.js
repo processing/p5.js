@@ -685,4 +685,54 @@ p5.prototype._getArea = function (objectType, shapeArgs) {
   return untransformedArea;
 };
 
+/**
+ * Adds functions for creating accessible outputs for creative coding projects.
+ *
+ * This function provides additional examples of accessible creative coding projects
+ * and links to resources for learning about accessible creative coding.
+ *
+ * @method addCreativeCodingOutputs
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Add the text description.
+ *   textOutput();
+ *
+ *   // Draw a couple of shapes.
+ *   background(200);
+ *   fill(255, 0, 0);
+ *   circle(20, 20, 20);
+ *   fill(0, 0, 255);
+ *   square(50, 50, 50);
+ *
+ *   // Add a general description of the canvas.
+ *   describe('A red circle and a blue square on a gray background.');
+ *
+ *   // Add creative coding outputs.
+ *   addCreativeCodingOutputs();
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.addCreativeCodingOutputs = function() {
+  // Example of an accessible creative coding project
+  const exampleProject = {
+    title: 'Accessible p5.js Sketches',
+    description: 'A collection of p5.js sketches designed with accessibility in mind, featuring screen reader support and keyboard navigation.',
+    link: 'https://accessible-p5js-sketches.com'
+  };
+
+  // Link to a resource for learning about accessible creative coding
+  const resourceLink = {
+    title: 'Web Accessibility Initiative (WAI)',
+    description: 'A comprehensive resource for learning about web accessibility, including guidelines, tutorials, and tools.',
+    link: 'https://www.w3.org/WAI/'
+  };
+
+  // Add the example project and resource link to the accessible outputs
+  this._accessibleOutputs.exampleProject = exampleProject;
+  this._accessibleOutputs.resourceLink = resourceLink;
+};
+
 export default p5;

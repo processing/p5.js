@@ -118,4 +118,25 @@ function _shapeList(idT, ingredients) {
   return { numShapes: shapeNumber, listShapes: shapeList };
 }
 
+// Add functions for creating accessible text outputs for creative coding projects
+p5.prototype.addCreativeCodingTextOutputs = function() {
+  // Example of an accessible creative coding project
+  const exampleProject = {
+    title: 'Accessible p5.js Sketches',
+    description: 'A collection of p5.js sketches designed with accessibility in mind, featuring screen reader support and keyboard navigation.',
+    link: 'https://accessible-p5js-sketches.com'
+  };
+
+  // Link to a resource for learning about accessible creative coding
+  const resourceLink = {
+    title: 'Web Accessibility Initiative (WAI)',
+    description: 'A comprehensive resource for learning about web accessibility, including guidelines, tutorials, and tools.',
+    link: 'https://www.w3.org/WAI/'
+  };
+
+  // Add the example project and resource link to the accessible text outputs
+  this._accessibleOutputs.exampleProject = exampleProject;
+  this._accessibleOutputs.resourceLink = resourceLink;
+};
+
 export default p5;
