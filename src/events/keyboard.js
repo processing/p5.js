@@ -4,7 +4,17 @@
  * @for p5
  * @requires core
  */
+export function isCode(input) {
+  if (typeof input !== 'string') {
+    return false;
+  }
 
+  if (input.length === 1 && /[0-9]/.test(input)) {
+    return true;
+  }
+  
+  return input.length > 1;
+}
 function keyboard(p5, fn){
   /**
    * A `Boolean` system variable that's `true` if any key is currently pressed
@@ -95,7 +105,9 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
+
   fn.keyIsPressed = false;
+  fn.code = null;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -439,14 +451,15 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    if (this._downKeys[e.which]) {
-      // prevent multiple firings
+    if (this._downKeys[e.code]) {
       return;
     }
     this.keyIsPressed = true;
     this.keyCode = e.which;
-    this._downKeys[e.which] = true;
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
+    this.key = e.key;
+    this.code = e.code;
+    this._downKeyCodes[e.code] = true;
+    this._downKeys[e.key] = true;
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);
@@ -612,16 +625,19 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-    this._downKeys[e.which] = false;
+    delete this._downKeyCodes[e.code];
+    delete this._downKeys[e.key];
+
 
     if (!this._areDownKeys()) {
       this.keyIsPressed = false;
+      this.key = '';
+      this.code = null;
+    } else {
+      // If other keys are still pressed, update code to the last pressed key
+      const lastPressedKey = Object.keys(this._downKeys).pop();
+      this.code = lastPressedKey;
     }
-
-    this._lastKeyCodeTyped = null;
-
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
-    this.keyCode = e.which;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyReleased === 'function') {
@@ -807,7 +823,7 @@ function keyboard(p5, fn){
    * <a href="https://keycode.info" target="_blank">keycode.info</a>.
    *
    * @method keyIsDown
-   * @param {Number}          code key to check.
+   * @param {Number|String}   code key to check.
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
@@ -899,11 +915,23 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.keyIsDown = function(code) {
-    // p5._validateParameters('keyIsDown', arguments);
-    return this._downKeys[code] || false;
-  };
+  function isCode(input) {
+    if (typeof input !== 'string') {
+      return false;
+    }
+    if (input.length === 1 && /[0-9]/.test(input)) {
+      return true;
+    }
+    return input.length > 1;
+  }
 
+  fn.keyIsDown = function(input) {
+    if (isCode(input)) {
+      return this._downKeyCodes[input] || this._downKeys[input] || false;
+    } else {
+      return this._downKeys[input] || this._downKeyCodes[input] || false;
+    }
+  }
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.
