@@ -518,12 +518,16 @@ function text2d(p5, fn) {
 
     // adjust the bounding boxes based on horiz. text alignment
     if (lines.length > 1) {
-      boxes.forEach(bb => bb.x += this._xAlignOffset(textAlign, width));
+      // Call the 2D mode version: the WebGL mode version does additional
+      // alignment adjustments to account for how WebGL renders text.
+      boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
     }
 
     // adjust the bounding boxes based on vert. text alignment
     if (typeof height !== 'undefined') {
-      this._yAlignOffset(boxes, height);
+      // Call the 2D mode version: the WebGL mode version does additional
+      // alignment adjustments to account for how WebGL renders text.
+      p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height);
     }
 
     // get the bounds for the text block
@@ -1224,11 +1228,11 @@ function text2d(p5, fn) {
           case fn.LEFT:
             adjustedX = x;
             break;
-          case fn._CTX_MIDDLE:
-            adjustedX = x + (adjustedW - widths[i]) / 2;
+          case fn.CENTER:
+            adjustedX = x + (adjustedW - widths[i]) / 2 - adjustedW / 2 + (width || 0) / 2;
             break;
           case fn.RIGHT:
-            adjustedX = x + adjustedW - widths[i];
+            adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
             break;
           case fn.END:
             throw new Error('textBounds: END not yet supported for textAlign');
@@ -1255,10 +1259,10 @@ function text2d(p5, fn) {
         case fn.BASELINE:
           break;
         case fn._CTX_MIDDLE:
-          yOff = -totalHeight / 2 + textSize;
+          yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
           break;
         case fn.BOTTOM:
-          yOff = -(totalHeight - textSize);
+          yOff = -(totalHeight - textSize) + (height || 0);
           break;
         default:
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?

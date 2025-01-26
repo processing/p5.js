@@ -766,61 +766,6 @@ function curves(p5, fn){
   };
 
   /**
-   * Adjusts the way <a href="#/p5/curve">curve()</a> and
-   * <a href="#/p5/curveVertex">splineVertex()</a> draw.
-   *
-   * Spline curves are like cables that are attached to a set of points.
-   * `curveTightness()` adjusts how tightly the cable is attached to the points.
-   *
-   * The parameter, `tightness`, determines how the curve fits to the vertex
-   * points. By default, `tightness` is set to 0. Setting tightness to 1,
-   * as in `curveTightness(1)`, connects the curve's points using straight
-   * lines. Values in the range from –5 to  5 deform curves while leaving them
-   * recognizable.
-   *
-   * @method curveTightness
-   * @param {Number} amount amount of tightness.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Move the mouse left and right to see the curve change.
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Set the curve's tightness using the mouse.
-   *   let t = map(mouseX, 0, 100, -5, 5, true);
-   *   curveTightness(t);
-   *
-   *   // Draw the curve.
-   *   noFill();
-   *   beginShape();
-   *   splineVertex(10, 26);
-   *   splineVertex(10, 26);
-   *   splineVertex(83, 24);
-   *   splineVertex(83, 61);
-   *   splineVertex(25, 65);
-   *   splineVertex(25, 65);
-   *   endShape();
-   * }
-   * </code>
-   * </div>
-   */
-  fn.curveTightness = function(t) {
-    // p5._validateParameters('curveTightness', arguments);
-    this._renderer._curveTightness = t;
-    return this;
-  };
-
-  /**
    * Calculates coordinates along a spline curve using interpolation.
    *
    * `curvePoint()` calculates coordinates along a spline curve using the
@@ -934,7 +879,7 @@ function curves(p5, fn){
    */
   fn.curvePoint = function(a, b, c, d, t) {
     // p5._validateParameters('curvePoint', arguments);
-    const s = this._renderer._curveTightness,
+    const s = this._renderer.states.splineProperties.tightness,
       t3 = t * t * t,
       t2 = t * t,
       f1 = (s - 1) / 2 * t3 + (1 - s) * t2 + (s - 1) / 2 * t,
@@ -1051,7 +996,7 @@ function curves(p5, fn){
   fn.curveTangent = function(a, b, c, d, t) {
     // p5._validateParameters('curveTangent', arguments);
 
-    const s = this._renderer._curveTightness,
+    const s = this._renderer.states.splineProperties.tightness,
       tt3 = t * t * 3,
       t2 = t * 2,
       f1 = (s - 1) / 2 * tt3 + (1 - s) * t2 + (s - 1) / 2,

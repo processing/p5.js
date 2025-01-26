@@ -280,8 +280,10 @@ to interpolated endpoints (a breaking change)
 */
 class SplineSegment extends Segment {
   #vertexCapacity = Infinity;
-  _splineEnds = constants.INCLUDE;
-  _splineTightness = 0;
+  _splineProperties = {
+    ends: constants.INCLUDE,
+    tightness: 0
+  };
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -296,7 +298,7 @@ class SplineSegment extends Segment {
   }
 
   get canOverrideAnchor() {
-    return this._splineEnds === constants.EXCLUDE;
+    return this._splineProperties.ends === constants.EXCLUDE;
   }
 
   // assuming for now that the first interpolated vertex is always
@@ -304,7 +306,7 @@ class SplineSegment extends Segment {
   // if this spline segment doesn't follow another segment,
   // the first vertex is in an anchor
   get _firstInterpolatedVertex() {
-    if (this._splineEnds === constants.EXCLUDE) {
+    if (this._splineProperties.ends === constants.EXCLUDE) {
       return this._comesAfterSegment ?
         this.vertices[1] :
         this.vertices[0];
@@ -328,10 +330,10 @@ class SplineSegment extends Segment {
   // doesn't line up with end of last segment
   addToShape(shape) {
     const added = super.addToShape(shape);
-    this._splineEnds = shape._splineEnds;
-    this._splineTightness = shape._splineTightness;
+    this._splineProperties.ends = shape._splineProperties.ends;
+    this._splineProperties.tightness = shape._splineProperties.tightness;
 
-    if (this._splineEnds !== constants.EXCLUDE) return added;
+    if (this._splineProperties.ends !== constants.EXCLUDE) return added;
 
     let verticesPushed = !this._belongsToShape;
     let lastPrimitive = shape.at(-1, -1);
@@ -367,9 +369,9 @@ class SplineSegment extends Segment {
 
   // override method on base class
   getEndVertex() {
-    if (this._splineEnds === constants.INCLUDE) {
+    if (this._splineProperties.ends === constants.INCLUDE) {
       return super.getEndVertex();
-    } else if (this._splineEnds === constants.EXCLUDE) {
+    } else if (this._splineProperties.ends === constants.EXCLUDE) {
       return this.vertices.at(-2);
     } else {
       return this.getStartVertex();
@@ -389,11 +391,11 @@ class SplineSegment extends Segment {
     }
 
     const prevVertex = this.getStartVertex();
-    if (this._splineEnds === constants.INCLUDE) {
+    if (this._splineProperties.ends === constants.INCLUDE) {
       points.unshift(prevVertex);
       points.push(this.vertices.at(-1));
-    } else if (this._splineEnds === constants.JOIN) {
-      points.unshift(this.vertices.at(-1), prevVertex);
+    } else if (this._splineProperties.ends === constants.JOIN) {
+      points.unshift(this.vertices.at(-1));
       points.push(prevVertex, this.vertices.at(0));
     }
 
@@ -410,7 +412,7 @@ class SplineSegment extends Segment {
   }
 
   close() {
-    this._splineEnds = constants.JOIN;
+    this._splineProperties.ends = constants.JOIN;
   }
 }
 
@@ -581,10 +583,12 @@ class Shape {
   #initialVertexProperties;
   #primitiveShapeCreators;
   #bezierOrder = 3;
-  _splineTightness = 0;
   kind = null;
   contours = [];
-  _splineEnds = constants.INCLUDE;
+  _splineProperties = {
+    tightness: 0,
+    ends: constants.INCLUDE
+  };
   userVertexProperties = null;
 
   constructor(
@@ -828,12 +832,8 @@ class Shape {
     this.#bezierOrder = order;
   }
 
-  splineEnds(mode) {
-    this._splineEnds = mode;
-  }
-
-  splineTightness(tightness) {
-    this._splineTightness = tightness;
+  splineProperty(key, value) {
+    this._splineProperties[key] = value;
   }
 
   /*
@@ -1076,7 +1076,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     const shape = splineSegment._shape;
 
     if (
-      splineSegment._splineEnds === constants.EXCLUDE &&
+      splineSegment._splineProperties.ends === constants.EXCLUDE &&
       !splineSegment._comesAfterSegment
     ) {
       let startVertex = splineSegment._firstInterpolatedVertex;
@@ -1088,7 +1088,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     );
     let bezierArrays = shape.catmullRomToBezier(
       arrayVertices,
-      splineSegment._splineTightness
+      splineSegment._splineProperties.tightness
     ).map(arr => arr.map(vertArr => shape.arrayToVertex(vertArr)));
     for (const array of bezierArrays) {
       const points = array.flatMap(vert => [vert.position.x, vert.position.y]);
@@ -1217,7 +1217,7 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     );
     let bezierArrays = shape.catmullRomToBezier(
       arrayVertices,
-      splineSegment._splineTightness
+      splineSegment._splineProperties.tightness
     );
     let startVertex = shape.vertexToArray(splineSegment._firstInterpolatedVertex);
     for (const array of bezierArrays) {
@@ -1596,10 +1596,11 @@ function customShapes(p5, fn) {
 
   /**
    * TODO: documentation
-   * @param {SHOW|HIDE} mode
+   * @param {String} key
+   * @param value
    */
-  fn.splineEnds = function(mode) {
-    return this._renderer.splineEnds(mode);
+  fn.splineProperty = function(key, value) {
+    return this._renderer.splineProperty(key, value);
   };
 
   /**
@@ -1967,6 +1968,7 @@ function customShapes(p5, fn) {
    * counter-clockwise order.
    *
    * @method endContour
+   * @param {OPEN|CLOSE} [mode=OPEN]
    *
    * @example
    * <div>

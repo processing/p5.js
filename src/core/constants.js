@@ -1359,7 +1359,7 @@ export const FLOAT = 'float';
 export const HALF_FLOAT = 'half-float';
 
 /**
- * The `splineEnds` mode where splines curve through
+ * The `splineProperty('ends')` mode where splines curve through
  * their first and last points.
  * @typedef {unique symbol} INCLUDE
  * @property {INCLUDE} INCLUDE
@@ -1368,7 +1368,7 @@ export const HALF_FLOAT = 'half-float';
 export const INCLUDE = Symbol('include');
 
 /**
- * The `splineEnds` mode where the first and last points in a spline
+ * The `splineProperty('ends')` mode where the first and last points in a spline
  * affect the direction of the curve, but are not rendered.
  * @typedef {unique symbol} EXCLUDE
  * @property {EXCLUDE} EXCLUDE
@@ -1377,7 +1377,7 @@ export const INCLUDE = Symbol('include');
 export const EXCLUDE = Symbol('exclude');
 
 /**
- * The `splineEnds` mode where the spline loops back to its first point.
+ * The `splineProperty('ends')` mode where the spline loops back to its first point.
  * Only used internally.
  * @typedef {unique symbol} JOIN
  * @property {JOIN} JOIN

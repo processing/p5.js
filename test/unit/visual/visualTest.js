@@ -8,11 +8,6 @@ const { readFile, writeFile } = server.commands
 // based on antialiasing.
 const COLOR_THRESHOLD = 25;
 
-// By how many pixels can the snapshot shift? This is
-// often useful to accommodate different text rendering
-// across environments.
-const SHIFT_THRESHOLD = 3;
-
 // The max side length to shrink test images down to before
 // comparing, for performance.
 const MAX_SIDE = 50;
@@ -39,6 +34,11 @@ function escapeName(name) {
 
 let namePrefix = '';
 
+// By how many pixels can the snapshot shift? This is
+// often useful to accommodate different text rendering
+// across environments.
+let shiftThreshold = 2;
+
 /**
  * A helper to define a category of visual tests.
  *
@@ -51,7 +51,7 @@ let namePrefix = '';
 export function visualSuite(
   name,
   callback,
-  { focus = false, skip = false } = {}
+  { focus = false, skip = false, shiftThreshold: newShiftThreshold } = {}
 ) {
   let suiteFn = describe;
   if (focus) {
@@ -61,11 +61,16 @@ export function visualSuite(
     suiteFn = suiteFn.skip;
   }
   suiteFn(name, () => {
+    let lastShiftThreshold
     let lastPrefix;
     let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
       lastPrefix = namePrefix;
       namePrefix += escapeName(name) + '/';
+      lastShiftThreshold = shiftThreshold;
+      if (newShiftThreshold !== undefined) {
+        shiftThreshold = newShiftThreshold
+      }
 
       // Force everything to be 1x
       window.devicePixelRatio = 1;
@@ -76,6 +81,7 @@ export function visualSuite(
     afterAll(() => {
       namePrefix = lastPrefix;
       window.devicePixelRatio = lastDeviceRatio;
+      shiftThreshold = lastShiftThreshold;
     });
   });
 }
@@ -109,7 +115,7 @@ export async function checkMatch(actual, expected, p5) {
   cnv.image(actual, 0, 0);
   cnv.blendMode(DIFFERENCE);
   cnv.image(expectedWithBg, 0, 0);
-  for (let i = 0; i < SHIFT_THRESHOLD; i++) {
+  for (let i = 0; i < shiftThreshold; i++) {
     cnv.filter(ERODE, false);
   }
   const diff = cnv.get();

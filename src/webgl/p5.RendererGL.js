@@ -46,6 +46,7 @@ import filterInvertFrag from "./shaders/filters/invert.frag";
 import filterThresholdFrag from "./shaders/filters/threshold.frag";
 import filterShaderVert from "./shaders/filters/default.vert";
 import { PrimitiveToVerticesConverter } from "../shape/custom_shapes";
+import { Color } from "../color/p5.Color";
 
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
@@ -407,8 +408,6 @@ class RendererGL extends Renderer {
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
 
-    this._curveTightness = 6;
-
     this.fontInfos = {};
 
     this._curShader = undefined;
@@ -440,8 +439,8 @@ class RendererGL extends Renderer {
       );
     }
     this.geometryBuilder = new GeometryBuilder(this);
-    this.geometryBuilder.prevFillColor = [...this.states.curFillColor];
-    this.states.curFillColor = [-1, -1, -1, -1];
+    this.geometryBuilder.prevFillColor = this.states.fillColor;
+    this.fill(new Color([-1, -1, -1, -1]));
   }
 
   /**
@@ -460,7 +459,7 @@ class RendererGL extends Renderer {
       );
     }
     const geometry = this.geometryBuilder.finish();
-    this.states.curFillColor = this.geometryBuilder.prevFillColor;
+    this.fill(this.geometryBuilder.prevFillColor);
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -584,6 +583,21 @@ class RendererGL extends Renderer {
       this.states._currentNormal = new Vector(xorv, y, z);
     }
     this.updateShapeVertexProperties();
+  }
+
+  model(model, count = 1) {
+    if (model.vertices.length > 0) {
+      if (this.geometryBuilder) {
+        this.geometryBuilder.addRetained(model);
+      } else {
+        if (!this.geometryInHash(model.gid)) {
+          model._edgesToVertices();
+          this._getOrMakeCachedBuffers(model);
+        }
+
+        this._drawGeometry(model, { count });
+      }
+    }
   }
 
   //////////////////////////////////////////////
@@ -2408,34 +2422,6 @@ class RendererGL extends Renderer {
    */
   _vToNArray(arr) {
     return arr.flatMap((item) => [item.x, item.y, item.z]);
-  }
-
-  // function to calculate BezierVertex Coefficients
-  _bezierCoefficients(t) {
-    const t2 = t * t;
-    const t3 = t2 * t;
-    const mt = 1 - t;
-    const mt2 = mt * mt;
-    const mt3 = mt2 * mt;
-    return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
-  }
-
-  // function to calculate QuadraticVertex Coefficients
-  _quadraticCoefficients(t) {
-    const t2 = t * t;
-    const mt = 1 - t;
-    const mt2 = mt * mt;
-    return [mt2, 2 * mt * t, t2];
-  }
-
-  // function to convert Bezier coordinates to Catmull Rom Splines
-  _bezierToCatmull(w) {
-    const p1 = w[1];
-    const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
-    const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
-    const p4 = w[2];
-    const p = [p1, p2, p3, p4];
-    return p;
   }
 }
 

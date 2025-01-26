@@ -562,4 +562,48 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('buildGeometry()', () => {
+    visualTest('can draw models', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const sphere = p5.buildGeometry(() => {
+        p5.scale(0.25);
+        p5.sphere();
+      });
+
+      const geom = p5.buildGeometry(() => {
+        p5.model(sphere);
+      });
+
+      p5.background(255);
+      p5.lights();
+      p5.model(geom);
+      screenshot();
+    });
+
+    visualTest('only fills set in buildGeometry are kept', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const geom = p5.buildGeometry(() => {
+        p5.push();
+        p5.translate(-p5.width*0.2, 0);
+        p5.scale(0.15);
+        p5.sphere();
+        p5.pop();
+
+        p5.push();
+        p5.fill('red');
+        p5.translate(p5.width*0.2, 0);
+        p5.scale(0.15);
+        p5.sphere();
+        p5.pop();
+      });
+
+      p5.fill('blue');
+      p5.noStroke();
+      p5.model(geom);
+      screenshot();
+    });
+  });
 });

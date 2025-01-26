@@ -105,8 +105,8 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.isKeyPressed = false;
-  fn.keyIsPressed = false; // khan
+
+  fn.keyIsPressed = false;
   fn.code = null;
 
   /**
@@ -454,7 +454,6 @@ function keyboard(p5, fn){
     if (this._downKeys[e.code]) {
       return;
     }
-    this.isKeyPressed = true;
     this.keyIsPressed = true;
     this.keyCode = e.which;
     this.key = e.key;
@@ -629,8 +628,8 @@ function keyboard(p5, fn){
     delete this._downKeyCodes[e.code];
     delete this._downKeys[e.key];
 
-    if (Object.keys(this._downKeys).length === 0) {
-      this.isKeyPressed = false;
+
+    if (!this._areDownKeys()) {
       this.keyIsPressed = false;
       this.key = '';
       this.code = null;
