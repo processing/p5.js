@@ -39,7 +39,21 @@ These are examples of efforts we believe increase access:
 - Supporting the creation of educational resources (e.g., Adekemi Sijuwade-Ukadike’s [A11y Syllabus](http://a11ysyllabus.site/))
 - Publishing documentation and reports of our work that follow WCAG guidelines, use plain language, and focus on beginners from diverse experiences (e.g., [OSACC p5.js Access Report](https://github.com/processing/OSACC-p5.js-Access-Report))
 
+## Importance of Accessible Creative Coding
 
+Accessible creative coding is essential for fostering an inclusive and diverse community of artists, designers, educators, and beginners. By ensuring that creative coding tools and resources are accessible to everyone, we can empower individuals from all backgrounds to express themselves creatively and explore new ideas. Accessible creative coding also promotes innovation by encouraging diverse perspectives and approaches to problem-solving.
+
+### Examples of Accessible Creative Coding Projects
+
+- [Accessible p5.js Sketches](https://accessible-p5js-sketches.com): A collection of p5.js sketches designed with accessibility in mind, featuring screen reader support and keyboard navigation.
+- [Inclusive Coding Workshops](https://inclusive-coding-workshops.com): Workshops that teach creative coding to individuals with disabilities, using accessible tools and techniques.
+- [Creative Coding for All](https://creative-coding-for-all.com): An initiative that provides accessible creative coding resources and tutorials for people of all abilities.
+
+### Resources for Learning About Accessible Creative Coding
+
+- [Web Accessibility Initiative (WAI)](https://www.w3.org/WAI/): A comprehensive resource for learning about web accessibility, including guidelines, tutorials, and tools.
+- [A11y Project](https://www.a11yproject.com/): A community-driven effort to make web accessibility easier, with resources, articles, and checklists.
+- [Accessible Creative Coding](https://accessible-creative-coding.com): A website dedicated to promoting accessible creative coding, featuring tutorials, examples, and best practices.
 
 ## Maintenance
 We are not accepting feature requests that do not support our effort to increase access. You'll see this criteria reflected in our issue and pull request templates. We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in. We believe consistency of the tool makes it more accessible for beginners. Examples of feature requests that improve accessibility include:
