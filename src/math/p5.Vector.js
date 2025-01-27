@@ -702,7 +702,6 @@ class Vector {
   }
 
   /**
-<<<<<<< HEAD
    * Subtracts from a vector's `x`, `y`, and `z` components.
    *
    * `sub()` can use separate numbers, as in `v.sub(1, 2, 3)`, another
@@ -717,6 +716,7 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
+   * @method sub
    * @param  {Number} x   x component of the vector to subtract.
    * @param  {Number} [y] y component of the vector to subtract.
    * @param  {Number} [z] z component of the vector to subtract.
@@ -827,133 +827,6 @@ class Vector {
    * </code>
    * </div>
    */
-=======
- * Subtracts from a vector's `x`, `y`, and `z` components.
- *
- * `sub()` can use separate numbers, as in `v.sub(1, 2, 3)`, another
- * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.sub(v2)`, or an array
- * of numbers, as in `v.sub([1, 2, 3])`.
- *
- * If a value isn't provided for a component, it won't change. For
- * example, `v.sub(4, 5)` subtracts 4 from `v.x`, 5 from `v.y`, and 0 from `v.z`.
- * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
- *
- * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
- * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
- * originals.
- *
- * @method sub
- * @param  {Number} x   x component of the vector to subtract.
- * @param  {Number} [y] y component of the vector to subtract.
- * @param  {Number} [z] z component of the vector to subtract.
- * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Style the points.
- *   strokeWeight(5);
- *
- *   // Bottom right.
- *   let pos = createVector(75, 75);
- *   point(pos);
- *
- *   // Top right.
- *   // Subtract numbers.
- *   pos.sub(0, 50);
- *   point(pos);
- *
- *   // Top left.
- *   // Subtract a p5.Vector.
- *   let p2 = createVector(50, 0);
- *   pos.sub(p2);
- *   point(pos);
- *
- *   // Bottom left.
- *   // Subtract an array.
- *   let arr = [0, -50];
- *   pos.sub(arr);
- *   point(pos);
- *
- *   describe('Four black dots arranged in a square on a gray background.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create p5.Vector objects.
- *   let p1 = createVector(75, 75);
- *   let p2 = createVector(50, 50);
- *
- *   // Subtract without modifying the original vectors.
- *   let p3 = p5.Vector.sub(p1, p2);
- *
- *   // Draw the points.
- *   strokeWeight(5);
- *   point(p1);
- *   point(p2);
- *   point(p3);
- *
- *   describe('Three black dots in a diagonal line from top left to bottom right.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   describe('Three arrows drawn on a gray square. A red and a blue arrow extend from the top left. A purple arrow extends from the tip of the red arrow to the tip of the blue arrow.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   let origin = createVector(0, 0);
- *
- *   // Draw the red arrow.
- *   let v1 = createVector(50, 50);
- *   drawArrow(origin, v1, 'red');
- *
- *   // Draw the blue arrow.
- *   let v2 = createVector(20, 70);
- *   drawArrow(origin, v2, 'blue');
- *
- *   // Purple arrow.
- *   let v3 = p5.Vector.sub(v2, v1);
- *   drawArrow(v1, v3, 'purple');
- * }
- *
- * // Draws an arrow between two vectors.
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
- * </code>
- * </div>
- */
->>>>>>> main
   /**
    * @param  {p5.Vector|Number[]} value the vector to subtract
    * @chainable
@@ -976,7 +849,6 @@ class Vector {
   }
 
   /**
-<<<<<<< HEAD
    * Multiplies a vector's `x`, `y`, and `z` components.
    *
    * `mult()` can use separate numbers, as in `v.mult(1, 2, 3)`, another
@@ -993,6 +865,7 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
+   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -1123,6 +996,7 @@ class Vector {
    *
    *   describe('Two arrows extending from the top left corner. The blue arrow is twice the length of the red arrow.');
    * }
+   *
    * function draw() {
    *   background(200);
    *
@@ -1154,187 +1028,6 @@ class Vector {
    * </code>
    * </div>
    */
-=======
- * Multiplies a vector's `x`, `y`, and `z` components.
- *
- * `mult()` can use separate numbers, as in `v.mult(1, 2, 3)`, another
- * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.mult(v2)`, or an array
- * of numbers, as in `v.mult([1, 2, 3])`.
- *
- * If only one value is provided, as in `v.mult(2)`, then all the components
- * will be multiplied by 2. If a value isn't provided for a component, it
- * won't change. For example, `v.mult(4, 5)` multiplies `v.x` by 4, `v.y` by 5,
- * and `v.z` by 1. Calling `mult()` with no arguments, as in `v.mult()`, has
- * no effect.
- *
- * The static version of `mult()`, as in `p5.Vector.mult(v, 2)`, returns a new
- * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
- * originals.
- *
- * @method mult
- * @param  {Number} n The number to multiply with the vector
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Style the points.
- *   strokeWeight(5);
- *
- *   // Top-left.
- *   let p = createVector(25, 25);
- *   point(p);
- *
- *   // Center.
- *   // Multiply all components by 2.
- *   p.mult(2);
- *   point(p);
- *
- *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   strokeWeight(5);
- *
- *   // Top-left.
- *   let p = createVector(25, 25);
- *   point(p);
- *
- *   // Bottom-right.
- *   // Multiply p.x * 2 and p.y * 3
- *   p.mult(2, 3);
- *   point(p);
- *
- *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Style the points.
- *   strokeWeight(5);
- *
- *   // Top-left.
- *   let p = createVector(25, 25);
- *   point(p);
- *
- *   // Bottom-right.
- *   // Multiply p.x * 2 and p.y * 3
- *   let arr = [2, 3];
- *   p.mult(arr);
- *   point(p);
- *
- *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Style the points.
- *   strokeWeight(5);
- *
- *   // Top-left.
- *   let p = createVector(25, 25);
- *   point(p);
- *
- *   // Bottom-right.
- *   // Multiply p.x * p2.x and p.y * p2.y
- *   let p2 = createVector(2, 3);
- *   p.mult(p2);
- *   point(p);
- *
- *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Style the points.
- *   strokeWeight(5);
- *
- *   // Top-left.
- *   let p = createVector(25, 25);
- *   point(p);
- *
- *   // Bottom-right.
- *   // Create a new p5.Vector with
- *   // p3.x = p.x * p2.x
- *   // p3.y = p.y * p2.y
- *   let p2 = createVector(2, 3);
- *   let p3 = p5.Vector.mult(p, p2);
- *   point(p3);
- *
- *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   describe('Two arrows extending from the top left corner. The blue arrow is twice the length of the red arrow.');
- * }
- * function draw() {
- *   background(200);
- *
- *   let origin = createVector(0, 0);
- *
- *   // Draw the red arrow.
- *   let v1 = createVector(25, 25);
- *   drawArrow(origin, v1, 'red');
- *
- *   // Draw the blue arrow.
- *   let v2 = p5.Vector.mult(v1, 2);
- *   drawArrow(origin, v2, 'blue');
- * }
- *
- * // Draws an arrow between two vectors.
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
- * </code>
- * </div>
- */
-
->>>>>>> main
   /**
    * @param  {Number} x number to multiply with the x component of the vector.
    * @param  {Number} y number to multiply with the y component of the vector.
@@ -1888,7 +1581,6 @@ class Vector {
   }
 
   /**
-<<<<<<< HEAD
    * Calculates the distance between two points represented by vectors.
    *
    * A point's coordinates can be represented by the components of a vector
@@ -1900,6 +1592,7 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
+   * @method dist
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    *
@@ -1972,8 +1665,8 @@ class Vector {
    *   // Style the text.
    *   textAlign(CENTER);
    *
-   *   // Display the magnitude.
-   *   let m = floor(v3.mag());
+   *   // Display the magnitude. The same as floor(v3.mag());
+   *   let m = floor(p5.Vector.dist(v1, v2));
    *   text(m, 50, 75);
    * }
    *
@@ -1994,114 +1687,6 @@ class Vector {
    * </code>
    * </div>
    */
-=======
- * Calculates the distance between two points represented by vectors.
- *
- * A point's coordinates can be represented by the components of a vector
- * that extends from the origin to the point.
- *
- * The static version of `dist()`, as in `p5.Vector.dist(v1, v2)`, is the same
- * as calling `v1.dist(v2)`.
- *
- * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
- * using coordinates as in `dist(x1, y1, x2, y2)`.
- *
- * @method dist
- * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
- * @return {Number}      distance.
- *
- * @example
- * <div class="norender">
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create p5.Vector objects.
- *   let v1 = createVector(1, 0);
- *   let v2 = createVector(0, 1);
- *
- *   // Calculate the distance between them.
- *   let d = v1.dist(v2);
- *
- *   // Prints "1.414..." to the console.
- *   print(d);
- * }
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Create p5.Vector objects.
- *   let v1 = createVector(1, 0);
- *   let v2 = createVector(0, 1);
- *
- *   // Calculate the distance between them.
- *   let d = p5.Vector.dist(v1, v2);
- *
- *   // Prints "1.414..." to the console.
- *   print(d);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   describe('Three arrows drawn on a gray square. A red and a blue arrow extend from the top left. A purple arrow extends from the tip of the red arrow to the tip of the blue arrow. The number 36 is written in black near the purple arrow.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   let origin = createVector(0, 0);
- *
- *   // Draw the red arrow.
- *   let v1 = createVector(50, 50);
- *   drawArrow(origin, v1, 'red');
- *
- *   // Draw the blue arrow.
- *   let v2 = createVector(20, 70);
- *   drawArrow(origin, v2, 'blue');
- *
- *   // Purple arrow.
- *   let v3 = p5.Vector.sub(v2, v1);
- *   drawArrow(v1, v3, 'purple');
- *
- *   // Style the text.
- *   textAlign(CENTER);
- *
- *   // Display the magnitude. The same as floor(v3.mag());
- *   let m = floor(p5.Vector.dist(v1, v2));
- *   text(m, 50, 75);
- * }
- *
- * // Draws an arrow between two vectors.
- * function drawArrow(base, vec, myColor) {
- *   push();
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
- * </code>
- * </div>
- */
->>>>>>> main
   dist(v) {
     return v.copy().sub(this).mag();
   }

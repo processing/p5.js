@@ -204,7 +204,6 @@ function trigonometry(p5, fn){
     return this._fromRadians(Math.atan(ratio));
   };
 
-<<<<<<< HEAD
   /**
    * Calculates the angle formed by a point, the origin, and the positive
    * x-axis.
@@ -290,7 +289,7 @@ function trigonometry(p5, fn){
    * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method cos
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       cosine of the angle.
    *
    * @example
@@ -370,7 +369,7 @@ function trigonometry(p5, fn){
    * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method sin
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       sine of the angle.
    *
    * @example
@@ -441,205 +440,6 @@ function trigonometry(p5, fn){
   fn.sin = function(angle) {
     return Math.sin(this._toRadians(angle));
   };
-=======
-/**
- * Calculates the cosine of an angle.
- *
- * `cos()` is useful for many geometric tasks in creative coding. The values
- * returned oscillate between -1 and 1 as the input angle increases. `cos()`
- * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
- *
- * @method cos
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
- * @return {Number}       cosine of the angle.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   describe('A white ball on a string oscillates left and right.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Calculate the coordinates.
- *   let x = 30 * cos(frameCount * 0.05) + 50;
- *   let y = 50;
- *
- *   // Draw the oscillator.
- *   line(50, y, x, y);
- *   circle(x, y, 20);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   describe('A series of black dots form a wave pattern.');
- * }
- *
- * function draw() {
- *   // Calculate the coordinates.
- *   let x = frameCount;
- *   let y = 30 * cos(x * 0.1) + 50;
- *
- *   // Draw the point.
- *   point(x, y);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   describe('A series of black dots form an infinity symbol.');
- * }
- *
- * function draw() {
- *   // Calculate the coordinates.
- *   let x = 30 * cos(frameCount * 0.1) + 50;
- *   let y = 10 * sin(frameCount * 0.2) + 50;
- *
- *   // Draw the point.
- *   point(x, y);
- * }
- * </code>
- * </div>
- */
-p5.prototype.cos = function(angle) {
-  return Math.cos(this._toRadians(angle));
-};
-
-/**
- * Calculates the sine of an angle.
- *
- * `sin()` is useful for many geometric tasks in creative coding. The values
- * returned oscillate between -1 and 1 as the input angle increases. `sin()`
- * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
- *
- * @method sin
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
- * @return {Number}       sine of the angle.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   describe('A white ball on a string oscillates up and down.');
- * }
- *
- * function draw() {
- *   background(200);
- *
- *   // Calculate the coordinates.
- *   let x = 50;
- *   let y = 30 * sin(frameCount * 0.05) + 50;
- *
- *   // Draw the oscillator.
- *   line(50, y, x, y);
- *   circle(x, y, 20);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   describe('A series of black dots form a wave pattern.');
- * }
- *
- * function draw() {
- *   // Calculate the coordinates.
- *   let x = frameCount;
- *   let y = 30 * sin(x * 0.1) + 50;
- *
- *   // Draw the point.
- *   point(x, y);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   describe('A series of black dots form an infinity symbol.');
- * }
- *
- * function draw() {
- *   // Calculate the coordinates.
- *   let x = 30 * cos(frameCount * 0.1) + 50;
- *   let y = 10 * sin(frameCount * 0.2) + 50;
- *
- *   // Draw the point.
- *   point(x, y);
- * }
- * </code>
- * </div>
- */
-p5.prototype.sin = function(angle) {
-  return Math.sin(this._toRadians(angle));
-};
-
-/**
- * Calculates the tangent of an angle.
- *
- * `tan()` is useful for many geometric tasks in creative coding. The values
- * returned range from -Infinity to Infinity and repeat periodically as the
- * input angle increases. `tan()` takes into account the current
- * <a href="#/p5/angleMode">angleMode()</a>.
- *
- * @method tan
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
- * @return {Number}       tangent of the angle.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   describe('A series of identical curves drawn with black dots. Each curve starts from the top of the canvas, continues down at a slight angle, flattens out at the middle of the canvas, then continues to the bottom.');
- * }
- *
- * function draw() {
- *   // Calculate the coordinates.
- *   let x = frameCount;
- *   let y = 5 * tan(x * 0.1) + 50;
- *
- *   // Draw the point.
- *   point(x, y);
- * }
- * </code>
- * </div>
- */
-p5.prototype.tan = function(angle) {
-  return Math.tan(this._toRadians(angle));
-};
->>>>>>> main
 
   /**
    * Calculates the tangent of an angle.
@@ -650,7 +450,7 @@ p5.prototype.tan = function(angle) {
    * <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method tan
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       tangent of the angle.
    *
    * @example
