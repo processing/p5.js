@@ -8,155 +8,7 @@
 
 import { Texture } from './p5.Texture';
 
-<<<<<<< HEAD
 class Shader {
-=======
-/**
- * A class to describe a shader program.
- *
- * Each `p5.Shader` object contains a shader program that runs on the graphics
- * processing unit (GPU). Shaders can process many pixels or vertices at the
- * same time, making them fast for many graphics tasks. They’re written in a
- * language called
- * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
- * and run along with the rest of the code in a sketch.
- *
- * A shader program consists of two files, a vertex shader and a fragment
- * shader. The vertex shader affects where 3D geometry is drawn on the screen
- * and the fragment shader affects color. Once the `p5.Shader` object is
- * created, it can be used with the <a href="#/p5/shader">shader()</a>
- * function, as in `shader(myShader)`.
- *
- * A shader can optionally describe *hooks,* which are functions in GLSL that
- * users may choose to provide to customize the behavior of the shader. For the
- * vertex or the fragment shader, users can pass in an object where each key is
- * the type and name of a hook function, and each value is a string with the
- * parameter list and default implementation of the hook. For example, to let users
- * optionally run code at the start of the vertex shader, the options object could
- * include:
- *
- * ```js
- * {
- *   vertex: {
- *     'void beforeVertex': '() {}'
- *   }
- * }
- * ```
- *
- * Then, in your vertex shader source, you can run a hook by calling a function
- * with the same name prefixed by `HOOK_`:
- *
- * ```glsl
- * void main() {
- *   HOOK_beforeVertex();
- *   // Add the rest of your shader code here!
- * }
- * ```
- *
- * Note: <a href="#/p5/createShader">createShader()</a>,
- * <a href="#/p5/createFilterShader">createFilterShader()</a>, and
- * <a href="#/p5/loadShader">loadShader()</a> are the recommended ways to
- * create an instance of this class.
- *
- * @class p5.Shader
- * @constructor
- * @param {p5.RendererGL} renderer WebGL context for this shader.
- * @param {String} vertSrc source code for the vertex shader program.
- * @param {String} fragSrc source code for the fragment shader program.
- * @param {Object} [options] An optional object describing how this shader can
- * be augmented with hooks. It can include:
- *  - `vertex`: An object describing the available vertex shader hooks.
- *  - `fragment`: An object describing the available frament shader hooks.
- *
- * @example
- * <div>
- * <code>
- * // Note: A "uniform" is a global variable within a shader program.
- *
- * // Create a string with the vertex shader program.
- * // The vertex shader is called for each vertex.
- * let vertSrc = `
- * precision highp float;
- * uniform mat4 uModelViewMatrix;
- * uniform mat4 uProjectionMatrix;
- *
- * attribute vec3 aPosition;
- * attribute vec2 aTexCoord;
- * varying vec2 vTexCoord;
- *
- * void main() {
- *   vTexCoord = aTexCoord;
- *   vec4 positionVec4 = vec4(aPosition, 1.0);
- *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
- * }
- * `;
- *
- * // Create a string with the fragment shader program.
- * // The fragment shader is called for each pixel.
- * let fragSrc = `
- * precision highp float;
- *
- * void main() {
- *   // Set each pixel's RGBA value to yellow.
- *   gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
- * }
- * `;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a p5.Shader object.
- *   let myShader = createShader(vertSrc, fragSrc);
- *
- *   // Apply the p5.Shader object.
- *   shader(myShader);
- *
- *   // Style the drawing surface.
- *   noStroke();
- *
- *   // Add a plane as a drawing surface.
- *   plane(100, 100);
- *
- *   describe('A yellow square.');
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Note: A "uniform" is a global variable within a shader program.
- *
- * let mandelbrot;
- *
- * // Load the shader and create a p5.Shader object.
- * function preload() {
- *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Use the p5.Shader object.
- *   shader(mandelbrot);
- *
- *   // Set the shader uniform p to an array.
- *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
- *
- *   describe('A fractal image zooms in and out of focus.');
- * }
- *
- * function draw() {
- *   // Set the shader uniform r to a value that oscillates between 0 and 2.
- *   mandelbrot.setUniform('r', sin(frameCount * 0.01) + 1);
- *
- *   // Add a quad as a display surface for the shader.
- *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
- * }
- * </code>
- * </div>
- */
-p5.Shader = class {
->>>>>>> main
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     // TODO: adapt this to not take ids, but rather,
     // to take the source for a vertex and fragment shader
@@ -1514,6 +1366,7 @@ function shader(p5, fn){
    * create an instance of this class.
    *
    * @class p5.Shader
+   * @constructor
    * @param {p5.RendererGL} renderer WebGL context for this shader.
    * @param {String} vertSrc source code for the vertex shader program.
    * @param {String} fragSrc source code for the fragment shader program.
@@ -1582,12 +1435,8 @@ function shader(p5, fn){
    *
    * let mandelbrot;
    *
-   * // Load the shader and create a p5.Shader object.
-   * function preload() {
-   *   mandelbrot = loadShader('assets/shader.vert', 'assets/shader.frag');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   mandelbrot = await loadShader('assets/shader.vert', 'assets/shader.frag');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Use the p5.Shader object.

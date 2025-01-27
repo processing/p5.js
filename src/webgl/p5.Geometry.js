@@ -578,11 +578,8 @@ class Geometry {
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/laDefense.jpg');
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);
@@ -632,7 +629,6 @@ class Geometry {
   }
 
   /**
-<<<<<<< HEAD
    * Flips the geometry’s texture v-coordinates.
    *
    * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
@@ -666,6 +662,7 @@ class Geometry {
    * // Right vertices: [1, 0] <--> [1, 1]
    * ```
    *
+   * @method flipV
    * @for p5.Geometry
    *
    * @example
@@ -673,11 +670,8 @@ class Geometry {
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/laDefense.jpg');
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);
@@ -716,92 +710,6 @@ class Geometry {
    * </code>
    * </div>
    */
-=======
- * Flips the geometry’s texture v-coordinates.
- *
- * In order for <a href="#/p5/texture">texture()</a> to work, the geometry
- * needs a way to map the points on its surface to the pixels in a rectangular
- * image that's used as a texture. The geometry's vertex at coordinates
- * `(x, y, z)` maps to the texture image's pixel at coordinates `(u, v)`.
- *
- * The <a href="#/p5.Geometry/uvs">myGeometry.uvs</a> array stores the
- * `(u, v)` coordinates for each vertex in the order it was added to the
- * geometry. Calling `myGeometry.flipV()` flips a geometry's v-coordinates
- * so that the texture appears mirrored vertically.
- *
- * For example, a plane's four vertices are added clockwise starting from the
- * top-left corner. Here's how calling `myGeometry.flipV()` would change a
- * plane's texture coordinates:
- *
- * ```js
- * // Print the original texture coordinates.
- * // Output: [0, 0, 1, 0, 0, 1, 1, 1]
- * console.log(myGeometry.uvs);
- *
- * // Flip the v-coordinates.
- * myGeometry.flipV();
- *
- * // Print the flipped texture coordinates.
- * // Output: [0, 1, 1, 1, 0, 0, 1, 0]
- * console.log(myGeometry.uvs);
- *
- * // Notice the swaps:
- * // Left vertices: [0, 0] &lt;--&gt; [1, 0]
- * // Right vertices: [1, 0] &lt;--&gt; [1, 1]
- * ```
- *
- * @method flipV
- * @for p5.Geometry
- *
- * @example
- * <div>
- * <code>
- * let img;
- *
- * function preload() {
- *   img = loadImage('assets/laDefense.jpg');
- * }
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   background(200);
- *
- *   // Create p5.Geometry objects.
- *   let geom1 = buildGeometry(createShape);
- *   let geom2 = buildGeometry(createShape);
- *
- *   // Flip geom2's V texture coordinates.
- *   geom2.flipV();
- *
- *   // Left (original).
- *   push();
- *   translate(-25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom1);
- *   pop();
- *
- *   // Right (flipped).
- *   push();
- *   translate(25, 0, 0);
- *   texture(img);
- *   noStroke();
- *   model(geom2);
- *   pop();
- *
- *   describe(
- *     'Two photos of a ceiling on a gray background. The photos are mirror images of each other.'
- *   );
- * }
- *
- * function createShape() {
- *   plane(40);
- * }
- * </code>
- * </div>
- */
->>>>>>> main
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
       if (index % 2 === 0) {
@@ -1362,11 +1270,11 @@ class Geometry {
   }
 
   /**
- * Averages the vertex normals. Used in curved
- * surfaces
- * @private
- * @chainable
- */
+   * Averages the vertex normals. Used in curved
+   * surfaces
+   * @private
+   * @chainable
+   */
   averageNormals() {
     for (let i = 0; i <= this.detailY; i++) {
       const offset = this.detailX + 1;
@@ -1383,10 +1291,10 @@ class Geometry {
   }
 
   /**
- * Averages pole normals.  Used in spherical primitives
- * @private
- * @chainable
- */
+   * Averages pole normals.  Used in spherical primitives
+   * @private
+   * @chainable
+   */
   averagePoleNormals() {
     //average the north pole
     let sum = new Vector(0, 0, 0);
@@ -1421,10 +1329,10 @@ class Geometry {
   }
 
   /**
- * Create a 2D array for establishing stroke connections
- * @private
- * @chainable
- */
+   * Create a 2D array for establishing stroke connections
+   * @private
+   * @chainable
+   */
   _makeTriangleEdges() {
     this.edges.length = 0;
 
@@ -1438,20 +1346,20 @@ class Geometry {
   }
 
   /**
- * Converts each line segment into the vertices and vertex attributes needed
- * to turn the line into a polygon on screen. This will include:
- * - Two triangles line segment to create a rectangle
- * - Two triangles per endpoint to create a stroke cap rectangle. A fragment
- *   shader is responsible for displaying the appropriate cap style within
- *   that rectangle.
- * - Four triangles per join between adjacent line segments, creating a quad on
- *   either side of the join, perpendicular to the lines. A vertex shader will
- *   discard the quad in the "elbow" of the join, and a fragment shader will
- *   display the appropriate join style within the remaining quad.
- *
- * @private
- * @chainable
- */
+   * Converts each line segment into the vertices and vertex attributes needed
+   * to turn the line into a polygon on screen. This will include:
+   * - Two triangles line segment to create a rectangle
+   * - Two triangles per endpoint to create a stroke cap rectangle. A fragment
+   *   shader is responsible for displaying the appropriate cap style within
+   *   that rectangle.
+   * - Four triangles per join between adjacent line segments, creating a quad on
+   *   either side of the join, perpendicular to the lines. A vertex shader will
+   *   discard the quad in the "elbow" of the join, and a fragment shader will
+   *   display the appropriate join style within the remaining quad.
+   *
+   * @private
+   * @chainable
+   */
   _edgesToVertices() {
     this.lineVertices.clear();
     this.lineTangentsIn.clear();
@@ -1595,21 +1503,21 @@ class Geometry {
   }
 
   /**
- * Adds the vertices and vertex attributes for two triangles making a rectangle
- * for a straight line segment. A vertex shader is responsible for picking
- * proper coordinates on the screen given the centerline positions, the tangent,
- * and the side of the centerline each vertex belongs to. Sides follow the
- * following scheme:
- *
- *  -1            -1
- *   o-------------o
- *   |             |
- *   o-------------o
- *   1             1
- *
- * @private
- * @chainable
- */
+   * Adds the vertices and vertex attributes for two triangles making a rectangle
+   * for a straight line segment. A vertex shader is responsible for picking
+   * proper coordinates on the screen given the centerline positions, the tangent,
+   * and the side of the centerline each vertex belongs to. Sides follow the
+   * following scheme:
+   *
+   *  -1            -1
+   *   o-------------o
+   *   |             |
+   *   o-------------o
+   *   1             1
+   *
+   * @private
+   * @chainable
+   */
   _addSegment(
     begin,
     end,
@@ -1641,21 +1549,21 @@ class Geometry {
   }
 
   /**
- * Adds the vertices and vertex attributes for two triangles representing the
- * stroke cap of a line. A fragment shader is responsible for displaying the
- * appropriate cap style within the rectangle they make.
- *
- * The lineSides buffer will include the following values for the points on
- * the cap rectangle:
- *
- *           -1  -2
- * -----------o---o
- *            |   |
- * -----------o---o
- *            1   2
- * @private
- * @chainable
- */
+   * Adds the vertices and vertex attributes for two triangles representing the
+   * stroke cap of a line. A fragment shader is responsible for displaying the
+   * appropriate cap style within the rectangle they make.
+   *
+   * The lineSides buffer will include the following values for the points on
+   * the cap rectangle:
+   *
+   *           -1  -2
+   * -----------o---o
+   *            |   |
+   * -----------o---o
+   *            1   2
+   * @private
+   * @chainable
+   */
   _addCap(point, tangent, color) {
     const ptArray = point.array();
     const tanInArray = tangent.array();
@@ -1671,28 +1579,28 @@ class Geometry {
   }
 
   /**
- * Adds the vertices and vertex attributes for four triangles representing a
- * join between two adjacent line segments. This creates a quad on either side
- * of the shared vertex of the two line segments, with each quad perpendicular
- * to the lines. A vertex shader will discard all but the quad in the "elbow" of
- * the join, and a fragment shader will display the appropriate join style
- * within the remaining quad.
- *
- * The lineSides buffer will include the following values for the points on
- * the join rectangles:
- *
- *            -1     -2
- * -------------o----o
- *              |    |
- *       1 o----o----o -3
- *         |    | 0  |
- * --------o----o    |
- *        2|    3    |
- *         |         |
- *         |         |
- * @private
- * @chainable
- */
+   * Adds the vertices and vertex attributes for four triangles representing a
+   * join between two adjacent line segments. This creates a quad on either side
+   * of the shared vertex of the two line segments, with each quad perpendicular
+   * to the lines. A vertex shader will discard all but the quad in the "elbow" of
+   * the join, and a fragment shader will display the appropriate join style
+   * within the remaining quad.
+   *
+   * The lineSides buffer will include the following values for the points on
+   * the join rectangles:
+   *
+   *            -1     -2
+   * -------------o----o
+   *              |    |
+   *       1 o----o----o -3
+   *         |    | 0  |
+   * --------o----o    |
+   *        2|    3    |
+   *         |         |
+   *         |         |
+   * @private
+   * @chainable
+   */
   _addJoin(
     point,
     fromTangent,
@@ -1714,57 +1622,57 @@ class Geometry {
   }
 
   /**
- * Transforms the geometry's vertices to fit snugly within a 100×100×100 box
- * centered at the origin.
- *
- * Calling `myGeometry.normalize()` translates the geometry's vertices so that
- * they're centered at the origin `(0, 0, 0)`. Then it scales the vertices so
- * that they fill a 100×100×100 box. As a result, small geometries will grow
- * and large geometries will shrink.
- *
- * Note: `myGeometry.normalize()` only works when called in the
- * <a href="#/p5/setup">setup()</a> function.
- *
- * @chainable
- *
- * @example
- * <div>
- * <code>
- * let myGeometry;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a very small torus.
- *   beginGeometry();
- *   torus(1, 0.25);
- *   myGeometry = endGeometry();
- *
- *   // Normalize the torus so its vertices fill
- *   // the range [-100, 100].
- *   myGeometry.normalize();
- *
- *   describe('A white torus rotates slowly against a dark gray background.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Rotate around the y-axis.
- *   rotateY(frameCount * 0.01);
- *
- *   // Style the torus.
- *   noStroke();
- *
- *   // Draw the torus.
- *   model(myGeometry);
- * }
- * </code>
- * </div>
- */
+   * Transforms the geometry's vertices to fit snugly within a 100×100×100 box
+   * centered at the origin.
+   *
+   * Calling `myGeometry.normalize()` translates the geometry's vertices so that
+   * they're centered at the origin `(0, 0, 0)`. Then it scales the vertices so
+   * that they fill a 100×100×100 box. As a result, small geometries will grow
+   * and large geometries will shrink.
+   *
+   * Note: `myGeometry.normalize()` only works when called in the
+   * <a href="#/p5/setup">setup()</a> function.
+   *
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myGeometry;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a very small torus.
+   *   beginGeometry();
+   *   torus(1, 0.25);
+   *   myGeometry = endGeometry();
+   *
+   *   // Normalize the torus so its vertices fill
+   *   // the range [-100, 100].
+   *   myGeometry.normalize();
+   *
+   *   describe('A white torus rotates slowly against a dark gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   *
+   *   // Style the torus.
+   *   noStroke();
+   *
+   *   // Draw the torus.
+   *   model(myGeometry);
+   * }
+   * </code>
+   * </div>
+   */
   normalize() {
     if (this.vertices.length > 0) {
       // Find the corners of our bounding box
@@ -2561,12 +2469,8 @@ function geometry(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/laDefense.jpg');
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);
