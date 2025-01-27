@@ -11,7 +11,7 @@
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "generate-types": "npm run docs && node utils/generate-types"
+    "generate-types": "npm run docs && node utils/generate-types && node utils/patch"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
