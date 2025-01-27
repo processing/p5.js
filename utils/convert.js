@@ -615,3 +615,5 @@ fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
+
+module.exports=  { getAllEntries };
