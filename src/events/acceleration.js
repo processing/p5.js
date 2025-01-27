@@ -527,7 +527,6 @@ function acceleration(p5, fn){
    * </div>
    */
 
-<<<<<<< HEAD
   /**
    * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
    * more than 90 degrees continuously.
@@ -585,37 +584,6 @@ function acceleration(p5, fn){
    * </code>
    * </div>
    */
-=======
-/**
- * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
- * the threshold value along X, Y or Z axis. The default threshold is set to 0.5.
- * The threshold value can be changed using <a href="#/p5/setMoveThreshold">setMoveThreshold()</a>.
- *
- * @method deviceMoved
- * @example
- * <div class="norender">
- * <code>
- * // Run this example on a mobile device
- * // Move the device around
- * // to change the value.
- *
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe(`50-by-50 black rect in center of canvas.
- *     turns white on mobile when device moves`);
- * }
- * function deviceMoved() {
- *   value = value + 5;
- *   if (value > 255) {
- *     value = 0;
- *   }
- * }
- * </code>
- * </div>
- */
->>>>>>> main
 
   /**
    * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
@@ -647,40 +615,8 @@ function acceleration(p5, fn){
    * </div>
    */
 
-<<<<<<< HEAD
   fn._ondeviceorientation = function (e) {
     this._updatePRotations();
-=======
-/**
- * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
- * changes of accelerationX and accelerationY values is more than
- * the threshold value. The default threshold is set to 30.
- * The threshold value can be changed using <a href="#/p5/setShakeThreshold">setShakeThreshold()</a>.
- *
- * @method deviceShaken
- * @example
- * <div class="norender">
- * <code>
- * // Run this example on a mobile device
- * // Shake the device to change the value.
- *
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- *   describe(`50-by-50 black rect in center of canvas.
- *     turns white on mobile when device shakes`);
- * }
- * function deviceShaken() {
- *   value = value + 5;
- *   if (value > 255) {
- *     value = 0;
- *   }
- * }
- * </code>
- * </div>
- */
->>>>>>> main
 
     // Convert from degrees into current angle mode
     this.rotationX = this._fromDegrees(e.beta);
