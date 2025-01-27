@@ -486,17 +486,14 @@ function generateDeclarationFile(items, filePath, organizedData) {
     // Separate static and instance members
     const staticItems = classItems.filter(item => item.isStatic);
     const instanceItems = classItems.filter(item => !item.isStatic);
-
     // Generate static members
     staticItems.forEach(item => {
       output += generateMethodDeclarations(item, true);
     });
-
     // Generate instance members
     instanceItems.forEach(item => {
       output += generateMethodDeclarations(item, false);
     });
-
     output += '  }\n\n';
   }
   
