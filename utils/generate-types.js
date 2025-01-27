@@ -1,33 +1,22 @@
 const fs = require('fs');
 const path = require('path');
+const { getAllEntries } = require("./convert");
 
 // Read docs.json
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
 
-// Flatten and organize data structure
-function getEntries(entry) {
-  if (!entry) return [];
-  if (!entry.members) return [entry];
-  
-  return [
-    entry,
-    ...getAllEntries(entry.members.global || []),
-    ...getAllEntries(entry.members.inner || []),
-    ...getAllEntries(entry.members.instance || []),
-    ...getAllEntries(entry.members.events || []),
-    ...getAllEntries(entry.members.static || [])
-  ];
-}
-
-function getAllEntries(arr) {
-  return arr.flatMap(getEntries);
-}
 const organized = {
     modules: {},
     classes: {},
     classitems: [],
     consts: {}
   };
+
+// Add this helper function at the top with other helpers
+function normalizeClassName(className) {
+  if (!className || className === 'p5') return 'p5';
+  return className.startsWith('p5.') ? className : `p5.${className}`;
+}
 
 // Organize data into structured format
 function organizeData(data) {
@@ -54,6 +43,8 @@ function organizeData(data) {
     if (entry.kind === 'class') {
       const { module, submodule } = getModuleInfo(entry);
       const className = entry.name;
+      const extendsTag = entry.tags?.find(tag => tag.title === 'extends');
+      
       organized.classes[className] = {
         name: className,
         description: extractDescription(entry.description),
@@ -63,7 +54,8 @@ function organizeData(data) {
           optional: param.type?.type === 'OptionalType'
         })),
         module,
-        submodule
+        submodule,
+        extends: extendsTag?.name || null
       };
     }
   });
@@ -72,11 +64,20 @@ function organizeData(data) {
   allData.forEach(entry => {
     if (entry.kind === 'function' || entry.kind === 'property') {
       const { module, submodule, forEntry } = getModuleInfo(entry);
+      
+      // Normalize memberof and forEntry
+      let memberof = entry.memberof;
+      if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
+        memberof = 'p5.' + memberof;
+      }
+      
+      let normalizedForEntry = forEntry;
+      if (forEntry && forEntry !== 'p5' && !forEntry.startsWith('p5.')) {
+        normalizedForEntry = 'p5.' + forEntry;
+      }
+      
       // Use memberof if available, fallback to forEntry, then default to 'p5'
-      const className = entry.memberof || forEntry || 'p5';
-     
-      // Create the class entry if it doesn't exist
-      // if (!organized.classes[className]) {console.log(`returning for ${className}`); return};
+      const className = normalizeClassName(memberof || normalizedForEntry || 'p5');
 
       const isStatic = entry.path?.[0]?.scope === 'static';
       // Handle overloads
@@ -356,17 +357,27 @@ function generateClassDeclaration(classDoc, organizedData) {
     }
     if (classDoc.tags) {
       if (description) {
-        output += ' *\n'; // Add separator between description and tags
+        output += ' *\n';
       }
       classDoc.tags.forEach(tag => {
         if (tag.description) {
           const tagDesc = extractDescription(tag.description);
+          
           output += formatJSDocComment(`@${tag.title} ${tagDesc}`, 0) + '\n';
         }
       });
     }
     output += ' */\n';
   }
+
+  // Get the parent class if it exists
+  const parentClass = classDoc.extends;
+  const extendsClause = parentClass ? ` extends ${parentClass}` : '';
+
+  // Start class declaration with inheritance if applicable
+  const fullClassName = normalizeClassName(classDoc.name);
+  const classDocName = fullClassName.replace('p5.', '');
+  output += `class ${classDocName}${extendsClause} {\n`;
 
   // Add constructor if there are parameters
   if (classDoc.params?.length > 0) {
@@ -378,9 +389,10 @@ function generateClassDeclaration(classDoc, organizedData) {
   }
 
   // Get all class items for this class
-  const classDocName = classDoc.name.startsWith('p5.') ? classDoc.name.substring(3) : classDoc.name;
- 
-  const classItems = organizedData.classitems.filter(item => item.class === classDocName);
+  const classItems = organizedData.classitems.filter(item => 
+    item.class === fullClassName || 
+    item.class === fullClassName.replace('p5.', '')
+  );
   
   // Separate static and instance members
   const staticItems = classItems.filter(item => item.isStatic);
@@ -445,10 +457,16 @@ function generateDeclarationFile(items, filePath, organizedData) {
   // Find the class documentation if it exists
   const classDoc = items.find(item => item.kind === 'class');
   if (classDoc) {
-    const classDocName = classDoc.name.startsWith('p5.') ? classDoc.name.substring(3) : classDoc.name;
+    const fullClassName = normalizeClassName(classDoc.name);
+    const classDocName = fullClassName.replace('p5.', '');
+    let parentClass = classDoc.tags?.find(tag => tag.title === 'extends')?.name;
+    if (parentClass) {
+      parentClass = parentClass.replace('p5.', '');
+    }
+    const extendsClause = parentClass ? ` extends ${parentClass}` : '';
     
     // Start class declaration
-    output += `  class ${classDocName} {\n`;
+    output += `  class ${classDocName}${extendsClause} {\n`;
     
     // Add constructor if there are parameters
     if (classDoc.params?.length > 0) {
@@ -458,27 +476,27 @@ function generateDeclarationFile(items, filePath, organizedData) {
         .join(', ');
       output += ');\n\n';
     }
-    
-    // Get all members that belong to this class
+
+    // Get all class items for this class
     const classItems = organizedData.classitems.filter(item => 
-      item.memberof === classDoc.name || item.class === classDocName
+      item.class === fullClassName || 
+      item.class === fullClassName.replace('p5.', '')
     );
     
     // Separate static and instance members
     const staticItems = classItems.filter(item => item.isStatic);
     const instanceItems = classItems.filter(item => !item.isStatic);
-    
+
     // Generate static members
     staticItems.forEach(item => {
       output += generateMethodDeclarations(item, true);
     });
-    
+
     // Generate instance members
     instanceItems.forEach(item => {
       output += generateMethodDeclarations(item, false);
     });
-    
-    // Close class declaration
+
     output += '  }\n\n';
   }
   
