@@ -103,7 +103,6 @@ export async function checkMatch(actual, expected, p5) {
       Math.ceil(img.height * scale)
     );
   }
-<<<<<<< HEAD
 
   const expectedWithBg = p5.createGraphics(expected.width, expected.height);
   expectedWithBg.pixelDensity(1);
@@ -121,18 +120,6 @@ export async function checkMatch(actual, expected, p5) {
   }
   const diff = cnv.get();
   cnv.remove();
-=======
-  // The below algorithm to calculate differences can produce false negatives in certain cases.
-  // Immediately return true for exact matches.
-  if (toBase64(expected) === toBase64(actual)) {
-    return { ok: true };
-  }
-  const diff = p5.createImage(actual.width, actual.height);
-  diff.drawingContext.drawImage(actual.canvas, 0, 0);
-  diff.drawingContext.globalCompositeOperation = 'difference';
-  diff.drawingContext.drawImage(expected.canvas, 0, 0);
-  diff.filter(p5.ERODE, false);
->>>>>>> main
   diff.loadPixels();
   expectedWithBg.remove();
 
