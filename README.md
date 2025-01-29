@@ -1090,6 +1090,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://karn-ashish-16.onrender.com/"><img src="https://avatars.githubusercontent.com/u/82334486?v=4?s=120" width="120px;" alt="Ashish Karn"/><br /><sub><b>Ashish Karn</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akkarn1689" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://dkessner.github.io/"><img src="https://avatars.githubusercontent.com/u/1002034?v=4?s=120" width="120px;" alt="Darren Kessner"/><br /><sub><b>Darren Kessner</b></sub></a><br /><a href="#example-dkessner" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://www.facebook.com/AnimeshSinha1309"><img src="https://avatars.githubusercontent.com/u/9739218?v=4?s=120" width="120px;" alt="Animesh Sinha"/><br /><sub><b>Animesh Sinha</b></sub></a><br /><a href="#example-AnimeshSinha1309" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/katlich112358"><img src="https://avatars.githubusercontent.com/u/59926191?v=4?s=120" width="120px;" alt="Kathryn Lichlyter"/><br /><sub><b>Kathryn Lichlyter</b></sub></a><br /><a href="#example-katlich112358" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
