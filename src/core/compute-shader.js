@@ -77,8 +77,7 @@ ${structFields}
         writeParticle(particle, particleIndex);
       }
     `
-    console.log("Generated Fragment Shader:")
-    console.log(fragmentShader)
+    
     return fragmentShader
   }
 
@@ -180,7 +179,6 @@ ${structFields}
     ;[this.inputFramebuffer, this.outputFramebuffer] = [this.outputFramebuffer, this.inputFramebuffer]
 
     this.p5.pop()
-    console.log("Compute called")
   }
 
   setParticles(particles) {
@@ -214,12 +212,12 @@ ${structFields}
     this.p5.background(0)
 
     this.inputFramebuffer.loadPixels()
+    this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
     this.inputFramebuffer.pixels.set(data)
     this.inputFramebuffer.updatePixels()
+    this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
 
     this.inputFramebuffer.end()
-    console.log("Set Particles:")
-    console.log(particles)
   }
 
   getParticles() {
@@ -252,8 +250,6 @@ ${structFields}
       particles.push(particle)
     }
 
-    console.log("Get Particles:")
-    console.log(particles)
     return particles
   }
 }
