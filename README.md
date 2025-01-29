@@ -1088,6 +1088,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://karn-ashish-16.onrender.com/"><img src="https://avatars.githubusercontent.com/u/82334486?v=4?s=120" width="120px;" alt="Ashish Karn"/><br /><sub><b>Ashish Karn</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akkarn1689" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://dkessner.github.io/"><img src="https://avatars.githubusercontent.com/u/1002034?v=4?s=120" width="120px;" alt="Darren Kessner"/><br /><sub><b>Darren Kessner</b></sub></a><br /><a href="#example-dkessner" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
