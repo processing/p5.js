@@ -6541,6 +6541,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "macarena",
+      "name": "Marco Macarena",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79822?v=4",
+      "profile": "http://macarena.pro.br",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
