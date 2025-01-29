@@ -6550,6 +6550,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "khamiltonuk",
+      "name": "Kristian Hamilton",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4013283?v=4",
+      "profile": "http://www.khamilton.co.uk",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
