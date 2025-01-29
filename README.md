@@ -1094,6 +1094,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://geealbers.net/"><img src="https://avatars.githubusercontent.com/u/7796401?v=4?s=120" width="120px;" alt="Greg Albers"/><br /><sub><b>Greg Albers</b></sub></a><br /><a href="#example-geealbers" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://macarena.pro.br"><img src="https://avatars.githubusercontent.com/u/79822?v=4?s=120" width="120px;" alt="Marco Macarena"/><br /><sub><b>Marco Macarena</b></sub></a><br /><a href="#example-macarena" title="Examples">💡</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://www.khamilton.co.uk"><img src="https://avatars.githubusercontent.com/u/4013283?v=4?s=120" width="120px;" alt="Kristian Hamilton"/><br /><sub><b>Kristian Hamilton</b></sub></a><br /><a href="#example-khamiltonuk" title="Examples">💡</a></td>
+    </tr>
   </tbody>
 </table>
 
