@@ -551,7 +551,7 @@ function rendering(p5, fn){
    * `clearDepth()` clears information about how far objects are from the camera
    * in 3D space. This information is stored in an object called the
    * *depth buffer*. Clearing the depth buffer ensures new objects aren't drawn
-   * behind old ones.Creates a <a href="#/p5.Graphics">p5.Gra Doing so can be useful for feedback effects in which the
+   * behind old ones. Doing so can be useful for feedback effects in which the
    * previous frame serves as the background for the current frame.
    *
    * The parameter, `depth`, is optional. If a number is passed, as in

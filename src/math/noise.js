@@ -275,7 +275,6 @@ function noise(p5, fn){
     let rxf, ryf;
     let r = 0;
     let ampl = 0.5;
-
     let n1, n2, n3;
 
     for (let o = 0; o < perlin_octaves; o++) {

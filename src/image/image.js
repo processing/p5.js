@@ -292,6 +292,7 @@ function image(p5, fn){
       temporaryGraphics.loadPixels();
       temporaryGraphics.pixels.set(framebuffer.pixels);
       temporaryGraphics.updatePixels();
+
       htmlCanvas = temporaryGraphics.elt;
       args.shift();
     } else {

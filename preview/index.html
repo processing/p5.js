@@ -21,13 +21,13 @@
 
     const sketch = function (p) {
       p.setup = async function () {
-        p.createCanvas(400, 400, p.WEBGL);
+        p.createCanvas(400, 400);
       };
 
       p.draw = function () {
         p.background(200);
-        p.strokeWeight(10)
-        p.line(-100, -100, 100, 100)
+        p.strokeWeight(10);
+        p.line(-100, -100, 100, 100);
       };
     };
 
