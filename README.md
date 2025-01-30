@@ -1102,6 +1102,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://kccon.ch"><img src="https://avatars.githubusercontent.com/u/26172283?v=4?s=120" width="120px;" alt="Casey Conchinha"/><br /><sub><b>Casey Conchinha</b></sub></a><br /><a href="#example-kcconch" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/davidblitz"><img src="https://avatars.githubusercontent.com/u/13055497?v=4?s=120" width="120px;" alt="davidblitz"/><br /><sub><b>davidblitz</b></sub></a><br /><a href="#example-davidblitz" title="Examples">💡</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/crh82"><img src="https://avatars.githubusercontent.com/u/103348212?v=4?s=120" width="120px;" alt="crh82"/><br /><sub><b>crh82</b></sub></a><br /><a href="#example-crh82" title="Examples">💡</a></td>
+    </tr>
   </tbody>
 </table>
 
