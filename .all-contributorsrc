@@ -6595,6 +6595,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "davidblitz",
+      "name": "davidblitz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13055497?v=4",
+      "profile": "https://github.com/davidblitz",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
