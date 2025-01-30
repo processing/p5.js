@@ -218,7 +218,7 @@ FES将在控制台生成以下消息：
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 ```
 FES将在控制台生成以下消息：
-> 🌸 p5.js 说：arc()在参数#0（从零开始的索引）处期望接收Number，但收到了字符串。[http://p5js.org/reference/#/p5/arc]
+> 🌸 p5.js 说：arc()在参数#0（从零开始的索引）处期望接收Number，但收到了字符串。[http://p5js.org/reference/p5/arc]
 ##### 位置
 core/friendly_errors/validate_params.js
 
@@ -272,7 +272,7 @@ function preload() {
 }
 ```
 FES将在控制台中生成以下消息：
-> 🌸 p5.js说：当调用background时（位于sketch.js的第4行[http://localhost:8000/lib/empty-example/sketch.js:4:3]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'background'”。（如果没有另外说明，这可能是由于从preload中调用了background。preload函数中除了load函数（loadImage、loadJSON、loadFont、loadStrings等）之外不应该有其他内容。）（http://p5js.org/reference/#/p5/preload）
+> 🌸 p5.js说：当调用background时（位于sketch.js的第4行[http://localhost:8000/lib/empty-example/sketch.js:4:3]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'background'”。（如果没有另外说明，这可能是由于从preload中调用了background。preload函数中除了load函数（loadImage、loadJSON、loadFont、loadStrings等）之外不应该有其他内容。）（http://p5js.org/reference/p5/preload）
 
 <ins>内部错误示例 2</ins>
 ```javascript
@@ -282,7 +282,7 @@ function setup() {
 }
 ```
 FES将在控制台中生成以下消息：
-> 🌸 p5.js说：当调用mouseClicked时（位于sketch.js的第3行[http://localhost:8000/lib/empty-example/sketch.js:3:7]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'bind'”。（如果没有另外说明，这可能是由于传递给mouseClicked的参数存在问题。）（http://p5js.org/reference/#/p5/mouseClicked）
+> 🌸 p5.js说：当调用mouseClicked时（位于sketch.js的第3行[http://localhost:8000/lib/empty-example/sketch.js:3:7]），在p5js库内部发生了一个错误，错误消息为“无法读取未定义的属性'bind'”。（如果没有另外说明，这可能是由于传递给mouseClicked的参数存在问题。）（http://p5js.org/reference/p5/mouseClicked）
 
 <ins>用户示例中的作用域错误示例</ins>
 ```javascript
@@ -303,7 +303,7 @@ function setup() {
 }
 ```
 FES将在控制台中生成以下消息：
-> 🌸 p5.js说：您可能错误地将“colour”写成了“color”（位于sketch.js的第2行[http://localhost:8000/lib/empty-example/sketch.js:2:3]）。如果希望使用p5.js中的函数，请将其更正为color（http://p5js.org/reference/#/p5/color）。
+> 🌸 p5.js说：您可能错误地将“colour”写成了“color”（位于sketch.js的第2行[http://localhost:8000/lib/empty-example/sketch.js:2:3]）。如果希望使用p5.js中的函数，请将其更正为color（http://p5js.org/reference/p5/color）。
 
 ##### 位置
 core/friendly_errors/fes_core.js
@@ -331,7 +331,7 @@ function setup() {
 }
 ```
 FES 将在控制台生成以下消息：
-> 🌸 p5.js 提示：您使用了 p5.js 的保留变量 "PI"，请确保将变量名更改为其他名称。(https://p5js.org/reference/#/p5/PI)
+> 🌸 p5.js 提示：您使用了 p5.js 的保留变量 "PI"，请确保将变量名更改为其他名称。(https://p5js.org/reference/p5/PI)
 
 <ins>重新定义 p5.js 保留函数的示例</ins>
 ```javascript
@@ -369,7 +369,7 @@ function preLoad() {
 }
 ```
 FES 将在控制台生成以下消息：
-> 🌸 p5.js 提示：似乎您可能误写了 preLoad，应该是 preload。如果这不是您的意图，请进行更正。(http://p5js.org/reference/#/p5/preload)
+> 🌸 p5.js 提示：似乎您可能误写了 preLoad，应该是 preload。如果这不是您的意图，请进行更正。(http://p5js.org/reference/p5/preload)
 
 ##### 位置
 core/friendly_errors/fes_core.js

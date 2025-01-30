@@ -71,7 +71,7 @@ Cualquier cosa en un bloque de estos se interpretará como documentación de ref
 
 ## Bloque de comentarios de referencia
 
-Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/#/p5/sin).
+Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/p5/sin).
 
 ```
 /**
@@ -262,7 +262,7 @@ Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas 
 * </code></div>
 ```
 
-Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](http://p5js.org/reference/#/p5/tint) como ejemplo.
+Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](http://p5js.org/reference/p5/tint) como ejemplo.
 
 ### Agregar descripción a un lienzo usando `describe()`
 

@@ -71,7 +71,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ## 레퍼런스 주석 블록
 
-앞서 보았던 `sin()` 함수의 레퍼런스 주석 블록을 조금 더 자세히 살펴보고, 각 섹션이 어떤 역할을 하는지 알아봅시다. 주석으로 작성한 내용이 실제 [`sin()`](https://p5js.org/reference/#/p5/sin) 레퍼런스 페이지에서는 어떻게 보여지는지 비교해보세요.
+앞서 보았던 `sin()` 함수의 레퍼런스 주석 블록을 조금 더 자세히 살펴보고, 각 섹션이 어떤 역할을 하는지 알아봅시다. 주석으로 작성한 내용이 실제 [`sin()`](https://p5js.org/reference/p5/sin) 레퍼런스 페이지에서는 어떻게 보여지는지 비교해보세요.
 
 ```
 /**
@@ -262,7 +262,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 * </code></div>
 ```
 
-만약, 예제 코드가 외부 애셋 파일을 사용해야 한다면, 필요한 파일들을 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 폴더에 넣어두세요(이미 해당 폴더에 존재하는 파일을 재사용해도 됩니다). 그리고 코드에서 "assets/filename.ext" 경로로 파일을 불러와 사용하면 됩니다. [tint()](http://p5js.org/reference/#/p5/tint) 레퍼런스를 참고하세요.
+만약, 예제 코드가 외부 애셋 파일을 사용해야 한다면, 필요한 파일들을 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 폴더에 넣어두세요(이미 해당 폴더에 존재하는 파일을 재사용해도 됩니다). 그리고 코드에서 "assets/filename.ext" 경로로 파일을 불러와 사용하면 됩니다. [tint()](http://p5js.org/reference/p5/tint) 레퍼런스를 참고하세요.
 
 ### `describe()`로 캔버스 설명 추가하기
 

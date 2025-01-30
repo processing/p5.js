@@ -1174,7 +1174,7 @@ function environment(p5, fn){
    *   textWrap(CHAR);
    *   text(url, 0, 40, 100);
    *
-   *   describe('The URL "https://p5js.org/reference/#/p5/getURL" written in black on a gray background.');
+   *   describe('The URL "https://p5js.org/reference/p5/getURL" written in black on a gray background.');
    * }
    * </code>
    * </div>
