@@ -8,11 +8,6 @@ export function isCode(input) {
   if (typeof input !== 'string') {
     return false;
   }
-
-  if (input.length === 1 && /[0-9]/.test(input)) {
-    return true;
-  }
-  
   return input.length > 1;
 }
 function keyboard(p5, fn){
@@ -636,8 +631,10 @@ function keyboard(p5, fn){
       this.code = null;
     } else {
       // If other keys are still pressed, update code to the last pressed key
+      const lastPressedCode = Object.keys(this._downKeyCodes).pop();
+      this.code = lastPressedCode;
       const lastPressedKey = Object.keys(this._downKeys).pop();
-      this.code = lastPressedKey;
+      this.key = lastPressedKey;
     }
 
     const context = this._isGlobal ? window : this;
@@ -919,9 +916,6 @@ function keyboard(p5, fn){
   function isCode(input) {
     if (typeof input !== 'string') {
       return false;
-    }
-    if (input.length === 1 && /[0-9]/.test(input)) {
-      return true;
     }
     return input.length > 1;
   }

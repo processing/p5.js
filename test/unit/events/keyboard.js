@@ -190,10 +190,11 @@ suite('Keyboard Events', function() {
       assert.isFalse(isCode([]));
     });
   
-    test('returns false for single non-digit characters', function() {
+    test('returns false for single non-digit and digit characters', function() {
       assert.isFalse(isCode('a'));
       assert.isFalse(isCode('Z'));
-      assert.isFalse(isCode('!'));
+      assert.isFalse(isCode('1'));
+      assert.isFalse(isCode('2'));
       assert.isFalse(isCode(' '));
     });
   
