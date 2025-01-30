@@ -1098,6 +1098,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://www.khamilton.co.uk"><img src="https://avatars.githubusercontent.com/u/4013283?v=4?s=120" width="120px;" alt="Kristian Hamilton"/><br /><sub><b>Kristian Hamilton</b></sub></a><br /><a href="#example-khamiltonuk" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://keshav-portfolio-resume.netlify.app/"><img src="https://avatars.githubusercontent.com/u/34001173?v=4?s=120" width="120px;" alt="Keshav Gupta"/><br /><sub><b>Keshav Gupta</b></sub></a><br /><a href="#example-keshavg2" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://riteshpatil.com"><img src="https://avatars.githubusercontent.com/u/56112399?v=4?s=120" width="120px;" alt="Ritesh Patil"/><br /><sub><b>Ritesh Patil</b></sub></a><br /><a href="#example-riteshsp2000" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://gabrielsroka.github.io"><img src="https://avatars.githubusercontent.com/u/14354736?v=4?s=120" width="120px;" alt="Gabriel Sroka"/><br /><sub><b>Gabriel Sroka</b></sub></a><br /><a href="#example-gabrielsroka" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
