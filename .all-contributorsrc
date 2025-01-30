@@ -6613,6 +6613,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "",
+      "name": "Aaron Welles",
+      "avatar_url": "https://hello-assets.p5js.org/placeholder_avatar.png",
+      "profile": "",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
