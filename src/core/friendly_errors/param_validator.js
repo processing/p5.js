@@ -19,10 +19,13 @@ function validateParams(p5, fn, lifecycles) {
   // const p5Constructors = {};
   // NOTE: This is a tempt fix for unit test but is not correct
   // Attaced constructors are `undefined`
-  const p5Constructors = Object.keys(dataDoc).reduce((acc, val) => {
-    if (val !== 'p5') {
-      const className = val.substring(3);
-      acc[className] = p5[className];
+  const p5Constructors = Object.keys(p5).reduce((acc, val) => {
+    if (
+      val.match(/^[A-Z]/) && // Starts with a capital
+      !val.match(/^[A-Z][A-Z0-9]*$/) && // Is not an all caps constant
+      p5[val] instanceof Function // Is a function
+    ) {
+      acc[val] = p5[val];
     }
     return acc;
   }, {});
@@ -125,18 +128,6 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {z.ZodSchema} Zod schema
    */
   fn.generateZodSchemasForFunc = function (func) {
-    // A special case for `p5.Color.paletteLerp`, which has an unusual and
-    // complicated function signature not shared by any other function in p5.
-    if (func === 'p5.Color.paletteLerp') {
-      return z.tuple([
-        z.array(z.tuple([
-          z.instanceof(p5.Color),
-          z.number()
-        ])),
-        z.number()
-      ]);
-    }
-
     const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = dataDoc[funcClass][funcName];
 
@@ -149,17 +140,26 @@ function validateParams(p5, fn, lifecycles) {
 
     // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
     const generateTypeSchema = type => {
+      if (!type) return z.any();
+
       const isArray = type.endsWith('[]');
       const baseType = isArray ? type.slice(0, -2) : type;
 
       let typeSchema;
 
-      // Type only contains uppercase letters and underscores -> type is a
-      // constant. Note that because we're ultimately interested in the value of
+      // Check for constants. Note that because we're ultimately interested in the value of
       // the constant, mapping constants to their values via `constantsMap` is
       // necessary.
-      if (/^[A-Z_]+$/.test(baseType)) {
+      if (baseType in constantsMap) {
         typeSchema = z.literal(constantsMap[baseType]);
+      }
+      // Some more constants are attached directly to p5.prototype, e.g. by addons:
+      else if (baseType.match(/^[A-Z][A-Z0-9]*$/) && baseType in fn) {
+        typeSchema = z.literal(fn[baseType]);
+      }
+      // Function types
+      else if (baseType.startsWith('function')) {
+        typeSchema = z.function();
       }
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
       else if (baseType.startsWith('p5')) {
@@ -169,6 +169,19 @@ function validateParams(p5, fn, lifecycles) {
       // For primitive types and web API objects.
       else if (schemaMap[baseType]) {
         typeSchema = schemaMap[baseType];
+      }
+      // Tuple types
+      else if (baseType.startsWith('[') && baseType.endsWith(']')) {
+        typeSchema = z.tuple(
+          baseType
+            .slice(1, -1)
+            .split(/, */g)
+            .map(entry => generateTypeSchema(entry))
+        );
+      }
+      // JavaScript classes, e.g. Request
+      else if (baseType.match(/^[A-Z]/) && baseType in window) {
+        typeSchema = z.instanceof(window[baseType]);
       } else {
         throw new Error(`Unsupported type '${type}' in parameter validation. Please report this issue.`);
       }
@@ -179,8 +192,8 @@ function validateParams(p5, fn, lifecycles) {
     // Generate a schema for a single parameter. In the case where a parameter can
     // be of multiple types, `generateTypeSchema` is called for each type.
     const generateParamSchema = param => {
-      const isOptional = param.endsWith('?');
-      param = param.replace(/\?$/, '');
+      const isOptional = param?.endsWith('?');
+      param = param?.replace(/\?$/, '');
 
       let schema;
 
@@ -193,7 +206,7 @@ function validateParams(p5, fn, lifecycles) {
       // our constants sometimes have numeric or non-primitive values.
       // 2) In some cases, the type can be constants or strings, making z.enum()
       // insufficient for the use case.
-      if (param.includes('|')) {
+      if (param?.includes('|')) {
         const types = param.split('|');
         schema = z.union(types
           .map(t => generateTypeSchema(t))
@@ -218,11 +231,11 @@ function validateParams(p5, fn, lifecycles) {
     // combinations that are valid for all numbers of parameters.
     const generateOverloadCombinations = params => {
       // No optional parameters, return the original parameter list right away.
-      if (!params.some(p => p.endsWith('?'))) {
+      if (!params.some(p => p?.endsWith('?'))) {
         return [params];
       }
 
-      const requiredParamsCount = params.filter(p => !p.endsWith('?')).length;
+      const requiredParamsCount = params.filter(p => p === null || !p.endsWith('?')).length;
       const result = [];
 
       for (let i = requiredParamsCount; i <= params.length; i++) {
@@ -332,7 +345,7 @@ function validateParams(p5, fn, lifecycles) {
   /**
    * Prints a friendly error message after parameter validation, if validation
    * has failed.
-   * 
+   *
    * @method _friendlyParamError
    * @private
    * @param {z.ZodError} zodErrorObj - The Zod error object containing validation errors.
@@ -423,7 +436,7 @@ function validateParams(p5, fn, lifecycles) {
 
     // Generates a link to the documentation based on the given function name.
     // TODO: Check if the link is reachable before appending it to the error
-    // message. 
+    // message.
     const generateDocumentationLink = (func) => {
       const { funcName, funcClass } = extractFuncNameAndClass(func);
       const p5BaseUrl = 'https://p5js.org/reference';

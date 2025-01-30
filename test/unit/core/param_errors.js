@@ -218,7 +218,7 @@ suite('Validate Params', function () {
         [new mockP5.Color(), 0.8],
         [new mockP5.Color(), 0.5]
       ];
-      const result = mockP5Prototype.validate('p5.Color.paletteLerp', [colorStops, 0.5]);
+      const result = mockP5Prototype.validate('p5.paletteLerp', [colorStops, 0.5]);
       assert.isTrue(result.success);
     })
   })

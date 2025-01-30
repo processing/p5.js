@@ -4,7 +4,11 @@ import curves from '../../../src/shape/curves';
 suite('Curves', function() {
   beforeAll(function() {
     mockP5Prototype._renderer = {
-      _curveTightness: 0
+      states: {
+        splineProperties: {
+          tightness: 0
+        }
+      }
     };
     curves(mockP5, mockP5Prototype);
   });

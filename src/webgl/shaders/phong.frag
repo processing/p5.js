@@ -49,7 +49,7 @@ void main(void) {
   inputs.color = isTexture
       ? TEXTURE(uSampler, vTexCoord) * uTint/255.
       : vColor;
-  if (isTexture) {
+  if (isTexture && inputs.color.a > 0.0) {
     // Textures come in with premultiplied alpha. Temporarily unpremultiply it
     // so hooks users don't have to think about premultiplied alpha.
     inputs.color.rgb /= inputs.color.a;
