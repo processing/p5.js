@@ -1100,6 +1100,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="http://riteshpatil.com"><img src="https://avatars.githubusercontent.com/u/56112399?v=4?s=120" width="120px;" alt="Ritesh Patil"/><br /><sub><b>Ritesh Patil</b></sub></a><br /><a href="#example-riteshsp2000" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://gabrielsroka.github.io"><img src="https://avatars.githubusercontent.com/u/14354736?v=4?s=120" width="120px;" alt="Gabriel Sroka"/><br /><sub><b>Gabriel Sroka</b></sub></a><br /><a href="#example-gabrielsroka" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://kccon.ch"><img src="https://avatars.githubusercontent.com/u/26172283?v=4?s=120" width="120px;" alt="Casey Conchinha"/><br /><sub><b>Casey Conchinha</b></sub></a><br /><a href="#example-kcconch" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/davidblitz"><img src="https://avatars.githubusercontent.com/u/13055497?v=4?s=120" width="120px;" alt="davidblitz"/><br /><sub><b>davidblitz</b></sub></a><br /><a href="#example-davidblitz" title="Examples">💡</a></td>
     </tr>
   </tbody>
 </table>
