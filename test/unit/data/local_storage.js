@@ -1,83 +1,86 @@
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import storage from '../../../src/data/local_storage';
+import p5Color from '../../../src/color/p5.Color';
+import creatingReading from '../../../src/color/creating_reading';
+import p5Vector from '../../../src/math/p5.Vector';
+import math from '../../../src/math/math';
+
 suite('local storage', function() {
-  var myp5;
-  var myBoolean = false;
-  var myObject = { one: 1, two: { nested: true } };
-  var myNumber = 46;
-  var myString = 'coolio';
-  var myColor;
-  var myVector;
+  const myBoolean = false;
+  const myObject = { one: 1, two: { nested: true } };
+  const myNumber = 46;
+  const myString = 'coolio';
+  let myColor;
+  let myVector;
 
-  var hardCodedTypeID = 'p5TypeID';
+  const hardCodedTypeID = 'p5TypeID';
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        myColor = myp5.color(40, 100, 70);
-        myVector = myp5.createVector(10, 20, 30);
-        myp5.storeItem('myBoolean', myBoolean);
-        myp5.storeItem('myObject', myObject);
-        myp5.storeItem('myNumber', myNumber);
-        myp5.storeItem('myString', myString);
-        myp5.storeItem('myColor', myColor);
-        myp5.storeItem('myVector', myVector);
-        done();
-      };
-    });
-  });
+  beforeAll(function() {
+    storage(mockP5, mockP5Prototype);
+    p5Color(mockP5, mockP5Prototype, {});
+    creatingReading(mockP5, mockP5Prototype);
+    p5Vector(mockP5, mockP5Prototype);
+    math(mockP5, mockP5Prototype);
 
-  teardown(function() {
-    myp5.remove();
+    mockP5Prototype.storeItem('myBoolean', myBoolean);
+    mockP5Prototype.storeItem('myObject', myObject);
+    mockP5Prototype.storeItem('myNumber', myNumber);
+    mockP5Prototype.storeItem('myString', myString);
+
+    myColor = mockP5Prototype.color(40, 100, 70);
+    myVector = mockP5Prototype.createVector(10, 20, 30);
+    mockP5Prototype.storeItem('myColor', myColor);
+    mockP5Prototype.storeItem('myVector', myVector);
   });
 
   suite('all keys and type keys should exist in local storage', function() {
     test('boolean storage retrieval should work', function() {
-      assert.isTrue(myp5.getItem('myBoolean') === false);
+      assert.equal(mockP5Prototype.getItem('myBoolean'), false);
     });
     test('boolean storage should store the correct type ID', function() {
-      assert.isTrue(
-        localStorage.getItem('myBoolean' + hardCodedTypeID) === 'boolean'
+      assert.equal(
+        localStorage.getItem('myBoolean' + hardCodedTypeID), 'boolean'
       );
     });
     test('object storage should work', function() {
-      assert.deepEqual(myp5.getItem('myObject'), {
+      assert.deepEqual(mockP5Prototype.getItem('myObject'), {
         one: 1,
         two: { nested: true }
       });
     });
     test('object storage retrieval should store the correct type ID', function() {
-      assert.isTrue(
-        localStorage.getItem('myObject' + hardCodedTypeID) === 'object'
+      assert.equal(
+        localStorage.getItem('myObject' + hardCodedTypeID), 'object'
       );
     });
     test('number storage retrieval should work', function() {
-      assert.isTrue(myp5.getItem('myNumber') === 46);
+      assert.equal(mockP5Prototype.getItem('myNumber'), 46);
     });
     test('number storage should store the correct type ID', function() {
-      assert.isTrue(
-        localStorage.getItem('myNumber' + hardCodedTypeID) === 'number'
+      assert.equal(
+        localStorage.getItem('myNumber' + hardCodedTypeID), 'number'
       );
     });
     test('string storage retrieval should work', function() {
-      assert.isTrue(myp5.getItem('myString') === 'coolio');
+      assert.equal(mockP5Prototype.getItem('myString'), 'coolio');
     });
     test('string storage should store the correct type ID', function() {
-      assert.isTrue(
-        localStorage.getItem('myString' + hardCodedTypeID) === 'string'
+      assert.equal(
+        localStorage.getItem('myString' + hardCodedTypeID), 'string'
       );
     });
     test('p5 Color should retrieve as p5 Color', function() {
-      assert.isTrue(myp5.getItem('myColor') instanceof p5.Color);
+      assert.instanceOf(mockP5Prototype.getItem('myColor'), mockP5.Color);
     });
     test('p5 Vector should retrieve as p5 Vector', function() {
-      assert.isTrue(myp5.getItem('myVector') instanceof p5.Vector);
+      assert.instanceOf(mockP5Prototype.getItem('myVector'), mockP5.Vector);
     });
   });
 
   var checkRemoval = function(key) {
-    myp5.removeItem(key);
-    assert.deepEqual(myp5.getItem(key), null);
-    assert.deepEqual(myp5.getItem(key + hardCodedTypeID), null);
+    mockP5Prototype.removeItem(key);
+    assert.deepEqual(mockP5Prototype.getItem(key), null);
+    assert.deepEqual(mockP5Prototype.getItem(key + hardCodedTypeID), null);
   };
 
   suite('should be able to remove all items', function() {
@@ -109,14 +112,14 @@ suite('local storage', function() {
   suite('should be able to clear all items at once', function () {
     test('should remove all items set by storeItem()', function () {
       localStorage.setItem('extra', 'stuff');
-      myp5.clearStorage();
-      assert.deepEqual(myp5.getItem('myBoolean'), null);
-      assert.deepEqual(myp5.getItem('myNumber'), null);
-      assert.deepEqual(myp5.getItem('myObject'), null);
-      assert.deepEqual(myp5.getItem('myString'), null);
-      assert.deepEqual(myp5.getItem('myColor'), null);
-      assert.deepEqual(myp5.getItem('myVector'), null);
-      assert.deepEqual(myp5.getItem('extra'), 'stuff');
+      mockP5Prototype.clearStorage();
+      assert.deepEqual(mockP5Prototype.getItem('myBoolean'), null);
+      assert.deepEqual(mockP5Prototype.getItem('myNumber'), null);
+      assert.deepEqual(mockP5Prototype.getItem('myObject'), null);
+      assert.deepEqual(mockP5Prototype.getItem('myString'), null);
+      assert.deepEqual(mockP5Prototype.getItem('myColor'), null);
+      assert.deepEqual(mockP5Prototype.getItem('myVector'), null);
+      assert.deepEqual(mockP5Prototype.getItem('extra'), 'stuff');
     });
   });
 });

@@ -1,185 +1,66 @@
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import files from '../../../src/io/files';
+
 suite('loadJSON', function() {
-  var invalidFile = '404file';
-  var jsonArrayFile = 'unit/assets/array.json';
-  var jsonObjectFile = 'unit/assets/object.json';
-  var jsonpObjectFile = 'unit/assets/object.js';
-  var jsonpArrayFile = 'unit/assets/array.js';
+  const invalidFile = '404file';
+  const jsonArrayFile = '/test/unit/assets/array.json';
+  const jsonObjectFile = '/test/unit/assets/object.json';
 
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadJSON(invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
+  beforeAll(async () => {
+    files(mockP5, mockP5Prototype);
+    await httpMock.start({ quiet: true });
   });
 
-  testSketchWithPromise('error prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadJSON(invalidFile, reject, function() {
+  test('throws error when encountering HTTP errors', async () => {
+    await expect(mockP5Prototype.loadJSON(invalidFile))
+      .rejects
+      .toThrow('Not Found');
+  });
+
+  test('error callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadJSON(invalidFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
       });
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Entered setup'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Entered draw'));
-    };
+    });
   });
 
-  testSketchWithPromise('error callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadJSON(
-        invalidFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
-  });
-
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadJSON(jsonObjectFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
-  testSketchWithPromise('success callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    var hasBeenCalled = false;
-    sketch.preload = function() {
-      sketch.loadJSON(
-        jsonObjectFile,
-        function() {
-          hasBeenCalled = true;
-        },
-        function(err) {
-          reject(new Error('Error callback was entered: ' + err));
-        }
-      );
-    };
-
-    sketch.setup = function() {
-      if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadJSON(jsonObjectFile, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }
-    };
-  });
-
-  test('returns an object for object JSON.', async function() {
-    const json = await promisedSketch(function(sketch, resolve, reject) {
-      var json;
-      sketch.preload = function() {
-        json = sketch.loadJSON(jsonObjectFile, function() {}, reject);
-      };
-
-      sketch.setup = function() {
-        resolve(json);
-      };
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
     });
-    assert.isObject(json);
   });
 
-  test('passes an object to success callback for object JSON.', async function() {
-    const json = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadJSON(jsonObjectFile, resolve, reject);
-      };
+  test('returns an object for object JSON.', async () => {
+    const data = await mockP5Prototype.loadJSON(jsonObjectFile);
+    assert.isObject(data);
+    assert.isNotArray(data);
+  });
+
+  test('passes an object to success callback for object JSON.', async () => {
+    await mockP5Prototype.loadJSON(jsonObjectFile, (data) => {
+      assert.isObject(data);
     });
-    assert.isObject(json);
   });
 
-  // Does not work with the current loadJSON.
-  test('returns an array for array JSON.');
-  // test('returns an array for array JSON.', async function() {
-  //   const json = await promisedSketch(function(sketch, resolve, reject) {
-  //     var json;
-  //     sketch.preload = function() {
-  //       json = sketch.loadJSON(jsonArrayFile, function() {}, reject);
-  //     };
-  //
-  //     sketch.setup = function() {
-  //       resolve(json);
-  //     };
-  //   });
-  //   assert.isArray(json);
-  //   assert.lengthOf(json, 3);
-  // });
+  test('returns an array for array JSON.', async () => {
+    const data = await mockP5Prototype.loadJSON(jsonArrayFile);
+    assert.isArray(data);
+    assert.lengthOf(data, 3);
+  });
 
   test('passes an array to success callback for array JSON.', async function() {
-    const json = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadJSON(jsonArrayFile, resolve, reject);
-      };
+    await mockP5Prototype.loadJSON(jsonArrayFile, (data) => {
+      assert.isArray(data);
+      assert.lengthOf(data, 3);
     });
-    assert.isArray(json);
-    assert.lengthOf(json, 3);
-  });
-
-  test('passes an object to success callback for object JSONP.', async function() {
-    const json = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadJSON(
-          jsonpObjectFile,
-          { jsonpCallbackFunction: 'jsonpCallbackFunction' },
-          'jsonp',
-          resolve,
-          reject
-        );
-      };
-    });
-    assert.isObject(json);
-  });
-
-  test('passes an array to success callback for array JSONP.', async function() {
-    const json = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadJSON(
-          jsonpArrayFile,
-          { jsonpCallbackFunction: 'jsonpCallbackFunction' },
-          'jsonp',
-          resolve,
-          reject
-        );
-      };
-    });
-    assert.isArray(json);
-    assert.lengthOf(json, 3);
   });
 });

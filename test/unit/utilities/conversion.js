@@ -1,50 +1,40 @@
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import conversion from '../../../src/utilities/conversion';
+
 suite('Conversion', function() {
-  var myp5;
-
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
-    });
+  beforeAll(function() {
+    conversion(mockP5, mockP5Prototype);
   });
-
-  teardown(function() {
-    myp5.remove();
-  });
-
-  var result;
 
   suite('p5.prototype.float', function() {
     test('should be a function', function() {
-      assert.ok(myp5.float);
-      assert.typeOf(myp5.float, 'function');
+      assert.ok(mockP5Prototype.float);
+      assert.typeOf(mockP5Prototype.float, 'function');
     });
 
     test('should convert a string to its floating point representation', function() {
-      result = myp5.float('56.99998');
+      const result = mockP5Prototype.float('56.99998');
       assert.typeOf(result, 'Number');
       assert.strictEqual(result, 56.99998);
     });
 
     test('should return NaN for invalid string', function() {
-      result = myp5.float('cat');
+      const result = mockP5Prototype.float('cat');
       assert.isNaN(result);
     });
 
     test('should return Infinity for Infinity', function() {
-      result = myp5.float(Infinity);
+      const result = mockP5Prototype.float(Infinity);
       assert.strictEqual(result, Infinity);
     });
 
     test('should return -Infinity for -Infinity', function() {
-      result = myp5.float(-Infinity);
+      const result = mockP5Prototype.float(-Infinity);
       assert.strictEqual(result, -Infinity);
     });
 
     test('should return array of floating points and Nan', function() {
-      result = myp5.float(['1', '2.0', '3.1', 'giraffe']);
+      const result = mockP5Prototype.float(['1', '2.0', '3.1', 'giraffe']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [1, 2.0, 3.1, NaN]);
     });
@@ -52,48 +42,48 @@ suite('Conversion', function() {
 
   suite('p5.prototype.int', function() {
     test('should be a function', function() {
-      assert.ok(myp5.int);
-      assert.typeOf(myp5.int, 'function');
+      assert.ok(mockP5Prototype.int);
+      assert.typeOf(mockP5Prototype.int, 'function');
     });
 
     test('should convert false to its integer representation i.e. 0', function() {
-      result = myp5.int(false);
+      const result = mockP5Prototype.int(false);
       assert.typeOf(result, 'Number');
       assert.strictEqual(result, 0);
     });
 
     test('should convert true to its integer representation i.e. 1', function() {
-      result = myp5.int(true);
+      const result = mockP5Prototype.int(true);
       assert.strictEqual(result, 1);
     });
 
     test('should convert a string to its integer representation', function() {
-      result = myp5.int('1001');
+      const result = mockP5Prototype.int('1001');
       assert.strictEqual(result, 1001);
     });
 
     test('should return NaN for invalid string', function() {
-      result = myp5.int('cat');
+      const result = mockP5Prototype.int('cat');
       assert.isNaN(result);
     });
 
     test('should return Infinity for Infinity', function() {
-      result = myp5.int(Infinity);
+      const result = mockP5Prototype.int(Infinity);
       assert.strictEqual(result, Infinity);
     });
 
     test('should return -Infinity for -Infinity', function() {
-      result = myp5.int(-Infinity);
+      const result = mockP5Prototype.int(-Infinity);
       assert.strictEqual(result, -Infinity);
     });
 
     test('should convert float to its integer representation', function() {
-      result = myp5.int('-1001.9');
+      const result = mockP5Prototype.int('-1001.9');
       assert.strictEqual(result, -1001);
     });
 
     test('should return array of integers and NaN', function() {
-      result = myp5.int(['1', '2.3', '-3.5', 'giraffe', false, 4.7]);
+      const result = mockP5Prototype.int(['1', '2.3', '-3.5', 'giraffe', false, 4.7]);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [1, 2, -3, NaN, 0, 4]);
     });
@@ -101,28 +91,28 @@ suite('Conversion', function() {
 
   suite('p5.prototype.str', function() {
     test('should be a function', function() {
-      assert.ok(myp5.str);
-      assert.typeOf(myp5.str, 'function');
+      assert.ok(mockP5Prototype.str);
+      assert.typeOf(mockP5Prototype.str, 'function');
     });
 
     test('should convert false to string', function() {
-      result = myp5.str(false);
+      const result = mockP5Prototype.str(false);
       assert.typeOf(result, 'String');
       assert.strictEqual(result, 'false');
     });
 
     test('should convert true to string', function() {
-      result = myp5.str(true);
+      const result = mockP5Prototype.str(true);
       assert.strictEqual(result, 'true');
     });
 
     test('should convert a number to string', function() {
-      result = myp5.str(45);
+      const result = mockP5Prototype.str(45);
       assert.strictEqual(result, '45');
     });
 
     test('should return array of strings', function() {
-      result = myp5.str([1, 2.3, true, -4.5]);
+      const result = mockP5Prototype.str([1, 2.3, true, -4.5]);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, ['1', '2.3', 'true', '-4.5']);
     });
@@ -130,52 +120,52 @@ suite('Conversion', function() {
 
   suite('p5.prototype.boolean', function() {
     test('should be a function', function() {
-      assert.ok(myp5.boolean);
-      assert.typeOf(myp5.boolean, 'function');
+      assert.ok(mockP5Prototype.boolean);
+      assert.typeOf(mockP5Prototype.boolean, 'function');
     });
 
     test('should convert 1 to true', function() {
-      result = myp5.boolean(1);
+      const result = mockP5Prototype.boolean(1);
       assert.strictEqual(result, true);
     });
 
     test('should convert a number to true', function() {
-      result = myp5.boolean(154);
+      const result = mockP5Prototype.boolean(154);
       assert.strictEqual(result, true);
     });
 
     test('should return true for Infinity', function() {
-      result = myp5.boolean(Infinity);
+      const result = mockP5Prototype.boolean(Infinity);
       assert.strictEqual(result, true);
     });
 
     test('should convert 0 to false', function() {
-      result = myp5.boolean(0);
+      const result = mockP5Prototype.boolean(0);
       assert.strictEqual(result, false);
     });
 
     test('should convert a string to false', function() {
-      result = myp5.boolean('1');
+      const result = mockP5Prototype.boolean('1');
       assert.strictEqual(result, false);
     });
 
     test('should convert a string to false', function() {
-      result = myp5.boolean('0');
+      const result = mockP5Prototype.boolean('0');
       assert.strictEqual(result, false);
     });
 
     test('should convert "true" to true', function() {
-      result = myp5.boolean('true');
+      const result = mockP5Prototype.boolean('true');
       assert.strictEqual(result, true);
     });
 
     test('should return false for empty string', function() {
-      result = myp5.boolean('');
+      const result = mockP5Prototype.boolean('');
       assert.strictEqual(result, false);
     });
 
     test('should return array of boolean', function() {
-      result = myp5.boolean([1, true, -4.5, Infinity, 'cat', '23']);
+      const result = mockP5Prototype.boolean([1, true, -4.5, Infinity, 'cat', '23']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [true, true, true, true, false, false]);
     });
@@ -183,42 +173,42 @@ suite('Conversion', function() {
 
   suite('p5.prototype.byte', function() {
     test('should be a function', function() {
-      assert.ok(myp5.byte);
-      assert.typeOf(myp5.byte, 'function');
+      assert.ok(mockP5Prototype.byte);
+      assert.typeOf(mockP5Prototype.byte, 'function');
     });
 
     test('should return 127 for 127', function() {
-      result = myp5.byte(127);
+      const result = mockP5Prototype.byte(127);
       assert.strictEqual(result, 127);
     });
 
     test('should return -128 for 128', function() {
-      result = myp5.byte(128);
+      const result = mockP5Prototype.byte(128);
       assert.strictEqual(result, -128);
     });
 
     test('should return 23 for 23.4', function() {
-      result = myp5.byte(23.4);
+      const result = mockP5Prototype.byte(23.4);
       assert.strictEqual(result, 23);
     });
 
     test('should return 1 for true', function() {
-      result = myp5.byte(true);
+      const result = mockP5Prototype.byte(true);
       assert.strictEqual(result, 1);
     });
 
     test('should return 23 for "23.4"', function() {
-      result = myp5.byte('23.4');
+      const result = mockP5Prototype.byte('23.4');
       assert.strictEqual(result, 23);
     });
 
     test('should return NaN for invalid string', function() {
-      result = myp5.byte('cat');
+      const result = mockP5Prototype.byte('cat');
       assert.isNaN(result);
     });
 
     test('should return array', function() {
-      result = myp5.byte([0, 255, '100']);
+      const result = mockP5Prototype.byte([0, 255, '100']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [0, -1, 100]);
     });
@@ -226,23 +216,23 @@ suite('Conversion', function() {
 
   suite('p5.prototype.char', function() {
     test('should be a function', function() {
-      assert.ok(myp5.char);
-      assert.typeOf(myp5.char, 'function');
+      assert.ok(mockP5Prototype.char);
+      assert.typeOf(mockP5Prototype.char, 'function');
     });
 
     test('should return the char representation of the number', function() {
-      result = myp5.char(65);
+      const result = mockP5Prototype.char(65);
       assert.typeOf(result, 'String');
       assert.strictEqual(result, 'A');
     });
 
     test('should return the char representation of the string', function() {
-      result = myp5.char('65');
+      const result = mockP5Prototype.char('65');
       assert.strictEqual(result, 'A');
     });
 
     test('should return array', function() {
-      result = myp5.char([65, 66, '67']);
+      const result = mockP5Prototype.char([65, 66, '67']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, ['A', 'B', 'C']);
     });
@@ -250,18 +240,18 @@ suite('Conversion', function() {
 
   suite('p5.prototype.unchar', function() {
     test('should be a function', function() {
-      assert.ok(myp5.unchar);
-      assert.typeOf(myp5.unchar, 'function');
+      assert.ok(mockP5Prototype.unchar);
+      assert.typeOf(mockP5Prototype.unchar, 'function');
     });
 
     test('should return the integer representation of char', function() {
-      result = myp5.unchar('A');
+      const result = mockP5Prototype.unchar('A');
       assert.typeOf(result, 'Number');
       assert.strictEqual(result, 65);
     });
 
     test('should return array of numbers', function() {
-      result = myp5.unchar(['A', 'B', 'C']);
+      const result = mockP5Prototype.unchar(['A', 'B', 'C']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [65, 66, 67]);
     });
@@ -269,30 +259,30 @@ suite('Conversion', function() {
 
   suite('p5.prototype.hex', function() {
     test('should be a function', function() {
-      assert.ok(myp5.hex);
-      assert.typeOf(myp5.hex, 'function');
+      assert.ok(mockP5Prototype.hex);
+      assert.typeOf(mockP5Prototype.hex, 'function');
     });
 
     test('should return the hex representation of the number', function() {
-      result = myp5.hex(65);
+      const result = mockP5Prototype.hex(65);
       assert.typeOf(result, 'String');
       assert.strictEqual(result, '00000041');
     });
 
     test('should return FFFFFFFF for Infinity', function() {
-      result = myp5.hex(Infinity);
+      const result = mockP5Prototype.hex(Infinity);
       assert.typeOf(result, 'String');
       assert.strictEqual(result, 'FFFFFFFF');
     });
 
     test('should return 00000000 for -Infinity', function() {
-      result = myp5.hex(-Infinity);
+      const result = mockP5Prototype.hex(-Infinity);
       assert.typeOf(result, 'String');
       assert.strictEqual(result, '00000000');
     });
 
     test('should return array', function() {
-      result = myp5.hex([65, 66, 67]);
+      const result = mockP5Prototype.hex([65, 66, 67]);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, ['00000041', '00000042', '00000043']);
     });
@@ -300,28 +290,28 @@ suite('Conversion', function() {
 
   suite('p5.prototype.unhex', function() {
     test('should be a function', function() {
-      assert.ok(myp5.unhex);
-      assert.typeOf(myp5.unchar, 'function');
+      assert.ok(mockP5Prototype.unhex);
+      assert.typeOf(mockP5Prototype.unchar, 'function');
     });
 
     test('should return the integer representation of hex', function() {
-      result = myp5.unhex('00000041');
+      const result = mockP5Prototype.unhex('00000041');
       assert.typeOf(result, 'Number');
       assert.strictEqual(result, 65);
     });
 
     test('should return the NaN for empty string', function() {
-      result = myp5.unhex('');
+      const result = mockP5Prototype.unhex('');
       assert.isNaN(result);
     });
 
-    test.skip('should return the NaN for invalid hex string', function() {
-      result = myp5.unhex('cat');
+    test('should return the NaN for invalid hex string', function() {
+      const result = mockP5Prototype.unhex('lorem');
       assert.isNaN(result);
     });
 
     test('should return array of numbers', function() {
-      result = myp5.unhex(['00000041', '00000042', '00000043']);
+      const result = mockP5Prototype.unhex(['00000041', '00000042', '00000043']);
       assert.typeOf(result, 'Array');
       assert.deepEqual(result, [65, 66, 67]);
     });

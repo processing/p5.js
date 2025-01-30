@@ -6,41 +6,15 @@
  * @requires core
  */
 
-import p5 from '../core/main';
 import * as constants from '../core/constants';
+import { Element } from '../dom/p5.Element';
+import { Renderer } from '../core/p5.Renderer';
+import { MediaElement } from '../dom/p5.MediaElement';
+import { Image } from '../image/p5.Image';
+import { Graphics } from '../core/p5.Graphics';
+import { FramebufferTexture } from './p5.Framebuffer';
 
-/**
- * Texture class for WEBGL Mode
- * @private
- * @class p5.Texture
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
- * will provide the GL context for this new p5.Texture
- * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData|p5.Framebuffer|p5.FramebufferTexture|ImageData} [obj] the
- * object containing the image data to store in the texture.
- * @param {Object} [settings] optional A javascript object containing texture
- * settings.
- * @param {Number} [settings.format] optional The internal color component
- * format for the texture. Possible values for format include gl.RGBA,
- * gl.RGB, gl.ALPHA, gl.LUMINANCE, gl.LUMINANCE_ALPHA. Defaults to gl.RBGA
- * @param {Number} [settings.minFilter] optional The texture minification
- * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
- * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
- * @param {Number} [settings.magFilter] optional The texture magnification
- * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
- * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
- * @param {Number} [settings.wrapS] optional The texture wrap settings for
- * the s coordinate, or x axis. Possible values are gl.CLAMP_TO_EDGE,
- * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
- * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
- * @param {Number} [settings.wrapT] optional The texture wrap settings for
- * the t coordinate, or y axis. Possible values are gl.CLAMP_TO_EDGE,
- * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
- * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
- * @param {Number} [settings.dataType] optional The data type of the texel
- * data. Possible values are gl.UNSIGNED_BYTE or gl.FLOAT. There are more
- * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
- */
-p5.Texture = class Texture {
+class Texture {
   constructor (renderer, obj, settings) {
     this._renderer = renderer;
 
@@ -89,20 +63,20 @@ p5.Texture = class Texture {
 
     // used to determine if this texture might need constant updating
     // because it is a video or gif.
-    this.isSrcMediaElement =
-      typeof p5.MediaElement !== 'undefined' && obj instanceof p5.MediaElement;
+    this.isSrcMediaElement = false;
+      typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
     this._videoPrevUpdateTime = 0;
     this.isSrcHTMLElement =
-      typeof p5.Element !== 'undefined' &&
-      obj instanceof p5.Element &&
-      !(obj instanceof p5.Graphics) &&
-      !(obj instanceof p5.Renderer);
-    this.isSrcP5Image = obj instanceof p5.Image;
-    this.isSrcP5Graphics = obj instanceof p5.Graphics;
-    this.isSrcP5Renderer = obj instanceof p5.Renderer;
+      typeof Element !== 'undefined' &&
+      obj instanceof Element &&
+      !(obj instanceof Graphics) &&
+      !(obj instanceof Renderer);
+    this.isSrcP5Image = obj instanceof Image;
+    this.isSrcP5Graphics = obj instanceof Graphics;
+    this.isSrcP5Renderer = obj instanceof Renderer;
     this.isImageData =
       typeof ImageData !== 'undefined' && obj instanceof ImageData;
-    this.isFramebufferTexture = obj instanceof p5.FramebufferTexture;
+    this.isFramebufferTexture = obj instanceof FramebufferTexture;
 
     const textureData = this._getTextureDataFromSource();
     this.width = textureData.width;
@@ -121,15 +95,15 @@ p5.Texture = class Texture {
       textureData = this.src.canvas;
     } else if (
       this.isSrcMediaElement ||
-    this.isSrcP5Graphics ||
-    this.isSrcP5Renderer ||
-    this.isSrcHTMLElement
+      this.isSrcHTMLElement
     ) {
-    // if param is a video HTML element
+      // if param is a video HTML element
       if (this.src._ensureCanvas) {
         this.src._ensureCanvas();
       }
-      textureData = this.src.canvas || this.src.elt;
+      textureData = this.src.elt;
+    } else if (this.isSrcP5Graphics || this.isSrcP5Renderer) {
+      textureData = this.src.canvas;
     } else if (this.isImageData) {
       textureData = this.src;
     }
@@ -149,8 +123,8 @@ p5.Texture = class Texture {
       this.glTex = gl.createTexture();
     }
 
-    this.glWrapS = this._renderer.textureWrapX;
-    this.glWrapT = this._renderer.textureWrapY;
+    this.glWrapS = this._renderer.states.textureWrapX;
+    this.glWrapT = this._renderer.states.textureWrapY;
 
     this.setWrapMode(this.glWrapS, this.glWrapT);
     this.bindTexture();
@@ -236,7 +210,7 @@ p5.Texture = class Texture {
         // flag for update in a future frame.
         // if we don't do this, a paused video, for example, may not
         // send the first frame to texture memory.
-        data.setModified(true);
+        data.setModified && data.setModified(true);
       }
     } else if (this.isSrcP5Image) {
       // for an image, we only update if the modified field has been set,
@@ -453,9 +427,9 @@ p5.Texture = class Texture {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
     this.unbindTexture();
   }
-};
+}
 
-export class MipmapTexture extends p5.Texture {
+class MipmapTexture extends Texture {
   constructor(renderer, levels, settings) {
     super(renderer, levels, settings);
     const gl = this._renderer.GL;
@@ -500,6 +474,43 @@ export class MipmapTexture extends p5.Texture {
   update() {}
 }
 
+function texture(p5, fn){
+  /**
+   * Texture class for WEBGL Mode
+   * @private
+   * @class p5.Texture
+   * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
+   * will provide the GL context for this new p5.Texture
+   * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData|p5.Framebuffer|p5.FramebufferTexture|ImageData} [obj] the
+   * object containing the image data to store in the texture.
+   * @param {Object} [settings] optional A javascript object containing texture
+   * settings.
+   * @param {Number} [settings.format] optional The internal color component
+   * format for the texture. Possible values for format include gl.RGBA,
+   * gl.RGB, gl.ALPHA, gl.LUMINANCE, gl.LUMINANCE_ALPHA. Defaults to gl.RBGA
+   * @param {Number} [settings.minFilter] optional The texture minification
+   * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+   * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+   * @param {Number} [settings.magFilter] optional The texture magnification
+   * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+   * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+   * @param {Number} [settings.wrapS] optional The texture wrap settings for
+   * the s coordinate, or x axis. Possible values are gl.CLAMP_TO_EDGE,
+   * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+   * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+   * @param {Number} [settings.wrapT] optional The texture wrap settings for
+   * the t coordinate, or y axis. Possible values are gl.CLAMP_TO_EDGE,
+   * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+   * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+   * @param {Number} [settings.dataType] optional The data type of the texel
+   * data. Possible values are gl.UNSIGNED_BYTE or gl.FLOAT. There are more
+   * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
+   */
+  p5.Texture = Texture;
+
+  p5.MipmapTexture = MipmapTexture;
+}
+
 export function checkWebGLCapabilities({ GL, webglVersion }) {
   const gl = GL;
   const supportsFloat = webglVersion === constants.WEBGL2
@@ -521,4 +532,9 @@ export function checkWebGLCapabilities({ GL, webglVersion }) {
   };
 }
 
-export default p5.Texture;
+export default texture;
+export { Texture, MipmapTexture };
+
+if(typeof p5 !== 'undefined'){
+  texture(p5, p5.prototype);
+}

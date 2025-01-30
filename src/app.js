@@ -1,106 +1,63 @@
 // core
 import p5 from './core/main';
-import './core/constants';
-import './core/environment';
-import './core/friendly_errors/stacktrace';
-import './core/friendly_errors/validate_params';
-import './core/friendly_errors/file_errors';
-import './core/friendly_errors/fes_core';
-import './core/friendly_errors/sketch_reader';
-import './core/helpers';
-import './core/legacy';
-import './core/preload';
-import './core/p5.Element';
-import './core/p5.Graphics';
-import './core/p5.Renderer';
-import './core/p5.Renderer2D';
-import './core/rendering';
-import './core/shim';
-import './core/structure';
-import './core/transform';
-import './core/shape/2d_primitives';
-import './core/shape/attributes';
-import './core/shape/curves';
-import './core/shape/vertex';
+import shape from './shape';
+shape(p5);
+
+// shapes
+import customShapes from './shape';
+customShapes(p5);
+
 //accessibility
-import './accessibility/outputs';
-import './accessibility/textOutput';
-import './accessibility/gridOutput';
-import './accessibility/color_namer';
+import accessibility from './accessibility';
+accessibility(p5);
+
 // color
-import './color/color_conversion';
-import './color/creating_reading';
-import './color/p5.Color';
-import './color/setting';
+import color from './color';
+color(p5);
+
+// core
+// currently, it only contains the test for parameter validation
+import friendlyErrors from './core/friendly_errors';
+friendlyErrors(p5);
 
 // data
-import './data/p5.TypedDict';
-import './data/local_storage.js';
+import data from './data';
+data(p5);
 
 // DOM
-import './dom/dom';
-
-// accessibility
-import './accessibility/describe';
+import dom from './dom';
+dom(p5);
 
 // events
-import './events/acceleration';
-import './events/keyboard';
-import './events/mouse';
-import './events/touch';
+import events from './events';
+events(p5);
 
 // image
-import './image/filters';
-import './image/image';
-import './image/loading_displaying';
-import './image/p5.Image';
-import './image/pixels';
+import image from './image';
+image(p5);
 
 // io
-import './io/files';
-import './io/p5.Table';
-import './io/p5.TableRow';
-import './io/p5.XML';
+import io from './io';
+io(p5);
 
 // math
-import './math/calculation';
-import './math/math';
-import './math/noise';
-import './math/p5.Vector';
-import './math/random';
-import './math/trigonometry';
-
-// typography
-import './typography/attributes';
-import './typography/loading_displaying';
-import './typography/p5.Font';
+import math from './math';
+math(p5);
 
 // utilities
-import './utilities/array_functions';
-import './utilities/conversion';
-import './utilities/string_functions';
-import './utilities/time_date';
+import utilities from './utilities';
+utilities(p5);
 
 // webgl
-import './webgl/3d_primitives';
-import './webgl/interaction';
-import './webgl/light';
-import './webgl/loading';
-import './webgl/material';
-import './webgl/p5.Camera';
-import './webgl/p5.DataArray';
-import './webgl/p5.Geometry';
-import './webgl/p5.Matrix';
-import './webgl/p5.Quat';
-import './webgl/p5.RendererGL.Immediate';
-import './webgl/p5.RendererGL';
-import './webgl/p5.RendererGL.Retained';
-import './webgl/p5.Framebuffer';
-import './webgl/p5.Shader';
-import './webgl/p5.RenderBuffer';
-import './webgl/p5.Texture';
-import './webgl/text';
+import webgl from './webgl';
+webgl(p5);
 
-import './core/init';
+// typography
+import type from './type'
+type(p5);
 
-module.exports = p5;
+import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
+Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+
+export default p5;
+

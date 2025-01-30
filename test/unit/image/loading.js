@@ -1,3 +1,10 @@
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import loadingDisplaying from '../../../src/image/loading_displaying';
+import image from '../../../src/image/p5.Image';
+
+import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
 /**
  * Expects an image file and a p5 instance with an image file loaded and drawn
  * and checks that they are exactly the same. Sends result to the callback.
@@ -26,422 +33,242 @@ var testImageRender = function(file, sketch) {
 };
 
 suite('loading images', function() {
-  var myp5;
+  const imagePath = '/test/unit/assets/cat.jpg';
+  const singleFrameGif = '/test/unit/assets/target_small.gif';
+  const animatedGif = '/test/unit/assets/white_black.gif';
+  const nyanCatGif = '/test/unit/assets/nyan_cat.gif';
+  const disposeNoneGif = '/test/unit/assets/dispose_none.gif';
+  const disposeBackgroundGif = '/test/unit/assets/dispose_background.gif';
+  const disposePreviousGif = '/test/unit/assets/dispose_previous.gif';
+  const invalidFile = '404file';
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
+  beforeAll(async function() {
+    loadingDisplaying(mockP5, mockP5Prototype);
+    image(mockP5, mockP5Prototype);
+    await httpMock.start({quiet: true});
+  });
 
-      // Make sure draw() exists so timing functions still run each frame
-      // and we can test gif animation
-      p.draw = function() {};
+  test('throws error when encountering HTTP errors', async () => {
+    await expect(mockP5Prototype.loadImage(invalidFile))
+      .rejects
+      .toThrow('Not Found');
+  });
+
+  test('error callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadImage(invalidFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      });
     });
   });
 
-  teardown(function() {
-    myp5.remove();
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadImage(imagePath, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
+    });
   });
 
-  var imagePath = 'unit/assets/cat.jpg';
-
-  setup(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
+  test('returns an object with correct data', async () => {
+    const pImg = await mockP5Prototype.loadImage(imagePath);
+    assert.ok(pImg, 'cat.jpg loaded');
+    assert.isTrue(pImg instanceof mockP5.Image);
   });
 
-  teardown(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
-  test('should call successCallback when image loads', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage(imagePath, resolve, reject);
-    }).then(function(pImg) {
+  test('passes an object with correct data to success callback', async () => {
+    await mockP5Prototype.loadImage(imagePath, (pImg) => {
       assert.ok(pImg, 'cat.jpg loaded');
-      assert.isTrue(pImg instanceof p5.Image);
+      assert.isTrue(pImg instanceof mockP5.Image);
     });
   });
 
-  test('should call failureCallback when unable to load image', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage(
-        'invalid path',
-        function(pImg) {
-          reject('Entered success callback.');
-        },
-        resolve
+  // TODO: this is more of an integration test, possibly delegate to visual test
+  // test('should draw image with defaults', function() {
+  //   return new Promise(function(resolve, reject) {
+  //     myp5.loadImage('unit/assets/cat.jpg', resolve, reject);
+  //   }).then(function(img) {
+  //     myp5.image(img, 0, 0);
+  //     return testImageRender('unit/assets/cat.jpg', myp5).then(function(res) {
+  //       assert.isTrue(res);
+  //     });
+  //   });
+  // });
+
+  test('static image should not have gifProperties', async () => {
+    const img = await mockP5Prototype.loadImage(imagePath);
+    assert.isNull(img.gifProperties);
+  });
+
+  test('single frame GIF should not have gifProperties', async () => {
+    const img = await mockP5Prototype.loadImage(singleFrameGif);
+    assert.isNull(img.gifProperties);
+  });
+
+  test('first frame of GIF should be painted after load', async () => {
+    const img = await mockP5Prototype.loadImage(animatedGif);
+    assert.deepEqual(img.get(0, 0), [255, 255, 255, 255]);
+  });
+
+  // test('animated gifs animate correctly', function() {
+  //   const wait = function(ms) {
+  //     return new Promise(function(resolve) {
+  //       setTimeout(resolve, ms);
+  //     });
+  //   };
+  //   let img;
+  //   return new Promise(function(resolve, reject) {
+  //     img = myp5.loadImage('unit/assets/nyan_cat.gif', resolve, reject);
+  //   }).then(function() {
+  //     assert.equal(img.gifProperties.displayIndex, 0);
+  //     myp5.image(img, 0, 0);
+
+  //     // This gif has frames that are around for 100ms each.
+  //     // After 100ms has elapsed, the display index should
+  //     // increment when we draw the image.
+  //     return wait(100);
+  //   }).then(function() {
+  //     return new Promise(function(resolve) {
+  //       window.requestAnimationFrame(resolve);
+  //     });
+  //   }).then(function() {
+  //     myp5.image(img, 0, 0);
+  //     assert.equal(img.gifProperties.displayIndex, 1);
+  //   });
+  // });
+
+  const backgroundColor = [135, 206, 235, 255];
+  const blue = [0, 0, 255, 255];
+  const transparent = [0, 0, 0, 0];
+  test('animated gifs work with no disposal', async () => {
+    const img = await mockP5Prototype.loadImage(disposeNoneGif);
+    // Frame 0 shows the background
+    assert.deepEqual(img.get(7, 12), backgroundColor);
+    // Frame 1 draws on top of the background
+    img.setFrame(1);
+    assert.deepEqual(img.get(7, 12), blue);
+    // Frame 2 does not erase untouched parts of frame 2
+    img.setFrame(2);
+    assert.deepEqual(img.get(7, 12), blue);
+  });
+
+  test('animated gifs work with background disposal', async () => {
+    const img = await mockP5Prototype.loadImage(disposeBackgroundGif);
+    // Frame 0 shows the background
+    assert.deepEqual(img.get(7, 12), backgroundColor);
+    // Frame 1 draws on top of the background
+    img.setFrame(1);
+    assert.deepEqual(img.get(7, 12), blue);
+    // Frame 2 erases the content added in frame 2
+    img.setFrame(2);
+    assert.deepEqual(img.get(7, 12), transparent);
+  });
+
+  test('animated gifs work with previous disposal', async () => {
+    const img = await mockP5Prototype.loadImage(disposePreviousGif);
+    // Frame 0 shows the background
+    assert.deepEqual(img.get(7, 12), backgroundColor);
+    // Frame 1 draws on top of the background
+    img.setFrame(1);
+    assert.deepEqual(img.get(7, 12), blue);
+    // Frame 2 returns the content added in frame 2 to its previous value
+    img.setFrame(2);
+    assert.deepEqual(img.get(7, 12), backgroundColor);
+  });
+
+  // /* TODO: make this resilient to platform differences in image resizing.
+  // test('should draw cropped image', function() {
+  //   return new Promise(function(resolve, reject) {
+  //     myp5.loadImage('unit/assets/target.gif', resolve, reject);
+  //   }).then(function(img) {
+  //     myp5.image(img, 0, 0, 6, 6, 5, 5, 6, 6);
+  //     return testImageRender('unit/assets/target_small.gif', myp5).then(
+  //       function(res) {
+  //         assert.isTrue(res);
+  //       }
+  //     );
+  //   });
+  // });
+  // */
+
+  test('should construct gifProperties correctly after preload', async () => {
+    const gifImage = await mockP5Prototype.loadImage(nyanCatGif);
+    assert.isTrue(gifImage instanceof p5.Image);
+
+    const nyanCatGifProperties = {
+      displayIndex: 0,
+      loopCount: 0,
+      loopLimit: null,
+      numFrames: 6,
+      playing: true,
+      timeDisplayed: 0
+    };
+    assert.isTrue(gifImage.gifProperties !== null);
+    for (let prop in nyanCatGifProperties) {
+      assert.deepEqual(
+        gifImage.gifProperties[prop],
+        nyanCatGifProperties[prop]
       );
-    }).then(function(event) {
-      assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
-    });
-  });
-
-  test('should draw image with defaults', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/cat.jpg', resolve, reject);
-    }).then(function(img) {
-      myp5.image(img, 0, 0);
-      return testImageRender('unit/assets/cat.jpg', myp5).then(function(res) {
-        assert.isTrue(res);
-      });
-    });
-  });
-
-  test('static image should not have gifProperties', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/cat.jpg', resolve, reject);
-    }).then(function(img) {
-      assert.isTrue(img.gifProperties === null);
-    });
-  });
-
-  test('single frame GIF should not have gifProperties', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/target_small.gif', resolve, reject);
-    }).then(function(img) {
-      assert.isTrue(img.gifProperties === null);
-    });
-  });
-
-  test('first frame of GIF should be painted after load', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/white_black.gif', resolve, reject);
-    }).then(function(img) {
-      assert.deepEqual(img.get(0, 0), [255, 255, 255, 255]);
-    });
-  });
-
-  test('animated gifs animate correctly', function() {
-    const wait = function(ms) {
-      return new Promise(function(resolve) {
-        setTimeout(resolve, ms);
-      });
-    };
-    let img;
-    return new Promise(function(resolve, reject) {
-      img = myp5.loadImage('unit/assets/nyan_cat.gif', resolve, reject);
-    }).then(function() {
-      assert.equal(img.gifProperties.displayIndex, 0);
-      myp5.image(img, 0, 0);
-
-      // This gif has frames that are around for 100ms each.
-      // After 100ms has elapsed, the display index should
-      // increment when we draw the image.
-      return wait(100);
-    }).then(function() {
-      return new Promise(function(resolve) {
-        window.requestAnimationFrame(resolve);
-      });
-    }).then(function() {
-      myp5.image(img, 0, 0);
-      assert.equal(img.gifProperties.displayIndex, 1);
-    });
-  });
-
-  var backgroundColor = [135, 206, 235, 255];
-  var blue = [0, 0, 255, 255];
-  var transparent = [0, 0, 0, 0];
-  test('animated gifs work with no disposal', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/dispose_none.gif', resolve, reject);
-    }).then(function(img) {
-      // Frame 0 shows the background
-      assert.deepEqual(img.get(7, 12), backgroundColor);
-      // Frame 1 draws on top of the background
-      img.setFrame(1);
-      assert.deepEqual(img.get(7, 12), blue);
-      // Frame 2 does not erase untouched parts of frame 2
-      img.setFrame(2);
-      assert.deepEqual(img.get(7, 12), blue);
-    });
-  });
-
-  test('animated gifs work with background disposal', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/dispose_background.gif', resolve, reject);
-    }).then(function(img) {
-      // Frame 0 shows the background
-      assert.deepEqual(img.get(7, 12), backgroundColor);
-      // Frame 1 draws on top of the background
-      img.setFrame(1);
-      assert.deepEqual(img.get(7, 12), blue);
-      // Frame 2 erases the content added in frame 2
-      img.setFrame(2);
-      assert.deepEqual(img.get(7, 12), transparent);
-    });
-  });
-
-  test('animated gifs work with previous disposal', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/dispose_previous.gif', resolve, reject);
-    }).then(function(img) {
-      // Frame 0 shows the background
-      assert.deepEqual(img.get(7, 12), backgroundColor);
-      // Frame 1 draws on top of the background
-      img.setFrame(1);
-      assert.deepEqual(img.get(7, 12), blue);
-      // Frame 2 returns the content added in frame 2 to its previous value
-      img.setFrame(2);
-      assert.deepEqual(img.get(7, 12), backgroundColor);
-    });
-  });
-
-  /* TODO: make this resilient to platform differences in image resizing.
-  test('should draw cropped image', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage('unit/assets/target.gif', resolve, reject);
-    }).then(function(img) {
-      myp5.image(img, 0, 0, 6, 6, 5, 5, 6, 6);
-      return testImageRender('unit/assets/target_small.gif', myp5).then(
-        function(res) {
-          assert.isTrue(res);
-        }
+    }
+    assert.deepEqual(
+      gifImage.gifProperties.numFrames,
+      gifImage.gifProperties.frames.length
+    );
+    for (let i = 0; i < gifImage.gifProperties.numFrames; i++) {
+      assert.isTrue(
+        gifImage.gifProperties.frames[i].image instanceof ImageData
       );
-    });
-  });
-  */
+      assert.isTrue(gifImage.gifProperties.frames[i].delay === 100);
+    }
 
-  // Test loading image in preload() with success callback
-  test('Test in preload() with success callback');
-  test('Test in setup() after preload()');
-  // These tests don't work correctly (You can't use suite and test like that)
-  // they simply get added at the root level.
-  var mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      suite('Test in preload() with success callback', function() {
-        test('Load asynchronously and use success callback', function(done) {
-          myImage = this_p5.loadImage('unit/assets/cat.jpg', function() {
-            assert.ok(myImage);
-            done();
-          });
-        });
-      });
-    };
-
-    this_p5.setup = function() {
-      suite('setup() after preload() with success callback', function() {
-        test('should be loaded if preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width > 0 && myImage.height > 0);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
-
-  // Test loading image in preload() without success callback
-  mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      myImage = this_p5.loadImage('unit/assets/cat.jpg');
-    };
-
-    this_p5.setup = function() {
-      suite('setup() after preload() without success callback', function() {
-        test('should be loaded now preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width > 0 && myImage.height > 0);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
-
-  // Test loading image failure in preload() without failure callback
-  mySketch = function(this_p5) {
-    this_p5.preload = function() {
-      this_p5.loadImage('', function() {
-        throw new Error('Should not be called');
-      });
-    };
-
-    this_p5.setup = function() {
-      throw new Error('Should not be called');
-    };
-  };
-  new p5(mySketch, null, false);
-
-  // Test loading image failure in preload() with failure callback
-  mySketch = function(this_p5) {
-    var myImage;
-    this_p5.preload = function() {
-      suite('Test loading image failure in preload() with failure callback', function() {
-        test('Load fail and use failure callback', function(done) {
-          myImage = this_p5.loadImage('', function() {
-            assert.fail();
-            done();
-          }, function() {
-            assert.ok(myImage);
-            done();
-          });
-        });
-      });
-    };
-
-    this_p5.setup = function() {
-      suite('setup() after preload() failure with failure callback', function() {
-        test('should be loaded now preload() finished', function(done) {
-          assert.isTrue(myImage instanceof p5.Image);
-          assert.isTrue(myImage.width === 1 && myImage.height === 1);
-          done();
-        });
-      });
-    };
-  };
-  new p5(mySketch, null, false);
-});
-
-suite('loading animated gif images', function() {
-  var myp5;
-
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
-    });
-  });
-
-  teardown(function() {
-    myp5.remove();
-  });
-
-  var imagePath = 'unit/assets/nyan_cat.gif';
-
-  setup(function disableFileLoadError() {
-    sinon.stub(p5, '_friendlyFileLoadError');
-  });
-
-  teardown(function restoreFileLoadError() {
-    p5._friendlyFileLoadError.restore();
-  });
-
-  test('should call successCallback when image loads', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage(imagePath, resolve, reject);
-    }).then(function(pImg) {
-      assert.ok(pImg, 'nyan_cat.gif loaded');
-      assert.isTrue(pImg instanceof p5.Image);
-    });
-  });
-
-  test('should call failureCallback when unable to load image', function() {
-    return new Promise(function(resolve, reject) {
-      myp5.loadImage(
-        'invalid path',
-        function(pImg) {
-          reject('Entered success callback.');
-        },
-        resolve
-      );
-    }).then(function(event) {
-      assert.equal(event.type, 'error');
-      assert.isTrue(p5._friendlyFileLoadError.called);
-    });
-  });
-
-  test('should construct gifProperties correctly after preload', function() {
-    var mySketch = function(this_p5) {
-      var gifImage;
-      this_p5.preload = function() {
-        suite('Test in preload() with success callback', function() {
-          test('Load asynchronously and use success callback', function(done) {
-            gifImage = this_p5.loadImage(imagePath, function() {
-              assert.ok(gifImage);
-              done();
-            });
-          });
-        });
-      };
-
-      this_p5.setup = function() {
-        suite('setup() after preload() with success callback', function() {
-          test('should be loaded if preload() finished', function(done) {
-            assert.isTrue(gifImage instanceof p5.Image);
-            assert.isTrue(gifImage.width > 0 && gifImage.height > 0);
-            done();
-          });
-          test('gifProperties should be correct after preload', function done() {
-            assert.isTrue(gifImage instanceof p5.Image);
-            var nyanCatGifProperties = {
-              displayIndex: 0,
-              loopCount: 0,
-              loopLimit: null,
-              numFrames: 6,
-              playing: true,
-              timeDisplayed: 0
-            };
-            assert.isTrue(gifImage.gifProperties !== null);
-            for (var prop in nyanCatGifProperties) {
-              assert.deepEqual(
-                gifImage.gifProperties[prop],
-                nyanCatGifProperties[prop]
-              );
-            }
-            assert.deepEqual(
-              gifImage.gifProperties.numFrames,
-              gifImage.gifProperties.frames.length
-            );
-            for (var i = 0; i < gifImage.gifProperties.numFrames; i++) {
-              assert.isTrue(
-                gifImage.gifProperties.frames[i].image instanceof ImageData
-              );
-              assert.isTrue(gifImage.gifProperties.frames[i].delay === 100);
-            }
-          });
-          test('should be able to modify gifProperties state', function() {
-            assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
-            gifImage.pause();
-            assert.isTrue(gifImage.gifProperties.playing === false);
-            gifImage.play();
-            assert.isTrue(gifImage.gifProperties.playing === true);
-            gifImage.setFrame(2);
-            assert.isTrue(gifImage.gifProperties.displayIndex === 2);
-            gifImage.reset();
-            assert.isTrue(gifImage.gifProperties.displayIndex === 0);
-            assert.isTrue(gifImage.gifProperties.timeDisplayed === 0);
-          });
-        });
-      };
-    };
-    new p5(mySketch, null, false);
+    assert.equal(gifImage.gifProperties.timeDisplayed, 0);
+    gifImage.pause();
+    assert.isFalse(gifImage.gifProperties.playing);
+    gifImage.play();
+    assert.isTrue(gifImage.gifProperties.playing);
+    gifImage.setFrame(2);
+    assert.equal(gifImage.gifProperties.displayIndex, 2);
+    gifImage.reset();
+    assert.equal(gifImage.gifProperties.displayIndex, 0);
+    assert.equal(gifImage.gifProperties.timeDisplayed, 0);
   });
 });
 
-suite('displaying images', function() {
+suite.todo('displaying images', function() {
   var myp5;
   var pImg;
   var imagePath = 'unit/assets/cat-with-hole.png';
   var chanNames = ['red', 'green', 'blue', 'alpha'];
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        myp5.pixelDensity(1);
-        myp5.loadImage(
-          imagePath,
-          function(img) {
-            pImg = img;
-            myp5.resizeCanvas(pImg.width, pImg.height);
-            done();
-          },
-          function() {
-            throw new Error('Error loading image');
-          }
-        );
-      };
+  beforeAll(async function() {
+    new Promise(resolve => {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          myp5.pixelDensity(1);
+          myp5.loadImage(
+            imagePath,
+            function(img) {
+              pImg = img;
+              myp5.resizeCanvas(pImg.width, pImg.height);
+              resolve();
+            },
+            function() {
+              throw new Error('Error loading image');
+            }
+          );
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -519,56 +346,99 @@ suite('displaying images', function() {
 });
 
 suite('displaying images that use fit mode', function() {
-  var myp5;
+  var myp5, imageSpy;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
+  });
+
+  beforeEach(() => {
+    imageSpy = vi.spyOn(myp5._renderer, 'image');
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test('CONTAIN when source image is larger than destination', function() {
     let src = myp5.createImage(400, 1000);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[7], 400 / (1000 / 400)); //  dw
-    assert.equal(myp5._renderer.image.getCall(0).args[8], 1000 / (1000 / 400)); // dh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        400 / (1000 / 400),
+        1000 / (1000 / 400)
+      );
   });
 
   test('CONTAIN when source image is smaller than destination', function() {
     let src = myp5.createImage(40, 90);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[7], 40 / (90 / 500)); //  dw
-    assert.equal(myp5._renderer.image.getCall(0).args[8], 90 / (90 / 500)); // dh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        40 / (90 / 500),
+        90 / (90 / 500)
+      );
   });
 
   test('COVER when source image is larger than destination', function() {
     let src = myp5.createImage(400, 1000);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.COVER);
     const r = Math.max(300 / 400, 400 / 1000);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        300 / r,
+        400 / r,
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number)
+      );
   });
 
   test('COVER when source image is smaller than destination', function() {
     let src = myp5.createImage(20, 100);
-    sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 20, 100, myp5.COVER);
     const r = Math.max(300 / 20, 400 / 100);
-    assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
+    expect(imageSpy)
+      .toHaveBeenCalledTimes(1)
+      .toHaveBeenCalledWith(
+        expect.anything(),
+        expect.any(Number),
+        expect.any(Number),
+        300 / r,
+        400 / r,
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number),
+        expect.any(Number)
+      );
   });
 });

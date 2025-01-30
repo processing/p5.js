@@ -18,20 +18,30 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump int;
+#define HOOK_DEFINES
 
+precision highp int;
+precision highp float;
+
+#ifdef AUGMENTED_HOOK_getWorldInputs
+uniform mat4 uModelMatrix;
+uniform mat4 uViewMatrix;
+#else
 uniform mat4 uModelViewMatrix;
+#endif
+
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform bool uUseLineColor;
+uniform bool uSimpleLines;
 uniform vec4 uMaterialColor;
 
 uniform vec4 uViewport;
 uniform int uPerspective;
 uniform int uStrokeJoin;
 
-IN vec4 aPosition;
+IN vec3 aPosition;
 IN vec3 aTangentIn;
 IN vec3 aTangentOut;
 IN float aSide;
@@ -64,25 +74,66 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
   return aPoint + aDir * intersectionDistance;
 }
 
+struct StrokeVertex {
+  vec3 position;
+  vec3 tangentIn;
+  vec3 tangentOut;
+  vec4 color;
+  float weight;
+};
+
 void main() {
   HOOK_beforeVertex();
-  // Caps have one of either the in or out tangent set to 0
-  vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
-    ? 1. : 0.;
 
-  // Joins have two unique, defined tangents
-  vJoin = (
-    aTangentIn != vec3(0.) &&
-    aTangentOut != vec3(0.) &&
-    aTangentIn != aTangentOut
-  ) ? 1. : 0.;
+  if (!uSimpleLines) {
+      // Caps have one of either the in or out tangent set to 0
+      vCap = (aTangentIn == vec3(0.)) != (aTangentOut == vec3(0.)) ? 1. : 0.;
 
-  vec4 localPosition = vec4(HOOK_getLocalPosition(aPosition.xyz), 1.);
-  vec4 posp = vec4(HOOK_getWorldPosition((uModelViewMatrix * localPosition).xyz), 1.);
-  vec4 posqIn = posp + uModelViewMatrix * vec4(aTangentIn, 0);
-  vec4 posqOut = posp + uModelViewMatrix * vec4(aTangentOut, 0);
-  float strokeWeight = HOOK_getStrokeWeight(uStrokeWeight);
-  vStrokeWeight = strokeWeight;
+      // Joins have two unique, defined tangents
+      vJoin = (
+          aTangentIn != vec3(0.) &&
+          aTangentOut != vec3(0.) &&
+          aTangentIn != aTangentOut
+      ) ? 1. : 0.;
+  }
+
+  StrokeVertex inputs;
+  inputs.position = aPosition.xyz;
+  inputs.color = uUseLineColor ? aVertexColor : uMaterialColor;
+  inputs.weight = uStrokeWeight;
+  inputs.tangentIn = aTangentIn;
+  inputs.tangentOut = aTangentOut;
+
+#ifdef AUGMENTED_HOOK_getObjectInputs
+  inputs = HOOK_getObjectInputs(inputs);
+#endif
+
+#ifdef AUGMENTED_HOOK_getWorldInputs
+  inputs.position = (uModelMatrix * vec4(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (uModelMatrix * vec4(aTangentIn, 0.)).xyz;
+  inputs.tangentOut = (uModelMatrix * vec4(aTangentOut, 0.)).xyz;
+  inputs = HOOK_getWorldInputs(inputs);
+#endif
+
+#ifdef AUGMENTED_HOOK_getWorldInputs
+  // Already multiplied by the model matrix, just apply view
+  inputs.position = (uViewMatrix * vec4(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (uViewMatrix * vec4(aTangentIn, 0.)).xyz;
+  inputs.tangentOut = (uViewMatrix * vec4(aTangentOut, 0.)).xyz;
+#else
+  // Apply both at once
+  inputs.position = (uModelViewMatrix * vec4(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (uModelViewMatrix * vec4(aTangentIn, 0.)).xyz;
+  inputs.tangentOut = (uModelViewMatrix * vec4(aTangentOut, 0.)).xyz;
+#endif
+#ifdef AUGMENTED_HOOK_getCameraInputs
+  inputs = hook_getCameraInputs(inputs);
+#endif
+
+  vec4 posp = vec4(inputs.position, 1.);
+  vec4 posqIn = vec4(inputs.position + inputs.tangentIn, 1.);
+  vec4 posqOut = vec4(inputs.position + inputs.tangentOut, 1.);
+  vStrokeWeight = inputs.weight;
 
   float facingCamera = pow(
     // The word space tangent's z value is 0 if it's facing the camera
@@ -116,7 +167,7 @@ void main() {
 
   // Moving vertices slightly toward camera when far away 
   // https://github.com/processing/p5.js/issues/6956 
-  float zOffset = mix(-0.00045, -1., facingCamera);
+  float zOffset = mix(0., -1., facingCamera);
   float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
 
   posp.z -= dynamicZAdjustment;
@@ -126,7 +177,6 @@ void main() {
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
   vec4 qOut = uProjectionMatrix * posqOut;
-  vCenter = HOOK_getLineCenter(p.xy);
 
   // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
   // screen_p = (p.xy/p.w + <1,1>) * 0.5 * uViewport.zw
@@ -170,7 +220,7 @@ void main() {
   }
 
   vec2 offset;
-  if (vJoin == 1.) {
+  if (vJoin == 1. && !uSimpleLines) {
     vTangent = normalize(tangentIn + tangentOut);
     vec2 normalIn = vec2(-tangentIn.y, tangentIn.x);
     vec2 normalOut = vec2(-tangentOut.y, tangentOut.x);
@@ -191,9 +241,9 @@ void main() {
         // find where the lines intersect to find the elbow of the join
         vec2 c = (posp.xy/posp.w + vec2(1.,1.)) * 0.5 * uViewport.zw;
         vec2 intersection = lineIntersection(
-          c + (side * normalIn * strokeWeight / 2.),
+          c + (side * normalIn * inputs.weight / 2.),
           tangentIn,
-          c + (side * normalOut * strokeWeight / 2.),
+          c + (side * normalOut * inputs.weight / 2.),
           tangentOut
         );
         offset = (intersection - c);
@@ -203,21 +253,21 @@ void main() {
         // the magnitude to avoid lines going across the whole screen when this
         // happens.
         float mag = length(offset);
-        float maxMag = 3. * strokeWeight;
+        float maxMag = 3. * inputs.weight;
         if (mag > maxMag) {
           offset *= maxMag / mag;
         }
       } else if (sideEnum == 1.) {
-        offset = side * normalIn * strokeWeight / 2.;
+        offset = side * normalIn * inputs.weight / 2.;
       } else if (sideEnum == 3.) {
-        offset = side * normalOut * strokeWeight / 2.;
+        offset = side * normalOut * inputs.weight / 2.;
       }
     }
     if (uStrokeJoin == STROKE_JOIN_BEVEL) {
       vec2 avgNormal = vec2(-vTangent.y, vTangent.x);
-      vMaxDist = abs(dot(avgNormal, normalIn * strokeWeight / 2.));
+      vMaxDist = abs(dot(avgNormal, normalIn * inputs.weight / 2.));
     } else {
-      vMaxDist = strokeWeight / 2.;
+      vMaxDist = inputs.weight / 2.;
     }
   } else {
     vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
@@ -229,14 +279,16 @@ void main() {
     // extends out from the line
     float tangentOffset = abs(aSide) - 1.;
     offset = (normal * normalOffset + tangent * tangentOffset) *
-      strokeWeight * 0.5;
-    vMaxDist = strokeWeight / 2.;
+      inputs.weight * 0.5;
+    vMaxDist = inputs.weight / 2.;
   }
-  vPosition = HOOK_getLinePosition(vCenter + offset);
+
+  vCenter = p.xy;
+  vPosition = vCenter + offset;
+  vColor = inputs.color;
 
   gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
   
-  vColor = HOOK_getVertexColor(uUseLineColor ? aVertexColor : uMaterialColor);
   HOOK_afterVertex();
 }

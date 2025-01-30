@@ -1,38 +1,31 @@
+import { mockP5, mockP5Prototype } from '../../js/mocks';
+import typeDict from '../../../src/data/p5.TypedDict';
+
 suite('Dictionary Objects', function() {
-  var myp5;
-  var stringDict;
-  var numberDict;
+  let stringDict;
+  let numberDict;
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        stringDict = myp5.createStringDict('happy', 'coding');
-        numberDict = myp5.createNumberDict(1, 2);
-        done();
-      };
-    });
-  });
-
-  teardown(function() {
-    myp5.remove();
+  beforeAll(function() {
+    typeDict(mockP5, mockP5Prototype);
+    stringDict = mockP5Prototype.createStringDict('happy', 'coding');
+    numberDict = mockP5Prototype.createNumberDict(1, 2);
   });
 
   suite('p5.prototype.stringDict', function() {
     test('should be created', function() {
-      assert.isTrue(stringDict instanceof p5.StringDict);
+      assert.instanceOf(stringDict, mockP5.StringDict);
     });
 
     test('has correct structure', function() {
       assert.deepEqual(
-        JSON.stringify(stringDict),
-        JSON.stringify({ data: { happy: 'coding' } })
+        stringDict,
+        { data: { happy: 'coding' } }
       );
     });
 
     test('should have correct size', function() {
       var amt = stringDict.size();
-      assert.isTrue(amt === Object.keys(stringDict.data).length);
+      assert.lengthOf(Object.keys(stringDict.data), amt);
     });
 
     test('should add new key-value pairs', function() {
@@ -58,19 +51,19 @@ suite('Dictionary Objects', function() {
 
   suite('p5.prototype.numberDict', function() {
     test('should be created', function() {
-      assert.isTrue(numberDict instanceof p5.NumberDict);
+      assert.instanceOf(numberDict, mockP5.NumberDict);
     });
 
     test('has correct structure', function() {
       assert.deepEqual(
-        JSON.stringify(numberDict),
-        JSON.stringify({ data: { 1: 2 } })
+        numberDict,
+        { data: { 1: 2 } }
       );
     });
 
     test('should have correct size', function() {
       var amt = numberDict.size();
-      assert.isTrue(amt === Object.keys(numberDict.data).length);
+      assert.lengthOf(Object.keys(numberDict.data), amt);
     });
 
     test('should add new key-value pairs', function() {

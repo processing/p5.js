@@ -1,3 +1,5 @@
+import p5 from '../../../src/app.js';
+
 suite('p5.Texture', function() {
   var myp5;
   var texImg1;
@@ -6,63 +8,59 @@ suite('p5.Texture', function() {
   var imgElementNotPowerOfTwo;
   var imgElementPowerOfTwo;
   var canvas;
+  let prevPixelRatio;
 
-  if (!window.Modernizr.webgl) {
-    //assert(false, 'could not run gl tests');
-    return;
-  }
-
-  setup(function(done) {
-    myp5 = new p5(function(p) {
-      p.preload = function() {
-        // texImg2 must have powerOfTwo dimensions
-        texImg2 = p.loadImage('unit/assets/target.gif');
-        // texImg3 must NOT have powerOfTwo dimensions
-        texImg3 = p.loadImage('unit/assets/nyan_cat.gif');
-        // texture object isn't created until it's used for something:
-        //p.box(70, 70, 70);
-      };
-      p.setup = function() {
-        canvas = p.createCanvas(100, 100, p.WEBGL);
-        texImg1 = p.createGraphics(2, 2, p.WEBGL);
-        new Promise(resolve => {
-          p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
-            el.size(50, 50);
-            imgElementPowerOfTwo = el;
-            p.texture(imgElementPowerOfTwo);
-            resolve();
+  beforeEach(function() {
+    prevPixelRatio = window.devicePixelRatio;
+    window.devicePixelRatio = 1;
+    return new Promise(done => {
+      myp5 = new p5(function(p) {
+        p.setup = async function() {
+          canvas = p.createCanvas(100, 100, p.WEBGL);
+          p.pixelDensity(1);
+          texImg1 = p.createGraphics(2, 2, p.WEBGL);
+          texImg2 = await p.loadImage('/unit/assets/target.gif');
+          texImg3 = await p.loadImage('/unit/assets/nyan_cat.gif');
+          new Promise(resolve => {
+            p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
+              el.size(50, 50);
+              imgElementPowerOfTwo = el;
+              p.texture(imgElementPowerOfTwo);
+              resolve();
+            });
+          }).then(() => new Promise(resolve => {
+            p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
+              el.size(50, 50);
+              imgElementNotPowerOfTwo = el;
+              p.texture(imgElementNotPowerOfTwo);
+              resolve();
+            });
+          })).then(() => {
+            p.texture(texImg1);
+            done();
           });
-        }).then(() => new Promise(resolve => {
-          p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
-            el.size(50, 50);
-            imgElementNotPowerOfTwo = el;
-            p.texture(imgElementNotPowerOfTwo);
-            resolve();
-          });
-        })).then(() => {
-          p.texture(texImg1);
-          done();
-        });
-      };
+        };
+      });
     });
   });
 
-  teardown(function() {
+  afterEach(function() {
+    window.devicePixelRatio = prevPixelRatio;
     myp5.remove();
   });
 
   var testTextureSet = function(src) {
-    test('Light shader set after texture()', function() {
-      var lightShader = myp5._renderer._getLightShader();
-      var selectedShader = myp5._renderer._getRetainedFillShader();
-      assert(
-        lightShader === selectedShader,
-        "_renderer's retain mode shader was not light shader " +
-          'after call to texture()'
-      );
-    });
-
+    var lightShader = myp5._renderer._getLightShader();
+    var selectedShader = myp5._renderer._getFillShader();
+    console.log('first');
+    assert(
+      lightShader === selectedShader,
+      "_renderer's retain mode shader was not light shader " +
+        'after call to texture()'
+    );
+    console.log('second');
     var tex = myp5._renderer.getTexture(src);
+    console.log('third');
     assert(tex !== undefined, 'texture was undefined');
     assert(tex instanceof p5.Texture, 'texture was not a p5.Texture object');
     assert(tex.src === src, 'texture did not have expected image as source');
@@ -135,11 +133,11 @@ suite('p5.Texture', function() {
     );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.NORMAL);
     });
     test('Set textureMode to IMAGE', function() {
       myp5.textureMode(myp5.IMAGE);
-      assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+      assert.deepEqual(myp5._renderer.states.textureMode, myp5.IMAGE);
     });
     test('Set global wrap mode to clamp', function() {
       myp5.textureWrap(myp5.CLAMP);

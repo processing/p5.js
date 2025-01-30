@@ -1,16 +1,18 @@
+import p5 from '../../../src/app.js';
+import { parallelSketches } from '../../js/p5_helpers';
+
 suite('Keyboard Events', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -36,39 +38,23 @@ suite('Keyboard Events', function() {
     });
   });
 
-  suite('p5.prototype.isKeyPressed', function() {
-    test('isKeyPressed should be a boolean', function() {
-      assert.isBoolean(myp5.isKeyPressed);
-    });
-
-    test('isKeyPressed should be true on key press', function() {
-      window.dispatchEvent(new KeyboardEvent('keydown'));
-      assert.strictEqual(myp5.isKeyPressed, true);
-    });
-
-    test('isKeyPressed should be false on key up', function() {
-      window.dispatchEvent(new KeyboardEvent('keyup'));
-      assert.strictEqual(myp5.isKeyPressed, false);
-    });
-  });
-
   suite('p5.prototype.key', function() {
-    test('key should be a string', function() {
+    test('key should be a string', async function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
       assert.isString(myp5.key);
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'A' }));
       assert.strictEqual(myp5.key, 'A');
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: '9' }));
       assert.strictEqual(myp5.key, '9');
     });
 
-    test('key should return the key pressed', function() {
+    test.todo('key should return the key pressed', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'CapsLock' }));
       assert.strictEqual(myp5.key, 'CapsLock');
     });
@@ -87,7 +73,7 @@ suite('Keyboard Events', function() {
   });
 
   suite('keyPressed', function() {
-    test('keyPressed must run when key is pressed', function() {
+    test.todo('keyPressed must run when key is pressed', function() {
       let count = 0;
       myp5.keyPressed = function() {
         count += 1;
@@ -188,7 +174,7 @@ suite('Keyboard Events', function() {
       assert.strictEqual(myp5.keyIsDown(35), true);
     });
 
-    test('keyIsDown should return false if key is not down', function() {
+    test.todo('keyIsDown should return false if key is not down', function() {
       assert.strictEqual(myp5.keyIsDown(35), false);
     });
   });

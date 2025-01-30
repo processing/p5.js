@@ -1,13 +1,26 @@
-/**
- * A helper class to contain an error and also the screenshot data that
- * caused the error.
- */
-class ScreenshotError extends Error {
-  constructor(message, actual, expected) {
-    super(message);
-    this.actual = actual;
-    this.expected = expected;
-  }
+import p5 from '../../../src/app.js';
+import { server } from '@vitest/browser/context'
+import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
+const { readFile, writeFile } = server.commands
+
+// By how much can each color channel value (0-255) differ before
+// we call it a mismatch? This should be large enough to not trigger
+// based on antialiasing.
+const COLOR_THRESHOLD = 25;
+
+// The max side length to shrink test images down to before
+// comparing, for performance.
+const MAX_SIDE = 50;
+
+// The background color to composite test cases onto before
+// diffing. This is used because canvas DIFFERENCE blend mode
+// does not handle alpha well. This should be a color that is
+// unlikely to be in the images originally.
+const BG = '#F0F';
+
+function writeImageFile(filename, base64Data) {
+  const prefix = /^data:image\/\w+;base64,/;
+  writeFile(filename, base64Data.replace(prefix, ''), 'base64');
 }
 
 function toBase64(img) {
@@ -21,6 +34,11 @@ function escapeName(name) {
 
 let namePrefix = '';
 
+// By how many pixels can the snapshot shift? This is
+// often useful to accommodate different text rendering
+// across environments.
+let shiftThreshold = 2;
+
 /**
  * A helper to define a category of visual tests.
  *
@@ -30,57 +48,96 @@ let namePrefix = '';
  * @param [options] An options object with optional additional settings. Set its
  * key `focus` to true to only run this test, or its `skip` key to skip it.
  */
-window.visualSuite = function(
+export function visualSuite(
   name,
   callback,
-  { focus = false, skip = false } = {}
+  { focus = false, skip = false, shiftThreshold: newShiftThreshold } = {}
 ) {
-  const lastPrefix = namePrefix;
-  namePrefix += escapeName(name) + '/';
-
-  let suiteFn = suite;
+  let suiteFn = describe;
   if (focus) {
     suiteFn = suiteFn.only;
   }
   if (skip) {
     suiteFn = suiteFn.skip;
   }
-  suiteFn(name, callback);
+  suiteFn(name, () => {
+    let lastShiftThreshold
+    let lastPrefix;
+    let lastDeviceRatio = window.devicePixelRatio;
+    beforeAll(() => {
+      lastPrefix = namePrefix;
+      namePrefix += escapeName(name) + '/';
+      lastShiftThreshold = shiftThreshold;
+      if (newShiftThreshold !== undefined) {
+        shiftThreshold = newShiftThreshold
+      }
 
-  namePrefix = lastPrefix;
-};
+      // Force everything to be 1x
+      window.devicePixelRatio = 1;
+    })
 
-window.checkMatch = function(actual, expected, p5) {
-  const maxSide = 50;
-  const scale = Math.min(maxSide/expected.width, maxSide/expected.height);
+    callback()
+
+    afterAll(() => {
+      namePrefix = lastPrefix;
+      window.devicePixelRatio = lastDeviceRatio;
+      shiftThreshold = lastShiftThreshold;
+    });
+  });
+}
+
+export async function checkMatch(actual, expected, p5) {
+  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+
+  // Long screenshots end up super tiny when fit to a small square, so we
+  // can double the max side length for these
+  const ratio = expected.width / expected.height;
+  const narrow = ratio !== 1;
+  if (narrow) {
+    scale *= 2;
+  }
+
   for (const img of [actual, expected]) {
     img.resize(
       Math.ceil(img.width * scale),
       Math.ceil(img.height * scale)
     );
   }
-  // The below algorithm to calculate differences can produce false negatives in certain cases.
-  // Immediately return true for exact matches.
-  if (toBase64(expected) === toBase64(actual)) {
-    return { ok: true };
+
+  const expectedWithBg = p5.createGraphics(expected.width, expected.height);
+  expectedWithBg.pixelDensity(1);
+  expectedWithBg.background(BG);
+  expectedWithBg.image(expected, 0, 0);
+
+  const cnv = p5.createGraphics(actual.width, actual.height);
+  cnv.pixelDensity(1);
+  cnv.background(BG);
+  cnv.image(actual, 0, 0);
+  cnv.blendMode(DIFFERENCE);
+  cnv.image(expectedWithBg, 0, 0);
+  for (let i = 0; i < shiftThreshold; i++) {
+    cnv.filter(ERODE, false);
   }
-  const diff = p5.createImage(actual.width, actual.height);
-  diff.drawingContext.drawImage(actual.canvas, 0, 0);
-  diff.drawingContext.globalCompositeOperation = 'difference';
-  diff.drawingContext.drawImage(expected.canvas, 0, 0);
-  diff.filter(p5.ERODE, false);
+  const diff = cnv.get();
+  cnv.remove();
   diff.loadPixels();
+  expectedWithBg.remove();
 
   let ok = true;
-  for (let i = 0; i < diff.pixels.length; i++) {
-    if (i % 4 === 3) continue; // Skip alpha checks
-    if (Math.abs(diff.pixels[i]) > 10) {
+  for (let i = 0; i < diff.pixels.length; i += 4) {
+    let diffSum = 0;
+    for (let off = 0; off < 3; off++) {
+      diffSum += diff.pixels[i+off]
+    }
+    diffSum /= 3;
+    if (diffSum > COLOR_THRESHOLD) {
       ok = false;
       break;
     }
   }
+
   return { ok, diff };
-};
+}
 
 /**
  * A helper to define a visual test, where we will assert that a sketch matches
@@ -101,13 +158,12 @@ window.checkMatch = function(actual, expected, p5) {
  * @param [options] An options object with optional additional settings. Set its
  * key `focus` to true to only run this test, or its `skip` key to skip it.
  */
-window.visualTest = function(
+export function visualTest(
   testName,
   callback,
   { focus = false, skip = false } = {}
 ) {
-  const name = namePrefix + escapeName(testName);
-  let suiteFn = suite;
+  let suiteFn = describe;
   if (focus) {
     suiteFn = suiteFn.only;
   }
@@ -116,9 +172,11 @@ window.visualTest = function(
   }
 
   suiteFn(testName, function() {
+    let name;
     let myp5;
 
-    setup(function() {
+    beforeAll(function() {
+      name = namePrefix + escapeName(testName);
       return new Promise(res => {
         myp5 = new p5(function(p) {
           p.setup = function() {
@@ -128,32 +186,29 @@ window.visualTest = function(
       });
     });
 
-    teardown(function() {
+    afterAll(function() {
       myp5.remove();
     });
 
     test('matches expected screenshots', async function() {
       let expectedScreenshots;
       try {
-        metadata = await fetch(
-          `unit/visual/screenshots/${name}/metadata.json`
-        ).then(res => res.json());
+        const metadata = JSON.parse(await readFile(
+          `../screenshots/${name}/metadata.json`
+        ));
         expectedScreenshots = metadata.numScreenshots;
       } catch (e) {
+        console.log(e);
         expectedScreenshots = 0;
-      }
-
-      if (!window.shouldGenerateScreenshots && !expectedScreenshots) {
-        // If running on CI, all expected screenshots should already
-        // be generated
-        throw new Error('No expected screenshots found');
       }
 
       const actual = [];
 
       // Generate screenshots
       await callback(myp5, () => {
-        actual.push(myp5.get());
+        const img = myp5.get();
+        img.pixelDensity(1);
+        actual.push(img);
       });
 
 
@@ -166,34 +221,31 @@ window.visualTest = function(
         );
       }
       if (!expectedScreenshots) {
-        writeTextFile(
-          `unit/visual/screenshots/${name}/metadata.json`,
+        await writeFile(
+          `../screenshots/${name}/metadata.json`,
           JSON.stringify({ numScreenshots: actual.length }, null, 2)
         );
       }
 
       const expectedFilenames = actual.map(
-        (_, i) => `unit/visual/screenshots/${name}/${i.toString().padStart(3, '0')}.png`
+        (_, i) => `../screenshots/${name}/${i.toString().padStart(3, '0')}.png`
       );
       const expected = expectedScreenshots
         ? (
           await Promise.all(
-            expectedFilenames.map(path => new Promise((resolve, reject) => {
-              myp5.loadImage(path, resolve, reject);
-            }))
+            expectedFilenames.map(path => myp5.loadImage('/unit/visual' + path.slice(2)))
           )
         )
         : [];
 
       for (let i = 0; i < actual.length; i++) {
         if (expected[i]) {
-          if (!checkMatch(actual[i], expected[i], myp5).ok) {
-            throw new ScreenshotError(
-              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\n` +
-              'If this is unexpected, paste these URLs into your browser to inspect them, or run grunt yui:dev and go to http://127.0.0.1:9001/test/visual.html.\n\n' +
-              `If this change is expected, please delete the test/unit/visual/screenshots/${name} folder and run tests again to generate a new screenshot.`,
-              actual[i],
-              expected[i]
+          const result = await checkMatch(actual[i], expected[i], myp5);
+          if (!result.ok) {
+            throw new Error(
+              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
+              'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
+              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`,
             );
           }
         } else {
@@ -202,4 +254,4 @@ window.visualTest = function(
       }
     });
   });
-};
+}

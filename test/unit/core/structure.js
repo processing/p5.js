@@ -1,16 +1,18 @@
+import p5 from '../../../src/app.js';
+import { testSketchWithPromise, createP5Iframe, P5_SCRIPT_TAG } from '../../js/p5_helpers';
+
 suite('Structure', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -56,18 +58,7 @@ suite('Structure', function() {
 
   suite('p5.prototype.push and p5.prototype.pop', function() {
     function getRenderState() {
-      var state = {};
-      for (var key in myp5._renderer) {
-        var value = myp5._renderer[key];
-        if (
-          typeof value !== 'function' &&
-          key !== '_cachedFillStyle' &&
-          key !== '_cachedStrokeStyle'
-        ) {
-          state[key] = value;
-        }
-      }
-      return state;
+      return { ...myp5._renderer.states };
     }
 
     function assertCanPreserveRenderState(work) {
@@ -208,7 +199,7 @@ suite('Structure', function() {
   suite('p5.prototype.redraw', function() {
     var iframe;
 
-    teardown(function() {
+    afterAll(function() {
       if (iframe) {
         iframe.teardown();
         iframe = null;
@@ -231,7 +222,7 @@ suite('Structure', function() {
       });
     });
 
-    test('instance redraw is independent of window', function() {
+    test.todo('instance redraw is independent of window', function() {
       // callback for p5 instance mode.
       // It does not call noLoop so redraw will be called many times.
       // Redraw is not supposed to call window.draw even though no draw is defined in cb

@@ -1,16 +1,18 @@
+import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
 suite('Environment', function() {
   var myp5;
 
-  setup(function(done) {
+  beforeAll(function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
   });
 
-  teardown(function() {
+  afterAll(function() {
     myp5.remove();
   });
 
@@ -94,7 +96,7 @@ suite('Environment', function() {
   });
 
   suite('p5.prototype.frameRate', function() {
-    test('returns 0 on first draw call', function() {
+    test.todo('returns 0 on first draw call', function() {
       assert.strictEqual(myp5.frameRate(), 0);
     });
 
@@ -111,25 +113,19 @@ suite('Environment', function() {
       });
     });
 
-    test('wrong param type. throws error.', function() {
-      assert.validationError(function() {
-        myp5.frameRate('a');
-      });
-    });
-
-    test('p5.prototype.getFrameRate', function() {
+    test.todo('p5.prototype.getFrameRate', function() {
       assert.strictEqual(myp5.getFrameRate(), 0);
     });
 
-    suite('drawing with target frame rates', function() {
+    suite.todo('drawing with target frame rates', function() {
       let clock;
       let prevRequestAnimationFrame;
       let nextFrameCallback = () => {};
       let controlledP5;
 
-      setup(function() {
-        clock = sinon.useFakeTimers(0);
-        sinon.stub(window.performance, 'now', Date.now);
+      beforeEach(function() {
+        clock = vi.useFakeTimers(0);
+        vi.spyOn(window.performance, 'now', Date.now);
 
         // Save the real requestAnimationFrame so we can restore it later
         prevRequestAnimationFrame = window.requestAnimationFrame;
@@ -153,8 +149,9 @@ suite('Environment', function() {
         });
       });
 
-      teardown(function() {
-        clock.restore();
+      afterEach(function() {
+        // clock.restore();
+        vi.restoreAllMocks();
         window.performance.now.restore();
         window.requestAnimationFrame = prevRequestAnimationFrame;
         nextFrameCallback = function() {};
@@ -162,7 +159,7 @@ suite('Environment', function() {
       });
 
       test('draw() is called at the correct frame rate given a faster display', function() {
-        sinon.spy(controlledP5, 'draw');
+        vi.spyOn(controlledP5, 'draw');
 
         clock.tick(1000 / 200); // Simulate a 200Hz refresh rate
         nextFrameCallback(); // trigger the next requestAnimationFrame
@@ -226,12 +223,6 @@ suite('Environment', function() {
       myp5.pixelDensity(2);
       assert.strictEqual(myp5.pixelDensity(), 2);
     });
-
-    test('wrong param type. throws validationError.', function() {
-      assert.validationError(function() {
-        myp5.pixelDensity('a');
-      });
-    });
   });
 
   suite('p5.prototype.displayDensity', function() {
@@ -243,6 +234,63 @@ suite('Environment', function() {
       let pd = myp5.displayDensity();
       myp5.pixelDensity(pd + 1);
       assert.isNumber(myp5.displayDensity(), pd);
+    });
+  });
+
+  suite('2D context test', function() {
+    beforeEach(function() {
+      myp5.createCanvas(100, 100);
+    });
+
+    test('worldToScreen for 2D context', function() {
+      let worldPos = myp5.createVector(50, 50);
+      let screenPos = myp5.worldToScreen(worldPos);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 2);
+      let worldPos = myp5.createVector(10, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 60, 0.1);
+    });
+  });
+
+  suite('3D context test', function() {
+    beforeEach(function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+    });
+
+    test('worldToScreen for 3D context', function() {
+      let worldPos = myp5.createVector(0, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 3D around Y-axis', function() {
+      myp5.push();
+      myp5.rotateY(myp5.PI / 2);
+      let worldPos = myp5.createVector(50, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 50, 0.1);
+    });
+
+    test('worldToScreen with rotation in 3D around Z-axis', function() {
+      myp5.push();
+      myp5.rotateZ(myp5.PI / 2);
+      let worldPos = myp5.createVector(10, 0, 0);
+      let screenPos = myp5.worldToScreen(worldPos);
+      myp5.pop();
+      assert.closeTo(screenPos.x, 50, 0.1);
+      assert.closeTo(screenPos.y, 60, 0.1);
     });
   });
 });

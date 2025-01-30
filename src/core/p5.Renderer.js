@@ -4,102 +4,216 @@
  * @for p5
  */
 
-import p5 from './main';
+import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
+import { Image } from '../image/p5.Image';
+import { Vector } from '../math/p5.Vector';
+import { Shape } from '../shape/custom_shapes';
 
-/**
- * Main graphics and rendering context, as well as the base API
- * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respectively.
- *
- * @class p5.Renderer
- * @constructor
- * @extends p5.Element
- * @param {HTMLElement} elt DOM node that is wrapped
- * @param {p5} [pInst] pointer to p5 instance
- * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
- */
-class Renderer extends p5.Element {
-  constructor(elt, pInst, isMainCanvas) {
-    super(elt, pInst);
-    this.canvas = elt;
-    this._pixelsState = pInst;
+class ClonableObject {
+  constructor(obj = {}) {
+    for (const key in obj) {
+      this[key] = obj[key];
+    }
+  }
+
+  clone() {
+    return new ClonableObject(this);
+  }
+};
+
+class Renderer {
+  static states = {
+    strokeColor: null,
+    strokeSet: false,
+    fillColor: null,
+    fillSet: false,
+    tint: null,
+
+    imageMode: constants.CORNER,
+    rectMode: constants.CORNER,
+    ellipseMode: constants.CENTER,
+    strokeWeight: 1,
+
+    textFont: { family: 'sans-serif' },
+    textLeading: 15,
+    leadingSet: false,
+    textSize: 12,
+    textAlign: constants.LEFT,
+    textBaseline: constants.BASELINE,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
+    textWrap: constants.WORD,
+
+    // added v2.0
+    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStretch: constants.NORMAL,
+    fontWeight: constants.NORMAL,
+    lineHeight: constants.NORMAL,
+    fontVariant: constants.NORMAL,
+    direction: 'inherit'
+  }
+
+  constructor(pInst, w, h, isMainCanvas) {
+    this._pInst = pInst;
+    this._isMainCanvas = isMainCanvas;
+    this.pixels = [];
+    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    this.width = w;
+    this.height = h;
+
+    this._events = {};
+
     if (isMainCanvas) {
       this._isMainCanvas = true;
-      // for pixel method sharing with pimage
-      this._pInst._setProperty('_curElement', this);
-      this._pInst._setProperty('canvas', this.canvas);
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-      this._styles = []; // non-main elt styles stored in p5.Renderer
     }
+
+    // Renderer state machine
+    this.states = Object.assign({}, Renderer.states);
+    // Clone properties that support it
+    for (const key in this.states) {
+      if (this.states[key] instanceof Array) {
+        this.states[key] = this.states[key].slice();
+      } else if (this.states[key] && this.states[key].clone instanceof Function) {
+        this.states[key] = this.states[key].clone();
+      }
+    }
+
+    this.states.strokeColor = new Color([0, 0, 0]);
+    this.states.fillColor = new Color([255, 255, 255]);
+
+    this._pushPopStack = [];
+    // NOTE: can use the length of the push pop stack instead
+    this._pushPopDepth = 0;
 
     this._clipping = false;
     this._clipInvert = false;
 
-    this._textSize = 12;
-    this._textLeading = 15;
-    this._textFont = 'sans-serif';
-    this._textStyle = constants.NORMAL;
-    this._textAscent = null;
-    this._textDescent = null;
-    this._textAlign = constants.LEFT;
-    this._textBaseline = constants.BASELINE;
-    this._textWrap = constants.WORD;
-
-    this._rectMode = constants.CORNER;
-    this._ellipseMode = constants.CENTER;
-    this._curveTightness = 0;
-    this._imageMode = constants.CORNER;
-
-    this._tint = null;
-    this._doStroke = true;
-    this._doFill = true;
-    this._strokeSet = false;
-    this._fillSet = false;
-    this._leadingSet = false;
-
-    this._pushPopDepth = 0;
+    this._currentShape = undefined; // Lazily generate current shape
   }
 
-  // the renderer should return a 'style' object that it wishes to
-  // store on the push stack.
-  push () {
-    this._pushPopDepth++;
-    return {
-      properties: {
-        _doStroke: this._doStroke,
-        _strokeSet: this._strokeSet,
-        _doFill: this._doFill,
-        _fillSet: this._fillSet,
-        _tint: this._tint,
-        _imageMode: this._imageMode,
-        _rectMode: this._rectMode,
-        _ellipseMode: this._ellipseMode,
-        _textFont: this._textFont,
-        _textLeading: this._textLeading,
-        _leadingSet: this._leadingSet,
-        _textSize: this._textSize,
-        _textAlign: this._textAlign,
-        _textBaseline: this._textBaseline,
-        _textStyle: this._textStyle,
-        _textWrap: this._textWrap
-      }
-    };
-  }
-
-  // a pop() operation is in progress
-  // the renderer is passed the 'style' object that it returned
-  // from its push() method.
-  pop (style) {
-    this._pushPopDepth--;
-    if (style.properties) {
-    // copy the style properties back into the renderer
-      Object.assign(this, style.properties);
+  get currentShape() {
+    if (!this._currentShape) {
+      this._currentShape = new Shape(this.getCommonVertexProperties());
     }
+    return this._currentShape;
+  }
+
+  remove() {
+
+  }
+
+  pixelDensity(val){
+    let returnValue;
+    if (typeof val === 'number') {
+      if (val !== this._pixelDensity) {
+        this._pixelDensity = val;
+      }
+      returnValue = this;
+      this.resize(this.width, this.height);
+    } else {
+      returnValue = this._pixelDensity;
+    }
+    return returnValue;
+  }
+
+  // Makes a shallow copy of the current states
+  // and push it into the push pop stack
+  push() {
+    this._pushPopDepth++;
+    const currentStates = Object.assign({}, this.states);
+    // Clone properties that support it
+    for (const key in currentStates) {
+      if (currentStates[key] instanceof Array) {
+        currentStates[key] = currentStates[key].slice();
+      } else if (currentStates[key] && currentStates[key].clone instanceof Function) {
+        currentStates[key] = currentStates[key].clone();
+      }
+    }
+    this._pushPopStack.push(currentStates);
+    return currentStates;
+  }
+
+  // Pop the previous states out of the push pop stack and
+  // assign it back to the current state
+  pop() {
+    this._pushPopDepth--;
+    Object.assign(this.states, this._pushPopStack.pop());
+    this.updateShapeVertexProperties();
+    this.updateShapeProperties();
+  }
+
+  bezierOrder(order) {
+    if (order === undefined) {
+      return this.states.bezierOrder;
+    } else {
+      this.states.bezierOrder = order;
+      this.updateShapeProperties();
+    }
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.bezierVertex(position, textureCoordinates);
+  }
+
+  splineProperty(key, value) {
+    if (value === undefined) {
+      return this.states.splineProperties[key];
+    } else {
+      this.states.splineProperties[key] = value;
+    }
+    this.updateShapeProperties();
+  }
+
+  splineVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.splineVertex(position, textureCoordinates);
+  }
+
+  curveDetail(d) {
+    if (d === undefined) {
+      return this.states.curveDetail;
+    } else {
+      this.states.curveDetail = d;
+    }
+  }
+
+  beginShape(...args) {
+    this.currentShape.reset();
+    this.currentShape.beginShape(...args);
+  }
+
+  endShape(...args) {
+    this.currentShape.endShape(...args);
+    this.drawShape(this.currentShape);
+  }
+
+  beginContour(shapeKind) {
+    this.currentShape.beginContour(shapeKind);
+  }
+
+  endContour(mode) {
+    this.currentShape.endContour(mode);
+  }
+
+  drawShape(shape, count) {
+    throw new Error('Unimplemented')
+  }
+
+  vertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+      ? new Vector(u, v)
+      : undefined;
+    this.currentShape.vertex(position, textureCoordinates);
   }
 
   beginClip(options = {}) {
@@ -118,31 +232,22 @@ class Renderer extends p5.Element {
   }
 
   /**
- * Resize our canvas element.
- */
-  resize (w, h) {
+   * Resize our canvas element.
+   */
+  resize(w, h) {
     this.width = w;
     this.height = h;
-    this.elt.width = w * this._pInst._pixelDensity;
-    this.elt.height = h * this._pInst._pixelDensity;
-    this.elt.style.width = `${w}px`;
-    this.elt.style.height = `${h}px`;
-    if (this._isMainCanvas) {
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
-    }
   }
 
-  get (x, y, w, h) {
-    const pixelsState = this._pixelsState;
-    const pd = pixelsState._pixelDensity;
+  get(x, y, w, h) {
+    const pd = this._pixelDensity;
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
       x = y = 0;
-      w = pixelsState.width;
-      h = pixelsState.height;
+      w = this.width;
+      h = this.height;
     } else {
       x *= pd;
       y *= pd;
@@ -158,7 +263,7 @@ class Renderer extends p5.Element {
     // get(x,y,w,h)
     }
 
-    const region = new p5.Image(w*pd, h*pd);
+    const region = new Image(w*pd, h*pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')
@@ -167,72 +272,140 @@ class Renderer extends p5.Element {
     return region;
   }
 
+  scale(x, y){
+
+  }
+
+  fill(...args) {
+    this.states.fillSet = true;
+    this.states.fillColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
+  }
+
+  noFill() {
+    this.states.fillColor = null;
+  }
+
+  strokeWeight(w) {
+    if (w === undefined) {
+      return this.states.strokeWeight;
+    } else {
+      this.states.strokeWeight = w;
+    }
+  }
+
+  stroke(...args) {
+    this.states.strokeSet = true;
+    this.states.strokeColor = this._pInst.color(...args);
+    this.updateShapeVertexProperties();
+  }
+
+  noStroke() {
+    this.states.strokeColor = null;
+  }
+
+  getCommonVertexProperties() {
+    return {}
+  }
+
+  getSupportedIndividualVertexProperties() {
+    return {
+      textureCoordinates: false,
+    }
+  }
+
+  updateShapeProperties() {
+    this.currentShape.bezierOrder(this.states.bezierOrder);
+    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
+    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
+  }
+
+  updateShapeVertexProperties() {
+    const props = this.getCommonVertexProperties();
+    for (const key in props) {
+      this.currentShape[key](props[key]);
+    }
+  }
+
+  textSize(s) {
+    if (typeof s === 'number') {
+      this.states.textSize = s;
+      if (!this.states.leadingSet) {
+      // only use a default value if not previously set (#5181)
+        this.states.textLeading = s * constants._DEFAULT_LEADMULT;
+      }
+      return this._applyTextProperties();
+    }
+
+    return this.states.textSize;
+  }
+
   textLeading (l) {
     if (typeof l === 'number') {
-      this._setProperty('_leadingSet', true);
-      this._setProperty('_textLeading', l);
+      this.states.leadingSet = true;
+      this.states.textLeading = l;
       return this._pInst;
     }
 
-    return this._textLeading;
+    return this.states.textLeading;
   }
 
   textStyle (s) {
     if (s) {
       if (
         s === constants.NORMAL ||
-      s === constants.ITALIC ||
-      s === constants.BOLD ||
-      s === constants.BOLDITALIC
+        s === constants.ITALIC ||
+        s === constants.BOLD ||
+        s === constants.BOLDITALIC
       ) {
-        this._setProperty('_textStyle', s);
+        this.states.fontStyle = s;
       }
 
       return this._applyTextProperties();
     }
 
-    return this._textStyle;
+    return this.states.fontStyle;
   }
 
   textAscent () {
-    if (this._textAscent === null) {
+    if (this.states.textAscent === null) {
       this._updateTextMetrics();
     }
-    return this._textAscent;
+    return this.states.textAscent;
   }
 
   textDescent () {
-    if (this._textDescent === null) {
+    if (this.states.textDescent === null) {
       this._updateTextMetrics();
     }
-    return this._textDescent;
+    return this.states.textDescent;
   }
 
   textAlign (h, v) {
     if (typeof h !== 'undefined') {
-      this._setProperty('_textAlign', h);
+      this.states.textAlign = h;
 
       if (typeof v !== 'undefined') {
-        this._setProperty('_textBaseline', v);
+        this.states.textBaseline = v;
       }
 
       return this._applyTextProperties();
     } else {
       return {
-        horizontal: this._textAlign,
-        vertical: this._textBaseline
+        horizontal: this.states.textAlign,
+        vertical: this.states.textBaseline
       };
     }
   }
 
   textWrap (wrapStyle) {
-    this._setProperty('_textWrap', wrapStyle);
-    return this._textWrap;
+    this.states.textWrap = wrapStyle;
+    return this.states.textWrap;
   }
 
   text(str, x, y, maxWidth, maxHeight) {
     const p = this._pInst;
-    const textWrapStyle = this._textWrap;
+    const textWrapStyle = this.states.textWrap;
 
     let lines;
     let line;
@@ -245,7 +418,7 @@ class Renderer extends p5.Element {
     // fix for #5785 (top of bounding box)
     let finalMinHeight = y;
 
-    if (!(this._doFill || this._doStroke)) {
+    if (!(this.states.fillColor || this.states.strokeColor)) {
       return;
     }
 
@@ -261,11 +434,11 @@ class Renderer extends p5.Element {
     lines = str.split('\n');
 
     if (typeof maxWidth !== 'undefined') {
-      if (this._rectMode === constants.CENTER) {
+      if (this.states.rectMode === constants.CENTER) {
         x -= maxWidth / 2;
       }
 
-      switch (this._textAlign) {
+      switch (this.states.textAlign) {
         case constants.CENTER:
           x += maxWidth / 2;
           break;
@@ -275,7 +448,7 @@ class Renderer extends p5.Element {
       }
 
       if (typeof maxHeight !== 'undefined') {
-        if (this._rectMode === constants.CENTER) {
+        if (this.states.rectMode === constants.CENTER) {
           y -= maxHeight / 2;
           finalMinHeight -= maxHeight / 2;
         }
@@ -283,7 +456,7 @@ class Renderer extends p5.Element {
         let originalY = y;
         let ascent = p.textAscent();
 
-        switch (this._textBaseline) {
+        switch (this.states.textBaseline) {
           case constants.BOTTOM:
             shiftedY = y + maxHeight;
             y = Math.max(shiftedY, y);
@@ -302,15 +475,15 @@ class Renderer extends p5.Element {
         finalMaxHeight = y + maxHeight - ascent;
 
         // fix for #5785 (bottom of bounding box)
-        if (this._textBaseline === constants.CENTER) {
+        if (this.states.textBaseline === constants.CENTER) {
           finalMaxHeight = originalY + maxHeight - ascent / 2;
         }
       } else {
       // no text-height specified, show warning for BOTTOM / CENTER
-        if (this._textBaseline === constants.BOTTOM ||
-        this._textBaseline === constants.CENTER) {
+        if (this.states.textBaseline === constants.BOTTOM ||
+        this.states.textBaseline === constants.CENTER) {
         // use rectHeight as an approximation for text height
-          let rectHeight = p.textSize() * this._textLeading;
+          let rectHeight = p.textSize() * this.states.textLeading;
           finalMinHeight = y - rectHeight / 2;
           finalMaxHeight = y + rectHeight / 2;
         }
@@ -338,9 +511,9 @@ class Renderer extends p5.Element {
         }
 
         let offset = 0;
-        if (this._textBaseline === constants.CENTER) {
+        if (this.states.textBaseline === constants.CENTER) {
           offset = (nlines.length - 1) * p.textLeading() / 2;
-        } else if (this._textBaseline === constants.BOTTOM) {
+        } else if (this.states.textBaseline === constants.BOTTOM) {
           offset = (nlines.length - 1) * p.textLeading();
         }
 
@@ -394,9 +567,9 @@ class Renderer extends p5.Element {
 
         nlines.push(line);
         let offset = 0;
-        if (this._textBaseline === constants.CENTER) {
+        if (this.states.textBaseline === constants.CENTER) {
           offset = (nlines.length - 1) * p.textLeading() / 2;
-        } else if (this._textBaseline === constants.BOTTOM) {
+        } else if (this.states.textBaseline === constants.BOTTOM) {
           offset = (nlines.length - 1) * p.textLeading();
         }
 
@@ -438,9 +611,9 @@ class Renderer extends p5.Element {
     // Offset to account for vertically centering multiple lines of text - no
     // need to adjust anything for vertical align top or baseline
       let offset = 0;
-      if (this._textBaseline === constants.CENTER) {
+      if (this.states.textBaseline === constants.CENTER) {
         offset = (lines.length - 1) * p.textLeading() / 2;
-      } else if (this._textBaseline === constants.BOTTOM) {
+      } else if (this.states.textBaseline === constants.BOTTOM) {
         offset = (lines.length - 1) * p.textLeading();
       }
 
@@ -468,21 +641,21 @@ class Renderer extends p5.Element {
   /**
  * Helper function to check font type (system or otf)
  */
-  _isOpenType(f = this._textFont) {
-    return typeof f === 'object' && f.font && f.font.supported;
+  _isOpenType({ font: f } = this.states.textFont) {
+    return typeof f === 'object' && f.data;
   }
 
   _updateTextMetrics() {
     if (this._isOpenType()) {
-      this._setProperty('_textAscent', this._textFont._textAscent());
-      this._setProperty('_textDescent', this._textFont._textDescent());
+      this.states.textAscent = this.states.textFont._textAscent();
+      this.states.textDescent = this.states.textFont._textDescent();
       return this;
     }
 
     // Adapted from http://stackoverflow.com/a/25355178
     const text = document.createElement('span');
-    text.style.fontFamily = this._textFont;
-    text.style.fontSize = `${this._textSize}px`;
+    text.style.fontFamily = this.states.textFont;
+    text.style.fontSize = `${this.states.textSize}px`;
     text.innerHTML = 'ABCjgq|';
 
     const block = document.createElement('div');
@@ -511,12 +684,27 @@ class Renderer extends p5.Element {
 
     document.body.removeChild(container);
 
-    this._setProperty('_textAscent', ascent);
-    this._setProperty('_textDescent', descent);
+    this.states.textAscent = ascent;
+    this.states.textDescent = descent;
 
     return this;
   }
+};
+
+function renderer(p5, fn){
+  /**
+   * Main graphics and rendering context, as well as the base API
+   * implementation for p5.js "core". To be used as the superclass for
+   * Renderer2D and Renderer3D classes, respectively.
+   *
+   * @class p5.Renderer
+   * @param {HTMLElement} elt DOM node that is wrapped
+   * @param {p5} [pInst] pointer to p5 instance
+   * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   */
+  p5.Renderer = Renderer;
 }
+
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
@@ -535,20 +723,6 @@ function calculateOffset(object) {
   }
   return [currentLeft, currentTop];
 }
-// This caused the test to failed.
-Renderer.prototype.textSize = function(s) {
-  if (typeof s === 'number') {
-    this._setProperty('_textSize', s);
-    if (!this._leadingSet) {
-    // only use a default value if not previously set (#5181)
-      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
-    }
-    return this._applyTextProperties();
-  }
 
-  return this._textSize;
-};
-
-p5.Renderer = Renderer;
-
-export default p5.Renderer;
+export default renderer;
+export { Renderer };

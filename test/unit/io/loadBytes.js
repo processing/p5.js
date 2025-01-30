@@ -1,149 +1,71 @@
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import files from '../../../src/io/files';
+
 suite('loadBytes', function() {
-  var invalidFile = '404file';
-  var validFile = 'unit/assets/nyan_cat.gif';
+  const invalidFile = '404file';
+  const validFile = '/test/unit/assets/nyan_cat.gif';
 
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadBytes(invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
+  beforeAll(async () => {
+    files(mockP5, mockP5Prototype);
+    await httpMock.start({ quiet: true });
   });
 
-  testSketchWithPromise('error prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadBytes(invalidFile);
-      setTimeout(resolve, 50);
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Setup called'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Draw called'));
-    };
+  test('throws error when encountering HTTP errors', async () => {
+    await expect(mockP5Prototype.loadBytes(invalidFile))
+      .rejects
+      .toThrow('Not Found');
   });
 
-  testSketchWithPromise('error callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadBytes(
-        invalidFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
-  });
-
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadBytes(validFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
-  testSketchWithPromise('success callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    var hasBeenCalled = false;
-    sketch.preload = function() {
-      sketch.loadBytes(
-        validFile,
-        function() {
-          hasBeenCalled = true;
-        },
-        function(err) {
-          reject(new Error('Error callback was entered: ' + err));
-        }
-      );
-    };
-
-    sketch.setup = function() {
-      if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
+  test('error callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadBytes(invalidFile, () => {
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }
-    };
+      });
+    });
   });
 
-  test('returns the correct object', async function() {
-    const object = await promisedSketch(function(sketch, resolve, reject) {
-      var _object;
-      sketch.preload = function() {
-        _object = sketch.loadBytes(validFile, function() {}, reject);
-      };
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadBytes(validFile, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
+    });
+  });
 
-      sketch.setup = function() {
-        resolve(_object);
-      };
-    });
-    assert.isObject(object);
-    // Check data format
-    expect(object.bytes).to.satisfy(function(v) {
-      return Array.isArray(v) || v instanceof Uint8Array;
-    });
+  test('returns the correct object',  async () => {
+    const data = await mockP5Prototype.loadBytes(validFile);
+    assert.instanceOf(data, Uint8Array);
+
     // Validate data
-    var str = 'GIF89a';
+    const str = 'GIF89a';
     // convert the string to a byte array
-    var rgb = str.split('').map(function(e) {
+    const rgb = str.split('').map(function(e) {
       return e.charCodeAt(0);
     });
     // this will convert a Uint8Aray to [], if necessary:
-    var loaded = Array.prototype.slice.call(object.bytes, 0, str.length);
+    const loaded = Array.prototype.slice.call(data, 0, str.length);
     assert.deepEqual(loaded, rgb);
   });
 
-  test('passes an object to success callback for object JSON', async function() {
-    const object = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadBytes(validFile, resolve, reject);
-      };
+  test('passes athe correct object to success callback',  async () => {
+    await mockP5Prototype.loadBytes(validFile, (data) => {
+      assert.instanceOf(data, Uint8Array);
+
+      // Validate data
+      const str = 'GIF89a';
+      // convert the string to a byte array
+      const rgb = str.split('').map(function(e) {
+        return e.charCodeAt(0);
+      });
+      // this will convert a Uint8Aray to [], if necessary:
+      const loaded = Array.prototype.slice.call(data, 0, str.length);
+      assert.deepEqual(loaded, rgb);
     });
-    assert.isObject(object);
-    // Check data format
-    expect(object.bytes).to.satisfy(function(v) {
-      return Array.isArray(v) || v instanceof Uint8Array;
-    });
-    // Validate data
-    var str = 'GIF89a';
-    // convert the string to a byte array
-    var rgb = str.split('').map(function(e) {
-      return e.charCodeAt(0);
-    });
-    // this will convert a Uint8Aray to [], if necessary:
-    var loaded = Array.prototype.slice.call(object.bytes, 0, str.length);
-    assert.deepEqual(loaded, rgb);
   });
 });

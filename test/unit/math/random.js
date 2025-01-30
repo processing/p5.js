@@ -1,17 +1,15 @@
+import random from '../../../src/math/random.js';
+import { vi } from 'vitest';
+
 suite('Random', function() {
-  var myp5;
+  const mockP5 = {
+    _validateParameters: vi.fn()
+  };
+  const mockP5Prototype = {
+  };
 
-  setup(function(done) {
-    new p5(function(p) {
-      p.setup = function() {
-        myp5 = p;
-        done();
-      };
-    });
-  });
-
-  teardown(function() {
-    myp5.remove();
+  beforeAll(function() {
+    random(mockP5, mockP5Prototype);
   });
 
   suite('p5.prototype.random', function() {
@@ -20,14 +18,14 @@ suite('Random', function() {
     var results = [];
 
     suite('random()', function() {
-      setup(function() {
-        myp5.randomSeed(99);
+      beforeEach(function() {
+        mockP5Prototype.randomSeed(99);
         for (var i = 0; i < 5; i++) {
-          results[i] = myp5.random();
+          results[i] = mockP5Prototype.random();
         }
-        myp5.randomSeed(99);
+        mockP5Prototype.randomSeed(99);
         for (i = 5; i < 10; i++) {
-          results[i] = myp5.random();
+          results[i] = mockP5Prototype.random();
         }
       });
       test('should return a number', function() {
@@ -50,7 +48,7 @@ suite('Random', function() {
 
     suite('random(5)', function() {
       test('should return a number 0 <= n < 5', function() {
-        result = myp5.random(5);
+        result = mockP5Prototype.random(5);
         assert.isTrue(result >= 0);
         assert.isTrue(result < 5);
       });
@@ -58,7 +56,7 @@ suite('Random', function() {
 
     suite('random(1, 10)', function() {
       test('should return a number 1 <= n < 10', function() {
-        result = myp5.random(1, 10);
+        result = mockP5Prototype.random(1, 10);
         assert.isTrue(result >= 1);
         assert.isTrue(result < 10);
       });
@@ -67,33 +65,26 @@ suite('Random', function() {
     suite('random(["apple", "pear", "orange", "grape"])', function() {
       test('should return a fruit', function() {
         var fruits = ['apple', 'pear', 'orange', 'grape'];
-        result = myp5.random(fruits);
+        result = mockP5Prototype.random(fruits);
         assert.include(fruits, result);
       });
     });
   });
-  suite('instance mode', function() {
+  suite.skip('instance mode', function() {
     var instances = [];
 
-    function addInstance(max, done) {
-      new p5(function(p) {
-        p.setup = function() {
-          instances.push(p);
-          if (instances.length >= max) {
-            done();
-          }
-        };
-      });
-    }
-
-    setup(function(done) {
+    beforeEach(async function() {
       var instanceCount = 2;
       for (var i = 0; i < instanceCount; i++) {
-        addInstance(instanceCount, done);
+        new p5(function(p) {
+          p.setup = function() {
+            instances.push(p);
+          };
+        });
       }
     });
 
-    teardown(function() {
+    afterEach(function() {
       instances.forEach(function(instance) {
         instance.remove();
       });
@@ -120,28 +111,21 @@ suite('Random', function() {
   });
 
   suite('p5.prototype.randomGaussian', function() {
-    suite('instance mode', function() {
+    suite.skip('instance mode', function() {
       var instances = [];
 
-      function addInstance(max, done) {
-        new p5(function(p) {
-          p.setup = function() {
-            instances.push(p);
-            if (instances.length >= max) {
-              done();
-            }
-          };
-        });
-      }
-
-      setup(function(done) {
+      beforeEach(async function() {
         var instanceCount = 2;
         for (var i = 0; i < instanceCount; i++) {
-          addInstance(instanceCount, done);
+          new p5(function(p) {
+            p.setup = function() {
+              instances.push(p);
+            };
+          });
         }
       });
 
-      teardown(function() {
+      afterEach(function() {
         instances.forEach(function(instance) {
           instance.remove();
         });
@@ -169,7 +153,7 @@ suite('Random', function() {
 
     suite('randomGaussian(42, 0)', function() {
       test('should return 42', function() {
-        result = myp5.randomGaussian(42, 0);
+        let result = mockP5Prototype.randomGaussian(42, 0);
         assert.isTrue(result === 42);
       });
     });

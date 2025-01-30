@@ -1,3 +1,5 @@
+import { visualSuite, visualTest } from "../visualTest";
+
 /*
   Helper function that draws a shape using the specified shape mode
   p5 ............... The p5 Instance
@@ -62,7 +64,7 @@ function shapeCorners(p5, shape, mode, x1, y1, x2, y2) {
 }
 
 
-visualSuite('Shape Modes', function(...args) {
+visualSuite('Shape Modes', function() {
   /*
     Comprehensive test for rendering ellipse(), arc(), and rect()
     with the different ellipseMode() / rectMode() values: CORNERS, CORNER, CENTER, RADIUS.

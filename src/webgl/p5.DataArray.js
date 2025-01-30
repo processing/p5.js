@@ -1,31 +1,4 @@
-import p5 from '../core/main';
-
-/**
- * An internal class to store data that will be sent to a p5.RenderBuffer.
- * Those need to eventually go into a Float32Array, so this class provides a
- * variable-length array container backed by a Float32Array so that it can be
- * sent to the GPU without allocating a new array each frame.
- *
- * Like a C++ vector, its fixed-length Float32Array backing its contents will
- * double in size when it goes over its capacity.
- *
- * @example
- * <div>
- * <code>
- * // Initialize storage with a capacity of 4
- * const storage = new DataArray(4);
- * console.log(storage.data.length); // 4
- * console.log(storage.length); // 0
- * console.log(storage.dataArray()); // Empty Float32Array
- *
- * storage.push(1, 2, 3, 4, 5, 6);
- * console.log(storage.data.length); // 8
- * console.log(storage.length); // 6
- * console.log(storage.dataArray()); // Float32Array{1, 2, 3, 4, 5, 6}
- * </code>
- * </div>
- */
-p5.DataArray = class DataArray {
+class DataArray {
   constructor(initialLength = 128) {
     this.length = 0;
     this.data = new Float32Array(initialLength);
@@ -107,4 +80,38 @@ p5.DataArray = class DataArray {
   }
 };
 
-export default p5.DataArray;
+function dataArray(p5, fn){
+  /**
+   * An internal class to store data that will be sent to a p5.RenderBuffer.
+   * Those need to eventually go into a Float32Array, so this class provides a
+   * variable-length array container backed by a Float32Array so that it can be
+   * sent to the GPU without allocating a new array each frame.
+   *
+   * Like a C++ vector, its fixed-length Float32Array backing its contents will
+   * double in size when it goes over its capacity.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Initialize storage with a capacity of 4
+   * const storage = new DataArray(4);
+   * console.log(storage.data.length); // 4
+   * console.log(storage.length); // 0
+   * console.log(storage.dataArray()); // Empty Float32Array
+   *
+   * storage.push(1, 2, 3, 4, 5, 6);
+   * console.log(storage.data.length); // 8
+   * console.log(storage.length); // 6
+   * console.log(storage.dataArray()); // Float32Array{1, 2, 3, 4, 5, 6}
+   * </code>
+   * </div>
+   */
+  p5.DataArray = DataArray;
+}
+
+export default dataArray;
+export { DataArray }
+
+if(typeof p5 !== 'undefined'){
+  dataArray(p5, p5.prototype);
+}

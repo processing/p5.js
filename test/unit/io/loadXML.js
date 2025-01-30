@@ -1,127 +1,58 @@
+import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
+import files from '../../../src/io/files';
+import xml from '../../../src/io/p5.XML';
+
 suite('loadXML', function() {
-  var invalidFile = '404file';
-  var validFile = 'unit/assets/books.xml';
+  const invalidFile = '404file';
+  const validFile = '/test/unit/assets/books.xml';
 
-  test('_friendlyFileLoadError is called', async function() {
-    const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
-    try {
-      await promisedSketch(function(sketch, resolve, reject) {
-        sketch.preload = function() {
-          sketch.loadXML(invalidFile, reject, resolve);
-        };
-      });
-      expect(
-        _friendlyFileLoadErrorStub.calledOnce,
-        'p5._friendlyFileLoadError was not called'
-      ).to.be.true;
-    } finally {
-      _friendlyFileLoadErrorStub.restore();
-    }
+  beforeAll(async () => {
+    files(mockP5, mockP5Prototype);
+    xml(mockP5, mockP5Prototype);
+    await httpMock.start({ quiet: true });
   });
 
-  testSketchWithPromise('error prevents sketch continuing', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadXML(invalidFile);
-      setTimeout(resolve, 50);
-    };
-
-    sketch.setup = function() {
-      reject(new Error('Setup called'));
-    };
-
-    sketch.draw = function() {
-      reject(new Error('Draw called'));
-    };
+  test('throws error when encountering HTTP errors', async () => {
+    await expect(mockP5Prototype.loadXML(invalidFile))
+      .rejects
+      .toThrow('Not Found');
   });
 
-  testSketchWithPromise('error callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadXML(
-        invalidFile,
-        function() {
-          reject(new Error('Success callback executed.'));
-        },
-        function() {
-          // Wait a bit so that if both callbacks are executed we will get an error.
-          setTimeout(resolve, 50);
-        }
-      );
-    };
-  });
-
-  testSketchWithPromise('loading correctly triggers setup', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      sketch.loadXML(validFile);
-    };
-
-    sketch.setup = function() {
-      resolve();
-    };
-  });
-
-  testSketchWithPromise('success callback is called', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    var hasBeenCalled = false;
-    sketch.preload = function() {
-      sketch.loadXML(
-        validFile,
-        function() {
-          hasBeenCalled = true;
-        },
-        function(err) {
-          reject(new Error('Error callback was entered: ' + err));
-        }
-      );
-    };
-
-    sketch.setup = function() {
-      if (!hasBeenCalled) {
-        reject(new Error('Setup called prior to success callback'));
-      } else {
+  test('error callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadXML(invalidFile, () => {
+        console.log("here");
+        reject("Success callback executed");
+      }, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }
-    };
+      });
+    });
   });
 
-  test('returns an object with correct data', async function() {
-    const xml = await promisedSketch(function(sketch, resolve, reject) {
-      let _xml;
-      sketch.preload = function() {
-        _xml = sketch.loadXML(validFile, function() {}, reject);
-      };
-
-      sketch.setup = function() {
-        resolve(_xml);
-      };
+  test('success callback is called', async () => {
+    await new Promise((resolve, reject) => {
+      mockP5Prototype.loadXML(validFile, () => {
+        // Wait a bit so that if both callbacks are executed we will get an error.
+        setTimeout(resolve, 50);
+      }, (err) => {
+        reject(`Error callback called: ${err.toString()}`);
+      });
     });
+  });
+
+  test('returns an object with correct data', async () => {
+    const xml = await mockP5Prototype.loadXML(validFile);
     assert.isObject(xml);
-    var children = xml.getChildren('book');
+    const children = xml.getChildren('book');
     assert.lengthOf(children, 12);
   });
 
-  test('passes an object with correct data', async function() {
-    const xml = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadXML(validFile, resolve, reject);
-      };
+  test('passes an object with correct data to success callback', async () => {
+    await mockP5Prototype.loadXML(validFile, (xml) => {
+      assert.isObject(xml);
+      const children = xml.getChildren('book');
+      assert.lengthOf(children, 12);
     });
-    assert.isObject(xml);
-    var children = xml.getChildren('book');
-    assert.lengthOf(children, 12);
   });
 });
