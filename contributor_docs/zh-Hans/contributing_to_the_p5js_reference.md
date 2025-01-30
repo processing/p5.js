@@ -72,7 +72,7 @@
 
 ## 参考注释块
 
-让我们解析上面 `sin()` 函数的参考注释块，并查看每个部分的作用。你可以将此处的注释与参考页面上的[`sin()`](https://p5js.org/reference/#/p5/sin)进行比较。
+让我们解析上面 `sin()` 函数的参考注释块，并查看每个部分的作用。你可以将此处的注释与参考页面上的[`sin()`](https://p5js.org/reference/p5/sin)进行比较。
 
 ```
 /**
@@ -269,7 +269,7 @@
 * </code></div>
 ```
 
-如果你的示例使用外部素材文件，请将它们放入 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 文件夹中（或者重用其中已有的文件），然后在代码中使用 "assets/filename.ext" 链接到它们。请参阅 [tint()](http://p5js.org/reference/#/p5/tint) 参考示例。
+如果你的示例使用外部素材文件，请将它们放入 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 文件夹中（或者重用其中已有的文件），然后在代码中使用 "assets/filename.ext" 链接到它们。请参阅 [tint()](http://p5js.org/reference/p5/tint) 参考示例。
 
 
 ### 使用 `describe()` 添加画布描述

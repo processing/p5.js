@@ -24,7 +24,7 @@ export const P2D = 'p2d';
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
- * `WEBGL` differs from the default <a href="/reference/#/p5/P2D">`P2D`</a> renderer in the following ways:
+ * `WEBGL` differs from the default <a href="/reference/p5/P2D">`P2D`</a> renderer in the following ways:
  *
  * - **Coordinate System** - When drawing in `WEBGL` mode, the origin point (0,0,0) is located at the center of the screen, not the top-left corner. See <a href="https://p5js.org/tutorials/coordinates-and-transformations/">the tutorial page about coordinates and transformations</a>.
  * - **3D Shapes** - `WEBGL` mode can be used to draw 3-dimensional shapes like <a href="#/p5/box">box()</a>, <a href="#/p5/sphere">sphere()</a>, <a href="#/p5/cone">cone()</a>, and <a href="https://p5js.org/reference/#3D%20Primitives">more</a>. See <a href="https://p5js.org/tutorials/custom-geometry/">the tutorial page about custom geometry</a> to make more complex objects.
@@ -810,7 +810,7 @@ export const HSL = 'hsl';
 /**
  * AUTO allows us to automatically set the width or height of an element (but not both),
  * based on the current height and width of the element. Only one parameter can
- * be passed to the <a href="/reference/#/p5.Element/size">size</a> function as AUTO, at a time.
+ * be passed to the <a href="/reference/p5.Element/size">size</a> function as AUTO, at a time.
  *
  * @property {String} AUTO
  * @final

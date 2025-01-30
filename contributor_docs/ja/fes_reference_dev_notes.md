@@ -222,7 +222,7 @@ FESはコンソールに以下のメッセージを生成します：
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 ```
 FESはコンソールに以下のメッセージを生成します：
-> 🌸 p5.jsが言うには、arc()はパラメータ#0（ゼロベースのインデックス）でNumberを期待していましたが、文字列を受け取りました。[http://p5js.org/reference/#/p5/arc]
+> 🌸 p5.jsが言うには、arc()はパラメータ#0（ゼロベースのインデックス）でNumberを期待していましたが、文字列を受け取りました。[http://p5js.org/reference/p5/arc]
 ##### 位置
 core/friendly_errors/validate_params.js
 
@@ -276,7 +276,7 @@ function preload() {
 }
 ```
 FES将在控制台中生成以下消息：
-> 🌸 p5.jsが言うには、backgroundを呼び出したとき（sketch.jsの4行目[http://localhost:8000/lib/empty-example/sketch.js:4:3]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'background'を読み取れません」です。（特に説明がない限り、これはpreloadからbackgroundが呼び出されたためかもしれません。preload関数内にはload関数（loadImage、loadJSON、loadFont、loadStringsなど）以外は含まれていないべきです。）（http://p5js.org/reference/#/p5/preload）
+> 🌸 p5.jsが言うには、backgroundを呼び出したとき（sketch.jsの4行目[http://localhost:8000/lib/empty-example/sketch.js:4:3]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'background'を読み取れません」です。（特に説明がない限り、これはpreloadからbackgroundが呼び出されたためかもしれません。preload関数内にはload関数（loadImage、loadJSON、loadFont、loadStringsなど）以外は含まれていないべきです。）（http://p5js.org/reference/p5/preload）
 
 <ins>内部エラーの例 2</ins>
 ```javascript
@@ -286,7 +286,7 @@ function setup() {
 }
 ```
 FES将在控制台中生成以下消息：
-> 🌸 p5.jsが言うには、mouseClickedを呼び出したとき（sketch.jsの3行目[http://localhost:8000/lib/empty-example/sketch.js:3:7]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'bind'を読み取れません」です。（特に説明がない限り、これはmouseClickedへの引数に問題がある可能性があります。）（http://p5js.org/reference/#/p5/mouseClicked）
+> 🌸 p5.jsが言うには、mouseClickedを呼び出したとき（sketch.jsの3行目[http://localhost:8000/lib/empty-example/sketch.js:3:7]）、p5jsライブラリ内部でエラーが発生しました。エラーメッセージは「未定義のプロパティ'bind'を読み取れません」です。（特に説明がない限り、これはmouseClickedへの引数に問題がある可能性があります。）（http://p5js.org/reference/p5/mouseClicked）
 
 <ins>ユーザー例のスコープエラーの例</ins>
 ```javascript
@@ -306,7 +306,7 @@ function setup() {
 }
 ```
 FESはコンソールに以下のメッセージを生成します：
-> 🌸 p5.jsが言うには、「colour」を誤って「color」と書いてしまった可能性があります（sketch.jsの2行目[http://localhost:8000/lib/empty-example/sketch.js:2:3]）。p5.jsの関数を使用する場合は、それをcolorに修正してください（http://p5js.org/reference/#/p5/color）。
+> 🌸 p5.jsが言うには、「colour」を誤って「color」と書いてしまった可能性があります（sketch.jsの2行目[http://localhost:8000/lib/empty-example/sketch.js:2:3]）。p5.jsの関数を使用する場合は、それをcolorに修正してください（http://p5js.org/reference/p5/color）。
 
 ##### 位置
 core/friendly_errors/fes_core.js
@@ -334,7 +334,7 @@ function setup() {
 }
 ```
 FESはコンソールに以下のメッセージを生成します：
-> 🌸 p5.jsのヒント：p5.jsの予約された変数「PI」を使用しています。変数名を他の名前に変更してください。(https://p5js.org/reference/#/p5/PI)
+> 🌸 p5.jsのヒント：p5.jsの予約された変数「PI」を使用しています。変数名を他の名前に変更してください。(https://p5js.org/reference/p5/PI)
 
 <ins>p5.j​​sの予約関数の再定義例</ins>
 ```javascript
@@ -372,7 +372,7 @@ function preLoad() {
 }
 ```
 FESはコンソールに以下のメッセージを生成します：
-> 🌸 p5.jsのヒント：preLoadと書くべきところをpreloadと誤って書いているようです。これが意図していない場合は、訂正してください。(http://p5js.org/reference/#/p5/preload)
+> 🌸 p5.jsのヒント：preLoadと書くべきところをpreloadと誤って書いているようです。これが意図していない場合は、訂正してください。(http://p5js.org/reference/p5/preload)
 
 ##### 位置
 core/friendly_errors/fes_core.js
