@@ -20,22 +20,14 @@
     import p5 from '../src/app.js';
 
     const sketch = function (p) {
-      let font, geom;
       p.setup = async function () {
-        font = await p.loadFont('font/Lato-Black.ttf');
-        p.createCanvas(400, 400, p.WEBGL);
-        p.textSize(120);
-        p.textAlign(p.CENTER)
-        geom = font.textToModel('p5*js', 0, 0, { extrude: 20 });
+        p.createCanvas(400, 400);
       };
 
       p.draw = function () {
         p.background(200);
-        p.normalMaterial();
-        p.drawingContext.enable(p.drawingContext.CULL_FACE);
-        p.drawingContext.cullFace(p.drawingContext.FRONT);
-        p.orbitControl();
-        p.model(geom);
+        p.strokeWeight(10);
+        p.line(-100, -100, 100, 100);
       };
     };
 

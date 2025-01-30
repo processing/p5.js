@@ -4,7 +4,7 @@
 
 Welcome to the contributor guidelines! This document is for new contributors looking to contribute code to p5.js, contributors looking to refresh their memories on some technical steps, or just about anything else to do with code contributions to p5.js.
 
-If you are looking to contribute outside of the p5.js repositories (writing tutorials, planning classes, organizing events), please have a look at the other relevant pages instead. Stewards or maintainers may find the [steward guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md) more helpful regarding reviewing issues and pull requests.
+If you are looking to contribute outside of the p5.js repositories (writing tutorials, planning classes, organizing events), please have a look at the other relevant pages instead. Stewards or maintainers may find the [steward guidelines](./steward_guidelines.md) more helpful regarding reviewing issues and pull requests.
 
 This is a relatively long and comprehensive document but we will try to signpost all steps and points as clearly as possible. Do utilize the table of contents to find sections relevant to you. Feel free to skip sections if they are not relevant to your planned contributions.
 
@@ -32,7 +32,6 @@ This is a relatively long and comprehensive document but we will try to signpost
     - [Source code](#source-code)
     - [Unit tests](#unit-tests)
     - [Inline documentation](#inline-documentation)
-    - [Internationalization](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
     - [Accessibility](#accessibility)
   - [Code standard](#code-standard)
   - [Software Design principles](#software-design-principles)
@@ -85,7 +84,7 @@ When you encounter possible incorrect behavior in p5.js or something not behavin
 
 There are a few fields for you to fill in for this template:
 
-1. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
+1. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
 2. *p5.js version* - You can find the p5.js version number in either the `<script>` tag link or on the very first line of the p5.js/p5.min.js file. It will look something similar to `1.4.2` (three numbers separated by periods).
 3. *Web browser and version* - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
 
@@ -160,8 +159,8 @@ This template should be used if you wish to propose changes or add functionality
 
 There are a few fields for this template that you should fill in.
 
-1. *Increasing Access* - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
-2. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/blob/main/contributor_docs/issue_labels.md).
+1. *Increasing Access* - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](./access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
+2. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
 3. *Feature enhancement details* - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
 
 For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
@@ -173,7 +172,7 @@ For feature enhancement proposals to be accepted they must be approved by at lea
 
 This template should be used if you wish to propose a new feature to be added to p5.js. For example to add support for drawing native HTML `<table>` elements with a new `createTable` function. Some proposals may overlap with existing feature enhancement proposals, in these cases you should just choose whichever template you feel is most appropriate.
 
-Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enchancement) for details about how to fill in each field.
+Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enhancement) for details about how to fill in each field.
 
 For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
 
@@ -182,7 +181,7 @@ For new feature request proposals to be accepted, they must be approved by at le
 
 ### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
 
-This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
+This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
 
 When opening a discussion issue, you can use the "Labels" panel on the side panels to add additional relevant labels so you can signpost your issue to the relevant area. The template itself is just the bare minimum text field. You can see [this link](https://github.com/processing/p5.js/issues/6517) for an example discussion issue.
 
@@ -213,7 +212,7 @@ Similarly, you should work at your own pace and be confident that there is no ha
 
 ## Quick Get Started For Developers
 
-If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md), you can follow the following steps:
+If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](./friendly_error_system.md), you can follow the following steps:
 
 1. [Create a fork of p5.js.](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [Clone your created fork to your computer.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
@@ -248,7 +247,7 @@ If you want to work/contribute to p5.js'🌸 codebase as a developer, either dir
   ```
 
 8. Add any unit tests if you are working on adding new features or feature enhancement.
-9. Once done, you can commit the changes and create a [Pull Request](https://p5js.org/contributor-docs/#/./contributor_guidelines?id=pull-requests).
+9. Once done, you can commit the changes and create a [Pull Request](#pull-requests).
 
 
 ## Using the GitHub edit functionality
@@ -264,7 +263,7 @@ However, it is not recommended to use this feature other than for very simple ch
 
 The first step to work on the p5.js source code is to fork the p5.js repository. Forking has a specific meaning in open source, but for our purpose, it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page, and GitHub will make a copy of the repo in your account.
 
-![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](fork.png)
+![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](images/fork.png)
 
 Working from your fork of the p5.js repository is necessary because you will likely not have direct write access to the official p5.js repository, and working on a fork allows you to make changes and later submit them back to the official repository.
 
@@ -302,7 +301,7 @@ Replace `[git_url]` with the URL you just copied above. This can take several mi
 Some of the key files and folders you will be in the p5.js folder are as follows:
 
 - `src` - Where all the code that eventually gets combined into the final p5.js and p5.min.js files lives
-- [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - Where unit tests and code for testing all documentation examples lives
+- [`test`](./unit_testing.md) - Where unit tests and code for testing all documentation examples lives
 - `tasks` - Where detailed and custom build code lives
 - `Gruntfile.js` - This is the main build configuration file
 - `contributor_docs` - Where the documentation and all other contributor documentation lives
@@ -401,17 +400,17 @@ If you are going to work on the source code, a good place to start, if you know 
 
 ### Unit tests
 
-If you are going to work on unit tests, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md). Note that for any feature enhancement, new features, and certain bug fix, unit tests covering the new implementations should be included in the PR.
+If you are going to work on unit tests, please see [here](./unit_testing.md). Note that for any feature enhancement, new features, and certain bug fix, unit tests covering the new implementations should be included in the PR.
 
 
 ### Inline documentation
 
-If you are going to work on the inline documentation, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md).
+If you are going to work on the inline documentation, as known as p5.js reference, please see [here](./contributing_to_the_p5js_reference.md).
 
 
 ### Accessibility
 
-If you are going to work on accessibility features, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/web_accessibility.md). For a Friendly Error System, please see [here](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md).
+If you are going to work on accessibility features, please see [here](./web_accessibility.md). For a Friendly Error System, please see [here](./friendly_error_system.md).
 
 
 ## Code standard
@@ -478,7 +477,7 @@ The pull request title should briefly describe what the changes are, again avoid
 
 ### Resolves
 
-In the template, there is this line `Resolves #[Add issue number here]`, which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#all-about-issues) (e.g., `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
+In the template, there is this line `Resolves #[Add issue number here]`, which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](#all-about-issues) (e.g., `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
 
 
 ### Changes
@@ -548,7 +547,7 @@ Now that your PR is opened, a steward or maintainer will review your PR. It may 
 
 Once a steward has reviewed your PR, one of two things may happen: 1. Your PR is approved and merged, hurray! 2. The steward may ask some questions regarding the PR or request some changes to the PR. If it's the latter, don't panic; it's perfectly normal, and the stewards are always here to help you complete your contribution!
 
-If changes are requested of your PR and you are able to make those changes, follow the [same process as before](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the requested changes, and if no additional changes are needed, your PR will be merged!
+If changes are requested of your PR and you are able to make those changes, follow the [same process as before](#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the requested changes, and if no additional changes are needed, your PR will be merged!
 
 [**⬆ back to top**](#contributor-guidelines)
 

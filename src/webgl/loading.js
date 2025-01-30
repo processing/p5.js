@@ -36,6 +36,10 @@ function loading(p5, fn){
    * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
    * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
    * object for more advanced usage.
+   * Note: When loading a `.obj` file that references materials stored in
+   * `.mtl` files, p5.js will attempt to load and apply those materials.
+   * To ensure that the `.obj` file reads the `.mtl` file correctly include the
+   * `.mtl` file alongside it.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -1063,12 +1067,9 @@ function loading(p5, fn){
    *
    * let shape;
    *
-   * // Load the file and create a p5.Geometry object.
-   * function preload() {
-   *   shape = loadModel('assets/octahedron.obj');
-   * }
+   * async function setup() {
+   *   shape = await loadModel('assets/octahedron.obj');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A white octahedron drawn against a gray background.');
@@ -1090,6 +1091,177 @@ function loading(p5, fn){
     this._assert3d('model');
     // p5._validateParameters('model', arguments);
     this._renderer.model(model, count);
+  };
+
+  /**
+   * Load a 3d model from an OBJ or STL string.
+   *
+   * OBJ and STL files lack a built-in sense of scale, causing models exported from different programs to vary in size.
+   * If your model doesn't display correctly, consider using `loadModel()` with `normalize` set to `true` to standardize its size.
+   * Further adjustments can be made using the `scale()` function.
+   *
+   * Also, the support for colored STL files is not present. STL files with color will be
+   * rendered without color properties.
+   *
+   * * Options can include:
+   * - `modelString`: Specifies the plain text string of either an stl or obj file to be loaded.
+   * - `fileType`: Defines the file extension of the model.
+   * - `normalize`: Enables standardized size scaling during loading if set to true.
+   * - `successCallback`: Callback for post-loading actions with the 3D model object.
+   * - `failureCallback`: Handles errors if model loading fails, receiving an event error.
+   * - `flipU`: Flips the U texture coordinates of the model.
+   * - `flipV`: Flips the V texture coordinates of the model.
+   *
+   *
+   * @method createModel
+   * @param  {String} modelString         String of the object to be loaded
+   * @param  {String} [fileType]          The file extension of the model
+   *                                      (<code>.stl</code>, <code>.obj</code>).
+   * @param  {Boolean} normalize        If true, scale the model to a
+   *                                      standardized size when loading
+   * @param  {function(p5.Geometry)} [successCallback] Function to be called
+   *                                     once the model is loaded. Will be passed
+   *                                     the 3D model object.
+   * @param  {function(Event)} [failureCallback] called with event error if
+   *                                         the model fails to load.
+   * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   *
+   * @example
+   * <div>
+   * <code>
+   * const octahedron_model = `
+   * v 0.000000E+00 0.000000E+00 40.0000
+   * v 22.5000 22.5000 0.000000E+00
+   * v 22.5000 -22.5000 0.000000E+00
+   * v -22.5000 -22.5000 0.000000E+00
+   * v -22.5000 22.5000 0.000000E+00
+   * v 0.000000E+00 0.000000E+00 -40.0000
+   * f     1 2 3
+   * f     1 3 4
+   * f     1 4 5
+   * f     1 5 2
+   * f     6 5 4
+   * f     6 4 3
+   * f     6 3 2
+   * f     6 2 5
+   * `;
+   * //draw a spinning octahedron
+   * let octahedron;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   octahedron = createModel(octahedron_model, '.obj');
+   *   describe('Vertically rotating 3D octahedron.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   model(octahedron);
+   *}
+   * </code>
+   * </div>
+   */
+  /**
+   * @method createModel
+   * @param  {String} modelString
+   * @param  {String} [fileType]
+   * @param  {function(p5.Geometry)} [successCallback]
+   * @param  {function(Event)} [failureCallback]
+   * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   */
+  /**
+   * @method createModel
+   * @param  {String} modelString
+   * @param  {String} [fileType]
+   * @param  {Object} [options]
+   * @param  {function(p5.Geometry)} [options.successCallback]
+   * @param  {function(Event)} [options.failureCallback]
+   * @param  {boolean} [options.normalize]
+   * @param  {boolean} [options.flipU]
+   * @param  {boolean} [options.flipV]
+   * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   */
+  let modelCounter = 0;
+  fn.createModel = function(modelString, fileType=' ', options) {
+    // p5._validateParameters('createModel', arguments);
+    let normalize= false;
+    let successCallback;
+    let failureCallback;
+    let flipU = false;
+    let flipV = false;
+    if (options && typeof options === 'object') {
+      normalize = options.normalize || false;
+      successCallback = options.successCallback;
+      failureCallback = options.failureCallback;
+      flipU = options.flipU || false;
+      flipV = options.flipV || false;
+    } else if (typeof options === 'boolean') {
+      normalize = options;
+      successCallback = arguments[3];
+      failureCallback = arguments[4];
+    } else {
+      successCallback = typeof arguments[2] === 'function' ? arguments[2] : undefined;
+      failureCallback = arguments[3];
+    }
+    const model = new p5.Geometry();
+    model.gid = `${fileType}|${normalize}|${modelCounter++}`;
+
+    if (fileType.match(/\.stl$/i)) {
+      try {
+        let uint8array = new TextEncoder().encode(modelString);
+        let arrayBuffer = uint8array.buffer;
+        parseSTL(model, arrayBuffer);
+      } catch (error) {
+        if (failureCallback) {
+          failureCallback(error);
+        } else {
+          p5._friendlyError('Error during parsing: ' + error.message);
+        }
+        return;
+      }
+    } else if (fileType.match(/\.obj$/i)) {
+      try {
+        const lines = modelString.split('\n');
+        parseObj(model, lines);
+      } catch (error) {
+        if (failureCallback) {
+          failureCallback(error);
+        } else {
+          p5._friendlyError('Error during parsing: ' + error.message);
+        }
+        return;
+      }
+    } else {
+      p5._friendlyFileLoadError(3, modelString);
+      if (failureCallback) {
+        failureCallback();
+      } else {
+        p5._friendlyError(
+          'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
+        );
+      }
+    }
+    if (normalize) {
+      model.normalize();
+    }
+
+    if (flipU) {
+      model.flipU();
+    }
+
+    if (flipV) {
+      model.flipV();
+    }
+
+    model._makeTriangleEdges();
+
+    if (typeof successCallback === 'function') {
+      successCallback(model);
+    }
+
+    return model;
   };
 }
 

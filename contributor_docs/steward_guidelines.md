@@ -7,24 +7,24 @@ Whether you have just joined us as a steward, are a seasoned maintainer of p5.js
 
 ## Table of Contents
 
-- [Issues](steward_guidelines.md#issues)
-  - [Bug report](steward_guidelines.md#bug-report)
-  - [Feature request](steward_guidelines.md#feature-request)
-  - [Feature enhancement](steward_guidelines.md#feature-enhancement)
-  - [Discussion](steward_guidelines.md#discussion)
-- [Pull Requests](steward_guidelines.md#pull-requests)
-  - [Simple fix](steward_guidelines.md#simple-fix)
-  - [Bug fix](steward_guidelines.md#bug-fix)
-  - [New feature/feature enhancement](steward_guidelines.md#new-feature-feature-enhancement)
-  - [Dependabot](steward_guidelines.md#dependabot)
-- [Build Process](steward_guidelines.md#build-process)
-  - [Main build task](steward_guidelines.md#main-build-task)
-  - [Miscellaneous tasks](steward_guidelines.md#miscellaneous-tasks)
-- [Release Process](steward_guidelines.md#release-process)
-- [Tips & Tricks](steward_guidelines.md#tips--tricks)
-  - [Reply templates](steward_guidelines.md#reply-templates)
-  - [GitHub CLI](steward_guidelines.md#github-cli)
-  - [Managing notifications](steward_guidelines.md#managing-notifications)
+- [Issues](#issues)
+  - [Bug report](#bug-report)
+  - [Feature request](#feature-request)
+  - [Feature enhancement](#feature-enhancement)
+  - [Discussion](#discussion)
+- [Pull Requests](#pull-requests)
+  - [Simple fix](#simple-fix)
+  - [Bug fix](#bug-fix)
+  - [New feature/feature enhancement](#new-feature-feature-enhancement)
+  - [Dependabot](#dependabot)
+- [Build Process](#build-process)
+  - [Main build task](#main-build-task)
+  - [Miscellaneous tasks](#miscellaneous-tasks)
+- [Release Process](#release-process)
+- [Tips & Tricks](#tips--tricks)
+  - [Reply templates](#reply-templates)
+  - [GitHub CLI](#github-cli)
+  - [Managing notifications](#managing-notifications)
 
 ---
 
@@ -71,7 +71,7 @@ Feature request issues should use the "New Feature Request" issue template. The 
    - If a feature request does not have the "Increasing Access" field sufficiently filled out, you can ask the issue author how the feature increases access.
    - The access statement of a feature can be provided by a different member of the community, including the issue reviewers.
 2. The new feature request can be assessed for inclusion based on the following criteria.
-   - Does the feature fit into the project scope and [design principles](design_principles.md) of p5.js?
+   - Does the feature fit into the project scope and [design principles](./contributor_guidelines.md#software-design-principles) of p5.js?
      - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
      - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
      - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as as an addon library.
@@ -89,7 +89,7 @@ Feature request issues should use the "New Feature Request" issue template. The 
 
 Feature enhancement issues should use the "Existing Feature Enhancement" issue template. The process is very similar to new feature requests. The difference between a new feature request and feature enhancement can be blurry sometimes. Feature enhancement mainly deals with existing functions of p5.js while a new feature request could be requesting entirely new functions to be added.
 
-1. Similar to new feature requests, feature enhancement should only be accepted if they increase access to p5.js. Please see point 1 of [section above](steward_guidelines.md#feature-request).
+1. Similar to new feature requests, feature enhancement should only be accepted if they increase access to p5.js. Please see point 1 of [section above](#feature-request).
 2. Inclusion criteria for feature enhancements are similar to those for feature requests, but particular attention should be paid to potential breaking changes.
    - If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
 3. Feature enhancements must be approved by at least one steward or maintainer before work should begin toward a PR. The PR review process for feature enhancement is documented below.
@@ -111,7 +111,7 @@ This type of issue has a minimal template ("Discussion") and should be used to g
 Almost all code contributions to the p5.js repositories happen through pull requests. Stewards and maintainers may have push access to the repositories but are still encouraged to follow the same issue > PR > review process when contributing code. Here are the steps to review a PR:
 
 - Pull request template can be found [here](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
-- Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](steward_guidelines.md#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
+- Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
   - The only instances where this does not apply are very minor typo fixes, which do not require an open issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
   - While this exception exists, we will apply it in practice only while contributors are still encouraged to open new issues first. In other words, if in doubt about whether this exception applies, just open an issue anyway.
 - If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when the PR is merged.
@@ -130,7 +130,7 @@ Simple fixes, such as a small typo fix, can be merged directly by anyone with me
 
 1. Bug fixes should be reviewed by the relevant area steward, ideally the same one that approved the referenced issue for fixing.
 2. The PR "Files Changed" tab can be used to initially review whether the fix is implemented as described in the issue discussion.
-3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can help streamline some of the process. (See more below in [Tips & Tricks](steward_guidelines.md#tips-tricks)).
+3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can help streamline some of the process. (See more below in [Tips & Tricks](#tips-tricks)).
    - [ ] The fix should address the original issue sufficiently.
    - [ ] The fix should not change any existing behaviors unless agreed upon in the original issue.
    - [ ] The fix should not have a significant performance impact on p5.js.
@@ -197,7 +197,7 @@ The `lint` task consists of two sub tasks: `lint:source` and `lint:samples`. `li
 
 The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively.
 
-Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [../tasks/build/eslint-samples.js](../tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
 
 
 #### `test` Task
@@ -223,7 +223,7 @@ grunt.registerTask('build', [
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
@@ -247,7 +247,7 @@ This step spins up a local server hosting the test files and built source code f
 mochaChrome
 ```
 
-This step is defined in [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
+This step is defined in [../tasks/test/mocha-chrome.js](../tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
 
 ```
 mochaTest
@@ -336,14 +336,14 @@ Below are some of the Saved Replies that are being used by p5.js maintainers. Yo
 
 ##### Closing: Access
 
-> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
+> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](./access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
 
-> We do not see a further explanation of how this issue [expands access](access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
+> We do not see a further explanation of how this issue [expands access](./access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
 
 
 ##### Closing: Addon
 
-> I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
+> I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [Creating an Addon Library](./creating_libraries.md)
 
 
 ##### Closing PR: Need Issue First

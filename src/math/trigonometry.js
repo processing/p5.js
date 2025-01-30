@@ -289,7 +289,7 @@ function trigonometry(p5, fn){
    * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method cos
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       cosine of the angle.
    *
    * @example
@@ -369,7 +369,7 @@ function trigonometry(p5, fn){
    * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method sin
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       sine of the angle.
    *
    * @example
@@ -450,7 +450,7 @@ function trigonometry(p5, fn){
    * <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @method tan
-   * @param  {Number} angle the angle.
+   * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
    * @return {Number}       tangent of the angle.
    *
    * @example

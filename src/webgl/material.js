@@ -513,6 +513,7 @@ function material(p5, fn){
     // p5._validateParameters('createShader', arguments);
     return new Shader(this._renderer, vertSrc, fragSrc, options);
   };
+
   /**
    * Creates and loads a filter shader from an external file.
    *
@@ -625,10 +626,8 @@ function material(p5, fn){
    * <div modernizr='webgl'>
    * <code>
    * let img, s;
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
-   * function setup() {
+   * async function setup() {
+   *   img = await loadImage('assets/bricks.jpg');
    *   let fragSrc = `precision highp float;
    *
    *   // x,y coordinates, given from the vertex shader
@@ -654,6 +653,7 @@ function material(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *   s = createFilterShader(fragSrc);
    * }
+   *
    * function draw() {
    *   image(img, -50, -50);
    *   s.setUniform('darkness', 0.5);

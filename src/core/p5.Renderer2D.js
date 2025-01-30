@@ -627,48 +627,12 @@ class Renderer2D extends Renderer {
         this.imageData;
     }
 
-    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(this.imageData, 0, 0, x, y, w, h);
   }
 
   //////////////////////////////////////////////
   // SHAPE | 2D Primitives
   //////////////////////////////////////////////
-
-  /**
- * Generate a cubic Bezier representing an arc on the unit circle of total
- * angle `size` radians, beginning `start` radians above the x-axis. Up to
- * four of these curves are combined to make a full arc.
- *
- * See ecridge.com/bezier.pdf for an explanation of the method.
- */
-  _acuteArcToBezier(
-    start,
-    size
-  ) {
-    // Evaluate constants.
-    const alpha = size / 2.0,
-      cos_alpha = Math.cos(alpha),
-      sin_alpha = Math.sin(alpha),
-      cot_alpha = 1.0 / Math.tan(alpha),
-      // This is how far the arc needs to be rotated.
-      phi = start + alpha,
-      cos_phi = Math.cos(phi),
-      sin_phi = Math.sin(phi),
-      lambda = (4.0 - cos_alpha) / 3.0,
-      mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
-
-    // Return rotated waypoints.
-    return {
-      ax: Math.cos(start).toFixed(7),
-      ay: Math.sin(start).toFixed(7),
-      bx: (lambda * cos_phi + mu * sin_phi).toFixed(7),
-      by: (lambda * sin_phi - mu * cos_phi).toFixed(7),
-      cx: (lambda * cos_phi - mu * sin_phi).toFixed(7),
-      cy: (lambda * sin_phi + mu * cos_phi).toFixed(7),
-      dx: Math.cos(start + size).toFixed(7),
-      dy: Math.sin(start + size).toFixed(7)
-    };
-  }
 
   /*
    * This function requires that:
@@ -685,32 +649,25 @@ class Renderer2D extends Renderer {
     let arcToDraw = 0;
     const curves = [];
 
-    x += rx;
-    y += ry;
+    const centerX = x + w / 2,
+      centerY = y + h / 2,
+      radiusX = w / 2,
+      radiusY = h / 2;
 
-    // Create curves
-    while (stop - start >= epsilon) {
-      arcToDraw = Math.min(stop - start, constants.HALF_PI);
-      curves.push(this._acuteArcToBezier(start, arcToDraw));
-      start += arcToDraw;
-    }
+    // Determines whether to add a line to the center, which should be done
+    // when the mode is PIE or default; as well as when the start and end
+    // angles do not form a full circle.
+    const createPieSlice = ! (
+      mode === constants.CHORD ||
+      mode === constants.OPEN ||
+      (stop - start) % constants.TWO_PI === 0
+    );
 
     // Fill curves
     if (this.states.fillColor) {
       if (!this._clipping) ctx.beginPath();
-      curves.forEach((curve, index) => {
-        if (index === 0) {
-          ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
-        }
-        /* eslint-disable indent */
-        ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
-          x + curve.cx * rx, y + curve.cy * ry,
-          x + curve.dx * rx, y + curve.dy * ry);
-        /* eslint-enable indent */
-      });
-      if (mode === constants.PIE || mode == null) {
-        ctx.lineTo(x, y);
-      }
+      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
+      if (createPieSlice) ctx.lineTo(centerX, centerY);
       ctx.closePath();
       if (!this._clipping) ctx.fill();
     }
@@ -718,25 +675,24 @@ class Renderer2D extends Renderer {
     // Stroke curves
     if (this.states.strokeColor) {
       if (!this._clipping) ctx.beginPath();
-      curves.forEach((curve, index) => {
-        if (index === 0) {
-          ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
-        }
-        /* eslint-disable indent */
-        ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
-          x + curve.cx * rx, y + curve.cy * ry,
-          x + curve.dx * rx, y + curve.dy * ry);
-        /* eslint-enable indent */
-      });
-      if (mode === constants.PIE) {
-        ctx.lineTo(x, y);
-        ctx.closePath();
-      } else if (mode === constants.CHORD) {
+      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
+
+      if (mode === constants.PIE && createPieSlice) {
+        // In PIE mode, stroke is added to the center and back to path,
+        // unless the pie forms a complete ellipse (see: createPieSlice)
+        ctx.lineTo(centerX, centerY);
+      }
+
+      if (mode === constants.PIE || mode === constants.CHORD) {
+        // Stroke connects back to path begin for both PIE and CHORD
         ctx.closePath();
       }
+
       if (!this._clipping) ctx.stroke();
     }
+
     return this;
+
   }
 
   ellipse(args) {
@@ -763,6 +719,7 @@ class Renderer2D extends Renderer {
     if (!this._clipping) ctx.beginPath();
 
     ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+    ctx.closePath();
 
     if (!this._clipping && doFill) {
       ctx.fill();
@@ -906,14 +863,7 @@ class Renderer2D extends Renderer {
         bl = hh;
       }
 
-      // Draw shape
-      if (!this._clipping) ctx.beginPath();
-      ctx.moveTo(x + tl, y);
-      ctx.arcTo(x + w, y, x + w, y + h, tr);
-      ctx.arcTo(x + w, y + h, x, y + h, br);
-      ctx.arcTo(x, y + h, x, y, bl);
-      ctx.arcTo(x, y, x + w, y, tl);
-      ctx.closePath();
+      ctx.roundRect(x, y, w, h, [tl, tr, br, bl]);
     }
     if (!this._clipping && this.states.fillColor) {
       ctx.fill();

@@ -1,5 +1,4 @@
 import * as constants from '../core/constants';
-
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
@@ -7,12 +6,6 @@ import { arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn){
   // Text/Typography
-  // @TODO:
-  //RendererGL.prototype._applyTextProperties = function() {
-    //@TODO finish implementation
-    //console.error('text commands not yet implemented in webgl');
-  //};
-
   RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
       return this.states.textFont.font._textWidth(s, this.states.textSize);
