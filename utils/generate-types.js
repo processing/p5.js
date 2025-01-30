@@ -212,14 +212,24 @@ function generateTypeFromTag(param) {
       return normalizeTypeName(param.type.name);
     case 'TypeApplication':
       const baseType = normalizeTypeName(param.type.expression.name);
+      
+      // Handle array cases
+      if (baseType === 'Array') {
+        const innerType = param.type.applications[0]; 
+        const innerTypeStr = generateTypeFromTag({ type: innerType });
+        return `${innerTypeStr}[]`;
+      }
+
+      // Regular type application
       const typeParams = param.type.applications
         .map(app => generateTypeFromTag({ type: app }))
         .join(', ');
       return `${baseType}<${typeParams}>`;
     case 'UnionType':
-      return param.type.elements
+      const unionTypes = param.type.elements
         .map(el => generateTypeFromTag({ type: el }))
         .join(' | ');
+      return unionTypes;
     case 'OptionalType':
       return generateTypeFromTag({ type: param.type.expression });
     case 'AllLiteral':
