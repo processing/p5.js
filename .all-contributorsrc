@@ -6559,6 +6559,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "keshavg2",
+      "name": "Keshav Gupta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34001173?v=4",
+      "profile": "https://keshav-portfolio-resume.netlify.app/",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
