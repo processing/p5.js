@@ -6586,6 +6586,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "kcconch",
+      "name": "Casey Conchinha",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26172283?v=4",
+      "profile": "http://kccon.ch",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
