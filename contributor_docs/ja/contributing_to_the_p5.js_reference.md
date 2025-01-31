@@ -143,7 +143,7 @@ p5.jsのソースコードを見るとき、ライブラリ内の多くの行が
 
 ## 其他签名
 
-如果一个函数有多个可能的参数选项，则可以分别指定每个参数。例如，[`background()`](http://p5js.org/reference/#p5/background) 函数有许多不同的参数选项（请参阅参考页面上的“语法”部分）。选择一个版本以使用上面的模板列出作为第一个签名。在第一个参考注释块的末尾，你可以添加额外的签名，每个签名都在自己的块中，仅使用以下示例中的 `@method` 和 `@param` 标签。
+如果一个函数有多个可能的参数选项，则可以分别指定每个参数。例如，[`background()`](https://p5js.org/reference/#p5/background) 函数有许多不同的参数选项（请参阅参考页面上的“语法”部分）。选择一个版本以使用上面的模板列出作为第一个签名。在第一个参考注释块的末尾，你可以添加额外的签名，每个签名都在自己的块中，仅使用以下示例中的 `@method` 和 `@param` 标签。
 
 ```
 /**
@@ -270,7 +270,7 @@ p5.jsのソースコードを見るとき、ライブラリ内の多くの行が
 * </code></div>
 ```
 
-サンプルで外部アセット ファイルを使用する場合は、それらを [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5 -theme/assets) に配置してください。 フォルダー (またはそこにある既存のファイルを再利用) を作成し、「assets/filename.ext」を使用してコード内でそれらにリンクします。 参考例については、[tint()](http://p5js.org/reference/p5/tint) を参照してください。
+サンプルで外部アセット ファイルを使用する場合は、それらを [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5 -theme/assets) に配置してください。 フォルダー (またはそこにある既存のファイルを再利用) を作成し、「assets/filename.ext」を使用してコード内でそれらにリンクします。 参考例については、[tint()](https://p5js.org/reference/p5/tint) を参照してください。
 
 
 ### `describe()` を使用してキャンバスの説明を追加します

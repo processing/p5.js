@@ -29,7 +29,7 @@ Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 
 ## Príklady
 
-Stránka p5.js obsahujé [integrované príklady](http://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
+Stránka p5.js obsahujé [integrované príklady](https://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
 p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](./es6-adoption.md).
@@ -154,7 +154,7 @@ $ npm run docs:dev
 Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
 - [p5.js](https://github.com/processing/p5.js): Tento repozitár obsahuje zdrojový kód knižnice p5.js. [Používateľská referečná príručka p5.js](https://p5js.org/reference/) je generovaná z [JSDoc](http://usejsdoc.org/) komentárov zahrnutých v tomto zdrojovom kóde. Spravuje ho [Lauren McCarthy](https://github.com/lmccart).
-- [website](https://github.com/processing/p5.js-website) Tento repozitár obsahuje väčšinu kódu [stránky p5.js](http://p5js.org) s výnimkou referenčnej príručky. Spravuje ho [Lauren McCarthy](https://github.com/lmccart).
+- [website](https://github.com/processing/p5.js-website) Tento repozitár obsahuje väčšinu kódu [stránky p5.js](https://p5js.org) s výnimkou referenčnej príručky. Spravuje ho [Lauren McCarthy](https://github.com/lmccart).
 - [sound](https://github.com/processing/p5.js-sound) Tento repozitár obsahuje knižnicu p5.sound.js. Spravuje ho [Jason Sigal](https://github.com/therewasaguy).
 - [web editor](https://github.com/processing/p5.js-web-editor): Tento repozitár obsahuje zdrojový kód pre [p5.js web editor](https://editor.p5js.org). Spravuje ho [Cassie Tarakajian](https://github.com/catarak). Všimni si však, že [p5.js editor](https://github.com/processing/p5.js-editor) je už zastaraný.
 

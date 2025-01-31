@@ -29,7 +29,7 @@ Além do código em si, também pode ser necessário fornecer alguma combinaçã
 
 ## Exemplos
 
-O site p5.js. inclui [exemplos integrados](http://p5js.org/examples/). Você pode [adicionar mais](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) e há uma issue que lista alguns [exemplos desejados](https://github.com/processing/p5.js/issues/1954).
+O site p5.js. inclui [exemplos integrados](https://p5js.org/examples/). Você pode [adicionar mais](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) e há uma issue que lista alguns [exemplos desejados](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
 

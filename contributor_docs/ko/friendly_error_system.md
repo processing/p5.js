@@ -54,15 +54,15 @@ function draw() {};
 ```javascript
 arc(1, 1, 10.5, 10);
 /// 콘솔에 다음의 메시지가 생성됩니다.:
-/// > pt.js: arc() 함수의 입력 파라미터 중 4번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
-/// > pt.js: arc() 함수의 입력 파라미터 중 5번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
+/// > pt.js: arc() 함수의 입력 파라미터 중 4번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [https://p5js.org/reference/#p5/arc]
+/// > pt.js: arc() 함수의 입력 파라미터 중 5번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [https://p5js.org/reference/#p5/arc]
 
 ```
 * 자료형 오류 예시:
 ```javascript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 /// 콘솔에 다음의 메시지가 생성됩니다.:
-/// > p5.js:arc() 함수의 입력 파라미터 중 0번째 자리에는(인덱스는 0부터 시작)에는 숫자가 들어와야 하는데 문자열이 들어왔습니다. [http://p5js.org/reference/#p5/arc]
+/// > p5.js:arc() 함수의 입력 파라미터 중 0번째 자리에는(인덱스는 0부터 시작)에는 숫자가 들어와야 하는데 문자열이 들어왔습니다. [https://p5js.org/reference/#p5/arc]
 ```
 * 이것은 다음과 같이 호출할 수 있습니다.: `p5._validateParameters(FUNCT_NAME, ARGUMENTS)` 또는 `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` 는 파라미터 검증이 필요한 함수 내부에서 씁니다. 일반적인 목적으로는 `p5._validateParameters` 를 사용하는 것이 좋습니다. `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` 은 주로 디버깅이나 단위 테스트 목적으로 사용합니다.
 * `color/creating_reading`, `core/2d_primitives`, `core/curves`, 그리고 `utilities/string_functions` 의 함수로 구현되어 있습니다. 

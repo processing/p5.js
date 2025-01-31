@@ -665,7 +665,7 @@ function dom(p5, fn){
    *   background(200);
    *
    *   // Create an anchor element that links to p5js.org.
-   *   let a = createA('http://p5js.org/', 'p5*js');
+   *   let a = createA('https://p5js.org/', 'p5*js');
    *   a.position(25, 35);
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
@@ -680,7 +680,7 @@ function dom(p5, fn){
    *
    *   // Create an anchor tag that links to p5js.org.
    *   // Open the link in a new tab.
-   *   let a = createA('http://p5js.org/', 'p5*js', '_blank');
+   *   let a = createA('https://p5js.org/', 'p5*js', '_blank');
    *   a.position(25, 35);
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
