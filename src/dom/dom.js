@@ -541,7 +541,7 @@ p5.prototype.createDiv = function (html = '') {
 };
 
 /**
- * Creates a `&lt;p&gt;&lt;/p&gt;` element.
+ * Creates a paragraph element.
  *
  * `&lt;p&gt;&lt;/p&gt;` elements are commonly used for paragraph-length text.
  *
