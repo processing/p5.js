@@ -142,7 +142,7 @@
 
 ## 其他签名
 
-如果一个函数有多个可能的参数选项，则可以分别指定每个参数。例如，[`background()`](http://p5js.org/reference/#p5/background) 函数有许多不同的参数选项（请参阅参考页面上的“语法”部分）。选择一个版本以使用上面的模板列出作为第一个签名。在第一个参考注释块的末尾，你可以添加额外的签名，每个签名都在自己的块中，仅使用以下示例中的 `@method` 和 `@param` 标签。
+如果一个函数有多个可能的参数选项，则可以分别指定每个参数。例如，[`background()`](https://p5js.org/reference/#p5/background) 函数有许多不同的参数选项（请参阅参考页面上的“语法”部分）。选择一个版本以使用上面的模板列出作为第一个签名。在第一个参考注释块的末尾，你可以添加额外的签名，每个签名都在自己的块中，仅使用以下示例中的 `@method` 和 `@param` 标签。
 
 ```
 /**
@@ -269,7 +269,7 @@
 * </code></div>
 ```
 
-如果你的示例使用外部素材文件，请将它们放入 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 文件夹中（或者重用其中已有的文件），然后在代码中使用 "assets/filename.ext" 链接到它们。请参阅 [tint()](http://p5js.org/reference/p5/tint) 参考示例。
+如果你的示例使用外部素材文件，请将它们放入 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 文件夹中（或者重用其中已有的文件），然后在代码中使用 "assets/filename.ext" 链接到它们。请参阅 [tint()](https://p5js.org/reference/p5/tint) 参考示例。
 
 
 ### 使用 `describe()` 添加画布描述

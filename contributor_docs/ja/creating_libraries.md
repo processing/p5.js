@@ -120,8 +120,8 @@ https://github.com/processing/processing/wiki/Library-Basics#library-methods
 
 * **貢献ライブラリは、作成者によってホスト、文書化、およびメンテナンスされます。** これはGitHub、個別のウェブサイト、またはその他の場所で行われる可能性があります。
 
-* **ドキュメントは非常に重要です！** ライブラリのドキュメントは、ダウンロードしてライブラリを使用するユーザーが簡単に見つけられる場所に配置してください。貢献ライブラリのドキュメントは、p5.jsの主要なリファレンスドキュメントには含まれませんが、類似の形式に従うことを検討してください。以下の例を参照してください：[ライブラリ概要ページ](http://p5js.org/reference/libraries/p5.sound)、[クラス概要ページ](http://p5js.org/reference/p5.Vector)、[メソッドページ](http://p5js.org/reference/p5/arc)。
+* **ドキュメントは非常に重要です！** ライブラリのドキュメントは、ダウンロードしてライブラリを使用するユーザーが簡単に見つけられる場所に配置してください。貢献ライブラリのドキュメントは、p5.jsの主要なリファレンスドキュメントには含まれませんが、類似の形式に従うことを検討してください。以下の例を参照してください：[ライブラリ概要ページ](https://p5js.org/reference/libraries/p5.sound)、[クラス概要ページ](https://p5js.org/reference/p5.Vector)、[メソッドページ](https://p5js.org/reference/p5/arc)。
 
 * **例も素晴らしいです！** それらは人々にあなたのライブラリが何ができるかを示します。これはすべてJavaScriptなので、ダウンロードする前にオンラインで実行することができます。[jsfiddle](http://jsfiddle.net/)と[codepen](http://codepen.io)は、例をホストするための2つの良いシンプルなオプションです。
 
-* **お知らせください！** ライブラリがリリース準備が整ったら、[hello@p5js.org](mailto:hello@p5js.org)にリンクといくつかの情報を添えてメールを送ってください。[ライブラリページ](http://p5js.org/libraries/)に掲載されます！
+* **お知らせください！** ライブラリがリリース準備が整ったら、[hello@p5js.org](mailto:hello@p5js.org)にリンクといくつかの情報を添えてメールを送ってください。[ライブラリページ](https://p5js.org/libraries/)に掲載されます！

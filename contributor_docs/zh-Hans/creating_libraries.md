@@ -118,8 +118,8 @@ https://github.com/processing/processing/wiki/Library-Basics#library-methods
 
 * **贡献的库由创建者托管、文档化和维护。** 这可以在GitHub、一个单独的网站或其他地方进行。
 
-* **文档至关重要！** 您的库的文档应该放在某个易于找到的位置，供下载和使用您的库的用户使用。贡献的库的文档将不会包含在主要的p5.js参考文档中，但您可能希望遵循类似的格式。请参阅这些示例：[库概述页面](http://p5js.org/reference/libraries/p5.sound)、[类概述页面](http://p5js.org/reference/p5.Vector)和[方法页面](http://p5js.org/reference/p5/arc)。
+* **文档至关重要！** 您的库的文档应该放在某个易于找到的位置，供下载和使用您的库的用户使用。贡献的库的文档将不会包含在主要的p5.js参考文档中，但您可能希望遵循类似的格式。请参阅这些示例：[库概述页面](https://p5js.org/reference/libraries/p5.sound)、[类概述页面](https://p5js.org/reference/p5.Vector)和[方法页面](https://p5js.org/reference/p5/arc)。
 
 * **示例也很棒！** 它们向人们展示了您的库能做什么。由于这全部是JavaScript，人们可以在下载之前在线运行它们。[jsfiddle](http://jsfiddle.net/)和[codepen](http://codepen.io)是两个很好的简单选项，可以用来托管示例。
 
-* **告诉我们吧！** 一旦您的库准备好发布，发送一封电子邮件至[hello@p5js.org](mailto:hello@p5js.org)，附上链接和一些信息。我们将在[libraries page](http://p5js.org/libraries/)上包含它！
+* **告诉我们吧！** 一旦您的库准备好发布，发送一封电子邮件至[hello@p5js.org](mailto:hello@p5js.org)，附上链接和一些信息。我们将在[libraries page](https://p5js.org/libraries/)上包含它！

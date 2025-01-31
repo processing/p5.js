@@ -1211,7 +1211,7 @@ p5.prototype.getURLPath = () =>
  * in an `Object`.
  *
  * For example, calling `getURLParams()` in a sketch hosted at the URL
- * `http://p5js.org?year=2014&month=May&day=15` returns
+ * `https://p5js.org?year=2014&month=May&day=15` returns
  * `{ year: 2014, month: 'May', day: 15 }`.
  *
  * @method getURLParams

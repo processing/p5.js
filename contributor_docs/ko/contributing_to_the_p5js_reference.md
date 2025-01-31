@@ -138,7 +138,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 
 ## 추가 시그니처
 
-만약 함수가 여러 개의 매개변수 옵션을 가지고 있다면, 각각을 개별적으로 명시할 수 있습니다. 예를 들어, [`background()`](http://p5js.org/reference/#p5/background) 함수는 다양한 매개변수 옵션을 지원하고 있습니다(background() 레퍼런스 페이지에서 "문법" 섹션을 확인해 보세요). 먼저 여러 옵션 중 하나를 선택하여, 앞서 살펴본 형식에 따라 첫 번째 시그니처에 관한 주석을 작성합니다. 첫 번째 주석 블록이 끝나면, 뒤이어 다른 시그니처를 추가 작성할 수 있습니다. 각각의 추가 시그니처는 ’@method’와 ‘@param’ 태그만 사용하여 작성할 수 있으며, 각자의 블록 범위 내에 작성되어야 합니다. 아래 예시를 참고해 주세요.
+만약 함수가 여러 개의 매개변수 옵션을 가지고 있다면, 각각을 개별적으로 명시할 수 있습니다. 예를 들어, [`background()`](https://p5js.org/reference/#p5/background) 함수는 다양한 매개변수 옵션을 지원하고 있습니다(background() 레퍼런스 페이지에서 "문법" 섹션을 확인해 보세요). 먼저 여러 옵션 중 하나를 선택하여, 앞서 살펴본 형식에 따라 첫 번째 시그니처에 관한 주석을 작성합니다. 첫 번째 주석 블록이 끝나면, 뒤이어 다른 시그니처를 추가 작성할 수 있습니다. 각각의 추가 시그니처는 ’@method’와 ‘@param’ 태그만 사용하여 작성할 수 있으며, 각자의 블록 범위 내에 작성되어야 합니다. 아래 예시를 참고해 주세요.
 
 ```
 /**
@@ -262,7 +262,7 @@ p5.js 소스 코드를 보면 많은 라인이 레퍼런스 주석으로 작성�
 * </code></div>
 ```
 
-만약, 예제 코드가 외부 애셋 파일을 사용해야 한다면, 필요한 파일들을 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 폴더에 넣어두세요(이미 해당 폴더에 존재하는 파일을 재사용해도 됩니다). 그리고 코드에서 "assets/filename.ext" 경로로 파일을 불러와 사용하면 됩니다. [tint()](http://p5js.org/reference/p5/tint) 레퍼런스를 참고하세요.
+만약, 예제 코드가 외부 애셋 파일을 사용해야 한다면, 필요한 파일들을 [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) 폴더에 넣어두세요(이미 해당 폴더에 존재하는 파일을 재사용해도 됩니다). 그리고 코드에서 "assets/filename.ext" 경로로 파일을 불러와 사용하면 됩니다. [tint()](https://p5js.org/reference/p5/tint) 레퍼런스를 참고하세요.
 
 ### `describe()`로 캔버스 설명 추가하기
 

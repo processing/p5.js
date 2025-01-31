@@ -122,9 +122,9 @@ circle(100, 100, 'hello');
 The code above should generate the following FE messages:
 
 ```
-🌸 p5.js says: [sketch.js, line 9] circle() was expecting at least 3 arguments, but received only 1. (http://p5js.org/reference/p5/circle)
-🌸 p5.js says: [sketch.js, line 14] circle() was expecting no more than 3 arguments, but received 4. (http://p5js.org/reference/p5/circle)
-🌸 p5.js says: [sketch.js, line 12] circle() was expecting Number for the third parameter, received string instead. (http://p5js.org/reference/p5/circle)
+🌸 p5.js says: [sketch.js, line 9] circle() was expecting at least 3 arguments, but received only 1. (https://p5js.org/reference/p5/circle)
+🌸 p5.js says: [sketch.js, line 14] circle() was expecting no more than 3 arguments, but received 4. (https://p5js.org/reference/p5/circle)
+🌸 p5.js says: [sketch.js, line 12] circle() was expecting Number for the third parameter, received string instead. (https://p5js.org/reference/p5/circle)
 ```
 
 Congratulations 🎈! You are now done adding parameter validation for your new method.
@@ -247,7 +247,7 @@ p5._friendlyError(
 This should generate the following FE messages:
 
 ```
-🌸 p5.js says: [sketch.js, line 19] An error with the message "vertex() must be used once before calling bezierVertex()" occurred inside the p5js library when bezierVertex was called. If not stated otherwise, it might be an issue with the arguments passed to bezierVertex. (http://p5js.org/reference/p5/bezierVertex) 
+🌸 p5.js says: [sketch.js, line 19] An error with the message "vertex() must be used once before calling bezierVertex()" occurred inside the p5js library when bezierVertex was called. If not stated otherwise, it might be an issue with the arguments passed to bezierVertex. (https://p5js.org/reference/p5/bezierVertex) 
 ```
 
 Congratulations 🎈! You are now done adding library error messages for your method.
@@ -258,13 +258,13 @@ Congratulations 🎈! You are now done adding library error messages for your me
 FES message writers should prioritize lowering the barrier of understanding error messages and increasing the accessibility of the debugging process. Here is one example:
 
 ```
-🌸 p5.js says: [sketch.js, line 7] circle() was expecting at least 3 arguments, but received only 1. (http://p5js.org/reference/p5/circle) 
+🌸 p5.js says: [sketch.js, line 7] circle() was expecting at least 3 arguments, but received only 1. (https://p5js.org/reference/p5/circle) 
 ```
 
 The above parameter validation message will be shown in Korean if the browser is set to `ko-KR` (Korean) locale:
 
 ```
-🌸 p5.js says: [sketch.js, 줄7] 최소 3개의 인수(argument)를 받는 함수 circle()에 인수가 1개만 입력되었습니다. (http://p5js.org/reference/p5/circle) 
+🌸 p5.js says: [sketch.js, 줄7] 최소 3개의 인수(argument)를 받는 함수 circle()에 인수가 1개만 입력되었습니다. (https://p5js.org/reference/p5/circle) 
 ```
 
 [Friendly Errors i18n Book](https://almchung.github.io/p5-fes-i18n-book/) discusses challenges and best practices for writing Friendly Error messages within the cross-cultural i18n context. Here are the main points from the book:
