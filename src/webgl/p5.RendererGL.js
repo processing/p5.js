@@ -2019,10 +2019,10 @@ class RendererGL extends Renderer {
       }
       this._defaultFontShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "mediump") +
-          defaultShaders.fontVert,
-        this._webGL2CompatibilityPrefix("frag", "mediump") +
-          defaultShaders.fontFrag,
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
+        defaultShaders.fontVert,
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
+        defaultShaders.fontFrag
       );
     }
     return this._defaultFontShader;

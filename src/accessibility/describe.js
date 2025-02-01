@@ -116,7 +116,6 @@ function describe(p5, fn){
    * </code>
    * </div>
    */
-
   fn.describe = function(text, display) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {

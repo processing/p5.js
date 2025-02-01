@@ -273,10 +273,8 @@ function noise(p5, fn){
     let yf = y - yi;
     let zf = z - zi;
     let rxf, ryf;
-
     let r = 0;
     let ampl = 0.5;
-
     let n1, n2, n3;
 
     for (let o = 0; o < perlin_octaves; o++) {
@@ -421,7 +419,7 @@ function noise(p5, fn){
    *   // Set the noise seed for consistent results.
    *   noiseSeed(99);
    *
-    *   describe('A black rectangle that grows randomly, first to the right and then to the left.');
+   *   describe('A black rectangle that grows randomly, first to the right and then to the left.');
    * }
    *
    * function draw() {

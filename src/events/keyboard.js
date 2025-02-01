@@ -449,12 +449,14 @@ function keyboard(p5, fn){
     if (this._downKeys[e.code]) {
       return;
     }
+
     this.keyIsPressed = true;
     this.keyCode = e.which;
     this.key = e.key;
     this.code = e.code;
     this._downKeyCodes[e.code] = true;
     this._downKeys[e.key] = true;
+
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);
@@ -463,6 +465,7 @@ function keyboard(p5, fn){
       }
     }
   };
+
   /**
    * A function that's called once when any key is released.
    *

@@ -11,7 +11,7 @@
 p5.js 项目除了这个代码库外还包括了以下几个其他的代码库：
 
 - [p5.js](https://github.com/processing/p5.js)：包括了 p5.js 源代码。[面向用户的 p5.js 参考文献](https://p5js.org/reference/)也是由包含在此源代码中的 [JSDoc](http://usejsdoc.org/) 注解生成的。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
-- [p5.js-website](https://github.com/processing/p5.js-website)：此源代码包含了 [p5.js website](http://p5js.org )的大多数代码（除参考文献外）。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
+- [p5.js-website](https://github.com/processing/p5.js-website)：此源代码包含了 [p5.js website](https://p5js.org )的大多数代码（除参考文献外）。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
 - [p5.js-sound](https://github.com/processing/p5.js-sound)：包括了 p5.sound.js 程式库。[Jason Sigal](https://github.com/therewasaguy) 为维持者。
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor)：包含了 [p5.js web editor](https://editor.p5js.org) 的源代码。[Cassie Tarakajian](https://github.com/catarak) 为维持者。请注意，旧版 [p5.js editor](https://github.com/processing/p5.js-editor) 已不再受支持。
 - [p5.accessibility](https://github.com/processing/p5.accessibility)：使 p5.js 更适合盲人和视障人士使用的程式库。
@@ -34,8 +34,8 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 我们意识到参考文献是这个项目中最重要的部分。不好的参考文献是新用户与新贡献者的最大屏障，让项目不具有包容性。[contributing_documentation.md](./contributing_documentation.md) 页面为开始修改参考文献给出了一个深入的导览。p5.js 的参考文献可以在以下几个地方找到：
 
 - [p5js.org/reference](https://p5js.org/reference/)：由 [inline documentation](./inline_documentation.md) 的源代码生成。它包括了文本描述和参数以及随附的代码片段示例。我们将所有这些内联文献和代码放在一起，以使代码和参考文献保持紧密的联系，并强化这样的思想，贡献参考文献与贡献代码至少同等重要。构建库后，它将检查内联参考文献和示例，以确保它们与代码的行为方式匹配。 要做出贡献，您可以先查看 [inline_documentation.md](./inline_documentation.md) 页面。
-- [p5js.org/examples](http://p5js.org/examples) 页面包含更长的示例，这些示例对于学习 p5.js 可能有用。要做出贡献，您可以先查看 [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)。
-- [p5js.org/learn](https://p5js.org/learn) 页面包含可帮助您学习 p5.js 和编程概念的教程。 要做出贡献，您可以先查看 [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html)。
+- [p5js.org/examples](https://p5js.org/examples) 页面包含更长的示例，这些示例对于学习 p5.js 可能有用。要做出贡献，您可以先查看 [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)。
+- [p5js.org/tutorials](https://p5js.org/tutorials) 页面包含可帮助您学习 p5.js 和编程概念的教程。 要做出贡献，您可以先查看 [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html)。
 - 您可能会注意到 p5.js 网站目前支持几种不同的语言。这称为国际化（i18n）。您可以在 [i18n_contribution](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md)页面了解更多。
 
 # GitHub Issue 流程

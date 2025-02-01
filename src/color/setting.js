@@ -1009,7 +1009,7 @@ function setting(p5, fn){
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
    * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
-   * @param  {Number}        [alpha]
+   * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
    * @chainable
    * @example
    * <div>
@@ -1367,7 +1367,7 @@ function setting(p5, fn){
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
    * @param  {Number}        v3      blue value if color mode is RGB or brightness value if color mode is HSB.
-   * @param  {Number}        [alpha]
+   * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
    * @chainable
    *
    * @example
@@ -1488,7 +1488,7 @@ function setting(p5, fn){
    *   strokeWeight(4);
    *   square(20, 20, 60);
    *
-   *   describe('A whiite square with a bright green outline.');
+   *   describe('A white square with a bright green outline.');
    * }
    * </code>
    * </div>
