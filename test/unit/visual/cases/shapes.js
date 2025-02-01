@@ -128,7 +128,7 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing with curves with hidden ends', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.splineProperty('ends', p5.EXCLUDE);
+        p5.splineProperty('ends', p5.DETACH);
         p5.splineVertex(10, 10);
         p5.splineVertex(15, 40);
         p5.splineVertex(40, 35);
@@ -176,7 +176,7 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing closed curve loops', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.splineProperty('ends', p5.EXCLUDE);
+        p5.splineProperty('ends', p5.DETACH);
         p5.splineVertex(10, 10);
         p5.splineVertex(15, 40);
         p5.splineVertex(40, 35);

@@ -42,7 +42,7 @@ class Renderer {
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
     bezierOrder: 3,
-    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
+    splineProperties: new ClonableObject({ ends: constants.ATTACH, tightness: 0 }),
     textWrap: constants.WORD,
 
     // added v2.0
