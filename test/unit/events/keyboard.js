@@ -183,16 +183,16 @@ suite('Keyboard Events', function() {
     });
   
     test('returns true for multi-character strings', function() {
-      assert.isTrue(isCode('Enter'));
+      assert.isTrue(isCode('ShiftLeft'));
       assert.isTrue(isCode('ArrowUp'));
-      assert.isTrue(isCode('Shift'));
-      assert.isTrue(isCode('Control'));
       assert.isTrue(isCode('ab'));
     });
 
-    test('returns false for strings for letright keys', function() {
-      assert.isFalse(isCode('AltLeft'));
-      assert.isFalse(isCode('ShiftRight'));
+    test('returns false/true for apppropriate leftright keys and codes', function() {
+      assert.isFalse(isCode('Alt'));
+      assert.isFalse(isCode('Shift'));
+      assert.isTrue(isCode('AltLeft'));
+      assert.isTrue(isCode('ShiftLeft'));
     });
   
     test('handles edge cases correctly', function() {

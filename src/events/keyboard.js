@@ -6,10 +6,10 @@
  */
 export function isCode(input) {
   const leftRightKeys = [
-    'AltLeft', 'AltRight',
-    'ShiftLeft', 'ShiftRight',
-    'ControlLeft', 'ControlRight',
-    'MetaLeft', 'MetaRight',
+    'Alt',
+    'Shift',
+    'Control',
+    'Meta',
   ];
   if (leftRightKeys.includes(input)) {
     return false;
@@ -924,21 +924,6 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  function isCode(input) {
-    const leftRightKeys = [
-      'AltLeft', 'AltRight',
-      'ShiftLeft', 'ShiftRight',
-      'ControlLeft', 'ControlRight',
-      'MetaLeft', 'MetaRight',
-    ];
-    if (leftRightKeys.includes(input)) {
-      return false;
-    }
-    if (typeof input !== 'string') {
-      return false;
-    }
-    return input.length > 1;
-  }
 
   fn.keyIsDown = function(input) {
     if (isCode(input)) {
