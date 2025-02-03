@@ -206,6 +206,7 @@ export class Matrix extends MatrixInterface {
       return this;
     }
     this.matrix = [...refArray];
+    this.#sqDimention = Math.sqrt(this.matrix.length)
     return this;
   }
 

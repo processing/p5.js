@@ -24,6 +24,7 @@
   },
   "version": "2.0.0-beta.2",
   "dependencies": {
+    "@d4c/numjs": "^0.17.34",
     "@davepagurek/bezier-path": "^0.0.2",
     "acorn": "^8.12.1",
     "acorn-walk": "^8.3.4",
