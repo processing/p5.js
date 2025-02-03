@@ -1,6 +1,6 @@
 # p5.js 网页可访问性
 
-本文档描述了 p5.js 的网页可访问性功能的结构，供贡献者、维护者和其他相关方使用。如果您有兴趣使您的作品对屏幕阅读器可访问，请访问[教程](https://p5js.org/learn)，或者如果您想在屏幕阅读器上使用 p5.js，请访问[使用屏幕阅读器的 p5.js 教程](https://p5js.org/learn/p5-screen-reader.html)。
+本文档描述了 p5.js 的网页可访问性功能的结构，供贡献者、维护者和其他相关方使用。如果您有兴趣使您的作品对屏幕阅读器可访问，请访问[教程](https://p5js.org/tutorials)，或者如果您想在屏幕阅读器上使用 p5.js，请访问[使用屏幕阅读器的 p5.js 教程](https://p5js.org/learn/p5-screen-reader.html)。
 
 ## 概述
 

@@ -4,9 +4,9 @@
 
 This document describes the structure of p5.js’ web accessibility features for contributors.
 
-If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the How to label your p5.js code tutorial.
+If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
-If you want to use p5.js with a screen reader, visit the [Using p5.js with a Screen Reader tutorial](https://p5js.org/learn/p5-screen-reader.html).
+If you want to use p5.js with a screen reader, visit the [Using p5.js with a Screen Reader tutorial](https://p5js.org/tutorials/p5js-with-screen-reader).
 
 The canvas HTML element is a grid of pixels. It doesn’t provide any screen reader-accessible information about the shapes drawn on it. p5.js has several functions that make the canvas more accessible to screen readers by providing [fallback text](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_usage#accessible_content) descriptions. I’ll describe some of the details around the implementation of these functions.
 

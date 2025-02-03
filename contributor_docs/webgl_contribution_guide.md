@@ -8,7 +8,7 @@ If you're reading this page, you're probably interested in helping work on WebGL
 ## Resources
 
 - Read our [p5.js WebGL architecture overview](webgl_mode_architecture.md) to understand how WebGL mode differs from 2D mode. This will be a valuable reference for some implementation specifics for shaders, strokes, and more.
-- Read our [contributor guidelines](https://p5js.org/contributor-docs/#/./contributor_guidelines) for information on how to create issues, set up the codebase, and test changes.
+- Read our [contributor guidelines](./contributor_guidelines) for information on how to create issues, set up the codebase, and test changes.
 - It can be helpful to know a bit about the browser's WebGL API, which is what p5.js's WebGL mode is built on top of:
   - [WebGL fundamentals](https://webglfundamentals.org/) goes over many core rendering concepts
   - [The Book of Shaders](https://thebookofshaders.com/) explains many techniques used in WebGL shaders
@@ -16,7 +16,7 @@ If you're reading this page, you're probably interested in helping work on WebGL
 
 ## Planning
 
-We organize open issues [in a GitHub Project](https://github.com/orgs/processing/projects/5), where we divide them up into a few types:
+We organize open issues [in a GitHub Project](https://github.com/orgs/processing/projects/20), where we divide them up into a few types:
 
 - **System-level changes** are longer-term goals with far-reaching implications in the code. These require the most discussion and planning before jumping into implementation.
 - **Bugs with no solution yet** are bug reports that need some debugging to narrow down the cause. These are not yet ready to be fixed: once the cause is found, then we can discuss the best way to fix it.

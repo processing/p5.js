@@ -20,9 +20,9 @@ class Camera {
     this.yScale = 1;
   }
   /**
-   * The camera’s y-coordinate.
+   * The camera’s x-coordinate.
    *
-   * By default, the camera’s y-coordinate is set to 0 in "world" space.
+   * By default, the camera’s x-coordinate is set to 0 in "world" space.
    *
    * @property {Number} eyeX
    * @readonly
@@ -33,12 +33,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -81,12 +78,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -145,12 +139,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -193,12 +184,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -257,12 +245,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -305,12 +290,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -370,12 +352,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -418,12 +397,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -483,12 +459,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -531,12 +504,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -596,12 +566,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -644,12 +611,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -709,12 +673,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -756,12 +717,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -820,12 +778,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -867,12 +822,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -931,12 +883,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -978,12 +927,9 @@ class Camera {
    * let cam;
    * let font;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Camera object.
@@ -2463,7 +2409,7 @@ class Camera {
       'centerX', 'centerY', 'centerZ',
       'upX', 'upY', 'upZ',
       'cameraFOV', 'aspectRatio', 'cameraNear', 'cameraFar', 'cameraType',
-      'yScale'
+      'yScale', 'useLinePerspective'
     ];
     for (const keyName of keyNamesOfThePropToCopy) {
       this[keyName] = cam[keyName];
@@ -2825,6 +2771,7 @@ class Camera {
     _cam.cameraFar = this.cameraFar;
 
     _cam.cameraType = this.cameraType;
+    _cam.useLinePerspective = this.useLinePerspective;
 
     _cam.cameraMatrix = this.cameraMatrix.copy();
     _cam.projMatrix = this.projMatrix.copy();
@@ -3351,7 +3298,7 @@ function camera(p5, fn){
    *
    * @method linePerspective
    * @for p5
-   * @param {Boolean} enable whether to enable line perspective.
+   * @param {boolean} enable whether to enable line perspective.
    *
    * @example
    * <div>
@@ -3433,9 +3380,8 @@ function camera(p5, fn){
    */
   /**
    * @method linePerspective
-   * @return {Boolean} whether line perspective is enabled.
+   * @return {boolean} whether line perspective is enabled.
    */
-
   fn.linePerspective = function (enable) {
     // p5._validateParameters('linePerspective', arguments);
     if (!(this._renderer instanceof RendererGL)) {
@@ -3834,6 +3780,7 @@ function camera(p5, fn){
    * `myCamera.move()` moves the camera along its own axes.
    *
    * @class p5.Camera
+   * @constructor
    * @param {rendererGL} rendererGL instance of WebGL renderer
    *
    * @example

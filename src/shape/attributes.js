@@ -375,11 +375,12 @@ function attributes(p5, fn){
    * </div>
    */
   fn.smooth = function() {
-    this.setAttributes('antialias', true);
     if (!this._renderer.isP3D) {
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = true;
       }
+    } else {
+      this.setAttributes('antialias', true);
     }
     return this;
   };

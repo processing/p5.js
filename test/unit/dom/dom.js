@@ -430,7 +430,7 @@ suite('DOM', function() {
     });
 
     test('creates anchor with given link & text', function() {
-      const testUrl = 'http://p5js.org/';
+      const testUrl = 'https://p5js.org/';
       const testText = 'p5js website';
       const testElement = mockP5Prototype.createA(testUrl, testText);
 
@@ -440,7 +440,7 @@ suite('DOM', function() {
 
     test('creates anchor with given target', function() {
       const testTarget = 'blank';
-      const testElement = mockP5Prototype.createA('http://p5js.org', 'p5js website', testTarget);
+      const testElement = mockP5Prototype.createA('https://p5js.org', 'p5js website', testTarget);
       assert.deepEqual(testElement.elt.target, testTarget);
     });
   });

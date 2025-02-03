@@ -124,9 +124,9 @@ https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
 
 * **기여된 라이브러리는 제작자가 호스팅, 문서화 및 유지 관리합니다.** 라이브러리들은 GitHub, 별도의 웹 사이트 또는 어딘가에 있을 수 있습니다.
 
-* **문서가 핵심입니다!** 라이브러리 문서는 사용자가 쉽게 찾아보고 다운로드 하여 사용할 수 있는 곳에 있어야 합니다. 기여된 라이브러리에 대한 문서는 기본 p5.js 레퍼런스에 포함되지 않지만 여러분이 유사한 형식을 따르고 싶을 수도 있습니다. [라이브러리 개요 페이지](http://p5js.org/reference/#/libraries/p5.sound), [클래스 개요 페이지](http://p5js.org/reference/#/p5.Vector) 및 [메소드 페이지](http://p5js.org/reference/#/p5/arc) 의 예제를 참조하세요.
+* **문서가 핵심입니다!** 라이브러리 문서는 사용자가 쉽게 찾아보고 다운로드 하여 사용할 수 있는 곳에 있어야 합니다. 기여된 라이브러리에 대한 문서는 기본 p5.js 레퍼런스에 포함되지 않지만 여러분이 유사한 형식을 따르고 싶을 수도 있습니다. [라이브러리 개요 페이지](https://p5js.org/reference/libraries/p5.sound), [클래스 개요 페이지](https://p5js.org/reference/p5.Vector) 및 [메소드 페이지](https://p5js.org/reference/p5/arc) 의 예제를 참조하세요.
 
 * **예제가 좋습니다!** 사람들에게 라이브러리가 할 수 있는 일을 보여주세요. 모두 자바스크립트이므로 사람들은 라이브러리를 다운로드하기 전 온라인에서 실행 되는 것을 볼 수 있습니다. 예제들을 호스팅하기 쉬운 
 [jsfiddle](http://jsfiddle.net/) 및 [codepen](http://codepen.io)이라는 두가지 좋은 옵션이 있습니다.
 
-* **알려주세요!** 라이브러리를 배포 할 준비가 되면 [hello@p5js.org](mailto:hello@p5js.org)로 링크와 몇 가지 정보와 함께 보내주세요. [라이브러리 페이지](http://p5js.org/libraries/)에 추가 할 것입니다.
+* **알려주세요!** 라이브러리를 배포 할 준비가 되면 [hello@p5js.org](mailto:hello@p5js.org)로 링크와 몇 가지 정보와 함께 보내주세요. [라이브러리 페이지](https://p5js.org/libraries/)에 추가 할 것입니다.

@@ -11,7 +11,7 @@ p5.jsに貢献することに興味を持ってくれてありがとうござい
 p5.jsプロジェクトには、このコードリポジトリ以外にもいくつかの他のコードリポジトリがあります：
 
 - [p5.js](https://github.com/processing/p5.js)：p5.jsのソースコードを含みます。[ユーザー向けのp5.js参照文献](https://p5js.org/reference/)も、このソースコード内の[JSDoc](http://usejsdoc.org/)コメントから生成されます。[Lauren Lee McCarthy](https://github.com/lmccart)がメンテナーです。
-- [p5.js-website](https://github.com/processing/p5.js-website)：このソースコードは、[p5.jsウェブサイト](http://p5js.org)の大部分のコードを含んでいます（参照文献を除く）。[Lauren Lee McCarthy](https://github.com/lmccart)がメンテナーです。
+- [p5.js-website](https://github.com/processing/p5.js-website)：このソースコードは、[p5.jsウェブサイト](https://p5js.org)の大部分のコードを含んでいます（参照文献を除く）。[Lauren Lee McCarthy](https://github.com/lmccart)がメンテナーです。
 - [p5.js-sound](https://github.com/processing/p5.js-sound)：p5.sound.jsライブラリを含みます。[Jason Sigal](https://github.com/therewasaguy)がメンテナーです。
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor)：[p5.jsウェブエディタ](https://editor.p5js.org)のソースコードを含みます。[Cassie Tarakajian](https://github.com/catarak)がメンテナーです。旧版の[p5.jsエディタ](https://github.com/processing/p5.js-editor)はもはやサポートされていませんのでご注意ください。
 - [p5.accessibility](https://github.com/processing/p5.accessibility)：盲人や視覚障害者がp5.jsをより使いやすくするためのライブラリです。
@@ -34,8 +34,8 @@ p5.jsプロジェクトには、このコードリポジトリ以外にもいく
 私たちは、参照文献がこのプロジェクトの最も重要な部分であることを認識しています。不十分な参照文献は、新規ユーザーや新規貢献者にとって最大の障壁であり、プロジェクトの包括性を損ないます。[contributing_documentation.md](./contributing_documentation.md)ページでは、参照文献の修正を開始するための詳細なガイドを提供しています。p5.jsの参照文献は、以下の場所で見つけることができます：
 
 - [p5js.org/reference](https://p5js.org/reference/)：[inline documentation](./inline_documentation.md)のソースコードから生成されます。それには、テキストの説明とパラメータ、添付されたコードスニペットの例が含まれています。コードと参照文献を密接に連携させるために、これらすべてのインラインドキュメントとコードを一緒に配置し、参照文献への貢献がコードへの貢献と少なくとも同じくらい重要であるという考えを強化しています。ライブラリをビルドすると、インライン参照文献と例がコードの動作と一致するかどうかをチェックします。貢献するには、まず[inline_documentation.md](./inline_documentation.md)ページをチェックしてください。
-- [p5js.org/examples](http://p5js.org/examples)ページには、p5.jsを学ぶのに役立つより長い例が含まれています。貢献するには、まず[adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)をチェックしてください。
-- [p5js.org/learn](https://p5js.org/learn)ページには、p5.jsやプログラミングの概念を学ぶのに役立つチュートリアルが含まれています。貢献するには、まず[p5.js tutorial guide](https://p5js.org/learn/tutorial-guide.html)をチェックしてください。
+- [p5js.org/examples](https://p5js.org/examples)ページには、p5.jsを学ぶのに役立つより長い例が含まれています。貢献するには、まず[adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)をチェックしてください。
+- [p5js.org/tutorials](https://p5js.org/tutorials)ページには、p5.jsやプログラミングの概念を学ぶのに役立つチュートリアルが含まれています。貢献するには、まず[p5.js tutorial guide](https://p5js.org/learn/tutorial-guide.html)をチェックしてください。
 - p5.jsウェブサイトが現在いくつかの異なる言語をサポートしていることに気付くかもしれません。これは国際化（i18n）と呼ばれます。[i18n_contribution](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md)ページで詳細を学ぶことができます。
 
 # GitHub Issue プロセス

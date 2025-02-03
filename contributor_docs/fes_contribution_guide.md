@@ -245,7 +245,7 @@ arc(1, 1, 10.5, 10);
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 13] arc() was expecting at least 6 arguments, but received only 4. (http://p5js.org/reference/#/p5/arc)
+🌸 p5.js says: [sketch.js, line 13] arc() was expecting at least 6 arguments, but received only 4. (https://p5js.org/reference/p5/arc)
 ```
 
 Example of a type mismatch
@@ -257,7 +257,7 @@ arc(1, ',1', 10.5, 10, 0, Math.PI);
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 14] arc() was expecting Number for the first parameter, received string instead. (http://p5js.org/reference/#/p5/arc)
+🌸 p5.js says: [sketch.js, line 14] arc() was expecting Number for the first parameter, received string instead. (https://p5js.org/reference/p5/arc)
 ```
 
 
@@ -336,7 +336,7 @@ function preload() {
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 8] An error with message "Cannot read properties of undefined (reading 'background')" occurred inside the p5js library when "background" was called. If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
+🌸 p5.js says: [sketch.js, line 8] An error with message "Cannot read properties of undefined (reading 'background')" occurred inside the p5js library when "background" was called. If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (https://p5js.org/reference/p5/preload)
 ```
 
 Internal Error Example 2:
@@ -351,7 +351,7 @@ function setup() {
 FES will generate the following message in the console:
 
 ```js
-🌸 p5.js says: [sketch.js, line 12] An error with message "Cannot read properties of undefined (reading 'bind')" occurred inside the p5js library when mouseClicked was called. If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
+🌸 p5.js says: [sketch.js, line 12] An error with message "Cannot read properties of undefined (reading 'bind')" occurred inside the p5js library when mouseClicked was called. If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (https://p5js.org/reference/p5/mouseClicked)
 ```
 
 Example of an Error (Scope):
@@ -386,7 +386,7 @@ function setup() {
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: [sketch.js, line 2] It seems that you may have accidentally written "xolor" instead of "color". Please correct it to color if you wish to use the function from p5.js. (http://p5js.org/reference/#/p5/color)
+🌸 p5.js says: [sketch.js, line 2] It seems that you may have accidentally written "xolor" instead of "color". Please correct it to color if you wish to use the function from p5.js. (https://p5js.org/reference/p5/color)
 ```
 
 
@@ -431,7 +431,7 @@ function preload() {
 FES will generate the following message in the console:
 
 ```
-🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
+🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (https://p5js.org/reference/p5/preload)
 ```
 
 

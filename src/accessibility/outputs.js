@@ -120,7 +120,6 @@ function outputs(p5, fn){
    * </code>
    * </div>
    */
-
   fn.textOutput = function(display) {
     // p5._validateParameters('textOutput', arguments);
     //if textOutput is already true
