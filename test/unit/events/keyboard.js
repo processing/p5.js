@@ -189,6 +189,11 @@ suite('Keyboard Events', function() {
       assert.isTrue(isCode('Control'));
       assert.isTrue(isCode('ab'));
     });
+
+    test('returns false for strings for letright keys', function() {
+      assert.isFalse(isCode('AltLeft'));
+      assert.isFalse(isCode('ShiftRight'));
+    });
   
     test('handles edge cases correctly', function() {
       assert.isFalse(isCode(''));  // empty string

@@ -5,6 +5,15 @@
  * @requires core
  */
 export function isCode(input) {
+  const leftRightKeys = [
+    'AltLeft', 'AltRight',
+    'ShiftLeft', 'ShiftRight',
+    'ControlLeft', 'ControlRight',
+    'MetaLeft', 'MetaRight',
+  ];
+  if (leftRightKeys.includes(input)) {
+    return false;
+  }
   if (typeof input !== 'string') {
     return false;
   }
@@ -913,6 +922,15 @@ function keyboard(p5, fn){
    * </div>
    */
   function isCode(input) {
+    const leftRightKeys = [
+      'AltLeft', 'AltRight',
+      'ShiftLeft', 'ShiftRight',
+      'ControlLeft', 'ControlRight',
+      'MetaLeft', 'MetaRight',
+    ];
+    if (leftRightKeys.includes(input)) {
+      return false;
+    }
     if (typeof input !== 'string') {
       return false;
     }
