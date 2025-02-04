@@ -1030,12 +1030,12 @@ class Renderer2D extends Renderer {
   }
 
   //////////////////////////////////////////////
-  // TYPOGRAPHY
+  // TYPOGRAPHY (see src/type/textCore.js)
   //
   //////////////////////////////////////////////
 
 
-
+  /*
   _renderText(p, line, x, y, maxY, minY) {
     if (y < minY || y >= maxY) {
       return; // don't render lines beyond our minY/maxY bounds (see #5785)
@@ -1100,7 +1100,7 @@ class Renderer2D extends Renderer {
     return p;
   }
 
-  /*_applyTextProperties() {
+  _applyTextProperties() {
     let font;
     const p = this._pInst;
 
