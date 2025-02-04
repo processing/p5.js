@@ -881,11 +881,11 @@ export const MITER = 'miter';
 export const AUTO = 'auto';
 // INPUT
 /**
- * @typedef {'AltLeft' | 'AltRight'} ALT
+ * @typedef {'Alt'} ALT
  * @property {ALT} ALT
  * @final
  */
-export const ALT = 'AltLeft';
+export const ALT = 'Alt';
 
 /**
  * @typedef {'Backspace'} BACKSPACE
@@ -895,11 +895,11 @@ export const ALT = 'AltLeft';
 export const BACKSPACE = 'Backspace';
 
 /**
- * @typedef {'ControlLeft' | 'ControlRight'} CONTROL
+ * @typedef {'Control' | 'Control'} CONTROL
  * @property {CONTROL} CONTROL
  * @final
  */
-export const CONTROL = 'ControlLeft';
+export const CONTROL = 'Control';
 
 /**
  * @typedef {'Delete'} DELETE
@@ -937,11 +937,11 @@ export const ESCAPE = 'Escape';
 export const LEFT_ARROW = 'ArrowLeft';
 
 /**
- * @typedef {'AltLeft' | 'AltRight'} OPTION
+ * @typedef {'Alt'} OPTION
  * @property {OPTION} OPTION
  * @final
  */
-export const OPTION = 'AltLeft';
+export const OPTION = 'Alt';
 
 /**
  * @typedef {'Enter'} RETURN
@@ -958,11 +958,11 @@ export const RETURN = 'Enter';
 export const RIGHT_ARROW = 'ArrowRight';
 
 /**
- * @typedef {'ShiftLeft' | 'ShiftRight'} SHIFT
+ * @typedef {'Shift'} SHIFT
  * @property {SHIFT} SHIFT
  * @final
  */
-export const SHIFT = 'ShiftLeft';
+export const SHIFT = 'Shift';
 
 /**
  * @typedef {'Tab'} TAB
