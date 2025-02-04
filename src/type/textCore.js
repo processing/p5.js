@@ -2,11 +2,11 @@ import { Renderer } from '../core/p5.Renderer';
 
 /**
  * @module Type
- * @submodule text2d
+ * @submodule textCore
  * @for p5
  * @requires core
  */
-function text2d(p5, fn) {
+function textCore(p5, fn) {
 
   // additional constants
   fn.IDEOGRAPHIC = 'ideographic';
@@ -1255,8 +1255,8 @@ function text2d(p5, fn) {
   }
 }
 
-export default text2d;
+export default textCore;
 
 if (typeof p5 !== 'undefined') {
-  text2d(p5, p5.prototype);
+  textCore(p5, p5.prototype);
 }
