@@ -4,7 +4,21 @@
  * @for p5
  * @requires core
  */
-
+export function isCode(input) {
+  const leftRightKeys = [
+    'Alt',
+    'Shift',
+    'Control',
+    'Meta',
+  ];
+  if (leftRightKeys.includes(input)) {
+    return false;
+  }
+  if (typeof input !== 'string') {
+    return false;
+  }
+  return input.length > 1;
+}
 function keyboard(p5, fn){
   /**
    * A `Boolean` system variable that's `true` if any key is currently pressed
@@ -95,7 +109,9 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
+
   fn.keyIsPressed = false;
+  fn.code = null;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -439,23 +455,16 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    if (e.repeat) {
-      // Ignore repeated key events when holding down a key
+    if (this._downKeys[e.code]) {
       return;
     }
 
     this.keyIsPressed = true;
     this.keyCode = e.which;
-    this._downKeys[e.which] = true;
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
-
-    // Track keys pressed with meta key
-    if (e.metaKey) {
-      if (!this._metaKeys) {
-        this._metaKeys = [];
-      }
-      this._metaKeys.push(e.which);
-    }
+    this.key = e.key;
+    this.code = e.code;
+    this._downKeyCodes[e.code] = true;
+    this._downKeys[e.key] = true;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
@@ -623,18 +632,20 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-    this._downKeys[e.which] = false;
-    this.keyIsPressed = false;
-    this._lastKeyCodeTyped = null;
+    delete this._downKeyCodes[e.code];
+    delete this._downKeys[e.key];
 
-    if (e.key === 'Meta') { // Meta key codes
-      // When meta key is released, clear all keys pressed with it
-      if (this._metaKeys) {
-        this._metaKeys.forEach(key => {
-          this._downKeys[key] = false;
-        });
-        this._metaKeys = [];
-      }
+
+    if (!this._areDownKeys()) {
+      this.keyIsPressed = false;
+      this.key = '';
+      this.code = null;
+    } else {
+      // If other keys are still pressed, update code to the last pressed key
+      const lastPressedCode = Object.keys(this._downKeyCodes).pop();
+      this.code = lastPressedCode;
+      const lastPressedKey = Object.keys(this._downKeys).pop();
+      this.key = lastPressedKey;
     }
 
     const context = this._isGlobal ? window : this;
@@ -821,7 +832,7 @@ function keyboard(p5, fn){
    * <a href="https://keycode.info" target="_blank">keycode.info</a>.
    *
    * @method keyIsDown
-   * @param {Number}          code key to check.
+   * @param {Number|String}   code key to check.
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
@@ -913,11 +924,14 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.keyIsDown = function(code) {
-    // p5._validateParameters('keyIsDown', arguments);
-    return this._downKeys[code] || false;
-  };
 
+  fn.keyIsDown = function(input) {
+    if (isCode(input)) {
+      return this._downKeyCodes[input] || this._downKeys[input] || false;
+    } else {
+      return this._downKeys[input] || this._downKeyCodes[input] || false;
+    }
+  }
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.
