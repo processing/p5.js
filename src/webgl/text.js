@@ -5,7 +5,8 @@ import { Geometry } from './p5.Geometry';
 import { arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn){
-  // Text/Typography
+  // Text/Typography (see src/type/textCore.js)
+  /*
   RendererGL.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
       return this.states.textFont.font._textWidth(s, this.states.textSize);
@@ -13,6 +14,7 @@ function text(p5, fn){
 
     return 0; // TODO: error
   };
+  */
 
   // rendering constants
 
