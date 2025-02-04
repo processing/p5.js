@@ -1105,6 +1105,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/crh82"><img src="https://avatars.githubusercontent.com/u/103348212?v=4?s=120" width="120px;" alt="crh82"/><br /><sub><b>crh82</b></sub></a><br /><a href="#example-crh82" title="Examples">💡</a></td>
       <td align="center" valign="top" width="16.66%"><img src="https://hello-assets.p5js.org/placeholder_avatar.png?s=120" width="120px;" alt="Aaron Welles"/><br /><sub><b>Aaron Welles</b></sub><br /><a href="#example" title="Examples">💡</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/seyko1"><img src="https://avatars.githubusercontent.com/u/26870879?v=4?s=120" width="120px;" alt="Seyko"/><br /><sub><b>Seyko</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=seyko1" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

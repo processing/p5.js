@@ -6636,6 +6636,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "seyko1",
+      "name": "Seyko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26870879?v=4",
+      "profile": "https://github.com/seyko1",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
