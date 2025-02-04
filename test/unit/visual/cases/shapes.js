@@ -150,6 +150,16 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
+      visualTest('Drawing simple closed curves', function(p5, screenshot) {
+        setup(p5);
+        p5.beginShape();
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.endShape(p5.CLOSE);
+        screenshot();
+      });
+
       visualTest('Drawing with curves with tightness', function(p5, screenshot) {
         setup(p5);
         p5.splineProperty('tightness', -1);

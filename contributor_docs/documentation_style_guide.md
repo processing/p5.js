@@ -49,7 +49,7 @@ We use YUIDoc to generate the p5.js API documentation. To generate the docs, nav
 $ npm run grunt yui:dev
 ```
 
-The output will appear in docs/reference. Refer to the [inline documentation guide](https://github.com/processing/p5.js/blob/main/contributor_docs/contributing_to_the_p5.js_reference.md) for more information.
+The output will appear in docs/reference. Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
 
 **[⬆ back to top](#table-of-contents)**
 

@@ -71,7 +71,7 @@ Cualquier cosa en un bloque de estos se interpretará como documentación de ref
 
 ## Bloque de comentarios de referencia
 
-Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/#/p5/sin).
+Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/p5/sin).
 
 ```
 /**
@@ -138,7 +138,7 @@ Si el método devuelve el objeto de la superclase, puedes omitir la etiqueta `@r
 
 ## Firmas adicionales
 
-Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función [`background()`](http://p5js.org/reference/#p5/background) toma una serie de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para incluirla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia puedes agregar firmas adicionales, cada una en su propio bloque, como en el siguiente ejemplo.
+Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función [`background()`](https://p5js.org/reference/#p5/background) toma una serie de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para incluirla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia puedes agregar firmas adicionales, cada una en su propio bloque, como en el siguiente ejemplo.
 
 ```
 /**
@@ -262,7 +262,7 @@ Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas 
 * </code></div>
 ```
 
-Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](http://p5js.org/reference/#/p5/tint) como ejemplo.
+Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](https://p5js.org/reference/p5/tint) como ejemplo.
 
 ### Agregar descripción a un lienzo usando `describe()`
 

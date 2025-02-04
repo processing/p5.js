@@ -95,8 +95,7 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.isKeyPressed = false;
-  fn.keyIsPressed = false; // khan
+  fn.keyIsPressed = false;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -440,15 +439,24 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    if (this._downKeys[e.which]) {
-      // prevent multiple firings
+    if (e.repeat) {
+      // Ignore repeated key events when holding down a key
       return;
     }
-    this.isKeyPressed = true;
+
     this.keyIsPressed = true;
     this.keyCode = e.which;
     this._downKeys[e.which] = true;
     this.key = e.key || String.fromCharCode(e.which) || e.which;
+
+    // Track keys pressed with meta key
+    if (e.metaKey) {
+      if (!this._metaKeys) {
+        this._metaKeys = [];
+      }
+      this._metaKeys.push(e.which);
+    }
+
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
       const executeDefault = context.keyPressed(e);
@@ -457,6 +465,7 @@ function keyboard(p5, fn){
       }
     }
   };
+
   /**
    * A function that's called once when any key is released.
    *
@@ -615,16 +624,18 @@ function keyboard(p5, fn){
    */
   fn._onkeyup = function(e) {
     this._downKeys[e.which] = false;
-
-    if (!this._areDownKeys()) {
-      this.isKeyPressed = false;
-      this.keyIsPressed = false;
-    }
-
+    this.keyIsPressed = false;
     this._lastKeyCodeTyped = null;
 
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
-    this.keyCode = e.which;
+    if (e.key === 'Meta') { // Meta key codes
+      // When meta key is released, clear all keys pressed with it
+      if (this._metaKeys) {
+        this._metaKeys.forEach(key => {
+          this._downKeys[key] = false;
+        });
+        this._metaKeys = [];
+      }
+    }
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyReleased === 'function') {

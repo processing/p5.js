@@ -716,6 +716,7 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
+   * @method sub
    * @param  {Number} x   x component of the vector to subtract.
    * @param  {Number} [y] y component of the vector to subtract.
    * @param  {Number} [z] z component of the vector to subtract.
@@ -864,6 +865,7 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
+   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -994,6 +996,7 @@ class Vector {
    *
    *   describe('Two arrows extending from the top left corner. The blue arrow is twice the length of the red arrow.');
    * }
+   *
    * function draw() {
    *   background(200);
    *
@@ -1589,6 +1592,7 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
+   * @method dist
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    *
@@ -1661,8 +1665,8 @@ class Vector {
    *   // Style the text.
    *   textAlign(CENTER);
    *
-   *   // Display the magnitude.
-   *   let m = floor(v3.mag());
+   *   // Display the magnitude. The same as floor(v3.mag());
+   *   let m = floor(p5.Vector.dist(v1, v2));
    *   text(m, 50, 75);
    * }
    *

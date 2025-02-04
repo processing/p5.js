@@ -58,7 +58,7 @@ function table(p5, fn){
     }
 
     /**
-     *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
+     *  Use <a href="/reference/p5.Table/addRow/">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
      *  an empty row is created. Typically, you would store a reference to
      *  the new row in a TableRow object (see newRow in the example above),
      *  and then set individual values using <a href="#/p5/set">set()</a>.
@@ -588,7 +588,7 @@ function table(p5, fn){
     }
 
     /**
-     *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
+     *  Use <a href="/reference/p5.Table/addColumn/">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
      *  Typically, you will want to specify a title, so the column
      *  may be easily referenced later by name. (If no title is
      *  specified, the new column's title will be null.)
@@ -840,7 +840,7 @@ function table(p5, fn){
     }
 
     /**
-     *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
+     *  Use <a href="/reference/p5.Table/removeColumn/">removeColumn()</a> to remove an existing column from a Table
      *  object. The column to be removed may be identified by either
      *  its title (a String) or its index value (an int).
      *  removeColumn(0) would remove the first column, removeColumn(1)
@@ -1308,7 +1308,7 @@ function table(p5, fn){
 
   /**
    * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
-   * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
+   * rows of the table. The same result as calling <a href="/reference/p5.Table/getRows/">getRows()</a>
    * @type {p5.TableRow[]}
    * @property rows
    * @for p5.Table

@@ -26,7 +26,7 @@ FES는 네 종류의 오류를 감지하고 메시지를 출력할 수 있습니
 * 이 함수는 파일이 올바로 로드되지 않으면 친절한 오류 메시지를 생성하고, 표시합니다. 그리고 로드하기에는 파일이 너무 큰지 확인해서 경고를 생성하기도 합니다.
 * 이것은 다음과 같이 호출할 수 있습니다.: `p5._friendlyFileLoadError(ERROR_TYPE, FILE_PATH)`.
 * 파일 로딩 오류 예시:
-````javascript
+```javascript
 /// 폰트 파일 누락
 let myFont;
 function preload() {
@@ -42,7 +42,7 @@ function draw() {};
 /// 콘솔에 다음의 메시지가 생성됩니다.:
 /// > p5.js: 폰트를 로드하는 데 문제가 있는 것 같습니다. 파일 경로 [assets / OpenSans-Regular.ttf]가 올바른지, 폰트를 온라인 호스팅하는지, 또는 로컬 서버가 실행 중인지 확인하십시오.
 
-````
+```
 * 현재 버전에는 `image`, `XML`, `table`, `text`, `json`, `font`에 대한 오류 메시지를 생성하는 템플릿이 포함되어 있습니다.
 * `image/loading_displaying/loadImage()`, `io/files/loadFont()`, `io/files/loadTable()`, `io/files/loadJSON()`, `io/files/loadStrings()`, `io/files/loadXML()`, `io/files/loadBytes()`에 구현되었습니다.
 * 파일 크기가 커서 로드하는 중 생기는 오류는 모두 loadX 메소드에 구현되었습니다. 
@@ -51,19 +51,19 @@ function draw() {};
 * 이 함수는 `docs/reference/data.json`에 있는 입력 파라미터 정보와 일치하는지 파라미터 검증을 실행합니다. 이것은 함수 호출이 올바른 개수와 파라미터형을 가지고 있는지 확인합니다.
 
 * 파라미터 누락 예시:
-````javascript
+```javascript
 arc(1, 1, 10.5, 10);
 /// 콘솔에 다음의 메시지가 생성됩니다.:
-/// > pt.js: arc() 함수의 입력 파라미터 중 4번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
-/// > pt.js: arc() 함수의 입력 파라미터 중 5번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
+/// > pt.js: arc() 함수의 입력 파라미터 중 4번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [https://p5js.org/reference/#p5/arc]
+/// > pt.js: arc() 함수의 입력 파라미터 중 5번째 자리(인덱스는 0부터 시작)에 빈 값이 들어온 것 같습니다. 의도한 것이 아니라면, 이것은 종종 범위의 문제입니다.: [https://p5js.org/examples/data-variable-scope.html]. [https://p5js.org/reference/#p5/arc]
 
-````
+```
 * 자료형 오류 예시:
-````javascript
+```javascript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 /// 콘솔에 다음의 메시지가 생성됩니다.:
-/// > p5.js:arc() 함수의 입력 파라미터 중 0번째 자리에는(인덱스는 0부터 시작)에는 숫자가 들어와야 하는데 문자열이 들어왔습니다. [http://p5js.org/reference/#p5/arc]
-````
+/// > p5.js:arc() 함수의 입력 파라미터 중 0번째 자리에는(인덱스는 0부터 시작)에는 숫자가 들어와야 하는데 문자열이 들어왔습니다. [https://p5js.org/reference/#p5/arc]
+```
 * 이것은 다음과 같이 호출할 수 있습니다.: `p5._validateParameters(FUNCT_NAME, ARGUMENTS)` 또는 `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` 는 파라미터 검증이 필요한 함수 내부에서 씁니다. 일반적인 목적으로는 `p5._validateParameters` 를 사용하는 것이 좋습니다. `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` 은 주로 디버깅이나 단위 테스트 목적으로 사용합니다.
 * `color/creating_reading`, `core/2d_primitives`, `core/curves`, 그리고 `utilities/string_functions` 의 함수로 구현되어 있습니다. 
 
@@ -74,12 +74,12 @@ arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 ## 개발자 유의사항
 * p5.js 객체를 생성할 때: 파라미터로 사용될 모든 p5.js 객체는 클래스 선언부에서 `name` 파라미터(오브젝트의 이름) 값을 지정해야 합니다. 예를 들면 다음과 같습니다.: 
 
-````javascript 
+```javascript 
 p5.newObject = function(parameter) {
    this.parameter = '파라미터';
    this.name = 'p5.newObject';
 };
-````
+```
 * 인라인 문서: 허용되는 파라미터 타입은 `Boolean`, `Number`, `String`, 그리고 객체의 이름(위의 주요 항목 참고)입니다. 유형에 관계없이 배열 파라미터에는 `Array` 를 쓰세요. 필요한 경우, 어떤 특정 타입의 배열 파라미터가 허용되는지(예시 `Number[]`, `String[]`) 설명 섹션에 적습니다.
 * 현재 지원되는 클래스 타입은 이렇습니다( `name` 파라미터를 가집니다): `p5.Color`, `p5.Element`, `p5.Graphics`, `p5.Renderer`, `p5.Renderer2D`, `p5.Image`, `p5.Table`, `p5.TableRow`, `p5.XML`, `p5.Vector`, `p5.Font`, `p5.Geometry`, `p5.Matrix`, `p5.RendererGL`.
 

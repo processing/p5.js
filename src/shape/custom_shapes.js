@@ -395,7 +395,7 @@ class SplineSegment extends Segment {
       points.unshift(prevVertex);
       points.push(this.vertices.at(-1));
     } else if (this._splineProperties.ends === constants.JOIN) {
-      points.unshift(this.vertices.at(-1), prevVertex);
+      points.unshift(this.vertices.at(-1));
       points.push(prevVertex, this.vertices.at(0));
     }
 
@@ -1968,6 +1968,7 @@ function customShapes(p5, fn) {
    * counter-clockwise order.
    *
    * @method endContour
+   * @param {OPEN|CLOSE} [mode=OPEN]
    *
    * @example
    * <div>

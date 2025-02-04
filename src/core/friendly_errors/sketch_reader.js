@@ -67,7 +67,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       //if the element in variableArray is a  p5.js constant then the below condidion
       //will be true, hence a match is found
       if (constants[variableArray[i]] !== undefined) {
-        let url = `https://p5js.org/reference/#/p5/${variableArray[i]}`;
+        let url = `https://p5js.org/reference/p5/${variableArray[i]}`;
         //display the FES message if a match is found
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
@@ -100,7 +100,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             undefined
           ) {
             //if a p5.js function is used ie it is in the funcs array
-            let url = `https://p5js.org/reference/#/p5/${variableArray[i]}`;
+            let url = `https://p5js.org/reference/p5/${variableArray[i]}`;
             p5._friendlyError(
               translator('fes.sketchReaderErrors.reservedFunc', {
                 url,
@@ -296,7 +296,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       //if the value is changed and if it is changed
       //then report.
       if (constants[tempArray[i]] !== element) {
-        let url = `https://p5js.org/reference/#/p5/${tempArray[i]}`;
+        let url = `https://p5js.org/reference/p5/${tempArray[i]}`;
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
             url,
@@ -354,7 +354,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               p5Constructors[keyArray[k]].prototype[functionArray[i]] !==
               element
             ) {
-              let url = `https://p5js.org/reference/#/p5/${functionArray[i]}`;
+              let url = `https://p5js.org/reference/p5/${functionArray[i]}`;
               p5._friendlyError(
                 translator('fes.sketchReaderErrors.reservedFunc', {
                   url,
@@ -403,6 +403,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   p5._fesCodeReader = fesCodeReader;
 
-  window.addEventListener('load', p5._fesCodeReader);
+  window.addEventListener('p5Ready', p5._fesCodeReader);
 }
 export default p5;

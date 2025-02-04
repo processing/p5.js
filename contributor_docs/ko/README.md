@@ -13,7 +13,7 @@ p5.js에 기여하는데에 관심을 가져주셔서 감사합니다! 우리 �
 p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 - [p5.js](https://github.com/processing/p5.js): 본 저장소에는 p5.js 라이브러리의 소스 코드가 보관되어 있습니다. [유저들이 보게 되는 p5.js의 레퍼런스 매뉴얼](https://p5js.org/reference/) 또한 이 소스 코드에 포함되어 있는 [JSDoc](http://usejsdoc.org/) 각주에서 생성됩니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
-- [p5.js-website](https://github.com/processing/p5.js-website): 본 저장소에는 레퍼런스 매뉴얼을 제외한 [p5.js 웹사이트](http://p5js.org)의 코드가 전부 보관되어 있습니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
+- [p5.js-website](https://github.com/processing/p5.js-website): 본 저장소에는 레퍼런스 매뉴얼을 제외한 [p5.js 웹사이트](https://p5js.org)의 코드가 전부 보관되어 있습니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
 - [p5.js-sound](https://github.com/processing/p5.js-sound): 본 저장소에는 p5.sound.js 라이브러리가 보관되어 있습니다. 본 저장소는 [제이슨 시갈(Jason Sigal)](https://github.com/therewasaguy)이 관리합니다.
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor): 본 저장소에는 [p5.js 웹 에디터](https://editor.p5js.org)의 소스 코드가 보관되어 있습니다. 본 저장소는 [캐시 타라케지언(Cassie Tarakajian)](https://github.com/catarak)이 관리합니다. 예전의 [p5.js 에디터](https://github.com/processing/p5.js-editor)는 이제 더 이상 사용되지 않다는 점을 참고하십시오.
 - [p5.accessibility](https://github.com/processing/p5.accessibility): 맹인 및 시각 장애인들이 조금 더 쉽게 p5 캔버스를 사용할 수 있도록 하는 라이브러리입니다.
@@ -39,7 +39,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 문서화는 본 프로젝트의 가장 중요한 부분입니다. 낮은 품질의 문서화는 새로운 이용자와 컨트리뷰터들의 진입 장벽을 높여 프로젝트 참여도를 저하시킵니다. [contributing_documentation.md](./contributing_documentation.md) 페이지는 문서화를 시작하는 데에 깊이 있는 개요를 제시합니다. p5.js를 위한 문서화는 아래와 같은 곳들에서 주로 찾아볼 수 있습니다:
 
 - [p5js.org/reference](https://p5js.org/reference/)는 소스 코드의 [인라인 도큐멘테이션](./inline_documentation.md)으로부터 생성됩니다. 이는 텍스트 설명, 파라미터, 코드 스니펫 예시 등을 포함합니다. 우리는 코드와 인라인 도큐멘테이션을 긴밀히 연결시키고, 문서화에 기여하는 게 코드에 기여하는 것 만큼이나 중요하다는 생각을 강화하기 위해 인라인 도큐멘테이션을 활용하는 것입니다. 라이브러리가 빌드 되면 라이브러리와 코드가 작동하는 방식 사이에 문제가 없음을 확실히 하기 위해 인라인 도큐멘테이션과 예시를 확인합니다. 이에 기여하기 위해선 [inline_documentation.md](./inline_documentation.md) 페이지를 살펴보는 걸로 시작하시기 바랍니다.
-- [p5js.org/examples](http://p5js.org/examples)페이지는 p5.js를 학습하는 데에 유용할 수 있는 길이가 긴 예시들을 담고 있습니다. 컨트리뷰션을 위해서는 [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) 페이지를 살펴보시기 바랍니다.
+- [p5js.org/examples](https://p5js.org/examples)페이지는 p5.js를 학습하는 데에 유용할 수 있는 길이가 긴 예시들을 담고 있습니다. 컨트리뷰션을 위해서는 [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) 페이지를 살펴보시기 바랍니다.
 - [p5js.org/tutorials](https://p5js.org/tutorials)페이지는 p5.js와 프로그래밍의 개념을 배울 수 있도록 도와주는 튜토리얼들을 담고 있습니다. 기여하기 위해서는 [p5.js 웹사이트의 튜토리얼에 대한 튜토리얼](https://p5js.org/learn/tutorial-guide.html)을 살펴보시기 바랍니다!
 - p5.js 웹사이트는 현재 몇 가지 다른 언어들을 지원하고 있음을 확인하실 수 있습니다. 이는 국제화(혹은 줄여서 i18n)라고 불립니다. 이에 대한 문서는 [i18n_contribution](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) 페이지에서 더 자세히 보실 수 있습니다.
 

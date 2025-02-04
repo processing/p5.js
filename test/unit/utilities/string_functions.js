@@ -97,6 +97,12 @@ suite('String functions', function() {
       const result = mockP5Prototype.nf(num, 3, 0);
       assert.equal(result, '123');
     });
+
+    test('should return correct string', function() {
+      var num = -123;
+      const result = mockP5Prototype.nf(num, 5);
+      assert.equal(result, '-00123');
+    });
   });
 
   suite('p5.prototype.nfc', function() {

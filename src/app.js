@@ -1,11 +1,9 @@
 // core
 import p5 from './core/main';
+
+// shape
 import shape from './shape';
 shape(p5);
-
-// shapes
-import customShapes from './shape';
-customShapes(p5);
 
 //accessibility
 import accessibility from './accessibility';

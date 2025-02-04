@@ -367,15 +367,15 @@ function creatingReading(p5, fn){
    * Gets the red value of a color.
    *
    * `red()` extracts the red value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * By default, `red()` returns a color's red value in the range 0
-   * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+   * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the red value in the given range.
    *
    * @method red
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the red value.
    *
@@ -504,15 +504,15 @@ function creatingReading(p5, fn){
    * Gets the green value of a color.
    *
    * `green()` extracts the green value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * By default, `green()` returns a color's green value in the range 0
-   * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+   * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the green value in the given range.
    *
    * @method green
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the green value.
    *
@@ -641,15 +641,15 @@ function creatingReading(p5, fn){
    * Gets the blue value of a color.
    *
    * `blue()` extracts the blue value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * By default, `blue()` returns a color's blue value in the range 0
-   * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+   * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the blue value in the given range.
    *
    * @method blue
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the blue value.
    *
@@ -880,16 +880,16 @@ function creatingReading(p5, fn){
    * Gets the hue value of a color.
    *
    * `hue()` extracts the hue value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * Hue describes a color's position on the color wheel. By default, `hue()`
    * returns a color's HSL hue in the range 0 to 360. If the
-   * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the hue
+   * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the hue
    * value in the given mode.
    *
    * @method hue
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the hue value.
    *
@@ -1001,16 +1001,16 @@ function creatingReading(p5, fn){
    * Gets the saturation value of a color.
    *
    * `saturation()` extracts the saturation value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * Saturation is scaled differently in HSB and HSL. By default, `saturation()`
    * returns a color's HSL saturation in the range 0 to 100. If the
-   * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the
+   * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the
    * saturation value in the given mode.
    *
    * @method saturation
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the saturation value
    *
@@ -1178,15 +1178,15 @@ function creatingReading(p5, fn){
    * Gets the brightness value of a color.
    *
    * `brightness()` extracts the HSB brightness value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * By default, `brightness()` returns a color's HSB brightness in the range 0
-   * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSB, it
+   * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB, it
    * returns the brightness value in the given range.
    *
    * @method brightness
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the brightness value.
    *
@@ -1323,15 +1323,15 @@ function creatingReading(p5, fn){
    * Gets the lightness value of a color.
    *
    * `lightness()` extracts the HSL lightness value from a
-   * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
+   * <a href="/reference/p5/p5.Color/">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
    * By default, `lightness()` returns a color's HSL lightness in the range 0
-   * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSL, it
+   * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSL, it
    * returns the lightness value in the given range.
    *
    * @method lightness
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the lightness value.
    *
@@ -1526,6 +1526,61 @@ function creatingReading(p5, fn){
   fn.lerpColor = function(c1, c2, amt) {
     // p5._validateParameters('lerpColor', arguments);
     return c1.lerp(c2, amt, this._renderer.states.colorMode);
+  };
+
+  /**
+   * Blends multiple colors to find a color between them.
+   *
+   * The `amt` parameter specifies the amount to interpolate between the color
+   * stops which are colors at each `amt` value "location" with `amt` values
+   * that are between 2 color stops interpolating between them based on its relative
+   * distance to both.
+   *
+   * The way that colors are interpolated depends on the current
+   * <a href="/reference/p5/colorMode/">colorMode()</a>.
+   *
+   * @method paletteLerp
+   * @param  {[p5.Color|String|Number|Number[], Number][]} colors_stops color stops to interpolate from
+   * @param  {Number} amt number to use to interpolate relative to color stops
+   * @return {p5.Color} interpolated color.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(400, 400);
+   * }
+   *
+   * function draw() {
+   *   // The background goes from white to red to green to blue fill
+   *   background(paletteLerp([
+   *     ['white', 0],
+   *     ['red', 0.05],
+   *     ['green', 0.25],
+   *     ['blue', 1]
+   *   ], millis() / 10000 % 1));
+   * }
+   * </code>
+   * </div>
+   */
+  fn.paletteLerp = function(color_stops, amt) {
+    const first_color_stop = color_stops[0];
+    if (amt < first_color_stop[1])
+      return this.color(first_color_stop[0]);
+
+    for (let i = 1; i < color_stops.length; i++) {
+      const color_stop = color_stops[i];
+      if (amt < color_stop[1]) {
+        const prev_color_stop = color_stops[i - 1];
+        return this.lerpColor(
+          this.color(prev_color_stop[0]),
+          this.color(color_stop[0]),
+          (amt - prev_color_stop[1]) / (color_stop[1] - prev_color_stop[1])
+        );
+      }
+    }
+
+    return this.color(color_stops[color_stops.length - 1][0]);
   };
 }
 

@@ -454,7 +454,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a `&lt;p&gt;&lt;/p&gt;` element.
+   * Creates a paragraph element.
    *
    * `&lt;p&gt;&lt;/p&gt;` elements are commonly used for paragraph-length text.
    *
@@ -665,7 +665,7 @@ function dom(p5, fn){
    *   background(200);
    *
    *   // Create an anchor element that links to p5js.org.
-   *   let a = createA('http://p5js.org/', 'p5*js');
+   *   let a = createA('https://p5js.org/', 'p5*js');
    *   a.position(25, 35);
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
@@ -680,7 +680,7 @@ function dom(p5, fn){
    *
    *   // Create an anchor tag that links to p5js.org.
    *   // Open the link in a new tab.
-   *   let a = createA('http://p5js.org/', 'p5*js', '_blank');
+   *   let a = createA('https://p5js.org/', 'p5*js', '_blank');
    *   a.position(25, 35);
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
@@ -1375,6 +1375,18 @@ function dom(p5, fn){
    * @example
    * <div>
    * <code>
+   * let style = document.createElement('style');
+   * style.innerHTML = `
+   * .p5-radio label {
+   *    display: flex;
+   *    align-items: center;
+   *  }
+   *  .p5-radio input {
+   *    margin-right: 5px;
+   *  }
+   *  `;
+   * document.head.appendChild(style);
+   *
    * let myRadio;
    *
    * function setup() {
@@ -1384,6 +1396,7 @@ function dom(p5, fn){
    *   // in the top-left corner.
    *   myRadio = createRadio();
    *   myRadio.position(0, 0);
+   *   myRadio.class('p5-radio');
    *   myRadio.size(60);
    *
    *   // Add a few color options.
@@ -1492,6 +1505,8 @@ function dom(p5, fn){
    * @method createRadio
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    */
+  //counter for unique names on radio button
+  let counter = 0;
   fn.createRadio = function (...args) {
     // Creates a div, adds each option as an individual input inside it.
     // If already given with a containerEl, will search for all input[radio]
@@ -1523,7 +1538,7 @@ function dom(p5, fn){
       self = addElement(radioElement, this);
       this.elt = radioElement;
     }
-    self._name = name || 'radioOption';
+    self._name = name || `radioOption_${counter++}`;
 
     // setup member functions
     const isRadioInput = el =>
