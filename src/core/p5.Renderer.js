@@ -170,6 +170,16 @@ class Renderer {
     this.updateShapeProperties();
   }
 
+  splineProperties(values) {
+    if (values) {
+      for (const key in values) {
+        this.splineProperty(key, values[key]);
+      }
+    } else {
+      return { ...this.states.splineProperties };
+    }
+  }
+
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
     const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
