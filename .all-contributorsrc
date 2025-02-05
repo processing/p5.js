@@ -6645,6 +6645,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "thekinardist",
+      "name": "Xevi H. Aqeel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21345916?v=4",
+      "profile": "http://kinardist.media",
+      "contributions": [
+        "example",
+        "design"
+      ]
     }
   ],
   "repoType": "github",
