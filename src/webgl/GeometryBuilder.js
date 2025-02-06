@@ -66,6 +66,21 @@ class GeometryBuilder {
       );
     }
     if (this.renderer._doStroke) {
+      input.edges.forEach(edge => {
+        edge.forEach(idx => {
+          // Ensure each edge (stroke) vertex gets the 'len' property from the corresponding fill vertex
+          const len = (input.vertices[idx] && input.vertices[idx].len)
+            ? input.vertices[idx].len
+            : 1.0;
+
+          // Default to 1.0 if 'len' is missing
+          // Here, we're adding 'len' to the vertexColors array or you could add it to a separate array if needed
+          if (!this.geometry.vertexLengths) {
+            this.geometry.vertexLengths = []; // Create if it doesn't exist
+          }
+          this.geometry.vertexLengths.push(len);
+        });
+      });
       this.geometry.edges.push(
         ...input.edges.map(edge => edge.map(idx => idx + startIdx))
       );
