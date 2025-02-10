@@ -12,7 +12,6 @@ const organized = {
     consts: {}
   };
 
-// Add this helper function at the top with other helpers
 function normalizeClassName(className) {
   if (!className || className === 'p5') return 'p5';
   return className.startsWith('p5.') ? className : `p5.${className}`;
@@ -25,118 +24,72 @@ function organizeData(data) {
 
   // Process modules first
   allData.forEach(entry => {
-    if (entry.tags?.some(tag => tag.title === 'module')) {
-      const { module, submodule } = getModuleInfo(entry);
-      organized.modules[module] = organized.modules[module] || {
-        name: module,
-        submodules: {},
-        classes: {}
-      };
-      if (submodule) {
-        organized.modules[module].submodules[submodule] = true;
+    const { module, submodule, forEntry } = getModuleInfo(entry);
+    const className = normalizeClassName(forEntry || entry.memberof || 'p5');
+
+    switch(entry.kind) {
+      case 'class':
+        organized.classes[className] = {
+          name: entry.name,
+          description: extractDescription(entry.description),
+          params: (entry.params || []).map(param => ({
+            name: param.name,
+            type: generateTypeFromTag(param),
+            optional: param.type?.type === 'OptionalType'
+          })),
+          module,
+          submodule,
+          extends:  entry.tags?.find(tag => tag.title === 'extends')?.name || null
+        }; break;
+        case 'function':
+        case 'property':
+          // Handle overloads
+          const overloads = entry.overloads?.map(overload => ({
+            params: overload.params,
+            returns: overload.returns,
+            description: extractDescription(overload.description)
+          }));
+          
+          organized.classitems.push({
+            name: entry.name,
+            kind: entry.kind,
+            description: extractDescription(entry.description),
+            params: (entry.params || []).map(param => ({
+              name: param.name,
+              type: generateTypeFromTag(param),
+              optional: param.type?.type === 'OptionalType'
+            })),
+            returnType: entry.returns?.[0] ? generateTypeFromTag(entry.returns[0]) : 'void',
+            module,
+            submodule,
+            class: className,
+            isStatic: entry.path?.[0]?.scope === 'static',
+            overloads
+          }); break;
+        case 'constant':
+        case 'typedef':
+          organized.consts[entry.name] = {
+            name: entry.name,
+            kind: entry.kind,
+            description: extractDescription(entry.description),
+            // For constants, use P5.CONSTANT_NAME format
+            type: entry.kind === 'constant' ? `P5.${entry.name.toUpperCase()}` : (entry.type ? generateTypeFromTag(entry) : 'any'),
+            module,
+            submodule,
+            class: forEntry || 'p5'
+          }; break;
       }
-    }
-  });
-
-  // Process classes
-  allData.forEach(entry => {
-    if (entry.kind === 'class') {
-      const { module, submodule } = getModuleInfo(entry);
-      const className = entry.name;
-      const extendsTag = entry.tags?.find(tag => tag.title === 'extends');
-      
-      organized.classes[className] = {
-        name: className,
-        description: extractDescription(entry.description),
-        params: (entry.params || []).map(param => ({
-          name: param.name,
-          type: generateTypeFromTag(param),
-          optional: param.type?.type === 'OptionalType'
-        })),
-        module,
-        submodule,
-        extends: extendsTag?.name || null
-      };
-    }
-  });
-
-  // Process class methods and properties
-  allData.forEach(entry => {
-    if (entry.kind === 'function' || entry.kind === 'property') {
-      const { module, submodule, forEntry } = getModuleInfo(entry);
-      
-      // Normalize memberof and forEntry
-      let memberof = entry.memberof;
-      if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
-        memberof = 'p5.' + memberof;
-      }
-      
-      let normalizedForEntry = forEntry;
-      if (forEntry && forEntry !== 'p5' && !forEntry.startsWith('p5.')) {
-        normalizedForEntry = 'p5.' + forEntry;
-      }
-      
-      // Use memberof if available, fallback to forEntry, then default to 'p5'
-      const className = normalizeClassName(memberof || normalizedForEntry || 'p5');
-
-      const isStatic = entry.path?.[0]?.scope === 'static';
-      // Handle overloads
-      const overloads = entry.overloads?.map(overload => ({
-        params: overload.params,
-        returns: overload.returns,
-        description: extractDescription(overload.description)
-      }));
-      
-      organized.classitems.push({
-        name: entry.name,
-        kind: entry.kind,
-        description: extractDescription(entry.description),
-        params: (entry.params || []).map(param => ({
-          name: param.name,
-          type: generateTypeFromTag(param),
-          optional: param.type?.type === 'OptionalType'
-        })),
-        returnType: entry.returns?.[0] ? generateTypeFromTag(entry.returns[0]) : 'void',
-        module,
-        submodule,
-        class: className,
-        isStatic,
-        overloads
-      });
-    }
-  });
-
-  // Process constants and typedefs
-  allData.forEach(entry => {
-    if (entry.kind === 'constant' || entry.kind === 'typedef') {
-      const { module, submodule, forEntry } = getModuleInfo(entry);
-      organized.consts[entry.name] = {
-        name: entry.name,
-        kind: entry.kind,
-        description: extractDescription(entry.description),
-        type: entry.type ? generateTypeFromTag(entry) : 'any',
-        module,
-        submodule,
-        class: forEntry || 'p5'
-      };
-    }
-    fs.writeFileSync("./consts.json", JSON.stringify(organized.consts, null, 2), 'utf8');
-  }); 
-
+    });
   return organized;
 }
 
 // Helper function to get module info
 function getModuleInfo(entry) {
-  const moduleTag = entry.tags?.find(tag => tag.title === 'module');
-  const submoduleTag = entry.tags?.find(tag => tag.title === 'submodule');
-  const forTag = entry.tags?.find(tag => tag.title === 'for')
-  
-  return {
-    module: moduleTag?.name || 'p5',
-    submodule: submoduleTag?.description,
-    forEntry: forTag?.description || entry.memberof
-  };
+    return {
+        module: entry.tags?.find(tag => tag.title === 'module')?.name || 'p5',
+        submodule: entry.tags?.find(tag => tag.title === 'submodule')?.description || null,
+        forEntry: entry.tags?.find(tag => tag.title === 'for')?.description || entry.memberof
+    };
 }
 
 // Function to extract text from description object or string
@@ -144,17 +97,13 @@ function extractDescription(desc) {
   if (!desc) return '';
   if (typeof desc === 'string') return desc;
   if (desc.children) {
-    return desc.children
-      .map(child => {
+    return desc.children.map(child => {
         if (child.type === 'text') return child.value;
         if (child.type === 'paragraph') return extractDescription(child);
-        if (child.type === 'inlineCode') return `\`${child.value}\``;
-        if (child.type === 'code') return `\`${child.value}\``;
+        if (child.type === 'inlineCode' || child.type === 'code') return `\`${child.value}\``;
         return '';
       })
-      .join('')
-      .trim()
-      .replace(/\n{3,}/g, '\n\n'); 
+      .join('').trim().replace(/\n{3,}/g, '\n\n'); 
   }
   return '';
 }
@@ -301,7 +250,7 @@ function generateFunctionDeclaration(funcDoc) {
 }
 
 // Helper function to generate method declarations
-function generateMethodDeclarations(item, isStatic = false) {
+function generateMethodDeclarations(item, isStatic = false, isGlobal = false) {
   let output = '';
   
   // Add JSDoc comment
@@ -425,11 +374,7 @@ function generateClassDeclaration(classDoc, organizedData) {
 // Generate declaration file for a group of items
 function generateDeclarationFile(items, filePath, organizedData) {
   let output = '// This file is auto-generated from JSDoc documentation\n\n';
-  
-  // Add imports based on dependencies
   const imports = new Set([`import p5 from 'p5';`]);
-  
-  // Check for dependencies
   const hasColorDependency = items.some(item => {
     const typeName = item.type?.name;
     const desc = extractDescription(item.description);
@@ -563,7 +508,7 @@ function groupByFile(items) {
 function generateAllDeclarationFiles() {
   // Organize all data first
   const organizedData = organizeData(data);
-  
+  generateCoreTypeDefinitions(organizedData);
   // Group items by file
   const fileGroups = groupByFile(getAllEntries(data));
   
@@ -575,19 +520,113 @@ function generateAllDeclarationFiles() {
       path.dirname(relativePath),
       `${parsedPath.name}.d.ts`
     );
-    
-    // Generate the declaration file content
+  
     const declarationContent = generateDeclarationFile(items, filePath, organizedData);
-    
-    // Create directory if it doesn't exist
     fs.mkdirSync(path.dirname(dtsPath), { recursive: true });
-    
-    // Write the declaration file
     fs.writeFileSync(dtsPath, declarationContent, 'utf8');
-    
     console.log(`Generated ${dtsPath}`);
   });
 }
+
+function generateCoreTypeDefinitions(organizedData) {
+  // Generate p5.d.ts
+  let p5Output = '// This file is auto-generated from JSDoc documentation\n\n';
+
+  // Generate the p5 class
+  p5Output += `declare class p5 {\n`;
+  p5Output += `  constructor(sketch?: (p: p5) => void, node?: HTMLElement, sync?: boolean);\n\n`;
+
+  // Add instance methods
+  const instanceItems = organizedData.classitems.filter(item => 
+    item.class === 'p5' && !item.isStatic
+  );
+  instanceItems.forEach(item => {
+    p5Output += generateMethodDeclarations(item, false);
+  });
+
+  // Add static methods
+  const staticItems = organizedData.classitems.filter(item => 
+    item.class === 'p5' && item.isStatic
+  );
+  staticItems.forEach(item => {
+    p5Output += generateMethodDeclarations(item, true);
+  });
+
+  // Add static constants
+  Object.values(organizedData.consts).forEach(constData => {
+    if (constData.class === 'p5') {
+      if (constData.description) {
+        p5Output += `  /**\n   * ${constData.description}\n   */\n`;
+      }
+      if (constData.kind === 'constant') {
+        p5Output += `  readonly ${constData.name.toUpperCase()}: ${constData.type};\n\n`;
+      } else {
+        p5Output += `  static ${constData.name}: ${constData.type};\n\n`;
+      }
+    }
+  });
+
+  p5Output += `}\n\n`;
+
+  // Add namespace for additional classes and types
+  p5Output += `declare namespace p5 {\n`;
+
+  // Add type definitions
+  Object.values(organizedData.consts).forEach(constData => {
+    if (constData.kind === 'typedef') {
+      if (constData.description) {
+        p5Output += `  /**\n   * ${constData.description}\n   */\n`;
+      }
+      p5Output += `  type ${constData.name} = ${constData.type};\n\n`;
+    }
+  });
+
+  // Add other classes (like Graphics, Vector, etc)
+  Object.values(organizedData.classes).forEach(classDoc => {
+    if (classDoc.name !== 'p5') {
+      p5Output += generateClassDeclaration(classDoc, organizedData);
+    }
+  });
+  p5Output += `}\n\n`;
+
+  p5Output += `export default p5;\n`;
+  p5Output += `export as namespace p5;\n`;
+
+  // Generate global.d.ts
+  let globalOutput = '// This file is auto-generated from JSDoc documentation\n\n';
+  globalOutput += `import p5 from 'p5';\n\n`;
+  globalOutput += `declare global {\n`;
+  globalOutput += `  interface Window {\n`;
+
+  
+  // Add instance methods
+  instanceItems.forEach(item => {
+    globalOutput += generateMethodDeclarations(item);
+  });
+
+  // Add constants to global scope
+  Object.values(organizedData.consts).forEach(constData => {
+    if (constData.kind === 'constant') {
+      if (constData.description) {
+        globalOutput += `    /**\n     * ${constData.description}\n     */\n`;
+      }
+      globalOutput += `    readonly ${constData.name.toUpperCase()}: ${constData.type};\n\n`;
+    }
+  });
+
+  globalOutput += `  }\n`;
+  globalOutput += `}\n\n`;
+  globalOutput += `export {};\n`;
+
+  // Create types directory if it doesn't exist
+  const typesDir = path.join(process.cwd(), 'types');
+  fs.mkdirSync(typesDir, { recursive: true });
+
+  // Write the files
+  fs.writeFileSync(path.join(typesDir, 'p5.d.ts'), p5Output, 'utf8');
+  fs.writeFileSync(path.join(typesDir, 'global.d.ts'), globalOutput, 'utf8');
+}
+
 
 // Run the generator
 generateAllDeclarationFiles(); 
