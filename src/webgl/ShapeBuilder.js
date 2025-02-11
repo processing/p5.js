@@ -285,7 +285,6 @@ export class ShapeBuilder {
         contours[contours.length-1].push(...vals);
       }
     }
-
     const polyTriangles = this._triangulate(contours);
     const originalVertices = this.geometry.vertices;
     this.geometry.vertices = [];
@@ -296,11 +295,8 @@ export class ShapeBuilder {
       prop.resetSrcArray();
     }
     const colors = [];
-    for (
-      let j = 0, polyTriLength = polyTriangles.length;
-      j < polyTriLength;
-      j = j + this.tessyVertexSize
-    ) {
+    // Loop over each vertex (remember: each triangle vertex is packed in tessyVertexSize floats)
+    for (let j = 0, len = polyTriangles.length; j < len; j += this.tessyVertexSize) {
       colors.push(...polyTriangles.slice(j + 5, j + 9));
       this.geometry.vertexNormals.push(new Vector(...polyTriangles.slice(j + 9, j + 12)));
       {
@@ -371,92 +367,140 @@ export class ShapeBuilder {
 
   _triangulate(contours) {
     const allTriangleVerts = [];
+    const vertexSize = this.tessyVertexSize;
   
-    // 1. Classify contours as outer shapes or holes using winding order
-    const classifiedContours = contours.map(contour => {
+    // (A) Collect all 3D points from every contour.
+    const allPoints3D = [];
+    for (const contour of contours) {
+      for (let j = 0; j < contour.length; j += vertexSize) {
+        allPoints3D.push([contour[j], contour[j + 1], contour[j + 2]]);
+      }
+    }
+    // Compute a projection basis from all points.
+    const basis = this._computeProjectionBasis(allPoints3D);
+  
+    // (B) For each contour, build its 2D projection.
+    let classifiedContours = contours.map(contour => {
       const polygon = [];
-      for (let j = 0; j < contour.length; j += this.tessyVertexSize) {
-        polygon.push([contour[j], contour[j + 1]]);
+      for (let j = 0; j < contour.length; j += vertexSize) {
+        const pt3 = [contour[j], contour[j + 1], contour[j + 2]];
+        const pt2 = this._projectPoint(pt3, basis);
+        polygon.push(pt2);
       }
       return {
-        isHole: this._isClockwise(polygon),
+        // We will decide later if this contour is outer or a hole.
         polygon,
         vertexData: contour
       };
     });
   
-    // 2. Group holes with their parent outer contours
-    const contourGroups = [];
-    for (const c of classifiedContours) {
-      if (!c.isHole) {
-        // Outer contour - start new group
-        contourGroups.push({
-          outer: c,
-          holes: []
-        });
+    const outerContours = [];
+    const holeContours = [];
+    for (let i = 0; i < classifiedContours.length; i++) {
+      const c = classifiedContours[i];
+      let contained = false;
+      for (let j = 0; j < classifiedContours.length; j++) {
+        if (i === j) continue;
+        if (this._contains(classifiedContours[j].polygon, c.polygon[0])) {
+          contained = true;
+          break;
+        }
+      }
+      if (!contained) {
+        outerContours.push(c);
       } else {
-        // Find parent outer contour that contains this hole
-        const parent = contourGroups.find(g => 
-          this._contains(g.outer.polygon, c.polygon[0])
-        );
-        if (parent) parent.holes.push(c);
+        holeContours.push(c);
       }
     }
+    // Group each outer contour with all holes contained in it.
+    const contourGroups = outerContours.map(outer => ({
+      outer,
+      holes: holeContours.filter(hole => this._contains(outer.polygon, hole.polygon[0]))
+    }));
   
-    // 3. Triangulate each group separately
     for (const group of contourGroups) {
       const { outer, holes } = group;
       const polygons = [outer.polygon, ...holes.map(h => h.polygon)];
-      
-      // Flatten and triangulate
       const { vertices: verts2D, holes: earcutHoles, dimensions } = flatten(polygons);
       const indices = earcut(verts2D, earcutHoles, dimensions);
-      
-      // Get deviation for this group
-      const dev = deviation(verts2D, earcutHoles, dimensions, indices);
-      console.log('Group deviation:', dev);
   
-      // Collect vertices
-      const vertexData = [];
-      for (let j = 0; j < outer.vertexData.length; j += this.tessyVertexSize) {
-        vertexData.push(outer.vertexData.slice(j, j + this.tessyVertexSize));
+      const vertexDataChunks = [];
+      for (let j = 0; j < outer.vertexData.length; j += vertexSize) {
+        vertexDataChunks.push(outer.vertexData.slice(j, j + vertexSize));
       }
+      // Then add the holes’ vertexData (in the same order as flatten() does).
       for (const h of holes) {
-        for (let j = 0; j < h.vertexData.length; j += this.tessyVertexSize) {
-          vertexData.push(h.vertexData.slice(j, j + this.tessyVertexSize));
+        for (let j = 0; j < h.vertexData.length; j += vertexSize) {
+          vertexDataChunks.push(h.vertexData.slice(j, j + vertexSize));
         }
       }
-  
+      // Build triangles using earcut’s indices.
       for (const idx of indices) {
-        allTriangleVerts.push(...vertexData[idx]);
+        allTriangleVerts.push(...vertexDataChunks[idx]);
       }
     }
-  
     return allTriangleVerts;
-  }
+  };
   
-  // Helper: Check if polygon is clockwise
-  _isClockwise(polygon) {
-    let sum = 0;
-    for (let i = 0; i < polygon.length; i++) {
-      const p1 = polygon[i];
-      const p2 = polygon[(i + 1) % polygon.length];
-      sum += (p2[0] - p1[0]) * (p2[1] + p1[1]);
+  _projectPoint(pt, basis) {
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    return [dot(pt, basis.u), dot(pt, basis.v)];
+  };
+  
+  _computeProjectionBasis(points) {
+    const epsilon = 1e-6;
+    const firstZ = points[0][2];
+    const isFlat2D = points.every(p => Math.abs(p[2] - firstZ) < epsilon);
+    if (isFlat2D) {
+      return {
+        normal: [0, 0, 1],
+        u: [1, 0, 0],
+        v: [0, 1, 0]
+      };
     }
-    return sum > 0;
-  }
+    // Otherwise compute a normal via Newell's method.
+    let normal = [0, 0, 0];
+    for (let i = 0; i < points.length; i++) {
+      const current = points[i];
+      const next = points[(i + 1) % points.length];
+      normal[0] += (current[1] - next[1]) * (current[2] + next[2]);
+      normal[1] += (current[2] - next[2]) * (current[0] + next[0]);
+      normal[2] += (current[0] - next[0]) * (current[1] + next[1]);
+    }
+    let len = Math.hypot(normal[0], normal[1], normal[2]);
+    if (len === 0) {
+      normal = [0, 0, 1];
+    } else {
+      normal = normal.map(n => n / len);
+    }
+    // Choose an arbitrary vector not parallel to the normal.
+    let u;
+    if (Math.abs(normal[0]) > Math.abs(normal[1])) {
+      u = [-normal[2], 0, normal[0]];
+    } else {
+      u = [0, normal[2], -normal[1]];
+    }
+    let uLen = Math.hypot(u[0], u[1], u[2]);
+    if (uLen === 0) u = [1, 0, 0];
+    else u = u.map(x => x / uLen);
+    // Compute v = normal cross u.
+    const v = [
+      normal[1] * u[2] - normal[2] * u[1],
+      normal[2] * u[0] - normal[0] * u[2],
+      normal[0] * u[1] - normal[1] * u[0]
+    ];
+    return { normal, u, v };
+  };
   
-  // Helper: Check if outer contains a point
   _contains(outerPolygon, [x, y]) {
     let inside = false;
     for (let i = 0, j = outerPolygon.length - 1; i < outerPolygon.length; j = i++) {
       const [xi, yi] = outerPolygon[i];
       const [xj, yj] = outerPolygon[j];
-      
       const intersect = ((yi > y) !== (yj > y)) &&
         (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
       if (intersect) inside = !inside;
     }
     return inside;
   }
-}
+};
