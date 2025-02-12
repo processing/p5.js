@@ -82,7 +82,6 @@ function fesCore(p5, fn){
     const entryPoints = [
       'setup',
       'draw',
-      'preload',
       'deviceMoved',
       'deviceTurned',
       'deviceShaken',
@@ -294,6 +293,10 @@ function fesCore(p5, fn){
       const instanceMode = context instanceof p5;
       context = instanceMode ? context : window;
       const fnNames = entryPoints;
+
+      if (context.preload) {
+        p5._friendlyError('The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead.', 'preload');
+      }
 
       const fxns = {};
       // lowercasename -> actualName mapping
