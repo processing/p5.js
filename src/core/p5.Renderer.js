@@ -9,6 +9,7 @@ import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
 import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
+import { States } from './States';
 
 class ClonableObject {
   constructor(obj = {}) {
@@ -70,15 +71,7 @@ class Renderer {
     }
 
     // Renderer state machine
-    this.states = Object.assign({}, Renderer.states);
-    // Clone properties that support it
-    for (const key in this.states) {
-      if (this.states[key] instanceof Array) {
-        this.states[key] = this.states[key].slice();
-      } else if (this.states[key] && this.states[key].clone instanceof Function) {
-        this.states[key] = this.states[key].clone();
-      }
-    }
+    this.states = new States(Renderer.states);
 
     this.states.strokeColor = new Color([0, 0, 0]);
     this.states.fillColor = new Color([255, 255, 255]);
@@ -118,20 +111,25 @@ class Renderer {
     return returnValue;
   }
 
+  _prepareStates() {
+    this.states.trackDiffs();
+  }
+
   // Makes a shallow copy of the current states
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    const currentStates = Object.assign({}, this.states);
-    this._pushPopStack.push(currentStates);
-    return currentStates;
+    this._pushPopStack.push(this.states.getDiff());
+    this.states.resetDiffTracking();
   }
 
   // Pop the previous states out of the push pop stack and
   // assign it back to the current state
   pop() {
     this._pushPopDepth--;
-    this.states = this._pushPopStack.pop();
+    const diff = this._pushPopStack.pop() || {};
+    this.states.applyDiff(diff);
+    this.states.resetDiffTracking();
     this.updateShapeVertexProperties();
     this.updateShapeProperties();
   }

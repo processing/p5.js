@@ -965,6 +965,7 @@ class RendererGL extends Renderer {
     this._pInst._renderer = renderer;
 
     renderer._applyDefaults();
+    renderer._prepareStates();
 
     if (typeof callback === "function") {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -1110,6 +1111,7 @@ class RendererGL extends Renderer {
   }
 
   getCommonVertexProperties() {
+    if (!this.states) debugger
     return {
       ...super.getCommonVertexProperties(),
       stroke: this.states.strokeColor,

@@ -25,9 +25,12 @@
       };
 
       p.draw = function () {
+        p.push();
         p.background(200);
         p.strokeWeight(10);
         p.line(-100, -100, 100, 100);
+        debugger
+        p.pop();
       };
     };
 
