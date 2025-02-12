@@ -295,7 +295,7 @@ function fesCore(p5, fn){
       const fnNames = entryPoints;
 
       if (context.preload) {
-        p5._friendlyError('The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead.', 'preload');
+        p5._friendlyError(translator('fes.preloadDisabled'), 'preload');
       }
 
       const fxns = {};
