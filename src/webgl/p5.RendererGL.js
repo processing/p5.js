@@ -634,7 +634,8 @@ class RendererGL extends Renderer {
   }
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
-    let originalModelMatrix = this.states.uModelMatrix.copy();
+    let originalModelMatrix = this.states.uModelMatrix;
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     try {
       this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
 
@@ -977,7 +978,9 @@ class RendererGL extends Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     this.states.uModelMatrix.reset();
+    this.states.uViewMatrix = this.states.uViewMatrix.clone();
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
@@ -1621,6 +1624,7 @@ class RendererGL extends Renderer {
   }
 
   applyMatrix(a, b, c, d, e, f) {
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     if (arguments.length === 16) {
       // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
@@ -1661,6 +1665,7 @@ class RendererGL extends Renderer {
       y = x.y;
       x = x.x;
     }
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
@@ -1674,6 +1679,7 @@ class RendererGL extends Renderer {
    * @chainable
    */
   scale(x, y, z) {
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
@@ -1682,6 +1688,7 @@ class RendererGL extends Renderer {
     if (typeof axis === "undefined") {
       return this.rotateZ(rad);
     }
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
@@ -1724,7 +1731,9 @@ class RendererGL extends Renderer {
     }
   }
   resetMatrix() {
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
     this.states.uModelMatrix.reset();
+    this.states.uViewMatrix = this.states.uViewMatrix.clone();
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }

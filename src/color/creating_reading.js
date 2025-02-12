@@ -52,15 +52,13 @@ function creatingReading(p5, fn){
     [OKLAB]: [100, [-125, 125], [-125, 125], 1],
     [OKLCH]: [100, 150, 360, 1],
     clone: function(){
-      let ret = {};
-      for(const key in this){
-        if(typeof this[key] !== 'function'){
-          ret[key] = structuredClone(this[key]);
-        }else{
-          ret[key] = this[key];
+      const cloned = { ...this };
+      for (const key in cloned) {
+        if (cloned[key] instanceof Array) {
+          cloned[key] = [...cloned[key]];
         }
       }
-      return ret;
+      return cloned;
     }
   };
 

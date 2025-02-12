@@ -62,7 +62,11 @@ suite('color/Setting', function() {
           colorMaxes: {
             rgb: [255, 255, 255, 255],
             hsb: [360, 100, 100, 1],
-            hsl: [360, 100, 100, 1]
+            hsl: [360, 100, 100, 1],
+            clone: function() {
+              // Quick incorrect implementation for this test
+              return this;
+            }
           }
         }
       }

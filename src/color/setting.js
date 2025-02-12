@@ -967,6 +967,7 @@ function setting(p5, fn){
       this._renderer.states.colorMode = mode;
 
       // Set color maxes.
+      this._renderer.states.colorMaxes = this._renderer.states.colorMaxes.clone();
       const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red

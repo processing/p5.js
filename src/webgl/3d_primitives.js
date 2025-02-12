@@ -1839,7 +1839,8 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(arcGeom);
     }
 
-    const uModelMatrix = this.states.uModelMatrix.copy();
+    const uModelMatrix = this.states.uModelMatrix;
+    this.states.uModelMatrix = this.states.uModelMatrix.clone();
 
     try {
       this.states.uModelMatrix.translate([x, y, 0]);
@@ -1900,7 +1901,8 @@ function primitives3D(p5, fn){
       // opposite corners at (0,0) & (1,1).
       //
       // before rendering, this square is scaled & moved to the required location.
-      const uModelMatrix = this.states.uModelMatrix.copy();
+      const uModelMatrix = this.states.uModelMatrix;
+      this.states.uModelMatrix = this.states.uModelMatrix.copy();
       try {
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);

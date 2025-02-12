@@ -123,14 +123,6 @@ class Renderer {
   push() {
     this._pushPopDepth++;
     const currentStates = Object.assign({}, this.states);
-    // Clone properties that support it
-    for (const key in currentStates) {
-      if (currentStates[key] instanceof Array) {
-        currentStates[key] = currentStates[key].slice();
-      } else if (currentStates[key] && currentStates[key].clone instanceof Function) {
-        currentStates[key] = currentStates[key].clone();
-      }
-    }
     this._pushPopStack.push(currentStates);
     return currentStates;
   }
@@ -139,7 +131,7 @@ class Renderer {
   // assign it back to the current state
   pop() {
     this._pushPopDepth--;
-    Object.assign(this.states, this._pushPopStack.pop());
+    this.states = this._pushPopStack.pop();
     this.updateShapeVertexProperties();
     this.updateShapeProperties();
   }
@@ -165,6 +157,7 @@ class Renderer {
     if (value === undefined) {
       return this.states.splineProperties[key];
     } else {
+      this.states.splineProperties = this.states.splineProperties.clone();
       this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();

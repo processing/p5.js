@@ -1457,6 +1457,7 @@ function light(p5, fn){
   RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
     const color = this._pInst.color(...arguments);
 
+    this.states.ambientLightColors = [...this.states.ambientLightColors];
     this.states.ambientLightColors.push(
       color._array[0],
       color._array[1],
@@ -1498,13 +1499,17 @@ function light(p5, fn){
 
     // normalize direction
     const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+    this.states.directionalLightDirections = [...this.states.directionalLightDirections];
     this.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
+    this.states.directionalLightDiffuseColors = [...this.states.directionalLightDiffuseColors];
     this.states.directionalLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
+
+    this.states.directionalLightSpecularColors = [...this.states.directionalLightSpecularColors];
     Array.prototype.push.apply(
       this.states.directionalLightSpecularColors,
       this.states.specularColors
@@ -1533,12 +1538,17 @@ function light(p5, fn){
       _z = v.z;
     }
 
+    this.states.pointLightPositions = [...this.states.pointLightPositions];
     this.states.pointLightPositions.push(_x, _y, _z);
+
+    this.states.pointLightDiffuseColors = [...this.states.pointLightDiffuseColors];
     this.states.pointLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
+
+    this.states.pointLightSpecularColors = [...this.states.pointLightSpecularColors];
     Array.prototype.push.apply(
       this.states.pointLightSpecularColors,
       this.states.specularColors
@@ -1812,23 +1822,23 @@ function light(p5, fn){
     this.states.activeImageLight = null;
     this.states.enableLighting = false;
 
-    this.states.ambientLightColors.length = 0;
+    this.states.ambientLightColors = [];
     this.states.specularColors = [1, 1, 1];
 
-    this.states.directionalLightDirections.length = 0;
-    this.states.directionalLightDiffuseColors.length = 0;
-    this.states.directionalLightSpecularColors.length = 0;
+    this.states.directionalLightDirections = [];
+    this.states.directionalLightDiffuseColors = [];
+    this.states.directionalLightSpecularColors = [];
 
-    this.states.pointLightPositions.length = 0;
-    this.states.pointLightDiffuseColors.length = 0;
-    this.states.pointLightSpecularColors.length = 0;
+    this.states.pointLightPositions = [];
+    this.states.pointLightDiffuseColors = [];
+    this.states.pointLightSpecularColors = [];
 
-    this.states.spotLightPositions.length = 0;
-    this.states.spotLightDirections.length = 0;
-    this.states.spotLightDiffuseColors.length = 0;
-    this.states.spotLightSpecularColors.length = 0;
-    this.states.spotLightAngle.length = 0;
-    this.states.spotLightConc.length = 0;
+    this.states.spotLightPositions = [];
+    this.states.spotLightDirections = [];
+    this.states.spotLightDiffuseColors = [];
+    this.states.spotLightSpecularColors = [];
+    this.states.spotLightAngle = [];
+    this.states.spotLightConc = [];
 
     this.states.constantAttenuation = 1;
     this.states.linearAttenuation = 0;
