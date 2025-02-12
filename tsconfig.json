@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ES6",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "types": [],  
+    "typeRoots": [
+      "./types",
+      "./src"
+    ],   
+    "lib": ["DOM", "ES6"],
+    "skipLibCheck": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "types/**/*.d.ts",
+    "lib/**/*.ts"
+  ]
+}
+
+  
