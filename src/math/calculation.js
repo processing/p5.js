@@ -149,7 +149,9 @@ p5.prototype.ceil = Math.ceil;
  */
 p5.prototype.constrain = function(n, low, high) {
   p5._validateParameters('constrain', arguments);
-  return Math.max(Math.min(n, high), low);
+  if (n < low) return low;
+  if (n > high) return high;
+  return n;
 };
 
 /**
