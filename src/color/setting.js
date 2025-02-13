@@ -964,10 +964,10 @@ function setting(p5, fn){
       ].includes(mode)
     ) {
       // Set color mode.
-      this._renderer.states.colorMode = mode;
+      this._renderer.states.setValue('colorMode', mode);
 
       // Set color maxes.
-      this._renderer.states.colorMaxes = this._renderer.states.colorMaxes.clone();
+      this._renderer.states.setValue('colorMaxes', this._renderer.states.colorMaxes.clone());
       const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red
@@ -1336,7 +1336,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer.states.strokeColor = null;
+    this._renderer.states.setValue('strokeColor', null);
     return this;
   };
 

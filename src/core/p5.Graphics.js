@@ -34,7 +34,6 @@ class Graphics {
     this._initializeInstanceVariables(this);
 
     this._renderer._applyDefaults();
-    this._renderer._prepareStates();
     return this;
   }
 

@@ -364,7 +364,7 @@ function interaction(p5, fn){
           10, -this._renderer.zoomVelocity
         );
         // modify uPMatrix
-        this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+        this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
         this._renderer.states.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
         this._renderer.states.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
       }
@@ -815,7 +815,7 @@ function interaction(p5, fn){
         this._renderer.states.curStrokeColor[1] * 255,
         this._renderer.states.curStrokeColor[2] * 255
       );
-      this._renderer.states.uModelMatrix = this._renderer.states.uModelMatrix.clone();
+      this._renderer.states.setValue('uModelMatrix', this._renderer.states.uModelMatrix.clone());
       this._renderer.states.uModelMatrix.reset();
 
       // Lines along X axis
@@ -863,7 +863,7 @@ function interaction(p5, fn){
 
     return function() {
       this.push();
-      this._renderer.states.uModelMatrix = this.states.uModelMatrix.clone();
+      this._renderer.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
       this._renderer.states.uModelMatrix.reset();
 
       // X axis

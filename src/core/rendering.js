@@ -141,7 +141,6 @@ function rendering(p5, fn){
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
     this._renderer._applyDefaults();
-    this._renderer._prepareStates();
 
     // Make the renderer own `pixels`
     if (!Object.hasOwn(this, 'pixels')) {

@@ -1,7 +1,5 @@
 export class States {
   #modified = {};
-  #tracking = false;
-  #data = {};
 
   constructor(initialState) {
     for (const key in initialState) {
@@ -9,25 +7,8 @@ export class States {
     }
   }
 
-  trackDiffs() {
-    this.#tracking = true;
-    this.#modified = {};
-    this.#data = {};
-    for (const key in this) {
-      console.log(key)
-      this.#data[key] = this[key];
-      Object.defineProperty(this, key, {
-        get() {
-          return this.#data[key];
-        },
-        set(val) {
-          if (this.#tracking) {
-            this.#modified[key] = this.#data[key];
-          }
-          this.#data[key] = val;
-        }
-      });
-    }
+  setValue(key, value) {
+    this[key] = value;
   }
 
   getDiff() {
@@ -38,10 +19,8 @@ export class States {
 
   applyDiff(prevModified) {
     for (const key in this.#modified) {
-      this.#data[key] = this.#modified[key];
+      this[key] = this.#modified[key];
     }
     this.#modified = prevModified;
   }
-
-  resetDiffTracking() {}
 }

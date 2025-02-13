@@ -1195,7 +1195,7 @@ class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+      this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uPMatrix.set(this.projMatrix);
     }
   }
@@ -1383,7 +1383,7 @@ class Camera {
       tx, ty, tz, 1);
     /* eslint-enable indent */
     if (this._isActive()) {
-      this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+      this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uPMatrix.set(this.projMatrix);
     }
     this.cameraType = 'custom';
@@ -1522,7 +1522,7 @@ class Camera {
     /* eslint-enable indent */
 
     if (this._isActive()) {
-      this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+      this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uPMatrix.set(this.projMatrix);
     }
 
@@ -2097,7 +2097,7 @@ class Camera {
     this.cameraMatrix.translate([tx, ty, tz]);
 
     if (this._isActive()) {
-      this._renderer.states.uViewMatrix = this._renderer.states.uViewMatrix.clone();
+      this._renderer.states.setValue('uViewMatrix', this._renderer.states.uViewMatrix.clone());
       this._renderer.states.uViewMatrix.set(this.cameraMatrix);
     }
     return this;
@@ -2423,9 +2423,9 @@ class Camera {
     this.projMatrix = cam.projMatrix.copy();
 
     if (this._isActive()) {
-      this._renderer.states.uModelMatrix = this._renderer.states.uModelMatrix.clone();
-      this._renderer.states.uViewMatrix = this._renderer.states.uViewMatrix.clone();
-      this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+      this._renderer.states.setValue('uModelMatrix', this._renderer.states.uModelMatrix.clone());
+      this._renderer.states.setValue('uViewMatrix', this._renderer.states.uViewMatrix.clone());
+      this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uModelMatrix.reset();
       this._renderer.states.uViewMatrix.set(this.cameraMatrix);
       this._renderer.states.uPMatrix.set(this.projMatrix);
@@ -2531,7 +2531,7 @@ class Camera {
         );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
-        this._renderer.states.uPMatrix = this._renderer.states.uPMatrix.clone();
+        this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
         this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
       }
     }
@@ -3919,12 +3919,12 @@ function camera(p5, fn){
   }
 
   RendererGL.prototype.setCamera = function(cam) {
-    this.states.curCamera = cam;
+    this.states.setValue('curCamera', cam);
 
     // set the projection matrix (which is not normally updated each frame)
-    this.states.uPMatrix = this.states.uPMatrix.clone();
+    this.states.setValue('uPMatrix', this.states.uPMatrix.clone());
     this.states.uPMatrix.set(cam.projMatrix);
-    this.states.uViewMatrix = this.states.uViewMatrix.clone();
+    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
   }
 }
