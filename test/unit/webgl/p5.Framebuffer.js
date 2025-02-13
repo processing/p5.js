@@ -48,7 +48,6 @@ suite('p5.Framebuffer', function() {
             myp5.box(5, 5, 5);
           });
 
-          console.log(myp5._renderer.states.uPMatrix.mat4)
           // Draw the framebuffer to the canvas
           myp5.background(0);
           myp5.noStroke();

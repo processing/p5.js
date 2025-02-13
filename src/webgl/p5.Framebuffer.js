@@ -1068,7 +1068,6 @@ class Framebuffer {
     // this.renderer.setCamera(this.defaultCamera);
     this.renderer.states.setValue('curCamera', this.defaultCamera);
     // set the projection matrix (which is not normally updated each frame)
-    debugger
     this.renderer.states.setValue('uPMatrix', this.renderer.states.uPMatrix.clone());
     this.renderer.states.uPMatrix.set(this.defaultCamera.projMatrix);
     this.renderer.states.setValue('uViewMatrix', this.renderer.states.uViewMatrix.clone());
