@@ -407,7 +407,7 @@ function generateDeclarationFile(items, filePath, organizedData) {
   const moduleName = getModuleInfo(items[0]).module;
   
   // Begin module declaration
-  output += `declare module '${moduleName}' {\n`;
+  output += `declare module 'p5' {\n`;
   
   // Find the class documentation if it exists
   const classDoc = items.find(item => item.kind === 'class');
@@ -528,9 +528,47 @@ function generateAllDeclarationFiles() {
   });
 }
 
+function findTypeDefinitionFiles(rootDir, p5DtsPath) {
+  const typeFiles = new Set();
+  const srcDir = path.join(rootDir, 'src');
+  
+  // Check if src directory exists
+  if (!fs.existsSync(srcDir)) {
+    return [];
+  }
+  
+  function scan(dir) {
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+      const fullPath = path.join(dir, file);
+      if (fs.statSync(fullPath).isDirectory()) {
+        scan(fullPath);
+      } else if (file.endsWith('.d.ts')) {
+        // Get path relative to p5.d.ts location and normalize slashes
+        const relativePath = path.relative(path.dirname(p5DtsPath), fullPath)
+          .replace(/\\/g, '/');
+        typeFiles.add(relativePath);
+      }
+    });
+  }
+  
+  // Only scan the src directory
+  scan(srcDir);
+  return Array.from(typeFiles).sort();
+}
+
 function generateCoreTypeDefinitions(organizedData) {
+  const p5DtsPath = path.join(process.cwd(), 'types', 'p5.d.ts');
+  
   // Generate p5.d.ts
   let p5Output = '// This file is auto-generated from JSDoc documentation\n\n';
+  
+  // Add reference paths to other .d.ts files
+  const typeFiles = findTypeDefinitionFiles(process.cwd(), p5DtsPath);
+  typeFiles.forEach(file => {
+    p5Output += `/// <reference types="${file}" />\n`;
+  });
+  p5Output += '\n';
 
   // Generate the p5 class
   p5Output += `declare class p5 {\n`;
@@ -596,21 +634,63 @@ function generateCoreTypeDefinitions(organizedData) {
   let globalOutput = '// This file is auto-generated from JSDoc documentation\n\n';
   globalOutput += `import p5 from 'p5';\n\n`;
   globalOutput += `declare global {\n`;
-  globalOutput += `  interface Window {\n`;
 
-  
-  // Add instance methods
+  // Generate global function declarations first
   instanceItems.forEach(item => {
-    globalOutput += generateMethodDeclarations(item);
+    if (item.kind === 'function') {
+      // Add JSDoc for global function
+      if (item.description) {
+        globalOutput += `  /**\n${formatJSDocComment(item.description, 2)}\n   */\n`;
+      }
+      
+      // Handle function overloads
+      if (item.overloads?.length > 0) {
+        item.overloads.forEach(overload => {
+          const params = (overload.params || [])
+            .map(param => generateParamDeclaration(param))
+            .join(', ');
+          const returnType = overload.returns?.[0]?.type 
+            ? generateTypeFromTag(overload.returns[0])
+            : 'void';
+          globalOutput += `  function ${item.name}(${params}): ${returnType};\n`;
+        });
+      }
+      
+      // Add main function declaration
+      const params = (item.params || [])
+        .map(param => generateParamDeclaration(param))
+        .join(', ');
+      globalOutput += `  function ${item.name}(${params}): ${item.returnType};\n\n`;
+    }
   });
 
-  // Add constants to global scope
+  // Add global constants
+  Object.values(organizedData.consts).forEach(constData => {
+    if (constData.kind === 'constant') {
+      if (constData.description) {
+        globalOutput += `  /**\n${formatJSDocComment(constData.description, 2)}\n   */\n`;
+     }
+      globalOutput += `  const ${constData.name.toUpperCase()}: p5.${constData.name.toUpperCase()};\n\n`;
+    }
+  });
+
+  // Generate Window interface
+  globalOutput += `  interface Window {\n`;
+  
+  // Add function references to Window interface
+  instanceItems.forEach(item => {
+    if (item.kind === 'function') {
+      globalOutput += `    ${item.name}: typeof ${item.name};\n`;
+    }
+  });
+
+  // Add constant references to Window interface
   Object.values(organizedData.consts).forEach(constData => {
     if (constData.kind === 'constant') {
       if (constData.description) {
         globalOutput += `    /**\n     * ${constData.description}\n     */\n`;
       }
-      globalOutput += `    readonly ${constData.name.toUpperCase()}: ${constData.type};\n\n`;
+      globalOutput += `    readonly ${constData.name.toUpperCase()}: typeof ${constData.name.toUpperCase()};\n`;
     }
   });
 
