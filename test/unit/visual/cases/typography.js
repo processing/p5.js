@@ -279,7 +279,7 @@ visualSuite("Typography", function () {
 
             p5.createCanvas(150, 100, mode === 'webgl' ? p5.WEBGL : undefined);
             if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
-            p5.textSize(19);
+            p5.textSize(20);
             p5.textWrap(p5.CHAR);
             const font = await p5.loadFont(
               '/unit/assets/Inconsolata-Bold.ttf'
