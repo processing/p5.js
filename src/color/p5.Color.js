@@ -33,7 +33,7 @@ import HSBSpace from './color_spaces/hsb.js';
 const map = (n, start1, stop1, start2, stop2) =>
   ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
 
-const serializationMap = new WeakMap();
+const serializationMap = {};
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -244,13 +244,14 @@ class Color {
    * </div>
    */
   toString(format) {
-    // NOTE: memoize more
-    let colorString = serializationMap.get(this._color);
+    const key = `${this._color.space.id}-${this._color.coords.join(",")}-${this._color.alpha}-${format}`;
+    let colorString = serializationMap[key];
+
     if(!colorString){
       colorString = serialize(this._color, {
         format
       });
-      serializationMap.set(this._color, colorString);
+      serializationMap[key] = colorString;
     }
     return colorString;
   }
