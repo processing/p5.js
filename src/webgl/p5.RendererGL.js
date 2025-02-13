@@ -181,6 +181,8 @@ class RendererGL extends Renderer {
     this.states.uPMatrix = new Matrix(4);
 
     this.states.curCamera = new Camera(this);
+    this.states.uPMatrix.set(this.states.curCamera.projMatrix);
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     this.states.enableLighting = false;
     this.states.ambientLightColors = [];
@@ -207,12 +209,12 @@ class RendererGL extends Renderer {
 
     this.states.curBlendMode = constants.BLEND;
 
-    this.states.setValue('_hasSetAmbient', false);
-    this.states.setValue('_useSpecularMaterial', false);
-    this.states.setValue('_useEmissiveMaterial', false);
-    this.states.setValue('_useNormalMaterial', false);
-    this.states.setValue('_useShininess', 1);
-    this.states.setValue('_useMetalness', 0);
+    this.states._hasSetAmbient = false;
+    this.states._useSpecularMaterial = false;
+    this.states._useEmissiveMaterial = false;
+    this.states._useNormalMaterial = false;
+    this.states._useShininess = 1;
+    this.states._useMetalness = 0;
 
     this.states.tint = [255, 255, 255, 255];
 
@@ -220,11 +222,11 @@ class RendererGL extends Renderer {
     this.states.linearAttenuation = 0;
     this.states.quadraticAttenuation = 0;
 
-    this.states.setValue('_currentNormal', new Vector(0, 0, 1));
+    this.states._currentNormal = new Vector(0, 0, 1);
 
     this.states.drawMode = constants.FILL;
 
-    this.states.setValue('_tex', null);
+    this.states._tex = null;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -2633,9 +2635,7 @@ function rendererGL(p5, fn) {
       }
     }
 
-    this.push();
     this._renderer._resetContext();
-    this.pop();
 
     if (this._renderer.states.curCamera) {
       this._renderer.states.curCamera._renderer = this._renderer;
