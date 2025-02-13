@@ -609,7 +609,7 @@ class Shape {
   }
 
   serializeToArray(val) {
-    if (val === null) {
+    if (val === null || val === undefined) {
       return [];
     } if (val instanceof Number) {
       return [val];

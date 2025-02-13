@@ -92,7 +92,7 @@ function attributes(p5, fn){
       m === constants.RADIUS ||
       m === constants.CENTER
     ) {
-      this._renderer.states.ellipseMode = m;
+      this._renderer.states.setValue('ellipseMode', m);
     }
     return this;
   };
@@ -295,7 +295,7 @@ function attributes(p5, fn){
       m === constants.RADIUS ||
       m === constants.CENTER
     ) {
-      this._renderer.states.rectMode = m;
+      this._renderer.states.setValue('rectMode', m);
     }
     return this; // return current rectMode ?
   };

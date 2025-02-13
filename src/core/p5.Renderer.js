@@ -9,6 +9,7 @@ import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
 import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
+import { States } from './States';
 
 class ClonableObject {
   constructor(obj = {}) {
@@ -70,15 +71,7 @@ class Renderer {
     }
 
     // Renderer state machine
-    this.states = Object.assign({}, Renderer.states);
-    // Clone properties that support it
-    for (const key in this.states) {
-      if (this.states[key] instanceof Array) {
-        this.states[key] = this.states[key].slice();
-      } else if (this.states[key] && this.states[key].clone instanceof Function) {
-        this.states[key] = this.states[key].clone();
-      }
-    }
+    this.states = new States(Renderer.states);
 
     this.states.strokeColor = new Color([0, 0, 0]);
     this.states.fillColor = new Color([255, 255, 255]);
@@ -122,33 +115,25 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    const currentStates = Object.assign({}, this.states);
-    // Clone properties that support it
-    for (const key in currentStates) {
-      if (currentStates[key] instanceof Array) {
-        currentStates[key] = currentStates[key].slice();
-      } else if (currentStates[key] && currentStates[key].clone instanceof Function) {
-        currentStates[key] = currentStates[key].clone();
-      }
-    }
-    this._pushPopStack.push(currentStates);
-    return currentStates;
+    this._pushPopStack.push(this.states.getDiff());
   }
 
   // Pop the previous states out of the push pop stack and
   // assign it back to the current state
   pop() {
     this._pushPopDepth--;
-    Object.assign(this.states, this._pushPopStack.pop());
-    this.updateShapeVertexProperties();
-    this.updateShapeProperties();
+    const diff = this._pushPopStack.pop() || {};
+    const modified = this.states.getModified();
+    this.states.applyDiff(diff);
+    this.updateShapeVertexProperties(modified);
+    this.updateShapeProperties(modified);
   }
 
   bezierOrder(order) {
     if (order === undefined) {
       return this.states.bezierOrder;
     } else {
-      this.states.bezierOrder = order;
+      this.states.setValue('bezierOrder', order);
       this.updateShapeProperties();
     }
   }
@@ -165,6 +150,7 @@ class Renderer {
     if (value === undefined) {
       return this.states.splineProperties[key];
     } else {
+      this.states.setValue('splineProperties', this.states.splineProperties.clone());
       this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();
@@ -192,7 +178,7 @@ class Renderer {
     if (d === undefined) {
       return this.states.curveDetail;
     } else {
-      this.states.curveDetail = d;
+      this.states.setValue('curveDetail', d);
     }
   }
 
@@ -287,31 +273,31 @@ class Renderer {
   }
 
   fill(...args) {
-    this.states.fillSet = true;
-    this.states.fillColor = this._pInst.color(...args);
+    this.states.setValue('fillSet', true);
+    this.states.setValue('fillColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
   }
 
   noFill() {
-    this.states.fillColor = null;
+    this.states.setValue('fillColor', null);
   }
 
   strokeWeight(w) {
     if (w === undefined) {
       return this.states.strokeWeight;
     } else {
-      this.states.strokeWeight = w;
+      this.states.setValue('strokeWeight', w);
     }
   }
 
   stroke(...args) {
-    this.states.strokeSet = true;
-    this.states.strokeColor = this._pInst.color(...args);
+    this.states.setValue('strokeSet', true);
+    this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
   }
 
   noStroke() {
-    this.states.strokeColor = null;
+    this.states.setValue('strokeColor', null);
   }
 
   getCommonVertexProperties() {
@@ -324,25 +310,31 @@ class Renderer {
     }
   }
 
-  updateShapeProperties() {
-    this.currentShape.bezierOrder(this.states.bezierOrder);
-    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
-    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
+  updateShapeProperties(modified) {
+    if (!modified || modified.bezierOrder || modified.splineProperties) {
+      const shape = this.currentShape;
+      shape.bezierOrder(this.states.bezierOrder);
+      shape.splineProperty('ends', this.states.splineProperties.ends);
+      shape.splineProperty('tightness', this.states.splineProperties.tightness);
+    }
   }
 
-  updateShapeVertexProperties() {
+  updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    for (const key in props) {
-      this.currentShape[key](props[key]);
+    if (!modified || Object.keys(modified).some((k) => k in props)) {
+      const shape = this.currentShape;
+      for (const key in props) {
+        shape[key](props[key]);
+      }
     }
   }
 
   textSize(s) {
     if (typeof s === 'number') {
-      this.states.textSize = s;
+      this.states.setValue('textSize', s);
       if (!this.states.leadingSet) {
       // only use a default value if not previously set (#5181)
-        this.states.textLeading = s * constants._DEFAULT_LEADMULT;
+        this.states.setValue('textLeading', s * constants._DEFAULT_LEADMULT);
       }
       return this._applyTextProperties();
     }
@@ -352,8 +344,8 @@ class Renderer {
 
   textLeading (l) {
     if (typeof l === 'number') {
-      this.states.leadingSet = true;
-      this.states.textLeading = l;
+      this.states.setValue('leadingSet', true);
+      this.states.setValue('textLeading', l);
       return this._pInst;
     }
 
@@ -368,7 +360,7 @@ class Renderer {
         s === constants.BOLD ||
         s === constants.BOLDITALIC
       ) {
-        this.states.fontStyle = s;
+        this.states.setValue('fontStyle', s);
       }
 
       return this._applyTextProperties();
@@ -393,10 +385,10 @@ class Renderer {
 
   textAlign (h, v) {
     if (typeof h !== 'undefined') {
-      this.states.textAlign = h;
+      this.states.setValue('textAlign', h);
 
       if (typeof v !== 'undefined') {
-        this.states.textBaseline = v;
+        this.states.setValue('textBaseline', v);
       }
 
       return this._applyTextProperties();
@@ -409,7 +401,7 @@ class Renderer {
   }
 
   textWrap (wrapStyle) {
-    this.states.textWrap = wrapStyle;
+    this.states.setValue('textWrap', wrapStyle);
     return this.states.textWrap;
   }
 
@@ -657,8 +649,8 @@ class Renderer {
 
   _updateTextMetrics() {
     if (this._isOpenType()) {
-      this.states.textAscent = this.states.textFont._textAscent();
-      this.states.textDescent = this.states.textFont._textDescent();
+      this.states.setValue('textAscent', this.states.textFont._textAscent());
+      this.states.setValue('textDescent', this.states.textFont._textDescent());
       return this;
     }
 
@@ -694,8 +686,8 @@ class Renderer {
 
     document.body.removeChild(container);
 
-    this.states.textAscent = ascent;
-    this.states.textDescent = descent;
+    this.states.setValue('textAscent', ascent);
+    this.states.setValue('textDescent', descent);
 
     return this;
   }

@@ -119,7 +119,8 @@ class Renderer2D extends Renderer {
   }
 
   _applyDefaults() {
-    this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+    this.states.setValue('_cachedFillStyle', undefined);
+    this.states.setValue('_cachedStrokeStyle', undefined);
     this._cachedBlendMode = constants.BLEND;
     this._setFill(constants._DEFAULT_FILL);
     this._setStroke(constants._DEFAULT_STROKE);
@@ -163,7 +164,7 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   background(...args) {
-    this.drawingContext.save();
+    this.push();
     this.resetMatrix();
 
     if (args[0] instanceof Image) {
@@ -176,7 +177,6 @@ class Renderer2D extends Renderer {
         this._pInst.image(args[0], 0, 0, this.width, this.height);
       }
     } else {
-      const curFill = this._getFill();
       // create background rect
       const color = this._pInst.color(...args);
 
@@ -193,14 +193,12 @@ class Renderer2D extends Renderer {
       }
 
       this.drawingContext.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      this._setFill(curFill);
 
       if (this._isErasing) {
         this._pInst.erase();
       }
     }
-    this.drawingContext.restore();
+    this.pop();
   }
 
   clear() {
@@ -235,12 +233,12 @@ class Renderer2D extends Renderer {
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
       // cache the fill style
-      this._cachedFillStyle = this.drawingContext.fillStyle;
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
       const newFill = this._pInst.color(255, opacityFill).toString();
       this.drawingContext.fillStyle = newFill;
 
       // cache the stroke style
-      this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
       const newStroke = this._pInst.color(255, opacityStroke).toString();
       this.drawingContext.strokeStyle = newStroke;
 
@@ -255,8 +253,8 @@ class Renderer2D extends Renderer {
 
   noErase() {
     if (this._isErasing) {
-      this.drawingContext.fillStyle = this._cachedFillStyle;
-      this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+      this.drawingContext.fillStyle = this.states._cachedFillStyle;
+      this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
 
       this.blendMode(this._cachedBlendMode);
       this._isErasing = false;
@@ -282,12 +280,12 @@ class Renderer2D extends Renderer {
     super.beginClip(options);
 
     // cache the fill style
-    this._cachedFillStyle = this.drawingContext.fillStyle;
+    this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     const newFill = this._pInst.color(255, 0).toString();
     this.drawingContext.fillStyle = newFill;
 
     // cache the stroke style
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     const newStroke = this._pInst.color(255, 0).toString();
     this.drawingContext.strokeStyle = newStroke;
 
@@ -330,8 +328,8 @@ class Renderer2D extends Renderer {
 
     super.endClip();
 
-    this.drawingContext.fillStyle = this._cachedFillStyle;
-    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+    this.drawingContext.fillStyle = this.states._cachedFillStyle;
+    this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
 
     this.blendMode(this._cachedBlendMode);
   }
@@ -945,30 +943,30 @@ class Renderer2D extends Renderer {
   }
 
   _getFill() {
-    if (!this._cachedFillStyle) {
-      this._cachedFillStyle = this.drawingContext.fillStyle;
+    if (!this.states._cachedFillStyle) {
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     }
-    return this._cachedFillStyle;
+    return this.states._cachedFillStyle;
   }
 
   _setFill(fillStyle) {
-    if (fillStyle !== this._cachedFillStyle) {
+    if (fillStyle !== this.states._cachedFillStyle) {
       this.drawingContext.fillStyle = fillStyle;
-      this._cachedFillStyle = fillStyle;
+      this.states.setValue('_cachedFillStyle', fillStyle);
     }
   }
 
   _getStroke() {
-    if (!this._cachedStrokeStyle) {
-      this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    if (!this.states._cachedStrokeStyle) {
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     }
-    return this._cachedStrokeStyle;
+    return this.states._cachedStrokeStyle;
   }
 
   _setStroke(strokeStyle) {
-    if (strokeStyle !== this._cachedStrokeStyle) {
+    if (strokeStyle !== this.states._cachedStrokeStyle) {
       this.drawingContext.strokeStyle = strokeStyle;
-      this._cachedStrokeStyle = strokeStyle;
+      this.states.setValue('_cachedStrokeStyle', strokeStyle);
     }
   }
 
@@ -1104,14 +1102,14 @@ class Renderer2D extends Renderer {
     let font;
     const p = this._pInst;
 
-    this.states.textAscent = null;
-    this.states.textDescent = null;
+    this.states.setValue('textAscent', null);
+    this.states.setValue('textDescent', null);
 
     font = this.states.textFont;
 
     if (this._isOpenType()) {
       font = this.states.textFont.font.familyName;
-      this.states.textStyle = this._textFont.font.styleName;
+      this.states.setValue('textStyle', this._textFont.font.styleName);
     }
 
     let fontNameString = font || 'sans-serif';
@@ -1155,9 +1153,6 @@ class Renderer2D extends Renderer {
   // class' pop method
   pop(style) {
     this.drawingContext.restore();
-    // Re-cache the fill / stroke state
-    this._cachedFillStyle = this.drawingContext.fillStyle;
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
 
     super.pop(style);
   }

@@ -1291,7 +1291,7 @@ function loadingDisplaying(p5, fn){
   fn.tint = function(...args) {
     // p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
+    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
   };
 
   /**
@@ -1330,7 +1330,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.noTint = function() {
-    this._renderer.states.tint = null;
+    this._renderer.states.setValue('tint', null);
   };
 
   /**
@@ -1449,7 +1449,7 @@ function loadingDisplaying(p5, fn){
       m === constants.CORNERS ||
       m === constants.CENTER
     ) {
-      this._renderer.states.imageMode = m;
+      this._renderer.states.setValue('imageMode', m);
     }
   };
 }

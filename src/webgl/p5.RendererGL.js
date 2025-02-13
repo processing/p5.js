@@ -181,6 +181,8 @@ class RendererGL extends Renderer {
     this.states.uPMatrix = new Matrix(4);
 
     this.states.curCamera = new Camera(this);
+    this.states.uPMatrix.set(this.states.curCamera.projMatrix);
+    this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     this.states.enableLighting = false;
     this.states.ambientLightColors = [];
@@ -286,9 +288,9 @@ class RendererGL extends Renderer {
     this._drawingFilter = false;
     this._drawingImage = false;
 
-    this.states.specularShader = undefined;
+    this.specularShader = undefined;
     this.sphereMapping = undefined;
-    this.states.diffusedShader = undefined;
+    this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -500,7 +502,7 @@ class RendererGL extends Renderer {
     if (d === undefined) {
       return this.states.curveDetail;
     } else {
-      this.states.curveDetail = d;
+      this.states.setValue('curveDetail', d);
     }
   }
 
@@ -578,9 +580,9 @@ class RendererGL extends Renderer {
 
   normal(xorv, y, z) {
     if (xorv instanceof Vector) {
-      this.states._currentNormal = xorv;
+      this.states.setValue('_currentNormal', xorv);
     } else {
-      this.states._currentNormal = new Vector(xorv, y, z);
+      this.states.setValue('_currentNormal', new Vector(xorv, y, z));
     }
     this.updateShapeVertexProperties();
   }
@@ -634,7 +636,8 @@ class RendererGL extends Renderer {
   }
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
-    let originalModelMatrix = this.states.uModelMatrix.copy();
+    let originalModelMatrix = this.states.uModelMatrix;
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     try {
       this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
 
@@ -644,7 +647,7 @@ class RendererGL extends Renderer {
         this._drawGeometry(model);
       }
     } finally {
-      this.states.uModelMatrix = originalModelMatrix;
+      this.states.setValue('uModelMatrix', originalModelMatrix);
     }
   }
 
@@ -977,33 +980,35 @@ class RendererGL extends Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
+    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
-    this.states.ambientLightColors.length = 0;
-    this.states.specularColors = [1, 1, 1];
+    this.states.setValue('ambientLightColors', []);
+    this.states.setValue('specularColors', [1, 1, 1]);
 
-    this.states.directionalLightDirections.length = 0;
-    this.states.directionalLightDiffuseColors.length = 0;
-    this.states.directionalLightSpecularColors.length = 0;
+    this.states.setValue('directionalLightDirections', []);
+    this.states.setValue('directionalLightDiffuseColors', []);
+    this.states.setValue('directionalLightSpecularColors', []);
 
-    this.states.pointLightPositions.length = 0;
-    this.states.pointLightDiffuseColors.length = 0;
-    this.states.pointLightSpecularColors.length = 0;
+    this.states.setValue('pointLightPositions', []);
+    this.states.setValue('pointLightDiffuseColors', []);
+    this.states.setValue('pointLightSpecularColors', []);
 
-    this.states.spotLightPositions.length = 0;
-    this.states.spotLightDirections.length = 0;
-    this.states.spotLightDiffuseColors.length = 0;
-    this.states.spotLightSpecularColors.length = 0;
-    this.states.spotLightAngle.length = 0;
-    this.states.spotLightConc.length = 0;
+    this.states.setValue('spotLightPositions', []);
+    this.states.setValue('spotLightDirections', []);
+    this.states.setValue('spotLightDiffuseColors', []);
+    this.states.setValue('spotLightSpecularColors', []);
+    this.states.setValue('spotLightAngle', []);
+    this.states.setValue('spotLightConc', []);
 
-    this.states.enableLighting = false;
+    this.states.setValue('enableLighting', false);
 
     //reset tint value for new frame
-    this.states.tint = [255, 255, 255, 255];
+    this.states.setValue('tint', [255, 255, 255, 255]);
 
     //Clear depth every frame
     this.GL.clearStencil(0);
@@ -1065,10 +1070,10 @@ class RendererGL extends Renderer {
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
     const color = this.states.fillColor;
-    this.states.curFillColor = color._array;
-    this.states.drawMode = constants.FILL;
-    this.states._useNormalMaterial = false;
-    this.states._tex = null;
+    this.states.setValue('curFillColor', color._array);
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', null);
   }
 
   /**
@@ -1103,10 +1108,11 @@ class RendererGL extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
-    this.states.curStrokeColor = this.states.strokeColor._array;
+    this.states.setValue('curStrokeColor', this.states.strokeColor._array);
   }
 
   getCommonVertexProperties() {
+    if (!this.states) debugger
     return {
       ...super.getCommonVertexProperties(),
       stroke: this.states.strokeColor,
@@ -1173,11 +1179,11 @@ class RendererGL extends Renderer {
           filterShaderFrags[operation],
         );
       }
-      this.states.filterShader = this.defaultFilterShaders[operation];
+      this.states.setValue('filterShader', this.defaultFilterShaders[operation]);
     }
     // use custom user-supplied shader
     else {
-      this.states.filterShader = args[0];
+      this.states.setValue('filterShader', args[0]);
     }
 
     // Setting the target to the framebuffer when applying a filter to a framebuffer.
@@ -1202,7 +1208,7 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.strokeColor = null;
+      this.states.setValue('strokeColor', null);
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
@@ -1242,7 +1248,7 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.strokeColor = null;
+        this.states.setValue('strokeColor', null);
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform("tex0", target);
@@ -1260,10 +1266,10 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.strokeColor = null;
+    this.states.setValue('strokeColor', null);
     this.clear();
     this.push();
-    this.states.imageMode = constants.CORNER;
+    this.states.setValue('imageMode', constants.CORNER);
     this.blendMode(constants.BLEND);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
@@ -1309,7 +1315,7 @@ class RendererGL extends Renderer {
       mode === constants.MULTIPLY ||
       mode === constants.REMOVE
     )
-      this.states.curBlendMode = mode;
+      this.states.setValue('curBlendMode', mode);
     else if (
       mode === constants.BURN ||
       mode === constants.OVERLAY ||
@@ -1329,19 +1335,19 @@ class RendererGL extends Renderer {
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.states.curFillColor.slice();
-      this.states.curFillColor = [1, 1, 1, opacityFill / 255];
+      this.states.setValue('curFillColor', [1, 1, 1, opacityFill / 255]);
       this._cachedStrokeStyle = this.states.curStrokeColor.slice();
-      this.states.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+      this.states.setValue('curStrokeColor', [1, 1, 1, opacityStroke / 255]);
     }
   }
 
   noErase() {
     if (this._isErasing) {
       // Restore colors
-      this.states.curFillColor = this._cachedFillStyle.slice();
-      this.states.curStrokeColor = this._cachedStrokeStyle.slice();
+      this.states.setValue('curFillColor', this._cachedFillStyle.slice());
+      this.states.setValue('curStrokeColor', this._cachedStrokeStyle.slice());
       // Restore blend mode
-      this.states.curBlendMode = this.preEraseBlend;
+      this.states.setValue('curBlendMode', this.preEraseBlend);
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1468,7 +1474,7 @@ class RendererGL extends Renderer {
     this.push();
     this.resetMatrix();
     this.clear();
-    this.states.imageMode = constants.CORNER;
+    this.states.setValue('imageMode', constants.CORNER);
     this.image(
       fbo,
       0,
@@ -1621,6 +1627,7 @@ class RendererGL extends Renderer {
   }
 
   applyMatrix(a, b, c, d, e, f) {
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     if (arguments.length === 16) {
       // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
@@ -1661,6 +1668,7 @@ class RendererGL extends Renderer {
       y = x.y;
       x = x.x;
     }
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
@@ -1674,6 +1682,7 @@ class RendererGL extends Renderer {
    * @chainable
    */
   scale(x, y, z) {
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
@@ -1682,6 +1691,7 @@ class RendererGL extends Renderer {
     if (typeof axis === "undefined") {
       return this.rotateZ(rad);
     }
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
@@ -1724,7 +1734,9 @@ class RendererGL extends Renderer {
     }
   }
   resetMatrix() {
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
+    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }
@@ -2100,16 +2112,16 @@ class RendererGL extends Renderer {
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
-    if (!this.states.diffusedShader) {
-      this.states.diffusedShader = this._pInst.createShader(
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag,
       );
     }
     newFramebuffer.draw(() => {
-      this.shader(this.states.diffusedShader);
-      this.states.diffusedShader.setUniform("environmentMap", input);
-      this.states.strokeColor = null;
+      this.shader(this.diffusedShader);
+      this.diffusedShader.setUniform("environmentMap", input);
+      this.states.setValue('strokeColor', null);
       this.noLights();
       this.plane(width, height);
     });
@@ -2142,8 +2154,8 @@ class RendererGL extends Renderer {
       density: 1,
     });
     let count = Math.log(size) / Math.log(2);
-    if (!this.states.specularShader) {
-      this.states.specularShader = this._pInst.createShader(
+    if (!this.specularShader) {
+      this.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightSpecularFrag,
       );
@@ -2158,11 +2170,11 @@ class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this.shader(this.states.specularShader);
+        this.shader(this.specularShader);
         this.clear();
-        this.states.specularShader.setUniform("environmentMap", input);
-        this.states.specularShader.setUniform("roughness", roughness);
-        this.states.strokeColor = null;
+        this.specularShader.setUniform("environmentMap", input);
+        this.specularShader.setUniform("roughness", roughness);
+        this.states.setValue('strokeColor', null);
         this.noLights();
         this.plane(w, w);
       });
@@ -2623,9 +2635,7 @@ function rendererGL(p5, fn) {
       }
     }
 
-    this.push();
     this._renderer._resetContext();
-    this.pop();
 
     if (this._renderer.states.curCamera) {
       this._renderer.states.curCamera._renderer = this._renderer;
