@@ -836,6 +836,16 @@ class Shape {
     this._splineProperties[key] = value;
   }
 
+  splineProperties(values) {
+    if (values) {
+      for (const key in values) {
+        this.splineProperty(key, values[key]);
+      }
+    } else {
+      return this._splineProperties;
+    }
+  }
+
   /*
   To-do: Maybe refactor #createVertex() since this has side effects that aren't advertised
   in the method name?
@@ -1597,10 +1607,18 @@ function customShapes(p5, fn) {
   /**
    * TODO: documentation
    * @param {String} key
-   * @param value
+   * @param [value]
    */
   fn.splineProperty = function(key, value) {
     return this._renderer.splineProperty(key, value);
+  };
+
+  /**
+   * TODO: documentation
+   * @param {Object} [values]
+   */
+  fn.splineProperties = function(values) {
+    return this._renderer.splineProperties(values);
   };
 
   /**
