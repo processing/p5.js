@@ -810,11 +810,14 @@ class Shape {
   vertexProperty(name, data) {
     this.userVertexProperties = this.userVertexProperties || {};
     const key = this.vertexPropertyKey(name);
+    
+    const dataArray = Array.isArray(data) ? data : [data];
+    
     if (!this.userVertexProperties[key]) {
-      this.userVertexProperties[key] = data.length ? data.length : 1;
+      this.userVertexProperties[key] = dataArray.length;
     }
-    this.#vertexProperties[key] = data;
-  }
+    this.#vertexProperties[key] = dataArray;
+}
   vertexPropertyName(key) {
     return key.replace(/Src$/, '');
   }
