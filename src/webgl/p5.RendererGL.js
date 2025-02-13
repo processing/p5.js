@@ -977,16 +977,6 @@ class RendererGL extends Renderer {
     }
   }
 
-  push() {
-    this.textDrawingContext().save()
-    super.push()
-  }
-
-  pop() {
-    super.pop()
-    this.textDrawingContext.restore()
-  }
-
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
