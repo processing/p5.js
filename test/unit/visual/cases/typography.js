@@ -295,6 +295,7 @@ visualSuite("Typography", function () {
               p5.background(255);
               p5.push();
               p5.textAlign(alignment.alignX, alignment.alignY);
+              p5.textWrap(p5.CHAR);
 
               p5.noFill();
               p5.strokeWeight(2);
