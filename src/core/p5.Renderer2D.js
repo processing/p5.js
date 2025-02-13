@@ -65,7 +65,7 @@ class Renderer2D extends Renderer {
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
     if(attributes.colorSpace === 'display-p3'){
-      this.states.setValue('colorMode', RGBHDR);
+      this.states.colorMode = RGBHDR;
     }
     if (isMainCanvas) {
       this._pInst.drawingContext = this.drawingContext;
@@ -164,7 +164,7 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   background(...args) {
-    this.drawingContext.save();
+    this.push();
     this.resetMatrix();
 
     if (args[0] instanceof Image) {
@@ -177,7 +177,6 @@ class Renderer2D extends Renderer {
         this._pInst.image(args[0], 0, 0, this.width, this.height);
       }
     } else {
-      const curFill = this._getFill();
       // create background rect
       const color = this._pInst.color(...args);
 
@@ -194,14 +193,12 @@ class Renderer2D extends Renderer {
       }
 
       this.drawingContext.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      this._setFill(curFill);
 
       if (this._isErasing) {
         this._pInst.erase();
       }
     }
-    this.drawingContext.restore();
+    this.pop();
   }
 
   clear() {

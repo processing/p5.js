@@ -176,58 +176,58 @@ class RendererGL extends Renderer {
     this.geometryBuilder = undefined;
 
     // Push/pop state
-    this.states.setValue('uModelMatrix', new Matrix(4));
-    this.states.setValue('uViewMatrix', new Matrix(4));
-    this.states.setValue('uPMatrix', new Matrix(4));
+    this.states.uModelMatrix = new Matrix(4);
+    this.states.uViewMatrix = new Matrix(4);
+    this.states.uPMatrix = new Matrix(4);
 
-    this.states.setValue('curCamera', new Camera(this));
+    this.states.curCamera = new Camera(this);
 
-    this.states.setValue('enableLighting', false);
-    this.states.setValue('ambientLightColors', []);
-    this.states.setValue('specularColors', [1, 1, 1]);
-    this.states.setValue('directionalLightDirections', []);
-    this.states.setValue('directionalLightDiffuseColors', []);
-    this.states.setValue('directionalLightSpecularColors', []);
-    this.states.setValue('pointLightPositions', []);
-    this.states.setValue('pointLightDiffuseColors', []);
-    this.states.setValue('pointLightSpecularColors', []);
-    this.states.setValue('spotLightPositions', []);
-    this.states.setValue('spotLightDirections', []);
-    this.states.setValue('spotLightDiffuseColors', []);
-    this.states.setValue('spotLightSpecularColors', []);
-    this.states.setValue('spotLightAngle', []);
-    this.states.setValue('spotLightConc', []);
-    this.states.setValue('activeImageLight', null);
+    this.states.enableLighting = false;
+    this.states.ambientLightColors = [];
+    this.states.specularColors = [1, 1, 1];
+    this.states.directionalLightDirections = [];
+    this.states.directionalLightDiffuseColors = [];
+    this.states.directionalLightSpecularColors = [];
+    this.states.pointLightPositions = [];
+    this.states.pointLightDiffuseColors = [];
+    this.states.pointLightSpecularColors = [];
+    this.states.spotLightPositions = [];
+    this.states.spotLightDirections = [];
+    this.states.spotLightDiffuseColors = [];
+    this.states.spotLightSpecularColors = [];
+    this.states.spotLightAngle = [];
+    this.states.spotLightConc = [];
+    this.states.activeImageLight = null;
 
-    this.states.setValue('curFillColor', [1, 1, 1, 1]);
-    this.states.setValue('curAmbientColor', [1, 1, 1, 1]);
-    this.states.setValue('curSpecularColor', [0, 0, 0, 0]);
-    this.states.setValue('curEmissiveColor', [0, 0, 0, 0]);
-    this.states.setValue('curStrokeColor', [0, 0, 0, 1]);
+    this.states.curFillColor = [1, 1, 1, 1];
+    this.states.curAmbientColor = [1, 1, 1, 1];
+    this.states.curSpecularColor = [0, 0, 0, 0];
+    this.states.curEmissiveColor = [0, 0, 0, 0];
+    this.states.curStrokeColor = [0, 0, 0, 1];
 
-    this.states.setValue('curBlendMode', constants.BLEND);
+    this.states.curBlendMode = constants.BLEND;
 
-    this.states._hasSetAmbient = false;
-    this.states._useSpecularMaterial = false;
-    this.states._useEmissiveMaterial = false;
-    this.states._useNormalMaterial = false;
-    this.states._useShininess = 1;
-    this.states._useMetalness = 0;
+    this.states.setValue('_hasSetAmbient', false);
+    this.states.setValue('_useSpecularMaterial', false);
+    this.states.setValue('_useEmissiveMaterial', false);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_useShininess', 1);
+    this.states.setValue('_useMetalness', 0);
 
-    this.states.setValue('tint', [255, 255, 255, 255]);
+    this.states.tint = [255, 255, 255, 255];
 
-    this.states.setValue('constantAttenuation', 1);
-    this.states.setValue('linearAttenuation', 0);
-    this.states.setValue('quadraticAttenuation', 0);
+    this.states.constantAttenuation = 1;
+    this.states.linearAttenuation = 0;
+    this.states.quadraticAttenuation = 0;
 
-    this.states._currentNormal = new Vector(0, 0, 1);
+    this.states.setValue('_currentNormal', new Vector(0, 0, 1));
 
-    this.states.setValue('drawMode', constants.FILL);
+    this.states.drawMode = constants.FILL;
 
-    this.states._tex = null;
-    this.states.setValue('textureMode', constants.IMAGE);
-    this.states.setValue('textureWrapX', constants.CLAMP);
-    this.states.setValue('textureWrapY', constants.CLAMP);
+    this.states.setValue('_tex', null);
+    this.states.textureMode = constants.IMAGE;
+    this.states.textureWrapX = constants.CLAMP;
+    this.states.textureWrapY = constants.CLAMP;
 
     // erasing
     this._isErasing = false;
@@ -286,21 +286,21 @@ class RendererGL extends Renderer {
     this._drawingFilter = false;
     this._drawingImage = false;
 
-    this.states.setValue('specularShader', undefined);
+    this.specularShader = undefined;
     this.sphereMapping = undefined;
-    this.states.setValue('diffusedShader', undefined);
+    this.diffusedShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
     this._defaultColorShader = undefined;
     this._defaultPointShader = undefined;
 
-    this.states.setValue('userFillShader', undefined);
-    this.states.setValue('userStrokeShader', undefined);
-    this.states.setValue('userPointShader', undefined);
-    this.states.setValue('userImageShader', undefined);
+    this.states.userFillShader = undefined;
+    this.states.userStrokeShader = undefined;
+    this.states.userPointShader = undefined;
+    this.states.userImageShader = undefined;
 
-    this.states.setValue('curveDetail', 1 / 4);
+    this.states.curveDetail = 1 / 4;
 
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
@@ -403,7 +403,7 @@ class RendererGL extends Renderer {
     this.activeFramebuffers = [];
 
     // for post processing step
-    this.states.setValue('filterShader', undefined);
+    this.states.filterShader = undefined;
     this.filterLayer = undefined;
     this.filterLayerTemp = undefined;
     this.defaultFilterShaders = {};
@@ -578,9 +578,9 @@ class RendererGL extends Renderer {
 
   normal(xorv, y, z) {
     if (xorv instanceof Vector) {
-      this.states._currentNormal = xorv;
+      this.states.setValue('_currentNormal', xorv);
     } else {
-      this.states._currentNormal = new Vector(xorv, y, z);
+      this.states.setValue('_currentNormal', new Vector(xorv, y, z));
     }
     this.updateShapeVertexProperties();
   }
@@ -985,23 +985,23 @@ class RendererGL extends Renderer {
 
     // reset light data for new frame.
 
-    this.states.ambientLightColors.length = 0;
+    this.states.setValue('ambientLightColors', []);
     this.states.setValue('specularColors', [1, 1, 1]);
 
-    this.states.directionalLightDirections.length = 0;
-    this.states.directionalLightDiffuseColors.length = 0;
-    this.states.directionalLightSpecularColors.length = 0;
+    this.states.setValue('directionalLightDirections', []);
+    this.states.setValue('directionalLightDiffuseColors', []);
+    this.states.setValue('directionalLightSpecularColors', []);
 
-    this.states.pointLightPositions.length = 0;
-    this.states.pointLightDiffuseColors.length = 0;
-    this.states.pointLightSpecularColors.length = 0;
+    this.states.setValue('pointLightPositions', []);
+    this.states.setValue('pointLightDiffuseColors', []);
+    this.states.setValue('pointLightSpecularColors', []);
 
-    this.states.spotLightPositions.length = 0;
-    this.states.spotLightDirections.length = 0;
-    this.states.spotLightDiffuseColors.length = 0;
-    this.states.spotLightSpecularColors.length = 0;
-    this.states.spotLightAngle.length = 0;
-    this.states.spotLightConc.length = 0;
+    this.states.setValue('spotLightPositions', []);
+    this.states.setValue('spotLightDirections', []);
+    this.states.setValue('spotLightDiffuseColors', []);
+    this.states.setValue('spotLightSpecularColors', []);
+    this.states.setValue('spotLightAngle', []);
+    this.states.setValue('spotLightConc', []);
 
     this.states.setValue('enableLighting', false);
 
@@ -1070,8 +1070,8 @@ class RendererGL extends Renderer {
     const color = this.states.fillColor;
     this.states.setValue('curFillColor', color._array);
     this.states.setValue('drawMode', constants.FILL);
-    this.states._useNormalMaterial = false;
-    this.states._tex = null;
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', null);
   }
 
   /**
@@ -2110,15 +2110,15 @@ class RendererGL extends Renderer {
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
-    if (!this.states.diffusedShader) {
-      this.states.diffusedShader = this._pInst.createShader(
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag,
       );
     }
     newFramebuffer.draw(() => {
-      this.shader(this.states.diffusedShader);
-      this.states.diffusedShader.setUniform("environmentMap", input);
+      this.shader(this.diffusedShader);
+      this.diffusedShader.setUniform("environmentMap", input);
       this.states.setValue('strokeColor', null);
       this.noLights();
       this.plane(width, height);
@@ -2152,8 +2152,8 @@ class RendererGL extends Renderer {
       density: 1,
     });
     let count = Math.log(size) / Math.log(2);
-    if (!this.states.specularShader) {
-      this.states.specularShader = this._pInst.createShader(
+    if (!this.specularShader) {
+      this.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightSpecularFrag,
       );
@@ -2168,10 +2168,10 @@ class RendererGL extends Renderer {
       let currCount = Math.log(w) / Math.log(2);
       let roughness = 1 - currCount / count;
       framebuffer.draw(() => {
-        this.shader(this.states.specularShader);
+        this.shader(this.specularShader);
         this.clear();
-        this.states.specularShader.setUniform("environmentMap", input);
-        this.states.specularShader.setUniform("roughness", roughness);
+        this.specularShader.setUniform("environmentMap", input);
+        this.specularShader.setUniform("roughness", roughness);
         this.states.setValue('strokeColor', null);
         this.noLights();
         this.plane(w, w);

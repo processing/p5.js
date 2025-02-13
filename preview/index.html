@@ -28,6 +28,11 @@
         p.push();
         p.background(200);
         p.strokeWeight(10);
+        p.push()
+        p.stroke('red')
+        p.line(-100, -100, 100, 100);
+        p.pop()
+        p.translate(200, 200)
         p.line(-100, -100, 100, 100);
         debugger
         p.pop();

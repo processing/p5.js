@@ -3,11 +3,14 @@ export class States {
 
   constructor(initialState) {
     for (const key in initialState) {
-      this[key] = initialState[key]
+      this[key] = initialState[key];
     }
   }
 
   setValue(key, value) {
+    if (!(key in this.#modified)) {
+      this.#modified[key] = this[key];
+    }
     this[key] = value;
   }
 

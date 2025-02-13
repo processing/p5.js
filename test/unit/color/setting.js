@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import creatingReading from '../../../src/color/creating_reading';
 import setting from '../../../src/color/setting';
+import { States } from '../../../src/core/States';
 
 // NOTE: Require ESM compatible libtess
 suite('color/Setting', function() {
@@ -57,7 +58,7 @@ suite('color/Setting', function() {
     beforeEach(() => {
       mockP5Prototype._renderer = {
         erase: vi.fn(),
-        states: {
+        states: new States({
           colorMode: 'rgb',
           colorMaxes: {
             rgb: [255, 255, 255, 255],
@@ -68,7 +69,7 @@ suite('color/Setting', function() {
               return this;
             }
           }
-        }
+        })
       }
     });
 

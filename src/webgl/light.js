@@ -1470,11 +1470,11 @@ function light(p5, fn){
   RendererGL.prototype.specularColor = function(v1, v2, v3) {
     const color = this._pInst.color(...arguments);
 
-    this.states.specularColors = [
+    this.states.setValue('specularColors', [
       color._array[0],
       color._array[1],
       color._array[2]
-    ];
+    ]);
   }
 
   RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
@@ -1780,23 +1780,23 @@ function light(p5, fn){
         );
         return;
     }
-    this.states.spotLightDiffuseColors = [
+    this.states.setValue('spotLightDiffuseColors', [
       color._array[0],
       color._array[1],
       color._array[2]
-    ];
+    ]);
 
-    this.states.spotLightSpecularColors = [
+    this.states.setValue('spotLightSpecularColors', [
       ...this.states.specularColors
-    ];
+    ]);
 
     this.states.setValue('spotLightPositions', [position.x, position.y, position.z]);
     direction.normalize();
-    this.states.spotLightDirections = [
+    this.states.setValue('spotLightDirections', [
       direction.x,
       direction.y,
       direction.z
-    ];
+    ]);
 
     if (angle === undefined) {
       angle = Math.PI / 3;
@@ -1843,8 +1843,8 @@ function light(p5, fn){
     this.states.setValue('constantAttenuation', 1);
     this.states.setValue('linearAttenuation', 0);
     this.states.setValue('quadraticAttenuation', 0);
-    this.states._useShininess = 1;
-    this.states._useMetalness = 0;
+    this.states.setValue('_useShininess', 1);
+    this.states.setValue('_useMetalness', 0);
   }
 }
 
