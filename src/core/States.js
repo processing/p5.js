@@ -17,6 +17,10 @@ export class States {
     return diff;
   }
 
+  getModified() {
+    return this.#modified;
+  }
+
   applyDiff(prevModified) {
     for (const key in this.#modified) {
       this[key] = this.#modified[key];

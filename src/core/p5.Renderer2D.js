@@ -236,12 +236,12 @@ class Renderer2D extends Renderer {
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
       // cache the fill style
-      this.states.setValue('cachedFillStyle', this.drawingContext.fillStyle);
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
       const newFill = this._pInst.color(255, opacityFill).toString();
       this.drawingContext.fillStyle = newFill;
 
       // cache the stroke style
-      this.states.setValue('cachedStrokeStyle', this.drawingContext.strokeStyle);
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
       const newStroke = this._pInst.color(255, opacityStroke).toString();
       this.drawingContext.strokeStyle = newStroke;
 
@@ -283,12 +283,12 @@ class Renderer2D extends Renderer {
     super.beginClip(options);
 
     // cache the fill style
-    this.states.setValue('cachedFillStyle', this.drawingContext.fillStyle);
+    this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     const newFill = this._pInst.color(255, 0).toString();
     this.drawingContext.fillStyle = newFill;
 
     // cache the stroke style
-    this.states.setValue('cachedStrokeStyle', this.drawingContext.strokeStyle);
+    this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     const newStroke = this._pInst.color(255, 0).toString();
     this.drawingContext.strokeStyle = newStroke;
 
@@ -947,7 +947,7 @@ class Renderer2D extends Renderer {
 
   _getFill() {
     if (!this.states._cachedFillStyle) {
-      this.states.setValue('cachedFillStyle', this.drawingContext.fillStyle);
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     }
     return this.states._cachedFillStyle;
   }
@@ -955,13 +955,13 @@ class Renderer2D extends Renderer {
   _setFill(fillStyle) {
     if (fillStyle !== this.states._cachedFillStyle) {
       this.drawingContext.fillStyle = fillStyle;
-      this.states.setValue('cachedFillStyle', fillStyle);
+      this.states.setValue('_cachedFillStyle', fillStyle);
     }
   }
 
   _getStroke() {
     if (!this.states._cachedStrokeStyle) {
-      this.states.setValue('cachedStrokeStyle', this.drawingContext.strokeStyle);
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     }
     return this.states._cachedStrokeStyle;
   }
@@ -969,7 +969,7 @@ class Renderer2D extends Renderer {
   _setStroke(strokeStyle) {
     if (strokeStyle !== this.states._cachedStrokeStyle) {
       this.drawingContext.strokeStyle = strokeStyle;
-      this.states.setValue('cachedStrokeStyle', strokeStyle);
+      this.states.setValue('_cachedStrokeStyle', strokeStyle);
     }
   }
 

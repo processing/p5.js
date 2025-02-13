@@ -123,9 +123,10 @@ class Renderer {
   pop() {
     this._pushPopDepth--;
     const diff = this._pushPopStack.pop() || {};
+    const modified = this.states.getModified();
     this.states.applyDiff(diff);
-    this.updateShapeVertexProperties();
-    this.updateShapeProperties();
+    this.updateShapeVertexProperties(modified);
+    this.updateShapeProperties(modified);
   }
 
   bezierOrder(order) {
@@ -299,16 +300,22 @@ class Renderer {
     }
   }
 
-  updateShapeProperties() {
-    this.currentShape.bezierOrder(this.states.bezierOrder);
-    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
-    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
+  updateShapeProperties(modified) {
+    if (!modified || modified.bezierOrder || modified.splineProperties) {
+      const shape = this.currentShape;
+      shape.bezierOrder(this.states.bezierOrder);
+      shape.splineProperty('ends', this.states.splineProperties.ends);
+      shape.splineProperty('tightness', this.states.splineProperties.tightness);
+    }
   }
 
-  updateShapeVertexProperties() {
+  updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    for (const key in props) {
-      this.currentShape[key](props[key]);
+    if (!modified || Object.keys(modified).some((k) => k in props)) {
+      const shape = this.currentShape;
+      for (const key in props) {
+        shape[key](props[key]);
+      }
     }
   }
 
