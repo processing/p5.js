@@ -20,23 +20,25 @@ function shadergen(p5, fn) {
   }
 
   class BaseNode {
-    constructor() {
+    constructor(isInternal) {
       if (new.target === BaseNode) {
         throw new TypeError("Cannot construct BaseNode instances directly. This is an abstract class.");
       }
       this.type = null;
       
       // For tracking recursion depth and creating temporary variables
-      this.isInternal = false; // TODO: dont use temp nodes for internal nodes 
+      this.isInternal = isInternal; // TODO: dont use temp nodes for internal nodes 
       this.usedIn = [];
       this.dependsOn = [];
       this.srcLine = null;
-      try {
-        throw new Error("StackCapture");
-      } catch (e) {
-        const lines = e.stack.split("\n");
-        console.log(lines)
-        this.srcLine = lines[4].trim();
+      if (!isInternal) {
+        try {
+          throw new Error("StackCapture");
+        } catch (e) {
+          const lines = e.stack.split("\n");
+          console.log(lines)
+          this.srcLine = lines[3].trim();
+        }
       }
     }
     
@@ -107,8 +109,8 @@ function shadergen(p5, fn) {
 
   // Primitive Types
   class IntNode extends BaseNode {
-    constructor(x = 0) {
-      super();
+    constructor(x = 0, isInternal = false) {
+      super(isInternal);
       this.x = x;
       this.type = 'int';
     }
@@ -127,8 +129,8 @@ function shadergen(p5, fn) {
   }
   
   class FloatNode extends BaseNode {
-    constructor(x = 0){
-      super();
+    constructor(x = 0, isInternal = false){
+      super(isInternal);
       this.x = x;
       this.type = 'float';
     }
@@ -147,11 +149,28 @@ function shadergen(p5, fn) {
     }
   }
   
+  // There is a possibility that since we *always* use a temporary variable for vectors
+  // that we don't actually need a Float Node for every component. They could be component node's instead? 
+  // May need to then store the temporary variable name in this class.
+
+  // I think swizzles could be easy then
+
   class VectorNode extends BaseNode {
-    constructor(values, type) {
-      super();
-      this.x = new FloatNode(x);
-      this.y = new FloatNode(y);
+    constructor(values, type, isInternal = false) {
+      super(isInternal);
+      const componentVariants = { 
+        pos: ['x', 'y', 'z', 'w'],
+        col: ['r', 'g', 'b', 'a'],
+        uv: ['s', 't', 'p', 'q']
+      }
+      for (let variant in componentVariants) {
+        for (let i = 0; i < arguments[0].length; i++) {
+          let componentCollection = componentVariants[variant];
+          let component = componentCollection[i];
+          this[component] = new FloatNode(arguments[0][i], isInternal = true);
+        }
+      }
+      console.log(this);
       this.type = type;
     }
     
@@ -162,8 +181,8 @@ function shadergen(p5, fn) {
 
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
-    constructor(name, args, type) {
-      super();
+    constructor(name, args, type, isInternal = false) {
+      super(isInternal);
       this.name = name;
       this.args = args;
       this.type = type;
@@ -186,25 +205,25 @@ function shadergen(p5, fn) {
   
   // Variables and member variable nodes
   class VariableNode extends BaseNode {
-    constructor(name, type) {
-      super()
+    constructor(name, type, isInternal = false) {
+      super(isInternal)
       this.name = name;
       this.type = type;
       switch (type) {
         case 'float':
         break;
         case 'vec2':
-        this.addSwizzles('x', 'y')
+        this.addComponents('x', 'y')
         break;
         case 'vec3':
-        this.addSwizzles('x', 'y', 'z')
+        this.addComponents('x', 'y', 'z')
         break;
         case 'vec4':
-        this.addSwizzles('x', 'y', 'z', 'w');  
+        this.addComponents('x', 'y', 'z', 'w');  
         break;
       }
     }
-    addSwizzles() {
+    addComponents() {
       for (let name of arguments) {
         this[name] = new ComponentNode(this.name, name);
       }
@@ -215,8 +234,8 @@ function shadergen(p5, fn) {
   }
   
   class ComponentNode extends BaseNode {
-    constructor(parent, component) {
-      super();
+    constructor(parent, component, isInternal = false) {
+      super(isInternal);
       this.varName = parent;
       this.component = component;
       this.type = 'float';
@@ -228,8 +247,8 @@ function shadergen(p5, fn) {
 
   // Binary Operator Nodes
   class BinaryOperatorNode extends BaseNode {
-    constructor(a, b) {
-      super();
+    constructor(a, b, isInternal = false) {
+      super(isInternal);
       this.a = a;
       this.b = b;
       for (const param of arguments) {
@@ -348,7 +367,7 @@ function shadergen(p5, fn) {
         getWorldPosition: null
       }
       this.resetGLSLContext();
-      global.GLOBAL_SHADER = this;
+      GLOBAL_SHADER = this;
       this.generator = modifyFunction;
     }
     generate() {
@@ -371,14 +390,16 @@ function shadergen(p5, fn) {
       this.uniforms[name] = value;
       return new VariableNode(name, value.type);
     }
+    
     buildFunction(argumentName, argumentType, callback) {
       let functionArgument = new VariableNode(argumentName, argumentType);
-      const finalLine = callback(functionArgument).toGLSL(this.context);
+      const finalLine = callback(functionArgument).toGLSLBase(this.context);
       let codeLines = this.context.declarations.slice();
       codeLines.push(`\n${argumentName} = ${finalLine}; \nreturn ${argumentName};`)
       this.resetGLSLContext();
       return codeLines.join("\n");
     }
+
     getWorldPosition(func) {
       this.functions.getWorldPosition = this.buildFunction("pos", "vec3", func);
     }
@@ -388,16 +409,23 @@ function shadergen(p5, fn) {
   }
 
   // User functions
+  fn.getWorldPosition = function(func){
+    GLOBAL_SHADER.getWorldPosition(func)
+  }
+  fn.getFinalColor = function(func){
+    GLOBAL_SHADER.getFinalColor(func)
+  }
+  
   fn.createVector2 = function(x, y) {
-    return new VectorNode(x, y, 'vec2');
+    return new VectorNode([x, y], 'vec2');
   }
 
   fn.createVector3 = function(x, y, z) {
-    return new VectorNode(x, y, z, 'vec3');
+    return new VectorNode([x, y, z], 'vec3');
   }
 
   fn.createVector4 = function(x, y, z, w) {
-    return new VectorNode(x, y, z, w, 'vec4');
+    return new VectorNode([x, y, z], w, 'vec4');
   }
   
   fn.createFloat = function(x) {
