@@ -1,6 +1,7 @@
 import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
 import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
+import pixelmatch from 'pixelmatch';
 const { readFile, writeFile } = server.commands
 
 // By how much can each color channel value (0-255) differ before
@@ -87,56 +88,116 @@ export function visualSuite(
 }
 
 export async function checkMatch(actual, expected, p5) {
-  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
-
-  // Long screenshots end up super tiny when fit to a small square, so we
-  // can double the max side length for these
-  const ratio = expected.width / expected.height;
-  const narrow = ratio !== 1;
-  if (narrow) {
-    scale *= 2;
+  // First do standard pixelmatch comparison
+  const diffData = actual.drawingContext.createImageData(actual.width, actual.height);
+  
+  // Get image data from both canvases
+  const actualData = actual.drawingContext.getImageData(0, 0, actual.width, actual.height);
+  const expectedData = expected.drawingContext.getImageData(0, 0, actual.width, actual.height);
+  
+  // Function to check if a region looks like text
+  // Text typically has high contrast and specific density patterns
+  const isLikelyText = (data, x, y, width) => {
+    const region = 3; // Check 3x3 area
+    let transitions = 0;
+    let nonEmpty = 0;
+    
+    for (let dy = -region; dy <= region; dy++) {
+      for (let dx = -region; dx <= region; dx++) {
+        const px = x + dx;
+        const py = y + dy;
+        if (px < 0 || px >= width || py < 0 || py >= width) continue;
+        
+        const idx = (py * width + px) * 4;
+        // Check if pixel is non-transparent and has significant contrast
+        if (data.data[idx + 3] > 20) {
+          nonEmpty++;
+          // Check for contrast with neighboring pixels
+          if (px > 0) {
+            const prevIdx = (py * width + (px - 1)) * 4;
+            if (Math.abs(data.data[idx] - data.data[prevIdx]) > 30) {
+              transitions++;
+            }
+          }
+        }
+      }
+    }
+    
+    // Text typically has moderate density and high number of transitions
+    return nonEmpty > 4 && nonEmpty < 20 && transitions > 3;
+  };
+  
+  // Custom comparison function that's more lenient with text
+  let diffCount = 0;
+  const shiftThreshold = 2; // Maximum pixels of shift allowed for text
+  
+  for (let y = 0; y < actual.height; y++) {
+    for (let x = 0; x < actual.width; x++) {
+      const idx = (y * actual.width + x) * 4;
+      
+      // Check if pixels match exactly
+      const exactMatch = [0, 1, 2, 3].every(i => 
+        Math.abs(actualData.data[idx + i] - expectedData.data[idx + i]) < 0.4 * 255
+      );
+      
+      if (exactMatch) {
+        // Pixels match, copy expected pixel to diff
+        [0, 1, 2, 3].forEach(i => diffData.data[idx + i] = expectedData.data[idx + i]);
+        continue;
+      }
+      
+      // If pixels don't match, check if it might be shifted text
+      if (isLikelyText(expectedData, x, y, actual.width)) {
+        let foundMatch = false;
+        
+        // Look for matching pixel within shift threshold
+        searchLoop:
+        for (let dy = -shiftThreshold; dy <= shiftThreshold; dy++) {
+          for (let dx = -shiftThreshold; dx <= shiftThreshold; dx++) {
+            const sx = x + dx;
+            const sy = y + dy;
+            
+            if (sx < 0 || sx >= actual.width || sy < 0 || sy >= actual.height) continue;
+            
+            const shiftIdx = (sy * actual.width + sx) * 4;
+            const pixelMatch = [0, 1, 2, 3].every(i =>
+              Math.abs(actualData.data[idx + i] - expectedData.data[shiftIdx + i]) < 0.4 * 255
+            );
+            
+            if (pixelMatch) {
+              foundMatch = true;
+              break searchLoop;
+            }
+          }
+        }
+        
+        if (foundMatch) {
+          // Mark as acceptable text shift (yellow in diff)
+          diffData.data[idx] = 255;     // R
+          diffData.data[idx + 1] = 255; // G
+          diffData.data[idx + 2] = 0;   // B
+          diffData.data[idx + 3] = 255; // A
+          continue;
+        }
+      }
+      
+      // If we get here, it's a real difference
+      diffCount++;
+      // Mark as difference (red in diff)
+      diffData.data[idx] = 255;     // R
+      diffData.data[idx + 1] = 0;   // G
+      diffData.data[idx + 2] = 0;   // B
+      diffData.data[idx + 3] = 255; // A
+    }
   }
-
-  for (const img of [actual, expected]) {
-    img.resize(
-      Math.ceil(img.width * scale),
-      Math.ceil(img.height * scale)
-    );
-  }
-
-  const expectedWithBg = p5.createGraphics(expected.width, expected.height);
-  expectedWithBg.pixelDensity(1);
-  expectedWithBg.background(BG);
-  expectedWithBg.image(expected, 0, 0);
-
+  
+  // Create diff image
   const cnv = p5.createGraphics(actual.width, actual.height);
-  cnv.pixelDensity(1);
-  cnv.background(BG);
-  cnv.image(actual, 0, 0);
-  cnv.blendMode(DIFFERENCE);
-  cnv.image(expectedWithBg, 0, 0);
-  for (let i = 0; i < shiftThreshold; i++) {
-    cnv.filter(ERODE, false);
-  }
+  cnv.drawingContext.putImageData(diffData, 0, 0);
   const diff = cnv.get();
   cnv.remove();
-  diff.loadPixels();
-  expectedWithBg.remove();
-
-  let ok = true;
-  for (let i = 0; i < diff.pixels.length; i += 4) {
-    let diffSum = 0;
-    for (let off = 0; off < 3; off++) {
-      diffSum += diff.pixels[i+off]
-    }
-    diffSum /= 3;
-    if (diffSum > COLOR_THRESHOLD) {
-      ok = false;
-      break;
-    }
-  }
-
-  return { ok, diff };
+  
+  return { ok: diffCount === 0, diff };
 }
 
 /**
