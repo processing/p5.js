@@ -199,19 +199,19 @@ function textCore(p5, fn) {
     return this.textDrawingContext().measureText('_').fontBoundingBoxDescent;
   };
 
-  
+
   // setters/getters for text properties //////////////////////////
 
   Renderer.prototype.textAlign = function (h, v) {
 
     // the setter
     if (typeof h !== 'undefined') {
-      this.states.textAlign = h;
+      this.states.setValue('textAlign', h);
       if (typeof v !== 'undefined') {
         if (v === fn.CENTER) {
           v = fn._CTX_MIDDLE;
         }
-        this.states.textBaseline = v;
+        this.states.setValue('textBaseline', v);
       }
       return this._applyTextProperties();
     }
@@ -267,7 +267,7 @@ function textCore(p5, fn) {
     }
 
     // update font properties in this.states
-    this.states.textFont = { font, family, size };
+    this.states.setValue('textFont', { font, family, size });
 
     // convert/update the size in this.states
     if (typeof size !== 'undefined') {
@@ -298,17 +298,14 @@ function textCore(p5, fn) {
       if (debug) console.log('  this.states.' + prop + '="' + style[prop] + '"');
     });
 
-    if (debug) console.log('  this.states.textFont="' + style.fontFamily + '"');
-    if (debug) console.log('  this.states.textSize="' + style.fontSize + '"');
-
     return { family: style.fontFamily, size: style.fontSize };
   }
 
   Renderer.prototype.textLeading = function (leading) {
     // the setter
     if (typeof leading === 'number') {
-      this.states.leadingSet = true;
-      this.states.textLeading = leading;
+      this.states.setValue('leadingSet', true);
+      this.states.setValue('textLeading', leading);
       return this._applyTextProperties();
     }
     // the getter
@@ -318,7 +315,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textWeight = function (weight) {
     // the setter
     if (typeof weight === 'number') {
-      this.states.fontWeight = weight;
+      this.states.setValue('fontWeight', weight);
       this._applyTextProperties();
       this._setCanvasStyleProperty('font-variation-settings', `"wght" ${weight}`);
       return;
@@ -345,7 +342,7 @@ function textCore(p5, fn) {
 
     // the setter
     if (typeof style !== 'undefined') {
-      this.states.fontStyle = style;
+      this.states.setValue('fontStyle', style);
       return this._applyTextProperties();
     }
     // the getter
@@ -355,7 +352,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textWrap = function (wrapStyle) {
 
     if (wrapStyle === fn.WORD || wrapStyle === fn.CHAR) {
-      this.states.textWrap = wrapStyle;
+      this.states.setValue('textWrap', wrapStyle);
       // no need to apply text properties here as not a context property
       return this._pInst;
     }
@@ -365,7 +362,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textDirection = function (direction) {
 
     if (typeof direction !== 'undefined') {
-      this.states.direction = direction;
+      this.states.setValue('direction', direction);
       return this._applyTextProperties();
     }
     return this.states.direction;
@@ -621,7 +618,7 @@ function textCore(p5, fn) {
               const min = Math.min.apply(Math, indexArr)
               let idx = indexArr.indexOf(min);
               let stretch = Object.keys(FontStretchMap)[idx];
-              this.states.fontStretch = stretch;
+              this.states.setValue('fontStretch', stretch);
             }
             break;
           case 'ital':
@@ -933,11 +930,11 @@ function textCore(p5, fn) {
 
       // set it in `this.states` if its been changed
       if (this.states.textSize !== theSize) {
-        this.states.textSize = theSize;
+        this.states.setValue('textSize', theSize);
 
         // handle leading here, if not set otherwise
         if (!this.states.leadingSet) {
-          this.states.textLeading = this.states.textSize * LeadingScale;
+          this.states.setValue('textLeading', this.states.textSize * LeadingScale);
         }
         return true; // size was changed
       }

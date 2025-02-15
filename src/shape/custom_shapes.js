@@ -609,7 +609,7 @@ class Shape {
   }
 
   serializeToArray(val) {
-    if (val === null) {
+    if (val === null || val === undefined) {
       return [];
     } if (val instanceof Number) {
       return [val];
@@ -810,11 +810,14 @@ class Shape {
   vertexProperty(name, data) {
     this.userVertexProperties = this.userVertexProperties || {};
     const key = this.vertexPropertyKey(name);
+    
+    const dataArray = Array.isArray(data) ? data : [data];
+    
     if (!this.userVertexProperties[key]) {
-      this.userVertexProperties[key] = data.length ? data.length : 1;
+      this.userVertexProperties[key] = dataArray.length;
     }
-    this.#vertexProperties[key] = data;
-  }
+    this.#vertexProperties[key] = dataArray;
+}
   vertexPropertyName(key) {
     return key.replace(/Src$/, '');
   }
@@ -834,6 +837,16 @@ class Shape {
 
   splineProperty(key, value) {
     this._splineProperties[key] = value;
+  }
+
+  splineProperties(values) {
+    if (values) {
+      for (const key in values) {
+        this.splineProperty(key, values[key]);
+      }
+    } else {
+      return this._splineProperties;
+    }
   }
 
   /*
@@ -1597,10 +1610,18 @@ function customShapes(p5, fn) {
   /**
    * TODO: documentation
    * @param {String} key
-   * @param value
+   * @param [value]
    */
   fn.splineProperty = function(key, value) {
     return this._renderer.splineProperty(key, value);
+  };
+
+  /**
+   * TODO: documentation
+   * @param {Object} [values]
+   */
+  fn.splineProperties = function(values) {
+    return this._renderer.splineProperties(values);
   };
 
   /**

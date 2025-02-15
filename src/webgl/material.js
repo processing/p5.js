@@ -2521,7 +2521,7 @@ function material(p5, fn){
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.states.textureMode = mode;
+      this._renderer.states.setValue('textureMode', mode);
     }
   };
 
@@ -2800,8 +2800,8 @@ function material(p5, fn){
    * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.states.textureWrapX = wrapX;
-    this._renderer.states.textureWrapY = wrapY;
+    this._renderer.states.setValue('textureWrapX', wrapX);
+    this._renderer.states.setValue('textureWrapY', wrapY);
 
     for (const texture of this._renderer.textures.values()) {
       texture.setWrapMode(wrapX, wrapY);
@@ -3078,11 +3078,11 @@ function material(p5, fn){
     // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states._hasSetAmbient = true;
-    this._renderer.states.curAmbientColor = color._array;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
-    this._renderer.states.fillColor = true;
+    this._renderer.states.setValue('_hasSetAmbient', true);
+    this._renderer.states.setValue('curAmbientColor', color._array);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
+    this._renderer.states.setValue('fillColor', true);
     return this;
   };
 
@@ -3174,10 +3174,10 @@ function material(p5, fn){
     // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.curEmissiveColor = color._array;
-    this._renderer.states._useEmissiveMaterial = true;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
+    this._renderer.states.setValue('curEmissiveColor', color._array);
+    this._renderer.states.setValue('_useEmissiveMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3429,10 +3429,10 @@ function material(p5, fn){
     // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.curSpecularColor = color._array;
-    this._renderer.states._useSpecularMaterial = true;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
+    this._renderer.states.setValue('curSpecularColor', color._array);
+    this._renderer.states.setValue('_useSpecularMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3749,45 +3749,45 @@ function material(p5, fn){
 
   RendererGL.prototype.shader = function(s) {
     // Always set the shader as a fill shader
-    this.states.userFillShader = s;
-    this.states._useNormalMaterial = false;
+    this.states.setValue('userFillShader', s);
+    this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.strokeShader = function(s) {
-    this.states.userStrokeShader = s;
+    this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.imageShader = function(s) {
-    this.states.userImageShader = s;
+    this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.resetShader = function() {
-    this.states.userFillShader = null;
-    this.states.userStrokeShader = null;
-    this.states.userImageShader = null;
+    this.states.setValue('userFillShader', null);
+    this.states.setValue('userStrokeShader', null);
+    this.states.setValue('userImageShader', null);
   }
 
   RendererGL.prototype.texture = function(tex) {
-    this.states.drawMode = constants.TEXTURE;
-    this.states._useNormalMaterial = false;
-    this.states._tex = tex;
-    this.states.fillColor = new Color([1, 1, 1]);
+    this.states.setValue('drawMode', constants.TEXTURE);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', tex);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
-    this.states.drawMode = constants.FILL;
-    this.states._useSpecularMaterial = false;
-    this.states._useEmissiveMaterial = false;
-    this.states._useNormalMaterial = true;
-    this.states.curFillColor = [1, 1, 1, 1];
-    this.states.fillColor = new Color([1, 1, 1]);
-    this.states.strokeColor = null;
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useSpecularMaterial', false);
+    this.states.setValue('_useEmissiveMaterial', false);
+    this.states.setValue('_useNormalMaterial', true);
+    this.states.setValue('curFillColor', [1, 1, 1, 1]);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
+    this.states.setValue('strokeColor', null);
   }
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -3803,12 +3803,12 @@ function material(p5, fn){
     if (shine < 1) {
       shine = 1;
     }
-    this.states._useShininess = shine;
+    this.states.setValue('_useShininess', shine);
   }
 
   RendererGL.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
-    this.states._useMetalness = metalMix;
+    this.states.setValue('_useMetalness', metalMix);
   }
 }
 

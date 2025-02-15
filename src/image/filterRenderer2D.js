@@ -184,8 +184,8 @@ class FilterRenderer2D {
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
 
-    this.pInst.states.rectMode = constants.CORNER;
-    this.pInst.states.imageMode = constants.CORNER;
+    this.pInst.states.setValue('rectMode', constants.CORNER);
+    this.pInst.states.setValue('imageMode', constants.CORNER);
     this.pInst.blendMode(constants.BLEND);
     this.pInst.resetMatrix();
 

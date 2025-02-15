@@ -1,5 +1,5 @@
 import p5 from '../../../src/app.js';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 
 suite('Rendering', function() {
   var myp5;
@@ -185,7 +185,7 @@ suite('Rendering', function() {
             try {
               expect(function() {
                 myp5[webglMethod].call(myp5);
-              }).to.throw(Error, /is only supported in WEBGL mode/);
+              }).toThrow(Error, /is only supported in WEBGL mode/);
             } finally {
               myp5.validateParameters = validateParamters;
             }
@@ -193,5 +193,19 @@ suite('Rendering', function() {
         })(webglMethod)
       );
     }
+  });
+
+  suite('spline functions', function() {
+    test('setting via splineProperty()', function() {
+      myp5.splineProperty('tightness', 2);
+      expect(myp5.splineProperty('tightness')).toEqual(2);
+      expect(myp5.splineProperties()).toMatchObject({ tightness: 2 });
+    });
+
+    test('setting via splineProperties()', function() {
+      myp5.splineProperties({ tightness: 2 });
+      expect(myp5.splineProperty('tightness')).toEqual(2);
+      expect(myp5.splineProperties()).toMatchObject({ tightness: 2 });
+    });
   });
 });

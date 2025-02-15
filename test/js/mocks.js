@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import { http, HttpResponse, passthrough } from 'msw';
 import { setupWorker } from 'msw/browser';
+import { States } from '../../src/core/States';
 
 // HTTP requests mocks
 const httpMocks = [
@@ -18,7 +19,7 @@ const httpMocks = [
 export const httpMock = setupWorker(...httpMocks);
 
 // p5.js module mocks
-const rendererStates = {};
+const rendererStates = new States({});
 export const mockP5 = vi.fn();
 Object.assign(mockP5, {
   _validateParameters: vi.fn(),
