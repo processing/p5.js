@@ -82,7 +82,6 @@ function fesCore(p5, fn){
     const entryPoints = [
       'setup',
       'draw',
-      'preload',
       'deviceMoved',
       'deviceTurned',
       'deviceShaken',
@@ -294,6 +293,10 @@ function fesCore(p5, fn){
       const instanceMode = context instanceof p5;
       context = instanceMode ? context : window;
       const fnNames = entryPoints;
+
+      if (context.preload) {
+        p5._friendlyError(translator('fes.preloadDisabled'), 'preload');
+      }
 
       const fxns = {};
       // lowercasename -> actualName mapping
