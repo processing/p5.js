@@ -84,7 +84,7 @@ import * as constants from '../constants';
  * </code>
  * </div>
  */
-p5.prototype.ellipseMode = function(m) {
+p5.prototype.ellipseMode = function (m) {
   p5._validateParameters('ellipseMode', arguments);
   if (
     m === constants.CORNER ||
@@ -101,11 +101,11 @@ p5.prototype.ellipseMode = function(m) {
  * Draws certain features with jagged (aliased) edges.
  *
  * <a href="#/p5/smooth">smooth()</a> is active by default. In 2D mode,
- * `noSmooth()` is helpful for scaling up images without blurring. The
- * functions don't affect shapes or fonts.
+ * `noSmooth()` disables anti-aliasing, which helps scale images without blurring.
+ * In WebGL mode, calling `noSmooth()` **may recreate the canvas**, which can
+ * cause position loss if the canvas was manually positioned using `position(x, y)`.
  *
- * In WebGL mode, `noSmooth()` causes all shapes to be drawn with jagged
- * (aliased) edges. The functions don't affect images or fonts.
+ * ⚠️ To avoid issues, use `noSmooth()` inside `setup()` rather than `draw()`.
  *
  * @method noSmooth
  * @chainable
@@ -170,7 +170,7 @@ p5.prototype.ellipseMode = function(m) {
  * </code>
  * </div>
  */
-p5.prototype.noSmooth = function() {
+p5.prototype.noSmooth = function () {
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = false;
@@ -287,7 +287,7 @@ p5.prototype.noSmooth = function() {
  * </code>
  * </div>
  */
-p5.prototype.rectMode = function(m) {
+p5.prototype.rectMode = function (m) {
   p5._validateParameters('rectMode', arguments);
   if (
     m === constants.CORNER ||
@@ -374,7 +374,7 @@ p5.prototype.rectMode = function(m) {
  * </code>
  * </div>
  */
-p5.prototype.smooth = function() {
+p5.prototype.smooth = function () {
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = true;
@@ -427,7 +427,7 @@ p5.prototype.smooth = function() {
  * </code>
  * </div>
  */
-p5.prototype.strokeCap = function(cap) {
+p5.prototype.strokeCap = function (cap) {
   p5._validateParameters('strokeCap', arguments);
   if (
     cap === constants.ROUND ||
@@ -526,7 +526,7 @@ p5.prototype.strokeCap = function(cap) {
  * </code>
  * </div>
  */
-p5.prototype.strokeJoin = function(join) {
+p5.prototype.strokeJoin = function (join) {
   p5._validateParameters('strokeJoin', arguments);
   if (
     join === constants.ROUND ||
@@ -593,7 +593,7 @@ p5.prototype.strokeJoin = function(join) {
  * </code>
  * </div>
  */
-p5.prototype.strokeWeight = function(w) {
+p5.prototype.strokeWeight = function (w) {
   p5._validateParameters('strokeWeight', arguments);
   this._renderer.strokeWeight(w);
   return this;

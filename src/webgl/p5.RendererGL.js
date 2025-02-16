@@ -23,7 +23,6 @@ const defineStrokeJoinEnum = function (key, val) {
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
 
-
 // Define constants in line shaders for each type of cap/join, and also record
 // the values in JS objects
 defineStrokeCapEnum('ROUND', 0);
@@ -81,9 +80,18 @@ const defaultShaders = {
     lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8'),
-  imageLightVert: readFileSync(join(__dirname, '/shaders/imageLight.vert'), 'utf-8'),
-  imageLightDiffusedFrag: readFileSync(join(__dirname, '/shaders/imageLightDiffused.frag'), 'utf-8'),
-  imageLightSpecularFrag: readFileSync(join(__dirname, '/shaders/imageLightSpecular.frag'), 'utf-8')
+  imageLightVert: readFileSync(
+    join(__dirname, '/shaders/imageLight.vert'),
+    'utf-8'
+  ),
+  imageLightDiffusedFrag: readFileSync(
+    join(__dirname, '/shaders/imageLightDiffused.frag'),
+    'utf-8'
+  ),
+  imageLightSpecularFrag: readFileSync(
+    join(__dirname, '/shaders/imageLightSpecular.frag'),
+    'utf-8'
+  )
 };
 let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
@@ -91,24 +99,43 @@ for (const key in defaultShaders) {
 }
 
 const filterShaderFrags = {
-  [constants.GRAY]:
-    readFileSync(join(__dirname, '/shaders/filters/gray.frag'), 'utf-8'),
-  [constants.ERODE]:
-    readFileSync(join(__dirname, '/shaders/filters/erode.frag'), 'utf-8'),
-  [constants.DILATE]:
-    readFileSync(join(__dirname, '/shaders/filters/dilate.frag'), 'utf-8'),
-  [constants.BLUR]:
-    readFileSync(join(__dirname, '/shaders/filters/blur.frag'), 'utf-8'),
-  [constants.POSTERIZE]:
-    readFileSync(join(__dirname, '/shaders/filters/posterize.frag'), 'utf-8'),
-  [constants.OPAQUE]:
-    readFileSync(join(__dirname, '/shaders/filters/opaque.frag'), 'utf-8'),
-  [constants.INVERT]:
-    readFileSync(join(__dirname, '/shaders/filters/invert.frag'), 'utf-8'),
-  [constants.THRESHOLD]:
-    readFileSync(join(__dirname, '/shaders/filters/threshold.frag'), 'utf-8')
+  [constants.GRAY]: readFileSync(
+    join(__dirname, '/shaders/filters/gray.frag'),
+    'utf-8'
+  ),
+  [constants.ERODE]: readFileSync(
+    join(__dirname, '/shaders/filters/erode.frag'),
+    'utf-8'
+  ),
+  [constants.DILATE]: readFileSync(
+    join(__dirname, '/shaders/filters/dilate.frag'),
+    'utf-8'
+  ),
+  [constants.BLUR]: readFileSync(
+    join(__dirname, '/shaders/filters/blur.frag'),
+    'utf-8'
+  ),
+  [constants.POSTERIZE]: readFileSync(
+    join(__dirname, '/shaders/filters/posterize.frag'),
+    'utf-8'
+  ),
+  [constants.OPAQUE]: readFileSync(
+    join(__dirname, '/shaders/filters/opaque.frag'),
+    'utf-8'
+  ),
+  [constants.INVERT]: readFileSync(
+    join(__dirname, '/shaders/filters/invert.frag'),
+    'utf-8'
+  ),
+  [constants.THRESHOLD]: readFileSync(
+    join(__dirname, '/shaders/filters/threshold.frag'),
+    'utf-8'
+  )
 };
-const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.vert'), 'utf-8');
+const filterShaderVert = readFileSync(
+  join(__dirname, '/shaders/filters/default.vert'),
+  'utf-8'
+);
 
 /**
  * @module Rendering
@@ -268,7 +295,7 @@ p5.prototype.setAttributes = function (key, value) {
   if (typeof this._glAttributes === 'undefined') {
     console.log(
       'You are trying to use setAttributes on a p5.Graphics object ' +
-      'that does not use a WEBGL renderer.'
+        'that does not use a WEBGL renderer.'
     );
     return;
   }
@@ -300,7 +327,7 @@ p5.prototype.setAttributes = function (key, value) {
       if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
         p5._friendlyError(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
-          'before calling the other drawing methods in setup()'
+            'before calling the other drawing methods in setup()'
         );
         return;
       }
@@ -358,7 +385,7 @@ export function readPixelsWebGL(
 
   gl.readPixels(
     x,
-    flipY ? (flipY - y - height) : y,
+    flipY ? flipY - y - height : y,
     width,
     height,
     format,
@@ -397,15 +424,7 @@ export function readPixelsWebGL(
  * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
  * @returns {Number[]} pixels The channel data for the pixel at that location
  */
-export function readPixelWebGL(
-  gl,
-  framebuffer,
-  x,
-  y,
-  format,
-  type,
-  flipY
-) {
+export function readPixelWebGL(gl, framebuffer, x, y, format, type, flipY) {
   // Record the currently bound framebuffer so we can go back to it after, and
   // bind the framebuffer we want to read from
   const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
@@ -415,11 +434,7 @@ export function readPixelWebGL(
   const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
   const pixels = new TypedArrayClass(channels);
 
-  gl.readPixels(
-    x, flipY ? (flipY - y - 1) : y, 1, 1,
-    format, type,
-    pixels
-  );
+  gl.readPixels(x, flipY ? flipY - y - 1 : y, 1, 1, format, type, pixels);
 
   // Re-bind whatever was previously bound
   gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
@@ -512,7 +527,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     this._isBlending = false;
 
-
     this._hasSetAmbient = false;
     this._useSpecularMaterial = false;
     this._useEmissiveMaterial = false;
@@ -533,9 +547,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.quadraticAttenuation = 0;
 
     /**
- * model view, projection, & normal
- * matrices
- */
+     * model view, projection, & normal
+     * matrices
+     */
     this.uModelMatrix = new p5.Matrix();
     this.uViewMatrix = new p5.Matrix();
     this.uMVMatrix = new p5.Matrix();
@@ -585,23 +599,94 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       geometry: {},
       buffers: {
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+          new p5.RenderBuffer(
+            4,
+            'lineVertexColors',
+            'lineColorBuffer',
+            'aVertexColor',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineVertices',
+            'lineVerticesBuffer',
+            'aPosition',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineTangentsIn',
+            'lineTangentsInBuffer',
+            'aTangentIn',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineTangentsOut',
+            'lineTangentsOutBuffer',
+            'aTangentOut',
+            this
+          ),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          new p5.RenderBuffer(
+            3,
+            'vertices',
+            'vertexBuffer',
+            'aPosition',
+            this,
+            this._vToNArray
+          ),
+          new p5.RenderBuffer(
+            3,
+            'vertexNormals',
+            'normalBuffer',
+            'aNormal',
+            this,
+            this._vToNArray
+          ),
+          new p5.RenderBuffer(
+            4,
+            'vertexColors',
+            'colorBuffer',
+            'aVertexColor',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'vertexAmbients',
+            'ambientBuffer',
+            'aAmbientColor',
+            this
+          ),
           //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new p5.RenderBuffer(
+            2,
+            'uvs',
+            'uvBuffer',
+            'aTexCoord',
+            this,
+            this._flatten
+          )
         ],
         text: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new p5.RenderBuffer(
+            3,
+            'vertices',
+            'vertexBuffer',
+            'aPosition',
+            this,
+            this._vToNArray
+          ),
+          new p5.RenderBuffer(
+            2,
+            'uvs',
+            'uvBuffer',
+            'aTexCoord',
+            this,
+            this._flatten
+          )
         ]
       }
     };
@@ -617,17 +702,74 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       _curveVertex: [],
       buffers: {
         fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+          new p5.RenderBuffer(
+            3,
+            'vertices',
+            'vertexBuffer',
+            'aPosition',
+            this,
+            this._vToNArray
+          ),
+          new p5.RenderBuffer(
+            3,
+            'vertexNormals',
+            'normalBuffer',
+            'aNormal',
+            this,
+            this._vToNArray
+          ),
+          new p5.RenderBuffer(
+            4,
+            'vertexColors',
+            'colorBuffer',
+            'aVertexColor',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'vertexAmbients',
+            'ambientBuffer',
+            'aAmbientColor',
+            this
+          ),
+          new p5.RenderBuffer(
+            2,
+            'uvs',
+            'uvBuffer',
+            'aTexCoord',
+            this,
+            this._flatten
+          )
         ],
         stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
+          new p5.RenderBuffer(
+            4,
+            'lineVertexColors',
+            'lineColorBuffer',
+            'aVertexColor',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineVertices',
+            'lineVerticesBuffer',
+            'aPosition',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineTangentsIn',
+            'lineTangentsInBuffer',
+            'aTangentIn',
+            this
+          ),
+          new p5.RenderBuffer(
+            3,
+            'lineTangentsOut',
+            'lineTangentsOutBuffer',
+            'aTangentOut',
+            this
+          ),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
         point: this.GL.createBuffer()
@@ -680,21 +822,23 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
-    * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
-     * to the geometry and then returned when
-     * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
-     * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
-     * draws shapes.
-     *
-     * If you need to draw complex shapes every frame which don't change over time,
-     * combining them upfront with `beginGeometry()` and `endGeometry()` and then
-     * drawing that will run faster than repeatedly drawing the individual pieces.
-     *
-     * @method beginGeometry
+   * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
+   * to the geometry and then returned when
+   * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
+   * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
+   * draws shapes.
+   *
+   * If you need to draw complex shapes every frame which don't change over time,
+   * combining them upfront with `beginGeometry()` and `endGeometry()` and then
+   * drawing that will run faster than repeatedly drawing the individual pieces.
+   *
+   * @method beginGeometry
    */
   beginGeometry() {
     if (this.geometryBuilder) {
-      throw new Error('It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.');
+      throw new Error(
+        'It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.'
+      );
     }
     this.geometryBuilder = new GeometryBuilder(this);
   }
@@ -710,7 +854,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    */
   endGeometry() {
     if (!this.geometryBuilder) {
-      throw new Error('Make sure you call beginGeometry() before endGeometry()!');
+      throw new Error(
+        'Make sure you call beginGeometry() before endGeometry()!'
+      );
     }
     const geometry = this.geometryBuilder.finish();
     this.geometryBuilder = undefined;
@@ -769,11 +915,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _initContext() {
     if (this._pInst._glAttributes.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
-      this.drawingContext =
-        this.canvas.getContext('webgl2', this._pInst._glAttributes);
+      this.drawingContext = this.canvas.getContext(
+        'webgl2',
+        this._pInst._glAttributes
+      );
     }
-    this.webglVersion =
-      this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
+    this.webglVersion = this.drawingContext
+      ? constants.WEBGL2
+      : constants.WEBGL;
     // If this is the main canvas, make sure the global `webglVersion` is set
     this._pInst._setProperty('webglVersion', this.webglVersion);
     if (!this.drawingContext) {
@@ -816,12 +965,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     maxAllowedPixelDimensions = Math.floor(
       maxTextureSize / this.pixelDensity()
     );
-    let adjustedWidth = Math.min(
-      width, maxAllowedPixelDimensions
-    );
-    let adjustedHeight = Math.min(
-      height, maxAllowedPixelDimensions
-    );
+    let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
+    let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
 
     if (adjustedWidth !== width || adjustedHeight !== height) {
       console.warn(
@@ -841,6 +986,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const h = this.height;
     const defaultId = this.canvas.id;
     const isPGraphics = this._pInst instanceof p5.Graphics;
+
+    // Preserve existing position and styles before recreation
+    const prevStyle = {
+      position: this.canvas.style.position,
+      top: this.canvas.style.top,
+      left: this.canvas.style.left
+    };
 
     if (isPGraphics) {
       const pg = this._pInst;
@@ -865,6 +1017,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
       this._pInst.canvas = c;
       this.canvas = c;
+
+      // Restore the saved position
+      this.canvas.style.position = prevStyle.position;
+      this.canvas.style.top = prevStyle.top;
+      this.canvas.style.left = prevStyle.left;
     }
 
     const renderer = new p5.RendererGL(
@@ -889,10 +1046,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
 
-
   /**
- * @class p5.RendererGL
- */
+   * @class p5.RendererGL
+   */
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
@@ -931,8 +1087,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * [background description]
- */
+   * [background description]
+   */
   background(...args) {
     const _col = this._pInst.color(...args);
     const _r = _col.levels[0] / 255;
@@ -946,37 +1102,37 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   // COLOR
   //////////////////////////////////////////////
   /**
- * Basic fill material for geometry with a given color
- * @method  fill
- * @class p5.RendererGL
- * @param  {Number|Number[]|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   noStroke();
- *   fill(100, 100, 240);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with purple cube spinning
- */
+   * Basic fill material for geometry with a given color
+   * @method  fill
+   * @class p5.RendererGL
+   * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+   * red or hue value (depending on the current color mode),
+   * or color Array, or CSS color string
+   * @param  {Number}            [v2] green or saturation value
+   * @param  {Number}            [v3] blue or brightness value
+   * @param  {Number}            [a]  opacity
+   * @chainable
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *   fill(100, 100, 240);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   box(75, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with purple cube spinning
+   */
   fill(v1, v2, v3, a) {
     //see material.js for more info on color blending in webgl
     const color = p5.prototype.color.apply(this._pInst, arguments);
@@ -987,35 +1143,35 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * Basic stroke material for geometry with a given color
- * @method  stroke
- * @param  {Number|Number[]|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   stroke(240, 150, 150);
- *   fill(100, 100, 240);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with purple cube with pink outline spinning
- */
+   * Basic stroke material for geometry with a given color
+   * @method  stroke
+   * @param  {Number|Number[]|String|p5.Color} v1  gray value,
+   * red or hue value (depending on the current color mode),
+   * or color Array, or CSS color string
+   * @param  {Number}            [v2] green or saturation value
+   * @param  {Number}            [v3] blue or brightness value
+   * @param  {Number}            [a]  opacity
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   stroke(240, 150, 150);
+   *   fill(100, 100, 240);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   box(75, 75, 75);
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with purple cube with pink outline spinning
+   */
   stroke(r, g, b, a) {
     const color = p5.prototype.color.apply(this._pInst, arguments);
     this.curStrokeColor = color._array;
@@ -1053,7 +1209,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
   }
   filter(...args) {
-
     let fbo = this.getFilterLayer();
 
     // use internal shader for filter constants BLUR, INVERT, etc
@@ -1080,7 +1235,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         );
       }
       this.filterShader = this.defaultFilterShaders[operation];
-
     }
     // use custom user-supplied shader
     else {
@@ -1148,14 +1302,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._pInst.shader(this.filterShader);
         this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
-        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
+        this.filterShader.setUniform('canvasSize', [
+          target.width,
+          target.height
+        ]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
         this.filterShader.setUniform('filterParameter', filterParameter);
         this._pInst.noLights();
         this._pInst.plane(target.width, target.height);
       });
-
     }
     // draw fbo contents onto main renderer.
     this._pInst.push();
@@ -1167,8 +1323,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
-    this._pInst.image(fbo, -target.width / 2, -target.height / 2,
-      target.width, target.height);
+    this._pInst.image(
+      fbo,
+      -target.width / 2,
+      -target.height / 2,
+      target.width,
+      target.height
+    );
     this._pInst.clearDepth();
     this._pInst.pop();
     this._pInst.pop();
@@ -1302,44 +1463,44 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * Change weight of stroke
- * @method  strokeWeight
- * @param  {Number} stroke weight to be used for drawing
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 400, WEBGL);
- *   setAttributes('antialias', true);
- * }
- *
- * function draw() {
- *   background(0);
- *   noStroke();
- *   translate(0, -100, 0);
- *   stroke(240, 150, 150);
- *   fill(100, 100, 240);
- *   push();
- *   strokeWeight(8);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   sphere(75);
- *   pop();
- *   push();
- *   translate(0, 200, 0);
- *   strokeWeight(1);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   sphere(75);
- *   pop();
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with two purple rotating spheres with pink
- * outlines the sphere on top has much heavier outlines,
- */
+   * Change weight of stroke
+   * @method  strokeWeight
+   * @param  {Number} stroke weight to be used for drawing
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 400, WEBGL);
+   *   setAttributes('antialias', true);
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *   translate(0, -100, 0);
+   *   stroke(240, 150, 150);
+   *   fill(100, 100, 240);
+   *   push();
+   *   strokeWeight(8);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   sphere(75);
+   *   pop();
+   *   push();
+   *   translate(0, 200, 0);
+   *   strokeWeight(1);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   sphere(75);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * black canvas with two purple rotating spheres with pink
+   * outlines the sphere on top has much heavier outlines,
+   */
   strokeWeight(w) {
     if (this.curStrokeWeight !== w) {
       this.pointSize = w;
@@ -1362,13 +1523,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * Loads the pixels data for this canvas into the pixels[] attribute.
- * Note that updatePixels() and set() do not work.
- * Any pixel manipulation must be done directly to the pixels[] array.
- *
- * @private
- * @method loadPixels
- */
+   * Loads the pixels data for this canvas into the pixels[] attribute.
+   * Note that updatePixels() and set() do not work.
+   * Any pixel manipulation must be done directly to the pixels[] array.
+   *
+   * @private
+   * @method loadPixels
+   */
 
   loadPixels() {
     const pixelsState = this._pixelsState;
@@ -1376,7 +1537,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
       console.log(
-        'loadPixels only works in WebGL when preserveDrawingBuffer ' + 'is true.'
+        'loadPixels only works in WebGL when preserveDrawingBuffer ' +
+          'is true.'
       );
       return;
     }
@@ -1416,11 +1578,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * @private
- * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
- * of the renderer's canvas. It will be created if it does not yet exist, and
- * reused if it does.
- */
+   * @private
+   * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
+   * of the renderer's canvas. It will be created if it does not yet exist, and
+   * reused if it does.
+   */
   _getTempFramebuffer() {
     if (!this._tempFramebuffer) {
       this._tempFramebuffer = this._pInst.createFramebuffer({
@@ -1432,8 +1594,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     return this._tempFramebuffer;
   }
-
-
 
   //////////////////////////////////////////////
   // HASH | for geometry
@@ -1449,21 +1609,18 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * [resize description]
- * @private
- * @param  {Number} w [description]
- * @param  {Number} h [description]
- */
+   * [resize description]
+   * @private
+   * @param  {Number} w [description]
+   * @param  {Number} h [description]
+   */
   resize(w, h) {
     p5.Renderer.prototype.resize.call(this, w, h);
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
       height: this.GL.drawingBufferHeight
     };
-    this.viewport(
-      this._origViewport.width,
-      this._origViewport.height
-    );
+    this.viewport(this._origViewport.width, this._origViewport.height);
 
     this._curCamera._resize();
 
@@ -1486,14 +1643,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * clears color and depth buffers
- * with r,g,b,a
- * @private
- * @param {Number} r normalized red val.
- * @param {Number} g normalized green val.
- * @param {Number} b normalized blue val.
- * @param {Number} a normalized alpha val.
- */
+   * clears color and depth buffers
+   * with r,g,b,a
+   * @private
+   * @param {Number} r normalized red val.
+   * @param {Number} g normalized green val.
+   * @param {Number} b normalized blue val.
+   * @param {Number} a normalized alpha val.
+   */
   clear(...args) {
     const _r = args[0] || 0;
     const _g = args[1] || 0;
@@ -1533,24 +1690,19 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (arguments.length === 16) {
       p5.Matrix.prototype.apply.apply(this.uModelMatrix, arguments);
     } else {
-      this.uModelMatrix.apply([
-        a, b, 0, 0,
-        c, d, 0, 0,
-        0, 0, 1, 0,
-        e, f, 0, 1
-      ]);
+      this.uModelMatrix.apply([a, b, 0, 0, c, d, 0, 0, 0, 0, 1, 0, e, f, 0, 1]);
     }
   }
 
   /**
- * [translate description]
- * @private
- * @param  {Number} x [description]
- * @param  {Number} y [description]
- * @param  {Number} z [description]
- * @chainable
- * @todo implement handle for components or vector as args
- */
+   * [translate description]
+   * @private
+   * @param  {Number} x [description]
+   * @param  {Number} y [description]
+   * @param  {Number} z [description]
+   * @chainable
+   * @todo implement handle for components or vector as args
+   */
   translate(x, y, z) {
     if (x instanceof p5.Vector) {
       z = x.z;
@@ -1562,13 +1714,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /**
- * Scales the Model View Matrix by a vector
- * @private
- * @param  {Number | p5.Vector | Array} x [description]
- * @param  {Number} [y] y-axis scalar
- * @param  {Number} [z] z-axis scalar
- * @chainable
- */
+   * Scales the Model View Matrix by a vector
+   * @private
+   * @param  {Number | p5.Vector | Array} x [description]
+   * @param  {Number} [y] y-axis scalar
+   * @param  {Number} [z] z-axis scalar
+   * @chainable
+   */
   scale(x, y, z) {
     this.uModelMatrix.scale(x, y, z);
     return this;
@@ -1704,10 +1856,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   //////////////////////////////////////////////
 
   /*
- * shaders are created and cached on a per-renderer basis,
- * on the grounds that each renderer will have its own gl context
- * and the shader must be valid in that context.
- */
+   * shaders are created and cached on a per-renderer basis,
+   * on the grounds that each renderer will have its own gl context
+   * and the shader must be valid in that context.
+   */
 
   _getImmediateStrokeShader() {
     // select the stroke shader to use
@@ -1718,16 +1870,13 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return stroke;
   }
 
-
   _getRetainedStrokeShader() {
     return this._getImmediateStrokeShader();
   }
 
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
-      this.sphereMapping = this._pInst.createFilterShader(
-        sphereMapping
-      );
+      this.sphereMapping = this._pInst.createFilterShader(sphereMapping);
     }
     this.uNMatrix.inverseTranspose(this.uViewMatrix);
     this.uNMatrix.invert3x3(this.uNMatrix);
@@ -1815,9 +1964,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._defaultLightShader = new p5.Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
-          defaultShaders.phongVert,
+            defaultShaders.phongVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
-          defaultShaders.phongFrag,
+            defaultShaders.phongFrag,
           {
             vertex: {
               'void beforeVertex': '() {}',
@@ -1850,9 +1999,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._defaultLightShader = new p5.Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
-          defaultShaders.lightVert,
+            defaultShaders.lightVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
-          defaultShaders.lightTextureFrag
+            defaultShaders.lightTextureFrag
         );
       }
     }
@@ -1865,9 +2014,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultImmediateModeShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.immediateVert,
+          defaultShaders.immediateVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.vertexColorFrag
+          defaultShaders.vertexColorFrag
       );
     }
 
@@ -1883,9 +2032,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultNormalShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.normalVert,
+          defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.normalFrag,
+          defaultShaders.normalFrag,
         {
           vertex: {
             'void beforeVertex': '() {}',
@@ -1918,9 +2067,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultColorShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.normalVert,
+          defaultShaders.normalVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.basicFrag,
+          defaultShaders.basicFrag,
         {
           vertex: {
             'void beforeVertex': '() {}',
@@ -1977,9 +2126,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultPointShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.pointVert,
+          defaultShaders.pointVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.pointFrag,
+          defaultShaders.pointFrag,
         {
           vertex: {
             'void beforeVertex': '() {}',
@@ -2009,9 +2158,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultLineShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.lineVert,
+          defaultShaders.lineVert,
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.lineFrag,
+          defaultShaders.lineFrag,
         {
           vertex: {
             'void beforeVertex': '() {}',
@@ -2045,18 +2194,15 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this._defaultFontShader = new p5.Shader(
         this,
         this._webGL2CompatibilityPrefix('vert', 'highp') +
-        defaultShaders.fontVert,
+          defaultShaders.fontVert,
         this._webGL2CompatibilityPrefix('frag', 'highp') +
-        defaultShaders.fontFrag
+          defaultShaders.fontFrag
       );
     }
     return this._defaultFontShader;
   }
 
-  _webGL2CompatibilityPrefix(
-    shaderType,
-    floatPrecision
-  ) {
+  _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
     let code = '';
     if (this.webglVersion === constants.WEBGL2) {
       code += '#version 300 es\n#define WEBGL2\n';
@@ -2098,11 +2244,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return tex;
   }
   /*
-    *  used in imageLight,
-    *  To create a blurry image from the input non blurry img, if it doesn't already exist
-    *  Add it to the diffusedTexture map,
-    *  Returns the blurry image
-    *  maps a p5.Image used by imageLight() to a p5.Framebuffer
+   *  used in imageLight,
+   *  To create a blurry image from the input non blurry img, if it doesn't already exist
+   *  Add it to the diffusedTexture map,
+   *  Returns the blurry image
+   *  maps a p5.Image used by imageLight() to a p5.Framebuffer
    */
   getDiffusedTexture(input) {
     // if one already exists for a given input image
@@ -2116,7 +2262,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let width = smallWidth;
     let height = Math.floor(smallWidth * (input.height / input.width));
     newFramebuffer = this._pInst.createFramebuffer({
-      width, height, density: 1
+      width,
+      height,
+      density: 1
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
@@ -2158,7 +2306,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     let tex;
     const levels = [];
     const framebuffer = this._pInst.createFramebuffer({
-      width: size, height: size, density: 1
+      width: size,
+      height: size,
+      density: 1
     });
     let count = Math.log(size) / Math.log(2);
     if (!this.specularShader) {
@@ -2215,8 +2365,14 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     baseStrokeShader.setUniform('uUseLineColor', this._useLineColor);
     baseStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
     baseStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-    baseStrokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
-    baseStrokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
+    baseStrokeShader.setUniform(
+      'uStrokeCap',
+      STROKE_CAP_ENUM[this.curStrokeCap]
+    );
+    baseStrokeShader.setUniform(
+      'uStrokeJoin',
+      STROKE_JOIN_ENUM[this.curStrokeJoin]
+    );
   }
 
   _setFillUniforms(fillShader) {
@@ -2268,7 +2424,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
     fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
-    fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
+    fillShader.setUniform(
+      'uLightingDirection',
+      this.directionalLightDirections
+    );
     fillShader.setUniform(
       'uDirectionalDiffuseColors',
       this.directionalLightDiffuseColors
@@ -2283,10 +2442,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.mixedAmbientLight = [...this.ambientLightColors];
 
     if (this._useMetalness > 0) {
-      this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors => {
+      this.mixedAmbientLight = this.mixedAmbientLight.map(ambientColors => {
         let mixing = ambientColors - this._useMetalness;
         return Math.max(0, mixing);
-      }));
+      });
     }
     fillShader.setUniform('uAmbientLightCount', ambientLightCount);
     fillShader.setUniform('uAmbientColor', this.mixedAmbientLight);
@@ -2295,7 +2454,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uSpotLightCount', spotLightCount);
     fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
     fillShader.setUniform('uSpotLightConc', this.spotLightConc);
-    fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
+    fillShader.setUniform(
+      'uSpotLightDiffuseColors',
+      this.spotLightDiffuseColors
+    );
     fillShader.setUniform(
       'uSpotLightSpecularColors',
       this.spotLightSpecularColors
@@ -2340,16 +2502,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /* Binds a buffer to the drawing context
-  * when passed more than two arguments it also updates or initializes
-  * the data associated with the buffer
-  */
-  _bindBuffer(
-    buffer,
-    target,
-    values,
-    type,
-    usage
-  ) {
+   * when passed more than two arguments it also updates or initializes
+   * the data associated with the buffer
+   */
+  _bindBuffer(buffer, target, values, type, usage) {
     if (!target) target = this.GL.ARRAY_BUFFER;
     this.GL.bindBuffer(target, buffer);
     if (values !== undefined) {
