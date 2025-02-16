@@ -7,7 +7,7 @@ assert.arrayApproximately = function(arr1, arr2, delta) {
   for(var i = 0; i < arr1.length; i++) {
     assert.approximately(arr1[i], arr2[i], delta);
   }
-}
+};
 
 
 // a custom assertion for validation errors that correctly handles
