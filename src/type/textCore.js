@@ -1245,7 +1245,7 @@ function textCore(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
+      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     }

@@ -656,9 +656,9 @@ function text(p5, fn){
       return; // don't render lines beyond our maxY position
     }
 
-    if (!this._isOpenType()) {
+    if (!p5.Font.hasGlyphData(this.states.textFont)) {
       console.log(
-        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported'
+        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported'
       );
       return;
     }
