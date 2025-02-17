@@ -40,7 +40,6 @@ function shadergen(p5, fn) {
           throw new Error("StackCapture");
         } catch (e) {
           const lines = e.stack.split("\n");
-          console.log(lines)
           let index = 5;
           this.srcLine = lines[index].trim();
         }
@@ -159,10 +158,43 @@ function shadergen(p5, fn) {
 
   // This would be the next step before adding all swizzles 
 
+  // I think it is also possible to make a proxy for vector nodes to check if the user accesses  or sets any 
+  // property .xyz / .rgb /.zxx etc as then we can automatically assign swizzles and only define .xyzw on the actual 
+  // object.
+
+  // Ultimately vectors are the focus of & most complex type in glsl (before we add matrices...) which justifies the complexity
+  // of this class.
+
+  // I am interested in the 'prop' value of get and set then
+
+  const VectorNodeHandler = {
+    swizzles: [
+      ['x', 'y', 'z', 'w'],
+      ['r', 'b', 'g', 'a'],
+      ['s', 't', 'p', 'q'],
+    ],
+    get(target, prop, receiver) {
+      // if (!this.isInternal) {
+        // console.log("TARGET: ", target);
+        // console.log("PROP: ", prop);
+        // console.log("RECEIVER: ", receiver);
+      // }
+      return Reflect.get(...arguments);
+    },
+    set(obj, prop, receiver) {
+      // if (!this.isInternal) {
+      //   console.log("OBJ: ", obj);
+      //   console.log("PROP: ", prop);
+      //   console.log("RECEIVER: ", receiver);
+      // }
+      obj[prop] = receiver;
+      return true;
+    }
+  }
+
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal);
-
       const componentVariants = { 
         pos: ['x', 'y', 'z', 'w'],
         col: ['r', 'g', 'b', 'a'],
@@ -172,8 +204,8 @@ function shadergen(p5, fn) {
         for (let i = 0; i < values.length; i++) {
           let componentCollection = componentVariants[variant];
           let component = componentCollection[i];
-          this[component] = new ComponentNode(this, component, true);
-          // this[component] = new FloatNode(values[i], true);
+          // this[component] = new ComponentNode(this, component, true);
+          this[component] = new FloatNode(values[i], true);
         }
       }
 
@@ -182,12 +214,13 @@ function shadergen(p5, fn) {
     }
     
     toGLSL(context) {
+      console.log(this)
       let glslArgs = ``;
       const components = ['x', 'y', 'z', 'w'].slice(0, this.size);
       
       for (let i = 0; i < this.size; i++) {
         const comma = i === this.size - 1 ? `` : `, `;
-        const component = components[i]
+        const component = components[i];
         glslArgs += `${this[component].toGLSLBase(context)}${comma}`;
       }
       
@@ -202,6 +235,11 @@ function shadergen(p5, fn) {
       this.name = name;
       this.args = args;
       this.type = type;
+
+      // TODO:
+      this.argumentTypes = {
+
+      };
     }
 
     deconstructArgs(context) {
@@ -227,19 +265,29 @@ function shadergen(p5, fn) {
       super(isInternal)
       this.name = name;
       this.type = type;
-      switch (type) {
-        case 'float':
-        break;
-        case 'vec2':
-        this.addComponents(['x', 'y'])
-        break;
-        case 'vec3':
-        this.addComponents(['x', 'y', 'z'])
-        break;
-        case 'vec4':
-        this.addComponents(['x', 'y', 'z', 'w']);  
-        break;
-      }
+      this.addComponents(
+        (() => {
+          switch (type) {
+            case 'vec2': return ['x', 'y'];
+            case 'vec3': return ['x', 'y', 'z'];
+            case 'vec4': return ['x', 'y', 'z', 'w'];
+            default: return [];
+          }
+        })()
+      );
+      // switch (type) {
+      //   case 'float':
+      //   break;
+      //   case 'vec2':
+      //   this.addComponents(['x', 'y'])
+      //   break;
+      //   case 'vec3':
+      //   this.addComponents(['x', 'y', 'z'])
+      //   break;
+      //   case 'vec4':
+      //   this.addComponents(['x', 'y', 'z', 'w']);  
+      //   break;
+      // }
     }
     addComponents(componentNames) {
       for (let componentName of componentNames) {
@@ -260,8 +308,8 @@ function shadergen(p5, fn) {
     }
     toGLSL(context) {
       // CURRENTLY BROKEN:
-      const parentName = this.parent.toGLSLBase(context);
-      // const parentName = this.parent.temporaryVariable ? this.parent.temporaryVariable : this.parent.name; 
+      // const parentName = this.parent.toGLSLBase(context);
+      const parentName = this.parent.temporaryVariable ? this.parent.temporaryVariable : this.parent.name; 
       return `${parentName}.${this.component}`;
     }
   }
@@ -299,13 +347,16 @@ function shadergen(p5, fn) {
       }
     }
 
+    // TODO: change order of parameters
     processOperand(context, operand) {
-      const code = operand.toGLSLBase(context);
-      if (operand.temporaryVariable) {
-        return operand.temporaryVariable;
+      if (operand.temporaryVariable) { return operand.temporaryVariable; }
+      let code = operand.toGLSLBase(context);      
+      if (isBinaryOperatorNode(operand)) {
+        console.log(operand)
+        code = `(${code})`;
       }
       if (this.type === 'float' && isIntNode(operand)) {
-        return `float${code}`;
+        code = `float(${code})`;
       }
       return code;
     }
@@ -316,7 +367,7 @@ function shadergen(p5, fn) {
       super(a, b)
     }
     toGLSL(context) {
-      return `(${this.processOperand(context, this.a)} * ${this.processOperand(context, this.b)})`;
+      return `${this.processOperand(context, this.a)} * ${this.processOperand(context, this.b)}`;
     }
   }
 
@@ -325,7 +376,7 @@ function shadergen(p5, fn) {
       super(a, b)
     }
     toGLSL(context) {
-      return `(${this.processOperand(context, this.a)} / ${this.processOperand(context, this.b)})`;
+      return `${this.processOperand(context, this.a)} / ${this.processOperand(context, this.b)}`;
     }
   }
 
@@ -334,7 +385,7 @@ function shadergen(p5, fn) {
       super(a, b)
     }
     toGLSL(context) {
-      return `(${this.processOperand(context, this.a)} + ${this.processOperand(context, this.b)})`;
+      return `${this.processOperand(context, this.a)} + ${this.processOperand(context, this.b)}`;
     }
   }
 
@@ -343,7 +394,7 @@ function shadergen(p5, fn) {
       super(a, b)
     }
     toGLSL(context) {
-      return `(${this.processOperand(context, this.a)} - ${this.processOperand(context, this.b)})`;
+      return `${this.processOperand(context, this.a)} - ${this.processOperand(context, this.b)}`;
     }
   }
 
@@ -357,7 +408,7 @@ function shadergen(p5, fn) {
       if (isVectorNode(this) || isFloatNode(this)) {
         return `mod(${this.a.toGLSLBase(context)}, ${this.b.toGLSLBase(context)})`;
       }
-      return `(${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)})`;
+      return `${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)}`;
     }
   }
 
@@ -383,7 +434,6 @@ function shadergen(p5, fn) {
   }
 
   function isVariableNode(node) { 
-    console.log(node.temporaryVariable);
     return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined'); 
   }
 
@@ -416,6 +466,16 @@ function shadergen(p5, fn) {
         declarations: [],
       }
     }
+    // TODO:
+    uniformInt() {
+      return
+    }
+    uniformFloat() {
+      return
+    }
+    uniformVector2() {
+      return
+    }
     uniform(name, value) {
       this.uniforms[name] = value;
       return new VariableNode(name, value.type);
@@ -447,14 +507,17 @@ function shadergen(p5, fn) {
   }
   
   fn.createVector2 = function(x, y) {
-    return new VectorNode([x, y], 'vec2');
+    return new Proxy(new VectorNode([x, y], 'vec2'), VectorNodeHandler);
   }
 
   fn.createVector3 = function(x, y, z) {
+    return new Proxy(new VectorNode([x, y, z], 'vec3'), VectorNodeHandler);
+
     return new VectorNode([x, y, z], 'vec3');
   }
 
   fn.createVector4 = function(x, y, z, w) {
+    return new Proxy(new VectorNode([x, y, z, w], 'vec4'), VectorNodeHandler);
     return new VectorNode([x, y, z, w], 'vec4');
   }
   
