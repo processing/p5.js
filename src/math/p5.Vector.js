@@ -94,7 +94,7 @@ class Vector {
    * Think of the x component as the horizontal position or the first number in the vector.
    * If the x component is not defined, it will return 0.
    *
-   * @returns {number} The x component of the vector. Returns 0 if the value is not defined.
+   * @returns {Number} The x component of the vector. Returns 0 if the value is not defined.
    */
   get x() {
     return this._values[0] || 0;
@@ -112,8 +112,8 @@ class Vector {
    * give you the first value 10, index 1 would give you the second value 20,
    * and so on.
    *
-   * @param {number} index - The position of the value you want to get from the vector.
-   * @returns {number} The value at the specified position in the vector.
+   * @param {Number} index - The position of the value you want to get from the vector.
+   * @returns {Number} The value at the specified position in the vector.
    * @throws Will throw an error if the index is out of bounds, meaning if you try to
    *          get a value from a position that doesn't exist in the vector.
    */
@@ -138,11 +138,10 @@ class Vector {
    * For example, if you have a vector with values [0, 20, 30], and you want to change the second value (20) to 50,
    * you would use this method with index 1 (since indexes start at 0) and value 50.
    *
-   * @param {number} index - The position in the vector where you want to set the new value.
-   * @param {number} value - The new value you want to set at the specified position.
+   * @param {Number} index - The position in the vector where you want to set the new value.
+   * @param {Number} value - The new value you want to set at the specified position.
    * @throws Will throw an error if the index is outside the bounds of the vector, meaning if you try to set a value at a position that doesn't exist in the vector.
    */
-
   setValue(index, value) {
     if (index < this._values.length) {
       this._values[index] = value;
@@ -161,7 +160,7 @@ class Vector {
    * Think of the y component as the vertical position or the second number in the vector.
    * If the y component is not defined, it will return 0.
    *
-   * @returns {number} The y component of the vector. Returns 0 if the value is not defined.
+   * @returns {Number} The y component of the vector. Returns 0 if the value is not defined.
    */
   get y() {
     return this._values[1] || 0;
@@ -174,7 +173,7 @@ class Vector {
    * Think of the z component as the depth or the third number in the vector.
    * If the z component is not defined, it will return 0.
    *
-   * @returns {number} The z component of the vector. Returns 0 if the value is not defined.
+   * @returns {Number} The z component of the vector. Returns 0 if the value is not defined.
    */
   get z() {
     return this._values[2] || 0;
@@ -187,7 +186,7 @@ class Vector {
    * Think of the w component as the fourth number in the vector.
    * If the w component is not defined, it will return 0.
    *
-   * @returns {number} The w component of the vector. Returns 0 if the value is not defined.
+   * @returns {Number} The w component of the vector. Returns 0 if the value is not defined.
    */
   get w() {
     return this._values[3] || 0;
@@ -200,7 +199,7 @@ class Vector {
    * The x value is the first number in the vector, representing the horizontal position.
    * By calling this method, you can update the x value to a new number.
    *
-   * @param {number} xVal - The new value for the x component.
+   * @param {Number} xVal - The new value for the x component.
    */
   set x(xVal) {
     if (this._values.length > 1) {
@@ -215,7 +214,7 @@ class Vector {
    * The y value is the second number in the vector, representing the vertical position.
    * By calling this method, you can update the y value to a new number.
    *
-   * @param {number} yVal - The new value for the y component.
+   * @param {Number} yVal - The new value for the y component.
    */
   set y(yVal) {
     if (this._values.length > 1) {
@@ -230,7 +229,7 @@ class Vector {
    * The z value is the third number in the vector, representing the depth or the third dimension.
    * By calling this method, you can update the z value to a new number.
    *
-   * @param {number} zVal - The new value for the z component.
+   * @param {Number} zVal - The new value for the z component.
    */
   set z(zVal) {
     if (this._values.length > 2) {
@@ -245,7 +244,7 @@ class Vector {
    * The w value is the fourth number in the vector, representing the fourth dimension.
    * By calling this method, you can update the w value to a new number.
    *
-   * @param {number} wVal - The new value for the w component.
+   * @param {Number} wVal - The new value for the w component.
    */
   set w(wVal) {
     if (this._values.length > 3) {
