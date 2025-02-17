@@ -6,15 +6,18 @@
 */
 
 function shadergen(p5, fn) {
-  const oldModify = p5.Shader.prototype.modify
   let GLOBAL_SHADER;
+  
+  const oldModify = p5.Shader.prototype.modify
+
   p5.Shader.prototype.modify = function(arg) {
     if (arg instanceof Function) {
       const program = new ShaderProgram(arg)
       const newArg = program.generate();
-      console.log(newArg)
+      console.log(newArg.vertex)
       return oldModify.call(this, newArg);
-    } else {
+    } 
+    else {
       return oldModify.call(this, arg)
     }
   }
@@ -27,17 +30,19 @@ function shadergen(p5, fn) {
       this.type = null;
       
       // For tracking recursion depth and creating temporary variables
-      this.isInternal = isInternal; // TODO: dont use temp nodes for internal nodes 
+      this.isInternal = isInternal;
       this.usedIn = [];
       this.dependsOn = [];
       this.srcLine = null;
-      if (!isInternal) {
+      
+      if (isInternal === false) {
         try {
           throw new Error("StackCapture");
         } catch (e) {
           const lines = e.stack.split("\n");
           console.log(lines)
-          this.srcLine = lines[3].trim();
+          let index = 5;
+          this.srcLine = lines[index].trim();
         }
       }
     }
@@ -66,7 +71,7 @@ function shadergen(p5, fn) {
         if (this.srcLine) {
           line += `\n// From ${this.srcLine}\n`;
         }
-        line += this.type + " " + this.temporaryVariable + " = " + this.toGLSLNoTemp(context) + ";";
+        line += this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
         context.declarations.push(line);
       }
       return this.temporaryVariable;
@@ -116,7 +121,7 @@ function shadergen(p5, fn) {
     }
     toGLSL(context) {
       if (isShaderNode(this.x)) {
-        let code = this.x.toGLSL(context);
+        let code = this.x.toGLSLBase(context);
         return isIntNode(this.x.type) ? code : `int(${code})`;
       }
       else if (typeof this.x === "number") {
@@ -136,8 +141,7 @@ function shadergen(p5, fn) {
     }
     toGLSL(context) {
       if (isShaderNode(this.x)) {
-        let code = this.x.toGLSL(context);
-        console.log(code)
+        let code = this.x.toGLSLBase(context);
         return isFloatNode(this.x) ? code : `float(${code})`;
       }
       else if (typeof this.x === "number") {
@@ -153,29 +157,41 @@ function shadergen(p5, fn) {
   // that we don't actually need a Float Node for every component. They could be component node's instead? 
   // May need to then store the temporary variable name in this class.
 
-  // I think swizzles could be easy then
+  // This would be the next step before adding all swizzles 
 
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal);
+
       const componentVariants = { 
         pos: ['x', 'y', 'z', 'w'],
         col: ['r', 'g', 'b', 'a'],
         uv: ['s', 't', 'p', 'q']
       }
       for (let variant in componentVariants) {
-        for (let i = 0; i < arguments[0].length; i++) {
+        for (let i = 0; i < values.length; i++) {
           let componentCollection = componentVariants[variant];
           let component = componentCollection[i];
-          this[component] = new FloatNode(arguments[0][i], isInternal = true);
+          this[component] = new ComponentNode(this, component, true);
+          // this[component] = new FloatNode(values[i], true);
         }
       }
-      console.log(this);
+
       this.type = type;
+      this.size = values.length; 
     }
     
     toGLSL(context) {
-      return `${this.type}(${this.x.toGLSLBase(context)}, ${this.y.toGLSLBase(context)})`
+      let glslArgs = ``;
+      const components = ['x', 'y', 'z', 'w'].slice(0, this.size);
+      
+      for (let i = 0; i < this.size; i++) {
+        const comma = i === this.size - 1 ? `` : `, `;
+        const component = components[i]
+        glslArgs += `${this[component].toGLSLBase(context)}${comma}`;
+      }
+      
+      return `${this.type}(${glslArgs})`;
     }
   }
 
@@ -187,17 +203,19 @@ function shadergen(p5, fn) {
       this.args = args;
       this.type = type;
     }
+
     deconstructArgs(context) {
       if (this.args.constructor === Array) {
-        let argsString = `${this.args[0].toGLSL(context)}`
+        let argsString = `${this.args[0].toGLSLBase(context)}`
         for (let arg of this.args.slice(1)) {
-          argsString += `, ${arg.toGLSL(context)}` 
+          argsString += `, ${arg.toGLSLBase(context)}` 
           return argsString;
         }
       } else {
-        return `${this.args.toGLSL(context)}`;
+        return `${this.args.toGLSLBase(context)}`;
       }
     }
+
     toGLSL(context) {
       return `${this.name}(${this.deconstructArgs(context)})`;
     }
@@ -213,19 +231,19 @@ function shadergen(p5, fn) {
         case 'float':
         break;
         case 'vec2':
-        this.addComponents('x', 'y')
+        this.addComponents(['x', 'y'])
         break;
         case 'vec3':
-        this.addComponents('x', 'y', 'z')
+        this.addComponents(['x', 'y', 'z'])
         break;
         case 'vec4':
-        this.addComponents('x', 'y', 'z', 'w');  
+        this.addComponents(['x', 'y', 'z', 'w']);  
         break;
       }
     }
-    addComponents() {
-      for (let name of arguments) {
-        this[name] = new ComponentNode(this.name, name);
+    addComponents(componentNames) {
+      for (let componentName of componentNames) {
+        this[componentName] = new ComponentNode(this, componentName, true);
       }
     }
     toGLSL(context) {
@@ -236,12 +254,14 @@ function shadergen(p5, fn) {
   class ComponentNode extends BaseNode {
     constructor(parent, component, isInternal = false) {
       super(isInternal);
-      this.varName = parent;
+      this.parent = parent;
       this.component = component;
       this.type = 'float';
     }
     toGLSL(context) {
-      return `${this.varName}.${this.component}`;
+      // CURRENTLY BROKEN:
+      const parentName = this.parent.toGLSL(context);
+      return `${parentName}.${this.component}`;
     }
   }
 
@@ -279,7 +299,10 @@ function shadergen(p5, fn) {
     }
 
     processOperand(context, operand) {
-      const code = operand.toGLSL(context);
+      const code = operand.toGLSLBase(context);
+      if (operand.temporaryVariable) {
+        return operand.temporaryVariable;
+      }
       if (this.type === 'float' && isIntNode(operand)) {
         return `float${code}`;
       }
@@ -291,7 +314,7 @@ function shadergen(p5, fn) {
     constructor(a, b) {
       super(a, b)
     }
-    toGLSLNoTemp(context) {
+    toGLSL(context) {
       return `(${this.processOperand(context, this.a)} * ${this.processOperand(context, this.b)})`;
     }
   }
@@ -300,7 +323,7 @@ function shadergen(p5, fn) {
     constructor(a, b) {
       super(a, b)
     }
-    toGLSLNoTemp(context) {
+    toGLSL(context) {
       return `(${this.processOperand(context, this.a)} / ${this.processOperand(context, this.b)})`;
     }
   }
@@ -309,7 +332,7 @@ function shadergen(p5, fn) {
     constructor(a, b) {
       super(a, b)
     }
-    toGLSLNoTemp(context) {
+    toGLSL(context) {
       return `(${this.processOperand(context, this.a)} + ${this.processOperand(context, this.b)})`;
     }
   }
@@ -318,7 +341,7 @@ function shadergen(p5, fn) {
     constructor(a, b) {
       super(a, b)
     }
-    toGLSLNoTemp(context) {
+    toGLSL(context) {
       return `(${this.processOperand(context, this.a)} - ${this.processOperand(context, this.b)})`;
     }
   }
@@ -328,32 +351,39 @@ function shadergen(p5, fn) {
     constructor(a, b) {
       super(a, b);
     }
-    toGLSLNoTemp(context) {
+    toGLSL(context) {
       // Switch on type between % or mod()
       if (isVectorNode(this) || isFloatNode(this)) {
-        return `mod(${this.a.toGLSL(context)}, ${this.b.toGLSL(context)})`;
+        return `mod(${this.a.toGLSLBase(context)}, ${this.b.toGLSLBase(context)})`;
       }
       return `(${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)})`;
     }
   }
 
   // Helper functions
-  function isShaderNode(value) {  return (value instanceof BaseNode); }
-
-  function isIntNode(value) { 
-    return (isShaderNode(value) && (value.type === 'int')); 
+  function isShaderNode(node) {  
+    return (node instanceof BaseNode); 
   }
 
-  function isFloatNode(value) { 
-    return (isShaderNode(value) && (value.type === 'float')); 
+  function isIntNode(node) { 
+    return (isShaderNode(node) && (node.type === 'int')); 
   }
 
-  function isVectorNode(value) { 
-    return (isShaderNode(value) && (value.type === 'vec2'|| value.type === 'vec3' || value.type === 'vec4')); 
+  function isFloatNode(node) { 
+    return (isShaderNode(node) && (node.type === 'float')); 
+  }
+
+  function isVectorNode(node) { 
+    return (isShaderNode(node) && (node.type === 'vec2'|| node.type === 'vec3' || node.type === 'vec4')); 
+  }
+
+  function isBinaryOperatorNode(node) {
+    return (node instanceof BinaryOperatorNode);
   }
 
   function isVariableNode(node) { 
-    return (node instanceof VariableNode || node instanceof ComponentNode); 
+    console.log(node.temporaryVariable);
+    return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined'); 
   }
 
   // Shader program
@@ -364,7 +394,6 @@ function shadergen(p5, fn) {
       this.uniforms = {
       }
       this.functions = {
-        getWorldPosition: null
       }
       this.resetGLSLContext();
       GLOBAL_SHADER = this;
@@ -392,7 +421,7 @@ function shadergen(p5, fn) {
     }
     
     buildFunction(argumentName, argumentType, callback) {
-      let functionArgument = new VariableNode(argumentName, argumentType);
+      let functionArgument = new VariableNode(argumentName, argumentType, true);
       const finalLine = callback(functionArgument).toGLSLBase(this.context);
       let codeLines = this.context.declarations.slice();
       codeLines.push(`\n${argumentName} = ${finalLine}; \nreturn ${argumentName};`)
@@ -425,7 +454,7 @@ function shadergen(p5, fn) {
   }
 
   fn.createVector4 = function(x, y, z, w) {
-    return new VectorNode([x, y, z], w, 'vec4');
+    return new VectorNode([x, y, z, w], 'vec4');
   }
   
   fn.createFloat = function(x) {
