@@ -260,7 +260,8 @@ function shadergen(p5, fn) {
     }
     toGLSL(context) {
       // CURRENTLY BROKEN:
-      const parentName = this.parent.toGLSL(context);
+      const parentName = this.parent.toGLSLBase(context);
+      // const parentName = this.parent.temporaryVariable ? this.parent.temporaryVariable : this.parent.name; 
       return `${parentName}.${this.component}`;
     }
   }
