@@ -146,7 +146,7 @@ export class Matrix extends MatrixInterface {
   /**
    * Sets the value of a specific element in the matrix.
    *
-   * @param {number} index - The position in the matrix where the value should be set.
+   * @param {Number} index - The position in the matrix where the value should be set.
    *                         Must be a non-negative integer less than the length of the matrix.
    * @param {*} value - The new value to be assigned to the specified position in the matrix.
    * @returns {Matrix} The current instance of the Matrix, allowing for method chaining.
@@ -662,7 +662,7 @@ export class Matrix extends MatrixInterface {
    * This method modifies the current matrix to apply a rotation transformation
    * around the X-axis. The rotation angle is specified in radians.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by.
+   * @param {Number} a - The angle in radians to rotate the matrix by.
    */
   rotateX(a) {
     this.rotate4x4(a, 1, 0, 0);
@@ -675,7 +675,7 @@ export class Matrix extends MatrixInterface {
    * around the Y-axis. The rotation is performed in 3D space, and the angle
    * is specified in radians.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by. Positive
+   * @param {Number} a - The angle in radians to rotate the matrix by. Positive
    * values rotate the matrix counterclockwise, and negative values rotate it
    * clockwise.
    */
@@ -686,7 +686,7 @@ export class Matrix extends MatrixInterface {
   /**
    * Rotates the matrix around the Z-axis by a given angle.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by.
+   * @param {Number} a - The angle in radians to rotate the matrix by.
    *
    * This method modifies the current matrix to apply a rotation transformation
    * around the Z-axis. The rotation is performed in a 4x4 matrix context, which

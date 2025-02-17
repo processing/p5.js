@@ -26,7 +26,7 @@ function primitives3D(p5, fn){
  * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
  *
  * @method strokeMode
- * @param {string} mode - The stroke mode to set. Possible values are:
+ * @param {String} mode - The stroke mode to set. Possible values are:
  *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
  *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
  *

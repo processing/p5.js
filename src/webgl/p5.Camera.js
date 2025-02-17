@@ -3306,7 +3306,7 @@ function camera(p5, fn){
    *
    * @method linePerspective
    * @for p5
-   * @param {boolean} enable whether to enable line perspective.
+   * @param {Boolean} enable whether to enable line perspective.
    *
    * @example
    * <div>

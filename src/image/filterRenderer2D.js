@@ -93,8 +93,8 @@ class FilterRenderer2D {
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
    * that overrides the operation-based shader.
-   * @param {string} operation - The filter operation type (e.g., constants.BLUR).
-   * @param {number} filterParameter - The strength of the filter.
+   * @param {String} operation - The filter operation type (e.g., constants.BLUR).
+   * @param {Number} filterParameter - The strength of the filter.
    * @param {p5.Shader} customShader - Optional custom shader.
    */
   setOperation(operation, filterParameter, customShader = null) {

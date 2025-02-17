@@ -117,11 +117,11 @@ function textCore(p5, fn) {
 
   /**
    * Computes the precise (tight) bounding box for a block of text
-   * @param {string} str - the text to measure
-   * @param {number} x - the x-coordinate of the text
-   * @param {number} y - the y-coordinate of the text
-   * @param {number} width - the max width of the text block
-   * @param {number} height - the max height of the text block
+   * @param {String} str - the text to measure
+   * @param {Number} x - the x-coordinate of the text
+   * @param {Number} y - the y-coordinate of the text
+   * @param {Number} width - the max width of the text block
+   * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
@@ -131,11 +131,11 @@ function textCore(p5, fn) {
 
   /**
    * Computes a generic (non-tight) bounding box for a block of text
-   * @param {string} str - the text to measure
-   * @param {number} x - the x-coordinate of the text
-   * @param {number} y - the y-coordinate of the text
-   * @param {number} width - the max width of the text block
-   * @param {number} height - the max height of the text block
+   * @param {String} str - the text to measure
+   * @param {Number} x - the x-coordinate of the text
+   * @param {Number} y - the y-coordinate of the text
+   * @param {Number} width - the max width of the text block
+   * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
@@ -145,7 +145,7 @@ function textCore(p5, fn) {
 
   /**
    * Get the width of a text string in pixels (tight bounds)
-   * @param {string} theText
+   * @param {String} theText
    * @returns - the width of the text in pixels
    */
   Renderer.prototype.textWidth = function (theText) {
@@ -156,7 +156,7 @@ function textCore(p5, fn) {
 
   /**
    * Get the width of a text string in pixels (loose bounds)
-   * @param {string} theText
+   * @param {String} theText
    * @returns - the width of the text in pixels
    */
   Renderer.prototype.fontWidth = function (theText) {
@@ -229,8 +229,8 @@ function textCore(p5, fn) {
   /**
    * Set the font and [size] and [options] for rendering text
    * @param {p5.Font | string} font - the font to use for rendering text
-   * @param {number} size - the size of the text, can be a number or a css-style string
-   * @param {object} options - additional options for rendering text, see FontProps
+   * @param {Number} size - the size of the text, can be a number or a css-style string
+   * @param {Object} options - additional options for rendering text, see FontProps
    */
   Renderer.prototype.textFont = function (font, size, options) {
 
@@ -693,7 +693,7 @@ function textCore(p5, fn) {
 
   /*
     Get the computed font-size in pixels for a given size string
-    @param {string} size - the font-size string to compute
+    @param {String} size - the font-size string to compute
     @returns {number} - the computed font-size in pixels
    */
   Renderer.prototype._fontSizePx = function (theSize, { family } = this.states.textFont) {
@@ -732,7 +732,7 @@ function textCore(p5, fn) {
 
   /*
     Aggregate the bounding boxes of multiple lines of text
-    @param {array} bboxes - the bounding boxes to aggregate
+    @param {Array} bboxes - the bounding boxes to aggregate
     @returns {object} - the aggregated bounding box
   */
   Renderer.prototype._aggregateBounds = function (bboxes) {
@@ -757,8 +757,8 @@ function textCore(p5, fn) {
 
   /*
     Process the text string to handle line-breaks and text wrapping
-    @param {string} str - the text to process
-    @param {number} width - the width to wrap the text to
+    @param {String} str - the text to process
+    @param {Number} width - the width to wrap the text to
     @returns {array} - the processed lines of text
   */
   Renderer.prototype._processLines = function (str, width, height) {
@@ -948,9 +948,9 @@ function textCore(p5, fn) {
 
   /*
     Split the lines of text based on the width and the textWrap property
-    @param {array} lines - the lines of text to split
-    @param {number} maxWidth - the maximum width of the lines
-    @param {object} opts - additional options for splitting the lines
+    @param {Array} lines - the lines of text to split
+    @param {Number} maxWidth - the maximum width of the lines
+    @param {Object} opts - additional options for splitting the lines
     @returns {array} - the split lines of text
   */
   Renderer.prototype._lineate = function (textWrap, lines, maxWidth = Infinity, opts = {}) {

@@ -751,9 +751,9 @@ function setting(p5, fn){
    * created in. Changing modes doesn't affect their appearance.
    *
    * @method colorMode
-   * @param {(RGB|HSB|HSL)} mode   either RGB, HSB or HSL, corresponding to
-   *                          Red/Green/Blue and Hue/Saturation/Brightness
-   *                          (or Lightness).
+   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB 
+   *                          or HSL, corresponding to Red/Green/Blue and 
+   *                          Hue/Saturation/Brightness (or Lightness).
    * @param {Number}  [max]  range for all values.
    * @chainable
    *
@@ -937,7 +937,7 @@ function setting(p5, fn){
 
   /**
    * @method colorMode
-   * @param {(RGB|HSB|HSL)} mode
+   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode
    * @param {Number} max1     range for the red or hue depending on the
    *                              current color mode.
    * @param {Number} max2     range for the green or saturation depending
