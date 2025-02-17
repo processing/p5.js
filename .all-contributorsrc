@@ -5344,7 +5344,16 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/127239756?v=4",
       "profile": "https://github.com/perminder-17",
       "contributions": [
-        "code"
+        "code",
+        "bug",
+        "doc",
+        "example",
+        "ideas",
+        "plugin",
+        "projectManagement",
+        "promotion",
+        "question",
+        "research"
       ]
     },
     {
