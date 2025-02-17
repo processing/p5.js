@@ -1406,6 +1406,102 @@ function environment(p5, fn){
           return new Vector(screenX, screenY, screenZ);
     }
   };
+  /**
+   * Converts 2D screen coordinates to 3D world coordinates.
+   *
+   * This function takes a vector and converts its coordinates
+   * from the world space to screen space. This can be useful for determining
+   * the mouse position relative to a 2D or 3D object.
+   *
+   * The Z component of the screen coordinates is treated as "depth", or
+   * distance from the camera, when converting to 3D world space.
+   *
+   * @method screenToWorld
+   * @param {p5.Vector} screenPosition The coordinates in screen space.
+   * @return {p5.Vector} A vector containing the 3D world space coordinates.
+   * @example
+   * <div>
+   * <code>
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   describe('A rotating square with a line passing through the mouse drawn across it.');
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *
+   *   // Move to center and rotate
+   *   translate(width/2, height/2);
+   *   rotate(millis() / 1000);
+   *   rect(-30, -30, 60);
+   *
+   *   // Compute the location of the mouse in the coordinates of the square
+   *   let localMouse = screenToWorld(createVector(mouseX, mouseY));
+   *
+   *   // Draw a line parallel to the local Y axis, passing through the mouse
+   *   line(localMouse.x, -30, localMouse.x, 30);
+   * }
+   *
+   * </code>
+   * </div>
+   * @example
+   * <div>
+   * <code>
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   describe('A rotating square with a line passing through the mouse drawn across it.');
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *
+   *   // Animate rotation
+   *   rotateZ(millis() / 1000);
+   *   rect(-30, -30, 60);
+   *
+   *   // Transform the 0, 0 point to get the depth of the square
+   *   let center = worldToScreen(createVector(0, 0))
+   *
+   *   // Compute the location of the mouse in the coordinates of the square,
+   *   // using the depth calculated earlier
+   *   let localMouse = screenToWorld(createVector(mouseX, mouseY, center.z));
+   *
+   *   // Draw a line parallel to the local Y axis, passing through the mouse
+   *   line(localMouse.x, -30, localMouse.x, 30);
+   * }
+   *
+   * </code>
+   * </div>
+   *
+   */
+  fn.screenToWorld = function(screenPosition) {
+    const renderer = this._renderer;
+    if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
+      // Handle 2D context
+      const inverseTransformMatrix = new DOMMatrix()
+        .multiply(renderer.drawingContext.getTransform().inverse())
+        .scale(renderer._pInst.pixelDensity());
+      const screenCoordinates = inverseTransformMatrix.transformPoint(
+        new DOMPoint(screenPosition.x, screenPosition.y)
+      );
+      return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
+    } else {
+      const normalizedDeviceCoordinates = new p5.Vector(
+        screenPosition.x / this.width * 2 - 1,
+        screenPosition.y / this.height * -2 + 1,
+        screenPosition.z * 2 - 1,
+      );
+      let uPMatrixInverse = renderer.states.uPMatrix.copy()
+      uPMatrixInverse = uPMatrixInverse.invert(uPMatrixInverse);
+      let modelViewMatrixInverse = renderer.calculateCombinedMatrix();
+      modelViewMatrixInverse = modelViewMatrixInverse.invert(modelViewMatrixInverse);
+      const cameraCoordinates = uPMatrixInverse.multiplyAndNormalizePoint(normalizedDeviceCoordinates);
+      const worldPosition = modelViewMatrixInverse.multiplyPoint(cameraCoordinates);
+      return worldPosition;
+    }
+  };
 }
 
 export default environment;

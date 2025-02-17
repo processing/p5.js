@@ -259,6 +259,37 @@ suite('Environment', function() {
       assert.closeTo(screenPos.x, 50, 0.1);
       assert.closeTo(screenPos.y, 60, 0.1);
     });
+
+    test('screenToWorld for 2D context', function() {
+      let screenPos = myp5.createVector(50, 50);
+      let worldPos = myp5.screenToWorld(screenPos);
+      assert.closeTo(worldPos.x, 50, 0.1);
+      assert.closeTo(worldPos.y, 50, 0.1);
+    });
+
+    test('screenToWorld with rotation in 2D', function() {
+      myp5.push();
+      myp5.translate(50, 50);
+      myp5.rotate(myp5.PI / 2);
+      let screenPos = myp5.createVector(50, 60);
+      let worldPos = myp5.screenToWorld(screenPos);
+      myp5.pop();
+      assert.closeTo(worldPos.x, 10, 0.1);
+      assert.closeTo(worldPos.y, 0, 0.1);
+    });
+
+    test('screenToWorld is inverse of worldToScreen in 2D', function() {
+      myp5.push();
+      // Arbitrary rotation
+      myp5.translate(10, 10);
+      myp5.rotate(myp5.PI / 8);
+      let origWorldPos = myp5.createVector(20, 20);
+      let screenPos = myp5.worldToScreen(origWorldPos);
+      let worldPos = myp5.screenToWorld(screenPos);
+      myp5.pop();
+      assert.closeTo(worldPos.x, origWorldPos.x, 0.1);
+      assert.closeTo(worldPos.y, origWorldPos.y, 0.1);
+    });
   });
 
   suite('3D context test', function() {
@@ -291,6 +322,48 @@ suite('Environment', function() {
       myp5.pop();
       assert.closeTo(screenPos.x, 50, 0.1);
       assert.closeTo(screenPos.y, 60, 0.1);
+    });
+
+    test('screenToWorld for 3D context', function() {
+      let screenPos = myp5.createVector(50, 50);
+      let worldPos = myp5.screenToWorld(screenPos);
+      assert.closeTo(worldPos.x, 0, 0.1);
+      assert.closeTo(worldPos.y, 0, 0.1);
+    });
+
+    test('screenToWorld with rotation in 3D around Y-axis', function() {
+      myp5.push();
+      myp5.rotateY(myp5.PI / 2);
+      let screenPos = myp5.createVector(50, 50, 10/11);
+      let worldPos = myp5.screenToWorld(screenPos);
+      myp5.pop();
+      assert.closeTo(worldPos.y, 0, 0.1);
+    });
+
+    test('screenToWorld with rotation in 3D around Z-axis', function() {
+      myp5.push();
+      myp5.rotateZ(myp5.PI / 2);
+      let screenPos = myp5.createVector(50, 60, 10/11);
+      let worldPos = myp5.screenToWorld(screenPos);
+      myp5.pop();
+      assert.closeTo(worldPos.x, 10, 0.1);
+      assert.closeTo(worldPos.y, 0, 0.1);
+    });
+
+    test('screenToWorld is inverse of worldToScreen in 3D', function() {
+      myp5.push();
+      // Arbitrary rotation
+      myp5.translate(10, 10);
+      myp5.rotateX(myp5.PI / 3);
+      myp5.rotateY(myp5.PI / 4);
+      myp5.rotateZ(myp5.PI / 8);
+      let origWorldPos = myp5.createVector(20, 20, 0);
+      let screenPos = myp5.worldToScreen(origWorldPos);
+      let worldPos = myp5.screenToWorld(screenPos);
+      myp5.pop();
+      assert.closeTo(worldPos.x, origWorldPos.x, 0.1);
+      assert.closeTo(worldPos.y, origWorldPos.y, 0.1);
+      assert.closeTo(worldPos.z, origWorldPos.z, 0.1);
     });
   });
 });
