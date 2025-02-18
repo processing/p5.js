@@ -51,6 +51,7 @@ function shadergen(p5, fn) {
         } catch (e) {
           const lines = e.stack.split("\n");
           let index = 5;
+          if (isBinaryOperatorNode(this)) { index--; };
           this.srcLine = lines[index].trim();
         }
       }
@@ -87,10 +88,10 @@ function shadergen(p5, fn) {
     };
     
     // TODO: Add more operations here
-    add(other)  { return new AdditionNode(this, this.enforceType(other)); }
-    sub(other)  { return new SubtractionNode(this, this.enforceType(other)); }
-    mult(other) { return new MultiplicationNode(this, this.enforceType(other)); }
-    div(other)  { return new DivisionNode(this, this.enforceType(other)); }
+    add(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '+'); }
+    sub(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '-'); }
+    mult(other) { return new BinaryOperatorNode(this, this.enforceType(other), '*'); }
+    div(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '/'); }
     mod(other)  { return new ModulusNode(this, this.enforceType(other)); }
     sin()       { return new FunctionCallNode('sin', this, 'float'); }
     cos()       { return new FunctionCallNode('cos', this, 'float'); }
@@ -326,12 +327,13 @@ function shadergen(p5, fn) {
 
   // Binary Operator Nodes
   class BinaryOperatorNode extends BaseNode {
-    constructor(a, b, isInternal = false) {
+    constructor(a, b, operator, isInternal = false) {
       super(isInternal);
+      this.op = operator;
       this.a = a;
       this.b = b;
-      for (const param of arguments) {
-        param.usedIn.push(this);
+      for (const operand of [a, b]) {
+        operand.usedIn.push(this);
       }
       this.type = this.determineType();
     }
@@ -361,8 +363,7 @@ function shadergen(p5, fn) {
     processOperand(context, operand) {
       if (operand.temporaryVariable) { return operand.temporaryVariable; }
       let code = operand.toGLSLBase(context);      
-      if (isBinaryOperatorNode(operand)) {
-        console.log(operand)
+      if (isBinaryOperatorNode(operand) && !operand.temporaryVariable) {
         code = `(${code})`;
       }
       if (this.type === 'float' && isIntNode(operand)) {
@@ -370,41 +371,11 @@ function shadergen(p5, fn) {
       }
       return code;
     }
-  }
 
-  class MultiplicationNode extends BinaryOperatorNode {
-    constructor(a, b) {
-      super(a, b)
-    }
     toGLSL(context) {
-      return `${this.processOperand(context, this.a)} * ${this.processOperand(context, this.b)}`;
-    }
-  }
-
-  class DivisionNode extends BinaryOperatorNode {
-    constructor(a, b) {
-      super(a, b)
-    }
-    toGLSL(context) {
-      return `${this.processOperand(context, this.a)} / ${this.processOperand(context, this.b)}`;
-    }
-  }
-
-  class AdditionNode extends BinaryOperatorNode {
-    constructor(a, b) {
-      super(a, b)
-    }
-    toGLSL(context) {
-      return `${this.processOperand(context, this.a)} + ${this.processOperand(context, this.b)}`;
-    }
-  }
-
-  class SubtractionNode extends BinaryOperatorNode {
-    constructor(a, b) {
-      super(a, b)
-    }
-    toGLSL(context) {
-      return `${this.processOperand(context, this.a)} - ${this.processOperand(context, this.b)}`;
+      const a = this.processOperand(this.a, context);
+      const b = this.processOperand(this.b, context);
+      return `${a} ${this.op} ${b}`;
     }
   }
 
