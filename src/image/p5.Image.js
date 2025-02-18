@@ -1426,7 +1426,7 @@ class Image {
    * helper method for web GL mode to indicate that an image has been
    * changed or unchanged since last upload. gl texture upload will
    * set this value to false after uploading the texture.
-   * @param {boolean} val sets whether or not the image has been
+   * @param {Boolean} val sets whether or not the image has been
    * modified.
    * @private
    */
