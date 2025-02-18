@@ -6664,6 +6664,24 @@
         "example",
         "design"
       ]
+    },
+    {
+      "login": "GregStanton",
+      "name": "Greg Stanton",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51820777?v=4",
+      "profile": "https://www.youtube.com/c/HigherMathNotes",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "example",
+        "ideas",
+        "plugin",
+        "projectManagement",
+        "promotion",
+        "question",
+        "research"
+      ]
     }
   ],
   "repoType": "github",
