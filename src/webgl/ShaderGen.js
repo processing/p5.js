@@ -67,12 +67,26 @@ function shadergen(p5, fn) {
       }
     }
 
+    // useTempVar() {
+    //   if (isBinaryOperatorNode(this)) {
+    //     console.log(this.a);
+    //     console.log(this.b);
+    //     return false; 
+    //   }
+    //   if (this.isInternal) { return false; }
+    //   if (isVariableNode(this)) { return false; }
+    //   if (isVectorNode(this)) { return true; }
+    //   return (this.usedIn.length > 1);
+    // };
+    
     useTempVar() {
-      if (this.isInternal) { return false; }
-      if (isVariableNode(this)) { return false; }
-      if (isVectorNode(this)) { return true; }
-      return (this.usedIn.length > 1);
-    };
+      if (this.isInternal || isVariableNode(this)) { return false; }
+      let score = 0;
+      score += isBinaryOperatorNode(this);
+      score += isVectorNode(this) * 2;
+      score += this.usedIn.length;
+      return score > 3;
+    }
     
     getTemp(context) {
       if (!this.temporaryVariable) {
@@ -206,35 +220,24 @@ function shadergen(p5, fn) {
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal);
-      const componentVariants = { 
-        pos: ['x', 'y', 'z', 'w'],
-        col: ['r', 'g', 'b', 'a'],
-        uv: ['s', 't', 'p', 'q']
-      }
-      for (let variant in componentVariants) {
-        for (let i = 0; i < values.length; i++) {
-          let componentCollection = componentVariants[variant];
-          let component = componentCollection[i];
-          // this[component] = new ComponentNode(this, component, true);
-          this[component] = new FloatNode(values[i], true);
-        }
-      }
+
+      this.components = ['x', 'y', 'z', 'w'].slice(0, values.length);
+      this.components.forEach((component, i) => {
+        this[component] = new FloatNode(values[i], true);
+        // this[component] = new ComponentNode(this, component, true);
+      });
 
       this.type = type;
-      this.size = values.length; 
     }
     
     toGLSL(context) {
-      console.log(this)
       let glslArgs = ``;
-      const components = ['x', 'y', 'z', 'w'].slice(0, this.size);
-      
-      for (let i = 0; i < this.size; i++) {
-        const comma = i === this.size - 1 ? `` : `, `;
-        const component = components[i];
+
+      this.components.forEach((component, i) => {
+        const comma = i === this.components.length - 1 ? `` : `, `;
         glslArgs += `${this[component].toGLSLBase(context)}${comma}`;
-      }
-      
+      })
+
       return `${this.type}(${glslArgs})`;
     }
   }
