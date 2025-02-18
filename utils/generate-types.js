@@ -563,7 +563,8 @@ function generateCoreTypeDefinitions(organizedData) {
   // Generate p5.d.ts
   let p5Output = '// This file is auto-generated from JSDoc documentation\n\n';
   
-  // Add reference paths to other .d.ts files
+  // Add reference to .d.ts files
+  p5Output += '/// <reference types="./global.d.ts" />\n';
   const typeFiles = findTypeDefinitionFiles(process.cwd(), p5DtsPath);
   typeFiles.forEach(file => {
     p5Output += `/// <reference types="${file}" />\n`;

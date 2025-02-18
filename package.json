@@ -86,7 +86,8 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/p5.esm.js",
-    "translations/**"
+    "translations/**",
+    "types/**"
   ],
   "description": "[![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {
@@ -105,5 +106,6 @@
     "workerDirectory": [
       "test"
     ]
-  }
+  },
+  "types": "./types/p5.d.ts"
 }
