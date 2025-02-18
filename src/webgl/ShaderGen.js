@@ -359,8 +359,7 @@ function shadergen(p5, fn) {
       }
     }
 
-    // TODO: change order of parameters
-    processOperand(context, operand) {
+    processOperand(operand, context) {
       if (operand.temporaryVariable) { return operand.temporaryVariable; }
       let code = operand.toGLSLBase(context);      
       if (isBinaryOperatorNode(operand) && !operand.temporaryVariable) {
