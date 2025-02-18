@@ -143,6 +143,7 @@ function shadergen(p5, fn) {
       this.x = x;
       this.type = 'int';
     }
+
     toGLSL(context) {
       if (isShaderNode(this.x)) {
         let code = this.x.toGLSLBase(context);
@@ -163,6 +164,7 @@ function shadergen(p5, fn) {
       this.x = x;
       this.type = 'float';
     }
+
     toGLSL(context) {
       if (isShaderNode(this.x)) {
         let code = this.x.toGLSLBase(context);
@@ -177,6 +179,7 @@ function shadergen(p5, fn) {
     }
   }
   
+  // TODO:
   // There is a possibility that since we *always* use a temporary variable for vectors
   // that we don't actually need a Float Node for every component. They could be component node's instead? 
   // May need to then store the temporary variable name in this class.
@@ -289,11 +292,13 @@ function shadergen(p5, fn) {
         })()
       );
     }
+
     addComponents(componentNames) {
       for (let componentName of componentNames) {
         this[componentName] = new ComponentNode(this, componentName, true);
       }
     }
+
     toGLSL(context) {
       return `${this.name}`;
     }
@@ -502,7 +507,6 @@ function shadergen(p5, fn) {
 
   fn.createVector3 = function(x, y, z) {
     return new Proxy(new VectorNode([x, y, z], 'vec3'), VectorNodeHandler);
-
     return new VectorNode([x, y, z], 'vec3');
   }
 
