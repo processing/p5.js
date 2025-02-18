@@ -424,6 +424,12 @@ function shadergen(p5, fn) {
   class ShaderProgram {
     constructor(modifyFunction) {
       this.uniforms = {
+        int: {},
+        float: {},
+        vec2: {},
+        vec3: {},
+        vec4: {},
+        texture: {},
       }
       this.functions = {
       }
@@ -448,18 +454,33 @@ function shadergen(p5, fn) {
       }
     }
     // TODO:
-    uniformInt() {
-      return
+    uniformInt(name, defaultValue) {
+      this.uniforms.int[name] = defaultValue;
+      return new VariableNode(name, 'int');
     }
-    uniformFloat() {
-      return
+    uniformFloat(name, defaultValue) {
+      this.uniforms.float[name] = defaultValue;
+      return new VariableNode(name, 'float');
     }
-    uniformVector2() {
-      return
+    uniformVector2(name, defaultValue) {
+      this.uniforms.vec2[name] = defaultValue;
+      return new VariableNode(name, 'vec2');
     }
-    uniform(name, value) {
-      this.uniforms[name] = value;
-      return new VariableNode(name, value.type);
+    uniformVector2(name, defaultValue) {
+      this.uniforms.vec3[name] = defaultValue;
+      return new VariableNode(name, 'vec3');
+    }
+    uniformVector2(name, defaultValue) {
+      this.uniforms.vec4[name] = defaultValue;
+      return new VariableNode(name, 'vec4');
+    }
+    uniformTexture(name, defaultValue) {
+      this.uniforms.texture[name] = defaultValue;
+      return new VariableNode(name, 'vec4');
+    }
+    uniform(name, defaultValue) {
+      this.uniforms[name] = defaultValue;
+      return new VariableNode(name, defaultValue.type);
     }
     
     buildFunction(argumentName, argumentType, callback) {
