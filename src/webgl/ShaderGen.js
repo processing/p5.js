@@ -199,21 +199,20 @@ function shadergen(p5, fn) {
       ['s', 't', 'p', 'q'],
     ],
     get(target, prop, receiver) {
-      // if (!this.isInternal) {
-        // console.log("TARGET: ", target);
-        // console.log("PROP: ", prop);
-        // console.log("RECEIVER: ", receiver);
-      // }
-      return Reflect.get(...arguments);
+      if (prop in target) {
+         return Reflect.get(target, prop, receiver); 
+      } else {
+        console.log(prop);
+      }
+      let modifiedProp;
+      return Reflect.get(target, modifiedProp, receiver);
     },
     set(obj, prop, receiver) {
-      // if (!this.isInternal) {
-      //   console.log("OBJ: ", obj);
-      //   console.log("PROP: ", prop);
-      //   console.log("RECEIVER: ", receiver);
-      // }
-      obj[prop] = receiver;
-      return true;
+      console.log("OBJect:",obj,"PROPERTY", prop, "RECEIVER", receiver);
+
+      if (prop in obj) { return Reflect.set(...arguments); }
+      let modifiedProp;
+      return Reflect.set(obj, modifiedProp, receiver);
     }
   }
 
