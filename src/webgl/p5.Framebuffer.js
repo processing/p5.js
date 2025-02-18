@@ -256,12 +256,10 @@ class Framebuffer {
    * let myBuffer;
    * let myFont;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   myFont = loadFont('assets/inconsolata.otf');
-   * }
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   myFont = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);

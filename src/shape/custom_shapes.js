@@ -1755,12 +1755,10 @@ function customShapes(p5, fn) {
    * <code>
    * let img;
    *
-   * // Load an image to apply as a texture.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image to apply as a texture.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A photograph of a ceiling rotates slowly against a gray background.');

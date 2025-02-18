@@ -346,12 +346,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -374,12 +372,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -404,12 +400,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -595,12 +589,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Create a p5.Image object.
@@ -707,12 +699,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -733,12 +723,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -759,12 +747,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -894,12 +880,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Copy one region of the image to another.
@@ -923,13 +907,10 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks.jpg');
    *   createCanvas(100, 100);
    *
    *   // Calculate the center of the bricks image.
@@ -977,13 +958,10 @@ class Image {
    * let photo;
    * let maskImage;
    *
-   * // Load the images.
-   * function preload() {
-   *   photo = loadImage('assets/rockies.jpg');
-   *   maskImage = loadImage('assets/mask2.png');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   photo = await loadImage('assets/rockies.jpg');
+   *   maskImage = await loadImage('assets/mask2.png');
    *   createCanvas(100, 100);
    *
    *   // Apply the mask.
@@ -1095,12 +1073,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the INVERT filter.
@@ -1118,12 +1094,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the GRAY filter.
@@ -1141,12 +1115,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the THRESHOLD filter.
@@ -1164,12 +1136,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the OPAQUE filter.
@@ -1187,12 +1157,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the POSTERIZE filter.
@@ -1210,12 +1178,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the BLUR filter.
@@ -1233,12 +1199,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the DILATE filter.
@@ -1256,12 +1220,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the ERODE filter.
@@ -1326,13 +1288,10 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1354,13 +1313,11 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1382,13 +1339,11 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1477,12 +1432,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -1527,12 +1480,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-wink-loop-once.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon face winks once and then freezes. Clicking resets the face and makes it wink again.');
@@ -1575,12 +1526,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon eye repeatedly looks around, then outwards. A number displayed in the bottom-left corner increases from 0 to 124, then repeats.');
@@ -1617,12 +1566,10 @@ class Image {
    * let gif;
    * let frameSlider;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Get the index of the last frame.
@@ -1675,12 +1622,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon eye looks around. The text "n / 125" is shown at the bottom of the canvas.');
@@ -1713,12 +1658,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/nancy-liang-wind-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
@@ -1758,12 +1701,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/nancy-liang-wind-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
@@ -1812,13 +1753,11 @@ class Image {
    * let gifFast;
    * let gifSlow;
    *
-   * // Load the images.
-   * function preload() {
-   *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   gifFast = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+   *   gifSlow = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1846,12 +1785,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Set the delay of frame 67.
@@ -1899,12 +1836,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -1919,12 +1854,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the GRAY filter.
@@ -1989,12 +1922,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -2027,12 +1958,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.

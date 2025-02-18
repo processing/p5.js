@@ -538,12 +538,10 @@ function environment(p5, fn){
    * <code>
    * let font;
    *
-   * function preload() {
+   * async function setup() {
    *   // Load a font to use.
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
+   *   font = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   // Create a canvas using WEBGL mode.
    *   createCanvas(100, 50, WEBGL);
    *   background(200);
@@ -562,12 +560,10 @@ function environment(p5, fn){
    * <code>
    * let font;
    *
-   * function preload() {
+   * async function setup() {
    *   // Load a font to use.
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
+   *   font = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   // Create a canvas using WEBGL mode.
    *   createCanvas(100, 50, WEBGL);
    *

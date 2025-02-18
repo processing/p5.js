@@ -1103,11 +1103,9 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    *
@@ -1170,11 +1168,9 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    *
@@ -1441,11 +1437,9 @@ function material(p5, fn){
    * let myShader;
    * let environment;
    *
-   * function preload() {
-   *   environment = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify({
    *     'Inputs getPixelInputs': `(Inputs inputs) {
@@ -2190,12 +2184,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A spinning cube with an image of a ceiling on each face.');
@@ -2256,12 +2248,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2292,12 +2282,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2450,12 +2438,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2483,12 +2469,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2632,11 +2616,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2676,11 +2658,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('Four identical images of a landscape arranged in a grid.');
@@ -2717,11 +2697,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2760,11 +2738,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -3575,11 +3551,9 @@ function material(p5, fn){
    *
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100 ,100 ,WEBGL);
    *
    *   describe(

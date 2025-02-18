@@ -499,11 +499,9 @@ for (const k in constants) {
  * <code>
  * let img;
  *
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
+ * async function setup() {
+ *   img = await loadImage('assets/bricks.jpg');
  *
- * function setup() {
  *   createCanvas(100, 100);
  *
  *   // Draw the image.
