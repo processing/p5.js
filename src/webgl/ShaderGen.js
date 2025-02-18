@@ -6,7 +6,6 @@
 */
 
 import { parse } from 'acorn';
-import { simple as walk } from 'acorn-walk';
 import estraverse from 'estraverse';
 
 function shadergen(p5, fn) {
