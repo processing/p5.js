@@ -1384,27 +1384,9 @@ function environment(p5, fn){
    *
    */
   fn.worldToScreen = function(worldPosition) {
-    const renderer = this._renderer;
-    if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
-      // Handle 2D context
-      const transformMatrix = new DOMMatrix()
-        .scale(1 / renderer._pInst.pixelDensity())
-        .multiply(renderer.drawingContext.getTransform());
-      const screenCoordinates = transformMatrix.transformPoint(
-        new DOMPoint(worldPosition.x, worldPosition.y)
-      );
-      return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
-    } else {
-          // Handle WebGL context (3D)
-          const modelViewMatrix = renderer.calculateCombinedMatrix();
-          const cameraCoordinates = modelViewMatrix.multiplyPoint(worldPosition);
-          const normalizedDeviceCoordinates =
-            renderer.states.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
-          const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
-          const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
-          const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
-          return new Vector(screenX, screenY, screenZ);
-    }
+    const matrix = this._renderer.getWorldToScreenMatrix();
+    const screenPosition = matrix.multiplyAndNormalizePoint(worldPosition);
+    return screenPosition;
   };
   /**
    * Converts 2D screen coordinates to 3D world coordinates.
@@ -1477,30 +1459,11 @@ function environment(p5, fn){
    *
    */
   fn.screenToWorld = function(screenPosition) {
-    const renderer = this._renderer;
-    if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
-      // Handle 2D context
-      const inverseTransformMatrix = new DOMMatrix()
-        .multiply(renderer.drawingContext.getTransform().inverse())
-        .scale(renderer._pInst.pixelDensity());
-      const screenCoordinates = inverseTransformMatrix.transformPoint(
-        new DOMPoint(screenPosition.x, screenPosition.y)
-      );
-      return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
-    } else {
-      const normalizedDeviceCoordinates = new p5.Vector(
-        screenPosition.x / this.width * 2 - 1,
-        screenPosition.y / this.height * -2 + 1,
-        screenPosition.z * 2 - 1,
-      );
-      let uPMatrixInverse = renderer.states.uPMatrix.copy()
-      uPMatrixInverse = uPMatrixInverse.invert(uPMatrixInverse);
-      let modelViewMatrixInverse = renderer.calculateCombinedMatrix();
-      modelViewMatrixInverse = modelViewMatrixInverse.invert(modelViewMatrixInverse);
-      const cameraCoordinates = uPMatrixInverse.multiplyAndNormalizePoint(normalizedDeviceCoordinates);
-      const worldPosition = modelViewMatrixInverse.multiplyPoint(cameraCoordinates);
-      return worldPosition;
-    }
+    let matrixInverse = this._renderer.getWorldToScreenMatrix();
+    matrixInverse = matrixInverse.invert(matrixInverse);
+
+    const worldPosition = matrixInverse.multiplyAndNormalizePoint(screenPosition);
+    return worldPosition;
   };
 }
 
