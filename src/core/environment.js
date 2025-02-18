@@ -1272,7 +1272,9 @@ function environment(p5, fn){
    * of 3D objects.
    *
    * @method worldToScreen
-   * @param {p5.Vector} worldPosition The 3D coordinates in the world space.
+   * @param {Number|p5.Vector} x The x coordinate in world space. (Or a vector for all three coordinates.)
+   * @param {Number} y The y coordinate in world space.
+   * @param {Number} [z] The z coordinate in world space.
    * @return {p5.Vector} A vector containing the 2D screen coordinates.
    * @example
    * <div>
@@ -1384,6 +1386,11 @@ function environment(p5, fn){
    *
    */
   fn.worldToScreen = function(worldPosition) {
+    if (typeof worldPosition === "number") {
+      // We got passed numbers, convert to vector
+      worldPosition = this.createVector(...arguments);
+    }
+
     const matrix = this._renderer.getWorldToScreenMatrix();
     const screenPosition = matrix.multiplyAndNormalizePoint(worldPosition);
     return screenPosition;
@@ -1391,15 +1398,17 @@ function environment(p5, fn){
   /**
    * Converts 2D screen coordinates to 3D world coordinates.
    *
-   * This function takes a vector and converts its coordinates
-   * from the world space to screen space. This can be useful for determining
-   * the mouse position relative to a 2D or 3D object.
+   * This function takes a vector and converts its coordinates from coordinates
+   * on the screen to coordinates in the currently drawn object. This can be
+   * useful for determining the mouse position relative to a 2D or 3D object.
    *
-   * The Z component of the screen coordinates is treated as "depth", or
-   * distance from the camera, when converting to 3D world space.
+   * If given, the Z component of the input coordinates is treated as "depth",
+   * or distance from the camera.
    *
    * @method screenToWorld
-   * @param {p5.Vector} screenPosition The coordinates in screen space.
+   * @param {Number|p5.Vector} x The x coordinate in screen space. (Or a vector for all three coordinates.)
+   * @param {Number} y The y coordinate in screen space.
+   * @param {Number} [z] The z coordinate in screen space.
    * @return {p5.Vector} A vector containing the 3D world space coordinates.
    * @example
    * <div>
@@ -1427,40 +1436,24 @@ function environment(p5, fn){
    *
    * </code>
    * </div>
-   * @example
-   * <div>
-   * <code>
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *   describe('A rotating square with a line passing through the mouse drawn across it.');
-   * }
-   *
-   * function draw() {
-   *   background(220);
-   *
-   *   // Animate rotation
-   *   rotateZ(millis() / 1000);
-   *   rect(-30, -30, 60);
-   *
-   *   // Transform the 0, 0 point to get the depth of the square
-   *   let center = worldToScreen(createVector(0, 0))
-   *
-   *   // Compute the location of the mouse in the coordinates of the square,
-   *   // using the depth calculated earlier
-   *   let localMouse = screenToWorld(createVector(mouseX, mouseY, center.z));
-   *
-   *   // Draw a line parallel to the local Y axis, passing through the mouse
-   *   line(localMouse.x, -30, localMouse.x, 30);
-   * }
-   *
-   * </code>
-   * </div>
    *
    */
   fn.screenToWorld = function(screenPosition) {
-    let matrixInverse = this._renderer.getWorldToScreenMatrix();
-    matrixInverse = matrixInverse.invert(matrixInverse);
+    if (typeof screenPosition === "number") {
+      // We got passed numbers, convert to vector
+      screenPosition = this.createVector(...arguments);
+    }
+
+    const matrix = this._renderer.getWorldToScreenMatrix();
+
+    if (screenPosition.dimensions == 2) {
+      // Calculate a sensible Z value for the current camera projection that
+      // will result in 0 once converted to world coordinates
+      let z = matrix.mat4[14] / matrix.mat4[15];
+      screenPosition = this.createVector(screenPosition.x, screenPosition.y, z);
+    }
+
+    const matrixInverse = matrix.invert(matrix);
 
     const worldPosition = matrixInverse.multiplyAndNormalizePoint(screenPosition);
     return worldPosition;
