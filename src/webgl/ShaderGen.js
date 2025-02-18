@@ -5,17 +5,28 @@
 * @requires core
 */
 
+import { parse } from 'acorn';
+import { simple as walk } from 'acorn-walk';
+import estraverse from 'estraverse';
+
 function shadergen(p5, fn) {
   let GLOBAL_SHADER;
   
   const oldModify = p5.Shader.prototype.modify
 
   p5.Shader.prototype.modify = function(arg) {
+
     if (arg instanceof Function) {
-      const program = new ShaderProgram(arg)
-      const newArg = program.generate();
-      console.log(newArg.vertex)
-      return oldModify.call(this, newArg);
+      const fnSource = arg.toString()
+      const ast = parse(fnSource, { ecmaVersion: 2021, locations: true });
+      const result = estraverse.traverse(ast, {
+        enter: (node) => console.log(node),
+      })
+
+      // const program = new ShaderProgram(arg)
+      // const newArg = program.generate();
+      // console.log(newArg.vertex)
+      // return oldModify.call(this, newArg);
     } 
     else {
       return oldModify.call(this, arg)
