@@ -51,6 +51,7 @@ class p5 {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this.hitCriticalError = false;
     this._setupDone = false;
     this._userNode = node;
     this._curElement = null;
@@ -124,6 +125,9 @@ class p5 {
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
+      if (window.hitCriticalError) {
+        return;
+      }
       p5.instance = this;
 
       // Loop through methods on the prototype and attach them to the window
@@ -199,6 +203,7 @@ class p5 {
   }
 
   async #_start() {
+    if (this.hitCriticalError) return;
     // Find node if id given
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
@@ -207,6 +212,7 @@ class p5 {
     }
 
     await this.#_setup();
+    if (this.hitCriticalError) return;
     if (!this._recording) {
       this._draw();
     }
@@ -215,6 +221,7 @@ class p5 {
   async #_setup() {
     // Run `presetup` hooks
     await this._runLifecycleHook('presetup');
+    if (this.hitCriticalError) return;
 
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
@@ -232,6 +239,7 @@ class p5 {
     if (typeof context.setup === 'function') {
       await context.setup();
     }
+    if (this.hitCriticalError) return;
 
     // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
@@ -268,6 +276,7 @@ class p5 {
   // current frame finish awaiting. The same goes for lifecycle hooks 'predraw'
   // and 'postdraw'.
   async _draw(requestAnimationFrameTimestamp) {
+    if (this.hitCriticalError) return;
     const now = requestAnimationFrameTimestamp || window.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;

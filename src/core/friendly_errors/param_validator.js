@@ -354,6 +354,7 @@ function validateParams(p5, fn, lifecycles) {
    */
   fn.friendlyParamError = function (zodErrorObj, func, args) {
     let message = '🌸 p5.js says: ';
+    let isVersionError = false;
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
     // always print the first error so that user can work through the errors
@@ -401,6 +402,7 @@ function validateParams(p5, fn, lifecycles) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
           message += 'Did you mean to put `await` before a loading function? ' +
             'An unexpected Promise was found. ';
+          isVersionError = true;
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
@@ -455,7 +457,11 @@ function validateParams(p5, fn, lifecycles) {
       message += ` For more information, see ${documentationLink}.`;
     }
 
-    console.log(message);
+    if (isVersionError) {
+      p5._error(this, message);
+    } else {
+      console.log(message);
+    }
     return message;
   }
 
