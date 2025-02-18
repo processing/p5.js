@@ -8,18 +8,69 @@
 
 import { Color } from './p5.Color';
 
+/**
+ * @typedef {'rgb'} RGB
+ * @property {RGB} RGB
+ * @final
+ */
 export const RGB = 'rgb';
+/**
+ * @typedef {'rgbhdr'} RGBHDR
+ * @property {RGBHDR} RGBHDR
+ * @final
+ */
 export const RGBHDR = 'rgbhdr';
+/**
+ * HSB (hue, saturation, brightness) is a type of color model.
+ * You can learn more about it at
+ * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
+ *
+ * @typedef {'hsb'} HSB
+ * @property {HSB} HSB
+ * @final
+ */
 export const HSB = 'hsb';
+/**
+ * @typedef {'hsl'} HSL
+ * @property {HSL} HSL
+ * @final
+ */
 export const HSL = 'hsl';
+/**
+ * @typedef {'hwb'} HWB
+ * @property {HWB} HWB
+ * @final
+ */
 export const HWB = 'hwb';
-
+/**
+ * @typedef {'lab'} LAB
+ * @property {LAB} LAB
+ * @final
+ */
 export const LAB = 'lab';
+/**
+ * @typedef {'lch'} LCH
+ * @property {LCH} LCH
+ * @final
+ */
 export const LCH = 'lch';
-
+/**
+ * @typedef {'oklab'} OKLAB
+ * @property {OKLAB} OKLAB
+ * @final
+ */
 export const OKLAB = 'oklab';
+/**
+ * @typedef {'oklch'} OKLCH
+ * @property {OKLCH} OKLCH
+ * @final
+ */
 export const OKLCH = 'oklch';
-
+/**
+ * @typedef {'rgba'} RGBA
+ * @property {RGBA} RGBA
+ * @final
+ */
 export const RGBA = 'rgba';
 
 function creatingReading(p5, fn){
