@@ -286,19 +286,6 @@ function shadergen(p5, fn) {
           }
         })()
       );
-      // switch (type) {
-      //   case 'float':
-      //   break;
-      //   case 'vec2':
-      //   this.addComponents(['x', 'y'])
-      //   break;
-      //   case 'vec3':
-      //   this.addComponents(['x', 'y', 'z'])
-      //   break;
-      //   case 'vec4':
-      //   this.addComponents(['x', 'y', 'z', 'w']);  
-      //   break;
-      // }
     }
     addComponents(componentNames) {
       for (let componentName of componentNames) {
