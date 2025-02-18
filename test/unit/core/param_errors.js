@@ -22,6 +22,7 @@ suite('Validate Params', function () {
     FramebufferTexture: function() {
       return 'mock p5.FramebufferTexture';
     },
+    _error: () => {},
   };
   const mockP5Prototype = {};
 
