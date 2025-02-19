@@ -138,6 +138,20 @@ class RendererGL extends Renderer {
     this.elt.id = "defaultCanvas0";
     this.elt.classList.add("p5Canvas");
 
+    // Set and return p5.Element
+    this.wrappedElt = new Element(this.elt, this._pInst);
+
+    // Extend renderer with methods of p5.Element with getters
+    for (const p of Object.getOwnPropertyNames(Element.prototype)) {
+      if (p !== 'constructor' && p[0] !== '_') {
+        Object.defineProperty(this, p, {
+          get() {
+            return this.wrappedElt[p];
+          }
+        })
+      }
+    }
+
     const dimensions = this._adjustDimensions(w, h);
     w = dimensions.adjustedWidth;
     h = dimensions.adjustedHeight;
