@@ -6682,6 +6682,16 @@
         "question",
         "research"
       ]
+    },
+    {
+      "login": "bojidar-bg",
+      "name": "Bojidar Marinov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5276727?v=4",
+      "profile": "https://bojidar-bg.dev/",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
