@@ -25,7 +25,7 @@ if (typeof Float32Array !== "undefined") {
  * @extends MatrixInterface
  *
  * @example
- * // Creating a 3x3 matrix from an array
+ * // Creating a 3x3 matrix from an array using column major arrangement
  * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
  *
  * // Creating a 4x4 identity matrix
@@ -283,9 +283,6 @@ export class Matrix extends MatrixInterface {
     return new Vector(...rowVector);
   }
 
-
-
-
   /**
    * Transposes the given matrix `a` based on the square dimension of the matrix.
    *
@@ -309,7 +306,6 @@ export class Matrix extends MatrixInterface {
       return this.#transposeNxN(a);
     }
   }
-
 
   /**
    * Multiplies the current matrix with another matrix or matrix-like array.
