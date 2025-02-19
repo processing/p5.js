@@ -7,6 +7,7 @@ import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
+import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 
@@ -997,6 +998,13 @@ class Renderer2D extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     this.drawingContext.transform(a, b, c, d, e, f);
+  }
+
+  getWorldToScreenMatrix() {
+    let domMatrix = new DOMMatrix()
+      .scale(1 / this._pixelDensity)
+      .multiply(this.drawingContext.getTransform());
+    return new Matrix(domMatrix.toFloat32Array());
   }
 
   resetMatrix() {

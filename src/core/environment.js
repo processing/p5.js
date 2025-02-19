@@ -1268,7 +1268,9 @@ function environment(p5, fn){
    * of 3D objects.
    *
    * @method worldToScreen
-   * @param {p5.Vector} worldPosition The 3D coordinates in the world space.
+   * @param {Number|p5.Vector} x The x coordinate in world space. (Or a vector for all three coordinates.)
+   * @param {Number} y The y coordinate in world space.
+   * @param {Number} [z] The z coordinate in world space.
    * @return {p5.Vector} A vector containing the 2D screen coordinates.
    * @example
    * <div>
@@ -1380,27 +1382,77 @@ function environment(p5, fn){
    *
    */
   fn.worldToScreen = function(worldPosition) {
-    const renderer = this._renderer;
-    if (renderer.drawingContext instanceof CanvasRenderingContext2D) {
-      // Handle 2D context
-      const transformMatrix = new DOMMatrix()
-        .scale(1 / renderer._pInst.pixelDensity())
-        .multiply(renderer.drawingContext.getTransform());
-      const screenCoordinates = transformMatrix.transformPoint(
-        new DOMPoint(worldPosition.x, worldPosition.y)
-      );
-      return new p5.Vector(screenCoordinates.x, screenCoordinates.y);
-    } else {
-          // Handle WebGL context (3D)
-          const modelViewMatrix = renderer.calculateCombinedMatrix();
-          const cameraCoordinates = modelViewMatrix.multiplyPoint(worldPosition);
-          const normalizedDeviceCoordinates =
-            renderer.states.uPMatrix.multiplyAndNormalizePoint(cameraCoordinates);
-          const screenX = (0.5 + 0.5 * normalizedDeviceCoordinates.x) * this.width;
-          const screenY = (0.5 - 0.5 * normalizedDeviceCoordinates.y) * this.height;
-          const screenZ = 0.5 + 0.5 * normalizedDeviceCoordinates.z;
-          return new Vector(screenX, screenY, screenZ);
+    if (typeof worldPosition === "number") {
+      // We got passed numbers, convert to vector
+      worldPosition = this.createVector(...arguments);
     }
+
+    const matrix = this._renderer.getWorldToScreenMatrix();
+    const screenPosition = matrix.multiplyAndNormalizePoint(worldPosition);
+    return screenPosition;
+  };
+  /**
+   * Converts 2D screen coordinates to 3D world coordinates.
+   *
+   * This function takes a vector and converts its coordinates from coordinates
+   * on the screen to coordinates in the currently drawn object. This can be
+   * useful for determining the mouse position relative to a 2D or 3D object.
+   *
+   * If given, the Z component of the input coordinates is treated as "depth",
+   * or distance from the camera.
+   *
+   * @method screenToWorld
+   * @param {Number|p5.Vector} x The x coordinate in screen space. (Or a vector for all three coordinates.)
+   * @param {Number} y The y coordinate in screen space.
+   * @param {Number} [z] The z coordinate in screen space.
+   * @return {p5.Vector} A vector containing the 3D world space coordinates.
+   * @example
+   * <div>
+   * <code>
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   describe('A rotating square with a line passing through the mouse drawn across it.');
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *
+   *   // Move to center and rotate
+   *   translate(width/2, height/2);
+   *   rotate(millis() / 1000);
+   *   rect(-30, -30, 60);
+   *
+   *   // Compute the location of the mouse in the coordinates of the square
+   *   let localMouse = screenToWorld(createVector(mouseX, mouseY));
+   *
+   *   // Draw a line parallel to the local Y axis, passing through the mouse
+   *   line(localMouse.x, -30, localMouse.x, 30);
+   * }
+   *
+   * </code>
+   * </div>
+   *
+   */
+  fn.screenToWorld = function(screenPosition) {
+    if (typeof screenPosition === "number") {
+      // We got passed numbers, convert to vector
+      screenPosition = this.createVector(...arguments);
+    }
+
+    const matrix = this._renderer.getWorldToScreenMatrix();
+
+    if (screenPosition.dimensions == 2) {
+      // Calculate a sensible Z value for the current camera projection that
+      // will result in 0 once converted to world coordinates
+      let z = matrix.mat4[14] / matrix.mat4[15];
+      screenPosition = this.createVector(screenPosition.x, screenPosition.y, z);
+    }
+
+    const matrixInverse = matrix.invert(matrix);
+
+    const worldPosition = matrixInverse.multiplyAndNormalizePoint(screenPosition);
+    return worldPosition;
   };
 }
 

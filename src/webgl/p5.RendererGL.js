@@ -1024,12 +1024,23 @@ class RendererGL extends Renderer {
     this.clear(..._col._getRGBA());
   }
 
-  // Combines the model and view matrices to get the uMVMatrix
-  // This method will be reusable wherever you need to update the combined matrix.
-  calculateCombinedMatrix() {
+
+  /**
+   * Get a matrix from world-space to screen-space
+   */
+  getWorldToScreenMatrix() {
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
-    return modelMatrix.copy().mult(viewMatrix);
+    const projectionMatrix = this.states.uPMatrix;
+    const projectedToScreenMatrix = new Matrix(4);
+    projectedToScreenMatrix.scale(this.width, this.height, 1);
+    projectedToScreenMatrix.translate([0.5, 0.5, 0.5]);
+    projectedToScreenMatrix.scale(0.5, -0.5, 0.5);
+
+    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
+    const modelViewProjectionMatrix = modelViewMatrix.mult(projectionMatrix);
+    const worldToScreenMatrix = modelViewProjectionMatrix.mult(projectedToScreenMatrix);
+    return worldToScreenMatrix;
   }
 
   //////////////////////////////////////////////
@@ -2204,7 +2215,7 @@ class RendererGL extends Renderer {
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
     const projectionMatrix = this.states.uPMatrix;
-    const modelViewMatrix = this.calculateCombinedMatrix();
+    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
 
     shader.setUniform(
       "uPerspective",
