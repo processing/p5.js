@@ -135,7 +135,7 @@ function font(p5, fn) {
             for (const { x, y } of contour) {
               this._pInst.vertex(x, y);
             }
-            this._pInst.endContour(this._pInst.CLOSE);
+            this._pInst.endContour();
           }
           this._pInst.endShape();
         } else {
@@ -147,7 +147,7 @@ function font(p5, fn) {
               for (const { x, y } of contour) {
                 this._pInst.vertex(x, y, side * extrude * 0.5);
               }
-              this._pInst.endContour(this._pInst.CLOSE);
+              this._pInst.endContour();
             }
             this._pInst.endShape();
             this._pInst.beginShape();
