@@ -930,7 +930,7 @@ class RendererGL extends Renderer {
     const w = this.width;
     const h = this.height;
     const defaultId = this.canvas.id;
-    const isPGraphics = this._pInst instanceof p5.Graphics;
+    const isPGraphics = this._pInst instanceof Graphics;
 
     // Preserve existing position and styles before recreation
     const prevStyle = {
