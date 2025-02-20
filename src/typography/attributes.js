@@ -154,7 +154,7 @@ p5.prototype.textLeading = function(theLeading) {
  *
  * Note: Font size is measured in pixels.
  *
- * Calling `textSize()` without an arugment returns the current size.
+ * Calling `textSize()` without an argument returns the current size.
  *
  * @method textSize
  * @param {Number} size size of the letters in units of pixels.
