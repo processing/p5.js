@@ -6,7 +6,8 @@
 */
 
 import { parse } from 'acorn';
-import estraverse from 'estraverse';
+import * as walk from 'acorn-walk';
+import escodegen from 'escodegen';
 
 function shadergen(p5, fn) {
   let GLOBAL_SHADER;
@@ -16,12 +17,14 @@ function shadergen(p5, fn) {
   p5.Shader.prototype.modify = function(arg) {
 
     if (arg instanceof Function) {
-      const fnSource = arg.toString()
-      const ast = parse(fnSource, { ecmaVersion: 2021, locations: true });
-      const result = estraverse.traverse(ast, {
-        enter: (node) => console.log(node),
-      })
+      const code = arg.toString()
+      const ast = parse(code, { ecmaVersion: 2021, locations: true });
+      
+      walk.ancestor(ast, ASTCallbacks, null, {myData: 123});
 
+      const transformed = escodegen.generate(ast);
+      console.log(transformed)
+     
       // const program = new ShaderProgram(arg)
       // const newArg = program.generate();
       // console.log(newArg.vertex)
@@ -31,6 +34,79 @@ function shadergen(p5, fn) {
       return oldModify.call(this, arg)
     }
   }
+
+  // Transpiler 
+
+  function replaceBinaryOperator(codeSource) {
+    switch (codeSource) {
+      case '+': return 'add';
+      case '-': return 'sub';
+      case '*': return 'mult';
+      case '/': return 'div';
+      case '%': return 'mod';
+    }
+  }
+
+  const ASTCallbacks = {
+    Literal(node, state, ancestors) {
+    },
+    AssignmentExpression(node, _state, ancestors) {
+      if (node.operator != '=') {
+        const rightReplacementNode = {
+          type: 'CallExpression',
+          callee: {
+            type: "MemberExpression",
+            object: {
+              type: "Identifier",
+              name: node.left.name
+            },
+            property: {
+              type: "Identifier",
+              name: replaceBinaryOperator(node.operator.replace('=','')),
+            },
+          },
+          arguments: [node.right]
+        }
+
+          node.operator = '=';
+          node.right = rightReplacementNode;
+        }
+      },
+    BinaryExpression(node, state, ancestors) {
+      // let i = ancestors.length - 1;
+      // let ancestor = ancestors[i]; // ancestor === node
+      // while (ancestor.type === 'BinaryExpression') {
+      //   ancestor = ancestors[i--];
+      // }
+
+      console.log("\n NEW NODE:")
+
+      const transformed = escodegen.generate(node);
+      const l = escodegen.generate(node.left);
+      const r = escodegen.generate(node.right);
+      console.log("Transformed: ", transformed);
+      console.log("Left: ", l);
+      console.log("Right: ", r);
+
+      console.log(node.left);
+
+      node.type = 'CallExpression';
+      console.log("OPERATOR: ", node.operator)
+      node.callee = {
+        type: "MemberExpression",
+        object: node.left,
+        property: {
+          type: "Identifier",
+          name: replaceBinaryOperator(node.operator),
+        },
+      };
+      node.arguments = [node.right];
+
+    },
+  }
+
+
+  // JS API
 
   class BaseNode {
     constructor(isInternal) {
