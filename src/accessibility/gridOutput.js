@@ -117,7 +117,7 @@ function _gridShapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapes = '';
   let totalShapes = 0;
-  //goes trhough every shape type in ingredients
+  //goes through every shape type in ingredients
   for (let x in ingredients) {
     let shapeNum = 0;
     for (let y in ingredients[x]) {
