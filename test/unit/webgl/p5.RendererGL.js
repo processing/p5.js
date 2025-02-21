@@ -23,6 +23,24 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('noSmooth() canvas position preservation', function() {
+    test('should maintain the canvas position after calling noSmooth()', function() {
+      myp5.createCanvas(300, 300, myp5.WEBGL);
+      let cnv = myp5.canvas;
+      cnv.style.position = 'absolute';
+      cnv.style.top = '150px';
+      cnv.style.left = '50px';
+      const originalTop = cnv.style.top;
+      const originalLeft = cnv.style.left;
+
+      // Calling noSmooth()
+      myp5.noSmooth();
+      assert.equal(cnv.style.top, originalTop);
+      assert.equal(cnv.style.left, originalLeft);
+    });
+  });
+
+
   suite('webglVersion', function() {
     test('should return WEBGL2 by default', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
