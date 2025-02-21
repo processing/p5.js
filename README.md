@@ -1110,6 +1110,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://www.youtube.com/c/HigherMathNotes"><img src="https://avatars.githubusercontent.com/u/51820777?v=4?s=120" width="120px;" alt="Greg Stanton"/><br /><sub><b>Greg Stanton</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AGregStanton" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=GregStanton" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=GregStanton" title="Documentation">📖</a> <a href="#example-GregStanton" title="Examples">💡</a> <a href="#ideas-GregStanton" title="Ideas, Planning, & Feedback">🤔</a> <a href="#plugin-GregStanton" title="Plugin/utility libraries">🔌</a> <a href="#projectManagement-GregStanton" title="Project Management">📆</a> <a href="#promotion-GregStanton" title="Promotion">📣</a> <a href="#question-GregStanton" title="Answering Questions">💬</a> <a href="#research-GregStanton" title="Research">🔬</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://bojidar-bg.dev/"><img src="https://avatars.githubusercontent.com/u/5276727?v=4?s=120" width="120px;" alt="Bojidar Marinov"/><br /><sub><b>Bojidar Marinov</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bojidar-bg" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=bojidar-bg" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ChloeYanYan"><img src="https://avatars.githubusercontent.com/u/181019103?v=4?s=120" width="120px;" alt="Chloe Yan"/><br /><sub><b>Chloe Yan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ChloeYanYan" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
