@@ -940,21 +940,25 @@ class RendererGL extends Renderer {
     };
 
     if (isPGraphics) {
+      // Handle PGraphics: remove and recreate the canvas
       const pg = this._pInst;
       pg.canvas.parentNode.removeChild(pg.canvas);
       pg.canvas = document.createElement("canvas");
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
       Element.call(pg, pg.canvas, pg._pInst);
+      // Restore previous width and height
       pg.width = w;
       pg.height = h;
     } else {
+      // Handle main canvas: remove and recreate it
       let c = this.canvas;
       if (c) {
         c.parentNode.removeChild(c);
       }
       c = document.createElement("canvas");
       c.id = defaultId;
+      // Attach the new canvas to the correct parent node
       if (this._pInst._userNode) {
         this._pInst._userNode.appendChild(c);
       } else {
