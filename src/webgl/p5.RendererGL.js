@@ -945,7 +945,7 @@ class RendererGL extends Renderer {
       pg.canvas = document.createElement("canvas");
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
-      p5.Element.call(pg, pg.canvas, pg._pInst);
+      Element.call(pg, pg.canvas, pg._pInst);
       pg.width = w;
       pg.height = h;
     } else {
