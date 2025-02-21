@@ -702,9 +702,9 @@ function _calculateColor(hsb) {
   return colortext;
 }
 
-//gets rgba and returs a color name
+//gets rgba and returns a color name
 p5.prototype._rgbColorName = function(arg) {
-  //conversts rgba to hsb
+  //converts rgba to hsb
   let hsb = color_conversion._rgbaToHSBA(arg);
   //stores hsb in global variable
   originalHSB = hsb;
