@@ -190,6 +190,10 @@ class p5 {
     return this._renderer.pixels;
   }
 
+  get drawingContext(){
+    return this._renderer.drawingContext;
+  }
+
   static registerAddon(addon) {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);

@@ -68,9 +68,6 @@ class Renderer2D extends Renderer {
     if(attributes.colorSpace === 'display-p3'){
       this.states.colorMode = RGBHDR;
     }
-    if (isMainCanvas) {
-      this._pInst.drawingContext = this.drawingContext;
-    }
     this.scale(this._pixelDensity, this._pixelDensity);
 
     if(!this.filterRenderer){
