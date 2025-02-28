@@ -1535,18 +1535,18 @@ function material(p5, fn){
    * </td><td>
    *
    * Output the final color for the current pixel. It takes in two parameters:
-   * `FilterInputs inputs`, and `in sampler2D content`, and must return a color
+   * `FilterInputs inputs`, and `in sampler2D canvasContent`, and must return a color
    * as a `vec4`.
    *
    * `FilterInputs inputs` is a scruct with the following properties:
    * - `vec2 texCoord`, the position on the canvas, with coordinates between 0 and 1. Calling
-   *   `getTexture(content, texCoord)` returns the original color of the current pixel.
+   *   `getTexture(canvasContent, texCoord)` returns the original color of the current pixel.
    * - `vec2 canvasSize`, the width and height of the sketch.
    * - `vec2 texelSize`, the size of one real pixel relative to the size of the whole canvas.
    *   This is equivalent to `1 / (canvasSize * pixelDensity)`.
    *
-   * `in sampler2D content` is a texture with the contents of the sketch, pre-filter. Call
-   * `getTexture(content, someCoordinate)` to retrieve the color of the sketch at that coordinate,
+   * `in sampler2D canvasContent` is a texture with the contents of the sketch, pre-filter. Call
+   * `getTexture(canvasContent, someCoordinate)` to retrieve the color of the sketch at that coordinate,
    * with coordinate values between 0 and 1.
    *
    * </td></tr>
@@ -1574,11 +1574,11 @@ function material(p5, fn){
    *     },
    *     'vec4 getColor': `(
    *       FilterInputs inputs,
-   *       in sampler2D content
+   *       in sampler2D canvasContent
    *     ) {
    *       inputs.texCoord.y +=
    *         0.01 * sin(time * 0.001 + inputs.position.x * 5.0);
-   *       return getTexture(content, inputs.texCoord);
+   *       return getTexture(canvasContent, inputs.texCoord);
    *     }`
    *   });
    * }

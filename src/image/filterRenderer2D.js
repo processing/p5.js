@@ -131,8 +131,8 @@ class FilterRenderer2D {
         {
             vertex: {},
             fragment: {
-              "vec4 getColor": `(FilterInputs inputs, in sampler2D content) {
-                return getTexture(content, inputs.texCoord);
+              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+                return getTexture(canvasContent, inputs.texCoord);
               }`,
             },
           }

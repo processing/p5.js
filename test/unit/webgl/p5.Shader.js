@@ -380,7 +380,7 @@ suite('p5.Shader', function() {
             }
           },
           {
-            name: 'content',
+            name: 'canvasContent',
             type: {
               typeName: 'sampler2D',
               qualifiers: ['in'],
