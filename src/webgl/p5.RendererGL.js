@@ -429,15 +429,9 @@ class RendererGL extends Renderer {
     this.scratchMat3 = new Matrix(3);
 
     this.isStencilTestOn = false; // Track stencil test state
-    this._userEnabledStencil = false; // Track whether user enabled stencil
-    // Override WebGL enable function
     const prevEnable = this.drawingContext.enable;
     this.drawingContext.enable = (key) => {
       if (key === this.drawingContext.STENCIL_TEST) {
-        // When clip() calls enable(), don't mark as user-enabled
-          if (!this._clipping) {
-            this._userEnabledStencil = true;
-          }
           this.isStencilTestOn = true;
       }
       return prevEnable.call(this.drawingContext, key);
@@ -449,12 +443,13 @@ class RendererGL extends Renderer {
         if (key === this.drawingContext.STENCIL_TEST) {
             // When pop() disables the stencil test after clip(), 
             // restore the user's stencil test setting
-            if (this._clipDepth === this._pushPopDepth) {
-                this.isStencilTestOn = this._userEnabledStencil;
-            } else {
-                this.isStencilTestOn = false;
-                this._userEnabledStencil = false;
-            }
+            // if (this._clipDepth === this._pushPopDepth) {
+            //     this.isStencilTestOn = this._userEnabledStencil;
+            // } else {
+            //     this.isStencilTestOn = false;
+            //     this._userEnabledStencil = false;
+            // }
+            this.isStencilTestOn = false;
         }
         return prevDisable.call(this.drawingContext, key);
     };
@@ -1430,7 +1425,7 @@ class RendererGL extends Renderer {
     this.drawTarget()._isClipApplied = true;
 
     const gl = this.GL;
-    this._savedStencilTestState = this._userEnabledStencil;
+    this.isStencilTestOn = this.drawingContext.getEnabled(this.drawingContext.STENCIL_TEST);
     gl.clearStencil(0); 
     gl.clear(gl.STENCIL_BUFFER_BIT);
     gl.enable(gl.STENCIL_TEST);
@@ -1783,11 +1778,11 @@ class RendererGL extends Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
-      if (!this._savedStencilTestState) {
-          this.GL.disable(this.GL.STENCIL_TEST);
+      if (this.isStencilTestOn) {
+        this.GL.enable(this.GL.STENCIL_TEST);
+      } else {
+        this.GL.disable(this.GL.STENCIL_TEST);
       }
-      
-      this._userEnabledStencil = this._savedStencilTestState;
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
