@@ -480,6 +480,41 @@ function shadergen(p5, fn) {
     }
   }
 
+  // TODO: finish If Node
+  class ConditionalNode {
+    constructor(value) {
+      this.value = value;
+      this.condition = null;
+      this.thenBranch = null;
+      this.elseBranch = null;
+    }
+    //helper 
+    checkType(value) {
+
+    }
+    // conditions
+    equalTo(value){}
+    greaterThan(value) {}
+    greaterThanEqualTo(value) {}
+    lessThan(value) {}
+    lessThanEqualTo(value) {}
+    // modifiers
+    not() {}
+    or() {}
+    and() {}
+    // returns
+    thenReturn(value) {}
+    elseReturn(value) {}
+    // Then?
+    then() {
+      GLOBAL_SHADER.context.declarations.push()
+    }
+  };
+
+  fn.if = function (value) {
+    return new ConditionalNode(value);
+  }
+
   // Helper functions
   function isShaderNode(node) {  
     return (node instanceof BaseNode); 
