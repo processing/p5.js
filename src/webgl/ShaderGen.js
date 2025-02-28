@@ -357,21 +357,22 @@ function shadergen(p5, fn) {
       super(isInternal)
       this.name = name;
       this.type = type;
-      this.addComponents(
-        (() => {
-          switch (type) {
-            case 'vec2': return ['x', 'y'];
-            case 'vec3': return ['x', 'y', 'z'];
-            case 'vec4': return ['x', 'y', 'z', 'w'];
-            default: return [];
-          }
-        })()
-      );
+      this.autoAddVectorComponents();
+    }
+    
+    addComponent(componentName) {
+      this[componentName] = new ComponentNode(this, componentName, true);
     }
 
-    addComponents(componentNames) {
+    autoAddVectorComponents() {
+      const options = {
+        vec2: ['x', 'y'],
+        vec3: ['x', 'y', 'z'],
+        vec4: ['x', 'y', 'z', 'w']
+      };
+      const componentNames = options[this.type] || [];
       for (let componentName of componentNames) {
-        this[componentName] = new ComponentNode(this, componentName, true);
+        this.addComponent(componentName);
       }
     }
 
