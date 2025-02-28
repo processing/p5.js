@@ -186,7 +186,23 @@ function shadergen(p5, fn) {
     sin()       { return new FunctionCallNode('sin', this, 'float'); }
     cos()       { return new FunctionCallNode('cos', this, 'float'); }
     radians()   { return new FunctionCallNode('radians', this, 'float'); }
+    abs()       { return new FunctionCallNode('abs',this, this.type) };
+    ceil()      { return new FunctionCallNode(); }
+
+    // TODO: 
+    // Add a whole lot of these functions. Probably should take them out of the primitive node and just attach them to global instead.
+    // https://docs.gl/el3/
     
+    max()       { return new FunctionCallNode(); }
+    min()       { return new FunctionCallNode(); }
+    ceil()      { return new FunctionCallNode(); }
+    round()     { return new FunctionCallNode(); }
+    roundEven() { return new FunctionCallNode(); }
+    sqrt()      { return new FunctionCallNode(); }
+    log()       { return new FunctionCallNode(); }
+    exp()       { return new FunctionCallNode(); }
+
+
     // Check that the types of the operands are compatible.
     // TODO: improve this with less branching if elses
     enforceType(other){
