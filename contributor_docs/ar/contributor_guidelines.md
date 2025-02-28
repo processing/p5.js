@@ -23,7 +23,7 @@
     - [نقاش](#نقاش)
 - [العمل على الكود الأساسي الخاص بـ p5.js](#العمل-على-الكود-الأساسي-الخاص-بـ-p5js)
   - [المتطلبات الأساسية](https://github.com/islml/p5.js/blob/Arabic-translations-for-contributor_docs/contributor_docs/ar/contributor_guidelines.md#المتطلبات-الأساسية)
-  - [المقدمة](المقدمة)
+  - [المقدمة](https://github.com/islml/p5.js/blob/Arabic-translations-for-contributor_docs/contributor_docs/ar/contributor_guidelines.md#المقدمة)
   - [البدء السريع للمطورين](#البدء-السريع-للمطورين)
   - [استخدام ميزة التعديل المباشر في Github](#استخدام-ميزة-التعديل-المباشر-في-Github)
   - [عمل Fork للريبو الخاص بـ p5.js والعمل من الـFork الخاص بك](#عمل-Fork-للريبو-الخاص-بـ-p5js-والعمل-من-الـFork-الخاص-بك)
