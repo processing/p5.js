@@ -16,6 +16,7 @@ import { ShapeBuilder } from "./ShapeBuilder";
 import { GeometryBufferCache } from "./GeometryBufferCache";
 import { filterParamDefaults } from "../image/const";
 
+import filterBaseVert from "./shaders/filters/base.vert";
 import lightingShader from "./shaders/lighting.glsl";
 import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
 import normalVert from "./shaders/normal.vert";
@@ -36,6 +37,7 @@ import imageLightVert from "./shaders/imageLight.vert";
 import imageLightDiffusedFrag from "./shaders/imageLightDiffused.frag";
 import imageLightSpecularFrag from "./shaders/imageLightSpecular.frag";
 
+import filterBaseFrag from "./shaders/filters/base.frag";
 import filterGrayFrag from "./shaders/filters/gray.frag";
 import filterErodeFrag from "./shaders/filters/erode.frag";
 import filterDilateFrag from "./shaders/filters/dilate.frag";
@@ -87,6 +89,8 @@ const defaultShaders = {
   imageLightVert,
   imageLightDiffusedFrag,
   imageLightSpecularFrag,
+  filterBaseVert,
+  filterBaseFrag,
 };
 let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
@@ -302,6 +306,7 @@ class RendererGL extends Renderer {
     this.specularShader = undefined;
     this.sphereMapping = undefined;
     this.diffusedShader = undefined;
+    this._baseFilterShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -2085,6 +2090,27 @@ class RendererGL extends Renderer {
       );
     }
     return this._defaultFontShader;
+  }
+
+  baseFilterShader() {
+    if (!this._baseFilterShader) {
+      this._baseFilterShader = new Shader(
+        this,
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          defaultShaders.filterBaseVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          defaultShaders.filterBaseFrag,
+        {
+            vertex: {},
+            fragment: {
+              "vec4 getColor": `(FilterInputs inputs, in sampler2D content) {
+                return getTexture(content, inputs.texCoord);
+              }`,
+            },
+          }
+      );
+    }
+    return this._baseFilterShader;
   }
 
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
