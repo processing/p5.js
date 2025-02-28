@@ -51,6 +51,7 @@ function shadergen(p5, fn) {
     Literal(node, state, ancestors) {
     },
     AssignmentExpression(node, _state, ancestors) {
+      // Operator overloading
       if (node.operator != '=') {
         const rightReplacementNode = {
           type: 'CallExpression',
