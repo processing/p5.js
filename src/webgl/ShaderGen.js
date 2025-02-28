@@ -672,6 +672,7 @@ function shadergen(p5, fn) {
   function getWorldPosition(func){
     GLOBAL_SHADER.getWorldPosition(func)
   }
+  
   function getFinalColor(func){
     GLOBAL_SHADER.getFinalColor(func)
   }
