@@ -334,4 +334,61 @@ suite('p5.Shader', function() {
       });
     });
   });
+
+  suite('hookTypes', function() {
+    test('Produces expected types on baseFilterShader()', function() {
+      const types = myp5.baseFilterShader().hookTypes('vec4 getColor');
+      assert.deepEqual(types, {
+        name: 'getColor',
+        returnType: {
+          typeName: 'vec4',
+          qualifiers: [],
+          properties: undefined,
+        },
+        parameters: [
+          {
+            name: 'inputs',
+            type: {
+              typeName: 'FilterInputs',
+              qualifiers: [],
+              properties: [
+                {
+                  name: 'texCoord',
+                  type: {
+                    typeName: 'vec2',
+                    qualifiers: [],
+                    properties: undefined,
+                  }
+                },
+                {
+                  name: 'canvasSize',
+                  type: {
+                    typeName: 'vec2',
+                    qualifiers: [],
+                    properties: undefined,
+                  }
+                },
+                {
+                  name: 'texelSize',
+                  type: {
+                    typeName: 'vec2',
+                    qualifiers: [],
+                    properties: undefined,
+                  }
+                },
+              ],
+            }
+          },
+          {
+            name: 'content',
+            type: {
+              typeName: 'sampler2D',
+              qualifiers: ['in'],
+              properties: undefined,
+            }
+          }
+        ]
+      });
+    });
+  });
 });
