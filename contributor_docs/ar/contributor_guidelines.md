@@ -462,11 +462,11 @@ npm test
 
 في تطبيق **GitHub Desktop**، ستجد زرًا على يمين زر تغيير الفروع (Branches) في الشريط العلوي. هذا الزر يُستخدم لدفع تغييراتك إلى **GitHub**. اضغط عليه لدفع التعديلات.
 
-![صورة تعرض GitHub Desktop بعد عمل Commit للتغييرات. زر دفع التعديلات إلى GitHub محاط بدائرة حمراء.](images/publish-branch.png)
+![صورة تعرض GitHub Desktop بعد عمل Commit للتغييرات. زر دفع التعديلات إلى GitHub محاط بدائرة حمراء.](../images/publish-branch.png)
 
 بمجرد رفع الكود، سيظهر زر يطلب منك إنشاء **Pull Request**. الضغط على هذا الزر سيعرض لك معاينة مع زر آخر لتأكيد إنشاء الطلب. اضغط على زر **Create Pull Request** لبدء العملية.
 
-![لقطة شاشة من GitHub Desktop بعد دفع الكود. في الشريط الجانبي الأيسر مكتوب "0 changed items". وفي الجزء الأيمن أسفل عنوان "No local changes"، يوجد زر أزرق باسم "Review Pull Request" محاط بدائرة حمراء.](images/preview-pull-request.png)
+![لقطة شاشة من GitHub Desktop بعد دفع الكود. في الشريط الجانبي الأيسر مكتوب "0 changed items". وفي الجزء الأيمن أسفل عنوان "No local changes"، يوجد زر أزرق باسم "Review Pull Request" محاط بدائرة حمراء.](../images/preview-pull-request.png)
 
  من خلال الطرفية (Terminal)
 
