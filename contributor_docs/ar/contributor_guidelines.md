@@ -33,10 +33,10 @@
   - [إعداد بيئة العمل Build Setup](#إعداد-بيئة-العمل-Build-Setup)
   - [سير العمل مع Git](#سير-العمل-مع-Git)
     - [كود المصدر](#كود-المصدر)
-    - [الاختبارات Unit Tests](#الاختبارات-Unit-Tests)
-    - [التوثيق المضمن](#التوثيق-المضمن)
+    - [الـUnit testsg](#الـUnit-tests)
+    - [التوثيق المضمن Inline Documentation](#التوثيق-المضمن-Inline-Documentation)
     - [إتاحة الوصول Accessibility](#إتاحة-الوصول-Accessibility)
-  - [معايير الكود](#معايير-الكود)
+  - [معايير كتابة الكود](#معايير-كتابة-الكود)
   - [مبادئ تصميم البرمجيات](#مبادئ-تصميم-البرمجيات)
 - [الـPull Requests](#الـPull-Requests)
   - [إنشاء Pull Request](#إنشاء-Pull-Request)
@@ -409,7 +409,7 @@ npm test
 إذا كنت ستعمل على **التوثيق المضمن** أو ما يُعرف بـp5.js Reference، فيمكنك الرجوع إلى [هذه الصفحة](./contributing_to_the_p5js_reference.md).
 
 
-### ميزات الوصول Accessibility
+### إتاحة الوصول Accessibility
 
 إذا كنت ستعمل على ميزات تخص **إمكانية الوصول** (Accessibility)، فيُرجى الاطلاع على [هذه الصفحة](./web_accessibility.md).  
 أما بالنسبة لنظام الأخطاء الودية (Friendly Error System)، فيمكنك الاطلاع على [هذه الصفحة](./friendly_error_system.md).
