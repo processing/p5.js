@@ -550,41 +550,6 @@ class RendererGL extends Renderer {
     super.endShape(mode, count);
   }
 
-  legacyEndShape(
-    mode,
-    isCurve,
-    isBezier,
-    isQuadratic,
-    isContour,
-    shapeKind,
-    count = 1
-  ) {
-    this.shapeBuilder.endShape(
-      mode,
-      isCurve,
-      isBezier,
-      isQuadratic,
-      isContour,
-      shapeKind
-    );
-
-    if (this.geometryBuilder) {
-      this.geometryBuilder.addImmediate(
-        this.shapeBuilder.geometry,
-        this.shapeBuilder.shapeMode
-      );
-    } else if (this.states.fillColor || this.states.strokeColor) {
-      this._drawGeometry(this.shapeBuilder.geometry, {
-        mode: this.shapeBuilder.shapeMode,
-        count,
-      });
-    }
-  }
-
-  legacyVertex(...args) {
-    this.shapeBuilder.vertex(...args);
-  }
-
   vertexProperty(...args) {
     this.currentShape.vertexProperty(...args);
   }
@@ -1051,6 +1016,27 @@ class RendererGL extends Renderer {
     this.clear(..._col._getRGBA());
   }
 
+  //////////////////////////////////////////////
+  // Positioning
+  //////////////////////////////////////////////
+
+  get uModelMatrix() {
+    return this.states.uModelMatrix;
+  }
+
+  get uViewMatrix() {
+    return this.states.uViewMatrix;
+  }
+
+  get uPMatrix() {
+    return this.states.uPMatrix;
+  }
+
+  get uMVMatrix() {
+    const m = this.uModelMatrix.copy();
+    m.mult(this.uViewMatrix);
+    return m;
+  }
 
   /**
    * Get a matrix from world-space to screen-space
