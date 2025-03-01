@@ -2702,5 +2702,85 @@ suite('p5.RendererGL', function() {
         expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with fewer values than vertices./);
       }
     );
-  })
+  });
+
+  suite('Matrix getters', function() {
+    test('uModelMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkModelMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uModelMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              5, 0, 0, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkModelMatrix();
+    });
+
+    test('uViewMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkViewMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uViewMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, -500, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkViewMatrix();
+    });
+
+    test('uMVMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkMVMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uMVMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              5, 0, -500, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkMVMatrix();
+    });
+
+    test('uPMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkPMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uPMatrix.mat4],
+            [
+              32, 0, 0, 0,
+              0, -32, 0, 0,
+              0, 0, -1.0202020406723022, -1,
+              0, 0, -161.6161651611328, 0
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.checkPMatrix();
+    });
+  });
 });
