@@ -26,7 +26,7 @@
   - [المقدمة](https://github.com/islml/p5.js/blob/Arabic-translations-for-contributor_docs/contributor_docs/ar/contributor_guidelines.md#المقدمة)
   - [البدء السريع للمطورين](#البدء-السريع-للمطورين)
   - [استخدام ميزة التعديل المباشر في Github](#استخدام-ميزة-التعديل-المباشر-في-Github)
-  - [عمل Fork للريبو الأساسية](https://github.com/islml/p5.js/blob/Arabic-translations-for-contributor_docs/contributor_docs/ar/contributor_guidelines.md#عمل-Fork-للريبو-الأساسية)
+  - [عمل Fork للريبو الأساسية](عمل-fork-للريبو-الأساسية)
     - [استخدام Github Desktop](#استخدام-Github-Desktop)
     - [استخدام واجهة أوامر git](#استخدام-واجهة-أوامر-git)
   - [نظرة عامة على بنية المشروع](#نظرة-عامة-على-بنية-المشروع)
