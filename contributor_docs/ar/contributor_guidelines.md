@@ -39,7 +39,7 @@
   - [معايير كتابة الكود](#معايير-كتابة-الكود)
   - [مبادئ تصميم البرمجيات](#مبادئ-تصميم-البرمجيات)
 - [الـPull Requests](#الـPull-Requests)
-  - [إنشاء الـPull Request](#إنشاء-Pull-Request)
+  - [إنشاء الـPull Request](#إنشاء-الـPull-Request)
     - [معلومات الـPull Request](#معلومات-الـPull-Request)
     - [العنوان Title](#العنوان-Title)
     - [خانة Resolves](#خانة-Resolves)
