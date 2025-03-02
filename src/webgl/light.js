@@ -904,12 +904,10 @@ function light(p5, fn){
    *
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape.');
@@ -962,12 +960,10 @@ function light(p5, fn){
    *
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100 ,100 ,WEBGL);
    *
    *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape. The full landscape is viewable in 3D as the user drags the mouse.');
@@ -1457,23 +1453,24 @@ function light(p5, fn){
   RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
     const color = this._pInst.color(...arguments);
 
+    this.states.setValue('ambientLightColors', [...this.states.ambientLightColors]);
     this.states.ambientLightColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
 
-    this.states.enableLighting = true;
+    this.states.setValue('enableLighting', true);
   }
 
   RendererGL.prototype.specularColor = function(v1, v2, v3) {
     const color = this._pInst.color(...arguments);
 
-    this.states.specularColors = [
+    this.states.setValue('specularColors', [
       color._array[0],
       color._array[1],
       color._array[2]
-    ];
+    ]);
   }
 
   RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
@@ -1498,19 +1495,23 @@ function light(p5, fn){
 
     // normalize direction
     const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+    this.states.setValue('directionalLightDirections', [...this.states.directionalLightDirections]);
     this.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
+    this.states.setValue('directionalLightDiffuseColors', [...this.states.directionalLightDiffuseColors]);
     this.states.directionalLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
+
+    this.states.setValue('directionalLightSpecularColors', [...this.states.directionalLightSpecularColors]);
     Array.prototype.push.apply(
       this.states.directionalLightSpecularColors,
       this.states.specularColors
     );
 
-    this.states.enableLighting = true;
+    this.states.setValue('enableLighting', true);
   }
 
   RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
@@ -1533,25 +1534,30 @@ function light(p5, fn){
       _z = v.z;
     }
 
+    this.states.setValue('pointLightPositions', [...this.states.pointLightPositions]);
     this.states.pointLightPositions.push(_x, _y, _z);
+
+    this.states.setValue('pointLightDiffuseColors', [...this.states.pointLightDiffuseColors]);
     this.states.pointLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
+
+    this.states.setValue('pointLightSpecularColors', [...this.states.pointLightSpecularColors]);
     Array.prototype.push.apply(
       this.states.pointLightSpecularColors,
       this.states.specularColors
     );
 
-    this.states.enableLighting = true;
+    this.states.setValue('enableLighting', true);
   }
 
   RendererGL.prototype.imageLight = function(img) {
     // activeImageLight property is checked by _setFillUniforms
     // for sending uniforms to the fillshader
-    this.states.activeImageLight = img;
-    this.states.enableLighting = true;
+    this.states.setValue('activeImageLight', img);
+    this.states.setValue('enableLighting', true);
   }
 
   RendererGL.prototype.lights = function() {
@@ -1596,9 +1602,9 @@ function light(p5, fn){
       );
     }
 
-    this.states.constantAttenuation = constantAttenuation;
-    this.states.linearAttenuation = linearAttenuation;
-    this.states.quadraticAttenuation = quadraticAttenuation;
+    this.states.setValue('constantAttenuation', constantAttenuation);
+    this.states.setValue('linearAttenuation', linearAttenuation);
+    this.states.setValue('quadraticAttenuation', quadraticAttenuation);
   }
 
   RendererGL.prototype.spotLight = function(
@@ -1770,23 +1776,23 @@ function light(p5, fn){
         );
         return;
     }
-    this.states.spotLightDiffuseColors = [
+    this.states.setValue('spotLightDiffuseColors', [
       color._array[0],
       color._array[1],
       color._array[2]
-    ];
+    ]);
 
-    this.states.spotLightSpecularColors = [
+    this.states.setValue('spotLightSpecularColors', [
       ...this.states.specularColors
-    ];
+    ]);
 
-    this.states.spotLightPositions = [position.x, position.y, position.z];
+    this.states.setValue('spotLightPositions', [position.x, position.y, position.z]);
     direction.normalize();
-    this.states.spotLightDirections = [
+    this.states.setValue('spotLightDirections', [
       direction.x,
       direction.y,
       direction.z
-    ];
+    ]);
 
     if (angle === undefined) {
       angle = Math.PI / 3;
@@ -1802,39 +1808,39 @@ function light(p5, fn){
     }
 
     angle = this._pInst._toRadians(angle);
-    this.states.spotLightAngle = [Math.cos(angle)];
-    this.states.spotLightConc = [concentration];
+    this.states.setValue('spotLightAngle', [Math.cos(angle)]);
+    this.states.setValue('spotLightConc', [concentration]);
 
-    this.states.enableLighting = true;
+    this.states.setValue('enableLighting', true);
   }
 
   RendererGL.prototype.noLights = function() {
-    this.states.activeImageLight = null;
-    this.states.enableLighting = false;
+    this.states.setValue('activeImageLight', null);
+    this.states.setValue('enableLighting', false);
 
-    this.states.ambientLightColors.length = 0;
-    this.states.specularColors = [1, 1, 1];
+    this.states.setValue('ambientLightColors', []);
+    this.states.setValue('specularColors', [1, 1, 1]);
 
-    this.states.directionalLightDirections.length = 0;
-    this.states.directionalLightDiffuseColors.length = 0;
-    this.states.directionalLightSpecularColors.length = 0;
+    this.states.setValue('directionalLightDirections', []);
+    this.states.setValue('directionalLightDiffuseColors', []);
+    this.states.setValue('directionalLightSpecularColors', []);
 
-    this.states.pointLightPositions.length = 0;
-    this.states.pointLightDiffuseColors.length = 0;
-    this.states.pointLightSpecularColors.length = 0;
+    this.states.setValue('pointLightPositions', []);
+    this.states.setValue('pointLightDiffuseColors', []);
+    this.states.setValue('pointLightSpecularColors', []);
 
-    this.states.spotLightPositions.length = 0;
-    this.states.spotLightDirections.length = 0;
-    this.states.spotLightDiffuseColors.length = 0;
-    this.states.spotLightSpecularColors.length = 0;
-    this.states.spotLightAngle.length = 0;
-    this.states.spotLightConc.length = 0;
+    this.states.setValue('spotLightPositions', []);
+    this.states.setValue('spotLightDirections', []);
+    this.states.setValue('spotLightDiffuseColors', []);
+    this.states.setValue('spotLightSpecularColors', []);
+    this.states.setValue('spotLightAngle', []);
+    this.states.setValue('spotLightConc', []);
 
-    this.states.constantAttenuation = 1;
-    this.states.linearAttenuation = 0;
-    this.states.quadraticAttenuation = 0;
-    this.states._useShininess = 1;
-    this.states._useMetalness = 0;
+    this.states.setValue('constantAttenuation', 1);
+    this.states.setValue('linearAttenuation', 0);
+    this.states.setValue('quadraticAttenuation', 0);
+    this.states.setValue('_useShininess', 1);
+    this.states.setValue('_useMetalness', 0);
   }
 }
 

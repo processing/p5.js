@@ -857,12 +857,10 @@ function loadingDisplaying(p5, fn){
    * ```js example
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -916,12 +914,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -938,12 +934,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -960,12 +954,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -982,12 +974,9 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/moonwalk.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/moonwalk.jpg');
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -1004,13 +993,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   // Image is 50 x 50 pixels.
-   *   img = loadImage('assets/laDefense50.png');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense50.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -1171,12 +1157,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left image.
@@ -1196,12 +1180,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left image.
@@ -1220,13 +1202,11 @@ function loadingDisplaying(p5, fn){
    * <div>
    * <code>
    * let img;
+   **
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1246,12 +1226,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1291,7 +1269,7 @@ function loadingDisplaying(p5, fn){
   fn.tint = function(...args) {
     // p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
+    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
   };
 
   /**
@@ -1306,12 +1284,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1330,7 +1306,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.noTint = function() {
-    this._renderer.states.tint = null;
+    this._renderer.states.setValue('tint', null);
   };
 
   /**
@@ -1371,12 +1347,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1396,12 +1370,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1421,12 +1393,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1449,7 +1419,7 @@ function loadingDisplaying(p5, fn){
       m === constants.CORNERS ||
       m === constants.CENTER
     ) {
-      this._renderer.states.imageMode = m;
+      this._renderer.states.setValue('imageMode', m);
     }
   };
 }

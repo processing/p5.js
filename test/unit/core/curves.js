@@ -1,14 +1,15 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import curves from '../../../src/shape/curves';
+import { States } from '../../../src/core/States';
 
 suite('Curves', function() {
   beforeAll(function() {
     mockP5Prototype._renderer = {
-      states: {
+      states: new States({
         splineProperties: {
           tightness: 0
         }
-      }
+      })
     };
     curves(mockP5, mockP5Prototype);
   });

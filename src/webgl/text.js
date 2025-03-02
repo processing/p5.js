@@ -656,9 +656,9 @@ function text(p5, fn){
       return; // don't render lines beyond our maxY position
     }
 
-    if (!this._isOpenType()) {
+    if (!p5.Font.hasGlyphData(this.states.textFont)) {
       console.log(
-        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported'
+        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported'
       );
       return;
     }
@@ -669,8 +669,8 @@ function text(p5, fn){
     const doStroke = this.states.strokeColor;
     const drawMode = this.states.drawMode;
 
-    this.states.strokeColor = null;
-    this.states.drawMode = constants.TEXTURE;
+    this.states.setValue('strokeColor', null);
+    this.states.setValue('drawMode', constants.TEXTURE);
 
     // get the cached FontInfo object
     const { font } = this.states.textFont;
@@ -766,8 +766,8 @@ function text(p5, fn){
       // clean up
       sh.unbindShader();
 
-      this.states.strokeColor = doStroke;
-      this.states.drawMode = drawMode;
+      this.states.setValue('strokeColor', doStroke);
+      this.states.setValue('drawMode', drawMode);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
       this.pop();

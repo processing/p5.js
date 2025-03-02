@@ -1,5 +1,23 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
+import * as fileSaver from 'file-saver';
+vi.mock('file-saver');
+
+expect.extend({
+  tobePng: (received) => {
+    if (received.type === 'image/png') {
+      return {
+        message: 'expect blob to have type image/png',
+        pass: true
+      }
+    } else {
+      return {
+        message: 'expect blob to have type image/png',
+        pass: false
+      }
+    }
+  }
+});
 
 suite('p5.Framebuffer', function() {
   let myp5;
@@ -640,4 +658,22 @@ suite('p5.Framebuffer', function() {
         );
       });
   });
+
+  suite('saveCanvas', function() {
+    test('should download a png file', async () => {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => myp5.background('red'));
+      myp5.saveCanvas(fbo);
+
+      await new Promise(res => setTimeout(res, 100));
+
+      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+      expect(fileSaver.saveAs)
+        .toHaveBeenCalledWith(
+          expect.tobePng(),
+          'untitled.png'
+        );
+    })
+  })
 });

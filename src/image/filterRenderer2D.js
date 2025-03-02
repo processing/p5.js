@@ -93,8 +93,8 @@ class FilterRenderer2D {
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
    * that overrides the operation-based shader.
-   * @param {string} operation - The filter operation type (e.g., constants.BLUR).
-   * @param {number} filterParameter - The strength of the filter.
+   * @param {String} operation - The filter operation type (e.g., constants.BLUR).
+   * @param {Number} filterParameter - The strength of the filter.
    * @param {p5.Shader} customShader - Optional custom shader.
    */
   setOperation(operation, filterParameter, customShader = null) {
@@ -184,8 +184,8 @@ class FilterRenderer2D {
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
 
-    this.pInst.states.rectMode = constants.CORNER;
-    this.pInst.states.imageMode = constants.CORNER;
+    this.pInst.states.setValue('rectMode', constants.CORNER);
+    this.pInst.states.setValue('imageMode', constants.CORNER);
     this.pInst.blendMode(constants.BLEND);
     this.pInst.resetMatrix();
 

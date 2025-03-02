@@ -187,12 +187,10 @@ function pointer(p5, fn){
    * <code>
    * let font;
    *
-   * // Load a font for WebGL mode.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
+   * async function setup() {
+   *   // Load a font for WebGL mode.
+   *   font = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -298,12 +296,10 @@ function pointer(p5, fn){
    * <code>
    * let font;
    *
-   * // Load a font for WebGL mode.
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
+   * async function setup() {
+   *   // Load a font for WebGL mode.
+   *   font = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(

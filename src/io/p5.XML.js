@@ -25,12 +25,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -77,12 +75,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -130,12 +126,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -186,12 +180,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -231,12 +223,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -290,12 +280,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -332,12 +320,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -396,12 +382,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -429,12 +413,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -483,12 +465,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -548,12 +528,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -593,12 +571,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -661,12 +637,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -708,12 +682,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -765,12 +737,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -833,12 +803,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -869,12 +837,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -937,12 +903,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -973,12 +937,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1034,12 +996,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1091,12 +1051,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1169,12 +1127,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1225,12 +1181,10 @@ class XML {
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1297,12 +1251,10 @@ function xml(p5, fn){
    * <code>
    * let myXML;
    *
-   * // Load the XML and create a p5.XML object.
-   * function preload() {
-   *   myXML = loadXML('assets/animals.xml');
-   * }
+   * async function setup() {
+   *   // Load the XML and create a p5.XML object.
+   *   myXML = await loadXML('assets/animals.xml');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);

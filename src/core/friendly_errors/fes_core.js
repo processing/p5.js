@@ -40,6 +40,10 @@ function fesCore(p5, fn){
   // to enable or disable styling (color, font-size, etc. ) for fes messages
   const ENABLE_FES_STYLING = false;
 
+  // Used for internally thrown errors that should not get wrapped by another
+  // friendly error handler
+  class FESError extends Error {};
+
   if (typeof IS_MINIFIED !== 'undefined') {
     p5._friendlyError =
       p5._checkForUserDefinedFunctions =
@@ -82,7 +86,6 @@ function fesCore(p5, fn){
     const entryPoints = [
       'setup',
       'draw',
-      'preload',
       'deviceMoved',
       'deviceTurned',
       'deviceShaken',
@@ -193,6 +196,26 @@ function fesCore(p5, fn){
         log(prefixedMsg);
       }
     };
+
+    /**
+     * Throws an error with helpful p5 context. Similar to _report, but
+     * this will stop other code execution to prevent downstream errors
+     * from being logged.
+     *
+     * @method _error
+     * @private
+     * @param                    context  p5 instance the error is from
+     * @param  {String}          message  Message to be printed
+     * @param  {String}          [func]   Name of function
+     */
+    p5._error = (context, message, func) => {
+      p5._report(message, func);
+      context.hitCriticalError = true;
+      // Throw an error to stop the current function (e.g. setup or draw) from
+      // running more code
+      throw new FESError('Stopping sketch to prevent more errors');
+    };
+
     /**
      * This is a generic method that can be called from anywhere in the p5
      * library to alert users to a common error.
@@ -276,6 +299,19 @@ function fesCore(p5, fn){
     };
 
     /**
+     * Whether or not p5.js is running in an environment where `preload` will be
+     * run before `setup`.
+     *
+     * This will return false for default builds >= 2.0, but backwards compatibility
+     * addons may set this to true.
+     *
+     * @private
+     */
+    p5.isPreloadSupported = function() {
+      return false;
+    }
+
+    /**
      * Checks capitalization for user defined functions.
      *
      * Generates and prints a friendly error message using key:
@@ -294,6 +330,10 @@ function fesCore(p5, fn){
       const instanceMode = context instanceof p5;
       context = instanceMode ? context : window;
       const fnNames = entryPoints;
+
+      if (context.preload && !p5.isPreloadSupported()) {
+        p5._error(context, translator('fes.preloadDisabled'));
+      }
 
       const fxns = {};
       // lowercasename -> actualName mapping
@@ -630,6 +670,10 @@ function fesCore(p5, fn){
      */
     const fesErrorMonitor = e => {
       if (p5.disableFriendlyErrors) return;
+
+      // Don't try to handle an error intentionally emitted by FES to halt execution
+      if (e && (e instanceof FESError || e.reason instanceof FESError)) return;
+
       // Try to get the error object from e
       let error;
       if (e instanceof Error) {

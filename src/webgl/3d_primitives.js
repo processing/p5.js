@@ -26,7 +26,7 @@ function primitives3D(p5, fn){
  * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
  *
  * @method strokeMode
- * @param {string} mode - The stroke mode to set. Possible values are:
+ * @param {String} mode - The stroke mode to set. Possible values are:
  *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
  *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
  *
@@ -1712,11 +1712,11 @@ function primitives3D(p5, fn){
         x1, y1, 0, 1            // the resulting origin
       ]).mult(this.states.uModelMatrix);
 
-      this.states.uModelMatrix = mult;
+      this.states.setValue('uModelMatrix', mult);
 
       this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
-      this.states.uModelMatrix = uModelMatrix;
+      this.states.setValue('uModelMatrix', uModelMatrix);
     }
 
     return this;
@@ -1839,7 +1839,8 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(arcGeom);
     }
 
-    const uModelMatrix = this.states.uModelMatrix.copy();
+    const uModelMatrix = this.states.uModelMatrix;
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
 
     try {
       this.states.uModelMatrix.translate([x, y, 0]);
@@ -1847,7 +1848,7 @@ function primitives3D(p5, fn){
 
       this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
-      this.states.uModelMatrix = uModelMatrix;
+      this.states.setValue('uModelMatrix', uModelMatrix);
     }
 
     return this;
@@ -1900,14 +1901,15 @@ function primitives3D(p5, fn){
       // opposite corners at (0,0) & (1,1).
       //
       // before rendering, this square is scaled & moved to the required location.
-      const uModelMatrix = this.states.uModelMatrix.copy();
+      const uModelMatrix = this.states.uModelMatrix;
+      this.states.setValue('uModelMatrix', this.states.uModelMatrix.copy());
       try {
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
         this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
-        this.states.uModelMatrix = uModelMatrix;
+        this.states.setValue('uModelMatrix', uModelMatrix);
       }
     } else {
       // Use Immediate mode to round the rectangle corner,
@@ -1949,7 +1951,7 @@ function primitives3D(p5, fn){
       let y2 = d;
 
       const prevMode = this.states.textureMode;
-      this.states.textureMode = constants.NORMAL;
+      this.states.setValue('textureMode', constants.NORMAL);
       const prevOrder = this.bezierOrder();
       this.bezierOrder(2);
       this.beginShape();
@@ -1984,7 +1986,7 @@ function primitives3D(p5, fn){
       }
 
       this.endShape(constants.CLOSE);
-      this.states.textureMode = prevMode;
+      this.states.setValue('textureMode', prevMode);
       this.bezierOrder(prevOrder);
     }
     return this;
@@ -2184,10 +2186,10 @@ function primitives3D(p5, fn){
 
     this.push();
     this.noLights();
-    this.states.strokeColor = null;;
+    this.states.setValue('strokeColor', null);
 
     this.texture(img);
-    this.states.textureMode = constants.NORMAL;
+    this.states.setValue('textureMode', constants.NORMAL);
 
     let u0 = 0;
     if (sx <= img.width) {
