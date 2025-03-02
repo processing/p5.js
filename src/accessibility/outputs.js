@@ -540,14 +540,9 @@ function outputs(p5, fn){
 
   //gets position of shape in the canvas
   fn._getPos = function (x, y) {
-    const untransformedPosition = new DOMPointReadOnly(x, y);
-    const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.calculateCombinedMatrix()) :
-      this.drawingContext.getTransform();
-    const { x: transformedX, y: transformedY } = untransformedPosition
-      .matrixTransform(currentTransform);
-    const canvasWidth = this.width * this._renderer._pixelDensity;
-    const canvasHeight = this.height * this._renderer._pixelDensity;
+    const { x: transformedX, y: transformedY } = this.worldToScreen(new this.Vector(x, y));
+    const canvasWidth = this.width;
+    const canvasHeight = this.height;
     if (transformedX < 0.4 * canvasWidth) {
       if (transformedY < 0.4 * canvasHeight) {
         return 'top left';

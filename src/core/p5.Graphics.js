@@ -609,7 +609,7 @@ function graphics(p5, fn){
    * @extends p5.Element
    * @param {Number} w            width width of the graphics buffer in pixels.
    * @param {Number} h            height height of the graphics buffer in pixels.
-   * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
+   * @param {(P2D|WEBGL|P2DHDR)} renderer   the renderer to use, either P2D or WEBGL.
    * @param {p5} [pInst]          sketch instance.
    * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
    *

@@ -129,7 +129,7 @@ class Framebuffer {
     const prevCam = this.renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.renderer.states.curCamera = prevCam;
+    this.renderer.states.setValue('curCamera', prevCam);
 
     this.draw(() => this.renderer.clear());
   }
@@ -256,12 +256,10 @@ class Framebuffer {
    * let myBuffer;
    * let myFont;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   myFont = loadFont('assets/inconsolata.otf');
-   * }
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   myFont = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);
@@ -905,7 +903,6 @@ class Framebuffer {
     const cam = new FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
     cam._setDefaultCamera();
-    this.renderer.states.curCamera = cam;
     return cam;
   }
 
@@ -1067,9 +1064,11 @@ class Framebuffer {
     // RendererGL.reset() does, but this does not try to clear any buffers;
     // it only sets the camera.
     // this.renderer.setCamera(this.defaultCamera);
-    this.renderer.states.curCamera = this.defaultCamera;
+    this.renderer.states.setValue('curCamera', this.defaultCamera);
     // set the projection matrix (which is not normally updated each frame)
+    this.renderer.states.setValue('uPMatrix', this.renderer.states.uPMatrix.clone());
     this.renderer.states.uPMatrix.set(this.defaultCamera.projMatrix);
+    this.renderer.states.setValue('uViewMatrix', this.renderer.states.uViewMatrix.clone());
     this.renderer.states.uViewMatrix.set(this.defaultCamera.cameraMatrix);
 
     this.renderer.resetMatrix();
@@ -1557,10 +1556,10 @@ class Framebuffer {
       this.begin();
       this.renderer.push();
       // this.renderer.imageMode(constants.CENTER);
-      this.renderer.states.imageMode = constants.CORNER;
+      this.renderer.states.setValue('imageMode', constants.CORNER);
       this.renderer.setCamera(this.filterCamera);
       this.renderer.resetMatrix();
-      this.renderer.states.strokeColor = null;
+      this.renderer.states.setValue('strokeColor', null);
       this.renderer.clear();
       this.renderer._drawingFilter = true;
       this.renderer.image(

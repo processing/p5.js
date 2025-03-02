@@ -183,13 +183,11 @@ function pixels(p5, fn){
    * let img0;
    * let img1;
    *
-   * // Load the images.
-   * function preload() {
-   *   img0 = loadImage('assets/rockies.jpg');
-   *   img1 = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   img0 = await loadImage('assets/rockies.jpg');
+   *   img1 = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Use the mountains as the background.
@@ -211,13 +209,11 @@ function pixels(p5, fn){
    * let img0;
    * let img1;
    *
-   * // Load the images.
-   * function preload() {
-   *   img0 = loadImage('assets/rockies.jpg');
-   *   img1 = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   img0 = await loadImage('assets/rockies.jpg');
+   *   img1 = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Use the mountains as the background.
@@ -239,13 +235,11 @@ function pixels(p5, fn){
    * let img0;
    * let img1;
    *
-   * // Load the images.
-   * function preload() {
-   *   img0 = loadImage('assets/rockies.jpg');
-   *   img1 = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   img0 = await loadImage('assets/rockies.jpg');
+   *   img1 = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Use the mountains as the background.
@@ -316,12 +310,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Use the mountains as the background.
@@ -495,12 +487,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -518,12 +508,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -541,12 +529,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -564,12 +550,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -587,12 +571,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -610,12 +592,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -633,12 +613,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -656,12 +634,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -679,12 +655,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -827,12 +801,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -853,12 +825,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -883,12 +853,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -933,12 +901,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -1069,12 +1035,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Use the image to set all pixels.
@@ -1113,12 +1077,10 @@ function pixels(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.

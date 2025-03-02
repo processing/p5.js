@@ -201,12 +201,9 @@ function timeDate(p5, fn){
    *
    * <div>
    * <code>
-   * // Load the GeoJSON.
-   * function preload() {
-   *   loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the GeoJSON.
+   *   await loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
    *   createCanvas(100, 100);
    *
    *   background(200);

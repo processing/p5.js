@@ -117,11 +117,11 @@ function textCore(p5, fn) {
 
   /**
    * Computes the precise (tight) bounding box for a block of text
-   * @param {string} str - the text to measure
-   * @param {number} x - the x-coordinate of the text
-   * @param {number} y - the y-coordinate of the text
-   * @param {number} width - the max width of the text block
-   * @param {number} height - the max height of the text block
+   * @param {String} str - the text to measure
+   * @param {Number} x - the x-coordinate of the text
+   * @param {Number} y - the y-coordinate of the text
+   * @param {Number} width - the max width of the text block
+   * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
@@ -131,11 +131,11 @@ function textCore(p5, fn) {
 
   /**
    * Computes a generic (non-tight) bounding box for a block of text
-   * @param {string} str - the text to measure
-   * @param {number} x - the x-coordinate of the text
-   * @param {number} y - the y-coordinate of the text
-   * @param {number} width - the max width of the text block
-   * @param {number} height - the max height of the text block
+   * @param {String} str - the text to measure
+   * @param {Number} x - the x-coordinate of the text
+   * @param {Number} y - the y-coordinate of the text
+   * @param {Number} width - the max width of the text block
+   * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
@@ -145,7 +145,7 @@ function textCore(p5, fn) {
 
   /**
    * Get the width of a text string in pixels (tight bounds)
-   * @param {string} theText
+   * @param {String} theText
    * @returns - the width of the text in pixels
    */
   Renderer.prototype.textWidth = function (theText) {
@@ -156,7 +156,7 @@ function textCore(p5, fn) {
 
   /**
    * Get the width of a text string in pixels (loose bounds)
-   * @param {string} theText
+   * @param {String} theText
    * @returns - the width of the text in pixels
    */
   Renderer.prototype.fontWidth = function (theText) {
@@ -199,19 +199,19 @@ function textCore(p5, fn) {
     return this.textDrawingContext().measureText('_').fontBoundingBoxDescent;
   };
 
-  
+
   // setters/getters for text properties //////////////////////////
 
   Renderer.prototype.textAlign = function (h, v) {
 
     // the setter
     if (typeof h !== 'undefined') {
-      this.states.textAlign = h;
+      this.states.setValue('textAlign', h);
       if (typeof v !== 'undefined') {
         if (v === fn.CENTER) {
           v = fn._CTX_MIDDLE;
         }
-        this.states.textBaseline = v;
+        this.states.setValue('textBaseline', v);
       }
       return this._applyTextProperties();
     }
@@ -229,8 +229,8 @@ function textCore(p5, fn) {
   /**
    * Set the font and [size] and [options] for rendering text
    * @param {p5.Font | string} font - the font to use for rendering text
-   * @param {number} size - the size of the text, can be a number or a css-style string
-   * @param {object} options - additional options for rendering text, see FontProps
+   * @param {Number} size - the size of the text, can be a number or a css-style string
+   * @param {Object} options - additional options for rendering text, see FontProps
    */
   Renderer.prototype.textFont = function (font, size, options) {
 
@@ -267,7 +267,7 @@ function textCore(p5, fn) {
     }
 
     // update font properties in this.states
-    this.states.textFont = { font, family, size };
+    this.states.setValue('textFont', { font, family, size });
 
     // convert/update the size in this.states
     if (typeof size !== 'undefined') {
@@ -298,17 +298,14 @@ function textCore(p5, fn) {
       if (debug) console.log('  this.states.' + prop + '="' + style[prop] + '"');
     });
 
-    if (debug) console.log('  this.states.textFont="' + style.fontFamily + '"');
-    if (debug) console.log('  this.states.textSize="' + style.fontSize + '"');
-
     return { family: style.fontFamily, size: style.fontSize };
   }
 
   Renderer.prototype.textLeading = function (leading) {
     // the setter
     if (typeof leading === 'number') {
-      this.states.leadingSet = true;
-      this.states.textLeading = leading;
+      this.states.setValue('leadingSet', true);
+      this.states.setValue('textLeading', leading);
       return this._applyTextProperties();
     }
     // the getter
@@ -318,7 +315,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textWeight = function (weight) {
     // the setter
     if (typeof weight === 'number') {
-      this.states.fontWeight = weight;
+      this.states.setValue('fontWeight', weight);
       this._applyTextProperties();
       this._setCanvasStyleProperty('font-variation-settings', `"wght" ${weight}`);
       return;
@@ -345,7 +342,7 @@ function textCore(p5, fn) {
 
     // the setter
     if (typeof style !== 'undefined') {
-      this.states.fontStyle = style;
+      this.states.setValue('fontStyle', style);
       return this._applyTextProperties();
     }
     // the getter
@@ -355,7 +352,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textWrap = function (wrapStyle) {
 
     if (wrapStyle === fn.WORD || wrapStyle === fn.CHAR) {
-      this.states.textWrap = wrapStyle;
+      this.states.setValue('textWrap', wrapStyle);
       // no need to apply text properties here as not a context property
       return this._pInst;
     }
@@ -365,7 +362,7 @@ function textCore(p5, fn) {
   Renderer.prototype.textDirection = function (direction) {
 
     if (typeof direction !== 'undefined') {
-      this.states.direction = direction;
+      this.states.setValue('direction', direction);
       return this._applyTextProperties();
     }
     return this.states.direction;
@@ -621,7 +618,7 @@ function textCore(p5, fn) {
               const min = Math.min.apply(Math, indexArr)
               let idx = indexArr.indexOf(min);
               let stretch = Object.keys(FontStretchMap)[idx];
-              this.states.fontStretch = stretch;
+              this.states.setValue('fontStretch', stretch);
             }
             break;
           case 'ital':
@@ -696,7 +693,7 @@ function textCore(p5, fn) {
 
   /*
     Get the computed font-size in pixels for a given size string
-    @param {string} size - the font-size string to compute
+    @param {String} size - the font-size string to compute
     @returns {number} - the computed font-size in pixels
    */
   Renderer.prototype._fontSizePx = function (theSize, { family } = this.states.textFont) {
@@ -735,7 +732,7 @@ function textCore(p5, fn) {
 
   /*
     Aggregate the bounding boxes of multiple lines of text
-    @param {array} bboxes - the bounding boxes to aggregate
+    @param {Array} bboxes - the bounding boxes to aggregate
     @returns {object} - the aggregated bounding box
   */
   Renderer.prototype._aggregateBounds = function (bboxes) {
@@ -760,8 +757,8 @@ function textCore(p5, fn) {
 
   /*
     Process the text string to handle line-breaks and text wrapping
-    @param {string} str - the text to process
-    @param {number} width - the width to wrap the text to
+    @param {String} str - the text to process
+    @param {Number} width - the width to wrap the text to
     @returns {array} - the processed lines of text
   */
   Renderer.prototype._processLines = function (str, width, height) {
@@ -933,11 +930,11 @@ function textCore(p5, fn) {
 
       // set it in `this.states` if its been changed
       if (this.states.textSize !== theSize) {
-        this.states.textSize = theSize;
+        this.states.setValue('textSize', theSize);
 
         // handle leading here, if not set otherwise
         if (!this.states.leadingSet) {
-          this.states.textLeading = this.states.textSize * LeadingScale;
+          this.states.setValue('textLeading', this.states.textSize * LeadingScale);
         }
         return true; // size was changed
       }
@@ -951,9 +948,9 @@ function textCore(p5, fn) {
 
   /*
     Split the lines of text based on the width and the textWrap property
-    @param {array} lines - the lines of text to split
-    @param {number} maxWidth - the maximum width of the lines
-    @param {object} opts - additional options for splitting the lines
+    @param {Array} lines - the lines of text to split
+    @param {Number} maxWidth - the maximum width of the lines
+    @param {Object} opts - additional options for splitting the lines
     @returns {array} - the split lines of text
   */
   Renderer.prototype._lineate = function (textWrap, lines, maxWidth = Infinity, opts = {}) {
@@ -1248,7 +1245,7 @@ function textCore(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
+      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     }

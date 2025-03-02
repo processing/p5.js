@@ -82,13 +82,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //add a row
      *   let newRow = table.addRow();
      *   newRow.setString('id', table.getRowCount() - 1);
@@ -136,13 +134,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //remove the first row
      *   table.removeRow(0);
      *
@@ -183,13 +179,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   let row = table.getRow(1);
      *   //print it column by column
      *   //note: a row is an object, not an array
@@ -224,13 +218,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   let rows = table.getRows();
      *
      *   //warning: rows is an array of objects
@@ -277,13 +269,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //find the animal named zebra
      *   let row = table.findRow('Zebra', 'name');
      *   //find the corresponding species
@@ -338,13 +328,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //add another goat
      *   let newRow = table.addRow();
      *   newRow.setString('id', table.getRowCount() - 1);
@@ -403,13 +391,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //Search using specified regex on a given column, return TableRow object
      *   let mammal = table.matchRow(new RegExp('ant'), 1);
      *   print(mammal.getString(1));
@@ -520,14 +506,12 @@ function table(p5, fn){
      * // 2,Equus zebra,Zebra
      *
      * let table;
+     **
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
-     *
-     * function setup() {
      *   //getColumn returns an array that can be printed directly
      *   print(table.getColumn('species'));
      *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
@@ -567,13 +551,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   table.clearRows();
      *   print(table.getRowCount() + ' total rows in table');
      *   print(table.getColumnCount() + ' total columns in table');
@@ -608,13 +590,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   table.addColumn('carnivore');
      *   table.set(0, 'carnivore', 'no');
      *   table.set(1, 'carnivore', 'yes');
@@ -649,11 +629,9 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   table = loadTable('assets/blobs.csv');
-     * }
+     * async function setup() {
+     *   table = await loadTable('assets/blobs.csv');
      *
-     * function setup() {
      *   createCanvas(200, 100);
      *   textAlign(CENTER);
      *   background(255);
@@ -685,11 +663,9 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   table = loadTable('assets/blobs.csv');
-     * }
+     * async function setup() {
+     *   table = await loadTable('assets/blobs.csv');
      *
-     * function setup() {
      *   createCanvas(200, 100);
      *   textAlign(CENTER);
      *   background(255);
@@ -861,13 +837,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   table.removeColumn('id');
      *   print(table.getColumnCount());
      *   describe('no image displayed');
@@ -923,13 +897,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   table.set(0, 'species', 'Canis Lupus');
      *   table.set(0, 'name', 'Wolf');
      *
@@ -970,13 +942,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   table.setNum(1, 'id', 1);
      *
      *   print(table.getColumn(0));
@@ -1011,13 +981,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   //add a row
      *   let newRow = table.addRow();
      *   newRow.setString('id', table.getRowCount() - 1);
@@ -1057,13 +1025,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   print(table.get(0, 1));
      *   //Capra hircus
      *   print(table.get(0, 'species'));
@@ -1100,13 +1066,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   print(table.getNum(1, 0) + 100);
      *   //id 1 + 100 = 101
      *   describe('no image displayed');
@@ -1141,13 +1105,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   // table is comma separated value "CSV"
-     *   // and has specifiying header for column labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   print(table.getString(0, 0)); // 0
      *   print(table.getString(0, 1)); // Capra hircus
      *   print(table.getString(0, 2)); // Goat
@@ -1188,13 +1150,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   //my table is comma separated value "csv"
-     *   //and has a header specifying the columns labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   let tableObject = table.getObject();
      *
      *   print(tableObject);
@@ -1245,13 +1205,11 @@ function table(p5, fn){
      *
      * let table;
      *
-     * function preload() {
-     *   // table is comma separated value "CSV"
-     *   // and has specifiying header for column labels
-     *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-     * }
+     * async function setup() {
+     *   // The table is comma separated value "csv"
+     *   // and has a header specifying the columns labels.
+     *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
      *
-     * function setup() {
      *   let tableArray = table.getArray();
      *   for (let i = 0; i < tableArray.length; i++) {
      *     print(tableArray[i]);
@@ -1290,13 +1248,11 @@ function table(p5, fn){
    *
    * let table;
    *
-   * function preload() {
-   *   //my table is comma separated value "csv"
-   *   //and has a header specifying the columns labels
-   *   table = loadTable('assets/mammals.csv', 'csv', 'header');
-   * }
+   * async function setup() {
+   *   // The table is comma separated value "csv"
+   *   // and has a header specifying the columns labels.
+   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
    *
-   * function setup() {
    *   //print the column names
    *   for (let c = 0; c < table.getColumnCount(); c++) {
    *     print('column ' + c + ' is named ' + table.columns[c]);

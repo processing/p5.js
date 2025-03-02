@@ -287,13 +287,13 @@ function image(p5, fn){
       const framebuffer = args[0];
       temporaryGraphics = this.createGraphics(framebuffer.width,
         framebuffer.height);
-      temporaryGraphics.pixelDensity(pixelDensity());
+      temporaryGraphics.pixelDensity(framebuffer.pixelDensity());
       framebuffer.loadPixels();
       temporaryGraphics.loadPixels();
       temporaryGraphics.pixels.set(framebuffer.pixels);
       temporaryGraphics.updatePixels();
 
-      htmlCanvas = temporaryGraphics.elt;
+      htmlCanvas = temporaryGraphics._renderer.canvas;
       args.shift();
     } else {
       htmlCanvas = this._curElement && this._curElement.elt;

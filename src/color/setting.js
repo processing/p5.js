@@ -751,9 +751,9 @@ function setting(p5, fn){
    * created in. Changing modes doesn't affect their appearance.
    *
    * @method colorMode
-   * @param {(RGB|HSB|HSL)} mode   either RGB, HSB or HSL, corresponding to
-   *                          Red/Green/Blue and Hue/Saturation/Brightness
-   *                          (or Lightness).
+   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB 
+   *                          or HSL, corresponding to Red/Green/Blue and 
+   *                          Hue/Saturation/Brightness (or Lightness).
    * @param {Number}  [max]  range for all values.
    * @chainable
    *
@@ -937,7 +937,7 @@ function setting(p5, fn){
 
   /**
    * @method colorMode
-   * @param {(RGB|HSB|HSL)} mode
+   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode
    * @param {Number} max1     range for the red or hue depending on the
    *                              current color mode.
    * @param {Number} max2     range for the green or saturation depending
@@ -964,9 +964,10 @@ function setting(p5, fn){
       ].includes(mode)
     ) {
       // Set color mode.
-      this._renderer.states.colorMode = mode;
+      this._renderer.states.setValue('colorMode', mode);
 
       // Set color maxes.
+      this._renderer.states.setValue('colorMaxes', this._renderer.states.colorMaxes.clone());
       const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red
@@ -1335,7 +1336,7 @@ function setting(p5, fn){
    * </div>
    */
   fn.noStroke = function() {
-    this._renderer.states.strokeColor = null;
+    this._renderer.states.setValue('strokeColor', null);
     return this;
   };
 

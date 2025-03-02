@@ -17,55 +17,55 @@ if (typeof Float32Array !== "undefined") {
 }
 /**
  * The `Matrix` class represents a mathematical matrix and provides various methods for matrix operations.
- * 
+ *
  * This class extends the `MatrixInterface` and includes methods for creating, manipulating, and performing
  * operations on matrices. It supports both 3x3 and 4x4 matrices, as well as general NxN matrices.
- * 
+ *
  * @class
  * @extends MatrixInterface
- * 
+ *
  * @example
  * // Creating a 3x3 matrix from an array
  * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
- * 
+ *
  * // Creating a 4x4 identity matrix
  * const identityMatrix = new Matrix(4);
- * 
+ *
  * // Adding two matrices
  * const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
  * const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
  * matrix1.add(matrix2); // matrix1 is now [10, 10, 10, 10, 10, 10, 10, 10, 10]
- * 
+ *
  * // Setting an element in the matrix
  * matrix.setElement(0, 10); // matrix is now [10, 2, 3, 4, 5, 6, 7, 8, 9]
- * 
+ *
  * // Resetting the matrix to an identity matrix
  * matrix.reset();
- * 
+ *
  * // Getting the diagonal elements of the matrix
  * const diagonal = matrix.diagonal(); // [1, 1, 1]
- * 
+ *
  * // Transposing the matrix
  * matrix.transpose();
- * 
+ *
  * // Multiplying two matrices
  * matrix1.mult(matrix2);
- * 
+ *
  * // Inverting the matrix
  * matrix.invert();
- * 
+ *
  * // Scaling the matrix
  * matrix.scale(2, 2, 2);
- * 
+ *
  * // Rotating the matrix around an axis
  * matrix.rotate4x4(Math.PI / 4, 1, 0, 0);
- * 
+ *
  * // Applying a perspective transformation
  * matrix.perspective(Math.PI / 4, 1, 0.1, 100);
- * 
+ *
  * // Applying an orthographic transformation
  * matrix.ortho(-1, 1, -1, 1, 0.1, 100);
- * 
+ *
  * // Multiplying a vector by the matrix
  * const vector = new Vector(1, 2, 3);
  * const result = matrix.multiplyPoint(vector);
@@ -81,7 +81,7 @@ export class Matrix extends MatrixInterface {
     if (isMatrixArray(args[0]) && isPerfectSquare(args[0])) {
       const sqDimention = Math.sqrt(Array.from(args[0]).length);
       this.#sqDimention = sqDimention;
-      this.matrix = Array.from(args[0]);
+      this.matrix = GLMAT_ARRAY_TYPE.from(args[0]);
     } else if (typeof args[0] === "number") {
       this.#sqDimention = Number(args[0]);
       this.matrix = this.#createIdentityMatrix(args[0]);
@@ -91,10 +91,10 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Getter for a 3x3 matrix.
-   * 
-   * This method returns the matrix if its dimensions are 3x3. 
+   *
+   * This method returns the matrix if its dimensions are 3x3.
    * If the matrix is not 3x3, it returns `undefined`.
-   * 
+   *
    * @returns {Array|undefined} The 3x3 matrix or `undefined` if the matrix is not 3x3.
    */
   get mat3() {
@@ -107,10 +107,10 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Getter for a 4x4 matrix.
-   * 
+   *
    * This method returns the matrix if its dimensions are 4x4.
    * If the matrix is not 4x4, it returns `undefined`.
-   * 
+   *
    * @returns {Array|undefined} The 4x4 matrix or `undefined` if the matrix is not 4x4.
    */
   get mat4() {
@@ -123,11 +123,11 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Adds the corresponding elements of the given matrix to this matrix.
-   * 
+   *
    * @param {Matrix} matrix - The matrix to add to this matrix. It must have the same dimensions as this matrix.
    * @returns {Matrix} The resulting matrix after addition.
    * @throws {Error} If the matrices do not have the same dimensions.
-   * 
+   *
    * @example
    * const matrix1 = new Matrix([1, 2, 3]);
    * const matrix2 = new Matrix([4, 5, 6]);
@@ -146,7 +146,7 @@ export class Matrix extends MatrixInterface {
   /**
    * Sets the value of a specific element in the matrix.
    *
-   * @param {number} index - The position in the matrix where the value should be set. 
+   * @param {Number} index - The position in the matrix where the value should be set.
    *                         Must be a non-negative integer less than the length of the matrix.
    * @param {*} value - The new value to be assigned to the specified position in the matrix.
    * @returns {Matrix} The current instance of the Matrix, allowing for method chaining.
@@ -165,10 +165,10 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Resets the current matrix to an identity matrix.
-   * 
+   *
    * This method replaces the current matrix with an identity matrix of the same dimensions.
    * An identity matrix is a square matrix with ones on the main diagonal and zeros elsewhere.
-   * 
+   *
    * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
    */
   reset() {
@@ -192,11 +192,11 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   set(inMatrix) {
-    let refArray = Array.from([...arguments]);
+    let refArray = GLMAT_ARRAY_TYPE.from([...arguments]);
     if (inMatrix instanceof Matrix) {
-      refArray = inMatrix.matrix;
+      refArray = GLMAT_ARRAY_TYPE.from(inMatrix.matrix);
     } else if (isMatrixArray(inMatrix)) {
-      refArray = inMatrix;
+      refArray = GLMAT_ARRAY_TYPE.from(inMatrix);
     }
     if (refArray.length !== this.matrix.length) {
       p5._friendlyError(
@@ -205,7 +205,7 @@ export class Matrix extends MatrixInterface {
       );
       return this;
     }
-    this.matrix = [...refArray];
+    this.matrix = refArray;
     return this;
   }
 
@@ -283,16 +283,16 @@ export class Matrix extends MatrixInterface {
     return new Vector(...rowVector);
   }
 
- 
+
 
 
   /**
    * Transposes the given matrix `a` based on the square dimension of the matrix.
-   * 
+   *
    * This method rearranges the elements of the matrix such that the rows become columns
    * and the columns become rows. It handles matrices of different dimensions (4x4, 3x3, NxN)
    * by delegating to specific transpose methods for each case.
-   * 
+   *
    * @param {Array} a - The matrix to be transposed. It should be a 2D array where each sub-array represents a row.
    * @returns {Array} - The transposed matrix.
    */
@@ -310,17 +310,17 @@ export class Matrix extends MatrixInterface {
     }
   }
 
- 
+
   /**
    * Multiplies the current matrix with another matrix or matrix-like array.
-   * 
+   *
    * This method supports several types of input:
    * - Another Matrix instance
    * - A matrix-like array (must be a perfect square, e.g., 4x4 or 3x3)
    * - Multiple arguments that form a perfect square matrix
-   * 
+   *
    * If the input is the same as the current matrix, a copy is made to avoid modifying the original matrix.
-   * 
+   *
    * @param {Matrix|Array|...number} multMatrix - The matrix or matrix-like array to multiply with.
    * @returns {Matrix|undefined} The resulting matrix after multiplication, or undefined if the input is invalid.
    * @chainable
@@ -368,10 +368,10 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Inverts a given matrix.
-   * 
+   *
    * This method inverts a matrix based on its dimensions. Currently, it supports
    * 3x3 and 4x4 matrices. If the matrix dimension is greater than 4, an error is thrown.
-   * 
+   *
    * @param {Array} a - The matrix to be inverted. It should be a 2D array representing the matrix.
    * @returns {Array} - The inverted matrix.
    * @throws {Error} - Throws an error if the matrix dimension is greater than 4.
@@ -662,7 +662,7 @@ export class Matrix extends MatrixInterface {
    * This method modifies the current matrix to apply a rotation transformation
    * around the X-axis. The rotation angle is specified in radians.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by.
+   * @param {Number} a - The angle in radians to rotate the matrix by.
    */
   rotateX(a) {
     this.rotate4x4(a, 1, 0, 0);
@@ -675,7 +675,7 @@ export class Matrix extends MatrixInterface {
    * around the Y-axis. The rotation is performed in 3D space, and the angle
    * is specified in radians.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by. Positive
+   * @param {Number} a - The angle in radians to rotate the matrix by. Positive
    * values rotate the matrix counterclockwise, and negative values rotate it
    * clockwise.
    */
@@ -686,8 +686,8 @@ export class Matrix extends MatrixInterface {
   /**
    * Rotates the matrix around the Z-axis by a given angle.
    *
-   * @param {number} a - The angle in radians to rotate the matrix by.
-   * 
+   * @param {Number} a - The angle in radians to rotate the matrix by.
+   *
    * This method modifies the current matrix to apply a rotation transformation
    * around the Z-axis. The rotation is performed in a 4x4 matrix context, which
    * is commonly used in 3D graphics to handle transformations.
@@ -880,12 +880,12 @@ export class Matrix extends MatrixInterface {
   /**
    * Multiplies the current 4x4 matrix with another 4x4 matrix.
    * This method updates the current matrix with the result of the multiplication.
-   * 
+   *
    * @private
    * @param {number[]} _src - A 16-element array representing the 4x4 matrix to multiply with.
-   * 
+   *
    * @returns {this} The current instance with the updated matrix.
-   * 
+   *
    * @example
    * // Assuming `matrix` is an instance of the Matrix class
    * const srcMatrix = [
@@ -1010,7 +1010,7 @@ export class Matrix extends MatrixInterface {
   /**
    * Transposes a square matrix in place.
    * This method swaps the rows and columns of the matrix, effectively flipping it over its diagonal.
-   * 
+   *
    * @private
    * @returns {Matrix} The current instance of the Matrix, with the transposed values.
    */
