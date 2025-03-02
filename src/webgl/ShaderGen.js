@@ -6,7 +6,7 @@
 */
 
 import { parse } from 'acorn';
-import * as walk from 'acorn-walk';
+import { simple } from 'acorn-walk';
 import escodegen from 'escodegen';
 
 function shadergen(p5, fn) {
@@ -14,24 +14,23 @@ function shadergen(p5, fn) {
   
   const oldModify = p5.Shader.prototype.modify
 
-  p5.Shader.prototype.modify = function(arg) {
-
-    if (arg instanceof Function) {
-      const code = arg.toString()
-      const ast = parse(code, { ecmaVersion: 2021, locations: true });
+  p5.Shader.prototype.modify = function(modifier) {
+    if (modifier instanceof Function) {
+      const code = modifier.toString()
+      const ast = parse(code, { ecmaVersion: 2021 /*, locations: true*/ });
       
-      walk.ancestor(ast, ASTCallbacks, null, {myData: 123});
+      simple(ast, ASTCallbacks);
 
-      const transformed = escodegen.generate(ast);
-      console.log(transformed)
+      const transpiledArg = escodegen.generate(ast);
+      console.log(transpiledArg)
      
-      // const program = new ShaderProgram(arg)
+      // const program = new ShaderProgram(modifier)
       // const newArg = program.generate();
       // console.log(newArg.vertex)
       // return oldModify.call(this, newArg);
     } 
     else {
-      return oldModify.call(this, arg)
+      return oldModify.call(this, modifier)
     }
   }
 
@@ -48,11 +47,14 @@ function shadergen(p5, fn) {
   }
 
   const ASTCallbacks = {
-    Literal(node, state, ancestors) {
+    // TODO: automatically making uniforms
+    Literal(node) {
     },
-    AssignmentExpression(node, _state, ancestors) {
-      // Operator overloading
-      if (node.operator != '=') {
+
+    // The callbacks for AssignmentExpression and BinaryExpression handle
+    // operator overloading including +=, *= assignment expressions 
+    AssignmentExpression(node) {
+      if (node.operator !== '=') {
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
@@ -68,31 +70,12 @@ function shadergen(p5, fn) {
           },
           arguments: [node.right]
         }
-
           node.operator = '=';
           node.right = rightReplacementNode;
         }
       },
-    BinaryExpression(node, state, ancestors) {
-      // let i = ancestors.length - 1;
-      // let ancestor = ancestors[i]; // ancestor === node
-      // while (ancestor.type === 'BinaryExpression') {
-      //   ancestor = ancestors[i--];
-      // }
-
-      console.log("\n NEW NODE:")
-
-      const transformed = escodegen.generate(node);
-      const l = escodegen.generate(node.left);
-      const r = escodegen.generate(node.right);
-      console.log("Transformed: ", transformed);
-      console.log("Left: ", l);
-      console.log("Right: ", r);
-
-      console.log(node.left);
-
+    BinaryExpression(node) {
       node.type = 'CallExpression';
-      console.log("OPERATOR: ", node.operator)
       node.callee = {
         type: "MemberExpression",
         object: node.left,
@@ -102,12 +85,13 @@ function shadergen(p5, fn) {
         },
       };
       node.arguments = [node.right];
-
     },
   }
 
 
-  // JS API
+  // Javascript Node API.
+  // These classes are for expressing GLSL functions in Javascript with
+  // needing to  transpile the user's code.
 
   class BaseNode {
     constructor(isInternal) {
@@ -121,7 +105,7 @@ function shadergen(p5, fn) {
       this.usedIn = [];
       this.dependsOn = [];
       this.srcLine = null;
-      
+      // Stack Capture is used to get the original line of user code for Debug purposes
       if (isInternal === false) {
         try {
           throw new Error("StackCapture");
