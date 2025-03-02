@@ -2803,6 +2803,7 @@ suite('p5.RendererGL', function() {
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
       }
     );
+  });
 
   suite('Matrix getters', function() {
     test('uModelMatrix', function() {
@@ -2882,5 +2883,5 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.checkPMatrix();
     });
-  });
+  });  
 });
