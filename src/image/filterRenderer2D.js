@@ -14,6 +14,11 @@ import filterThresholdFrag from '../webgl/shaders/filters/threshold.frag';
 import filterShaderVert from '../webgl/shaders/filters/default.vert';
 import { filterParamDefaults } from "./const";
 
+
+import filterBaseFrag from "../webgl/shaders/filters/base.frag";
+import filterBaseVert from "../webgl/shaders/filters/base.vert";
+import webgl2CompatibilityShader from "../webgl/shaders/webgl2Compatibility.glsl";
+
 class FilterRenderer2D {
   /**
    * Creates a new FilterRenderer2D instance.
@@ -27,7 +32,12 @@ class FilterRenderer2D {
     this.canvas.height = pInst.height;
 
     // Initialize the WebGL context
-    this.gl = this.canvas.getContext('webgl');
+    let webglVersion = constants.WEBGL2;
+    this.gl = this.canvas.getContext('webgl2');
+    if (!this.gl) {
+      webglVersion = constants.WEBGL;
+      this.gl = this.canvas.getContext('webgl');
+    }
     if (!this.gl) {
       console.error("WebGL not supported, cannot apply filter.");
       return;
@@ -38,7 +48,7 @@ class FilterRenderer2D {
       registerEnabled: new Set(),
       _curShader: null,
       _emptyTexture: null,
-      webglVersion: 'WEBGL',
+      webglVersion,
       states: {
         textureWrapX: this.gl.CLAMP_TO_EDGE,
         textureWrapY: this.gl.CLAMP_TO_EDGE,
@@ -53,6 +63,8 @@ class FilterRenderer2D {
         return this._emptyTexture;
       },
     };
+
+    this._baseFilterShader = undefined;
 
     // Store the fragment shader sources
     this.filterShaderSources = {
@@ -88,6 +100,45 @@ class FilterRenderer2D {
 
     // Upload texcoord data once
     this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords);
+  }
+
+  _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
+    let code = "";
+    if (this._renderer.webglVersion === constants.WEBGL2) {
+      code += "#version 300 es\n#define WEBGL2\n";
+    }
+    if (shaderType === "vert") {
+      code += "#define VERTEX_SHADER\n";
+    } else if (shaderType === "frag") {
+      code += "#define FRAGMENT_SHADER\n";
+    }
+    if (floatPrecision) {
+      code += `precision ${floatPrecision} float;\n`;
+    }
+    return code;
+  }
+
+  baseFilterShader() {
+    if (!this._baseFilterShader) {
+      this._baseFilterShader = new Shader(
+        this._renderer,
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          webgl2CompatibilityShader +
+          filterBaseVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          webgl2CompatibilityShader +
+          filterBaseFrag,
+        {
+            vertex: {},
+            fragment: {
+              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+                return getTexture(canvasContent, inputs.texCoord);
+              }`,
+            },
+          }
+      );
+    }
+    return this._baseFilterShader;
   }
 
   /**
