@@ -288,29 +288,29 @@ function shadergen(p5, fn) {
 
   // I am interested in the 'prop' value of get and set then
 
-  const VectorNodeHandler = {
-    swizzles: [
-      ['x', 'y', 'z', 'w'],
-      ['r', 'b', 'g', 'a'],
-      ['s', 't', 'p', 'q'],
-    ],
-    get(target, prop, receiver) {
-      if (prop in target) {
-         return Reflect.get(target, prop, receiver); 
-      } else {
-        console.log(prop);
-      }
-      let modifiedProp;
-      return Reflect.get(target, modifiedProp, receiver);
-    },
-    set(obj, prop, receiver) {
-      console.log("OBJect:",obj,"PROPERTY", prop, "RECEIVER", receiver);
+  // const VectorNodeHandler = {
+  //   swizzles: [
+  //     ['x', 'y', 'z', 'w'],
+  //     ['r', 'b', 'g', 'a'],
+  //     ['s', 't', 'p', 'q'],
+  //   ],
+  //   get(target, prop, receiver) {
+  //     if (prop in target) {
+  //        return Reflect.get(target, prop, receiver); 
+  //     } else {
+  //       console.log(prop);
+  //     }
+  //     let modifiedProp;
+  //     return Reflect.get(target, modifiedProp, receiver);
+  //   },
+  //   set(obj, prop, receiver) {
+  //     console.log("OBJect:",obj,"PROPERTY", prop, "RECEIVER", receiver);
 
-      if (prop in obj) { return Reflect.set(...arguments); }
-      let modifiedProp;
-      return Reflect.set(obj, modifiedProp, receiver);
-    }
-  }
+  //     if (prop in obj) { return Reflect.set(...arguments); }
+  //     let modifiedProp;
+  //     return Reflect.set(obj, modifiedProp, receiver);
+  //   }
+  // }
 
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
@@ -631,16 +631,17 @@ function shadergen(p5, fn) {
   }
   
   fn.createVector2 = function(x, y) {
-    return new Proxy(new VectorNode([x, y], 'vec2'), VectorNodeHandler);
+    // return new Proxy(new VectorNode([x, y], 'vec2'), VectorNodeHandler);
+    return new VectorNode([x, y], 'vec2');
   }
 
   fn.createVector3 = function(x, y, z) {
-    return new Proxy(new VectorNode([x, y, z], 'vec3'), VectorNodeHandler);
+    // return new Proxy(new VectorNode([x, y, z], 'vec3'), VectorNodeHandler);
     return new VectorNode([x, y, z], 'vec3');
   }
 
   fn.createVector4 = function(x, y, z, w) {
-    return new Proxy(new VectorNode([x, y, z, w], 'vec4'), VectorNodeHandler);
+    // return new Proxy(new VectorNode([x, y, z, w], 'vec4'), VectorNodeHandler);
     return new VectorNode([x, y, z, w], 'vec4');
   }
   
