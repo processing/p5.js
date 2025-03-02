@@ -428,41 +428,37 @@ class RendererGL extends Renderer {
 
     this.scratchMat3 = new Matrix(3);
 
-    this.isStencilTestOn = false; // Track stencil test state
-    this._userEnabledStencil = false; // Track whether user enabled stencil
+    this._userEnabledStencil = false;
+    this.isStencilTestOn = false;
+    // Store original methods for internal use
+    this._internalEnable = this.drawingContext.enable;
+    this._internalDisable = this.drawingContext.disable;
+
     // Override WebGL enable function
-    const prevEnable = this.drawingContext.enable;
     this.drawingContext.enable = (key) => {
-        if (key === this.drawingContext.STENCIL_TEST) {
-            if (!this._clipping) {
-                this._userEnabledStencil = true;
-            }
-            this.isStencilTestOn = true;
+      // When enable is called with STENCIL_TEST
+      if (key === this.drawingContext.STENCIL_TEST) {
+        // If not during clip(), mark as user-enabled
+        if (!this._clipping) {
+          this._userEnabledStencil = true;
         }
-        return prevEnable.call(this.drawingContext, key);
+      }
+      return this._internalEnable.call(this.drawingContext, key);
     };
 
     // Override WebGL disable function
-    const prevDisable = this.drawingContext.disable;
     this.drawingContext.disable = (key) => {
-        if (key === this.drawingContext.STENCIL_TEST) {
-            if (this._clipDepth === this._pushPopDepth) {
-                this.isStencilTestOn = this._userEnabledStencil;
-            } else {
-                this.isStencilTestOn = false;
-                this._userEnabledStencil = false;
-            }
+      if (key === this.drawingContext.STENCIL_TEST) {
+        // When pop() disables the stencil test after clip(),
+        // preserve the user's stencil test setting
+        if (this._clipDepth === this._pushPopDepth) {
+          // Don't change user setting here, just use internal disable
+        } else {
+          // User explicitly disabled stencil test
+          this._userEnabledStencil = false;
         }
-        return prevDisable.call(this.drawingContext, key);
-    };
-
-    // Override WebGL getEnabled function
-    const prevGetEnabled = this.drawingContext.getEnabled;
-    this.drawingContext.getEnabled = (key) => {
-        if (key === this.drawingContext.STENCIL_TEST) {
-            return this.isStencilTestOn;
-        }
-        return prevGetEnabled.call(this.drawingContext, key);
+      }
+      return this._internalDisable.call(this.drawingContext, key);
     };
   }
 
@@ -1061,8 +1057,8 @@ class RendererGL extends Renderer {
     //Clear depth every frame
     this.GL.clearStencil(0);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT | this.GL.STENCIL_BUFFER_BIT);
-    if (!this.isStencilTestOn) {
-      this.GL.disable(this.GL.STENCIL_TEST);
+    if (!this._userEnabledStencil) {
+      this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
     }
   
   }
@@ -1427,9 +1423,6 @@ class RendererGL extends Renderer {
     this.drawTarget()._isClipApplied = true;
 
     const gl = this.GL;
-    this._savedStencilTestState = this._userEnabledStencil;
-    this._preClipStencilState = this.drawingContext.getEnabled(this.drawingContext.STENCIL_TEST);
-    // this.isStencilTestOn = this.drawingContext.getEnabled(this.drawingContext.STENCIL_TEST);
     gl.clearStencil(0); 
     gl.clear(gl.STENCIL_BUFFER_BIT);
     gl.enable(gl.STENCIL_TEST);
@@ -1782,22 +1775,12 @@ class RendererGL extends Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
-      // if (this.isStencilTestOn) {
-      //   this.GL.enable(this.GL.STENCIL_TEST);
-      // } else {
-      //   this.GL.disable(this.GL.STENCIL_TEST);
-      // }
-      // if (!this._savedStencilTestState) {
-      //   this.GL.disable(this.GL.STENCIL_TEST);
-      // }
-      if (this._preClipStencilState) {
-        this.GL.enable(this.GL.STENCIL_TEST);
-      } else {
-        this.GL.disable(this.GL.STENCIL_TEST);
+      if (!this._userEnabledStencil) {
+        this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
       }
     
     // Reset saved state
-    this._userEnabledStencil = this._savedStencilTestState;
+    // this._userEnabledStencil = this._savedStencilTestState;
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
@@ -1809,9 +1792,9 @@ class RendererGL extends Renderer {
         this.GL.enable(this.GL.STENCIL_TEST);
         this._stencilTestOn = true;
       } else {
-        if (!this.isStencilTestOn) {
-          this.GL.disable(this.GL.STENCIL_TEST);
-      }
+        if (!this._userEnabledStencil) {
+          this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+        }
         this._stencilTestOn = false;
       }
     }
