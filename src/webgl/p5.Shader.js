@@ -52,6 +52,79 @@ class Shader {
     };
   }
 
+  hookTypes(hookName) {
+    let fullSrc = this._vertSrc;
+    let body = this.hooks.vertex[hookName];
+    if (!body) {
+      body = this.hooks.fragment[hookName];
+      fullSrc = this._fragSrc;
+    }
+    if (!body) {
+      throw new Error(`Can't find hook ${hookName}!`);
+    }
+    const nameParts = hookName.split(/\s+/g);
+    const functionName = nameParts.pop();
+    const returnType = nameParts.pop();
+    const returnQualifiers = [...nameParts];
+
+    const parameterMatch = /\(([^\)]*)\)/.exec(body);
+    if (!parameterMatch) {
+      throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
+    }
+
+    const structProperties = structName => {
+      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
+      if (!structDefMatch) return undefined;
+
+      const properties = [];
+      for (const defSrc of structDefMatch[1].split(';')) {
+        // E.g. `int var1, var2;` or `MyStruct prop;`
+        const parts = defSrc.trim().split(/\s+|,/g);
+        const typeName = parts.shift();
+        const names = [...parts];
+        const typeProperties = structProperties(typeName);
+        for (const name of names) {
+          properties.push({
+            name,
+            type: {
+              typeName,
+              qualifiers: [],
+              properties: typeProperties,
+            },
+          });
+        }
+      }
+      return properties;
+    };
+
+    const parameters = parameterMatch[1].split(',').map(paramString => {
+      // e.g. `int prop` or `in sampler2D prop` or `const float prop`
+      const parts = paramString.trim().split(/\s+/g);
+      const name = parts.pop();
+      const typeName = parts.pop();
+      const qualifiers = [...parts];
+      const properties = structProperties(typeName);
+      return {
+        name,
+        type: {
+          typeName,
+          qualifiers,
+          properties,
+        }
+      }
+    });
+
+    return {
+      name: functionName,
+      returnType: {
+        typeName: returnType,
+        qualifiers: returnQualifiers,
+        properties: structProperties(returnType)
+      },
+      parameters
+    };
+  }
+
   shaderSrc(src, shaderType) {
     const main = 'void main';
     let [preMain, postMain] = src.split(main);

@@ -73,6 +73,31 @@ visualSuite('WebGL', function() {
 
     for (const mode of ['webgl', '2d']) {
       visualSuite(`In ${mode} mode`, function() {
+        visualTest('It can use filter shader hooks', function(p5, screenshot) {
+          p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+
+          const s = p5.baseFilterShader().modify({
+            'vec4 getColor': `(FilterInputs inputs, in sampler2D content) {
+              vec4 c = getTexture(content, inputs.texCoord);
+              float avg = (c.r + c.g + c.b) / 3.0;
+              return vec4(avg, avg, avg, c.a);
+            }`
+          });
+
+          if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+          p5.background(255);
+          p5.fill('red');
+          p5.noStroke();
+          p5.circle(15, 15, 20);
+          p5.circle(30, 30, 20);
+          p5.filter(s);
+          screenshot();
+        });
+      });
+    }
+
+    for (const mode of ['webgl', '2d']) {
+      visualSuite(`In ${mode} mode`, function() {
         visualTest('It can combine multiple filter passes', function(p5, screenshot) {
           p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
           if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
