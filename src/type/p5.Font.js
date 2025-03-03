@@ -121,7 +121,186 @@ function font(p5, fn) {
 
       return cmdContours.map((commands) => pathToPoints(commands, options, this));
     }
-
+  /**
+   * Sets the <a href="#/p5.Shader">p5.Shader</a> object to apply while drawing.
+   *
+   * Shaders are programs that run on the graphics processing unit (GPU). They
+   * can process many pixels or vertices at the same time, making them fast for
+   * many graphics tasks. They’re written in a language called
+   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * and run along with the rest of the code in a sketch.
+   * <a href="#/p5.Shader">p5.Shader</a> objects can be created using the
+   * <a href="#/p5/createShader">createShader()</a> and
+   * <a href="#/p5/loadShader">loadShader()</a> functions.
+   *
+   * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
+   * apply. For example, calling `shader(myShader)` applies `myShader` to
+   * process each pixel on the canvas. This only changes the fill (the inner part of shapes),
+   * but does not affect the outlines (strokes) or any images drawn using the `image()` function.
+   * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
+   * fragment and vertex shaders will be compiled the first time it's passed to
+   * `shader()`. See
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/compileShader" target="_blank">MDN</a>
+   * for more information about compiling shaders.
+   *
+   * Calling <a href="#/p5/resetShader">resetShader()</a> restores a sketch’s
+   * default shaders.
+   *
+   * Note: Shaders can only be used in WebGL mode.
+   *
+   * <div>
+   * <p>
+   *
+   * If you want to apply shaders to strokes or images, use the following methods:
+   * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   *
+   * </p>
+   * </div>
+   *
+   *
+   * @method shader
+   * @chainable
+   * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+   *                      to apply.
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let fillShader;
+   *
+   * let vertSrc = `
+   * precision highp float;
+   * attribute vec3 aPosition;
+   * uniform mat4 uModelViewMatrix;
+   * uniform mat4 uProjectionMatrix;
+   * varying vec3 vPosition;
+   *
+   * void main() {
+   *   vPosition = aPosition;
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+   * }
+   * `;
+   *
+   * let fragSrc = `
+   * precision highp float;
+   * uniform vec3 uLightDir;
+   * varying vec3 vPosition;
+   *
+   * void main() {
+   *   vec3 lightDir = normalize(uLightDir);
+   *   float brightness = dot(lightDir, normalize(vPosition));
+   *   brightness = clamp(brightness, 0.4, 1.0);
+   *   vec3 color = vec3(0.3, 0.5, 1.0);
+   *   color = color * brightness * 3.0;
+   *   gl_FragColor = vec4(color, 1.0);
+   * }
+   * `;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   fillShader = createShader(vertSrc, fragSrc);
+   *   noStroke();
+   *   describe('A rotating torus with simulated directional lighting.');
+   * }
+   *
+   * function draw() {
+   *   background(20, 20, 40);
+   *   let lightDir = [0.5, 0.5, -1.0];
+   *   fillShader.setUniform('uLightDir', lightDir);
+   *   shader(fillShader);
+   *   rotateY(frameCount * 0.02);
+   *   rotateX(frameCount * 0.02);
+   *   //lights();
+   *   torus(25, 10, 30, 30);
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let fillShader;
+   *
+   * let vertSrc = `
+   * precision highp float;
+   * attribute vec3 aPosition;
+   * uniform mat4 uProjectionMatrix;
+   * uniform mat4 uModelViewMatrix;
+   * varying vec3 vPosition;
+   * void main() {
+   *   vPosition = aPosition;
+   *   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+   * }
+   * `;
+   *
+   * let fragSrc = `
+   * precision highp float;
+   * uniform vec3 uLightPos;
+   * uniform vec3 uFillColor;
+   * varying vec3 vPosition;
+   * void main() {
+   *   float brightness = dot(normalize(uLightPos), normalize(vPosition));
+   *   brightness = clamp(brightness, 0.0, 1.0);
+   *   vec3 color = uFillColor * brightness;
+   *   gl_FragColor = vec4(color, 1.0);
+   * }
+   * `;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   fillShader = createShader(vertSrc, fragSrc);
+   *   shader(fillShader);
+   *   noStroke();
+   *   describe('A square affected by both fill color and lighting, with lights controlled by mouse.');
+   * }
+   *
+   * function draw() {
+   *   let lightPos = [(mouseX - width / 2) / width,
+   *     (mouseY - height / 2) / height, 1.0];
+   *   fillShader.setUniform('uLightPos', lightPos);
+   *   let fillColor = [map(mouseX, 0, width, 0, 1),
+   *     map(mouseY, 0, height, 0, 1), 0.5];
+   *   fillShader.setUniform('uFillColor', fillColor);
+   *   plane(100, 100);
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   myShader = baseMaterialShader().modify({
+   *     declarations: 'uniform float time;',
+   *     'vec4 getFinalColor': `(vec4 color) {
+   *       float r = 0.2 + 0.5 * abs(sin(time + 0.0));
+   *       float g = 0.2 + 0.5 * abs(sin(time + 1.0));
+   *       float b = 0.2 + 0.5 * abs(sin(time + 2.0));
+   *       color.rgb = vec3(r, g, b);
+   *       return color;
+   *     }`
+   *   });
+   *
+   *   noStroke();
+   *   describe('A 3D cube with dynamically changing colors on a beige background.');
+   * }
+   *
+   * function draw() {
+   *   background(245, 245, 220);
+   *   shader(myShader);
+   *   myShader.setUniform('time', millis() / 1000.0);
+   *
+   *   box(50);
+   * }
+   * </code>
+   * </div>
+   *
+   */
     textToModel(str, x, y, width, height, options) {
       ({ width, height, options } = this._parseArgs(width, height, options));
       const extrude = options?.extrude || 0;
