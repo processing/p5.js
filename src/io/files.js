@@ -295,7 +295,7 @@ function files(p5, fn){
 
     try{
       const { data } = await request(path, 'json');
-      if (successCallback) successCallback(data);
+      if (successCallback) return successCallback(data);
       return data;
     } catch(err) {
       p5._friendlyFileLoadError(5, path);
@@ -444,12 +444,12 @@ function files(p5, fn){
       let { data } = await request(path, 'text');
       data = data.split(/\r?\n/);
 
-      if (successCallback) successCallback(data);
+      if (successCallback) return successCallback(data);
       return data;
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
@@ -549,7 +549,7 @@ function files(p5, fn){
       });
 
       if (successCallback) {
-        successCallback(ret);
+        return successCallback(ret);
       } else {
         return ret;
       }
@@ -729,12 +729,12 @@ function files(p5, fn){
       const parsedDOM = parser.parseFromString(data, 'application/xml');
       data = new p5.XML(parsedDOM);
 
-      if (successCallback) successCallback(data);
+      if (successCallback) return successCallback(data);
       return data;
     } catch(err) {
       p5._friendlyFileLoadError(1, path);
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
@@ -750,7 +750,7 @@ function files(p5, fn){
    *                                    completes
    * @param {Function} [errorCallback] function to be executed if there
    *                                    is an error
-   * @returns {Promise<Object>} an object whose 'bytes' property will be the loaded buffer
+   * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
    * <div class='norender'><code>
@@ -770,12 +770,12 @@ function files(p5, fn){
     try{
       let { data } = await request(path, 'arrayBuffer');
       data = new Uint8Array(data);
-      if (successCallback) successCallback(data);
+      if (successCallback) return successCallback(data);
       return data;
     } catch(err) {
       p5._friendlyFileLoadError(6, path);
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
@@ -785,11 +785,11 @@ function files(p5, fn){
   fn.loadBlob = async function(path, successCallback, errorCallback) {
     try{
       const { data } = await request(path, 'blob');
-      if (successCallback) successCallback(data);
+      if (successCallback) return successCallback(data);
       return data;
     } catch(err) {
       if(errorCallback) {
-        errorCallback(err);
+        return errorCallback(err);
       } else {
         throw err;
       }
