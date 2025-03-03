@@ -615,11 +615,11 @@ function font(p5, fn) {
         pfont = await create(this, ident, path, descriptors);
       }
       catch (err) {
-        if (error) error(err);
+        if (error) return error(err);
         throw err;
       }
     }
-    if (success) success(pfont);
+    if (success) return success(pfont);
 
     return pfont;
   }

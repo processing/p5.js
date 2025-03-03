@@ -130,8 +130,8 @@ function material(p5, fn){
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = await request(vertFilename, 'text');
-      loadedShader._fragSrc = await request(fragFilename, 'text');
+      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
+      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
         return successCallback(loadedShader);
