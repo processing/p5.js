@@ -117,7 +117,7 @@ If the parameter is optional, add square brackets around the name:
 
 ### Additional info: Constants
 
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) , then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
 
 ```
 @param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
@@ -227,7 +227,7 @@ The relevant `@example` tag to create the above is as follows:
 
 After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated. The example’s canvas should be 100x100 pixels and if the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. We won’t go through the details about best practices and code style for the example code here; please see the reference style guide instead.
 
-You can have multiple examples for one feature.To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
+You can have multiple examples for one feature. To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
 
 ```
 * @example

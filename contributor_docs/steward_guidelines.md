@@ -74,12 +74,12 @@ Feature request issues should use the "New Feature Request" issue template. The 
    - Does the feature fit into the project scope and [design principles](./contributor_guidelines.md#software-design-principles) of p5.js?
      - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
      - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
-     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as as an addon library.
+     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as an addon library.
      - If it is unclear whether or not it fits, it can be a good idea to suggest making an addon library as a proof-of-concept. This helps give users a way to use the feature, provides a much more concrete example of its usage and importance, and does not necessarily need to be as complete of a solution as a fully integrated feature. It can be integrated into the core of p5.js later if appropriate.
    - Is the feature likely to cause a breaking change?
      - Will it conflict with existing p5.js functions and variables?
      - Will it conflict with typical sketches already written for p5.js?
-     - Features that are likely to cause conflicts such as  the ones above  are  considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
+     - Features that are likely to cause conflicts such as the ones above are considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
    - Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native JavaScript code, or existing easy-to-use libraries?
      - For example, instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native JavaScript `["Hello", "world!"].join()` should be preferred instead.
 3. If the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin toward a PR. The PR review process for new features is documented below.
@@ -119,7 +119,7 @@ Almost all code contributions to the p5.js repositories happen through pull requ
 
 ### Simple fix
 
-Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure  that the automated CI test passes.
+Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure that the automated CI test passes.
 
 ![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
 
@@ -223,7 +223,7 @@ grunt.registerTask('build', [
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all have similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).

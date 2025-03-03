@@ -422,7 +422,7 @@ p5.js' code standard or code style is enforced by [ESLlint](https://eslint.org/)
 
 While working on any features of p5.js, it is important to keep in mind the design principles of p5.js. Our priorities may differ from the priorities of other projects, so if you are coming from a different project, we recommend that you familiarize yourself with p5.js' design principles.
 
-- **Access** We prioritize accessibility first and foremost, and decisions we make must take into account how it increases access to historically marginalized groups. Read more about this in our access statement.
+- **Access** We prioritize accessibility first and foremost, and decisions we make must take into account how they increase access to historically marginalized groups. Read more about this in our access statement.
 - **Beginner Friendly** The p5.js API aims to be friendly to beginner coders, offering a low barrier to creating interactive and visual web content with cutting-edge HTML5/Canvas/DOM APIs.
 - **Educational** p5.js is focused on an API and curriculum that supports educational use, including a complete reference to the API with supporting examples, as well as tutorials and sample class curricula that introduce core creative coding principles in a clear and engaging order.
 - **JavaScript and its community** p5.js aims to make web development practices more accessible to beginners by modeling proper JavaScript design patterns and usage while abstracting them where necessary. As an open-source library, p5.js also includes the wider JavaScript community in its creation, documentation, and dissemination.

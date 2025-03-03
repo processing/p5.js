@@ -279,7 +279,7 @@ Your addon library may not extend p5 or p5 classes at all, but instead just offe
 
 **p5.js has two modes, global mode and instance mode.** In global mode, all p5 properties and methods are bound to the `window` object, allowing users to call methods like `background()` without having to prefix them with anything. However, this means you need to be careful not to overwrite native JavaScript functionality. For example “`Math`” and “`console`” are both native Javascript functionalities so you shouldn’t have methods named “`Math`” or “`console`”.
 
-**Class names should use** `PascalCase`**, while methods and properties should use** `camelCase`**.** Classes in p5 are prefixed with p5. We would like to keep this namespace for p5 core classes only, so when you create your own namespace, **do not include the** `p5.` **prefix for class names**. You are welcomed to create your own prefix, or just give them non-prefixed names.
+**Class names should use** `PascalCase`**, while methods and properties should use** `camelCase`**.** Classes in p5 are prefixed with p5. We would like to keep this namespace for p5 core classes only, so when you create your own namespace, **do not include the** `p5.` **prefix for class names**. You are welcome to create your own prefix, or just give them non-prefixed names.
 
 ```js
 // Do not do this

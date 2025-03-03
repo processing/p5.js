@@ -163,7 +163,7 @@ Next, you will file an issue ticket to discuss creating a new case or confirm yo
 
 Go to the [issue board](https://github.com/processing/p5.js/issues), press the "New Issue" button, and then choose the "Issue: 💡 Existing Feature Enhancement" option. An empty form should appear.
 
-Add a title along the lines of “Adding a new case to `fileLoadErrrorCases`: \[a high-level description of your file load error case].” For the “Increasing access” section, enter a short paragraph on the typical scenario you prepared at the beginning of this step.
+Add a title along the lines of “Adding a new case to `fileLoadErrorCases`: \[a high-level description of your file load error case].” For the “Increasing access” section, enter a short paragraph on the typical scenario you prepared at the beginning of this step.
 
 Then, check the “Friendly Errors” box for the “Most appropriate sub-area of p5.js?” question. Lastly, for the “Feature enhancement details” section, enter your paragraph detailing your error handling and what file types it loads.
 
