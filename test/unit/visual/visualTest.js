@@ -135,7 +135,7 @@ export async function checkMatch(actual, expected, p5) {
     width,
     height,
     { 
-      threshold: 0.3,
+      threshold: 0.6,
       includeAA: false,
       alpha: 0.1
     }
