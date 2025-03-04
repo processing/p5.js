@@ -2450,9 +2450,9 @@ p5.Camera = class Camera {
 
     // Compute new up vector to prevent flipping
     let forward = createVector(
-        rotatedCenter[0] - this.eyeX,
-        rotatedCenter[1] - this.eyeY,
-        rotatedCenter[2] - this.eyeZ
+      rotatedCenter[0] - this.eyeX,
+      rotatedCenter[1] - this.eyeY,
+      rotatedCenter[2] - this.eyeZ
     ).normalize();
 
     let up = createVector(this.upX, this.upY, this.upZ);
