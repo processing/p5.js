@@ -272,6 +272,7 @@ class Renderer2D extends Renderer {
         this.drawingContext.stroke(visitor.path);
       }
     }
+  this.clipPath.closePath();
   }
 
   beginClip(options = {}) {
