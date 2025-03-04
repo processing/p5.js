@@ -2458,7 +2458,7 @@ p5.Camera = class Camera {
     let up = createVector(this.upX, this.upY, this.upZ);
     let right = p5.Vector.cross(forward, up).normalize(); // Right vector
     up = p5.Vector.cross(right, forward).normalize(); // Corrected up vector
-    
+
     this.camera(
       this.eyeX,
       this.eyeY,
