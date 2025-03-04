@@ -1548,8 +1548,8 @@ class Camera {
     centerY -= this.eyeY;
     centerZ -= this.eyeZ;
 
-    const rotation = new Matrix(4); // TODO Maybe pass p5
-    rotation.rotate4x4(this._renderer._pInst._toRadians(a), x, y, z);
+    const rotation = p5.Matrix.identity(this._renderer._pInst);
+    rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
     /* eslint-disable max-len */
     const rotatedCenter = [
@@ -1564,6 +1564,17 @@ class Camera {
     rotatedCenter[1] += this.eyeY;
     rotatedCenter[2] += this.eyeZ;
 
+    // Compute new up vector to prevent flipping
+    let forward = createVector(
+      rotatedCenter[0] - this.eyeX,
+      rotatedCenter[1] - this.eyeY,
+      rotatedCenter[2] - this.eyeZ
+    ).normalize();
+
+    let up = createVector(this.upX, this.upY, this.upZ);
+    let right = p5.Vector.cross(forward, up).normalize(); // Right vector
+    up = p5.Vector.cross(right, forward).normalize(); // Corrected up vector
+
     this.camera(
       this.eyeX,
       this.eyeY,
@@ -1571,10 +1582,15 @@ class Camera {
       rotatedCenter[0],
       rotatedCenter[1],
       rotatedCenter[2],
-      this.upX,
-      this.upY,
-      this.upZ
+      this.up.x,
+      this.up.y,
+      this.up.z
     );
+
+    // Update up vector
+    this.upX = up.x;
+    this.upY = up.y;
+    this.upZ = up.z;
   }
 
   /**
