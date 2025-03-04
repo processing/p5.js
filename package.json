@@ -35,6 +35,7 @@
     "libtess": "^1.2.2",
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
+    "pixelmatch": "^7.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

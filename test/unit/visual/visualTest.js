@@ -2,6 +2,7 @@ import p5 from '../../../src/app.js';
 import { server } from '@vitest/browser/context'
 import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands
+import pixelmatch from 'pixelmatch';
 
 // By how much can each color channel value (0-255) differ before
 // we call it a mismatch? This should be large enough to not trigger
@@ -88,15 +89,12 @@ export function visualSuite(
 
 export async function checkMatch(actual, expected, p5) {
   let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
-
-  // Long screenshots end up super tiny when fit to a small square, so we
-  // can double the max side length for these
   const ratio = expected.width / expected.height;
   const narrow = ratio !== 1;
   if (narrow) {
     scale *= 2;
   }
-
+  
   for (const img of [actual, expected]) {
     img.resize(
       Math.ceil(img.width * scale),
@@ -104,39 +102,154 @@ export async function checkMatch(actual, expected, p5) {
     );
   }
 
-  const expectedWithBg = p5.createGraphics(expected.width, expected.height);
-  expectedWithBg.pixelDensity(1);
-  expectedWithBg.background(BG);
-  expectedWithBg.image(expected, 0, 0);
-
-  const cnv = p5.createGraphics(actual.width, actual.height);
-  cnv.pixelDensity(1);
-  cnv.background(BG);
-  cnv.image(actual, 0, 0);
-  cnv.blendMode(DIFFERENCE);
-  cnv.image(expectedWithBg, 0, 0);
-  for (let i = 0; i < shiftThreshold; i++) {
-    cnv.filter(ERODE, false);
-  }
-  const diff = cnv.get();
-  cnv.remove();
-  diff.loadPixels();
-  expectedWithBg.remove();
-
-  let ok = true;
-  for (let i = 0; i < diff.pixels.length; i += 4) {
-    let diffSum = 0;
-    for (let off = 0; off < 3; off++) {
-      diffSum += diff.pixels[i+off]
+  // Ensure both images have the same dimensions
+  const width = expected.width;
+  const height = expected.height;
+  
+  // Create canvases with background color
+  const actualCanvas = p5.createGraphics(width, height);
+  const expectedCanvas = p5.createGraphics(width, height);
+  actualCanvas.pixelDensity(1);
+  expectedCanvas.pixelDensity(1);
+  
+  actualCanvas.background(BG);
+  expectedCanvas.background(BG);
+  
+  actualCanvas.image(actual, 0, 0);
+  expectedCanvas.image(expected, 0, 0);
+  
+  // Load pixel data
+  actualCanvas.loadPixels();
+  expectedCanvas.loadPixels();
+  
+  // Create diff output canvas
+  const diffCanvas = p5.createGraphics(width, height);
+  diffCanvas.pixelDensity(1);
+  diffCanvas.loadPixels();
+  
+  // Run pixelmatch
+  const diffCount = pixelmatch(
+    actualCanvas.pixels,
+    expectedCanvas.pixels,
+    diffCanvas.pixels,
+    width,
+    height,
+    { 
+      threshold: 0.3,
+      includeAA: false,
+      alpha: 0.1
     }
-    diffSum /= 3;
-    if (diffSum > COLOR_THRESHOLD) {
-      ok = false;
-      break;
+  );
+  
+  // If no differences, return early
+  if (diffCount === 0) {
+    actualCanvas.remove();
+    expectedCanvas.remove();
+    diffCanvas.updatePixels();
+    return { ok: true, diff: diffCanvas };
+  }
+  
+  // Post-process to identify and filter out isolated differences
+  const visited = new Set();
+  const clusterSizes = [];
+  
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const pos = (y * width + x) * 4;
+      
+      // If this is a diff pixel (red in pixelmatch output) and not yet visited
+      if (
+        diffCanvas.pixels[pos] === 255 && 
+        diffCanvas.pixels[pos + 1] === 0 && 
+        diffCanvas.pixels[pos + 2] === 0 &&
+        !visited.has(pos)
+      ) {
+        // Find the connected cluster size using BFS
+        const clusterSize = findClusterSize(diffCanvas.pixels, x, y, width, height, 1, visited);
+        clusterSizes.push(clusterSize);
+      }
     }
   }
+  
+  // Define significance thresholds
+  const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
+  const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
 
-  return { ok, diff };
+  // Determine if the differences are significant
+  const significantClusters = clusterSizes.filter(size => size >= MIN_CLUSTER_SIZE);
+  const significantDiffPixels = significantClusters.reduce((sum, size) => sum + size, 0);
+
+  // Update the diff canvas
+  diffCanvas.updatePixels();
+  
+  // Clean up canvases
+  actualCanvas.remove();
+  expectedCanvas.remove();
+  
+  // Determine test result
+  const ok = (
+    diffCount === 0 ||  // No differences at all
+    (
+      significantDiffPixels === 0 ||  // No significant clusters
+      (
+        significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS &&  // Total different pixels within tolerance
+        significantClusters.length <= 2  // Not too many significant clusters
+      )
+    )
+  );
+
+  return { 
+    ok,
+    diff: diffCanvas,
+    details: {
+      totalDiffPixels: diffCount,
+      significantDiffPixels,
+      clusters: clusterSizes,
+      significantClusters
+    }
+  };
+}
+
+/**
+ * Find the size of a connected cluster of diff pixels using BFS
+ */
+function findClusterSize(pixels, startX, startY, width, height, radius, visited) {
+  const queue = [{x: startX, y: startY}];
+  let size = 0;
+  
+  while (queue.length > 0) {
+    const {x, y} = queue.shift();
+    const pos = (y * width + x) * 4;
+    
+    // Skip if already visited
+    if (visited.has(pos)) continue;
+    
+    // Skip if not a diff pixel
+    if (pixels[pos] !== 255 || pixels[pos + 1] !== 0 || pixels[pos + 2] !== 0) continue;
+    
+    // Mark as visited
+    visited.add(pos);
+    size++;
+    
+    // Add neighbors to queue
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        const nx = x + dx;
+        const ny = y + dy;
+        
+        // Skip if out of bounds
+        if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+        
+        // Skip if already visited
+        const npos = (ny * width + nx) * 4;
+        if (!visited.has(npos)) {
+          queue.push({x: nx, y: ny});
+        }
+      }
+    }
+  }
+  
+  return size;
 }
 
 /**
