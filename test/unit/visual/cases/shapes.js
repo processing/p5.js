@@ -194,8 +194,13 @@ visualSuite('Shape drawing', function() {
         setup(p5);
         p5.beginShape();
         p5.vertex(10, 10);
-        p5.bezierVertex(10, 10, 15, 40, 40, 35);
-        p5.bezierVertex(25, 15, 15, 25, 15, 25);
+        p5.bezierVertex(10, 10);
+        p5.bezierVertex(15, 40);
+        p5.bezierVertex(40, 35);
+
+        p5.bezierVertex(25, 15)
+        p5.bezierVertex(15, 25)
+        p5.bezierVertex(15, 25);
         p5.endShape();
         screenshot();
       });
@@ -204,9 +209,13 @@ visualSuite('Shape drawing', function() {
         setup(p5);
         p5.beginShape();
         p5.vertex(10, 10);
-        p5.quadraticVertex(10, 10, 15, 40);
-        p5.quadraticVertex(40, 35, 25, 15);
-        p5.quadraticVertex(15, 25, 10, 10);
+        p5.bezierOrder(2);
+        p5.bezierVertex(10, 10);
+        p5.bezierVertex(15, 40);
+        p5.bezierVertex(40, 35);
+        p5.bezierVertex(25, 15);
+        p5.bezierVertex(15, 25);
+        p5.bezierVertex(10, 10);
         p5.endShape();
         screenshot();
       });
@@ -367,7 +376,9 @@ visualSuite('Shape drawing', function() {
           p5.beginShape();
           p5.vertex(10, 10, 0);
           p5.vertex(10, 40, -150);
-          p5.quadraticVertex(40, 40, 200, 40, 10, 150);
+          p5.bezierOrder(2);
+          p5.bezierVertex(40, 40, 200);
+          p5.bezierVertex(40, 10, 150);
           p5.endShape(p5.CLOSE);
 
           screenshot();
@@ -379,7 +390,9 @@ visualSuite('Shape drawing', function() {
           p5.beginShape();
           p5.vertex(10, 10, 0);
           p5.vertex(10, 40, -150);
-          p5.bezierVertex(40, 40, 200, 40, 10, 150, 10, 10, 0);
+          p5.bezierVertex(40, 40, 200);
+          p5.bezierVertex(40, 10, 150);
+          p5.bezierVertex(10, 10, 0);
           p5.endShape();
 
           screenshot();

@@ -26,13 +26,6 @@ suite('Vertex', function() {
     });
   });
 
-  suite('p5.prototype.quadraticVertex', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.quadraticVertex);
-      assert.typeOf(myp5.quadraticVertex, 'function');
-    });
-  });
-
   suite('p5.prototype.bezierVertex', function() {
     test('should be a function', function() {
       assert.ok(myp5.bezierVertex);
