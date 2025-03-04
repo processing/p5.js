@@ -1548,8 +1548,8 @@ class Camera {
     centerY -= this.eyeY;
     centerZ -= this.eyeZ;
 
-    const rotation = p5.Matrix.identity(this._renderer._pInst);
-    rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
+    const rotation = new Matrix(4); // TODO Maybe pass p5
+    rotation.rotate4x4(this._renderer._pInst._toRadians(a), x, y, z);
 
     /* eslint-disable max-len */
     const rotatedCenter = [
