@@ -36,8 +36,7 @@ function shadergen(p5, fn) {
     }
   }
 
-  // Transpiler 
-
+  // AST Transpiler Callbacks and their helpers
   function replaceBinaryOperator(codeSource) {
     switch (codeSource) {
       case '+': return 'add';
@@ -50,8 +49,7 @@ function shadergen(p5, fn) {
 
   const ASTCallbacks = {
     // TODO: automatically making uniforms
-    Literal(node) {
-    },
+    
 
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions 
@@ -92,9 +90,8 @@ function shadergen(p5, fn) {
 
 
   // Javascript Node API.
-  // These classes are for expressing GLSL functions in Javascript with
+  // These classes are for expressing GLSL functions in Javascript without
   // needing to  transpile the user's code.
-
   class BaseNode {
     constructor(isInternal) {
       if (new.target === BaseNode) {
@@ -125,7 +122,7 @@ function shadergen(p5, fn) {
     toGLSLBase(context){
       if (this.useTempVar()) {
         return this.getTemp(context);
-      } 
+      }
       else {
         return this.toGLSL(context);
       }
@@ -171,25 +168,6 @@ function shadergen(p5, fn) {
     mult(other) { return new BinaryOperatorNode(this, this.enforceType(other), '*'); }
     div(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '/'); }
     mod(other)  { return new ModulusNode(this, this.enforceType(other)); }
-    sin()       { return new FunctionCallNode('sin', this, 'float'); }
-    cos()       { return new FunctionCallNode('cos', this, 'float'); }
-    radians()   { return new FunctionCallNode('radians', this, 'float'); }
-    abs()       { return new FunctionCallNode('abs',this, this.type) };
-    ceil()      { return new FunctionCallNode(); }
-
-    // TODO: 
-    // Add a whole lot of these functions. Probably should take them out of the primitive node and just attach them to global instead.
-    // https://docs.gl/el3/
-    
-    max()       { return new FunctionCallNode(); }
-    min()       { return new FunctionCallNode(); }
-    ceil()      { return new FunctionCallNode(); }
-    round()     { return new FunctionCallNode(); }
-    roundEven() { return new FunctionCallNode(); }
-    sqrt()      { return new FunctionCallNode(); }
-    log()       { return new FunctionCallNode(); }
-    exp()       { return new FunctionCallNode(); }
-
 
     // Check that the types of the operands are compatible.
     // TODO: improve this with less branching if elses
@@ -302,13 +280,10 @@ function shadergen(p5, fn) {
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal);
-
       this.components = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.components.forEach((component, i) => {
         this[component] = new FloatNode(values[i], true);
-        // this[component] = new ComponentNode(this, component, true);
       });
-
       this.type = type;
     }
     
@@ -468,16 +443,13 @@ function shadergen(p5, fn) {
   }
 
   // TODO: finish If Node
-  class ConditionalNode {
+  class ConditionalNode extends BaseNode {
     constructor(value) {
+      super(value);
       this.value = value;
       this.condition = null;
       this.thenBranch = null;
       this.elseBranch = null;
-    }
-    //helper 
-    checkType(value) {
-
     }
     // conditions
     equalTo(value){}
@@ -492,11 +464,20 @@ function shadergen(p5, fn) {
     // returns
     thenReturn(value) {}
     elseReturn(value) {}
-    // Then?
-    then() {
-      GLOBAL_SHADER.context.declarations.push()
-    }
+    // 
+    thenDiscard() {
+      new ConditionalDiscard(this.condition);
+    };
   };
+
+  class ConditionalDiscard extends Base{
+    constructor(condition){
+      this.condition = condition;
+    }
+    toGLSL(context) {
+      context.discardConditions.push(`if(${this.condition}{discard;})`);
+    }
+  }
 
   fn.if = function (value) {
     return new ConditionalNode(value);
@@ -531,46 +512,67 @@ function shadergen(p5, fn) {
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
 
   class ShaderGenerator {
-    constructor(modifyFunction, shaderToModify) {
-      this.modifyFunction = modifyFunction;
-      this.shaderToModify = shaderToModify;
-      shaderToModify.inspectHooks();
+    constructor(modifyFunction, originalShader) {
       GLOBAL_SHADER = this;
-      this.uniforms = {};
-      this.functions = {};
+      this.modifyFunction = modifyFunction;
+      this.generateHookBuilders(originalShader);
+      this.output = {
+        uniforms: {},
+      }
       this.resetGLSLContext();
     }
+
     callModifyFunction() {
       this.modifyFunction();
-      return {
-        uniforms: this.uniforms,
-        functions: this.functions,
-        vertex: this.functions.getWorldPosition,
-        fragment: this.functions.getFinalColor,
-      }
+      return this.output;
     }
+
+    generateHookBuilders(originalShader) {
+      const availableHooks = {
+        ...originalShader.hooks.vertex,
+        ...originalShader.hooks.fragment,
+      }
+      
+      // Defines a function for each of the hooks for the shader we are modifying.
+      Object.keys(availableHooks).forEach((hookName) => {
+        const hookTypes = originalShader.hookTypes(hookName)
+        this[hookTypes.name] = function(userOverride) {
+          let hookArgs = []
+          let argsArray = [];
+
+          hookTypes.parameters.forEach((parameter, i) => {
+            hookArgs.push(
+              new VariableNode(parameter.name, parameter.type.typeName, true)
+            );
+            if (i === 0) {
+              argsArray.push(`${parameter.type.typeName} ${parameter.name}`);
+            } else {
+              argsArray.push(`, ${parameter.type.typeName} ${parameter.name}`);
+            }
+          })
+
+          const toGLSLResult = userOverride(...hookArgs).toGLSLBase(this.context);
+          let codeLines = [`(${argsArray.join(', ')}) {`, this.context.declarations.slice()].flat();
+          codeLines.push(`\n${hookTypes.returnType.typeName} finalReturnValue = ${toGLSLResult};
+                          \nreturn finalReturnValue;
+                          \n}`);
+          this.output[hookName] = codeLines.join('\n');
+          this.resetGLSLContext();
+        }
+
+        // Expose the Functions to global scope for users to use
+        window[hookTypes.name] = function(userOverride) {
+          GLOBAL_SHADER[hookTypes.name](userOverride); 
+        };
+      })
+    }
+
     resetGLSLContext() { 
       this.context = {
         id: 0,
         getNextID: function() { return this.id++ },
         declarations: [],
       }
-    }
-    // TODO:
-    buildFunction(argumentName, argumentType, callback) {
-      let functionArgument = new VariableNode(argumentName, argumentType, true);
-      const finalLine = callback(functionArgument).toGLSLBase(this.context);
-      let codeLines = this.context.declarations.slice();
-      codeLines.push(`\n${argumentName} = ${finalLine}; \nreturn ${argumentName};`)
-      this.resetGLSLContext();
-      return codeLines.join("\n");
-    }
-
-    getWorldPosition(func) {
-      this.functions.getWorldPosition = this.buildFunction("pos", "vec3", func);
-    }
-    getFinalColor(func) {
-      this.functions.getFinalColor = this.buildFunction("col", "vec3", func);
     }
   }
 
@@ -629,7 +631,7 @@ function shadergen(p5, fn) {
   for (const type in uniformFns) {
     const uniformFnVariant = `uniform${uniformFns[type]}`;
     ShaderGenerator.prototype[uniformFnVariant] = function(name, defaultValue) {
-      this.uniforms[`${type} ${name}`] = defaultValue;
+      this.output.uniforms[`${type} ${name}`] = defaultValue;
       return new VariableNode(name, type);
     };
     fn[uniformFnVariant] = function (name, value) { 
@@ -637,12 +639,69 @@ function shadergen(p5, fn) {
     };
   }
   
-  function getWorldPosition(func){
-    GLOBAL_SHADER.getWorldPosition(func)
-  }
-  
-  function getFinalColor(func){
-    GLOBAL_SHADER.getFinalColor(func)
+  // GLSL Built in functions
+  // TODO: 
+  // Add a whole lot of these functions. 
+  // https://docs.gl/el3/abs
+  const builtInFunctions = {
+    // Trigonometry
+    'acos': {},
+    'acosh': {},
+    'asin': {},
+    'asinh': {},
+    'atan': {},
+    'atanh': {},
+    'cos': {},
+    'cosh': {},
+    'degrees': {},
+    'radians': {},
+    'sin': {},
+    'sinh': {},
+    'tan': {},
+    'tanh': {},
+    // Mathematics
+    'abs': {},
+    'ceil': {},
+    'clamp': {},
+    'dFdx': {},
+    'dFdy': {},
+    'exp': {},
+    'exp2': {},
+    'floor': {},
+    'fma': {},
+    'fract': {},
+    'fwidth': {},
+    'inversesqrt': {},
+    'isinf': {},
+    'isnan': {},
+    'log': {},
+    'log2': {},
+    'max': {},
+    'min': {},
+    'mix': {},
+    'mod': {},
+    'modf': {},
+    'pow': {},
+    'round': {},
+    'roundEven': {},
+    'sign': {},
+    'smoothstep': {},
+    'sqrt': {},
+    'step': {},
+    'trunc': {},
+    // Vector
+    'cross': {},
+    'distance': {},
+    'dot': {},
+    'equal': {},
+    'faceforward': {},
+    'length': {},
+    'normalize': {},
+    'notEqual': {},
+    'reflect': {},
+    'refract': {},
+    // Texture sampling
+    'texture': {},
   }
 
   const oldTexture = p5.prototype.texture;
