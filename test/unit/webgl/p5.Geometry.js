@@ -223,8 +223,9 @@ suite('p5.Geometry', function() {
         myp5.cone();
 
         myp5.beginShape();
-        myp5.vertex(-20, -50);
         myp5.bezierOrder(2);
+        myp5.bezierVertex(-20, -50);
+
         myp5.bezierVertex(-40, -70);
         myp5.bezierVertex(0, -60);
         myp5.endShape();

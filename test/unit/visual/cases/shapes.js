@@ -193,7 +193,8 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing with cubic beziers', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.vertex(10, 10);
+        p5.bezierVertex(10, 10);
+
         p5.bezierVertex(10, 10);
         p5.bezierVertex(15, 40);
         p5.bezierVertex(40, 35);
@@ -208,12 +209,15 @@ visualSuite('Shape drawing', function() {
       visualTest('Drawing with quadratic beziers', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
-        p5.vertex(10, 10);
         p5.bezierOrder(2);
         p5.bezierVertex(10, 10);
+
+        p5.bezierVertex(10, 10);
         p5.bezierVertex(15, 40);
+
         p5.bezierVertex(40, 35);
         p5.bezierVertex(25, 15);
+
         p5.bezierVertex(15, 25);
         p5.bezierVertex(10, 10);
         p5.endShape();
