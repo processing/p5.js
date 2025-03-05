@@ -48,9 +48,15 @@ function shadergen(p5, fn) {
   }
 
   const ASTCallbacks = {
-    // TODO: automatically making uniforms
-    
-
+    VariableDeclarator(node) {
+      if (node.init.callee && node.init.callee.name.slice(0, 7) === 'uniform') {
+        const uniformNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(uniformNameLiteral);
+      }
+    },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions 
     AssignmentExpression(node) {
@@ -632,7 +638,8 @@ function shadergen(p5, fn) {
     const uniformFnVariant = `uniform${uniformFns[type]}`;
     ShaderGenerator.prototype[uniformFnVariant] = function(name, defaultValue) {
       this.output.uniforms[`${type} ${name}`] = defaultValue;
-      return new VariableNode(name, type);
+      let safeType = type === 'sampler2D' ? 'vec4' : type;
+      return new VariableNode(name, safeType);
     };
     fn[uniformFnVariant] = function (name, value) { 
       return GLOBAL_SHADER[uniformFnVariant](name, value); 
