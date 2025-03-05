@@ -9,43 +9,43 @@ function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
 
   // Raw example
-  myShader = baseMaterialShader().modify(() => {
-    const offset = calculateOffset();
+  // myShader = baseMaterialShader().modify(() => {
+  //   const offset = calculateOffset();
 
-    getWorldPosition((pos) => {
-      let a = createVector3(1, 2, 3);
-      let b = createVector3(3, 4, 5);
+  //   getWorldPosition((pos) => {
+  //     let a = createVector3(1, 2, 3);
+  //     let b = createVector3(3, 4, 5);
 
-      a = (a * b + offset) / 10;
+  //     a = (a * b + offset) / 10;
 
-      pos += a;
+  //     pos += a;
 
-      return pos;
-    });
-  });
+  //     return pos;
+  //   });
+  // });
 
 
   // Create and use the custom shader.
-  // myShader = baseMaterialShader().modify(
-  //   () => {
-  //     const offset = uniform('offset', () => calculateOffset)
+  myShader = baseMaterialShader().modify(
+    () => {
+      const offset = uniformFloat('offset', () => calculateOffset)
 
-  //     getWorldPosition((pos) => {
-  //       let a = createVector3(1, 2, 3);
-  //       let b = createVector3(3, 4, 5);
-  //       a = a.add(b);
+      getWorldPosition((pos) => {
+        let a = createVector3(1, 2, 3);
+        let b = createVector3(3, 4, 5);
+        a = a.add(b);
 
-  //       let c = a.add(b);
-  //       c = c.add(offset);
-  //       c.x = b.x.add(1);
+        let c = a.add(b);
+        c += c.add(offset);
+        c.x = b.x.add(1);
 
 
-  //       pos = pos.add(c);
+        pos = pos.add(c);
 
-  //       return pos;
-  //     })
-  //   }
-  // );
+        return pos;
+      })
+    }
+  );
 }
 
 function draw(){

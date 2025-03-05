@@ -18,15 +18,17 @@ function shadergen(p5, fn) {
     if (modifier instanceof Function) {
       const code = modifier.toString()
       const ast = parse(code, { ecmaVersion: 2021 /*, locations: true*/ });
-      
       simple(ast, ASTCallbacks);
-
       const transpiledArg = escodegen.generate(ast);
-      console.log(transpiledArg)
-     
-      // const program = new ShaderProgram(modifier)
-      // const newArg = program.generate();
-      // console.log(newArg.vertex)
+      const transpiledFn = new Function(transpiledArg
+        .slice(transpiledArg.indexOf("{") + 1, transpiledArg.lastIndexOf("}"))
+      );
+      
+      const generator = new ShaderGenerator(transpiledFn, this)
+      const newArg = generator.callModifyFunction();
+      console.log(code);
+      console.log(transpiledArg);
+      console.log(newArg)
       // return oldModify.call(this, newArg);
     } 
     else {
@@ -111,6 +113,7 @@ function shadergen(p5, fn) {
           throw new Error("StackCapture");
         } catch (e) {
           const lines = e.stack.split("\n");
+          // console.log(lines);
           let index = 5;
           if (isBinaryOperatorNode(this)) { index--; };
           this.srcLine = lines[index].trim();
@@ -527,24 +530,18 @@ function shadergen(p5, fn) {
   // Shader program
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
 
-  class ShaderProgram {
-    constructor(modifyFunction) {
-      this.uniforms = {
-        int: {},
-        float: {},
-        vec2: {},
-        vec3: {},
-        vec4: {},
-        texture: {},
-      }
-      this.functions = {
-      }
-      this.resetGLSLContext();
+  class ShaderGenerator {
+    constructor(modifyFunction, shaderToModify) {
+      this.modifyFunction = modifyFunction;
+      this.shaderToModify = shaderToModify;
+      shaderToModify.inspectHooks();
       GLOBAL_SHADER = this;
-      this.generator = modifyFunction;
+      this.uniforms = {};
+      this.functions = {};
+      this.resetGLSLContext();
     }
-    generate() {
-      this.generator();
+    callModifyFunction() {
+      this.modifyFunction();
       return {
         uniforms: this.uniforms,
         functions: this.functions,
@@ -560,35 +557,6 @@ function shadergen(p5, fn) {
       }
     }
     // TODO:
-    uniformInt(name, defaultValue) {
-      this.uniforms.int[name] = defaultValue;
-      return new VariableNode(name, 'int');
-    }
-    uniformFloat(name, defaultValue) {
-      this.uniforms.float[name] = defaultValue;
-      return new VariableNode(name, 'float');
-    }
-    uniformVector2(name, defaultValue) {
-      this.uniforms.vec2[name] = defaultValue;
-      return new VariableNode(name, 'vec2');
-    }
-    uniformVector2(name, defaultValue) {
-      this.uniforms.vec3[name] = defaultValue;
-      return new VariableNode(name, 'vec3');
-    }
-    uniformVector2(name, defaultValue) {
-      this.uniforms.vec4[name] = defaultValue;
-      return new VariableNode(name, 'vec4');
-    }
-    uniformTexture(name, defaultValue) {
-      this.uniforms.texture[name] = defaultValue;
-      return new VariableNode(name, 'vec4');
-    }
-    uniform(name, defaultValue) {
-      this.uniforms[name] = defaultValue;
-      return new VariableNode(name, defaultValue.type);
-    }
-    
     buildFunction(argumentName, argumentType, callback) {
       let functionArgument = new VariableNode(argumentName, argumentType, true);
       const finalLine = callback(functionArgument).toGLSLBase(this.context);
@@ -649,9 +617,24 @@ function shadergen(p5, fn) {
     return new VariableNode('discard', 'keyword');
   }
   
-  fn.uniform = function(name, value) {
-    let result = GLOBAL_SHADER.uniform(name, value)
-    return result;
+  // Uniforms and attributes
+  const uniformFns = {
+    'int': 'Int',
+    'float': 'Float',
+    'vec2': 'Vector2',
+    'vec3': 'Vector3',
+    'vec4': 'Vector4',
+    'sampler2D': 'Texture',
+  };
+  for (const type in uniformFns) {
+    const uniformFnVariant = `uniform${uniformFns[type]}`;
+    ShaderGenerator.prototype[uniformFnVariant] = function(name, defaultValue) {
+      this.uniforms[`${type} ${name}`] = defaultValue;
+      return new VariableNode(name, type);
+    };
+    fn[uniformFnVariant] = function (name, value) { 
+      return GLOBAL_SHADER[uniformFnVariant](name, value); 
+    };
   }
   
   function getWorldPosition(func){
