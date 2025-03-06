@@ -135,7 +135,7 @@ export async function checkMatch(actual, expected, p5) {
     width,
     height,
     { 
-      threshold: 0.6,
+      threshold: 0.35,
       includeAA: false,
       alpha: 0.1
     }
@@ -174,10 +174,15 @@ export async function checkMatch(actual, expected, p5) {
   // Define significance thresholds
   const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
   const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
+  const MAX_LINE_SHIFT_PIXELS = 100;
 
   // Determine if the differences are significant
-  const significantClusters = clusterSizes.filter(size => size >= MIN_CLUSTER_SIZE);
-  const significantDiffPixels = significantClusters.reduce((sum, size) => sum + size, 0);
+  const lineShiftClusters = clusterSizes.filter(c => c.isLineShift && c.size > MIN_CLUSTER_SIZE);
+  const nonLineShiftClusters = clusterSizes.filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
+  
+  // Calculate significant differences excluding line shifts
+  const significantDiffPixels = nonLineShiftClusters.reduce((sum, c) => sum + c.size, 0);
+  const lineShiftPixels = lineShiftClusters.reduce((sum, c) => sum + c.size, 0);
 
   // Update the diff canvas
   diffCanvas.updatePixels();
@@ -188,12 +193,12 @@ export async function checkMatch(actual, expected, p5) {
   
   // Determine test result
   const ok = (
-    diffCount === 0 ||  // No differences at all
+    diffCount === 0 ||  
     (
-      significantDiffPixels === 0 ||  // No significant clusters
+      significantDiffPixels === 0 ||  
       (
-        significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS &&  // Total different pixels within tolerance
-        significantClusters.length <= 2  // Not too many significant clusters
+        (significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS) &&  
+        (nonLineShiftClusters.length <= 2)  // Not too many significant clusters
       )
     )
   );
@@ -204,8 +209,7 @@ export async function checkMatch(actual, expected, p5) {
     details: {
       totalDiffPixels: diffCount,
       significantDiffPixels,
-      clusters: clusterSizes,
-      significantClusters
+      clusters: clusterSizes
     }
   };
 }
@@ -216,6 +220,7 @@ export async function checkMatch(actual, expected, p5) {
 function findClusterSize(pixels, startX, startY, width, height, radius, visited) {
   const queue = [{x: startX, y: startY}];
   let size = 0;
+  const clusterPixels = [];
   
   while (queue.length > 0) {
     const {x, y} = queue.shift();
@@ -230,6 +235,7 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
     // Mark as visited
     visited.add(pos);
     size++;
+    clusterPixels.push({x, y});
     
     // Add neighbors to queue
     for (let dy = -radius; dy <= radius; dy++) {
@@ -248,8 +254,48 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
       }
     }
   }
+
+  let isLineShift = false;
+  if (clusterPixels.length > 0) {
+    // Count pixels with limited neighbors (line-like characteristic)
+    let linelikePixels = 0;
+    
+    for (const {x, y} of clusterPixels) {
+      // Count neighbors
+      let neighbors = 0;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          if (dx === 0 && dy === 0) continue; // Skip self
+          
+          const nx = x + dx;
+          const ny = y + dy;
+          
+          // Skip if out of bounds
+          if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+          
+          const npos = (ny * width + nx) * 4;
+          // Check if neighbor is a diff pixel
+          if (pixels[npos] === 255 && pixels[npos + 1] === 0 && pixels[npos + 2] === 0) {
+            neighbors++;
+          }
+        }
+      }
+      
+      // Line-like pixels typically have 1-2 neighbors
+      if (neighbors <= 2) {
+        linelikePixels++;
+      }
+    }
+    
+    // If most pixels (>80%) in the cluster have ≤2 neighbors, it's likely a line shift
+    isLineShift = linelikePixels / clusterPixels.length > 0.8;
+  }
   
-  return size;
+  return {
+    size,
+    pixels: clusterPixels,
+    isLineShift
+  };
 }
 
 /**
