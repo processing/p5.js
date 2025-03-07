@@ -55,7 +55,7 @@ The `rendering.js` module presents the user-facing API for p5's various graphica
 
 ## [p5.Renderer.js](./p5.Renderer.js)
 
-The `p5.Renderer.js` module provides a common base definition for a p5 project output mode that can then be extended as with [p5.Renderer2D](./p5.Renderer2D.js). For three dimensional output, see the [webgl module](../webgl/). Each `p5` object instance typically has a `Renderer` attached as a property.
+The `p5.Renderer.js` module provides a common base definition for a p5 project output mode that can then be extended as with [p5.Renderer2D](./p5.Renderer2D.js). For three-dimensional output, see the [webgl module](../webgl/). Each `p5` object instance typically has a `Renderer` attached as a property.
 
 ## [p5.Renderer2D.js](./p5.Renderer2D.js)
 

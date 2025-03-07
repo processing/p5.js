@@ -1,4 +1,4 @@
-# You can create the issue in a different repo than where the problem is. Just make sure you installed the bot on the configured repository.
+# You can create the issue in a different repo than where the problem is. Just make sure you have installed the bot on the configured repository.
 # The issue will link back to the original repository where the contribution will be made.
 repository: p5.js
 
