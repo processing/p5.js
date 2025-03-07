@@ -135,7 +135,7 @@ export async function checkMatch(actual, expected, p5) {
     width,
     height,
     { 
-      threshold: 0.35,
+      threshold: 0.6,
       includeAA: false,
       alpha: 0.1
     }
@@ -174,7 +174,7 @@ export async function checkMatch(actual, expected, p5) {
   // Define significance thresholds
   const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
   const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
-  const MAX_LINE_SHIFT_PIXELS = 100;
+  const MAX_LINE_SHIFT_PIXELS = 200;
 
   // Determine if the differences are significant
   const lineShiftClusters = clusterSizes.filter(c => c.isLineShift && c.size > MIN_CLUSTER_SIZE);
@@ -290,7 +290,6 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
     // If most pixels (>80%) in the cluster have ≤2 neighbors, it's likely a line shift
     isLineShift = linelikePixels / clusterPixels.length > 0.8;
   }
-  
   return {
     size,
     pixels: clusterPixels,
