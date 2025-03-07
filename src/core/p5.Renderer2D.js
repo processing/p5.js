@@ -855,7 +855,6 @@ class Renderer2D extends p5.Renderer {
           this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
         }
         this._doFillStrokeClose(closeShape);
-        this.drawingContext.closePath();
       }
     } else if (
       isBezier &&
@@ -1053,6 +1052,7 @@ class Renderer2D extends p5.Renderer {
           }
         }
         this._doFillStrokeClose(closeShape);
+        this.drawingContext.closePath();    
       }
     }
     isCurve = false;
