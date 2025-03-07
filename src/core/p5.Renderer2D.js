@@ -1052,7 +1052,7 @@ class Renderer2D extends p5.Renderer {
           }
         }
         this._doFillStrokeClose(closeShape);
-        this.drawingContext.closePath();    
+        this.drawingContext.closePath();
       }
     }
     isCurve = false;
