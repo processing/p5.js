@@ -41,6 +41,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -85,6 +88,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -192,6 +198,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -253,6 +262,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -297,6 +309,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -360,6 +375,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -404,6 +422,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -467,6 +488,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -511,6 +535,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -574,6 +601,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -618,6 +648,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -681,6 +714,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -724,6 +760,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -786,6 +825,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -829,6 +871,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -891,6 +936,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -934,6 +982,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -1605,6 +1656,9 @@ class Camera {
    *   normalMaterial();
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    * }
    *
    * function draw() {
@@ -1684,6 +1738,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -1745,6 +1802,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -1808,6 +1868,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -2519,16 +2582,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-        this.projMatrix.setElement(
-          0,
-          cam0.projMatrix.mat4[0] *
-            Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
-        );
-        this.projMatrix.setElement(
-          5,
-          cam0.projMatrix.mat4[5] *
-            Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
-        );
+      this.projMatrix.setElement(
+        0,
+        cam0.projMatrix.mat4[0] *
+          Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
+      );
+      this.projMatrix.setElement(
+        5,
+        cam0.projMatrix.mat4[5] *
+          Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
+      );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -3273,7 +3336,6 @@ function camera(p5, fn){
     return this;
   };
 
-
   /**
    * Enables or disables perspective for lines in 3D sketches.
    *
@@ -3393,11 +3455,10 @@ function camera(p5, fn){
   fn.linePerspective = function (enable) {
     // p5._validateParameters('linePerspective', arguments);
     if (!(this._renderer instanceof RendererGL)) {
-      throw new Error('linePerspective() must be called in WebGL mode.');
+      throw new Error("linePerspective() must be called in WebGL mode.");
     }
     this._renderer.linePerspective(enable);
   };
-
 
   /**
    * Sets an orthographic projection for the current camera in a 3D sketch.
@@ -3503,7 +3564,7 @@ function camera(p5, fn){
    * </div>
    */
   fn.ortho = function (...args) {
-    this._assert3d('ortho');
+    this._assert3d("ortho");
     // p5._validateParameters('ortho', args);
     this._renderer.ortho(...args);
     return this;
@@ -3615,7 +3676,7 @@ function camera(p5, fn){
    * </div>
    */
   fn.frustum = function (...args) {
-    this._assert3d('frustum');
+    this._assert3d("frustum");
     // p5._validateParameters('frustum', args);
     this._renderer.frustum(...args);
     return this;
@@ -3693,7 +3754,7 @@ function camera(p5, fn){
    * </div>
    */
   fn.createCamera = function () {
-    this._assert3d('createCamera');
+    this._assert3d("createCamera");
 
     return this._renderer.createCamera();
   };
@@ -3803,6 +3864,9 @@ function camera(p5, fn){
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -3883,15 +3947,15 @@ function camera(p5, fn){
    */
   p5.Camera = Camera;
 
-  RendererGL.prototype.camera = function(...args) {
+  RendererGL.prototype.camera = function (...args) {
     this.states.curCamera.camera(...args);
-  }
+  };
 
-  RendererGL.prototype.perspective = function(...args) {
+  RendererGL.prototype.perspective = function (...args) {
     this.states.curCamera.perspective(...args);
-  }
+  };
 
-  RendererGL.prototype.linePerspective = function(enable) {
+  RendererGL.prototype.linePerspective = function (enable) {
     if (enable !== undefined) {
       // Set the line perspective if enable is provided
       this.states.curCamera.useLinePerspective = enable;
@@ -3899,34 +3963,34 @@ function camera(p5, fn){
       // If no argument is provided, return the current value
       return this.states.curCamera.useLinePerspective;
     }
-  }
+  };
 
-  RendererGL.prototype.ortho = function(...args) {
+  RendererGL.prototype.ortho = function (...args) {
     this.states.curCamera.ortho(...args);
-  }
+  };
 
-  RendererGL.prototype.frustum = function(...args) {
+  RendererGL.prototype.frustum = function (...args) {
     this.states.curCamera.frustum(...args);
-  }
+  };
 
-  RendererGL.prototype.createCamera = function() {
+  RendererGL.prototype.createCamera = function () {
     // compute default camera settings, then set a default camera
     const _cam = new Camera(this);
     _cam._computeCameraDefaultSettings();
     _cam._setDefaultCamera();
 
     return _cam;
-  }
+  };
 
-  RendererGL.prototype.setCamera = function(cam) {
-    this.states.setValue('curCamera', cam);
+  RendererGL.prototype.setCamera = function (cam) {
+    this.states.setValue("curCamera", cam);
 
     // set the projection matrix (which is not normally updated each frame)
-    this.states.setValue('uPMatrix', this.states.uPMatrix.clone());
+    this.states.setValue("uPMatrix", this.states.uPMatrix.clone());
     this.states.uPMatrix.set(cam.projMatrix);
-    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
+    this.states.setValue("uViewMatrix", this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
-  }
+  };
 }
 
 export default camera;
