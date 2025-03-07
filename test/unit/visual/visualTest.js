@@ -135,7 +135,7 @@ export async function checkMatch(actual, expected, p5) {
     width,
     height,
     { 
-      threshold: 0.6,
+      threshold: 0.5,
       includeAA: false,
       alpha: 0.1
     }
@@ -290,6 +290,7 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
     // If most pixels (>80%) in the cluster have ≤2 neighbors, it's likely a line shift
     isLineShift = linelikePixels / clusterPixels.length > 0.8;
   }
+
   return {
     size,
     pixels: clusterPixels,
