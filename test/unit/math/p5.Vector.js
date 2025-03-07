@@ -52,6 +52,10 @@ suite("p5.Vector", function () {
       assert.equal(v.y, 0);
       assert.equal(v.z, 0);
     });
+
+    test("should have dimensions initialized to 2", function () {
+      assert.equal(v.dimensions, 2);
+    });
   });
 
   suite.todo("p5.prototype.createVector(1, 2, 3)", function () {
@@ -63,6 +67,10 @@ suite("p5.Vector", function () {
       assert.equal(v.x, 1);
       assert.equal(v.y, 2);
       assert.equal(v.z, 3);
+    });
+
+    test("should have dimensions initialized to 3", function () {
+      assert.equal(v.dimensions, 3);
     });
   });
 

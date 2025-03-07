@@ -34,7 +34,6 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let dimensions = args.length; // TODO: make default 3 if no arguments
     let values = args.map((arg) => arg || 0);
     if (typeof args[0] === "function") {
       this.isPInst = true;
@@ -42,6 +41,7 @@ class Vector {
       this._toRadians = args[1];
       values = args.slice(2).map((arg) => arg || 0);
     }
+    let dimensions = values.length; // TODO: make default 3 if no arguments
     if (dimensions === 0) {
       this.dimensions = 2;
       this._values = [0, 0, 0];
