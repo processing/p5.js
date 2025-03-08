@@ -2755,7 +2755,7 @@ suite('p5.RendererGL', function() {
         
         const gl = myp5._renderer.GL;
         gl.enable(gl.STENCIL_TEST);
-
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
         myp5.redraw();
 
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
@@ -2776,6 +2776,7 @@ suite('p5.RendererGL', function() {
         myp5.clip(() => {
           myp5.rect(0, 0, 10, 10);
         });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
         myp5.pop();
 
         assert.equal(myp5._renderer._userEnabledStencil, true);
@@ -2795,6 +2796,7 @@ suite('p5.RendererGL', function() {
         myp5.clip(() => {
           myp5.rect(0, 0, 10, 10);
         });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
         myp5.pop();
 
         myp5.redraw();
@@ -2883,5 +2885,5 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.checkPMatrix();
     });
-  });  
+  });
 });
