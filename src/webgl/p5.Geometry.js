@@ -1376,7 +1376,7 @@ class Geometry {
         const begin = this.vertices[currEdge[0]];
         const end = this.vertices[currEdge[1]];
 
-        // ✅ Copy vertex properties into buffers for stroke vertices (Fix based on Dave's feedback)
+        // Copy vertex properties into buffers for stroke vertices
         if (this.vertexProperties) {
             this.vertexProperties.push([...this.vertexProperties[currEdge[0]]]);
             this.vertexProperties.push([...this.vertexProperties[currEdge[1]]]);
