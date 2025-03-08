@@ -1376,33 +1376,22 @@ class Geometry {
         const begin = this.vertices[currEdge[0]];
         const end = this.vertices[currEdge[1]];
 
-        // Ensuring vertex properties are copied for stroke vertices
-        if (this.vertexProperties && this.vertexProperties[currEdge[0]]) {
+        // ✅ Copy vertex properties into buffers for stroke vertices (Fix based on Dave's feedback)
+        if (this.vertexProperties) {
             this.vertexProperties.push([...this.vertexProperties[currEdge[0]]]);
-        }
-        if (this.vertexProperties && this.vertexProperties[currEdge[1]]) {
             this.vertexProperties.push([...this.vertexProperties[currEdge[1]]]);
         }
 
         const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
-            ? this.vertexStrokeColors.slice(
-                prevEdge[1] * 4,
-                (prevEdge[1] + 1) * 4
-            )
+            ? this.vertexStrokeColors.slice(prevEdge[1] * 4, (prevEdge[1] + 1) * 4)
             : [0, 0, 0, 0];
 
         const fromColor = this.vertexStrokeColors.length > 0
-            ? this.vertexStrokeColors.slice(
-                currEdge[0] * 4,
-                (currEdge[0] + 1) * 4
-            )
+            ? this.vertexStrokeColors.slice(currEdge[0] * 4, (currEdge[0] + 1) * 4)
             : [0, 0, 0, 0];
 
         const toColor = this.vertexStrokeColors.length > 0
-            ? this.vertexStrokeColors.slice(
-                currEdge[1] * 4,
-                (currEdge[1] + 1) * 4
-            )
+            ? this.vertexStrokeColors.slice(currEdge[1] * 4, (currEdge[1] + 1) * 4)
             : [0, 0, 0, 0];
 
         const dir = end.copy().sub(begin).normalize();
@@ -1482,8 +1471,10 @@ class Geometry {
     for (const { point, dir, color } of potentialCaps.values()) {
         this._addCap(point, dir, color);
     }
+
     return this;
 }
+
 
 
   /**
