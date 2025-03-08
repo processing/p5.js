@@ -87,6 +87,52 @@ export function visualSuite(
   });
 }
 
+/**
+ * Image Diff Algorithm for p5.js Visual Tests
+ * 
+ * This algorithm addresses the challenge of cross-platform rendering differences in p5.js visual tests.
+ * Different operating systems and browsers render graphics with subtle variations, particularly with
+ * anti-aliasing, text rendering, and sub-pixel positioning. This can cause false negatives in tests
+ * when the visual differences are acceptable rendering variations rather than actual bugs.
+ * 
+ * Key components of the approach:
+ * 
+ * 1. Initial pixel-by-pixel comparison:
+ *    - Uses pixelmatch to identify differences between expected and actual images
+ *    - Sets a moderate threshold (0.5) to filter out minor color/intensity variations
+ *    - Produces a diff image with red pixels marking differences
+ * 
+ * 2. Cluster identification using BFS (Breadth-First Search):
+ *    - Groups connected difference pixels into clusters
+ *    - Uses a queue-based BFS algorithm to find all connected pixels
+ *    - Defines connectivity based on 8-way adjacency (all surrounding pixels)
+ * 
+ * 3. Cluster categorization by type:
+ *    - Analyzes each pixel's neighborhood characteristics
+ *    - Specifically identifies "line shift" clusters - differences that likely represent
+ *      the same visual elements shifted by 1px due to platform rendering differences
+ *    - Line shifts are identified when >80% of pixels in a cluster have ≤2 neighboring diff pixels
+ * 
+ * 4. Intelligent failure criteria:
+ *    - Filters out clusters smaller than MIN_CLUSTER_SIZE pixels (noise reduction)
+ *    - Applies different thresholds for regular differences vs. line shifts
+ *    - Considers both the total number of significant pixels and number of distinct clusters
+ * 
+ * This approach balances the need to catch genuine visual bugs (like changes to shape geometry, 
+ * colors, or positioning) while tolerating acceptable cross-platform rendering variations.
+ * 
+ * Parameters:
+ * - MIN_CLUSTER_SIZE: Minimum size for a cluster to be considered significant (default: 4)
+ * - MAX_TOTAL_DIFF_PIXELS: Maximum allowed non-line-shift difference pixels (default: 40)
+ * Note: These can be adjusted for further updation
+ * 
+ * Note for contributors: When running tests locally, you may not see these differences as they
+ * mainly appear when tests run on different operating systems or browser rendering engines.
+ * However, the same code may produce slightly different renderings on CI environments, particularly
+ * with text positioning, thin lines, or curved shapes. This algorithm helps distinguish between
+ * these acceptable variations and actual visual bugs.
+ */
+
 export async function checkMatch(actual, expected, p5) {
   let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
   const ratio = expected.width / expected.height;
@@ -174,15 +220,12 @@ export async function checkMatch(actual, expected, p5) {
   // Define significance thresholds
   const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
   const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
-  const MAX_LINE_SHIFT_PIXELS = 200;
 
   // Determine if the differences are significant
-  const lineShiftClusters = clusterSizes.filter(c => c.isLineShift && c.size > MIN_CLUSTER_SIZE);
   const nonLineShiftClusters = clusterSizes.filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
   
   // Calculate significant differences excluding line shifts
   const significantDiffPixels = nonLineShiftClusters.reduce((sum, c) => sum + c.size, 0);
-  const lineShiftPixels = lineShiftClusters.reduce((sum, c) => sum + c.size, 0);
 
   // Update the diff canvas
   diffCanvas.updatePixels();
