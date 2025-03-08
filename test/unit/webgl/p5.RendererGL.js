@@ -1,3 +1,4 @@
+import { suite } from 'vitest';
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
 const toArray = (typedArray) => Array.from(typedArray);
@@ -2700,6 +2701,108 @@ suite('p5.RendererGL', function() {
         myp5.model(myGeo);
         console.log = oldLog;
         expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with fewer values than vertices./);
+      }
+    );
+  });
+
+  suite('Stencil Test Tracking', function() {
+    test('Stencil test is disabled by default',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+        const isEnabled = gl.isEnabled(gl.STENCIL_TEST);
+        
+        assert.equal(isEnabled, false);
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+      }
+    );
+    
+    test('Tracks when user manually enables stencil test',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+        
+        gl.enable(gl.STENCIL_TEST);
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+      }
+    );
+    
+    test('Tracks when user manually disables stencil test',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.enable(gl.STENCIL_TEST);
+        gl.disable(gl.STENCIL_TEST);
+        
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
+      }
+    );
+    
+    test('Maintains stencil test state across draw cycles when user enabled',
+      function() {
+        let drawCalled = false;
+
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const originalDraw = myp5.draw;
+        
+        myp5.draw = function() {
+          drawCalled = true;
+          if (originalDraw) originalDraw.call(myp5);
+        };
+        
+        const gl = myp5._renderer.GL;
+        gl.enable(gl.STENCIL_TEST);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.redraw();
+
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+
+        myp5.draw = originalDraw;
+      }
+    );
+    
+    test('Internal clip operations preserve user stencil test setting',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.enable(gl.STENCIL_TEST);
+
+        myp5.push();
+        myp5.clip(() => {
+          myp5.rect(0, 0, 10, 10);
+        });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.pop();
+
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+      }
+    );
+    
+    test('Internal clip operations do not enable stencil test for future draw cycles',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.disable(gl.STENCIL_TEST);
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+
+        myp5.push();
+        myp5.clip(() => {
+          myp5.rect(0, 0, 10, 10);
+        });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.pop();
+
+        myp5.redraw();
+
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
       }
     );
   });
