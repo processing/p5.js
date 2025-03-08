@@ -1571,12 +1571,14 @@ class Element {
     // For details, see https://github.com/processing/p5.js/issues/3087.
     const eventPrependedFxn = function (event) {
       this._pInst.mouseIsPressed = true;
+      this._pInst._activePointers.set(e.pointerId, e);
       this._pInst._setMouseButton(event);
+      this._pInst._updatePointerCoords(e);
       // Pass along the return-value of the callback:
       return fxn.call(this, event);
     };
     // Pass along the event-prepended form of the callback.
-    Element._adjustListener('mousedown', eventPrependedFxn, this);
+    Element._adjustListener('pointerdown', eventPrependedFxn, this);
     return this;
   }
 
@@ -1746,7 +1748,7 @@ class Element {
    * </div>
    */
   mouseReleased(fxn) {
-    Element._adjustListener('mouseup', fxn, this);
+    Element._adjustListener('pointerup', fxn, this);
     return this;
   }
 
@@ -1831,7 +1833,7 @@ class Element {
    * </div>
    */
   mouseMoved(fxn) {
-    Element._adjustListener('mousemove', fxn, this);
+    Element._adjustListener('pointermove', fxn, this);
     return this;
   }
 
@@ -1872,7 +1874,7 @@ class Element {
    * </div>
    */
   mouseOver(fxn) {
-    Element._adjustListener('mouseover', fxn, this);
+    Element._adjustListener('pointerover', fxn, this);
     return this;
   }
 
@@ -1913,140 +1915,11 @@ class Element {
    * </div>
    */
   mouseOut(fxn) {
-    Element._adjustListener('mouseout', fxn, this);
+    Element._adjustListener('pointerout', fxn, this);
     return this;
   }
 
-  /**
-   * Calls a function when the element is touched.
-   *
-   * Calling `myElement.touchStarted(false)` disables the function.
-   *
-   * Note: Touch functions only work on mobile devices.
-   *
-   * @param  {Function|Boolean} fxn function to call when the touch
-   *                                starts.
-   *                                `false` disables the function.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Call randomColor() when the
-   *   // user touches the canvas.
-   *   cnv.touchStarted(randomColor);
-   *
-   *   describe('A gray square changes color when the user touches the canvas.');
-   * }
-   *
-   * // Paint the background either
-   * // red, yellow, blue, or green.
-   * function randomColor() {
-   *   let c = random(['red', 'yellow', 'blue', 'green']);
-   *   background(c);
-   * }
-   * </code>
-   * </div>
-   */
-  touchStarted(fxn) {
-    Element._adjustListener('touchstart', fxn, this);
-    return this;
-  }
-
-  /**
-   * Calls a function when the user touches the element and moves.
-   *
-   * Calling `myElement.touchMoved(false)` disables the function.
-   *
-   * Note: Touch functions only work on mobile devices.
-   *
-   * @param  {Function|Boolean} fxn function to call when the touch
-   *                                moves over the element.
-   *                                `false` disables the function.
-   * @chainable
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Call randomColor() when the
-   *   // user touches the canvas
-   *   // and moves.
-   *   cnv.touchMoved(randomColor);
-   *
-   *   describe('A gray square changes color when the user touches the canvas and moves.');
-   * }
-   *
-   * // Paint the background either
-   * // red, yellow, blue, or green.
-   * function randomColor() {
-   *   let c = random(['red', 'yellow', 'blue', 'green']);
-   *   background(c);
-   * }
-   * </code>
-   * </div>
-   */
-  touchMoved(fxn) {
-    Element._adjustListener('touchmove', fxn, this);
-    return this;
-  }
-
-  /**
-   * Calls a function when the user stops touching the element.
-   *
-   * Calling `myElement.touchMoved(false)` disables the function.
-   *
-   * Note: Touch functions only work on mobile devices.
-   *
-   * @param  {Function|Boolean} fxn function to call when the touch
-   *                                ends.
-   *                                `false` disables the function.
-   * @chainable
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Call randomColor() when the
-   *   // user touches the canvas,
-   *   // then lifts their finger.
-   *   cnv.touchEnded(randomColor);
-   *
-   *   describe('A gray square changes color when the user touches the canvas, then lifts their finger.');
-   * }
-   *
-   * // Paint the background either
-   * // red, yellow, blue, or green.
-   * function randomColor() {
-   *   let c = random(['red', 'yellow', 'blue', 'green']);
-   *   background(c);
-   * }
-   * </code>
-   * </div>
-   */
-  touchEnded(fxn) {
-    Element._adjustListener('touchend', fxn, this);
-    return this;
-  }
-
-  /**
+    /**
    * Calls a function when a file is dragged over the element.
    *
    * Calling `myElement.dragOver(false)` disables the function.

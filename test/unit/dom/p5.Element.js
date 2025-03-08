@@ -254,159 +254,6 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.touchStarted', function() {
-    test('attaches and gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function(event) {
-        myFnCounter++;
-      };
-
-      elt.touchStarted(myFn);
-      assert.isFunction(elt._events.touchstart);
-      elt.elt.dispatchEvent(new Event('touchstart'));
-      assert.equal(myFnCounter, 1);
-    });
-
-    test('attaches multiple handlers and only latest gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-      var myFnCounterOther = 0;
-      var myFnOther = function() {
-        myFnCounterOther++;
-      };
-
-      elt.touchStarted(myFn);
-      elt.touchStarted(myFnOther);
-      assert.isFunction(elt._events.touchstart);
-      elt.elt.dispatchEvent(new Event('touchstart'));
-      assert.equal(myFnCounter, 0);
-      assert.equal(myFnCounterOther, 1);
-    });
-
-    test('detaches and does not get events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-
-      elt.touchStarted(myFn);
-      elt.touchStarted(false);
-      assert.isNull(elt._events.touchstart);
-      elt.elt.dispatchEvent(new Event('touchstart'));
-      assert.equal(myFnCounter, 0);
-    });
-  });
-
-  suite('p5.Element.prototype.touchMoved', function() {
-    test('attaches and gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function(event) {
-        myFnCounter++;
-      };
-
-      elt.touchMoved(myFn);
-      assert.isFunction(elt._events.touchmove);
-      elt.elt.dispatchEvent(new Event('touchmove'));
-      assert.equal(myFnCounter, 1);
-    });
-
-    test('attaches multiple handlers and only latest gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-      var myFnCounterOther = 0;
-      var myFnOther = function() {
-        myFnCounterOther++;
-      };
-
-      elt.touchMoved(myFn);
-      elt.touchMoved(myFnOther);
-      assert.isFunction(elt._events.touchmove);
-      elt.elt.dispatchEvent(new Event('touchmove'));
-      assert.equal(myFnCounter, 0);
-      assert.equal(myFnCounterOther, 1);
-    });
-
-    test('detaches and does not get events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-
-      elt.touchMoved(myFn);
-      elt.touchMoved(false);
-      assert.isNull(elt._events.touchmove);
-      elt.elt.dispatchEvent(new Event('touchmove'));
-      assert.equal(myFnCounter, 0);
-    });
-  });
-
-  suite('p5.Element.prototype.touchEnded', function() {
-    test('attaches and gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function(event) {
-        myFnCounter++;
-      };
-
-      elt.touchEnded(myFn);
-      assert.isFunction(elt._events.touchend);
-      elt.elt.dispatchEvent(new Event('touchend'));
-      assert.equal(myFnCounter, 1);
-    });
-
-    test('attaches multiple handlers and only latest gets events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-      var myFnCounterOther = 0;
-      var myFnOther = function() {
-        myFnCounterOther++;
-      };
-
-      elt.touchEnded(myFn);
-      elt.touchEnded(myFnOther);
-      assert.isFunction(elt._events.touchend);
-      elt.elt.dispatchEvent(new Event('touchend'));
-      assert.equal(myFnCounter, 0);
-      assert.equal(myFnCounterOther, 1);
-    });
-
-    test('detaches and does not get events', function() {
-      // setup
-      const elt = mockP5Prototype.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
-        myFnCounter++;
-      };
-
-      elt.touchEnded(myFn);
-      elt.touchEnded(false);
-      assert.isNull(elt._events.touchend);
-      elt.elt.dispatchEvent(new Event('touchend'));
-      assert.equal(myFnCounter, 0);
-    });
-  });
-
   suite('p5.Element.prototype.mouseReleased', function() {
     test('attaches and gets events', function() {
       // setup
@@ -417,8 +264,8 @@ suite('p5.Element', function() {
       };
 
       elt.mouseReleased(myFn);
-      assert.isFunction(elt._events.mouseup);
-      elt.elt.dispatchEvent(new Event('mouseup'));
+      assert.isFunction(elt._events.pointerup);
+      elt.elt.dispatchEvent(new Event('pointerup'));
       assert.equal(myFnCounter, 1);
     });
 
@@ -436,8 +283,8 @@ suite('p5.Element', function() {
 
       elt.mouseReleased(myFn);
       elt.mouseReleased(myFnOther);
-      assert.isFunction(elt._events.mouseup);
-      elt.elt.dispatchEvent(new Event('mouseup'));
+      assert.isFunction(elt._events.pointerup);
+      elt.elt.dispatchEvent(new Event('pointerup'));
       assert.equal(myFnCounter, 0);
       assert.equal(myFnCounterOther, 1);
     });
@@ -452,8 +299,8 @@ suite('p5.Element', function() {
 
       elt.mouseReleased(myFn);
       elt.mouseReleased(false);
-      assert.isNull(elt._events.mouseup);
-      elt.elt.dispatchEvent(new Event('mouseup'));
+      assert.isNull(elt._events.pointerup);
+      elt.elt.dispatchEvent(new Event('pointerup'));
       assert.equal(myFnCounter, 0);
     });
   });
@@ -468,8 +315,8 @@ suite('p5.Element', function() {
       };
 
       elt.mouseMoved(myFn);
-      assert.isFunction(elt._events.mousemove);
-      elt.elt.dispatchEvent(new Event('mousemove'));
+      assert.isFunction(elt._events.pointermove);
+      elt.elt.dispatchEvent(new Event('pointermove'));
       assert.equal(myFnCounter, 1);
     });
 
@@ -487,8 +334,8 @@ suite('p5.Element', function() {
 
       elt.mouseMoved(myFn);
       elt.mouseMoved(myFnOther);
-      assert.isFunction(elt._events.mousemove);
-      elt.elt.dispatchEvent(new Event('mousemove'));
+      assert.isFunction(elt._events.pointermove);
+      elt.elt.dispatchEvent(new Event('pointermove'));
       assert.equal(myFnCounter, 0);
       assert.equal(myFnCounterOther, 1);
     });
@@ -503,8 +350,8 @@ suite('p5.Element', function() {
 
       elt.mouseMoved(myFn);
       elt.mouseMoved(false);
-      assert.isNull(elt._events.mousemove);
-      elt.elt.dispatchEvent(new Event('mousemove'));
+      assert.isNull(elt._events.pointermove);
+      elt.elt.dispatchEvent(new Event('pointermove'));
       assert.equal(myFnCounter, 0);
     });
   });
@@ -519,8 +366,8 @@ suite('p5.Element', function() {
       };
 
       elt.mouseOver(myFn);
-      assert.isFunction(elt._events.mouseover);
-      elt.elt.dispatchEvent(new Event('mouseover'));
+      assert.isFunction(elt._events.pointerover);
+      elt.elt.dispatchEvent(new Event('pointerover'));
       assert.equal(myFnCounter, 1);
     });
 
@@ -538,8 +385,8 @@ suite('p5.Element', function() {
 
       elt.mouseOver(myFn);
       elt.mouseOver(myFnOther);
-      assert.isFunction(elt._events.mouseover);
-      elt.elt.dispatchEvent(new Event('mouseover'));
+      assert.isFunction(elt._events.pointerover);
+      elt.elt.dispatchEvent(new Event('pointerover'));
       assert.equal(myFnCounter, 0);
       assert.equal(myFnCounterOther, 1);
     });
@@ -554,8 +401,8 @@ suite('p5.Element', function() {
 
       elt.mouseOver(myFn);
       elt.mouseOver(false);
-      assert.isNull(elt._events.mouseover);
-      elt.elt.dispatchEvent(new Event('mouseover'));
+      assert.isNull(elt._events.pointerover);
+      elt.elt.dispatchEvent(new Event('pointerover'));
       assert.equal(myFnCounter, 0);
     });
   });
@@ -570,8 +417,8 @@ suite('p5.Element', function() {
       };
 
       elt.mouseOut(myFn);
-      assert.isFunction(elt._events.mouseout);
-      elt.elt.dispatchEvent(new Event('mouseout'));
+      assert.isFunction(elt._events.pointerout);
+      elt.elt.dispatchEvent(new Event('pointerout'));
       assert.equal(myFnCounter, 1);
     });
 
@@ -589,8 +436,8 @@ suite('p5.Element', function() {
 
       elt.mouseOut(myFn);
       elt.mouseOut(myFnOther);
-      assert.isFunction(elt._events.mouseout);
-      elt.elt.dispatchEvent(new Event('mouseout'));
+      assert.isFunction(elt._events.pointerout);
+      elt.elt.dispatchEvent(new Event('pointerout'));
       assert.equal(myFnCounter, 0);
       assert.equal(myFnCounterOther, 1);
     });
@@ -605,8 +452,8 @@ suite('p5.Element', function() {
 
       elt.mouseOut(myFn);
       elt.mouseOut(false);
-      assert.isNull(elt._events.mouseout);
-      elt.elt.dispatchEvent(new Event('mouseout'));
+      assert.isNull(elt._events.pointerout);
+      elt.elt.dispatchEvent(new Event('pointerout'));
       assert.equal(myFnCounter, 0);
     });
   });
