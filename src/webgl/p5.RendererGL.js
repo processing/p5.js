@@ -2090,6 +2090,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     const texture = this.textures.get(src);
     if (texture) {
+      if (src.isModified()) {  // Assuming isModified() returns the _modified flag
+        texture.update(src);   // Update texture with new image data
+        src.setModified(false); // Reset the modified flag
+      }
       return texture;
     }
 
