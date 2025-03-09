@@ -1802,7 +1802,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *   background(200);
  *
  *   // Draw the circle
- *   circle(circleSize, 50, 50);
+ *   circle(50, 50, circleSize);
  * }
  *
  * // Increment circleSize when the user scrolls the mouse wheel.
