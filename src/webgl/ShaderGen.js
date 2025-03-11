@@ -494,7 +494,7 @@ function shadergen(p5, fn) {
       GLOBAL_SHADER = this;
       this.modifyFunction = modifyFunction;
       this.srcLocations = srcLocations;
-      this.generateHookBuilders(originalShader);
+      this.generateHookOverrides(originalShader);
       this.output = {
         uniforms: {},
       }
@@ -507,31 +507,28 @@ function shadergen(p5, fn) {
       return this.output;
     }
 
-    generateHookBuilders(originalShader) {
+    generateHookOverrides(originalShader) {
       const availableHooks = {
         ...originalShader.hooks.vertex,
         ...originalShader.hooks.fragment,
       }
-      
       // Defines a function for each of the hooks for the shader we are modifying.
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName)
+        console.log(hookTypes);
         this[hookTypes.name] = function(userOverride) {
-          let hookArgs = []
-          let argsArray = [];
-
-          hookTypes.parameters.forEach((parameter, i) => {
-            hookArgs.push(
+          let argNodes = []
+          const argsArray = hookTypes.parameters.map((parameter) => {
+            argNodes.push(
               new VariableNode(parameter.name, parameter.type.typeName, true)
             );
-            if (i === 0) {
-              argsArray.push(`${parameter.type.typeName} ${parameter.name}`);
-            } else {
-              argsArray.push(`, ${parameter.type.typeName} ${parameter.name}`);
-            }
-          })
-          const toGLSLResult = userOverride(...hookArgs).toGLSLBase(this.context);
-          let codeLines = [`(${argsArray.join(', ')}) {`, this.context.declarations.slice()].flat();
+            const qualifiers = parameter.type.qualifiers.length > 0 ? parameter.type.qualifiers.join(' ') : '';
+            return `${qualifiers} ${parameter.type.typeName} ${parameter.name}`.trim();
+          });
+
+          const argsString = `(${argsArray.join(', ')}) {`;
+          const toGLSLResult = userOverride(...argNodes).toGLSLBase(this.context);
+          let codeLines = [ argsString, ...this.context.declarations ];
           codeLines.push(`\n${hookTypes.returnType.typeName} finalReturnValue = ${toGLSLResult};
                           \nreturn finalReturnValue;
                           \n}`);
