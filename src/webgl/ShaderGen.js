@@ -37,7 +37,7 @@ function shadergen(p5, fn) {
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations)
       const generatedModifyArgument = generator.generate();
       console.log("SRC STRING: ", generatorFunction);
-      console.log("NEW OPTIONS:", generatedModifyArgument['vec4 getFinalColor'])
+      console.log("NEW OPTIONS:", generatedModifyArgument)
 
       return oldModify.call(this, generatedModifyArgument);
     } 
