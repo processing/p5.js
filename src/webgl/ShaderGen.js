@@ -14,25 +14,35 @@ function shadergen(p5, fn) {
   
   const oldModify = p5.Shader.prototype.modify
 
-  p5.Shader.prototype.modify = function(modifier) {
-    if (modifier instanceof Function) {
-      const code = modifier.toString()
-      const ast = parse(code, { ecmaVersion: 2021 /*, locations: true*/ });
-      simple(ast, ASTCallbacks);
-      const transpiledArg = escodegen.generate(ast);
-      const transpiledFn = new Function(transpiledArg
-        .slice(transpiledArg.indexOf("{") + 1, transpiledArg.lastIndexOf("}"))
-      );
-      
-      const generator = new ShaderGenerator(transpiledFn, this)
-      const newArg = generator.callModifyFunction();
-      console.log(code);
-      console.log(transpiledArg);
-      console.log(newArg)
-      // return oldModify.call(this, newArg);
+  p5.Shader.prototype.modify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
+    if (shaderModifier instanceof Function) {
+      let generatorFunction;
+      if (options.parser) {
+        const sourceString = shaderModifier.toString()
+        const ast = parse(sourceString, { 
+          ecmaVersion: 2021, 
+          locations: options.srcLocations 
+        });
+        simple(ast, ASTCallbacks);
+        const transpiledSource = escodegen.generate(ast);
+        generatorFunction = new Function(
+          transpiledSource.slice(
+            transpiledSource.indexOf("{") + 1,
+            transpiledSource.lastIndexOf("}")
+          )
+        );
+      } else {
+        generatorFunction = shaderModifier;
+      }
+      const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations)
+      const generatedModifyArgument = generator.hookCallbacks();
+      console.log("SRC STRING: ", generatorFunction);
+      console.log("NEW OPTIONS:", generatedModifyArgument['vec4 getFinalColor'])
+
+      return oldModify.call(this, generatedModifyArgument);
     } 
     else {
-      return oldModify.call(this, modifier)
+      return oldModify.call(this, shaderModifier)
     }
   }
 
@@ -49,7 +59,7 @@ function shadergen(p5, fn) {
 
   const ASTCallbacks = {
     VariableDeclarator(node) {
-      if (node.init.callee && node.init.callee.name.slice(0, 7) === 'uniform') {
+      if (node.init.callee && node.init.callee.name.startsWith('uniform')) {
         const uniformNameLiteral = {
           type: 'Literal',
           value: node.id.name
@@ -61,18 +71,17 @@ function shadergen(p5, fn) {
     // operator overloading including +=, *= assignment expressions 
     AssignmentExpression(node) {
       if (node.operator !== '=') {
+        const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
             type: "MemberExpression",
-            object: {
-              type: "Identifier",
-              name: node.left.name
-            },
+            object: node.left,
             property: {
               type: "Identifier",
-              name: replaceBinaryOperator(node.operator.replace('=','')),
+              name: methodName,
             },
+            computed: false,
           },
           arguments: [node.right]
         }
@@ -99,54 +108,42 @@ function shadergen(p5, fn) {
   // These classes are for expressing GLSL functions in Javascript without
   // needing to  transpile the user's code.
   class BaseNode {
-    constructor(isInternal) {
+    constructor(isInternal, type) {
       if (new.target === BaseNode) {
         throw new TypeError("Cannot construct BaseNode instances directly. This is an abstract class.");
       }
-      this.type = null;
-      
+      this.type = type;
+
       // For tracking recursion depth and creating temporary variables
       this.isInternal = isInternal;
       this.usedIn = [];
       this.dependsOn = [];
       this.srcLine = null;
       // Stack Capture is used to get the original line of user code for Debug purposes
-      if (isInternal === false) {
+      if (GLOBAL_SHADER.srcLocations === true && isInternal === false) {
         try {
           throw new Error("StackCapture");
         } catch (e) {
           const lines = e.stack.split("\n");
-          // console.log(lines);
-          let index = 5;
-          if (isBinaryOperatorNode(this)) { index--; };
-          this.srcLine = lines[index].trim();
+          let userSketchLineIndex = 5;
+          if (isBinaryOperatorNode(this)) { userSketchLineIndex--; };
+          this.srcLine = lines[userSketchLineIndex].trim();
         }
       }
     }
     
     // The base node implements a version of toGLSL which determines whether the generated code should be stored in a temporary variable.
     toGLSLBase(context){
-      if (this.useTempVar()) {
-        return this.getTemp(context);
+      if (this.shouldUseTemporaryVariable()) {
+        return this.getTemporaryVariable(context);
       }
       else {
         return this.toGLSL(context);
       }
     }
 
-    // useTempVar() {
-    //   if (isBinaryOperatorNode(this)) {
-    //     console.log(this.a);
-    //     console.log(this.b);
-    //     return false; 
-    //   }
-    //   if (this.isInternal) { return false; }
-    //   if (isVariableNode(this)) { return false; }
-    //   if (isVectorNode(this)) { return true; }
-    //   return (this.usedIn.length > 1);
-    // };
-    
-    useTempVar() {
+    shouldUseTemporaryVariable() {
+      if (this.temporaryVariable)
       if (this.isInternal || isVariableNode(this)) { return false; }
       let score = 0;
       score += isBinaryOperatorNode(this);
@@ -155,7 +152,7 @@ function shadergen(p5, fn) {
       return score > 3;
     }
     
-    getTemp(context) {
+    getTemporaryVariable(context) {
       if (!this.temporaryVariable) {
         this.temporaryVariable = `temp_${context.getNextID()}`;
         let line = "";
@@ -168,7 +165,7 @@ function shadergen(p5, fn) {
       return this.temporaryVariable;
     };
     
-    // TODO: Add more operations here
+    // Binary Operators
     add(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '+'); }
     sub(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '-'); }
     mult(other) { return new BinaryOperatorNode(this, this.enforceType(other), '*'); }
@@ -194,6 +191,22 @@ function shadergen(p5, fn) {
         return new this.constructor(other);
       }
     }
+
+    addComponent(componentName, type='float') {
+      this[componentName] = new ComponentNode(this, componentName, type, true);
+    }
+
+    autoAddVectorComponents() {
+      const options = {
+        vec2: ['x', 'y'],
+        vec3: ['x', 'y', 'z'],
+        vec4: ['x', 'y', 'z', 'w']
+      };
+      const componentNames = options[this.type] || [];
+      for (let componentName of componentNames) {
+        this.addComponent(componentName);
+      }
+    }
     
     toGLSL(context){
       throw new TypeError("Not supposed to call this function on BaseNode, which is an abstract class.");
@@ -203,9 +216,8 @@ function shadergen(p5, fn) {
   // Primitive Types
   class IntNode extends BaseNode {
     constructor(x = 0, isInternal = false) {
-      super(isInternal);
+      super(isInternal, 'int');
       this.x = x;
-      this.type = 'int';
     }
 
     toGLSL(context) {
@@ -224,9 +236,8 @@ function shadergen(p5, fn) {
   
   class FloatNode extends BaseNode {
     constructor(x = 0, isInternal = false){
-      super(isInternal);
+      super(isInternal, 'float');
       this.x = x;
-      this.type = 'float';
     }
 
     toGLSL(context) {
@@ -243,54 +254,14 @@ function shadergen(p5, fn) {
     }
   }
   
-  // TODO:
-  // There is a possibility that since we *always* use a temporary variable for vectors
-  // that we don't actually need a Float Node for every component. They could be component node's instead? 
-  // May need to then store the temporary variable name in this class.
-
-  // This would be the next step before adding all swizzles 
-
-  // I think it is also possible to make a proxy for vector nodes to check if the user accesses  or sets any 
-  // property .xyz / .rgb /.zxx etc as then we can automatically assign swizzles and only define .xyzw on the actual 
-  // object.
-
-  // Ultimately vectors are the focus of & most complex type in glsl (before we add matrices...) which justifies the complexity
-  // of this class.
-
-  // I am interested in the 'prop' value of get and set then
-
-  // const VectorNodeHandler = {
-  //   swizzles: [
-  //     ['x', 'y', 'z', 'w'],
-  //     ['r', 'b', 'g', 'a'],
-  //     ['s', 't', 'p', 'q'],
-  //   ],
-  //   get(target, prop, receiver) {
-  //     if (prop in target) {
-  //        return Reflect.get(target, prop, receiver); 
-  //     } else {
-  //       console.log(prop);
-  //     }
-  //     let modifiedProp;
-  //     return Reflect.get(target, modifiedProp, receiver);
-  //   },
-  //   set(obj, prop, receiver) {
-  //     console.log("OBJect:",obj,"PROPERTY", prop, "RECEIVER", receiver);
-
-  //     if (prop in obj) { return Reflect.set(...arguments); }
-  //     let modifiedProp;
-  //     return Reflect.set(obj, modifiedProp, receiver);
-  //   }
-  // }
 
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
-      super(isInternal);
+      super(isInternal, type);
       this.components = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.components.forEach((component, i) => {
         this[component] = new FloatNode(values[i], true);
       });
-      this.type = type;
     }
     
     toGLSL(context) {
@@ -308,11 +279,9 @@ function shadergen(p5, fn) {
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
     constructor(name, args, type, isInternal = false) {
-      super(isInternal);
+      super(isInternal, type);
       this.name = name;
       this.args = args;
-      this.type = type;
-
       // TODO:
       this.argumentTypes = {
 
@@ -320,12 +289,8 @@ function shadergen(p5, fn) {
     }
 
     deconstructArgs(context) {
-      if (this.args.constructor === Array) {
-        let argsString = `${this.args[0].toGLSLBase(context)}`
-        for (let arg of this.args.slice(1)) {
-          argsString += `, ${arg.toGLSLBase(context)}` 
-          return argsString;
-        }
+      if (Array.isArray(this.args)) {
+        return this.args.map((argNode) => argNode.toGLSLBase(context)).join(', ');
       } else {
         return `${this.args.toGLSLBase(context)}`;
       }
@@ -339,26 +304,9 @@ function shadergen(p5, fn) {
   // Variables and member variable nodes
   class VariableNode extends BaseNode {
     constructor(name, type, isInternal = false) {
-      super(isInternal)
+      super(isInternal, type)
       this.name = name;
-      this.type = type;
       this.autoAddVectorComponents();
-    }
-    
-    addComponent(componentName) {
-      this[componentName] = new ComponentNode(this, componentName, true);
-    }
-
-    autoAddVectorComponents() {
-      const options = {
-        vec2: ['x', 'y'],
-        vec3: ['x', 'y', 'z'],
-        vec4: ['x', 'y', 'z', 'w']
-      };
-      const componentNames = options[this.type] || [];
-      for (let componentName of componentNames) {
-        this.addComponent(componentName);
-      }
     }
 
     toGLSL(context) {
@@ -367,14 +315,13 @@ function shadergen(p5, fn) {
   }
   
   class ComponentNode extends BaseNode {
-    constructor(parent, component, isInternal = false) {
-      super(isInternal);
+    constructor(parent, componentName, type, isInternal = false) {
+      super(isInternal, type);
       this.parent = parent;
-      this.component = component;
+      this.component = componentName;
       this.type = 'float';
     }
     toGLSL(context) {
-      // CURRENTLY BROKEN:
       // const parentName = this.parent.toGLSLBase(context);
       const parentName = this.parent.temporaryVariable ? this.parent.temporaryVariable : this.parent.name; 
       return `${parentName}.${this.component}`;
@@ -384,7 +331,7 @@ function shadergen(p5, fn) {
   // Binary Operator Nodes
   class BinaryOperatorNode extends BaseNode {
     constructor(a, b, operator, isInternal = false) {
-      super(isInternal);
+      super(isInternal, null);
       this.op = operator;
       this.a = a;
       this.b = b;
@@ -394,7 +341,7 @@ function shadergen(p5, fn) {
       this.type = this.determineType();
     }
     
-    // We know that both this.a and this.b are nodes because of PrimitiveNode.enforceType
+    // We know that both this.a and this.b are nodes because of BaseNode.enforceType
     determineType() {
       if (this.a.type === this.b.type) {
         return this.a.type;
@@ -476,7 +423,7 @@ function shadergen(p5, fn) {
     };
   };
 
-  class ConditionalDiscard extends Base{
+  class ConditionalDiscard extends BaseNode {
     constructor(condition){
       this.condition = condition;
     }
@@ -489,7 +436,7 @@ function shadergen(p5, fn) {
     return new ConditionalNode(value);
   }
 
-  // Helper functions
+  // Node Helper functions
   function isShaderNode(node) {  
     return (node instanceof BaseNode); 
   }
@@ -514,13 +461,14 @@ function shadergen(p5, fn) {
     return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined'); 
   }
 
-  // Shader program
+  // Shader Generator
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
 
   class ShaderGenerator {
-    constructor(modifyFunction, originalShader) {
+    constructor(modifyFunction, originalShader, srcLocations) {
       GLOBAL_SHADER = this;
       this.modifyFunction = modifyFunction;
+      this.srcLocations = srcLocations;
       this.generateHookBuilders(originalShader);
       this.output = {
         uniforms: {},
@@ -528,7 +476,7 @@ function shadergen(p5, fn) {
       this.resetGLSLContext();
     }
 
-    callModifyFunction() {
+    hookCallbacks() {
       this.modifyFunction();
       return this.output;
     }
@@ -556,6 +504,7 @@ function shadergen(p5, fn) {
               argsArray.push(`, ${parameter.type.typeName} ${parameter.name}`);
             }
           })
+          console.log(hookArgs)
 
           const toGLSLResult = userOverride(...hookArgs).toGLSLBase(this.context);
           let codeLines = [`(${argsArray.join(', ')}) {`, this.context.declarations.slice()].flat();
@@ -582,37 +531,18 @@ function shadergen(p5, fn) {
     }
   }
 
+  // User function helpers
+  function conformVectorParameters(value, vectorDimensions) {
+    // Allow arguments as arrays ([0,0,0,0]) or not (0,0,0,0)
+    value = value.flat();
+    // Populate arguments so uniformVector3(0) becomes [0,0,0] 
+    if (value.length === 1) {
+      value = Array(vectorDimensions).fill(value[0]);
+    }
+    return value;
+  }
+
   // User functions
-  fn.getWorldPosition = function(func){
-    GLOBAL_SHADER.getWorldPosition(func)
-  }
-  fn.getFinalColor = function(func){
-    GLOBAL_SHADER.getFinalColor(func)
-  }
-  
-  fn.createVector2 = function(x, y) {
-    // return new Proxy(new VectorNode([x, y], 'vec2'), VectorNodeHandler);
-    return new VectorNode([x, y], 'vec2');
-  }
-
-  fn.createVector3 = function(x, y, z) {
-    // return new Proxy(new VectorNode([x, y, z], 'vec3'), VectorNodeHandler);
-    return new VectorNode([x, y, z], 'vec3');
-  }
-
-  fn.createVector4 = function(x, y, z, w) {
-    // return new Proxy(new VectorNode([x, y, z, w], 'vec4'), VectorNodeHandler);
-    return new VectorNode([x, y, z, w], 'vec4');
-  }
-  
-  fn.createFloat = function(x) {
-    return new FloatNode(x);
-  }
-  
-  fn.createInt = function(x) {
-    return new IntNode(x);
-  }
-  
   fn.instanceID = function() {
     return new VariableNode('gl_InstanceID', 'int');
   }
@@ -625,47 +555,76 @@ function shadergen(p5, fn) {
     return new VariableNode('discard', 'keyword');
   }
   
-  // Uniforms and attributes
-  const uniformFns = {
-    'int': 'Int',
-    'float': 'Float',
-    'vec2': 'Vector2',
-    'vec3': 'Vector3',
-    'vec4': 'Vector4',
-    'sampler2D': 'Texture',
+  // Generating uniformFloat, uniformVec, createFloat, etc functions
+  // Maps a GLSL type to the name suffix for method names
+  const GLSLTypesToSuffixes = {
+    int:    'Int',
+    float:  'Float',
+    vec2:   'Vector2',
+    vec3:   'Vector3',
+    vec4:   'Vector4',
+    sampler2D: 'Texture',
   };
-  for (const type in uniformFns) {
-    const uniformFnVariant = `uniform${uniformFns[type]}`;
-    ShaderGenerator.prototype[uniformFnVariant] = function(name, defaultValue) {
-      this.output.uniforms[`${type} ${name}`] = defaultValue;
-      let safeType = type === 'sampler2D' ? 'vec4' : type;
+  const nodeConstructors = {
+    int:   (value) => new IntNode(value),
+    float: (value) => new FloatNode(value),
+    vec2:  (value) => new VectorNode(value, 'vec2'),
+    vec3:  (value) => new VectorNode(value, 'vec3'),
+    vec4:  (value) => new VectorNode(value, 'vec4'),
+  };
+  for (const glslType in GLSLTypesToSuffixes) {
+    // Generate uniform*() Methods for creating uniforms
+    const typeIdentifier = GLSLTypesToSuffixes[glslType];
+    const uniformMethodName = `uniform${typeIdentifier}`;
+    ShaderGenerator.prototype[uniformMethodName] = function(...args) {
+      let [name, ...defaultValue] = args;
+      if(glslType.startsWith('vec')) {
+        defaultValue = conformVectorParameters(defaultValue, +glslType.slice(3));
+      }
+      this.output.uniforms[`${glslType} ${name}`] = defaultValue;
+      let safeType = glslType === 'sampler2D' ? 'vec4' : glslType;
       return new VariableNode(name, safeType);
     };
-    fn[uniformFnVariant] = function (name, value) { 
-      return GLOBAL_SHADER[uniformFnVariant](name, value); 
+    fn[uniformMethodName] = function (...args) { 
+      return GLOBAL_SHADER[uniformMethodName](...args); 
     };
+
+    // Generate the create*() Methods for creating variables in shaders
+    if (glslType === 'sampler2D') { continue; }
+    const createMethodName = `create${typeIdentifier}`;
+    fn[createMethodName] = function (...value) {
+      if(glslType.startsWith('vec')) {
+        value = conformVectorParameters(value, +glslType.slice(3));
+      } else {
+        value = value[0];
+      }
+      return nodeConstructors[glslType](value);
+    }
   }
   
   // GLSL Built in functions
   // TODO: 
   // Add a whole lot of these functions. 
   // https://docs.gl/el3/abs
+
+  // constructor(name, args, type, isInternal = false) {
+
   const builtInFunctions = {
     // Trigonometry
     'acos': {},
-    'acosh': {},
+    // 'acosh': {},
     'asin': {},
-    'asinh': {},
+    // 'asinh': {},
     'atan': {},
-    'atanh': {},
+    // 'atanh': {},
     'cos': {},
-    'cosh': {},
+    // 'cosh': {},
     'degrees': {},
     'radians': {},
     'sin': {},
-    'sinh': {},
+    // 'sinh': {},
     'tan': {},
-    'tanh': {},
+    // 'tanh': {},
     // Mathematics
     'abs': {},
     'ceil': {},
@@ -675,41 +634,44 @@ function shadergen(p5, fn) {
     'exp': {},
     'exp2': {},
     'floor': {},
-    'fma': {},
+    // 'fma': {},
     'fract': {},
-    'fwidth': {},
-    'inversesqrt': {},
-    'isinf': {},
-    'isnan': {},
-    'log': {},
-    'log2': {},
+    // 'fwidth': {},
+    // 'inversesqrt': {},
+    // 'isinf': {},
+    // 'isnan': {},
+    // 'log': {},
+    // 'log2': {},
     'max': {},
     'min': {},
     'mix': {},
-    'mod': {},
-    'modf': {},
+    // 'mod': {},
+    // 'modf': {},
     'pow': {},
-    'round': {},
-    'roundEven': {},
-    'sign': {},
+    // 'round': {},
+    // 'roundEven': {},
+    // 'sign': {},
     'smoothstep': {},
     'sqrt': {},
     'step': {},
-    'trunc': {},
+    // 'trunc': {},
     // Vector
     'cross': {},
     'distance': {},
     'dot': {},
-    'equal': {},
-    'faceforward': {},
+    // 'equal': {},
+    // 'faceforward': {},
     'length': {},
     'normalize': {},
-    'notEqual': {},
-    'reflect': {},
-    'refract': {},
+    // 'notEqual': {},
+    // 'reflect': {},
+    // 'refract': {},
     // Texture sampling
     'texture': {},
   }
+
+  // Object.entries(builtInFunctions).forEach(([glslFnName, properties]) => {
+  // })
 
   const oldTexture = p5.prototype.texture;
   p5.prototype.texture = function(...args) {
