@@ -6,7 +6,7 @@
 */
 
 import { parse } from 'acorn';
-import { simple } from 'acorn-walk';
+import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
 function shadergen(p5, fn) {
@@ -23,7 +23,7 @@ function shadergen(p5, fn) {
           ecmaVersion: 2021, 
           locations: options.srcLocations 
         });
-        simple(ast, ASTCallbacks);
+        ancestor(ast, ASTCallbacks);
         const transpiledSource = escodegen.generate(ast);
         generatorFunction = new Function(
           transpiledSource.slice(
@@ -103,7 +103,6 @@ function shadergen(p5, fn) {
     },
   }
 
-
   // Javascript Node API.
   // These classes are for expressing GLSL functions in Javascript without
   // needing to  transpile the user's code.
@@ -114,7 +113,6 @@ function shadergen(p5, fn) {
       }
       this.type = type;
       this.componentNames = [];
-      this.swizzleAccessed = false;
       this.swizzleChanged = false;
       // For tracking recursion depth and creating temporary variables
       this.isInternal = isInternal;
@@ -151,7 +149,6 @@ function shadergen(p5, fn) {
           let value = new ComponentNode(this, componentName, 'float', true);
           Object.defineProperty(this, componentName, {
             get() {
-              this.swizzleAccessed = true;
               return value;
             },
             set(newValue) {
@@ -215,7 +212,6 @@ function shadergen(p5, fn) {
     mod(other)  { return new ModulusNode(this, this.enforceType(other)); }
 
     // Check that the types of the operands are compatible.
-    // TODO: improve this with less branching if elses
     enforceType(other){
       if (isShaderNode(other)){
         if ((isFloatNode(this) || isVectorNode(this)) && isIntNode(other)) {
@@ -228,7 +224,10 @@ function shadergen(p5, fn) {
           return new IntNode(other);
         }
         return new FloatNode(other);
-      } 
+      }
+      else if(Array.isArray(other)) {
+        return new VectorNode(other, `vec${other.length}`)
+      }
       else {
         return new this.constructor(other);
       }
@@ -474,7 +473,7 @@ function shadergen(p5, fn) {
     return (isShaderNode(node) && (node.type === 'float')); 
   }
 
-  function isVectorNode(node) { 
+  function isVectorNode(node) {
     return (isShaderNode(node) && (node.type === 'vec2'|| node.type === 'vec3' || node.type === 'vec4')); 
   }
 
@@ -507,17 +506,20 @@ function shadergen(p5, fn) {
       return this.output;
     }
 
+    // This method generates the hook overrides which the user calls in their modify function.
     generateHookOverrides(originalShader) {
       const availableHooks = {
         ...originalShader.hooks.vertex,
         ...originalShader.hooks.fragment,
       }
-      // Defines a function for each of the hooks for the shader we are modifying.
+
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName)
         console.log(hookTypes);
+
         this[hookTypes.name] = function(userOverride) {
           let argNodes = []
+
           const argsArray = hookTypes.parameters.map((parameter) => {
             argNodes.push(
               new VariableNode(parameter.name, parameter.type.typeName, true)
@@ -525,9 +527,14 @@ function shadergen(p5, fn) {
             const qualifiers = parameter.type.qualifiers.length > 0 ? parameter.type.qualifiers.join(' ') : '';
             return `${qualifiers} ${parameter.type.typeName} ${parameter.name}`.trim();
           });
-
           const argsString = `(${argsArray.join(', ')}) {`;
-          const toGLSLResult = userOverride(...argNodes).toGLSLBase(this.context);
+          
+          let returnedValue = userOverride(...argNodes);
+          if (!isShaderNode(returnedValue)) {
+              const expectedReturnType = hookTypes.returnType;
+              returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue)
+          }
+          const toGLSLResult = returnedValue.toGLSLBase(this.context);
           let codeLines = [ argsString, ...this.context.declarations ];
           codeLines.push(`\n${hookTypes.returnType.typeName} finalReturnValue = ${toGLSLResult};
                           \nreturn finalReturnValue;
@@ -602,13 +609,12 @@ function shadergen(p5, fn) {
 
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
       let [name, ...defaultValue] = args;
+
       if(glslType.startsWith('vec')) {
         defaultValue = conformVectorParameters(defaultValue, +glslType.slice(3));
         this.output.uniforms[`${glslType} ${name}`] = defaultValue;
       } 
       else {
-        console.log("defaultValue: ",defaultValue);
-        console.log("defaultValue[0]: ",defaultValue[0])
         this.output.uniforms[`${glslType} ${name}`] = defaultValue[0];
       }
 
@@ -637,59 +643,69 @@ function shadergen(p5, fn) {
   }
   
   // GLSL Built in functions
-  // TODO: 
   // Add a whole lot of these functions. 
   // https://docs.gl/el3/abs
+  // TODO: 
+  //  In reality many of these have multiple overrides which will need to address later.
+  // Also, their return types depend on the genType which will need to address urgently
+  //      genType clamp(genType x,
+  //                    genType minVal,
+  //                    genType maxVal);
+  //      genType clamp(genType x,
+  //                    float minVal,
+  //                    float maxVal);
 
-  // constructor(name, args, type, isInternal = false) {
+
 
   const builtInFunctions = {
-    // Trigonometry
-    'acos': {},
+    //////////// Trigonometry //////////
+    'acos': { args: ['genType'], returnType: 'float'},
     // 'acosh': {},
-    'asin': {},
+    'asin': { args: ['genType'], returnType: 'float'},
     // 'asinh': {},
-    'atan': {},
+    'atan': { args: ['genType'], returnType: 'float'},
     // 'atanh': {},
-    'cos': {},
+    'cos': { args: ['genType'], returnType: 'float', isp5Function: true},
     // 'cosh': {},
-    'degrees': {},
-    'radians': {},
-    'sin': {},
+    'degrees': { args: ['genType'], returnType: 'float'},
+    'radians': { args: ['genType'], returnType: 'float'},
+    'sin': { args: ['genType'], returnType: 'float' , isp5Function: true},
     // 'sinh': {},
-    'tan': {},
+    'tan': { args: ['genType'], returnType: 'float', isp5Function: true},
     // 'tanh': {},
-    // Mathematics
-    'abs': {},
-    'ceil': {},
-    'clamp': {},
-    'dFdx': {},
-    'dFdy': {},
-    'exp': {},
-    'exp2': {},
-    'floor': {},
+
+    ////////// Mathematics //////////
+    'abs': { args: ['genType'], returnType: 'float'},
+    'ceil': { args: ['genType'], returnType: 'float'},
+    'clamp': { args: ['genType', 'genType', 'genType'], returnType: 'float'},
+    // 'dFdx': {},
+    // 'dFdy': {},
+    'exp': { args: ['genType'], returnType: 'float'},
+    'exp2': { args: ['genType'], returnType: 'float'},
+    'floor': { args: ['genType'], returnType: 'float'},
     // 'fma': {},
-    'fract': {},
+    'fract': { args: ['genType'], returnType: 'float'},
     // 'fwidth': {},
     // 'inversesqrt': {},
     // 'isinf': {},
     // 'isnan': {},
     // 'log': {},
     // 'log2': {},
-    'max': {},
-    'min': {},
-    'mix': {},
+    'max': { args: ['genType'], returnType: 'genType'},
+    'min': { args: ['genType'], returnType: 'genType'},
+    'mix': { args: ['genType'], returnType: 'genType'},
     // 'mod': {},
     // 'modf': {},
-    'pow': {},
+    'pow': { args: ['genType'], returnType: 'float'},
     // 'round': {},
     // 'roundEven': {},
     // 'sign': {},
-    'smoothstep': {},
-    'sqrt': {},
-    'step': {},
+    'smoothstep': { args: ['genType', 'genType', 'genType'], returnType: 'float'},
+    'sqrt': { args: ['genType'], returnType: 'genType'},
+    'step': { args: ['genType', 'genType'], returnType: 'genType'},
     // 'trunc': {},
-    // Vector
+
+    ////////// Vector //////////
     'cross': {},
     'distance': {},
     'dot': {},
@@ -704,7 +720,10 @@ function shadergen(p5, fn) {
     'texture': {},
   }
 
-  // Object.entries(builtInFunctions).forEach(([glslFnName, properties]) => {
+  // Object.entries(builtInFunctions).forEach(([functionName, properties]) => {
+  //   fn[functionName] = function () {
+  //     new FunctionCallNode(functionName, args, type, isInternal = false)
+  //   }
   // })
 
   const oldTexture = p5.prototype.texture;
