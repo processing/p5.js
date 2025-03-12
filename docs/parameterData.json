@@ -367,7 +367,18 @@
     "worldToScreen": {
       "overloads": [
         [
-          "p5.Vector"
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "screenToWorld": {
+      "overloads": [
+        [
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
         ]
       ]
     },
@@ -1968,24 +1979,6 @@
         ]
       ]
     },
-    "quadraticVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
     "normal": {
       "overloads": [
         [
@@ -2839,6 +2832,11 @@
         []
       ]
     },
+    "baseFilterShader": {
+      "overloads": [
+        []
+      ]
+    },
     "baseNormalShader": {
       "overloads": [
         []
@@ -3349,27 +3347,6 @@
       ]
     },
     "mouseOut": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "touchStarted": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "touchMoved": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "touchEnded": {
       "overloads": [
         [
           "Function|Boolean"

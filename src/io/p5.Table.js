@@ -37,6 +37,7 @@ function table(p5, fn){
    *  scratch, dynamically, or using data from an existing file.
    *
    *  @class p5.Table
+   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
    */
   p5.Table = class Table {
@@ -66,6 +67,7 @@ function table(p5, fn){
      *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
      *  duplicated and added to the table.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param   {p5.TableRow} [row] row to be added to the table
      *  @return  {p5.TableRow} the row that was added
      *
@@ -119,6 +121,7 @@ function table(p5, fn){
     /**
      * Removes a row from the table object.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param   {Integer} id ID number of the row to remove
      *
      * @example
@@ -163,6 +166,7 @@ function table(p5, fn){
      * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
      * can then be used to get and set values of the selected row.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param  {Integer}   rowID ID number of the row to get
      * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
      *
@@ -203,6 +207,7 @@ function table(p5, fn){
     /**
      *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
      *
      * @example
@@ -251,6 +256,7 @@ function table(p5, fn){
      *  row is returned. The column to search may be specified by
      *  either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String} value  The value to match
      *  @param  {Integer|String} column ID number or title of the
      *                                 column to search
@@ -310,6 +316,7 @@ function table(p5, fn){
      *  as shown in the example above. The column to search may be
      *  specified by either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String} value  The value to match
      *  @param  {Integer|String} column ID number or title of the
      *                                 column to search
@@ -373,6 +380,7 @@ function table(p5, fn){
      * matching row is returned. The column to search may be
      * specified by either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param  {String|RegExp} regexp The regular expression to match
      * @param  {String|Integer} column The column ID (number) or
      *                                  title (string)
@@ -427,6 +435,7 @@ function table(p5, fn){
      * used to iterate through all the rows, as shown in the example. The
      * column to search may be specified by either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param  {String} regexp The regular expression to match
      * @param  {String|Integer} [column] The column ID (number) or
      *                                  title (string)
@@ -491,6 +500,7 @@ function table(p5, fn){
      *  Retrieves all values in the specified column, and returns them
      *  as an array. The column may be specified by either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String|Number} column String or Number of the column to return
      *  @return {Array}       Array of column values
      *
@@ -538,6 +548,8 @@ function table(p5, fn){
      *  Removes all rows from a Table. While all rows are removed,
      *  columns and column titles are maintained.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+     *
      * @example
      * <div class="norender">
      * <code>
@@ -575,6 +587,7 @@ function table(p5, fn){
      *  may be easily referenced later by name. (If no title is
      *  specified, the new column's title will be null.)
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param {String} [title] title of the given column
      *
      * @example
@@ -618,6 +631,7 @@ function table(p5, fn){
     /**
      *  Returns the total number of columns in a Table.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @return {Integer} Number of columns in this table
      * @example
      * <div>
@@ -651,6 +665,7 @@ function table(p5, fn){
     /**
      *  Returns the total number of rows in a Table.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @return {Integer} Number of rows in this table
      * @example
      * <div>
@@ -688,6 +703,7 @@ function table(p5, fn){
      *  rows are processed. A specific column may be referenced by
      *  either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String} chars  String listing characters to be removed
      *  @param  {String|Integer} [column] Column ID (number)
      *                                   or name (string)
@@ -758,6 +774,7 @@ function table(p5, fn){
      *  values in all columns and rows are trimmed. A specific column
      *  may be referenced by either its ID or title.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String|Integer} [column] Column ID (number)
      *                                   or name (string)
      * @example
@@ -822,6 +839,7 @@ function table(p5, fn){
      *  removeColumn(0) would remove the first column, removeColumn(1)
      *  would remove the second column, and so on.
      *
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String|Integer} column columnName (string) or ID (number)
      *
      * @example
@@ -879,6 +897,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified
      * by either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param {String|Integer} column column ID (Number)
      *                               or title (String)
@@ -924,6 +943,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified
      * by either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param {String|Integer} column column ID (Number)
      *                               or title (String)
@@ -966,6 +986,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified
      * by either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param {String|Integer} column column ID (Number)
      *                               or title (String)
@@ -1007,6 +1028,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified by
      * either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
@@ -1048,6 +1070,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified by
      * either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
@@ -1087,6 +1110,7 @@ function table(p5, fn){
      * The row is specified by its ID, while the column may be specified by
      * either its ID or title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {Integer} row row ID
      * @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
@@ -1133,6 +1157,7 @@ function table(p5, fn){
      * passed in, each row object will be stored with that attribute as its
      * title.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @param {String} [headerColumn] Name of the column which should be used to
      *                              title each row object (optional)
      * @return {Object}
@@ -1190,6 +1215,7 @@ function table(p5, fn){
     /**
      * Retrieves all table data and returns it as a multidimensional array.
      *
+     * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      * @return {Array}
      *
      * @example
@@ -1231,6 +1257,7 @@ function table(p5, fn){
   /**
    * An array containing the names of the columns in the table, if the "header" the table is
    * loaded with the "header" parameter.
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @type {String[]}
    * @property columns
    * @for p5.Table
@@ -1267,6 +1294,7 @@ function table(p5, fn){
    * rows of the table. The same result as calling <a href="/reference/p5.Table/getRows/">getRows()</a>
    * @type {p5.TableRow[]}
    * @property rows
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @for p5.Table
    * @name rows
   */

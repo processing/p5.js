@@ -13,6 +13,7 @@ function tableRow(p5, fn){
    *  JSON object.
    *
    *  @class p5.TableRow
+   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    *  @constructor
    *  @param {any[]} row         optional: populate the row with an
    *                              array of values
@@ -31,6 +32,7 @@ function tableRow(p5, fn){
      *  The column may be specified by either its ID or title.
      *
      *  @method  set
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param {String|Integer} column Column ID (Number)
      *                                or Title (String)
      *  @param {String|Number} value  The value to be stored
@@ -90,6 +92,7 @@ function tableRow(p5, fn){
      *  The column may be specified by either its ID or title.
      *
      *  @method  setNum
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param {String|Integer} column Column ID (Number)
      *                                or Title (String)
      *  @param {Number|String} value  The value to be stored
@@ -131,6 +134,7 @@ function tableRow(p5, fn){
      *  The column may be specified by either its ID or title.
      *
      *  @method  setString
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param {String|Integer} column Column ID (Number)
      *                                or Title (String)
      *  @param {String|Number|Boolean|Object} value  The value to be stored
@@ -173,6 +177,7 @@ function tableRow(p5, fn){
      *  The column may be specified by either its ID or title.
      *
      *  @method  get
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
      *  @return {String|Number}
@@ -219,6 +224,7 @@ function tableRow(p5, fn){
      *  title.
      *
      *  @method  getNum
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
      *  @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
      *  @return {Number}  Float Floating point number
@@ -270,7 +276,9 @@ function tableRow(p5, fn){
      *  column. The column may be specified by either its ID or
      *  title.
      *
-     *  @method  getString
+     *  @method  getStri
+     *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+
      *  @param  {String|Integer} column columnName (string) or
      *                                   ID (number)
      *  @return {String}  String
