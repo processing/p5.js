@@ -29,7 +29,6 @@ export function generateTypeDefinitions(data) {
 function generateP5TypeDefinitions(organizedData) {
     let output = '// This file is auto-generated from JSDoc documentation\n\n';
     
-    output += '/// <reference types="./global.d.ts" />\n\n';
     output += `declare class p5 {\n`;
     output += `  constructor(sketch?: (p: p5) => void, node?: HTMLElement, sync?: boolean);\n\n`;
     const instanceItems = organizedData.classitems.filter(item => 
