@@ -18,6 +18,7 @@ export function normalizeClassName(className) {
 }
 
 export function generateTypeDefinitions(data) {
+
   const organized = organizeData(data);
   
   return {
@@ -427,6 +428,7 @@ export function generateTypeFromTag(param) {
   }
   
   export function generateFunctionDeclaration(funcDoc) {
+
     let output = '';
   
     if (funcDoc.description || funcDoc.tags?.length > 0) {
@@ -510,7 +512,9 @@ export function generateTypeFromTag(param) {
     return output;
   }
 
-function generateClassDeclaration(classDoc, organizedData) {
+export function generateClassDeclaration(classDoc, organizedData) {
+ 
+
     let output = '';
   
     if (classDoc.description || classDoc.tags?.length > 0) {
@@ -552,7 +556,6 @@ function generateClassDeclaration(classDoc, organizedData) {
       item.class === fullClassName || 
       item.class === fullClassName.replace('p5.', '')
     );
-    
     const staticItems = classItems.filter(item => item.isStatic);
     const instanceItems = classItems.filter(item => !item.isStatic);
   
