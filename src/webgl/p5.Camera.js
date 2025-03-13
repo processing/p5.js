@@ -2435,6 +2435,7 @@ p5.Camera = class Camera {
     const rotation = p5.Matrix.identity(this._renderer._pInst);
     rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
+    // Apply the rotation matrix to the center vector
     /* eslint-disable max-len */
     const rotatedCenter = [
       centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
@@ -2443,21 +2444,17 @@ p5.Camera = class Camera {
     ];
     /* eslint-enable max-len */
 
-    // add eye position back into center
+    // Translate the rotated center back to world coordinates
     rotatedCenter[0] += this.eyeX;
     rotatedCenter[1] += this.eyeY;
     rotatedCenter[2] += this.eyeZ;
 
-    // Compute new up vector to prevent flipping
-    let forward = createVector(
-      rotatedCenter[0] - this.eyeX,
-      rotatedCenter[1] - this.eyeY,
-      rotatedCenter[2] - this.eyeZ
-    ).normalize();
-
-    let up = createVector(this.upX, this.upY, this.upZ);
-    let right = p5.Vector.cross(forward, up).normalize(); // Right vector
-    up = p5.Vector.cross(right, forward).normalize(); // Corrected up vector
+    // Rotate the up vector to keep the correct camera orientation
+    /* eslint-disable max-len */
+    const upX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8];
+    const upY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9];
+    const upZ = this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
+    /* eslint-enable max-len */
 
     this.camera(
       this.eyeX,
@@ -2466,15 +2463,10 @@ p5.Camera = class Camera {
       rotatedCenter[0],
       rotatedCenter[1],
       rotatedCenter[2],
-      this.up.x,
-      this.up.y,
-      this.up.z
+      upX,
+      upY,
+      upZ
     );
-
-    // Update up vector
-    this.upX = up.x;
-    this.upY = up.y;
-    this.upZ = up.z;
   }
 
   /**
