@@ -38,7 +38,6 @@ function shadergen(p5, fn) {
       const generatedModifyArgument = generator.generate();
       console.log("SRC STRING: ", generatorFunction);
       console.log("NEW OPTIONS:", generatedModifyArgument)
-
       return oldModify.call(this, generatedModifyArgument);
     } 
     else {
@@ -58,7 +57,7 @@ function shadergen(p5, fn) {
   }
 
   const ASTCallbacks = {
-    VariableDeclarator(node) {
+    VariableDeclarator(node, _state, _ancestors) {
       if (node.init.callee && node.init.callee.name.startsWith('uniform')) {
         const uniformNameLiteral = {
           type: 'Literal',
@@ -69,7 +68,7 @@ function shadergen(p5, fn) {
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions 
-    AssignmentExpression(node) {
+    AssignmentExpression(node, _state, _ancestors) {
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
@@ -89,7 +88,35 @@ function shadergen(p5, fn) {
           node.right = rightReplacementNode;
         }
       },
-    BinaryExpression(node) {
+    BinaryExpression(node, _state, ancestors) {
+      // Don't convert uniform default values to node methods, as 
+      // they should be evaluated at runtime, not compiled.
+      const isUniform = (ancestor) => {
+        return ancestor.type === 'CallExpression'
+          && ancestor.callee?.type === 'Identifier'
+          && ancestor.callee?.name.startsWith('uniform');
+      }
+      if (ancestors.some(isUniform)) {
+        return;
+      }
+      // If the left hand side of an expression is one of these types,
+      // we should construct a node from it.
+      const unsafeTypes = ["Literal", "ArrayExpression"]
+      if (unsafeTypes.includes(node.left.type)) {
+        const leftReplacementNode = {
+          type: "CallExpression",
+          callee: {
+            type: "Identifier",
+            name: "makeNode",
+          },
+          arguments: [node.left, node.right]
+        }
+        node.left = leftReplacementNode;
+        console.log(escodegen.generate(leftReplacementNode))
+      }
+
+      // Replace the binary operator with a call expression
+      // in other words a call to BaseNode.mult(), .div() etc.
       node.type = 'CallExpression';
       node.callee = {
         type: "MemberExpression",
@@ -101,6 +128,14 @@ function shadergen(p5, fn) {
       };
       node.arguments = [node.right];
     },
+  }
+
+  // This unfinished function lets you do 1 * 10
+  // and turns it into float.mult(10)
+  fn.makeNode = function(leftValue, rightValue) {
+    if (typeof leftValue === 'number') {
+      return new FloatNode(leftValue);
+    }
   }
 
   // Javascript Node API.
@@ -192,7 +227,6 @@ function shadergen(p5, fn) {
           for (let componentName of this.componentNames) {
             valueArgs.push(this[componentName])
           }
-          console.log(this, valueArgs)
           const replacement = nodeConstructors[this.type](valueArgs)
           line += this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
           line += `\n` + this.temporaryVariable + " = " + replacement.toGLSL(context) + ";";
@@ -515,7 +549,7 @@ function shadergen(p5, fn) {
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName)
-        console.log(hookTypes);
+        // console.log(hookTypes);
 
         this[hookTypes.name] = function(userOverride) {
           let argNodes = []
