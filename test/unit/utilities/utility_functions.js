@@ -1,48 +1,11 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import stringFunctions from '../../../src/utilities/string_functions';
+import random from '../../../src/math/random';
 
 suite('String functions', function() {
   beforeAll(function() {
     stringFunctions(mockP5, mockP5Prototype);
-  });
-
-  suite('p5.prototype.join', function() {
-    test('should be a function', function() {
-      assert.ok(mockP5Prototype.join);
-    });
-
-    test('should return joined string', function() {
-      var arr = ['foo', 'bar'];
-      var sep = '-';
-      const result = mockP5Prototype.join(arr, sep);
-      assert.equal(result, 'foo-bar');
-    });
-  });
-
-  suite('p5.prototype.match', function() {
-    test('should be a function', function() {
-      assert.ok(mockP5Prototype.match);
-    });
-
-    test('should return correct index of match strings', function() {
-      var str = 'Where is the duckling in this ducky duck string?';
-      var regexp = 'duck';
-      const result = mockP5Prototype.match(str, regexp);
-      assert.equal(result.index, 13);
-    });
-  });
-
-  suite('p5.prototype.matchAll', function() {
-    test('should be a function', function() {
-      assert.ok(mockP5Prototype.matchAll);
-    });
-
-    test('should return correct array of strings', function() {
-      var str = 'Where is the duckling in this ducky duck string?';
-      var regexp = 'duck';
-      const result = mockP5Prototype.matchAll(str, regexp);
-      assert.equal(result.length, 3);
-    });
+    random(mockP5, mockP5Prototype);
   });
 
   suite('p5.prototype.nf', function() {
@@ -159,19 +122,6 @@ suite('String functions', function() {
     });
   });
 
-  suite('p5.prototype.split', function() {
-    test('should be a function', function() {
-      assert.ok(mockP5Prototype.split);
-    });
-
-    test('should return correct index of match strings', function() {
-      var str = 'parsely, sage, rosemary, thyme';
-      var regexp = ',';
-      const result = mockP5Prototype.split(str, regexp);
-      assert.equal(result.length, 4);
-    });
-  });
-
   suite('p5.prototype.splitTokens', function() {
     test('should be a function', function() {
       assert.ok(mockP5Prototype.splitTokens);
@@ -185,15 +135,20 @@ suite('String functions', function() {
     });
   });
 
-  suite('p5.prototype.trim', function() {
-    test('should be a function', function() {
-      assert.ok(mockP5Prototype.trim);
-    });
-
-    test('should return correct strings', function() {
-      var str = '     oh so roomy     ';
-      const result = mockP5Prototype.trim(str);
-      assert.equal(result, 'oh so roomy');
+  suite('p5.prototype.shuffle', function() {
+    test('should contain all the elements of the original array', function() {
+      let regularArr = ['ABC', 'def', {}, Math.PI * 2, Math.E];
+      let newArr = mockP5Prototype.shuffle(regularArr);
+      let flag = true;
+      for (let i = 0; i < regularArr.length; i++) {
+        if (!newArr.includes(regularArr[i])) {
+          flag = false;
+          break;
+        }
+      }
+      assert.isArray(newArr);
+      assert.strictEqual(newArr.length, regularArr.length);
+      assert.strictEqual(flag, true);
     });
   });
 });
