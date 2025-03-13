@@ -2,6 +2,8 @@
  * @module Typography
  */
 
+import { textCoreConstants } from './textCore.js';
+
 /*
   API:
      loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap")
@@ -251,7 +253,7 @@ class Font {
 
     // lineate and compute bounds for the text
     let { lines, bounds } = renderer._computeBounds
-      (fn._FONT_BOUNDS, str, x, y, width, height,
+      (textCoreConstants._FONT_BOUNDS, str, x, y, width, height,
         { ignoreRectMode: true, ...options });
 
     // compute positions for each of the lines

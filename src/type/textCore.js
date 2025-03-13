@@ -5,19 +5,19 @@
 
 import { Renderer } from '../core/p5.Renderer';
 
+export const textCoreConstants = {
+  IDEOGRAPHIC: 'ideographic',
+  RIGHT_TO_LEFT: 'rtl',
+  LEFT_TO_RIGHT: 'ltr',
+  _CTX_MIDDLE: 'middle',
+  _TEXT_BOUNDS: '_textBoundsSingle',
+  _FONT_BOUNDS: '_fontBoundsSingle',
+  HANGING: 'hanging',
+  START: 'start',
+  END: 'end',
+}
+
 function textCore(p5, fn) {
-
-  // additional constants
-  fn.IDEOGRAPHIC = 'ideographic';
-  fn.RIGHT_TO_LEFT = 'rtl';
-  fn.LEFT_TO_RIGHT = 'ltr';
-  fn._CTX_MIDDLE = 'middle';
-  fn._TEXT_BOUNDS = '_textBoundsSingle';
-  fn._FONT_BOUNDS = '_fontBoundsSingle';
-  fn.HANGING = 'hanging';
-  fn.START = 'start';
-  fn.END = 'end';
-
   const LeadingScale = 1.275;
   const DefaultFill = '#000000';
   const LinebreakRe = /\r?\n/g;
@@ -265,7 +265,7 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
     // delegate to _textBoundsSingle for measuring
-    return this._computeBounds(fn._TEXT_BOUNDS, str, x, y, width, height).bounds;
+    return this._computeBounds(textCoreConstants._TEXT_BOUNDS, str, x, y, width, height).bounds;
   };
 
   /**
@@ -280,7 +280,7 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
     // delegate to _fontBoundsSingle for measuring
-    return this._computeBounds(fn._FONT_BOUNDS, str, x, y, width, height).bounds;
+    return this._computeBounds(textCoreConstants._FONT_BOUNDS, str, x, y, width, height).bounds;
   };
 
   /**
@@ -355,7 +355,7 @@ function textCore(p5, fn) {
       this.states.setValue('textAlign', h);
       if (typeof v !== 'undefined') {
         if (v === fn.CENTER) {
-          v = fn._CTX_MIDDLE;
+          v = textCoreConstants._CTX_MIDDLE;
         }
         this.states.setValue('textBaseline', v);
       }
@@ -970,9 +970,9 @@ function textCore(p5, fn) {
         return width / 2;
       case fn.RIGHT:
         return width;
-      case fn.START:
+      case textCoreConstants.START:
         return 0;
-      case fn.END:
+      case textCoreConstants.END:
         throw new Error('textBounds: END not yet supported for textAlign');
       default:
         return 0;
@@ -1282,7 +1282,7 @@ function textCore(p5, fn) {
 
       for (let i = 0; i < lines.length; i++) {
         switch (textAlign) {
-          case fn.START:
+          case textCoreConstants.START:
             throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
           case fn.LEFT:
             adjustedX = x;
@@ -1293,7 +1293,7 @@ function textCore(p5, fn) {
           case fn.RIGHT:
             adjustedX = x + adjustedW;
             break;
-          case fn.END:
+          case textCoreConstants.END:
             throw new Error('textBounds: END not yet supported for textAlign');
         }
         lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
@@ -1319,16 +1319,16 @@ function textCore(p5, fn) {
           break; // ??
         case fn.BASELINE:
           break;
-        case fn._CTX_MIDDLE:
+        case textCoreConstants._CTX_MIDDLE:
           yOff = ydiff / 2;
           break;
         case fn.BOTTOM:
           yOff = ydiff;
           break;
-        case fn.IDEOGRAPHIC:
+        case textCoreConstants.IDEOGRAPHIC:
           console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
           break;
-        case fn.HANGING:
+        case textCoreConstants.HANGING:
           console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
           break;
       }
@@ -1358,7 +1358,7 @@ function textCore(p5, fn) {
 
       for (let i = 0; i < lines.length; i++) {
         switch (textAlign) {
-          case fn.START:
+          case textCoreConstants.START:
             throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
           case fn.LEFT:
             adjustedX = x;
@@ -1369,7 +1369,7 @@ function textCore(p5, fn) {
           case fn.RIGHT:
             adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
             break;
-          case fn.END:
+          case textCoreConstants.END:
             throw new Error('textBounds: END not yet supported for textAlign');
         }
         lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
@@ -1393,7 +1393,7 @@ function textCore(p5, fn) {
           break;
         case fn.BASELINE:
           break;
-        case fn._CTX_MIDDLE:
+        case textCoreConstants._CTX_MIDDLE:
           yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
           break;
         case fn.BOTTOM:
