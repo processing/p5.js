@@ -374,6 +374,7 @@ for (const entry of allData) {
   const propTag = entry.tags.find(tag => tag.title === 'property');
   const forTag = entry.tags.find(tag => tag.title === 'for');
   let memberof = entry.memberof;
+  if (memberof === 'fn') memberof = undefined;
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
@@ -422,6 +423,7 @@ for (const entry of allData) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
     let memberof = entry.memberof;
+    if (memberof === 'fn') memberof = undefined;
     if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
       memberof = 'p5.' + memberof;
     }
