@@ -1,7 +1,6 @@
 /**
  * @module DOM
  * @submodule DOM
- * @for p5.Element
  */
 
 import { File } from './p5.File';
@@ -9,53 +8,8 @@ import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 
 class Element {
-  /**
-   * A `Number` property that stores the element's width.
-   *
-   * @type {Number}
-   * @property width
-   * @for p5.Element
-   */
   width;
-  /**
-   * A `Number` property that stores the element's height.
-   *
-   * @type {Number}
-   * @property height
-   * @for p5.Element
-   */
   height;
-  /**
-   * The element's underlying `HTMLElement` object.
-   *
-   * The
-   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
-   * object's properties and methods can be used directly.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   // Create a canvas element and
-   *   // assign it to cnv.
-   *   let cnv = createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Set the border style for the
-   *   // canvas.
-   *   cnv.elt.style.border = '5px dashed deeppink';
-   *
-   *   describe('A gray square with a pink border drawn with dashed lines.');
-   * }
-   * </code>
-   * </div>
-   *
-   * @property elt
-   * @for p5.Element
-   * @name elt
-   * @readOnly
-   */
   elt;
 
   constructor(elt, pInst) {
@@ -69,8 +23,6 @@ class Element {
   /**
    * Removes the element, stops all audio/video streams, and removes all
    * callback functions.
-   *
-   * @method remove
    *
    * @example
    * <div>
@@ -274,7 +226,6 @@ class Element {
    * `myElement.child(otherElement)`. If no argument is provided, an array of
    * children DOM nodes is returned.
    *
-   * @method child
    * @returns {Node[]} an array of child nodes.
    *
    * @example
@@ -347,7 +298,6 @@ class Element {
    * </div>
    */
   /**
-   * @method child
    * @param  {String|p5.Element} [child] the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
    *                         to add to the current element
    * @chainable
@@ -382,7 +332,6 @@ class Element {
    * HTML is returned.
    *
    * @for p5.Element
-   * @method html
    * @returns {String} the inner HTML of the element
    *
    * @example
@@ -441,7 +390,6 @@ class Element {
    * </div>
    */
   /**
-   * @method html
    * @param  {String} [html] the HTML to be placed inside the element
    * @param  {Boolean} [append] whether to append HTML to existing
    * @chainable
@@ -555,7 +503,6 @@ class Element {
    * Adds a class to the element.
    *
    * @for p5.Element
-   * @method addClass
    * @param  {String} class name of class to add.
    * @chainable
    *
@@ -592,7 +539,6 @@ class Element {
   /**
    * Removes a class from the element.
    *
-   * @method removeClass
    * @param  {String} class name of class to remove.
    * @chainable
    *
@@ -635,7 +581,6 @@ class Element {
   /**
    * Checks if a class is already applied to element.
    *
-   * @method hasClass
    * @returns {boolean} a boolean value if element has specified class.
    * @param c {String} name of class to check.
    *
@@ -676,7 +621,6 @@ class Element {
   /**
    * Toggles whether a class is applied to the element.
    *
-   * @method toggleClass
    * @param c {String} class name to toggle.
    * @chainable
    *
@@ -727,7 +671,6 @@ class Element {
    * If no argument is passed, as in `myElement.center()` the element is aligned
    * both vertically and horizontally.
    *
-   * @method center
    * @param  {String} [align] passing 'vertical', 'horizontal' aligns element accordingly
    * @chainable
    *
@@ -799,7 +742,6 @@ class Element {
    * If no arguments passed, as in `myElement.position()`, the method returns
    * the element's position in an object, as in `{ x: 0, y: 0 }`.
    *
-   * @method position
    * @returns {Object} object of form `{ x: 0, y: 0 }` containing the element's position.
    *
    * @example
@@ -836,7 +778,6 @@ class Element {
    * </div>
    */
   /**
-   * @method position
    * @param  {Number} [x] x-position relative to top-left of window (optional)
    * @param  {Number} [y] y-position relative to top-left of window (optional)
    * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
@@ -869,7 +810,6 @@ class Element {
   /**
    * Shows the current element.
    *
-   * @method show
    * @chainable
    *
    * @example
@@ -905,7 +845,6 @@ class Element {
   /**
    * Hides the current element.
    *
-   * @method hide
    * @chainable
    *
    * @example
@@ -959,7 +898,6 @@ class Element {
    * Note: In the case of elements that need to load data, such as images, wait
    * to call `myElement.size()` until after the data loads.
    *
-   * @method size
    * @return {Object} width and height of the element in an object.
    *
    * @example
@@ -1050,7 +988,6 @@ class Element {
    * </div>
    */
   /**
-   * @method size
    * @param  {(Number|AUTO)} [w]   width of the element, either AUTO, or a number.
    * @param  {(Number|AUTO)} [h] height of the element, either AUTO, or a number.
    * @chainable
@@ -1121,7 +1058,6 @@ class Element {
    * <a href="#/p5.Color">p5.Color</a> object, as in
    * `myElement.style('color', myColor)`.
    *
-   * @method style
    * @param  {String} property style property to set.
    * @returns {String} value of the property.
    *
@@ -1205,7 +1141,6 @@ class Element {
    * </div>
    */
   /**
-   * @method style
    * @param  {String} property
    * @param  {String|p5.Color} value value to assign to the property.
    * @return {String} value of the property.
@@ -1327,7 +1262,6 @@ class Element {
    * `myElement.attribute('align', 'center')` sets the element's horizontal
    * alignment to `center`.
    *
-   * @method attribute
    * @return {String} value of the attribute.
    *
    * @example
@@ -1364,7 +1298,6 @@ class Element {
    * </div>
    */
   /**
-   * @method attribute
    * @param  {String} attr       attribute to set.
    * @param  {String} value      value to assign to the attribute.
    * @chainable
@@ -1399,7 +1332,6 @@ class Element {
    * calling `myElement.removeAttribute('align')` removes its `align`
    * attribute if it's been set.
    *
-   * @method removeAttribute
    * @param  {String} attr       attribute to remove.
    * @chainable
    *
@@ -1451,7 +1383,6 @@ class Element {
    * The parameter, `value`, is an optional number or string. If provided,
    * as in `myElement.value(123)`, it's used to set the element's value.
    *
-   * @method value
    * @return {String|Number} value of the element.
    *
    * @example
@@ -1511,7 +1442,6 @@ class Element {
    * </div>
    */
   /**
-   * @method value
    * @param  {String|Number}     value
    * @chainable
    */
@@ -2006,7 +1936,6 @@ class Element {
    *
    * Calling `myElement.changed(false)` disables the function.
    *
-   * @method changed
    * @param  {Function|Boolean} fxn function to call when the element changes.
    *                                `false` disables the function.
    * @chainable
@@ -2082,7 +2011,6 @@ class Element {
    * `myElement.input()` is often used to with text inputs and sliders. Calling
    * `myElement.input(false)` disables the function.
    *
-   * @method input
    * @param  {Function|Boolean} fxn function to call when input is detected within
    *                                the element.
    *                                `false` disables the function.
@@ -2162,7 +2090,6 @@ class Element {
    * parameter, `event`, that's a
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/DragEvent">DragEvent</a>.
    *
-   * @method drop
    * @param  {Function} callback  called when a file loads. Called once for each file dropped.
    * @param  {Function} [fxn]     called once when any files are dropped.
    * @chainable
@@ -2311,7 +2238,6 @@ class Element {
    * <a href="#/p5.Element">p5.Element</a> object is passed, as in
    * `myElement.draggable(otherElement)`, the other element will become draggable.
    *
-   * @method draggable
    * @param  {p5.Element} [elmnt]  another <a href="#/p5.Element">p5.Element</a>.
    * @chainable
    *
@@ -2538,6 +2464,54 @@ function element(p5, fn){
    * </div>
    */
   p5.Element = Element;
+
+  /**
+   * A `Number` property that stores the element's width.
+   *
+   * @type {Number}
+   * @property width
+   * @for p5.Element
+   */
+
+  /**
+   * A `Number` property that stores the element's height.
+   *
+   * @type {Number}
+   * @property height
+   * @for p5.Element
+   */
+
+  /**
+   * The element's underlying `HTMLElement` object.
+   *
+   * The
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement" target="_blank">HTMLElement</a>
+   * object's properties and methods can be used directly.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   // Create a canvas element and
+   *   // assign it to cnv.
+   *   let cnv = createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Set the border style for the
+   *   // canvas.
+   *   cnv.elt.style.border = '5px dashed deeppink';
+   *
+   *   describe('A gray square with a pink border drawn with dashed lines.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @property elt
+   * @for p5.Element
+   * @name elt
+   * @readOnly
+   */
 }
 
 export default element;
