@@ -112,7 +112,6 @@ function shadergen(p5, fn) {
           arguments: [node.left, node.right]
         }
         node.left = leftReplacementNode;
-        console.log(escodegen.generate(leftReplacementNode))
       }
 
       // Replace the binary operator with a call expression
@@ -141,6 +140,7 @@ function shadergen(p5, fn) {
   // Javascript Node API.
   // These classes are for expressing GLSL functions in Javascript without
   // needing to  transpile the user's code.
+
   class BaseNode {
     constructor(isInternal, type) {
       if (new.target === BaseNode) {
@@ -248,6 +248,9 @@ function shadergen(p5, fn) {
     // Check that the types of the operands are compatible.
     enforceType(other){
       if (isShaderNode(other)){
+        if (!isGLSLNativeType(other.type)) {
+          throw new TypeError (`You've tried to perform an operation on a struct of type: ${other.type}. Try accessing a member on that struct with '.'`)
+        }
         if ((isFloatNode(this) || isVectorNode(this)) && isIntNode(other)) {
           return new FloatNode(other)
         }
@@ -366,6 +369,7 @@ function shadergen(p5, fn) {
       this.name = name;
       this.addVectorComponents();
     }
+
     toGLSL(context) {
       return `${this.name}`;
     }
@@ -519,13 +523,20 @@ function shadergen(p5, fn) {
     return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined'); 
   }
 
+    // Helper function to check if a type is a user defined struct or native type
+    function isGLSLNativeType(typeName) {
+      // Supported types for now
+      const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
+      return glslNativeTypes.includes(typeName);
+    }
+
   // Shader Generator
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
 
   class ShaderGenerator {
-    constructor(modifyFunction, originalShader, srcLocations) {
+    constructor(userCallback, originalShader, srcLocations) {
       GLOBAL_SHADER = this;
-      this.modifyFunction = modifyFunction;
+      this.userCallback = userCallback;
       this.srcLocations = srcLocations;
       this.generateHookOverrides(originalShader);
       this.output = {
@@ -535,8 +546,7 @@ function shadergen(p5, fn) {
     }
 
     generate() {
-      this.modifyFunction();
-      console.log(this.output);
+      this.userCallback();
       return this.output;
     }
 
@@ -548,31 +558,52 @@ function shadergen(p5, fn) {
       }
 
       Object.keys(availableHooks).forEach((hookName) => {
-        const hookTypes = originalShader.hookTypes(hookName)
-        // console.log(hookTypes);
-
-        this[hookTypes.name] = function(userOverride) {
+        const hookTypes = originalShader.hookTypes(hookName);
+        this[hookTypes.name] = function(userCallback) {
+          // Create the initial nodes which are passed to the user callback
+          // Also generate a string of the arguments for the code generation
           let argNodes = []
-
-          const argsArray = hookTypes.parameters.map((parameter) => {
-            argNodes.push(
-              new VariableNode(parameter.name, parameter.type.typeName, true)
-            );
+          let argsArray = [];
+          hookTypes.parameters.forEach((parameter) => {
+            if (!isGLSLNativeType(parameter.type.typeName)) {
+              let structArg = {};
+              parameter.type.properties.forEach((property) => {
+                structArg[property.name] = new VariableNode(`${parameter.name}.${property.name}`, property.type.typeName, true);
+              });
+              argNodes.push(structArg);
+            } else {
+              argNodes.push(
+                new VariableNode(parameter.name, parameter.type.typeName, true)
+              );
+            }
             const qualifiers = parameter.type.qualifiers.length > 0 ? parameter.type.qualifiers.join(' ') : '';
-            return `${qualifiers} ${parameter.type.typeName} ${parameter.name}`.trim();
-          });
-          const argsString = `(${argsArray.join(', ')}) {`;
+            argsArray.push(`${qualifiers} ${parameter.type.typeName} ${parameter.name}`.trim())
+          })
           
-          let returnedValue = userOverride(...argNodes);
-          if (!isShaderNode(returnedValue)) {
-              const expectedReturnType = hookTypes.returnType;
+          let returnedValue = userCallback(...argNodes);
+          const expectedReturnType = hookTypes.returnType;
+          const toGLSLResults = {};
+          // If the expected return type is a struct we need to evaluate each of its properties
+          if (!isGLSLNativeType(expectedReturnType.typeName)) {
+            Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
+              toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
+            })
+          } else {
+            // We can accept raw numbers or arrays otherwise
+            if (!isShaderNode(returnedValue)) {
               returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue)
+            }
+            toGLSLResults['notAProperty'] = returnedValue.toGLSLBase(this.context);
           }
-          const toGLSLResult = returnedValue.toGLSLBase(this.context);
-          let codeLines = [ argsString, ...this.context.declarations ];
-          codeLines.push(`\n${hookTypes.returnType.typeName} finalReturnValue = ${toGLSLResult};
-                          \nreturn finalReturnValue;
-                          \n}`);
+          
+          // Build the final GLSL string:
+          let codeLines = [ `(${argsArray.join(', ')}) {`, ...this.context.declarations ];
+          codeLines.push(`${hookTypes.returnType.typeName} finalReturnValue;`);
+          Object.entries(toGLSLResults).forEach(([propertyName, result]) => {
+            const propString = expectedReturnType.properties ? `.${propertyName}` : '';
+            codeLines.push(`finalReturnValue${propString} = ${result};`)
+          })
+          codeLines.push('return finalReturnValue;', '}');
           this.output[hookName] = codeLines.join('\n');
           this.resetGLSLContext();
         }
@@ -619,7 +650,7 @@ function shadergen(p5, fn) {
   
   // Generating uniformFloat, uniformVec, createFloat, etc functions
   // Maps a GLSL type to the name suffix for method names
-  const GLSLTypesToSuffixes = {
+  const GLSLTypesToIdentifiers = {
     int:    'Int',
     float:  'Float',
     vec2:   'Vector2',
@@ -636,9 +667,9 @@ function shadergen(p5, fn) {
     vec4:  (value) => new VectorNode(value, 'vec4'),
   };
 
-  for (const glslType in GLSLTypesToSuffixes) {
+  for (const glslType in GLSLTypesToIdentifiers) {
     // Generate uniform*() Methods for creating uniforms
-    const typeIdentifier = GLSLTypesToSuffixes[glslType];
+    const typeIdentifier = GLSLTypesToIdentifiers[glslType];
     const uniformMethodName = `uniform${typeIdentifier}`;
 
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
