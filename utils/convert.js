@@ -221,6 +221,9 @@ function getModuleInfo(entry) {
   const file = entry.context.file;
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
   let memberof = entry.memberof;
+  if (memberof === 'fn') {
+    memberof = undefined;
+  }
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
