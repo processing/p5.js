@@ -1,11 +1,10 @@
-import { Renderer } from '../core/p5.Renderer';
-
 /**
- * @module Type
- * @submodule textCore
- * @for p5
+ * @module Typography
  * @requires core
  */
+
+import { Renderer } from '../core/p5.Renderer';
+
 function textCore(p5, fn) {
 
   // additional constants
@@ -43,7 +42,6 @@ function textCore(p5, fn) {
     'textWidth',
     'textWrap',
     'textBounds',
-    'textToPoints',
     'textDirection',
     'textProperty',
     'textProperties',
@@ -53,6 +51,146 @@ function textCore(p5, fn) {
     'fontDescent',
     'textWeight'
   ];
+
+  /**
+   * TODO
+   *
+   * @method text
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textAlign
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textAscent
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textDescent
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textLeading
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textMode
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textFont
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textSize
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textStyle
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textWidth
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textWrap
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textBounds
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textDirection
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textProperty
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method textProperties
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method fontBounds
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method fontWidth
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method fontAscent
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method fontDescent
+   * @for p5
+   */
+
+  /**
+   * TODO
+   *
+   * @method fontWeight
+   * @for p5
+   */
 
   // attach each text func to p5, delegating to the renderer
   textFunctions.forEach(func => {
@@ -123,6 +261,7 @@ function textCore(p5, fn) {
    * @param {Number} width - the max width of the text block
    * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
+   * @private
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
     // delegate to _textBoundsSingle for measuring
@@ -137,6 +276,7 @@ function textCore(p5, fn) {
    * @param {Number} width - the max width of the text block
    * @param {Number} height - the max height of the text block
    * @returns - a bounding box object for the text block: {x,y,w,h}
+   * @private
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
     // delegate to _fontBoundsSingle for measuring
@@ -147,6 +287,7 @@ function textCore(p5, fn) {
    * Get the width of a text string in pixels (tight bounds)
    * @param {String} theText
    * @returns - the width of the text in pixels
+   * @private
    */
   Renderer.prototype.textWidth = function (theText) {
     let lines = this._processLines(theText);
@@ -158,6 +299,7 @@ function textCore(p5, fn) {
    * Get the width of a text string in pixels (loose bounds)
    * @param {String} theText
    * @returns - the width of the text in pixels
+   * @private
    */
   Renderer.prototype.fontWidth = function (theText) {
     // return the max width of the lines (using loose bounds)
@@ -169,6 +311,7 @@ function textCore(p5, fn) {
    * @param {*} txt - optional text to measure, if provided will be
    * used to compute the ascent, otherwise the font's ascent will be used
    * @returns - the ascent of the text
+   * @private
    */
   Renderer.prototype.textAscent = function (txt = '') {
     if (!txt.length) return this.fontAscent();
@@ -177,6 +320,7 @@ function textCore(p5, fn) {
 
   /**
    * @returns - returns the ascent for the current font
+   * @private
    */
   Renderer.prototype.fontAscent = function () {
     return this.textDrawingContext().measureText('_').fontBoundingBoxAscent;
@@ -186,6 +330,7 @@ function textCore(p5, fn) {
    * @param {*} txt - optional text to measure, if provided will
    * be used to compute the descent, otherwise the font's descent will be used
    * @returns - the descent of the text
+   * @private
    */
   Renderer.prototype.textDescent = function (txt = '') {
     if (!txt.length) return this.fontDescent();
@@ -194,6 +339,7 @@ function textCore(p5, fn) {
 
   /**
    * @returns - returns the descent for the current font
+   * @private
    */
   Renderer.prototype.fontDescent = function () {
     return this.textDrawingContext().measureText('_').fontBoundingBoxDescent;
@@ -231,6 +377,7 @@ function textCore(p5, fn) {
    * @param {p5.Font | string} font - the font to use for rendering text
    * @param {Number} size - the size of the text, can be a number or a css-style string
    * @param {Object} options - additional options for rendering text, see FontProps
+   * @private
    */
   Renderer.prototype.textFont = function (font, size, options) {
 
@@ -326,6 +473,7 @@ function textCore(p5, fn) {
 
   /**
    * @param {*} size - the size of the text, can be a number or a css-style string
+   * @private
    */
   Renderer.prototype.textSize = function (size) {
 
@@ -373,6 +521,7 @@ function textCore(p5, fn) {
    * The property to be set can be a mapped or unmapped property on `this.states` or a property
    * on `this.textDrawingContext()` or on `this.canvas.style`
    * The property to get can exist in `this.states` or `this.textDrawingContext()` or `this.canvas.style`
+   * @private
    */
   Renderer.prototype.textProperty = function (prop, value, opts) {
 
@@ -417,6 +566,7 @@ function textCore(p5, fn) {
   /**
    * Batch set/get text properties for the renderer.
    * The properties can be either on `states` or `drawingContext`
+   * @private
    */
   Renderer.prototype.textProperties = function (properties) {
 
@@ -470,6 +620,7 @@ function textCore(p5, fn) {
   /*
     Compute the bounds for a block of text based on the specified
     measure function, either _textBoundsSingle or _fontBoundsSingle
+   * @private
   */
   Renderer.prototype._computeBounds = function (type, str, x, y, width, height, opts) {
 
@@ -528,6 +679,7 @@ function textCore(p5, fn) {
 
   /*
     Adjust width, height of bounds based on current rectMode
+   * @private
   */
   Renderer.prototype._rectModeAdjust = function (x, y, width, height) {
 
@@ -550,6 +702,7 @@ function textCore(p5, fn) {
 
   /*
     Attempts to set a property directly on the canvas.style object
+   * @private
   */
   Renderer.prototype._setCanvasStyleProperty = function (opt, val, debug) {
 
@@ -579,6 +732,7 @@ function textCore(p5, fn) {
   /*
     Parses the fontVariationSettings string and sets the font properties, only font-weight
     working consistently across browsers at present
+   * @private
   */
   Renderer.prototype._handleFontVariationSettings = function (value, debug = false) {
     // check if the value is a string or an object
@@ -695,6 +849,7 @@ function textCore(p5, fn) {
     Get the computed font-size in pixels for a given size string
     @param {String} size - the font-size string to compute
     @returns {number} - the computed font-size in pixels
+   * @private
    */
   Renderer.prototype._fontSizePx = function (theSize, { family } = this.states.textFont) {
 
@@ -734,6 +889,7 @@ function textCore(p5, fn) {
     Aggregate the bounding boxes of multiple lines of text
     @param {Array} bboxes - the bounding boxes to aggregate
     @returns {object} - the aggregated bounding box
+   * @private
   */
   Renderer.prototype._aggregateBounds = function (bboxes) {
     // loop over the bounding boxes to get the min/max x/y values
@@ -760,6 +916,7 @@ function textCore(p5, fn) {
     @param {String} str - the text to process
     @param {Number} width - the width to wrap the text to
     @returns {array} - the processed lines of text
+   * @private
   */
   Renderer.prototype._processLines = function (str, width, height) {
 
@@ -952,6 +1109,7 @@ function textCore(p5, fn) {
     @param {Number} maxWidth - the maximum width of the lines
     @param {Object} opts - additional options for splitting the lines
     @returns {array} - the split lines of text
+   * @private
   */
   Renderer.prototype._lineate = function (textWrap, lines, maxWidth = Infinity, opts = {}) {
 

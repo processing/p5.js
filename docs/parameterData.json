@@ -1997,6 +1997,106 @@
         ]
       ]
     },
+    "text": {
+      "overloads": [
+        []
+      ]
+    },
+    "textAlign": {
+      "overloads": [
+        []
+      ]
+    },
+    "textAscent": {
+      "overloads": [
+        []
+      ]
+    },
+    "textDescent": {
+      "overloads": [
+        []
+      ]
+    },
+    "textLeading": {
+      "overloads": [
+        []
+      ]
+    },
+    "textMode": {
+      "overloads": [
+        []
+      ]
+    },
+    "textFont": {
+      "overloads": [
+        []
+      ]
+    },
+    "textSize": {
+      "overloads": [
+        []
+      ]
+    },
+    "textStyle": {
+      "overloads": [
+        []
+      ]
+    },
+    "textWidth": {
+      "overloads": [
+        []
+      ]
+    },
+    "textWrap": {
+      "overloads": [
+        []
+      ]
+    },
+    "textBounds": {
+      "overloads": [
+        []
+      ]
+    },
+    "textDirection": {
+      "overloads": [
+        []
+      ]
+    },
+    "textProperty": {
+      "overloads": [
+        []
+      ]
+    },
+    "textProperties": {
+      "overloads": [
+        []
+      ]
+    },
+    "fontBounds": {
+      "overloads": [
+        []
+      ]
+    },
+    "fontWidth": {
+      "overloads": [
+        []
+      ]
+    },
+    "fontAscent": {
+      "overloads": [
+        []
+      ]
+    },
+    "fontDescent": {
+      "overloads": [
+        []
+      ]
+    },
+    "fontWeight": {
+      "overloads": [
+        []
+      ]
+    },
     "append": {
       "overloads": [
         [
@@ -3070,13 +3170,6 @@
         []
       ]
     },
-    "loadFont": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
     "findClosestSchema": {
       "overloads": [
         [
@@ -3364,87 +3457,6 @@
   },
   "p5.Renderer": {
     "resize": {
-      "overloads": [
-        []
-      ]
-    },
-    "textBounds": {
-      "overloads": [
-        [
-          "String",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "fontBounds": {
-      "overloads": [
-        [
-          "String",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "textWidth": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "fontWidth": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "textAscent": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
-    "fontAscent": {
-      "overloads": [
-        []
-      ]
-    },
-    "textDescent": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
-    "fontDescent": {
-      "overloads": [
-        []
-      ]
-    },
-    "textFont": {
-      "overloads": [
-        [
-          "p5.Font|string",
-          "Number",
-          "Object"
-        ]
-      ]
-    },
-    "textSize": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
-    "textProperty": {
       "overloads": [
         []
       ]
@@ -4690,6 +4702,13 @@
           "p5.Vector",
           "p5.Vector"
         ]
+      ]
+    }
+  },
+  "p5.Font": {
+    "hasGlyphData": {
+      "overloads": [
+        []
       ]
     }
   },
