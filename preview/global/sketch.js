@@ -2,28 +2,26 @@ p5.disableFriendlyErrors = true;
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-
 let myShader;
-
-function myCol() {
-  const col = (sin(millis() * 0.001) + 1)/2;
-  return col;
-}
 
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+
   myShader = baseMaterialShader().modify(() => {
-    const time = uniformFloat(() => sin(millis()*0.001));
+    const time = uniformFloat(() => millis());
+
     getFinalColor((col) => {
       col.x = uvCoords().x;
       col.y = uvCoords().y;
+      col.z = 1;
       return col;
     });
+
     getWorldInputs((inputs) => {
-      inputs.position.x += time * inputs.position.y;
+      inputs.position.y += 20 * sin(time * 0.001 + inputs.position.x * 0.05);
       return inputs;
     })
-  }, { parser: true, srcLocations: false });
+  });
 }
 
 function draw(){
@@ -34,20 +32,3 @@ function draw(){
   fill(255,0,0)
   sphere(100);
 }
-
-// `(vec4 color) {
-//   // From at <computed> [as uniformVector4] (http://localhost:5173/p5.js:86002:25)
-//   vec4 temp_0 = uCol;
-//   temp_0 = vec4(temp_0.x, 1.0000, temp_0.z, temp_0.w);
-//   vec4 finalReturnValue = temp_0;
-//   return finalReturnValue;
-// }`
-// `
-// (vec4 color) {
-
-// // From at <computed> [as uniformVector4] (http://localhost:5173/p5.js:86002:25)
-// vec4 temp_0 = uCol;
-// temp_0 = vec4(temp_0.x, 1.0000, temp_0.z, temp_0.w);
-// vec4 finalReturnValue = temp_0 + vec4(0.0000 + 2.0000, 0.0000, 0.0000, 0.0000);
-// return finalReturnValue;
-// }`
