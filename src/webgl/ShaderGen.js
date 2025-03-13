@@ -141,6 +141,7 @@ function shadergen(p5, fn) {
   // These classes are for expressing GLSL functions in Javascript without
   // needing to  transpile the user's code.
 
+
   class BaseNode {
     constructor(isInternal, type) {
       if (new.target === BaseNode) {
@@ -248,6 +249,9 @@ function shadergen(p5, fn) {
     // Check that the types of the operands are compatible.
     enforceType(other){
       if (isShaderNode(other)){
+        if (!isGLSLNativeType(other.type)) {
+          throw new TypeError (`You've tried to perform an operation on a struct of type: ${other.type}. Try accessing a member on that struct with '.'`)
+        }
         if (!isGLSLNativeType(other.type)) {
           throw new TypeError (`You've tried to perform an operation on a struct of type: ${other.type}. Try accessing a member on that struct with '.'`)
         }
@@ -369,6 +373,7 @@ function shadergen(p5, fn) {
       this.name = name;
       this.addVectorComponents();
     }
+
 
     toGLSL(context) {
       return `${this.name}`;
@@ -529,13 +534,23 @@ function shadergen(p5, fn) {
       const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
       return glslNativeTypes.includes(typeName);
     }
+  }
+
+    // Helper function to check if a type is a user defined struct or native type
+    function isGLSLNativeType(typeName) {
+      // Supported types for now
+      const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
+      return glslNativeTypes.includes(typeName);
+    }
 
   // Shader Generator
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
 
   class ShaderGenerator {
     constructor(userCallback, originalShader, srcLocations) {
+    constructor(userCallback, originalShader, srcLocations) {
       GLOBAL_SHADER = this;
+      this.userCallback = userCallback;
       this.userCallback = userCallback;
       this.srcLocations = srcLocations;
       this.generateHookOverrides(originalShader);
@@ -660,6 +675,7 @@ function shadergen(p5, fn) {
   // Generating uniformFloat, uniformVec, createFloat, etc functions
   // Maps a GLSL type to the name suffix for method names
   const GLSLTypesToIdentifiers = {
+  const GLSLTypesToIdentifiers = {
     int:    'Int',
     float:  'Float',
     vec2:   'Vector2',
@@ -677,7 +693,9 @@ function shadergen(p5, fn) {
   };
 
   for (const glslType in GLSLTypesToIdentifiers) {
+  for (const glslType in GLSLTypesToIdentifiers) {
     // Generate uniform*() Methods for creating uniforms
+    const typeIdentifier = GLSLTypesToIdentifiers[glslType];
     const typeIdentifier = GLSLTypesToIdentifiers[glslType];
     const uniformMethodName = `uniform${typeIdentifier}`;
 
