@@ -470,6 +470,7 @@ function files(p5, fn){
    * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
    *
    * @method loadTable
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @param  {String|Request} filename    name of the file or URL to load
    * @param  {String}         [separator] the separator character used by the file, defaults to `','`
    * @param  {String}         [header]    "header" to indicate table has header row
@@ -1987,6 +1988,7 @@ function files(p5, fn){
    *  vary between web browsers.
    *
    *  @method saveTable
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    *  @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
    *  @param  {String} filename the filename to which the Table should be saved
    *  @param  {String} [options]  can be one of "tsv", "csv", or "html"

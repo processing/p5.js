@@ -515,6 +515,7 @@ function utilityFunctions(p5, fn){
    * carriage return (`\r`), form feed (`\f`), and space.
    *
    * @method splitTokens
+   * @deprecated This will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @param  {String} value string to split.
    * @param  {String} [delim] character(s) to use for splitting the string.
    * @return {String[]} separated strings.
