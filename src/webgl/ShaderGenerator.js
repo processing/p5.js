@@ -9,7 +9,7 @@ import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
-function shadergen(p5, fn) {
+function shadergenerator(p5, fn) {
   let GLOBAL_SHADER;
   
   const oldModify = p5.Shader.prototype.modify
@@ -343,12 +343,17 @@ function shadergen(p5, fn) {
 
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
-    constructor(name, args, type, isInternal = false) {
-      super(isInternal, type);
+    constructor(name, args, properties, isInternal = false) {
+      let returnType = properties.returnType;
+      if (returnType === 'genType') {
+        returnType = args[0].type;
+        console.log("GENTYPE")
+      }
+      super(isInternal, returnType);
       this.name = name;
       this.args = args;
-      // TODO:
-      this.argumentTypes = args;
+      this.argumentTypes = properties.args;
+      this.addVectorComponents();
     }
 
     deconstructArgs(context) {
@@ -531,7 +536,6 @@ function shadergen(p5, fn) {
       // Supported types for now
       const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
       return glslNativeTypes.includes(typeName);
-    }
   }
 
     // Helper function to check if a type is a user defined struct or native type
@@ -689,7 +693,6 @@ function shadergen(p5, fn) {
   };
 
   for (const glslType in GLSLTypesToIdentifiers) {
-  for (const glslType in GLSLTypesToIdentifiers) {
     // Generate uniform*() Methods for creating uniforms
     const typeIdentifier = GLSLTypesToIdentifiers[glslType];
     const uniformMethodName = `uniform${typeIdentifier}`;
@@ -704,9 +707,7 @@ function shadergen(p5, fn) {
       else {
         this.output.uniforms[`${glslType} ${name}`] = defaultValue[0];
       }
-
-      let safeType = glslType === 'sampler2D' ? 'vec4' : glslType;
-      const uniform = new VariableNode(name, safeType, false);
+      const uniform = new VariableNode(name, glslType, false);
       return uniform;
     };
 
@@ -732,7 +733,6 @@ function shadergen(p5, fn) {
   // GLSL Built in functions
   // Add a whole lot of these functions. 
   // https://docs.gl/el3/abs
-  // TODO: 
   //  In reality many of these have multiple overrides which will need to address later.
   // Also, their return types depend on the genType which will need to address urgently
   //      genType clamp(genType x,
@@ -741,90 +741,95 @@ function shadergen(p5, fn) {
   //      genType clamp(genType x,
   //                    float minVal,
   //                    float maxVal);
-
-
-
   const builtInFunctions = {
     //////////// Trigonometry //////////
-    'acos': { args: ['genType'], returnType: 'float'},
-    // 'acosh': {},
-    'asin': { args: ['genType'], returnType: 'float'},
-    // 'asinh': {},
-    'atan': { args: ['genType'], returnType: 'float'},
-    // 'atanh': {},
-    'cos': { args: ['genType'], returnType: 'float', isp5Function: true},
-    // 'cosh': {},
-    'degrees': { args: ['genType'], returnType: 'float'},
-    'radians': { args: ['genType'], returnType: 'float'},
-    'sin': { args: ['genType'], returnType: 'float' , isp5Function: true},
-    // 'sinh': {},
-    'tan': { args: ['genType'], returnType: 'float', isp5Function: true},
-    // 'tanh': {},
+    'acos': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'acosh': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'asin': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'asinh': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'atan': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'atanh': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'cos': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'cosh': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'degrees': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'radians': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'sin': { args: ['genType'], returnType: 'genType' , isp5Function: true},
+    'sinh': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'tan': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'tanh': { args: ['genType'], returnType: 'genType', isp5Function: false},
 
     ////////// Mathematics //////////
-    'abs': { args: ['genType'], returnType: 'float'},
-    'ceil': { args: ['genType'], returnType: 'float'},
-    'clamp': { args: ['genType', 'genType', 'genType'], returnType: 'float'},
-    // 'dFdx': {},
-    // 'dFdy': {},
-    'exp': { args: ['genType'], returnType: 'float'},
-    'exp2': { args: ['genType'], returnType: 'float'},
-    'floor': { args: ['genType'], returnType: 'float'},
-    // 'fma': {},
-    'fract': { args: ['genType'], returnType: 'float'},
-    // 'fwidth': {},
-    // 'inversesqrt': {},
+    'abs': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'ceil': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'clamp': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'dFdx': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'dFdy': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'exp': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'exp2': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'floor': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'fma': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'fract': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'fwidth': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'inversesqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
     // 'isinf': {},
     // 'isnan': {},
-    // 'log': {},
-    // 'log2': {},
-    'max': { args: ['genType'], returnType: 'genType'},
-    'min': { args: ['genType'], returnType: 'genType'},
-    'mix': { args: ['genType'], returnType: 'genType'},
+    'log': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'log2': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'max': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'min': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'mix': { args: ['genType'], returnType: 'genType', isp5Function: false},
     // 'mod': {},
     // 'modf': {},
-    'pow': { args: ['genType'], returnType: 'float'},
-    // 'round': {},
-    // 'roundEven': {},
+    'pow': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'round': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'roundEven': { args: ['genType'], returnType: 'genType', isp5Function: false},
     // 'sign': {},
-    'smoothstep': { args: ['genType', 'genType', 'genType'], returnType: 'float'},
-    'sqrt': { args: ['genType'], returnType: 'genType'},
-    'step': { args: ['genType', 'genType'], returnType: 'genType'},
-    // 'trunc': {},
+    'smoothstep': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'sqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'step': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'trunc': { args: ['genType'], returnType: 'genType', isp5Function: false},
 
     ////////// Vector //////////
-    'cross': {},
-    'distance': {},
-    'dot': {},
+    'cross': { args: ['vec3', 'vec3'], returnType: 'vec3', isp5Function: true},
+    'distance': { args: ['genType', 'genType'], returnType: 'float', isp5Function: true},
+    'dot': { args: ['genType', 'genType'], returnType: 'float', isp5Function: true},
     // 'equal': {},
-    // 'faceforward': {},
-    'length': {},
-    'normalize': {},
+    'faceforward': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'length': { args: ['genType'], returnType: 'float', isp5Function: false},
+    'normalize': { args: ['genType'], returnType: 'genType', isp5Function: true},
     // 'notEqual': {},
-    // 'reflect': {},
-    // 'refract': {},
+    'reflect': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'refract': { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false},
     // Texture sampling
-    'texture': {},
+    'texture': {args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true},
   }
 
-  // Object.entries(builtInFunctions).forEach(([functionName, properties]) => {
-  //   fn[functionName] = function () {
-  //     new FunctionCallNode(functionName, args, type, isInternal = false)
-  //   }
-  // })
-
-  const oldTexture = p5.prototype.texture;
-  p5.prototype.texture = function(...args) {
-    if (isShaderNode(args[0])) {
-      return new FunctionCallNode('texture', args, 'vec4');
+  Object.entries(builtInFunctions).forEach(([functionName, properties]) => {
+    if (properties.isp5Function) {
+      const originalFn = fn[functionName];
+      
+      fn[functionName] = function (...args) {
+        return new FunctionCallNode(functionName, args, properties)
+      }
     } else {
-      return oldTexture.apply(this, args);
+      fn[functionName] = function (...args) {
+        return new FunctionCallNode(functionName, args, properties);
+      }
     }
-  }
+  })
+
+  // const oldTexture = p5.prototype.texture;
+  // p5.prototype.texture = function(...args) {
+  //   if (isShaderNode(args[0])) {
+  //     return new FunctionCallNode('texture', args, 'vec4');
+  //   } else {
+  //     return oldTexture.apply(this, args);
+  //   }
+  // }
 }
 
-export default shadergen;
+export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
-  p5.registerAddon(shadergen)
+  p5.registerAddon(shadergenerator)
 }
