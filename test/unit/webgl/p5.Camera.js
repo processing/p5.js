@@ -341,7 +341,7 @@ suite('p5.Camera', function() {
         assert.closeTo(myCam.upY, expectedUp.y, 0.001, 'upY mismatch');
         assert.closeTo(myCam.upZ, expectedUp.z, 0.001, 'upZ mismatch');
       });
-    }); 
+    });
   });
 
   suite('Rotation with angleMode(DEGREES)', function() {
