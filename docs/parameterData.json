@@ -295,45 +295,6 @@
         ]
       ]
     },
-    "createAudio": {
-      "overloads": [
-        [],
-        [
-          "String|String[]?",
-          "Function?"
-        ]
-      ]
-    },
-    "bezierOrder": {
-      "overloads": [
-        []
-      ]
-    },
-    "splineVertex": {
-      "overloads": [
-        []
-      ]
-    },
-    "splineProperty": {
-      "overloads": [
-        [
-          "String",
-          null
-        ]
-      ]
-    },
-    "splineProperties": {
-      "overloads": [
-        [
-          "Object?"
-        ]
-      ]
-    },
-    "beginContour": {
-      "overloads": [
-        []
-      ]
-    },
     "cursor": {
       "overloads": [
         [
@@ -838,169 +799,6 @@
         [
           "Function",
           "Boolean?"
-        ]
-      ]
-    },
-    "remove": {
-      "overloads": [
-        []
-      ]
-    },
-    "child": {
-      "overloads": [
-        [],
-        [
-          "String|p5.Element?"
-        ]
-      ]
-    },
-    "removeClass": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "hasClass": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
-    "toggleClass": {
-      "overloads": [
-        [
-          null
-        ]
-      ]
-    },
-    "center": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "position": {
-      "overloads": [
-        [],
-        [
-          "Number?",
-          "Number?",
-          "String?"
-        ]
-      ]
-    },
-    "show": {
-      "overloads": [
-        []
-      ]
-    },
-    "hide": {
-      "overloads": [
-        []
-      ]
-    },
-    "size": {
-      "overloads": [
-        [],
-        [
-          "Number|AUTO?",
-          "Number|AUTO?"
-        ]
-      ]
-    },
-    "style": {
-      "overloads": [
-        [
-          "String"
-        ],
-        [
-          "String",
-          "String|p5.Color"
-        ]
-      ]
-    },
-    "attribute": {
-      "overloads": [
-        [],
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
-    "removeAttribute": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "value": {
-      "overloads": [
-        [],
-        [
-          "String|Number"
-        ]
-      ]
-    },
-    "changed": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "input": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "drop": {
-      "overloads": [
-        [
-          "Function",
-          "Function?"
-        ]
-      ]
-    },
-    "draggable": {
-      "overloads": [
-        [
-          "p5.Element?"
-        ]
-      ]
-    },
-    "volume": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "createMedia": {
-      "overloads": [
-        []
-      ]
-    },
-    "createVideo": {
-      "overloads": [
-        [
-          "String|String[]",
-          "Function?"
-        ]
-      ]
-    },
-    "createCapture": {
-      "overloads": [
-        [
-          "AUDIO|VIDEO|Object?",
-          "Object?",
-          "Function?"
         ]
       ]
     },
@@ -2109,6 +1907,11 @@
           "Number?",
           "Number?"
         ]
+      ]
+    },
+    "beginContour": {
+      "overloads": [
+        []
       ]
     },
     "endContour": {
@@ -3262,122 +3065,82 @@
         ]
       ]
     },
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
     "loadFont": {
       "overloads": [
         [
           null
         ]
       ]
-    }
-  },
-  "p5.Element": {
-    "html": {
+    },
+    "findClosestSchema": {
+      "overloads": [
+        [
+          "z.ZodSchema",
+          "Array"
+        ]
+      ]
+    },
+    "validate": {
+      "overloads": [
+        [
+          "String",
+          "Array"
+        ]
+      ]
+    },
+    "createVideo": {
+      "overloads": [
+        [
+          "String|String[]",
+          "Function?"
+        ]
+      ]
+    },
+    "createAudio": {
       "overloads": [
         [],
         [
-          "String?",
-          "Boolean?"
+          "String|String[]?",
+          "Function?"
         ]
       ]
     },
-    "addClass": {
+    "createCapture": {
       "overloads": [
         [
-          "String"
+          "AUDIO|VIDEO|Object?",
+          "Object?",
+          "Function?"
         ]
       ]
     },
-    "parent": {
+    "bezierOrder": {
       "overloads": [
-        [
-          "String|p5.Element|Object"
-        ],
         []
       ]
     },
-    "id": {
+    "splineVertex": {
       "overloads": [
-        [
-          "String"
-        ],
         []
       ]
     },
-    "class": {
+    "splineProperty": {
       "overloads": [
         [
-          "String"
-        ],
-        []
-      ]
-    },
-    "mousePressed": {
-      "overloads": [
-        [
-          "Function|Boolean"
+          "String",
+          null
         ]
       ]
     },
-    "doubleClicked": {
+    "splineProperties": {
       "overloads": [
         [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseWheel": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseReleased": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseClicked": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseMoved": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseOver": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "mouseOut": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "dragOver": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "dragLeave": {
-      "overloads": [
-        [
-          "Function|Boolean"
+          "Object?"
         ]
       ]
     }
@@ -3692,6 +3455,252 @@
       ]
     }
   },
+  "p5.Element": {
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
+    "parent": {
+      "overloads": [
+        [
+          "String|p5.Element|Object"
+        ],
+        []
+      ]
+    },
+    "child": {
+      "overloads": [
+        [],
+        [
+          "String|p5.Element?"
+        ]
+      ]
+    },
+    "html": {
+      "overloads": [
+        [],
+        [
+          "String?",
+          "Boolean?"
+        ]
+      ]
+    },
+    "id": {
+      "overloads": [
+        [
+          "String"
+        ],
+        []
+      ]
+    },
+    "class": {
+      "overloads": [
+        [
+          "String"
+        ],
+        []
+      ]
+    },
+    "addClass": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "removeClass": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "hasClass": {
+      "overloads": [
+        [
+          null
+        ]
+      ]
+    },
+    "toggleClass": {
+      "overloads": [
+        [
+          null
+        ]
+      ]
+    },
+    "center": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "position": {
+      "overloads": [
+        [],
+        [
+          "Number?",
+          "Number?",
+          "String?"
+        ]
+      ]
+    },
+    "show": {
+      "overloads": [
+        []
+      ]
+    },
+    "hide": {
+      "overloads": [
+        []
+      ]
+    },
+    "size": {
+      "overloads": [
+        [],
+        [
+          "Number|AUTO?",
+          "Number|AUTO?"
+        ]
+      ]
+    },
+    "style": {
+      "overloads": [
+        [
+          "String"
+        ],
+        [
+          "String",
+          "String|p5.Color"
+        ]
+      ]
+    },
+    "attribute": {
+      "overloads": [
+        [],
+        [
+          "String",
+          "String"
+        ]
+      ]
+    },
+    "removeAttribute": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "value": {
+      "overloads": [
+        [],
+        [
+          "String|Number"
+        ]
+      ]
+    },
+    "mousePressed": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "doubleClicked": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseWheel": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseReleased": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseClicked": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseMoved": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseOver": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "mouseOut": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "dragOver": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "dragLeave": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "changed": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "input": {
+      "overloads": [
+        [
+          "Function|Boolean"
+        ]
+      ]
+    },
+    "drop": {
+      "overloads": [
+        [
+          "Function",
+          "Function?"
+        ]
+      ]
+    },
+    "draggable": {
+      "overloads": [
+        [
+          "p5.Element?"
+        ]
+      ]
+    }
+  },
   "p5.MediaElement": {
     "play": {
       "overloads": [
@@ -3727,7 +3736,10 @@
     },
     "volume": {
       "overloads": [
-        []
+        [],
+        [
+          "Number"
+        ]
       ]
     },
     "speed": {

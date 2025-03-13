@@ -1,7 +1,6 @@
 /**
  * @module DOM
  * @submodule DOM
- * @for p5
  */
 
 import { Element } from './p5.Element';
@@ -512,7 +511,6 @@ class MediaElement extends Element {
    * </div>
    */
   /**
-   * @method volume
    * @param {Number}            val volume between 0.0 and 1.0.
    * @chainable
    */
@@ -1387,7 +1385,6 @@ function media(p5, fn){
    * The second parameter, `callback`, is optional. It's a function to call once
    * the video is ready to play.
    *
-   * @method createVideo
    * @param  {String|String[]} src path to a video file, or an array of paths for
    *                               supporting different browsers.
    * @param  {Function} [callback] function to call once the video is ready to play.
@@ -1483,7 +1480,6 @@ function media(p5, fn){
    * The second parameter, `callback`, is optional. It's a function to call once
    * the audio is ready to play.
    *
-   * @method createAudio
    * @param  {String|String[]} [src] path to an audio file, or an array of paths
    *                                 for supporting different browsers.
    * @param  {Function} [callback]   function to call once the audio is ready to play.
@@ -1578,7 +1574,6 @@ function media(p5, fn){
    * <a href="http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https" target="_blank">here</a>
    * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
    *
-   * @method createCapture
    * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
    *                                   or a constraints object. Both video and audio
    *                                   audio streams are captured by default.
