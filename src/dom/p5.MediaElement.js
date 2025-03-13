@@ -1,7 +1,7 @@
 /**
  * @module DOM
  * @submodule DOM
- * @for p5.Element
+ * @for p5
  */
 
 import { Element } from './p5.Element';
