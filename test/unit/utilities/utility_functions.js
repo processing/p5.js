@@ -1,5 +1,5 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
-import stringFunctions from '../../../src/utilities/string_functions';
+import stringFunctions from '../../../src/utilities/utility_functions';
 import random from '../../../src/math/random';
 
 suite('String functions', function() {
