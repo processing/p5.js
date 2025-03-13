@@ -2,7 +2,8 @@
  * @module Typography
  */
 
-import { textCoreConstants } from './textCore.js';
+import { textCoreConstants } from './textCore';
+import * as constants from '../core/constants';
 
 /*
   API:
@@ -329,19 +330,19 @@ class Font {
       let x = bounds.x;
       let y = bounds.y + (i * textLeading) + ascent;
       let lineWidth = renderer._fontWidthSingle(text);
-      if (textAlign === fn.CENTER) {
+      if (textAlign === constants.CENTER) {
         x += (bounds.w - lineWidth) / 2;
       }
-      else if (textAlign === fn.RIGHT) {
+      else if (textAlign === constants.RIGHT) {
         x += (bounds.w - lineWidth);
       }
       if (typeof width !== 'undefined') {
         switch (renderer.states.rectMode) {
-          case fn.CENTER:
+          case constants.CENTER:
             x -= width / 2;
             y -= height / 2;
             break;
-          case fn.RADIUS:
+          case constants.RADIUS:
             x -= width;
             y -= height;
             break;
