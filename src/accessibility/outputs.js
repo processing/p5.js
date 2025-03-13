@@ -579,8 +579,13 @@ p5.prototype._getPos = function (x, y) {
 function _canvasLocator(args, canvasWidth, canvasHeight) {
   const noRows = 10;
   const noCols = 10;
-  let locX = Math.floor(args[0] / canvasWidth * noRows);
-  let locY = Math.floor(args[1] / canvasHeight * noCols);
+  let x = args[0];
+  let y = args[1];
+  if (x < 0 || x >= canvasWidth || y < 0 || y >= canvasHeight) {
+    return null;
+  }
+  let locX = Math.floor(x / canvasWidth * noRows);
+  let locY = Math.floor(y / canvasHeight * noCols);
   if (locX === noRows) {
     locX = locX - 1;
   }
