@@ -347,7 +347,6 @@ function shadergenerator(p5, fn) {
       let returnType = properties.returnType;
       if (returnType === 'genType') {
         returnType = args[0].type;
-        console.log("GENTYPE")
       }
       super(isInternal, returnType);
       this.name = name;
@@ -575,6 +574,7 @@ function shadergenerator(p5, fn) {
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName);
+        console.log(hookTypes);
         this[hookTypes.name] = function(userCallback) {
           // Create the initial nodes which are passed to the user callback
           // Also generate a string of the arguments for the code generation
