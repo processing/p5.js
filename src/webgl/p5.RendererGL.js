@@ -636,7 +636,7 @@ class RendererGL extends Renderer {
     this._useVertexColor = geometry.vertexColors.length > 0;
 
     const shader =
-      this._drawingFilter && this.states.userFillShader
+      !this._drawingFilter && this.states.userFillShader
         ? this.states.userFillShader
         : this._getFillShader();
     shader.bindShader();
