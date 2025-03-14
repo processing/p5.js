@@ -1,11 +1,28 @@
-p5.disableFriendlyErrors = true;
+// p5.disableFriendlyErrors = true;
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 let myShader;
+let filterShader;
+let video;
 
-function setup(){
+
+async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+
+  // filterShader = baseFi
+
+  filterShader = baseFilterShader().modify(() => {
+    const time = uniformFloat(() => millis());
+
+    getColor((input, canvasContents) => {
+      let myColor = texture(canvasContents, uvCoords());
+      const d = distance(input.texCoord, [0.5, 0.5]);
+      myColor.x = smoothstep(0, 0.5, d);
+      myColor.y = sin(time*0.001)/2;
+      return myColor;
+    })
+  });
 
   myShader = baseMaterialShader().modify(() => {
     const time = uniformFloat(() => millis());
@@ -25,10 +42,12 @@ function setup(){
 }
 
 function draw(){
-  orbitControl();
+  // orbitControl();
   background(0);
-  shader(myShader);
   noStroke();
-  fill(255,0,0)
-  sphere(100);
+  fill('blue')
+  sphere(100)
+  shader(myShader);
+  filter(filterShader);
+  // filterShader.setUniform('time', millis());
 }
