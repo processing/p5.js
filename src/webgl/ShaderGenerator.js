@@ -58,7 +58,7 @@ function shadergenerator(p5, fn) {
 
   const ASTCallbacks = {
     VariableDeclarator(node, _state, _ancestors) {
-      if (node.init.callee && node.init.callee.name.startsWith('uniform')) {
+      if (node.init.callee && node.init.callee.name?.startsWith('uniform')) {
         const uniformNameLiteral = {
           type: 'Literal',
           value: node.id.name
@@ -344,11 +344,28 @@ function shadergenerator(p5, fn) {
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
     constructor(name, args, properties, isInternal = false) {
-      let returnType = properties.returnType;
-      if (returnType === 'genType') {
-        returnType = args[0].type;
+      let inferredType = args.find((arg, i) => {
+        properties.args[i] === 'genType'
+        && isShaderNode(arg)
+      })?.type;
+      if (!inferredType) {
+        let arrayArg = args.find(arg => Array.isArray(arg));
+        inferredType = arrayArg ? `vec${arrayArg.length}` : undefined;
       }
-      super(isInternal, returnType);
+      if (!inferredType) {
+        inferredType = 'float'; 
+      }
+      args = args.map((arg, i) => {
+        if (!isShaderNode(arg)) {
+          const typeName = properties.args[i] === 'genType' ? inferredType : properties.args[i];
+          arg = nodeConstructors[typeName](arg);
+        }
+        return arg;
+      })
+      if (properties.returnType === 'genType') {
+        properties.returnType = inferredType;
+      }
+      super(isInternal, properties.returnType);
       this.name = name;
       this.args = args;
       this.argumentTypes = properties.args;
@@ -741,7 +758,7 @@ function shadergenerator(p5, fn) {
   //      genType clamp(genType x,
   //                    float minVal,
   //                    float maxVal);
-  const builtInFunctions = {
+  const builtInGLSLFunctions = {
     //////////// Trigonometry //////////
     'acos': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'acosh': { args: ['genType'], returnType: 'genType', isp5Function: false},
@@ -804,7 +821,7 @@ function shadergenerator(p5, fn) {
     'texture': {args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true},
   }
 
-  Object.entries(builtInFunctions).forEach(([functionName, properties]) => {
+  Object.entries(builtInGLSLFunctions).forEach(([functionName, properties]) => {
     if (properties.isp5Function) {
       const originalFn = fn[functionName];
       
