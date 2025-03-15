@@ -533,7 +533,7 @@ function material(p5, fn){
    * let myShader;
    *
    * async function setup() {
-   *   myShader = await loadFilterShader('assets/shader.frag');
+   *   myShader = await loadFilterShader('assets/basic.frag');
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    * }
@@ -543,7 +543,7 @@ function material(p5, fn){
    *   shader(myShader);
    *
    *   // rect gives us some geometry on the screen
-   *   rect(0, 0, width, height);
+   *   rect(-50, -50, width, height);
    * }
    * </code>
    * </div>
