@@ -1104,9 +1104,6 @@
         [
           "Number",
           "Number"
-        ],
-        [
-          "String|Integer"
         ]
       ]
     },
@@ -1121,10 +1118,6 @@
           "Number",
           "Number",
           "Number|Number[]|Object"
-        ],
-        [
-          "String|Integer",
-          "String|Number"
         ]
       ]
     },
@@ -2974,7 +2967,7 @@
     "linePerspective": {
       "overloads": [
         [
-          "boolean"
+          "Boolean"
         ],
         []
       ]
@@ -3566,180 +3559,6 @@
       ]
     }
   },
-  "p5.Table": {
-    "addRow": {
-      "overloads": [
-        [
-          "p5.TableRow?"
-        ]
-      ]
-    },
-    "removeRow": {
-      "overloads": [
-        [
-          "Integer"
-        ]
-      ]
-    },
-    "getRow": {
-      "overloads": [
-        [
-          "Integer"
-        ]
-      ]
-    },
-    "getRows": {
-      "overloads": [
-        []
-      ]
-    },
-    "findRow": {
-      "overloads": [
-        [
-          "String",
-          "Integer|String"
-        ]
-      ]
-    },
-    "findRows": {
-      "overloads": [
-        [
-          "String",
-          "Integer|String"
-        ]
-      ]
-    },
-    "matchRow": {
-      "overloads": [
-        [
-          "String|RegExp",
-          "String|Integer"
-        ]
-      ]
-    },
-    "matchRows": {
-      "overloads": [
-        [
-          "String",
-          "String|Integer?"
-        ]
-      ]
-    },
-    "getColumn": {
-      "overloads": [
-        [
-          "String|Number"
-        ]
-      ]
-    },
-    "clearRows": {
-      "overloads": [
-        []
-      ]
-    },
-    "addColumn": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "getColumnCount": {
-      "overloads": [
-        []
-      ]
-    },
-    "getRowCount": {
-      "overloads": [
-        []
-      ]
-    },
-    "removeTokens": {
-      "overloads": [
-        [
-          "String",
-          "String|Integer?"
-        ]
-      ]
-    },
-    "trim": {
-      "overloads": [
-        [
-          "String|Integer?"
-        ]
-      ]
-    },
-    "removeColumn": {
-      "overloads": [
-        [
-          "String|Integer"
-        ]
-      ]
-    },
-    "set": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "String|Number"
-        ]
-      ]
-    },
-    "setNum": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "Number"
-        ]
-      ]
-    },
-    "setString": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "String"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getNum": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getString": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getObject": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "getArray": {
-      "overloads": [
-        []
-      ]
-    }
-  },
   "p5.Graphics": {
     "reset": {
       "overloads": [
@@ -4129,6 +3948,227 @@
         [
           "Number",
           "Number?"
+        ]
+      ]
+    }
+  },
+  "p5.Table": {
+    "addRow": {
+      "overloads": [
+        [
+          "p5.TableRow?"
+        ]
+      ]
+    },
+    "removeRow": {
+      "overloads": [
+        [
+          "Integer"
+        ]
+      ]
+    },
+    "getRow": {
+      "overloads": [
+        [
+          "Integer"
+        ]
+      ]
+    },
+    "getRows": {
+      "overloads": [
+        []
+      ]
+    },
+    "findRow": {
+      "overloads": [
+        [
+          "String",
+          "Integer|String"
+        ]
+      ]
+    },
+    "findRows": {
+      "overloads": [
+        [
+          "String",
+          "Integer|String"
+        ]
+      ]
+    },
+    "matchRow": {
+      "overloads": [
+        [
+          "String|RegExp",
+          "String|Integer"
+        ]
+      ]
+    },
+    "matchRows": {
+      "overloads": [
+        [
+          "String",
+          "String|Integer?"
+        ]
+      ]
+    },
+    "getColumn": {
+      "overloads": [
+        [
+          "String|Number"
+        ]
+      ]
+    },
+    "clearRows": {
+      "overloads": [
+        []
+      ]
+    },
+    "addColumn": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "getColumnCount": {
+      "overloads": [
+        []
+      ]
+    },
+    "getRowCount": {
+      "overloads": [
+        []
+      ]
+    },
+    "removeTokens": {
+      "overloads": [
+        [
+          "String",
+          "String|Integer?"
+        ]
+      ]
+    },
+    "trim": {
+      "overloads": [
+        [
+          "String|Integer?"
+        ]
+      ]
+    },
+    "removeColumn": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "set": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "String|Number"
+        ]
+      ]
+    },
+    "setNum": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "Number"
+        ]
+      ]
+    },
+    "setString": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "String"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getNum": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getString": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getObject": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "getArray": {
+      "overloads": [
+        []
+      ]
+    }
+  },
+  "p5.TableRow": {
+    "set": {
+      "overloads": [
+        [
+          "String|Integer",
+          "String|Number"
+        ]
+      ]
+    },
+    "setNum": {
+      "overloads": [
+        [
+          "String|Integer",
+          "Number|String"
+        ]
+      ]
+    },
+    "setString": {
+      "overloads": [
+        [
+          "String|Integer",
+          "String|Number|Boolean|Object"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "getNum": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "getString": {
+      "overloads": [
+        [
+          "String|Integer"
         ]
       ]
     }
