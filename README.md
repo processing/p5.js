@@ -1112,6 +1112,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/webermayank"><img src="https://avatars.githubusercontent.com/u/111176033?v=4?s=120" width="120px;" alt="Mayank Verma"/><br /><sub><b>Mayank Verma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=webermayank" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lab-mediaArts"><img src="https://avatars.githubusercontent.com/u/179049131?v=4?s=120" width="120px;" alt="Lauren Berrios"/><br /><sub><b>Lauren Berrios</b></sub></a><br /><a href="#ideas-lab-mediaArts" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
