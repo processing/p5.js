@@ -551,7 +551,7 @@ function material(p5, fn){
    * A rectangle with a shader applied to it.
    */
   fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
-    p5._validateParameters('loadFilterShader', arguments);
+    // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
