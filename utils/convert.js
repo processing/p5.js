@@ -128,6 +128,14 @@ function locationInfo(node) {
   };
 }
 
+function deprecationInfo(node) {
+  if (!node.deprecated) {
+    return {};
+  }
+
+  return { deprecated: descriptionString(node.deprecated) };
+}
+
 function getExample(node) {
   return node.description;
 }
@@ -254,6 +262,7 @@ for (const entry of allData) {
       name: entry.name,
       ...locationInfo(entry),
       ...typeObject(entry.type),
+      ...deprecationInfo(entry),
       description: descriptionString(entry.description),
       example: examples.length > 0 ? examples : undefined,
       alt: getAlt(entry),
@@ -276,6 +285,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       extends: entry.augments && entry.augments[0] && entry.augments[0].name,
       description: descriptionString(entry.description),
       example: entry.examples.map(getExample),
@@ -333,6 +343,7 @@ for (const entry of allData) {
       ...location,
       line: property.lineNumber || location.line,
       ...typeObject(property.type),
+      ...deprecationInfo(entry),
       module,
       submodule,
       class: entry.name
@@ -367,6 +378,7 @@ for (const entry of allData) {
     name: propTag.name,
     ...locationInfo(entry),
     ...typeObject(propTag.type),
+    ...deprecationInfo(entry),
     module,
     submodule,
     class: forName
@@ -428,6 +440,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       itemtype: 'method',
       chainable: (prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'))
         ? 1

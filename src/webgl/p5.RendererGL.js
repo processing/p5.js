@@ -14,8 +14,9 @@ import { Graphics } from "../core/p5.Graphics";
 import { Element } from "../dom/p5.Element";
 import { ShapeBuilder } from "./ShapeBuilder";
 import { GeometryBufferCache } from "./GeometryBufferCache";
-import { filterParamDefaults } from '../image/const';
+import { filterParamDefaults } from "../image/const";
 
+import filterBaseVert from "./shaders/filters/base.vert";
 import lightingShader from "./shaders/lighting.glsl";
 import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
 import normalVert from "./shaders/normal.vert";
@@ -36,6 +37,7 @@ import imageLightVert from "./shaders/imageLight.vert";
 import imageLightDiffusedFrag from "./shaders/imageLightDiffused.frag";
 import imageLightSpecularFrag from "./shaders/imageLightSpecular.frag";
 
+import filterBaseFrag from "./shaders/filters/base.frag";
 import filterGrayFrag from "./shaders/filters/gray.frag";
 import filterErodeFrag from "./shaders/filters/erode.frag";
 import filterDilateFrag from "./shaders/filters/dilate.frag";
@@ -87,6 +89,8 @@ const defaultShaders = {
   imageLightVert,
   imageLightDiffusedFrag,
   imageLightSpecularFrag,
+  filterBaseVert,
+  filterBaseFrag,
 };
 let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
@@ -123,9 +127,6 @@ class RendererGL extends Renderer {
     // This redundant property is useful in reminding you that you are
     // interacting with WebGLRenderingContext, still worth considering future removal
     this.GL = this.drawingContext;
-    if (isMainCanvas) {
-      this._pInst.drawingContext = this.drawingContext;
-    }
 
     if (this._isMainCanvas) {
       // for pixel method sharing with pimage
@@ -137,6 +138,20 @@ class RendererGL extends Renderer {
     }
     this.elt.id = "defaultCanvas0";
     this.elt.classList.add("p5Canvas");
+
+    // Set and return p5.Element
+    this.wrappedElt = new Element(this.elt, this._pInst);
+
+    // Extend renderer with methods of p5.Element with getters
+    for (const p of Object.getOwnPropertyNames(Element.prototype)) {
+      if (p !== 'constructor' && p[0] !== '_') {
+        Object.defineProperty(this, p, {
+          get() {
+            return this.wrappedElt[p];
+          }
+        })
+      }
+    }
 
     const dimensions = this._adjustDimensions(w, h);
     w = dimensions.adjustedWidth;
@@ -291,6 +306,7 @@ class RendererGL extends Renderer {
     this.specularShader = undefined;
     this.sphereMapping = undefined;
     this.diffusedShader = undefined;
+    this._baseFilterShader = undefined;
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
@@ -315,7 +331,7 @@ class RendererGL extends Renderer {
           "vertexBuffer",
           "aPosition",
           this,
-          this._vToNArray,
+          this._vToNArray
         ),
         new RenderBuffer(
           3,
@@ -323,24 +339,24 @@ class RendererGL extends Renderer {
           "normalBuffer",
           "aNormal",
           this,
-          this._vToNArray,
+          this._vToNArray
         ),
         new RenderBuffer(
           4,
           "vertexColors",
           "colorBuffer",
           "aVertexColor",
-          this,
+          this
         ),
         new RenderBuffer(
           3,
           "vertexAmbients",
           "ambientBuffer",
           "aAmbientColor",
-          this,
+          this
         ),
         new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
-          arr.flat(),
+          arr.flat()
         ),
       ],
       stroke: [
@@ -349,28 +365,28 @@ class RendererGL extends Renderer {
           "lineVertexColors",
           "lineColorBuffer",
           "aVertexColor",
-          this,
+          this
         ),
         new RenderBuffer(
           3,
           "lineVertices",
           "lineVerticesBuffer",
           "aPosition",
-          this,
+          this
         ),
         new RenderBuffer(
           3,
           "lineTangentsIn",
           "lineTangentsInBuffer",
           "aTangentIn",
-          this,
+          this
         ),
         new RenderBuffer(
           3,
           "lineTangentsOut",
           "lineTangentsOutBuffer",
           "aTangentOut",
-          this,
+          this
         ),
         new RenderBuffer(1, "lineSides", "lineSidesBuffer", "aSide", this),
       ],
@@ -381,10 +397,10 @@ class RendererGL extends Renderer {
           "vertexBuffer",
           "aPosition",
           this,
-          this._vToNArray,
+          this._vToNArray
         ),
         new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
-          arr.flat(),
+          arr.flat()
         ),
       ],
       point: this.GL.createBuffer(),
@@ -416,6 +432,29 @@ class RendererGL extends Renderer {
     this.drawShapeCount = 1;
 
     this.scratchMat3 = new Matrix(3);
+
+    this._userEnabledStencil = false;
+    // Store original methods for internal use
+    this._internalEnable = this.drawingContext.enable;
+    this._internalDisable = this.drawingContext.disable;
+
+    // Override WebGL enable function
+    this.drawingContext.enable = (key) => {
+      if (key === this.drawingContext.STENCIL_TEST) {
+        if (!this._clipping) {
+          this._userEnabledStencil = true;
+        }
+      }
+      return this._internalEnable.call(this.drawingContext, key);
+    };
+
+    // Override WebGL disable function
+    this.drawingContext.disable = (key) => {
+      if (key === this.drawingContext.STENCIL_TEST) {
+          this._userEnabledStencil = false;
+      }
+      return this._internalDisable.call(this.drawingContext, key);
+    };
   }
 
   //////////////////////////////////////////////
@@ -437,7 +476,7 @@ class RendererGL extends Renderer {
   beginGeometry() {
     if (this.geometryBuilder) {
       throw new Error(
-        "It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.",
+        "It looks like `beginGeometry()` is being called while another p5.Geometry is already being build."
       );
     }
     this.geometryBuilder = new GeometryBuilder(this);
@@ -457,7 +496,7 @@ class RendererGL extends Renderer {
   endGeometry() {
     if (!this.geometryBuilder) {
       throw new Error(
-        "Make sure you call beginGeometry() before endGeometry()!",
+        "Make sure you call beginGeometry() before endGeometry()!"
       );
     }
     const geometry = this.geometryBuilder.finish();
@@ -502,7 +541,7 @@ class RendererGL extends Renderer {
     if (d === undefined) {
       return this.states.curveDetail;
     } else {
-      this.states.setValue('curveDetail', d);
+      this.states.setValue("curveDetail", d);
     }
   }
 
@@ -516,13 +555,13 @@ class RendererGL extends Renderer {
     if (this.geometryBuilder) {
       this.geometryBuilder.addImmediate(
         this.shapeBuilder.geometry,
-        this.shapeBuilder.shapeMode,
+        this.shapeBuilder.shapeMode
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
       if (this.shapeBuilder.shapeMode === constants.POINTS) {
         this._drawPoints(
           this.shapeBuilder.geometry.vertices,
-          this.buffers.point,
+          this.buffers.point
         );
       } else {
         this._drawGeometry(this.shapeBuilder.geometry, {
@@ -539,50 +578,15 @@ class RendererGL extends Renderer {
     super.endShape(mode, count);
   }
 
-  legacyEndShape(
-    mode,
-    isCurve,
-    isBezier,
-    isQuadratic,
-    isContour,
-    shapeKind,
-    count = 1,
-  ) {
-    this.shapeBuilder.endShape(
-      mode,
-      isCurve,
-      isBezier,
-      isQuadratic,
-      isContour,
-      shapeKind,
-    );
-
-    if (this.geometryBuilder) {
-      this.geometryBuilder.addImmediate(
-        this.shapeBuilder.geometry,
-        this.shapeBuilder.shapeMode,
-      );
-    } else if (this.states.fillColor || this.states.strokeColor) {
-      this._drawGeometry(this.shapeBuilder.geometry, {
-        mode: this.shapeBuilder.shapeMode,
-        count,
-      });
-    }
-  }
-
-  legacyVertex(...args) {
-    this.shapeBuilder.vertex(...args);
-  }
-
   vertexProperty(...args) {
     this.currentShape.vertexProperty(...args);
   }
 
   normal(xorv, y, z) {
     if (xorv instanceof Vector) {
-      this.states.setValue('_currentNormal', xorv);
+      this.states.setValue("_currentNormal", xorv);
     } else {
-      this.states.setValue('_currentNormal', new Vector(xorv, y, z));
+      this.states.setValue("_currentNormal", new Vector(xorv, y, z));
     }
     this.updateShapeVertexProperties();
   }
@@ -615,8 +619,8 @@ class RendererGL extends Renderer {
           prop.getSrcName(),
           prop.getDstName(),
           prop.getName(),
-          this,
-        ),
+          this
+        )
       );
     }
 
@@ -637,7 +641,7 @@ class RendererGL extends Renderer {
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
     let originalModelMatrix = this.states.uModelMatrix;
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     try {
       this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
 
@@ -647,7 +651,7 @@ class RendererGL extends Renderer {
         this._drawGeometry(model);
       }
     } finally {
-      this.states.setValue('uModelMatrix', originalModelMatrix);
+      this.states.setValue("uModelMatrix", originalModelMatrix);
     }
   }
 
@@ -671,7 +675,7 @@ class RendererGL extends Renderer {
 
     this._applyColorBlend(
       this.states.curFillColor,
-      geometry.hasFillTransparency(),
+      geometry.hasFillTransparency()
     );
 
     this._drawBuffers(geometry, { mode, count });
@@ -698,7 +702,7 @@ class RendererGL extends Renderer {
 
     this._applyColorBlend(
       this.states.curStrokeColor,
-      geometry.hasStrokeTransparency(),
+      geometry.hasStrokeTransparency()
     );
 
     if (count === 1) {
@@ -709,11 +713,11 @@ class RendererGL extends Renderer {
           gl.TRIANGLES,
           0,
           geometry.lineVertices.length / 3,
-          count,
+          count
         );
       } catch (e) {
         console.log(
-          "🌸 p5.js says: Instancing is only supported in WebGL2 mode",
+          "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
         );
       }
     }
@@ -734,7 +738,7 @@ class RendererGL extends Renderer {
       gl.ARRAY_BUFFER,
       this._vToNArray(vertices),
       Float32Array,
-      gl.STATIC_DRAW,
+      gl.STATIC_DRAW
     );
 
     pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
@@ -756,12 +760,12 @@ class RendererGL extends Renderer {
           if (adjustedLength > geometry.vertices.length) {
             this._pInst.constructor._friendlyError(
               `One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()",
+              "vertexProperty()"
             );
           } else if (adjustedLength < geometry.vertices.length) {
             this._pInst.constructor._friendlyError(
               `One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()",
+              "vertexProperty()"
             );
           }
         }
@@ -787,7 +791,7 @@ class RendererGL extends Renderer {
       ) {
         if (!gl.getExtension("OES_element_index_uint")) {
           throw new Error(
-            "Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.",
+            "Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint."
           );
         }
       }
@@ -797,7 +801,7 @@ class RendererGL extends Renderer {
           gl.TRIANGLES,
           geometry.faces.length * 3,
           glBuffers.indexBufferType,
-          0,
+          0
         );
       } else {
         try {
@@ -806,11 +810,11 @@ class RendererGL extends Renderer {
             geometry.faces.length * 3,
             glBuffers.indexBufferType,
             0,
-            count,
+            count
           );
         } catch (e) {
           console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode",
+            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
           );
         }
       }
@@ -822,7 +826,7 @@ class RendererGL extends Renderer {
           gl.drawArraysInstanced(mode, 0, geometry.vertices.length, count);
         } catch (e) {
           console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode",
+            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
           );
         }
       }
@@ -863,7 +867,7 @@ class RendererGL extends Renderer {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
       this.drawingContext = this.canvas.getContext(
         "webgl2",
-        this._pInst._glAttributes,
+        this._pInst._glAttributes
       );
     }
     this.webglVersion = this.drawingContext
@@ -891,7 +895,7 @@ class RendererGL extends Renderer {
       // be encoded the same way as textures from everything else.
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
       this._viewport = this.drawingContext.getParameter(
-        this.drawingContext.VIEWPORT,
+        this.drawingContext.VIEWPORT
       );
     }
   }
@@ -908,7 +912,7 @@ class RendererGL extends Renderer {
     let maxTextureSize = this._maxTextureSize;
 
     let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this._pixelDensity,
+      maxTextureSize / this._pixelDensity
     );
     let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
     let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
@@ -916,7 +920,7 @@ class RendererGL extends Renderer {
     if (adjustedWidth !== width || adjustedHeight !== height) {
       console.warn(
         "Warning: The requested width/height exceeds hardware limits. " +
-          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`,
+          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
       );
     }
 
@@ -932,22 +936,33 @@ class RendererGL extends Renderer {
     const defaultId = this.canvas.id;
     const isPGraphics = this._pInst instanceof Graphics;
 
+    // Preserve existing position and styles before recreation
+    const prevStyle = {
+      position: this.canvas.style.position,
+      top: this.canvas.style.top,
+      left: this.canvas.style.left,
+    };
+
     if (isPGraphics) {
+      // Handle PGraphics: remove and recreate the canvas
       const pg = this._pInst;
       pg.canvas.parentNode.removeChild(pg.canvas);
       pg.canvas = document.createElement("canvas");
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
       Element.call(pg, pg.canvas, pg._pInst);
+      // Restore previous width and height
       pg.width = w;
       pg.height = h;
     } else {
+      // Handle main canvas: remove and recreate it
       let c = this.canvas;
       if (c) {
         c.parentNode.removeChild(c);
       }
       c = document.createElement("canvas");
       c.id = defaultId;
+      // Attach the new canvas to the correct parent node
       if (this._pInst._userNode) {
         this._pInst._userNode.appendChild(c);
       } else {
@@ -955,6 +970,11 @@ class RendererGL extends Renderer {
       }
       this._pInst.canvas = c;
       this.canvas = c;
+
+      // Restore the saved position
+      this.canvas.style.position = prevStyle.position;
+      this.canvas.style.top = prevStyle.top;
+      this.canvas.style.left = prevStyle.left;
     }
 
     const renderer = new RendererGL(
@@ -962,7 +982,7 @@ class RendererGL extends Renderer {
       w,
       h,
       !isPGraphics,
-      this._pInst.canvas,
+      this._pInst.canvas
     );
     this._pInst._renderer = renderer;
 
@@ -980,40 +1000,43 @@ class RendererGL extends Renderer {
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
-    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
+    this.states.setValue("uViewMatrix", this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
-    this.states.setValue('ambientLightColors', []);
-    this.states.setValue('specularColors', [1, 1, 1]);
+    this.states.setValue("ambientLightColors", []);
+    this.states.setValue("specularColors", [1, 1, 1]);
 
-    this.states.setValue('directionalLightDirections', []);
-    this.states.setValue('directionalLightDiffuseColors', []);
-    this.states.setValue('directionalLightSpecularColors', []);
+    this.states.setValue("directionalLightDirections", []);
+    this.states.setValue("directionalLightDiffuseColors", []);
+    this.states.setValue("directionalLightSpecularColors", []);
 
-    this.states.setValue('pointLightPositions', []);
-    this.states.setValue('pointLightDiffuseColors', []);
-    this.states.setValue('pointLightSpecularColors', []);
+    this.states.setValue("pointLightPositions", []);
+    this.states.setValue("pointLightDiffuseColors", []);
+    this.states.setValue("pointLightSpecularColors", []);
 
-    this.states.setValue('spotLightPositions', []);
-    this.states.setValue('spotLightDirections', []);
-    this.states.setValue('spotLightDiffuseColors', []);
-    this.states.setValue('spotLightSpecularColors', []);
-    this.states.setValue('spotLightAngle', []);
-    this.states.setValue('spotLightConc', []);
+    this.states.setValue("spotLightPositions", []);
+    this.states.setValue("spotLightDirections", []);
+    this.states.setValue("spotLightDiffuseColors", []);
+    this.states.setValue("spotLightSpecularColors", []);
+    this.states.setValue("spotLightAngle", []);
+    this.states.setValue("spotLightConc", []);
 
-    this.states.setValue('enableLighting', false);
+    this.states.setValue("enableLighting", false);
 
     //reset tint value for new frame
-    this.states.setValue('tint', [255, 255, 255, 255]);
+    this.states.setValue("tint", [255, 255, 255, 255]);
 
     //Clear depth every frame
     this.GL.clearStencil(0);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT | this.GL.STENCIL_BUFFER_BIT);
-    this.GL.disable(this.GL.STENCIL_TEST);
+    if (!this._userEnabledStencil) {
+      this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+    }
+  
   }
 
   /**
@@ -1024,12 +1047,44 @@ class RendererGL extends Renderer {
     this.clear(..._col._getRGBA());
   }
 
-  // Combines the model and view matrices to get the uMVMatrix
-  // This method will be reusable wherever you need to update the combined matrix.
-  calculateCombinedMatrix() {
+  //////////////////////////////////////////////
+  // Positioning
+  //////////////////////////////////////////////
+
+  get uModelMatrix() {
+    return this.states.uModelMatrix;
+  }
+
+  get uViewMatrix() {
+    return this.states.uViewMatrix;
+  }
+
+  get uPMatrix() {
+    return this.states.uPMatrix;
+  }
+
+  get uMVMatrix() {
+    const m = this.uModelMatrix.copy();
+    m.mult(this.uViewMatrix);
+    return m;
+  }
+
+  /**
+   * Get a matrix from world-space to screen-space
+   */
+  getWorldToScreenMatrix() {
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
-    return modelMatrix.copy().mult(viewMatrix);
+    const projectionMatrix = this.states.uPMatrix;
+    const projectedToScreenMatrix = new Matrix(4);
+    projectedToScreenMatrix.scale(this.width, this.height, 1);
+    projectedToScreenMatrix.translate([0.5, 0.5, 0.5]);
+    projectedToScreenMatrix.scale(0.5, -0.5, 0.5);
+
+    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
+    const modelViewProjectionMatrix = modelViewMatrix.mult(projectionMatrix);
+    const worldToScreenMatrix = modelViewProjectionMatrix.mult(projectedToScreenMatrix);
+    return worldToScreenMatrix;
   }
 
   //////////////////////////////////////////////
@@ -1070,10 +1125,10 @@ class RendererGL extends Renderer {
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
     const color = this.states.fillColor;
-    this.states.setValue('curFillColor', color._array);
-    this.states.setValue('drawMode', constants.FILL);
-    this.states.setValue('_useNormalMaterial', false);
-    this.states.setValue('_tex', null);
+    this.states.setValue("curFillColor", color._array);
+    this.states.setValue("drawMode", constants.FILL);
+    this.states.setValue("_useNormalMaterial", false);
+    this.states.setValue("_tex", null);
   }
 
   /**
@@ -1108,11 +1163,11 @@ class RendererGL extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
-    this.states.setValue('curStrokeColor', this.states.strokeColor._array);
+    this.states.setValue("curStrokeColor", this.states.strokeColor._array);
   }
 
   getCommonVertexProperties() {
-    if (!this.states) debugger
+    if (!this.states) debugger;
     return {
       ...super.getCommonVertexProperties(),
       stroke: this.states.strokeColor,
@@ -1166,8 +1221,11 @@ class RendererGL extends Renderer {
     let operation = undefined;
     if (typeof args[0] === "string") {
       operation = args[0];
-      let useDefaultParam = operation in filterParamDefaults && args[1] === undefined;
-      filterParameter = useDefaultParam ? filterParamDefaults[operation] : args[1];
+      let useDefaultParam =
+        operation in filterParamDefaults && args[1] === undefined;
+      filterParameter = useDefaultParam
+        ? filterParamDefaults[operation]
+        : args[1];
 
       // Create and store shader for constants once on initial filter call.
       // Need to store multiple in case user calls different filters,
@@ -1176,14 +1234,17 @@ class RendererGL extends Renderer {
         this.defaultFilterShaders[operation] = new Shader(
           fbo.renderer,
           filterShaderVert,
-          filterShaderFrags[operation],
+          filterShaderFrags[operation]
         );
       }
-      this.states.setValue('filterShader', this.defaultFilterShaders[operation]);
+      this.states.setValue(
+        "filterShader",
+        this.defaultFilterShaders[operation]
+      );
     }
     // use custom user-supplied shader
     else {
-      this.states.setValue('filterShader', args[0]);
+      this.states.setValue("filterShader", args[0]);
     }
 
     // Setting the target to the framebuffer when applying a filter to a framebuffer.
@@ -1208,7 +1269,7 @@ class RendererGL extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.setValue('strokeColor', null);
+      this.states.setValue("strokeColor", null);
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
@@ -1220,7 +1281,7 @@ class RendererGL extends Renderer {
       ]);
       this.states.filterShader.setUniform(
         "radius",
-        Math.max(1, filterParameter),
+        Math.max(1, filterParameter)
       );
 
       // Horiz pass: draw `target` to `tmp`
@@ -1248,7 +1309,7 @@ class RendererGL extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.setValue('strokeColor', null);
+        this.states.setValue("strokeColor", null);
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
         this.states.filterShader.setUniform("tex0", target);
@@ -1266,10 +1327,10 @@ class RendererGL extends Renderer {
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.setValue('strokeColor', null);
+    this.states.setValue("strokeColor", null);
     this.clear();
     this.push();
-    this.states.setValue('imageMode', constants.CORNER);
+    this.states.setValue("imageMode", constants.CORNER);
     this.blendMode(constants.BLEND);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
@@ -1284,7 +1345,7 @@ class RendererGL extends Renderer {
       -target.width / 2,
       -target.height / 2,
       target.width,
-      target.height,
+      target.height
     );
     this._drawingFilter = false;
     this.clearDepth();
@@ -1315,7 +1376,7 @@ class RendererGL extends Renderer {
       mode === constants.MULTIPLY ||
       mode === constants.REMOVE
     )
-      this.states.setValue('curBlendMode', mode);
+      this.states.setValue("curBlendMode", mode);
     else if (
       mode === constants.BURN ||
       mode === constants.OVERLAY ||
@@ -1324,7 +1385,7 @@ class RendererGL extends Renderer {
       mode === constants.DODGE
     ) {
       console.warn(
-        "BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.",
+        "BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode."
       );
     }
   }
@@ -1335,19 +1396,19 @@ class RendererGL extends Renderer {
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.states.curFillColor.slice();
-      this.states.setValue('curFillColor', [1, 1, 1, opacityFill / 255]);
+      this.states.setValue("curFillColor", [1, 1, 1, opacityFill / 255]);
       this._cachedStrokeStyle = this.states.curStrokeColor.slice();
-      this.states.setValue('curStrokeColor', [1, 1, 1, opacityStroke / 255]);
+      this.states.setValue("curStrokeColor", [1, 1, 1, opacityStroke / 255]);
     }
   }
 
   noErase() {
     if (this._isErasing) {
       // Restore colors
-      this.states.setValue('curFillColor', this._cachedFillStyle.slice());
-      this.states.setValue('curStrokeColor', this._cachedStrokeStyle.slice());
+      this.states.setValue("curFillColor", this._cachedFillStyle.slice());
+      this.states.setValue("curStrokeColor", this._cachedStrokeStyle.slice());
       // Restore blend mode
-      this.states.setValue('curBlendMode', this.preEraseBlend);
+      this.states.setValue("curBlendMode", this.preEraseBlend);
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
@@ -1367,17 +1428,17 @@ class RendererGL extends Renderer {
     const gl = this.GL;
     gl.clearStencil(0);
     gl.clear(gl.STENCIL_BUFFER_BIT);
-    gl.enable(gl.STENCIL_TEST);
+    this._internalEnable.call(gl, gl.STENCIL_TEST);
     this._stencilTestOn = true;
     gl.stencilFunc(
       gl.ALWAYS, // the test
       1, // reference value
-      0xff, // mask
+      0xff // mask
     );
     gl.stencilOp(
       gl.KEEP, // what to do if the stencil test fails
       gl.KEEP, // what to do if the depth test fails
-      gl.REPLACE, // what to do if both tests pass
+      gl.REPLACE // what to do if both tests pass
     );
     gl.disable(gl.DEPTH_TEST);
 
@@ -1394,12 +1455,12 @@ class RendererGL extends Renderer {
     gl.stencilOp(
       gl.KEEP, // what to do if the stencil test fails
       gl.KEEP, // what to do if the depth test fails
-      gl.KEEP, // what to do if both tests pass
+      gl.KEEP // what to do if both tests pass
     );
     gl.stencilFunc(
       this._clipInvert ? gl.EQUAL : gl.NOTEQUAL, // the test
       0, // reference value
-      0xff, // mask
+      0xff // mask
     );
     gl.enable(gl.DEPTH_TEST);
 
@@ -1429,7 +1490,7 @@ class RendererGL extends Renderer {
       y,
       gl.RGBA,
       gl.UNSIGNED_BYTE,
-      this._pInst.height * this._pInst.pixelDensity(),
+      this._pInst.height * this._pInst.pixelDensity()
     );
   }
 
@@ -1445,7 +1506,7 @@ class RendererGL extends Renderer {
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
       console.log(
         "loadPixels only works in WebGL when preserveDrawingBuffer " +
-          "is true.",
+          "is true."
       );
       return;
     }
@@ -1463,7 +1524,7 @@ class RendererGL extends Renderer {
       this.height * pd,
       gl.RGBA,
       gl.UNSIGNED_BYTE,
-      this.height * pd,
+      this.height * pd
     );
   }
 
@@ -1474,7 +1535,7 @@ class RendererGL extends Renderer {
     this.push();
     this.resetMatrix();
     this.clear();
-    this.states.setValue('imageMode', constants.CORNER);
+    this.states.setValue("imageMode", constants.CORNER);
     this.image(
       fbo,
       0,
@@ -1484,7 +1545,7 @@ class RendererGL extends Renderer {
       -fbo.width / 2,
       -fbo.height / 2,
       fbo.width,
-      fbo.height,
+      fbo.height
     );
     this.pop();
     this.GL.clearDepth(1);
@@ -1562,7 +1623,7 @@ class RendererGL extends Renderer {
     //resize pixels buffer
     if (typeof this.pixels !== "undefined") {
       this.pixels = new Uint8Array(
-        this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4,
+        this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
       );
     }
 
@@ -1627,7 +1688,7 @@ class RendererGL extends Renderer {
   }
 
   applyMatrix(a, b, c, d, e, f) {
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     if (arguments.length === 16) {
       // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
@@ -1668,7 +1729,7 @@ class RendererGL extends Renderer {
       y = x.y;
       x = x.x;
     }
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
@@ -1682,7 +1743,7 @@ class RendererGL extends Renderer {
    * @chainable
    */
   scale(x, y, z) {
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
@@ -1691,7 +1752,7 @@ class RendererGL extends Renderer {
     if (typeof axis === "undefined") {
       return this.rotateZ(rad);
     }
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
@@ -1717,6 +1778,12 @@ class RendererGL extends Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+      if (!this._userEnabledStencil) {
+        this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+      }
+    
+    // Reset saved state
+    // this._userEnabledStencil = this._savedStencilTestState;
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
@@ -1725,18 +1792,20 @@ class RendererGL extends Renderer {
     const drawTarget = this.drawTarget();
     if (drawTarget._isClipApplied !== this._stencilTestOn) {
       if (drawTarget._isClipApplied) {
-        this.GL.enable(this.GL.STENCIL_TEST);
+        this._internalEnable.call(this.GL, this.GL.STENCIL_TEST);
         this._stencilTestOn = true;
       } else {
-        this.GL.disable(this.GL.STENCIL_TEST);
+        if (!this._userEnabledStencil) {
+          this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+        }
         this._stencilTestOn = false;
       }
     }
   }
   resetMatrix() {
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
-    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
+    this.states.setValue("uViewMatrix", this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }
@@ -1816,7 +1885,7 @@ class RendererGL extends Renderer {
   baseMaterialShader() {
     if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
-        "The material shader does not support hooks without perPixelLighting. Try turning it back on.",
+        "The material shader does not support hooks without perPixelLighting. Try turning it back on."
       );
     }
     return this._getLightShader();
@@ -1854,7 +1923,7 @@ class RendererGL extends Renderer {
               "vec4 getFinalColor": "(vec4 color) { return color; }",
               "void afterFragment": "() {}",
             },
-          },
+          }
         );
       } else {
         this._defaultLightShader = new Shader(
@@ -1862,7 +1931,7 @@ class RendererGL extends Renderer {
           this._webGL2CompatibilityPrefix("vert", "highp") +
             defaultShaders.lightVert,
           this._webGL2CompatibilityPrefix("frag", "highp") +
-            defaultShaders.lightTextureFrag,
+            defaultShaders.lightTextureFrag
         );
       }
     }
@@ -1895,7 +1964,7 @@ class RendererGL extends Renderer {
             "vec4 getFinalColor": "(vec4 color) { return color; }",
             "void afterFragment": "() {}",
           },
-        },
+        }
       );
     }
 
@@ -1927,7 +1996,7 @@ class RendererGL extends Renderer {
             "vec4 getFinalColor": "(vec4 color) { return color; }",
             "void afterFragment": "() {}",
           },
-        },
+        }
       );
     }
 
@@ -1984,7 +2053,7 @@ class RendererGL extends Renderer {
             "bool shouldDiscard": "(bool outside) { return outside; }",
             "void afterFragment": "() {}",
           },
-        },
+        }
       );
     }
     return this._defaultPointShader;
@@ -2005,9 +2074,12 @@ class RendererGL extends Renderer {
         {
           vertex: {
             "void beforeVertex": "() {}",
-            "StrokeVertex getObjectInputs": "(StrokeVertex inputs) { return inputs; }",
-            "StrokeVertex getWorldInputs": "(StrokeVertex inputs) { return inputs; }",
-            "StrokeVertex getCameraInputs": "(StrokeVertex inputs) { return inputs; }",
+            "StrokeVertex getObjectInputs":
+              "(StrokeVertex inputs) { return inputs; }",
+            "StrokeVertex getWorldInputs":
+              "(StrokeVertex inputs) { return inputs; }",
+            "StrokeVertex getCameraInputs":
+              "(StrokeVertex inputs) { return inputs; }",
             "void afterVertex": "() {}",
           },
           fragment: {
@@ -2017,7 +2089,7 @@ class RendererGL extends Renderer {
             "bool shouldDiscard": "(bool outside) { return outside; }",
             "void afterFragment": "() {}",
           },
-        },
+        }
       );
     }
 
@@ -2031,13 +2103,34 @@ class RendererGL extends Renderer {
       }
       this._defaultFontShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix('vert', 'highp') +
-        defaultShaders.fontVert,
-        this._webGL2CompatibilityPrefix('frag', 'highp') +
-        defaultShaders.fontFrag
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          defaultShaders.fontVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          defaultShaders.fontFrag
       );
     }
     return this._defaultFontShader;
+  }
+
+  baseFilterShader() {
+    if (!this._baseFilterShader) {
+      this._baseFilterShader = new Shader(
+        this,
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          defaultShaders.filterBaseVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          defaultShaders.filterBaseFrag,
+        {
+            vertex: {},
+            fragment: {
+              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+                return getTexture(canvasContent, inputs.texCoord);
+              }`,
+            },
+          }
+      );
+    }
+    return this._baseFilterShader;
   }
 
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
@@ -2115,13 +2208,13 @@ class RendererGL extends Renderer {
     if (!this.diffusedShader) {
       this.diffusedShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
-        defaultShaders.imageLightDiffusedFrag,
+        defaultShaders.imageLightDiffusedFrag
       );
     }
     newFramebuffer.draw(() => {
       this.shader(this.diffusedShader);
       this.diffusedShader.setUniform("environmentMap", input);
-      this.states.setValue('strokeColor', null);
+      this.states.setValue("strokeColor", null);
       this.noLights();
       this.plane(width, height);
     });
@@ -2157,7 +2250,7 @@ class RendererGL extends Renderer {
     if (!this.specularShader) {
       this.specularShader = this._pInst.createShader(
         defaultShaders.imageLightVert,
-        defaultShaders.imageLightSpecularFrag,
+        defaultShaders.imageLightSpecularFrag
       );
     }
     // currently only 8 levels
@@ -2174,7 +2267,7 @@ class RendererGL extends Renderer {
         this.clear();
         this.specularShader.setUniform("environmentMap", input);
         this.specularShader.setUniform("roughness", roughness);
-        this.states.setValue('strokeColor', null);
+        this.states.setValue("strokeColor", null);
         this.noLights();
         this.plane(w, w);
       });
@@ -2204,11 +2297,11 @@ class RendererGL extends Renderer {
     const modelMatrix = this.states.uModelMatrix;
     const viewMatrix = this.states.uViewMatrix;
     const projectionMatrix = this.states.uPMatrix;
-    const modelViewMatrix = this.calculateCombinedMatrix();
+    const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
 
     shader.setUniform(
       "uPerspective",
-      this.states.curCamera.useLinePerspective ? 1 : 0,
+      this.states.curCamera.useLinePerspective ? 1 : 0
     );
     shader.setUniform("uViewMatrix", viewMatrix.mat4);
     shader.setUniform("uProjectionMatrix", projectionMatrix.mat4);
@@ -2219,7 +2312,7 @@ class RendererGL extends Renderer {
       modelViewProjectionMatrix.mult(projectionMatrix);
       shader.setUniform(
         "uModelViewProjectionMatrix",
-        modelViewProjectionMatrix.mat4,
+        modelViewProjectionMatrix.mat4
       );
     }
     if (shader.uniforms.uNormalMatrix) {
@@ -2250,7 +2343,7 @@ class RendererGL extends Renderer {
     strokeShader.setUniform("uStrokeCap", STROKE_CAP_ENUM[this.curStrokeCap]);
     strokeShader.setUniform(
       "uStrokeJoin",
-      STROKE_JOIN_ENUM[this.curStrokeJoin],
+      STROKE_JOIN_ENUM[this.curStrokeJoin]
     );
   }
 
@@ -2261,7 +2354,7 @@ class RendererGL extends Renderer {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
         (mixedSpecularColor, index) =>
           this.states.curFillColor[index] * this.states._useMetalness +
-          mixedSpecularColor * (1 - this.states._useMetalness),
+          mixedSpecularColor * (1 - this.states._useMetalness)
       );
     }
 
@@ -2291,15 +2384,15 @@ class RendererGL extends Renderer {
     fillShader.setUniform("uPointLightCount", pointLightCount);
     fillShader.setUniform(
       "uPointLightLocation",
-      this.states.pointLightPositions,
+      this.states.pointLightPositions
     );
     fillShader.setUniform(
       "uPointLightDiffuseColors",
-      this.states.pointLightDiffuseColors,
+      this.states.pointLightDiffuseColors
     );
     fillShader.setUniform(
       "uPointLightSpecularColors",
-      this.states.pointLightSpecularColors,
+      this.states.pointLightSpecularColors
     );
 
     const directionalLightCount =
@@ -2307,15 +2400,15 @@ class RendererGL extends Renderer {
     fillShader.setUniform("uDirectionalLightCount", directionalLightCount);
     fillShader.setUniform(
       "uLightingDirection",
-      this.states.directionalLightDirections,
+      this.states.directionalLightDirections
     );
     fillShader.setUniform(
       "uDirectionalDiffuseColors",
-      this.states.directionalLightDiffuseColors,
+      this.states.directionalLightDiffuseColors
     );
     fillShader.setUniform(
       "uDirectionalSpecularColors",
-      this.states.directionalLightSpecularColors,
+      this.states.directionalLightSpecularColors
     );
 
     // TODO: sum these here...
@@ -2337,26 +2430,26 @@ class RendererGL extends Renderer {
     fillShader.setUniform("uSpotLightConc", this.states.spotLightConc);
     fillShader.setUniform(
       "uSpotLightDiffuseColors",
-      this.states.spotLightDiffuseColors,
+      this.states.spotLightDiffuseColors
     );
     fillShader.setUniform(
       "uSpotLightSpecularColors",
-      this.states.spotLightSpecularColors,
+      this.states.spotLightSpecularColors
     );
     fillShader.setUniform("uSpotLightLocation", this.states.spotLightPositions);
     fillShader.setUniform(
       "uSpotLightDirection",
-      this.states.spotLightDirections,
+      this.states.spotLightDirections
     );
 
     fillShader.setUniform(
       "uConstantAttenuation",
-      this.states.constantAttenuation,
+      this.states.constantAttenuation
     );
     fillShader.setUniform("uLinearAttenuation", this.states.linearAttenuation);
     fillShader.setUniform(
       "uQuadraticAttenuation",
-      this.states.quadraticAttenuation,
+      this.states.quadraticAttenuation
     );
   }
 
@@ -2383,7 +2476,7 @@ class RendererGL extends Renderer {
     // should be they be same var?
     pointShader.setUniform(
       "uPointSize",
-      this.states.strokeWeight * this._pixelDensity,
+      this.states.strokeWeight * this._pixelDensity
     );
   }
 
@@ -2598,7 +2691,7 @@ function rendererGL(p5, fn) {
     if (typeof this._glAttributes === "undefined") {
       console.log(
         "You are trying to use setAttributes on a p5.Graphics object " +
-          "that does not use a WEBGL renderer.",
+          "that does not use a WEBGL renderer."
       );
       return;
     }
@@ -2629,7 +2722,7 @@ function rendererGL(p5, fn) {
       if (this._renderer.geometryBufferCache.numCached() > 0) {
         p5._friendlyError(
           "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()",
+            "before calling the other drawing methods in setup()"
         );
         return;
       }
@@ -2648,7 +2741,7 @@ function rendererGL(p5, fn) {
   fn._assert3d = function (name) {
     if (!this._renderer.isP3D)
       throw new Error(
-        `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`,
+        `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
       );
   };
 
@@ -2681,7 +2774,7 @@ export function readPixelsWebGL(
   height,
   format,
   type,
-  flipY,
+  flipY
 ) {
   // Record the currently bound framebuffer so we can go back to it after, and
   // bind the framebuffer we want to read from
@@ -2704,7 +2797,7 @@ export function readPixelsWebGL(
     height,
     format,
     type,
-    pixels,
+    pixels
   );
 
   // Re-bind whatever was previously bound

@@ -904,12 +904,10 @@ function light(p5, fn){
    *
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape.');
@@ -962,12 +960,10 @@ function light(p5, fn){
    *
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100 ,100 ,WEBGL);
    *
    *   describe('A sphere floating above a landscape. The surface of the sphere reflects the landscape. The full landscape is viewable in 3D as the user drags the mouse.');

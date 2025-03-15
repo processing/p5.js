@@ -810,11 +810,14 @@ class Shape {
   vertexProperty(name, data) {
     this.userVertexProperties = this.userVertexProperties || {};
     const key = this.vertexPropertyKey(name);
+    
+    const dataArray = Array.isArray(data) ? data : [data];
+    
     if (!this.userVertexProperties[key]) {
-      this.userVertexProperties[key] = data.length ? data.length : 1;
+      this.userVertexProperties[key] = dataArray.length;
     }
-    this.#vertexProperties[key] = data;
-  }
+    this.#vertexProperties[key] = dataArray;
+}
   vertexPropertyName(key) {
     return key.replace(/Src$/, '');
   }
@@ -1752,12 +1755,10 @@ function customShapes(p5, fn) {
    * <code>
    * let img;
    *
-   * // Load an image to apply as a texture.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image to apply as a texture.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A photograph of a ceiling rotates slowly against a gray background.');

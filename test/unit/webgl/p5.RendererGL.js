@@ -1,3 +1,4 @@
+import { suite } from 'vitest';
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
 const toArray = (typedArray) => Array.from(typedArray);
@@ -22,6 +23,24 @@ suite('p5.RendererGL', function() {
       assert.instanceOf(myp5._renderer, p5.RendererGL);
     });
   });
+
+  suite('noSmooth() canvas position preservation', function() {
+    test('should maintain the canvas position after calling noSmooth()', function() {
+      myp5.createCanvas(300, 300, myp5.WEBGL);
+      let cnv = myp5.canvas;
+      cnv.style.position = 'absolute';
+      cnv.style.top = '150px';
+      cnv.style.left = '50px';
+      const originalTop = cnv.style.top;
+      const originalLeft = cnv.style.left;
+
+      // Calling noSmooth()
+      myp5.noSmooth();
+      assert.equal(cnv.style.top, originalTop);
+      assert.equal(cnv.style.left, originalLeft);
+    });
+  });
+
 
   suite('webglVersion', function() {
     test('should return WEBGL2 by default', function() {
@@ -2684,5 +2703,187 @@ suite('p5.RendererGL', function() {
         expect(logs.join('\n')).to.match(/One of the geometries has a custom vertex property 'aCustom' with fewer values than vertices./);
       }
     );
-  })
+  });
+
+  suite('Stencil Test Tracking', function() {
+    test('Stencil test is disabled by default',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+        const isEnabled = gl.isEnabled(gl.STENCIL_TEST);
+        
+        assert.equal(isEnabled, false);
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+      }
+    );
+    
+    test('Tracks when user manually enables stencil test',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+        
+        gl.enable(gl.STENCIL_TEST);
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+      }
+    );
+    
+    test('Tracks when user manually disables stencil test',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.enable(gl.STENCIL_TEST);
+        gl.disable(gl.STENCIL_TEST);
+        
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
+      }
+    );
+    
+    test('Maintains stencil test state across draw cycles when user enabled',
+      function() {
+        let drawCalled = false;
+
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const originalDraw = myp5.draw;
+        
+        myp5.draw = function() {
+          drawCalled = true;
+          if (originalDraw) originalDraw.call(myp5);
+        };
+        
+        const gl = myp5._renderer.GL;
+        gl.enable(gl.STENCIL_TEST);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.redraw();
+
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+
+        myp5.draw = originalDraw;
+      }
+    );
+    
+    test('Internal clip operations preserve user stencil test setting',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.enable(gl.STENCIL_TEST);
+
+        myp5.push();
+        myp5.clip(() => {
+          myp5.rect(0, 0, 10, 10);
+        });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.pop();
+
+        assert.equal(myp5._renderer._userEnabledStencil, true);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
+      }
+    );
+    
+    test('Internal clip operations do not enable stencil test for future draw cycles',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const gl = myp5._renderer.GL;
+
+        gl.disable(gl.STENCIL_TEST);
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+
+        myp5.push();
+        myp5.clip(() => {
+          myp5.rect(0, 0, 10, 10);
+        });
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
+        myp5.pop();
+
+        myp5.redraw();
+
+        assert.equal(myp5._renderer._userEnabledStencil, false);
+        assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
+      }
+    );
+  });
+
+  suite('Matrix getters', function() {
+    test('uModelMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkModelMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uModelMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              5, 0, 0, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkModelMatrix();
+    });
+
+    test('uViewMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkViewMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uViewMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, -500, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkViewMatrix();
+    });
+
+    test('uMVMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkMVMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uMVMatrix.mat4],
+            [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              5, 0, -500, 1
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.translate(5, 0);
+      myp5.camera(0, 0, 500, 0, 0, 0);
+      myp5.checkMVMatrix();
+    });
+
+    test('uPMatrix', function() {
+      p5.registerAddon(function (p5, fn) {
+        fn.checkPMatrix = function() {
+          assert.deepEqual(
+            [...this._renderer.uPMatrix.mat4],
+            [
+              32, 0, 0, 0,
+              0, -32, 0, 0,
+              0, 0, -1.0202020406723022, -1,
+              0, 0, -161.6161651611328, 0
+            ]
+          );
+        }
+      });
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.checkPMatrix();
+    });
+  });
 });

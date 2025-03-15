@@ -197,11 +197,11 @@
     "colorMode": {
       "overloads": [
         [
-          "RGB|HSB|HSL",
+          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
           "Number?"
         ],
         [
-          "RGB|HSB|HSL",
+          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
           "Number",
           "Number",
           "Number",
@@ -367,7 +367,18 @@
     "worldToScreen": {
       "overloads": [
         [
-          "p5.Vector"
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "screenToWorld": {
+      "overloads": [
+        [
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
         ]
       ]
     },
@@ -401,7 +412,7 @@
         [
           "Number?",
           "Number?",
-          "P2D|WEBGL?",
+          "P2D|WEBGL|P2DHDR?",
           "HTMLCanvasElement?"
         ],
         [
@@ -1968,24 +1979,6 @@
         ]
       ]
     },
-    "quadraticVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
     "normal": {
       "overloads": [
         [
@@ -2322,7 +2315,7 @@
     "strokeMode": {
       "overloads": [
         [
-          "string"
+          "String"
         ]
       ]
     },
@@ -2835,6 +2828,11 @@
       ]
     },
     "baseMaterialShader": {
+      "overloads": [
+        []
+      ]
+    },
+    "baseFilterShader": {
       "overloads": [
         []
       ]
@@ -3355,27 +3353,6 @@
         ]
       ]
     },
-    "touchStarted": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "touchMoved": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
-    "touchEnded": {
-      "overloads": [
-        [
-          "Function|Boolean"
-        ]
-      ]
-    },
     "dragOver": {
       "overloads": [
         [
@@ -3791,36 +3768,36 @@
     "textBounds": {
       "overloads": [
         [
-          "string",
-          "number",
-          "number",
-          "number",
-          "number"
+          "String",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
         ]
       ]
     },
     "fontBounds": {
       "overloads": [
         [
-          "string",
-          "number",
-          "number",
-          "number",
-          "number"
+          "String",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
         ]
       ]
     },
     "textWidth": {
       "overloads": [
         [
-          "string"
+          "String"
         ]
       ]
     },
     "fontWidth": {
       "overloads": [
         [
-          "string"
+          "String"
         ]
       ]
     },
@@ -3852,8 +3829,8 @@
       "overloads": [
         [
           "p5.Font|string",
-          "number",
-          "object"
+          "Number",
+          "Object"
         ]
       ]
     },
@@ -4270,15 +4247,15 @@
     "getValue": {
       "overloads": [
         [
-          "number"
+          "Number"
         ]
       ]
     },
     "setValue": {
       "overloads": [
         [
-          "number",
-          "number"
+          "Number",
+          "Number"
         ]
       ]
     },

@@ -7,6 +7,22 @@ suite('Validate Params', function () {
     Color: function () {
       return 'mock p5.Color';
     },
+    Image: function() {
+      return 'mock p5.Image';
+    },
+    Element: function() {
+      return 'mock p5.Element';
+    },
+    Texture: function() {
+      return 'mock p5.Texture';
+    },
+    Framebuffer: function() {
+      return 'mock p5.Framebuffer';
+    },
+    FramebufferTexture: function() {
+      return 'mock p5.FramebufferTexture';
+    },
+    _error: () => {},
   };
   const mockP5Prototype = {};
 
@@ -99,6 +115,17 @@ suite('Validate Params', function () {
         const result = mockP5Prototype.validate('p5.arc', input);
         assert.equal(result.error, msg);
       });
+    });
+  });
+
+  suite('validateParams: promise where no promise is expected', function () {
+    test('image(): promise for first argument', function () {
+      const result = mockP5Prototype.validate('p5.image', [Promise.resolve(), 0, 0]);
+      console.log(result);
+      assert.equal(
+        result.error,
+        '🌸 p5.js says: Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture at the first parameter in p5.image().'
+      );
     });
   });
 

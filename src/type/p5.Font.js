@@ -56,6 +56,15 @@ function font(p5, fn) {
       this.face = fontFace;
     }
 
+    /**
+     * Checks whether a font has glyph point data and
+     * can thus be used for textToPoints(), WEBGL mode, etc.
+     */
+    static hasGlyphData(textFont) {
+      let { font } = textFont;
+      return typeof font === 'object' && typeof font.data !== 'undefined';
+    }
+
     fontBounds(str, x, y, width, height, options) {
       ({ width, height, options } = this._parseArgs(width, height, options));
       let renderer = options?.graphics?._renderer || this._pInst._renderer;
@@ -583,16 +592,13 @@ function font(p5, fn) {
 
       // TODO: generate descriptors from font in the future
 
-      if (fonts.length !== 1 || fonts[0].cmap === undefined) {
+      if (fonts.length === 0 || fonts[0].cmap === undefined) {
         throw Error('parsing font data');
       }
 
       // make sure we have a valid name
-      if (!name) {
-        name = extractFontName(fonts[0], path);
-        if (name.includes(' ')) name = name.replace(/ /g, '_');
-      }
-
+      name = name || extractFontName(fonts[0], path);
+        
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fonts[0]);
 
@@ -609,17 +615,17 @@ function font(p5, fn) {
         pfont = await create(this, ident, path, descriptors);
       }
       catch (err) {
-        if (error) error(err);
+        if (error) return error(err);
         throw err;
       }
     }
-    if (success) success(pfont);
+    if (success) return success(pfont);
 
     return pfont;
   }
 
   async function create(pInst, name, path, descriptors, rawFont) {
-
+    
     let face = createFontFace(name, path, descriptors, rawFont);
 
     // load if we need to
@@ -627,8 +633,8 @@ function font(p5, fn) {
 
     // add it to the document
     document.fonts.add(face);
-
-    // return a p5.Font instance
+    
+    // return a new p5.Font
     return new p5.Font(pInst, face, name, path, rawFont);
   }
 
@@ -641,6 +647,9 @@ function font(p5, fn) {
   }
 
   function createFontFace(name, path, descriptors, rawFont) {
+
+    if (name.includes(' ')) name = "'" + name + "'"; // NOTE: must be single-quotes
+
     let fontArg = rawFont?._data;
     if (!fontArg) {
       if (!validFontTypesRe.test(path)) {
@@ -661,26 +670,37 @@ function font(p5, fn) {
   }
 
   function extractFontName(font, path) {
-    let meta = font?.name;
+    let result, meta = font?.name;
 
     // use the metadata if we have it
-    if (meta) {
+    if (meta) {      
       if (meta.fullName) {
         return meta.fullName;
       }
       if (meta.familyName) {
-        return meta.familyName;
+        result = meta.familyName;
       }
     }
 
-    // if not, extract the name from the path
-    let matches = extractFontNameRe.exec(path);
-    if (matches && matches.length >= 3) {
-      return matches[1];
+    if (!result) {
+
+      // if not, try to extract the name from the path
+      let matches = extractFontNameRe.exec(path);
+      if (matches && matches.length >= 3) {
+        result = matches[1];
+      }
+      else {
+        // give up and return the full path
+        result = path;
+      }
+    }
+    
+    // replace spaces with underscores
+    if (result.includes(' ')) {
+      result = result.replace(/ /g, '_');
     }
 
-    // give up and return the full path
-    return path;
+    return result;
   };
 
   function pathToPoints(cmds, options, font) {

@@ -838,36 +838,6 @@ export const BEVEL = 'bevel';
  */
 export const MITER = 'miter';
 
-// COLOR
-/**
- * @typedef {'rgb'} RGB
- * @property {RGB} RGB
- * @final
- */
-// export const RGB = 'rgb';
-/**
- * HSB (hue, saturation, brightness) is a type of color model.
- * You can learn more about it at
- * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
- *
- * @typedef {'hsb'} HSB
- * @property {HSB} HSB
- * @final
- */
-// export const HSB = 'hsb';
-/**
- * @typedef {'hsl'} HSL
- * @property {HSL} HSL
- * @final
- */
-// export const HSL = 'hsl';
-/**
- * @typedef {'rgba'} RGBA
- * @property {RGBA} RGBA
- * @final
- */
-// export const RGBA = 'rgba';
-
 // DOM EXTENSION
 /**
  * AUTO allows us to automatically set the width or height of an element (but not both),

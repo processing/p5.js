@@ -7,6 +7,7 @@ import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
+import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 
@@ -66,9 +67,6 @@ class Renderer2D extends Renderer {
     this.drawingContext = this.canvas.getContext('2d', attributes);
     if(attributes.colorSpace === 'display-p3'){
       this.states.colorMode = RGBHDR;
-    }
-    if (isMainCanvas) {
-      this._pInst.drawingContext = this.drawingContext;
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
@@ -266,6 +264,7 @@ class Renderer2D extends Renderer {
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
+      this.clipPath.closePath();      
     } else {
       if (this.states.fillColor) {
         this.drawingContext.fill(visitor.path);
@@ -999,6 +998,13 @@ class Renderer2D extends Renderer {
     this.drawingContext.transform(a, b, c, d, e, f);
   }
 
+  getWorldToScreenMatrix() {
+    let domMatrix = new DOMMatrix()
+      .scale(1 / this._pixelDensity)
+      .multiply(this.drawingContext.getTransform());
+    return new Matrix(domMatrix.toFloat32Array());
+  }
+
   resetMatrix() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(
@@ -1029,106 +1035,7 @@ class Renderer2D extends Renderer {
 
   //////////////////////////////////////////////
   // TYPOGRAPHY (see src/type/textCore.js)
-  //
   //////////////////////////////////////////////
-
-
-  /*
-  _renderText(p, line, x, y, maxY, minY) {
-    if (y < minY || y >= maxY) {
-      return; // don't render lines beyond our minY/maxY bounds (see #5785)
-    }
-
-    p.push(); // fix to #803
-
-    if (!this._isOpenType()) {
-      // a system/browser font
-
-      // no stroke unless specified by user
-      if (this.states.strokeColor && this.states.strokeSet) {
-        this.drawingContext.strokeText(line, x, y);
-      }
-
-      if (!this._clipping && this.states.fillColor) {
-        // if fill hasn't been set by user, use default text fill
-        if (!this.states.fillSet) {
-          this._setFill(constants._DEFAULT_TEXT_FILL);
-        }
-
-        this.drawingContext.fillText(line, x, y);
-      }
-    } else {
-      // an opentype font, let it handle the rendering
-
-      this.states.textFont._renderPath(line, x, y, { renderer: this });
-    }
-
-    p.pop();
-    return p;
-  }
-
-  textWidth(s) {
-    if (this._isOpenType()) {
-      return this.states.textFont._textWidth(s, this.states.textSize);
-    }
-
-    return this.drawingContext.measureText(s).width;
-  }
-
-  text(str, x, y, maxWidth, maxHeight) {
-    let baselineHacked;
-
-    // baselineHacked: (HACK)
-    // A temporary fix to conform to Processing's implementation
-    // of BASELINE vertical alignment in a bounding box
-
-    if (typeof maxWidth !== 'undefined') {
-      if (this.drawingContext.textBaseline === constants.BASELINE) {
-        baselineHacked = true;
-        this.drawingContext.textBaseline = constants.TOP;
-      }
-    }
-
-    const p = super.text(...arguments);
-
-    if (baselineHacked) {
-      this.drawingContext.textBaseline = constants.BASELINE;
-    }
-
-    return p;
-  }
-
-  _applyTextProperties() {
-    let font;
-    const p = this._pInst;
-
-    this.states.setValue('textAscent', null);
-    this.states.setValue('textDescent', null);
-
-    font = this.states.textFont;
-
-    if (this._isOpenType()) {
-      font = this.states.textFont.font.familyName;
-      this.states.setValue('textStyle', this._textFont.font.styleName);
-    }
-
-    let fontNameString = font || 'sans-serif';
-    if (/\s/.exec(fontNameString)) {
-      // If the name includes spaces, surround in quotes
-      fontNameString = `"${fontNameString}"`;
-    }
-    this.drawingContext.font = `${this.states.textStyle || 'normal'} ${this.states.textSize ||
-      12}px ${fontNameString}`;
-
-    this.drawingContext.textAlign = this.states.textAlign;
-    if (this.states.textBaseline === constants.CENTER) {
-      this.drawingContext.textBaseline = constants._CTX_MIDDLE;
-    } else {
-      this.drawingContext.textBaseline = this.states.textBaseline;
-    }
-
-    return p;
-  }*/
 
   //////////////////////////////////////////////
   // STRUCTURE

@@ -130,8 +130,8 @@ function material(p5, fn){
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = await request(vertFilename, 'text');
-      loadedShader._fragSrc = await request(fragFilename, 'text');
+      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
+      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
         return successCallback(loadedShader);
@@ -1103,11 +1103,9 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    *
@@ -1170,11 +1168,9 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    *
@@ -1441,11 +1437,9 @@ function material(p5, fn){
    * let myShader;
    * let environment;
    *
-   * function preload() {
-   *   environment = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify({
    *     'Inputs getPixelInputs': `(Inputs inputs) {
@@ -1524,6 +1518,82 @@ function material(p5, fn){
   fn.baseMaterialShader = function() {
     this._assert3d('baseMaterialShader');
     return this._renderer.baseMaterialShader();
+  };
+
+  /**
+   * Get the base shader for filters.
+   *
+   * You can then call <a href="#/p5.Shader/modify">`baseFilterShader().modify()`</a>
+   * and change the following hook:
+   *
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `vec4 getColor`
+   *
+   * </td><td>
+   *
+   * Output the final color for the current pixel. It takes in two parameters:
+   * `FilterInputs inputs`, and `in sampler2D canvasContent`, and must return a color
+   * as a `vec4`.
+   *
+   * `FilterInputs inputs` is a scruct with the following properties:
+   * - `vec2 texCoord`, the position on the canvas, with coordinates between 0 and 1. Calling
+   *   `getTexture(canvasContent, texCoord)` returns the original color of the current pixel.
+   * - `vec2 canvasSize`, the width and height of the sketch.
+   * - `vec2 texelSize`, the size of one real pixel relative to the size of the whole canvas.
+   *   This is equivalent to `1 / (canvasSize * pixelDensity)`.
+   *
+   * `in sampler2D canvasContent` is a texture with the contents of the sketch, pre-filter. Call
+   * `getTexture(canvasContent, someCoordinate)` to retrieve the color of the sketch at that coordinate,
+   * with coordinate values between 0 and 1.
+   *
+   * </td></tr>
+   * </table>
+   *
+   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+   * are using WebGL 1, write your hooks in GLSL ES 100 instead.
+   *
+   * @method baseFilterShader
+   * @beta
+   * @returns {p5.Shader} The filter shader
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let img;
+   * let myShader;
+   *
+   * async function setup() {
+   *   img = await loadImage('assets/bricks.jpg');
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = baseFilterShader().modify({
+   *     uniforms: {
+   *       'float time': () => millis()
+   *     },
+   *     'vec4 getColor': `(
+   *       FilterInputs inputs,
+   *       in sampler2D canvasContent
+   *     ) {
+   *       inputs.texCoord.y +=
+   *         0.01 * sin(time * 0.001 + inputs.position.x * 5.0);
+   *       return getTexture(canvasContent, inputs.texCoord);
+   *     }`
+   *   });
+   * }
+   *
+   * function draw() {
+   *   image(img, -50, -50);
+   *   filter(myShader);
+   *   describe('an image of bricks, distorting over time');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.baseFilterShader = function() {
+    return (this._renderer.filterRenderer || this._renderer)
+      .baseFilterShader();
   };
 
   /**
@@ -2190,12 +2260,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A spinning cube with an image of a ceiling on each face.');
@@ -2256,12 +2324,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2292,12 +2358,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2450,12 +2514,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2483,12 +2545,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2632,11 +2692,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2676,11 +2734,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('Four identical images of a landscape arranged in a grid.');
@@ -2717,11 +2773,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2760,11 +2814,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -3575,11 +3627,9 @@ function material(p5, fn){
    *
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100 ,100 ,WEBGL);
    *
    *   describe(
