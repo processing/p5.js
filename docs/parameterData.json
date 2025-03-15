@@ -130,7 +130,7 @@
     "paletteLerp": {
       "overloads": [
         [
-          null,
+          "[p5.Color|String|Number|Number[], Number][]",
           "Number"
         ]
       ]
@@ -844,7 +844,7 @@
     "keyIsDown": {
       "overloads": [
         [
-          "Number"
+          "Number|String"
         ]
       ]
     },
@@ -1324,6 +1324,9 @@
           "Number",
           "Number",
           "Number"
+        ],
+        [
+          "p5.Vector"
         ]
       ]
     },
@@ -2748,6 +2751,33 @@
         ]
       ]
     },
+    "createModel": {
+      "overloads": [
+        [
+          "String",
+          "String?",
+          "Boolean",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String",
+          "String?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String",
+          "String?",
+          "Object?",
+          "function(p5.Geometry)?",
+          "function(Event)?",
+          "boolean?",
+          "boolean?",
+          "boolean?"
+        ]
+      ]
+    },
     "loadShader": {
       "overloads": [
         [
@@ -2946,7 +2976,7 @@
     "linePerspective": {
       "overloads": [
         [
-          "Boolean"
+          "boolean"
         ],
         []
       ]
@@ -3358,6 +3388,46 @@
         [
           "Function|Boolean"
         ]
+      ]
+    }
+  },
+  "p5.Geometry": {
+    "flipV": {
+      "overloads": [
+        []
+      ]
+    },
+    "calculateBoundingBox": {
+      "overloads": [
+        []
+      ]
+    },
+    "clearColors": {
+      "overloads": [
+        []
+      ]
+    },
+    "flipU": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeNormals": {
+      "overloads": [
+        [
+          "FLAT|SMOOTH?",
+          "Object?"
+        ]
+      ]
+    },
+    "normalize": {
+      "overloads": [
+        []
       ]
     }
   },
@@ -4268,11 +4338,6 @@
     "sub": {
       "overloads": [
         [
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
           "p5.Vector|Number[]"
         ],
         [
@@ -4284,9 +4349,6 @@
     },
     "mult": {
       "overloads": [
-        [
-          "Number"
-        ],
         [
           "Number",
           "Number",
@@ -4384,18 +4446,6 @@
       ]
     },
     "cross": {
-      "overloads": [
-        [
-          "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
-        ]
-      ]
-    },
-    "dist": {
       "overloads": [
         [
           "p5.Vector"
@@ -4582,6 +4632,15 @@
       "overloads": [
         []
       ]
+    },
+    "dist": {
+      "overloads": [
+        [],
+        [
+          "p5.Vector",
+          "p5.Vector"
+        ]
+      ]
     }
   },
   "p5.Camera": {
@@ -4755,46 +4814,6 @@
           "Number",
           "Number"
         ]
-      ]
-    }
-  },
-  "p5.Geometry": {
-    "calculateBoundingBox": {
-      "overloads": [
-        []
-      ]
-    },
-    "clearColors": {
-      "overloads": [
-        []
-      ]
-    },
-    "flipU": {
-      "overloads": [
-        []
-      ]
-    },
-    "flipV": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeNormals": {
-      "overloads": [
-        [
-          "FLAT|SMOOTH?",
-          "Object?"
-        ]
-      ]
-    },
-    "normalize": {
-      "overloads": [
-        []
       ]
     }
   },

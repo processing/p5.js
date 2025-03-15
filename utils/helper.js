@@ -20,7 +20,7 @@ export function normalizeClassName(className) {
 export function generateTypeDefinitions(data) {
 
   const organized = organizeData(data);
-  
+
   return {
     p5Types: generateP5TypeDefinitions(organized),
     globalTypes: generateGlobalTypeDefinitions(organized),
@@ -29,23 +29,23 @@ export function generateTypeDefinitions(data) {
 }
 function generateP5TypeDefinitions(organizedData) {
     let output = '// This file is auto-generated from JSDoc documentation\n\n';
-    
+
     output += `declare class p5 {\n`;
     output += `  constructor(sketch?: (p: p5) => void, node?: HTMLElement, sync?: boolean);\n\n`;
-    const instanceItems = organizedData.classitems.filter(item => 
+    const instanceItems = organizedData.classitems.filter(item =>
       item.class === 'p5' && !item.isStatic
     );
     instanceItems.forEach(item => {
       output += generateMethodDeclarations(item, false);
     });
-  
-    const staticItems = organizedData.classitems.filter(item => 
+
+    const staticItems = organizedData.classitems.filter(item =>
       item.class === 'p5' && item.isStatic
     );
     staticItems.forEach(item => {
       output += generateMethodDeclarations(item, true);
     });
-  
+
     Object.values(organizedData.consts).forEach(constData => {
       if (constData.class === 'p5') {
         if (constData.description) {
@@ -58,11 +58,11 @@ function generateP5TypeDefinitions(organizedData) {
         }
       }
     });
-  
+
     output += `}\n\n`;
-  
+
     output += `declare namespace p5 {\n`;
-  
+
     Object.values(organizedData.consts).forEach(constData => {
       if (constData.kind === 'typedef') {
         if (constData.description) {
@@ -71,17 +71,17 @@ function generateP5TypeDefinitions(organizedData) {
         output += `  type ${constData.name} = ${constData.type};\n\n`;
       }
     });
-  
+
     Object.values(organizedData.classes).forEach(classDoc => {
       if (classDoc.name !== 'p5') {
         output += generateClassDeclaration(classDoc, organizedData);
       }
     });
     output += `}\n\n`;
-  
+
     output += `export default p5;\n`;
     output += `export as namespace p5;\n`;
-  
+
     return output;
   }
 
@@ -89,8 +89,8 @@ function generateGlobalTypeDefinitions(organizedData) {
     let output = '// This file is auto-generated from JSDoc documentation\n\n';
     output += `import p5 from 'p5';\n\n`;
     output += `declare global {\n`;
-  
-    const instanceItems = organizedData.classitems.filter(item => 
+
+    const instanceItems = organizedData.classitems.filter(item =>
       item.class === 'p5' && !item.isStatic
     );
     instanceItems.forEach(item => {
@@ -98,26 +98,26 @@ function generateGlobalTypeDefinitions(organizedData) {
         if (item.description) {
           output += `  /**\n${formatJSDocComment(item.description, 2)}\n   */\n`;
         }
-        
+
         if (item.overloads?.length > 0) {
           item.overloads.forEach(overload => {
             const params = (overload.params || [])
               .map(param => generateParamDeclaration(param))
               .join(', ');
-            const returnType = overload.returns?.[0]?.type 
+            const returnType = overload.returns?.[0]?.type
               ? generateTypeFromTag(overload.returns[0])
               : 'void';
             output += `  function ${item.name}(${params}): ${returnType};\n`;
           });
         }
-        
+
         const params = (item.params || [])
           .map(param => generateParamDeclaration(param))
           .join(', ');
         output += `  function ${item.name}(${params}): ${item.returnType};\n\n`;
       }
     });
-  
+
     Object.values(organizedData.consts).forEach(constData => {
       if (constData.kind === 'constant') {
         if (constData.description) {
@@ -126,15 +126,15 @@ function generateGlobalTypeDefinitions(organizedData) {
         output += `  const ${constData.name.toUpperCase()}: p5.${constData.name.toUpperCase()};\n\n`;
       }
     });
-  
+
     output += `  interface Window {\n`;
-    
+
     instanceItems.forEach(item => {
       if (item.kind === 'function') {
         output += `    ${item.name}: typeof ${item.name};\n`;
       }
     });
-  
+
     Object.values(organizedData.consts).forEach(constData => {
       if (constData.kind === 'constant') {
         if (constData.description) {
@@ -143,23 +143,23 @@ function generateGlobalTypeDefinitions(organizedData) {
         output += `    readonly ${constData.name.toUpperCase()}: typeof ${constData.name.toUpperCase()};\n`;
       }
     });
-  
+
     output += `  }\n`;
     output += `}\n\n`;
     output += `export {};\n`;
-  
+
     return output;
   }
 
 function generateFileTypeDefinitions(organizedData, data) {
     const fileDefinitions = new Map();
     const fileGroups = groupByFile(getAllEntries(data));
-    
+
     fileGroups.forEach((items, filePath) => {
       const declarationContent = generateDeclarationFile(items, organizedData);
       fileDefinitions.set(filePath, declarationContent);
     });
-  
+
     return fileDefinitions;
   }
   const organized = {
@@ -177,17 +177,17 @@ function generateDeclarationFile(items, organizedData) {
       const desc = extractDescription(item.description);
       return typeName === 'Color' || (typeof desc === 'string' && desc.includes('Color'));
     });
-  
+
     const hasVectorDependency = items.some(item => {
       const typeName = item.type?.name;
       const desc = extractDescription(item.description);
       return typeName === 'Vector' || (typeof desc === 'string' && desc.includes('Vector'));
     });
-  
-    const hasConstantsDependency = items.some(item => 
+
+    const hasConstantsDependency = items.some(item =>
       item.tags?.some(tag => tag.title === 'requires' && tag.description === 'constants')
     );
-  
+
     if (hasColorDependency) {
       imports.add(`import { Color } from '../color/p5.Color';`);
     }
@@ -197,10 +197,10 @@ function generateDeclarationFile(items, organizedData) {
     if (hasConstantsDependency) {
       imports.add(`import * as constants from '../core/constants';`);
     }
-  
+
     output += Array.from(imports).join('\n') + '\n\n';
     output += `declare module 'p5' {\n`;
-  
+
     const classDoc = items.find(item => item.kind === 'class');
     if (classDoc) {
       const fullClassName = normalizeClassName(classDoc.name);
@@ -210,9 +210,9 @@ function generateDeclarationFile(items, organizedData) {
         parentClass = parentClass.replace('p5.', '');
       }
       const extendsClause = parentClass ? ` extends ${parentClass}` : '';
-  
+
       output += `  class ${classDocName}${extendsClause} {\n`;
-  
+
       if (classDoc.params?.length > 0) {
         output += '    constructor(';
         output += classDoc.params
@@ -220,12 +220,12 @@ function generateDeclarationFile(items, organizedData) {
           .join(', ');
         output += ');\n\n';
       }
-  
-      const classItems = organizedData.classitems.filter(item => 
-        item.class === fullClassName || 
+
+      const classItems = organizedData.classitems.filter(item =>
+        item.class === fullClassName ||
         item.class === fullClassName.replace('p5.', '')
       );
-  
+
       const staticItems = classItems.filter(item => item.isStatic);
       const instanceItems = classItems.filter(item => !item.isStatic);
       staticItems.forEach(item => {
@@ -236,7 +236,7 @@ function generateDeclarationFile(items, organizedData) {
       });
       output += '  }\n\n';
     }
-  
+
     items.forEach(item => {
       if (item.kind !== 'class' && (!item.memberof || item.memberof !== classDoc?.name)) {
         switch (item.kind) {
@@ -260,24 +260,24 @@ function generateDeclarationFile(items, organizedData) {
         }
       }
     });
-  
+
     output += '}\n\n';
-  
+
     return output;
   }
-  
+
   export function organizeData(data) {
     const allData = getAllEntries(data);
-    
+
     organized.modules = {};
     organized.classes = {};
     organized.classitems = [];
     organized.consts = {};
-  
+
     allData.forEach(entry => {
       const { module, submodule, forEntry } = getModuleInfo(entry);
       const className = normalizeClassName(forEntry || entry.memberof || 'p5');
-  
+
       switch(entry.kind) {
         case 'class':
           organized.classes[className] = {
@@ -299,7 +299,7 @@ function generateDeclarationFile(items, organizedData) {
               returns: overload.returns,
               description: extractDescription(overload.description)
             }));
-            
+
             organized.classitems.push({
               name: entry.name,
               kind: entry.kind,
@@ -349,29 +349,30 @@ export function extractDescription(desc) {
           if (child.type === 'inlineCode' || child.type === 'code') return `\`${child.value}\``;
           return '';
         })
-        .join('').trim().replace(/\n{3,}/g, '\n\n'); 
+        .join('').trim().replace(/\n{3,}/g, '\n\n');
     }
     return '';
   }
 export function generateTypeFromTag(param) {
     if (!param || !param.type) return 'any';
-  
+
     switch (param.type.type) {
       case 'NameExpression':
         return normalizeTypeName(param.type.name);
-      case 'TypeApplication':
+      case 'TypeApplication': {
         const baseType = normalizeTypeName(param.type.expression.name);
-        
+
         if (baseType === 'Array') {
-          const innerType = param.type.applications[0]; 
+          const innerType = param.type.applications[0];
           const innerTypeStr = generateTypeFromTag({ type: innerType });
           return `${innerTypeStr}[]`;
         }
-  
+
         const typeParams = param.type.applications
           .map(app => generateTypeFromTag({ type: app }))
           .join(', ');
         return `${baseType}<${typeParams}>`;
+      }
       case 'UnionType':
         const unionTypes = param.type.elements
           .map(el => generateTypeFromTag({ type: el }))
@@ -387,6 +388,10 @@ export function generateTypeFromTag(param) {
         return `'${param.type.value}'`;
       case 'UndefinedLiteralType':
         return 'undefined';
+      case 'ArrayType': {
+        const innerTypeStrs = param.type.elements.map(e => generateTypeFromTag({ type: e }));
+        return `[${innerTypeStrs.join(', ')}]`;
+      }
       default:
         return 'any';
     }
@@ -394,9 +399,9 @@ export function generateTypeFromTag(param) {
 
   export function normalizeTypeName(type) {
     if (!type) return 'any';
-    
+
     if (type === '[object Object]') return 'any';
-    
+
     const primitiveTypes = {
       'String': 'string',
       'Number': 'number',
@@ -407,15 +412,15 @@ export function generateTypeFromTag(param) {
       'Array': 'Array',
       'Function': 'Function'
     };
-    
+
     return primitiveTypes[type] || type;
   }
 
   export function generateParamDeclaration(param) {
     if (!param) return 'any';
-    
+
     let type = param.type;
-    const isOptional = param.type?.type === 'OptionalType'; 
+    const isOptional = param.type?.type === 'OptionalType';
     if (typeof type === 'string') {
       type = normalizeTypeName(type);
     } else if (param.type?.type) {
@@ -423,14 +428,14 @@ export function generateTypeFromTag(param) {
     } else {
       type = 'any';
     }
-  
+
     return `${param.name}${isOptional ? '?' : ''}: ${type}`;
   }
-  
+
   export function generateFunctionDeclaration(funcDoc) {
 
     let output = '';
-  
+
     if (funcDoc.description || funcDoc.tags?.length > 0) {
       output += '/**\n';
       const description = extractDescription(funcDoc.description);
@@ -439,7 +444,7 @@ export function generateTypeFromTag(param) {
       }
       if (funcDoc.tags) {
         if (description) {
-          output += ' *\n'; 
+          output += ' *\n';
         }
         funcDoc.tags.forEach(tag => {
           if (tag.description) {
@@ -450,22 +455,22 @@ export function generateTypeFromTag(param) {
       }
       output += ' */\n';
     }
-  
+
     const params = (funcDoc.params || [])
       .map(param => generateParamDeclaration(param))
       .join(', ');
-  
-    const returnType = funcDoc.returns?.[0]?.type 
+
+    const returnType = funcDoc.returns?.[0]?.type
       ? generateTypeFromTag(funcDoc.returns[0])
       : 'void';
-  
+
     output += `function ${funcDoc.name}(${params}): ${returnType};\n\n`;
     return output;
   }
-  
+
   export function generateMethodDeclarations(item, isStatic = false, isGlobal = false) {
     let output = '';
-    
+
     if (item.description) {
       output += '  /**\n';
       const itemDesc = extractDescription(item.description);
@@ -484,22 +489,22 @@ export function generateTypeFromTag(param) {
       }
       output += '   */\n';
     }
-  
+
     if (item.kind === 'function') {
       const staticPrefix = isStatic ? 'static ' : '';
-      
+
       if (item.overloads?.length > 0) {
         item.overloads.forEach(overload => {
           const params = (overload.params || [])
             .map(param => generateParamDeclaration(param))
             .join(', ');
-          const returnType = overload.returns?.[0]?.type 
+          const returnType = overload.returns?.[0]?.type
             ? generateTypeFromTag(overload.returns[0])
             : 'void';
           output += `  ${staticPrefix}${item.name}(${params}): ${returnType};\n`;
         });
       }
-      
+
       const params = (item.params || [])
         .map(param => generateParamDeclaration(param))
         .join(', ');
@@ -508,15 +513,15 @@ export function generateTypeFromTag(param) {
       const staticPrefix = isStatic ? 'static ' : '';
       output += `  ${staticPrefix}${item.name}: ${item.returnType};\n\n`;
     }
-    
+
     return output;
   }
 
 export function generateClassDeclaration(classDoc, organizedData) {
- 
+
 
     let output = '';
-  
+
     if (classDoc.description || classDoc.tags?.length > 0) {
       output += '/**\n';
       const description = extractDescription(classDoc.description);
@@ -536,14 +541,14 @@ export function generateClassDeclaration(classDoc, organizedData) {
       }
       output += ' */\n';
     }
-  
+
     const parentClass = classDoc.extends;
     const extendsClause = parentClass ? ` extends ${parentClass}` : '';
-  
+
     const fullClassName = normalizeClassName(classDoc.name);
     const classDocName = fullClassName.replace('p5.', '');
     output += `class ${classDocName}${extendsClause} {\n`;
-  
+
     if (classDoc.params?.length > 0) {
       output += '  constructor(';
       output += classDoc.params
@@ -551,30 +556,30 @@ export function generateClassDeclaration(classDoc, organizedData) {
         .join(', ');
       output += ');\n\n';
     }
-  
-    const classItems = organizedData.classitems.filter(item => 
-      item.class === fullClassName || 
+
+    const classItems = organizedData.classitems.filter(item =>
+      item.class === fullClassName ||
       item.class === fullClassName.replace('p5.', '')
     );
     const staticItems = classItems.filter(item => item.isStatic);
     const instanceItems = classItems.filter(item => !item.isStatic);
-  
+
     staticItems.forEach(item => {
       output += generateMethodDeclarations(item, true);
     });
-  
+
     instanceItems.forEach(item => {
       output += generateMethodDeclarations(item, false);
     });
-  
+
     output += '}\n\n';
     return output;
   }
-  
+
 function formatJSDocComment(text, indentLevel = 0) {
     if (!text) return '';
     const indent = ' '.repeat(indentLevel);
-    
+
     const lines = text
       .split('\n')
       .map(line => line.trim())
@@ -587,23 +592,23 @@ function formatJSDocComment(text, indentLevel = 0) {
         return acc;
       }, [])
       .filter((line, i, arr) => i < arr.length - 1 || line !== ''); // Remove trailing empty line
-  
+
     return lines
       .map(line => `${indent} * ${line}`)
       .join('\n');
   }
   function groupByFile(items) {
     const fileGroups = new Map();
-    
+
     items.forEach(item => {
       if (!item.context || !item.context.file) return;
-      
+
       const filePath = item.context.file;
       if (!fileGroups.has(filePath)) {
         fileGroups.set(filePath, []);
       }
       fileGroups.get(filePath).push(item);
     });
-    
+
     return fileGroups;
-  }  
+  }
