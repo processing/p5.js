@@ -1589,8 +1589,8 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a>.
    *
    * @method paletteLerp
-   * @param  {[p5.Color|String|Number|Number[], Number][]} colors_stops color stops to interpolate from
-   * @param  {Number} amt number to use to interpolate relative to color stops
+   * @param {Array<[(p5.Color|String|Number|Number[]), Number]>} colors_stops color stops to interpolate from
+   * @param {Number} amt number to use to interpolate relative to color stops
    * @return {p5.Color} interpolated color.
    *
    * @example
