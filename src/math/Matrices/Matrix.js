@@ -69,6 +69,43 @@ if (typeof Float32Array !== "undefined") {
  * // Multiplying a vector by the matrix
  * const vector = new Vector(1, 2, 3);
  * const result = matrix.multiplyPoint(vector);
+ *
+ * // p5.js script example
+ * <div><code>
+ * function setup() {
+ *   noCanvas();
+ *   // Create a 4x4 identity matrix
+ *   const matrix = new Matrix(4);
+ *   console.log("Original Matrix:", matrix.matrix);
+ *
+ *   // Add two matrices
+ *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+ *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+ *   matrix1.add(matrix2);
+ *   console.log("After Addition:", matrix1.matrix); // Output: [10, 10, 10, 10, 10, 10, 10, 10, 10]
+ *
+ *   // Reset the matrix to an identity matrix
+ *   matrix.reset();
+ *   console.log("Reset Matrix:", matrix.matrix);
+ *
+ *   // Apply a scaling transformation
+ *   matrix.scale(2, 2, 2);
+ *   console.log("Scaled Matrix:", matrix.matrix);
+ *
+ *   // Apply a rotation around the X-axis
+ *   matrix.rotate4x4(Math.PI / 4, 1, 0, 0);
+ *   console.log("Rotated Matrix (X-axis):", matrix.matrix);
+ *
+ *   // Apply a perspective transformation
+ *   matrix.perspective(Math.PI / 4, 1, 0.1, 100);
+ *   console.log("Perspective Matrix:", matrix.matrix);
+ *
+ *   // Multiply a vector by the matrix
+ *   const vector = new Vector(1, 2, 3);
+ *   const transformedVector = matrix.multiplyPoint(vector);
+ *   console.log("Transformed Vector:", transformedVector.toString());
+ * }
+ * </code></div>
  */
 export class Matrix extends MatrixInterface {
   matrix;
@@ -132,6 +169,17 @@ export class Matrix extends MatrixInterface {
    * const matrix1 = new Matrix([1, 2, 3]);
    * const matrix2 = new Matrix([4, 5, 6]);
    * matrix1.add(matrix2); // matrix1 is now [5, 7, 9]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix1 = new Matrix([1, 2, 3, 4]);
+   *   const matrix2 = new Matrix([5, 6, 7, 8]);
+   *   matrix1.add(matrix2);
+   *   console.log(matrix1.matrix); // Output: [6, 8, 10, 12]
+   * }
+   * </code></div>
    */
   add(matrix) {
     if (this.matrix.length !== matrix.matrix.length) {
@@ -146,15 +194,54 @@ export class Matrix extends MatrixInterface {
   /**
    * Sets the value of a specific element in the matrix.
    *
+   * A matrix is essentially a two-dimensional array (a grid of rows and columns).
+   * This function allows you to update or change the value of a specific element
+   * in the matrix by specifying its row and column indices.
+   *
+   * Parameters:
+   * - `row` (number): The index of the row where the element is located.
+   *   Indices start from 0, so the first row is at index 0.
+   * - `col` (number): The index of the column where the element is located.
+   *   Indices start from 0, so the first column is at index 0.
+   * - `value` (any): The new value you want to assign to the specified element.
+   *
+   * Example:
+   * If you have the following matrix:
+   * [
+   *   [1, 2, 3],
+   *   [4, 5, 6],
+   *   [7, 8, 9]
+   * ]
+   * Calling `setElement(1, 2, 10)` will update the element at row 1, column 2
+   * (which is the value `6`) to `10`. The updated matrix will look like this:
+   * [
+   *   [1, 2, 3],
+   *   [4, 5, 10],
+   *   [7, 8, 9]
+   * ]
+   *
+   * This function is useful for modifying specific parts of the matrix without
+   * having to recreate the entire structure.
+   *
    * @param {Number} index - The position in the matrix where the value should be set.
    *                         Must be a non-negative integer less than the length of the matrix.
-   * @param {*} value - The new value to be assigned to the specified position in the matrix.
+   * @param {Number} value - The new value to be assigned to the specified position in the matrix.
    * @returns {Matrix} The current instance of the Matrix, allowing for method chaining.
    *
    * @example
    * // Assuming matrix is an instance of Matrix with initial values [1, 2, 3]
    * matrix.setElement(1, 10);
    * // Now the matrix values are [1, 10, 3]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4]);
+   *   matrix.setElement(2, 99);
+   *   console.log(matrix.matrix); // Output: [1, 2, 99, 4]
+   * }
+   * </code></div>
    */
   setElement(index, value) {
     if (index >= 0 && index < this.matrix.length) {
@@ -168,8 +255,29 @@ export class Matrix extends MatrixInterface {
    *
    * This method replaces the current matrix with an identity matrix of the same dimensions.
    * An identity matrix is a square matrix with ones on the main diagonal and zeros elsewhere.
+   * This is useful for resetting transformations or starting fresh with a clean matrix.
    *
    * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
+   *
+   * @example
+   * // Resetting a 4x4 matrix to an identity matrix
+   * const matrix = new Matrix(4);
+   * matrix.scale(2, 2, 2); // Apply some transformations
+   * console.log(matrix.matrix); // Output: Transformed matrix
+   * matrix.reset(); // Reset to identity matrix
+   * console.log(matrix.matrix); // Output: Identity matrix
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4);
+   *   matrix.scale(2, 2, 2); // Apply scaling transformation
+   *   console.log("Before reset:", matrix.matrix);
+   *   matrix.reset(); // Reset to identity matrix
+   *   console.log("After reset:", matrix.matrix);
+   * }
+   * </code></div>
    */
   reset() {
     this.matrix = this.#createIdentityMatrix(this.#sqDimention);
@@ -178,18 +286,49 @@ export class Matrix extends MatrixInterface {
 
   /**
    * Replace the entire contents of a NxN matrix.
-   * If providing an array or a p5.Matrix, the values will be copied without
-   * referencing the source object.
-   * Can also provide NxN numbers as individual arguments.
    *
-   * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
-   *                                     an Array of length 16
-   * @chainable
-   */
-  /**
-   * @param {Number[]} elements 16 numbers passed by value to avoid
-   *                                     array copying.
-   * @chainable
+   * This method allows you to replace the values of the current matrix with
+   * those from another matrix, an array, or individual arguments. The input
+   * can be a `Matrix` instance, an array of numbers, or individual numbers
+   * that match the dimensions of the current matrix. The values are copied
+   * without referencing the source object, ensuring that the original input
+   * remains unchanged.
+   *
+   * If the input dimensions do not match the current matrix, an error will
+   * be thrown to ensure consistency.
+   *
+   * @param {Matrix|Float32Array|Number[]} [inMatrix] - The input matrix, array,
+   * or individual numbers to replace the current matrix values.
+   * @returns {Matrix} The current instance of the Matrix class, allowing for
+   * method chaining.
+   *
+   * @example
+   * // Replacing the contents of a matrix with another matrix
+   * const matrix1 = new Matrix([1, 2, 3, 4]);
+   * const matrix2 = new Matrix([5, 6, 7, 8]);
+   * matrix1.set(matrix2);
+   * console.log(matrix1.matrix); // Output: [5, 6, 7, 8]
+   *
+   * // Replacing the contents of a matrix with an array
+   * const matrix = new Matrix([1, 2, 3, 4]);
+   * matrix.set([9, 10, 11, 12]);
+   * console.log(matrix.matrix); // Output: [9, 10, 11, 12]
+   *
+   * // Replacing the contents of a matrix with individual numbers
+   * const matrix = new Matrix(4); // Creates a 4x4 identity matrix
+   * matrix.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+   * console.log(matrix.matrix); // Output: [1, 2, 3, ..., 16]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4]);
+   *   console.log("Before set:", matrix.matrix);
+   *   matrix.set([5, 6, 7, 8]);
+   *   console.log("After set:", matrix.matrix); // Output: [5, 6, 7, 8]
+   * }
+   * </code></div>
    */
   set(inMatrix) {
     let refArray = GLMAT_ARRAY_TYPE.from([...arguments]);
@@ -200,7 +339,7 @@ export class Matrix extends MatrixInterface {
     }
     if (refArray.length !== this.matrix.length) {
       p5._friendlyError(
-        `Expected same dimentions values but received different ${refArray.length}.`,
+        `Expected same dimensions values but received different ${refArray.length}.`,
         "p5.Matrix.set"
       );
       return this;
@@ -210,20 +349,66 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Gets a copy of the vector, returns a p5.Matrix object.
+   * Gets a copy of the matrix, returns a p5.Matrix object.
    *
-   * @return {p5.Matrix} the copy of the p5.Matrix object
+   * This method creates a new instance of the `Matrix` class and copies the
+   * current matrix values into it. The returned matrix is independent of the
+   * original, meaning changes to the copy will not affect the original matrix.
+   *
+   * This is useful when you need to preserve the current state of a matrix
+   * while performing operations on a duplicate.
+   *
+   * @return {p5.Matrix} A new instance of the `Matrix` class containing the
+   *                     same values as the original matrix.
+   *
+   * @example
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const originalMatrix = new Matrix([1, 2, 3, 4]);
+   *   const copiedMatrix = originalMatrix.get();
+   *   console.log("Original Matrix:", originalMatrix.matrix);
+   *   console.log("Copied Matrix:", copiedMatrix.matrix);
+   *
+   *   // Modify the copied matrix
+   *   copiedMatrix.setElement(2, 99);
+   *   console.log("Modified Copied Matrix:", copiedMatrix.matrix);
+   *   console.log("Original Matrix remains unchanged:", originalMatrix.matrix);
+   * }
+   * </code></div>
    */
   get() {
     return new Matrix(this.matrix); // TODO: Pass p5
   }
 
   /**
-   * return a copy of this matrix.
+   * Return a copy of this matrix.
    * If this matrix is 4x4, a 4x4 matrix with exactly the same entries will be
-   * generated. The same is true if this matrix is 3x3.
+   * generated. The same is true if this matrix is 3x3 or any NxN matrix.
    *
-   * @return {p5.Matrix}   the result matrix
+   * This method is useful when you need to preserve the current state of a matrix
+   * while performing operations on a duplicate. The returned matrix is independent
+   * of the original, meaning changes to the copy will not affect the original matrix.
+   *
+   * @return {p5.Matrix}   The result matrix.
+   *
+   * @example
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const copiedMatrix = originalMatrix.copy();
+   *   console.log("Original Matrix:", originalMatrix.matrix);
+   *   console.log("Copied Matrix:", copiedMatrix.matrix);
+   *
+   *   // Modify the copied matrix
+   *   copiedMatrix.setElement(4, 99);
+   *   console.log("Modified Copied Matrix:", copiedMatrix.matrix);
+   *   console.log("Original Matrix remains unchanged:", originalMatrix.matrix);
+   * }
+   * </code></div>
    */
   copy() {
     return new Matrix(this.matrix);
@@ -235,16 +420,62 @@ export class Matrix extends MatrixInterface {
    * without modifying the original one.
    *
    * @returns {Matrix} A new matrix instance that is a copy of the current matrix.
+   *
+   * @example
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const clonedMatrix = originalMatrix.clone();
+   *   console.log("Original Matrix:", originalMatrix.matrix);
+   *   console.log("Cloned Matrix:", clonedMatrix.matrix);
+   *
+   *   // Modify the cloned matrix
+   *   clonedMatrix.setElement(4, 99);
+   *   console.log("Modified Cloned Matrix:", clonedMatrix.matrix);
+   *   console.log("Original Matrix remains unchanged:", originalMatrix.matrix);
+   * }
+   * </code></div>
    */
   clone() {
     return this.copy();
   }
+
   /**
    * Returns the diagonal elements of the matrix in the form of an array.
    * A NxN matrix will return an array of length N.
    *
+   * This method extracts the diagonal elements of the matrix, which are the
+   * elements where the row index equals the column index. For example, in a
+   * 3x3 matrix:
+   * [
+   *   [1, 2, 3],
+   *   [4, 5, 6],
+   *   [7, 8, 9]
+   * ]
+   * The diagonal elements are [1, 5, 9].
+   *
+   * This is useful for operations that require the main diagonal of a matrix,
+   * such as calculating the trace of a matrix or verifying if a matrix is diagonal.
+   *
    * @return {Number[]} An array obtained by arranging the diagonal elements
-   *                    of the matrix in ascending order of index
+   *                    of the matrix in ascending order of index.
+   *
+   * @example
+   * // Extracting the diagonal elements of a matrix
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const diagonal = matrix.diagonal(); // [1, 5, 9]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const diagonal = matrix.diagonal();
+   *   console.log("Diagonal elements:", diagonal); // Output: [1, 5, 9]
+   * }
+   * </code></div>
    */
   diagonal() {
     const diagonal = [];
@@ -258,8 +489,29 @@ export class Matrix extends MatrixInterface {
    * This function is only for 3x3 matrices.
    * A function that returns a row vector of a NxN matrix.
    *
-   * @param {Number} columnIndex matrix column number
-   * @return {p5.Vector}
+   * This method extracts a specific row from the matrix and returns it as a `p5.Vector`.
+   * The row is determined by the `columnIndex` parameter, which specifies the column
+   * index of the matrix. This is useful for operations that require working with
+   * individual rows of a matrix, such as row transformations or dot products.
+   *
+   * @param {Number} columnIndex - The index of the column to extract as a row vector.
+   *                               Must be a non-negative integer less than the matrix dimension.
+   * @return {p5.Vector} A `p5.Vector` representing the extracted row of the matrix.
+   *
+   * @example
+   * // Extracting a row vector from a 3x3 matrix
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const rowVector = matrix.row(1); // Returns a vector [2, 5, 8]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const rowVector = matrix.row(1); // Extract the second row (index 1)
+   *   console.log("Row Vector:", rowVector.toString()); // Output: Row Vector: [2, 5, 8]
+   * }
+   * </code></div>
    */
   row(columnIndex) {
     const columnVector = [];
@@ -272,8 +524,29 @@ export class Matrix extends MatrixInterface {
   /**
    * A function that returns a column vector of a NxN matrix.
    *
-   * @param {Number} rowIndex matrix row number
-   * @return {p5.Vector}
+   * This method extracts a specific column from the matrix and returns it as a `p5.Vector`.
+   * The column is determined by the `rowIndex` parameter, which specifies the row index
+   * of the matrix. This is useful for operations that require working with individual
+   * columns of a matrix, such as column transformations or dot products.
+   *
+   * @param {Number} rowIndex - The index of the row to extract as a column vector.
+   *                             Must be a non-negative integer less than the matrix dimension.
+   * @return {p5.Vector} A `p5.Vector` representing the extracted column of the matrix.
+   *
+   * @example
+   * // Extracting a column vector from a 3x3 matrix
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const columnVector = matrix.column(1); // Returns a vector [4, 5, 6]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const columnVector = matrix.column(1); // Extract the second column (index 1)
+   *   console.log("Column Vector:", columnVector.toString()); // Output: Column Vector: [4, 5, 6]
+   * }
+   * </code></div>
    */
   column(rowIndex) {
     const rowVector = [];
@@ -290,14 +563,36 @@ export class Matrix extends MatrixInterface {
    * and the columns become rows. It handles matrices of different dimensions (4x4, 3x3, NxN)
    * by delegating to specific transpose methods for each case.
    *
-   * @param {Array} a - The matrix to be transposed. It should be a 2D array where each sub-array represents a row.
-   * @returns {Array} - The transposed matrix.
+   * If no argument is provided, the method transposes the current matrix instance.
+   * If an argument is provided, it transposes the given matrix `a` and updates the current matrix.
+   *
+   * @param {Array} [a] - The matrix to be transposed. It should be a 2D array where each sub-array represents a row.
+   *                      If omitted, the current matrix instance is transposed.
+   * @returns {Matrix} - The current instance of the Matrix class, allowing for method chaining.
+   *
+   * @example
+   * // Transposing a 3x3 matrix
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * matrix.transpose();
+   * console.log(matrix.matrix); // Output: [1, 4, 7, 2, 5, 8, 3, 6, 9]
+   *
+   * // Transposing a 4x4 matrix
+   * const matrix4x4 = new Matrix(4);
+   * matrix4x4.transpose();
+   * console.log(matrix4x4.matrix); // Output: Transposed 4x4 identity matrix
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   console.log("Before transpose:", matrix.matrix);
+   *   matrix.transpose();
+   *   console.log("After transpose:", matrix.matrix); // Output: [1, 4, 7, 2, 5, 8, 3, 6, 9]
+   * }
+   * </code></div>
    */
   transpose(a) {
-    // TODO: Cristian: What does passing an argument to a transpose mean?
-    // In the codebase this is never done in any reference
-    // Actually transposse of a 4x4 is never done dierectly,
-    // I'm thinking it is incorrect, transpose3x3 is only used for inverseTranspose4x4
     if (this.#sqDimention === 4) {
       return this.#transpose4x4(a);
     } else if (this.#sqDimention === 3) {
@@ -317,9 +612,37 @@ export class Matrix extends MatrixInterface {
    *
    * If the input is the same as the current matrix, a copy is made to avoid modifying the original matrix.
    *
+   * The method determines the appropriate multiplication strategy based on the dimensions of the current matrix
+   * and the input matrix. It supports 3x3, 4x4, and NxN matrices.
+   *
    * @param {Matrix|Array|...number} multMatrix - The matrix or matrix-like array to multiply with.
    * @returns {Matrix|undefined} The resulting matrix after multiplication, or undefined if the input is invalid.
    * @chainable
+   *
+   * @example
+   * // Multiplying two 3x3 matrices
+   * const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   * matrix1.mult(matrix2);
+   * console.log(matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
+   *
+   * // Multiplying a 4x4 matrix with another 4x4 matrix
+   * const matrix4x4_1 = new Matrix(4); // Identity matrix
+   * const matrix4x4_2 = new Matrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1]);
+   * matrix4x4_1.mult(matrix4x4_2);
+   * console.log(matrix4x4_1.matrix); // Output: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1]
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   *   console.log("Before multiplication:", matrix1.matrix);
+   *   matrix1.mult(matrix2);
+   *   console.log("After multiplication:", matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
+   * }
+   * </code></div>
    */
   mult(multMatrix) {
     let _src;
@@ -348,9 +671,33 @@ export class Matrix extends MatrixInterface {
    * Takes a vector and returns the vector resulting from multiplying to
    * that vector by this matrix from left.
    *
-   * @param {p5.Vector} multVector the vector to which this matrix applies
-   * @param {p5.Vector} [target] The vector to receive the result
-   * @return {p5.Vector}
+   * This method applies the current 3x3 matrix to a given vector, effectively
+   * transforming the vector using the matrix. The resulting vector is returned
+   * as a new vector or stored in the provided target vector.
+   *
+   * @param {p5.Vector} multVector - The vector to which this matrix applies.
+   * @param {p5.Vector} [target] - The vector to receive the result. If not provided,
+   *                               a copy of the input vector will be created and returned.
+   * @return {p5.Vector} - The transformed vector after applying the matrix.
+   *
+   * @example
+   * // Multiplying a 3x3 matrix with a vector
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const vector = new Vector(1, 2, 3);
+   * const result = matrix.multiplyVec(vector);
+   * console.log(result.toString()); // Output: Transformed vector
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const vector = new Vector(1, 2, 3);
+   *   const result = matrix.multiplyVec(vector);
+   *   console.log("Original Vector:", vector.toString());
+   *   console.log("Transformed Vector:", result.toString());
+   * }
+   * </code></div>
    */
   multiplyVec(multVector, target) {
     if (target === undefined) {
@@ -368,9 +715,41 @@ export class Matrix extends MatrixInterface {
    * This method inverts a matrix based on its dimensions. Currently, it supports
    * 3x3 and 4x4 matrices. If the matrix dimension is greater than 4, an error is thrown.
    *
+   * For 4x4 matrices, it uses a specialized algorithm to compute the inverse.
+   * For 3x3 matrices, it uses a different algorithm optimized for smaller matrices.
+   *
+   * If the matrix is singular (non-invertible), the method will return `null`.
+   *
    * @param {Array} a - The matrix to be inverted. It should be a 2D array representing the matrix.
-   * @returns {Array} - The inverted matrix.
+   * @returns {Array|null} - The inverted matrix, or `null` if the matrix is singular.
    * @throws {Error} - Throws an error if the matrix dimension is greater than 4.
+   *
+   * @example
+   * // Inverting a 3x3 matrix
+   * const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+   * const invertedMatrix = matrix.invert();
+   * console.log(invertedMatrix.matrix); // Output: Inverted 3x3 matrix
+   *
+   * // Inverting a 4x4 matrix
+   * const matrix4x4 = new Matrix(4); // Identity matrix
+   * matrix4x4.scale(2, 2, 2);
+   * const invertedMatrix4x4 = matrix4x4.invert();
+   * console.log(invertedMatrix4x4.matrix); // Output: Inverted 4x4 matrix
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+   *   console.log("Original Matrix:", matrix.matrix);
+   *   const invertedMatrix = matrix.invert();
+   *   if (invertedMatrix) {
+   *     console.log("Inverted Matrix:", invertedMatrix.matrix);
+   *   } else {
+   *     console.log("Matrix is singular and cannot be inverted.");
+   *   }
+   * }
+   * </code></div>
    */
   invert(a) {
     if (this.#sqDimention === 4) {
@@ -388,7 +767,37 @@ export class Matrix extends MatrixInterface {
    * This function is only for 4x4 matrices.
    * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
    *
-   * @return {p5.Matrix}
+   * This method extracts the top-left 3x3 portion of a 4x4 matrix and creates a new
+   * 3x3 matrix from it. This is particularly useful in 3D graphics for operations
+   * that require only the rotational or scaling components of a transformation matrix.
+   *
+   * If the current matrix is not 4x4, an error is thrown to ensure the method is used
+   * correctly. The resulting 3x3 matrix is independent of the original matrix, meaning
+   * changes to the new matrix will not affect the original.
+   *
+   * @return {p5.Matrix} A new 3x3 matrix containing the top-left portion of the original 4x4 matrix.
+   * @throws {Error} If the current matrix is not 4x4.
+   *
+   * @example
+   * // Extracting a 3x3 submatrix from a 4x4 matrix
+   * const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
+   * matrix4x4.scale(2, 2, 2); // Apply scaling transformation
+   * const subMatrix3x3 = matrix4x4.createSubMatrix3x3();
+   * console.log("Original 4x4 Matrix:", matrix4x4.matrix);
+   * console.log("Extracted 3x3 Submatrix:", subMatrix3x3.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
+   *   matrix4x4.scale(2, 2, 2); // Apply scaling transformation
+   *   console.log("Original 4x4 Matrix:", matrix4x4.matrix);
+   *
+   *   const subMatrix3x3 = matrix4x4.createSubMatrix3x3();
+   *   console.log("Extracted 3x3 Submatrix:", subMatrix3x3.matrix);
+   * }
+   * </code></div>
    */
   createSubMatrix3x3() {
     if (this.#sqDimention === 4) {
@@ -409,17 +818,45 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Converts a 4×4 matrix to its 3×3 inverse transform
-   * commonly used in MVMatrix to NMatrix conversions.
-   * @param  {p5.Matrix} mat4 the matrix to be based on to invert
-   * @chainable
-   * @todo  finish implementation
+   * Converts a 4×4 matrix to its 3×3 inverse transpose transform.
+   * This is commonly used in MVMatrix to NMatrix conversions, particularly
+   * in 3D graphics for transforming normal vectors.
+   *
+   * This method extracts the top-left 3×3 portion of a 4×4 matrix, inverts it,
+   * and then transposes the result. If the matrix is singular (non-invertible),
+   * the resulting matrix will be zeroed out.
+   *
+   * @param  {p5.Matrix} mat4 - The 4×4 matrix to be converted.
+   * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
+   * @throws {Error} If the current matrix is not 3×3.
+   *
+   * @example
+   * // Converting a 4×4 matrix to its 3×3 inverse transpose
+   * const mat4 = new Matrix(4); // Create a 4×4 identity matrix
+   * mat4.scale(2, 2, 2); // Apply scaling transformation
+   * const mat3 = new Matrix(3); // Create a 3×3 matrix
+   * mat3.inverseTranspose4x4(mat4);
+   * console.log("Converted 3×3 Matrix:", mat3.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const mat4 = new Matrix(4); // Create a 4×4 identity matrix
+   *   mat4.scale(2, 2, 2); // Apply scaling transformation
+   *   console.log("Original 4×4 Matrix:", mat4.matrix);
+   *
+   *   const mat3 = new Matrix(3); // Create a 3×3 matrix
+   *   mat3.inverseTranspose4x4(mat4);
+   *   console.log("Converted 3×3 Matrix:", mat3.matrix);
+   * }
+   * </code></div>
    */
   inverseTranspose4x4({ mat4 }) {
     if (this.#sqDimention !== 3) {
-      p5._friendlyError("sorry, this function only works with mat3");
+      throw new Error("This function only works with 3×3 matrices.");
     } else {
-      //convert mat4 -> mat3
+      // Convert mat4 -> mat3 by extracting the top-left 3×3 portion
       this.matrix[0] = mat4[0];
       this.matrix[1] = mat4[1];
       this.matrix[2] = mat4[2];
@@ -432,11 +869,11 @@ export class Matrix extends MatrixInterface {
     }
 
     const inverse = this.invert();
-    // check inverse succeeded
+    // Check if inversion succeeded
     if (inverse) {
       inverse.transpose(this.matrix);
     } else {
-      // in case of singularity, just zero the matrix
+      // In case of singularity, zero out the matrix
       for (let i = 0; i < 9; i++) {
         this.matrix[i] = 0;
       }
@@ -450,6 +887,10 @@ export class Matrix extends MatrixInterface {
    * This method multiplies the current matrix by another matrix, which can be provided
    * in several forms: another Matrix instance, an array representing a matrix, or as
    * individual arguments representing the elements of a 4x4 matrix.
+   *
+   * This operation is useful for combining transformations such as translation, rotation,
+   * scaling, and perspective projection into a single matrix. By applying a transformation
+   * matrix, you can modify the current matrix to represent a new transformation.
    *
    * @param {Matrix|Array|number} multMatrix - The matrix to multiply with. This can be:
    *   - An instance of the Matrix class.
@@ -470,6 +911,28 @@ export class Matrix extends MatrixInterface {
    * @example
    * // Applying a transformation using individual arguments
    * matrix.apply(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   // Create a 4x4 identity matrix
+   *   const matrix = new Matrix(4);
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Create a scaling transformation matrix
+   *   const scalingMatrix = new Matrix([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1]);
+   *
+   *   // Apply the scaling transformation
+   *   matrix.apply(scalingMatrix);
+   *   console.log("After Scaling Transformation:", matrix.matrix);
+   *
+   *   // Apply a translation transformation using an array
+   *   const translationMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 5, 5, 1];
+   *   matrix.apply(translationMatrix);
+   *   console.log("After Translation Transformation:", matrix.matrix);
+   * }
+   * </code></div>
    */
   apply(multMatrix) {
     let _src;
@@ -529,9 +992,58 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * scales a p5.Matrix by scalars or a vector
-   * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
-   * @chainable
+   * Scales a p5.Matrix by scalars or a vector.
+   *
+   * This method applies a scaling transformation to the current matrix.
+   * Scaling is a transformation that enlarges or shrinks objects by a scale factor
+   * along the x, y, and z axes. The scale factors can be provided as individual
+   * numbers, an array, or a `p5.Vector`.
+   *
+   * If a `p5.Vector` or an array is provided, the x, y, and z components are extracted
+   * from it. If the z component is not provided, it defaults to 1 (no scaling along the z-axis).
+   *
+   * @param {p5.Vector|Float32Array|Number[]} s - The vector or scalars to scale by.
+   *                                              Can be a `p5.Vector`, an array, or individual numbers.
+   * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
+   *
+   * @example
+   * // Scaling a matrix by individual scalars
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.scale(2, 3, 4); // Scale by 2 along x, 3 along y, and 4 along z
+   * console.log(matrix.matrix);
+   *
+   * // Scaling a matrix by a p5.Vector
+   * const scaleVector = new Vector(2, 3, 4);
+   * matrix.scale(scaleVector);
+   * console.log(matrix.matrix);
+   *
+   * // Scaling a matrix by an array
+   * const scaleArray = [2, 3, 4];
+   * matrix.scale(scaleArray);
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Scale the matrix by individual scalars
+   *   matrix.scale(2, 3, 4);
+   *   console.log("Scaled Matrix (2, 3, 4):", matrix.matrix);
+   *
+   *   // Scale the matrix by a p5.Vector
+   *   const scaleVector = new Vector(1.5, 2.5, 3.5);
+   *   matrix.scale(scaleVector);
+   *   console.log("Scaled Matrix (Vector):", matrix.matrix);
+   *
+   *   // Scale the matrix by an array
+   *   const scaleArray = [0.5, 0.5, 0.5];
+   *   matrix.scale(scaleArray);
+   *   console.log("Scaled Matrix (Array):", matrix.matrix);
+   * }
+   * </code></div>
    */
   scale(x, y, z) {
     if (x instanceof Vector) {
@@ -633,10 +1145,43 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * @todo  finish implementing this method!
-   * translates
-   * @param  {Number[]} v vector to translate by
-   * @chainable
+   * Translates the current matrix by a given vector.
+   *
+   * This method applies a translation transformation to the current matrix.
+   * Translation moves the matrix by a specified amount along the x, y, and z axes.
+   * The input vector can be a 2D or 3D vector. If the z-component is not provided,
+   * it defaults to 0, meaning no translation along the z-axis.
+   *
+   * @param {Number[]} v - A vector representing the translation. It should be an array
+   *                       with two or three elements: [x, y, z]. The z-component is optional.
+   * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
+   *
+   * @example
+   * // Translating a matrix by a 3D vector
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.translate([10, 20, 30]); // Translate by 10 units along x, 20 along y, and 30 along z
+   * console.log(matrix.matrix);
+   *
+   * // Translating a matrix by a 2D vector
+   * matrix.translate([5, 15]); // Translate by 5 units along x and 15 along y
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Translate the matrix by a 3D vector
+   *   matrix.translate([10, 20, 30]);
+   *   console.log("After 3D Translation (10, 20, 30):", matrix.matrix);
+   *
+   *   // Translate the matrix by a 2D vector
+   *   matrix.translate([5, 15]);
+   *   console.log("After 2D Translation (5, 15):", matrix.matrix);
+   * }
+   * </code></div>
    */
   translate(v) {
     const x = v[0],
@@ -650,6 +1195,7 @@ export class Matrix extends MatrixInterface {
       this.matrix[2] * x + this.matrix[6] * y + this.matrix[10] * z;
     this.matrix[15] +=
       this.matrix[3] * x + this.matrix[7] * y + this.matrix[11] * z;
+    return this;
   }
 
   /**
@@ -658,7 +1204,30 @@ export class Matrix extends MatrixInterface {
    * This method modifies the current matrix to apply a rotation transformation
    * around the X-axis. The rotation angle is specified in radians.
    *
+   * Rotating around the X-axis means that the Y and Z coordinates of the matrix
+   * are transformed while the X coordinates remain unchanged. This is commonly
+   * used in 3D graphics to create animations or transformations along the X-axis.
+   *
    * @param {Number} a - The angle in radians to rotate the matrix by.
+   *
+   * @example
+   * // Rotating a matrix around the X-axis
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.rotateX(Math.PI / 4); // Rotate 45 degrees around the X-axis
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Rotate the matrix 45 degrees (PI/4 radians) around the X-axis
+   *   matrix.rotateX(Math.PI / 4);
+   *   console.log("After Rotation (X-axis, 45 degrees):", matrix.matrix);
+   * }
+   * </code></div>
    */
   rotateX(a) {
     this.rotate4x4(a, 1, 0, 0);
@@ -669,11 +1238,33 @@ export class Matrix extends MatrixInterface {
    *
    * This method modifies the current matrix to apply a rotation transformation
    * around the Y-axis. The rotation is performed in 3D space, and the angle
-   * is specified in radians.
+   * is specified in radians. Rotating around the Y-axis means that the X and Z
+   * coordinates of the matrix are transformed while the Y coordinates remain
+   * unchanged. This is commonly used in 3D graphics to create animations or
+   * transformations along the Y-axis.
    *
    * @param {Number} a - The angle in radians to rotate the matrix by. Positive
    * values rotate the matrix counterclockwise, and negative values rotate it
    * clockwise.
+   *
+   * @example
+   * // Rotating a matrix around the Y-axis
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.rotateY(Math.PI / 4); // Rotate 45 degrees around the Y-axis
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Rotate the matrix 45 degrees (PI/4 radians) around the Y-axis
+   *   matrix.rotateY(Math.PI / 4);
+   *   console.log("After Rotation (Y-axis, 45 degrees):", matrix.matrix);
+   * }
+   * </code></div>
    */
   rotateY(a) {
     this.rotate4x4(a, 0, 1, 0);
@@ -682,29 +1273,79 @@ export class Matrix extends MatrixInterface {
   /**
    * Rotates the matrix around the Z-axis by a given angle.
    *
-   * @param {Number} a - The angle in radians to rotate the matrix by.
-   *
    * This method modifies the current matrix to apply a rotation transformation
    * around the Z-axis. The rotation is performed in a 4x4 matrix context, which
-   * is commonly used in 3D graphics to handle transformations.
+   * is commonly used in 3D graphics to handle transformations. Rotating around
+   * the Z-axis means that the X and Y coordinates of the matrix are transformed
+   * while the Z coordinates remain unchanged.
    *
-   * Example usage:
-   * ```
-   * const matrix = new Matrix();
-   * matrix.rotateZ(Math.PI / 4); // Rotates the matrix 45 degrees around the Z-axis
-   * ```
+   * @param {Number} a - The angle in radians to rotate the matrix by. Positive
+   * values rotate the matrix counterclockwise, and negative values rotate it
+   * clockwise.
+   *
+   * @returns {Matrix} The current instance of the Matrix class, allowing for
+   * method chaining.
+   *
+   * @example
+   * // Rotating a matrix around the Z-axis
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.rotateZ(Math.PI / 4); // Rotate 45 degrees around the Z-axis
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Rotate the matrix 45 degrees (PI/4 radians) around the Z-axis
+   *   matrix.rotateZ(Math.PI / 4);
+   *   console.log("After Rotation (Z-axis, 45 degrees):", matrix.matrix);
+   * }
+   * </code></div>
    */
   rotateZ(a) {
     this.rotate4x4(a, 0, 0, 1);
   }
 
   /**
-   * sets the perspective matrix
-   * @param  {Number} fovy   [description]
-   * @param  {Number} aspect [description]
-   * @param  {Number} near   near clipping plane
-   * @param  {Number} far    far clipping plane
-   * @chainable
+   * Sets the perspective projection matrix.
+   *
+   * This method modifies the current matrix to represent a perspective projection.
+   * Perspective projection is commonly used in 3D graphics to simulate the effect
+   * of objects appearing smaller as they move further away from the camera.
+   *
+   * The perspective matrix is defined by the field of view (fovy), aspect ratio,
+   * and the near and far clipping planes. The near and far clipping planes define
+   * the range of depth that will be rendered, with anything outside this range
+   * being clipped.
+   *
+   * @param {Number} fovy - The field of view in the y direction, in radians.
+   * @param {Number} aspect - The aspect ratio of the viewport (width / height).
+   * @param {Number} near - The distance to the near clipping plane. Must be greater than 0.
+   * @param {Number} far - The distance to the far clipping plane. Must be greater than the near value.
+   * @returns {Matrix} The current instance of the Matrix class, allowing for method chaining.
+   *
+   * @example
+   * // Setting a perspective projection matrix
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * matrix.perspective(Math.PI / 4, 1.5, 0.1, 100); // Set perspective projection
+   * console.log(matrix.matrix);
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Set a perspective projection with a 45-degree field of view,
+   *   // an aspect ratio of 1.5, and near/far clipping planes at 0.1 and 100.
+   *   matrix.perspective(Math.PI / 4, 1.5, 0.1, 100);
+   *   console.log("Perspective Matrix:", matrix.matrix);
+   * }
+   * </code></div>
    */
   perspective(fovy, aspect, near, far) {
     const f = 1.0 / Math.tan(fovy / 2),
@@ -731,14 +1372,52 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * sets the ortho matrix
-   * @param  {Number} left   [description]
-   * @param  {Number} right  [description]
-   * @param  {Number} bottom [description]
-   * @param  {Number} top    [description]
-   * @param  {Number} near   near clipping plane
-   * @param  {Number} far    far clipping plane
+   * Sets this matrix to an orthographic projection matrix.
+   *
+   * An orthographic projection matrix is used to create a 2D rendering
+   * of a 3D scene by projecting points onto a plane without perspective
+   * distortion. This method modifies the current matrix to represent
+   * the orthographic projection defined by the given parameters.
+   *
+   * @param {number} left - The coordinate for the left vertical clipping plane.
+   * @param {number} right - The coordinate for the right vertical clipping plane.
+   * @param {number} bottom - The coordinate for the bottom horizontal clipping plane.
+   * @param {number} top - The coordinate for the top horizontal clipping plane.
+   * @param {number} near - The distance to the near depth clipping plane. Must be positive.
+   * @param {number} far - The distance to the far depth clipping plane. Must be positive.
    * @chainable
+   * @returns {Matrix} The current matrix instance, updated with the orthographic projection.
+   *
+   * @example
+   * <div><code>
+   * // Example using p5.js to demonstrate orthographic projection
+   * function setup() {
+   *   createCanvas(400, 400, WEBGL);
+   *   let orthoMatrix = new p5.Matrix();
+   *   orthoMatrix.ortho(-200, 200, -200, 200, 0.1, 1000);
+   *   applyMatrix(
+   *     orthoMatrix.mat4[0], orthoMatrix.mat4[1], orthoMatrix.mat4[2], orthoMatrix.mat4[3],
+   *     orthoMatrix.mat4[4], orthoMatrix.mat4[5], orthoMatrix.mat4[6], orthoMatrix.mat4[7],
+   *     orthoMatrix.mat4[8], orthoMatrix.mat4[9], orthoMatrix.mat4[10], orthoMatrix.mat4[11],
+   *     orthoMatrix.mat4[12], orthoMatrix.mat4[13], orthoMatrix.mat4[14], orthoMatrix.mat4[15]
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   box(100);
+   * }
+   * </code></div>
+   *
+   * This example demonstrates how to use an orthographic projection matrix
+   * in a p5.js sketch. The `ortho` method is used to define the projection
+   * parameters, and the resulting matrix is applied to the 3D rendering context.
+   *
+   * Note: While working on any features of p5.js, it is important to keep in mind
+   * the design principles of p5.js, including accessibility, beginner-friendliness,
+   * educational focus, and alignment with the JavaScript and Processing communities.
    */
   ortho(left, right, bottom, top, near, far) {
     const lr = 1 / (left - right),
@@ -765,10 +1444,45 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * apply a matrix to a vector with x,y,z,w components
-   * get the results in the form of an array
-   * @param {Number}
-   * @return {Number[]}
+   * Applies a matrix to a vector with x, y, z, w components and returns the result as an array.
+   *
+   * This method multiplies the current matrix by a 4D vector (x, y, z, w) and computes the resulting vector.
+   * It is commonly used in 3D graphics for transformations such as translation, rotation, scaling, and perspective projection.
+   *
+   * The resulting vector is returned as an array of four numbers, representing the transformed x, y, z, and w components.
+   *
+   * @param {Number} x - The x component of the vector.
+   * @param {Number} y - The y component of the vector.
+   * @param {Number} z - The z component of the vector.
+   * @param {Number} w - The w component of the vector.
+   * @returns {Number[]} An array containing the transformed [x, y, z, w] components.
+   *
+   * @example
+   * // Applying a matrix to a 4D vector
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const result = matrix.multiplyVec4(1, 2, 3, 1); // Transform the vector [1, 2, 3, 1]
+   * console.log(result); // Output: [1, 2, 3, 1] (unchanged for identity matrix)
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Apply the matrix to a 4D vector
+   *   const result = matrix.multiplyVec4(1, 2, 3, 1);
+   *   console.log("Transformed Vector:", result); // Output: [1, 2, 3, 1]
+   *
+   *   // Modify the matrix (e.g., apply a translation)
+   *   matrix.translate([5, 5, 5]);
+   *   console.log("Modified Matrix:", matrix.matrix);
+   *
+   *   // Apply the modified matrix to the same vector
+   *   const transformedResult = matrix.multiplyVec4(1, 2, 3, 1);
+   *   console.log("Transformed Vector after Translation:", transformedResult); // Output: [6, 7, 8, 1]
+   * }
+   * </code></div>
    */
   multiplyVec4(x, y, z, w) {
     const result = new Array(4);
@@ -788,8 +1502,48 @@ export class Matrix extends MatrixInterface {
    * Returns a vector consisting of the first
    * through third components of the result.
    *
-   * @param {p5.Vector}
-   * @return {p5.Vector}
+   * This method multiplies the current matrix by a 4D vector (x, y, z, 1),
+   * effectively transforming the vector using the matrix. The resulting
+   * vector is returned as a new `p5.Vector` instance.
+   *
+   * This is useful for applying transformations such as translation,
+   * rotation, scaling, or perspective projection to a point in 3D space.
+   *
+   * @param {p5.Vector} vector - The input vector to transform. It should
+   *                              have x, y, and z components.
+   * @return {p5.Vector} A new `p5.Vector` instance representing the transformed point.
+   *
+   * @example
+   * // Applying a matrix to a 3D point
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const point = new Vector(1, 2, 3); // Define a 3D point
+   * const transformedPoint = matrix.multiplyPoint(point);
+   * console.log(transformedPoint.toString()); // Output: [1, 2, 3] (unchanged for identity matrix)
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Define a 3D point
+   *   const point = new Vector(1, 2, 3);
+   *   console.log("Original Point:", point.toString());
+   *
+   *   // Apply the matrix to the point
+   *   const transformedPoint = matrix.multiplyPoint(point);
+   *   console.log("Transformed Point:", transformedPoint.toString());
+   *
+   *   // Modify the matrix (e.g., apply a translation)
+   *   matrix.translate([5, 5, 5]);
+   *   console.log("Modified Matrix:", matrix.matrix);
+   *
+   *   // Apply the modified matrix to the same point
+   *   const translatedPoint = matrix.multiplyPoint(point);
+   *   console.log("Translated Point:", translatedPoint.toString()); // Output: [6, 7, 8]
+   * }
+   * </code></div>
    */
   multiplyPoint({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 1);
@@ -802,8 +1556,47 @@ export class Matrix extends MatrixInterface {
    * Returns the result of dividing the 1st to 3rd components
    * of the result by the 4th component as a vector.
    *
-   * @param {p5.Vector}
-   * @return {p5.Vector}
+   * This method multiplies the current matrix by a 4D vector (x, y, z, 1),
+   * effectively transforming the vector using the matrix. The resulting
+   * vector is normalized by dividing its x, y, and z components by the w component.
+   * This is useful for applying transformations such as perspective projection
+   * to a point in 3D space.
+   *
+   * @param {p5.Vector} vector - The input vector to transform. It should
+   *                              have x, y, and z components.
+   * @return {p5.Vector} A new `p5.Vector` instance representing the transformed and normalized point.
+   *
+   * @example
+   * // Applying a matrix to a 3D point and normalizing it
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const point = new Vector(1, 2, 3); // Define a 3D point
+   * const transformedPoint = matrix.multiplyAndNormalizePoint(point);
+   * console.log(transformedPoint.toString()); // Output: [1, 2, 3] (unchanged for identity matrix)
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Define a 3D point
+   *   const point = new Vector(1, 2, 3);
+   *   console.log("Original Point:", point.toString());
+   *
+   *   // Apply the matrix to the point and normalize it
+   *   const transformedPoint = matrix.multiplyAndNormalizePoint(point);
+   *   console.log("Transformed and Normalized Point:", transformedPoint.toString());
+   *
+   *   // Modify the matrix (e.g., apply a perspective transformation)
+   *   matrix.perspective(Math.PI / 4, 1.5, 0.1, 100);
+   *   console.log("Modified Matrix (Perspective):", matrix.matrix);
+   *
+   *   // Apply the modified matrix to the same point
+   *   const perspectivePoint = matrix.multiplyAndNormalizePoint(point);
+   *   console.log("Point after Perspective Transformation:", perspectivePoint.toString());
+   * }
+   * </code></div>
    */
   multiplyAndNormalizePoint({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 1);
@@ -819,8 +1612,46 @@ export class Matrix extends MatrixInterface {
    * Returns a vector consisting of the first
    * through third components of the result.
    *
-   * @param {p5.Vector}
-   * @return {p5.Vector}
+   * This method multiplies the current matrix by a 4D vector (x, y, z, 0),
+   * effectively transforming the direction vector using the matrix. The resulting
+   * vector is returned as a new `p5.Vector` instance. This is particularly useful
+   * for transforming direction vectors (e.g., normals) without applying translation.
+   *
+   * @param {p5.Vector} vector - The input vector to transform. It should
+   *                              have x, y, and z components.
+   * @return {p5.Vector} A new `p5.Vector` instance representing the transformed direction.
+   *
+   * @example
+   * // Applying a matrix to a direction vector
+   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const direction = new Vector(1, 0, 0); // Define a direction vector
+   * const transformedDirection = matrix.multiplyDirection(direction);
+   * console.log(transformedDirection.toString()); // Output: [1, 0, 0] (unchanged for identity matrix)
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Define a direction vector
+   *   const direction = new Vector(1, 0, 0);
+   *   console.log("Original Direction:", direction.toString());
+   *
+   *   // Apply the matrix to the direction vector
+   *   const transformedDirection = matrix.multiplyDirection(direction);
+   *   console.log("Transformed Direction:", transformedDirection.toString());
+   *
+   *   // Modify the matrix (e.g., apply a rotation)
+   *   matrix.rotateY(Math.PI / 4); // Rotate 45 degrees around the Y-axis
+   *   console.log("Modified Matrix (Rotation):", matrix.matrix);
+   *
+   *   // Apply the modified matrix to the same direction vector
+   *   const rotatedDirection = matrix.multiplyDirection(direction);
+   *   console.log("Rotated Direction:", rotatedDirection.toString()); // Output: Rotated vector
+   * }
+   * </code></div>
    */
   multiplyDirection({ x, y, z }) {
     const array = this.multiplyVec4(x, y, z, 0);
@@ -829,21 +1660,53 @@ export class Matrix extends MatrixInterface {
 
   /**
    * This function is only for 3x3 matrices.
-   * Takes a vector and returns the vector resulting from multiplying to
-   * that vector by this matrix from left.
+   * Takes a vector and returns the vector resulting from multiplying
+   * that vector by this matrix from the left.
    *
-   * @param {p5.Vector} multVector the vector to which this matrix applies
-   * @param {p5.Vector} [target] The vector to receive the result
-   * @return {p5.Vector}
-   */
-  /**
-   * This function is only for 3x3 matrices.
-   * Takes a vector and returns the vector resulting from multiplying to
-   * that vector by this matrix from left.
+   * This method applies the current 3x3 matrix to a given vector, effectively
+   * transforming the vector using the matrix. The resulting vector is returned
+   * as a new vector or stored in the provided target vector.
    *
-   * @param {p5.Vector} multVector the vector to which this matrix applies
-   * @param {p5.Vector} [target] The vector to receive the result
-   * @return {p5.Vector}
+   * This is useful for operations such as transforming points or directions
+   * in 2D or 3D space using a 3x3 transformation matrix.
+   *
+   * @param {p5.Vector} multVector - The vector to which this matrix applies.
+   * @param {p5.Vector} [target] - The vector to receive the result. If not provided,
+   *                               a copy of the input vector will be created and returned.
+   * @return {p5.Vector} - The transformed vector after applying the matrix.
+   *
+   * @example
+   * // Multiplying a 3x3 matrix with a vector
+   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const vector = new Vector(1, 2, 3);
+   * const result = matrix.multiplyVec3(vector);
+   * console.log(result.toString()); // Output: Transformed vector
+   *
+   * // p5.js script example
+   * <div><code>
+   * function setup() {
+   *   noCanvas();
+   *   // Create a 3x3 matrix
+   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   console.log("Original Matrix:", matrix.matrix);
+   *
+   *   // Define a vector
+   *   const vector = new Vector(1, 2, 3);
+   *   console.log("Original Vector:", vector.toString());
+   *
+   *   // Apply the matrix to the vector
+   *   const transformedVector = matrix.multiplyVec3(vector);
+   *   console.log("Transformed Vector:", transformedVector.toString());
+   *
+   *   // Modify the matrix (e.g., apply a scaling transformation)
+   *   matrix.scale(2, 2, 2);
+   *   console.log("Modified Matrix (Scaling):", matrix.matrix);
+   *
+   *   // Apply the modified matrix to the same vector
+   *   const scaledVector = matrix.multiplyVec3(vector);
+   *   console.log("Scaled Vector:", scaledVector.toString());
+   * }
+   * </code></div>
    */
   multiplyVec3(multVector, target) {
     if (target === undefined) {
@@ -1133,7 +1996,7 @@ export class Matrix extends MatrixInterface {
       a20 = a.matrix[8];
       a21 = a.matrix[9];
       a22 = a.matrix[10];
-      a23 = a.matrix[11];
+      a23 = a.matrix[11]
       a30 = a.matrix[12];
       a31 = a.matrix[13];
       a32 = a.matrix[14];

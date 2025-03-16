@@ -19,6 +19,11 @@ function math(p5, fn){
    * y-component of 4. From the origin, this vector's tip is 3 units to the
    * right and 4 units down.
    *
+   * You can also pass N dimensions to the `createVector` function. For example,
+   * calling `createVector(1, 2, 3, 4)` creates a vector with four components.
+   * This allows for flexibility in representing vectors in higher-dimensional
+   * spaces.
+   *
    * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
    * motion because they simplify the math. For example, a moving ball has a
    * position and a velocity. Position describes where the ball is in space. The
@@ -30,9 +35,7 @@ function math(p5, fn){
    * <a href="#/p5.Vector">p5.Vector</a> class.
    *
    * @method createVector
-   * @param {Number} [x] x component of the vector.
-   * @param {Number} [y] y component of the vector.
-   * @param {Number} [z] z component of the vector.
+   * @param {...Number} components Components of the vector.
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
@@ -88,7 +91,7 @@ function math(p5, fn){
    *
    *   // Draw the dot.
    *   strokeWeight(5);
-   *   point(pos);
+   *   point(pos); 
    * }
    * </code>
    * </div>
@@ -110,9 +113,12 @@ function math(p5, fn){
    *
    * A matrix is a mathematical concept that is useful in many fields, including
    * computer graphics. In p5.js, matrices are used to perform transformations
-   * on shapes and images.
+   * on shapes and images. The `createMatrix` method can take a column-major
+   * array representation of a square matrix as an argument.
    *
    * @method createMatrix
+   * @param {Array<Number>} components Column-major array representation of the matrix.
+   *
    * @return {p5.Matrix} new <a href="#/p5.Matrix">p5.Matrix</a> object.
    *
    * @example
@@ -120,9 +126,7 @@ function math(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   let matrix = createMatrix();
-   *   console.log(matrix);
-   *   describe('Logs a new p5.Matrix object to the console.');
+   *   let matrix = createMatrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * }
    * </code>
    * </div>
