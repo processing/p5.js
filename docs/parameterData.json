@@ -130,7 +130,7 @@
     "paletteLerp": {
       "overloads": [
         [
-          null,
+          "[p5.Color|String|Number|Number[], Number][]",
           "Number"
         ]
       ]

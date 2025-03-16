@@ -1,22 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getAllEntries } from './helper.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
-
-function getEntries(entry) {
-  return [
-    entry,
-    ...getAllEntries(entry.members.global),
-    ...getAllEntries(entry.members.inner),
-    ...getAllEntries(entry.members.instance),
-    ...getAllEntries(entry.members.events),
-    ...getAllEntries(entry.members.static)
-  ];
-}
-
-function getAllEntries(arr) {
-  return arr.flatMap(getEntries);
-}
 
 const allData = getAllEntries(data);
 
@@ -631,3 +621,4 @@ fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
+
