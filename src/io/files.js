@@ -754,7 +754,9 @@ function files(p5, fn){
    * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
-   * <div class='norender'><code>
+   * 
+   * <div class='norender'>
+   * <code>
    * let data;
    *
    * async function setup() {
@@ -772,8 +774,10 @@ function files(p5, fn){
    *
    * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
    * }
-   * </code></div>
+   * </code>
+   * </div>
    */
+
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
       let { data } = await request(path, 'arrayBuffer');
