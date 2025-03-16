@@ -761,7 +761,7 @@ function files(p5, fn){
    *
    * async function setup() {
    * createCanvas(100, 100); // Create a canvas
-   * data = await loadBytes('mammals.xml'); // Load the bytes from the XML file
+   * data = await loadBytes('assets/mammals.xml'); // Load the bytes from the XML file
    *
    * background(255); // Set a white background
    * fill(0);       // Set text color to black
@@ -772,6 +772,7 @@ function files(p5, fn){
    * text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
    * }
    *
+   * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
    * }
    * </code>
    * </div>
