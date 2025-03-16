@@ -755,7 +755,7 @@ function files(p5, fn){
    *
    * @example
    * 
-   * <div class='norender'>
+   * <div>
    * <code>
    * let data;
    *
