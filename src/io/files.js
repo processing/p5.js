@@ -772,7 +772,6 @@ function files(p5, fn){
    * text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
    * }
    *
-   * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
    * }
    * </code>
    * </div>
