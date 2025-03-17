@@ -748,8 +748,8 @@ function material(p5, fn){
    * <p>
    *
    * If you want to apply shaders to strokes or images, use the following methods:
-   * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
-   * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
    *
    * </p>
    * </div>
@@ -1106,7 +1106,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1171,7 +1171,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
