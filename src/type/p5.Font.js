@@ -154,8 +154,7 @@ class Font {
       * @return {p5.Geometry} A geometry object representing the 3D model of the text.
       *
       * @example
-      * <div modernizr='webgl'>
-      * <code>
+      * ```js
       * let font;
       * let geom;
       *
@@ -176,9 +175,7 @@ class Font {
       * scale(min(width, height) / 300);
       * model(geom);
       * }
-      * </code>
-      * </div>
-      * 
+      * ```js
       * Once your 3D text is ready, you can rotate it in 3D space using orbitControl() 
       * — just click and drag with your mouse to see it from all angles!
       * 
