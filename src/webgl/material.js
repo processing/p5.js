@@ -1106,7 +1106,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1171,7 +1171,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
