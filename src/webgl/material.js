@@ -748,8 +748,8 @@ function material(p5, fn){
    * <p>
    *
    * If you want to apply shaders to strokes or images, use the following methods:
-   * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
-   * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
    *
    * </p>
    * </div>
@@ -794,7 +794,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   noStroke();
    *   describe('A rotating torus with simulated directional lighting.');
@@ -844,7 +844,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   shader(fillShader);
    *   noStroke();
@@ -869,7 +869,7 @@ function material(p5, fn){
    * let myShader;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *
    *   myShader = baseMaterialShader().modify({
    *     declarations: 'uniform float time;',
