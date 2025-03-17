@@ -6233,7 +6233,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/7389189?v=4",
       "profile": "https://github.com/AaratiAkkapeddi",
       "contributions": [
-        "code"
+        "code",
+        "ideas"
       ]
     },
     {
@@ -6694,6 +6695,15 @@
       ]
     },
     {
+      "login": "ChloeYanYan",
+      "name": "Chloe Yan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/181019103?v=4",
+      "profile": "https://github.com/ChloeYanYan",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
       "login": "webermayank",
       "name": "Mayank Verma",
       "avatar_url": "https://avatars.githubusercontent.com/u/111176033?v=4",
@@ -6709,6 +6719,70 @@
       "profile": "https://github.com/lab-mediaArts",
       "contributions": [
         "ideas"
+      ]
+    },
+    {
+      "login": "roxi09",
+      "name": "roxi09",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175943104?v=4",
+      "profile": "https://github.com/Roxi09",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "jlliu",
+      "name": "Jackie Liu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8304517?v=4",
+      "profile": "https://github.com/jlliu",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "re7l",
+      "name": "Carrie Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19353655?v=4",
+      "profile": "https://github.com/re7l",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "himanshuukholiya",
+      "name": "Himanshu Kholiya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/128818464?v=4",
+      "profile": "https://github.com/himanshuukholiya",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mclark414",
+      "name": "mclark414",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26391144?v=4",
+      "profile": "https://github.com/mclark414",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "mxramsey",
+      "name": "Mx. Ramsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161327383?v=4",
+      "profile": "https://github.com/mxramsey",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "franolichdesign",
+      "name": "Franolich Design",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74784668?v=4",
+      "profile": "https://github.com/franolichdesign",
+      "contributions": [
+        "bug",
+        "code"
       ]
     }
   ],
