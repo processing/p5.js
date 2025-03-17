@@ -260,6 +260,7 @@ Common acceptable differences include:
 
 For example, text rendered on macOS might appear slightly different from text rendered in a Linux CI environment. The same applies to thin lines, curves, and other graphical elements with anti-aliasing.
 An example of this can be the below image which earlier caused tests to fail in CI because of different rendering environments.
+
 ![Example](./images/pixelmatch2.png)
 
 The p5.js visual testing system uses a sophisticated algorithm to distinguish between acceptable rendering variations and actual bugs:
@@ -279,6 +280,7 @@ The p5.js visual testing system uses a sophisticated algorithm to distinguish be
   - Permits minor line shifts that are typical across platforms
 
 The below is the example of the tests that should fail:
+
 ![Example](./images/pixelmatch.png)
 
 
