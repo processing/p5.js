@@ -6233,7 +6233,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/7389189?v=4",
       "profile": "https://github.com/AaratiAkkapeddi",
       "contributions": [
-        "code"
+        "code",
+        "ideas"
       ]
     },
     {
@@ -6709,6 +6710,24 @@
       "profile": "https://github.com/himanshuukholiya",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "mclark414",
+      "name": "mclark414",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26391144?v=4",
+      "profile": "https://github.com/mclark414",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "mxramsey",
+      "name": "Mx. Ramsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161327383?v=4",
+      "profile": "https://github.com/mxramsey",
+      "contributions": [
+        "ideas"
       ]
     }
   ],
