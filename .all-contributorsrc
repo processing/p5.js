@@ -6738,6 +6738,16 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "franolichdesign",
+      "name": "Franolich Design",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74784668?v=4",
+      "profile": "https://github.com/franolichdesign",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
