@@ -450,9 +450,9 @@ export class Matrix extends MatrixInterface {
    * elements where the row index equals the column index. For example, in a
    * 3x3 matrix:
    * [
-   *   [1, 2, 3],
-   *   [4, 5, 6],
-   *   [7, 8, 9]
+   *   1, 2, 3,
+   *   4, 5, 6,
+   *   7, 8, 9
    * ]
    * The diagonal elements are [1, 5, 9].
    *
