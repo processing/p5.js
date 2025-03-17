@@ -794,7 +794,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   noStroke();
    *   describe('A rotating torus with simulated directional lighting.');
@@ -844,7 +844,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   shader(fillShader);
    *   noStroke();
@@ -869,7 +869,7 @@ function material(p5, fn){
    * let myShader;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *
    *   myShader = baseMaterialShader().modify({
    *     declarations: 'uniform float time;',
