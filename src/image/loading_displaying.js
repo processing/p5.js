@@ -995,7 +995,7 @@ function loadingDisplaying(p5, fn){
    *
    * async function setup() {
    *   // Load the image.
-   *   img = await loadImage('assets/laDefense50.jpg');
+   *   img = await loadImage('assets/laDefense50.png');
    *
    *   createCanvas(100, 100);
    *
