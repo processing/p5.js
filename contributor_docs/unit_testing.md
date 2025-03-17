@@ -249,3 +249,44 @@ visualSuite('3D Model rendering', function() {
 });
 ```
 
+
+Different operating systems and browsers render graphics with subtle variations. These differences are normal and shouldn't cause tests to fail.
+Common acceptable differences include:
+
+* Single-pixel shifts in line positions
+* Slight variations in anti-aliasing
+* Text rendering differences (especially font weight and kerning)
+* Minor differences in curve smoothness
+
+For example, text rendered on macOS might appear slightly different from text rendered in a Linux CI environment. The same applies to thin lines, curves, and other graphical elements with anti-aliasing.
+An example of this can be the below image which earlier caused tests to fail in CI because of different rendering environments.
+![Example](./images/pixelmatch2.png)
+
+The p5.js visual testing system uses a sophisticated algorithm to distinguish between acceptable rendering variations and actual bugs:
+
+* Initial comparison - Compares pixels with a moderate threshold (0.5) to identify differences using [pixelmatch](https://github.com/mapbox/pixelmatch) library for pixel to pixel comparison.
+* Cluster identification - Groups connected difference pixels using a Breadth-First Search (BFS) algorithm
+* Pattern recognition - The algorithm specifically identifies:
+
+  - "Line shift" clusters - differences that likely represent the same visual element shifted by 1px
+  - Isolated pixel differences (noise)
+
+
+* Smart failure criteria - Applies different thresholds:
+
+  - Ignores clusters smaller than 4 pixels
+  - Allows up to 40 total significant difference pixels
+  - Permits minor line shifts that are typical across platforms
+
+The below is the example of the tests that should fail:
+![Example](./images/pixelmatch.png)
+
+
+
+This approach balances sensitivity to real bugs while tolerating platform-specific rendering variations. The algorithm uses these key parameters:
+```js
+const MIN_CLUSTER_SIZE = 4;       // Minimum significant cluster size
+const MAX_TOTAL_DIFF_PIXELS = 40; // Maximum allowed significant differences
+```
+The algorithm identifies line shifts by analyzing the neighborhood of each difference pixel. If more than 80% of pixels in a cluster have ≤2 neighbors, it's classified as a line shift rather than a structural difference.
+This intelligent comparison ensures tests don't fail due to minor rendering differences while still catching actual visual bugs.
