@@ -1006,7 +1006,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   animatedStrokeShader = createShader(vertSrc, fragSrc);
    *   strokeShader(animatedStrokeShader);
    *   strokeWeight(4);
