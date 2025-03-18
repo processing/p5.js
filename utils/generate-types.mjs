@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   generateTypeDefinitions
-} from "./helper.js";
+} from "./helper.mjs";
 
 // Fix for __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);

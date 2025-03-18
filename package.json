@@ -5,13 +5,13 @@
     "build": "rollup -c",
     "dev": "vite preview/",
     "dev:global": "concurrently -n build,server \"rollup -c -w\" \"npx vite preview/global/\"",
-    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
+    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.mjs",
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "generate-types": "npm run docs && node utils/generate-types && node utils/patch"
+    "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
