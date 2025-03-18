@@ -151,7 +151,6 @@ class Font {
       * or styled with shaders—to create engaging, interactive visual art.
       *
       * @method textToModel
-      * @memberof p5.Font
       * @param {String} str The text string to convert into a 3D model.
       * @param {Number} x The x-coordinate for the starting position of the text.
       * @param {Number} y The y-coordinate for the starting position of the text.
