@@ -500,7 +500,7 @@ class Table {
     const ret = [];
     if (typeof value === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        ret.push(this.rows[i].obj[value]);
+        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);
       }
     } else {
       for (let j = 0; j < this.rows.length; j++) {
