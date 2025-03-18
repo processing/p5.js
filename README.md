@@ -1122,6 +1122,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/mxramsey"><img src="https://avatars.githubusercontent.com/u/161327383?v=4?s=120" width="120px;" alt="Mx. Ramsey"/><br /><sub><b>Mx. Ramsey</b></sub></a><br /><a href="#ideas-mxramsey" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/franolichdesign"><img src="https://avatars.githubusercontent.com/u/74784668?v=4?s=120" width="120px;" alt="Franolich Design"/><br /><sub><b>Franolich Design</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Afranolichdesign" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=franolichdesign" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Roxi09"><img src="https://avatars.githubusercontent.com/u/175943104?v=4?s=120" width="120px;" alt="roxi09"/><br /><sub><b>roxi09</b></sub></a><br /><a href="#ideas-roxi09" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/lab-mediaArts"><img src="https://avatars.githubusercontent.com/u/179049131?v=4?s=120" width="120px;" alt="Lauren Berrios"/><br /><sub><b>Lauren Berrios</b></sub></a><br /><a href="#ideas-lab-mediaArts" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
