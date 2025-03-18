@@ -264,6 +264,7 @@ class Renderer2D extends Renderer {
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
+      this.clipPath.closePath();      
     } else {
       if (this.states.fillColor) {
         this.drawingContext.fill(visitor.path);

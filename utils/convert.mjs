@@ -1,22 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getAllEntries } from './helper.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
-
-function getEntries(entry) {
-  return [
-    entry,
-    ...getAllEntries(entry.members.global),
-    ...getAllEntries(entry.members.inner),
-    ...getAllEntries(entry.members.instance),
-    ...getAllEntries(entry.members.events),
-    ...getAllEntries(entry.members.static)
-  ];
-}
-
-function getAllEntries(arr) {
-  return arr.flatMap(getEntries);
-}
 
 const allData = getAllEntries(data);
 
@@ -138,6 +128,14 @@ function locationInfo(node) {
   };
 }
 
+function deprecationInfo(node) {
+  if (!node.deprecated) {
+    return {};
+  }
+
+  return { deprecated: descriptionString(node.deprecated) };
+}
+
 function getExample(node) {
   return node.description;
 }
@@ -213,6 +211,7 @@ function getModuleInfo(entry) {
   const file = entry.context.file;
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
   let memberof = entry.memberof;
+  if (memberof === 'fn') memberof = 'p5';
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
@@ -264,6 +263,7 @@ for (const entry of allData) {
       name: entry.name,
       ...locationInfo(entry),
       ...typeObject(entry.type),
+      ...deprecationInfo(entry),
       description: descriptionString(entry.description),
       example: examples.length > 0 ? examples : undefined,
       alt: getAlt(entry),
@@ -286,6 +286,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       extends: entry.augments && entry.augments[0] && entry.augments[0].name,
       description: descriptionString(entry.description),
       example: entry.examples.map(getExample),
@@ -343,6 +344,7 @@ for (const entry of allData) {
       ...location,
       line: property.lineNumber || location.line,
       ...typeObject(property.type),
+      ...deprecationInfo(entry),
       module,
       submodule,
       class: entry.name
@@ -360,6 +362,7 @@ for (const entry of allData) {
   const propTag = entry.tags.find(tag => tag.title === 'property');
   const forTag = entry.tags.find(tag => tag.title === 'for');
   let memberof = entry.memberof;
+  if (memberof === 'fn') memberof = 'p5';
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
@@ -377,6 +380,7 @@ for (const entry of allData) {
     name: propTag.name,
     ...locationInfo(entry),
     ...typeObject(propTag.type),
+    ...deprecationInfo(entry),
     module,
     submodule,
     class: forName
@@ -407,6 +411,7 @@ for (const entry of allData) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
     let memberof = entry.memberof;
+    if (memberof === 'fn') memberof = 'p5';
     if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
       memberof = 'p5.' + memberof;
     }
@@ -438,6 +443,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       itemtype: 'method',
       chainable: (prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'))
         ? 1
@@ -615,3 +621,4 @@ fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
+

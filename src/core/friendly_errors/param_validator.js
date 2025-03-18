@@ -105,6 +105,19 @@ function validateParams(p5, fn, lifecycles) {
     return { funcName, funcClass };
   }
 
+  function validBracketNesting(type) {
+    let level = 0;
+    for (let i = 0; i < type.length; i++) {
+      if (type[i] === '[') {
+        level++;
+      } else if (type[i] === ']') {
+        level--;
+        if (level < 0) return false;
+      }
+    }
+    return level === 0;
+  }
+
   /**
    * This is a helper function that generates Zod schemas for a function based on
    * the parameter data from `docs/parameterData.json`.
@@ -139,11 +152,8 @@ function validateParams(p5, fn, lifecycles) {
     }
 
     // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
-    const generateTypeSchema = type => {
-      if (!type) return z.any();
-
-      const isArray = type.endsWith('[]');
-      const baseType = isArray ? type.slice(0, -2) : type;
+    const generateTypeSchema = baseType => {
+      if (!baseType) return z.any();
 
       let typeSchema;
 
@@ -162,7 +172,7 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = z.function();
       }
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
-      else if (baseType.startsWith('p5')) {
+      else if (/^p5\.[a-zA-Z0-9]+$/.exec(baseType) || baseType === 'p5') {
         const className = baseType.substring(baseType.indexOf('.') + 1);
         typeSchema = z.instanceof(p5Constructors[className]);
       }
@@ -171,7 +181,11 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = schemaMap[baseType];
       }
       // Tuple types
-      else if (baseType.startsWith('[') && baseType.endsWith(']')) {
+      else if (
+        baseType.startsWith('[') &&
+        baseType.endsWith(']') &&
+        validBracketNesting(baseType.slice(1, -1))
+      ) {
         typeSchema = z.tuple(
           baseType
             .slice(1, -1)
@@ -182,21 +196,7 @@ function validateParams(p5, fn, lifecycles) {
       // JavaScript classes, e.g. Request
       else if (baseType.match(/^[A-Z]/) && baseType in window) {
         typeSchema = z.instanceof(window[baseType]);
-      } else {
-        throw new Error(`Unsupported type '${type}' in parameter validation. Please report this issue.`);
       }
-
-      return isArray ? z.array(typeSchema) : typeSchema;
-    };
-
-    // Generate a schema for a single parameter. In the case where a parameter can
-    // be of multiple types, `generateTypeSchema` is called for each type.
-    const generateParamSchema = param => {
-      const isOptional = param?.endsWith('?');
-      param = param?.replace(/\?$/, '');
-
-      let schema;
-
       // Generate a schema for a single parameter that can be of multiple
       // types / constants, i.e. `String|Number|Array`.
       //
@@ -206,14 +206,27 @@ function validateParams(p5, fn, lifecycles) {
       // our constants sometimes have numeric or non-primitive values.
       // 2) In some cases, the type can be constants or strings, making z.enum()
       // insufficient for the use case.
-      if (param?.includes('|')) {
-        const types = param.split('|');
-        schema = z.union(types
+      else if (baseType.includes('|') && baseType.split('|').every(t => validBracketNesting(t))) {
+        const types = baseType.split('|');
+        typeSchema = z.union(types
           .map(t => generateTypeSchema(t))
           .filter(s => s !== undefined));
+      } else if (baseType.endsWith('[]')) {
+        typeSchema = z.array(generateTypeSchema(baseType.slice(0, -2)));
       } else {
-        schema = generateTypeSchema(param);
+        throw new Error(`Unsupported type '${baseType}' in parameter validation. Please report this issue.`);
       }
+
+      return typeSchema;
+    };
+
+    // Generate a schema for a single parameter. In the case where a parameter can
+    // be of multiple types, `generateTypeSchema` is called for each type.
+    const generateParamSchema = param => {
+      const isOptional = param?.endsWith('?');
+      param = param?.replace(/\?$/, '');
+
+      let schema = generateTypeSchema(param);
 
       return isOptional ? schema.optional() : schema;
     };

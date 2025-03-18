@@ -471,7 +471,7 @@ class Color {
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
     // Get colorjs maxes
-    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
+    const colorjsMaxes = Color.#colorjsMaxes[RGB];
 
     // Normalize everything to 0,1 or the provided range (map)
     let coords = structuredClone(to(this._color, 'srgb').coords);
