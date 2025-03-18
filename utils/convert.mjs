@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getAllEntries } from './helper.js';
+import { getAllEntries } from './helper.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -621,4 +621,3 @@ fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
-
