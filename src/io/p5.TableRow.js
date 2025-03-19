@@ -295,7 +295,7 @@ class TableRow {
    */
   getString(column) {
     if (typeof column === 'string') {
-      return this.obj[column].toString();
+      return this.obj[this.table.columns.indexOf(column)].toString();
     } else {
       return this.arr[column].toString();
     }
