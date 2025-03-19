@@ -164,7 +164,7 @@ class Table {
    *   background(255); // Set background to white
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Get the row at index 1 (second row)
    *   let row = table.getRow(1);
@@ -204,7 +204,7 @@ class Table {
    *   background(255);
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   let rows = table.getRows();
    *
@@ -263,7 +263,7 @@ class Table {
    *   background(255); // Set background to white
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *    // Find the row with the animal named "Zebra"
    *   let row = table.findRow('Zebra', 'name');
@@ -325,7 +325,7 @@ class Table {
    *   background(255); // Set background to white
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Add another goat entry
    *   let newRow = table.addRow();
@@ -944,7 +944,7 @@ class Table {
    *   background(255);
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Update the first row: change species to "Canis Lupus" and name to "Wolf"
    *   table.set(0, 'species', 'Canis Lupus');
@@ -997,7 +997,7 @@ class Table {
    *   background(255);
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Set the value in row 1, column "id" to the number 1
    *   table.setNum(1, 'id', 1);
@@ -1041,7 +1041,7 @@ class Table {
    *   background(255);
    *
    *   // Load the CSV file from the assets folder with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Add a new row with the new animal data
    *   let newRow = table.addRow();
@@ -1141,7 +1141,7 @@ class Table {
    *   background(255); // Set background to white
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Compute the result: id at row 1, column 0 plus 100 (i.e. 1 + 100 = 101)
    *   let result = table.getNum(1, 0) + 100;
@@ -1182,7 +1182,7 @@ class Table {
    *   background(255); // Set background to white
    *
    *   // Load the CSV file with a header row
-   *   table = await loadTable('mammals.csv', ',', 'header');
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   // Set text properties
    *   fill(0);      // Text color: black
