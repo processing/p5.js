@@ -484,35 +484,29 @@ function files(p5, fn){
    * @return {Promise<Object>}            <a href="#/p5.Table">Table</a> object containing data
    *
    * @example
-   * <div class='norender'>
+   * <div>
    * <code>
-   * // Given the following CSV file called "mammals.csv"
-   * // located in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
-   *   //count the columns
-   *   print(table.getRowCount() + ' total rows in table');
-   *   print(table.getColumnCount() + ' total columns in table');
+   *   // Get the second row (index 1)
+   *   let row = table.getRow(1);
    *
-   *   print(table.getColumn('name'));
-   *   //["Goat", "Leopard", "Zebra"]
-   *
-   *   //cycle through the table
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++) {
-   *       print(table.getString(r, c));
-   *     }
-   *   describe(`randomly generated text from a file,
-   *     for example "i smell like butter"`);
+   *   // Set text properties
+   *   fill(0);       // Set text color to black
+   *   textSize(16);  // Adjust text size as needed
+   *   
+   *   // Display each column value in the row on the canvas.
+   *   // Using an offset for y-position so each value appears on a new line.
+   *   for (let c = 0; c < table.getColumnCount(); c++) {
+   *     text(row.getString(c), 10, 30 + c * 20);
+   *   }
    * }
    * </code>
    * </div>
