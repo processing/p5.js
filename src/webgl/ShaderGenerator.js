@@ -274,6 +274,16 @@ function shadergenerator(p5, fn) {
       }
     }
 
+    toFloat() {
+      if (isFloatNode(this)) {
+        return this;
+      } else if (isIntNode(this)) {
+        return new FloatNode(this);
+      } else {
+        throw new TypeError(`Can't convert from type '${this.type}' to 'float'.`)
+      }
+    }
+
     toGLSL(context){
       throw new TypeError("Not supposed to call this function on BaseNode, which is an abstract class.");
     }
@@ -373,11 +383,13 @@ function shadergenerator(p5, fn) {
     }
 
     deconstructArgs(context) {
-      if (Array.isArray(this.args)) {
-        return this.args.map((argNode) => argNode.toGLSLBase(context)).join(', ');
-      } else {
-        return `${this.args.toGLSLBase(context)}`;
-      }
+      let argsString = this.args.map((argNode, i) => {
+        if (isIntNode(argNode) && this.argumentTypes[i] != 'float') {
+          argNode = argNode.toFloat();
+        }
+        return argNode.toGLSLBase(context);
+      }).join(', ');
+      return argsString;
     }
 
     toGLSL(context) {
