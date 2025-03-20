@@ -102,31 +102,37 @@ class Table {
    * @param   {Integer} id ID number of the row to remove
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
    *
-   *   //remove the first row
+   *   // Load the CSV file with a header row
+   *    table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Remove the first row from the table
    *   table.removeRow(0);
    *
-   *   //print the results
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++)
-   *       print(table.getString(r, c));
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
    *
+   *   // Display the table values on the canvas:
+   *   // Each row's cell values are joined into a single string and drawn on a new line.
+   *   let y = 20; // Starting vertical position
+   *   for (let r = 0; r < table.getRowCount(); r++) {
+   *     let rowText = "";
+   *     for (let c = 0; c < table.getColumnCount(); c++) {
+   *       rowText += table.getString(r, c) + " ";
+   *     }
+   *     text(rowText, 18, y * 3);
+   *     y += 20;
+   *   }
+   * 
    *   describe('no image displayed');
    * }
    * </code>
@@ -148,28 +154,28 @@ class Table {
    * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   background(255); // Set background to white
    *
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Get the row at index 1 (second row)
    *   let row = table.getRow(1);
-   *   //print it column by column
-   *   //note: a row is an object, not an array
+   * 
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Set the text size
+   *
+   *   // Loop over each column in the row and display its value on the canvas
    *   for (let c = 0; c < table.getColumnCount(); c++) {
-   *     print(row.getString(c));
+   *     text(row.getString(c), 10, 20 + c * 50 + 20);
    *   }
    *
    *   describe('no image displayed');
@@ -188,34 +194,41 @@ class Table {
    *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
+   *
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
    *   let rows = table.getRows();
    *
-   *   //warning: rows is an array of objects
+   *   // Warning: rows is an array of objects.
+   *   // Set the 'name' of each row to 'Unicorn'
    *   for (let r = 0; r < rows.length; r++) {
    *     rows[r].set('name', 'Unicorn');
    *   }
    *
-   *   //print the results
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++)
-   *       print(table.getString(r, c));
+   *   // Set text properties
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Display the modified table values on the canvas
+   *   // We'll join each row's values with a space and display each row on a new line.
+   *   let y = 20; // Starting y position
+   *   for (let r = 0; r < table.getRowCount(); r++) {
+   *     let rowText = "";
+   *     for (let c = 0; c < table.getColumnCount(); c++) {
+   *       rowText += table.getString(r, c) + " ";
+   *     }
+   *     text(rowText, 10, y * 2);
+   *     y += 20; // Move to next line
+   *   }
    *
    *   describe('no image displayed');
    * }
@@ -240,27 +253,29 @@ class Table {
    *  @return {p5.TableRow}
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 100x100 canvas
+   *   createCanvas(100, 100);
+   *   background(255); // Set background to white
    *
-   *   //find the animal named zebra
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *    // Find the row with the animal named "Zebra"
    *   let row = table.findRow('Zebra', 'name');
-   *   //find the corresponding species
-   *   print(row.getString('species'));
+   *
+   *   // Get the species from the found row
+   *   let species = row.getString('species');
+   *
+   *   // Set text properties and display the species on the canvas
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
+   *   text(species, 10, 30);
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -300,32 +315,34 @@ class Table {
    *  @return {p5.TableRow[]}        An Array of TableRow objects
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   background(255); // Set background to white
    *
-   *   //add another goat
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Add another goat entry
    *   let newRow = table.addRow();
    *   newRow.setString('id', table.getRowCount() - 1);
    *   newRow.setString('species', 'Scape Goat');
    *   newRow.setString('name', 'Goat');
    *
-   *   //find the rows containing animals named Goat
+   *   // Find rows where the name is "Goat"
    *   let rows = table.findRows('Goat', 'name');
-   *   print(rows.length + ' Goats found');
+   *
+   *   // Set text properties
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Display the result on the canvas
+   *   text(rows.length + ' Goats found', 10, 30);
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -364,27 +381,30 @@ class Table {
    * @return {p5.TableRow}        TableRow object
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   background(255); // Set background to white
    *
-   *   //Search using specified regex on a given column, return TableRow object
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Search using the specified regex on column index 1 (species)
    *   let mammal = table.matchRow(new RegExp('ant'), 1);
-   *   print(mammal.getString(1));
-   *   //Output "Panthera pardus"
+   *   let species = mammal.getString(1);  // "Panthera pardus"
+   *
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);       // Text color: black
+   *   textSize(12);  // Adjust text size as needed
+   *   
+   *   // Display the species on the canvas
+   *   text(species, 10, 30);
+   *
+   *   describe('no image displayed');
    * }
    * </code>
    * </div>
@@ -423,20 +443,25 @@ class Table {
    * let table;
    *
    * function setup() {
-   *   table = new p5.Table();
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
    *
+   *   // Create a new p5.Table and add columns
+   *   table = new p5.Table();
    *   table.addColumn('name');
    *   table.addColumn('type');
    *
-   *   let newRow = table.addRow();
+   *   // Add rows to the table
+   *    let newRow = table.addRow();
    *   newRow.setString('name', 'Lion');
-   *   newRow.setString('type', 'Mammal');
+   *    newRow.setString('type', 'Mammal');
    *
    *   newRow = table.addRow();
    *   newRow.setString('name', 'Snake');
    *   newRow.setString('type', 'Reptile');
    *
-   *   newRow = table.addRow();
+   *    newRow = table.addRow();
    *   newRow.setString('name', 'Mosquito');
    *   newRow.setString('type', 'Insect');
    *
@@ -444,14 +469,21 @@ class Table {
    *   newRow.setString('name', 'Lizard');
    *   newRow.setString('type', 'Reptile');
    *
+   *   // Search for rows where the "type" starts with "R"
    *   let rows = table.matchRows('R.*', 'type');
+   *
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);       // Text color: black
+   *   textSize(12);  // Text size
+   *
+   *   // Display each matching row on the canvas
+   *   let y = 20;
    *   for (let i = 0; i < rows.length; i++) {
-   *     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
+   *     let output = rows[i].getString('name') + ': ' + rows[i].getString('type');
+   *     text(output, 10, y);
+   *     y += 20;
    *   }
    * }
-   * // Sketch prints:
-   * // Snake: Reptile
-   * // Lizard: Reptile
    * </code>
    * </div>
    */
@@ -511,7 +543,8 @@ class Table {
     const ret = [];
     if (typeof value === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);      }
+        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);    
+        }
     } else {
       for (let j = 0; j < this.rows.length; j++) {
         ret.push(this.rows[j].arr[value]);
@@ -582,30 +615,24 @@ class Table {
    * let table;
    *
    * async function setup() {
-   *   // Create a 300x300 canvas
    *   createCanvas(300, 300);
+   *   table = await loadTable('/assets/mammals.csv', ',', 'header');
    *
-   *   // Load the CSV file with a header row
-   *   table = await loadTable('assets/mammals.csv', ',', 'header');
-   *
-   *   // Add a new column 'carnivore' and set its values
    *   table.addColumn('carnivore');
    *   table.set(0, 'carnivore', 'no');
    *   table.set(1, 'carnivore', 'yes');
    *   table.set(2, 'carnivore', 'no');
    *
-   *   // Set text properties for drawing on the canvas
-   *   fill(0);      // Text color: black
-   *   textSize(12); // Adjust text size as needed
+   *   fill(0);      // Set text color to black
+   *   textSize(11); // Adjust text size as needed
    *
-   *   // Display the table data on the canvas in a grid format
-   *   // Here we calculate positions based on row and column indices.
    *   for (let r = 0; r < table.getRowCount(); r++) {
    *     for (let c = 0; c < table.getColumnCount(); c++) {
-   *       // Calculate x and y positions for each cell.
-   *       let x = c * 50 + 10;  // Horizontal offset for each column
-   *       let y = r * 30 + 20;  // Vertical offset for each row
-   *       text(table.getString(r, c), x * c, y);
+   *       // Keep column spacing consistent (e.g. 80 pixels apart).
+   *       let x = c * 80 + 10;
+   *       let y = r * 30 + 20;
+   *       // Use x directly, rather than multiplying by c again
+   *       text(table.getString(r, c), x, y);
    *     }
    *   }
    *
@@ -834,25 +861,31 @@ class Table {
    *  @param  {String|Integer} column columnName (string) or ID (number)
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 100x100 canvas
+   *   createCanvas(100, 100);
+   *   background(255); // Set background to white
    *
-   *   table.removeColumn('id');
-   *   print(table.getColumnCount());
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *    // Remove the "id" column
+   *    table.removeColumn('id');
+   *
+   *   // Get the remaining column count
+   *   let colCount = table.getColumnCount();
+   *
+   *   // Set text properties
+   *   fill(0);      // Text color: black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Display the column count on the canvas
+   *   text(colCount, 40, 50);
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -895,30 +928,37 @@ class Table {
    * @param {String|Number} value  value to assign
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
    *
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Update the first row: change species to "Canis Lupus" and name to "Wolf"
    *   table.set(0, 'species', 'Canis Lupus');
    *   table.set(0, 'name', 'Wolf');
    *
-   *   //print the results
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++)
-   *       print(table.getString(r, c));
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);      // Text color: black
+   *    textSize(12); // Adjust text size as needed
+   *
+   *   // Display the table values on the canvas:
+   *   // Each row's values are concatenated into a single string and displayed on a new line.
+   *   let y = 20; // Starting vertical position
+   *   for (let r = 0; r < table.getRowCount(); r++) {
+   *     let rowText = "";
+   *     for (let c = 0; c < table.getColumnCount(); c++) {
+   *       rowText += table.getString(r, c) + " ";
+   *     }
+   *     text(rowText, 10, y * 2.5);
+   *     y += 20;
+   *   }
    *
    *   describe('no image displayed');
    * }
@@ -941,27 +981,29 @@ class Table {
    * @param {Number} value  value to assign
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 100x100 canvas and set a white background
+   *   createCanvas(100, 100);
+   *   background(255);
    *
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Set the value in row 1, column "id" to the number 1
    *   table.setNum(1, 'id', 1);
    *
-   *   print(table.getColumn(0));
-   *   //["0", 1, "2"]
+   *   // Get the first column as an array and join its values into a string for display.
+   *   let col0 = table.getColumn(0);  // Expected output: ["0", 1, "2"]
+   *   let output = col0.join(", ");
+   *
+   *   // Set text properties and display the output on the canvas
+   *   fill(0);      // Text color: black
+   *   textSize(12); // Adjust text size as needed
+   *   text(output, 30, 50);
    *
    *   describe('no image displayed');
    * }
@@ -983,32 +1025,44 @@ class Table {
    *                               or title (String)
    * @param {String} value  value to assign
    * @example
-   * <div class="norender"><code>
-   * // Given the CSV file "mammals.csv" in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
+   * <div>
+   * <code>
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
    *
-   *   //add a row
+   *   // Load the CSV file from the assets folder with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Add a new row with the new animal data
    *   let newRow = table.addRow();
    *   newRow.setString('id', table.getRowCount() - 1);
    *   newRow.setString('species', 'Canis Lupus');
    *   newRow.setString('name', 'Wolf');
    *
-   *   print(table.getArray());
+   *   // Convert the table to a 2D array
+   *   let tableArray = table.getArray();
+   *
+   *   // Set text properties
+   *   fill(0);       // Set text color to black
+   *   textSize(12);  // Adjust text size as needed
+   *
+   *   // Display each row of the table on the canvas
+   *   let y = 20;  // Starting y position
+   *   for (let i = 0; i < tableArray.length; i++) {
+   *     // Join the values of each row with a comma separator
+   *     let rowText = tableArray[i].join(', ');
+   *     text(rowText, 15, y * 2);
+   *     y += 20;  // Increment y position for the next row
+   *   }
    *
    *   describe('no image displayed');
    * }
-   * </code></div>
+   * </code>
+   * </div>
    */
   setString (row, column, value) {
     this.rows[row].setString(column, value);
@@ -1026,27 +1080,30 @@ class Table {
    * @return {String|Number}
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 100x100 canvas
+   *   createCanvas(100, 100);
+   *   background(255); // Set background to white
    *
-   *   print(table.get(0, 1));
-   *   //Capra hircus
-   *   print(table.get(0, 'species'));
-   *   //Capra hircus
+   *   // Load the CSV file from the assets folder with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Set text properties for drawing on the canvas
+   *   fill(0);      // Text color: black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Get the values from the table
+   *   let value1 = table.get(0, 1);       // Using column index (1) => "Capra hircus"
+   *   let value2 = table.get(0, 'species'); // Using column name => "Capra hircus"
+   *
+   *   // Display the values on the canvas
+   *   text(value1, 10, 30);
+   *   text(value2, 10, 60);
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -1068,25 +1125,26 @@ class Table {
    * @return {Number}
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 100x100 canvas
+   *   createCanvas(100, 100);
+   *   background(255); // Set background to white
    *
-   *   print(table.getNum(1, 0) + 100);
-   *   //id 1 + 100 = 101
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Compute the result: id at row 1, column 0 plus 100 (i.e. 1 + 100 = 101)
+   *   let result = table.getNum(1, 0) + 100;
+   *   
+   *   // Set text properties and display the result on the canvas
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
+   *   text(result, 10, 30);  // Display the result at position (10, 30)
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -1108,32 +1166,43 @@ class Table {
    * @return {String}
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   background(255); // Set background to white
    *
-   *   print(table.getString(0, 0)); // 0
-   *   print(table.getString(0, 1)); // Capra hircus
-   *   print(table.getString(0, 2)); // Goat
-   *   print(table.getString(1, 0)); // 1
-   *   print(table.getString(1, 1)); // Panthera pardus
-   *   print(table.getString(1, 2)); // Leopard
-   *   print(table.getString(2, 0)); // 2
-   *   print(table.getString(2, 1)); // Equus zebra
-   *   print(table.getString(2, 2)); // Zebra
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Set text properties
+   *   fill(0);      // Text color: black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Display each table cell value on the canvas one below the other.
+   *   // We use a variable 'y' to increment the vertical position.
+   *   let y = 20;
+   *   text(table.getString(0, 0), 10, y); // 0
+   *   y += 20;
+   *   text(table.getString(0, 1), 10, y); // Capra hircus
+   *   y += 20;
+   *   text(table.getString(0, 2), 10, y); // Goat
+   *   y += 20;
+   *   text(table.getString(1, 0), 10, y); // 1
+   *   y += 20;
+   *   text(table.getString(1, 1), 10, y); // Panthera pardus
+   *   y += 20;
+   *   text(table.getString(1, 2), 10, y); // Leopard
+   *   y += 20;
+   *   text(table.getString(2, 0), 10, y); // 2
+   *   y += 20;
+   *   text(table.getString(2, 1), 10, y); // Equus zebra
+   *   y += 20;
+   *   text(table.getString(2, 2), 10, y); // Zebra
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -1210,27 +1279,32 @@ class Table {
    * @return {Array}
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
-   * // Given the CSV file "mammals.csv"
-   * // in the project's "assets" folder
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leoperd
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   // The table is comma separated value "csv"
-   *   // and has a header specifying the columns labels.
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas and set a white background
+   *   createCanvas(200, 200);
+   *   background(255);
    *
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
+   *
+   *   // Get the CSV data as a 2D array
    *   let tableArray = table.getArray();
+   *
+   *   // Set text properties
+   *   fill(0);      // Set text color to black
+   *   textSize(12); // Adjust text size as needed
+   *
+   *   // Display each row of the CSV on the canvas
+   *   // Each row is displayed on a separate line
    *   for (let i = 0; i < tableArray.length; i++) {
-   *     print(tableArray[i]);
+   *     let rowText = tableArray[i].join(", ");
+   *     text(rowText, 10, 20 + i * 50 + 30);
    *   }
+   *
    *   describe('no image displayed');
    * }
    * </code>
