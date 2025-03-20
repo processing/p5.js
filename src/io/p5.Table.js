@@ -615,30 +615,24 @@ class Table {
    * let table;
    *
    * async function setup() {
-   *   // Create a 300x300 canvas
    *   createCanvas(300, 300);
+   *   table = await loadTable('/assets/mammals.csv', ',', 'header');
    *
-   *   // Load the CSV file with a header row
-   *   table = await loadTable('assets/mammals.csv', ',', 'header');
-   *
-   *   // Add a new column 'carnivore' and set its values
    *   table.addColumn('carnivore');
    *   table.set(0, 'carnivore', 'no');
    *   table.set(1, 'carnivore', 'yes');
    *   table.set(2, 'carnivore', 'no');
    *
-   *   // Set text properties for drawing on the canvas
-   *   fill(0);      // Text color: black
-   *   textSize(12); // Adjust text size as needed
+   *   fill(0);      // Set text color to black
+   *   textSize(11); // Adjust text size as needed
    *
-   *   // Display the table data on the canvas in a grid format
-   *   // Here we calculate positions based on row and column indices.
    *   for (let r = 0; r < table.getRowCount(); r++) {
    *     for (let c = 0; c < table.getColumnCount(); c++) {
-   *       // Calculate x and y positions for each cell.
-   *       let x = c * 50 + 10;  // Horizontal offset for each column
-   *       let y = r * 30 + 20;  // Vertical offset for each row
-   *       text(table.getString(r, c), x + c*25, y);
+   *       // Keep column spacing consistent (e.g. 80 pixels apart).
+   *       let x = c * 80 + 10;
+   *       let y = r * 30 + 20;
+   *       // Use x directly, rather than multiplying by c again
+   *       text(table.getString(r, c), x, y);
    *     }
    *   }
    *
@@ -987,7 +981,7 @@ class Table {
    * @param {Number} value  value to assign
    *
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
    * let table;
    *
