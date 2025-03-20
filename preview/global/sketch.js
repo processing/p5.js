@@ -1,53 +1,50 @@
-// p5.disableFriendlyErrors = true;
+p5.disableFriendlyErrors = true;
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-let myShader;
-let filterShader;
-let video;
 
+let myModel;
+let starShader;
+let starStrokeShader;
+let stars;
+
+function starShaderCallback() {
+  const time = uniformFloat(() => millis());
+  getWorldInputs((inputs) => {
+    inputs.position.y += instanceID() * 20 - 1000;
+    inputs.position.x += 40*sin(time * 0.001 + instanceID());
+    return inputs;
+  });
+  getObjectInputs((inputs) => {
+    inputs.position *= sin(time*0.001 + instanceID());
+    return inputs;
+  })
+}
 
 async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-
-  // filterShader = baseFi
-
-  filterShader = baseFilterShader().modify(() => {
-    const time = uniformFloat(() => millis());
-
-    getColor((input, canvasContents) => {
-      let myColor = texture(canvasContents, uvCoords());
-      const d = distance(input.texCoord, [0.5, 0.5]);
-      myColor.x = smoothstep(0, 0.5, d);
-      myColor.y = sin(time*0.001)/2;
-      return myColor;
-    })
-  });
-
-  myShader = baseMaterialShader().modify(() => {
-    const time = uniformFloat(() => millis());
-
-    getFinalColor((col) => {
-      col.x = uvCoords().x;
-      col.y = uvCoords().y;
-      col.z = 1;
-      return col;
-    });
-
-    getWorldInputs((inputs) => {
-      inputs.position.y += 20 * sin(time * 0.001 + inputs.position.x * 0.05);
-      return inputs;
-    })
-  });
+  stars = buildGeometry(() => sphere(20, 7, 4))
+  starShader = baseMaterialShader().modify(starShaderCallback); 
+  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
 }
 
 function draw(){
-  // orbitControl();
-  background(0);
+  background(0,200,240);
+  orbitControl();
+  // noStroke();
+  
+  push();
+  stroke(255,0,255)
+  fill(255,200,255)
+  strokeShader(starStrokeShader)
+  shader(starShader);
+  model(stars, 100);
+  pop();
+  push();
+  shader(baseMaterialShader());
   noStroke();
-  fill('blue')
-  sphere(100)
-  shader(myShader);
-  filter(filterShader);
-  // filterShader.setUniform('time', millis());
+  rotateX(HALF_PI);
+  translate(0, 0, -250);
+  plane(10000)
+  pop();
 }
