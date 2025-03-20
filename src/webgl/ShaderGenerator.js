@@ -715,10 +715,6 @@ function shadergenerator(p5, fn) {
     return new VariableNode('gl_InstanceID', 'int');
   }
 
-  fn.uvCoords = function() {
-    return new VariableNode('vTexCoord', 'vec2');
-  }
-
   fn.discard = function() {
     return new VariableNode('discard', 'keyword');
   }
