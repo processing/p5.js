@@ -24,3 +24,5 @@ docs/data.json
 analyzer/
 preview/
 __screenshots__/
+actual-screenshots/
+visual-report.html
