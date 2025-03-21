@@ -740,20 +740,23 @@ function setting(p5, fn){
    * Calling colorMode(RGB, 100) sets colors to use RGB color values between 0 and 100.
    * Pure red is color(100, 0, 0) in this model.
    *
-   * Calling colorMode(HSB) or colorMode(HSL) changes to HSB or HSL system instead of RGB.
+   * Calling `colorMode(HSB)` or colorMode(HSL) changes to HSB or HSL system instead of RGB.
    * Pure red is color(0, 100, 100) in HSB and color(0, 100, 50) in HSL.
    *
    * p5.js 2.0 now supports additional color modes:
    *
-   * RGBHDR - High Dynamic Range RGB defined within the Display P3 color space.
+   * **RGBHDR** - High Dynamic Range RGB defined within the Display P3 color space.
    *          Colors are expressed with an extended dynamic range. To render these colors
-   *          accurately, you must use the HDR canvas described in the documentation.
+   *          accurately, you must use the HDR canvas.
    *
    * HWB    - Hue, Whiteness, Blackness.
    *          Similar to HSB and HSL, this mode uses a hue angle.
    *          Instead of saturation and lightness, HWB defines colors based on the percentage
    *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
    *          Pure red in HWB is represented as color(0, 0, 0) (i.e., hue 0 with 0% whiteness and 0% blackness).
+   * 
+   * 
+   * <img src="assets/drawImage.png"></img>
    *
    * LAB    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
    *          It is widely used in professional color measurement contexts due to its perceptual uniformity.
