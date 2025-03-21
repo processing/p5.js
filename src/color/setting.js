@@ -733,20 +733,42 @@ function setting(p5, fn){
   /**
    * Changes the way color values are interpreted.
    *
-   * By default, the `Number` parameters for <a href="#/p5/fill">fill()</a>,
-   * <a href="#/p5/stroke">stroke()</a>,
-   * <a href="#/p5/background">background()</a>, and
-   * <a href="#/p5/color">color()</a> are defined by values between 0 and 255
-   * using the RGB color model. This is equivalent to calling
-   * `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
+   * By default, the Number parameters for fill(), stroke(), background(), and color()
+   * are defined by values between 0 and 255 using the RGB color model.
+   * This is equivalent to calling colorMode(RGB, 255). Pure red is color(255, 0, 0) in this model.
    *
-   * Calling `colorMode(RGB, 100)` sets colors to use RGB color values
-   * between 0 and 100. Pure red is `color(100, 0, 0)` in this model.
+   * Calling colorMode(RGB, 100) sets colors to use RGB color values between 0 and 100.
+   * Pure red is color(100, 0, 0) in this model.
    *
-   * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL system
-   * instead of RGB. Pure red is `color(0, 100, 100)` in HSB and
-   * `color(0, 100, 50)` in HSL.
+   * Calling colorMode(HSB) or colorMode(HSL) changes to HSB or HSL system instead of RGB.
+   * Pure red is color(0, 100, 100) in HSB and color(0, 100, 50) in HSL.
    *
+   * p5.js 2.0 now supports additional color modes:
+   *
+   * RGBHDR - High Dynamic Range RGB defined within the Display P3 color space.
+   *          Colors are expressed with an extended dynamic range. To render these colors
+   *          accurately, you must use the HDR canvas described in the documentation.
+   *
+   * HWB    - Hue, Whiteness, Blackness.
+   *          Similar to HSB and HSL, this mode uses a hue angle.
+   *          Instead of saturation and lightness, HWB defines colors based on the percentage
+   *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
+   *          Pure red in HWB is represented as color(0, 0, 0) (i.e., hue 0 with 0% whiteness and 0% blackness).
+   *
+   * LAB    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
+   *          It is widely used in professional color measurement contexts due to its perceptual uniformity.
+   *
+   * LCH    - A more intuitive representation of the CIE Lab color space using Lightness, Chroma, and Hue.
+   *          This mode separates the color's chromatic intensity (chroma) from its lightness,
+   *          simplifying color selection and manipulation.
+   *
+   * OKLAB  - A variant of the CIE Lab color space that corrects for non-uniformities inherent in LAB.
+   *          The adjustment provides a more perceptually accurate and uniform representation,
+   *          which is particularly beneficial for smooth color transitions.
+   *
+   * OKLCH  - An easier-to-use representation of OKLAB, expressing colors in terms of Lightness, Chroma, and Hue.
+   *          This mode retains the perceptual benefits of OKLAB while offering a more intuitive format for color manipulation.
+   * 
    * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
    * created in. Changing modes doesn't affect their appearance.
    *
