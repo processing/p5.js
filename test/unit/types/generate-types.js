@@ -1,5 +1,5 @@
 import { suite, test, expect } from 'vitest';
-import { 
+import {
   normalizeClassName,
   generateTypeFromTag,
   generateParamDeclaration,
@@ -7,7 +7,7 @@ import {
   generateClassDeclaration,
   generateMethodDeclarations,
   generateTypeDefinitions
-} from '../../../utils/helper.js';
+} from '../../../utils/helper.mjs';
 
 // Move absFuncDoc to the top level
 const absFuncDoc = {
@@ -198,14 +198,14 @@ suite('normalizeClassName', () => {
 
 suite('generateTypeFromTag', () => {
   test('should handle primitive types', () => {
-    expect(generateTypeFromTag({ 
-      type: { type: 'NameExpression', name: 'Number' } 
+    expect(generateTypeFromTag({
+      type: { type: 'NameExpression', name: 'Number' }
     })).toBe('number');
-    expect(generateTypeFromTag({ 
-      type: { type: 'NameExpression', name: 'String' } 
+    expect(generateTypeFromTag({
+      type: { type: 'NameExpression', name: 'String' }
     })).toBe('string');
-    expect(generateTypeFromTag({ 
-      type: { type: 'NameExpression', name: 'Boolean' } 
+    expect(generateTypeFromTag({
+      type: { type: 'NameExpression', name: 'Boolean' }
     })).toBe('boolean');
   });
 
@@ -243,7 +243,7 @@ suite('generateParamDeclaration', () => {
   test('should handle optional parameters', () => {
     expect(generateParamDeclaration({
       name: 'y',
-      type: { 
+      type: {
         type: 'OptionalType',
         expression: { type: 'NameExpression', name: 'String' }
       }
@@ -274,9 +274,9 @@ suite('generateClassDeclaration', () => {
         { name: 'renderer', type: { type: 'NameExpression', name: 'p5.RendererGL' } },
         { name: 'vertSrc', type: { type: 'NameExpression', name: 'string' } },
         { name: 'fragSrc', type: { type: 'NameExpression', name: 'string' } },
-        { 
+        {
           name: 'options',
-          type: { 
+          type: {
             type: 'OptionalType',
             expression: { type: 'NameExpression', name: 'object' }
           }
@@ -303,9 +303,9 @@ suite('generateMethodDeclarations', () => {
       name: 'copyToContext',
       kind: 'function',
       description: '',
-      params: [{ 
+      params: [{
         name: 'context',
-        type: { 
+        type: {
           type: 'UnionType',
           elements: [
             { type: 'NameExpression', name: 'p5' },
@@ -330,7 +330,7 @@ suite('generateMethodDeclarations', () => {
 suite('generateTypeDefinitions', () => {
   test('should generate type definitions from minimal data', () => {
     const result = generateTypeDefinitions([absFuncDoc]);
-    
+
     const expectedContent = '// This file is auto-generated from JSDoc documentation\n\n' +
       'import p5 from \'p5\';\n\n' +
       'declare module \'p5\' {\n' +
@@ -369,9 +369,9 @@ suite('generateTypeDefinitions', () => {
       '}\n\n';
 
     const filePath = 'C:\\Users\\diyas\\Documents\\p5.js\\src\\math\\calculation.js';
-    
+
     // Helper function to normalize whitespace and newlines
-    const normalizeString = (str) => 
+    const normalizeString = (str) =>
       str.replace(/\s+/g, ' ')
          .replace(/\n\s*/g, '\n')
          .trim();

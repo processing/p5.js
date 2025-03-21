@@ -259,7 +259,7 @@ class Table {
   // try the Object
     if (typeof column === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        if (this.rows[i].obj[column] === value) {
+        if (this.rows[i].obj[this.columns.indexOf(column)] === value) {
           return this.rows[i];
         }
       }
@@ -324,7 +324,7 @@ class Table {
     const ret = [];
     if (typeof column === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        if (this.rows[i].obj[column] === value) {
+        if (this.rows[i].obj[this.columns.indexOf(column)] === value) {
           ret.push(this.rows[i]);
         }
       }
@@ -387,7 +387,7 @@ class Table {
       }
     } else {
       for (let i = 0; i < this.rows.length; i++) {
-        if (this.rows[i].obj[column].match(regexp)) {
+        if (this.rows[i].obj[this.columns.indexOf(column)].match(regexp)) {
           return this.rows[i];
         }
       }
@@ -454,7 +454,7 @@ class Table {
       }
     } else {
       for (let i = 0; i < this.rows.length; i++) {
-        if (this.rows[i].obj[column].match(regexp)) {
+        if (this.rows[i].obj[this.columns.indexOf(column)].match(regexp)) {
           ret.push(this.rows[i]);
         }
       }
@@ -500,7 +500,7 @@ class Table {
     const ret = [];
     if (typeof value === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        ret.push(this.rows[i].obj[value]);
+        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);
       }
     } else {
       for (let j = 0; j < this.rows.length; j++) {
@@ -1028,7 +1028,11 @@ class Table {
    * </div>
    */
   get (row, column) {
-    return this.rows[row].get(column);
+    if(typeof column === 'string'){
+      return this.rows[row].get(this.columns.indexOf(column));
+    } else {
+      return this.rows[row].get(column);
+    }
   }
 
   /**

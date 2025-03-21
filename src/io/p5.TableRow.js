@@ -194,7 +194,7 @@ class TableRow {
    */
   get(column) {
     if (typeof column === 'string') {
-      return this.obj[column];
+      return this.obj[this.table.columns.indexOf(column)];
     } else {
       return this.arr[column];
     }
@@ -241,7 +241,7 @@ class TableRow {
   getNum(column) {
     let ret;
     if (typeof column === 'string') {
-      ret = parseFloat(this.obj[column]);
+      ret = parseFloat(this.obj[this.table.columns.indexOf(column)]);
     } else {
       ret = parseFloat(this.arr[column]);
     }
@@ -295,7 +295,7 @@ class TableRow {
    */
   getString(column) {
     if (typeof column === 'string') {
-      return this.obj[column].toString();
+      return this.obj[this.table.columns.indexOf(column)].toString();
     } else {
       return this.arr[column].toString();
     }
