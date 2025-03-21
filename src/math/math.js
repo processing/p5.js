@@ -1,6 +1,5 @@
 /**
  * @module Math
- * @submodule Vector
  * @for p5
  * @requires core
  */

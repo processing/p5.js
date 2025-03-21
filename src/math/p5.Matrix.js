@@ -1,4 +1,5 @@
 /**
+ * @module Math
  * @requires constants
  * @todo see methods below needing further implementation.
  * future consideration: implement SIMD optimizations
