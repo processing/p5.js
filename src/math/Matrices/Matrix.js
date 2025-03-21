@@ -1,3 +1,8 @@
+/**
+ * @module Math
+ * @submodule Matrix 
+ */
+
 import { Vector } from "../p5.Vector";
 import { MatrixInterface } from "./MatrixInterface";
 
@@ -1996,7 +2001,7 @@ export class Matrix extends MatrixInterface {
       a20 = a.matrix[8];
       a21 = a.matrix[9];
       a22 = a.matrix[10];
-      a23 = a.matrix[11]
+      a23 = a.matrix[11];
       a30 = a.matrix[12];
       a31 = a.matrix[13];
       a32 = a.matrix[14];
