@@ -1,6 +1,5 @@
 /**
  * @module Math
- * @submodule Matrix 
  */
 
 import { Vector } from "../p5.Vector";

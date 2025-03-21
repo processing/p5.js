@@ -1,6 +1,5 @@
 /**
  * @module Math
- * @submodule Vector
  * @requires constants
  */
 
