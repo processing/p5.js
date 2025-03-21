@@ -1028,7 +1028,11 @@ class Table {
    * </div>
    */
   get (row, column) {
-    return this.rows[row].get(column);
+    if(typeof column === 'string'){
+      return this.rows[row].get(this.columns.indexOf(column));
+    } else {
+      return this.rows[row].get(column);
+    }
   }
 
   /**
