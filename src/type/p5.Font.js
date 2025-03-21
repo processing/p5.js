@@ -128,6 +128,9 @@ class Font {
     return cmdContours.map((commands) => pathToPoints(commands, options, this));
   }
 
+  /**
+   * Test
+   */
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;

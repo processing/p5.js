@@ -402,11 +402,6 @@
         []
       ]
     },
-    "preload": {
-      "overloads": [
-        []
-      ]
-    },
     "createCanvas": {
       "overloads": [
         [
@@ -626,28 +621,6 @@
       "overloads": [
         [
           "String"
-        ]
-      ]
-    },
-    "createStringDict": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ],
-        [
-          "Object"
-        ]
-      ]
-    },
-    "createNumberDict": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Object"
         ]
       ]
     },
@@ -2097,86 +2070,6 @@
         []
       ]
     },
-    "append": {
-      "overloads": [
-        [
-          "Array",
-          "Any"
-        ]
-      ]
-    },
-    "arrayCopy": {
-      "overloads": [
-        [
-          "Array",
-          "Integer",
-          "Array",
-          "Integer",
-          "Integer"
-        ],
-        [
-          "Array",
-          "Array",
-          "Integer?"
-        ]
-      ]
-    },
-    "concat": {
-      "overloads": [
-        [
-          "Array",
-          "Array"
-        ]
-      ]
-    },
-    "reverse": {
-      "overloads": [
-        [
-          "Array"
-        ]
-      ]
-    },
-    "shorten": {
-      "overloads": [
-        [
-          "Array"
-        ]
-      ]
-    },
-    "shuffle": {
-      "overloads": [
-        [
-          "Array",
-          "Boolean?"
-        ]
-      ]
-    },
-    "sort": {
-      "overloads": [
-        [
-          "Array",
-          "Integer?"
-        ]
-      ]
-    },
-    "splice": {
-      "overloads": [
-        [
-          "Array",
-          "Any",
-          "Integer"
-        ]
-      ]
-    },
-    "subset": {
-      "overloads": [
-        [
-          "Array",
-          "Integer",
-          "Integer?"
-        ]
-      ]
-    },
     "float": {
       "overloads": [
         [
@@ -2266,28 +2159,39 @@
         ]
       ]
     },
-    "join": {
+    "day": {
       "overloads": [
-        [
-          "Array",
-          "String"
-        ]
+        []
       ]
     },
-    "match": {
+    "hour": {
       "overloads": [
-        [
-          "String",
-          "String"
-        ]
+        []
       ]
     },
-    "matchAll": {
+    "minute": {
       "overloads": [
-        [
-          "String",
-          "String"
-        ]
+        []
+      ]
+    },
+    "millis": {
+      "overloads": [
+        []
+      ]
+    },
+    "month": {
+      "overloads": [
+        []
+      ]
+    },
+    "second": {
+      "overloads": [
+        []
+      ]
+    },
+    "year": {
+      "overloads": [
+        []
       ]
     },
     "nf": {
@@ -2344,14 +2248,6 @@
         ]
       ]
     },
-    "split": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
     "splitTokens": {
       "overloads": [
         [
@@ -2360,49 +2256,12 @@
         ]
       ]
     },
-    "trim": {
+    "shuffle": {
       "overloads": [
         [
-          "String"
-        ],
-        [
-          "String[]"
+          "Array",
+          "Boolean?"
         ]
-      ]
-    },
-    "day": {
-      "overloads": [
-        []
-      ]
-    },
-    "hour": {
-      "overloads": [
-        []
-      ]
-    },
-    "minute": {
-      "overloads": [
-        []
-      ]
-    },
-    "millis": {
-      "overloads": [
-        []
-      ]
-    },
-    "month": {
-      "overloads": [
-        []
-      ]
-    },
-    "second": {
-      "overloads": [
-        []
-      ]
-    },
-    "year": {
-      "overloads": [
-        []
       ]
     },
     "strokeMode": {
@@ -3312,127 +3171,6 @@
         [
           "Number"
         ]
-      ]
-    }
-  },
-  "p5.TypedDict": {
-    "size": {
-      "overloads": [
-        []
-      ]
-    },
-    "hasKey": {
-      "overloads": [
-        [
-          "Number|String"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Number|String"
-        ]
-      ]
-    },
-    "set": {
-      "overloads": [
-        [
-          "Number|String",
-          "Number|String"
-        ]
-      ]
-    },
-    "create": {
-      "overloads": [
-        [
-          "Number|String",
-          "Number|String"
-        ],
-        [
-          "Object"
-        ]
-      ]
-    },
-    "clear": {
-      "overloads": [
-        []
-      ]
-    },
-    "remove": {
-      "overloads": [
-        [
-          "Number|String"
-        ]
-      ]
-    },
-    "print": {
-      "overloads": [
-        []
-      ]
-    },
-    "saveTable": {
-      "overloads": [
-        []
-      ]
-    },
-    "saveJSON": {
-      "overloads": [
-        []
-      ]
-    }
-  },
-  "p5.NumberDict": {
-    "add": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "sub": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "mult": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "div": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "minValue": {
-      "overloads": [
-        []
-      ]
-    },
-    "maxValue": {
-      "overloads": [
-        []
-      ]
-    },
-    "minKey": {
-      "overloads": [
-        []
-      ]
-    },
-    "maxKey": {
-      "overloads": [
-        []
       ]
     }
   },
@@ -4706,6 +4444,11 @@
     }
   },
   "p5.Font": {
+    "textToModel": {
+      "overloads": [
+        []
+      ]
+    },
     "hasGlyphData": {
       "overloads": [
         []
