@@ -438,7 +438,7 @@ class Table {
    *                                  title (string)
    * @return {p5.TableRow[]}          An Array of TableRow objects
    * @example
-   * <div class="norender">
+   * <div>
    * <code>
    * let table;
    *
