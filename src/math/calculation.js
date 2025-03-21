@@ -776,6 +776,8 @@ p5.prototype.min = function(...args) {
  * range [0, 10] is proportional to 0.2's position in the range [0, 1]. This
  * is the same as calling `map(2, 0, 10, 0, 1)`.
  *
+ * This function performs a linear mapping from the original range to the target range.
+ *
  * Numbers outside of the original range are not constrained between 0 and 1.
  * Out-of-range values are often intentional and useful.
  *
