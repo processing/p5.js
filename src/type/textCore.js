@@ -315,7 +315,7 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textAscent = function (txt = '') {
     if (!txt.length) return this.fontAscent();
-    return this.textDrawingContext().measureText(txt)[prop];
+    return this.textDrawingContext().measureText(txt).actualBoundingBoxAscent;
   };
 
   /**
@@ -334,7 +334,7 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textDescent = function (txt = '') {
     if (!txt.length) return this.fontDescent();
-    return this.textDrawingContext().measureText(txt)[prop];
+    return this.textDrawingContext().measureText(txt).actualBoundingBoxDescent;
   };
 
   /**
