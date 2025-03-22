@@ -486,33 +486,27 @@ function files(p5, fn){
    * @example
    * <div class='norender'>
    * <code>
-   * // Given the following CSV file called "mammals.csv"
-   * // located in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
+   *   
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
-   *   //count the columns
-   *   print(table.getRowCount() + ' total rows in table');
-   *   print(table.getColumnCount() + ' total columns in table');
+   *   // Get the second row (index 1)
+   *   let row = table.getRow(1);
    *
-   *   print(table.getColumn('name'));
-   *   //["Goat", "Leopard", "Zebra"]
-   *
-   *   //cycle through the table
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++) {
-   *       print(table.getString(r, c));
-   *     }
-   *   describe(`randomly generated text from a file,
-   *     for example "i smell like butter"`);
+   *   // Set text properties
+   *   fill(0);       // Set text color to black
+   *   textSize(16);  // Adjust text size as needed
+   *   
+   *   // Display each column value in the row on the canvas.
+   *   // Using an offset for y-position so each value appears on a new line.
+   *   for (let c = 0; c < table.getColumnCount(); c++) {
+   *     text(row.getString(c), 10, 30 + c * 20);
+   *   }
    * }
    * </code>
    * </div>
@@ -754,19 +748,30 @@ function files(p5, fn){
    * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
-   * <div class='norender'><code>
+   * 
+   * <div>
+   * <code>
    * let data;
    *
    * async function setup() {
-   *   data = await loadBytes('assets/mammals.xml');
+   * createCanvas(100, 100); // Create a canvas
+   * data = await loadBytes('assets/mammals.xml'); // Load the bytes from the XML file
    *
-   *   for (let i = 0; i < 5; i++) {
-   *     console.log(data.bytes[i].toString(16));
-   *   }
-   *   describe('no image displayed');
+   * background(255); // Set a white background
+   * fill(0);       // Set text color to black
+   *
+   * // Display the first 5 byte values on the canvas in hexadecimal format
+   * for (let i = 0; i < 5; i++) {
+   * let byteHex = data[i].toString(16);
+   * text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
    * }
-   * </code></div>
+   *
+   * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
+   * }
+   * </code>
+   * </div>
    */
+
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
       let { data } = await request(path, 'arrayBuffer');

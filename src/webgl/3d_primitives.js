@@ -35,8 +35,7 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- *
- *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background. The wavy line have caps, joins and colors.');
  * }
  *
  * function draw() {
@@ -47,13 +46,16 @@ function primitives3D(p5, fn){
  *   translate(0, -50, 0);
  *   sphere(50);
  *   pop();
+ *   orbitControl();
  *
  *   noFill();
  *   strokeWeight(15);
- *   beginShape();
- *   vertex(-150, 100);
  *   stroke('red');
- *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   beginShape();
+ *   bezierOrder(2); // Sets the order of the Bezier curve.
+ *   bezierVertex(80, 80);
+ *   bezierVertex(50, -40);
+ *   bezierVertex(-80, 80);
  *   endShape();
  * }
  * </code>
@@ -63,25 +65,30 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- *
  *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
  *
  * function draw() {
  *   background(128);
- *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
+ *   strokeMode(SIMPLE); // Simplifies stroke rendering for better performance.
+ *   
+ *   // Draw sphere
  *   push();
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
  *   pop();
+ *   orbitControl();
  *
+ *   // Draw modified wavy red line
  *   noFill();
  *   strokeWeight(15);
- *   beginShape();
- *   vertex(-150, 100);
  *   stroke('red');
- *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   beginShape();
+ *   bezierOrder(2); // Sets the order of the Bezier curve.
+ *   bezierVertex(80, 80);
+ *   bezierVertex(50, -40);
+ *   bezierVertex(-80, 80);
  *   endShape();
  * }
  * </code>
