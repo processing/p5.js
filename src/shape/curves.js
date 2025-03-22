@@ -582,10 +582,10 @@ function curves(p5, fn){
    * point.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `curve()` has twelve arguments because each point has x-, y-, and
+   * `spline()` has twelve arguments because each point has x-, y-, and
    * z-coordinates.
    *
-   * @method curve
+   * @method spline
    * @param  {Number} x1 x-coordinate of the first control point.
    * @param  {Number} y1 y-coordinate of the first control point.
    * @param  {Number} x2 x-coordinate of the first anchor point.
@@ -612,8 +612,8 @@ function curves(p5, fn){
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(5, 26, 5, 26, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -654,12 +654,12 @@ function curves(p5, fn){
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(x1, y1, 73, 24, 73, 61, 15, 65);
+   *   spline(x1, y1, 73, 24, 73, 61, 15, 65);
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(x1, y1, x1, y1, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(x1, y1, x1, y1, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -704,7 +704,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-150, 275, 50, 60, 50, 60, 250, 275);
+   *   spline(-150, 275, 50, 60, 50, 60, 250, 275);
    *
    *   // Draw the balloon string.
    *   line(50, 60, 50, 80);
@@ -730,7 +730,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
+   *   spline(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
    *
    *   // Draw the balloon string.
    *   line(0, 10, 0, 0, 30, 0);
@@ -740,7 +740,7 @@ function curves(p5, fn){
    */
 
   /**
-   * @method curve
+   * @method spline
    * @param  {Number} x1
    * @param  {Number} y1
    * @param  {Number} z1 z-coordinate of the first control point.
@@ -755,12 +755,13 @@ function curves(p5, fn){
    * @param  {Number} z4 z-coordinate of the second control point.
    * @chainable
    */
-  fn.curve = function(...args) {
+  fn.spline = function(...args) {
     // p5._validateParameters('curve', args);
 
-    if (this._renderer.states.strokeColor) {
-      this._renderer.curve(...args);
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+      return this;
     }
+    this._renderer.spline(...args);
 
     return this;
   };
