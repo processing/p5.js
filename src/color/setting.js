@@ -738,12 +738,12 @@ function setting(p5, fn){
    * This is equivalent to calling `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
    *
    * Calling `colorMode(RGB, 100)` sets colors to use RGB color values between 0 and 100.
-   * Pure red is color(100, 0, 0) in this model.
+   * Pure red is `color(100, 0, 0)` in this model.
    *
    * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL system instead of RGB.
    * Pure red is `color(0, 100, 100)` in HSB and `color(0, 100, 50)` in HSL.
    *
-   * p5.js 2.0 now supports additional color modes:
+   * Some additional color modes that p5.js supports are:
    *
    * `RGBHDR` - High Dynamic Range RGB defined within the Display P3 color space.
    *          Colors are expressed with an extended dynamic range. To render these colors
@@ -753,10 +753,9 @@ function setting(p5, fn){
    *          Similar to HSB and HSL, this mode uses a hue angle.
    *          Instead of saturation and lightness, HWB defines colors based on the percentage
    *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
-   *          Pure red in HWB is represented as color(0, 0, 0) (i.e., hue 0 with 0% whiteness and 0% blackness).
-   * 
-   * 
-   * <img src="assets/hwb.png"></img>
+   *          Pure red in HWB is represented as `color(0, 0, 0)` (i.e., hue 0 with 0% whiteness and 0% blackness).
+   *    
+   *         <img src="assets/hwb.png"></img>
    *
    * `LAB`    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
    *          It is widely used in professional color measurement contexts due to its perceptual uniformity.
@@ -868,6 +867,83 @@ function setting(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
+   *   
+   *   // Draw a neutral gray background using the default color mode.
+   *   background(200); 
+   *   
+   *   // Switch to HWB color mode.
+   *   // (Assuming p5.js supports HWB with a range of:
+   *   // hue: 0–360, whiteness: 0–100, blackness: 0–100.)
+   *   colorMode(HWB);
+   *   
+   *   // Set fill to pure red in HWB.
+   *   // Pure red in HWB is: hue = 0°, whiteness = 0%, blackness = 0%.
+   *   fill(0, 0, 0);
+   *   
+   *   // Draw a circle at the center.
+   *   circle(50, 50, 25);
+   *   
+   *   describe('A gray square with a red circle at its center, drawn using HWB color mode.');
+   * }
+   * </code>
+   * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   
+   *   // Draw a neutral gray background using the default color mode.
+   *   background(200);
+   *   
+   *   // Switch to LAB color mode.
+   *   // In this mode, L typically ranges from 0 to 100 while a and b span roughly -128 to 127.
+   *   colorMode(LAB);
+   *   
+   *   // Set fill to pure red in LAB.
+   *   // The sRGB red (255, 0, 0) converts approximately to LAB as:
+   *   // L = 53, a = 80, b = 67.
+   *   fill(53, 80, 67);
+   *   
+   *   // Draw a circle at the center.
+   *   circle(50, 50, 25);
+   *   
+   *   describe('A gray square with a red circle at its center, drawn using LAB color mode.');
+   * }
+   * </code>
+   * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   
+   *   // Draw a neutral gray background.
+   *   background(200);
+   *   
+   *   // Switch to LCH color mode.
+   *   // In LCH, colors are defined by Lightness, Chroma, and Hue (in degrees).
+   *   colorMode(LCH);
+   *   
+   *   // Set fill to an approximation of pure red in LCH:
+   *   // Lightness ≈ 53, Chroma ≈ 104, Hue ≈ 40°.
+   *   fill(53, 104, 40);
+   *   
+   *   // Draw a circle at the center.
+   *   circle(50, 50, 25);
+   *   
+   *   describe('A gray square with a red circle at its center, drawn using LCH color mode.');
+   * }
+   * </code>  
+   * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
    *
    *   // Use RGB color with values in the range 0-100.
    *   colorMode(RGB, 100);
@@ -955,6 +1031,61 @@ function setting(p5, fn){
    *   circle(50, 60, 50);
    *
    *   describe('Two overlapping translucent pink circle outlines.');
+   * }
+   * </code>
+   * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * let hslGraphic, lchGraphic, oklchGraphic;
+   *
+   * function setup() {
+   *   createCanvas(600, 200);
+   *   noLoop();
+   *
+   *   // Create three graphics objects for HSL, LCH, and OKLCH color modes
+   *   hslGraphic = createGraphics(200, 200);
+   *   lchGraphic = createGraphics(200, 200);
+   *   oklchGraphic = createGraphics(200, 200);
+   *
+   *   // Draw HSL color wheel
+   *   colorMode(HSL);
+   *   hslGraphic.translate(100, 100);
+   *   for (let i = 0; i < 1000; i++) {
+   *     hslGraphic.stroke(360 / 1000 * i, 70, 50);
+   *     hslGraphic.line(0, 0, hslGraphic.width / 2, 0);
+   *     hslGraphic.rotate(TAU / 1000);
+   *   }
+   *
+   *   // Draw LCH color wheel
+   *   colorMode(LCH);
+   *   lchGraphic.translate(100, 100);
+   *   for (let i = 0; i < 1000; i++) {
+   *     lchGraphic.stroke(54, 106, 360 / 1000 * i);
+   *     lchGraphic.line(0, 0, lchGraphic.width / 2, 0);
+   *     lchGraphic.rotate(TAU / 1000);
+   *   }
+   *
+   *   // Draw OKLCH color wheel
+   *   colorMode(OKLCH);
+   *   oklchGraphic.translate(100, 100);
+   *   for (let i = 0; i < 1000; i++) {
+   *     oklchGraphic.stroke(54, 106, 360 / 1000 * i);
+   *     oklchGraphic.line(0, 0, oklchGraphic.width / 2, 0);
+   *     oklchGraphic.rotate(TAU / 1000);
+   *   }
+   * }
+   *
+   * function draw() {
+   *   // Set the styles
+   *   colorMode(RGB);
+   *   background(220);
+   *
+   *   // Display the color wheels
+   *   image(hslGraphic, 0, 0);
+   *   image(lchGraphic, 200, 0);
+   *   image(oklchGraphic, 400, 0);
    * }
    * </code>
    * </div>
