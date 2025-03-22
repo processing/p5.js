@@ -1,8 +1,8 @@
 /**
  *  Example: Apply a p5.LowPass filter to a p5.SoundFile.
  *  Visualize the sound with FFT.
- *  Map mouseX to the the filter's cutoff frequency
- *  and mouseY to resonance/width of the a BandPass filter
+ *  Map mouseX to the filter's cutoff frequency
+ *  and mouseY to resonance/width of the BandPass filter
  */
 
 var soundFile;
@@ -44,7 +44,7 @@ function setup() {
 function draw() {
   background(30);
 
-  // Map mouseX to a the cutoff frequency for our lowpass filter
+  // Map mouseX to the cutoff frequency for our lowpass filter
   filterFreq = map(mouseX, 0, width, 10, 22050);
   // Map mouseY to resonance/width
   filterRes = map(mouseY, 0, height, 15, 5);

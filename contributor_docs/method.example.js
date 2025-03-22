@@ -2,7 +2,7 @@
  * "This is a template for inline documentation of a method. Remove all text
  * between double quotes for using this template. Some description about the
  * method goes here. Explain in simple words, what the function does and what
- * would be good/bad use cases for it. If there are any corners cases or warnings,
+ * would be good/bad use cases for it. If there are any corner cases or warnings,
  * do explain them over here."
  *
  * By default, the background is transparent.
@@ -32,8 +32,8 @@
  * "A single line precisely describing the second example"
  */
 
-// "If your method has more than one signatures, they can be documentated each
-// in their own block with description about their parameters as follows."
+// "If your method has more than one signature, they can be documented each
+// in their own block with description of their parameters as follows."
 /**
  * @method "methodName"
  * @param {"dataType"} "paramName" "Description of the param"
