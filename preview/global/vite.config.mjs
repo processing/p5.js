@@ -17,7 +17,7 @@ export default defineConfig({
       name: 'reload',
       configureServer(server) {
         const { ws, watcher } = server;
-        const buildLibPath = path.resolve(libPath, './p5.rollup.js');
+        const buildLibPath = path.resolve(libPath, './p5.js');
         watcher.add(buildLibPath);
         watcher.on('change', file => {
           if(file === buildLibPath){
