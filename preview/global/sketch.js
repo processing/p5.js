@@ -1,55 +1,50 @@
-const vertSrc = `#version 300 es
- precision mediump float;
- uniform mat4 uModelViewMatrix;
- uniform mat4 uProjectionMatrix;
+p5.disableFriendlyErrors = true;
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
- in vec3 aPosition;
- in vec2 aOffset;
+let myModel;
+let starShader;
+let starStrokeShader;
+let stars;
 
- void main(){
-   vec4 positionVec4 = vec4(aPosition.xyz, 1.0);
-   positionVec4.xy += aOffset;
-   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
- }
-`;
+function starShaderCallback() {
+  const time = uniformFloat(() => millis());
+  getWorldInputs((inputs) => {
+    inputs.position.y += instanceID() * 20 - 1000;
+    inputs.position.x += 40*sin(time * 0.001 + instanceID());
+    return inputs;
+  });
+  getObjectInputs((inputs) => {
+    inputs.position *= sin(time*0.001 + instanceID());
+    return inputs;
+  })
+}
 
-const fragSrc = `#version 300 es
- precision mediump float;
- out vec4 outColor;
- void main(){
-   outColor = vec4(0.0, 1.0, 1.0, 1.0);
- }
-`;
-
-let myShader;
-function setup(){
-  createCanvas(100, 100, WEBGL);
-
-  // Create and use the custom shader.
-  myShader = createShader(vertSrc, fragSrc);
-
-  describe('A wobbly, cyan circle on a gray background.');
+async function setup(){
+  createCanvas(windowWidth, windowHeight, WEBGL);
+  stars = buildGeometry(() => sphere(20, 7, 4))
+  starShader = baseMaterialShader().modify(starShaderCallback); 
+  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
 }
 
 function draw(){
-  // Set the styles
-  background(125);
+  background(0,200,240);
+  orbitControl();
+  // noStroke();
+  
+  push();
+  stroke(255,0,255)
+  fill(255,200,255)
+  strokeShader(starStrokeShader)
+  shader(starShader);
+  model(stars, 100);
+  pop();
+  push();
+  shader(baseMaterialShader());
   noStroke();
-  shader(myShader);
-
-  // Draw the circle.
-  beginShape();
-  for (let i = 0; i < 30; i++){
-    const x = 40 * cos(i/30 * TWO_PI);
-    const y = 40 * sin(i/30 * TWO_PI);
-
-    // Apply some noise to the coordinates.
-    const xOff = 10 * noise(x + millis()/1000) - 5;
-    const yOff = 10 * noise(y + millis()/1000) - 5;
-
-    // Apply these noise values to the following vertex.
-    vertexProperty('aOffset', [xOff, yOff]);
-    vertex(x, y);
-  }
-  endShape(CLOSE);
+  rotateX(HALF_PI);
+  translate(0, 0, -250);
+  plane(10000)
+  pop();
 }

@@ -573,9 +573,6 @@ class Graphics {
 
     this._styles = [];
 
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
     // this._colorMode = RGB;
     // this._colorMaxes = {
     //   rgb: [255, 255, 255, 255],

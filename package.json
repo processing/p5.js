@@ -23,12 +23,13 @@
       "node ./utils/sample-linter.mjs"
     ]
   },
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0-beta.5",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "acorn": "^8.12.1",
     "acorn-walk": "^8.3.4",
     "colorjs.io": "^0.5.2",
+    "escodegen": "^2.1.0",
     "file-saver": "^1.3.8",
     "gifenc": "^1.0.3",
     "i18next": "^19.0.2",
