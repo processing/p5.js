@@ -212,6 +212,24 @@ class Renderer {
     this.currentShape.vertex(position, textureCoordinates);
   }
 
+  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._pInst.beginShape();
+    this._pInst.vertex(x1, y1);
+    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
+    this._pInst.endShape();
+    return this;
+  }
+
+  spline(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._pInst.beginShape();
+    this._pInst.splineVertex(x1, y1);
+    this._pInst.splineVertex(x2, y2);
+    this._pInst.splineVertex(x3, y3);
+    this._pInst.splineVertex(x4, y4);
+    this._pInst.endShape();
+    return this;
+  }
+
   beginClip(options = {}) {
     if (this._clipping) {
       throw new Error("It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?");
