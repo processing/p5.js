@@ -2116,7 +2116,7 @@ function material(p5, fn){
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
+   *   strokeShader(myShader);
    *   strokeWeight(10);
    *   beginShape();
    *   for (let i = 0; i <= 50; i++) {

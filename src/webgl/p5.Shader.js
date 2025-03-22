@@ -316,22 +316,23 @@ class Shader {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify({
    *     uniforms: {
-   *       'float time': () => millis()
+   *       'float time': () => millis() // Uniform for time
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   sphere(50);
+   *   shader(myShader); // Apply the custom shader
+   *   lights();         // Enable lighting
+   *   noStroke();       // Disable stroke
+   *   fill('red');      // Set fill color to red
+   *   sphere(50);       // Draw a sphere with the shader applied
    * }
    * </code>
    * </div>
@@ -346,9 +347,10 @@ class Shader {
    *   myShader = baseMaterialShader().modify({
    *     // Manually specifying a uniform
    *     declarations: 'uniform float time;',
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
