@@ -14,8 +14,12 @@ import { Matrix } from './Matrices/Matrix'
 
 function matrix(p5, fn){
   /**
-   * A class to describe a 4×4 matrix
+   * A class to describe a matrix
    * for model and view matrix manipulation in the p5js webgl renderer.
+   * The `Matrix` class represents a mathematical matrix and provides various methods for matrix operations.
+   *
+   * This class extends the `MatrixInterface` and includes methods for creating, manipulating, and performing
+   * operations on matrices. It supports both 3x3 and 4x4 matrices, as well as general NxN matrices.
    * @class p5.Matrix
    * @extends MatrixInterface
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
@@ -68,7 +72,7 @@ function matrix(p5, fn){
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *
    *   // Create a 4x4 identity matrix
    *   const matrix = new Matrix(4);
    *   console.log("Original Matrix:", matrix.matrix);

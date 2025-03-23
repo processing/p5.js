@@ -77,7 +77,7 @@ if (typeof Float32Array !== "undefined") {
  * // p5.js script example
  * <div><code>
  * function setup() {
- *   noCanvas();
+ *   
  *   // Create a 4x4 identity matrix
  *   const matrix = new Matrix(4);
  *   console.log("Original Matrix:", matrix.matrix);
@@ -177,7 +177,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix1 = new Matrix([1, 2, 3, 4]);
    *   const matrix2 = new Matrix([5, 6, 7, 8]);
    *   matrix1.add(matrix2);
@@ -240,7 +240,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4]);
    *   matrix.setElement(2, 99);
    *   console.log(matrix.matrix); // Output: [1, 2, 99, 4]
@@ -274,7 +274,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4);
    *   matrix.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Before reset:", matrix.matrix);
@@ -326,7 +326,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4]);
    *   console.log("Before set:", matrix.matrix);
    *   matrix.set([5, 6, 7, 8]);
@@ -369,7 +369,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const originalMatrix = new Matrix([1, 2, 3, 4]);
    *   const copiedMatrix = originalMatrix.get();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -401,7 +401,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const copiedMatrix = originalMatrix.copy();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -429,7 +429,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const clonedMatrix = originalMatrix.clone();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -474,7 +474,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const diagonal = matrix.diagonal();
    *   console.log("Diagonal elements:", diagonal); // Output: [1, 5, 9]
@@ -510,7 +510,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const rowVector = matrix.row(1); // Extract the second row (index 1)
    *   console.log("Row Vector:", rowVector.toString()); // Output: Row Vector: [2, 5, 8]
@@ -545,7 +545,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const columnVector = matrix.column(1); // Extract the second column (index 1)
    *   console.log("Column Vector:", columnVector.toString()); // Output: Column Vector: [4, 5, 6]
@@ -588,7 +588,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Before transpose:", matrix.matrix);
    *   matrix.transpose();
@@ -639,7 +639,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   console.log("Before multiplication:", matrix1.matrix);
@@ -694,7 +694,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const vector = new Vector(1, 2, 3);
    *   const result = matrix.multiplyVec(vector);
@@ -743,7 +743,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
    *   console.log("Original Matrix:", matrix.matrix);
    *   const invertedMatrix = matrix.invert();
@@ -793,7 +793,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
    *   matrix4x4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4x4 Matrix:", matrix4x4.matrix);
@@ -845,7 +845,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const mat4 = new Matrix(4); // Create a 4×4 identity matrix
    *   mat4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4×4 Matrix:", mat4.matrix);
@@ -919,7 +919,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   // Create a 4x4 identity matrix
    *   const matrix = new Matrix(4);
    *   console.log("Original Matrix:", matrix.matrix);
@@ -1029,7 +1029,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1173,7 +1173,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1223,7 +1223,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1260,7 +1260,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1299,7 +1299,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1340,7 +1340,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1470,7 +1470,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1527,7 +1527,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1580,7 +1580,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1635,7 +1635,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1689,7 +1689,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   noCanvas();
+   *   
    *   // Create a 3x3 matrix
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Original Matrix:", matrix.matrix);
