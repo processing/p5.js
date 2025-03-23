@@ -354,10 +354,56 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Sets or gets a single text property for the renderer.
+   *
+   * The `textProperty()` function allows you to set or retrieve a single text-related property,
+   * such as `textAlign`, `textBaseline`, `fontStyle`, or any other property
+   * that may be part of the renderer's state, its drawing context, or the canvas style.
+   *
+   * When called with a `prop` and a `value`, the function sets the property by checking
+   * for its existence in the renderer's state, the drawing context, or the canvas style. If the property is
+   * successfully modified, the function applies the updated text properties. If called with only the
+   * `prop` parameter, the function returns the current value of that property.
    *
    * @method textProperty
    * @for p5
+   *
+   * @param {String} prop - The name of the text property to set or get.
+   * @param {*} [value] - (Optional) The value to set for the specified text property. If omitted, the current
+   *                      value of the property is returned.
+   * @param {Object} [opts] - (Optional) An object containing additional options. Currently supports a debug flag.
+   * @returns {*} If used as a getter (no value provided), returns the current value of the specified text property.
+   *              If used as a setter, returns the p5 instance for method chaining.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 300);
+   *   background(240);
+   * 
+   *   // Set the text alignment to CENTER and the baseline to TOP using textProperty.
+   *   textProperty("textAlign", CENTER);
+   *   textProperty("textBaseline", TOP);
+   * 
+   *   // Set additional text properties and draw the text.
+   *   textSize(32);
+   *   textFont("Georgia");
+   *   fill(0);
+   *   text("Hello, World!", width / 2, 50);
+   * 
+   *   // Retrieve and display the current text properties.
+   *   let currentAlign = textProperty("textAlign");
+   *   let currentBaseline = textProperty("textBaseline");
+   * 
+   *   textSize(16);
+   *   textAlign(LEFT, TOP);
+   *   fill(50);
+   *   text("Current textAlign: " + currentAlign, 50, 150);
+   *   text("Current textBaseline: " + currentBaseline, 50, 170);
+   * }
+   * </code>
+   * </div>
    */
 
   /**
@@ -477,17 +523,108 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Returns the loose descent of the text based on the font's intrinsic metrics.
+   *
+   * The `fontDescent()` function calculates the descent of the text using the font's
+   * intrinsic metrics (e.g., `fontBoundingBoxDescent`). This value represents the space
+   * below the baseline that the font inherently occupies, and is useful for layout purposes when
+   * an approximate vertical measurement is required. If a text string is provided as an argument,
+   * the descent is computed for that specific string; otherwise, the descent of the current font is
+   * returned.
    *
    * @method fontDescent
    * @for p5
+   *
+   * @param {String} [txt] - (Optional) The text string for which to calculate the descent.
+   *                         If omitted, the function returns the descent for the current font.
+   * @returns {Number} The loose descent value in pixels.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 300);
+   *   background(220);
+   * 
+   *   textSize(48);
+   *   textAlign(LEFT, BASELINE);
+   *   textFont('Georgia');
+   * 
+   *   let s = "Hello, p5.js!";
+   *   let x = 50, y = 150;
+   * 
+   *   fill(0);
+   *   text(s, x, y);
+   * 
+   *   // Get the font descent of the current font
+   *   let fdesc = fontDescent();
+   * 
+   *   // Draw a red line at the baseline and a blue line at the descent position
+   *   stroke('red');
+   *   line(x, y, x + 200, y); // Baseline
+   *   stroke('blue');
+   *   line(x, y + fdesc, x + 200, y + fdesc); // Font descent position
+   * 
+   *   noStroke();
+   *   fill(0);
+   *   textSize(16);
+   *   text("fontDescent: " + fdesc.toFixed(2) + " pixels", x, y + fdesc + 20);
+   * }
+   * </code>
+   * </div>
    */
 
   /**
-   * TODO
+   * 
+   * Sets or gets the current font weight.
    *
-   * @method fontWeight
+   * The <code>textWeight()</code> function is used to specify the weight (thickness) of the text.
+   * When a numeric value is provided, it sets the font weight to that value and updates the
+   * rendering properties accordingly (including the "font-variation-settings" on the canvas style).
+   * When called without an argument, it returns the current font weight setting.
+   *
+   * @method textWeight
    * @for p5
+   *
+   * @param {Number} [weight] - (Optional) The numeric weight value to set for the text.
+   *                            If not provided, the function returns the current font weight.
+   * @returns {Number | p5} If used as a getter (no argument provided), returns the current
+   *                        font weight as a number. If used as a setter, returns the p5 instance
+   *                        for method chaining.
+   * 
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 200);
+   *   background(240);
+   *   
+   *   // Set text alignment, size, and font
+   *   textAlign(LEFT, TOP);
+   *   textSize(20);
+   *   textFont("Georgia");
+   *   
+   *   // Draw text with a normal weight (lighter appearance)
+   *   push();
+   *   textWeight(400);  // Set font weight to 400
+   *   fill(0);
+   *   text("Normal", 50, 50);
+   *   let normalWeight = textWeight();  // Should return 400
+   *   pop();
+   *   
+   *   // Draw text with a bold weight (heavier appearance)
+   *   push();
+   *   textWeight(900);  // Set font weight to 900
+   *   fill(0);
+   *   text("Bold", 50, 100);
+   *   let boldWeight = textWeight();  // Should return 900
+   *   pop();
+   *   
+   *   // Display the current font weight values on the canvas
+   *   textSize(16);
+   *   fill(50);
+   *   text("Normal Weight: " + normalWeight, 150, 52);
+   *   text("Bold Weight: " + boldWeight, 150, 100);
+   * }
+   * </code>
    */
 
   // attach each text func to p5, delegating to the renderer
