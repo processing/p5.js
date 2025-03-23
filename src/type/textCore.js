@@ -67,17 +67,106 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Returns the ascent of the text.
+   *
+   * The `textAscent()` function calculates the distance from the baseline to the
+   * highest point of the current font. This value represents the ascent, which is essential
+   * for determining the overall height of the text along with `textDescent()`. If
+   * a text string is provided as an argument, the ascent is calculated based on that specific
+   * string; otherwise, the ascent of the current font is returned.
    *
    * @method textAscent
    * @for p5
+   *
+   * @param {String} [txt] - (Optional) The text string for which to calculate the ascent.
+   *                         If omitted, the function returns the ascent for the current font.
+   * @returns {Number} The ascent value in pixels.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(600, 300);
+   *   background(220);
+   * 
+   *   textSize(48);
+   *   textAlign(LEFT, BASELINE);
+   *   textFont('Georgia');
+   * 
+   *   let s = "Hello, p5.js!";
+   *   let x = 50, y = 150;
+   * 
+   *   fill(0);
+   *   text(s, x, y);
+   * 
+   *   // Get the ascent of the current font
+   *   let asc = textAscent();
+   * 
+   *   // Draw a red line at the baseline and a blue line at the ascent position
+   *   stroke('red');
+   *   line(x, y, x + 200, y); // Baseline
+   *   stroke('blue');
+   *   line(x, y - asc, x + 200, y - asc); // Ascent (top of text)
+   * 
+   *   noStroke();
+   *   fill(0);
+   *   textSize(16);
+   *   text("textAscent: " + asc.toFixed(2) + " pixels", x, y - asc - 10);
+   * }
+   * </code>
+   * </div>
    */
 
+
   /**
-   * TODO
+   * Returns the descent of the text.
+   *
+   * The `textDescent()` function calculates the distance from the baseline to the
+   * lowest point of the current font. This value represents the descent, which, when combined
+   * with the ascent (from `textAscent()`), determines the overall vertical span of the text.
+   * If a text string is provided as an argument, the descent is calculated based on that specific string;
+   * otherwise, the descent of the current font is returned.
    *
    * @method textDescent
    * @for p5
+   *
+   * @param {String} [txt] - (Optional) The text string for which to calculate the descent.
+   *                         If omitted, the function returns the descent for the current font.
+   * @returns {Number} The descent value in pixels.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(600, 300);
+   *   background(220);
+   * 
+   *   textSize(48);
+   *   textAlign(LEFT, BASELINE);
+   *   textFont('Georgia');
+   * 
+   *   let s = "Hello, p5.js!";
+   *   let x = 50, y = 150;
+   * 
+   *   fill(0);
+   *   text(s, x, y);
+   * 
+   *   // Get the descent of the current font
+   *   let desc = textDescent();
+   * 
+   *   // Draw a red line at the baseline and a blue line at the bottom of the text
+   *   stroke('red');
+   *   line(x, y, x + 200, y); // Baseline
+   *   stroke('blue');
+   *   line(x, y + desc, x + 200, y + desc); // Descent (bottom of text)
+   * 
+   *   noStroke();
+   *   fill(0);
+   *   textSize(16);
+   *   text("textDescent: " + desc.toFixed(2) + " pixels", x, y + desc + 20);
+   * }
+   * </code>
+   * </div>
    */
 
   /**
@@ -102,11 +191,49 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Sets or gets the current text size.
+   *
+   * The `textSize()` function is used to specify the size of the text
+   * that will be rendered on the canvas. When called with an argument, it sets the
+   * text size to the specified value (which can be a number representing pixels or a
+   * CSS-style string, e.g., '32px', '2em'). When called without an argument, it
+   * returns the current text size in pixels.
    *
    * @method textSize
    * @for p5
+   *
+   * @param {Number | String} [size] - (Optional) The size to set for the text. If not provided,
+   *                                   the function returns the current text size.
+   * @returns {Number | p5} If used as a getter (no arguments provided), returns the current
+   *                        text size in pixels. If used as a setter, returns the p5 instance
+   *                        for method chaining.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(600, 200);
+   *   background(240);
+   * 
+   *   // Set the text size to 48 pixels
+   *   textSize(48);
+   *   textAlign(CENTER, CENTER);
+   *   textFont("Georgia");
+   * 
+   *   // Draw text using the current text size
+   *   fill(0);
+   *   text("Hello, p5.js!", width / 2, height / 2);
+   * 
+   *   // Retrieve and display the current text size
+   *   let currentSize = textSize();
+   *   fill(50);
+   *   textSize(16);
+   *   text("Current text size: " + currentSize, width / 2, height - 20);
+   * }
+   * </code>
+   * </div>
    */
+
 
   /**
    * TODO
@@ -116,10 +243,48 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Calculates the width of the given text string in pixels.
+   * 
+   * The `textWidth()` function processes the provided text string to determine its tight bounding box
+   * based on the current text properties such as font, textSize, and textStyle. Internally, it splits
+   * the text into individual lines (if line breaks are present) and computes the bounding box for each
+   * line using the renderer’s measurement functions. The final width is determined as the maximum width
+   * among all these lines.
+   * 
+   * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
+   * will return the width of the longest line.
    *
    * @method textWidth
    * @for p5
+   * 
+   * @example  
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200);
+   *   background(220);
+   *   
+   *   // Set text size and alignment
+   *   textSize(48);
+   *   textAlign(LEFT, TOP);
+   *   
+   *   let myText = "Hello";
+   *   
+   *   // Calculate the width of the text
+   *   let tw = textWidth(myText);
+   *   
+   *   // Draw the text on the canvas
+   *   fill(0);
+   *   text(myText, 50, 50);
+   *   
+   *   // Display the text width below
+   *   noStroke();
+   *   fill(0);
+   *   textSize(20);
+   *   text("Text width: " + tw, 10, 150);
+   * }
+   * </code>
+   * </div>
    */
 
   /**
@@ -130,11 +295,56 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Computes the tight bounding box for a block of text.
+   *
+   * The `textBounds()` function calculates the precise pixel boundaries that enclose
+   * the rendered text based on the current text properties (such as font, textSize, textStyle, and
+   * alignment). If the text spans multiple lines (due to line breaks or wrapping), the function
+   * measures each line individually and then aggregates these measurements into a single bounding box.
+   * The resulting object contains the x and y coordinates along with the width (w) and height (h)
+   * of the text block.
    *
    * @method textBounds
    * @for p5
+   *
+   * @param {String} str - The text string to measure.
+   * @param {Number} x - The x-coordinate where the text is drawn.
+   * @param {Number} y - The y-coordinate where the text is drawn.
+   * @param {Number} [width] - (Optional) The maximum width available for the text block.
+   *                           When specified, the text may be wrapped to fit within this width.
+   * @param {Number} [height] - (Optional) The maximum height available for the text block.
+   *                            Any lines exceeding this height will be truncated.
+   * @returns {Object} An object with properties <code>{x, y, w, h}</code> that represent the tight
+   *                   bounding box of the rendered text.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 200);
+   *   background(220);
+   * 
+   *   // Set up text properties for clarity
+   *   textSize(32);
+   *   textAlign(LEFT, TOP);
+   * 
+   *   let txt = "Hello, World!";
+   *   // Compute the bounding box for the text starting at (50, 50)
+   *   let bounds = textBounds(txt, 50, 50);
+   * 
+   *   // Draw the text
+   *   fill(0);
+   *   text(txt, 50, 50);
+   * 
+   *   // Draw the computed bounding box in red to visualize the measured area
+   *   noFill();
+   *   stroke('red');
+   *   rect(bounds.x, bounds.y, bounds.w, bounds.h);
+   * }
+   * </code>
+   * </div>
    */
+
 
   /**
    * TODO
@@ -158,18 +368,106 @@ function textCore(p5, fn) {
    */
 
   /**
-   * TODO
+   * Computes a generic (non-tight) bounding box for a block of text.
+   *
+   * The `fontBounds()` function calculates the bounding box for the text based on the
+   * font's intrinsic metrics (such as `fontBoundingBoxAscent` and
+   * `fontBoundingBoxDescent`). Unlike `textBounds()`, which measures the exact
+   * pixel boundaries of the rendered text, `fontBounds()` provides a looser measurement
+   * derived from the font’s default spacing. This measurement is useful for layout purposes where
+   * a consistent approximation of the text's dimensions is desired.
    *
    * @method fontBounds
    * @for p5
+   *
+   * @param {String} str - The text string to measure.
+   * @param {Number} x - The x-coordinate where the text is drawn.
+   * @param {Number} y - The y-coordinate where the text is drawn.
+   * @param {Number} [width] - (Optional) The maximum width available for the text block.
+   *                           When specified, the text may be wrapped to fit within this width.
+   * @param {Number} [height] - (Optional) The maximum height available for the text block.
+   *                            Any lines exceeding this height will be truncated.
+   * @returns {Object} An object with properties <code>{x, y, w, h}</code> representing the loose
+   *                   bounding box of the text based on the font's intrinsic metrics.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 200);
+   *   background(240);
+   * 
+   *   textSize(32);
+   *   textAlign(LEFT, TOP);
+   *   textFont('Georgia');
+   * 
+   *   let txt = "Hello, World!";
+   *   // Compute the bounding box based on the font's intrinsic metrics
+   *   let bounds = fontBounds(txt, 50, 50);
+   * 
+   *   fill(0);
+   *   text(txt, 50, 50);
+   * 
+   *   noFill();
+   *   stroke('green');
+   *   rect(bounds.x, bounds.y, bounds.w, bounds.h);
+   * 
+   *   noStroke();
+   *   fill(50);
+   *   textSize(15);
+   *   text("Font Bounds: x=" + bounds.x.toFixed(1) + ", y=" + bounds.y.toFixed(1) +
+   *        ", w=" + bounds.w.toFixed(1) + ", h=" + bounds.h.toFixed(1), 8, 100);
+   * }
+   * </code>
+   * </div>
    */
 
+
   /**
-   * TODO
+   * Returns the loose width of a text string based on the current font.
+   *
+   * The `fontWidth()` function measures the width of the provided text string using
+   * the font's default measurement (i.e., the width property from the text metrics returned by
+   * the browser). Unlike `textWidth()`, which calculates the tight pixel boundaries
+   * of the text glyphs, `fontWidth()` uses the font's intrinsic spacing, which may include
+   * additional space for character spacing and kerning. This makes it useful for scenarios where
+   * an approximate width is sufficient for layout and positioning.
    *
    * @method fontWidth
    * @for p5
+   *
+   * @param {String} theText - The text string to measure.
+   * @returns {Number} The loose width of the text in pixels.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 200);
+   *   background(240);
+   * 
+   *   textSize(32);
+   *   textAlign(LEFT, TOP);
+   *   textFont('Georgia');
+   * 
+   *   let s = "Hello, World!";
+   *   let fw = fontWidth(s);
+   * 
+   *   fill(0);
+   *   text(s, 50, 50);
+   * 
+   *   stroke('blue');
+   *   line(50, 90, 50 + fw, 90);
+   * 
+   *   noStroke();
+   *   fill(50);
+   *   textSize(16);
+   *   text("Font width: " + fw.toFixed(2) + " pixels", 50, 100);
+   * }
+   * </code>
+   * </div>
    */
+
 
   /**
    * TODO
