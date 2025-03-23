@@ -18,6 +18,7 @@ function matrix(p5, fn){
    * for model and view matrix manipulation in the p5js webgl renderer.
    * The `Matrix` class represents a mathematical matrix and provides various methods for matrix operations.
    *
+   * The `Matrix` class represents a mathematical matrix and provides various methods for matrix operations.
    * This class extends the `MatrixInterface` and includes methods for creating, manipulating, and performing
    * operations on matrices. It supports both 3x3 and 4x4 matrices, as well as general NxN matrices.
    * @class p5.Matrix
