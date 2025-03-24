@@ -36,8 +36,6 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations)
       const generatedModifyArgument = generator.generate();
-      console.log("SRC STRING: ", generatorFunction);
-      console.log("NEW OPTIONS:", generatedModifyArgument)
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -615,7 +613,6 @@ function shadergenerator(p5, fn) {
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName);
-        console.log(hookTypes);
         this[hookTypes.name] = function(userCallback) {
           // Create the initial nodes which are passed to the user callback
           // Also generate a string of the arguments for the code generation
