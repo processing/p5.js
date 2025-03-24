@@ -479,7 +479,6 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  // TODO: Correct the implementation for floats/ genType etc
   class ModulusNode extends BinaryOperatorNode {
     constructor(a, b) {
       super(a, b);
@@ -779,14 +778,6 @@ function shadergenerator(p5, fn) {
   // GLSL Built in functions
   // Add a whole lot of these functions.
   // https://docs.gl/el3/abs
-  //  In reality many of these have multiple overrides which will need to address later.
-  // Also, their return types depend on the genType which will need to address urgently
-  //      genType clamp(genType x,
-  //                    genType minVal,
-  //                    genType maxVal);
-  //      genType clamp(genType x,
-  //                    float minVal,
-  //                    float maxVal);
   const builtInGLSLFunctions = {
     //////////// Trigonometry //////////
     'acos': { args: ['genType'], returnType: 'genType', isp5Function: true},
@@ -853,7 +844,6 @@ function shadergenerator(p5, fn) {
   Object.entries(builtInGLSLFunctions).forEach(([functionName, properties]) => {
     if (properties.isp5Function) {
       const originalFn = fn[functionName];
-
       fn[functionName] = function (...args) {
         if (GLOBAL_SHADER?.isGenerating) {
           return new FunctionCallNode(functionName, args, properties)
