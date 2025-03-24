@@ -1,5 +1,6 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 [![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449)](#contributors)
+[![License](https://img.shields.io/github/license/processing/p5.js)](https://github.com/processing/p5.js/blob/main/license.txt)
 [![Total Downloads](https://img.shields.io/npm/dt/p5)](https://www.npmjs.com/package/p5)
 
 # [p5.js](https://p5js.org)
