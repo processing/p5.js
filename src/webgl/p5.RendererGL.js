@@ -1036,7 +1036,7 @@ class RendererGL extends Renderer {
     if (!this._userEnabledStencil) {
       this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
     }
-  
+
   }
 
   /**
@@ -1781,7 +1781,7 @@ class RendererGL extends Renderer {
       if (!this._userEnabledStencil) {
         this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
       }
-    
+
     // Reset saved state
     // this._userEnabledStencil = this._savedStencilTestState;
     }
@@ -2349,6 +2349,7 @@ class RendererGL extends Renderer {
 
   _setFillUniforms(fillShader) {
     this.mixedSpecularColor = [...this.states.curSpecularColor];
+    const empty = this._getEmptyTexture();
 
     if (this.states._useMetalness > 0) {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
@@ -2362,9 +2363,12 @@ class RendererGL extends Renderer {
     fillShader.setUniform("uUseVertexColor", this._useVertexColor);
     fillShader.setUniform("uMaterialColor", this.states.curFillColor);
     fillShader.setUniform("isTexture", !!this.states._tex);
-    if (this.states._tex) {
-      fillShader.setUniform("uSampler", this.states._tex);
-    }
+    // We need to explicitly set uSampler back to an empty texture here.
+    // In general, we record the last set texture so we can re-apply it
+    // the next time a shader is used. However, the texture() function
+    // works differently and is global p5 state. If the p5 state has
+    // been cleared, we also need to clear the value in uSampler to match.
+    fillShader.setUniform("uSampler", this.states._tex || empty);
     fillShader.setUniform("uTint", this.states.tint);
 
     fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
