@@ -1259,7 +1259,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
