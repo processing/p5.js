@@ -3,7 +3,7 @@
  * @requires constants
  */
 
-import * as constants from '../core/constants';
+import * as constants from "../core/constants";
 
 /// HELPERS FOR REMAINDER METHOD
 const calculateRemainder2D = function (xComponent, yComponent) {
@@ -716,7 +716,6 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method sub
    * @param  {Number} x   x component of the vector to subtract.
    * @param  {Number} [y] y component of the vector to subtract.
    * @param  {Number} [z] z component of the vector to subtract.
@@ -3816,7 +3815,7 @@ class Vector {
     }
     return v.equals(v2);
   }
-};
+}
 
 function vector(p5, fn) {
   /**
@@ -3932,6 +3931,6 @@ function vector(p5, fn) {
 export default vector;
 export { Vector };
 
-if (typeof p5 !== 'undefined') {
+if (typeof p5 !== "undefined") {
   vector(p5, p5.prototype);
 }
