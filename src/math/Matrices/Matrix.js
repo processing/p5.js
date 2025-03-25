@@ -40,7 +40,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Getter for a 3x3 matrix.
+   * Returns the 3x3 matrix if the dimensions are 3x3, otherwise returns `undefined`.
    *
    * This method returns the matrix if its dimensions are 3x3.
    * If the matrix is not 3x3, it returns `undefined`.
@@ -56,7 +56,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Getter for a 4x4 matrix.
+   * Returns the 4x4 matrix if the dimensions are 4x4, otherwise returns `undefined`.
    *
    * This method returns the matrix if its dimensions are 4x4.
    * If the matrix is not 4x4, it returns `undefined`.
@@ -72,7 +72,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Adds the corresponding elements of the given matrix to this matrix.
+   * Adds the corresponding elements of the given matrix to this matrix, if the dimentions are the same.
    *
    * @param {Matrix} matrix - The matrix to add to this matrix. It must have the same dimensions as this matrix.
    * @returns {Matrix} The resulting matrix after addition.
@@ -86,7 +86,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix1 = new Matrix([1, 2, 3, 4]);
    *   const matrix2 = new Matrix([5, 6, 7, 8]);
    *   matrix1.add(matrix2);
@@ -105,32 +105,31 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Sets the value of a specific element in the matrix.
+   * Sets the value of a specific element in the matrix in column-major order.
    *
-   * A matrix is essentially a two-dimensional array (a grid of rows and columns).
+   * A matrix is stored in column-major order, meaning elements are arranged column by column.
    * This function allows you to update or change the value of a specific element
-   * in the matrix by specifying its row and column indices.
+   * in the matrix by specifying its index in the column-major order and the new value.
    *
    * Parameters:
-   * - `row` (number): The index of the row where the element is located.
-   *   Indices start from 0, so the first row is at index 0.
-   * - `col` (number): The index of the column where the element is located.
-   *   Indices start from 0, so the first column is at index 0.
+   * - `index` (number): The position in the matrix where the value should be set.
+   *   Indices start from 0 and follow column-major order.
    * - `value` (any): The new value you want to assign to the specified element.
    *
    * Example:
-   * If you have the following matrix:
+   * If you have the following 3x3 matrix stored in column-major order:
    * [
-   *   [1, 2, 3],
-   *   [4, 5, 6],
-   *   [7, 8, 9]
+   *   1, 4, 7,  // Column 1
+   *   2, 5, 8,  // Column 2
+   *   3, 6, 9   // Column 3
    * ]
-   * Calling `setElement(1, 2, 10)` will update the element at row 1, column 2
-   * (which is the value `6`) to `10`. The updated matrix will look like this:
+   * Calling `setElement(4, 10)` will update the element at index 4
+   * (which corresponds to row 2, column 2 in row-major order) to `10`.
+   * The updated matrix will look like this:
    * [
-   *   [1, 2, 3],
-   *   [4, 5, 10],
-   *   [7, 8, 9]
+   *   1, 4, 7,
+   *   2, 10, 8,
+   *   3, 6, 9
    * ]
    *
    * This function is useful for modifying specific parts of the matrix without
@@ -142,14 +141,14 @@ export class Matrix extends MatrixInterface {
    * @returns {Matrix} The current instance of the Matrix, allowing for method chaining.
    *
    * @example
-   * // Assuming matrix is an instance of Matrix with initial values [1, 2, 3]
-   * matrix.setElement(1, 10);
-   * // Now the matrix values are [1, 10, 3]
+   * // Assuming matrix is an instance of Matrix with initial values [1, 2, 3, 4]
+   * matrix.setElement(2, 99);
+   * // Now the matrix values are [1, 2, 99, 4]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4]);
    *   matrix.setElement(2, 99);
    *   console.log(matrix.matrix); // Output: [1, 2, 99, 4]
@@ -183,7 +182,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4);
    *   matrix.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Before reset:", matrix.matrix);
@@ -235,7 +234,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4]);
    *   console.log("Before set:", matrix.matrix);
    *   matrix.set([5, 6, 7, 8]);
@@ -278,7 +277,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const originalMatrix = new Matrix([1, 2, 3, 4]);
    *   const copiedMatrix = originalMatrix.get();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -310,7 +309,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const copiedMatrix = originalMatrix.copy();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -338,7 +337,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const clonedMatrix = originalMatrix.clone();
    *   console.log("Original Matrix:", originalMatrix.matrix);
@@ -383,7 +382,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const diagonal = matrix.diagonal();
    *   console.log("Diagonal elements:", diagonal); // Output: [1, 5, 9]
@@ -399,8 +398,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * This function is only for 3x3 matrices.
-   * A function that returns a row vector of a NxN matrix.
+   * This function is only for 3x3 matrices A function that returns a row vector of a NxN matrix.
    *
    * This method extracts a specific row from the matrix and returns it as a `p5.Vector`.
    * The row is determined by the `columnIndex` parameter, which specifies the column
@@ -419,7 +417,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const rowVector = matrix.row(1); // Extract the second row (index 1)
    *   console.log("Row Vector:", rowVector.toString()); // Output: Row Vector: [2, 5, 8]
@@ -454,7 +452,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const columnVector = matrix.column(1); // Extract the second column (index 1)
    *   console.log("Column Vector:", columnVector.toString()); // Output: Column Vector: [4, 5, 6]
@@ -497,7 +495,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Before transpose:", matrix.matrix);
    *   matrix.transpose();
@@ -548,7 +546,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   console.log("Before multiplication:", matrix1.matrix);
@@ -580,9 +578,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * This function is only for 3x3 matrices.
-   * Takes a vector and returns the vector resulting from multiplying to
-   * that vector by this matrix from left.
+   * Takes a vector and returns the vector resulting from multiplying to that vector by this matrix from left. This function is only for 3x3 matrices.
    *
    * This method applies the current 3x3 matrix to a given vector, effectively
    * transforming the vector using the matrix. The resulting vector is returned
@@ -603,7 +599,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const vector = new Vector(1, 2, 3);
    *   const result = matrix.multiplyVec(vector);
@@ -652,7 +648,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
    *   console.log("Original Matrix:", matrix.matrix);
    *   const invertedMatrix = matrix.invert();
@@ -677,8 +673,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * This function is only for 4x4 matrices.
-   * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it.
+   * Creates a 3x3 matrix whose entries are the top left 3x3 part and returns it. This function is only for 4x4 matrices.
    *
    * This method extracts the top-left 3x3 portion of a 4x4 matrix and creates a new
    * 3x3 matrix from it. This is particularly useful in 3D graphics for operations
@@ -702,7 +697,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
    *   matrix4x4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4x4 Matrix:", matrix4x4.matrix);
@@ -754,7 +749,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const mat4 = new Matrix(4); // Create a 4×4 identity matrix
    *   mat4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4×4 Matrix:", mat4.matrix);
@@ -828,7 +823,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   // Create a 4x4 identity matrix
    *   const matrix = new Matrix(4);
    *   console.log("Original Matrix:", matrix.matrix);
@@ -938,7 +933,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -988,7 +983,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * rotate our Matrix around an axis by the given angle.
+   * Rotate our Matrix around an axis by the given angle.
    * @param  {Number} a The angle of rotation in radians
    * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
    * @chainable
@@ -1082,7 +1077,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1132,7 +1127,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1169,7 +1164,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1208,7 +1203,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1249,7 +1244,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1379,7 +1374,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1410,8 +1405,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * Applies a matrix to a vector.
-   * The fourth component is set to 1.
+   * Applies a matrix to a vector. The fourth component is set to 1.
    * Returns a vector consisting of the first
    * through third components of the result.
    *
@@ -1436,7 +1430,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1489,7 +1483,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1544,7 +1538,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
@@ -1572,8 +1566,7 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
-   * This function is only for 3x3 matrices.
-   * Takes a vector and returns the vector resulting from multiplying
+   * Takes a vector and returns the vector resulting from multiplying. This function is only for 3x3 matrices.
    * that vector by this matrix from the left.
    *
    * This method applies the current 3x3 matrix to a given vector, effectively
@@ -1598,7 +1591,7 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div><code>
    * function setup() {
-   *   
+   *
    *   // Create a 3x3 matrix
    *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Original Matrix:", matrix.matrix);
@@ -1633,6 +1626,12 @@ export class Matrix extends MatrixInterface {
 
   // ====================
   // PRIVATE
+  /**
+   * Creates identity matrix
+   * This method updates the current matrix with the result of the multiplication.
+   *
+   * @private
+   */
   #createIdentityMatrix(dimension) {
     // This it to prevent loops in the most common 3x3 and 4x4 cases
     // TODO: check performance if it actually helps
@@ -1722,6 +1721,7 @@ export class Matrix extends MatrixInterface {
   /**
    * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
    *                                                we want to multiply by
+   * @private
    * @chainable
    */
   #multNxN(multMatrix) {
@@ -1751,6 +1751,7 @@ export class Matrix extends MatrixInterface {
    *
    * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
    *                                                we want to multiply by
+   * @private
    * @chainable
    */
   #mult3x3(_src) {
@@ -1800,6 +1801,7 @@ export class Matrix extends MatrixInterface {
    * transpose according to a given matrix
    * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
    *                                               based on to transpose
+   * @private
    * @chainable
    */
   #transpose4x4(a) {
@@ -1865,6 +1867,7 @@ export class Matrix extends MatrixInterface {
    * If no arguments, it transposes itself and returns it.
    *
    * @param  {Number[]} mat3 1-dimensional array
+   * @private
    * @chainable
    */
   #transpose3x3(mat3) {
@@ -1892,6 +1895,7 @@ export class Matrix extends MatrixInterface {
    * invert  matrix according to a give matrix
    * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
    *                                                based on to invert
+   * @private
    * @chainable
    */
   #invert4x4(a) {
@@ -1977,6 +1981,7 @@ export class Matrix extends MatrixInterface {
   /**
    * Inverts a 3×3 matrix
    * @chainable
+   * @private
    */
   #invert3x3() {
     const a00 = this.mat3[0];
@@ -2013,6 +2018,7 @@ export class Matrix extends MatrixInterface {
   /**
    * inspired by Toji's mat4 determinant
    * @return {Number} Determinant of our 4×4 matrix
+   * @private
    */
   #determinant4x4() {
     if (this.#sqDimention !== 4) {

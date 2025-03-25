@@ -1593,6 +1593,7 @@ class Vector {
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
    * @method dist
+   * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    *
