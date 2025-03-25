@@ -366,7 +366,6 @@ function shadergenerator(p5, fn) {
       args = args.map((arg, i) => {
         if (!isShaderNode(arg)) {
           const typeName = properties.args[i] === 'genType' ? inferredType : properties.args[i];
-          console.log(typeName);
           arg = nodeConstructors[typeName](arg);
         }
         return arg;
