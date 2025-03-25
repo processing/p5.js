@@ -4,16 +4,13 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-let myModel;
 let starShader;
 let starStrokeShader;
-let waterShader;
 let stars;
 let originalFrameBuffer;
 let pixellizeShader;
 let fresnelShader;
 let bloomShader;
-let myCamera;
 
 function fresnelShaderCallback() {
   const fresnelPower = uniformFloat(2);
@@ -68,29 +65,6 @@ function starShaderCallback() {
   });
 }
 
-function waterShaderCallback() {
-  const time = uniformFloat(() => millis());
-  const speed = uniformFloat(0.005);
-
-  function getOffset(st) {
-    st = st * 12 - 6;
-    let d = length(st);
-    return 0.5 + 0.5 * sin(d * 10.0 - time * speed);
-  }
-
-  getObjectInputs((inputs) => {
-    const offset = getOffset(inputs.uv);
-    inputs.position.z += offset * 200 - 100;
-    return inputs;
-  });
-
-  getPixelInputs((inputs) => {
-    const offset = getOffset(inputs.texCoord);
-    inputs.color = createVector4(0, 0.3*offset, offset, 1); 
-    return inputs;
-  });
-}
-
 function pixellizeShaderCallback() {
   const pixelSize = uniformFloat(()=> width/2);
   getColor((input, canvasContent) => {
@@ -116,18 +90,12 @@ async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
   stars = buildGeometry(() => sphere(20, 4, 2))
   originalFrameBuffer = createFramebuffer();
-  blurredFrameBuffer = createFramebuffer();
 
   starShader = baseMaterialShader().modify(starShaderCallback); 
   starStrokeShader = baseStrokeShader().modify(starShaderCallback)
-  console.log("FRESNEL")
   fresnelShader = baseColorShader().modify(fresnelShaderCallback);
-  // waterShader = baseMaterialShader().modify(waterShaderCallback);
   bloomShader = baseFilterShader().modify(bloomShaderCallback);
   pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
-
-  let myCamera = createCamera();
-  myCamera.setPosition(0, 0, 1000);
 }
 
 function draw(){
@@ -149,7 +117,7 @@ function draw(){
   shader(fresnelShader)
   let viewDir = [originalFrameBuffer.defaultCamera.eyeX, originalFrameBuffer.defaultCamera.eyeY, originalFrameBuffer.defaultCamera.eyeZ];
   fresnelShader.setUniform("viewDir", viewDir)
-  stroke('cyan')
+  noStroke()
   sphere(500);
   pop()
 
