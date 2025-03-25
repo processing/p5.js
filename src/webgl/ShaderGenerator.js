@@ -366,6 +366,7 @@ function shadergenerator(p5, fn) {
       args = args.map((arg, i) => {
         if (!isShaderNode(arg)) {
           const typeName = properties.args[i] === 'genType' ? inferredType : properties.args[i];
+          console.log(typeName);
           arg = nodeConstructors[typeName](arg);
         }
         return arg;
@@ -809,12 +810,12 @@ function shadergenerator(p5, fn) {
     // 'isnan': {},
     'log': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'log2': { args: ['genType'], returnType: 'genType', isp5Function: false},
-    'max': { args: ['genType'], returnType: 'genType', isp5Function: true},
-    'min': { args: ['genType'], returnType: 'genType', isp5Function: true},
-    'mix': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'max': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+    'min': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+    'mix': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
     // 'mod': {},
     // 'modf': {},
-    'pow': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'pow': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
     'round': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'roundEven': { args: ['genType'], returnType: 'genType', isp5Function: false},
     // 'sign': {},
