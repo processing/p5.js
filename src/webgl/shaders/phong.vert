@@ -33,7 +33,7 @@ OUT vec4 vColor;
 struct Vertex {
   vec3 position;
   vec3 normal;
-  vec2 uv;
+  vec2 texCoord;
   vec4 color;
 };
 
@@ -43,7 +43,7 @@ void main(void) {
   Vertex inputs;
   inputs.position = aPosition;
   inputs.normal = aNormal;
-  inputs.uv = aTexCoord;
+  inputs.texCoord = aTexCoord;
   inputs.color = (uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor;
 #ifdef AUGMENTED_HOOK_getObjectInputs
   inputs = HOOK_getObjectInputs(inputs);
@@ -70,7 +70,7 @@ void main(void) {
 
   // Pass varyings to fragment shader
   vViewPosition = inputs.position;
-  vTexCoord = inputs.uv;
+  vTexCoord = inputs.texCoord;
   vNormal = inputs.normal;
   vColor = inputs.color;
 
