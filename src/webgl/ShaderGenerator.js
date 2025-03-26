@@ -36,7 +36,6 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations);
       const generatedModifyArgument = generator.generate();
-      console.log(generatedModifyArgument)
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
