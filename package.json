@@ -5,12 +5,13 @@
     "build": "rollup -c",
     "dev": "vite preview/",
     "dev:global": "concurrently -n build,server \"rollup -c -w\" \"npx vite preview/global/\"",
-    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.js",
+    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.mjs",
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
@@ -22,7 +23,7 @@
       "node ./utils/sample-linter.mjs"
     ]
   },
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.5",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "acorn": "^8.12.1",
@@ -36,6 +37,7 @@
     "libtess": "^1.2.2",
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
+    "pixelmatch": "^7.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -86,7 +88,8 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/p5.esm.js",
-    "translations/**"
+    "translations/**",
+    "types/**"
   ],
   "description": "[![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {
@@ -105,5 +108,6 @@
     "workerDirectory": [
       "test"
     ]
-  }
+  },
+  "types": "./types/p5.d.ts"
 }

@@ -1,195 +1,11 @@
 /**
  * @module Data
- * @submodule String Functions
+ * @submodule Utility Functions
  * @for p5
  * @requires core
  */
 
-function stringFunctions(p5, fn){
-  /**
-   * Combines an array of strings into one string.
-   *
-   * The first parameter, `list`, is the array of strings to join.
-   *
-   * The second parameter, `separator`, is the character(s) that should be used
-   * to separate the combined strings. For example, calling
-   * `join(myWords, ' : ')` would return a string of words each separated by a
-   * colon and spaces.
-   *
-   * @method join
-   * @param  {Array}  list array of strings to combine.
-   * @param  {String} separator character(s) to place between strings when they're combined.
-   * @return {String} combined string.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create an array of strings.
-   *   let myWords = ['one', 'two', 'three'];
-   *
-   *   // Create a combined string
-   *   let combined = join(myWords, ' : ');
-   *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *
-   *   // Display the combined string.
-   *   text(combined, 50, 50);
-   *
-   *   describe('The text "one : two : three" written in black on a gray canvas.');
-   * }
-   * </code>
-   * </div>
-   */
-  fn.join = function(list, separator) {
-    // p5._validateParameters('join', arguments);
-    return list.join(separator);
-  };
-
-  /**
-   * Applies a regular expression to a string and returns an array with the
-   * first match.
-   *
-   * `match()` uses regular expressions (regex) to match patterns in text. For
-   * example, the regex `abc` can be used to search a string for the exact
-   * sequence of characters `abc`. See
-   * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools" target="_blank">MDN</a>.
-   * for more information about regexes.
-   *
-   * The first parameter, `str`, is the string to search.
-   *
-   * The second parameter, `regex`, is a string with the regular expression to
-   * apply. For example, calling `match('Hello, p5*js!', '[a-z][0-9]')` would
-   * return the array `['p5']`.
-   *
-   * Note: If no matches are found, `null` is returned.
-   *
-   * @method match
-   * @param  {String} str string to search.
-   * @param  {String} regexp regular expression to match.
-   * @return {String[]} match if found.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create a string variable.
-   *   let string = 'Hello, p5*js!';
-   *
-   *   // Match the characters that are lowercase
-   *   // letters followed by digits.
-   *   let matches = match(string, '[a-z][0-9]');
-   *
-   *   // Print the matches array to the console:
-   *   // ['p5']
-   *   print(matches);
-   *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *   textSize(16);
-   *
-   *   // Display the matches.
-   *   text(matches, 50, 50);
-   *
-   *   describe('The text "p5" written in black on a gray canvas.');
-   * }
-   * </code>
-   * </div>
-   */
-  fn.match = function(str, reg) {
-    // p5._validateParameters('match', arguments);
-    return str.match(reg);
-  };
-
-  /**
-   * Applies a regular expression to a string and returns an array of matches.
-   *
-   * `match()` uses regular expressions (regex) to match patterns in text. For
-   * example, the regex `abc` can be used to search a string for the exact
-   * sequence of characters `abc`. See
-   * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#tools" target="_blank">MDN</a>.
-   * for more information about regexes. `matchAll()` is different from
-   * <a href="#/p5/match">match()</a> because it returns every match, not just
-   * the first.
-   *
-   * The first parameter, `str`, is the string to search.
-   *
-   * The second parameter, `regex`, is a string with the regular expression to
-   * apply. For example, calling
-   * `matchAll('p5*js is easier than abc123', '[a-z][0-9]')` would return the
-   * 2D array `[['p5'], ['c1']]`.
-   *
-   * Note: If no matches are found, an empty array `[]` is returned.
-   *
-   * @method matchAll
-   * @param  {String} str string to search.
-   * @param  {String} regexp regular expression to match.
-   * @return {String[]} matches found.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create a string variable.
-   *   let string = 'p5*js is easier than abc123';
-   *
-   *   // Match the character sequences that are
-   *   // lowercase letters followed by digits.
-   *   let matches = matchAll(string, '[a-z][0-9]');
-   *
-   *   // Print the matches array to the console:
-   *   // [['p5'], ['c1']]
-   *   print(matches);
-   *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *   textSize(16);
-   *
-   *   // Iterate over the matches array.
-   *   for (let i = 0; i < matches.length; i += 1) {
-   *
-   *     // Calculate the y-coordainate.
-   *     let y = (i + 1) * 33;
-   *
-   *     // Display the match.
-   *     text(matches[i], 50, y);
-   *   }
-   *
-   *   describe(
-   *     'The text "p5" and "c1" written on separate lines. The text is black on a gray background.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  fn.matchAll = function(str, reg) {
-    // p5._validateParameters('matchAll', arguments);
-    const re = new RegExp(reg, 'g');
-    let match = re.exec(str);
-    const matches = [];
-    while (match !== null) {
-      matches.push(match);
-      // matched text: match[0]
-      // match start: match.index
-      // capturing group n: match[n]
-      match = re.exec(str);
-    }
-    return matches;
-  };
-
+function utilityFunctions(p5, fn){
   /**
    * Converts a `Number` into a `String` with a given number of digits.
    *
@@ -683,67 +499,6 @@ function stringFunctions(p5, fn){
   /**
    * Splits a `String` into pieces and returns an array containing the pieces.
    *
-   * The first parameter, `value`, is the string to split.
-   *
-   * The second parameter, `delim`, is the character(s) that should be used to
-   * split the string. For example, calling
-   * `split('rock...paper...scissors', '...')` would return the array
-   * `['rock', 'paper', 'scissors']` because there are three periods `...`
-   * between each word.
-   *
-   * @method split
-   * @param  {String} value the String to be split
-   * @param  {String} delim the String used to separate the data
-   * @return {String[]}  Array of Strings
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Create a string variable.
-   *   let string = 'rock...paper...scissors';
-   *
-   *   // Split the string at each ...
-   *   let words = split(string, '...');
-   *
-   *   // Print the array to the console:
-   *   // ["rock", "paper", "scissors"]
-   *   print(words);
-   *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *   textFont('Courier New');
-   *   textSize(16);
-   *
-   *   // Iterate over the words array.
-   *   for (let i = 0; i < words.length; i += 1) {
-   *
-   *     // Calculate the y-coordinate.
-   *     let y = (i + 1) * 25;
-   *
-   *     // Display the word.
-   *     text(words[i], 50, y);
-   *   }
-   *
-   *   describe(
-   *     'The words "rock", "paper", and "scissors" written on separate lines. The text is black on a gray background.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  fn.split = function(str, delim) {
-    // p5._validateParameters('split', arguments);
-    return str.split(delim);
-  };
-
-  /**
-   * Splits a `String` into pieces and returns an array containing the pieces.
-   *
    * `splitTokens()` is an enhanced version of
    * <a href="#/p5/split">split()</a>. It can split a string when any characters
    * from a list are detected.
@@ -760,6 +515,7 @@ function stringFunctions(p5, fn){
    * carriage return (`\r`), form feed (`\f`), and space.
    *
    * @method splitTokens
+   * @deprecated This will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @param  {String} value string to split.
    * @param  {String} [delim] character(s) to use for splitting the string.
    * @return {String[]} separated strings.
@@ -907,20 +663,21 @@ function stringFunctions(p5, fn){
   };
 
   /**
-   * Removes whitespace from the start and end of a `String` without changing the middle.
+   * Shuffles the elements of an array.
    *
-   * `trim()` trims
-   * <a href="https://developer.mozilla.org/en-US/docs/Glossary/whitespace" target="_blank">whitespace characters</a>
-   * such as spaces, carriage returns, tabs, Unicode "nbsp" character.
+   * The first parameter, `array`, is the array to be shuffled. For example,
+   * calling `shuffle(myArray)` will shuffle the elements of `myArray`. By
+   * default, the original array won’t be modified. Instead, a copy will be
+   * created, shuffled, and returned.
    *
-   * The parameter, `str`, is the string to trim. If a single string is passed,
-   * as in `trim('   pad   ')`, a single string is returned. If an array of
-   * strings is passed, as in `trim(['    pad   ', '\n space \n'])`, an array of
-   * strings is returned.
+   * The second parameter, `modify`, is optional. If `true` is passed, as in
+   * `shuffle(myArray, true)`, then the array will be shuffled in place without
+   * making a copy.
    *
-   * @method trim
-   * @param  {String} str string to trim.
-   * @return {String} trimmed string.
+   * @method shuffle
+   * @param  {Array} array array to shuffle.
+   * @param  {Boolean} [bool] if `true`, shuffle the original array in place. Defaults to `false`.
+   * @return {Array} shuffled array.
    *
    * @example
    * <div>
@@ -930,20 +687,41 @@ function stringFunctions(p5, fn){
    *
    *   background(200);
    *
-   *   // Create a string variable.
-   *   let string = '   p5*js   ';
+   *   // Create an array of colors.
+   *   let colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
    *
-   *   // Trim the whitespace.
-   *   let trimmed = trim(string);
+   *   // Create a shuffled copy of the array.
+   *   let shuffledColors = shuffle(colors);
    *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *   textSize(16);
+   *   // Draw  a row of circles using the original array.
+   *   for (let i = 0; i < colors.length; i += 1) {
+   *     // Calculate the x-coordinate.
+   *     let x = (i + 1) * 12.5;
    *
-   *   // Display the text.
-   *   text(`Hello, ${trimmed}!`, 50, 50);
+   *     // Style the circle.
+   *     let c = colors[i];
+   *     fill(c);
    *
-   *   describe('The text "Hello, p5*js!" written in black on a gray background.');
+   *     // Draw the circle.
+   *     circle(x, 33, 10);
+   *   }
+   *
+   *   // Draw  a row of circles using the original array.
+   *   for (let i = 0; i < shuffledColors.length; i += 1) {
+   *     // Calculate the x-coordinate.
+   *     let x = (i + 1) * 12.5;
+   *
+   *     // Style the circle.
+   *     let c = shuffledColors[i];
+   *     fill(c);
+   *
+   *     // Draw the circle.
+   *     circle(x, 67, 10);
+   *   }
+   *
+   *   describe(
+   *     'Two rows of circles on a gray background. The top row follows the color sequence ROYGBIV. The bottom row has all the same colors but they are shuffled.'
+   *   );
    * }
    * </code>
    * </div>
@@ -955,42 +733,53 @@ function stringFunctions(p5, fn){
    *
    *   background(200);
    *
-   *   // Create an array of strings.
-   *   let strings = ['   wide  ', '\n  open  ', '\n spaces  '];
+   *   // Create an array of colors.
+   *   let colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
    *
-   *   // Trim the whitespace.
-   *   let trimmed = trim(strings);
+   *   // Shuffle the array.
+   *   shuffle(colors, true);
    *
-   *   // Style the text.
-   *   textAlign(CENTER, CENTER);
-   *   textFont('Courier New');
-   *   textSize(10);
+   *   // Draw  a row of circles using the original array.
+   *   for (let i = 0; i < colors.length; i += 1) {
+   *     // Calculate the x-coordinate.
+   *     let x = (i + 1) * 12.5;
    *
-   *   // Display the text.
-   *   text(`${trimmed[0]} ${trimmed[1]} ${trimmed[2]}`, 50, 50);
+   *     // Style the circle.
+   *     let c = colors[i];
+   *     fill(c);
    *
-   *   describe('The text "wide open spaces" written in black on a gray background.');
+   *     // Draw the circle.
+   *     circle(x, 50, 10);
+   *   }
+   *
+   *   describe(
+   *     'A row of colorful circles on a gray background. Their sequence changes each time the sketch runs.'
+   *   );
    * }
    * </code>
    * </div>
    */
-  /**
-   * @method trim
-   * @param  {String[]} strs strings to trim.
-   * @return {String[]} trimmed strings.
-   */
-  fn.trim = function(str) {
-    // p5._validateParameters('trim', arguments);
-    if (str instanceof Array) {
-      return str.map(this.trim);
-    } else {
-      return str.trim();
+  fn.shuffle = function (arr, bool) {
+    const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+    arr = bool || isView ? arr : arr.slice();
+
+    let rnd,
+      tmp,
+      idx = arr.length;
+    while (idx > 1) {
+      rnd = (this.random(0, 1) * idx) | 0;
+
+      tmp = arr[--idx];
+      arr[idx] = arr[rnd];
+      arr[rnd] = tmp;
     }
+
+    return arr;
   };
 }
 
-export default stringFunctions;
+export default utilityFunctions;
 
 if(typeof p5 !== 'undefined'){
-  stringFunctions(p5, p5.prototype);
+  utilityFunctions(p5, p5.prototype);
 }

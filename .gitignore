@@ -10,6 +10,7 @@ docs/reference/*
 examples/3d/
 .idea
 dist/
+*.d.ts
 p5.zip
 bower-repo/
 p5-website/

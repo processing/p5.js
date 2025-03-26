@@ -50,10 +50,10 @@ suite('Curves', function() {
     });
   });
 
-  suite('p5.prototype.curve', function() {
+  suite('p5.prototype.spline', function() {
     test('should be a function', function() {
-      assert.ok(mockP5Prototype.curve);
-      assert.typeOf(mockP5Prototype.curve, 'function');
+      assert.ok(mockP5Prototype.spline);
+      assert.typeOf(mockP5Prototype.spline, 'function');
     });
   });
 

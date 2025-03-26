@@ -432,6 +432,29 @@ class RendererGL extends Renderer {
     this.drawShapeCount = 1;
 
     this.scratchMat3 = new Matrix(3);
+
+    this._userEnabledStencil = false;
+    // Store original methods for internal use
+    this._internalEnable = this.drawingContext.enable;
+    this._internalDisable = this.drawingContext.disable;
+
+    // Override WebGL enable function
+    this.drawingContext.enable = (key) => {
+      if (key === this.drawingContext.STENCIL_TEST) {
+        if (!this._clipping) {
+          this._userEnabledStencil = true;
+        }
+      }
+      return this._internalEnable.call(this.drawingContext, key);
+    };
+
+    // Override WebGL disable function
+    this.drawingContext.disable = (key) => {
+      if (key === this.drawingContext.STENCIL_TEST) {
+          this._userEnabledStencil = false;
+      }
+      return this._internalDisable.call(this.drawingContext, key);
+    };
   }
 
   //////////////////////////////////////////////
@@ -1010,7 +1033,10 @@ class RendererGL extends Renderer {
     //Clear depth every frame
     this.GL.clearStencil(0);
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT | this.GL.STENCIL_BUFFER_BIT);
-    this.GL.disable(this.GL.STENCIL_TEST);
+    if (!this._userEnabledStencil) {
+      this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+    }
+
   }
 
   /**
@@ -1402,7 +1428,7 @@ class RendererGL extends Renderer {
     const gl = this.GL;
     gl.clearStencil(0);
     gl.clear(gl.STENCIL_BUFFER_BIT);
-    gl.enable(gl.STENCIL_TEST);
+    this._internalEnable.call(gl, gl.STENCIL_TEST);
     this._stencilTestOn = true;
     gl.stencilFunc(
       gl.ALWAYS, // the test
@@ -1752,6 +1778,12 @@ class RendererGL extends Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+      if (!this._userEnabledStencil) {
+        this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+      }
+
+    // Reset saved state
+    // this._userEnabledStencil = this._savedStencilTestState;
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
@@ -1760,10 +1792,12 @@ class RendererGL extends Renderer {
     const drawTarget = this.drawTarget();
     if (drawTarget._isClipApplied !== this._stencilTestOn) {
       if (drawTarget._isClipApplied) {
-        this.GL.enable(this.GL.STENCIL_TEST);
+        this._internalEnable.call(this.GL, this.GL.STENCIL_TEST);
         this._stencilTestOn = true;
       } else {
-        this.GL.disable(this.GL.STENCIL_TEST);
+        if (!this._userEnabledStencil) {
+          this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+        }
         this._stencilTestOn = false;
       }
     }
@@ -2315,6 +2349,7 @@ class RendererGL extends Renderer {
 
   _setFillUniforms(fillShader) {
     this.mixedSpecularColor = [...this.states.curSpecularColor];
+    const empty = this._getEmptyTexture();
 
     if (this.states._useMetalness > 0) {
       this.mixedSpecularColor = this.mixedSpecularColor.map(
@@ -2328,9 +2363,12 @@ class RendererGL extends Renderer {
     fillShader.setUniform("uUseVertexColor", this._useVertexColor);
     fillShader.setUniform("uMaterialColor", this.states.curFillColor);
     fillShader.setUniform("isTexture", !!this.states._tex);
-    if (this.states._tex) {
-      fillShader.setUniform("uSampler", this.states._tex);
-    }
+    // We need to explicitly set uSampler back to an empty texture here.
+    // In general, we record the last set texture so we can re-apply it
+    // the next time a shader is used. However, the texture() function
+    // works differently and is global p5 state. If the p5 state has
+    // been cleared, we also need to clear the value in uSampler to match.
+    fillShader.setUniform("uSampler", this.states._tex || empty);
     fillShader.setUniform("uTint", this.states.tint);
 
     fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
