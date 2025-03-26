@@ -12,12 +12,14 @@ let pixellizeShader;
 let fresnelShader;
 let bloomShader;
 
+
 function fresnelShaderCallback() {
   const fresnelPower = uniformFloat(2);
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
   const viewDir = uniformVector3();
   const time = uniformFloat(() => millis());
+  const mouseIntensity = uniformVector2(()=>[map(mouseX, 0, width, 0, 0.15), map(mouseY, 0, height, 0, 0.15)]);
 
   getWorldInputs((inputs) => {
     let n = normalize(inputs.normal);
@@ -25,8 +27,8 @@ function fresnelShaderCallback() {
     
     let base = 1.0 - dot(n, v);
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
-    let col = mix([0,0,0], [1, .5, .7], fresnel);
-    inputs.color = createVector4(col.x, col.y, col.z, 1);
+    let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
+    inputs.color = [col.x, col.y, col.z, 1];
 
     inputs.position.x += 10 * sin(inputs.position.z + time * 0.01);
     return inputs;
@@ -38,19 +40,19 @@ function starShaderCallback() {
   const skyRadius = uniformFloat(1000);
   
   function rand2(st) {
-    return fract(sin(dot(st, createVector2(12.9898, 78.233))) * 43758.5453123);
+    return fract(sin(dot(st, [12.9898, 78.233])) * 43758.5453123);
   }
 
   function semiSphere() {
     let id = instanceID();
-    let theta = rand2(createVector2(id, 0.1234)) * TWO_PI;
-    let phi = rand2(createVector2(id, 3.321)) * PI+time/10000;
+    let theta = rand2([id, 0.1234]) * TWO_PI;
+    let phi = rand2([id, 3.321]) * PI+time/10000;
     let r = skyRadius;
     r *= 1.5 * sin(phi);
     let x = r * sin(phi) * cos(theta);
     let y = r *1.5* cos(phi);
     let z = r * sin(phi) * sin(theta);
-    return createVector3(x, y, z);
+    return [x, y, z];
   }
 
   getWorldInputs((inputs) => {
