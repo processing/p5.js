@@ -743,7 +743,7 @@ function shadergenerator(p5, fn) {
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
       let [name, ...defaultValue] = args;
 
-      if(glslType.startsWith('vec')) {
+      if(glslType.startsWith('vec') && !(defaultValue[0] instanceof Function)) {
         defaultValue = conformVectorParameters(defaultValue, +glslType.slice(3));
         this.output.uniforms[`${glslType} ${name}`] = defaultValue;
       }
