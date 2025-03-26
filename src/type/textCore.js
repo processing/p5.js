@@ -953,10 +953,51 @@ function textCore(p5, fn) {
 
 
   /**
-   * TODO
+   * Sets or gets the text drawing direction.
+   *
+   * The <code>textDirection()</code> function allows you to specify the direction in which text is
+   * rendered on the canvas. When provided with a <code>direction</code> parameter (such as "ltr" for
+   * left-to-right, "rtl" for right-to-left, or "inherit"), it updates the renderer's state with that
+   * value and applies the new setting. When called without any arguments, it returns the current text
+   * direction. This function is particularly useful for rendering text in languages with different
+   * writing directions.
    *
    * @method textDirection
    * @for p5
+   *
+   * @param {String} [direction] - (Optional) The text direction to set ("ltr", "rtl", or "inherit").
+   *                               If omitted, the function returns the current text direction.
+   * @returns {String | p5} If used as a getter (no argument provided), returns the current text direction.
+   *                        If used as a setter, returns the p5 instance for method chaining.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 300);
+   *   background(240);
+   *
+   *   textSize(32);
+   *   textFont("Georgia");
+   *   textAlign(LEFT, TOP);
+   *
+   *   // Set text direction to right-to-left and draw Arabic text.
+   *   textDirection("rtl");
+   *   fill(0);
+   *   text("Hey! ", 50, 50);
+   *
+   *   // Set text direction to left-to-right and draw English text.
+   *   textDirection("rtl");
+   *   text("Hello, p5.js!", 50, 150);
+   *
+   *   // Display the current text direction.
+   *   textSize(16);
+   *   fill(50);
+   *   textAlign(LEFT, TOP);
+   *   text("Current textDirection: " + textDirection(), 50, 250);
+   * }
+   * </code>
+   * </div>
    */
 
   /**
