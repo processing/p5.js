@@ -34,8 +34,9 @@ function shadergenerator(p5, fn) {
       } else {
         generatorFunction = shaderModifier;
       }
-      const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations)
+      const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations);
       const generatedModifyArgument = generator.generate();
+      console.log(generatedModifyArgument)
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -99,15 +100,15 @@ function shadergenerator(p5, fn) {
       }
       // If the left hand side of an expression is one of these types,
       // we should construct a node from it.
-      const unsafeTypes = ["Literal", "ArrayExpression"]
+      const unsafeTypes = ["Literal", "ArrayExpression", "Identifier"];
       if (unsafeTypes.includes(node.left.type)) {
         const leftReplacementNode = {
           type: "CallExpression",
           callee: {
             type: "Identifier",
-            name: "makeNode",
+            name: "dynamicNode",
           },
-          arguments: [node.left, node.right]
+          arguments: [node.left]
         }
         node.left = leftReplacementNode;
       }
@@ -129,12 +130,15 @@ function shadergenerator(p5, fn) {
 
   // This unfinished function lets you do 1 * 10
   // and turns it into float.mult(10)
-  fn.makeNode = function(leftValue, rightValue) {
-    if (typeof leftValue === 'number') {
-      return new FloatNode(leftValue);
+  fn.dynamicNode = function (input) {
+    if (isShaderNode(input)) {
+      return input;
     }
-    else if (Array.isArray(leftValue)) {
-      return new VectorNode(leftValue, `vec${leftValue.length}`);
+    else if (typeof input === 'number') {
+      return new FloatNode(input);
+    }
+    else if (Array.isArray(input)) {
+      return new VectorNode(input, `vec${input.length}`);
     }
   }
 
@@ -154,7 +158,6 @@ function shadergenerator(p5, fn) {
       // For tracking recursion depth and creating temporary variables
       this.isInternal = isInternal;
       this.usedIn = [];
-      this.dependsOn = [];
       this.srcLine = null;
       // Stack Capture is used to get the original line of user code for Debug purposes
       if (GLOBAL_SHADER.srcLocations === true && isInternal === false) {
@@ -168,13 +171,6 @@ function shadergenerator(p5, fn) {
         }
       }
     }
-    // get type() {
-    //   return this._type;
-    // }
-
-    // set type(value) {
-    //   this._type = value;
-    // }
 
     addVectorComponents() {
       if (this.type.startsWith('vec')) {
@@ -211,10 +207,10 @@ function shadergenerator(p5, fn) {
       if (this.swizzleChanged) { return true; }
       if (this.isInternal || isVariableNode(this)) { return false; }
       let score = 0;
-      score += isBinaryOperatorNode(this);
+      score += isBinaryOperatorNode(this) * 2;
       score += isVectorNode(this) * 2;
-      score += this.usedIn.length;
-      return score > 3;
+      score += Math.max(0, this.usedIn.length - 1);
+      return score >= 3;
     }
 
     getTemporaryVariable(context) {
@@ -230,10 +226,10 @@ function shadergenerator(p5, fn) {
             valueArgs.push(this[componentName])
           }
           const replacement = nodeConstructors[this.type](valueArgs)
-          line += this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
-          line += `\n` + this.temporaryVariable + " = " + replacement.toGLSL(context) + ";";
+          line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
+          line += `\n` + "  " + this.temporaryVariable + " = " + replacement.toGLSL(context) + ";";
         } else {
-          line += this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
+          line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
         }
         context.declarations.push(line);
       }
@@ -421,8 +417,7 @@ function shadergenerator(p5, fn) {
     }
     toGLSL(context) {
       const parentName = this.parent.toGLSLBase(context);
-      // const parentName = this.parent.temporaryVariable ? this.parent.temporaryVariable : this.parent.name;
-      return `${parentName}.${this.componentName}`;
+      return `(${parentName}).${this.componentName}`;
     }
   }
 
@@ -647,11 +642,12 @@ function shadergenerator(p5, fn) {
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
               if (!isShaderNode(propertyNode)) {
-                propertyNode = makeNode(propertyNode);
+                propertyNode = dynamicNode(propertyNode);
               }
               toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
             })
-          } else {
+          } 
+          else {
             // We can accept raw numbers or arrays otherwise
             if (!isShaderNode(returnedValue)) {
               returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue)
@@ -664,15 +660,15 @@ function shadergenerator(p5, fn) {
           let codeLines = [
             `(${argsArray.join(', ')}) {`,
             ...this.context.declarations,
-            `${hookTypes.returnType.typeName} finalReturnValue;`
+            `\n  ${hookTypes.returnType.typeName} finalReturnValue;`
           ];
 
           Object.entries(toGLSLResults).forEach(([propertyName, result]) => {
             const propString = expectedReturnType.properties ? `.${propertyName}` : '';
-            codeLines.push(`finalReturnValue${propString} = ${result};`)
+            codeLines.push(`  finalReturnValue${propString} = ${result};`)
           })
 
-          codeLines.push('return finalReturnValue;', '}');
+          codeLines.push('  return finalReturnValue;', '}');
           this.output[hookName] = codeLines.join('\n');
           this.resetGLSLContext();
         }
