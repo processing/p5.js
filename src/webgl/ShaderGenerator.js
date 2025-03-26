@@ -133,6 +133,9 @@ function shadergenerator(p5, fn) {
     if (typeof leftValue === 'number') {
       return new FloatNode(leftValue);
     }
+    else if (Array.isArray(leftValue)) {
+      return new VectorNode(leftValue, `vec${leftValue.length}`);
+    }
   }
 
   // Javascript Node API.
@@ -643,6 +646,9 @@ function shadergenerator(p5, fn) {
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
+              if (!isShaderNode(propertyNode)) {
+                propertyNode = makeNode(propertyNode);
+              }
               toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
             })
           } else {
