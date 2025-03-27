@@ -17,20 +17,15 @@ function fresnelShaderCallback() {
   const fresnelPower = uniformFloat(2);
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
-  const viewDir = uniformVector3();
-  const time = uniformFloat(() => millis());
   const mouseIntensity = uniformVector2(()=>[map(mouseX, 0, width, 0, 0.15), map(mouseY, 0, height, 0, 0.15)]);
 
-  getWorldInputs((inputs) => {
+  getCameraInputs((inputs) => {
     let n = normalize(inputs.normal);
-    let v = normalize(viewDir);
-    
+    let v = normalize(0 - inputs.position);
     let base = 1.0 - dot(n, v);
-    let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
+    let fresnel = createVector3(fresnelScale * pow(base, fresnelPower) + fresnelBias);
     let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
     inputs.color = [col.x, col.y, col.z, 1];
-
-    inputs.position.x += 10 * sin(inputs.position.z + time * 0.01);
     return inputs;
   });
 }
@@ -117,8 +112,6 @@ function draw(){
 
   push()
   shader(fresnelShader)
-  let viewDir = [originalFrameBuffer.defaultCamera.eyeX, originalFrameBuffer.defaultCamera.eyeY, originalFrameBuffer.defaultCamera.eyeZ];
-  fresnelShader.setUniform("viewDir", viewDir)
   noStroke()
   sphere(500);
   pop()
