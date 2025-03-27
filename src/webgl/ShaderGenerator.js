@@ -85,6 +85,16 @@ function shadergenerator(p5, fn) {
           node.operator = '=';
           node.right = rightReplacementNode;
         }
+        if (node.right.type === 'ArrayExpression') {
+          node.right = {
+            type: 'CallExpression',
+            callee: {
+              type: "Identifier",
+              name: "dynamicNode",
+            },
+            arguments: [node.right]
+          }
+        }
       },
     BinaryExpression(node, _state, ancestors) {
       // Don't convert uniform default values to node methods, as
