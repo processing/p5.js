@@ -425,7 +425,7 @@ function shadergenerator(p5, fn) {
     }
     toGLSL(context) {
       let parentName = this.parent.toGLSLBase(context);
-      if (isBinaryExpressionNode(this.parent) && !this.parent.temporaryVariable) {
+      if (!isVariableNode(this.parent) || !hasTemporaryVariable(this.parent)) {
         parentName = `(${parentName})`;
       }
       return `${parentName}.${this.componentName}`;
