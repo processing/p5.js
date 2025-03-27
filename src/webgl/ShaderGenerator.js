@@ -163,7 +163,7 @@ function shadergenerator(p5, fn) {
       }
       this.type = type;
       this.componentNames = [];
-      this.swizzleChanged = false;
+      this.componentsChanged = false;
       // For tracking recursion depth and creating temporary variables
       this.isInternal = isInternal;
       this.usedIn = [];
@@ -194,7 +194,7 @@ function shadergenerator(p5, fn) {
               return value;
             },
             set(newValue) {
-              this.swizzleChanged = true;
+              this.componentsChanged = true;
               value = newValue;
             }
           })
@@ -666,21 +666,31 @@ function shadergenerator(p5, fn) {
           const expectedReturnType = hookTypes.returnType;
           const toGLSLResults = {};
 
+          const updateComponents = (node) => {
+            if (node.componentsChanged) {
+              const components = node.componentNames.map((componentName) => {
+                return node[componentName]
+              });
+              const replacement = nodeConstructors[node.type](components);
+              this.context.declarations.push(
+                `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
+              );
+            }
+          }
+
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
-              if (!isShaderNode(propertyNode)) {
-                propertyNode = dynamicNode(propertyNode);
-              }
+              propertyNode = dynamicNode(propertyNode);
               toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
-            })
-          } 
-          else {
-            // We can accept raw numbers or arrays otherwise
+              updateComponents(propertyNode);
+            });
+          } else {
             if (!isShaderNode(returnedValue)) {
               returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue)
             }
             toGLSLResults['notAProperty'] = returnedValue.toGLSLBase(this.context);
+            updateComponents(returnedValue);
           }
 
           // Build the final GLSL string.
