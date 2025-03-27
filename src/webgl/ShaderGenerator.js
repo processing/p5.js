@@ -175,7 +175,7 @@ function shadergenerator(p5, fn) {
         } catch (e) {
           const lines = e.stack.split("\n");
           let userSketchLineIndex = 5;
-          if (isBinaryOperatorNode(this)) { userSketchLineIndex--; };
+          if (isBinaryExpressionNode(this)) { userSketchLineIndex--; };
           this.srcLine = lines[userSketchLineIndex].trim();
         }
       }
@@ -243,10 +243,10 @@ function shadergenerator(p5, fn) {
     };
 
     // Binary Operators
-    add(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '+'); }
-    sub(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '-'); }
-    mult(other) { return new BinaryOperatorNode(this, this.enforceType(other), '*'); }
-    div(other)  { return new BinaryOperatorNode(this, this.enforceType(other), '/'); }
+    add(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '+'); }
+    sub(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '-'); }
+    mult(other) { return new BinaryExpressionNode(this, this.enforceType(other), '*'); }
+    div(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '/'); }
     mod(other)  { return new ModulusNode(this, this.enforceType(other)); }
 
     // Check that the types of the operands are compatible.
@@ -258,13 +258,13 @@ function shadergenerator(p5, fn) {
         if (!isGLSLNativeType(other.type)) {
           throw new TypeError (`You've tried to perform an operation on a struct of type: ${other.type}. Try accessing a member on that struct with '.'`)
         }
-        if ((isFloatNode(this) || isVectorNode(this)) && isIntNode(other)) {
+        if ((isFloatType(this) || isVectorType(this)) && isIntType(other)) {
           return new FloatNode(other)
         }
         return other;
       }
       else if(typeof other === 'number') {
-        if (isIntNode(this)) {
+        if (isIntType(this)) {
           return new IntNode(other);
         }
         return new FloatNode(other);
@@ -278,9 +278,9 @@ function shadergenerator(p5, fn) {
     }
 
     toFloat() {
-      if (isFloatNode(this)) {
+      if (isFloatType(this)) {
         return this;
-      } else if (isIntNode(this)) {
+      } else if (isIntType(this)) {
         return new FloatNode(this);
       } else {
         throw new TypeError(`Can't convert from type '${this.type}' to 'float'.`)
@@ -302,7 +302,7 @@ function shadergenerator(p5, fn) {
     toGLSL(context) {
       if (isShaderNode(this.x)) {
         let code = this.x.toGLSLBase(context);
-        return isIntNode(this.x.type) ? code : `int(${code})`;
+        return isIntType(this.x.type) ? code : `int(${code})`;
       }
       else if (typeof this.x === "number") {
         return `${Math.floor(this.x)}`;
@@ -322,7 +322,7 @@ function shadergenerator(p5, fn) {
     toGLSL(context) {
       if (isShaderNode(this.x)) {
         let code = this.x.toGLSLBase(context);
-        return isFloatNode(this.x) ? code : `float(${code})`;
+        return isFloatType(this.x) ? code : `float(${code})`;
       }
       else if (typeof this.x === "number") {
         return `${this.x.toFixed(4)}`;
@@ -358,8 +358,8 @@ function shadergenerator(p5, fn) {
   class FunctionCallNode extends BaseNode {
     constructor(name, args, properties, isInternal = false) {
       let inferredType = args.find((arg, i) => {
-        properties.args[i] === 'genType'
-        && isShaderNode(arg)
+        if (i >= properties.args.length) return false;
+        return properties.args[i] === 'genType' && isShaderNode(arg);
       })?.type;
       if (!inferredType) {
         let arrayArg = args.find(arg => Array.isArray(arg));
@@ -390,7 +390,7 @@ function shadergenerator(p5, fn) {
 
     deconstructArgs(context) {
       let argsString = this.args.map((argNode, i) => {
-        if (isIntNode(argNode) && this.argumentTypes[i] != 'float') {
+        if (isIntType(argNode) && this.argumentTypes[i] != 'float') {
           argNode = argNode.toFloat();
         }
         return argNode.toGLSLBase(context);
@@ -425,13 +425,16 @@ function shadergenerator(p5, fn) {
       this.type = type;
     }
     toGLSL(context) {
-      const parentName = this.parent.toGLSLBase(context);
-      return `(${parentName}).${this.componentName}`;
+      let parentName = this.parent.toGLSLBase(context);
+      if (isBinaryExpressionNode(this.parent) && !this.parent.temporaryVariable) {
+        parentName = `(${parentName})`;
+      }
+      return `${parentName}.${this.componentName}`;
     }
   }
 
   // Binary Operator Nodes
-  class BinaryOperatorNode extends BaseNode {
+  class BinaryExpressionNode extends BaseNode {
     constructor(a, b, operator, isInternal = false) {
       super(isInternal, null);
       this.op = operator;
@@ -449,14 +452,14 @@ function shadergenerator(p5, fn) {
       if (this.a.type === this.b.type) {
         return this.a.type;
       }
-      else if (isVectorNode(this.a) && isFloatNode(this.b)) {
+      else if (isVectorType(this.a) && isFloatType(this.b)) {
         return this.a.type;
       }
-      else if (isVectorNode(this.b) && isFloatNode(this.a)) {
+      else if (isVectorType(this.b) && isFloatType(this.a)) {
         return this.b.type;
       }
-      else if (isFloatNode(this.a) && isIntNode(this.b)
-        || isIntNode(this.a) && isFloatNode(this.b)
+      else if (isFloatType(this.a) && isIntType(this.b)
+        || isIntType(this.a) && isFloatType(this.b)
       ) {
         return 'float';
       }
@@ -468,10 +471,10 @@ function shadergenerator(p5, fn) {
     processOperand(operand, context) {
       if (operand.temporaryVariable) { return operand.temporaryVariable; }
       let code = operand.toGLSLBase(context);
-      if (isBinaryOperatorNode(operand) && !operand.temporaryVariable) {
+      if (isBinaryExpressionNode(operand) && !operand.temporaryVariable) {
         code = `(${code})`;
       }
-      if (this.type === 'float' && isIntNode(operand)) {
+      if (this.type === 'float' && isIntType(operand)) {
         code = `float(${code})`;
       }
       return code;
@@ -484,13 +487,13 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  class ModulusNode extends BinaryOperatorNode {
+  class ModulusNode extends BinaryExpressionNode {
     constructor(a, b) {
       super(a, b);
     }
     toGLSL(context) {
       // Switch on type between % or mod()
-      if (isVectorNode(this) || isFloatNode(this)) {
+      if (isVectorType(this) || isFloatType(this)) {
         return `mod(${this.a.toGLSLBase(context)}, ${this.b.toGLSLBase(context)})`;
       }
       return `${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)}`;
@@ -543,24 +546,36 @@ function shadergenerator(p5, fn) {
     return (node instanceof BaseNode);
   }
 
-  function isIntNode(node) {
+  function isIntType(node) {
     return (isShaderNode(node) && (node.type === 'int'));
   }
 
-  function isFloatNode(node) {
+  function isFloatType(node) {
     return (isShaderNode(node) && (node.type === 'float'));
   }
 
-  function isVectorNode(node) {
+  function isVectorType(node) {
     return (isShaderNode(node) && (node.type === 'vec2'|| node.type === 'vec3' || node.type === 'vec4'));
   }
 
-  function isBinaryOperatorNode(node) {
-    return (node instanceof BinaryOperatorNode);
+  function isBinaryExpressionNode(node) {
+    return (node instanceof BinaryExpressionNode);
   }
 
   function isVariableNode(node) {
     return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined');
+  }
+
+  function isLiteralNode(node) {
+    return (node instanceof FloatNode || node instanceof IntNode);
+  }
+
+  function isFunctionCallNode(node) {
+    return (node instanceof FunctionCallNode);
+  }
+
+  function isVectorNode(node) {
+    return (node instanceof VectorNode)
   }
 
     // Helper function to check if a type is a user defined struct or native type
@@ -583,7 +598,6 @@ function shadergenerator(p5, fn) {
   class ShaderGenerator {
     constructor(userCallback, originalShader, srcLocations) {
       GLOBAL_SHADER = this;
-      this.userCallback = userCallback;
       this.userCallback = userCallback;
       this.srcLocations = srcLocations;
       this.cleanup = () => {};
