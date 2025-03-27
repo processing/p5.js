@@ -213,12 +213,19 @@ function shadergenerator(p5, fn) {
     }
 
     shouldUseTemporaryVariable() {
-      if (this.swizzleChanged) { return true; }
+      if (this.type === 'sampler2D') { return false; }
+      return true;
       if (this.isInternal || isVariableNode(this)) { return false; }
+      if (this.swizzleChanged) { return true; }
+      if (isFunctionCallNode(this)) { return true; }
+      if (this.usedIn.length > 1) { return true; }
       let score = 0;
-      score += isBinaryOperatorNode(this) * 2;
-      score += isVectorNode(this) * 2;
-      score += Math.max(0, this.usedIn.length - 1);
+      score += isBinaryExpressionNode(this) * 2;
+      score += isVectorType(this) * 2;
+      score += isFloatType(this);
+      // score += isLiteralNode(this);
+      score += isVectorNode(this);
+      score += Math.max(0, this.usedIn.length);
       return score >= 3;
     }
 
@@ -229,17 +236,7 @@ function shadergenerator(p5, fn) {
         if (this.srcLine) {
           line += `\n// From ${this.srcLine}\n`;
         }
-        if (this.swizzleChanged) {
-          const valueArgs = [];
-          for (let componentName of this.componentNames) {
-            valueArgs.push(this[componentName])
-          }
-          const replacement = nodeConstructors[this.type](valueArgs)
-          line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
-          line += `\n` + "  " + this.temporaryVariable + " = " + replacement.toGLSL(context) + ";";
-        } else {
-          line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
-        }
+        line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
         context.declarations.push(line);
       }
       return this.temporaryVariable;
@@ -382,6 +379,9 @@ function shadergenerator(p5, fn) {
         properties.returnType = inferredType;
       }
       super(isInternal, properties.returnType);
+      for (const arg of args) {
+        arg.usedIn.push(this);
+      }
       this.name = name;
       this.args = args;
       this.argumentTypes = properties.args;
@@ -591,6 +591,7 @@ function shadergenerator(p5, fn) {
       this.output = {
         uniforms: {},
       }
+      this.uniformNodes = [];
       this.resetGLSLContext();
       this.isGenerating = false;
     }
@@ -620,6 +621,8 @@ function shadergenerator(p5, fn) {
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName);
+
+        // These functions are where the user code is executed
         this[hookTypes.name] = function(userCallback) {
           // Create the initial nodes which are passed to the user callback
           // Also generate a string of the arguments for the code generation
@@ -698,11 +701,16 @@ function shadergenerator(p5, fn) {
     }
 
     resetGLSLContext() {
+      this.uniformNodes.forEach((node) => {
+        node.usedIn = [];
+        node.temporaryVariable = undefined;
+      });
       this.context = {
         id: 0,
         getNextID: function() { return this.id++ },
         declarations: [],
       }
+      this.uniformNodes = [];
     }
   }
 
@@ -761,6 +769,7 @@ function shadergenerator(p5, fn) {
         this.output.uniforms[`${glslType} ${name}`] = defaultValue[0];
       }
       const uniform = new VariableNode(name, glslType, false);
+      this.uniformNodes.push(uniform);
       return uniform;
     };
 
