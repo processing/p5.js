@@ -357,26 +357,28 @@ function shadergenerator(p5, fn) {
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
     constructor(name, args, properties, isInternal = false) {
-      let inferredType = args.find((arg, i) => {
-        if (i >= properties.args.length) return false;
-        return properties.args[i] === 'genType' && isShaderNode(arg);
-      })?.type;
-      if (!inferredType) {
-        let arrayArg = args.find(arg => Array.isArray(arg));
-        inferredType = arrayArg ? `vec${arrayArg.length}` : undefined;
+      if (args.length !== properties.args.length) {
+        throw new Error(`Function ${name} expects ${properties.args.length} arguments, but ${args.length} were provided.`);
       }
-      if (!inferredType) {
-        inferredType = 'float';
+      let inferredGenType = args.find((arg, i) => 
+        properties.args[i] === 'genType' && isShaderNode(arg)
+      )?.type;
+      if (!inferredGenType || inferredGenType === 'float') {
+        let arrayArg = args.find(arg => Array.isArray(arg));
+        inferredGenType = arrayArg ? `vec${arrayArg.length}` : undefined;
+      }
+      if (!inferredGenType) {
+        inferredGenType = 'float';
       }
       args = args.map((arg, i) => {
         if (!isShaderNode(arg)) {
-          const typeName = properties.args[i] === 'genType' ? inferredType : properties.args[i];
+          const typeName = properties.args[i] === 'genType' ? inferredGenType : properties.args[i];
           arg = nodeConstructors[typeName](arg);
         }
         return arg;
       })
       if (properties.returnType === 'genType') {
-        properties.returnType = inferredType;
+        properties.returnType = inferredGenType;
       }
       super(isInternal, properties.returnType);
       for (const arg of args) {
