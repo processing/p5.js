@@ -213,20 +213,15 @@ function shadergenerator(p5, fn) {
     }
 
     shouldUseTemporaryVariable() {
-      if (this.type === 'sampler2D') { return false; }
-      return true;
-      if (this.isInternal || isVariableNode(this)) { return false; }
-      if (this.swizzleChanged) { return true; }
-      if (isFunctionCallNode(this)) { return true; }
-      if (this.usedIn.length > 1) { return true; }
+      if (this.isInternal || isVariableNode(this) || this.type === 'sampler2D') { return false; }
+      // Swizzles must use temporary variables as otherwise they will not be registered
+      if (this.componentsChanged || hasTemporaryVariable(this)) { return true; }
       let score = 0;
+      score += isFunctionCallNode(this) * 2;
       score += isBinaryExpressionNode(this) * 2;
-      score += isVectorType(this) * 2;
-      score += isFloatType(this);
-      // score += isLiteralNode(this);
-      score += isVectorNode(this);
-      score += Math.max(0, this.usedIn.length);
-      return score >= 3;
+      score += isVectorType(this) * 3;
+      score += this.usedIn.length;
+      return score >= 4;
     }
 
     getTemporaryVariable(context) {
@@ -556,6 +551,10 @@ function shadergenerator(p5, fn) {
     return (isShaderNode(node) && (node.type === 'float'));
   }
 
+  function isFloatNode(node) {
+    return (node instanceof FloatNode);
+  }
+
   function isVectorType(node) {
     return (isShaderNode(node) && (node.type === 'vec2'|| node.type === 'vec3' || node.type === 'vec4'));
   }
@@ -565,7 +564,11 @@ function shadergenerator(p5, fn) {
   }
 
   function isVariableNode(node) {
-    return (node instanceof VariableNode || node instanceof ComponentNode || typeof(node.temporaryVariable) != 'undefined');
+    return (node instanceof VariableNode || node instanceof ComponentNode);
+  }
+
+  function hasTemporaryVariable(node) {
+    return (node.temporaryVariable);
   }
 
   function isLiteralNode(node) {
@@ -742,7 +745,11 @@ function shadergenerator(p5, fn) {
 
   // User function helpers
   function conformVectorParameters(value, vectorDimensions) {
-    // Allow arguments as arrays ([0,0,0,0]) or not (0,0,0,0)
+    // Allow arguments as arrays or otherwise. The following are all equivalent:
+    // ([0,0,0,0]) (0,0,0,0) (0) ([0])
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
     value = value.flat();
     // Populate arguments so uniformVector3(0) becomes [0,0,0]
     if (value.length === 1) {
