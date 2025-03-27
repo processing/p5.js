@@ -277,8 +277,6 @@ function shadergenerator(p5, fn) {
         return this;
       } else if (isIntType(this)) {
         return new FloatNode(this);
-      } else {
-        throw new TypeError(`Can't convert from type '${this.type}' to 'float'.`)
       }
     }
 
@@ -331,9 +329,10 @@ function shadergenerator(p5, fn) {
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal, type);
+      values = conformVectorParameters(values, +type.slice(3));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.componentNames.forEach((component, i) => {
-        this[component] = new FloatNode(values[i], true);
+        this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
       });
     }
 
@@ -342,6 +341,9 @@ function shadergenerator(p5, fn) {
 
       this.componentNames.forEach((component, i) => {
         const comma = i === this.componentNames.length - 1 ? `` : `, `;
+        if (!isShaderNode(this[component])) {
+          this[component] = new FloatNode(this[component]);
+        }
         glslArgs += `${this[component].toGLSLBase(context)}${comma}`;
       })
 
