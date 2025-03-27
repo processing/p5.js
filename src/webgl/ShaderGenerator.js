@@ -354,19 +354,53 @@ function shadergenerator(p5, fn) {
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
     constructor(name, args, properties, isInternal = false) {
+
+      // Some functions in GLSL have overloads, therefore we should determine which function signature
+      // the user is trying to call.
+      if (Array.isArray(properties)) {
+        let possibleOverloads = properties.filter(overload => overload.args.length === args.length);
+
+        // We may want a deeper check to ensure that there are no unnecessary casts:
+        // let indicesOfDifference = {};
+        // for (let argIndex = 0; argIndex < args.length; argIndex++) {
+        //   indicesOfDifference[argIndex] = new Set();
+        //   for (let overload = 0; overload < possibleOverloads.length; overload++) {
+        //     indicesOfDifference[argIndex].add(possibleOverloads[overload].args[argIndex])
+        //   }
+        //   if (indicesOfDifference[argIndex].size === 1) { delete indicesOfDifference[argIndex]}
+        // }
+
+        // This works for now:
+        let selectedOverload = possibleOverloads.find(overload => {
+          return args.every((arg, i) => {
+            let expectedArgType = overload.args[i];
+            if (expectedArgType != 'genType') {
+              if (isShaderNode(arg) && arg.type === expectedArgType) { return true; }
+              if (typeof arg === 'number' && expectedArgType === 'float') { return true; } // could be int later
+              if (Array.isArray(arg) && expectedArgType === 'genType') { return true; }
+            }
+            return true;
+          });
+        });
+        properties = selectedOverload;
+      }
       if (args.length !== properties.args.length) {
         throw new Error(`Function ${name} expects ${properties.args.length} arguments, but ${args.length} were provided.`);
       }
+
       let inferredGenType = args.find((arg, i) => 
         properties.args[i] === 'genType' && isShaderNode(arg)
       )?.type;
+
       if (!inferredGenType || inferredGenType === 'float') {
         let arrayArg = args.find(arg => Array.isArray(arg));
         inferredGenType = arrayArg ? `vec${arrayArg.length}` : undefined;
       }
+
       if (!inferredGenType) {
         inferredGenType = 'float';
       }
+
       args = args.map((arg, i) => {
         if (!isShaderNode(arg)) {
           const typeName = properties.args[i] === 'genType' ? inferredGenType : properties.args[i];
@@ -374,13 +408,13 @@ function shadergenerator(p5, fn) {
         }
         return arg;
       })
+
       if (properties.returnType === 'genType') {
         properties.returnType = inferredGenType;
       }
+
       super(isInternal, properties.returnType);
-      for (const arg of args) {
-        arg.usedIn.push(this);
-      }
+      args.forEach(arg => arg.usedIn.push(this));
       this.name = name;
       this.args = args;
       this.argumentTypes = properties.args;
@@ -827,7 +861,10 @@ function shadergenerator(p5, fn) {
     'acosh': { args: ['genType'], returnType: 'genType', isp5Function: false},
     'asin': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'asinh': { args: ['genType'], returnType: 'genType', isp5Function: false},
-    'atan': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'atan': [
+      { args: ['genType'], returnType: 'genType', isp5Function: false},
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    ],
     'atanh': { args: ['genType'], returnType: 'genType', isp5Function: false},
     'cos': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'cosh': { args: ['genType'], returnType: 'genType', isp5Function: false},
@@ -855,16 +892,28 @@ function shadergenerator(p5, fn) {
     // 'isnan': {},
     'log': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'log2': { args: ['genType'], returnType: 'genType', isp5Function: false},
-    'max': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
-    'min': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
-    'mix': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'max': [
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true}, 
+      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true}, 
+    ],
+    'min': [
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true}, 
+      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true}, 
+    ],
+    'mix': [
+      { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false}, 
+      { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false}, 
+    ],
     // 'mod': {},
     // 'modf': {},
     'pow': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
     'round': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'roundEven': { args: ['genType'], returnType: 'genType', isp5Function: false},
     // 'sign': {},
-    'smoothstep': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'smoothstep': [
+      { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+      { args: ['float', 'float', 'genType'], returnType: 'genType', isp5Function: false},
+    ],
     'sqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'step': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
     'trunc': { args: ['genType'], returnType: 'genType', isp5Function: false},
