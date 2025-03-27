@@ -410,7 +410,6 @@ function shadergenerator(p5, fn) {
       this.addVectorComponents();
     }
 
-
     toGLSL(context) {
       return `${this.name}`;
     }
@@ -585,19 +584,12 @@ function shadergenerator(p5, fn) {
     return (node instanceof VectorNode)
   }
 
-    // Helper function to check if a type is a user defined struct or native type
-    function isGLSLNativeType(typeName) {
-      // Supported types for now
-      const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
-      return glslNativeTypes.includes(typeName);
+  // Helper function to check if a type is a user defined struct or native type
+  function isGLSLNativeType(typeName) {
+    // Supported types for now
+    const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
+    return glslNativeTypes.includes(typeName);
   }
-
-    // Helper function to check if a type is a user defined struct or native type
-    function isGLSLNativeType(typeName) {
-      // Supported types for now
-      const glslNativeTypes = ['int', 'float', 'vec2', 'vec3', 'vec4', 'sampler2D'];
-      return glslNativeTypes.includes(typeName);
-    }
 
   // Shader Generator
   // This class is responsible for converting the nodes into an object containing GLSL code, to be used by p5.Shader.modify
@@ -795,7 +787,6 @@ function shadergenerator(p5, fn) {
 
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
       let [name, ...defaultValue] = args;
-
       if(glslType.startsWith('vec') && !(defaultValue[0] instanceof Function)) {
         defaultValue = conformVectorParameters(defaultValue, +glslType.slice(3));
         this.output.uniforms[`${glslType} ${name}`] = defaultValue;
@@ -889,7 +880,8 @@ function shadergenerator(p5, fn) {
     // 'notEqual': {},
     'reflect': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
     'refract': { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false},
-    // Texture sampling
+    
+    ////////// Texture sampling //////////
     'texture': {args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true},
   }
 
@@ -915,15 +907,6 @@ function shadergenerator(p5, fn) {
       }
     }
   })
-
-  // const oldTexture = p5.prototype.texture;
-  // p5.prototype.texture = function(...args) {
-  //   if (isShaderNode(args[0])) {
-  //     return new FunctionCallNode('texture', args, 'vec4');
-  //   } else {
-  //     return oldTexture.apply(this, args);
-  //   }
-  // }
 }
 
 export default shadergenerator;
