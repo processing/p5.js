@@ -242,17 +242,9 @@ function shadergenerator(p5, fn) {
             }
           })
         }
-        this.addSwizzleTrap();
       }
     }
 
-    addSwizzleTrap() {
-      const possibleSwizzles = [
-        ['x', 'y', 'z', 'w'],
-        ['r', 'g', 'b', 'a'],
-        ['s', 't', 'p', 'q']
-      ].map(s => s.slice(0, this.componentNames.length));
-    }
 
     // The base node implements a version of toGLSL which determines whether the generated code should be stored in a temporary variable.
     toGLSLBase(context){
@@ -387,6 +379,10 @@ function shadergenerator(p5, fn) {
       values = conformVectorParameters(values, +type.slice(3));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.componentNames.forEach((component, i) => {
+        let value = values[i];
+        if (isShaderNode(value)) {
+          value = new FloatNode()
+        }
         this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
       });
     }
@@ -938,13 +934,14 @@ function shadergenerator(p5, fn) {
           return Reflect.get(...arguments);
         } else {
           for (const group of swizzleSets) {
-            if ([...property].every(char => group.includes(char)) && property.length <= size) {
+            if ([...property].every(char => group.includes(char))) {
+              if (property.length === 1) { return object[swizzleSets[0][0]] }
               const components = [...property].map(char => {
                 const index = group.indexOf(char);
                 const mappedChar = swizzleSets[0][index];
                 return object[mappedChar];
               });
-              const type = object['type'];
+              const type = `vec${property.length}`;
               const node = nodeConstructors[type](components);
               return node;
             }
