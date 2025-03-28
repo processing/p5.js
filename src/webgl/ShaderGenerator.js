@@ -27,8 +27,8 @@ function shadergenerator(p5, fn) {
         const transpiledSource = escodegen.generate(ast);
         generatorFunction = new Function(
           transpiledSource.slice(
-            transpiledSource.indexOf("{") + 1,
-            transpiledSource.lastIndexOf("}")
+            transpiledSource.indexOf('{') + 1,
+            transpiledSource.lastIndexOf('}')
           )
         );
       } else {
@@ -84,6 +84,14 @@ function shadergenerator(p5, fn) {
         }
         node.init.arguments.unshift(uniformNameLiteral);
       }
+      if (node.init.callee && node.init.callee.name?.startsWith('varying')) {
+        const varyingNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(varyingNameLiteral);
+        _state[node.id.name] = varyingNameLiteral;
+      }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions
@@ -93,10 +101,10 @@ function shadergenerator(p5, fn) {
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
-            type: "MemberExpression",
+            type: 'MemberExpression',
             object: node.left,
             property: {
-              type: "Identifier",
+              type: 'Identifier',
               name: methodName,
             },
             computed: false,
@@ -110,10 +118,28 @@ function shadergenerator(p5, fn) {
           node.right = {
             type: 'CallExpression',
             callee: {
-              type: "Identifier",
-              name: "dynamicNode",
+              type: 'Identifier',
+              name: 'dynamicNode',
             },
             arguments: [node.right]
+          }
+        }
+        if (_state[node.left.name]) {
+          node.type = 'ExpressionStatement';
+          node.expression = {
+            type: 'CallExpression',
+            callee: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: node.left.name
+              },
+              property: {
+                type: 'Identifier',
+                name: 'bridge',
+              }
+            },
+            arguments: [node.right],
           }
         }
       },
@@ -123,13 +149,13 @@ function shadergenerator(p5, fn) {
       if (_ancestors.some(ancestorIsUniform)) { return; }
       // If the left hand side of an expression is one of these types,
       // we should construct a node from it.
-      const unsafeTypes = ["Literal", "ArrayExpression", "Identifier"];
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
       if (unsafeTypes.includes(node.left.type)) {
         const leftReplacementNode = {
-          type: "CallExpression",
+          type: 'CallExpression',
           callee: {
-            type: "Identifier",
-            name: "dynamicNode",
+            type: 'Identifier',
+            name: 'dynamicNode',
           },
           arguments: [node.left]
         }
@@ -139,10 +165,10 @@ function shadergenerator(p5, fn) {
       // in other words a call to BaseNode.mult(), .div() etc.
       node.type = 'CallExpression';
       node.callee = {
-        type: "MemberExpression",
+        type: 'MemberExpression',
         object: node.left,
         property: {
-          type: "Identifier",
+          type: 'Identifier',
           name: replaceBinaryOperator(node.operator),
         },
       };
@@ -177,7 +203,7 @@ function shadergenerator(p5, fn) {
   class BaseNode {
     constructor(isInternal, type) {
       if (new.target === BaseNode) {
-        throw new TypeError("Cannot construct BaseNode instances directly. This is an abstract class.");
+        throw new TypeError('Cannot construct BaseNode instances directly. This is an abstract class.');
       }
       this.type = type;
       this.componentNames = [];
@@ -189,9 +215,9 @@ function shadergenerator(p5, fn) {
       // Stack Capture is used to get the original line of user code for Debug purposes
       if (GLOBAL_SHADER.srcLocations === true && isInternal === false) {
         try {
-          throw new Error("StackCapture");
+          throw new Error('StackCapture');
         } catch (e) {
-          const lines = e.stack.split("\n");
+          const lines = e.stack.split('\n');
           let userSketchLineIndex = 5;
           if (isBinaryExpressionNode(this)) { userSketchLineIndex--; };
           this.srcLine = lines[userSketchLineIndex].trim();
@@ -205,7 +231,6 @@ function shadergenerator(p5, fn) {
         this.componentNames = ['x', 'y', 'z', 'w'].slice(0, vectorDimensions);
 
         for (let componentName of this.componentNames) {
-          // let value = new FloatNode()
           let value = new ComponentNode(this, componentName, 'float', true);
           Object.defineProperty(this, componentName, {
             get() {
@@ -245,11 +270,11 @@ function shadergenerator(p5, fn) {
     getTemporaryVariable(context) {
       if (!this.temporaryVariable) {
         this.temporaryVariable = `temp_${context.getNextID()}`;
-        let line = "";
+        let line = '';
         if (this.srcLine) {
           line += `\n// From ${this.srcLine}\n`;
         }
-        line += "  " + this.type + " " + this.temporaryVariable + " = " + this.toGLSL(context) + ";";
+        line += '  ' + this.type + ' ' + this.temporaryVariable + ' = ' + this.toGLSL(context) + ';';
         context.declarations.push(line);
       }
       return this.temporaryVariable;
@@ -299,7 +324,7 @@ function shadergenerator(p5, fn) {
     }
 
     toGLSL(context){
-      throw new TypeError("Not supposed to call this function on BaseNode, which is an abstract class.");
+      throw new TypeError('Not supposed to call this function on BaseNode, which is an abstract class.');
     }
   }
 
@@ -315,7 +340,7 @@ function shadergenerator(p5, fn) {
         let code = this.x.toGLSLBase(context);
         return isIntType(this.x.type) ? code : `int(${code})`;
       }
-      else if (typeof this.x === "number") {
+      else if (typeof this.x === 'number') {
         return `${Math.floor(this.x)}`;
       }
       else {
@@ -338,7 +363,7 @@ function shadergenerator(p5, fn) {
         let code = this.x.toGLSLBase(context);
         return isFloatType(this.x) ? code : `float(${code})`;
       }
-      else if (typeof this.x === "number") {
+      else if (typeof this.x === 'number') {
         return `${this.x.toFixed(4)}`;
       }
       else {
@@ -503,6 +528,20 @@ function shadergenerator(p5, fn) {
     }
   }
 
+  class VaryingNode extends VariableNode {
+    constructor(name, type, isInternal = false) {
+      super(name, type, isInternal);
+      this.isSet = false;
+      this.value = null;
+    }
+    bridge(value) {
+      if (!isShaderNode(value) || this.type.startsWith('vec') && getType(value) === 'float') {
+        value = nodeConstructors[this.type](value)
+      } 
+      GLOBAL_SHADER.registerVarying(this, value);
+    }
+  }
+
   // Binary Operator Nodes
   class BinaryExpressionNode extends BaseNode {
     constructor(a, b, operator, isInternal = false) {
@@ -534,7 +573,7 @@ function shadergenerator(p5, fn) {
         return 'float';
       }
       else {
-        throw new Error("Incompatible types for binary operator");
+        throw new Error('Incompatible types for binary operator');
       }
     }
 
@@ -698,6 +737,8 @@ function shadergenerator(p5, fn) {
       this.cleanup = () => {};
       this.generateHookOverrides(originalShader);
       this.output = {
+        vertexDeclarations: new Set(),
+        fragmentDeclarations: new Set(),
         uniforms: {},
       }
       this.uniformNodes = [];
@@ -712,6 +753,8 @@ function shadergenerator(p5, fn) {
 
       this.isGenerating = true;
       this.userCallback();
+      this.output.vertexDeclarations = [...this.output.vertexDeclarations].join('\n');
+      this.output.fragmentDeclarations = [...this.output.fragmentDeclarations].join('\n');
       this.isGenerating = false;
 
       this.cleanup();
@@ -771,6 +814,7 @@ function shadergenerator(p5, fn) {
             }
           }
 
+
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
@@ -781,10 +825,21 @@ function shadergenerator(p5, fn) {
           } else {
             if (!isShaderNode(returnedValue)) {
               returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue)
+            } else if (isFloatType(returnedValue) && expectedReturnType.typeName.startsWith('vec')) {
+              returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue);
             }
             toGLSLResults['notAProperty'] = returnedValue.toGLSLBase(this.context);
             updateComponents(returnedValue);
           }
+
+          this.context.varyings.forEach(varying => {
+            let { node, value } = varying;
+            this.context.declarations.push(
+              `  ${node.name} = ${value.toGLSLBase(this.context)};`
+            );
+            this.output.vertexDeclarations.add(`out ${node.type} ${node.name};`);
+            this.output.fragmentDeclarations.add(`in ${node.type} ${node.name};`);
+          })
 
           // Build the final GLSL string.
           // The order of this code is a bit confusing, we need to call toGLSLBase
@@ -803,7 +858,6 @@ function shadergenerator(p5, fn) {
           this.output[hookName] = codeLines.join('\n');
           this.resetGLSLContext();
         }
-
         windowOverrides[hookTypes.name] = window[hookTypes.name];
 
         // Expose the Functions to global scope for users to use
@@ -811,12 +865,17 @@ function shadergenerator(p5, fn) {
           GLOBAL_SHADER[hookTypes.name](userOverride);
         };
       });
+      
 
       this.cleanup = () => {
         for (const key in windowOverrides) {
           window[key] = windowOverrides[key];
         }
       };
+    }
+
+    registerVarying(node, value) {
+      this.context.varyings.push({ node, value })
     }
 
     resetGLSLContext() {
@@ -826,8 +885,9 @@ function shadergenerator(p5, fn) {
       });
       this.context = {
         id: 0,
-        getNextID: function() { return this.id++ },
+        getNextID() { return this.id++ },
         declarations: [],
+        varyings: [],
       }
       this.uniformNodes = [];
     }
@@ -904,10 +964,13 @@ function shadergenerator(p5, fn) {
     if (glslType === 'sampler2D') { continue; }
 
     const varyingMethodName = `varying${typeIdentifier}`;
-    ShaderGenerator.prototype[varyingMethodName] = function(...args) {
-      let [name, ...value] = args;
-      // if ()
+    ShaderGenerator.prototype[varyingMethodName] = function(name) {
+      return new VaryingNode(name, glslType, false);
     }
+
+    fn[varyingMethodName] = function (name) {
+      return GLOBAL_SHADER[varyingMethodName](name);
+    };
 
     // Generate the create*() Methods for creating variables in shaders
     const createMethodName = `create${typeIdentifier}`;
