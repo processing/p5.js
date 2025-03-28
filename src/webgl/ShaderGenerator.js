@@ -375,7 +375,7 @@ function shadergenerator(p5, fn) {
             expectedArgType = genType;
           }
           similarity += (userType === expectedArgType);
-          return userType === expectedArgType;
+          return userType === expectedArgType || (userType === 'float' && expectedArgType.startsWith('vec'));
         })
 
         return { ...props, valid, similarity, genType }
@@ -392,7 +392,6 @@ function shadergenerator(p5, fn) {
           const argsLengthStr = argsLengthArr.join(' or ');
           throw new Error(`Function '${name}' has ${properties.length} variants which expect ${argsLengthStr} arguments, but ${userArgs.length} arguments were provided.`);
         }
-
         const findBestOverload = function (best, current) {
           current = determineFunctionSignature(current);
           if (!current.valid) { return best; }
