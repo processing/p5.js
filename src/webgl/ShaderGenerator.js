@@ -43,7 +43,7 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  // AST Transpiler Callbacks and their helpers
+  // AST Transpiler Callbacks and helper functions
   function replaceBinaryOperator(codeSource) {
     switch (codeSource) {
       case '+': return 'add';
@@ -52,6 +52,28 @@ function shadergenerator(p5, fn) {
       case '/': return 'div';
       case '%': return 'mod';
     }
+  }
+
+  function replaceUnaryExpression(node) {
+    const sign = {
+      type: 'Literal',
+      value: node.operator,
+    }
+    const replacement ={
+      type: 'CallExpression',
+      callee: {
+        type: 'Identifier',
+        name: 'unaryNode'
+      },
+      arguments: [node.argument, sign]
+    }
+    return replacement;
+  }
+
+  const isUniform = (ancestor) => {
+    return ancestor.type === 'CallExpression'
+      && ancestor.callee?.type === 'Identifier'
+      && ancestor.callee?.name.startsWith('uniform');
   }
 
   const ASTCallbacks = {
@@ -63,10 +85,16 @@ function shadergenerator(p5, fn) {
         }
         node.init.arguments.unshift(uniformNameLiteral);
       }
+      if (node.init.type === 'UnaryExpression') {
+        node.init = replaceUnaryExpression(node.init)
+      }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions
     AssignmentExpression(node, _state, _ancestors) {
+      if (node.right.type === 'UnaryExpression') {
+        node.right = replaceUnaryExpression(node.right)
+      }
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
@@ -96,17 +124,10 @@ function shadergenerator(p5, fn) {
           }
         }
       },
-    BinaryExpression(node, _state, ancestors) {
+    BinaryExpression(node, _state, _ancestors) {
       // Don't convert uniform default values to node methods, as
       // they should be evaluated at runtime, not compiled.
-      const isUniform = (ancestor) => {
-        return ancestor.type === 'CallExpression'
-          && ancestor.callee?.type === 'Identifier'
-          && ancestor.callee?.name.startsWith('uniform');
-      }
-      if (ancestors.some(isUniform)) {
-        return;
-      }
+      if (_ancestors.some(isUniform)) { return; }
       // If the left hand side of an expression is one of these types,
       // we should construct a node from it.
       const unsafeTypes = ["Literal", "ArrayExpression", "Identifier"];
@@ -121,7 +142,9 @@ function shadergenerator(p5, fn) {
         }
         node.left = leftReplacementNode;
       }
-
+      [node.left, node.right] = [node.left, node.right].map((op) => 
+        op.type === 'UnaryExpression' ? replaceUnaryExpression(op) : op
+      )
       // Replace the binary operator with a call expression
       // in other words a call to BaseNode.mult(), .div() etc.
       node.type = 'CallExpression';
@@ -135,6 +158,14 @@ function shadergenerator(p5, fn) {
       };
       node.arguments = [node.right];
     },
+    ArrayExpression(node, _state, _ancestors) {
+      if (_ancestors.some(isUniform)) { return; }
+      node.elements = node.elements.map(el => el.type === 'UnaryExpression' ? replaceUnaryExpression(el) : el);
+    }, 
+    CallExpression(node, _state, _ancestors) {
+      if (_ancestors.some(isUniform)) { return; }
+      node.arguments = node.arguments.map(a => a.type === 'UnaryExpression' ? replaceUnaryExpression(a) : a);
+    }
   }
 
   // This unfinished function lets you do 1 * 10
@@ -149,6 +180,11 @@ function shadergenerator(p5, fn) {
     else if (Array.isArray(input)) {
       return new VectorNode(input, `vec${input.length}`);
     }
+  }
+
+  fn.unaryNode = function(input, sign) {
+    input = dynamicNode(input);
+    return new UnaryNode(input, sign);
   }
 
   // Javascript Node API.
@@ -478,7 +514,7 @@ function shadergenerator(p5, fn) {
     }
     toGLSL(context) {
       let parentName = this.parent.toGLSLBase(context);
-      if (!isVariableNode(this.parent) || !hasTemporaryVariable(this.parent)) {
+      if (!isVariableNode(this.parent) && !hasTemporaryVariable(this.parent)) {
         parentName = `(${parentName})`;
       }
       return `${parentName}.${this.componentName}`;
@@ -549,6 +585,21 @@ function shadergenerator(p5, fn) {
         return `mod(${this.a.toGLSLBase(context)}, ${this.b.toGLSLBase(context)})`;
       }
       return `${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)}`;
+    }
+  }
+
+  class UnaryNode extends BaseNode {
+    constructor(a, operator, isInternal = false) {
+      super(isInternal, a.type)
+      this.a = a;
+      this.operator = operator;
+    }
+    toGLSL(context) {
+      let mainStr = this.a.toGLSLBase(context);
+      if (!isVariableNode(this.a) && !hasTemporaryVariable(this.a)) {
+        mainStr = `(${mainStr})`
+      }
+      return `${this.operator}${mainStr}`
     }
   }
 
