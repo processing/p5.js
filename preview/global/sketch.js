@@ -18,16 +18,23 @@ function fresnelShaderCallback() {
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
   const mouseIntensity = uniformVector2(()=>[map(mouseX, 0, width, 0, 0.15), map(mouseY, 0, height, 0, 0.15)]);
+  let val = varyingFloat('val');
+  let colr = varyingVector4('colr');
 
   getCameraInputs((inputs) => {
     let n = normalize(inputs.normal);
     let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
+    val = mouseIntensity.y;
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
     let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
     inputs.color = [col.x, col.y, col.z, 1];
     return inputs;
   });
+
+  getFinalColor((col) => {
+    return col * [val,col.y,col.y,1];
+  })
 }
 
 function starShaderCallback() {
