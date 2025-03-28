@@ -309,6 +309,9 @@ function shadergenerator(p5, fn) {
   class FloatNode extends BaseNode {
     constructor(x = 0, isInternal = false){
       super(isInternal, 'float');
+      if (Array.isArray(x)) {
+        x = x[0];
+      }
       this.x = x;
     }
 
@@ -353,71 +356,89 @@ function shadergenerator(p5, fn) {
 
   // Function Call Nodes
   class FunctionCallNode extends BaseNode {
-    constructor(name, args, properties, isInternal = false) {
+    constructor(name, userArgs, properties, isInternal = false) {
 
-      // Some functions in GLSL have overloads, therefore we should determine which function signature
-      // the user is trying to call.
+      let functionSignature;
+      const determineFunctionSignature = (props) => {
+        let genType;
+        let similarity = 0;
+
+        const valid = userArgs.every((userArg, i) => {
+          const userType = getType(userArg);
+          let expectedArgType = props.args[i];
+
+          if (expectedArgType === 'genType') {
+            // We allow conversions from float -> vec if one argument is a vector.
+            if (genType === undefined || (genType === 'float' && userType.startsWith('vec'))) {
+              genType = userType
+            };
+            expectedArgType = genType;
+          }
+          similarity += (userType === expectedArgType);
+          return userType === expectedArgType;
+        })
+
+        return { ...props, valid, similarity, genType }
+      }
+
       if (Array.isArray(properties)) {
-        let possibleOverloads = properties.filter(overload => overload.args.length === args.length);
+        // Check if the right amount of 
+        let possibleOverloads = properties.filter(o => o.args.length === userArgs.length);
+        if (possibleOverloads.length === 0) {
+          const argsLengthSet = new Set();
+          const argsLengthArr = [];
+          properties.forEach((p) => argsLengthSet.add(p.args.length));
+          argsLengthSet.forEach((len) => argsLengthArr.push(`${len}`));
+          const argsLengthStr = argsLengthArr.join(' or ');
+          throw new Error(`Function '${name}' has ${properties.length} variants which expect ${argsLengthStr} arguments, but ${userArgs.length} arguments were provided.`);
+        }
 
-        // We may want a deeper check to ensure that there are no unnecessary casts:
-        // let indicesOfDifference = {};
-        // for (let argIndex = 0; argIndex < args.length; argIndex++) {
-        //   indicesOfDifference[argIndex] = new Set();
-        //   for (let overload = 0; overload < possibleOverloads.length; overload++) {
-        //     indicesOfDifference[argIndex].add(possibleOverloads[overload].args[argIndex])
-        //   }
-        //   if (indicesOfDifference[argIndex].size === 1) { delete indicesOfDifference[argIndex]}
-        // }
-
-        // This works for now:
-        let selectedOverload = possibleOverloads.find(overload => {
-          return args.every((arg, i) => {
-            let expectedArgType = overload.args[i];
-            if (expectedArgType != 'genType') {
-              if (isShaderNode(arg) && arg.type === expectedArgType) { return true; }
-              if (typeof arg === 'number' && expectedArgType === 'float') { return true; } // could be int later
-              if (Array.isArray(arg) && expectedArgType === 'genType') { return true; }
-            }
-            return true;
-          });
-        });
-        properties = selectedOverload;
-      }
-      if (args.length !== properties.args.length) {
-        throw new Error(`Function ${name} expects ${properties.args.length} arguments, but ${args.length} were provided.`);
+        const findBestOverload = function (best, current) {
+          current = determineFunctionSignature(current);
+          if (!current.valid) { return best; }
+          if (!best || current.similarity > best.similarity) { 
+            best = current; 
+          }
+          return best;
+        }
+        functionSignature = possibleOverloads.reduce(findBestOverload, null);
+      } else {
+        functionSignature = determineFunctionSignature(properties);
       }
 
-      let inferredGenType = args.find((arg, i) => 
-        properties.args[i] === 'genType' && isShaderNode(arg)
-      )?.type;
-
-      if (!inferredGenType || inferredGenType === 'float') {
-        let arrayArg = args.find(arg => Array.isArray(arg));
-        inferredGenType = arrayArg ? `vec${arrayArg.length}` : undefined;
+      if (!functionSignature || !functionSignature.valid) {
+        const argsStrJoin = (args) => `(${args.map((arg) => arg).join(', ')})`;
+        const expectedArgsString = Array.isArray(properties) ? 
+          properties.map(prop => argsStrJoin(prop.args)).join(' or ')
+          : argsStrJoin(properties.args);
+        const providedArgsString = argsStrJoin(userArgs.map((a)=>getType(a)));
+          throw new Error(`Function '${name}' was called with wrong arguments. Most likely, you provided mixed lengths vectors as arguments.\nExpected argument types: ${expectedArgsString}\nProvided argument types: ${providedArgsString}\nAll of the arguments with expected type 'genType' should have a matching type. If one of those is different, try to find where it was created.
+        `);
       }
 
-      if (!inferredGenType) {
-        inferredGenType = 'float';
+      if (userArgs.length !== functionSignature.args.length) {
+        throw new Error(`Function '${name}' expects ${functionSignature.args.length} arguments, but ${userArgs.length} were provided.`);
       }
 
-      args = args.map((arg, i) => {
+      userArgs = userArgs.map((arg, i) => {
         if (!isShaderNode(arg)) {
-          const typeName = properties.args[i] === 'genType' ? inferredGenType : properties.args[i];
+          const typeName = functionSignature.args[i] === 'genType' ? functionSignature.genType : functionSignature.args[i];
           arg = nodeConstructors[typeName](arg);
+        } else if (isFloatType(arg) && functionSignature.args[i] ==='genType' && functionSignature.genType !== 'float') {
+          arg = nodeConstructors[functionSignature.genType](arg);
         }
         return arg;
       })
 
-      if (properties.returnType === 'genType') {
-        properties.returnType = inferredGenType;
+      if (functionSignature.returnType === 'genType') {
+        functionSignature.returnType = functionSignature.genType;
       }
 
-      super(isInternal, properties.returnType);
-      args.forEach(arg => arg.usedIn.push(this));
+      super(isInternal, functionSignature.returnType);
+      userArgs.forEach(arg => arg.usedIn.push(this));
       this.name = name;
-      this.args = args;
-      this.argumentTypes = properties.args;
+      this.args = userArgs;
+      this.argumentTypes = functionSignature.args;
       this.addVectorComponents();
     }
 
@@ -574,6 +595,15 @@ function shadergenerator(p5, fn) {
   }
 
   // Node Helper functions
+  function getType(node) {
+    if (isShaderNode(node)) { return node.type; }
+    else if (Array.isArray(node) && node.length > 1) { return `vec${node.length}`; }
+    else if (typeof node === 'number' || (Array.isArray(node) && node.length === 1)) {
+      return 'float';
+    }
+    return undefined;
+  }
+
   function isShaderNode(node) {
     return (node instanceof BaseNode);
   }
@@ -935,7 +965,8 @@ function shadergenerator(p5, fn) {
   }
 
   Object.entries(builtInGLSLFunctions).forEach(([functionName, properties]) => {
-    if (properties.isp5Function) {
+    const isp5Function = Array.isArray(properties) ? properties[0].isp5Function : properties.isp5Function;
+    if (isp5Function) {
       const originalFn = fn[functionName];
       fn[functionName] = function (...args) {
         if (GLOBAL_SHADER?.isGenerating) {
