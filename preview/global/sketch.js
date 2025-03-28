@@ -21,7 +21,7 @@ function fresnelShaderCallback() {
 
   getCameraInputs((inputs) => {
     let n = normalize(inputs.normal);
-    let v = normalize(0 - inputs.position);
+    let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
     let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
