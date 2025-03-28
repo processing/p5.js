@@ -25,16 +25,16 @@ function fresnelShaderCallback() {
     let n = normalize(inputs.normal);
     let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
-    val = mouseIntensity.y;
+    val = mouseIntensity.x;
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
     let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
     inputs.color = [col.x, col.y, col.z, 1];
     return inputs;
   });
 
-  getFinalColor((col) => {
-    return col * [val,col.y,col.y,1];
-  })
+  // getFinalColor((col) => {
+    // return col * [val,col.y,col.y,1];
+  // })
 }
 
 function starShaderCallback() {
