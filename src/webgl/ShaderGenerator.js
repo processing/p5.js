@@ -54,29 +54,28 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  function replaceUnaryExpression(node) {
-    const sign = {
-      type: 'Literal',
-      value: node.operator,
-    }
-    const replacement ={
-      type: 'CallExpression',
-      callee: {
-        type: 'Identifier',
-        name: 'unaryNode'
-      },
-      arguments: [node.argument, sign]
-    }
-    return replacement;
-  }
-
-  const isUniform = (ancestor) => {
+  function ancestorIsUniform(ancestor) {
     return ancestor.type === 'CallExpression'
       && ancestor.callee?.type === 'Identifier'
       && ancestor.callee?.name.startsWith('uniform');
   }
 
   const ASTCallbacks = {
+    UnaryExpression(node, _state, _ancestors) {
+      if (_ancestors.some(ancestorIsUniform)) { return; }
+      const signNode = {
+        type: 'Literal',
+        value: node.operator,
+      }
+      node.type = 'CallExpression'
+      node.callee = {
+        type: 'Identifier',
+        name: 'unaryNode',
+      };
+      node.arguments = [node.argument, signNode]
+      delete node.argument;
+      delete node.operator;
+    },
     VariableDeclarator(node, _state, _ancestors) {
       if (node.init.callee && node.init.callee.name?.startsWith('uniform')) {
         const uniformNameLiteral = {
@@ -85,16 +84,10 @@ function shadergenerator(p5, fn) {
         }
         node.init.arguments.unshift(uniformNameLiteral);
       }
-      if (node.init.type === 'UnaryExpression') {
-        node.init = replaceUnaryExpression(node.init)
-      }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions
     AssignmentExpression(node, _state, _ancestors) {
-      if (node.right.type === 'UnaryExpression') {
-        node.right = replaceUnaryExpression(node.right)
-      }
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
@@ -127,7 +120,7 @@ function shadergenerator(p5, fn) {
     BinaryExpression(node, _state, _ancestors) {
       // Don't convert uniform default values to node methods, as
       // they should be evaluated at runtime, not compiled.
-      if (_ancestors.some(isUniform)) { return; }
+      if (_ancestors.some(ancestorIsUniform)) { return; }
       // If the left hand side of an expression is one of these types,
       // we should construct a node from it.
       const unsafeTypes = ["Literal", "ArrayExpression", "Identifier"];
@@ -142,9 +135,6 @@ function shadergenerator(p5, fn) {
         }
         node.left = leftReplacementNode;
       }
-      [node.left, node.right] = [node.left, node.right].map((op) => 
-        op.type === 'UnaryExpression' ? replaceUnaryExpression(op) : op
-      )
       // Replace the binary operator with a call expression
       // in other words a call to BaseNode.mult(), .div() etc.
       node.type = 'CallExpression';
@@ -158,14 +148,6 @@ function shadergenerator(p5, fn) {
       };
       node.arguments = [node.right];
     },
-    ArrayExpression(node, _state, _ancestors) {
-      if (_ancestors.some(isUniform)) { return; }
-      node.elements = node.elements.map(el => el.type === 'UnaryExpression' ? replaceUnaryExpression(el) : el);
-    }, 
-    CallExpression(node, _state, _ancestors) {
-      if (_ancestors.some(isUniform)) { return; }
-      node.arguments = node.arguments.map(a => a.type === 'UnaryExpression' ? replaceUnaryExpression(a) : a);
-    }
   }
 
   // This unfinished function lets you do 1 * 10
@@ -917,8 +899,15 @@ function shadergenerator(p5, fn) {
       return GLOBAL_SHADER[uniformMethodName](...args);
     };
 
+    
     // We don't need a createTexture method.
     if (glslType === 'sampler2D') { continue; }
+
+    const varyingMethodName = `varying${typeIdentifier}`;
+    ShaderGenerator.prototype[varyingMethodName] = function(...args) {
+      let [name, ...value] = args;
+      // if ()
+    }
 
     // Generate the create*() Methods for creating variables in shaders
     const createMethodName = `create${typeIdentifier}`;
