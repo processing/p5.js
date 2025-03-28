@@ -28,7 +28,7 @@ function fresnelShaderCallback() {
     val = mouseIntensity.x;
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
     let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
-    inputs.color = [col.x, col.y, col.z, 1];
+    inputs.color = col.xxxx;
     return inputs;
   });
 
