@@ -946,7 +946,6 @@ function font(p5, fn) {
    *   fontStyle: 'normal',
    *   fontVariationSettings: '"wdth" 100',
    * });
-   * ```
    * </code>
    * </div>
    */
