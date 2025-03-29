@@ -62,6 +62,8 @@ class Geometry {
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
+    this.gid = `_p5_Geometry_${Geometry.nextId}`;
+    Geometry.nextId++;
     if (callback instanceof Function) {
       callback.call(this);
     }
@@ -1916,6 +1918,12 @@ class Geometry {
     return this.userVertexProperties[propertyName];
   }
 };
+
+/**
+ * Keeps track of how many custom geometry objects have been made so that each
+ * can be assigned a unique ID.
+ */
+Geometry.nextId = 0;
 
 function geometry(p5, fn){
   /**
