@@ -2451,12 +2451,15 @@ p5.Camera = class Camera {
 
     // Rotate the up vector to keep the correct camera orientation
     /* eslint-disable max-len */
-    const upX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8];
-    const upY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9];
-    const upZ = this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
+    let upX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8];
+    let upY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9];
+    let upZ = this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
     /* eslint-enable max-len */
 
-    up.normalize();
+    upX.normalize();
+    upY.normalize();
+    upZ.normalize();
+
     this.camera(
       this.eyeX,
       this.eyeY,
