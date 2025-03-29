@@ -921,6 +921,7 @@ function font(p5, fn) {
    * <div>
    * <code>
    * async function setup() {
+   *   createCanvas(100, 100);
    *   await loadFont('assets/inconsolata.otf');
    *   let p = createP('p5*js');
    *   p.style('color', 'deeppink');
