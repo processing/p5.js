@@ -63,16 +63,53 @@ function shadergenerator(p5, fn) {
   const ASTCallbacks = {
     UnaryExpression(node, _state, _ancestors) {
       if (_ancestors.some(ancestorIsUniform)) { return; }
+
       const signNode = {
         type: 'Literal',
         value: node.operator,
       }
-      node.type = 'CallExpression'
-      node.callee = {
-        type: 'Identifier',
-        name: 'unaryNode',
-      };
-      node.arguments = [node.argument, signNode]
+      
+      const standardReplacement = (node) => {
+          node.type = 'CallExpression'
+          node.callee = {
+            type: 'Identifier',
+            name: 'unaryNode',
+          }
+          node.arguments = [node.argument, signNode]
+      }
+
+      if (node.type === 'MemberExpression') {
+        const property = node.argument.property.name;
+        const swizzleSets = [
+          ['x', 'y', 'z', 'w'],
+          ['r', 'g', 'b', 'a'],
+          ['s', 't', 'p', 'q']
+        ];
+  
+        let isSwizzle = swizzleSets.some(set =>
+          [...property].every(char => set.includes(char))
+        ) && node.argument.type === 'MemberExpression';
+  
+        if (isSwizzle) {
+          node.type = 'MemberExpression';
+          node.object = {
+            type: 'CallExpression',
+            callee: {
+              type: 'Identifier',
+              name: 'unaryNode'
+            },
+            arguments: [node.argument.object, signNode],
+          };
+          node.property = {
+            type: 'Identifier',
+            name: property
+          };
+        } else {
+          standardReplacement(node);
+        } 
+      } else {
+        standardReplacement(node);
+      }
       delete node.argument;
       delete node.operator;
     },
@@ -107,7 +144,6 @@ function shadergenerator(p5, fn) {
               type: 'Identifier',
               name: methodName,
             },
-            computed: false,
           },
           arguments: [node.right]
         }
@@ -211,9 +247,6 @@ function shadergenerator(p5, fn) {
           let value = new ComponentNode(this, componentName, 'float', true);
           Object.defineProperty(this, componentName, {
             get() {
-              if (isUnaryNode(this)) {
-                return this.node.value;
-              }
               return value;
             },
             set(newValue) {
@@ -604,7 +637,7 @@ function shadergenerator(p5, fn) {
 
     toGLSL(context) {
       let mainStr = this.node.toGLSLBase(context);
-      if (!isVariableNode(this.node) && !hasTemporaryVariable(this.node)) {
+      if (!isVariableNode(this.node) && !hasTemporaryVariable(this.node) && !isPrimitiveNode(this.node)) {
         mainStr = `(${mainStr})`
       }
       return `${this.operator}${mainStr}`
@@ -727,8 +760,8 @@ function shadergenerator(p5, fn) {
     return (node.temporaryVariable);
   }
 
-  function isLiteralNode(node) {
-    return (node instanceof FloatNode || node instanceof IntNode);
+  function isPrimitiveNode(node) {
+    return (node instanceof FloatNode || node instanceof IntNode || node instanceof VectorNode);
   }
 
   function isFunctionCallNode(node) {
@@ -947,31 +980,41 @@ function shadergenerator(p5, fn) {
       ['s', 't', 'p', 'q']
     ].map(s => s.slice(0, size));
     return { 
-      get(object, property, receiver) {
-        if(object[property]) {
+      get(target, property, receiver) {
+        if(target[property]) {
           return Reflect.get(...arguments);
         } else {
-          let u = false;
-          if (isUnaryNode(object)) { object = object.node; u = true; }
-          for (const group of swizzleSets) {
-            if ([...property].every(char => group.includes(char))) {
-              if (property.length === 1) { 
-                return object[swizzleSets[0][group.indexOf(property[0])]] 
+          for (const set of swizzleSets) {
+            if ([...property].every(char => set.includes(char))) {
+              if (property.length === 1) {
+                return target[swizzleSets[0][set.indexOf(property[0])]] 
               }
               const components = [...property].map(char => {
-                const index = group.indexOf(char);
+                const index = set.indexOf(char);
                 const mappedChar = swizzleSets[0][index];
-                return object[mappedChar];
+                return target[mappedChar];
               });
               const type = `vec${property.length}`;
-              const node = nodeConstructors[type](components);
-              return node;
+              return nodeConstructors[type](components);
             }
           }
         }
       },
-      set(object, property, receiver) {
-        return Reflect.set(...arguments);
+      set(target, property, value, receiver) {
+      for (const set of swizzleSets) {
+        if ([...property].every(char => set.includes(char))) {
+          const newValues = Array.isArray(value) 
+            ? value 
+            : Array(property.length).fill(value);
+          [...property].forEach((char, i) => {
+            const index = set.indexOf(char);
+            const realProperty = swizzleSets[0][index];
+            Reflect.set(target, realProperty, newValues[i]);
+          });
+          return true;
+        }
+      }
+      return Reflect.set(target, property, value, receiver);
       }
     }
   }
@@ -998,7 +1041,7 @@ function shadergenerator(p5, fn) {
 
   function dynamicAddSwizzleTrap(node) {
     if (node.type.startsWith('vec')) {
-      return new Proxy(node, swizzleTrap(+node.type.slice(3)));
+      return new Proxy(node, swizzleTrap(parseInt(node.type.slice(3))));
     } else {
       return node;
     }
