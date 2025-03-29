@@ -146,7 +146,7 @@ class Font {
    * <code>
    * let font;
    *
-   * function setup() {
+   * async function setup() {
    *   createCanvas(100, 100);
    *   font = await loadFont('assets/inconsolata.otf');
    *
@@ -217,7 +217,7 @@ class Font {
    * <code>
    * let font;
    *
-   * function setup() {
+   * async function setup() {
    *   createCanvas(100, 100);
    *   font = await loadFont('assets/inconsolata.otf');
    *
