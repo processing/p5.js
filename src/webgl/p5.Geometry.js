@@ -273,10 +273,10 @@ class Geometry {
    *
    *   // Create a p5.Geometry object.
    *   // Set its internal color to red.
-   *   beginGeometry();
-   *   fill(255, 0, 0);
-   *   plane(20);
-   *   let myGeometry = endGeometry();
+   *   let myGeometry = buildGeometry(() => {
+   *     fill(255, 0, 0);
+   *     plane(20);
+   *   });
    *
    *   // Style the shape.
    *   noStroke();
