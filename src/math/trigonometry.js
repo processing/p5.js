@@ -283,10 +283,12 @@ p5.prototype.atan2 = function(y, x) {
  *
  * `cos()` is useful for many geometric tasks in creative coding. The values
  * returned oscillate between -1 and 1 as the input angle increases. `cos()`
- * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
+ * calculates the cosine of an angle, using radians by default, or according to
+ * if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
  *
  * @method cos
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
+ * @param  {Number} angle the angle, in radians by default, or according to
+ * if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
  * @return {Number}       cosine of the angle.
  *
  * @example
@@ -363,10 +365,12 @@ p5.prototype.cos = function(angle) {
  *
  * `sin()` is useful for many geometric tasks in creative coding. The values
  * returned oscillate between -1 and 1 as the input angle increases. `sin()`
- * takes into account the current <a href="#/p5/angleMode">angleMode()</a>.
+ * calculates the sine of an angle, using radians by default, or according to
+ * if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
  *
  * @method sin
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
+ * @param  {Number} angle the angle, in radians by default, or according to
+ * if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
  * @return {Number}       sine of the angle.
  *
  * @example
@@ -443,11 +447,13 @@ p5.prototype.sin = function(angle) {
  *
  * `tan()` is useful for many geometric tasks in creative coding. The values
  * returned range from -Infinity to Infinity and repeat periodically as the
- * input angle increases. `tan()` takes into account the current
- * <a href="#/p5/angleMode">angleMode()</a>.
+ * input angle increases. `tan()` calculates the tan of an angle, using radians
+ * by default, or according to
+ * if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
  *
  * @method tan
- * @param  {Number} angle the angle in radians unless specified by <a href="/reference/p5/angleMode/">angleMode()</a>.
+ * @param  {Number} angle the angle, in radians by default, or according to
+ * if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
  * @return {Number}       tangent of the angle.
  *
  * @example
