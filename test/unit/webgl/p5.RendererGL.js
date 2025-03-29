@@ -119,7 +119,8 @@ suite('p5.RendererGL', function() {
 
       // It should be red
       assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
-    })
+    });
+
     test('textures remain bound after each draw call', function() {
       myp5.createCanvas(20, 10, myp5.WEBGL);
       myp5.background(255);
@@ -132,7 +133,7 @@ suite('p5.RendererGL', function() {
           inputs.color = texture(myTex, inputs.texCoord);
           return inputs;
         }`
-      })
+      });
 
       // Make a red texture
       const tex = myp5.createFramebuffer();
@@ -154,7 +155,33 @@ suite('p5.RendererGL', function() {
       // Both rectangles should be red
       assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
       assert.deepEqual(myp5.get(15, 5), [255, 0, 0, 255]);
-    })
+    });
+
+    test('texture() does not remain bound', function() {
+      myp5.createCanvas(20, 10, myp5.WEBGL);
+      myp5.background(255);
+
+      const myShader = myp5.baseMaterialShader().modify({});
+
+      // Make a red texture
+      const tex = myp5.createFramebuffer();
+      tex.draw(() => myp5.background('red'));
+
+      myp5.shader(myShader);
+      const uSampler = myShader.samplers.find((s) => s.name === 'uSampler');
+
+      myp5.push();
+      myp5.texture(tex);
+      myp5.circle(0, 0, 20);
+      expect(uSampler.texture.isFramebufferTexture).toBeTruthy();
+      myp5.pop();
+
+      myp5.push();
+      // Texture should be unbound now
+      myp5.circle(0, 0, 20);
+      expect(uSampler.texture.isFramebufferTexture).toBeFalsy();
+      myp5.pop();
+    });
   });
 
   suite('default stroke shader', function() {
@@ -2711,23 +2738,23 @@ suite('p5.RendererGL', function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const gl = myp5._renderer.GL;
         const isEnabled = gl.isEnabled(gl.STENCIL_TEST);
-        
+
         assert.equal(isEnabled, false);
         assert.equal(myp5._renderer._userEnabledStencil, false);
       }
     );
-    
+
     test('Tracks when user manually enables stencil test',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const gl = myp5._renderer.GL;
-        
+
         gl.enable(gl.STENCIL_TEST);
         assert.equal(myp5._renderer._userEnabledStencil, true);
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
       }
     );
-    
+
     test('Tracks when user manually disables stencil test',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -2735,24 +2762,24 @@ suite('p5.RendererGL', function() {
 
         gl.enable(gl.STENCIL_TEST);
         gl.disable(gl.STENCIL_TEST);
-        
+
         assert.equal(myp5._renderer._userEnabledStencil, false);
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), false);
       }
     );
-    
+
     test('Maintains stencil test state across draw cycles when user enabled',
       function() {
         let drawCalled = false;
 
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const originalDraw = myp5.draw;
-        
+
         myp5.draw = function() {
           drawCalled = true;
           if (originalDraw) originalDraw.call(myp5);
         };
-        
+
         const gl = myp5._renderer.GL;
         gl.enable(gl.STENCIL_TEST);
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), true)
@@ -2764,7 +2791,7 @@ suite('p5.RendererGL', function() {
         myp5.draw = originalDraw;
       }
     );
-    
+
     test('Internal clip operations preserve user stencil test setting',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -2783,7 +2810,7 @@ suite('p5.RendererGL', function() {
         assert.equal(gl.isEnabled(gl.STENCIL_TEST), true);
       }
     );
-    
+
     test('Internal clip operations do not enable stencil test for future draw cycles',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);

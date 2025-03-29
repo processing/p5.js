@@ -1434,7 +1434,7 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textAscent = function (txt = '') {
     if (!txt.length) return this.fontAscent();
-    return this.textDrawingContext().measureText(txt)[prop];
+    return this.textDrawingContext().measureText(txt).actualBoundingBoxAscent;
   };
 
   /**
@@ -1453,12 +1453,80 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textDescent = function (txt = '') {
     if (!txt.length) return this.fontDescent();
-    return this.textDrawingContext().measureText(txt)[prop];
+    return this.textDrawingContext().measureText(txt).actualBoundingBoxDescent;
   };
 
   /**
-   * @returns - returns the descent for the current font
-   * @private
+   * Returns the typographic ascent of the currently active font in pixels.
+   * 
+   * @return {number} returns the descent for the current font
+   * 
+   * This function automatically detects the active font and calculates its
+   * ascent, which is the maximum vertical distance between the baseline and
+   * the highest glyph in the font's design metrics. This measurement is
+   * intrinsic to the font itself and remains consistent regardless of specific
+   * character combinations.
+   * 
+   * @method fontDescent
+   * 
+   * @example
+   * <div modernizr='canvas'>
+   * <code>
+   * function setup() {
+   *  createCanvas(300, 200);
+   *  background(200);
+   *  textFont('Courier New');
+   *  textSize(20);
+   *  text('Hello World!', 35, 55);
+   *   const ascent = fontAscent();
+   *   text(`Ascent-value: ${ascent.toFixed(1)}px`, 20, 120);
+   * }
+   * </code>
+   * </div>
+   * 
+   *  In the example below, you can see how to visualize the font ascent:
+   * - A red line represents the text baseline.
+   * - A green line is drawn at a distance equal to the ascent above the baseline.
+   * - The text is rendered using the specified font, and the calculated ascent value is displayed.
+   *
+   * <div modernizr='canvas'>
+   * <code>
+   * function setup() {
+   *   createCanvas(300, 200);
+   *   textSize(20);
+   *   textFont('Courier New');
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   const yBase = 50; // Baseline Y position
+   *
+   *   // Get font metrics
+   *   const ascent = fontAscent();
+   *   const txt = 'Hello p5.js';
+   *
+   *   // Draw baseline (red line)
+   *   stroke(255, 0, 0);
+   *   line(0, yBase, width, yBase);
+   *
+   *    // Draw ascent line (green line)
+   *   stroke(0, 255, 0);
+   *   line(0, yBase - ascent, width, yBase - ascent);
+   *
+   *   // Draw text
+   *   noStroke();
+   *   fill(0);
+   *   textAlign(LEFT, BASELINE);
+   *   text(txt, 50, yBase);
+   *
+   *   // Display the ascent metric
+   *   fill(0);
+   *   text(`Ascent-value: ${ascent.toFixed(1)}px`, 20, 120);
+   * }
+   * </code>
+   * </div>
+   * 
    */
   Renderer.prototype.fontDescent = function () {
     return this.textDrawingContext().measureText('_').fontBoundingBoxDescent;
