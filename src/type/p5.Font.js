@@ -833,22 +833,7 @@ function font(p5, fn) {
    * In 2D mode, `path` can take on a few other forms. It could be a path to a CSS file,
    * such as one from <a href="https://fonts.google.com/">Google Fonts.</a> It could also
    * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a> It can also be an object containing key-value pairs with
-   * properties that you would find in an `@font-face` block:
-   *
-   * ```js
-   * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
-   * loadFont({
-   *   fontFamily: '"Bricolage Grotesque", serif',
-   *   fontOpticalSizing: 'auto',
-   *   fontWeight: 400,
-   *   fontStyle: 'normal',
-   *   fontVariationSettings: '"wdth" 100',
-   * });
-   * loadFont("https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf");
-   * loadFont("path/to/localFont.ttf");
-   * loadFont("system-font-name");
-   * ```
+   * properties that you would find in an `@font-face` block.
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, it will be called once the font has loaded. The callback function
@@ -945,6 +930,23 @@ function font(p5, fn) {
    *
    *   describe('The text "p5*js" written in pink on a white background.');
    * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div class="norender">
+   * <code>
+   * // Some other forms of loading fonts:
+   * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
+   * loadFont({
+   *   fontFamily: '"Bricolage Grotesque", serif',
+   *   fontOpticalSizing: 'auto',
+   *   fontWeight: 400,
+   *   fontStyle: 'normal',
+   *   fontVariationSettings: '"wdth" 100',
+   * });
+   * ```
    * </code>
    * </div>
    */
