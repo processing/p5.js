@@ -264,7 +264,7 @@ class Renderer2D extends Renderer {
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
-      this.clipPath.closePath();      
+      this.clipPath.closePath();
     } else {
       if (this.states.fillColor) {
         this.drawingContext.fill(visitor.path);
@@ -967,27 +967,6 @@ class Renderer2D extends Renderer {
       this.drawingContext.strokeStyle = strokeStyle;
       this.states.setValue('_cachedStrokeStyle', strokeStyle);
     }
-  }
-
-  //////////////////////////////////////////////
-  // SHAPE | Curves
-  //////////////////////////////////////////////
-  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.vertex(x1, y1);
-    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
-    this._pInst.endShape();
-    return this;
-  }
-
-  curve(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.splineVertex(x1, y1);
-    this._pInst.splineVertex(x2, y2);
-    this._pInst.splineVertex(x3, y3);
-    this._pInst.splineVertex(x4, y4);
-    this._pInst.endShape();
-    return this;
   }
 
   //////////////////////////////////////////////

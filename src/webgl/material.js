@@ -533,7 +533,7 @@ function material(p5, fn){
    * let myShader;
    *
    * async function setup() {
-   *   myShader = await loadFilterShader('assets/shader.frag');
+   *   myShader = await loadFilterShader('assets/basic.frag');
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    * }
@@ -543,7 +543,7 @@ function material(p5, fn){
    *   shader(myShader);
    *
    *   // rect gives us some geometry on the screen
-   *   rect(0, 0, width, height);
+   *   rect(-50, -50, width, height);
    * }
    * </code>
    * </div>
@@ -551,7 +551,7 @@ function material(p5, fn){
    * A rectangle with a shader applied to it.
    */
   fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
-    p5._validateParameters('loadFilterShader', arguments);
+    // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
@@ -1259,7 +1259,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1622,7 +1622,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1788,7 +1788,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -2116,7 +2116,7 @@ function material(p5, fn){
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
+   *   strokeShader(myShader);
    *   strokeWeight(10);
    *   beginShape();
    *   for (let i = 0; i <= 50; i++) {

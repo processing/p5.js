@@ -194,7 +194,7 @@ When opening a discussion issue, you can use the "Labels" panel on the side pane
 
 ## Prerequisites
 
-To proceed you should be minimally familiar with working with the command line, git, node.js (at least v18 and up), and have a local development environment setup.
+To proceed you should be minimally familiar with working with the command line, git, node.js (at least v20 and up), and have a local development environment setup.
 
 
 ## Introduction

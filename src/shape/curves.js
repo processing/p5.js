@@ -215,109 +215,6 @@ function curves(p5, fn){
   };
 
   /**
-   * Sets the number of segments used to draw Bézier curves in WebGL mode.
-   *
-   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
-   * more flat segments makes shapes appear smoother.
-   *
-   * The parameter, `detail`, is the number of segments to use while drawing a
-   * Bézier curve. For example, calling `bezierDetail(5)` will use 5 segments to
-   * draw curves with the <a href="#/p5/bezier">bezier()</a> function. By
-   * default,`detail` is 20.
-   *
-   * Note: `bezierDetail()` has no effect in 2D mode.
-   *
-   * @method bezierDetail
-   * @param {Number} detail number of segments to use. Defaults to 20.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Draw the original curve.
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   strokeWeight(5);
-   *   point(85, 20);
-   *   point(15, 80);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(10, 10);
-   *   point(90, 90);
-   *
-   *   // Draw a black bezier curve.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
-   *   bezier(85, 20, 10, 10, 90, 90, 15, 80);
-   *
-   *   // Draw red lines from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   line(85, 20, 10, 10);
-   *   line(15, 80, 90, 90);
-   *
-   *   describe(
-   *     'A gray square with three curves. A black s-curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Draw the curve with less detail.
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Set the curveDetail() to 5.
-   *   bezierDetail(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   strokeWeight(5);
-   *   point(35, -30, 0);
-   *   point(-35, 30, 0);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(-40, -40, 0);
-   *   point(40, 40, 0);
-   *
-   *   // Draw a black bezier curve.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
-   *   bezier(35, -30, 0, -40, -40, 0, 40, 40, 0, -35, 30, 0);
-   *
-   *   // Draw red lines from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   line(35, -30, -40, -40);
-   *   line(-35, 30, 40, 40);
-   *
-   *   describe(
-   *     'A gray square with three curves. A black s-curve is drawn with jagged segments. Two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  fn.bezierDetail = function(d) {
-    // p5._validateParameters('bezierDetail', arguments);
-    this._bezierDetail = d;
-    return this;
-  };
-
-  /**
    * Calculates coordinates along a Bézier curve using interpolation.
    *
    * `bezierPoint()` calculates coordinates along a Bézier curve using the
@@ -582,10 +479,10 @@ function curves(p5, fn){
    * point.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `curve()` has twelve arguments because each point has x-, y-, and
+   * `spline()` has twelve arguments because each point has x-, y-, and
    * z-coordinates.
    *
-   * @method curve
+   * @method spline
    * @param  {Number} x1 x-coordinate of the first control point.
    * @param  {Number} y1 y-coordinate of the first control point.
    * @param  {Number} x2 x-coordinate of the first anchor point.
@@ -612,8 +509,8 @@ function curves(p5, fn){
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(5, 26, 5, 26, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -654,12 +551,12 @@ function curves(p5, fn){
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(x1, y1, 73, 24, 73, 61, 15, 65);
+   *   spline(x1, y1, 73, 24, 73, 61, 15, 65);
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(x1, y1, x1, y1, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(x1, y1, x1, y1, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -704,7 +601,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-150, 275, 50, 60, 50, 60, 250, 275);
+   *   spline(-150, 275, 50, 60, 50, 60, 250, 275);
    *
    *   // Draw the balloon string.
    *   line(50, 60, 50, 80);
@@ -730,7 +627,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
+   *   spline(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
    *
    *   // Draw the balloon string.
    *   line(0, 10, 0, 0, 30, 0);
@@ -740,7 +637,7 @@ function curves(p5, fn){
    */
 
   /**
-   * @method curve
+   * @method spline
    * @param  {Number} x1
    * @param  {Number} y1
    * @param  {Number} z1 z-coordinate of the first control point.
@@ -755,12 +652,13 @@ function curves(p5, fn){
    * @param  {Number} z4 z-coordinate of the second control point.
    * @chainable
    */
-  fn.curve = function(...args) {
+  fn.spline = function(...args) {
     // p5._validateParameters('curve', args);
 
-    if (this._renderer.states.strokeColor) {
-      this._renderer.curve(...args);
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+      return this;
     }
+    this._renderer.spline(...args);
 
     return this;
   };
