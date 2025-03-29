@@ -316,7 +316,7 @@ function textCore(p5, fn) {
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(600, 300);
+   *   createCanvas(400, 300);
    *   background(220);
    *
    *   textSize(48);
@@ -413,7 +413,7 @@ function textCore(p5, fn) {
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(600, 300);
+   *   createCanvas(400, 300);
    *   background(220);
    *
    *   textSize(48);
@@ -499,6 +499,7 @@ function textCore(p5, fn) {
  * @method textLeading
  * @for p5
  * @param {Number} leading The new text leading to apply, in pixels
+ * @returns {Number} If no arguments are provided, the current text leading
  *
  * @example
  * <div>
@@ -526,7 +527,6 @@ function textCore(p5, fn) {
  /*
   * @method textLeading
   * @for p5
-  * @returns {Number} The current text leading
   */
 
   /**
@@ -633,6 +633,7 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {Number} size - The size to set for the text.
+   * @returns {Number} If no arguments are provided, the current text size in pixels.
    *
    * @example
    * <div>
@@ -702,7 +703,8 @@ function textCore(p5, fn) {
    *
    * @method textStyle
    * @for p5
-   * @param {NORMAL|ITALIC|BOLD} style The style to use
+   * @param {NORMAL|ITALIC|BOLD|BOLDITALIC} style The style to use
+   * @returns {NORMAL|ITALIC|BOLD|BOLDITALIC} If no arguments are provided, the current style
    *
    * @example
    * <div>
@@ -736,6 +738,11 @@ function textCore(p5, fn) {
    * }
    * </code>
    * </div>
+   */
+  /**
+   * @method textStyle
+   * @for p5
+   * @returns {NORMAL|BOLD|ITALIC|BOLDITALIC}
    */
 
 
@@ -863,6 +870,7 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {WORD|CHAR} style The wrapping style to use
+   * @returns {CHAR|WORD} If no arguments are provided, the current wrapping style
    *
    * @example
    * <div>
@@ -997,6 +1005,7 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {String} [direction] - The text direction to set ("ltr", "rtl", or "inherit").
+   * @returns {String} If no arguments are provided, the current text direction, either "ltr", "rtl", or "inherit"
    *
    * @example
    * <div>
@@ -1012,10 +1021,10 @@ function textCore(p5, fn) {
    *   // Set text direction to right-to-left and draw Arabic text.
    *   textDirection("rtl");
    *   fill(0);
-   *   text("Hey! ", 50, 50);
+   *   text("مرحبًا!", 50, 50);
    *
    *   // Set text direction to left-to-right and draw English text.
-   *   textDirection("rtl");
+   *   textDirection("ltr");
    *   text("Hello, p5.js!", 50, 150);
    *
    *   // Display the current text direction.
@@ -1051,6 +1060,7 @@ function textCore(p5, fn) {
    * @param {String} prop - The name of the text property to set or get.
    * @param {any} value - The value to set for the specified text property. If omitted, the current
    *                      value of the property is returned
+   * @returns {any} If no arguments are provided, the current value of the specified text property
    *
    * @example
    * <div>
@@ -1321,6 +1331,7 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {Number} weight - The numeric weight value to set for the text.
+   * @returns {Number} If no arguments are provided, the current font weight
    *
    * <code>
    * function setup() {
