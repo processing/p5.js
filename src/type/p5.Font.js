@@ -286,22 +286,12 @@ class Font {
       *   });
       * }
       *
-      * let prevWords = '';
-      * let prevFont = '';
-      * let prevExtrude = -1;
-      *
       * function draw() {
-      *   if (words !== prevWords || prevFont !== font || prevExtrude !== extrude) {
       *     if (geom) freeGeometry(geom);
       *
       *     geom = fonts[font].textToModel(words, 0, 50, { sampleFactor: 2, extrude });
       *     geom.clearColors();
       *     geom.normalize();
-      *
-      *     prevWords = words;
-      *     prevFont = font;
-      *     prevExtrude = extrude;
-      *   }
       *
       *   background(255);
       *   orbitControl();
