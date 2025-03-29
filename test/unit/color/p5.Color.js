@@ -737,8 +737,8 @@ suite('p5.Color', function() {
       assert.instanceOf(c, Color);
     });
 
-    test('should correctly set RGB levels', function() {
-      assert.deepEqual(c._color.coords, [39.3, 39.3, 39.3]);
+    test('should correctly set color coordinates', function() {
+      assert.deepEqual(c._color.coords, [0, 0, 39.3]);
       assert.equal(c._color.alpha, 1);
     });
   });
@@ -754,7 +754,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c._color.coords, [39.3, 39.3, 39.3]);
+      assert.deepEqual(c._color.coords, [0, 0, 39.3]);
       assert.equal(c._color.alpha, 0.275);
     });
   });
@@ -770,7 +770,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c._color.coords, [39.3, 39.3, 39.3]);
+      assert.deepEqual(c._color.coords, [0, 0, 39.3]);
       assert.equal(c._color.alpha, 1);
     });
   });
@@ -786,7 +786,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly set RGB levels', function() {
-      assert.deepEqual(c._color.coords, [39.3, 39.3, 39.3]);
+      assert.deepEqual(c._color.coords, [0, 0, 39.3]);
       assert.equal(c._color.alpha, 0.275);
     });
   });
