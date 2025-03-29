@@ -197,7 +197,7 @@ function textCore(p5, fn) {
    * }
    *
    * function draw() {
-   *   background(0);
+   *   background(200);
    *   rotateY(frameCount / 30);
    *   text('p5*js', 0, 0);
    *
