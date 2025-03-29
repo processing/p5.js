@@ -1331,6 +1331,7 @@ function textCore(p5, fn) {
    * @param {Number} weight - The numeric weight value to set for the text.
    * @returns {Number} If no arguments are provided, the current font weight
    *
+   * @example
    * <code>
    * function setup() {
    *   createCanvas(300, 200);
