@@ -65,6 +65,7 @@ class Font {
   /**
    * Checks whether a font has glyph point data and
    * can thus be used for textToPoints(), WEBGL mode, etc.
+   * @private
    */
   static hasGlyphData(textFont) {
     let { font } = textFont;
@@ -117,11 +118,7 @@ class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `fontSize`, is optional. It sets the text's font
-   * size. By default, `font.textToPoints()` will use the current
-   * <a href="#/p5/textSize">textSize()</a>.
-   *
-   * The fifth parameter, `options`, is also optional. `font.textToPoints()`
+   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
    * expects an object with the following properties:
    *
    * `sampleFactor` is the ratio of the text's path length to the number of
@@ -135,8 +132,6 @@ class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Number} [fontSize] font size. Defaults to the current
-   *                             <a href="#/p5/textSize">textSize()</a>.
    * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
    *                             properties.
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
@@ -151,9 +146,10 @@ class Font {
    *   font = await loadFont('assets/inconsolata.otf');
    *
    *   background(200);
+   *   textSize(35);
    *
    *   // Get the point array.
-   *   let points = font.textToPoints('p5*js', 6, 60, 35, { sampleFactor: 0.5 });
+   *   let points = font.textToPoints('p5*js', 6, 60, { sampleFactor: 0.5 });
    *
    *   // Draw a dot at each point.
    *   for (let p of points) {
@@ -188,11 +184,7 @@ class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `fontSize`, is optional. It sets the text's font
-   * size. By default, `font.textToPoints()` will use the current
-   * <a href="#/p5/textSize">textSize()</a>.
-   *
-   * The fifth parameter, `options`, is also optional. `font.textToPoints()`
+   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
    * expects an object with the following properties:
    *
    * `sampleFactor` is the ratio of the text's path length to the number of
@@ -206,8 +198,6 @@ class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Number} [fontSize] font size. Defaults to the current
-   *                             <a href="#/p5/textSize">textSize()</a>.
    * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
    *                             properties.
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
@@ -219,18 +209,22 @@ class Font {
    *
    * async function setup() {
    *   createCanvas(100, 100);
-   *   font = await loadFont('assets/inconsolata.otf');
+   *   font = await loadFont('/assets/inconsolata.otf');
+   * }
    *
+   * function draw() {
    *   background(200);
+   *   textAlign(CENTER, CENTER);
+   *   textSize(30);
    *
    *   // Get the point array.
-   *   let contours = font.textToContours('p5*js', 6, 60, 35, { sampleFactor: 0.5 });
+   *   let contours = font.textToContours('p5*js', width/2, height/2, { sampleFactor: 0.5 });
    *
    *   beginShape();
    *   for (const pts of contours) {
    *     beginContour();
    *     for (const pt of pts) {
-   *       vertex(pt.x + 20*sin(pt.y*0.01), pt.y + 20*sin(pt.x*0.01));
+   *       vertex(pt.x + 5*sin(pt.y*0.1 + millis()*0.01), pt.y);
    *     }
    *     endContour(CLOSE);
    *   }
