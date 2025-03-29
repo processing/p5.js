@@ -1056,9 +1056,9 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {String} prop - The name of the text property to set or get.
-   * @param {any} value - The value to set for the specified text property. If omitted, the current
+   * @param value - The value to set for the specified text property. If omitted, the current
    *                      value of the property is returned
-   * @returns {any} If no arguments are provided, the current value of the specified text property
+   * @returns If no arguments are provided, the current value of the specified text property
    *
    * @example
    * <div>
@@ -1094,7 +1094,7 @@ function textCore(p5, fn) {
     * @method textProperty
     * @for p5
     * @param {String} prop - The name of the text property to set or get.
-    * @returns {any} The current value of the specified text property
+    * @returns The current value of the specified text property
     */
 
   /**
