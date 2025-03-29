@@ -1774,7 +1774,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Modify the material shader to display roughness.
-   *   const myShader = materialShader().modify({
+   *   const myShader = baseMaterialShader().modify({
    *     vertexDeclarations:`in float aRoughness;
    *                         out float vRoughness;`,
    *     fragmentDeclarations: 'in float vRoughness;',
@@ -1833,7 +1833,6 @@ class Geometry {
    * </code>
    * </div>
    *
-   * @method vertexProperty
    * @param {String} propertyName the name of the vertex property.
    * @param {Number|Number[]} data the data tied to the vertex property.
    * @param {Number} [size] optional size of each unit of data.
