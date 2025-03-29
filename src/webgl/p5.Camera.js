@@ -2467,9 +2467,9 @@ p5.Camera = class Camera {
       rotatedCenter[0],
       rotatedCenter[1],
       rotatedCenter[2],
-      upX,
-      upY,
-      upZ
+      up.x,
+      up.y,
+      up.z
     );
   }
 
