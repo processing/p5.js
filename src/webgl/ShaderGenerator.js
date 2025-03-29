@@ -176,30 +176,7 @@ function shadergenerator(p5, fn) {
     },
   }
 
-  // This unfinished function lets you do 1 * 10
-  // and turns it into float.mult(10)
-  fn.dynamicNode = function (input) {
-    if (isShaderNode(input)) {
-      return input;
-    }
-    else if (typeof input === 'number') {
-      return new FloatNode(input);
-    }
-    else if (Array.isArray(input)) {
-      return nodeConstructors[`vec${input.length}`](input);
-    }
-  }
-
-  fn.unaryNode = function(input, sign) {
-    input = dynamicNode(input);
-    return new UnaryNode(input, sign);
-  }
-
   // Javascript Node API.
-  // These classes are for expressing GLSL functions in Javascript without
-  // needing to  transpile the user's code.
-
-
   class BaseNode {
     constructor(isInternal, type) {
       if (new.target === BaseNode) {
@@ -282,11 +259,11 @@ function shadergenerator(p5, fn) {
     };
 
     // Binary Operators
-    add(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '+'); }
-    sub(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '-'); }
-    mult(other) { return new BinaryExpressionNode(this, this.enforceType(other), '*'); }
-    div(other)  { return new BinaryExpressionNode(this, this.enforceType(other), '/'); }
-    mod(other)  { return new ModulusNode(this, this.enforceType(other)); }
+    add(other)  { return binaryExpressionNodeConstructor(this, this.enforceType(other), '+'); }
+    sub(other)  { return binaryExpressionNodeConstructor(this, this.enforceType(other), '-'); }
+    mult(other) { return binaryExpressionNodeConstructor(this, this.enforceType(other), '*'); }
+    div(other)  { return binaryExpressionNodeConstructor(this, this.enforceType(other), '/'); }
+    mod(other)  { return binaryExpressionNodeConstructor(this, this.enforceType(other), '%'); }
 
     // Check that the types of the operands are compatible.
     enforceType(other){
@@ -309,7 +286,8 @@ function shadergenerator(p5, fn) {
         return new FloatNode(other);
       }
       else if(Array.isArray(other)) {
-        return nodeConstructors[`vec${other.length}`](other);
+        return nodeConstructors.dynamicVector(other);
+        // return nodeConstructors[`vec${other.length}`](other);
       }
       else {
         return nodeConstructors[this.type](other);
@@ -378,26 +356,20 @@ function shadergenerator(p5, fn) {
       super(isInternal, type);
       values = conformVectorParameters(values, +type.slice(3));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, values.length);
+      this.addVectorComponents(values);
+    }
+    
+    addVectorComponents(values) {
       this.componentNames.forEach((component, i) => {
-        let value = values[i];
-        if (isShaderNode(value)) {
-          value = new FloatNode()
-        }
         this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
       });
     }
 
     toGLSL(context) {
-      let glslArgs = ``;
-
-      this.componentNames.forEach((component, i) => {
-        const comma = i === this.componentNames.length - 1 ? `` : `, `;
-        if (!isShaderNode(this[component])) {
-          this[component] = new FloatNode(this[component]);
-        }
-        glslArgs += `${this[component].toGLSLBase(context)}${comma}`;
-      })
-
+      let values = this.componentNames.map(c => this[c])
+      values = conformVectorParameters(values);
+      this.addVectorComponents(values);
+      let glslArgs = this.componentNames.map((comp) => this[comp].toGLSLBase(context)).join(', ');
       return `${this.type}(${glslArgs})`;
     }
   }
@@ -430,7 +402,7 @@ function shadergenerator(p5, fn) {
       }
 
       if (Array.isArray(properties)) {
-        // Check if the right amount of 
+        // Check if the right number of parameters were provided
         let possibleOverloads = properties.filter(o => o.args.length === userArgs.length);
         if (possibleOverloads.length === 0) {
           const argsLengthSet = new Set();
@@ -602,8 +574,8 @@ function shadergenerator(p5, fn) {
   }
 
   class ModulusNode extends BinaryExpressionNode {
-    constructor(a, b) {
-      super(a, b);
+    constructor(a, b, isInternal) {
+      super(a, b, isInternal);
     }
     toGLSL(context) {
       // Switch on type between % or mod()
@@ -666,10 +638,6 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  fn.if = function (value) {
-    return new ConditionalNode(value);
-  }
-
   // Node Helper functions
   function getType(node) {
     if (isShaderNode(node)) { return node.type; }
@@ -678,6 +646,41 @@ function shadergenerator(p5, fn) {
       return 'float';
     }
     return undefined;
+  }
+
+  function computeVectorLength(values) {
+    let length = 0;
+    if (Array.isArray(values)) {
+      for(let val of values) {
+        if (isVectorType(val)) length += parseInt(val.type.slice(3));
+        else length += 1;
+      }
+    } 
+    else if (isVectorType(values)) {
+      length += parseInt(val.type.slice(3));
+    }
+    if (![2, 3, 4].includes(length)) {
+      throw new Error(`You have attempted to construct a vector with ${length} values. Only vec2, vec3, and vec4 types are supported.`)
+    }
+    return length
+  }
+
+  fn.dynamicNode = function (input) {
+    if (isShaderNode(input)) {
+      return input;
+    }
+    else if (typeof input === 'number') {
+      return new FloatNode(input);
+    }
+    else if (Array.isArray(input)) {
+      return nodeConstructors.dynamicVector(input);
+    }
+  }
+
+  // For replacing unary expressions
+  fn.unaryNode = function(input, sign) {
+    input = dynamicNode(input);
+    return new UnaryNode(input, sign);
   }
 
   function isShaderNode(node) {
@@ -906,20 +909,19 @@ function shadergenerator(p5, fn) {
       value = [value];
     }
     value = value.flat();
+    value = value.map(val => {
+      if (isVectorType(val)) {
+        const componentArray = val.componentNames.map(comp => val[comp]);
+        return componentArray;
+      } else {
+        return val;
+      }
+    }).flat();
     // Populate arguments so uniformVector3(0) becomes [0,0,0]
-    if (value.length === 1) {
+    if (value.length === 1 && !isVectorNode(value[0])) {
       value = Array(vectorDimensions).fill(value[0]);
     }
     return value;
-  }
-
-  // User functions
-  fn.instanceID = function() {
-    return variableConstructor('gl_InstanceID', 'int');
-  }
-
-  fn.discard = function() {
-    return variableConstructor('discard', 'keyword');
   }
 
   function swizzleTrap(size) {
@@ -953,7 +955,16 @@ function shadergenerator(p5, fn) {
       }
     }
   }
+    
+  // User functions
+  fn.if = function (value) {
+    return new ConditionalNode(value);
+  }
 
+  fn.instanceID = function() {
+    return variableConstructor('gl_InstanceID', 'int');
+  }
+  
   // Generating uniformFloat, uniformVec, createFloat, etc functions
   // Maps a GLSL type to the name suffix for method names
   const GLSLTypesToIdentifiers = {
@@ -965,13 +976,27 @@ function shadergenerator(p5, fn) {
     sampler2D: 'Texture',
   };
 
-  function variableConstructor(name, type, isInternal) {
-    const node = new VariableNode(name, type, isInternal);
+  function dynamicAddSwizzleTrap(node) {
     if (node.type.startsWith('vec')) {
       return new Proxy(node, swizzleTrap(+node.type.slice(3)));
     } else {
       return node;
     }
+  }
+
+  function binaryExpressionNodeConstructor(a, b, operator, isInternal) {
+    let node;
+    if (operator === '%') {
+      node = new ModulusNode(a, b);
+    } else {
+      node = new BinaryExpressionNode(a, b, operator, isInternal);
+    }
+    return dynamicAddSwizzleTrap(node);
+  }
+
+  function variableConstructor(name, type, isInternal) {
+    const node = new VariableNode(name, type, isInternal);
+    return dynamicAddSwizzleTrap(node);
   }
 
   function fnNodeConstructor(name, userArgs, properties, isInternal) {
@@ -989,6 +1014,10 @@ function shadergenerator(p5, fn) {
     vec2:  (value) => new Proxy(new VectorNode(value, 'vec2'), swizzleTrap(2)),
     vec3:  (value) => new Proxy(new VectorNode(value, 'vec3'), swizzleTrap(3)),
     vec4:  (value) => new Proxy(new VectorNode(value, 'vec4'), swizzleTrap(4)),
+    dynamicVector: function(value) {
+      const size = computeVectorLength(value);
+      return this[`vec${size}`](value);
+    },
   };
 
   for (const glslType in GLSLTypesToIdentifiers) {
@@ -999,7 +1028,7 @@ function shadergenerator(p5, fn) {
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
       let [name, ...defaultValue] = args;
       if(glslType.startsWith('vec') && !(defaultValue[0] instanceof Function)) {
-        defaultValue = conformVectorParameters(defaultValue, +glslType.slice(3));
+        defaultValue = conformVectorParameters(defaultValue, parseInt(glslType.slice(3)));
         this.output.uniforms[`${glslType} ${name}`] = defaultValue;
       }
       else {
@@ -1031,7 +1060,7 @@ function shadergenerator(p5, fn) {
     const createMethodName = `create${typeIdentifier}`;
     fn[createMethodName] = function (...value) {
       if(glslType.startsWith('vec')) {
-        value = conformVectorParameters(value, +glslType.slice(3));
+        value = conformVectorParameters(value, parseInt(glslType.slice(3)));
       } else {
         value = value[0];
       }
