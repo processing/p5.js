@@ -273,7 +273,7 @@ class Geometry {
    *
    *   // Create a p5.Geometry object.
    *   // Set its internal color to red.
-   *   let myGeometry = buildGeometry(() => {
+   *   let myGeometry = buildGeometry(function() {
    *     fill(255, 0, 0);
    *     plane(20);
    *   });
@@ -336,7 +336,7 @@ class Geometry {
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(() => {
+   *   myModel = buildGeometry(function()) {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -441,7 +441,7 @@ class Geometry {
    * let saveBtn2;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(() => {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -936,9 +936,9 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus();
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus();
+   *   });
    *
    *   // Compute the vertex normals.
    *   myGeometry.computeNormals();
@@ -1679,9 +1679,9 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a very small torus.
-   *   beginGeometry();
-   *   torus(1, 0.25);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {;
+   *     torus(1, 0.25);
+   *   });
    *
    *   // Normalize the torus so its vertices fill
    *   // the range [-100, 100].
@@ -1794,10 +1794,10 @@ class Geometry {
    *   });
    *
    *   // Create the Geometry object.
-   *   beginGeometry();
-   *   fill('hotpink');
-   *   sphere(45, 50, 50);
-   *   geo = endGeometry();
+   *   geo = buildGeometry(function() {
+   *     fill('hotpink');
+   *     sphere(45, 50, 50);
+   *   });
    *
    *   // Set the roughness value for every vertex.
    *   for (let v of geo.vertices){
@@ -2224,9 +2224,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus(30, 15, 10, 8);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus(30, 15, 10, 8);
+   *   });
    *
    *   describe('A white torus rotates slowly against a dark gray background. Red spheres mark its vertices.');
    * }
@@ -2293,9 +2293,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus(30, 15, 10, 8);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus(30, 15, 10, 8);
+   *   });
    *
    *   // Compute the vertex normals.
    *   myGeometry.computeNormals();
@@ -2440,9 +2440,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   sphere();
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     sphere();
+   *   });
    *
    *   describe("A sphere drawn on a gray background. The sphere's surface is a grayscale patchwork of triangles.");
    * }
