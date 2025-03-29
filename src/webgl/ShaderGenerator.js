@@ -211,17 +211,23 @@ function shadergenerator(p5, fn) {
           let value = new ComponentNode(this, componentName, 'float', true);
           Object.defineProperty(this, componentName, {
             get() {
+              if (isUnaryNode(this)) {
+                return this.node.value;
+              }
               return value;
             },
             set(newValue) {
               this.componentsChanged = true;
-              value = newValue;
+              if (isUnaryNode(this)) {
+                this.node.value = newValue;
+              } else {
+                value = newValue;
+              }
             }
           })
         }
       }
     }
-
 
     // The base node implements a version of toGLSL which determines whether the generated code should be stored in a temporary variable.
     toGLSLBase(context){
@@ -521,31 +527,31 @@ function shadergenerator(p5, fn) {
 
   // Binary Operator Nodes
   class BinaryExpressionNode extends BaseNode {
-    constructor(a, b, operator, isInternal = false) {
+    constructor(left, right, operator, isInternal = false) {
       super(isInternal, null);
       this.op = operator;
-      this.a = a;
-      this.b = b;
-      for (const operand of [a, b]) {
+      this.left = left;
+      this.right = right;
+      for (const operand of [left, right]) {
         operand.usedIn.push(this);
       }
       this.type = this.determineType();
       this.addVectorComponents();
     }
 
-    // We know that both this.a and this.b are nodes because of BaseNode.enforceType
+    // We know that both this.left and this.right are nodes because of BaseNode.enforceType
     determineType() {
-      if (this.a.type === this.b.type) {
-        return this.a.type;
+      if (this.left.type === this.right.type) {
+        return this.left.type;
       }
-      else if (isVectorType(this.a) && isFloatType(this.b)) {
-        return this.a.type;
+      else if (isVectorType(this.left) && isFloatType(this.right)) {
+        return this.left.type;
       }
-      else if (isVectorType(this.b) && isFloatType(this.a)) {
-        return this.b.type;
+      else if (isVectorType(this.right) && isFloatType(this.left)) {
+        return this.right.type;
       }
-      else if (isFloatType(this.a) && isIntType(this.b)
-        || isIntType(this.a) && isFloatType(this.b)
+      else if (isFloatType(this.left) && isIntType(this.right)
+        || isIntType(this.left) && isFloatType(this.right)
       ) {
         return 'float';
       }
@@ -567,8 +573,8 @@ function shadergenerator(p5, fn) {
     }
 
     toGLSL(context) {
-      const a = this.processOperand(this.a, context);
-      const b = this.processOperand(this.b, context);
+      const a = this.processOperand(this.left, context);
+      const b = this.processOperand(this.right, context);
       return `${a} ${this.op} ${b}`;
     }
   }
@@ -580,21 +586,25 @@ function shadergenerator(p5, fn) {
     toGLSL(context) {
       // Switch on type between % or mod()
       if (isVectorType(this) || isFloatType(this)) {
-        return `mod(${this.a.toGLSLBase(context)}, ${this.b.toGLSLBase(context)})`;
+        return `mod(${this.left.toGLSLBase(context)}, ${this.right.toGLSLBase(context)})`;
       }
-      return `${this.processOperand(context, this.a)} % ${this.processOperand(context, this.b)}`;
+      return `${this.processOperand(context, this.left)} % ${this.processOperand(context, this.right)}`;
     }
   }
 
   class UnaryNode extends BaseNode {
-    constructor(a, operator, isInternal = false) {
-      super(isInternal, a.type)
-      this.a = a;
+    constructor(node, operator, isInternal = false) {
+      super(isInternal, node.type)
+      this.node = node;
       this.operator = operator;
+      if (isVectorType(this)) {
+        this.addVectorComponents();
+      }
     }
+
     toGLSL(context) {
-      let mainStr = this.a.toGLSLBase(context);
-      if (!isVariableNode(this.a) && !hasTemporaryVariable(this.a)) {
+      let mainStr = this.node.toGLSLBase(context);
+      if (!isVariableNode(this.node) && !hasTemporaryVariable(this.node)) {
         mainStr = `(${mainStr})`
       }
       return `${this.operator}${mainStr}`
@@ -652,7 +662,9 @@ function shadergenerator(p5, fn) {
     let length = 0;
     if (Array.isArray(values)) {
       for(let val of values) {
-        if (isVectorType(val)) length += parseInt(val.type.slice(3));
+        if (isVectorType(val)) {
+          length += parseInt(val.type.slice(3)); 
+        }
         else length += 1;
       }
     } 
@@ -680,7 +692,7 @@ function shadergenerator(p5, fn) {
   // For replacing unary expressions
   fn.unaryNode = function(input, sign) {
     input = dynamicNode(input);
-    return new UnaryNode(input, sign);
+    return dynamicAddSwizzleTrap(new UnaryNode(input, sign));
   }
 
   function isShaderNode(node) {
@@ -725,6 +737,10 @@ function shadergenerator(p5, fn) {
 
   function isVectorNode(node) {
     return (node instanceof VectorNode)
+  }
+
+  function isUnaryNode(node) {
+    return (node instanceof UnaryNode)
   }
 
   // Helper function to check if a type is a user defined struct or native type
@@ -935,9 +951,13 @@ function shadergenerator(p5, fn) {
         if(object[property]) {
           return Reflect.get(...arguments);
         } else {
+          let u = false;
+          if (isUnaryNode(object)) { object = object.node; u = true; }
           for (const group of swizzleSets) {
             if ([...property].every(char => group.includes(char))) {
-              if (property.length === 1) { return object[swizzleSets[0][0]] }
+              if (property.length === 1) { 
+                return object[swizzleSets[0][group.indexOf(property[0])]] 
+              }
               const components = [...property].map(char => {
                 const index = group.indexOf(char);
                 const mappedChar = swizzleSets[0][index];
