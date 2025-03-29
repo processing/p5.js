@@ -1984,126 +1984,35 @@ p5.Geometry = class Geometry {
     this.lineTangentsIn.clear();
     this.lineTangentsOut.clear();
     this.lineSides.clear();
-
+    if (this.vertexProperties) this.vertexProperties = [];
     const potentialCaps = new Map();
-    const connected = new Set();
-    let lastValidDir;
     for (let i = 0; i < this.edges.length; i++) {
-      const prevEdge = this.edges[i - 1];
       const currEdge = this.edges[i];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
-      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
-        ? this.vertexStrokeColors.slice(
-          prevEdge[1] * 4,
-          (prevEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
+      if (this.vertexProperties) {
+        for (let j = 0; j < 4; j++) {
+          this.vertexProperties.push([...this.vertexProperties[currEdge[0]]]);
+          this.vertexProperties.push([...this.vertexProperties[currEdge[1]]]);
+        }
+      }
       const fromColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[0] * 4,
-          (currEdge[0] + 1) * 4
-        )
+        ? this.vertexStrokeColors.slice(currEdge[0] * 4, (currEdge[0] + 1) * 4)
         : [0, 0, 0, 0];
       const toColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[1] * 4,
-          (currEdge[1] + 1) * 4
-        )
+        ? this.vertexStrokeColors.slice(currEdge[1] * 4, (currEdge[1] + 1) * 4)
         : [0, 0, 0, 0];
-      const dir = end
-        .copy()
-        .sub(begin)
-        .normalize();
-      const dirOK = dir.magSq() > 0;
-      if (dirOK) {
-        this._addSegment(begin, end, fromColor, toColor, dir);
-      }
-
-      if (i > 0 && prevEdge[1] === currEdge[0]) {
-        if (!connected.has(currEdge[0])) {
-          connected.add(currEdge[0]);
-          potentialCaps.delete(currEdge[0]);
-          // Add a join if this segment shares a vertex with the previous. Skip
-          // actually adding join vertices if either the previous segment or this
-          // one has a length of 0.
-          //
-          // Don't add a join if the tangents point in the same direction, which
-          // would mean the edges line up exactly, and there is no need for a join.
-          if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
-            this._addJoin(begin, lastValidDir, dir, fromColor);
-          }
-        }
-      } else {
-        // Start a new line
-        if (dirOK && !connected.has(currEdge[0])) {
-          const existingCap = potentialCaps.get(currEdge[0]);
-          if (existingCap) {
-            this._addJoin(
-              begin,
-              existingCap.dir,
-              dir,
-              fromColor
-            );
-            potentialCaps.delete(currEdge[0]);
-            connected.add(currEdge[0]);
-          } else {
-            potentialCaps.set(currEdge[0], {
-              point: begin,
-              dir: dir.copy().mult(-1),
-              color: fromColor
-            });
-          }
-        }
-        if (lastValidDir && !connected.has(prevEdge[1])) {
-          const existingCap = potentialCaps.get(prevEdge[1]);
-          if (existingCap) {
-            this._addJoin(
-              this.vertices[prevEdge[1]],
-              lastValidDir,
-              existingCap.dir.copy().mult(-1),
-              prevColor
-            );
-            potentialCaps.delete(prevEdge[1]);
-            connected.add(prevEdge[1]);
-          } else {
-            // Close off the last segment with a cap
-            potentialCaps.set(prevEdge[1], {
-              point: this.vertices[prevEdge[1]],
-              dir: lastValidDir,
-              color: prevColor
-            });
-          }
-          lastValidDir = undefined;
-        }
-      }
-
-      if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
-        const existingCap = potentialCaps.get(currEdge[1]);
-        if (existingCap) {
-          this._addJoin(
-            end,
-            dir,
-            existingCap.dir.copy().mult(-1),
-            toColor
-          );
-          potentialCaps.delete(currEdge[1]);
-          connected.add(currEdge[1]);
-        } else {
-          potentialCaps.set(currEdge[1], {
-            point: end,
-            dir,
-            color: toColor
-          });
-        }
-      }
-
-      if (dirOK) {
-        lastValidDir = dir;
+      const dir = end.copy().sub(begin).normalize();
+      if (dir.magSq() > 0) {
+        this._addSegment(
+          begin, end, fromColor, toColor, dir,
+          this.vertexProperties[currEdge[0]],
+          this.vertexProperties[currEdge[1]]
+        );
       }
     }
-    for (const { point, dir, color } of potentialCaps.values()) {
-      this._addCap(point, dir, color);
+    for (const { point, dir, color, vertexProps } of potentialCaps.values()) {
+      this._addCap(point, dir, color, vertexProps);
     }
     return this;
   }
@@ -2124,13 +2033,7 @@ p5.Geometry = class Geometry {
  * @private
  * @chainable
  */
-  _addSegment(
-    begin,
-    end,
-    fromColor,
-    toColor,
-    dir
-  ) {
+  _addSegment(begin, end, fromColor, toColor, dir, fromProps, toProps) {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
@@ -2142,16 +2045,17 @@ p5.Geometry = class Geometry {
     }
     this.lineVertices.push(...a, ...b, ...a, ...b, ...b, ...a);
     this.lineVertexColors.push(
-      ...fromColor,
-      ...toColor,
-      ...fromColor,
-      ...toColor,
-      ...toColor,
-      ...fromColor
+      ...fromColor, ...toColor, ...fromColor,
+      ...toColor, ...toColor, ...fromColor
     );
+    if (this.vertexProperties) {
+      for (let i = 0; i < 6; i++) {
+        this.vertexProperties.push([...fromProps]);
+        this.vertexProperties.push([...toProps]);
+      }
+    }
     return this;
   }
-
   /**
  * Adds the vertices and vertex attributes for two triangles representing the
  * stroke cap of a line. A fragment shader is responsible for displaying the
@@ -2168,7 +2072,7 @@ p5.Geometry = class Geometry {
  * @private
  * @chainable
  */
-  _addCap(point, tangent, color) {
+  _addCap(point, tangent, color, vertexProps) {
     const ptArray = point.array();
     const tanInArray = tangent.array();
     const tanOutArray = [0, 0, 0];
@@ -2177,11 +2081,13 @@ p5.Geometry = class Geometry {
       this.lineTangentsIn.push(...tanInArray);
       this.lineTangentsOut.push(...tanOutArray);
       this.lineVertexColors.push(...color);
+      if (this.vertexProperties) {
+        this.vertexProperties.push([...vertexProps]);
+      }
     }
     this.lineSides.push(-1, 2, -2, 1, 2, -1);
     return this;
   }
-
   /**
  * Adds the vertices and vertex attributes for four triangles representing a
  * join between two adjacent line segments. This creates a quad on either side
@@ -2205,12 +2111,7 @@ p5.Geometry = class Geometry {
  * @private
  * @chainable
  */
-  _addJoin(
-    point,
-    fromTangent,
-    toTangent,
-    color
-  ) {
+  _addJoin(point, fromTangent, toTangent, color, vertexProps) {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
@@ -2219,12 +2120,14 @@ p5.Geometry = class Geometry {
       this.lineTangentsIn.push(...tanInArray);
       this.lineTangentsOut.push(...tanOutArray);
       this.lineVertexColors.push(...color);
+      if (this.vertexProperties) {
+        this.vertexProperties.push([...vertexProps]);
+      }
     }
     this.lineSides.push(-1, -3, -2, -1, 0, -3);
     this.lineSides.push(3, 1, 2, 3, 0, 1);
     return this;
   }
-
   /**
  * Transforms the geometry's vertices to fit snugly within a 100×100×100 box
  * centered at the origin.
