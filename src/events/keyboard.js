@@ -213,7 +213,7 @@ function keyboard(p5, fn){
    * which has a value of 13:
    *
    * ```js
-   * if (keyCode === ENTER) {
+   * if (keyCode === 13) {
    *   // Code to run if the enter key was pressed.
    * }
    * ```
@@ -273,13 +273,13 @@ function keyboard(p5, fn){
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
    *   if (keyIsPressed === true) {
-   *     if (keyCode === UP_ARROW) {
+   *     if (keyCode === 38) {
    *       y -= 1;
-   *     } else if (keyCode === DOWN_ARROW) {
+   *     } else if (keyCode === 40) {
    *       y += 1;
-   *     } else if (keyCode === LEFT_ARROW) {
+   *     } else if (keyCode === 37) {
    *       x -= 1;
-   *     } else if (keyCode === RIGHT_ARROW) {
+   *     } else if (keyCode === 39) {
    *       x += 1;
    *     }
    *   }
@@ -317,7 +317,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) {
    *     // Code to run.
    *   }
    * }
@@ -443,9 +443,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user presses an arrow key.
    * function keyPressed() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) {
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) {
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -497,7 +497,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) {
    *     // Code to run.
    *   }
    * }
@@ -620,9 +620,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user releases an arrow key.
    * function keyReleased() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) {
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) {
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -899,19 +899,19 @@ function keyboard(p5, fn){
    *
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
-   *   if (keyIsDown(37) === true) {
+   *   if (keyIsDown('ArrowLeft') === true) {
    *     x -= 1;
    *   }
    *
-   *   if (keyIsDown(39) === true) {
+   *   if (keyIsDown('ArrowRight') === true) {
    *     x += 1;
    *   }
    *
-   *   if (keyIsDown(38) === true) {
+   *   if (keyIsDown('ArrowUp') === true) {
    *     y -= 1;
    *   }
    *
-   *   if (keyIsDown(40) === true) {
+   *   if (keyIsDown('ArrowDown'') === true) {
    *     y += 1;
    *   }
    *
