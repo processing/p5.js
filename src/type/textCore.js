@@ -95,6 +95,7 @@ function textCore(p5, fn) {
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background(200);
    *   text('hi', 50, 50);
    *
@@ -106,6 +107,7 @@ function textCore(p5, fn) {
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background('skyblue');
    *   textSize(100);
    *   text('🌈', 0, 100);
@@ -115,9 +117,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   textSize(32);
    *   fill(255);
    *   stroke(0);
@@ -129,9 +133,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background('black');
    *   textSize(22);
    *   fill('yellow');
@@ -148,9 +154,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background(200);
    *   let s = 'The quick brown fox jumps over the lazy dog.';
    *   text(s, 10, 10, 70, 80);
@@ -160,9 +168,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background(200);
    *   rectMode(CENTER);
    *   let s = 'The quick brown fox jumps over the lazy dog.';
@@ -173,16 +183,14 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div modernizr='webgl'>
    * <code>
    * let font;
    *
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
    *   createCanvas(100, 100, WEBGL);
+   *   font = await loadFont('assets/inconsolata.otf');
    *   textFont(font);
    *   textSize(32);
    *   textAlign(CENTER, CENTER);
@@ -252,6 +260,7 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -309,26 +318,26 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(600, 300);
    *   background(220);
-   * 
+   *
    *   textSize(48);
    *   textAlign(LEFT, BASELINE);
    *   textFont('Georgia');
-   * 
+   *
    *   let s = "Hello, p5.js!";
    *   let x = 50, y = 150;
-   * 
+   *
    *   fill(0);
    *   text(s, x, y);
-   * 
+   *
    *   // Get the ascent of the current font
    *   let asc = textAscent();
-   * 
+   *
    *   // Draw a red line at the baseline and a blue line at the ascent position
    *   stroke('red');
    *   line(x, y, x + 200, y); // Baseline
    *   stroke('blue');
    *   line(x, y - asc, x + 200, y - asc); // Ascent (top of text)
-   * 
+   *
    *   noStroke();
    *   fill(0);
    *   textSize(16);
@@ -336,8 +345,8 @@ function textCore(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
-   * 
+   *
+   *
    * @example
    * <div>
    * <code>
@@ -345,7 +354,7 @@ function textCore(p5, fn) {
    *
    * async function setup()  {
    *   font = await loadFont('assets/inconsolata.otf');
-   * 
+   *
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -406,26 +415,26 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(600, 300);
    *   background(220);
-   * 
+   *
    *   textSize(48);
    *   textAlign(LEFT, BASELINE);
    *   textFont('Georgia');
-   * 
+   *
    *   let s = "Hello, p5.js!";
    *   let x = 50, y = 150;
-   * 
+   *
    *   fill(0);
    *   text(s, x, y);
-   * 
+   *
    *   // Get the descent of the current font
    *   let desc = textDescent();
-   * 
+   *
    *   // Draw a red line at the baseline and a blue line at the bottom of the text
    *   stroke('red');
    *   line(x, y, x + 200, y); // Baseline
    *   stroke('blue');
    *   line(x, y + desc, x + 200, y + desc); // Descent (bottom of text)
-   * 
+   *
    *   noStroke();
    *   fill(0);
    *   textSize(16);
@@ -433,7 +442,8 @@ function textCore(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
+   * @example
    * <div>
    * <code>
    * let font;
@@ -443,7 +453,7 @@ function textCore(p5, fn) {
    *
    *   createCanvas(100, 100);
    *
-   *   background(200); 
+   *   background(200);
    *
    *   // Style the font.
    *   textFont(font);
@@ -488,6 +498,7 @@ function textCore(p5, fn) {
  *
  * @method textLeading
  * @for p5
+ * @param {Number} leading The new text leading to apply, in pixels
  *
  * @example
  * <div>
@@ -512,13 +523,11 @@ function textCore(p5, fn) {
  * </code>
  * </div>
  */
-
-  /**
-   * TODO
-   *
-   * @method textMode
-   * @for p5
-   */
+ /*
+  * @method textLeading
+  * @for p5
+  * @returns {Number} The current text leading
+  */
 
   /**
    * Sets the font used by the <a href="#/p5/text">text()</a> function.
@@ -534,13 +543,15 @@ function textCore(p5, fn) {
    * <a href="#/p5/loadFont">loadFont()</a>.
    *
    * @method textFont
-   * @return {Object} current font or p5 Object.
+   * @param {p5.Font|String|Object} font The font to apply
+   * @param {Number} [size] An optional text size to apply.
    * @for p5
    *
    * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background(200);
    *   textFont('Courier New');
    *   textSize(24);
@@ -551,9 +562,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background('black');
    *   fill('palegreen');
    *   textFont('Courier New', 10);
@@ -565,9 +578,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
    *   background(200);
    *   textFont('Verdana');
    *   let currentFont = textFont();
@@ -578,19 +593,19 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * let fontRegular;
    * let fontItalic;
    * let fontBold;
    *
-   * function preload() {
-   *   fontRegular = loadFont('assets/Regular.otf');
-   *   fontItalic = loadFont('assets/Italic.ttf');
-   *   fontBold = loadFont('assets/Bold.ttf');
-   * }
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   fontRegular = await loadFont('assets/Regular.otf');
+   *   fontItalic = await loadFont('assets/Italic.ttf');
+   *   fontBold = await loadFont('assets/Bold.ttf');
    *
-   * function setup() {
    *   background(200);
    *   textFont(fontRegular);
    *   text('I am Normal', 10, 30);
@@ -617,11 +632,7 @@ function textCore(p5, fn) {
    * @method textSize
    * @for p5
    *
-   * @param {Number | String} [size] - (Optional) The size to set for the text. If not provided,
-   *                                   the function returns the current text size.
-   * @returns {Number | p5} If used as a getter (no arguments provided), returns the current
-   *                        text size in pixels. If used as a setter, returns the p5 instance
-   *                        for method chaining.
+   * @param {Number} size - The size to set for the text.
    *
    * @example
    * <div>
@@ -629,16 +640,16 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(600, 200);
    *   background(240);
-   * 
+   *
    *   // Set the text size to 48 pixels
    *   textSize(48);
    *   textAlign(CENTER, CENTER);
    *   textFont("Georgia");
-   * 
+   *
    *   // Draw text using the current text size
    *   fill(0);
    *   text("Hello, p5.js!", width / 2, height / 2);
-   * 
+   *
    *   // Retrieve and display the current text size
    *   let currentSize = textSize();
    *   fill(50);
@@ -647,7 +658,8 @@ function textCore(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -672,7 +684,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-
+   /**
+    * @method textSize
+    * @for p5
+    * @returns {Number} The current text size in pixels.
+    */
 
   /**
    * Sets the style for system fonts when
@@ -686,7 +702,8 @@ function textCore(p5, fn) {
    *
    * @method textStyle
    * @for p5
-   * 
+   * @param {NORMAL|ITALIC|BOLD} style The style to use
+   *
    * @example
    * <div>
    * <code>
@@ -721,42 +738,44 @@ function textCore(p5, fn) {
    * </div>
    */
 
-  
+
   /**
    * Calculates the width of the given text string in pixels.
-   * 
+   *
    * The `textWidth()` function processes the provided text string to determine its tight bounding box
    * based on the current text properties such as font, textSize, and textStyle. Internally, it splits
    * the text into individual lines (if line breaks are present) and computes the bounding box for each
    * line using the renderer’s measurement functions. The final width is determined as the maximum width
    * among all these lines.
-   * 
+   *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
    *
    * @method textWidth
    * @for p5
-   * 
-   * @example  
+   * @param {String} text The text to measure
+   * @returns {Number} The width of the text
+   *
+   * @example
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(200, 200);
    *   background(220);
-   *   
+   *
    *   // Set text size and alignment
    *   textSize(48);
    *   textAlign(LEFT, TOP);
-   *   
+   *
    *   let myText = "Hello";
-   *   
+   *
    *   // Calculate the width of the text
    *   let tw = textWidth(myText);
-   *   
+   *
    *   // Draw the text on the canvas
    *   fill(0);
    *   text(myText, 50, 50);
-   *   
+   *
    *   // Display the text width below
    *   noStroke();
    *   fill(0);
@@ -765,7 +784,8 @@ function textCore(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -792,6 +812,7 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -840,6 +861,9 @@ function textCore(p5, fn) {
    *
    * @method textWrap
    * @for p5
+   *
+   * @param {WORD|CHAR} style The wrapping style to use
+   *
    * @example
    * <div>
    * <code>
@@ -860,6 +884,7 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -879,6 +904,7 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
    * function setup() {
@@ -898,6 +924,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
+   /**
+    * @method textWrap
+    * @for p5
+    * @returns {CHAR|WORD} The current wrapping style
+    */
 
 
   /**
@@ -920,7 +951,7 @@ function textCore(p5, fn) {
    *                           When specified, the text may be wrapped to fit within this width.
    * @param {Number} [height] - (Optional) The maximum height available for the text block.
    *                            Any lines exceeding this height will be truncated.
-   * @returns {Object} An object with properties <code>{x, y, w, h}</code> that represent the tight
+   * @returns {Object} An object with properties `x`, `y`, `w`, and `h` that represent the tight
    *                   bounding box of the rendered text.
    *
    * @example
@@ -929,19 +960,19 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(300, 200);
    *   background(220);
-   * 
+   *
    *   // Set up text properties for clarity
    *   textSize(32);
    *   textAlign(LEFT, TOP);
-   * 
+   *
    *   let txt = "Hello, World!";
    *   // Compute the bounding box for the text starting at (50, 50)
    *   let bounds = textBounds(txt, 50, 50);
-   * 
+   *
    *   // Draw the text
    *   fill(0);
    *   text(txt, 50, 50);
-   * 
+   *
    *   // Draw the computed bounding box in red to visualize the measured area
    *   noFill();
    *   stroke('red');
@@ -965,10 +996,7 @@ function textCore(p5, fn) {
    * @method textDirection
    * @for p5
    *
-   * @param {String} [direction] - (Optional) The text direction to set ("ltr", "rtl", or "inherit").
-   *                               If omitted, the function returns the current text direction.
-   * @returns {String | p5} If used as a getter (no argument provided), returns the current text direction.
-   *                        If used as a setter, returns the p5 instance for method chaining.
+   * @param {String} [direction] - The text direction to set ("ltr", "rtl", or "inherit").
    *
    * @example
    * <div>
@@ -999,6 +1027,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
+   /**
+    * @method textDirection
+    * @for p5
+    * @returns {String} The current text direction, either "ltr", "rtl", or "inherit"
+    */
 
   /**
    * Sets or gets a single text property for the renderer.
@@ -1016,11 +1049,8 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @param {String} prop - The name of the text property to set or get.
-   * @param {*} [value] - (Optional) The value to set for the specified text property. If omitted, the current
-   *                      value of the property is returned.
-   * @param {Object} [opts] - (Optional) An object containing additional options. Currently supports a debug flag.
-   * @returns {*} If used as a getter (no value provided), returns the current value of the specified text property.
-   *              If used as a setter, returns the p5 instance for method chaining.
+   * @param {any} value - The value to set for the specified text property. If omitted, the current
+   *                      value of the property is returned
    *
    * @example
    * <div>
@@ -1028,21 +1058,21 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(300, 300);
    *   background(240);
-   * 
+   *
    *   // Set the text alignment to CENTER and the baseline to TOP using textProperty.
    *   textProperty("textAlign", CENTER);
    *   textProperty("textBaseline", TOP);
-   * 
+   *
    *   // Set additional text properties and draw the text.
    *   textSize(32);
    *   textFont("Georgia");
    *   fill(0);
    *   text("Hello, World!", width / 2, 50);
-   * 
+   *
    *   // Retrieve and display the current text properties.
    *   let currentAlign = textProperty("textAlign");
    *   let currentBaseline = textProperty("textBaseline");
-   * 
+   *
    *   textSize(16);
    *   textAlign(LEFT, TOP);
    *   fill(50);
@@ -1052,6 +1082,12 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
+   /**
+    * @method textProperty
+    * @for p5
+    * @param {String} prop - The name of the text property to set or get.
+    * @returns {any} The current value of the specified text property
+    */
 
   /**
    * TODO
@@ -1080,7 +1116,7 @@ function textCore(p5, fn) {
    *                           When specified, the text may be wrapped to fit within this width.
    * @param {Number} [height] - (Optional) The maximum height available for the text block.
    *                            Any lines exceeding this height will be truncated.
-   * @returns {Object} An object with properties <code>{x, y, w, h}</code> representing the loose
+   * @returns {Object} An object with properties `x`, `y`, `w`, and `h` representing the loose
    *                   bounding box of the text based on the font's intrinsic metrics.
    *
    * @example
@@ -1089,22 +1125,22 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
-   * 
+   *
    *   textSize(32);
    *   textAlign(LEFT, TOP);
    *   textFont('Georgia');
-   * 
+   *
    *   let txt = "Hello, World!";
    *   // Compute the bounding box based on the font's intrinsic metrics
    *   let bounds = fontBounds(txt, 50, 50);
-   * 
+   *
    *   fill(0);
    *   text(txt, 50, 50);
-   * 
+   *
    *   noFill();
    *   stroke('green');
    *   rect(bounds.x, bounds.y, bounds.w, bounds.h);
-   * 
+   *
    *   noStroke();
    *   fill(50);
    *   textSize(15);
@@ -1138,20 +1174,20 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
-   * 
+   *
    *   textSize(32);
    *   textAlign(LEFT, TOP);
    *   textFont('Georgia');
-   * 
+   *
    *   let s = "Hello, World!";
    *   let fw = fontWidth(s);
-   * 
+   *
    *   fill(0);
    *   text(s, 50, 50);
-   * 
+   *
    *   stroke('blue');
    *   line(50, 90, 50 + fw, 90);
-   * 
+   *
    *   noStroke();
    *   fill(50);
    *   textSize(16);
@@ -1192,26 +1228,26 @@ function textCore(p5, fn) {
    * function setup() {
    *   createCanvas(300, 300);
    *   background(220);
-   * 
+   *
    *   textSize(48);
    *   textAlign(LEFT, BASELINE);
    *   textFont('Georgia');
-   * 
+   *
    *   let s = "Hello, p5.js!";
    *   let x = 50, y = 150;
-   * 
+   *
    *   fill(0);
    *   text(s, x, y);
-   * 
+   *
    *   // Get the font descent of the current font
    *   let fdesc = fontDescent();
-   * 
+   *
    *   // Draw a red line at the baseline and a blue line at the descent position
    *   stroke('red');
    *   line(x, y, x + 200, y); // Baseline
    *   stroke('blue');
    *   line(x, y + fdesc, x + 200, y + fdesc); // Font descent position
-   * 
+   *
    *   noStroke();
    *   fill(0);
    *   textSize(16);
@@ -1222,7 +1258,7 @@ function textCore(p5, fn) {
    */
 
   /**
-   * 
+   *
    * Sets or gets the current font weight.
    *
    * The <code>textWeight()</code> function is used to specify the weight (thickness) of the text.
@@ -1233,22 +1269,18 @@ function textCore(p5, fn) {
    * @method textWeight
    * @for p5
    *
-   * @param {Number} [weight] - (Optional) The numeric weight value to set for the text.
-   *                            If not provided, the function returns the current font weight.
-   * @returns {Number | p5} If used as a getter (no argument provided), returns the current
-   *                        font weight as a number. If used as a setter, returns the p5 instance
-   *                        for method chaining.
-   * 
+   * @param {Number} weight - The numeric weight value to set for the text.
+   *
    * <code>
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
-   *   
+   *
    *   // Set text alignment, size, and font
    *   textAlign(LEFT, TOP);
    *   textSize(20);
    *   textFont("Georgia");
-   *   
+   *
    *   // Draw text with a normal weight (lighter appearance)
    *   push();
    *   textWeight(400);  // Set font weight to 400
@@ -1256,7 +1288,7 @@ function textCore(p5, fn) {
    *   text("Normal", 50, 50);
    *   let normalWeight = textWeight();  // Should return 400
    *   pop();
-   *   
+   *
    *   // Draw text with a bold weight (heavier appearance)
    *   push();
    *   textWeight(900);  // Set font weight to 900
@@ -1264,7 +1296,7 @@ function textCore(p5, fn) {
    *   text("Bold", 50, 100);
    *   let boldWeight = textWeight();  // Should return 900
    *   pop();
-   *   
+   *
    *   // Display the current font weight values on the canvas
    *   textSize(16);
    *   fill(50);
@@ -1272,6 +1304,11 @@ function textCore(p5, fn) {
    *   text("Bold Weight: " + boldWeight, 150, 100);
    * }
    * </code>
+   */
+  /**
+   * @method textWeight
+   * @for p5
+   * @returns {Number} The current font weight
    */
 
   // attach each text func to p5, delegating to the renderer
