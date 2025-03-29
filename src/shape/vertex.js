@@ -1416,7 +1416,8 @@ function vertex(p5, fn){
     return this;
   };
 
-  /** Sets the shader's vertex property or attribute variables.
+  /**
+   * Sets the shader's vertex property or attribute variables.
    *
    * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
    * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
@@ -1437,6 +1438,11 @@ function vertex(p5, fn){
    *
    * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on
    * <a href="#/p5/Geometry">Geometry</a> objects.
+   *
+   * @method vertexProperty
+   * @for p5
+   * @param {String} attributeName the name of the vertex attribute.
+   * @param {Number|Number[]} data the data tied to the vertex attribute.
    *
    * @example
    * <div>
@@ -1577,10 +1583,6 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
-   *
-   * @method vertexProperty
-   * @param {String} attributeName the name of the vertex attribute.
-   * @param {Number|Number[]} data the data tied to the vertex attribute.
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');
