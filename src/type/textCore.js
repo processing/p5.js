@@ -1090,10 +1090,24 @@ function textCore(p5, fn) {
     */
 
   /**
-   * TODO
+   * Gets or sets text properties in batch, similar to calling `textProperty()`
+   * multiple times.
+   *
+   * If an object is passed in, `textProperty(key, value)` will be called for you
+   * on every key/value pair in the object.
+   *
+   * If no arguments are passed in, an object will be returned with all the current
+   * properties.
    *
    * @method textProperties
    * @for p5
+   * @param {Object} properties An object whose keys are properties to set, and whose
+   *                            values are what they should be set to.
+   */
+  /**
+   * @method textProperties
+   * @for p5
+   * @returns {Object} An object with all the possible properties and their current values.
    */
 
   /**
@@ -1711,10 +1725,6 @@ function textCore(p5, fn) {
     return modified ? this._applyTextProperties() : this._pInst;
   };
 
-  /**
-   * Batch set/get text properties for the renderer.
-   * The properties can be either on `states` or `drawingContext`
-   */
   /**
    * Batch set/get text properties for the renderer.
    * The properties can be either on `states` or `drawingContext`
