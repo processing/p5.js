@@ -195,7 +195,6 @@ function textCore(p5, fn) {
   /**
    * Returns the typographic ascent of the currently active font in pixels.
    * 
-   * @private
    * @return {number} returns the descent for the current font
    * 
    * This function automatically detects the active font and calculates its
