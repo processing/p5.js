@@ -2459,7 +2459,7 @@ p5.Camera = class Camera {
     );
     /* eslint-enable max-len */
 
-    up.normalize()
+    up.normalize();
     this.camera(
       this.eyeX,
       this.eyeY,
