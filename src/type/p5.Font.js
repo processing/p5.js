@@ -132,7 +132,6 @@ class Font {
    * than 0. The value represents the threshold angle to use when determining
    * whether two edges are collinear.
    *
-   * @method textToPoints
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
@@ -204,7 +203,6 @@ class Font {
    * than 0. The value represents the threshold angle to use when determining
    * whether two edges are collinear.
    *
-   * @method textToPoints
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
@@ -872,6 +870,7 @@ function font(p5, fn) {
    * <a href="#/p5/setup">setup()</a> before using the result.
    *
    * @method loadFont
+   * @for p5
    * @param  {String|Object}        path       path of the font to be loaded, a CSS `@font-face` string, or an object with font face properties.
    * @param  {String}        [name]            An alias that can be used for this font in `textFont()`. Defaults to the name in the font's metadata.
    * @param  {Function}      [successCallback] function called with the
