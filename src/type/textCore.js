@@ -226,7 +226,7 @@ function textCore(p5, fn) {
    *
    * @method textAlign
    * @for p5
-   * @param {Constant} horizAlign horizontal alignment, either LEFT,
+   * @param {LEFT|CENTER|RIGHT} horizAlign horizontal alignment
    *                            CENTER, or RIGHT.
    * @param {Constant} [vertAlign] vertical alignment, either TOP,
    *                            BOTTOM, CENTER, or BASELINE.
