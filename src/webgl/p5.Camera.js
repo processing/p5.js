@@ -2456,6 +2456,7 @@ p5.Camera = class Camera {
     const upZ = this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
     /* eslint-enable max-len */
 
+    up.normalize();
     this.camera(
       this.eyeX,
       this.eyeY,
