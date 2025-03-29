@@ -27,6 +27,16 @@ jobs:
         run: npm test
         env:
           CI: true
+      - name: Generate Visual Test Report
+        run: node visual-report.js
+        env:
+          CI: true
+      - name: Upload Visual Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-report
+          path: test/unit/visual/visual-report.html
+          retention-days: 14
       - name: report test coverage
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
         env:
