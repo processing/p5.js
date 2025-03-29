@@ -1004,7 +1004,7 @@ function textCore(p5, fn) {
    * @method textDirection
    * @for p5
    *
-   * @param {String} [direction] - The text direction to set ("ltr", "rtl", or "inherit").
+   * @param {String} direction - The text direction to set ("ltr", "rtl", or "inherit").
    * @returns {String} If no arguments are provided, the current text direction, either "ltr", "rtl", or "inherit"
    *
    * @example
