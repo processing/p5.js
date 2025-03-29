@@ -1332,6 +1332,7 @@ function textCore(p5, fn) {
    * @returns {Number} If no arguments are provided, the current font weight
    *
    * @example
+   * <div>
    * <code>
    * function setup() {
    *   createCanvas(300, 200);
@@ -1365,6 +1366,30 @@ function textCore(p5, fn) {
    *   text("Bold Weight: " + boldWeight, 150, 100);
    * }
    * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let font;
+   *
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   font = await loadFont(
+   *     'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   textFont(font);
+   *   textAlign(LEFT, TOP);
+   *   textSize(35);
+   *   textWeight(sin(millis() * 0.002) * 200 + 400);
+   *   text('p5*js', 0, 10);
+   *   describe('The text p5*js pulsing its weight over time');
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method textWeight
