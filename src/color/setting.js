@@ -733,12 +733,15 @@ function setting(p5, fn){
   /**
    * Changes the way color values are interpreted.
    *
-   * By default, the Number parameters for fill(), stroke(), background(), and color()
-   * are defined by values between 0 and 255 using the RGB color model.
-   * This is equivalent to calling `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
+   * By default, the `Number` parameters for <a href="#/p5/fill">fill()</a>,
+   * <a href="#/p5/stroke">stroke()</a>,
+   * <a href="#/p5/background">background()</a>, and
+   * <a href="#/p5/color">color()</a> are defined by values between 0 and 255
+   * using the RGB color model. This is equivalent to calling
+   * `colorMode(RGB, 255)`. Pure red is `color(255, 0, 0)` in this model.
    *
-   * Calling `colorMode(RGB, 100)` sets colors to use RGB color values between 0 and 100.
-   * Pure red is `color(100, 0, 0)` in this model.
+   * Calling `colorMode(RGB, 100)` sets colors to use RGB color values
+   * between 0 and 100. Pure red is `color(100, 0, 0)` in this model.
    *
    * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL systems instead of RGB.
    * Pure red is `color(0, 100, 100)` in HSB and `color(0, 100, 50)` in HSL.
