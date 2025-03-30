@@ -41,6 +41,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -85,6 +88,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -153,6 +159,9 @@ class Camera {
    *   // Point the camera at the origin.
    *   cam.lookAt(0, 0, 0);
    *
+   *   // Set the camera.
+   *   setCamera(cam);
+   *
    *   describe(
    *     'A white cube on a gray background. The text "eyeY: -400" is written in black beneath it.'
    *   );
@@ -174,7 +183,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeY)}`, 0, 55);
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 55);
    * }
    * </code>
    * </div>
@@ -191,6 +200,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -253,6 +265,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -297,6 +312,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -360,6 +378,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -404,6 +425,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -467,6 +491,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -511,6 +538,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -574,6 +604,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -618,6 +651,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -681,6 +717,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -724,6 +763,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -786,6 +828,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -829,6 +874,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -891,6 +939,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -934,6 +985,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -1605,6 +1659,9 @@ class Camera {
    *   normalMaterial();
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    * }
    *
    * function draw() {
@@ -1684,6 +1741,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -1745,6 +1805,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -1808,6 +1871,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -2134,6 +2200,9 @@ class Camera {
    *   // Point it at the origin.
    *   cam.lookAt(0, 0, 0);
    *
+   *   // Set the camera.
+   *   setCamera(cam);
+   *
    *   describe(
    *     'A white cube drawn against a gray background. The cube appears to move when the user presses certain keys.'
    *   );
@@ -2386,6 +2455,9 @@ class Camera {
    *
    *   // Copy cam1's configuration.
    *   cam2.set(cam1);
+   *
+   *   // Set the camera.
+   *   setCamera(cam2);
    *
    *   describe(
    *     'A white cube drawn against a gray background. The camera slowly moves forward. The camera resets when the user double-clicks.'
@@ -3395,7 +3467,7 @@ function camera(p5, fn){
     if (!(this._renderer instanceof RendererGL)) {
       throw new Error('linePerspective() must be called in WebGL mode.');
     }
-    this._renderer.linePerspective(enable);
+    return this._renderer.linePerspective(enable);
   };
 
 
@@ -3802,6 +3874,9 @@ function camera(p5, fn){
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);

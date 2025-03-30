@@ -284,6 +284,7 @@ function validateParams(p5, fn, lifecycles) {
    * arguments, in the case of an initial validation error. We will then use the
    * closest schema to generate a friendly error message.
    *
+   * @private
    * @param {z.ZodSchema} schema - Zod schema.
    * @param {Array} args - User input arguments.
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
@@ -482,6 +483,7 @@ function validateParams(p5, fn, lifecycles) {
    * Runs parameter validation by matching the input parameters to Zod schemas
    * generated from the parameter data from `docs/parameterData.json`.
    *
+   * @private
    * @param {String} func - Name of the function.
    * @param {Array} args - User input arguments.
    * @returns {Object} The validation result.

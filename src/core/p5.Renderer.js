@@ -74,7 +74,7 @@ class Renderer {
     this.states = new States(Renderer.states);
 
     this.states.strokeColor = new Color([0, 0, 0]);
-    this.states.fillColor = new Color([255, 255, 255]);
+    this.states.fillColor = new Color([1, 1, 1]);
 
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead

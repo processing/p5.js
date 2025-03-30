@@ -1783,13 +1783,6 @@
         ]
       ]
     },
-    "bezierDetail": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
     "bezierPoint": {
       "overloads": [
         [
@@ -1812,7 +1805,7 @@
         ]
       ]
     },
-    "curve": {
+    "spline": {
       "overloads": [
         [
           "Number",
@@ -1970,89 +1963,154 @@
         ]
       ]
     },
+    "loadFont": {
+      "overloads": [
+        [
+          "String|Object",
+          "String?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "text": {
       "overloads": [
-        []
+        [
+          "String|Object|Array|Number|Boolean",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
       ]
     },
     "textAlign": {
       "overloads": [
-        []
+        [
+          "LEFT|CENTER|RIGHT",
+          "TOP|BOTTOM|CENTER|BASELINE?"
+        ]
       ]
     },
     "textAscent": {
       "overloads": [
-        []
+        [
+          "String?"
+        ]
       ]
     },
     "textDescent": {
       "overloads": [
-        []
+        [
+          "String?"
+        ]
       ]
     },
     "textLeading": {
       "overloads": [
-        []
-      ]
-    },
-    "textMode": {
-      "overloads": [
-        []
+        [
+          "Number"
+        ]
       ]
     },
     "textFont": {
       "overloads": [
-        []
+        [
+          "p5.Font|String|Object",
+          "Number?"
+        ]
       ]
     },
     "textSize": {
       "overloads": [
+        [
+          "Number"
+        ],
         []
       ]
     },
     "textStyle": {
       "overloads": [
+        [
+          "NORMAL|ITALIC|BOLD|BOLDITALIC"
+        ],
         []
       ]
     },
     "textWidth": {
       "overloads": [
-        []
+        [
+          "String"
+        ]
       ]
     },
     "textWrap": {
       "overloads": [
+        [
+          "WORD|CHAR"
+        ],
         []
       ]
     },
     "textBounds": {
       "overloads": [
-        []
+        [
+          "String",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
       ]
     },
     "textDirection": {
       "overloads": [
+        [
+          "String"
+        ],
         []
       ]
     },
     "textProperty": {
       "overloads": [
-        []
+        [
+          "String",
+          null
+        ],
+        [
+          "String"
+        ]
       ]
     },
     "textProperties": {
       "overloads": [
+        [
+          "Object"
+        ],
         []
       ]
     },
     "fontBounds": {
       "overloads": [
-        []
+        [
+          "String",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
       ]
     },
     "fontWidth": {
       "overloads": [
-        []
+        [
+          "String"
+        ]
       ]
     },
     "fontAscent": {
@@ -2065,8 +2123,11 @@
         []
       ]
     },
-    "fontWeight": {
+    "textWeight": {
       "overloads": [
+        [
+          "Number"
+        ],
         []
       ]
     },
@@ -3131,6 +3192,11 @@
         ]
       ]
     },
+    "makeEdgesFromFaces": {
+      "overloads": [
+        []
+      ]
+    },
     "normalize": {
       "overloads": [
         []
@@ -3195,11 +3261,6 @@
   },
   "p5.Renderer": {
     "resize": {
-      "overloads": [
-        []
-      ]
-    },
-    "textProperties": {
       "overloads": [
         []
       ]
@@ -4444,12 +4505,27 @@
     }
   },
   "p5.Font": {
-    "textToModel": {
+    "textToPoints": {
       "overloads": [
-        []
+        [
+          "String",
+          "Number",
+          "Number",
+          "Object?"
+        ]
       ]
     },
-    "hasGlyphData": {
+    "textToContours": {
+      "overloads": [
+        [
+          "String",
+          "Number",
+          "Number",
+          "Object?"
+        ]
+      ]
+    },
+    "textToModel": {
       "overloads": [
         []
       ]

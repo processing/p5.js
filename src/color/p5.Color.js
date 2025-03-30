@@ -169,7 +169,7 @@ class Color {
 
   // Get raw coordinates of underlying library, can differ between libraries
   get _array() {
-    return [...this._color.coords, this._color.alpha];
+    return this._getRGBA();
   }
 
   array(){

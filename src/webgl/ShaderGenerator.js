@@ -36,8 +36,6 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations)
       const generatedModifyArgument = generator.generate();
-      console.log("SRC STRING: ", generatorFunction);
-      console.log("NEW OPTIONS:", generatedModifyArgument)
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -479,7 +477,6 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  // TODO: Correct the implementation for floats/ genType etc
   class ModulusNode extends BinaryOperatorNode {
     constructor(a, b) {
       super(a, b);
@@ -616,7 +613,6 @@ function shadergenerator(p5, fn) {
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName);
-        console.log(hookTypes);
         this[hookTypes.name] = function(userCallback) {
           // Create the initial nodes which are passed to the user callback
           // Also generate a string of the arguments for the code generation
@@ -779,14 +775,6 @@ function shadergenerator(p5, fn) {
   // GLSL Built in functions
   // Add a whole lot of these functions.
   // https://docs.gl/el3/abs
-  //  In reality many of these have multiple overrides which will need to address later.
-  // Also, their return types depend on the genType which will need to address urgently
-  //      genType clamp(genType x,
-  //                    genType minVal,
-  //                    genType maxVal);
-  //      genType clamp(genType x,
-  //                    float minVal,
-  //                    float maxVal);
   const builtInGLSLFunctions = {
     //////////// Trigonometry //////////
     'acos': { args: ['genType'], returnType: 'genType', isp5Function: true},
@@ -821,12 +809,12 @@ function shadergenerator(p5, fn) {
     // 'isnan': {},
     'log': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'log2': { args: ['genType'], returnType: 'genType', isp5Function: false},
-    'max': { args: ['genType'], returnType: 'genType', isp5Function: true},
-    'min': { args: ['genType'], returnType: 'genType', isp5Function: true},
-    'mix': { args: ['genType'], returnType: 'genType', isp5Function: false},
+    'max': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+    'min': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+    'mix': { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
     // 'mod': {},
     // 'modf': {},
-    'pow': { args: ['genType'], returnType: 'genType', isp5Function: true},
+    'pow': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
     'round': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'roundEven': { args: ['genType'], returnType: 'genType', isp5Function: false},
     // 'sign': {},
@@ -853,7 +841,6 @@ function shadergenerator(p5, fn) {
   Object.entries(builtInGLSLFunctions).forEach(([functionName, properties]) => {
     if (properties.isp5Function) {
       const originalFn = fn[functionName];
-
       fn[functionName] = function (...args) {
         if (GLOBAL_SHADER?.isGenerating) {
           return new FunctionCallNode(functionName, args, properties)

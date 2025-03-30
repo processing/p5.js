@@ -810,9 +810,9 @@ class Shape {
   vertexProperty(name, data) {
     this.userVertexProperties = this.userVertexProperties || {};
     const key = this.vertexPropertyKey(name);
-    
+
     const dataArray = Array.isArray(data) ? data : [data];
-    
+
     if (!this.userVertexProperties[key]) {
       this.userVertexProperties[key] = dataArray.length;
     }
@@ -1584,14 +1584,31 @@ function customShapes(p5, fn) {
   // ---- FUNCTIONS ----
 
   /**
-   * TODO: documentation
+   * @method beierOrder
+   * @returns {Number} The current bezier order.
+   */
+  /**
+   * @method beierOrder
+   * @param {Number} order The new order to set.
    */
   fn.bezierOrder = function(order) {
     return this._renderer.bezierOrder(order);
   };
 
   /**
-   * TODO: documentation
+   * @method splineVertex
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} [u=0]
+   * @param {Number} [v=0]
+   */
+  /**
+   * @method splineVertex
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   * @param {Number} [u=0]
+   * @param {Number} [v=0]
    */
   fn.splineVertex = function(...args) {
     let x = 0, y = 0, z = 0, u = 0, v = 0;
@@ -1608,17 +1625,26 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * TODO: documentation
-   * @param {String} key
-   * @param [value]
+   * @method splineProperty
+   * @param {String} property
+   * @returns value The current value for the given property.
    */
-  fn.splineProperty = function(key, value) {
-    return this._renderer.splineProperty(key, value);
+  /**
+   * @method splineProperty
+   * @param {String} property
+   * @param value Value to set the given property to.
+   */
+  fn.splineProperty = function(property, value) {
+    return this._renderer.splineProperty(property, value);
   };
 
   /**
-   * TODO: documentation
-   * @param {Object} [values]
+   * @method splineProperties
+   * @returns {Object} The current spline properties.
+   */
+  /**
+   * @method splineProperties
+   * @param {Object} An object containing key-value pairs to set.
    */
   fn.splineProperties = function(values) {
     return this._renderer.splineProperties(values);
@@ -1796,15 +1822,16 @@ function customShapes(p5, fn) {
    * @method vertex
    * @param  {Number} x
    * @param  {Number} y
-   * @param  {Number} [z]   z-coordinate of the vertex. Defaults to 0.
+   * @param  {Number} [u=0]   u-coordinate of the vertex's texture.
+   * @param  {Number} [v=0]   v-coordinate of the vertex's texture.
    */
   /**
    * @method vertex
    * @param  {Number} x
    * @param  {Number} y
-   * @param  {Number} [z]
-   * @param  {Number} [u]   u-coordinate of the vertex's texture. Defaults to 0.
-   * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
+   * @param  {Number} z
+   * @param  {Number} [u=0]   u-coordinate of the vertex's texture.
+   * @param  {Number} [v=0]   v-coordinate of the vertex's texture.
    */
   fn.vertex = function(x, y) {
     let z, u, v;
@@ -1828,38 +1855,6 @@ function customShapes(p5, fn) {
     this._renderer.vertex(x, y, z, u, v);
     return;
   };
-
-  // Note: Code is commented out for now, to avoid conflicts with the existing implementation.
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.beginShape = function() {
-
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.bezierVertex = function() {
-
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.curveVertex = function() {
-
-  // };
 
   /**
    * Begins creating a hole within a flat shape.
@@ -2064,46 +2059,6 @@ function customShapes(p5, fn) {
   fn.endContour = function(mode = constants.OPEN) {
     this._renderer.endContour(mode);
   };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.endShape = function() {
-
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.vertex = function() {
-
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.normal = function() {
-
-  // };
-
-  /**
-     * Top-line description
-     *
-     * More details...
-     */
-
-  // fn.vertexProperty = function() {
-
-  // };
 }
 
 export default customShapes;

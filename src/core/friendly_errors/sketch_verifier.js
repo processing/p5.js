@@ -218,10 +218,6 @@ export const verifierUtils = {
   }
 };
 
-/**
- * @for p5
- * @requires core
- */
 function sketchVerifier(p5, _fn, lifecycles) {
   lifecycles.presetup = async function() {
     if (!p5.disableFriendlyErrors) {

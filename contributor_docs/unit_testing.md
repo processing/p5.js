@@ -249,3 +249,75 @@ visualSuite('3D Model rendering', function() {
 });
 ```
 
+
+Different operating systems and browsers render graphics with subtle variations. These differences are normal and shouldn't cause tests to fail.
+Common acceptable differences include:
+
+* Single-pixel shifts in line positions
+* Slight variations in anti-aliasing
+* Text rendering differences (especially font weight and kerning)
+* Minor differences in curve smoothness
+
+For example, text rendered on macOS might appear slightly different from text rendered in a Linux CI environment. The same applies to thin lines, curves, and other graphical elements with anti-aliasing.
+An example of this can be the below image which earlier caused tests to fail in CI because of different rendering environments.
+
+![Example](./images/pixelmatch2.png)
+
+The p5.js visual testing system uses a sophisticated algorithm to distinguish between acceptable rendering variations and actual bugs:
+
+* Initial comparison - Compares pixels with a moderate threshold (0.5) to identify differences using [pixelmatch](https://github.com/mapbox/pixelmatch) library for pixel to pixel comparison.
+* Cluster identification - Groups connected difference pixels using a Breadth-First Search (BFS) algorithm
+* Pattern recognition - The algorithm specifically identifies:
+
+  - "Line shift" clusters - differences that likely represent the same visual element shifted by 1px
+  - Isolated pixel differences (noise)
+
+
+* Smart failure criteria - Applies different thresholds:
+
+  - Ignores clusters smaller than 4 pixels
+  - Allows up to 40 total significant difference pixels
+  - Permits minor line shifts that are typical across platforms
+
+The below is the example of the tests that should fail:
+
+![Example](./images/pixelmatch.png)
+
+
+
+This approach balances sensitivity to real bugs while tolerating platform-specific rendering variations. The algorithm uses these key parameters:
+```js
+const MIN_CLUSTER_SIZE = 4;       // Minimum significant cluster size
+const MAX_TOTAL_DIFF_PIXELS = 40; // Maximum allowed significant differences
+```
+The algorithm identifies line shifts by analyzing the neighborhood of each difference pixel. If more than 80% of pixels in a cluster have ≤2 neighbors, it's classified as a line shift rather than a structural difference.
+This intelligent comparison ensures tests don't fail due to minor rendering differences while still catching actual visual bugs.
+
+It's important to note that the improved algorithm described above allows tests with acceptable platform-specific variations to pass correctly. Tests that previously failed due to minor rendering differences (like anti-aliasing variations or subtle text rendering differences) will now pass as they should, while still detecting actual rendering bugs.
+For example, a test showing text rendering that previously failed on CI (despite looking correct visually) will now pass with the improved algorithm, as it can distinguish between meaningful differences and acceptable platform-specific rendering variations. This makes the test suite more reliable and reduces false failures that require manual investigation.
+
+### Some best practices for writing visual tests
+
+When creating visual tests for p5.js, following these practices will help ensure reliable and efficient tests:
+
+* Keep canvas sizes small - Use dimensions close to 50x50 pixels whenever possible. The test system resizes images for efficiency before comparison, and smaller canvases result in faster tests, especially on CI environments.
+* Focus on visible details - At small canvas sizes, intricate details may be hard to distinguish. Design your test sketches to clearly demonstrate the feature being tested with elements that are visible at the reduced size.
+* Use multiple screenshots per test - Instead of cramming many variants into a single screenshot, call screenshot() multiple times within a test:
+  ```js
+  visualTest('stroke weight variations', function(p5, screenshot) {
+    p5.createCanvas(50, 50);
+    
+    // Test thin stroke
+    p5.background(200);
+    p5.stroke(0);
+    p5.strokeWeight(1);
+    p5.line(10, 25, 40, 25);
+    screenshot(); // Screenshot with thin lines
+    
+    // Test thick stroke
+    p5.background(200);
+    p5.strokeWeight(5);
+    p5.line(10, 25, 40, 25);
+    screenshot(); // Screenshot with thick lines
+  });
+  ```   
