@@ -1117,7 +1117,7 @@ function setting(p5, fn){
    *  
    * 
    * function setup() {
-   *   createCanvas(600, 200);
+   *   createCanvas(300, 200);
    *   noStroke();
    *   noLoop();
    * }
@@ -1126,7 +1126,7 @@ function setting(p5, fn){
    *   //--- Left rectangle: RGB mode
    *   colorMode(RGB, 255);
    *   fill(128); // Interpreted as R=G=B=128 in RGB
-   *   rect(0, 0, 200, 200);
+   *   rect(0, 0, 100, 200);
    * 
    *   //--- Middle rectangle: LAB mode
    *   // In LAB, a single value is interpreted as Lightness (L).
@@ -1134,7 +1134,7 @@ function setting(p5, fn){
    *   // becomes roughly halfway in terms of lightness.
    *   colorMode(LAB, 100);
    *   fill(50); 
-   *   rect(200, 0, 200, 200);
+   *   rect(100, 0, 100, 200);
    * 
    *   //--- Right rectangle: HWB mode
    *   // In HWB, a single value is mapped onto whiteness and blackness together.
@@ -1142,14 +1142,14 @@ function setting(p5, fn){
    *   // their max values to interpret this single parameter. 
    *   colorMode(HWB, 100);
    *   fill(50);
-   *   rect(400, 0, 200, 200);
+   *   rect(200, 0, 100, 200);
    * 
    *   // Add text labels
    *   fill(0); // Switch to black text for clarity (RGB mode for text)
    *   textSize(14);
    *   text("RGB (128)", 10, 20);
-   *   text("LAB (50)", 210, 20);
-   *   text("HWB (50)", 410, 20);
+   *   text("LAB (50)", 105, 20);
+   *   text("HWB (50)", 205, 20);
    * }
    * </code>
    * </div>
