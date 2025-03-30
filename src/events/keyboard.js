@@ -213,7 +213,7 @@ function keyboard(p5, fn){
    * which has a value of 13:
    *
    * ```js
-   * if (keyCode === ENTER) {
+   * if (keyCode === 13) {
    *   // Code to run if the enter key was pressed.
    * }
    * ```
@@ -443,9 +443,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user presses an arrow key.
    * function keyPressed() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) {
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) {
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -497,7 +497,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) {
    *     // Code to run.
    *   }
    * }

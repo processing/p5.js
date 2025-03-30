@@ -740,7 +740,7 @@ function setting(p5, fn){
    * Calling `colorMode(RGB, 100)` sets colors to use RGB color values between 0 and 100.
    * Pure red is `color(100, 0, 0)` in this model.
    *
-   * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL system instead of RGB.
+   * Calling `colorMode(HSB)` or `colorMode(HSL)` changes to HSB or HSL systems instead of RGB.
    * Pure red is `color(0, 100, 100)` in HSB and `color(0, 100, 50)` in HSL.
    *
    * Some additional color modes that p5.js supports are:
@@ -755,7 +755,7 @@ function setting(p5, fn){
    *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
    *          Pure red in HWB is represented as `color(0, 0, 0)` (i.e., hue 0 with 0% whiteness and 0% blackness).
    *    
-   *         <img src="assets/hwb.png"></img>
+   *          <img src="assets/hwb.png"></img>
    *
    * `LAB`    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
    *          It is widely used in professional color measurement contexts due to its perceptual uniformity.
@@ -770,14 +770,31 @@ function setting(p5, fn){
    *
    * `OKLCH`  - An easier-to-use representation of OKLAB, expressing colors in terms of Lightness, Chroma, and Hue.
    *          This mode retains the perceptual benefits of OKLAB while offering a more intuitive format for color manipulation.
-   * 
+   *
    * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
    * created in. Changing modes doesn't affect their appearance.
    *
+   *  **Single-value (Grayscale) Colors**  
+   *  When a color is specified with only one parameter (e.g., `color(g)`), p5.js will interpret it
+   *  as a grayscale color. However, how that single parameter translates into a grayscale value
+   *  depends on the color mode:
+   *
+   * - **RGB, HSB, and HSL**: The single value will be used consistently for the gray equivalent 
+   *    in each of these modes (for example, mapping to red/green/blue channels equally in RGB).
+   *
+   * - **LAB, LCH, OKLAB, and OKLCH**: The single value is taken to be the lightness (L) component,
+   *   with the specified max range for that channel.
+   *
+   * - **HWB**: Grayscale relies on both the whiteness (W) and blackness (B) channels. Since
+   *   a single value cannot directly account for two distinct channels, the library uses an
+   *   average of their max values to interpret the single grayscale parameter. For instance,
+   *   if W has a max of 50 and B has a max of 100, then the single grayscale parameter
+   *   is mapped using (50 + 100) / 2 = 75 as its effective maximum. More complex or negative
+   *   ranges are currently not handled, so results in those cases may be ambiguous.
+   *
    * @method colorMode
-   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB 
-   *                          or HSL, corresponding to Red/Green/Blue and 
-   *                          Hue/Saturation/Brightness (or Lightness).
+   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB, HSL,
+   *          or one of the extended modes described above.
    * @param {Number}  [max]  range for all values.
    * @chainable
    *
