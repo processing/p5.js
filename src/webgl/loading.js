@@ -168,8 +168,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', true, handleModel);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', true, handleModel);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -202,8 +202,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', true, handleModel, handleError);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -241,8 +241,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', '.obj', true, handleModel, handleError);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', '.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -286,8 +286,8 @@ function loading(p5, fn){
    * };
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', options);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', options);
    *
    *   createCanvas(100, 100, WEBGL);
    *
