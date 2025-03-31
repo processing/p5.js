@@ -777,13 +777,14 @@ function shadergenerator(p5, fn) {
 
     if(condition, branchCallback) {
       this.condition = dynamicNode(condition);
-      this.dependsOn.push(this.condition.left, this.condition.right);
+      this.checkConditionDependencies(condition);
       this.ifBranch = branch(branchCallback);
       this.ifBranch.parent = this;
     }
 
     elseIf(condition, branchCallback) {
       let elseBranch = branch(branchCallback);
+      this.checkConditionDependencies(condition);
       branchCallback.parent = this;
       this.dependsOn.push(condition.left, condition.right);
       this.elseIfs.push({ condition, elseBranch });
@@ -804,7 +805,14 @@ function shadergenerator(p5, fn) {
       if (this.insertionPoint = -1) {
         this.insertionPoint = GLOBAL_SHADER.context.declarations.length;
       }
-      console.log(this.insertionPoint)
+    }
+
+    checkConditionDependencies(condition) {
+      [condition.left, condition.right].forEach((node) => {
+        if (node.shouldUseTemporaryVariable() || isVariableNode(node)) {
+          this.dependsOn.push(node);
+        }
+      });
     }
 
     toGLSL(context) {
