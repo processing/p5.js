@@ -17,24 +17,20 @@ function fresnelShaderCallback() {
   const fresnelPower = uniformFloat(2);
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
-  const mouseIntensity = uniformVector2(()=>[map(mouseX, 0, width, 0, 0.15), map(mouseY, 0, height, 0, 0.15)]);
-  let val = varyingFloat('val');
-  let colr = varyingVector4('colr');
-
   getCameraInputs((inputs) => {
+    let myValue = [1,0,0];
     let n = normalize(inputs.normal);
+    If(n == n, () => assign(myValue, 1));
     let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
-    val = mouseIntensity.x;
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
-    let col = mix([mouseIntensity.y, 0, mouseIntensity.x], [1, .5, .7], fresnel);
-    inputs.color = col.xxxx;
+    
+    
+    let col = mix(myValue, [1, .5, .7], fresnel);
+
+    inputs.color = [col, 1];
     return inputs;
   });
-
-  // getFinalColor((col) => {
-    // return col * [val,col.y,col.y,1];
-  // })
 }
 
 function starShaderCallback() {
@@ -95,11 +91,11 @@ async function setup(){
   stars = buildGeometry(() => sphere(20, 4, 2))
   originalFrameBuffer = createFramebuffer();
 
-  starShader = baseMaterialShader().modify(starShaderCallback); 
-  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
+  // starShader = baseMaterialShader().modify(starShaderCallback); 
+  // starStrokeShader = baseStrokeShader().modify(starShaderCallback)
   fresnelShader = baseColorShader().modify(fresnelShaderCallback);
-  bloomShader = baseFilterShader().modify(bloomShaderCallback);
-  pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
+  // bloomShader = baseFilterShader().modify(bloomShaderCallback);
+  // pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
 }
 
 function draw(){
@@ -107,15 +103,15 @@ function draw(){
   background(0);
   orbitControl(); 
 
-  push()
-  strokeWeight(4)
-  stroke(255,0,0)
-  rotateX(PI/2 + millis() * 0.0005);
-  fill(255,100, 150)
-  strokeShader(starStrokeShader)
-  shader(starShader);
-  model(stars, 5000);
-  pop()
+  // push()
+  // strokeWeight(4)
+  // stroke(255,0,0)
+  // rotateX(PI/2 + millis() * 0.0005);
+  // fill(255,100, 150)
+  // strokeShader(starStrokeShader)
+  // shader(starShader);
+  // model(stars, 5000);
+  // pop()
 
   push()
   shader(fresnelShader)
@@ -123,12 +119,12 @@ function draw(){
   sphere(500);
   pop()
 
-  filter(pixellizeShader);
+  // filter(pixellizeShader);
   originalFrameBuffer.end();
   
   imageMode(CENTER)
   image(originalFrameBuffer, 0, 0)
   
-  filter(BLUR, 20)
-  filter(bloomShader);
+  // filter(BLUR, 20)
+  // filter(bloomShader);
 }
