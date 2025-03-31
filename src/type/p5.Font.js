@@ -230,24 +230,30 @@ class Font {
       * <div modernizr='webgl'>
       * <code>
       * let geom;
-      * let fonts;
+      * let activeFont;
       * let artShader;
       * let lineShader;
       *
       * // Define parameters as simple variables
       * let words = 'HELLO';
-      * let font = 'Anton';
       * let warp = 1;
       * let extrude = 5;
       * let palette = ["#ffe03d", "#fe4830", "#d33033", "#6d358a", "#1c509e", "#00953c"];
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   fonts = {
-      *     Anton: await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'),
-      *     Montserrat: await loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'),
-      *     'Source Serif': await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'),
-      *   };
+      *
+      *   // Using Anton as the default font for this example:
+      *  
+      *  // Alternative fonts:
+      *  // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *  // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *  // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   activeFont = await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf');
+      *
+      *   geom = activeFont.textToModel(words, 0, 50, { sampleFactor: 2, extrude });
+      *   geom.clearColors();
+      *   geom.normalize();
       *
       *   artShader = baseMaterialShader().modify({
       *     uniforms: {
@@ -273,7 +279,7 @@ class Font {
       *       return vec4(c, 1.);
       *     }`
       *   });
-      *
+      *   
       *   lineShader = baseStrokeShader().modify({
       *     uniforms: {
       *       'float time': () => millis(),
@@ -288,12 +294,6 @@ class Font {
       * }
       *
       * function draw() {
-      *     if (geom) freeGeometry(geom);
-      *
-      *     geom = fonts[font].textToModel(words, 0, 50, { sampleFactor: 2, extrude });
-      *     geom.clearColors();
-      *     geom.normalize();
-      *
       *   background(255);
       *   orbitControl();
       *   shader(artShader);
