@@ -79,16 +79,16 @@ export class Matrix extends MatrixInterface {
    * @throws {Error} If the matrices do not have the same dimensions.
    *
    * @example
-   * const matrix1 = new Matrix([1, 2, 3]);
-   * const matrix2 = new Matrix([4, 5, 6]);
+   * const matrix1 = new p5.Matrix([1, 2, 3]);
+   * const matrix2 = new p5.Matrix([4, 5, 6]);
    * matrix1.add(matrix2); // matrix1 is now [5, 7, 9]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
    *
-   *   const matrix1 = new Matrix([1, 2, 3, 4]);
-   *   const matrix2 = new Matrix([5, 6, 7, 8]);
+   *   const matrix1 = new p5.Matrix([1, 2, 3, 4]);
+   *   const matrix2 = new p5.Matrix([5, 6, 7, 8]);
    *   matrix1.add(matrix2);
    *   console.log(matrix1.matrix); // Output: [6, 8, 10, 12]
    * }
@@ -118,19 +118,23 @@ export class Matrix extends MatrixInterface {
    *
    * Example:
    * If you have the following 3x3 matrix stored in column-major order:
+   * ```
    * [
    *   1, 4, 7,  // Column 1
    *   2, 5, 8,  // Column 2
    *   3, 6, 9   // Column 3
    * ]
+   * ```
    * Calling `setElement(4, 10)` will update the element at index 4
    * (which corresponds to row 2, column 2 in row-major order) to `10`.
    * The updated matrix will look like this:
+   * ```
    * [
    *   1, 4, 7,
    *   2, 10, 8,
    *   3, 6, 9
    * ]
+   * ```
    *
    * This function is useful for modifying specific parts of the matrix without
    * having to recreate the entire structure.
@@ -141,15 +145,14 @@ export class Matrix extends MatrixInterface {
    * @returns {Matrix} The current instance of the Matrix, allowing for method chaining.
    *
    * @example
-   * // Assuming matrix is an instance of Matrix with initial values [1, 2, 3, 4]
-   * matrix.setElement(2, 99);
+   * // Assuming matrix is an instance of Matrix with initial values [1, 2, 3, 4] matrix.setElement(2, 99);
    * // Now the matrix values are [1, 2, 99, 4]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4]);
    *   matrix.setElement(2, 99);
    *   console.log(matrix.matrix); // Output: [1, 2, 99, 4]
    * }
@@ -173,7 +176,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Resetting a 4x4 matrix to an identity matrix
-   * const matrix = new Matrix(4);
+   * const matrix = new p5.Matrix(4);
    * matrix.scale(2, 2, 2); // Apply some transformations
    * console.log(matrix.matrix); // Output: Transformed matrix
    * matrix.reset(); // Reset to identity matrix
@@ -183,7 +186,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4);
+   *   const matrix = new p5.Matrix(4);
    *   matrix.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Before reset:", matrix.matrix);
    *   matrix.reset(); // Reset to identity matrix
@@ -216,18 +219,18 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Replacing the contents of a matrix with another matrix
-   * const matrix1 = new Matrix([1, 2, 3, 4]);
-   * const matrix2 = new Matrix([5, 6, 7, 8]);
+   * const matrix1 = new p5.Matrix([1, 2, 3, 4]);
+   * const matrix2 = new p5.Matrix([5, 6, 7, 8]);
    * matrix1.set(matrix2);
    * console.log(matrix1.matrix); // Output: [5, 6, 7, 8]
    *
    * // Replacing the contents of a matrix with an array
-   * const matrix = new Matrix([1, 2, 3, 4]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4]);
    * matrix.set([9, 10, 11, 12]);
    * console.log(matrix.matrix); // Output: [9, 10, 11, 12]
    *
    * // Replacing the contents of a matrix with individual numbers
-   * const matrix = new Matrix(4); // Creates a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Creates a 4x4 identity matrix
    * matrix.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
    * console.log(matrix.matrix); // Output: [1, 2, 3, ..., 16]
    *
@@ -235,7 +238,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4]);
    *   console.log("Before set:", matrix.matrix);
    *   matrix.set([5, 6, 7, 8]);
    *   console.log("After set:", matrix.matrix); // Output: [5, 6, 7, 8]
@@ -278,7 +281,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const originalMatrix = new Matrix([1, 2, 3, 4]);
+   *   const originalMatrix = new p5.Matrix([1, 2, 3, 4]);
    *   const copiedMatrix = originalMatrix.get();
    *   console.log("Original Matrix:", originalMatrix.matrix);
    *   console.log("Copied Matrix:", copiedMatrix.matrix);
@@ -310,7 +313,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const originalMatrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const copiedMatrix = originalMatrix.copy();
    *   console.log("Original Matrix:", originalMatrix.matrix);
    *   console.log("Copied Matrix:", copiedMatrix.matrix);
@@ -338,7 +341,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const originalMatrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const originalMatrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const clonedMatrix = originalMatrix.clone();
    *   console.log("Original Matrix:", originalMatrix.matrix);
    *   console.log("Cloned Matrix:", clonedMatrix.matrix);
@@ -361,11 +364,13 @@ export class Matrix extends MatrixInterface {
    * This method extracts the diagonal elements of the matrix, which are the
    * elements where the row index equals the column index. For example, in a
    * 3x3 matrix:
+   * ```
    * [
    *   1, 2, 3,
    *   4, 5, 6,
    *   7, 8, 9
    * ]
+   * ```
    * The diagonal elements are [1, 5, 9].
    *
    * This is useful for operations that require the main diagonal of a matrix,
@@ -376,14 +381,14 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Extracting the diagonal elements of a matrix
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * const diagonal = matrix.diagonal(); // [1, 5, 9]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const diagonal = matrix.diagonal();
    *   console.log("Diagonal elements:", diagonal); // Output: [1, 5, 9]
    * }
@@ -411,14 +416,14 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Extracting a row vector from a 3x3 matrix
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * const rowVector = matrix.row(1); // Returns a vector [2, 5, 8]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const rowVector = matrix.row(1); // Extract the second row (index 1)
    *   console.log("Row Vector:", rowVector.toString()); // Output: Row Vector: [2, 5, 8]
    * }
@@ -446,14 +451,14 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Extracting a column vector from a 3x3 matrix
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * const columnVector = matrix.column(1); // Returns a vector [4, 5, 6]
    *
    * // p5.js script example
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const columnVector = matrix.column(1); // Extract the second column (index 1)
    *   console.log("Column Vector:", columnVector.toString()); // Output: Column Vector: [4, 5, 6]
    * }
@@ -483,12 +488,12 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Transposing a 3x3 matrix
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * matrix.transpose();
    * console.log(matrix.matrix); // Output: [1, 4, 7, 2, 5, 8, 3, 6, 9]
    *
    * // Transposing a 4x4 matrix
-   * const matrix4x4 = new Matrix(4);
+   * const matrix4x4 = new p5.Matrix(4);
    * matrix4x4.transpose();
    * console.log(matrix4x4.matrix); // Output: Transposed 4x4 identity matrix
    *
@@ -496,7 +501,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Before transpose:", matrix.matrix);
    *   matrix.transpose();
    *   console.log("After transpose:", matrix.matrix); // Output: [1, 4, 7, 2, 5, 8, 3, 6, 9]
@@ -532,14 +537,14 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Multiplying two 3x3 matrices
-   * const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   * const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   * const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    * matrix1.mult(matrix2);
    * console.log(matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
    *
    * // Multiplying a 4x4 matrix with another 4x4 matrix
-   * const matrix4x4_1 = new Matrix(4); // Identity matrix
-   * const matrix4x4_2 = new Matrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1]);
+   * const matrix4x4_1 = new p5.Matrix(4); // Identity matrix
+   * const matrix4x4_2 = new p5.Matrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1]);
    * matrix4x4_1.mult(matrix4x4_2);
    * console.log(matrix4x4_1.matrix); // Output: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1]
    *
@@ -547,8 +552,8 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   *   const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   console.log("Before multiplication:", matrix1.matrix);
    *   matrix1.mult(matrix2);
    *   console.log("After multiplication:", matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
@@ -591,8 +596,8 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Multiplying a 3x3 matrix with a vector
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   * const vector = new Vector(1, 2, 3);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const vector = new p5.Vector(1, 2, 3);
    * const result = matrix.multiplyVec(vector);
    * console.log(result.toString()); // Output: Transformed vector
    *
@@ -600,8 +605,8 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   *   const vector = new Vector(1, 2, 3);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const vector = new p5.Vector(1, 2, 3);
    *   const result = matrix.multiplyVec(vector);
    *   console.log("Original Vector:", vector.toString());
    *   console.log("Transformed Vector:", result.toString());
@@ -635,12 +640,12 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Inverting a 3x3 matrix
-   * const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+   * const matrix = new p5.Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
    * const invertedMatrix = matrix.invert();
    * console.log(invertedMatrix.matrix); // Output: Inverted 3x3 matrix
    *
    * // Inverting a 4x4 matrix
-   * const matrix4x4 = new Matrix(4); // Identity matrix
+   * const matrix4x4 = new p5.Matrix(4); // Identity matrix
    * matrix4x4.scale(2, 2, 2);
    * const invertedMatrix4x4 = matrix4x4.invert();
    * console.log(invertedMatrix4x4.matrix); // Output: Inverted 4x4 matrix
@@ -649,7 +654,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
    *   console.log("Original Matrix:", matrix.matrix);
    *   const invertedMatrix = matrix.invert();
    *   if (invertedMatrix) {
@@ -688,7 +693,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Extracting a 3x3 submatrix from a 4x4 matrix
-   * const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
+   * const matrix4x4 = new p5.Matrix(4); // Creates a 4x4 identity matrix
    * matrix4x4.scale(2, 2, 2); // Apply scaling transformation
    * const subMatrix3x3 = matrix4x4.createSubMatrix3x3();
    * console.log("Original 4x4 Matrix:", matrix4x4.matrix);
@@ -698,7 +703,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix4x4 = new Matrix(4); // Creates a 4x4 identity matrix
+   *   const matrix4x4 = new p5.Matrix(4); // Creates a 4x4 identity matrix
    *   matrix4x4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4x4 Matrix:", matrix4x4.matrix);
    *
@@ -740,9 +745,9 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Converting a 4×4 matrix to its 3×3 inverse transpose
-   * const mat4 = new Matrix(4); // Create a 4×4 identity matrix
+   * const mat4 = new p5.Matrix(4); // Create a 4×4 identity matrix
    * mat4.scale(2, 2, 2); // Apply scaling transformation
-   * const mat3 = new Matrix(3); // Create a 3×3 matrix
+   * const mat3 = new p5.Matrix(3); // Create a 3×3 matrix
    * mat3.inverseTranspose4x4(mat4);
    * console.log("Converted 3×3 Matrix:", mat3.matrix);
    *
@@ -750,11 +755,11 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const mat4 = new Matrix(4); // Create a 4×4 identity matrix
+   *   const mat4 = new p5.Matrix(4); // Create a 4×4 identity matrix
    *   mat4.scale(2, 2, 2); // Apply scaling transformation
    *   console.log("Original 4×4 Matrix:", mat4.matrix);
    *
-   *   const mat3 = new Matrix(3); // Create a 3×3 matrix
+   *   const mat3 = new p5.Matrix(3); // Create a 3×3 matrix
    *   mat3.inverseTranspose4x4(mat4);
    *   console.log("Converted 3×3 Matrix:", mat3.matrix);
    * }
@@ -808,7 +813,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Assuming `matrix` is an instance of Matrix
-   * const anotherMatrix = new Matrix();
+   * const anotherMatrix = new p5.Matrix();
    * matrix.apply(anotherMatrix);
    *
    * @example
@@ -825,11 +830,11 @@ export class Matrix extends MatrixInterface {
    * function setup() {
    *
    *   // Create a 4x4 identity matrix
-   *   const matrix = new Matrix(4);
+   *   const matrix = new p5.Matrix(4);
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Create a scaling transformation matrix
-   *   const scalingMatrix = new Matrix([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1]);
+   *   const scalingMatrix = new p5.Matrix([2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1]);
    *
    *   // Apply the scaling transformation
    *   matrix.apply(scalingMatrix);
@@ -916,12 +921,12 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Scaling a matrix by individual scalars
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.scale(2, 3, 4); // Scale by 2 along x, 3 along y, and 4 along z
    * console.log(matrix.matrix);
    *
    * // Scaling a matrix by a p5.Vector
-   * const scaleVector = new Vector(2, 3, 4);
+   * const scaleVector = new p5.Vector(2, 3, 4);
    * matrix.scale(scaleVector);
    * console.log(matrix.matrix);
    *
@@ -934,7 +939,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Scale the matrix by individual scalars
@@ -942,7 +947,7 @@ export class Matrix extends MatrixInterface {
    *   console.log("Scaled Matrix (2, 3, 4):", matrix.matrix);
    *
    *   // Scale the matrix by a p5.Vector
-   *   const scaleVector = new Vector(1.5, 2.5, 3.5);
+   *   const scaleVector = new p5.Vector(1.5, 2.5, 3.5);
    *   matrix.scale(scaleVector);
    *   console.log("Scaled Matrix (Vector):", matrix.matrix);
    *
@@ -1066,7 +1071,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Translating a matrix by a 3D vector
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.translate([10, 20, 30]); // Translate by 10 units along x, 20 along y, and 30 along z
    * console.log(matrix.matrix);
    *
@@ -1078,7 +1083,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Translate the matrix by a 3D vector
@@ -1120,7 +1125,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Rotating a matrix around the X-axis
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.rotateX(Math.PI / 4); // Rotate 45 degrees around the X-axis
    * console.log(matrix.matrix);
    *
@@ -1128,7 +1133,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Rotate the matrix 45 degrees (PI/4 radians) around the X-axis
@@ -1157,7 +1162,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Rotating a matrix around the Y-axis
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.rotateY(Math.PI / 4); // Rotate 45 degrees around the Y-axis
    * console.log(matrix.matrix);
    *
@@ -1165,7 +1170,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Rotate the matrix 45 degrees (PI/4 radians) around the Y-axis
@@ -1196,7 +1201,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Rotating a matrix around the Z-axis
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.rotateZ(Math.PI / 4); // Rotate 45 degrees around the Z-axis
    * console.log(matrix.matrix);
    *
@@ -1204,7 +1209,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Rotate the matrix 45 degrees (PI/4 radians) around the Z-axis
@@ -1237,7 +1242,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Setting a perspective projection matrix
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * matrix.perspective(Math.PI / 4, 1.5, 0.1, 100); // Set perspective projection
    * console.log(matrix.matrix);
    *
@@ -1245,7 +1250,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Set a perspective projection with a 45-degree field of view,
@@ -1367,7 +1372,7 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Applying a matrix to a 4D vector
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    * const result = matrix.multiplyVec4(1, 2, 3, 1); // Transform the vector [1, 2, 3, 1]
    * console.log(result); // Output: [1, 2, 3, 1] (unchanged for identity matrix)
    *
@@ -1375,7 +1380,7 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Apply the matrix to a 4D vector
@@ -1422,8 +1427,8 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Applying a matrix to a 3D point
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
-   * const point = new Vector(1, 2, 3); // Define a 3D point
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
+   * const point = new p5.Vector(1, 2, 3); // Define a 3D point
    * const transformedPoint = matrix.multiplyPoint(point);
    * console.log(transformedPoint.toString()); // Output: [1, 2, 3] (unchanged for identity matrix)
    *
@@ -1431,11 +1436,11 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Define a 3D point
-   *   const point = new Vector(1, 2, 3);
+   *   const point = new p5.Vector(1, 2, 3);
    *   console.log("Original Point:", point.toString());
    *
    *   // Apply the matrix to the point
@@ -1475,8 +1480,8 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Applying a matrix to a 3D point and normalizing it
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
-   * const point = new Vector(1, 2, 3); // Define a 3D point
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
+   * const point = new p5.Vector(1, 2, 3); // Define a 3D point
    * const transformedPoint = matrix.multiplyAndNormalizePoint(point);
    * console.log(transformedPoint.toString()); // Output: [1, 2, 3] (unchanged for identity matrix)
    *
@@ -1484,11 +1489,11 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Define a 3D point
-   *   const point = new Vector(1, 2, 3);
+   *   const point = new p5.Vector(1, 2, 3);
    *   console.log("Original Point:", point.toString());
    *
    *   // Apply the matrix to the point and normalize it
@@ -1530,8 +1535,8 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Applying a matrix to a direction vector
-   * const matrix = new Matrix(4); // Create a 4x4 identity matrix
-   * const direction = new Vector(1, 0, 0); // Define a direction vector
+   * const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
+   * const direction = new p5.Vector(1, 0, 0); // Define a direction vector
    * const transformedDirection = matrix.multiplyDirection(direction);
    * console.log(transformedDirection.toString()); // Output: [1, 0, 0] (unchanged for identity matrix)
    *
@@ -1539,11 +1544,11 @@ export class Matrix extends MatrixInterface {
    * <div><code>
    * function setup() {
    *
-   *   const matrix = new Matrix(4); // Create a 4x4 identity matrix
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Define a direction vector
-   *   const direction = new Vector(1, 0, 0);
+   *   const direction = new p5.Vector(1, 0, 0);
    *   console.log("Original Direction:", direction.toString());
    *
    *   // Apply the matrix to the direction vector
@@ -1583,8 +1588,8 @@ export class Matrix extends MatrixInterface {
    *
    * @example
    * // Multiplying a 3x3 matrix with a vector
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   * const vector = new Vector(1, 2, 3);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const vector = new p5.Vector(1, 2, 3);
    * const result = matrix.multiplyVec3(vector);
    * console.log(result.toString()); // Output: Transformed vector
    *
@@ -1593,11 +1598,11 @@ export class Matrix extends MatrixInterface {
    * function setup() {
    *
    *   // Create a 3x3 matrix
-   *   const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   console.log("Original Matrix:", matrix.matrix);
    *
    *   // Define a vector
-   *   const vector = new Vector(1, 2, 3);
+   *   const vector = new p5.Vector(1, 2, 3);
    *   console.log("Original Vector:", vector.toString());
    *
    *   // Apply the matrix to the vector

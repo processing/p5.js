@@ -7,12 +7,10 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
  *   Reference/Global_Objects/SIMD
  */
-import { Matrix } from './Matrices/Matrix'
+import { Matrix } from "./Matrices/Matrix";
 // import { MatrixNumjs as Matrix } from './Matrices/MatrixNumjs'
 
-
-
-function matrix(p5, fn){
+function matrix(p5, fn) {
   /**
    * A class to describe a matrix
    * for model and view matrix manipulation in the p5js webgl renderer.
@@ -22,7 +20,6 @@ function matrix(p5, fn){
    * This class extends the `MatrixInterface` and includes methods for creating, manipulating, and performing
    * operations on matrices. It supports both 3x3 and 4x4 matrices, as well as general NxN matrices.
    * @class p5.Matrix
-   * @extends MatrixInterface
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
    * @example
    * // Creating a 3x3 matrix from an array using column major arrangement
@@ -113,6 +110,6 @@ function matrix(p5, fn){
 export default matrix;
 export { Matrix };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== "undefined") {
   matrix(p5, p5.prototype);
 }
