@@ -200,26 +200,27 @@ class Font {
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   fonts = {
-      *     Anton: await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'),
-      *     Montserrat: await loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'),
-      *     'Source Serif': await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'),
-      *   };
-      *
-      *   // You can change fonts from here.
-      *   geom = fonts['Source Serif'].textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
+      *   
+      *   // Alternative fonts:
+      *   // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *   // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *   // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   
+      *   // Using Source Serif for this example:
+      *   font = await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf');
+      *   
+      *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
       *   geom.clearColors();
       *   geom.normalize();
       * }
       *
       * function draw() {
       *   background(255);
-      *   orbitControl(); // Enables mouse control to rotate the 3D text.
+      *   orbitControl();
       *   fill("red");
       *   strokeWeight(4);
       *   scale(min(width, height) / 300);
       *   model(geom);
-      *
       *   describe('3D red extruded "Hello" in Source Serif on white, rotatable via mouse.');
       * }
       * </code>
