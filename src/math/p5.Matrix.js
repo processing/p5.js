@@ -67,7 +67,7 @@ function matrix(p5, fn) {
    * const vector = new Vector(1, 2, 3);
    * const result = matrix.multiplyPoint(vector);
    *
-   *
+   * // p5.js script example
    * <div><code>
    * function setup() {
    *
