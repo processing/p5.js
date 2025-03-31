@@ -66,9 +66,9 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads.
-   *   loadImage('assets/laDefense.jpg', handleImage);
+   *   await loadImage('assets/laDefense.jpg', handleImage);
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
@@ -82,10 +82,10 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
-   *   loadImage('assets/laDefense.jpg', handleImage, handleError);
+   *   await loadImage('assets/laDefense.jpg', handleImage, handleError);
    * }
    *
    * // Display the image.

@@ -127,7 +127,6 @@ class Font {
 
     return cmdContours.map((commands) => pathToPoints(commands, options, this));
   }
-
   /**
       * 
       * Converts text into a 3D model that can be rendered in WebGL mode.
@@ -170,24 +169,20 @@ class Font {
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   fonts = {
-      *     Anton: await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf')
-      *   };
+      *   font = await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf');
       *
-      *   // Create 3D geometry from text using the Anton font
-      *   geom = fonts['Anton'].textToModel("Hello", 50, 0, { sampleFactor: 2 });
+      *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2 });
       *   geom.clearColors();
       *   geom.normalize();
       * }
       *
       * function draw() {
       *   background(255);
-      *   orbitControl(); // Enables mouse control to rotate the 3D text
+      *   orbitControl();
       *   fill("red");
       *   strokeWeight(4);
       *   scale(min(width, height) / 300);
       *   model(geom);
-      *
       *   describe('A red non-extruded "Hello" in Anton on white canvas, rotatable via mouse.');
       * }
       * </code>
@@ -201,26 +196,27 @@ class Font {
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   fonts = {
-      *     Anton: await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'),
-      *     Montserrat: await loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'),
-      *     'Source Serif': await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'),
-      *   };
-      *
-      *   // You can change fonts from here.
-      *   geom = fonts['Source Serif'].textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
+      *   
+      *   // Alternative fonts:
+      *   // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *   // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *   // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   
+      *   // Using Source Serif for this example:
+      *   font = await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf');
+      *   
+      *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
       *   geom.clearColors();
       *   geom.normalize();
       * }
       *
       * function draw() {
       *   background(255);
-      *   orbitControl(); // Enables mouse control to rotate the 3D text.
+      *   orbitControl();
       *   fill("red");
       *   strokeWeight(4);
       *   scale(min(width, height) / 300);
       *   model(geom);
-      *
       *   describe('3D red extruded "Hello" in Source Serif on white, rotatable via mouse.');
       * }
       * </code>
@@ -230,24 +226,30 @@ class Font {
       * <div modernizr='webgl'>
       * <code>
       * let geom;
-      * let fonts;
+      * let activeFont;
       * let artShader;
       * let lineShader;
       *
       * // Define parameters as simple variables
       * let words = 'HELLO';
-      * let font = 'Anton';
       * let warp = 1;
       * let extrude = 5;
       * let palette = ["#ffe03d", "#fe4830", "#d33033", "#6d358a", "#1c509e", "#00953c"];
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   fonts = {
-      *     Anton: await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'),
-      *     Montserrat: await loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'),
-      *     'Source Serif': await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'),
-      *   };
+      *
+      *   // Using Anton as the default font for this example:
+      *  
+      *  // Alternative fonts:
+      *  // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *  // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *  // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   activeFont = await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf');
+      *
+      *   geom = activeFont.textToModel(words, 0, 50, { sampleFactor: 2, extrude });
+      *   geom.clearColors();
+      *   geom.normalize();
       *
       *   artShader = baseMaterialShader().modify({
       *     uniforms: {
@@ -273,7 +275,7 @@ class Font {
       *       return vec4(c, 1.);
       *     }`
       *   });
-      *
+      *   
       *   lineShader = baseStrokeShader().modify({
       *     uniforms: {
       *       'float time': () => millis(),
@@ -287,23 +289,7 @@ class Font {
       *   });
       * }
       *
-      * let prevWords = '';
-      * let prevFont = '';
-      * let prevExtrude = -1;
-      *
       * function draw() {
-      *   if (words !== prevWords || prevFont !== font || prevExtrude !== extrude) {
-      *     if (geom) freeGeometry(geom);
-      *
-      *     geom = fonts[font].textToModel(words, 0, 50, { sampleFactor: 2, extrude });
-      *     geom.clearColors();
-      *     geom.normalize();
-      *
-      *     prevWords = words;
-      *     prevFont = font;
-      *     prevExtrude = extrude;
-      *   }
-      *
       *   background(255);
       *   orbitControl();
       *   shader(artShader);

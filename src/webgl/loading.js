@@ -98,11 +98,11 @@ function loading(p5, fn){
    *
    * @method loadModel
    * @param  {String|Request} path      path of the model to be loaded.
+   * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
-   * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
@@ -330,9 +330,9 @@ function loading(p5, fn){
    * @method loadModel
    * @param  {String|Request} path
    * @param  {Object} [options] loading options.
+   * @param  {String} [options.fileType]
    * @param  {function(p5.Geometry)} [options.successCallback]
    * @param  {function(Event)} [options.failureCallback]
-   * @param  {String} [options.fileType]
    * @param  {Boolean} [options.normalize]
    * @param  {Boolean} [options.flipU]
    * @param  {Boolean} [options.flipV]
