@@ -812,22 +812,20 @@ export class Matrix extends MatrixInterface {
    * @returns {Matrix} The current matrix after applying the transformation.
    *
    * @example
+   * <div class="norender"><code>
+   * function setup() {
+   *
    * // Assuming `matrix` is an instance of Matrix
    * const anotherMatrix = new p5.Matrix();
    * matrix.apply(anotherMatrix);
    *
-   * @example
    * // Applying a transformation using an array
    * const matrixArray = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
    * matrix.apply(matrixArray);
    *
-   * @example
    * // Applying a transformation using individual arguments
    * matrix.apply(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
    *
-   * // p5.js script example
-   * <div class="norender"><code>
-   * function setup() {
    *
    *   // Create a 4x4 identity matrix
    *   const matrix = new p5.Matrix(4);
@@ -988,9 +986,29 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
+   * Rotate the Matrix around a specified axis by a given angle.
+   *
+   * This method applies a rotation transformation to the matrix, modifying its orientation
+   * in 3D space. The rotation is performed around the provided axis, which can be defined
+   * as a `p5.Vector` or an array of numbers representing the x, y, and z components of the axis.
    * Rotate our Matrix around an axis by the given angle.
-   * @param  {Number} a The angle of rotation in radians
-   * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
+   * @param  {Number} a The angle of rotation in radians.
+   *                    Angles in radians are a measure of rotation, where 2π radians
+   *                    represent a full circle (360 degrees). For example:
+   *                    - π/2 radians = 90 degrees (quarter turn)
+   *                    - π radians = 180 degrees (half turn)
+   *                    - 2π radians = 360 degrees (full turn)
+   *                    Use `Math.PI` for π or `p5`'s `PI` constant if using p5.js.
+   * @param  {p5.Vector|Number[]} axis The axis or axes to rotate around.
+   *                                   This defines the direction of the rotation.
+   *                                   - If using a `p5.Vector`, it should represent
+   *                                     the x, y, and z components of the axis.
+   *                                   - If using an array, it should be in the form
+   *                                     [x, y, z], where x, y, and z are numbers.
+   *                                   For example:
+   *                                   - [1, 0, 0] rotates around the x-axis.
+   *                                   - [0, 1, 0] rotates around the y-axis.
+   *                                   - [0, 0, 1] rotates around the z-axis.   *
    * @chainable
    * inspired by Toji's gl-matrix lib, mat4 rotation
    */
