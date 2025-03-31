@@ -84,7 +84,7 @@ export class Matrix extends MatrixInterface {
    * matrix1.add(matrix2); // matrix1 is now [5, 7, 9]
    *
    * // p5.js script example
-   * <div><code>
+   * <div class="norender"><code>
    * function setup() {
    *
    *   const matrix1 = new p5.Matrix([1, 2, 3, 4]);
