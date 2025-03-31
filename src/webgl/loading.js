@@ -203,7 +203,7 @@ function loading(p5, fn){
    *
    * // Load the file and create a p5.Geometry object.
    * function setup() {
-   *   loadModel('assets/wrong.obj', true, handleModel, handleError);
+   *   loadModel('assets/teapot.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -242,7 +242,7 @@ function loading(p5, fn){
    *
    * // Load the file and create a p5.Geometry object.
    * function setup() {
-   *   loadModel('assets/teapot.obj', true, handleModel, handleError, '.obj');
+   *   loadModel('assets/teapot.obj', '.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -279,10 +279,10 @@ function loading(p5, fn){
    *
    * let shape;
    * let options = {
+   *   fileType: '.obj',
    *   normalize: true,
    *   successCallback: handleModel,
-   *   failureCallback: handleError,
-   *   fileType: '.obj'
+   *   failureCallback: handleError
    * };
    *
    * // Load the file and create a p5.Geometry object.
@@ -321,9 +321,9 @@ function loading(p5, fn){
   /**
    * @method loadModel
    * @param  {String|Request} path
+   * @param  {String} [fileType]
    * @param  {function(p5.Geometry)} [successCallback]
    * @param  {function(Event)} [failureCallback]
-   * @param  {String} [fileType]
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
   /**

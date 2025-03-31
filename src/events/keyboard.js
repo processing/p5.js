@@ -196,32 +196,36 @@ function keyboard(p5, fn){
   fn.key = '';
 
   /**
-   * A `Number` system variable that contains the code of the last key typed.
+   * A `Number` system variable that contains the code of the last key pressed.
    *
-   * All keys have a `keyCode`. For example, the `a` key has the `keyCode` 65.
-   * The `keyCode` variable is helpful for checking whether a special key has
-   * been typed. For example, the following conditional checks whether the enter
-   * key has been typed:
+   * Every key has a numeric key code. For example, the letter `a` key has the key code 65.
+   * Use this key code to determine which key was pressed by comparing it to the numeric value
+   * of the desired key.
+   *
+   * For example, to detect when the Enter key is pressed:
    *
    * ```js
-   * if (keyCode === 13) {
-   *   // Code to run if the enter key was pressed.
+   * if (keyCode === 13) { // Enter key
+   *   // Code to run if the Enter key was pressed.
    * }
    * ```
    *
-   * The same code can be written more clearly using the system variable `ENTER`
-   * which has a value of 13:
+   * Alternatively, you can use the <a href="#/p5/key">key</a> function to directly compare the key value:
    *
    * ```js
-   * if (keyCode === 13) {
-   *   // Code to run if the enter key was pressed.
+   * if (key === 'Enter') { // Enter key
+   *   // Code to run if the Enter key was pressed.
    * }
    * ```
    *
-   * The system variables `BACKSPACE`, `DELETE`, `ENTER`, `RETURN`, `TAB`,
-   * `ESCAPE`, `SHIFT`, `CONTROL`, `OPTION`, `ALT`, `UP_ARROW`, `DOWN_ARROW`,
-   * `LEFT_ARROW`, and `RIGHT_ARROW` are all helpful shorthands the key codes of
-   * special keys. Key codes can be found on websites such as
+   * Use the following numeric codes for the arrow keys:
+   *
+   *   Up Arrow: 38  
+   *   Down Arrow: 40  
+   *   Left Arrow: 37  
+   *   Right Arrow: 39
+   *
+   * More key codes can be found at websites such as 
    * <a href="http://keycode.info/">keycode.info</a>.
    *
    * @property {Integer} keyCode
@@ -273,13 +277,13 @@ function keyboard(p5, fn){
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
    *   if (keyIsPressed === true) {
-   *     if (keyCode === UP_ARROW) {
+   *     if (keyCode === 38) { // Up arrow key
    *       y -= 1;
-   *     } else if (keyCode === DOWN_ARROW) {
+   *     } else if (keyCode === 40) { // Down arrow key
    *       y += 1;
-   *     } else if (keyCode === LEFT_ARROW) {
+   *     } else if (keyCode === 37) { // Left arrow key
    *       x -= 1;
-   *     } else if (keyCode === RIGHT_ARROW) {
+   *     } else if (keyCode === 39) { // Right arrow key
    *       x += 1;
    *     }
    *   }
@@ -317,7 +321,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) { // Enter key
    *     // Code to run.
    *   }
    * }
@@ -443,9 +447,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user presses an arrow key.
    * function keyPressed() {
-   *   if (keyCode === 37) {
+   *   if (keyCode === 37) { // Left arrow key
    *     value = 255;
-   *   } else if (keyCode === 39) {
+   *   } else if (keyCode === 39) { // Right arrow key
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -497,7 +501,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === 13) {
+   *   if (keyCode === 13) { // Enter key
    *     // Code to run.
    *   }
    * }
@@ -620,9 +624,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user releases an arrow key.
    * function keyReleased() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) { // Left arrow key
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) { // Right arrow key
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -683,7 +687,7 @@ function keyboard(p5, fn){
    *   }
    *
    *   // Check for "c" using keyCode.
-   *   if (keyCode === 67) {
+   *   if (keyCode === 67) { // 67 is the ASCII code for 'c'
    *     // Code to run.
    *   }
    * }
@@ -899,19 +903,19 @@ function keyboard(p5, fn){
    *
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
-   *   if (keyIsDown(37) === true) {
+   *   if (keyIsDown('ArrowLeft') === true) {
    *     x -= 1;
    *   }
    *
-   *   if (keyIsDown(39) === true) {
+   *   if (keyIsDown('ArrowRight') === true) {
    *     x += 1;
    *   }
    *
-   *   if (keyIsDown(38) === true) {
+   *   if (keyIsDown('ArrowUp') === true) {
    *     y -= 1;
    *   }
    *
-   *   if (keyIsDown(40) === true) {
+   *   if (keyIsDown('ArrowDown') === true) {
    *     y += 1;
    *   }
    *
