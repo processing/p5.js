@@ -23,13 +23,14 @@ function shadergenerator(p5, fn) {
           ecmaVersion: 2021,
           locations: options.srcLocations
         });
-        ancestor(ast, ASTCallbacks);
+        ancestor(ast, ASTCallbacks, undefined, { varyings: {} });
         const transpiledSource = escodegen.generate(ast);
         generatorFunction = new Function(
-          transpiledSource.slice(
+          transpiledSource
+          .slice(
             transpiledSource.indexOf('{') + 1,
             transpiledSource.lastIndexOf('}')
-          )
+          ).replaceAll(';', '')
         );
       } else {
         generatorFunction = shaderModifier;
@@ -127,7 +128,28 @@ function shadergenerator(p5, fn) {
           value: node.id.name
         }
         node.init.arguments.unshift(varyingNameLiteral);
-        _state[node.id.name] = varyingNameLiteral;
+        _state.varyings[node.id.name] = varyingNameLiteral;
+      }
+    },
+    Identifier(node, _state, _ancestors) {
+      if (_state.varyings[node.name] 
+          && !_ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)) {
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: {
+              type: 'Identifier',
+              name: node.name
+            },
+            property: {
+              type: 'Identifier',
+              name: 'getValue'
+            },
+          },
+          arguments: [],
+        }
       }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
@@ -160,7 +182,7 @@ function shadergenerator(p5, fn) {
             arguments: [node.right]
           }
         }
-        if (_state[node.left.name]) {
+        if (_state.varyings[node.left.name]) {
           node.type = 'ExpressionStatement';
           node.expression = {
             type: 'CallExpression',
@@ -251,7 +273,7 @@ function shadergenerator(p5, fn) {
             },
             set(newValue) {
               this.componentsChanged = true;
-              if (isUnaryNode(this)) {
+              if (isUnaryExpressionNode(this)) {
                 this.node.value = newValue;
               } else {
                 value = newValue;
@@ -318,13 +340,13 @@ function shadergenerator(p5, fn) {
         }
         return other;
       }
-      else if(typeof other === 'number') {
+      else if (typeof other === 'number') {
         if (isIntType(this)) {
           return new IntNode(other);
         }
         return new FloatNode(other);
       }
-      else if(Array.isArray(other)) {
+      else if (Array.isArray(other)) {
         return nodeConstructors.dynamicVector(other);
         // return nodeConstructors[`vec${other.length}`](other);
       }
@@ -544,17 +566,42 @@ function shadergenerator(p5, fn) {
     }
   }
 
+  // 
   class VaryingNode extends VariableNode {
     constructor(name, type, isInternal = false) {
       super(name, type, isInternal);
-      this.isSet = false;
-      this.value = null;
+      this.timesChanged = 0;
+      this.tempVars = 0;
     }
+
+    getValue() {
+      const context = GLOBAL_SHADER.context;
+      if (!context.varyings[this.name] || !this.timesChanged) {
+        return this;
+      }
+
+      let values = context.varyings[this.name].splice(0, this.timesChanged);
+      let snapshot;
+      values.forEach((val, i) => {
+        let { value } = val;
+        context.declarations.push(`  ${this.name} = ${value.toGLSLBase(context)};`);
+        if (i === values.length - 1) {
+          const tempName = `${this.name}_${this.tempVars++}`
+          snapshot = dynamicAddSwizzleTrap(new VariableNode(tempName, this.type, true));
+          context.declarations.push(`  ${this.type} ${tempName} = ${this.name};`);
+        }
+      });
+
+      this.timesChanged = 0;
+      return snapshot;
+    }
+
     bridge(value) {
       if (!isShaderNode(value) || this.type.startsWith('vec') && getType(value) === 'float') {
         value = nodeConstructors[this.type](value)
-      } 
+      }
       GLOBAL_SHADER.registerVarying(this, value);
+      this.timesChanged += 1
     }
   }
 
@@ -562,7 +609,7 @@ function shadergenerator(p5, fn) {
   class BinaryExpressionNode extends BaseNode {
     constructor(left, right, operator, isInternal = false) {
       super(isInternal, null);
-      this.op = operator;
+      this.operator = operator;
       this.left = left;
       this.right = right;
       for (const operand of [left, right]) {
@@ -574,7 +621,10 @@ function shadergenerator(p5, fn) {
 
     // We know that both this.left and this.right are nodes because of BaseNode.enforceType
     determineType() {
-      if (this.left.type === this.right.type) {
+      if (['==', '>', '>=', '<', '<=', '||', '!', '&&'].includes(this.operator)) {
+        return 'bool';
+      }
+      else if (this.left.type === this.right.type) {
         return this.left.type;
       }
       else if (isVectorType(this.left) && isFloatType(this.right)) {
@@ -608,7 +658,7 @@ function shadergenerator(p5, fn) {
     toGLSL(context) {
       const a = this.processOperand(this.left, context);
       const b = this.processOperand(this.right, context);
-      return `${a} ${this.op} ${b}`;
+      return `${a} ${this.operator} ${b}`;
     }
   }
 
@@ -625,7 +675,7 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  class UnaryNode extends BaseNode {
+  class UnaryExpressionNode extends BaseNode {
     constructor(node, operator, isInternal = false) {
       super(isInternal, node.type)
       this.node = node;
@@ -644,32 +694,62 @@ function shadergenerator(p5, fn) {
     }
   }
 
+  // Conditions and logical modifiers
+  BaseNode.prototype.equalTo = function(other) {
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '=='); 
+  }
+
+  BaseNode.prototype.greaterThan = function(other) {
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>'); 
+  }
+
+  BaseNode.prototype.greaterThanEqualTo = function(other) {
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>='); 
+  }
+
+  BaseNode.prototype.lessThan = function(other) {
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '<'); 
+  }
+  
+  BaseNode.prototype.lessThanEqualTo = function(other) {
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '<='); }
+ 
+  BaseNode.prototype.not = function() {
+     return new UnaryExpressionNode(this.condition, '!', true); 
+  }
+ 
+  BaseNode.prototype.or = function(other) {
+    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '||', true); 
+  }
+  
+  BaseNode.prototype.and = function(other) {
+    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '&&', true); 
+  }
+
   // TODO: finish If Node
   class ConditionalNode extends BaseNode {
-    constructor(value) {
-      super(value);
-      this.value = value;
-      this.condition = null;
+    constructor(condition) {
+      this.condition = condition;
       this.thenBranch = null;
       this.elseBranch = null;
     }
-    // conditions
-    equalTo(value){}
-    greaterThan(value) {}
-    greaterThanEqualTo(value) {}
-    lessThan(value) {}
-    lessThanEqualTo(value) {}
-    // modifiers
-    not() {}
-    or() {}
-    and() {}
+
     // returns
-    thenReturn(value) {}
-    elseReturn(value) {}
-    //
+    thenReturn(value) {
+      this.thenBranch = value
+    }
+    elseReturn(value) {
+      this.elseBranch = value
+    }
     thenDiscard() {
-      new ConditionalDiscard(this.condition);
+      return new ConditionalDiscard(this.condition);
     };
+
+    toGLSL(context) {
+      let str = `if (${this.condition}) {
+
+      }`
+    }
   };
 
   class ConditionalDiscard extends BaseNode {
@@ -677,7 +757,7 @@ function shadergenerator(p5, fn) {
       this.condition = condition;
     }
     toGLSL(context) {
-      context.discardConditions.push(`if(${this.condition}{discard;})`);
+      context.discardConditions.push(`if (${this.condition}{discard;})`);
     }
   }
 
@@ -725,7 +805,7 @@ function shadergenerator(p5, fn) {
   // For replacing unary expressions
   fn.unaryNode = function(input, sign) {
     input = dynamicNode(input);
-    return dynamicAddSwizzleTrap(new UnaryNode(input, sign));
+    return dynamicAddSwizzleTrap(new UnaryExpressionNode(input, sign));
   }
 
   function isShaderNode(node) {
@@ -756,6 +836,10 @@ function shadergenerator(p5, fn) {
     return (node instanceof VariableNode || node instanceof ComponentNode);
   }
 
+  function isVaryingNode(node) {
+    return (node instanceof VaryingNode);
+  }
+
   function hasTemporaryVariable(node) {
     return (node.temporaryVariable);
   }
@@ -772,8 +856,8 @@ function shadergenerator(p5, fn) {
     return (node instanceof VectorNode)
   }
 
-  function isUnaryNode(node) {
-    return (node instanceof UnaryNode)
+  function isUnaryExpressionNode(node) {
+    return (node instanceof UnaryExpressionNode)
   }
 
   // Helper function to check if a type is a user defined struct or native type
@@ -871,7 +955,6 @@ function shadergenerator(p5, fn) {
             }
           }
 
-
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
@@ -889,14 +972,6 @@ function shadergenerator(p5, fn) {
             updateComponents(returnedValue);
           }
 
-          this.context.varyings.forEach(varying => {
-            let { node, value } = varying;
-            this.context.declarations.push(
-              `  ${node.name} = ${value.toGLSLBase(this.context)};`
-            );
-            this.output.vertexDeclarations.add(`out ${node.type} ${node.name};`);
-            this.output.fragmentDeclarations.add(`in ${node.type} ${node.name};`);
-          })
 
           // Build the final GLSL string.
           // The order of this code is a bit confusing, we need to call toGLSLBase
@@ -909,8 +984,21 @@ function shadergenerator(p5, fn) {
           Object.entries(toGLSLResults).forEach(([propertyName, result]) => {
             const propString = expectedReturnType.properties ? `.${propertyName}` : '';
             codeLines.push(`  finalReturnValue${propString} = ${result};`)
-          })
+          });
 
+          this.context.declarations = [];
+          for (let key in this.context.varyings) {
+            const declArray = this.context.varyings[key];
+            const finalVaryingAssignments = [];
+            declArray.forEach(obj => {
+              const { node, value } = obj;
+              finalVaryingAssignments.push(`  ${node.name} = ${value.toGLSLBase(this.context)};`)
+              finalVaryingAssignments.unshift(...this.context.declarations);
+              node.timesChanged = 0;
+            });
+            codeLines.push(...finalVaryingAssignments);
+          }
+          
           codeLines.push('  return finalReturnValue;', '}');
           this.output[hookName] = codeLines.join('\n');
           this.resetGLSLContext();
@@ -932,7 +1020,12 @@ function shadergenerator(p5, fn) {
     }
 
     registerVarying(node, value) {
-      this.context.varyings.push({ node, value })
+      if (!Array.isArray(this.context.varyings[node.name])) { 
+        this.context.varyings[node.name] = []; 
+      }
+      this.context.varyings[node.name].push({ node, value });
+      this.output.vertexDeclarations.add(`out ${node.type} ${node.name};`);
+      this.output.fragmentDeclarations.add(`in ${node.type} ${node.name};`);
     }
 
     resetGLSLContext() {
@@ -981,7 +1074,7 @@ function shadergenerator(p5, fn) {
     ].map(s => s.slice(0, size));
     return { 
       get(target, property, receiver) {
-        if(target[property]) {
+        if (target[property]) {
           return Reflect.get(...arguments);
         } else {
           for (const set of swizzleSets) {
@@ -1020,7 +1113,7 @@ function shadergenerator(p5, fn) {
   }
     
   // User functions
-  fn.if = function (value) {
+  fn.If = function (value) {
     return new ConditionalNode(value);
   }
 
@@ -1090,7 +1183,7 @@ function shadergenerator(p5, fn) {
 
     ShaderGenerator.prototype[uniformMethodName] = function(...args) {
       let [name, ...defaultValue] = args;
-      if(glslType.startsWith('vec') && !(defaultValue[0] instanceof Function)) {
+      if (glslType.startsWith('vec') && !(defaultValue[0] instanceof Function)) {
         defaultValue = conformVectorParameters(defaultValue, parseInt(glslType.slice(3)));
         this.output.uniforms[`${glslType} ${name}`] = defaultValue;
       }
@@ -1112,7 +1205,7 @@ function shadergenerator(p5, fn) {
 
     const varyingMethodName = `varying${typeIdentifier}`;
     ShaderGenerator.prototype[varyingMethodName] = function(name) {
-      return new VaryingNode(name, glslType, false);
+      return dynamicAddSwizzleTrap(new VaryingNode(name, glslType, false));
     }
 
     fn[varyingMethodName] = function (name) {
@@ -1122,7 +1215,7 @@ function shadergenerator(p5, fn) {
     // Generate the create*() Methods for creating variables in shaders
     const createMethodName = `create${typeIdentifier}`;
     fn[createMethodName] = function (...value) {
-      if(glslType.startsWith('vec')) {
+      if (glslType.startsWith('vec')) {
         value = conformVectorParameters(value, parseInt(glslType.slice(3)));
       } else {
         value = value[0];
