@@ -11,6 +11,7 @@ import escodegen from 'escodegen';
 
 function shadergenerator(p5, fn) {
   let GLOBAL_SHADER;
+  let BRANCH;
 
   const oldModify = p5.Shader.prototype.modify
 
@@ -52,7 +53,14 @@ function shadergenerator(p5, fn) {
       case '*': return 'mult';
       case '/': return 'div';
       case '%': return 'mod';
-    }
+      case '==':
+      case '===': return 'equalTo';
+      case '>': return 'greaterThan';
+      case '>=': return 'greaterThanEqualTo';
+      case '<': return 'lessThan';
+      case '&&': return 'and';
+      case '||': return 'or';
+      }
   }
 
   function ancestorIsUniform(ancestor) {
@@ -154,6 +162,15 @@ function shadergenerator(p5, fn) {
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions
+    ArrayExpression(node, _state, _ancestors) {
+      const original = JSON.parse(JSON.stringify(node));
+      node.type = 'CallExpression';
+      node.callee = {
+        type: 'Identifier',
+        name: 'dynamicNode',
+      };
+      node.arguments = [original];
+    },
     AssignmentExpression(node, _state, _ancestors) {
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
@@ -172,16 +189,16 @@ function shadergenerator(p5, fn) {
           node.operator = '=';
           node.right = rightReplacementNode;
         }
-        if (node.right.type === 'ArrayExpression') {
-          node.right = {
-            type: 'CallExpression',
-            callee: {
-              type: 'Identifier',
-              name: 'dynamicNode',
-            },
-            arguments: [node.right]
-          }
-        }
+        // if (node.right.type === 'ArrayExpression') {
+        //   node.right = {
+        //     type: 'CallExpression',
+        //     callee: {
+        //       type: 'Identifier',
+        //       name: 'dynamicNode',
+        //     },
+        //     arguments: [node.right]
+        //   }
+        // }
         if (_state.varyings[node.left.name]) {
           node.type = 'ExpressionStatement';
           node.expression = {
@@ -284,20 +301,35 @@ function shadergenerator(p5, fn) {
       }
     }
 
+    checkIfUsedInConditional(context) {
+      context.ifs.forEach((statement) => {
+        if (statement.insertionPoint > -1) return;
+        if (statement.dependsOn.includes(this)) {
+          const i = statement.dependsOn.indexOf(this);
+          statement.dependsOn.splice(i, 1);
+        }
+        if (statement.dependsOn.length === 0) {
+          statement.saveState();
+        }
+      });
+    }
+
     // The base node implements a version of toGLSL which determines whether the generated code should be stored in a temporary variable.
     toGLSLBase(context){
+      let result;
       if (this.shouldUseTemporaryVariable()) {
-        return this.getTemporaryVariable(context);
+        result = this.getTemporaryVariable(context);
+      } else {
+        result = this.toGLSL(context);
       }
-      else {
-        return this.toGLSL(context);
-      }
+      this.checkIfUsedInConditional(context);
+      return result;
     }
 
     shouldUseTemporaryVariable() {
-      if (this.isInternal || isVariableNode(this) || this.type === 'sampler2D') { return false; }
+      if (this.isInternal || isVariableNode(this) || isConditionalNode(this) || this.type === 'sampler2D') { return false; }
       // Swizzles must use temporary variables as otherwise they will not be registered
-      if (this.componentsChanged || hasTemporaryVariable(this)) { return true; }
+      if (this.componentsChanged) { return true; }
       let score = 0;
       score += isFunctionCallNode(this) * 2;
       score += isBinaryExpressionNode(this) * 2;
@@ -725,34 +757,129 @@ function shadergenerator(p5, fn) {
   BaseNode.prototype.and = function(other) {
     return new binaryExpressionNodeConstructor(this, this.enforceType(other), '&&', true); 
   }
+  
+  function branch(callback) {
+    const branch = new BranchNode();
+    callback();
+    BRANCH = null;
+    return branch;
+  }
 
-  // TODO: finish If Node
-  class ConditionalNode extends BaseNode {
-    constructor(condition) {
-      this.condition = condition;
-      this.thenBranch = null;
+  class ConditionalNode {
+    constructor(condition, branchCallback) {
+      this.dependsOn = [];
+      this.if(condition, branchCallback);
+      this.insertionPoint = -1;
+      this.elseIfs = [];
       this.elseBranch = null;
+      GLOBAL_SHADER.context.ifs.push(this);
     }
 
-    // returns
-    thenReturn(value) {
-      this.thenBranch = value
+    if(condition, branchCallback) {
+      this.condition = dynamicNode(condition);
+      this.dependsOn.push(this.condition.left, this.condition.right);
+      this.ifBranch = branch(branchCallback);
+      this.ifBranch.parent = this;
     }
-    elseReturn(value) {
-      this.elseBranch = value
+
+    elseIf(condition, branchCallback) {
+      let elseBranch = branch(branchCallback);
+      branchCallback.parent = this;
+      this.dependsOn.push(condition.left, condition.right);
+      this.elseIfs.push({ condition, elseBranch });
+      return this;
     }
+
+    else(branchCallback) {
+      this.elseBranch = branch(branchCallback);
+      this.elseBranch.parent = this
+      return this;
+    }
+
     thenDiscard() {
       return new ConditionalDiscard(this.condition);
     };
 
-    toGLSL(context) {
-      let str = `if (${this.condition}) {
+    saveState() {
+      if (this.insertionPoint = -1) {
+        this.insertionPoint = GLOBAL_SHADER.context.declarations.length;
+      }
+      console.log(this.insertionPoint)
+    }
 
-      }`
+    toGLSL(context) {
+      let str = `  if (${this.condition.toGLSL(context)}) {`
+      str += `\n    ${this.ifBranch.toGLSL(context)}`
+      str += `\n  }`;
+
+      if (this.elseIfs.length) {
+        this.elseIfs.forEach((elif) => {
+          let { condition, elseBranch } = elif;
+          str += ` else if (${condition.toGLSL(context)}) {`
+          str += `\n    ${elseBranch.toGLSL(context)}`
+          str += `\n  }`;
+        })
+      }
+
+      if (this.elseBranch) {
+        str += ` else {`
+        str += `\n    ${this.elseBranch.toGLSL(context)}`
+        str += `\n  }`;
+      }
+
+      return str;
     }
   };
 
-  class ConditionalDiscard extends BaseNode {
+  fn.assign = function(node, value) {
+    if (!BRANCH) {
+       throw new error('assign() is supposed to be used inside of conditional branchs. Use the "=" operator as normal otherwise.');
+    }
+    BRANCH.assign(node, value);
+  }
+
+  class BranchNode {
+    constructor(_condition) {
+      BRANCH = this;
+      this.statements = [];
+      this.dependsOn = [];
+      this.values = [];
+      Object.defineProperty(this, 'parent', {
+        set(newParent) {
+          newParent.dependsOn.push(this.dependsOn);
+          newParent.dependsOn = newParent.dependsOn.flat();
+          parent = newParent;
+        }
+      })
+    }
+
+    assign(node, value) {
+      this.dependsOn.push(node);
+      this.values.push(value);
+    }
+
+    toGLSL(context) {
+      this.dependsOn.forEach((node, i) => {
+        let statement;
+        const value = this.values[i];
+        const result = nodeConstructors[node.type](value)
+                .toGLSL(context);
+
+        if (isVariableNode(node) || hasTemporaryVariable(node)) {
+        statement = `${node.toGLSLBase(context)} = ${result};`;
+        } else {
+        node.temporaryVariable = `temp_${context.getNextID()}`;
+        statement = `${node.type} ${node.toGLSLBase(context)} = ${result};`
+        }
+
+        this.statements.push(statement);
+      })
+
+      return this.statements.join (`\n    `)
+    }
+  }
+
+  class ConditionalDiscard {
     constructor(condition){
       this.condition = condition;
     }
@@ -836,8 +963,8 @@ function shadergenerator(p5, fn) {
     return (node instanceof VariableNode || node instanceof ComponentNode);
   }
 
-  function isVaryingNode(node) {
-    return (node instanceof VaryingNode);
+  function isConditionalNode(node) {
+    return (node instanceof ConditionalNode)
   }
 
   function hasTemporaryVariable(node) {
@@ -972,7 +1099,10 @@ function shadergenerator(p5, fn) {
             updateComponents(returnedValue);
           }
 
-
+          this.context.ifs.forEach((statement, index) => {
+            const lines = statement.toGLSL(this.context);
+            this.context.declarations.splice(statement.insertionPoint, 0, lines);
+          })
           // Build the final GLSL string.
           // The order of this code is a bit confusing, we need to call toGLSLBase
           let codeLines = [
@@ -1038,6 +1168,7 @@ function shadergenerator(p5, fn) {
         getNextID() { return this.id++ },
         declarations: [],
         varyings: [],
+        ifs: [],
       }
       this.uniformNodes = [];
     }
@@ -1087,6 +1218,7 @@ function shadergenerator(p5, fn) {
                 const mappedChar = swizzleSets[0][index];
                 return target[mappedChar];
               });
+
               const type = `vec${property.length}`;
               return nodeConstructors[type](components);
             }
@@ -1094,27 +1226,26 @@ function shadergenerator(p5, fn) {
         }
       },
       set(target, property, value, receiver) {
-      for (const set of swizzleSets) {
-        if ([...property].every(char => set.includes(char))) {
-          const newValues = Array.isArray(value) 
-            ? value 
-            : Array(property.length).fill(value);
-          [...property].forEach((char, i) => {
-            const index = set.indexOf(char);
-            const realProperty = swizzleSets[0][index];
-            Reflect.set(target, realProperty, newValues[i]);
-          });
-          return true;
+        for (const set of swizzleSets) {
+          const propertyCharArray = [...property];
+          if (propertyCharArray.every(char => set.includes(char))) {
+            const newValues = Array.isArray(value) ? value : Array(property.length).fill(value);
+            propertyCharArray.forEach((char, i) => {
+              const index = set.indexOf(char);
+              const realProperty = swizzleSets[0][index];
+              Reflect.set(target, realProperty, newValues[i]);
+            });
+            return true;
+          }
         }
-      }
-      return Reflect.set(target, property, value, receiver);
+        return Reflect.set(...arguments);
       }
     }
   }
     
   // User functions
-  fn.If = function (value) {
-    return new ConditionalNode(value);
+  fn.If = function (condition, branch) {
+    return new ConditionalNode(condition, branch);
   }
 
   fn.instanceID = function() {
