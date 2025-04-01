@@ -817,6 +817,32 @@ function font(p5, fn) {
   p5.Font = Font;
 
   /**
+   * @private
+   */
+  fn.parseFontData = async function(pathOrData) {
+    // load the raw font bytes
+    let result = pathOrData instanceof Uint8Array
+      ? pathOrData
+      : await fn.loadBytes(path);
+    //console.log('result:', result);
+
+    if (!result) {
+      throw Error('Failed to load font data');
+    }
+
+    // parse the font data
+    let fonts = Typr.parse(result);
+
+    // TODO: generate descriptors from font in the future
+
+    if (fonts.length === 0 || fonts[0].cmap === undefined) {
+      throw Error('parsing font data');
+    }
+
+    return fonts[0];
+  };
+
+  /**
    * Loads a font and creates a <a href="#/p5.Font">p5.Font</a> object.
    * `loadFont()` can load fonts in either .otf or .ttf format. Loaded fonts can
    * be used to style text on the canvas and in HTML elements.
@@ -996,37 +1022,39 @@ function font(p5, fn) {
               .join('');
             fontDescriptors[camelCaseKey] = style.getPropertyValue(key);
           }
-          fontPromises.push(create(this, name, src, fontDescriptors));
+          fontPromises.push((async () => {
+            let fontData;
+            try {
+              const urlMatch = /url\(([^\)]+)\)/.exec(src);
+              if (urlMatch) {
+                let url = urlMatch[1];
+                if (/^['"]/.exec(url) && url.at(0) === url.at(-1)) {
+                  url = url.slice(1, -1)
+                }
+                fontData = await fn.parseFontData(url);
+              }
+            } catch (_e) {
+              console.log(
+                'This font can only be drawn and will not work with textToPoints/Contours/Model.'
+              );
+            }
+            return create(this, name, src, fontDescriptors, fontData)
+          })());
         }
       }
       const fonts = await Promise.all(fontPromises);
-      return fonts[0]; // TODO: handle multiple faces?
+      return fonts.find(f => f.data) || fonts[0]; // TODO: handle multiple faces?
     }
 
     let pfont;
     try {
-      // load the raw font bytes
-      let result = await fn.loadBytes(path);
-      //console.log('result:', result);
-
-      if (!result) {
-        throw Error('Failed to load font data');
-      }
-
-      // parse the font data
-      let fonts = Typr.parse(result);
-
-      // TODO: generate descriptors from font in the future
-
-      if (fonts.length === 0 || fonts[0].cmap === undefined) {
-        throw Error('parsing font data');
-      }
+      const fontData = await fn.parseFontData(path);
 
       // make sure we have a valid name
-      name = name || extractFontName(fonts[0], path);
+      name = name || extractFontName(font, path);
 
       // create a FontFace object and pass it to the p5.Font constructor
-      pfont = await create(this, name, path, descriptors, fonts[0]);
+      pfont = await create(this, name, path, descriptors, fontData);
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
