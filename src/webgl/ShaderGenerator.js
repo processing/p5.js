@@ -5,6 +5,7 @@
 * @requires core
 */
 
+import replace from '@rollup/plugin-replace';
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
@@ -1219,18 +1220,13 @@ function shadergenerator(p5, fn) {
         ifs: [],
         updateComponents: function(node, _emplaceAt) {
           if (node.componentsChanged) {
+            const lines = [];
             if (isVectorNode(node)) {
               node.componentNames.forEach((name, i) => {
-                const lines = [];
                 if (node[name] !== node.originalValues[i]) {
                   const replacement = nodeConstructors['float'](node[name]);
                   const line = `  ${node.temporaryVariable}.${name} = ${replacement.toGLSLBase(this)};`;
                   lines.push(line);
-                }
-                if (_emplaceAt) {
-                  this.declarations.splice(_emplaceAt, 0, ...lines)
-                } else {
-                  this.declarations.push(...lines);
                 }
               });
             } else {
@@ -1238,12 +1234,30 @@ function shadergenerator(p5, fn) {
                 return node[name]
               });
               const replacement = nodeConstructors[node.type](components);
-              this.declarations.push(line);
+              const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
+              lines.push(line);
+            }
+            if (_emplaceAt) {
+              this.declarations.splice(_emplaceAt, 0, ...lines)
+            } else {
+              this.declarations.push(...lines);
             }
             node.componentsChanged = false;
           }
         }
       }
+      // const updateComponents = (node) => {
+      //   if (node.componentsChanged) {
+      //     const components = node.componentNames.map((componentName) => {
+      //       return node[componentName]
+      //     });
+      //     const replacement = nodeConstructors[node.type](components);
+      //     this.context.declarations.push(
+      //       `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
+      //     );
+      //   }
+      // }
+
       this.uniformNodes = [];
     }
   }
