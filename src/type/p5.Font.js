@@ -110,79 +110,82 @@ class Font {
    * @param  {Object} [options]      Configuration object for rendering text.
    * @return {Array<Array>}          A flat array of path commands.
    * 
-  * <code>
-  * let font;
-  *
-  * async function setup() {
-  *   font = await loadFont('assets/inconsolata.otf');
-  *   createCanvas(200, 200);
-  *   background(220);
-  *   noLoop();
-  * }
-  *
-  * function draw() {
-  *   background(220);
-  *   stroke(0);
-  *   noFill();
-  *   textSize(60);
-  *   
-  *   // Get path commands for "Hello" (drawn at baseline x=50, y=100):
-  *   const pathCommands = font.textToPaths('Hello', 30, 110);
-  *
-  *   beginShape();
-  *   for (let i = 0; i < pathCommands.length; i++) {
-  *     const cmd = pathCommands[i];
-  *     const type = cmd[0];
-  *
-  *     switch (type) {
-  *       case 'M': {
-  *         // Move to (start a new contour)
-  *         const x = cmd[1];
-  *         const y = cmd[2];
-  *         endContour(); // In case we were already drawing
-  *         beginContour();
-  *         vertex(x, y);
-  *         break;
-  *       }
-  *       case 'L': {
-  *         // Line to
-  *         const x = cmd[1];
-  *         const y = cmd[2];
-  *         vertex(x, y);
-  *         break;
-  *       }
-  *       case 'Q': {
-  *         // Quadratic curve to: ['Q', cx, cy, x, y]
-  *         // Simplified to just draw line to endpoint
-  *         const x = cmd[3];
-  *         const y = cmd[4];
-  *         vertex(x, y);
-  *         break;
-  *       }
-  *       case 'C': {
-  *         // Cubic bezier to: ['C', x1, y1, x2, y2, x3, y3]
-  *         // Simplified to just draw line to endpoint
-  *         const x = cmd[5];
-  *         const y = cmd[6];
-  *         vertex(x, y);
-  *         break;
-  *       }
-  *       case 'Z': {
-  *         // Close path
-  *         endContour(CLOSE);
-  *         beginContour();
-  *         break;
-  *       }
-  *     }
-  *   }
-  *   endContour();
-  *   endShape();
-  *   
-  *   // Note: The letters will appear angular since we're only using lines
-  *   // between points rather than the actual curves from the font outlines.
-  * }
-  * </code>
-  */
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * async function setup() {
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(200, 200);
+   *   background(220);
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   stroke(0);
+   *   noFill();
+   *   textSize(60);
+   *   
+   *   // Get path commands for "Hello" (drawn at baseline x=50, y=100):
+   *   const pathCommands = font.textToPaths('Hello', 30, 110);
+   *
+   *   beginShape();
+   *   for (let i = 0; i < pathCommands.length; i++) {
+   *     const cmd = pathCommands[i];
+   *     const type = cmd[0];
+   *
+   *     switch (type) {
+   *       case 'M': {
+   *         // Move to (start a new contour)
+   *         const x = cmd[1];
+   *         const y = cmd[2];
+   *         endContour(); // In case we were already drawing
+   *         beginContour();
+   *         vertex(x, y);
+   *         break;
+   *       }
+   *       case 'L': {
+   *         // Line to
+   *         const x = cmd[1];
+   *         const y = cmd[2];
+   *         vertex(x, y);
+   *         break;
+   *       }
+   *       case 'Q': {
+   *         // Quadratic curve to: ['Q', cx, cy, x, y]
+   *         // Simplified to just draw line to endpoint
+   *         const x = cmd[3];
+   *         const y = cmd[4];
+   *         vertex(x, y);
+   *         break;
+   *       }
+   *       case 'C': {
+   *         // Cubic bezier to: ['C', x1, y1, x2, y2, x3, y3]
+   *         // Simplified to just draw line to endpoint
+   *         const x = cmd[5];
+   *         const y = cmd[6];
+   *         vertex(x, y);
+   *         break;
+   *       }
+   *       case 'Z': {
+   *         // Close path
+   *         endContour(CLOSE);
+   *         beginContour();
+   *         break;
+   *       }
+   *     }
+   *   }
+   *   endContour();
+   *   endShape();
+   *   
+   *   // Note: The letters will appear angular since we're only using lines
+   *   // between points rather than the actual curves from the font outlines.
+   * }
+   * </code>
+   * </div>
+   */
  
   textToPaths(str, x, y, width, height, options) {
 
