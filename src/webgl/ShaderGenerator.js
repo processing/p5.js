@@ -37,7 +37,6 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations);
       const generatedModifyArgument = generator.generate();
-      console.log(generatedModifyArgument['Vertex getCameraInputs'])
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -437,10 +436,15 @@ function shadergenerator(p5, fn) {
   }
 
   class FloatNode extends BaseNode {
-    constructor(x = 0, isInternal = false){
+    constructor(x = 0, isInternal = false, _parent = false){
       super(isInternal, 'float');
       if (Array.isArray(x)) {
         x = x[0];
+      }
+      if (_parent) {
+        const { parent, name } = _parent
+        this.name = name;
+        this.parent = parent;
       }
       this.x = x;
     }
@@ -471,7 +475,8 @@ function shadergenerator(p5, fn) {
     addVectorComponents(values) {
       this.componentsChanged = false;
       this.componentNames.forEach((componentName, i) => {
-        let value = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
+        const info = { name: componentName, parent: this };
+        let value = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true, info);
         Object.defineProperty(this, componentName, {
           get() {
             return value;
@@ -481,7 +486,7 @@ function shadergenerator(p5, fn) {
             if (isUnaryExpressionNode(this)) {
               this.node.value = newValue;
             } else {
-              value = isFloatNode(newValue) ? newValue : new FloatNode(newValue, true);
+              value = isFloatNode(newValue) ? newValue : new FloatNode(newValue, true, { name: componentName, info });
             }
           }
         })
@@ -490,7 +495,7 @@ function shadergenerator(p5, fn) {
 
     toGLSL(context) {
       if (!this.componentsChanged || !this.defined) {
-        let glslArgs = this.componentNames.map((name, i) => this.originalValues[i].toGLSLBase(context)).join(', ');
+        let glslArgs = this.componentNames.map((_name, i) => this.originalValues[i].toGLSLBase(context)).join(', ');
         this.defined = true;
         return `${this.type}(${glslArgs})`;
       } else {
@@ -867,7 +872,7 @@ function shadergenerator(p5, fn) {
       const diff = newLength - oldLength;
       this.insertionPoint += diff;
 
-      let str = `  if (${this.condition.toGLSL(context)}) {`
+      let str = `\n  if (${this.condition.toGLSL(context)}) {`
       // let str = `  if (${this.conditionString}) {`
       str += `\n    ${this.ifBranch.toGLSL(context)}`
       str += `\n  }`;
@@ -884,7 +889,7 @@ function shadergenerator(p5, fn) {
       if (this.elseBranch) {
         str += ` else {`
         str += `\n    ${this.elseBranch.toGLSL(context)}`
-        str += `\n  }`;
+        str += `\n  }\n`;
       }
 
       return str;
@@ -910,7 +915,8 @@ function shadergenerator(p5, fn) {
           return parent;
         },
         set(newParent) {
-          const flatDependencies = this.dependsOn.map(d => [...Object.values(d)]).flat();
+          const flatDependencies = this.dependsOn.map(d => [...Object.values(d)])
+          .flat().filter(n => n !== -1);
           newParent.dependsOn.push(...flatDependencies)
           parent = newParent;
         }
@@ -921,9 +927,9 @@ function shadergenerator(p5, fn) {
       if (!isShaderNode(value) || value.type !== node.type) {
         value = nodeConstructors[node.type](value);
         this.declarations.push(value);
-        this.dependsOn.push({ node });
+        this.dependsOn.push({ node, parent: node.parent | -1 });
       } else {
-        this.dependsOn.push( { node, value });
+        this.dependsOn.push( { node, value, parent: node.parent | -1 });
       }
     }
 
@@ -932,7 +938,6 @@ function shadergenerator(p5, fn) {
       this.dependsOn.forEach(({ node, value }) => {
         let statement;
         let result;
-        // if (isShadeNode(value) && node.type === value.type) {
         if (!value) {
           let decl = this.declarations[declarationsIndex];
           declarationsIndex++;
@@ -947,6 +952,8 @@ function shadergenerator(p5, fn) {
         
         if (isVariableNode(node) || hasTemporaryVariable(node)) {
           statement = `${node.toGLSLBase(context)} = ${result};`;
+        } else if (isFloatNode(node) && node.name) {
+            statement = `${node.parent.toGLSLBase(context)}.${node.name} = ${result};`;
         } else {
           node.temporaryVariable = `temp_${context.getNextID()}`;
           statement = `${node.type} ${node.toGLSLBase(context)} = ${result};`
@@ -955,7 +962,7 @@ function shadergenerator(p5, fn) {
         this.statements.push(statement);
       })
 
-      return this.statements.join (`\n    `)
+      return this.statements.join(`\n    `);
     }
   }
 
