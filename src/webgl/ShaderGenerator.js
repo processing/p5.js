@@ -38,6 +38,8 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations);
       const generatedModifyArgument = generator.generate();
+      console.log(generatorFunction.toString())
+      console.log(generatedModifyArgument['Vertex getCameraInputs'])
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -263,6 +265,7 @@ function shadergenerator(p5, fn) {
       // For tracking recursion depth and creating temporary variables
       this.isInternal = isInternal;
       this.usedIn = [];
+      this.dependsOn = [];
       this.srcLine = null;
       // Stack Capture is used to get the original line of user code for Debug purposes
       if (GLOBAL_SHADER.srcLocations === true && isInternal === false) {
@@ -279,7 +282,7 @@ function shadergenerator(p5, fn) {
 
     addVectorComponents() {
       if (this.type.startsWith('vec')) {
-        const vectorDimensions = +this.type.slice(3);
+        const vectorDimensions = parseInt(this.type.slice(3));
         this.componentNames = ['x', 'y', 'z', 'w'].slice(0, vectorDimensions);
 
         for (let componentName of this.componentNames) {
@@ -304,12 +307,11 @@ function shadergenerator(p5, fn) {
     checkIfUsedInConditional(context) {
       context.ifs.forEach((statement) => {
         if (statement.insertionPoint > -1) return;
-        if (statement.dependsOn.includes(this)) {
-          const i = statement.dependsOn.indexOf(this);
-          statement.dependsOn.splice(i, 1);
-        }
-        if (statement.dependsOn.length === 0) {
-          statement.saveState();
+        statement.dependeciesFulfilled += statement.dependsOn
+                                .filter((dependecy) => dependecy != this)
+                                .length;
+        if (statement.dependsOn.length === statement.dependeciesFulfilled) {
+          statement.saveState(context);
         }
       });
     }
@@ -327,9 +329,9 @@ function shadergenerator(p5, fn) {
     }
 
     shouldUseTemporaryVariable() {
+      if (this.componentsChanged) { return true; }
       if (this.isInternal || isVariableNode(this) || isConditionalNode(this) || this.type === 'sampler2D') { return false; }
       // Swizzles must use temporary variables as otherwise they will not be registered
-      if (this.componentsChanged) { return true; }
       let score = 0;
       score += isFunctionCallNode(this) * 2;
       score += isBinaryExpressionNode(this) * 2;
@@ -450,20 +452,45 @@ function shadergenerator(p5, fn) {
       values = conformVectorParameters(values, +type.slice(3));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.addVectorComponents(values);
+      this.originalValues = this.componentNames.map(name => this[name]);
+      console.log(this.originalValues);
     }
     
     addVectorComponents(values) {
-      this.componentNames.forEach((component, i) => {
-        this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
+      this.componentsChanged = false;
+      this.componentNames.forEach((componentName, i) => {
+        let value = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
+        Object.defineProperty(this, componentName, {
+          get() {
+            return value;
+          },
+          set(newValue) {
+            this.componentsChanged = true;
+            if (isUnaryExpressionNode(this)) {
+              this.node.value = newValue;
+            } else {
+              value = new ComponentNode(this, componentName, 'float', true);
+              // value = newValue;
+            }
+          }
+        })
       });
     }
 
+    // updateVectorComponents(values) {
+    //   this.componentNames.forEach((component, i) => {
+    //     this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
+    //   });
+    // }
+
     toGLSL(context) {
-      let values = this.componentNames.map(c => this[c])
-      values = conformVectorParameters(values);
-      this.addVectorComponents(values);
-      let glslArgs = this.componentNames.map((comp) => this[comp].toGLSLBase(context)).join(', ');
-      return `${this.type}(${glslArgs})`;
+      if (!this.componentsChanged || !this.defined) {
+        let glslArgs = this.componentNames.map((name, i) => this.originalValues[i].toGLSLBase(context)).join(', ');
+        this.defined = true;
+        return `${this.type}(${glslArgs})`;
+      } else {
+        return this.temporaryVariable;
+      }
     }
   }
 
@@ -769,14 +796,24 @@ function shadergenerator(p5, fn) {
     constructor(condition, branchCallback) {
       this.dependsOn = [];
       this.if(condition, branchCallback);
+      this.dependeciesFulfilled = 0;
       this.insertionPoint = -1;
       this.elseIfs = [];
       this.elseBranch = null;
       GLOBAL_SHADER.context.ifs.push(this);
     }
 
+    checkConditionDependencies(condition) {
+      [condition.left, condition.right].forEach((node) => {
+        if (node.shouldUseTemporaryVariable() || isVariableNode(node)) {
+          this.dependsOn.push(node);
+        }
+      });
+    }
+
     if(condition, branchCallback) {
-      this.condition = dynamicNode(condition);
+      this.condition = condition;
+      this.conditionString = condition.toGLSLBase(GLOBAL_SHADER.context);
       this.checkConditionDependencies(condition);
       this.ifBranch = branch(branchCallback);
       this.ifBranch.parent = this;
@@ -801,22 +838,21 @@ function shadergenerator(p5, fn) {
       return new ConditionalDiscard(this.condition);
     };
 
-    saveState() {
+    saveState(context) {
       if (this.insertionPoint = -1) {
-        this.insertionPoint = GLOBAL_SHADER.context.declarations.length;
+        this.insertionPoint = context.declarations.length;
       }
     }
 
-    checkConditionDependencies(condition) {
-      [condition.left, condition.right].forEach((node) => {
-        if (node.shouldUseTemporaryVariable() || isVariableNode(node)) {
-          this.dependsOn.push(node);
-        }
-      });
-    }
-
     toGLSL(context) {
+      const oldLength = context.declarations.length;
+      this.dependsOn.forEach(dep => context.updateComponents(dep));
+      const newLength = context.declarations.length;
+      const diff = newLength - oldLength;
+      this.insertionPoint += diff;
+      
       let str = `  if (${this.condition.toGLSL(context)}) {`
+      // let str = `  if (${this.conditionString}) {`
       str += `\n    ${this.ifBranch.toGLSL(context)}`
       str += `\n  }`;
 
@@ -854,7 +890,9 @@ function shadergenerator(p5, fn) {
       this.values = [];
       Object.defineProperty(this, 'parent', {
         set(newParent) {
-          newParent.dependsOn.push(this.dependsOn);
+          newParent.dependsOn.push(this.dependsOn, this.values.filter(
+            (v) => isShaderNode(v) && (isVariableNode(v) || v.shouldUseTemporaryVariable())
+          ));
           newParent.dependsOn = newParent.dependsOn.flat();
           parent = newParent;
         }
@@ -870,8 +908,12 @@ function shadergenerator(p5, fn) {
       this.dependsOn.forEach((node, i) => {
         let statement;
         const value = this.values[i];
-        const result = nodeConstructors[node.type](value)
-                .toGLSL(context);
+        let result;
+        if (isShaderNode(value) && node.type === value.type) {
+          result = value.toGLSLBase(context);
+        } else {
+          result = nodeConstructors[node.type](value).toGLSLBase(context);
+        }
 
         if (isVariableNode(node) || hasTemporaryVariable(node)) {
         statement = `${node.toGLSLBase(context)} = ${result};`;
@@ -1078,24 +1120,26 @@ function shadergenerator(p5, fn) {
           const expectedReturnType = hookTypes.returnType;
           const toGLSLResults = {};
 
-          const updateComponents = (node) => {
-            if (node.componentsChanged) {
-              const components = node.componentNames.map((componentName) => {
-                return node[componentName]
-              });
-              const replacement = nodeConstructors[node.type](components);
-              this.context.declarations.push(
-                `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
-              );
-            }
-          }
+          // const updateComponents = (node) => {
+          //   if (node.componentsChanged) {
+          //     const components = node.componentNames.map((componentName) => {
+          //       return node[componentName]
+          //     });
+          //     const replacement = nodeConstructors[node.type](components);
+          //     const tempVar = node.getTemporaryVariable(this.context);
+          //     this.context.declarations.push(
+          //       `  ${tempVar} = ${replacement.toGLSLBase(this.context)};`
+          //     );
+          //   }
+
+          // }
 
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
               propertyNode = dynamicNode(propertyNode);
               toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
-              updateComponents(propertyNode);
+              this.context.updateComponents(propertyNode);
             });
           } else {
             if (!isShaderNode(returnedValue)) {
@@ -1104,10 +1148,10 @@ function shadergenerator(p5, fn) {
               returnedValue = nodeConstructors[expectedReturnType.typeName](returnedValue);
             }
             toGLSLResults['notAProperty'] = returnedValue.toGLSLBase(this.context);
-            updateComponents(returnedValue);
+            this.context.updateComponents(returnedValue);
           }
 
-          this.context.ifs.forEach((statement, index) => {
+          this.context.ifs.forEach((statement) => {
             const lines = statement.toGLSL(this.context);
             this.context.declarations.splice(statement.insertionPoint, 0, lines);
           })
@@ -1166,6 +1210,7 @@ function shadergenerator(p5, fn) {
       this.output.fragmentDeclarations.add(`in ${node.type} ${node.name};`);
     }
 
+
     resetGLSLContext() {
       this.uniformNodes.forEach((node) => {
         node.usedIn = [];
@@ -1177,6 +1222,19 @@ function shadergenerator(p5, fn) {
         declarations: [],
         varyings: [],
         ifs: [],
+        updateComponents: function(node) {
+          if (node.componentsChanged) {
+            const components = node.componentNames.map((name) => {
+              return node[name]
+            });
+            const replacement = nodeConstructors[node.type](components);
+            const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`;
+            console.log(line)
+            this.declarations.push(
+              `    ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`
+            );
+          }
+        }
       }
       this.uniformNodes = [];
     }
@@ -1213,7 +1271,7 @@ function shadergenerator(p5, fn) {
     ].map(s => s.slice(0, size));
     return { 
       get(target, property, receiver) {
-        if (target[property]) {
+        if (property in target) {
           return Reflect.get(...arguments);
         } else {
           for (const set of swizzleSets) {
@@ -1241,7 +1299,8 @@ function shadergenerator(p5, fn) {
             propertyCharArray.forEach((char, i) => {
               const index = set.indexOf(char);
               const realProperty = swizzleSets[0][index];
-              Reflect.set(target, realProperty, newValues[i]);
+              const descriptor = Object.getOwnPropertyDescriptor(target, realProperty);
+              Reflect.set(target, realProperty, newValues[i], receiver);
             });
             return true;
           }
