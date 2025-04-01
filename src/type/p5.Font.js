@@ -78,6 +78,123 @@ class Font {
     return renderer.fontBounds(str, x, y, width, height);
   }
 
+
+      /**
+     * Returns the bounding box for a string of text written using the font.
+     *
+     * The bounding box is the smallest rectangle that can contain a string of
+     * text. `font.textBounds()` returns an object with the bounding box's
+     * location and size. For example, calling `font.textBounds('p5*js', 5, 20)`
+     * returns an object in the format
+     * `{ x: 5.7, y: 12.1 , w: 9.9, h: 28.6 }`. The `x` and `y` properties are
+     * always the coordinates of the bounding box's top-left corner.
+     *
+     * The first parameter, `str`, is a string of text. The second and third
+     * parameters, `x` and `y`, are the text's position. By default, they set the
+     * coordinates of the bounding box's bottom-left corner. See
+     * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+     *
+     * The fourth parameter, `fontSize`, is optional. It sets the font size used to
+     * determine the bounding box. By default, `font.textBounds()` will use the
+     * current <a href="#/p5/textSize">textSize()</a>.
+     *
+     * @method textBounds
+     * @param  {String} str        string of text.
+     * @param  {Number} x          x-coordinate of the text.
+     * @param  {Number} y          y-coordinate of the text.
+     * @param  {Number} [fontSize] font size. Defaults to the current
+     *                             <a href="#/p5/textSize">textSize()</a>.
+     * @return {Object}            object describing the bounding box with
+     *                             properties x, y, w, and h.
+     *
+     * @example
+     * <div>
+     * <code>
+     * let font;
+     *
+     * function preload() {
+     *   font = loadFont('assets/inconsolata.otf');
+     * }
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   background(200);
+     *
+     *   // Display the bounding box.
+     *   let bbox = font.textBounds('p5*js', 35, 53);
+     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+     *
+     *   // Style the text.
+     *   textFont(font);
+     *
+     *   // Display the text.
+     *   text('p5*js', 35, 53);
+     *
+     *   describe('The text "p5*js" written in black inside a white rectangle.');
+     * }
+     * </code>
+     * </div>
+     *
+     * <div>
+     * <code>
+     * let font;
+     *
+     * function preload() {
+     *   font = loadFont('assets/inconsolata.otf');
+     * }
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   background(200);
+     *
+     *   // Style the text.
+     *   textFont(font);
+     *   textSize(15);
+     *   textAlign(CENTER, CENTER);
+     *
+     *   // Display the bounding box.
+     *   let bbox = font.textBounds('p5*js', 50, 50);
+     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+     *
+     *   // Display the text.
+     *   text('p5*js', 50, 50);
+     *
+     *   describe('The text "p5*js" written in black inside a white rectangle.');
+     * }
+     * </code>
+     * </div>
+     *
+     * <div>
+     * <code>
+     * let font;
+     *
+     * function preload() {
+     *   font = loadFont('assets/inconsolata.otf');
+     * }
+     *
+     * function setup() {
+     *   createCanvas(100, 100);
+     *
+     *   background(200);
+     *
+     *   // Display the bounding box.
+     *   let bbox = font.textBounds('p5*js', 31, 53, 15);
+     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+     *
+     *   // Style the text.
+     *   textFont(font);
+     *   textSize(15);
+     *
+     *   // Display the text.
+     *   text('p5*js', 31, 53);
+     *
+     *   describe('The text "p5*js" written in black inside a white rectangle.');
+     * }
+     * </code>
+     * </div>
+     */
   textBounds(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
@@ -117,9 +234,8 @@ class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `fontSize`, is optional. It sets the text's font
-   * size. By default, `font.textToPoints()` will use the current
-   * <a href="#/p5/textSize">textSize()</a>.
+   * - width, height (optional): A bounding box for wrapped text. If not needed,
+   *   simply omit them and pass an options object as the 4th parameter.
    *
    * The fifth parameter, `options`, is also optional. `font.textToPoints()`
    * expects an object with the following properties:
@@ -135,28 +251,26 @@ class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Number} [fontSize] font size. Defaults to the current
-   *                             <a href="#/p5/textSize">textSize()</a>.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
+   * @param  {Number} [width]    Optional width for text wrapping.
+   * @param  {Number} [height]   Optional height for text wrapping.
+   * @param  {Object} [options]  Optional object with `sampleFactor` and `simplifyThreshold`.
    *                             properties.
-   * @return {Array} array of point objects, each with x, y, and alpha (path angle) properties.
+   * @return {Array}             Array of point objects; each has `{ x, y, alpha }`.
    *
    * @example
    * <div>
    * <code>
    * let font;
    *
-   * function preload() {
-   *   font = loadFont('assets/inconsolata.otf');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   font = await loadFont('assets/inconsolata.otf');
    *   createCanvas(100, 100);
    *
    *   background(200);
-   *
+   *    
+   *   textSize(30)
    *   // Get the point array.
-   *   let points = font.textToPoints('p5*js', 6, 60, 35, { sampleFactor:  0.5 });
+   *   let points = font.textToPoints('p5*js', 6, 60, { sampleFactor:  0.5 });
    *
    *   // Draw a dot at each point.
    *   for (let p of points) {
