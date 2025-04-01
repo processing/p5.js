@@ -78,123 +78,6 @@ class Font {
     return renderer.fontBounds(str, x, y, width, height);
   }
 
-
-      /**
-     * Returns the bounding box for a string of text written using the font.
-     *
-     * The bounding box is the smallest rectangle that can contain a string of
-     * text. `font.textBounds()` returns an object with the bounding box's
-     * location and size. For example, calling `font.textBounds('p5*js', 5, 20)`
-     * returns an object in the format
-     * `{ x: 5.7, y: 12.1 , w: 9.9, h: 28.6 }`. The `x` and `y` properties are
-     * always the coordinates of the bounding box's top-left corner.
-     *
-     * The first parameter, `str`, is a string of text. The second and third
-     * parameters, `x` and `y`, are the text's position. By default, they set the
-     * coordinates of the bounding box's bottom-left corner. See
-     * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
-     *
-     * The fourth parameter, `fontSize`, is optional. It sets the font size used to
-     * determine the bounding box. By default, `font.textBounds()` will use the
-     * current <a href="#/p5/textSize">textSize()</a>.
-     *
-     * @method textBounds
-     * @param  {String} str        string of text.
-     * @param  {Number} x          x-coordinate of the text.
-     * @param  {Number} y          y-coordinate of the text.
-     * @param  {Number} [fontSize] font size. Defaults to the current
-     *                             <a href="#/p5/textSize">textSize()</a>.
-     * @return {Object}            object describing the bounding box with
-     *                             properties x, y, w, and h.
-     *
-     * @example
-     * <div>
-     * <code>
-     * let font;
-     *
-     * function preload() {
-     *   font = loadFont('assets/inconsolata.otf');
-     * }
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Display the bounding box.
-     *   let bbox = font.textBounds('p5*js', 35, 53);
-     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
-     *
-     *   // Style the text.
-     *   textFont(font);
-     *
-     *   // Display the text.
-     *   text('p5*js', 35, 53);
-     *
-     *   describe('The text "p5*js" written in black inside a white rectangle.');
-     * }
-     * </code>
-     * </div>
-     *
-     * <div>
-     * <code>
-     * let font;
-     *
-     * function preload() {
-     *   font = loadFont('assets/inconsolata.otf');
-     * }
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Style the text.
-     *   textFont(font);
-     *   textSize(15);
-     *   textAlign(CENTER, CENTER);
-     *
-     *   // Display the bounding box.
-     *   let bbox = font.textBounds('p5*js', 50, 50);
-     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
-     *
-     *   // Display the text.
-     *   text('p5*js', 50, 50);
-     *
-     *   describe('The text "p5*js" written in black inside a white rectangle.');
-     * }
-     * </code>
-     * </div>
-     *
-     * <div>
-     * <code>
-     * let font;
-     *
-     * function preload() {
-     *   font = loadFont('assets/inconsolata.otf');
-     * }
-     *
-     * function setup() {
-     *   createCanvas(100, 100);
-     *
-     *   background(200);
-     *
-     *   // Display the bounding box.
-     *   let bbox = font.textBounds('p5*js', 31, 53, 15);
-     *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
-     *
-     *   // Style the text.
-     *   textFont(font);
-     *   textSize(15);
-     *
-     *   // Display the text.
-     *   text('p5*js', 31, 53);
-     *
-     *   describe('The text "p5*js" written in black inside a white rectangle.');
-     * }
-     * </code>
-     * </div>
-     */
   textBounds(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
@@ -202,6 +85,105 @@ class Font {
     return renderer.textBounds(str, x, y, width, height);
   }
 
+  /**
+   * Returns a flat array of path commands that describe the outlines of a string of text.
+   *
+   * Each command is represented as an array of the form `[type, ...coords]`, where:
+   * - `type` is one of `'M'`, `'L'`, `'Q'`, `'C'`, or `'Z'`,
+   * - `coords` are the numeric values needed for that command.
+   *
+   * `'M'` indicates a "move to" (starting a new contour),
+   * `'L'` a line segment,
+   * `'Q'` a quadratic bezier,
+   * `'C'` a cubic bezier, and
+   * `'Z'` closes the current path.
+   *
+   * The first two parameters, `x` and `y`, specify the baseline origin for the text.
+   * Optionally, you can provide a `width` and `height` for text wrapping; if you don't need
+   * wrapping, you can omit them and directly pass `options` as the fourth parameter.
+   *
+   * @param  {String} str            The text to convert into path commands.
+   * @param  {Number} x              x‐coordinate of the text baseline.
+   * @param  {Number} y              y‐coordinate of the text baseline.
+   * @param  {Number} [width]        Optional width for text wrapping.
+   * @param  {Number} [height]       Optional height for text wrapping.
+   * @param  {Object} [options]      Configuration object for rendering text.
+   * @return {Array<Array>}          A flat array of path commands.
+   * 
+  * <code>
+  * let font;
+  *
+  * async function setup() {
+  *   font = await loadFont('assets/inconsolata.otf');
+  *   createCanvas(200, 200);
+  *   background(220);
+  *   noLoop();
+  * }
+  *
+  * function draw() {
+  *   background(220);
+  *   stroke(0);
+  *   noFill();
+  *   textSize(60);
+  *   
+  *   // Get path commands for "Hello" (drawn at baseline x=50, y=100):
+  *   const pathCommands = font.textToPaths('Hello', 30, 110);
+  *
+  *   beginShape();
+  *   for (let i = 0; i < pathCommands.length; i++) {
+  *     const cmd = pathCommands[i];
+  *     const type = cmd[0];
+  *
+  *     switch (type) {
+  *       case 'M': {
+  *         // Move to (start a new contour)
+  *         const x = cmd[1];
+  *         const y = cmd[2];
+  *         endContour(); // In case we were already drawing
+  *         beginContour();
+  *         vertex(x, y);
+  *         break;
+  *       }
+  *       case 'L': {
+  *         // Line to
+  *         const x = cmd[1];
+  *         const y = cmd[2];
+  *         vertex(x, y);
+  *         break;
+  *       }
+  *       case 'Q': {
+  *         // Quadratic curve to: ['Q', cx, cy, x, y]
+  *         // Simplified to just draw line to endpoint
+  *         const x = cmd[3];
+  *         const y = cmd[4];
+  *         vertex(x, y);
+  *         break;
+  *       }
+  *       case 'C': {
+  *         // Cubic bezier to: ['C', x1, y1, x2, y2, x3, y3]
+  *         // Simplified to just draw line to endpoint
+  *         const x = cmd[5];
+  *         const y = cmd[6];
+  *         vertex(x, y);
+  *         break;
+  *       }
+  *       case 'Z': {
+  *         // Close path
+  *         endContour(CLOSE);
+  *         beginContour();
+  *         break;
+  *       }
+  *     }
+  *   }
+  *   endContour();
+  *   endShape();
+  *   
+  *   // Note: The letters will appear angular since we're only using lines
+  *   // between points rather than the actual curves from the font outlines.
+  * }
+  * </code>
+  */
+ 
   textToPaths(str, x, y, width, height, options) {
 
     ({ width, height, options } = this._parseArgs(width, height, options));
@@ -292,6 +274,73 @@ class Font {
     }, []);
   }
 
+  /**
+   * Returns an array of “contours” for the specified text, where each contour is
+   * an array of points describing one continuous outline (or “path”) of a glyph.
+   * 
+   * For example, if a glyph has an inner hole (like the letter “o”), that interior
+   * ring is returned as a separate contour. Each point in a contour is an object
+   * with `{ x, y, angle }`, where:
+   * - `x` and `y` are the coordinates of the point.
+   * - `angle` (also referred to as `alpha` in some contexts) is the local tangent
+   *   angle of the outline at that point, in radians (unless your p5.js angleMode
+   *   is set to DEGREES).
+   * 
+   * @param {String} str - The text to convert into one or more “contours.”
+   * @param {Number} [x=0] - The baseline x-coordinate where the text should begin.
+   * @param {Number} [y=0] - The baseline y-coordinate where the text should begin.
+   * @param {Number} [width] - Optional maximum width for text wrapping.
+   * @param {Number} [height] - Optional maximum height for text wrapping.
+   * @param {Object} [options] - Additional rendering options.
+   * @param {Number} [options.sampleFactor=0.1] - Determines how many sample points
+   *   are generated along each glyph outline. Higher values produce more points
+   *   and smoother contours but require more processing.
+   * @param {Number} [options.simplifyThreshold=0] - If set above 0, points that
+   *   are nearly collinear (based on the angle threshold) get removed, simplifying
+   *   the shape.
+   * 
+   * @returns {Array<Array<{x: Number, y: Number, angle: Number}>>} An array of
+   *   contour arrays. Each sub-array represents a single closed loop (path).
+   * 
+   * @example
+   * <div>
+   * <code>
+   * let myFont;
+   *
+   * async function setup() {
+   *   myFont = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(200, 200);
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *
+   *   // textToContours returns an array of contours,
+   *   // where each contour is an array of { x, y, angle } points.
+   *   textSize(50);
+   *   let contours = myFont.textToContours("Hello", 50, 100);
+   *
+   *   // Draw each contour as a closed shape
+   *   stroke(0);
+   *   noFill();
+   *   strokeWeight(2);
+   *
+   *   for (let i = 0; i < contours.length; i++) {
+   *     beginShape();
+   *     for (let p of contours[i]) {
+   *       // Each p is an object with { x, y, angle }
+   *       vertex(p.x, p.y);
+   *     }
+   *     endShape(CLOSE);
+   *   }
+   *
+   *   // Note: Each letter's outlines are visible - letters with holes
+   *   // (like 'o' or 'e') will show multiple contours
+   * }
+   * </code>
+   * </div>
+   */   
   textToContours(str, x = 0, y = 0, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
 
