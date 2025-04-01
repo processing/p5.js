@@ -104,6 +104,71 @@ class Font {
     return glyphs.map(g => g.path.commands).flat();
   }
 
+    /**
+   * Returns an array of points outlining a string of text written using the
+   * font.
+   *
+   * Each point object in the array has three properties that describe the
+   * point's location and orientation, called its path angle. For example,
+   * `{ x: 10, y: 20, alpha: 450 }`.
+   *
+   * The first parameter, `str`, is a string of text. The second and third
+   * parameters, `x` and `y`, are the text's position. By default, they set the
+   * coordinates of the bounding box's bottom-left corner. See
+   * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+   *
+   * The fourth parameter, `fontSize`, is optional. It sets the text's font
+   * size. By default, `font.textToPoints()` will use the current
+   * <a href="#/p5/textSize">textSize()</a>.
+   *
+   * The fifth parameter, `options`, is also optional. `font.textToPoints()`
+   * expects an object with the following properties:
+   *
+   * `sampleFactor` is the ratio of the text's path length to the number of
+   * samples. It defaults to 0.1. Higher values produce more points along the
+   * path and are more precise.
+   *
+   * `simplifyThreshold` removes collinear points if it's set to a number other
+   * than 0. The value represents the threshold angle to use when determining
+   * whether two edges are collinear.
+   *
+   * @param  {String} str        string of text.
+   * @param  {Number} x          x-coordinate of the text.
+   * @param  {Number} y          y-coordinate of the text.
+   * @param  {Number} [fontSize] font size. Defaults to the current
+   *                             <a href="#/p5/textSize">textSize()</a>.
+   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
+   *                             properties.
+   * @return {Array} array of point objects, each with x, y, and alpha (path angle) properties.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * function preload() {
+   *   font = loadFont('assets/inconsolata.otf');
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Get the point array.
+   *   let points = font.textToPoints('p5*js', 6, 60, 35, { sampleFactor:  0.5 });
+   *
+   *   // Draw a dot at each point.
+   *   for (let p of points) {
+   *     point(p.x, p.y);
+   *   }
+   *
+   *   describe('A set of black dots outlining the text "p5*js" on a gray background.');
+   * }
+   * </code>
+   * </div>
+   */
+
   textToPoints(str, x, y, width, height, options) {
     // By segmenting per contour, pointAtLength becomes much faster
     const contourPoints = this.textToContours(str, x, y, width, height, options);
