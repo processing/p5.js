@@ -4,8 +4,6 @@
 * @for p5
 * @requires core
 */
-
-import replace from '@rollup/plugin-replace';
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
@@ -39,6 +37,7 @@ function shadergenerator(p5, fn) {
       }
       const generator = new ShaderGenerator(generatorFunction, this, options.srcLocations);
       const generatedModifyArgument = generator.generate();
+      console.log(generatedModifyArgument['Vertex getCameraInputs'])
       return oldModify.call(this, generatedModifyArgument);
     }
     else {
@@ -61,7 +60,7 @@ function shadergenerator(p5, fn) {
       case '<': return 'lessThan';
       case '&&': return 'and';
       case '||': return 'or';
-      }
+    }
   }
 
   function ancestorIsUniform(ancestor) {
@@ -322,7 +321,19 @@ function shadergenerator(p5, fn) {
         let oldLength = context.declarations.length;
         result = this.getTemporaryVariable(context);
         let diff = context.declarations.length - 1 - oldLength;
-        this.dependsOn.forEach(d => context.updateComponents(d, diff > 0 ? diff : undefined));
+        if (Array.isArray(this.dependsOn)){
+          this.dependsOn.forEach(d => context.updateComponents(d, diff > 0 ? diff : undefined));
+        } else {
+            this.dependsOn.nodesArray.forEach((node, i) => {
+              const originalComponents = this.dependsOn[i];
+              const currentComponents = node.componentNames.map(name => node[name]);
+              if (!originalComponents) return;
+              const dependencies = originalComponents.map((component, i) => 
+                component === currentComponents[i]
+              )
+              context.updateComponents(node, diff > 0 ? diff : undefined, dependencies);
+            })
+        }
       } else {
         result = this.toGLSL(context);
       }
@@ -339,7 +350,7 @@ function shadergenerator(p5, fn) {
       score += isBinaryExpressionNode(this) * 2;
       score += isVectorType(this) * 3;
       score += this.usedIn.length;
-      return score >= 4;
+      return score >= 5;
     }
 
     getTemporaryVariable(context) {
@@ -567,9 +578,18 @@ function shadergenerator(p5, fn) {
       }
 
       super(isInternal, functionSignature.returnType);
-      userArgs.forEach(arg => {
+
+      if (userArgs.find(arg => isVectorNode(arg))) {
+        this.dependsOn = { nodesArray: [] };
+      }
+      userArgs.forEach((arg, i) => {
         arg.usedIn.push(this);
-        this.dependsOn.push(arg);
+        let arr = Array.isArray(this.dependsOn) ? this.dependsOn : this.dependsOn.nodesArray;
+        if (isVectorType(arg)) {
+          this.dependsOn[i] = [];
+          arg.componentNames.forEach(name => this.dependsOn[i].push(arg[name]));
+        }
+        arr.push(arg);
       });
       this.name = name;
       this.args = userArgs;
@@ -924,7 +944,7 @@ function shadergenerator(p5, fn) {
         } else {
           result = value.toGLSLBase(context);
         }
-
+        
         if (isVariableNode(node) || hasTemporaryVariable(node)) {
           statement = `${node.toGLSLBase(context)} = ${result};`;
         } else {
@@ -1206,7 +1226,6 @@ function shadergenerator(p5, fn) {
       this.output.fragmentDeclarations.add(`in ${node.type} ${node.name};`);
     }
 
-
     resetGLSLContext() {
       this.uniformNodes.forEach((node) => {
         node.usedIn = [];
@@ -1218,11 +1237,15 @@ function shadergenerator(p5, fn) {
         declarations: [],
         varyings: [],
         ifs: [],
-        updateComponents: function(node, _emplaceAt) {
+        updateComponents: function(node, _emplaceAt, _changedComponents) {
           if (node.componentsChanged) {
+            if (!_changedComponents) {
+              _changedComponents = node.componentNames.map(() => true);
+            }
             const lines = [];
             if (isVectorNode(node)) {
               node.componentNames.forEach((name, i) => {
+                if (!_changedComponents[i]) return;
                 if (node[name] !== node.originalValues[i]) {
                   const replacement = nodeConstructors['float'](node[name]);
                   const line = `  ${node.temporaryVariable}.${name} = ${replacement.toGLSLBase(this)};`;
@@ -1246,18 +1269,6 @@ function shadergenerator(p5, fn) {
           }
         }
       }
-      // const updateComponents = (node) => {
-      //   if (node.componentsChanged) {
-      //     const components = node.componentNames.map((componentName) => {
-      //       return node[componentName]
-      //     });
-      //     const replacement = nodeConstructors[node.type](components);
-      //     this.context.declarations.push(
-      //       `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
-      //     );
-      //   }
-      // }
-
       this.uniformNodes = [];
     }
   }
