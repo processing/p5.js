@@ -449,11 +449,10 @@ function shadergenerator(p5, fn) {
   class VectorNode extends BaseNode {
     constructor(values, type, isInternal = false) {
       super(isInternal, type);
-      values = conformVectorParameters(values, +type.slice(3));
+      values = conformVectorParameters(values, parseInt(type.slice(3)));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, values.length);
       this.addVectorComponents(values);
       this.originalValues = this.componentNames.map(name => this[name]);
-      console.log(this.originalValues);
     }
     
     addVectorComponents(values) {
@@ -469,19 +468,12 @@ function shadergenerator(p5, fn) {
             if (isUnaryExpressionNode(this)) {
               this.node.value = newValue;
             } else {
-              value = new ComponentNode(this, componentName, 'float', true);
-              // value = newValue;
+              value = isFloatNode(newValue) ? newValue : new FloatNode(newValue, true);
             }
           }
         })
       });
     }
-
-    // updateVectorComponents(values) {
-    //   this.componentNames.forEach((component, i) => {
-    //     this[component] = isFloatNode(values[i]) ? values[i] : new FloatNode(values[i], true);
-    //   });
-    // }
 
     toGLSL(context) {
       if (!this.componentsChanged || !this.defined) {
@@ -850,7 +842,7 @@ function shadergenerator(p5, fn) {
       const newLength = context.declarations.length;
       const diff = newLength - oldLength;
       this.insertionPoint += diff;
-      
+
       let str = `  if (${this.condition.toGLSL(context)}) {`
       // let str = `  if (${this.conditionString}) {`
       str += `\n    ${this.ifBranch.toGLSL(context)}`
@@ -1120,20 +1112,6 @@ function shadergenerator(p5, fn) {
           const expectedReturnType = hookTypes.returnType;
           const toGLSLResults = {};
 
-          // const updateComponents = (node) => {
-          //   if (node.componentsChanged) {
-          //     const components = node.componentNames.map((componentName) => {
-          //       return node[componentName]
-          //     });
-          //     const replacement = nodeConstructors[node.type](components);
-          //     const tempVar = node.getTemporaryVariable(this.context);
-          //     this.context.declarations.push(
-          //       `  ${tempVar} = ${replacement.toGLSLBase(this.context)};`
-          //     );
-          //   }
-
-          // }
-
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
@@ -1224,15 +1202,26 @@ function shadergenerator(p5, fn) {
         ifs: [],
         updateComponents: function(node) {
           if (node.componentsChanged) {
-            const components = node.componentNames.map((name) => {
-              return node[name]
-            });
-            const replacement = nodeConstructors[node.type](components);
-            const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`;
-            console.log(line)
-            this.declarations.push(
-              `    ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`
-            );
+            if (isVectorNode(node)) {
+              node.componentNames.forEach((name, i) => {
+                const lines = [];
+                if (node[name] !== node.originalValues[i]) {
+                  const replacement = nodeConstructors['float'](node[name]);
+                  const line = `${node.temporaryVariable}.${name} = ${replacement.toGLSLBase(this)};`;
+                  lines.push(line);
+                }
+                this.declarations.push(...lines);
+              });
+            } else {
+              const components = node.componentNames.map((name) => {
+                return node[name]
+              });
+              const replacement = nodeConstructors[node.type](components);
+              const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`;
+              this.declarations.push(
+                `    ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`
+              );
+            }
           }
         }
       }
