@@ -1033,17 +1033,13 @@ function font(p5, fn) {
                 }
                 fontData = await fn.parseFontData(url);
               }
-            } catch (_e) {
-              console.log(
-                'This font can only be drawn and will not work with textToPoints/Contours/Model.'
-              );
-            }
+            } catch (_e) {}
             return create(this, name, src, fontDescriptors, fontData)
           })());
         }
       }
       const fonts = await Promise.all(fontPromises);
-      return fonts.find(f => f.data) || fonts[0]; // TODO: handle multiple faces?
+      return fonts.findLast(f => f.data) || fonts[0]; // TODO: handle multiple faces?
     }
 
     let pfont;
