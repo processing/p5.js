@@ -777,7 +777,7 @@ function setting(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
    * created in. Changing modes doesn't affect their appearance.
    *
-   *  `Single-value (Grayscale) Colors` :    
+   *  `Single-value (Grayscale) Colors`:    
    *  When a color is specified with only one parameter (e.g., `color(g)`), p5.js will interpret it
    *  as a grayscale color. However, how that single parameter translates into a grayscale value
    *  depends on the color mode:
