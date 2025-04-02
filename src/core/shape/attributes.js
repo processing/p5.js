@@ -176,10 +176,13 @@ p5.prototype.noSmooth = function() {
       this.drawingContext.imageSmoothingEnabled = false;
     }
   } else {
-    this.setAttributes('antialias', false);
+    // Check if disabling antialiasing breaks positioning before applying
+    if (this._renderer && this._renderer.GL) {
+      this.setAttributes('antialias', false);
+    }
   }
-  return this;
 };
+
 
 /**
  * Changes where rectangles and squares are drawn.
