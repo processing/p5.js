@@ -1766,7 +1766,7 @@ class Geometry {
    * let geo;
    *
    * function cartesianToSpherical(x, y, z) {
-   *   let r = sqrt(pow(x, x) + pow(y, y) + pow(z, z));
+   *   let r = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
    *   let theta = acos(z / r);
    *   let phi = atan2(y, x);
    *   return { theta, phi };
