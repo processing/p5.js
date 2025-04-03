@@ -823,7 +823,7 @@ function font(p5, fn) {
     // load the raw font bytes
     let result = pathOrData instanceof Uint8Array
       ? pathOrData
-      : await fn.loadBytes(path);
+      : await fn.loadBytes(pathOrData);
     //console.log('result:', result);
 
     if (!result) {
@@ -1047,7 +1047,7 @@ function font(p5, fn) {
       const fontData = await fn.parseFontData(path);
 
       // make sure we have a valid name
-      name = name || extractFontName(font, path);
+      name = name || extractFontName(fontData, path);
 
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fontData);
