@@ -1736,7 +1736,7 @@ class Geometry {
 
   /** Sets the shader's vertex property or attribute variables.
    *
-   * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+   * A vertex property, or vertex attribute, is a variable belonging to a vertex in a shader. p5.js provides some
    * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
    * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
    * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
