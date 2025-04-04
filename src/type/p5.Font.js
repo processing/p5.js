@@ -65,6 +65,7 @@ class Font {
   /**
    * Checks whether a font has glyph point data and
    * can thus be used for textToPoints(), WEBGL mode, etc.
+   * @private
    */
   static hasGlyphData(textFont) {
     let { font } = textFont;
@@ -104,6 +105,62 @@ class Font {
     return glyphs.map(g => g.path.commands).flat();
   }
 
+  /**
+   * Returns an array of points outlining a string of text written using the
+   * font.
+   *
+   * Each point object in the array has three properties that describe the
+   * point's location and orientation, called its path angle. For example,
+   * `{ x: 10, y: 20, alpha: 450 }`.
+   *
+   * The first parameter, `str`, is a string of text. The second and third
+   * parameters, `x` and `y`, are the text's position. By default, they set the
+   * coordinates of the bounding box's bottom-left corner. See
+   * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+   *
+   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
+   * expects an object with the following properties:
+   *
+   * `sampleFactor` is the ratio of the text's path length to the number of
+   * samples. It defaults to 0.1. Higher values produce more points along the
+   * path and are more precise.
+   *
+   * `simplifyThreshold` removes collinear points if it's set to a number other
+   * than 0. The value represents the threshold angle to use when determining
+   * whether two edges are collinear.
+   *
+   * @param  {String} str        string of text.
+   * @param  {Number} x          x-coordinate of the text.
+   * @param  {Number} y          y-coordinate of the text.
+   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
+   *                             properties.
+   * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   font = await loadFont('assets/inconsolata.otf');
+   *
+   *   background(200);
+   *   textSize(35);
+   *
+   *   // Get the point array.
+   *   let points = font.textToPoints('p5*js', 6, 60, { sampleFactor: 0.5 });
+   *
+   *   // Draw a dot at each point.
+   *   for (let p of points) {
+   *     point(p.x, p.y);
+   *   }
+   *
+   *   describe('A set of black dots outlining the text "p5*js" on a gray background.');
+   * }
+   * </code>
+   * </div>
+   */
   textToPoints(str, x, y, width, height, options) {
     // By segmenting per contour, pointAtLength becomes much faster
     const contourPoints = this.textToContours(str, x, y, width, height, options);
@@ -113,6 +170,71 @@ class Font {
     }, []);
   }
 
+  /**
+   * Returns an array of arrays of points outlining a string of text written using the
+   * font. Each array represents a contour, so the letter O will have two outer arrays:
+   * one for the outer edge of the shape, and one for the inner edge of the hole.
+   *
+   * Each point object in a contour array has three properties that describe the
+   * point's location and orientation, called its path angle. For example,
+   * `{ x: 10, y: 20, alpha: 450 }`.
+   *
+   * The first parameter, `str`, is a string of text. The second and third
+   * parameters, `x` and `y`, are the text's position. By default, they set the
+   * coordinates of the bounding box's bottom-left corner. See
+   * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
+   *
+   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
+   * expects an object with the following properties:
+   *
+   * `sampleFactor` is the ratio of the text's path length to the number of
+   * samples. It defaults to 0.1. Higher values produce more points along the
+   * path and are more precise.
+   *
+   * `simplifyThreshold` removes collinear points if it's set to a number other
+   * than 0. The value represents the threshold angle to use when determining
+   * whether two edges are collinear.
+   *
+   * @param  {String} str        string of text.
+   * @param  {Number} x          x-coordinate of the text.
+   * @param  {Number} y          y-coordinate of the text.
+   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
+   *                             properties.
+   * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   font = await loadFont('/assets/inconsolata.otf');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   textAlign(CENTER, CENTER);
+   *   textSize(30);
+   *
+   *   // Get the point array.
+   *   let contours = font.textToContours('p5*js', width/2, height/2, { sampleFactor: 0.5 });
+   *
+   *   beginShape();
+   *   for (const pts of contours) {
+   *     beginContour();
+   *     for (const pt of pts) {
+   *       vertex(pt.x + 5*sin(pt.y*0.1 + millis()*0.01), pt.y);
+   *     }
+   *     endContour(CLOSE);
+   *   }
+   *   endShape();
+   *
+   *   describe('The text p5*js wobbling over time');
+   * }
+   * </code>
+   * </div>
+   */
   textToContours(str, x = 0, y = 0, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
 
@@ -688,20 +810,158 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
 function font(p5, fn) {
 
   /**
-   * TODO
+   * A class to describe fonts. Create through <a href="#/p5/loadFont">`loadFont()`</a>.
    *
    * @class p5.Font
    */
   p5.Font = Font;
 
   /**
-   * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
-   * Optional arguments include the font name, descriptors for the FontFace object,
-   * and callbacks for success and error.
+   * Loads a font and creates a <a href="#/p5.Font">p5.Font</a> object.
+   * `loadFont()` can load fonts in either .otf or .ttf format. Loaded fonts can
+   * be used to style text on the canvas and in HTML elements.
+   *
+   * The first parameter, `path`, is the path to a font file.
+   * Paths to local files should be relative. For example,
+   * `'assets/inconsolata.otf'`. The Inconsolata font used in the following
+   * examples can be downloaded for free
+   * <a href="https://www.fontsquirrel.com/fonts/inconsolata" target="_blank">here</a>.
+   * Paths to remote files should be URLs. For example,
+   * `'https://example.com/inconsolata.otf'`. URLs may be blocked due to browser
+   * security.
+   *
+   * In 2D mode, `path` can take on a few other forms. It could be a path to a CSS file,
+   * such as one from <a href="https://fonts.google.com/">Google Fonts.</a> It could also
+   * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a> It can also be an object containing key-value pairs with
+   * properties that you would find in an `@font-face` block.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is
+   * passed, it will be called once the font has loaded. The callback function
+   * may use the new <a href="#/p5.Font">p5.Font</a> object if needed.
+   *
+   * The third parameter, `failureCallback`, is also optional. If a function is
+   * passed, it will be called if the font fails to load. The callback function
+   * may use the error
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+   * object if needed.
+   *
+   * Fonts can take time to load. `await` the result of `loadFont()` in
+   * <a href="#/p5/setup">setup()</a> before using the result.
+   *
    * @method loadFont
-   * @param  {...any} args - path, name, onSuccess, onError, descriptors
-   * @returns a Promise that resolves with a p5.Font instance
+   * @for p5
+   * @param  {String|Object}        path       path of the font to be loaded, a CSS `@font-face` string, or an object with font face properties.
+   * @param  {String}        [name]            An alias that can be used for this font in `textFont()`. Defaults to the name in the font's metadata.
+   * @param  {Function}      [successCallback] function called with the
+   *                                           <a href="#/p5.Font">p5.Font</a> object after it
+   *                                           loads.
+   * @param  {Function}      [failureCallback] function called with the error
+   *                                           <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+   *                                           object if the font fails to load.
+   * @return {Promise<p5.Font>}                         <a href="#/p5.Font">p5.Font</a> object.
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   fill('deeppink');
+   *   textFont(font);
+   *   textSize(36);
+   *   text('p5*js', 10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   loadFont('assets/inconsolata.otf', font => {
+   *     fill('deeppink');
+   *     textFont(font);
+   *     textSize(36);
+   *     text('p5*js', 10, 50);
+   *
+   *     describe('The text "p5*js" written in pink on a white background.');
+   *   });
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   loadFont('assets/inconsolata.otf', success, failure);
+   * }
+   *
+   * function success(font) {
+   *   fill('deeppink');
+   *   textFont(font);
+   *   textSize(36);
+   *   text('p5*js', 10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   *
+   * function failure(event) {
+   *   console.error('Oops!', event);
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *   await loadFont('assets/inconsolata.otf');
+   *   let p = createP('p5*js');
+   *   p.style('color', 'deeppink');
+   *   p.style('font-family', 'Inconsolata');
+   *   p.style('font-size', '36px');
+   *   p.position(10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div class="norender">
+   * <code>
+   * // Some other forms of loading fonts:
+   * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
+   * loadFont({
+   *   fontFamily: '"Bricolage Grotesque", serif',
+   *   fontOpticalSizing: 'auto',
+   *   fontWeight: 400,
+   *   fontStyle: 'normal',
+   *   fontVariationSettings: '"wdth" 100',
+   * });
+   * </code>
+   * </div>
    */
+  /**
+    * @method loadFont
+    * @for p5
+    * @param  {String}        path              path of the font to be loaded.
+    * @param  {Function}      [successCallback] function called with the
+    *                                           <a href="#/p5.Font">p5.Font</a> object after it
+    *                                           loads.
+    * @param  {Function}      [failureCallback] function called with the error
+    *                                           <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+    *                                           object if the font fails to load.
+    * @returns {Promise<p5.Font>} The font.
+    */
   fn.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
     let { path, name, success, error, descriptors } = parseCreateArgs(...args);
