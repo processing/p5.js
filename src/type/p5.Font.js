@@ -858,8 +858,7 @@ function font(p5, fn) {
    *
    * In 2D mode, `path` can take on a few other forms. It could be a path to a CSS file,
    * such as one from <a href="https://fonts.google.com/">Google Fonts.</a> It could also
-   * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a> It can also be an object containing key-value pairs with
-   * properties that you would find in an `@font-face` block.
+   * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a>
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, it will be called once the font has loaded. The callback function
@@ -876,8 +875,10 @@ function font(p5, fn) {
    *
    * @method loadFont
    * @for p5
-   * @param  {String|Object}        path       path of the font to be loaded, a CSS `@font-face` string, or an object with font face properties.
+   * @param  {String}        path       path of the font or CSS file to be loaded, or a CSS `@font-face` string.
    * @param  {String}        [name]            An alias that can be used for this font in `textFont()`. Defaults to the name in the font's metadata.
+   * @param  {Object}        [options]         An optional object with extra CSS font face descriptors, or p5.js font settings.
+   * @param  {Number}        [options.index]   An optional index specifying which font from a CSS file to use. Defaults to the last one in the file.
    * @param  {Function}      [successCallback] function called with the
    *                                           <a href="#/p5.Font">p5.Font</a> object after it
    *                                           loads.
@@ -966,13 +967,6 @@ function font(p5, fn) {
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
    * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
-   * loadFont({
-   *   fontFamily: '"Bricolage Grotesque", serif',
-   *   fontOpticalSizing: 'auto',
-   *   fontWeight: 400,
-   *   fontStyle: 'normal',
-   *   fontVariationSettings: '"wdth" 100',
-   * });
    * </code>
    * </div>
    */
@@ -990,7 +984,7 @@ function font(p5, fn) {
     */
   fn.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
-    let { path, name, success, error, descriptors } = parseCreateArgs(...args);
+    let { path, name, success, error, options: { index, ...descriptors } = {} } = parseCreateArgs(...args);
 
     let isCSS = path.includes('@font-face');
 
@@ -1038,8 +1032,12 @@ function font(p5, fn) {
           })());
         }
       }
-      const fonts = await Promise.all(fontPromises);
-      return fonts.findLast(f => f.data) || fonts[0]; // TODO: handle multiple faces?
+      if (index !== undefined) {
+        return await fontPromises[index]
+      } else {
+        const fonts = await Promise.all(fontPromises);
+        return fonts.findLast(f => f.data) || fonts[0]; // TODO: handle multiple faces?
+      }
     }
 
     let pfont;
