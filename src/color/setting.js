@@ -782,8 +782,10 @@ function setting(p5, fn){
    *  as a grayscale color. However, how that single parameter translates into a grayscale value
    *  depends on the color mode:
    *
-   * - `RGB, HSB, and HSL`: The single value will be used consistently for the gray equivalent 
-   *    in each of these modes (for example, mapping to red/green/blue channels equally in RGB).
+   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum 
+   *   (i.e., the single parameter is mapped to the blue channel's max). 
+   *   In HSB and HSL, the single value is mapped to Brightness and Lightness max respectively with hue=0 . 
+   *   and saturation=0.
    *
    * - `LAB, LCH, OKLAB, and OKLCH`: The single value is taken to be the `lightness (L)` component,
    *   with the specified max range for that channel.
