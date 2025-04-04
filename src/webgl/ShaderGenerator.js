@@ -297,8 +297,9 @@ function shadergenerator(p5, fn) {
       this.useTemp = true;
     }
 
-    assertUsedInConditional() { 
+    assertUsedInConditional(branch) { 
       this.usedInConditional = true;
+      this.usedIn.push(branch);
       this.forceTemporaryVariable();
     }
 
@@ -311,7 +312,7 @@ function shadergenerator(p5, fn) {
         const isUsedSatisfied = () => statement.usedInSatisfied.length >= 1;
         const isDepsSatisfied = () => statement.dependsOn.length === statement.dependsOnSatisfied.length;
         if (statement.insertionPoint > -1 || !statement.usedIn.length) return;
-        if (statement.dependsOn.includes(this) && !statement.dependsOnSatisfied.includes(this)) {
+        if (statement.dependsOn.some(d => d.node === this) && !statement.dependsOnSatisfied.includes(this)) {
           statement.dependsOnSatisfied.push(this);
         }
         if (statement.usedIn.includes(this) && !statement.usedInSatisfied.includes(this)) {
@@ -330,22 +331,17 @@ function shadergenerator(p5, fn) {
         let oldLength = context.declarations.length;
         result = this.getTemporaryVariable(context);
         let diff = context.declarations.length - 1 - oldLength;
-        if (Array.isArray(this.dependsOn)){
-          this.dependsOn.forEach(d => {
-            context.updateComponents(d, diff > 0 ? diff : undefined);
-          });
-        } else {
-          // Update the incorrect components
-          this.dependsOn.nodesArray.forEach((nodeDependency, i) => {
-            const originalComponents = this.dependsOn[i];
-            const currentComponents = nodeDependency.componentNames.map(name => nodeDependency[name]);
-            if (!originalComponents) return;
-            const dependencies = originalComponents.map((component, i) => 
-              component === currentComponents[i]
-            )
-            context.updateComponents(nodeDependency, diff > 0 ? diff : undefined, dependencies);
-          })
-        }
+        diff = diff > 0 ? diff : undefined;
+        this.dependsOn.forEach(dependency => {
+          if (dependency.isVector) {
+            const dependencies = dependency.originalComponents.map((component, i) => 
+              component === dependency.currentComponents[i]
+            );
+            context.updateComponents(dependency.node, diff, dependencies);
+          } else {
+            context.updateComponents(dependency.node, diff);
+          }
+        });
       } else {
         result = this.toGLSL(context);
       }
@@ -600,18 +596,6 @@ function shadergenerator(p5, fn) {
 
       super(isInternal, functionSignature.returnType);
 
-      if (userArgs.find(arg => isVectorNode(arg))) {
-        this.dependsOn = { nodesArray: [] };
-      }
-      userArgs.forEach((arg, i) => {
-        arg.usedIn.push(this);
-        let arr = Array.isArray(this.dependsOn) ? this.dependsOn : this.dependsOn.nodesArray;
-        if (isVectorType(arg)) {
-          this.dependsOn[i] = [];
-          arg.componentNames.forEach(name => this.dependsOn[i].push(arg[name]));
-        }
-        arr.push(arg);
-      });
       this.name = name;
       this.args = userArgs;
       this.argumentTypes = functionSignature.args;
@@ -873,7 +857,7 @@ function shadergenerator(p5, fn) {
 
     toGLSL(context) {
       const oldLength = context.declarations.length;
-      this.dependsOn.forEach(dep => context.updateComponents(dep));
+      this.dependsOn.forEach(dep => context.updateComponents(dep.node));
       const newLength = context.declarations.length;
       const diff = newLength - oldLength;
       this.insertionPoint += diff;
@@ -939,14 +923,14 @@ function shadergenerator(p5, fn) {
       }
       node = node.parent ? node.parent : node;
       value = value.parent ? value.parent : value;
-      if ([node, value].some(n => this.dependsOn.includes(n))) {
+      if ([node, value].some(n => this.dependsOn.some(d=>d.node===n))) {
         return;
       }
-      node.assertUsedInConditional();
-      this.dependsOn.push(node)
+      node.assertUsedInConditional(this);
+      this.dependsOn.push(makeDependencyObject(node))
       if (value.shouldUseTemporaryVariable()) {
-        value.assertUsedInConditional();
-        this.dependsOn.push(value);
+        value.assertUsedInConditional(this);
+        this.dependsOn.push(makeDependencyObject(value));
       }
     }
 
@@ -1071,7 +1055,7 @@ function shadergenerator(p5, fn) {
   }
 
   function isConditionalNode(node) {
-    return (node instanceof ConditionalNode)
+    return (node instanceof ConditionalNode || node instanceof BranchNode)
   }
 
   function hasTemporaryVariable(node) {
@@ -1302,6 +1286,28 @@ function shadergenerator(p5, fn) {
   }
 
   // User function helpers
+  function makeDependencyObject(dep) {
+    if (isVectorType(dep)) {
+      return {
+        node: dep,
+        isVector: true,
+        originalComponents: [...dep.componentNames.map(name => dep[name])],
+        get currentComponents() {
+          return dep.componentNames.map(name => dep[name]);
+        }
+      };
+    } else {
+      return {
+        node: dep,
+        isVector: false
+      };
+    }
+  }
+  
+  function makeDependencyArray(dependencies) {
+    return dependencies.map(dep => makeDependencyObject(dep));
+  }
+
   function conformVectorParameters(value, vectorDimensions) {
     // Allow arguments as arrays or otherwise. The following are all equivalent:
     // ([0,0,0,0]) (0,0,0,0) (0) ([0])
@@ -1423,11 +1429,19 @@ function shadergenerator(p5, fn) {
   function fnNodeConstructor(name, userArgs, properties, isInternal) {
     let node = new FunctionCallNode(name, userArgs, properties, isInternal);
     node = dynamicAddSwizzleTrap(node);
-    if (node.args.some(arg => arg.isUsedInConditional())) {
-      GLOBAL_SHADER.context.ifs.forEach(statement => {
-        statement.usedIn.push(node);
+    node.dependsOn = makeDependencyArray(node.args);
+    const dependsOnConditionals = node.args.map(arg => {
+      const conditionals = arg.usedIn.filter(n => isConditionalNode(n)).map(c => {
+        if (c instanceof BranchNode) {
+          return c.parent;
+        } else {
+          return c;
+        }
       });
-    }
+      return conditionals;
+    }).flat();
+    dependsOnConditionals.forEach(conditional => conditional.usedIn.push(node));
+
     return node;
   }
 
