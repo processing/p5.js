@@ -1269,7 +1269,7 @@ function shadergenerator(p5, fn) {
                 return node[name]
               });
               const replacement = nodeConstructors[node.type](components);
-              const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this.context)};`
+              const line = `  ${node.temporaryVariable} = ${replacement.toGLSLBase(this)};`
               lines.push(line);
             }
             if (_emplaceAt) {
