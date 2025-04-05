@@ -213,9 +213,13 @@ class Renderer {
   }
 
   bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
+    const oldOrder = this._pInst.bezierOrder();
+    this._pInst.bezierOrder(oldOrder);
     this._pInst.beginShape();
-    this._pInst.vertex(x1, y1);
-    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
+    this._pInst.bezierVertex(x1, y1);
+    this._pInst.bezierVertex(x2, y2);
+    this._pInst.bezierVertex(x3, y3);
+    this._pInst.bezierVertex(x4, y4);
     this._pInst.endShape();
     return this;
   }
