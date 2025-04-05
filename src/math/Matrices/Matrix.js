@@ -283,13 +283,13 @@ export class Matrix extends MatrixInterface {
    *
    *   const originalMatrix = new p5.Matrix([1, 2, 3, 4]);
    *   const copiedMatrix = originalMatrix.get();
-   *   console.log("Original Matrix:", originalMatrix.matrix);
-   *   console.log("Copied Matrix:", copiedMatrix.matrix);
+   *   console.log("Original Matrix:", originalMatrix.matrix); // Output: [1, 2, 3, 4]
+   *   console.log("Copied Matrix:", copiedMatrix.matrix); // Output: [1, 2, 3, 4]
    *
    *   // Modify the copied matrix
    *   copiedMatrix.setElement(2, 99);
-   *   console.log("Modified Copied Matrix:", copiedMatrix.matrix);
-   *   console.log("Original Matrix remains unchanged:", originalMatrix.matrix);
+   *   console.log("Modified Copied Matrix:", copiedMatrix.matrix); // Output: [1, 2, 99, 4]
+   *   console.log("Original Matrix remains unchanged:", originalMatrix.matrix); // Output: [1, 2, 3, 4]
    * }
    * </code></div>
    */
@@ -608,8 +608,8 @@ export class Matrix extends MatrixInterface {
    *   const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const vector = new p5.Vector(1, 2, 3);
    *   const result = matrix.multiplyVec(vector);
-   *   console.log("Original Vector:", vector.toString());
-   *   console.log("Transformed Vector:", result.toString());
+   *   console.log("Original Vector:", vector.toString()); // Output : Original Vector: [1, 2, 3]
+   *   console.log("Transformed Vector:", result.toString()); // Output : Transformed Vector: [30, 36, 42]
    * }
    * </code></div>
    */
@@ -1607,19 +1607,19 @@ export class Matrix extends MatrixInterface {
    *
    *   // Define a vector
    *   const vector = new p5.Vector(1, 2, 3);
-   *   console.log("Original Vector:", vector.toString());
+   *   console.log("Original Vector:", vector.toString()); // Output: [1, 2, 3]
    *
    *   // Apply the matrix to the vector
    *   const transformedVector = matrix.multiplyVec3(vector);
-   *   console.log("Transformed Vector:", transformedVector.toString());
+   *   console.log("Transformed Vector:", transformedVector.toString()); // Output: [30, 36, 42]
    *
    *   // Modify the matrix (e.g., apply a scaling transformation)
    *   matrix.scale(2, 2, 2);
-   *   console.log("Modified Matrix (Scaling):", matrix.matrix);
+   *   console.log("Modified Matrix (Scaling):", matrix.matrix); // Output: [2, 4, 6, 8, 10, 12, 14, 16, 18]
    *
    *   // Apply the modified matrix to the same vector
    *   const scaledVector = matrix.multiplyVec3(vector);
-   *   console.log("Scaled Vector:", scaledVector.toString());
+   *   console.log("Scaled Vector:", scaledVector.toString()); // Output: [60, 72, 84]
    * }
    * </code></div>
    */
