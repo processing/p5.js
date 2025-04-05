@@ -57,27 +57,27 @@ suite('Curves', function() {
     });
   });
 
-  suite('p5.prototype.curvePoint', function() {
+  suite('p5.prototype.splinePoint', function() {
     var result;
     test('should be a function', function() {
-      assert.ok(mockP5Prototype.curvePoint);
-      assert.typeOf(mockP5Prototype.curvePoint, 'function');
+      assert.ok(mockP5Prototype.splinePoint);
+      assert.typeOf(mockP5Prototype.splinePoint, 'function');
     });
     test('should return the correct point on a Catmull-Rom Curve', function() {
-      result = mockP5Prototype.curvePoint(5, 5, 73, 73, 0.5);
+      result = mockP5Prototype.splinePoint(5, 5, 73, 73, 0.5);
       assert.equal(result, 39);
       assert.notEqual(result, -1);
     });
   });
 
-  suite('p5.prototype.curveTangent', function() {
+  suite('p5.prototype.splineTangent', function() {
     var result;
     test('should be a function', function() {
-      assert.ok(mockP5Prototype.curveTangent);
-      assert.typeOf(mockP5Prototype.curveTangent, 'function');
+      assert.ok(mockP5Prototype.splineTangent);
+      assert.typeOf(mockP5Prototype.splineTangent, 'function');
     });
     test('should return the correct point on a Catmull-Rom Curve', function() {
-      result = mockP5Prototype.curveTangent(95, 73, 73, 15, 0.5);
+      result = mockP5Prototype.splineTangent(95, 73, 73, 15, 0.5);
       assert.equal(result, 10);
       assert.notEqual(result, -1);
     });
