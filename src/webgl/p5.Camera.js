@@ -1618,6 +1618,15 @@ class Camera {
     rotatedCenter[1] += this.eyeY;
     rotatedCenter[2] += this.eyeZ;
 
+    // Rotate the up vector to keep the correct camera orientation
+    /* eslint-disable max-len */
+    let up = new p5.Vector(
+      this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8],
+      this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9],
+      this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10]
+    );
+    /* eslint-enable max-len */
+    up.normalize()
     this.camera(
       this.eyeX,
       this.eyeY,
@@ -1625,9 +1634,9 @@ class Camera {
       rotatedCenter[0],
       rotatedCenter[1],
       rotatedCenter[2],
-      this.upX,
-      this.upY,
-      this.upZ
+      up.x,
+      up.y,
+      up.z
     );
   }
 
