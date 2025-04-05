@@ -249,10 +249,181 @@ class Font {
 
     return cmdContours.map((commands) => pathToPoints(commands, options, this));
   }
-
   /**
-   * Test
-   */
+      * 
+      * Converts text into a 3D model that can be rendered in WebGL mode.
+      * 
+      * This method transforms flat text into extruded 3D geometry, allowing 
+      * for dynamic effects like depth, warping, and custom shading.
+      * 
+      * It works by taking the outlines (contours) of each character in the 
+      * provided text string and constructing a 3D shape from them.
+      * 
+      * Once your 3D text is ready, you can rotate it in 3D space using <a href="#/p5/orbitControl">orbitControl()</a> 
+      * — just click and drag with your mouse to see it from all angles!
+      * 
+      * Use the extrude slider to give your letters depth: slide it up, and your 
+      * flat text turns into a solid, multi-dimensional object.
+      * 
+      * You can also choose from various fonts such as "Anton", "Montserrat", or "Source Serif", 
+      * much like selecting fancy fonts in a word processor,
+      * 
+      * The generated model (a Geometry object) can be manipulated further—rotated, scaled, 
+      * or styled with shaders—to create engaging, interactive visual art.
+      *
+      * @param {String} str The text string to convert into a 3D model.
+      * @param {Number} x The x-coordinate for the starting position of the text.
+      * @param {Number} y The y-coordinate for the starting position of the text.
+      * @param {Number} width Maximum width of the text block (wraps text if exceeded).
+      * @param {Number} height Maximum height of the text block.
+      * @param {Object} [options] Configuration options for the 3D text:
+      * @param {Number} [options.extrude=0] The depth to extrude the text. A value of 0 produces 
+      * flat text; higher values create thicker, 3D models.
+      * @param {Number} [options.sampleFactor=1] A factor controlling the level of detail for the text contours.
+      *  Higher values result in smoother curves.
+      * @return {p5.Geometry} A geometry object representing the 3D model of the text.
+      *
+      * @example
+      * <div modernizr='webgl'>
+      * <code>
+      * let font;
+      * let geom;
+      *
+      * async function setup() {
+      *   createCanvas(200, 200, WEBGL);
+      *   font = await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf');
+      *
+      *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2 });
+      *   geom.clearColors();
+      *   geom.normalize();
+      * }
+      *
+      * function draw() {
+      *   background(255);
+      *   orbitControl();
+      *   fill("red");
+      *   strokeWeight(4);
+      *   scale(min(width, height) / 300);
+      *   model(geom);
+      *   describe('A red non-extruded "Hello" in Anton on white canvas, rotatable via mouse.');
+      * }
+      * </code>
+      * </div>
+      * 
+      * @example
+      * <div modernizr='webgl'>
+      * <code>
+      * let font;
+      * let geom;
+      *
+      * async function setup() {
+      *   createCanvas(200, 200, WEBGL);
+      *   
+      *   // Alternative fonts:
+      *   // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *   // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *   // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   
+      *   // Using Source Serif for this example:
+      *   font = await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf');
+      *   
+      *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
+      *   geom.clearColors();
+      *   geom.normalize();
+      * }
+      *
+      * function draw() {
+      *   background(255);
+      *   orbitControl();
+      *   fill("red");
+      *   strokeWeight(4);
+      *   scale(min(width, height) / 300);
+      *   model(geom);
+      *   describe('3D red extruded "Hello" in Source Serif on white, rotatable via mouse.');
+      * }
+      * </code>
+      * </div>
+      * 
+      * @example
+      * <div modernizr='webgl'>
+      * <code>
+      * let geom;
+      * let activeFont;
+      * let artShader;
+      * let lineShader;
+      *
+      * // Define parameters as simple variables
+      * let words = 'HELLO';
+      * let warp = 1;
+      * let extrude = 5;
+      * let palette = ["#ffe03d", "#fe4830", "#d33033", "#6d358a", "#1c509e", "#00953c"];
+      *
+      * async function setup() {
+      *   createCanvas(200, 200, WEBGL);
+      *
+      *   // Using Anton as the default font for this example:
+      *  
+      *  // Alternative fonts:
+      *  // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
+      *  // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
+      *  // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
+      *   activeFont = await loadFont('https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf');
+      *
+      *   geom = activeFont.textToModel(words, 0, 50, { sampleFactor: 2, extrude });
+      *   geom.clearColors();
+      *   geom.normalize();
+      *
+      *   artShader = baseMaterialShader().modify({
+      *     uniforms: {
+      *       'float time': () => millis(),
+      *       'float warp': () => warp,
+      *       'float numColors': () => palette.length,
+      *       'vec3[6] colors': () => palette.flatMap((c) => [red(c)/255, green(c)/255, blue(c)/255]),
+      *     },
+      *     vertexDeclarations: 'out vec3 vPos;',
+      *     fragmentDeclarations: 'in vec3 vPos;',
+      *     'Vertex getObjectInputs': `(Vertex inputs) {
+      *       vPos = inputs.position;
+      *       inputs.position.x += 5. * warp * sin(inputs.position.y * 0.1 + time * 0.001) / (1. + warp);
+      *       inputs.position.y += 5. * warp * sin(inputs.position.x * 0.1 + time * 0.0009) / (1. + warp);
+      *       return inputs;
+      *     }`,
+      *     'vec4 getFinalColor': `(vec4 _c) {
+      *       float x = vPos.x * 0.005;
+      *       float a = floor(fract(x) * numColors);
+      *       float b = a == numColors - 1. ? 0. : a + 1.;
+      *       float t = fract(x * numColors);
+      *       vec3 c = mix(colors[int(a)], colors[int(b)], t);
+      *       return vec4(c, 1.);
+      *     }`
+      *   });
+      *   
+      *   lineShader = baseStrokeShader().modify({
+      *     uniforms: {
+      *       'float time': () => millis(),
+      *       'float warp': () => warp,
+      *     },
+      *     'StrokeVertex getObjectInputs': `(StrokeVertex inputs) {
+      *       inputs.position.x += 5. * warp * sin(inputs.position.y * 0.1 + time * 0.001) / (1. + warp);
+      *       inputs.position.y += 5. * warp * sin(inputs.position.x * 0.1 + time * 0.0009) / (1. + warp);
+      *       return inputs;
+      *     }`,
+      *   });
+      * }
+      *
+      * function draw() {
+      *   background(255);
+      *   orbitControl();
+      *   shader(artShader);
+      *   strokeShader(lineShader);
+      *   strokeWeight(4);
+      *   scale(min(width, height) / 210);
+      *   model(geom);
+      *   describe('3D wavy with different color sets "Hello" in Anton on white canvas, rotatable via mouse.');
+      * }
+      * </code>
+      * </div>
+      */
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
