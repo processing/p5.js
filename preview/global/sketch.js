@@ -12,22 +12,16 @@ let pixellizeShader;
 let fresnelShader;
 let bloomShader;
 
-
 function fresnelShaderCallback() {
   const fresnelPower = uniformFloat(2);
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
   getCameraInputs((inputs) => {
-    let myValue = [1,0,0];
     let n = normalize(inputs.normal);
-    If(n == n, () => assign(myValue, 1));
     let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
-    
-    
-    let col = mix(myValue, [1, .5, .7], fresnel);
-
+    let col = mix([0, 0, 0], [1, .5, .7], fresnel);
     inputs.color = [col, 1];
     return inputs;
   });
@@ -48,7 +42,7 @@ function starShaderCallback() {
     let r = skyRadius;
     r *= 1.5 * sin(phi);
     let x = r * sin(phi) * cos(theta);
-    let y = r *1.5* cos(phi);
+    let y = r * 1.5 * cos(phi);
     let z = r * sin(phi) * sin(theta);
     return [x, y, z];
   }
@@ -66,7 +60,7 @@ function starShaderCallback() {
 }
 
 function pixellizeShaderCallback() {
-  const pixelSize = uniformFloat(()=> width/2);
+  const pixelSize = uniformFloat(()=> width*.75);
   getColor((input, canvasContent) => {
     let coord = input.texCoord;
     coord = floor(coord * pixelSize) / pixelSize;
@@ -80,7 +74,7 @@ function bloomShaderCallback() {
   getColor((input, canvasContent) => {
     const blurredCol = texture(canvasContent, input.texCoord);
     const originalCol = texture(preBlur, input.texCoord);
-    const brightPass = max(originalCol - 0.3, 0.7) * 1.2;
+    const brightPass = max(originalCol, 0.3) * 1.5;
     const bloom = originalCol + blurredCol * brightPass;
     return bloom;
   });
@@ -88,43 +82,43 @@ function bloomShaderCallback() {
 
 async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-  stars = buildGeometry(() => sphere(20, 4, 2))
+  stars = buildGeometry(() => sphere(30, 4, 2))
   originalFrameBuffer = createFramebuffer();
 
-  // starShader = baseMaterialShader().modify(starShaderCallback); 
-  // starStrokeShader = baseStrokeShader().modify(starShaderCallback)
+  starShader = baseMaterialShader().modify(starShaderCallback); 
+  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
   fresnelShader = baseColorShader().modify(fresnelShaderCallback);
-  // bloomShader = baseFilterShader().modify(bloomShaderCallback);
-  // pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
+  bloomShader = baseFilterShader().modify(bloomShaderCallback);
+  pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
 }
 
 function draw(){
   originalFrameBuffer.begin();
   background(0);
-  orbitControl(); 
+  orbitControl();
 
-  // push()
-  // strokeWeight(4)
-  // stroke(255,0,0)
-  // rotateX(PI/2 + millis() * 0.0005);
-  // fill(255,100, 150)
-  // strokeShader(starStrokeShader)
-  // shader(starShader);
-  // model(stars, 5000);
-  // pop()
+  push()
+  strokeWeight(4)
+  stroke(255,0,0)
+  rotateX(PI/2 + millis() * 0.0005);
+  fill(255,100, 150)
+  strokeShader(starStrokeShader)
+  shader(starShader);
+  model(stars, 2000);
+  pop()
 
   push()
   shader(fresnelShader)
   noStroke()
   sphere(500);
   pop()
+  filter(pixellizeShader);
 
-  // filter(pixellizeShader);
   originalFrameBuffer.end();
   
   imageMode(CENTER)
   image(originalFrameBuffer, 0, 0)
   
-  // filter(BLUR, 20)
-  // filter(bloomShader);
+  filter(BLUR, 20)
+  filter(bloomShader);
 }
