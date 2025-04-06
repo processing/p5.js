@@ -1012,6 +1012,19 @@ export class Matrix extends MatrixInterface {
    *                                   - [0, 0, 1] rotates around the z-axis.   *
    * @chainable
    * inspired by Toji's gl-matrix lib, mat4 rotation
+   *
+   * @example
+   * // p5.js script example
+   * <div class="norender"><code>
+   * function setup() {
+   *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
+   *   console.log("Original Matrix:", matrix.matrix.slice().toString()); // [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+   *
+   *   // Translate the matrix by a 3D vector
+   *   matrix.rotate4x4(Math.PI, [1,0,0]);
+   *   console.log("After rotation of PI degrees on vector [1,0,0]:", matrix.matrix.slice().toString()); // [1,0,0,0,0,-1,1.2246468525851679e-16,0,0,-1.2246468525851679e-16,-1,0,0,0,0,1]
+   * }
+   * </code></div>
    */
   rotate4x4(a, x, y, z) {
     if (x instanceof Vector) {
