@@ -1838,7 +1838,7 @@ class RendererGL extends Renderer {
     this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
     this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
     this.sphereMapping.setUniform("uNewNormalMatrix", this.scratchMat3.mat3);
-    this.sphereMapping.setUniform("uSampler", img);
+    this.sphereMapping.setUniform("uEnvMap", img);
     return this.sphereMapping;
   }
 
