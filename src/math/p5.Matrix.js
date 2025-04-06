@@ -23,14 +23,14 @@ function matrix(p5, fn) {
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
    * @example
    * // Creating a 3x3 matrix from an array using column major arrangement
-   * const matrix = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *
    * // Creating a 4x4 identity matrix
-   * const identityMatrix = new Matrix(4);
+   * const identityMatrix = new p5.Matrix(4);
    *
    * // Adding two matrices
-   * const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   * const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   * const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   * const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    * matrix1.add(matrix2); // matrix1 is now [10, 10, 10, 10, 10, 10, 10, 10, 10]
    *
    * // Setting an element in the matrix
@@ -72,30 +72,30 @@ function matrix(p5, fn) {
    * function setup() {
    *
    *   // Create a 4x4 identity matrix
-   *   const matrix = new Matrix(4);
-   *   console.log("Original Matrix:", matrix.matrix);
+   *   const matrix = new p5.Matrix(4);
+   *   console.log("Original p5.Matrix:", matrix.matrix);
    *
    *   // Add two matrices
-   *   const matrix1 = new Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-   *   const matrix2 = new Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+   *   const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+   *   const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   matrix1.add(matrix2);
    *   console.log("After Addition:", matrix1.matrix); // Output: [10, 10, 10, 10, 10, 10, 10, 10, 10]
    *
    *   // Reset the matrix to an identity matrix
    *   matrix.reset();
-   *   console.log("Reset Matrix:", matrix.matrix);
+   *   console.log("Reset p5.Matrix:", matrix.matrix);
    *
    *   // Apply a scaling transformation
    *   matrix.scale(2, 2, 2);
-   *   console.log("Scaled Matrix:", matrix.matrix);
+   *   console.log("Scaled p5.Matrix:", matrix.matrix);
    *
    *   // Apply a rotation around the X-axis
    *   matrix.rotate4x4(Math.PI / 4, 1, 0, 0);
-   *   console.log("Rotated Matrix (X-axis):", matrix.matrix);
+   *   console.log("Rotated p5.Matrix (X-axis):", matrix.matrix);
    *
    *   // Apply a perspective transformation
    *   matrix.perspective(Math.PI / 4, 1, 0.1, 100);
-   *   console.log("Perspective Matrix:", matrix.matrix);
+   *   console.log("Perspective p5.Matrix:", matrix.matrix);
    *
    *   // Multiply a vector by the matrix
    *   const vector = new Vector(1, 2, 3);

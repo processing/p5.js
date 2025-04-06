@@ -816,7 +816,8 @@ export class Matrix extends MatrixInterface {
    * function setup() {
    *
    * // Assuming `matrix` is an instance of Matrix
-   * const anotherMatrix = new p5.Matrix();
+   * const anotherMatrix = new p5.Matrix(4);
+   * const anotherMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
    * matrix.apply(anotherMatrix);
    *
    * // Applying a transformation using an array
