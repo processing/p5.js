@@ -290,51 +290,84 @@ suite('p5.Camera', function() {
   });
 
   suite('Camera Tilt and Up Vector', function() {
-    test('Tilt() correctly updates the up vector', function() {
-      var orig = getVals(myCam); // Store original camera values
+      test('Tilt() correctly updates the up vector', function() {
+          var orig = getVals(myCam); // Store original camera values
+          // Apply tilt to the camera
+          myCam.tilt(30); // Tilt by 30 degrees
 
-      // Apply tilt to the camera
-      myCam.tilt(30); // Tilt by 30 degrees
-      // Compute expected up vector (normalized)
-      let forward = myp5.createVector(
-        myCam.centerX - myCam.eyeX,
-        myCam.centerY - myCam.eyeY,
-        myCam.centerZ - myCam.eyeZ
-      );
-      let up = myp5.createVector(orig.ux, orig.uy, orig.uz);
-      let right = p5.Vector.cross(forward, up);
-      let expectedUp = p5.Vector.cross(right, forward).normalize();
-      // Verify that the up vector has changed
-      assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
-      assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
-      assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
-      // Verify up vector matches expected values within a small margin of error
-      assert.closeTo(myCam.upX, expectedUp.x, 0.001, 'upX mismatch');
-      assert.closeTo(myCam.upY, expectedUp.y, 0.001, 'upY mismatch');
-      assert.closeTo(myCam.upZ, expectedUp.z, 0.001, 'upZ mismatch');
-    });
+          // Compute expected up vector without p5.Vector
+          let forwardX = myCam.centerX - myCam.eyeX;
+          let forwardY = myCam.centerY - myCam.eyeY;
+          let forwardZ = myCam.centerZ - myCam.eyeZ;
 
-    test('Tilt() with negative angle correctly updates the up vector', function() {
-      var orig = getVals(myCam); // Store original camera values
-      myCam.tilt(-30); // Tilt by -30 degrees
-      // Compute expected up vector (normalized)
-      let forward = myp5.createVector(
-        myCam.centerX - myCam.eyeX,
-        myCam.centerY - myCam.eyeY,
-        myCam.centerZ - myCam.eyeZ
-      );
-      let up = myp5.createVector(orig.ux, orig.uy, orig.uz);
-      let right = p5.Vector.cross(forward, up);
-      let expectedUp = p5.Vector.cross(right, forward).normalize();
-      // Verify that the up vector has changed
-      assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
-      assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
-      assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
-      // Verify up vector matches expected values within a small margin of error
-      assert.closeTo(myCam.upX, expectedUp.x, 0.001, 'upX mismatch');
-      assert.closeTo(myCam.upY, expectedUp.y, 0.001, 'upY mismatch');
-      assert.closeTo(myCam.upZ, expectedUp.z, 0.001, 'upZ mismatch');
-    });
+          let upX = orig.ux;
+          let upY = orig.uy;
+          let upZ = orig.uz;
+
+          let rightX = forwardY * upZ - forwardZ * upY;
+          let rightY = forwardZ * upX - forwardX * upZ;
+          let rightZ = forwardX * upY - forwardY * upX;
+
+          // Now compute expected up vector (normalize)
+          let expectedUpX = rightY * forwardZ - rightZ * forwardY;
+          let expectedUpY = rightZ * forwardX - rightX * forwardZ;
+          let expectedUpZ = rightX * forwardY - rightY * forwardX;
+
+          // Normalize the expected up vector
+          let length = Math.sqrt(expectedUpX * expectedUpX + expectedUpY * expectedUpY + expectedUpZ * expectedUpZ);
+          expectedUpX /= length;
+          expectedUpY /= length;
+          expectedUpZ /= length;
+
+          // Verify that the up vector has changed
+          assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
+          assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
+          assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
+
+          // Verify up vector matches expected values within a small margin of error
+          assert.closeTo(myCam.upX, expectedUpX, 0.001, 'upX mismatch');
+          assert.closeTo(myCam.upY, expectedUpY, 0.001, 'upY mismatch');
+          assert.closeTo(myCam.upZ, expectedUpZ, 0.001, 'upZ mismatch');
+      });
+
+      test('Tilt() with negative angle correctly updates the up vector', function() {
+          var orig = getVals(myCam); // Store original camera values
+          myCam.tilt(-30); // Tilt by -30 degrees
+
+          // Compute expected up vector without p5.Vector
+          let forwardX = myCam.centerX - myCam.eyeX;
+          let forwardY = myCam.centerY - myCam.eyeY;
+          let forwardZ = myCam.centerZ - myCam.eyeZ;
+
+          let upX = orig.ux;
+          let upY = orig.uy;
+          let upZ = orig.uz;
+
+          let rightX = forwardY * upZ - forwardZ * upY;
+          let rightY = forwardZ * upX - forwardX * upZ;
+          let rightZ = forwardX * upY - forwardY * upX;
+
+          // Now compute expected up vector (normalize)
+          let expectedUpX = rightY * forwardZ - rightZ * forwardY;
+          let expectedUpY = rightZ * forwardX - rightX * forwardZ;
+          let expectedUpZ = rightX * forwardY - rightY * forwardX;
+
+          // Normalize the expected up vector
+          let length = Math.sqrt(expectedUpX * expectedUpX + expectedUpY * expectedUpY + expectedUpZ * expectedUpZ);
+          expectedUpX /= length;
+          expectedUpY /= length;
+          expectedUpZ /= length;
+
+          // Verify that the up vector has changed
+          assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
+          assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
+          assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
+
+          // Verify up vector matches expected values within a small margin of error
+          assert.closeTo(myCam.upX, expectedUpX, 0.001, 'upX mismatch');
+          assert.closeTo(myCam.upY, expectedUpY, 0.001, 'upY mismatch');
+          assert.closeTo(myCam.upZ, expectedUpZ, 0.001, 'upZ mismatch');
+      });
   });
 
   suite('Rotation with angleMode(DEGREES)', function() {
