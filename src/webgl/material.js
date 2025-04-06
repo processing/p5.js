@@ -1441,17 +1441,15 @@ function material(p5, fn){
    *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       float factor =
-   *         sin(
-   *           inputs.texCoord.x * ${TWO_PI} +
-   *           inputs.texCoord.y * ${TWO_PI}
-   *         ) * 0.4 + 0.5;
-   *       inputs.shininess = mix(1., 100., factor);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       let factor = sin(
+   *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
+   *       );
+   *       inputs.shininess = mix(1, 100, factor);
    *       inputs.metalness = factor;
    *       return inputs;
-   *     }`
+   *     })
    *   });
    * }
    *
@@ -1476,25 +1474,17 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       vec3 newNormal = inputs.normal;
-   *       // Simple bump mapping: adjust the normal based on position
-   *       newNormal.x += 0.2 * sin(
-   *           sin(
-   *             inputs.texCoord.y * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.x * ${TWO_PI} * 25.0
-   *           )
-   *         );
-   *       newNormal.y += 0.2 * sin(
-   *         sin(
-   *             inputs.texCoord.x * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.y * ${TWO_PI} * 25.0
-   *           )
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.normal.x += 0.2 * sin(
+   *         sin(inputs.texCoord.yx * TWO_PI * [10, 25])
    *       );
-   *       inputs.normal = normalize(newNormal);
+   *       inputs.normal.y += 0.2 * sin(
+   *         sin(inputs.texCoord * TWO_PI * [10, 25])
+   *       );
+   *       inputs.normal = normalize(inputs.normal);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1568,18 +1558,13 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/bricks.jpg');
    *   createCanvas(100, 100, WEBGL);
-   *   myShader = baseFilterShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'vec4 getColor': `(
-   *       FilterInputs inputs,
-   *       in sampler2D canvasContent
-   *     ) {
+   *   myShader = baseFilterShader().modify(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getColor((color, canvasContent) => {
    *       inputs.texCoord.y +=
-   *         0.01 * sin(time * 0.001 + inputs.position.x * 5.0);
-   *       return getTexture(canvasContent, inputs.texCoord);
-   *     }`
+   *         0.01 * sin(time * 0.001 + inputs.position.x * 5);
+   *       return texture(canvasContent, inputs.texCoord);
+   *     });
    *   });
    * }
    *
