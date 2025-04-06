@@ -110,7 +110,7 @@ class Font {
    * @param  {Number} [height]       Optional height for text wrapping.
    * @param  {Object} [options]      Configuration object for rendering text.
    * @return {Array<Array>}          A flat array of path commands.
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -128,7 +128,7 @@ class Font {
    *   stroke(0);
    *   noFill();
    *   textSize(60);
-   *   
+   *
    *   // Get path commands for "Hello" (drawn at baseline x=50, y=100):
    *   const pathCommands = font.textToPaths('Hello', 30, 110);
    *
@@ -154,15 +154,28 @@ class Font {
    *         vertex(x, y);
    *         break;
    *       }
-   *       case 'C': {
-   *         // Cubic bezier
-   *         // Simplified to just draw line to endpoint
-   *         const cx = cmd[3];
-   *         const cy = cmd[4];
-   *         const x = cmd[5];
-   *         const y = cmd[6];
+   *       case 'Q': {
+   *         // Quadratic bezier
+   *         const cx = cmd[1];
+   *         const cy = cmd[2];
+   *         const x = cmd[3];
+   *         const y = cmd[4];
    *         bezierOrder(2);
    *         bezierVertex(cx, cy);
+   *         bezierVertex(x, y);
+   *         break;
+   *       }
+   *       case 'C': {
+   *         // Cubic bezier
+   *         const cx1 = cmd[1];
+   *         const cy1 = cmd[2];
+   *         const cx2 = cmd[3];
+   *         const cy2 = cmd[4];
+   *         const x = cmd[5];
+   *         const y = cmd[6];
+   *         bezierOrder(3);
+   *         bezierVertex(cx1, cy1);
+   *         bezierVertex(cx2, cy2);
    *         bezierVertex(x, y);
    *         break;
    *       }
@@ -176,12 +189,11 @@ class Font {
    *   }
    *   endContour();
    *   endShape();
-   *   
    * }
    * </code>
    * </div>
    */
- 
+
   textToPaths(str, x, y, width, height, options) {
 
     ({ width, height, options } = this._parseArgs(width, height, options));
