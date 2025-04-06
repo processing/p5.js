@@ -76,7 +76,7 @@ function shadergenerator(p5, fn) {
         type: 'Literal',
         value: node.operator,
       }
-      
+
       const standardReplacement = (node) => {
           node.type = 'CallExpression'
           node.callee = {
@@ -93,11 +93,11 @@ function shadergenerator(p5, fn) {
           ['r', 'g', 'b', 'a'],
           ['s', 't', 'p', 'q']
         ];
-  
+
         let isSwizzle = swizzleSets.some(set =>
           [...property].every(char => set.includes(char))
         ) && node.argument.type === 'MemberExpression';
-  
+
         if (isSwizzle) {
           node.type = 'MemberExpression';
           node.object = {
@@ -114,7 +114,7 @@ function shadergenerator(p5, fn) {
           };
         } else {
           standardReplacement(node);
-        } 
+        }
       } else {
         standardReplacement(node);
       }
@@ -139,7 +139,7 @@ function shadergenerator(p5, fn) {
       }
     },
     Identifier(node, _state, _ancestors) {
-      if (_state.varyings[node.name] 
+      if (_state.varyings[node.name]
           && !_ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)) {
         node.type = 'ExpressionStatement';
         node.expression = {
@@ -297,7 +297,7 @@ function shadergenerator(p5, fn) {
       this.useTemp = true;
     }
 
-    assertUsedInConditional(branch) { 
+    assertUsedInConditional(branch) {
       this.usedInConditional = true;
       this.usedIn.push(branch);
       this.forceTemporaryVariable();
@@ -316,8 +316,8 @@ function shadergenerator(p5, fn) {
           statement.dependsOnSatisfied.push(this);
         }
         if (statement.usedIn.includes(this) && !statement.usedInSatisfied.includes(this)) {
-          statement.usedInSatisfied.push(this); 
-        } 
+          statement.usedInSatisfied.push(this);
+        }
         if (isDepsSatisfied() && isUsedSatisfied()) {
           statement.saveState(context, isDepsSatisfied(), isUsedSatisfied());
         }
@@ -334,7 +334,7 @@ function shadergenerator(p5, fn) {
         diff = diff > 0 ? diff : undefined;
         this.dependsOn.forEach(dependency => {
           if (dependency.isVector) {
-            const dependencies = dependency.originalComponents.map((component, i) => 
+            const dependencies = dependency.originalComponents.map((component, i) =>
               component === dependency.currentComponents[i]
             );
             context.updateComponents(dependency.node, diff, dependencies);
@@ -345,14 +345,14 @@ function shadergenerator(p5, fn) {
       } else {
         result = this.toGLSL(context);
       }
-      this.checkConditionalDependencies(context) 
+      this.checkConditionalDependencies(context)
       return result;
     }
 
     shouldUseTemporaryVariable() {
       if (this.componentsChanged || hasTemporaryVariable(this) || this.useTemp) { return true; }
       if (this.isInternal || isVariableNode(this) || isConditionalNode(this) || this.type === 'sampler2D') { return false; }
-      
+
       // return false;
       // Swizzles must use temporary variables as otherwise they will not be registered
       let score = 0;
@@ -480,7 +480,7 @@ function shadergenerator(p5, fn) {
       this.originalValues = conformVectorParameters(values, parseInt(type.slice(3)));
       this.componentNames = ['x', 'y', 'z', 'w'].slice(0, this.originalValues.length);
     }
-    
+
     addVectorComponents() {
       const values = this.originalValues;
       this.componentsChanged = false;
@@ -556,8 +556,8 @@ function shadergenerator(p5, fn) {
         const findBestOverload = function (best, current) {
           current = determineFunctionSignature(current);
           if (!current.valid) { return best; }
-          if (!best || current.similarity > best.similarity) { 
-            best = current; 
+          if (!best || current.similarity > best.similarity) {
+            best = current;
           }
           return best;
         }
@@ -568,7 +568,7 @@ function shadergenerator(p5, fn) {
 
       if (!functionSignature || !functionSignature.valid) {
         const argsStrJoin = (args) => `(${args.map((arg) => arg).join(', ')})`;
-        const expectedArgsString = Array.isArray(properties) ? 
+        const expectedArgsString = Array.isArray(properties) ?
           properties.map(prop => argsStrJoin(prop.args)).join(' or ')
           : argsStrJoin(properties.args);
         const providedArgsString = argsStrJoin(userArgs.map((a)=>getType(a)));
@@ -645,7 +645,7 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  // 
+  //
   class VaryingNode extends VariableNode {
     constructor(name, type, isInternal = false) {
       super(name, type, isInternal);
@@ -771,36 +771,36 @@ function shadergenerator(p5, fn) {
 
   // Conditions and logical modifiers
   BaseNode.prototype.equalTo = function(other) {
-    return binaryExpressionNodeConstructor(this, this.enforceType(other), '=='); 
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '==');
   }
 
   BaseNode.prototype.greaterThan = function(other) {
-    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>'); 
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>');
   }
 
   BaseNode.prototype.greaterThanEqualTo = function(other) {
-    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>='); 
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '>=');
   }
 
   BaseNode.prototype.lessThan = function(other) {
-    return binaryExpressionNodeConstructor(this, this.enforceType(other), '<'); 
+    return binaryExpressionNodeConstructor(this, this.enforceType(other), '<');
   }
-  
+
   BaseNode.prototype.lessThanEqualTo = function(other) {
     return binaryExpressionNodeConstructor(this, this.enforceType(other), '<='); }
- 
+
   BaseNode.prototype.not = function() {
-     return new UnaryExpressionNode(this.condition, '!', true); 
+     return new UnaryExpressionNode(this.condition, '!', true);
   }
- 
+
   BaseNode.prototype.or = function(other) {
-    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '||', true); 
+    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '||', true);
   }
-  
+
   BaseNode.prototype.and = function(other) {
-    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '&&', true); 
+    return new binaryExpressionNodeConstructor(this, this.enforceType(other), '&&', true);
   }
-  
+
   function branch(callback) {
     const branch = new BranchNode();
     callback();
@@ -847,8 +847,8 @@ function shadergenerator(p5, fn) {
     };
 
     saveState(context, usedInSatisfied, dependsOnSatisfied) {
-      this.states.push({ 
-        line: context.declarations.length, 
+      this.states.push({
+        line: context.declarations.length,
         usedInSatisfied,
         dependsOnSatisfied
       });
@@ -951,13 +951,13 @@ function shadergenerator(p5, fn) {
         } else {
           result = value.toGLSLBase(context);
         }
-        
+
         if (isVariableNode(node) || hasTemporaryVariable(node)) {
           statement = `${node.toGLSLBase(context)} = ${result};`;
-        } 
+        }
         else if (isFloatNode(node) && node.name) {
             statement = `${node.parent.toGLSLBase(context)}.${node.name} = ${result};`;
-        } 
+        }
         else {
           node.temporaryVariable = `temp_${context.getNextID()}`;
           statement = `${node.type} ${node.toGLSLBase(context)} = ${result};`
@@ -994,11 +994,11 @@ function shadergenerator(p5, fn) {
     if (Array.isArray(values)) {
       for(let val of values) {
         if (isVectorType(val)) {
-          length += parseInt(val.type.slice(3)); 
+          length += parseInt(val.type.slice(3));
         }
         else length += 1;
       }
-    } 
+    }
     else if (isVectorType(values)) {
       length += parseInt(val.type.slice(3));
     }
@@ -1208,7 +1208,7 @@ function shadergenerator(p5, fn) {
             });
             codeLines.push(...finalVaryingAssignments);
           }
-          
+
           codeLines.push('  return finalReturnValue;', '}');
           this.output[hookName] = codeLines.join('\n');
           this.resetGLSLContext();
@@ -1220,7 +1220,7 @@ function shadergenerator(p5, fn) {
           GLOBAL_SHADER[hookTypes.name](userOverride);
         };
       });
-      
+
 
       this.cleanup = () => {
         for (const key in windowOverrides) {
@@ -1230,8 +1230,8 @@ function shadergenerator(p5, fn) {
     }
 
     registerVarying(node, value) {
-      if (!Array.isArray(this.context.varyings[node.name])) { 
-        this.context.varyings[node.name] = []; 
+      if (!Array.isArray(this.context.varyings[node.name])) {
+        this.context.varyings[node.name] = [];
       }
       this.context.varyings[node.name].push({ node, value });
       this.output.vertexDeclarations.add(`OUT ${node.type} ${node.name};`);
@@ -1303,7 +1303,7 @@ function shadergenerator(p5, fn) {
       };
     }
   }
-  
+
   function makeDependencyArray(dependencies) {
     return dependencies.map(dep => makeDependencyObject(dep));
   }
@@ -1336,7 +1336,7 @@ function shadergenerator(p5, fn) {
       ['r', 'g', 'b', 'a'],
       ['s', 't', 'p', 'q']
     ].map(s => s.slice(0, size));
-    return { 
+    return {
       get(target, property, receiver) {
         if (property in target) {
           return Reflect.get(...arguments);
@@ -1344,7 +1344,7 @@ function shadergenerator(p5, fn) {
           for (const set of swizzleSets) {
             if ([...property].every(char => set.includes(char))) {
               if (property.length === 1) {
-                return target[swizzleSets[0][set.indexOf(property[0])]] 
+                return target[swizzleSets[0][set.indexOf(property[0])]]
               }
               const components = [...property].map(char => {
                 const index = set.indexOf(char);
@@ -1376,7 +1376,7 @@ function shadergenerator(p5, fn) {
       }
     }
   }
-    
+
   // User functions
   fn.If = function (condition, branch) {
     return new ConditionalNode(condition, branch);
@@ -1390,7 +1390,7 @@ function shadergenerator(p5, fn) {
     const props = { args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true };
     return fnNodeConstructor('getTexture', userArgs,  props);
   }
-  
+
   // Generating uniformFloat, uniformVec, createFloat, etc functions
   // Maps a GLSL type to the name suffix for method names
   const GLSLTypesToIdentifiers = {
@@ -1407,7 +1407,7 @@ function shadergenerator(p5, fn) {
       const size = _size ? _size : parseInt(node.type.slice(3));
       node =  new Proxy(node, swizzleTrap(size));
       node.addVectorComponents();
-    } 
+    }
     return node;
   }
 
@@ -1480,8 +1480,8 @@ function shadergenerator(p5, fn) {
       return GLOBAL_SHADER[uniformMethodName](...args);
     };
 
-    
-    // We don't need a createTexture method.
+
+    // We don't need a texture creation method.
     if (glslType === 'sampler2D') { continue; }
 
     const varyingMethodName = `varying${typeIdentifier}`;
@@ -1493,16 +1493,24 @@ function shadergenerator(p5, fn) {
       return GLOBAL_SHADER[varyingMethodName](name);
     };
 
-    // Generate the create*() Methods for creating variables in shaders
-    const createMethodName = `create${typeIdentifier}`;
-    fn[createMethodName] = function (...value) {
-      if (glslType.startsWith('vec')) {
-        value = conformVectorParameters(value, parseInt(glslType.slice(3)));
+    // Generate the creation methods for creating variables in shaders
+    const originalFn = fn[glslType];
+    fn[glslType] = function (...value) {
+      if (GLOBAL_SHADER?.isGenerating) {
+        if (glslType.startsWith('vec')) {
+          value = conformVectorParameters(value, parseInt(glslType.slice(3)));
+        } else {
+          value = value[0];
+        }
+        return nodeConstructors[glslType](value);
+      } else if (originalFn) {
+        return originalFn.apply(this, value);
       } else {
-        value = value[0];
+        p5._friendlyError(
+          `It looks like you've called ${glslType} outside of a shader's modify() function.`
+        );
       }
-      return nodeConstructors[glslType](value);
-    }
+    };
   }
 
   // GLSL Built in functions
@@ -1546,16 +1554,16 @@ function shadergenerator(p5, fn) {
     'log': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'log2': { args: ['genType'], returnType: 'genType', isp5Function: false},
     'max': [
-      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true}, 
-      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true}, 
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true},
     ],
     'min': [
-      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true}, 
-      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true}, 
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
+      { args: ['genType', 'float'], returnType: 'genType', isp5Function: true},
     ],
     'mix': [
-      { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false}, 
-      { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false}, 
+      { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
+      { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false},
     ],
     // 'mod': {},
     // 'modf': {},
@@ -1582,7 +1590,7 @@ function shadergenerator(p5, fn) {
     // 'notEqual': {},
     'reflect': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
     'refract': { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false},
-    
+
     ////////// Texture sampling //////////
     'texture': {args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true},
   }
