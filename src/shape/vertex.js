@@ -429,12 +429,10 @@ function vertex(p5, fn){
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
    * @method bezierVertex
-   * @param  {Number} x2 x-coordinate of the first control point.
-   * @param  {Number} y2 y-coordinate of the first control point.
-   * @param  {Number} x3 x-coordinate of the second control point.
-   * @param  {Number} y3 y-coordinate of the second control point.
-   * @param  {Number} x4 x-coordinate of the anchor point.
-   * @param  {Number} y4 y-coordinate of the anchor point.
+   * @param  {Number} x x-coordinate of the first control point.
+   * @param  {Number} y y-coordinate of the first control point.
+   * @param  {Number} [u]
+   * @param  {Number} [v]
    *
    * @example
    * <div>
@@ -652,15 +650,11 @@ function vertex(p5, fn){
 
   /**
    * @method bezierVertex
-   * @param  {Number} x2
-   * @param  {Number} y2
-   * @param  {Number} z2 z-coordinate of the first control point.
-   * @param  {Number} x3
-   * @param  {Number} y3
-   * @param  {Number} z3 z-coordinate of the second control point.
-   * @param  {Number} x4
-   * @param  {Number} y4
-   * @param  {Number} z4 z-coordinate of the anchor point.
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} z
+   * @param  {Number} [u]
+   * @param  {Number} [v]
    */
   fn.bezierVertex = function(...args) {
     this._renderer.bezierVertex(...args);
