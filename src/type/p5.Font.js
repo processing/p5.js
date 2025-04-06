@@ -1022,7 +1022,7 @@ function font(p5, fn) {
             name,
             src,
             fontDescriptors,
-            load: async () => {
+            loadWithData: async () => {
               let fontData;
               try {
                 const urlMatch = /url\(([^\)]+)\)/.exec(src);
@@ -1035,7 +1035,8 @@ function font(p5, fn) {
                 }
               } catch (_e) {}
               return create(this, name, src, fontDescriptors, fontData)
-            }
+            },
+            loadWithoutData: () => create(this, name, src, fontDescriptors)
           });
         }
       }
@@ -1090,7 +1091,15 @@ function font(p5, fn) {
           closestMatch = font;
         }
       }
-      return (closestMatch || possibleFonts.at(-1))?.load();
+      const picked = (closestMatch || possibleFonts.at(-1));
+      for (const font of possibleFonts) {
+        if (font !== picked) {
+          // Load without parsing data with Typr so that it still can be accessed
+          // via regular CSS by name
+          font.loadWithoutData();
+        }
+      }
+      return picked?.loadWithData();
     }
 
     let pfont;
