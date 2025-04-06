@@ -1626,6 +1626,12 @@ class Camera {
     /* eslint-enable max-len */
 
     //Normalize the up vector
+    const upLength = Math.sqrt(
+      rotatedUpX * rotatedUpX +
+      rotatedUpY * rotatedUpY +
+      rotatedUpZ * rotatedUpZ
+    );
+
     const normalizedUpX = rotatedUpX / upLength;
     const normalizedUpY = rotatedUpY / upLength;
     const normalizedUpZ = rotatedUpZ / upLength;
