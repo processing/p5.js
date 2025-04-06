@@ -51,7 +51,7 @@ class Vector {
   }
 
   /**
-   * Gets the values of the N-dimentional vector.
+   * Gets the values of the N-dimensional vector.
    *
    * This method returns an array of numbers that represent the vector.
    * Each number in the array corresponds to a different component of the vector,
