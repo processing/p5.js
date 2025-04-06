@@ -806,7 +806,7 @@ function files(p5, fn){
    *
    * async function setup() {
    *   createCanvas(200, 200);
-   *
+   *   background(220);
    *   try {
    *     // 1. Load an image file as a Blob.
    *     myBlob = await loadBlob('assets/flower-1.png');
@@ -822,10 +822,6 @@ function files(p5, fn){
    *   } catch (err) {
    *     console.error('Error loading blob:', err);
    *   }
-   * }
-   *
-   * function draw() {
-   *   background(220);
    * }
    * </code>
    * </div>
