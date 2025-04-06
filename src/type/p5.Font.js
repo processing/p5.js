@@ -4,6 +4,8 @@
 
 import { textCoreConstants } from './textCore';
 import * as constants from '../core/constants';
+import { UnicodeRange } from '@japont/unicode-range';
+import { unicodeRanges } from './unicodeRanges';
 
 /*
   API:
@@ -789,7 +791,7 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
   }
 
   // get the callbacks/descriptors if any
-  let success, error, descriptors;
+  let success, error, options;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (typeof arg === 'function') {
@@ -800,11 +802,11 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
       }
     }
     else if (typeof arg === 'object') {
-      descriptors = arg;
+      options = arg;
     }
   }
 
-  return { path, name, success, error, descriptors };
+  return { path, name, success, error, options };
 }
 
 function font(p5, fn) {
@@ -878,7 +880,7 @@ function font(p5, fn) {
    * @param  {String}        path       path of the font or CSS file to be loaded, or a CSS `@font-face` string.
    * @param  {String}        [name]            An alias that can be used for this font in `textFont()`. Defaults to the name in the font's metadata.
    * @param  {Object}        [options]         An optional object with extra CSS font face descriptors, or p5.js font settings.
-   * @param  {Number}        [options.index]   An optional index specifying which font from a CSS file to use. Defaults to the last one in the file.
+   * @param  {String|Array<String>} [options.sets] (Experimental) An optional string of list of strings with Unicode character set names that should be included. When a CSS file is used as the font, it may contain multiple font files. The font best matching the requested character sets will be picked.
    * @param  {Function}      [successCallback] function called with the
    *                                           <a href="#/p5.Font">p5.Font</a> object after it
    *                                           loads.
@@ -984,7 +986,7 @@ function font(p5, fn) {
     */
   fn.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
-    let { path, name, success, error, options: { index, ...descriptors } = {} } = parseCreateArgs(...args);
+    let { path, name, success, error, options: { sets, ...descriptors } = {} } = parseCreateArgs(...args);
 
     let isCSS = path.includes('@font-face');
 
@@ -1000,7 +1002,7 @@ function font(p5, fn) {
     if (isCSS) {
       const stylesheet = new CSSStyleSheet();
       await stylesheet.replace(path);
-      const fontPromises = [];
+      const possibleFonts = [];
       for (const rule of stylesheet.cssRules) {
         if (rule instanceof CSSFontFaceRule) {
           const style = rule.style;
@@ -1016,28 +1018,79 @@ function font(p5, fn) {
               .join('');
             fontDescriptors[camelCaseKey] = style.getPropertyValue(key);
           }
-          fontPromises.push((async () => {
-            let fontData;
-            try {
-              const urlMatch = /url\(([^\)]+)\)/.exec(src);
-              if (urlMatch) {
-                let url = urlMatch[1];
-                if (/^['"]/.exec(url) && url.at(0) === url.at(-1)) {
-                  url = url.slice(1, -1)
+          possibleFonts.push({
+            name,
+            src,
+            fontDescriptors,
+            load: async () => {
+              let fontData;
+              try {
+                const urlMatch = /url\(([^\)]+)\)/.exec(src);
+                if (urlMatch) {
+                  let url = urlMatch[1];
+                  if (/^['"]/.exec(url) && url.at(0) === url.at(-1)) {
+                    url = url.slice(1, -1)
+                  }
+                  fontData = await fn.parseFontData(url);
                 }
-                fontData = await fn.parseFontData(url);
-              }
-            } catch (_e) {}
-            return create(this, name, src, fontDescriptors, fontData)
-          })());
+              } catch (_e) {}
+              return create(this, name, src, fontDescriptors, fontData)
+            }
+          });
         }
       }
-      if (index !== undefined) {
-        return await fontPromises[index]
-      } else {
-        const fonts = await Promise.all(fontPromises);
-        return fonts.findLast(f => f.data) || fonts[0]; // TODO: handle multiple faces?
+
+      // TODO: handle multiple font faces?
+      sets = sets || ['latin']; // Default to latin for now if omitted
+      const requestedGroups = (sets instanceof Array ? sets : [sets])
+        .map(s => s.toLowerCase());
+      // Grab thr named groups with names that include the requested keywords
+      const requestedCategories = unicodeRanges
+        .filter((r) => requestedGroups.some(
+          g => r.category.includes(g) &&
+            // Only include extended character sets if specifically requested
+            r.category.includes('ext') === g.includes('ext')
+        ));
+      const requestedRanges = new Set(
+        UnicodeRange.parse(
+          requestedCategories.map((c) => `U+${c.hexrange[0]}-${c.hexrange[1]}`)
+        )
+      );
+      let closestRangeOverlap = 0;
+      let closestDescriptorOverlap = 0;
+      let closestMatch = undefined;
+      for (const font of possibleFonts) {
+        if (!font.fontDescriptors.unicodeRange) continue;
+        const fontRange = new Set(
+          UnicodeRange.parse(
+            font.fontDescriptors.unicodeRange.split(/,\s*/g)
+          )
+        );
+        const rangeOverlap = [...fontRange.values()]
+          .filter(v => requestedRanges.has(v))
+          .length;
+
+        const targetDescriptors = {
+          // Default to normal style at regular weight
+          style: 'normal',
+          weight: 400,
+          // Override from anything else passed in
+          ...descriptors
+        };
+        const descriptorOverlap = Object.keys(font.fontDescriptors)
+          .filter(k => font.fontDescriptors[k] === targetDescriptors[k])
+          .length;
+
+        if (
+          descriptorOverlap > closestDescriptorOverlap ||
+          (descriptorOverlap === closestDescriptorOverlap && rangeOverlap >= closestRangeOverlap)
+        ) {
+          closestDescriptorOverlap = descriptorOverlap
+          closestRangeOverlap = rangeOverlap;
+          closestMatch = font;
+        }
       }
+      return (closestMatch || possibleFonts.at(-1))?.load();
     }
 
     let pfont;
