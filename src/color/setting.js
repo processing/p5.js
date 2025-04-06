@@ -1115,46 +1115,28 @@ function setting(p5, fn){
    * @example
    * <div>
    * <code>
-   * 
-   *  // Example: Single-value (Grayscale) colors in different color modes. 
-   *  // Each rectangle is filled with one parameter, but its final color depends
-   *  // on how that parameter is interpreted by the current color mode.
-   *  
-   * 
+   * // Example: Single-value (Grayscale) colors in different color modes.
+   * // The rectangle is filled with one parameter, but its final color depends
+   * // on how that parameter is interpreted by the current color mode.
+   *
    * function setup() {
-   *   createCanvas(300, 200);
+   *   createCanvas(100, 100);
    *   noStroke();
    *   noLoop();
    * }
-   * 
+   *
    * function draw() {
-   *   //--- Left rectangle: RGB mode
+   *   // Set color mode to RGB with range 0-255
    *   colorMode(RGB, 255);
-   *   fill(128); // Interpreted as R=G=B=128 in RGB
-   *   rect(0, 0, 100, 200);
-   * 
-   *   //--- Middle rectangle: LAB mode
-   *   // In LAB, a single value is interpreted as Lightness (L).
-   *   // The default max for each LAB component is 100, so a single value of 50
-   *   // becomes roughly halfway in terms of lightness.
-   *   colorMode(LAB, 100);
-   *   fill(50); 
-   *   rect(100, 0, 100, 200);
-   * 
-   *   //--- Right rectangle: HWB mode
-   *   // In HWB, a single value is mapped onto whiteness and blackness together.
-   *   // Because both W and B are needed to specify a gray, the library averages
-   *   // their max values to interpret this single parameter. 
-   *   colorMode(HWB, 100);
-   *   fill(50);
-   *   rect(200, 0, 100, 200);
-   * 
-   *   // Add text labels
-   *   fill(0); // Switch to black text for clarity (RGB mode for text)
+   *   
+   *   // Fill with single grayscale value
+   *   fill(128);
+   *   rect(0, 0, 100, 100);
+   *
+   *   // Add text label
+   *   fill(0); // Switch to black text for clarity
    *   textSize(14);
    *   text("RGB (128)", 10, 20);
-   *   text("LAB (50)", 105, 20);
-   *   text("HWB (50)", 205, 20);
    * }
    * </code>
    * </div>
