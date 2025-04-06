@@ -1101,17 +1101,16 @@ export class Matrix extends MatrixInterface {
    * // p5.js script example
    * <div class="norender"><code>
    * function setup() {
-   *
    *   const matrix = new p5.Matrix(4); // Create a 4x4 identity matrix
-   *   console.log("Original Matrix:", matrix.matrix);
+   *   console.log("Original Matrix:", matrix.matrix.slice().toString()); // [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
    *
    *   // Translate the matrix by a 3D vector
    *   matrix.translate([10, 20, 30]);
-   *   console.log("After 3D Translation (10, 20, 30):", matrix.matrix);
+   *   console.log("After 3D Translation (10, 20, 30):", matrix.matrix.slice().toString()); // [1,0,0,0,0,1,0,0,0,0,1,0,10,20,30,1]
    *
    *   // Translate the matrix by a 2D vector
    *   matrix.translate([5, 15]);
-   *   console.log("After 2D Translation (5, 15):", matrix.matrix);
+   *   console.log("After 2D Translation (5, 15):", matrix.matrix.slice().toString()); // [1,0,0,0,0,1,0,0,0,0,1,0,15,35,30,1]
    * }
    * </code></div>
    */
