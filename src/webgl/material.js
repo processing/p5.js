@@ -1374,14 +1374,12 @@ function material(p5, fn){
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'Vertex getWorldInputs': `(Vertex inputs) {
+ *       let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
-   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1403,19 +1401,19 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     declarations: 'vec3 myNormal;',
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
+   *   myShader = baseMaterialShader().modify(() => {
+   *     let myNormal = varyingVec3();
+   *     getPixelInputs((inputs) => {
    *       myNormal = inputs.normal;
    *       return inputs;
-   *     }`,
-   *     'vec4 getFinalColor': `(vec4 color) {
+   *     });
+   *     getFinalColor((color) => {
    *       return mix(
-   *         vec4(1.0, 1.0, 1.0, 1.0),
+   *         vec4(1, 1, 1, 1),
    *         color,
    *         abs(dot(myNormal, vec3(0.0, 0.0, 1.0)))
    *       );
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1477,10 +1475,10 @@ function material(p5, fn){
    *   myShader = baseMaterialShader().modify(() => {
    *     getPixelInputs((inputs) => {
    *       inputs.normal.x += 0.2 * sin(
-   *         sin(inputs.texCoord.yx * TWO_PI * [10, 25])
+   *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
    *       );
    *       inputs.normal.y += 0.2 * sin(
-   *         sin(inputs.texCoord * TWO_PI * [10, 25])
+   *         sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
    *       );
    *       inputs.normal = normalize(inputs.normal);
    *       return inputs;
