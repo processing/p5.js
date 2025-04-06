@@ -73,32 +73,32 @@ function matrix(p5, fn) {
    *
    *   // Create a 4x4 identity matrix
    *   const matrix = new p5.Matrix(4);
-   *   console.log("Original p5.Matrix:", matrix.matrix);
+   *   console.log("Original p5.Matrix:", matrix.matrix.toString()); // Output: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
    *
    *   // Add two matrices
    *   const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    *   const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   matrix1.add(matrix2);
-   *   console.log("After Addition:", matrix1.matrix); // Output: [10, 10, 10, 10, 10, 10, 10, 10, 10]
+   *   console.log("After Addition:", matrix1.matrix.toString()); // Output: [10, 10, 10, 10, 10, 10, 10, 10, 10]
    *
    *   // Reset the matrix to an identity matrix
    *   matrix.reset();
-   *   console.log("Reset p5.Matrix:", matrix.matrix);
+   *   console.log("Reset p5.Matrix:", matrix.matrix.toString()); // [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
    *
    *   // Apply a scaling transformation
    *   matrix.scale(2, 2, 2);
-   *   console.log("Scaled p5.Matrix:", matrix.matrix);
+   *   console.log("Scaled p5.Matrix:", matrix.matrix.toString()); // [2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1]
    *
    *   // Apply a rotation around the X-axis
    *   matrix.rotate4x4(Math.PI / 4, 1, 0, 0);
-   *   console.log("Rotated p5.Matrix (X-axis):", matrix.matrix);
+   *   console.log("Rotated p5.Matrix (X-axis):", matrix.matrix.toString()); // [2, 0, 0, 0, 0, 1.4142135381698608, 1.4142135381698608, 0, 0, -1.4142135381698608, 1.4142135381698608, 0, 0, 0, 0, 1]
    *
    *   // Apply a perspective transformation
    *   matrix.perspective(Math.PI / 4, 1, 0.1, 100);
-   *   console.log("Perspective p5.Matrix:", matrix.matrix);
+   *   console.log("Perspective p5.Matrix:", matrix.matrix.toString());// [2.4142136573791504, 0, 0, 0, 0, 2.4142136573791504, 0, 0, 0, 0, -1.0020020008087158, -1, 0, 0, -0.20020020008087158, 0]
    *
    *   // Multiply a vector by the matrix
-   *   const vector = new Vector(1, 2, 3);
+   *   const vector = new p5.Vector(1, 2, 3);
    *   const transformedVector = matrix.multiplyPoint(vector);
    *   console.log("Transformed Vector:", transformedVector.toString());
    * }
