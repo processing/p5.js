@@ -68,7 +68,7 @@ function matrix(p5, fn) {
    * const result = matrix.multiplyPoint(vector);
    *
    * // p5.js script example
-   * <div><code>
+   * <div class="norender"><code>
    * function setup() {
    *
    *   // Create a 4x4 identity matrix
