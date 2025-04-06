@@ -1620,10 +1620,9 @@ class Camera {
 
     // Rotate the up vector to keep the correct camera orientation
     /* eslint-disable max-len */
-
-    const rotatedUpX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8],
-    const rotatedUpY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9],
-    const rotatedUpZ =  this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10]
+    const rotatedUpX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8];
+    const rotatedUpY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9];
+    const rotatedUpZ =  this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
     /* eslint-enable max-len */
 
     //Normalize the up vector
