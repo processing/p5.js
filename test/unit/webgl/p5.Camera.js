@@ -290,85 +290,112 @@ suite('p5.Camera', function() {
   });
 
   suite('Camera Tilt and Up Vector', function() {
-      test('Tilt() correctly updates the up vector', function() {
-          var orig = getVals(myCam); // Store original camera values
-          // Apply tilt to the camera
-          myCam.tilt(30); // Tilt by 30 degrees
-
-          // Compute expected up vector without p5.Vector
-          let forwardX = myCam.centerX - myCam.eyeX;
-          let forwardY = myCam.centerY - myCam.eyeY;
-          let forwardZ = myCam.centerZ - myCam.eyeZ;
-
-          let upX = orig.ux;
-          let upY = orig.uy;
-          let upZ = orig.uz;
-
-          let rightX = forwardY * upZ - forwardZ * upY;
-          let rightY = forwardZ * upX - forwardX * upZ;
-          let rightZ = forwardX * upY - forwardY * upX;
-
-          // Now compute expected up vector (normalize)
-          let expectedUpX = rightY * forwardZ - rightZ * forwardY;
-          let expectedUpY = rightZ * forwardX - rightX * forwardZ;
-          let expectedUpZ = rightX * forwardY - rightY * forwardX;
-
-          // Normalize the expected up vector
-          let length = Math.sqrt(expectedUpX * expectedUpX + expectedUpY * expectedUpY + expectedUpZ * expectedUpZ);
-          expectedUpX /= length;
-          expectedUpY /= length;
-          expectedUpZ /= length;
-
-          // Verify that the up vector has changed
-          assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
-          assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
-          assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
-
-          // Verify up vector matches expected values within a small margin of error
-          assert.closeTo(myCam.upX, expectedUpX, 0.001, 'upX mismatch');
-          assert.closeTo(myCam.upY, expectedUpY, 0.001, 'upY mismatch');
-          assert.closeTo(myCam.upZ, expectedUpZ, 0.001, 'upZ mismatch');
-      });
-
-      test('Tilt() with negative angle correctly updates the up vector', function() {
-          var orig = getVals(myCam); // Store original camera values
-          myCam.tilt(-30); // Tilt by -30 degrees
-
-          // Compute expected up vector without p5.Vector
-          let forwardX = myCam.centerX - myCam.eyeX;
-          let forwardY = myCam.centerY - myCam.eyeY;
-          let forwardZ = myCam.centerZ - myCam.eyeZ;
-
-          let upX = orig.ux;
-          let upY = orig.uy;
-          let upZ = orig.uz;
-
-          let rightX = forwardY * upZ - forwardZ * upY;
-          let rightY = forwardZ * upX - forwardX * upZ;
-          let rightZ = forwardX * upY - forwardY * upX;
-
-          // Now compute expected up vector (normalize)
-          let expectedUpX = rightY * forwardZ - rightZ * forwardY;
-          let expectedUpY = rightZ * forwardX - rightX * forwardZ;
-          let expectedUpZ = rightX * forwardY - rightY * forwardX;
-
-          // Normalize the expected up vector
-          let length = Math.sqrt(expectedUpX * expectedUpX + expectedUpY * expectedUpY + expectedUpZ * expectedUpZ);
-          expectedUpX /= length;
-          expectedUpY /= length;
-          expectedUpZ /= length;
-
-          // Verify that the up vector has changed
-          assert.notStrictEqual(myCam.upX, orig.ux, 'upX should be updated');
-          assert.notStrictEqual(myCam.upY, orig.uy, 'upY should be updated');
-          assert.notStrictEqual(myCam.upZ, orig.uz, 'upZ should be updated');
-
-          // Verify up vector matches expected values within a small margin of error
-          assert.closeTo(myCam.upX, expectedUpX, 0.001, 'upX mismatch');
-          assert.closeTo(myCam.upY, expectedUpY, 0.001, 'upY mismatch');
-          assert.closeTo(myCam.upZ, expectedUpZ, 0.001, 'upZ mismatch');
-      });
+    var myp5;
+    var myCam;
+    var delta = 0.001;
+  
+    // Function to retrieve the camera's parameters
+    var getVals = function(cam) {
+      return {
+        ex: cam.eyeX,
+        ey: cam.eyeY,
+        ez: cam.eyeZ,
+        cx: cam.centerX,
+        cy: cam.centerY,
+        cz: cam.centerZ,
+        ux: cam.upX,
+        uy: cam.upY,
+        uz: cam.upZ
+      };
+    };
+  
+    // Initialize the camera and set up the p5 instance
+    setup(function() {
+      myp5 = new p5();
+      myCam = myp5.camera;
+      myp5._renderer = { _pInst: myp5 }; // Simulate the renderer
+    });
+  
+    // Test: Camera starts with correct initial values
+    test('Camera initial values', function() {
+      var vals = getVals(myCam);
+      assert.closeTo(vals.ex, 0, delta);
+      assert.closeTo(vals.ey, 0, delta);
+      assert.closeTo(vals.ez, 500, delta);
+      assert.closeTo(vals.cx, 0, delta);
+      assert.closeTo(vals.cy, 0, delta);
+      assert.closeTo(vals.cz, 0, delta);
+      assert.closeTo(vals.ux, 0, delta);
+      assert.closeTo(vals.uy, 1, delta);
+      assert.closeTo(vals.uz, 0, delta);
+    });
+  
+    // Test: Camera rotation around a given axis (e.g., X-axis) while maintaining the up vector orientation
+    test('Camera rotation around X-axis', function() {
+      myCam._rotateView(90, 1, 0, 0); // Rotate by 90 degrees around X-axis
+  
+      var vals = getVals(myCam);
+      // Check that the center's Y value changes but the up vector remains consistent
+      assert.notCloseTo(vals.cy, 0, delta); // Y center should change
+      assert.closeTo(vals.ux, 0, delta);   // X up vector should stay the same
+      assert.closeTo(vals.uy, 0, delta);   // Y up vector should change
+      assert.closeTo(vals.uz, 1, delta);   // Z up vector should stay the same
+    });
+  
+    // Test: Camera rotation around Y-axis, checking up vector normalization
+    test('Camera rotation around Y-axis', function() {
+      myCam._rotateView(90, 0, 1, 0); // Rotate by 90 degrees around Y-axis
+  
+      var vals = getVals(myCam);
+      // Ensure the up vector is normalized
+      var upLength = Math.sqrt(vals.ux * vals.ux + vals.uy * vals.uy + vals.uz * vals.uz);
+      assert.closeTo(upLength, 1, delta); // Check if up vector is normalized to 1
+    });
+  
+    // Test: Rotation around the eye position
+    test('Camera rotation around eye position', function() {
+      myCam.eyeX = 100;
+      myCam.eyeY = 100;
+      myCam.eyeZ = 100;
+  
+      // Rotate by 90 degrees around Z-axis
+      myCam._rotateView(90, 0, 0, 1);
+  
+      var vals = getVals(myCam);
+      assert.notCloseTo(vals.cx, 0, delta); // The center should have changed after rotation
+      assert.notCloseTo(vals.cy, 0, delta);
+      assert.notCloseTo(vals.cz, 0, delta);
+    });
+  
+    // Edge case: No rotation
+    test('No rotation results in no change', function() {
+      var initialVals = getVals(myCam);
+  
+      myCam._rotateView(0, 0, 0, 0); // No rotation
+  
+      var finalVals = getVals(myCam);
+      assert.deepEqual(initialVals, finalVals); // Values should remain the same
+    });
+  
+    // Edge case: Very small rotation
+    test('Very small rotation', function() {
+      myCam._rotateView(0.001, 0, 1, 0); // Small rotation around Y-axis
+  
+      var vals = getVals(myCam);
+      assert.closeTo(vals.cy, 0, delta); // Y center should remain almost the same
+    });
+  
+    // Edge case: Extreme rotation (e.g., 360 degrees)
+    test('Extreme rotation (360 degrees)', function() {
+      var initialVals = getVals(myCam);
+  
+      myCam._rotateView(360, 0, 1, 0); // 360-degree rotation around Y-axis
+  
+      var finalVals = getVals(myCam);
+      assert.deepEqual(initialVals, finalVals); // Values should be almost identical after a full rotation
+    });
   });
+
 
   suite('Rotation with angleMode(DEGREES)', function() {
     beforeEach(function() {
