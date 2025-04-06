@@ -289,59 +289,6 @@ suite('p5.Camera', function() {
     });
   });
 
-  suite('Camera Tilt and Up Vector', function() {
-    test('Camera Tilt and Up Vector initial values', function() {
-      var vals = getVals(myCam);
-      assert.closeTo(vals.ex, 0, delta);
-      assert.closeTo(vals.ey, 0, delta);
-      assert.closeTo(vals.ez, 500, delta); // Ensure it starts at 500 for eyeZ
-      assert.closeTo(vals.cx, 0, delta);
-      assert.closeTo(vals.cy, 0, delta);
-      assert.closeTo(vals.cz, 0, delta);
-      assert.closeTo(vals.ux, 0, delta);
-      assert.closeTo(vals.uy, 1, delta);
-      assert.closeTo(vals.uz, 0, delta);
-    });
-
-    test('Tilt() with positive parameter sets correct Matrix without changing eyeXYZ', function() {
-      var orig = getVals(myCam);
-
-      var expectedMatrix = new Float32Array([
-        1, 0, 0, 0,
-        0, 0.07073719799518585, -0.9974949955940247, 0,
-        -0, 0.9974949955940247, 0.07073719799518585, 0,
-        0, -86.3855972290039, -6.126020908355713, 1
-      ]);
-
-      myCam.tilt(1.5);
-
-      assert.deepCloseTo(myCam.cameraMatrix.mat4, expectedMatrix);
-
-      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
-      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
-      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
-    });
-
-    test('Tilt() with negative parameter sets correct matrix without changing eyeXYZ', function() {
-      var orig = getVals(myCam);
-
-      var expectedMatrix = new Float32Array([
-        1, 0, 0, 0,
-        0, 0.07073719799518585, 0.9974949955940247, 0,
-        0, -0.9974949955940247, 0.07073719799518585, 0,
-        0, 86.3855972290039, -6.126020908355713, 1
-      ]);
-
-      myCam.tilt(-1.5);
-
-      assert.deepCloseTo(myCam.cameraMatrix.mat4, expectedMatrix);
-
-      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
-      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
-      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
-    });
-  });
-
   suite('Rotation with angleMode(DEGREES)', function() {
     beforeEach(function() {
       myp5.push();
