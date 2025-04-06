@@ -1584,11 +1584,11 @@ function customShapes(p5, fn) {
   // ---- FUNCTIONS ----
 
   /**
-   * @method beierOrder
+   * @method bezierOrder
    * @returns {Number} The current bezier order.
    */
   /**
-   * @method beierOrder
+   * @method bezierOrder
    * @param {Number} order The new order to set.
    */
   fn.bezierOrder = function(order) {

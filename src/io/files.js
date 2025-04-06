@@ -782,7 +782,50 @@ function files(p5, fn){
       }
     }
   };
-
+  
+  /**
+   * Loads a file at the given path as a Blob, then returns the resulting data or
+   * passes it to a success callback function, if provided. On load, this function
+   * returns a `Promise` that resolves to a Blob containing the file data.
+   *
+   * @method loadBlob
+   * @param {String|Request} path - The path or Request object pointing to the file
+   *                                you want to load.
+   * @param {Function} [successCallback] - Optional. A function to be called if the
+   *                                       file successfully loads, receiving the
+   *                                       resulting Blob as its only argument.
+   * @param {Function} [errorCallback] - Optional. A function to be called if an
+   *                                     error occurs during loading; receives the
+   *                                     error object as its only argument.
+   * @returns {Promise<Blob>} A promise that resolves with the loaded Blob.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myBlob;
+   *
+   * async function setup() {
+   *   createCanvas(200, 200);
+   *   background(220);
+   *   try {
+   *     // 1. Load an image file as a Blob.
+   *     myBlob = await loadBlob('assets/flower-1.png');
+   *
+   *     // 2. Convert the Blob into an object URL.
+   *     const objectUrl = URL.createObjectURL(myBlob);
+   *
+   *     // 3. Load that object URL into a p5.Image.
+   *     loadImage(objectUrl, (img) => {
+   *       // 4. Display the loaded image.
+   *       image(img, 0, 0, width, height);
+   *     });
+   *   } catch (err) {
+   *     console.error('Error loading blob:', err);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   fn.loadBlob = async function(path, successCallback, errorCallback) {
     try{
       const { data } = await request(path, 'blob');

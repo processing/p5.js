@@ -382,11 +382,6 @@
         ]
       ]
     },
-    "sketchVerifier": {
-      "overloads": [
-        []
-      ]
-    },
     "setup": {
       "overloads": [
         []
@@ -1855,6 +1850,50 @@
         ]
       ]
     },
+    "bezierOrder": {
+      "overloads": [
+        [],
+        [
+          "Number"
+        ]
+      ]
+    },
+    "splineVertex": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "splineProperty": {
+      "overloads": [
+        [
+          "String"
+        ],
+        [
+          "String",
+          null
+        ]
+      ]
+    },
+    "splineProperties": {
+      "overloads": [
+        [],
+        [
+          "Object"
+        ]
+      ]
+    },
     "vertex": {
       "overloads": [
         [
@@ -1864,12 +1903,13 @@
         [
           "Number",
           "Number",
+          "Number?",
           "Number?"
         ],
         [
           "Number",
           "Number",
-          "Number?",
+          "Number",
           "Number?",
           "Number?"
         ]
@@ -1899,21 +1939,15 @@
         [
           "Number",
           "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
+          "Number?",
+          "Number?"
         ],
         [
           "Number",
           "Number",
           "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
+          "Number?",
+          "Number?"
         ]
       ]
     },
@@ -1955,11 +1989,6 @@
         [
           "String",
           "Number|Number[]"
-        ],
-        [
-          "String",
-          "Number|Number[]",
-          "Number?"
         ]
       ]
     },
@@ -3090,22 +3119,6 @@
         []
       ]
     },
-    "findClosestSchema": {
-      "overloads": [
-        [
-          "z.ZodSchema",
-          "Array"
-        ]
-      ]
-    },
-    "validate": {
-      "overloads": [
-        [
-          "String",
-          "Array"
-        ]
-      ]
-    },
     "createVideo": {
       "overloads": [
         [
@@ -3129,31 +3142,6 @@
           "AUDIO|VIDEO|Object?",
           "Object?",
           "Function?"
-        ]
-      ]
-    },
-    "bezierOrder": {
-      "overloads": [
-        []
-      ]
-    },
-    "splineVertex": {
-      "overloads": [
-        []
-      ]
-    },
-    "splineProperty": {
-      "overloads": [
-        [
-          "String",
-          null
-        ]
-      ]
-    },
-    "splineProperties": {
-      "overloads": [
-        [
-          "Object?"
         ]
       ]
     }
@@ -3200,6 +3188,15 @@
     "normalize": {
       "overloads": [
         []
+      ]
+    },
+    "vertexProperty": {
+      "overloads": [
+        [
+          "String",
+          "Number|Number[]",
+          "Number?"
+        ]
       ]
     }
   },
@@ -4505,6 +4502,18 @@
     }
   },
   "p5.Font": {
+    "textToPaths": {
+      "overloads": [
+        [
+          "String",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?",
+          "Object?"
+        ]
+      ]
+    },
     "textToPoints": {
       "overloads": [
         [
