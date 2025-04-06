@@ -1324,16 +1324,18 @@ export class Matrix extends MatrixInterface {
    * <div class="norender"><code>
    * // Example using p5.js to demonstrate orthographic projection
    * function setup() {
-   *   let orthoMatrix = new p5.Matrix(4);
-   *   orthoMatrix.ortho(-200, 200, -200, 200, 0.1, 1000);
-   *   applyMatrix(
+   *  let orthoMatrix = new p5.Matrix(4);
+   *  console.log(orthoMatrix.matrix.toString()) // Output: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+   *  orthoMatrix.ortho(-200, 200, -200, 200, 0.1, 1000);
+   *  console.log(orthoMatrix.matrix.toString()) // Output: [24 0.004999999888241291,0,0,0,0,0.004999999888241291,0,0,0,0,-0.0020002000965178013,0,0,0,-1.0002000331878662,1]
+   *  applyMatrix(
    *     orthoMatrix.mat4[0], orthoMatrix.mat4[1], orthoMatrix.mat4[2], orthoMatrix.mat4[3],
    *     orthoMatrix.mat4[4], orthoMatrix.mat4[5], orthoMatrix.mat4[6], orthoMatrix.mat4[7],
    *     orthoMatrix.mat4[8], orthoMatrix.mat4[9], orthoMatrix.mat4[10], orthoMatrix.mat4[11],
    *     orthoMatrix.mat4[12], orthoMatrix.mat4[13], orthoMatrix.mat4[14], orthoMatrix.mat4[15]
-   *   );
-   * }
-   *
+   *  );
+   *  console.log(orthoMatrix.matrix.toString()) // Output: [31 0.004999999888241291,0,0,0,0,0.004999999888241291,0,0,0,0,-0.0020002000965178013,0,0,0,-1.0002000331878662,1]
+   *   }
    * </code></div>
    *
    */
