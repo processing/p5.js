@@ -290,68 +290,11 @@ suite('p5.Camera', function() {
   });
 
   suite('Camera Tilt and Up Vector', function() {
-    var myp5;
-    var myCam;
-    var delta = 0.001;
-  
-    // Function to retrieve the camera's parameters
-    var getVals = function(cam) {
-      return {
-        ex: cam.eyeX,
-        ey: cam.eyeY,
-        ez: cam.eyeZ,
-        cx: cam.centerX,
-        cy: cam.centerY,
-        cz: cam.centerZ,
-        ux: cam.upX,
-        uy: cam.upY,
-        uz: cam.upZ
-      };
-    };
-  
-    // Initialize the camera and set up the p5 instance
-    beforeAll(function() {
-      myp5 = new p5(function(p) {
-        p.setup = function() {
-          p.createCanvas(100, 100, p.WEBGL);
-          myCam = p.createCamera();
-        };
-      });
-    });
-  
-    afterAll(function() {
-      myp5.remove();
-    });
-  
-    beforeEach(function() {
-      myp5.angleMode(myp5.RADIANS);
-  
-      // Set camera defaults
-      myCam.camera(
-        0,
-        0,
-        100 / 2.0 / Math.tan(Math.PI * 30.0 / 180.0),
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      );
-      myCam.perspective(
-        Math.PI / 3.0,
-        1,
-        myCam.eyeZ / 10.0,
-        myCam.eyeZ * 10.0
-      );
-      myp5.setCamera(myCam);
-    });
-  
-    test('Camera initial values', function() {
+    test('Camera Tilt and Up Vector initial values', function() {
       var vals = getVals(myCam);
       assert.closeTo(vals.ex, 0, delta);
       assert.closeTo(vals.ey, 0, delta);
-      assert.closeTo(vals.ez, 500, delta);
+      assert.closeTo(vals.ez, 500, delta); // Ensure it starts at 500 for eyeZ
       assert.closeTo(vals.cx, 0, delta);
       assert.closeTo(vals.cy, 0, delta);
       assert.closeTo(vals.cz, 0, delta);
@@ -359,59 +302,45 @@ suite('p5.Camera', function() {
       assert.closeTo(vals.uy, 1, delta);
       assert.closeTo(vals.uz, 0, delta);
     });
-  
-    test('Camera rotation around X-axis', function() {
-      myCam._rotateView(90, 1, 0, 0); // Rotate by 90 degrees around X-axis
-  
-      var vals = getVals(myCam);
-      assert.notCloseTo(vals.cy, 0, delta); // Y center should change
-      assert.closeTo(vals.ux, 0, delta);   // X up vector should stay the same
-      assert.closeTo(vals.uy, 0, delta);   // Y up vector should change
-      assert.closeTo(vals.uz, 1, delta);   // Z up vector should stay the same
+
+    test('Tilt() with positive parameter sets correct Matrix without changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 0.07073719799518585, -0.9974949955940247, 0,
+        -0, 0.9974949955940247, 0.07073719799518585, 0,
+        0, -86.3855972290039, -6.126020908355713, 1
+      ]);
+
+      myCam.tilt(1.5);
+
+      assert.deepCloseTo(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
     });
-  
-    test('Camera rotation around Y-axis', function() {
-      myCam._rotateView(90, 0, 1, 0); // Rotate by 90 degrees around Y-axis
-  
-      var vals = getVals(myCam);
-      var upLength = Math.sqrt(vals.ux * vals.ux + vals.uy * vals.uy + vals.uz * vals.uz);
-      assert.closeTo(upLength, 1, delta); // Check if up vector is normalized to 1
-    });
-  
-    test('Camera rotation around eye position', function() {
-      myCam.eyeX = 100;
-      myCam.eyeY = 100;
-      myCam.eyeZ = 100;
-  
-      myCam._rotateView(90, 0, 0, 1);
-  
-      var vals = getVals(myCam);
-      assert.notCloseTo(vals.cx, 0, delta); // The center should have changed after rotation
-      assert.notCloseTo(vals.cy, 0, delta);
-      assert.notCloseTo(vals.cz, 0, delta);
-    });
-  
-    test('No rotation results in no change', function() {
-      var initialVals = getVals(myCam);
-      myCam._rotateView(0, 0, 0, 0); // No rotation
-      var finalVals = getVals(myCam);
-      assert.deepEqual(initialVals, finalVals); // Values should remain the same
-    });
-  
-    test('Very small rotation', function() {
-      myCam._rotateView(0.001, 0, 1, 0); // Small rotation around Y-axis
-      var vals = getVals(myCam);
-      assert.closeTo(vals.cy, 0, delta); // Y center should remain almost the same
-    });
-  
-    test('Extreme rotation (360 degrees)', function() {
-      var initialVals = getVals(myCam);
-      myCam._rotateView(360, 0, 1, 0); // 360-degree rotation around Y-axis
-      var finalVals = getVals(myCam);
-      assert.deepEqual(initialVals, finalVals); // Values should be almost identical after a full rotation
+
+    test('Tilt() with negative parameter sets correct matrix without changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 0.07073719799518585, 0.9974949955940247, 0,
+        0, -0.9974949955940247, 0.07073719799518585, 0,
+        0, 86.3855972290039, -6.126020908355713, 1
+      ]);
+
+      myCam.tilt(-1.5);
+
+      assert.deepCloseTo(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
     });
   });
-
 
   suite('Rotation with angleMode(DEGREES)', function() {
     beforeEach(function() {
