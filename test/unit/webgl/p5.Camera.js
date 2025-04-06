@@ -310,13 +310,43 @@ suite('p5.Camera', function() {
     };
   
     // Initialize the camera and set up the p5 instance
-    setup(function() {
-      myp5 = new p5();
-      myCam = myp5.camera;
-      myp5._renderer = { _pInst: myp5 }; // Simulate the renderer
+    beforeAll(function() {
+      myp5 = new p5(function(p) {
+        p.setup = function() {
+          p.createCanvas(100, 100, p.WEBGL);
+          myCam = p.createCamera();
+        };
+      });
     });
   
-    // Test: Camera starts with correct initial values
+    afterAll(function() {
+      myp5.remove();
+    });
+  
+    beforeEach(function() {
+      myp5.angleMode(myp5.RADIANS);
+  
+      // Set camera defaults
+      myCam.camera(
+        0,
+        0,
+        100 / 2.0 / Math.tan(Math.PI * 30.0 / 180.0),
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      );
+      myCam.perspective(
+        Math.PI / 3.0,
+        1,
+        myCam.eyeZ / 10.0,
+        myCam.eyeZ * 10.0
+      );
+      myp5.setCamera(myCam);
+    });
+  
     test('Camera initial values', function() {
       var vals = getVals(myCam);
       assert.closeTo(vals.ex, 0, delta);
@@ -330,35 +360,29 @@ suite('p5.Camera', function() {
       assert.closeTo(vals.uz, 0, delta);
     });
   
-    // Test: Camera rotation around a given axis (e.g., X-axis) while maintaining the up vector orientation
     test('Camera rotation around X-axis', function() {
       myCam._rotateView(90, 1, 0, 0); // Rotate by 90 degrees around X-axis
   
       var vals = getVals(myCam);
-      // Check that the center's Y value changes but the up vector remains consistent
       assert.notCloseTo(vals.cy, 0, delta); // Y center should change
       assert.closeTo(vals.ux, 0, delta);   // X up vector should stay the same
       assert.closeTo(vals.uy, 0, delta);   // Y up vector should change
       assert.closeTo(vals.uz, 1, delta);   // Z up vector should stay the same
     });
   
-    // Test: Camera rotation around Y-axis, checking up vector normalization
     test('Camera rotation around Y-axis', function() {
       myCam._rotateView(90, 0, 1, 0); // Rotate by 90 degrees around Y-axis
   
       var vals = getVals(myCam);
-      // Ensure the up vector is normalized
       var upLength = Math.sqrt(vals.ux * vals.ux + vals.uy * vals.uy + vals.uz * vals.uz);
       assert.closeTo(upLength, 1, delta); // Check if up vector is normalized to 1
     });
   
-    // Test: Rotation around the eye position
     test('Camera rotation around eye position', function() {
       myCam.eyeX = 100;
       myCam.eyeY = 100;
       myCam.eyeZ = 100;
   
-      // Rotate by 90 degrees around Z-axis
       myCam._rotateView(90, 0, 0, 1);
   
       var vals = getVals(myCam);
@@ -367,30 +391,22 @@ suite('p5.Camera', function() {
       assert.notCloseTo(vals.cz, 0, delta);
     });
   
-    // Edge case: No rotation
     test('No rotation results in no change', function() {
       var initialVals = getVals(myCam);
-  
       myCam._rotateView(0, 0, 0, 0); // No rotation
-  
       var finalVals = getVals(myCam);
       assert.deepEqual(initialVals, finalVals); // Values should remain the same
     });
   
-    // Edge case: Very small rotation
     test('Very small rotation', function() {
       myCam._rotateView(0.001, 0, 1, 0); // Small rotation around Y-axis
-  
       var vals = getVals(myCam);
       assert.closeTo(vals.cy, 0, delta); // Y center should remain almost the same
     });
   
-    // Edge case: Extreme rotation (e.g., 360 degrees)
     test('Extreme rotation (360 degrees)', function() {
       var initialVals = getVals(myCam);
-  
       myCam._rotateView(360, 0, 1, 0); // 360-degree rotation around Y-axis
-  
       var finalVals = getVals(myCam);
       assert.deepEqual(initialVals, finalVals); // Values should be almost identical after a full rotation
     });
