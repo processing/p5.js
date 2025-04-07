@@ -4,6 +4,8 @@
 
 import { textCoreConstants } from './textCore';
 import * as constants from '../core/constants';
+import { UnicodeRange } from '@japont/unicode-range';
+import { unicodeRanges } from './unicodeRanges';
 
 /*
   API:
@@ -1068,7 +1070,7 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
   }
 
   // get the callbacks/descriptors if any
-  let success, error, descriptors;
+  let success, error, options;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (typeof arg === 'function') {
@@ -1079,11 +1081,11 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
       }
     }
     else if (typeof arg === 'object') {
-      descriptors = arg;
+      options = arg;
     }
   }
 
-  return { path, name, success, error, descriptors };
+  return { path, name, success, error, options };
 }
 
 function font(p5, fn) {
@@ -1094,6 +1096,32 @@ function font(p5, fn) {
    * @class p5.Font
    */
   p5.Font = Font;
+
+  /**
+   * @private
+   */
+  fn.parseFontData = async function(pathOrData) {
+    // load the raw font bytes
+    let result = pathOrData instanceof Uint8Array
+      ? pathOrData
+      : await fn.loadBytes(pathOrData);
+    //console.log('result:', result);
+
+    if (!result) {
+      throw Error('Failed to load font data');
+    }
+
+    // parse the font data
+    let fonts = Typr.parse(result);
+
+    // TODO: generate descriptors from font in the future
+
+    if (fonts.length === 0 || fonts[0].cmap === undefined) {
+      throw Error('parsing font data');
+    }
+
+    return fonts[0];
+  };
 
   /**
    * Loads a font and creates a <a href="#/p5.Font">p5.Font</a> object.
@@ -1111,8 +1139,7 @@ function font(p5, fn) {
    *
    * In 2D mode, `path` can take on a few other forms. It could be a path to a CSS file,
    * such as one from <a href="https://fonts.google.com/">Google Fonts.</a> It could also
-   * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a> It can also be an object containing key-value pairs with
-   * properties that you would find in an `@font-face` block.
+   * be a string with a <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">CSS `@font-face` declaration.</a>
    *
    * The second parameter, `successCallback`, is optional. If a function is
    * passed, it will be called once the font has loaded. The callback function
@@ -1129,8 +1156,10 @@ function font(p5, fn) {
    *
    * @method loadFont
    * @for p5
-   * @param  {String|Object}        path       path of the font to be loaded, a CSS `@font-face` string, or an object with font face properties.
+   * @param  {String}        path       path of the font or CSS file to be loaded, or a CSS `@font-face` string.
    * @param  {String}        [name]            An alias that can be used for this font in `textFont()`. Defaults to the name in the font's metadata.
+   * @param  {Object}        [options]         An optional object with extra CSS font face descriptors, or p5.js font settings.
+   * @param  {String|Array<String>} [options.sets] (Experimental) An optional string of list of strings with Unicode character set names that should be included. When a CSS file is used as the font, it may contain multiple font files. The font best matching the requested character sets will be picked.
    * @param  {Function}      [successCallback] function called with the
    *                                           <a href="#/p5.Font">p5.Font</a> object after it
    *                                           loads.
@@ -1219,13 +1248,6 @@ function font(p5, fn) {
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
    * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
-   * loadFont({
-   *   fontFamily: '"Bricolage Grotesque", serif',
-   *   fontOpticalSizing: 'auto',
-   *   fontWeight: 400,
-   *   fontStyle: 'normal',
-   *   fontVariationSettings: '"wdth" 100',
-   * });
    * </code>
    * </div>
    */
@@ -1243,7 +1265,7 @@ function font(p5, fn) {
     */
   fn.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
-    let { path, name, success, error, descriptors } = parseCreateArgs(...args);
+    let { path, name, success, error, options: { sets, ...descriptors } = {} } = parseCreateArgs(...args);
 
     let isCSS = path.includes('@font-face');
 
@@ -1259,7 +1281,7 @@ function font(p5, fn) {
     if (isCSS) {
       const stylesheet = new CSSStyleSheet();
       await stylesheet.replace(path);
-      const fontPromises = [];
+      const possibleFonts = [];
       for (const rule of stylesheet.cssRules) {
         if (rule instanceof CSSFontFaceRule) {
           const style = rule.style;
@@ -1275,37 +1297,99 @@ function font(p5, fn) {
               .join('');
             fontDescriptors[camelCaseKey] = style.getPropertyValue(key);
           }
-          fontPromises.push(create(this, name, src, fontDescriptors));
+          possibleFonts.push({
+            name,
+            src,
+            fontDescriptors,
+            loadWithData: async () => {
+              let fontData;
+              try {
+                const urlMatch = /url\(([^\)]+)\)/.exec(src);
+                if (urlMatch) {
+                  let url = urlMatch[1];
+                  if (/^['"]/.exec(url) && url.at(0) === url.at(-1)) {
+                    url = url.slice(1, -1)
+                  }
+                  fontData = await fn.parseFontData(url);
+                }
+              } catch (_e) {}
+              return create(this, name, src, fontDescriptors, fontData)
+            },
+            loadWithoutData: () => create(this, name, src, fontDescriptors)
+          });
         }
       }
-      const fonts = await Promise.all(fontPromises);
-      return fonts[0]; // TODO: handle multiple faces?
+
+      // TODO: handle multiple font faces?
+      sets = sets || ['latin']; // Default to latin for now if omitted
+      const requestedGroups = (sets instanceof Array ? sets : [sets])
+        .map(s => s.toLowerCase());
+      // Grab thr named groups with names that include the requested keywords
+      const requestedCategories = unicodeRanges
+        .filter((r) => requestedGroups.some(
+          g => r.category.includes(g) &&
+            // Only include extended character sets if specifically requested
+            r.category.includes('ext') === g.includes('ext')
+        ));
+      const requestedRanges = new Set(
+        UnicodeRange.parse(
+          requestedCategories.map((c) => `U+${c.hexrange[0]}-${c.hexrange[1]}`)
+        )
+      );
+      let closestRangeOverlap = 0;
+      let closestDescriptorOverlap = 0;
+      let closestMatch = undefined;
+      for (const font of possibleFonts) {
+        if (!font.fontDescriptors.unicodeRange) continue;
+        const fontRange = new Set(
+          UnicodeRange.parse(
+            font.fontDescriptors.unicodeRange.split(/,\s*/g)
+          )
+        );
+        const rangeOverlap = [...fontRange.values()]
+          .filter(v => requestedRanges.has(v))
+          .length;
+
+        const targetDescriptors = {
+          // Default to normal style at regular weight
+          style: 'normal',
+          weight: 400,
+          // Override from anything else passed in
+          ...descriptors
+        };
+        const descriptorOverlap = Object.keys(font.fontDescriptors)
+          .filter(k => font.fontDescriptors[k] === targetDescriptors[k])
+          .length;
+
+        if (
+          descriptorOverlap > closestDescriptorOverlap ||
+          (descriptorOverlap === closestDescriptorOverlap && rangeOverlap >= closestRangeOverlap)
+        ) {
+          closestDescriptorOverlap = descriptorOverlap
+          closestRangeOverlap = rangeOverlap;
+          closestMatch = font;
+        }
+      }
+      const picked = (closestMatch || possibleFonts.at(-1));
+      for (const font of possibleFonts) {
+        if (font !== picked) {
+          // Load without parsing data with Typr so that it still can be accessed
+          // via regular CSS by name
+          font.loadWithoutData();
+        }
+      }
+      return picked?.loadWithData();
     }
 
     let pfont;
     try {
-      // load the raw font bytes
-      let result = await fn.loadBytes(path);
-      //console.log('result:', result);
-
-      if (!result) {
-        throw Error('Failed to load font data');
-      }
-
-      // parse the font data
-      let fonts = Typr.parse(result);
-
-      // TODO: generate descriptors from font in the future
-
-      if (fonts.length === 0 || fonts[0].cmap === undefined) {
-        throw Error('parsing font data');
-      }
+      const fontData = await fn.parseFontData(path);
 
       // make sure we have a valid name
-      name = name || extractFontName(fonts[0], path);
+      name = name || extractFontName(fontData, path);
 
       // create a FontFace object and pass it to the p5.Font constructor
-      pfont = await create(this, name, path, descriptors, fonts[0]);
+      pfont = await create(this, name, path, descriptors, fontData);
 
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
