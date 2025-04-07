@@ -790,7 +790,7 @@ function setting(p5, fn){
    * - `LAB, LCH, OKLAB, and OKLCH`: The single value is taken to be the `lightness (L)` component,
    *   with the specified max range for that channel.
    *
-   * - `HWB`: Grayscale relies on both the` whiteness (W)` and `blackness (B)` channels. Since
+   * - `HWB`: Grayscale relies on both the `whiteness (W)` and `blackness (B)` channels. Since
    *   a single value cannot directly account for two distinct channels, the library uses an
    *   average of their max values to interpret the single grayscale parameter. For instance,
    *   if W has a max of 50 and B has a max of 100, then the single grayscale parameter
