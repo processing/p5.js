@@ -1558,9 +1558,9 @@ function material(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *   myShader = baseFilterShader().modify(() => {
    *     let time = uniformFloat(() => millis());
-   *     getColor((color, canvasContent) => {
+   *     getColor((inputs, canvasContent) => {
    *       inputs.texCoord.y +=
-   *         0.01 * sin(time * 0.001 + inputs.position.x * 5);
+   *         0.02 * sin(time * 0.001 + inputs.texCoord.x * 5);
    *       return texture(canvasContent, inputs.texCoord);
    *     });
    *   });
