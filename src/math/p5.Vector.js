@@ -1,10 +1,9 @@
 /**
  * @module Math
- * @submodule Vector
  * @requires constants
  */
 
-import * as constants from '../core/constants';
+import * as constants from "../core/constants";
 
 /// HELPERS FOR REMAINDER METHOD
 const calculateRemainder2D = function (xComponent, yComponent) {
@@ -52,7 +51,7 @@ class Vector {
   }
 
   /**
-   * Gets the values of the vector.
+   * Gets the values of the N-dimensional vector.
    *
    * This method returns an array of numbers that represent the vector.
    * Each number in the array corresponds to a different component of the vector,
@@ -382,7 +381,7 @@ class Vector {
   }
 
   /**
-   * Adds to a vector's `x`, `y`, and `z` components.
+   * Adds to a vector's components.
    *
    * `add()` can use separate numbers, as in `v.add(1, 2, 3)`,
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
@@ -392,11 +391,13 @@ class Vector {
    * example, `v.add(4, 5)` adds 4 to `v.x`, 5 to `v.y`, and 0 to `v.z`.
    * Calling `add()` with no arguments, as in `v.add()`, has no effect.
    *
+   * This method supports N-dimensional vectors.
+   *
    * The static version of `add()`, as in `p5.Vector.add(v2, v1)`, returns a new
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @param  {Number} x   x component of the vector to be added.
+   * @param  {Number|Array} x   x component of the vector to be added or an array of components.
    * @param  {Number} [y] y component of the vector to be added.
    * @param  {Number} [z] z component of the vector to be added.
    * @chainable
@@ -715,7 +716,6 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method sub
    * @param  {Number} x   x component of the vector to subtract.
    * @param  {Number} [y] y component of the vector to subtract.
    * @param  {Number} [z] z component of the vector to subtract.
@@ -1592,6 +1592,7 @@ class Vector {
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
    * @method dist
+   * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    *
@@ -3814,7 +3815,7 @@ class Vector {
     }
     return v.equals(v2);
   }
-};
+}
 
 function vector(p5, fn) {
   /**
@@ -3930,6 +3931,6 @@ function vector(p5, fn) {
 export default vector;
 export { Vector };
 
-if (typeof p5 !== 'undefined') {
+if (typeof p5 !== "undefined") {
   vector(p5, p5.prototype);
 }
