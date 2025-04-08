@@ -1147,6 +1147,15 @@
         ]
       ]
     },
+    "loadBlob": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "httpGet": {
       "overloads": [
         [
@@ -1423,15 +1432,15 @@
     "createVector": {
       "overloads": [
         [
-          "Number?",
-          "Number?",
-          "Number?"
+          null
         ]
       ]
     },
     "createMatrix": {
       "overloads": [
-        []
+        [
+          "Number[]"
+        ]
       ]
     },
     "noise": {
@@ -1828,7 +1837,7 @@
         ]
       ]
     },
-    "curvePoint": {
+    "splinePoint": {
       "overloads": [
         [
           "Number",
@@ -1839,7 +1848,7 @@
         ]
       ]
     },
-    "curveTangent": {
+    "splineTangent": {
       "overloads": [
         [
           "Number",
@@ -1995,8 +2004,10 @@
     "loadFont": {
       "overloads": [
         [
-          "String|Object",
+          "String",
           "String?",
+          "Object?",
+          "String|String[]?",
           "Function?",
           "Function?"
         ],
@@ -2726,23 +2737,23 @@
       "overloads": [
         [
           "String|Request",
+          "String?",
           "Boolean",
           "function(p5.Geometry)?",
-          "function(Event)?",
-          "String?"
+          "function(Event)?"
         ],
         [
           "String|Request",
+          "String?",
           "function(p5.Geometry)?",
-          "function(Event)?",
-          "String?"
+          "function(Event)?"
         ],
         [
           "String|Request",
           "Object?",
+          "String?",
           "function(p5.Geometry)?",
           "function(Event)?",
-          "String?",
           "Boolean?",
           "Boolean?",
           "Boolean?"
@@ -4124,6 +4135,221 @@
       ]
     }
   },
+  "p5.Matrix": {
+    "add": {
+      "overloads": [
+        [
+          "Matrix"
+        ]
+      ]
+    },
+    "setElement": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "reset": {
+      "overloads": [
+        []
+      ]
+    },
+    "set": {
+      "overloads": [
+        [
+          "Matrix|Float32Array|Number[]?"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        []
+      ]
+    },
+    "copy": {
+      "overloads": [
+        []
+      ]
+    },
+    "clone": {
+      "overloads": [
+        []
+      ]
+    },
+    "diagonal": {
+      "overloads": [
+        []
+      ]
+    },
+    "row": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "column": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "transpose": {
+      "overloads": [
+        [
+          "Array?"
+        ]
+      ]
+    },
+    "mult": {
+      "overloads": [
+        [
+          null
+        ]
+      ]
+    },
+    "multiplyVec": {
+      "overloads": [
+        [
+          "p5.Vector",
+          "p5.Vector?"
+        ]
+      ]
+    },
+    "invert": {
+      "overloads": [
+        [
+          "Array"
+        ]
+      ]
+    },
+    "createSubMatrix3x3": {
+      "overloads": [
+        []
+      ]
+    },
+    "inverseTranspose4x4": {
+      "overloads": [
+        [
+          "p5.Matrix"
+        ]
+      ]
+    },
+    "apply": {
+      "overloads": [
+        [
+          "Matrix|Array|number"
+        ]
+      ]
+    },
+    "scale": {
+      "overloads": [
+        [
+          "p5.Vector|Float32Array|Number[]"
+        ]
+      ]
+    },
+    "rotate4x4": {
+      "overloads": [
+        [
+          "Number",
+          "p5.Vector|Number[]"
+        ]
+      ]
+    },
+    "translate": {
+      "overloads": [
+        [
+          "Number[]"
+        ]
+      ]
+    },
+    "rotateX": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "rotateY": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "rotateZ": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "perspective": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "ortho": {
+      "overloads": [
+        [
+          "number",
+          "number",
+          "number",
+          "number",
+          "number",
+          "number"
+        ]
+      ]
+    },
+    "multiplyVec4": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "multiplyPoint": {
+      "overloads": [
+        [
+          "p5.Vector"
+        ]
+      ]
+    },
+    "multiplyAndNormalizePoint": {
+      "overloads": [
+        [
+          "p5.Vector"
+        ]
+      ]
+    },
+    "multiplyDirection": {
+      "overloads": [
+        [
+          "p5.Vector"
+        ]
+      ]
+    },
+    "multiplyVec3": {
+      "overloads": [
+        [
+          "p5.Vector",
+          "p5.Vector?"
+        ]
+      ]
+    }
+  },
   "p5.Vector": {
     "getValue": {
       "overloads": [
@@ -4163,7 +4389,7 @@
     "add": {
       "overloads": [
         [
-          "Number",
+          "Number|Array",
           "Number?",
           "Number?"
         ],
@@ -4195,6 +4421,11 @@
     },
     "sub": {
       "overloads": [
+        [
+          "Number",
+          "Number?",
+          "Number?"
+        ],
         [
           "p5.Vector|Number[]"
         ],
@@ -4536,7 +4767,16 @@
     },
     "textToModel": {
       "overloads": [
-        []
+        [
+          "String",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Object?",
+          "Number?",
+          "Number?"
+        ]
       ]
     }
   },
