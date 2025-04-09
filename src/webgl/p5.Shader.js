@@ -843,7 +843,15 @@ class Shader {
 
     for (const uniform of this.samplers) {
       let tex = uniform.texture;
-      if (tex === undefined) {
+      if (
+        tex === undefined ||
+        (
+          false &&
+          tex.isFramebufferTexture &&
+          !tex.src.framebuffer.antialias &&
+          tex.src.framebuffer === this._renderer.activeFramebuffer()
+        )
+      ) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
         // so we supply a default texture instead.
