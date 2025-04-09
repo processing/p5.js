@@ -1,6 +1,7 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import outputs from '../../../src/accessibility/outputs';
 import textOutput from '../../../src/accessibility/textOutput';
+import p5 from '../../../src/app.js';
 
 // TODO: Is it possible to test this without a runtime?
 suite('outputs', function() {
@@ -17,10 +18,36 @@ suite('outputs', function() {
       assert.typeOf(mockP5Prototype.textOutput, 'function');
     });
 
+    test('should not break for webgl', async function() {
+      await new Promise((res) => {
+        new p5((p) => {
+          p.setup = function() {
+            p.createCanvas(50, 50, p.WEBGL);
+            p.textOutput();
+            p.circle(0, 0, 20);
+            res();
+          };
+        });
+      });
+    });
+
+    test('should not break for webgl', async function() {
+      await new Promise((res) => {
+        new p5((p) => {
+          p.setup = function() {
+            p.createCanvas(50, 50, p.WEBGL);
+            p.gridOutput();
+            p.circle(0, 0, 20);
+            res();
+          };
+        });
+      });
+    });
+
     let expected =
       'Your output is a, 100 by 100 pixels, white canvas containing the following shape:';
 
-    test.todo('should create output as fallback', function() {
+    test('should create output as fallback', function() {
       return new Promise(function(resolve, reject) {
         let actual = '';
         new p5(function(p) {
@@ -46,7 +73,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create output as label', function() {
+    test('should create output as label', function() {
       return new Promise(function(resolve, reject) {
         let label = '';
         let fallback = '';
@@ -76,7 +103,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for arc()', function() {
+    test('should create text output for arc()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">red arc</a>, at middle, covering 31% of the canvas.</li>';
@@ -104,7 +131,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for ellipse()', function() {
+    test('should create text output for ellipse()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green circle</a>, at middle, covering 24% of the canvas.</li>';
@@ -132,7 +159,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for triangle()', function() {
+    test('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected =
           '<li><a href="#myCanvasIDtextOutputshape0">green triangle</a>, at top left, covering 13% of the canvas.</li>';
@@ -170,7 +197,7 @@ suite('outputs', function() {
     let expected =
       'white canvas, 100 by 100 pixels, contains 1 shape:  1 square';
 
-    test.todo('should create output as fallback', function() {
+    test('should create output as fallback', function() {
       return new Promise(function(resolve, reject) {
         let actual = '';
         new p5(function(p) {
@@ -196,7 +223,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create output as label', function() {
+    test('should create output as label', function() {
       return new Promise(function(resolve, reject) {
         let label = '';
         let fallback = '';
@@ -226,7 +253,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for quad()', function() {
+    test('should create text output for quad()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'red quadrilateral, location = top left, area = 45 %';
         new p5(function(p) {
@@ -253,7 +280,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for point()', function() {
+    test('should create text output for point()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'dark fuchsia point, location = bottom right';
         new p5(function(p) {
@@ -280,7 +307,7 @@ suite('outputs', function() {
       });
     });
 
-    test.todo('should create text output for triangle()', function() {
+    test('should create text output for triangle()', function() {
       return new Promise(function(resolve, reject) {
         expected = 'green triangle, location = top left, area = 13 %';
         new p5(function(p) {
