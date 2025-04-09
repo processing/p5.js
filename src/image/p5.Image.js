@@ -13,6 +13,8 @@
 import Filters from './filters';
 import { Renderer } from '../core/p5.Renderer';
 
+let fnRef;
+
 class Image {
   constructor(width, height) {
     this.width = width;
@@ -939,7 +941,7 @@ class Image {
    * @param  {Integer} dh
    */
   copy(...args) {
-    fn.copy.apply(this, args);
+    fnRef.copy.apply(this, args);
   }
 
   /**
@@ -1373,7 +1375,7 @@ class Image {
    */
   blend(...args) {
     // p5._validateParameters('p5.Image.blend', arguments);
-    fn.blend.apply(this, args);
+    fnRef.blend.apply(this, args);
     this.setModified(true);
   }
 
@@ -1459,9 +1461,9 @@ class Image {
    */
   save(filename, extension) {
     if (this.gifProperties) {
-      fn.encodeAndDownloadGif(this, filename);
+      fnRef.encodeAndDownloadGif(this, filename);
     } else {
-      fn.saveCanvas(this.canvas, filename, extension);
+      fnRef.saveCanvas(this.canvas, filename, extension);
     }
   }
 
@@ -1820,6 +1822,8 @@ class Image {
 };
 
 function image(p5, fn){
+  fnRef = fn;
+
   /**
    * A class to describe an image.
    *
