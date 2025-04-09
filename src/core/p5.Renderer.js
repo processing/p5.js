@@ -367,6 +367,7 @@ function renderer(p5, fn){
    * @param {HTMLElement} elt DOM node that is wrapped
    * @param {p5} [pInst] pointer to p5 instance
    * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   * @private
    */
   p5.Renderer = Renderer;
 }
@@ -374,6 +375,7 @@ function renderer(p5, fn){
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
+ * @private
  */
 function calculateOffset(object) {
   let currentLeft = 0,
