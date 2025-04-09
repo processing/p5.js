@@ -1755,7 +1755,7 @@ function dom(p5, fn){
       inst.push();
       if (value) {
         if (value.mode) {
-          inst.colorMode(value.mode, ...value?.maxes[value.mode]);
+          inst.colorMode(value.mode, ...(value?.maxes ? value.maxes[value.mode] || [] : []));
         }
       }
       const c = inst.color(this.elt.value);
