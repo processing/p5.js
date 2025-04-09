@@ -31,6 +31,25 @@ suite('color/CreatingReading', function() {
     });
   });
 
+  suite('constructor clamping', function() {
+    test('should work on multi channels', function() {
+      const myColor = mockP5Prototype.color(1000, 1000, 1000, 1000);
+      assert.deepEqual(myColor.array(), [1, 1, 1, 1]);
+    });
+    test('should work on gray + alpha', function() {
+      const myColor = mockP5Prototype.color(1000, 1000);
+      assert.deepEqual(myColor.array(), [1, 1, 1, 1]);
+    });
+    test('should work on gray', function() {
+      const myColor = mockP5Prototype.color(1000);
+      assert.deepEqual(myColor.array(), [1, 1, 1, 1]);
+    });
+    test('normal values work', function() {
+      const myColor = mockP5Prototype.color(255 / 2);
+      assert.deepEqual(myColor.array(), [0.5, 0.5, 0.5, 1]);
+    });
+  });
+
   suite('p5.prototype.lerpColor', function() {
     beforeEach(function() {
       mockP5Prototype.colorMode(mockP5Prototype.RGB);
