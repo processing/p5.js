@@ -1501,9 +1501,9 @@ class Element {
     // For details, see https://github.com/processing/p5.js/issues/3087.
     const eventPrependedFxn = function (event) {
       this._pInst.mouseIsPressed = true;
-      this._pInst._activePointers.set(e.pointerId, e);
+      this._pInst._activePointers.set(event.pointerId, event);
       this._pInst._setMouseButton(event);
-      this._pInst._updatePointerCoords(e);
+      this._pInst._updatePointerCoords(event);
       // Pass along the return-value of the callback:
       return fxn.call(this, event);
     };
