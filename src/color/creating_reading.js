@@ -408,7 +408,8 @@ function creatingReading(p5, fn){
     return new Color(
       arg,
       this._renderer.states.colorMode,
-      this._renderer.states.colorMaxes[this._renderer.states.colorMode]
+      this._renderer.states.colorMaxes[this._renderer.states.colorMode],
+      { clamp: true }
     );
   };
 
