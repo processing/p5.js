@@ -2213,31 +2213,29 @@ class Camera {
    *
    *   // Move the camera along its "local" axes
    *   // when the user presses certain keys.
-   *   if (keyIsPressed === true) {
    *
-   *     // Move horizontally.
-   *     if (keyCode === LEFT_ARROW) {
-   *       cam.move(-1, 0, 0);
-   *     }
-   *     if (keyCode === RIGHT_ARROW) {
-   *       cam.move(1, 0, 0);
-   *     }
+   *   // Move horizontally.
+   *   if (keyIsDown(LEFT_ARROW)) {
+   *     cam.move(-1, 0, 0);
+   *   }
+   *   if (keyIsDown(RIGHT_ARROW)) {
+   *     cam.move(1, 0, 0);
+   *   }
    *
-   *     // Move vertically.
-   *     if (keyCode === UP_ARROW) {
-   *       cam.move(0, -1, 0);
-   *     }
-   *     if (keyCode === DOWN_ARROW) {
-   *       cam.move(0, 1, 0);
-   *     }
+   *   // Move vertically.
+   *   if (keyIsDown(UP_ARROW)) {
+   *     cam.move(0, -1, 0);
+   *   }
+   *   if (keyIsDown(DOWN_ARROW)) {
+   *     cam.move(0, 1, 0);
+   *   }
    *
-   *     // Move in/out of the screen.
-   *     if (key === 'i') {
-   *       cam.move(0, 0, -1);
-   *     }
-   *     if (key === 'o') {
-   *       cam.move(0, 0, 1);
-   *     }
+   *   // Move in/out of the screen.
+   *   if (keyIsDown('i')) {
+   *     cam.move(0, 0, -1);
+   *   }
+   *   if (keyIsDown('o')) {
+   *     cam.move(0, 0, 1);
    *   }
    *
    *   // Draw the box.

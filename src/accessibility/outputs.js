@@ -540,7 +540,7 @@ function outputs(p5, fn){
 
   //gets position of shape in the canvas
   fn._getPos = function (x, y) {
-    const { x: transformedX, y: transformedY } = this.worldToScreen(new this.Vector(x, y));
+    const { x: transformedX, y: transformedY } = this.worldToScreen(new p5.Vector(x, y));
     const canvasWidth = this.width;
     const canvasHeight = this.height;
     if (transformedX < 0.4 * canvasWidth) {
@@ -657,7 +657,7 @@ function outputs(p5, fn){
     ];
     //  Apply the inverse of the current transformations to the canvas corners
     const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.states.uMVMatrix.mat4) :
+      new DOMMatrix(this._renderer.uMVMatrix.mat4) :
       this.drawingContext.getTransform();
     const invertedTransform = currentTransform.inverse();
     const tc = canvasCorners.map(

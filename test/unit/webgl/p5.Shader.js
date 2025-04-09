@@ -333,6 +333,28 @@ suite('p5.Shader', function() {
         expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
       });
     });
+
+    test('framebuffer textures are unbound when you draw to the framebuffer', function() {
+      const sh = myp5.baseMaterialShader().modify({
+        uniforms: {
+          'sampler2D myTex': null,
+        },
+        'vec4 getFinalColor': `(vec4 c) {
+          return getTexture(myTex, vec2(0.,0.));
+        }`
+      });
+      const fbo = myp5.createFramebuffer();
+
+      myp5.shader(sh);
+      sh.setUniform('myTex', fbo);
+
+      fbo.draw(() => myp5.background('red'));
+
+      sh.setUniform('myTex', fbo);
+      myp5.noStroke();
+      myp5.plane(myp5.width, myp5.height);
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+    });
   });
 
   suite('hookTypes', function() {

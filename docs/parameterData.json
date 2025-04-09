@@ -392,11 +392,6 @@
         []
       ]
     },
-    "calculateOffset": {
-      "overloads": [
-        []
-      ]
-    },
     "createCanvas": {
       "overloads": [
         [
@@ -3094,37 +3089,6 @@
         ]
       ]
     },
-    "update": {
-      "overloads": [
-        []
-      ]
-    },
-    "bindTexture": {
-      "overloads": [
-        []
-      ]
-    },
-    "unbindTexture": {
-      "overloads": [
-        []
-      ]
-    },
-    "setInterpolation": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
-    "setWrapMode": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
     "remove": {
       "overloads": [
         []
@@ -3264,13 +3228,6 @@
         [
           "Object?"
         ]
-      ]
-    }
-  },
-  "p5.Renderer": {
-    "resize": {
-      "overloads": [
-        []
       ]
     }
   },
