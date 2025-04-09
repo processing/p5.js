@@ -114,8 +114,6 @@ class Texture {
    * Initializes common texture parameters, creates a gl texture,
    * tries to upload the texture for the first time if data is
    * already available.
-   * @private
-   * @method init
    */
   init (data) {
     const gl = this._renderer.GL;
@@ -172,7 +170,6 @@ class Texture {
    * easy to do so) and reuploads the texture if necessary. If it's not
    * possible or to expensive to do a calculation to determine wheter or
    * not the data has occurred, this method simply re-uploads the texture.
-   * @method update
    */
   update () {
     const data = this.src;
@@ -271,7 +268,6 @@ class Texture {
 
   /**
    * Binds the texture to the appropriate GL target.
-   * @method bindTexture
    */
   bindTexture () {
     // bind texture using gl context + glTarget and
@@ -284,7 +280,6 @@ class Texture {
 
   /**
    * Unbinds the texture from the appropriate GL target.
-   * @method unbindTexture
    */
   unbindTexture () {
     // unbind per above, disable texturing on glTarget
@@ -304,7 +299,6 @@ class Texture {
    * Sets how a texture is be interpolated when upscaled or downscaled.
    * Nearest filtering uses nearest neighbor scaling when interpolating
    * Linear filtering uses WebGL's linear scaling when interpolating
-   * @method setInterpolation
    * @param {String} downScale Specifies the texture filtering when
    *                           textures are shrunk. Options are LINEAR or NEAREST
    * @param {String} upScale Specifies the texture filtering when
@@ -337,7 +331,6 @@ class Texture {
    * when their uv's go outside of the 0 - 1 range. There are three options:
    * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
    * is a power of two size (128, 256, 512, 1024, etc.).
-   * @method setWrapMode
    * @param {String} wrapX Controls the horizontal texture wrapping behavior
    * @param {String} wrapY Controls the vertical texture wrapping behavior
    */

@@ -3094,37 +3094,6 @@
         ]
       ]
     },
-    "update": {
-      "overloads": [
-        []
-      ]
-    },
-    "bindTexture": {
-      "overloads": [
-        []
-      ]
-    },
-    "unbindTexture": {
-      "overloads": [
-        []
-      ]
-    },
-    "setInterpolation": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
-    "setWrapMode": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ]
-      ]
-    },
     "remove": {
       "overloads": [
         []
