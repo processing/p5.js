@@ -360,25 +360,25 @@ class Font {
     return cmdContours.map((commands) => pathToPoints(commands, options, this));
   }
   /**
-      * 
+      *
       * Converts text into a 3D model that can be rendered in WebGL mode.
-      * 
-      * This method transforms flat text into extruded 3D geometry, allowing 
+      *
+      * This method transforms flat text into extruded 3D geometry, allowing
       * for dynamic effects like depth, warping, and custom shading.
-      * 
-      * It works by taking the outlines (contours) of each character in the 
+      *
+      * It works by taking the outlines (contours) of each character in the
       * provided text string and constructing a 3D shape from them.
-      * 
-      * Once your 3D text is ready, you can rotate it in 3D space using <a href="#/p5/orbitControl">orbitControl()</a> 
+      *
+      * Once your 3D text is ready, you can rotate it in 3D space using <a href="#/p5/orbitControl">orbitControl()</a>
       * — just click and drag with your mouse to see it from all angles!
-      * 
-      * Use the extrude slider to give your letters depth: slide it up, and your 
+      *
+      * Use the extrude slider to give your letters depth: slide it up, and your
       * flat text turns into a solid, multi-dimensional object.
-      * 
-      * You can also choose from various fonts such as "Anton", "Montserrat", or "Source Serif", 
+      *
+      * You can also choose from various fonts such as "Anton", "Montserrat", or "Source Serif",
       * much like selecting fancy fonts in a word processor,
-      * 
-      * The generated model (a Geometry object) can be manipulated further—rotated, scaled, 
+      *
+      * The generated model (a Geometry object) can be manipulated further—rotated, scaled,
       * or styled with shaders—to create engaging, interactive visual art.
       *
       * @param {String} str The text string to convert into a 3D model.
@@ -387,7 +387,7 @@ class Font {
       * @param {Number} width Maximum width of the text block (wraps text if exceeded).
       * @param {Number} height Maximum height of the text block.
       * @param {Object} [options] Configuration options for the 3D text:
-      * @param {Number} [options.extrude=0] The depth to extrude the text. A value of 0 produces 
+      * @param {Number} [options.extrude=0] The depth to extrude the text. A value of 0 produces
       * flat text; higher values create thicker, 3D models.
       * @param {Number} [options.sampleFactor=1] A factor controlling the level of detail for the text contours.
       *  Higher values result in smoother curves.
@@ -419,7 +419,7 @@ class Font {
       * }
       * </code>
       * </div>
-      * 
+      *
       * @example
       * <div modernizr='webgl'>
       * <code>
@@ -428,15 +428,15 @@ class Font {
       *
       * async function setup() {
       *   createCanvas(200, 200, WEBGL);
-      *   
+      *
       *   // Alternative fonts:
       *   // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
       *   // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
       *   // Source Serif: 'https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf'
-      *   
+      *
       *   // Using Source Serif for this example:
       *   font = await loadFont('https://fonts.gstatic.com/s/sourceserif4/v8/vEFy2_tTDB4M7-auWDN0ahZJW3IX2ih5nk3AucvUHf6OAVIJmeUDygwjihdqrhxXD-wGvjU.ttf');
-      *   
+      *
       *   geom = font.textToModel("Hello", 50, 0, { sampleFactor: 2, extrude: 5 });
       *   geom.clearColors();
       *   geom.normalize();
@@ -453,7 +453,7 @@ class Font {
       * }
       * </code>
       * </div>
-      * 
+      *
       * @example
       * <div modernizr='webgl'>
       * <code>
@@ -472,7 +472,7 @@ class Font {
       *   createCanvas(200, 200, WEBGL);
       *
       *   // Using Anton as the default font for this example:
-      *  
+      *
       *  // Alternative fonts:
       *  // Anton: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.ttf'
       *  // Montserrat: 'https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'
@@ -507,7 +507,7 @@ class Font {
       *       return vec4(c, 1.);
       *     }`
       *   });
-      *   
+      *
       *   lineShader = baseStrokeShader().modify({
       *     uniforms: {
       *       'float time': () => millis(),
@@ -925,7 +925,7 @@ function createFontFace(name, path, descriptors, rawFont) {
 
   if (name.includes(' ')) name = "'" + name + "'"; // NOTE: must be single-quotes
 
-  let fontArg = rawFont?._data;
+  let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
     if (!validFontTypesRe.test(path)) {
       throw Error(invalidFontError);

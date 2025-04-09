@@ -90,7 +90,11 @@ Typr["parse"] = function (buff) {
 
 
   var data = new Uint8Array(buff);
-  if (data[0] == 0x77) data = woffToOtf(data);
+  let compressedData;
+  if (data[0] == 0x77) {
+    compressedData = data;
+    data = woffToOtf(data);
+  }
 
   var tmap = {};
   var tag = bin.readASCII(data, 0, 4);
@@ -107,6 +111,7 @@ Typr["parse"] = function (buff) {
     return fnts;
   }
   var fnt = readFont(data, 0, 0, tmap);  //console.log(fnt);  throw "e";
+  fnt._compressedData = compressedData;
   var fvar = fnt["fvar"];
   if (fvar) {
     var out = [fnt];
