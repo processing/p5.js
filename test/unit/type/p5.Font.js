@@ -39,4 +39,15 @@ suite('p5.Font', function () {
     assert.property(bbox, 'w');
     assert.property(bbox, 'h');
   });
+
+  suite('textToPoints', () => {
+    test('contains no NaNs', async () => {
+      const pFont = await myp5.loadFont(fontFile);
+      const pts = pFont.textToPoints('hello, world!', 0, 0);
+      for (const pt of pts) {
+        expect(pt.x).not.toBeNaN();
+        expect(pt.y).not.toBeNaN();
+      }
+    });
+  });
 });

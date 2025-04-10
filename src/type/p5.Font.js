@@ -1016,13 +1016,17 @@ function pathToPoints(cmds, options, font) {
     simplifyThreshold: 0
   });
 
-  const totalPoints = Math.ceil(path.getTotalLength() * opts.sampleFactor);
+  const totalPoints = Math.max(1, Math.ceil(path.getTotalLength() * opts.sampleFactor));
   let points = [];
 
   const mode = font._pInst.angleMode();
   const DEGREES = font._pInst.DEGREES;
   for (let i = 0; i < totalPoints; i++) {
-    const length = path.getTotalLength() * (i / (totalPoints - 1));
+    const length = path.getTotalLength() * (
+      totalPoints === 1
+        ? 0
+        : (i / (totalPoints - 1))
+    );
     points.push({
       ...path.getPointAtLength(length),
       get angle() {
