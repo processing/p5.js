@@ -133,7 +133,7 @@ function deprecationInfo(node) {
     return {};
   }
 
-  return { deprecated: descriptionString(node.deprecated) };
+  return { deprecated: true, deprecationMessage: descriptionString(node.deprecated) };
 }
 
 function getExample(node) {
