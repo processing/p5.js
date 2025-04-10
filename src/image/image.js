@@ -272,8 +272,6 @@ function image(p5, fn){
    *  @param  {String} [extension]
    */
   fn.saveCanvas = function(...args) {
-    // p5._validateParameters('saveCanvas', args);
-
     // copy arguments to array
     let htmlCanvas, filename, extension, temporaryGraphics;
 
