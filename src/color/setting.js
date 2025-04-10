@@ -782,8 +782,10 @@ function setting(p5, fn){
    *  as a grayscale color. However, how that single parameter translates into a grayscale value
    *  depends on the color mode:
    *
-   * - `RGB, HSB, and HSL`: The single value will be used consistently for the gray equivalent 
-   *    in each of these modes (for example, mapping to red/green/blue channels equally in RGB).
+   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum 
+   *   (i.e., the single parameter is mapped to the blue channel's max). 
+   *   In HSB and HSL, the single value is mapped to Brightness or Lightness max respectively with hue=0 . 
+   *   and saturation=0.
    *
    * - `LAB, LCH, OKLAB, and OKLCH`: The single value is taken to be the `lightness (L)` component,
    *   with the specified max range for that channel.
@@ -1113,46 +1115,28 @@ function setting(p5, fn){
    * @example
    * <div>
    * <code>
-   * 
-   *  // Example: Single-value (Grayscale) colors in different color modes. 
-   *  // Each rectangle is filled with one parameter, but its final color depends
-   *  // on how that parameter is interpreted by the current color mode.
-   *  
-   * 
+   * // Example: Single-value (Grayscale) colors in different color modes.
+   * // The rectangle is filled with one parameter, but its final color depends
+   * // on how that parameter is interpreted by the current color mode.
+   *
    * function setup() {
    *   createCanvas(300, 200);
    *   noStroke();
    *   noLoop();
    * }
-   * 
+   *
    * function draw() {
-   *   //--- Left rectangle: RGB mode
+   *   // Set color mode to RGB with range 0-255
    *   colorMode(RGB, 255);
-   *   fill(128); // Interpreted as R=G=B=128 in RGB
-   *   rect(0, 0, 100, 200);
-   * 
-   *   //--- Middle rectangle: LAB mode
-   *   // In LAB, a single value is interpreted as Lightness (L).
-   *   // The default max for each LAB component is 100, so a single value of 50
-   *   // becomes roughly halfway in terms of lightness.
-   *   colorMode(LAB, 100);
-   *   fill(50); 
-   *   rect(100, 0, 100, 200);
-   * 
-   *   //--- Right rectangle: HWB mode
-   *   // In HWB, a single value is mapped onto whiteness and blackness together.
-   *   // Because both W and B are needed to specify a gray, the library averages
-   *   // their max values to interpret this single parameter. 
-   *   colorMode(HWB, 100);
-   *   fill(50);
-   *   rect(200, 0, 100, 200);
-   * 
-   *   // Add text labels
-   *   fill(0); // Switch to black text for clarity (RGB mode for text)
+   *   
+   *   // Fill with single grayscale value (128 = mid-gray in RGB)
+   *   fill(128);
+   *   rect(0, 0, 100, 100);
+   *
+   *   // Add text label
+   *   fill(0); // Switch to black text for clarity
    *   textSize(14);
    *   text("RGB (128)", 10, 20);
-   *   text("LAB (50)", 105, 20);
-   *   text("HWB (50)", 205, 20);
    * }
    * </code>
    * </div>

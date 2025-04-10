@@ -153,20 +153,16 @@ class Font {
    *         vertex(x, y);
    *         break;
    *       }
-   *       case 'Q': {
-   *         // Quadratic curve to: ['Q', cx, cy, x, y]
-   *         // Simplified to just draw line to endpoint
-   *         const x = cmd[3];
-   *         const y = cmd[4];
-   *         vertex(x, y);
-   *         break;
-   *       }
    *       case 'C': {
-   *         // Cubic bezier to: ['C', x1, y1, x2, y2, x3, y3]
+   *         // Cubic bezier
    *         // Simplified to just draw line to endpoint
+   *         const cx = cmd[3];
+   *         const cy = cmd[4];
    *         const x = cmd[5];
    *         const y = cmd[6];
-   *         vertex(x, y);
+   *         bezierOrder(2);
+   *         bezierVertex(cx, cy);
+   *         bezierVertex(x, y);
    *         break;
    *       }
    *       case 'Z': {
@@ -180,8 +176,6 @@ class Font {
    *   endContour();
    *   endShape();
    *   
-   *   // Note: The letters will appear angular since we're only using lines
-   *   // between points rather than the actual curves from the font outlines.
    * }
    * </code>
    * </div>

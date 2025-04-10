@@ -1137,6 +1137,60 @@
  * </div>
  */
 
+
+/**
+ * Asynchronous Asset Loading with Async/Await.
+ *
+ * Using async/await in your p5.js sketch allows you to load assets, such as images and JSON data,
+ * in a straightforward, linear fashion without resorting to nested callbacks. Declaring a function
+ * with the async keyword tells JavaScript that this function will perform asynchronous operations and
+ * will always return a promise. Within an async function, the await keyword pauses the execution until
+ * the promise is resolved, making the code appear synchronous and easier to read and maintain.
+ *
+ * In the example below, setup() is declared as an async function. The await keyword is used to wait for
+ * the loadImage() and loadJSON() functions to complete their asset loading. Once the assets are loaded,
+ * createCanvas() sets up the drawing surface and the assets become available for use.
+ *
+ * ```js
+ * let img, data;
+ *
+ * async function setup(){
+ *   // Wait until the image and JSON data have fully loaded.
+ *   img = await loadImage("./my-image.png");
+ *   data = await loadJSON("./my-data.json");
+ *
+ *   // Create the canvas after loading assets.
+ *   createCanvas(400, 400);
+ * }
+ * ```
+ *
+ * @property async/await
+ * @example
+ * <div>
+ * <code>
+ * let img, data;
+ *
+ * async function setup(){
+ *   // Pause execution until the image is loaded.
+ *   img = await loadImage("./assets/image.png");
+ *
+ *   // Pause execution until the JSON data is loaded.
+ *   data = await loadJSON("./assets/data.json");
+ *
+ *   // Create the canvas where the sketch is drawn.
+ *   createCanvas(400, 400);
+ *
+ *   // Display the loaded image.
+ *   background(220);
+ *   image(img, 0, 0);
+ *
+ *   // Log the loaded JSON data to the console.
+ *   console.log(data);
+ * }
+ * </code>
+ * </div>
+ */
+
 /**
  * A list that keeps several pieces of data in order.
  *
