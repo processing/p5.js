@@ -17,6 +17,11 @@ suite('Loading Fonts', function () {
   // tests ////////////////////////////////////////////////
   const fontFile = '/unit/assets/acmesa.ttf';
 
+  test('loadFont on zlib compressed fonts works', async () => {
+    const font = await myp5.loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUFjIg1_i6t8kCHKm459Wx7xQYXK0vOoz6jq6R8aXw.woff');
+    expect(font.data).toBeTruthy();
+  });
+
   test('loadFont.await', async () => {
     const pFont = await myp5.loadFont(fontFile, 'fredTheFont');
     assert.ok(pFont, 'acmesa.ttf loaded');
