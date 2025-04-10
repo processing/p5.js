@@ -90,6 +90,7 @@ Typr["parse"] = function (buff) {
 
 
   var data = new Uint8Array(buff);
+  // PATCHED: keep around the compressed data if we inflate it
   let compressedData;
   if (data[0] == 0x77) {
     compressedData = data;
@@ -111,7 +112,7 @@ Typr["parse"] = function (buff) {
     return fnts;
   }
   var fnt = readFont(data, 0, 0, tmap);  //console.log(fnt);  throw "e";
-  fnt._compressedData = compressedData;
+  fnt._compressedData = compressedData; // PATCH: make compressed data accessible
   var fvar = fnt["fvar"];
   if (fvar) {
     var out = [fnt];
