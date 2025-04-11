@@ -441,6 +441,8 @@ export function visualTest(
         : [];
 
       for (let i = 0; i < actual.length; i++) {
+        const flatName = name.replace(/\//g, '-');
+        const actualFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
         if (expected[i]) {
           const result = await checkMatch(actual[i], expected[i], myp5);
           if (!result.ok) {
@@ -453,6 +455,7 @@ export function visualTest(
         } else {
           writeImageFile(expectedFilenames[i], toBase64(actual[i]));
         }
+        writeImageFile(actualFilename, toBase64(actual[i]));
       }
     });
   });
