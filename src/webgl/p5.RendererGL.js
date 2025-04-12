@@ -457,6 +457,13 @@ class RendererGL extends Renderer {
     };
   }
 
+  remove() {
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
+  }
+
   //////////////////////////////////////////////
   // Geometry Building
   //////////////////////////////////////////////

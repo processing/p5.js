@@ -1749,7 +1749,7 @@ function textCore(p5, fn) {
       modified = true;
     }
     // does it exist in the canvas.style ?
-    else if (prop in this.canvas.style) {
+    else if (prop in this.textCanvas().style) {
       this._setCanvasStyleProperty(prop, value, debug);
       modified = true;
     }
@@ -1913,16 +1913,16 @@ function textCore(p5, fn) {
     }
 
     // lets try to set it on the canvas style
-    this.canvas.style[opt] = value;
+    this.textCanvas().style[opt] = value;
 
     // check if the value was set successfully
-    if (this.canvas.style[opt] !== value) {
+    if (this.textCanvas().style[opt] !== value) {
 
       // fails on precision for floating points, also quotes and spaces
 
       if (0) console.warn(`Unable to set '${opt}' property` // FES?
         + ' on canvas.style. It may not be supported. Expected "'
-        + value + '" but got: "' + this.canvas.style[opt] + "'");
+        + value + '" but got: "' + this.textCanvas().style[opt] + "'");
     }
   };
 
@@ -2075,7 +2075,7 @@ function textCore(p5, fn) {
       Object.entries(props).forEach(([prop, val]) => {
         ele.style[prop] = val;
       });
-      this.canvas.appendChild(ele);
+      this.textCanvas().appendChild(ele);
       cachedDiv = ele;
     }
     return cachedDiv;
@@ -2435,7 +2435,9 @@ function textCore(p5, fn) {
   };
 
   if (p5.Renderer2D) {
-
+    p5.Renderer2D.prototype.textCanvas = function () {
+      return this.canvas;
+    };
     p5.Renderer2D.prototype.textDrawingContext = function () {
       return this.drawingContext;
     };
@@ -2535,14 +2537,30 @@ function textCore(p5, fn) {
   }
 
   if (p5.RendererGL) {
-    p5.RendererGL.prototype.textDrawingContext = function () {
-      if (!this._textDrawingContext) {
+    p5.RendererGL.prototype.textCanvas = function() {
+      if (!this._textCanvas) {
         this._textCanvas = document.createElement('canvas');
         this._textCanvas.width = 1;
         this._textCanvas.height = 1;
-        this._textDrawingContext = this._textCanvas.getContext('2d');
+        this._textCanvas.style.display = 'none';
+        // Has to be added to the DOM for measureText to work properly!
+        this.canvas.parentElement.insertBefore(this._textCanvas, this.canvas);
+      }
+      return this._textCanvas;
+    };
+    p5.RendererGL.prototype.textDrawingContext = function() {
+      if (!this._textDrawingContext) {
+        const textCanvas = this.textCanvas();
+        this._textDrawingContext = textCanvas.getContext('2d');
       }
       return this._textDrawingContext;
+    };
+    const oldRemove = p5.RendererGL.prototype.remove;
+    p5.RendererGL.prototype.remove = function() {
+      if (this._textCanvas) {
+        this._textCanvas.parentElement.removeChild(this._textCanvas);
+      }
+      oldRemove.call(this);
     };
 
     p5.RendererGL.prototype._positionLines = function (x, y, width, height, lines) {

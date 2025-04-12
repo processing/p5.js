@@ -86,6 +86,14 @@ class Texture {
     return this;
   }
 
+  remove() {
+    if (this.glTex) {
+      const gl = this._renderer.GL;
+      gl.deleteTexture(this.glTex);
+      this.glTex = undefined;
+    }
+  }
+
   _getTextureDataFromSource () {
     let textureData;
     if (this.isFramebufferTexture) {

@@ -51,8 +51,8 @@ const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; /
 const fontFaceVariations = ['weight', 'stretch', 'style'];
 
 
-
-class Font {
+let nextId = 0;
+export class Font {
   constructor(p, fontFace, name, path, data) {
     if (!(fontFace instanceof FontFace)) {
       throw Error('FontFace is required');
@@ -62,6 +62,7 @@ class Font {
     this.path = path;
     this.data = data;
     this.face = fontFace;
+    this.id = nextId++;
   }
 
   /**
@@ -669,12 +670,42 @@ class Font {
     // convert lines to paths
     let uPE = this.data?.head?.unitsPerEm || 1000;
     let scale = renderer.states.textSize / uPE;
-    let pathsForLine = lines.map(l => this._lineToGlyphs(l, scale));
+
+    const axs = this._currentAxes(renderer);
+    let pathsForLine = lines.map(l => this._lineToGlyphs(l, { scale, axs }));
 
     // restore the baseline
     renderer.drawingContext.textBaseline = setBaseline;
 
     return pathsForLine;
+  }
+
+  _currentAxes(renderer) {
+    let axs;
+    if ((this.data?.fvar?.length ?? 0) > 0) {
+      const fontAxes = this.data.fvar[0];
+      axs = fontAxes.map(([tag, minVal, maxVal, defaultVal, flags, name]) => {
+        if (!renderer) return defaultVal;
+        if (tag === 'wght') {
+          return renderer.states.fontWeight;
+        } else if (tag === 'wdth') {
+          // TODO: map from keywords (normal, ultra-condensed, etc) to values
+          // return renderer.states.fontStretch
+          return defaultVal;
+        } else if (renderer.textCanvas().style.fontVariationSettings) {
+          const match = new RegExp(`\\b${tag}\s+(\d+)`)
+            .exec(renderer.textCanvas().style.fontVariationSettings);
+          if (match) {
+            return parseInt(match[1]);
+          } else {
+            return defaultVal;
+          }
+        } else {
+          return defaultVal;
+        }
+      });
+    }
+    return axs;
   }
 
   _textToPathPoints(str, x, y, width, height, options) {
@@ -760,21 +791,24 @@ class Font {
     return lines.map(coordify);
   }
 
-  _lineToGlyphs(line, scale = 1) {
+  _lineToGlyphs(line, { scale = 1, axs } = {}) {
 
     if (!this.data) {
       throw Error('No font data available for "' + this.name
         + '"\nTry downloading a local copy of the font file');
     }
-    let glyphShapes = Typr.U.shape(this.data, line.text);
+    let glyphShapes = Typr.U.shape(this.data, line.text, { axs });
     line.glyphShapes = glyphShapes;
-    line.glyphs = this._shapeToPaths(glyphShapes, line, scale);
+
+    line.glyphs = this._shapeToPaths(glyphShapes, line, { scale, axs });
 
     return line;
   }
 
-  _positionGlyphs(text) {
-    const glyphShapes = Typr.U.shape(this.data, text);
+  _positionGlyphs(text, options) {
+    let renderer = options?.graphics?._renderer || this._pInst._renderer;
+    const axs = this._currentAxes(renderer);
+    const glyphShapes = Typr.U.shape(this.data, text, { axs });
     const positionedGlyphs = [];
     let x = 0;
     for (const glyph of glyphShapes) {
@@ -784,11 +818,11 @@ class Font {
     return positionedGlyphs;
   }
 
-  _singleShapeToPath(shape, { scale = 1, x = 0, y = 0, lineX = 0, lineY = 0 } = {}) {
+  _singleShapeToPath(shape, { scale = 1, x = 0, y = 0, lineX = 0, lineY = 0, axs } = {}) {
     let font = this.data;
     let crdIdx = 0;
     let { g, ax, ay, dx, dy } = shape;
-    let { crds, cmds } = Typr.U.glyphToPath(font, g);
+    let { crds, cmds } = Typr.U.glyphToPath(font, g, true, axs);
 
     // can get simple points for each glyph here, but we don't need them ?
     let glyph = { /*g: line.text[i], points: [],*/ path: { commands: [] } };
@@ -816,7 +850,7 @@ class Font {
     return { glyph, ax, ay };
   }
 
-  _shapeToPaths(glyphs, line, scale = 1) {
+  _shapeToPaths(glyphs, line, { scale = 1, axs } = {}) {
     let x = 0, y = 0, paths = [];
 
     if (glyphs.length !== line.text.length) {
@@ -832,6 +866,7 @@ class Font {
         y,
         lineX: line.x,
         lineY: line.y,
+        axs,
       });
 
       paths.push(glyph);
