@@ -113,7 +113,6 @@ visualSuite("Typography", function () {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
         '/unit/assets/BricolageGrotesque-Variable.ttf',
-        { weight: '200 800' }
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.background(255);
@@ -130,7 +129,6 @@ visualSuite("Typography", function () {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
         '/unit/assets/BricolageGrotesque-Variable.ttf',
-        { weight: '200 800' }
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.push();

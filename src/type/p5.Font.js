@@ -684,14 +684,14 @@ export class Font {
     let axs;
     if ((this.data?.fvar?.length ?? 0) > 0) {
       const fontAxes = this.data.fvar[0];
-      axs = fontAxes.map(([tag, minVal, maxVal, defaultVal, flags, name]) => {
+      axs = fontAxes.map(([tag, minVal, defaultVal, maxVal, flags, name]) => {
         if (!renderer) return defaultVal;
         if (tag === 'wght') {
           return renderer.states.fontWeight;
         } else if (tag === 'wdth') {
           // TODO: map from keywords (normal, ultra-condensed, etc) to values
           // return renderer.states.fontStretch
-          return defaultVal;
+          return 100;
         } else if (renderer.textCanvas().style.fontVariationSettings) {
           const match = new RegExp(`\\b${tag}\s+(\d+)`)
             .exec(renderer.textCanvas().style.fontVariationSettings);
@@ -969,6 +969,18 @@ function createFontFace(name, path, descriptors, rawFont) {
       path = 'url(' + path + ')';
     }
     fontArg = path;
+  }
+
+  if ((rawFont?.fvar?.length ?? 0) > 0) {
+    descriptors = descriptors || {};
+    for (const [tag, minVal, defaultVal, maxVal, flags, name] of rawFont.fvar[0]) {
+      if (tag === 'wght') {
+        descriptors.weight = `${minVal} ${maxVal}`;
+      } else if (tag === 'wdth') {
+        descriptors.stretch = `${minVal}% ${maxVal}%`;
+      }
+      // TODO add other descriptors
+    }
   }
 
   // create/return the FontFace object
