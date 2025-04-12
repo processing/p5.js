@@ -684,7 +684,7 @@ export class Font {
     let axs;
     if ((this.data?.fvar?.length ?? 0) > 0) {
       const fontAxes = this.data.fvar[0];
-      axs = fontAxes.map(([tag, minVal, maxVal, defaultVal, flags, name]) => {
+      axs = fontAxes.map(([tag, minVal, defaultVal, maxVal, flags, name]) => {
         if (!renderer) return defaultVal;
         if (tag === 'wght') {
           return renderer.states.fontWeight;
@@ -973,7 +973,7 @@ function createFontFace(name, path, descriptors, rawFont) {
 
   if ((rawFont?.fvar?.length ?? 0) > 0) {
     descriptors = descriptors || {};
-    for (const [tag, minVal, maxVal, defaultVal, flags, name] of rawFont.fvar[0]) {
+    for (const [tag, minVal, defaultVal, maxVal, flags, name] of rawFont.fvar[0]) {
       if (tag === 'wght') {
         descriptors.weight = `${minVal} ${maxVal}`;
       } else if (tag === 'wdth') {
