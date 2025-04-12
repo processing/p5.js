@@ -1164,7 +1164,7 @@
  * }
  * ```
  *
- * @property async/await
+ * @property async
  * @example
  * <div>
  * <code>
