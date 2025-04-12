@@ -691,7 +691,7 @@ export class Font {
         } else if (tag === 'wdth') {
           // TODO: map from keywords (normal, ultra-condensed, etc) to values
           // return renderer.states.fontStretch
-          return defaultVal;
+          return 100;
         } else if (renderer.textCanvas().style.fontVariationSettings) {
           const match = new RegExp(`\\b${tag}\s+(\d+)`)
             .exec(renderer.textCanvas().style.fontVariationSettings);
@@ -977,7 +977,7 @@ function createFontFace(name, path, descriptors, rawFont) {
       if (tag === 'wght') {
         descriptors.weight = `${minVal} ${maxVal}`;
       } else if (tag === 'wdth') {
-        descriptors.stretch = `${minVal} ${maxVal}`;
+        descriptors.stretch = `${minVal}% ${maxVal}%`;
       }
       // TODO add other descriptors
     }
