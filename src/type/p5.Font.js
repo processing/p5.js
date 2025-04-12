@@ -51,8 +51,8 @@ const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; /
 const fontFaceVariations = ['weight', 'stretch', 'style'];
 
 
-
-class Font {
+let nextId = 0;
+export class Font {
   constructor(p, fontFace, name, path, data) {
     if (!(fontFace instanceof FontFace)) {
       throw Error('FontFace is required');
@@ -62,6 +62,7 @@ class Font {
     this.path = path;
     this.data = data;
     this.face = fontFace;
+    this.id = nextId++;
   }
 
   /**
@@ -688,10 +689,12 @@ class Font {
         if (tag === 'wght') {
           return renderer.states.fontWeight;
         } else if (tag === 'wdth') {
-          return renderer.states.fontStretch
-        } else if (renderer.canvas.style.fontVariationSettings) {
+          // TODO: map from keywords (normal, ultra-condensed, etc) to values
+          // return renderer.states.fontStretch
+          return defaultVal;
+        } else if (renderer.textCanvas().style.fontVariationSettings) {
           const match = new RegExp(`\\b${tag}\s+(\d+)`)
-            .exec(renderer.canvas.style.fontVariationSettings);
+            .exec(renderer.textCanvas().style.fontVariationSettings);
           if (match) {
             return parseInt(match[1]);
           } else {

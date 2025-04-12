@@ -125,6 +125,26 @@ visualSuite("Typography", function () {
         screenshot();
       }
     });
+
+    visualTest('can control variable fonts from files in WebGL', async function (p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/BricolageGrotesque-Variable.ttf',
+        { weight: '200 800' }
+      );
+      for (let weight = 400; weight <= 800; weight += 100) {
+        p5.push();
+        p5.background(255);
+        p5.translate(-p5.width/2, -p5.height/2);
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.textWeight(weight);
+        p5.text('p5*js', 0, 10, p5.width);
+        p5.pop();
+        screenshot();
+      }
+    });
   });
 
   visualSuite("textAlign", function () {
