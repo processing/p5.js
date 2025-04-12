@@ -1180,24 +1180,27 @@
  * @example
  * <div>
  * <code>
- * let img, data;
+ * // Click and drag the mouse to view the scene from different angles.
+ * 
+ * let shape;
  *
+ * // Load the file and create a p5.Geometry object.
  * async function setup() {
- *   // Pause execution until the image is loaded.
- *   img = await loadImage("./assets/image.png");
+ *   shape = await loadModel('/assets/teapot.obj');
  *
- *   // Pause execution until the JSON data is loaded.
- *   data = await loadJSON("./assets/data.json");
+ *   createCanvas(100, 100, WEBGL);
  *
- *   // Create the canvas where the sketch is drawn.
- *   createCanvas(400, 400);
+ *   describe('A white teapot drawn against a gray background.');
+ * }
  *
- *   // Display the loaded image.
- *   background(220);
- *   image(img, 0, 0);
+ * function draw() {
+ *   background(200);
  *
- *   // Log the loaded JSON data to the console for debugging or inspection.
- *   console.log(data);
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
  * }
  * </code>
  * </div>
