@@ -1204,6 +1204,36 @@
  * }
  * </code>
  * </div>
+ * 
+ * <div>
+ * <code>
+ * let font;
+ *
+ * async function setup() {
+ *   // Load a font for WebGL mode.
+ *   font = await loadFont('assets/inconsolata.otf');
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     "A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+ * }
+ * </code>
+ * </div>
  */
 
 /**
