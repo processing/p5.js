@@ -971,6 +971,18 @@ function createFontFace(name, path, descriptors, rawFont) {
     fontArg = path;
   }
 
+  if ((rawFont?.fvar?.length ?? 0) > 0) {
+    descriptors = descriptors || {};
+    for (const [tag, minVal, maxVal, defaultVal, flags, name] of rawFont.fvar[0]) {
+      if (tag === 'wght') {
+        descriptors.weight = `${minVal} ${maxVal}`;
+      } else if (tag === 'wdth') {
+        descriptors.stretch = `${minVal} ${maxVal}`;
+      }
+      // TODO add other descriptors
+    }
+  }
+
   // create/return the FontFace object
   let face = new FontFace(name, fontArg, descriptors);
   if (face.status === 'error') {
