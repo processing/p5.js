@@ -1091,12 +1091,122 @@ function font(p5, fn) {
   p5.Font = Font;
 
   /**
-   * Load a font and returns a p5.Font instance. The font can be specified by its path or a url.
-   * Optional arguments include the font name, descriptors for the FontFace object,
-   * and callbacks for success and error.
+   * Load a font and return a p5.Font instance. The font can be specified by its path
+   * (e.g., `'assets/inconsolata.otf'`) or a URL (e.g., `'https://example.com/myfont.ttf'`).
+   * The function returns a `Promise` that resolves to a p5.Font instance.
+   *
+   * -Path : The first parameter, `path`, is the path to a font file.
+   *         Paths to local files should be relative. For example,
+   *        `'assets/inconsolata.otf'`. The Inconsolata font used in the following
+   *         examples can be downloaded for free
+   *         <a href="https://www.fontsquirrel.com/fonts/inconsolata" target="_blank">here</a>.
+   *         Paths to remote files should be URLs. For example,
+   *        `'https://example.com/inconsolata.otf'`. URLs may be blocked due to browser
+   *         security.
+   *
+   * 
+   * - The second parameter is `name` (string) - Optional. If the second parameter is a string, it will
+   *   be used as the font name. If the second parameter is a function, that
+   *   function is treated as the `success` callback instead.
+   * 
+   * - `success` (function) - Optional. A callback invoked once the font has
+   *    loaded. It receives the loaded `p5.Font` instance. (If the second argument
+   *    was already a function, then *that* becomes `success`, and the third
+   *    argument is parsed as `error` or `descriptors`.)
+   *
+   * - `error` (function) - Optional. A callback invoked if the font fails to
+   *    load, receiving the error event or error object.
+   * 
+   * - `descriptors` (object) - Optional. An object with
+   *    [FontFace descriptors](https://developer.mozilla.org/en-US/docs/Web/API/FontFace/FontFace#parameters).
+   *    For example:
+   * The third parameter, `failureCallback`, is also optional. If a function is
+   * passed, it will be called if the font fails to load. The callback function
+   * may use the error
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
+   * object if needed.
+   *
+   * Fonts can take time to load. Calling `loadFont()` in
+   * <a href="#/p5/preload">preload()</a> ensures fonts load before they're
+   * used in <a href="#/p5/setup">setup()</a> or
+   * <a href="#/p5/draw">draw()</a>.
+   *
    * @method loadFont
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
+   * @example
+   * <div>
+   * <code>
+   * let font;
+   *
+   * function preload() {
+   *   font = loadFont('assets/inconsolata.otf');
+   * }
+   *
+   * function setup() {
+   *   fill('deeppink');
+   *   textFont(font);
+   *   textSize(36);
+   *   text('p5*js', 10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   loadFont('assets/inconsolata.otf', font => {
+   *     fill('deeppink');
+   *     textFont(font);
+   *     textSize(36);
+   *     text('p5*js', 10, 50);
+   *
+   *     describe('The text "p5*js" written in pink on a white background.');
+   *   });
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   loadFont('assets/inconsolata.otf', success, failure);
+   * }
+   *
+   * function success(font) {
+   *   fill('deeppink');
+   *   textFont(font);
+   *   textSize(36);
+   *   text('p5*js', 10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   *
+   * function failure(event) {
+   *   console.error('Oops!', event);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function preload() {
+   *   loadFont('assets/inconsolata.otf');
+   * }
+   *
+   * function setup() {
+   *   let p = createP('p5*js');
+   *   p.style('color', 'deeppink');
+   *   p.style('font-family', 'Inconsolata');
+   *   p.style('font-size', '36px');
+   *   p.position(10, 50);
+   *
+   *   describe('The text "p5*js" written in pink on a white background.');
+   * }
+   * </code>
+   * </div>
    */
   fn.loadFont = async function (...args/*path, name, onSuccess, onError, descriptors*/) {
 
