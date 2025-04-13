@@ -1131,7 +1131,6 @@ function font(p5, fn) {
    * used in <a href="#/p5/setup">setup()</a> or
    * <a href="#/p5/draw">draw()</a>.
    *
-   * @method loadFont
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
    * @example
