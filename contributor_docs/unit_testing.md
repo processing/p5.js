@@ -249,6 +249,10 @@ visualSuite('3D Model rendering', function() {
 });
 ```
 
+## Visual tests in p5.js 2.0
+
+_Both p5.js 1.x and p5.js 2.0 include visual tests. In p5.js 2.0, there are more tests, and the visual testing system uses a new diffing algorithm that is more robust. This section is this p5.js 2.0 specific system._
+
 
 Different operating systems and browsers render graphics with subtle variations. These differences are normal and shouldn't cause tests to fail.
 Common acceptable differences include:

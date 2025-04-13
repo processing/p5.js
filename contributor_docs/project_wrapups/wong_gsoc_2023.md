@@ -31,9 +31,9 @@ Many thanks to my mentors for all their support: Adam Ferriss, Austin Slominski,
 - [Third pull request](https://github.com/processing/p5.js/pull/6324), replacing the old filters with new shader filters. Status: merged
 
 ### Public documentation pages:
-- [WEBGL](https://p5js.org/reference/#/p5/WEBGL) -  Status: merged, page created
-- [filter()](https://p5js.org/reference/#/p5/filter) - Status: merged, page not updated yet
-- [createFilterShader()](https://p5js.org/reference/#/p5/createFilterShader) - Status: merged, page not created yet
+- [WEBGL](https://p5js.org/reference/p5/WEBGL) -  Status: merged, page created
+- [filter()](https://p5js.org/reference/p5/filter) - Status: merged, page not updated yet
+- [createFilterShader()](https://p5js.org/reference/p5/createFilterShader) - Status: merged, page not created yet
 
 ### Performance measuring helpers:
 
