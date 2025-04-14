@@ -307,4 +307,4 @@ p5.prototype.myMethod = function(){
 
 **Examples are great, too!** They show people what your library can do. Because this is all JavaScript, people can see them running online before they download anything.[ ](http://jsfiddle.net/) You can create a collection of examples on the p5.js web editor to showcase how your library works.
 
-**Submit your library!** Once your library is ready for distribution and you’d like it included on the [p5js.org/libraries](https://p5js.org/libraries) page, please submit a pull request on the p5.js website GitHub repository following [this intruction](https://github.com/processing/p5.js-website/blob/main/docs/contributing_libraries.md)!
+**Submit your library!** Once your library is ready for distribution and you’d like it included on the [p5js.org/libraries](https://p5js.org/libraries) page, please submit a pull request on the p5.js website GitHub repository following [this instruction](https://github.com/processing/p5.js-website/blob/main/docs/contributing_libraries.md)!
