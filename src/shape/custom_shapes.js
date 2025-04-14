@@ -6,7 +6,6 @@
  * @requires constants
  */
 
-// REMINDER: remove .js extension (currently using it to run file locally)
 import { Color } from '../color/p5.Color';
 import { Vector } from '../math/p5.Vector';
 import * as constants from '../core/constants';
