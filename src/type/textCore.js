@@ -1665,7 +1665,13 @@ function textCore(p5, fn) {
     if (typeof weight === 'number') {
       this.states.setValue('fontWeight', weight);
       this._applyTextProperties();
-      this._setCanvasStyleProperty('font-variation-settings', `"wght" ${weight}`);
+
+      // Safari works without weight set in the canvas style attribute, and actually
+      // has buggy behavior if it is present, using the wrong weight when drawing
+      // multiple times with different weights
+      if (!p5.prototype._isSafari()) {
+        this._setCanvasStyleProperty('font-variation-settings', `"wght" ${weight}`);
+      }
       return;
     }
     // the getter
