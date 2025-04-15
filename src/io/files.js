@@ -2187,9 +2187,7 @@ function files(p5, fn){
    *  @private
    */
   fn._isSafari = function () {
-    // Thanks to user Fregante on StackOverflow for the
-    // one-liner below (CC BY SA 3.0)
-    // https://stackoverflow.com/a/23522755
+    // The following line is CC BY SA 3 by user Fregante https://stackoverflow.com/a/23522755
     return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   };
 
