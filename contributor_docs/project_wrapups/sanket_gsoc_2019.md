@@ -18,7 +18,7 @@ Apart from implementing these functions, I also added unit tests, manual tests, 
 
 Before and during the Summer of Code, I fixed minor bugs unrelated to my project, which helped me immensely to understand and get around the codebase and the workflow of p5.js. They are listed [here](https://github.com/processing/p5.js/pulls?utf8=%E2%9C%93&q=is%3Apr+author%3Asanketsingh24).
 
-### [lightFalloff()](https://p5js.org/reference/#/p5/lightFalloff)
+### [lightFalloff()](https://p5js.org/reference/p5/lightFalloff)
 This function allows the user to set the attenuation values, which are used in shaders to restrict the spread of light. Earlier, this was a constant value. Now, the artists can use this function to set the value themselves. Implementing this function required me to add three new uniforms, as well as modifying the light shader and light.js. The default was set to 1.
 
 ### [emissiveMaterial()](https://github.com/processing/p5.js/pull/3820)

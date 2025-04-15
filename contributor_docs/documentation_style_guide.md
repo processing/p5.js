@@ -140,7 +140,7 @@ Always use `let` to declare variables.
 
 **Accessibility terminology**
 
-The following terminiology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
+The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
 | Recommended |	Not Recommended |
 | -- | -- |
@@ -713,7 +713,7 @@ if (
 
 ## Iteration
 
-- Don’t use a `while` or `do-while` loops unless it's necessary. Use `for` loops to iterate a fixed number of times.
+- Don’t use `while` or `do-while` loops unless it's necessary. Use `for` loops to iterate a fixed number of times.
 
 ```javascript
 let numPetals = 7;
@@ -896,7 +896,7 @@ for (let i = 0; i < numbers.length; i += 1) {
 let numbersCopy = numbers.slice();
 ```
 
-- Write arrays on multiple lines when it improves readibility. Use line breaks after the opening bracket and before the closing bracket. Add a trailing comma.
+- Write arrays on multiple lines when it improves readability. Use line breaks after the opening bracket and before the closing bracket. Add a trailing comma.
 
 ```javascript
 // Bad.
