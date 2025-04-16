@@ -215,6 +215,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the grid description.
    *   gridOutput();
@@ -235,6 +240,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the grid description and
    *   // display it for debugging.
@@ -254,6 +264,7 @@ function outputs(p5, fn){
    * </code>
    * </div>
    */
+
 
   fn.gridOutput = function(display) {
     // p5._validateParameters('gridOutput', arguments);
