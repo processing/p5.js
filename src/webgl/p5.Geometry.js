@@ -2370,10 +2370,10 @@ function geometry(p5, fn){
    *   myGeometry = buildGeometry(function(){
    * 
    *   // Create p5.Vector objects to position the vertices.
-   *   let v0 = createVector(-40, 0, 0);
-   *   let v1 = createVector(0, -40, 0);
-   *   let v2 = createVector(0, 40, 0);
-   *   let v3 = createVector(40, 0, 0);
+   *   v0 = createVector(-40, 0, 0);
+   *   v1 = createVector(0, -40, 0);
+   *   v2 = createVector(0, 40, 0);
+   *   v3 = createVector(40, 0, 0);
    * 
    * });
    *
