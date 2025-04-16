@@ -1733,7 +1733,7 @@ class Image {
    *
    * async function setup() {
    *   // Load the image.
-   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
    *   createCanvas(100, 100);
    *
