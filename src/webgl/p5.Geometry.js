@@ -2196,12 +2196,14 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   myGeometry = new p5.Geometry();
-   *
+   *   myGeometry = buildGeometry(function(){
+   * 
    *   // Create p5.Vector objects to position the vertices.
-   *   let v0 = createVector(-40, 0, 0);
-   *   let v1 = createVector(0, -40, 0);
-   *   let v2 = createVector(40, 0, 0);
+   *    v0 = createVector(-40, 0, 0);
+   *    v1 = createVector(0, -40, 0);
+   *    v2 = createVector(40, 0, 0);
+   *
+   * });
    *
    *   // Add the vertices to the p5.Geometry object's vertices array.
    *   myGeometry.vertices.push(v0, v1, v2);
