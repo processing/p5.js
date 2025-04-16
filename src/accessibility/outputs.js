@@ -81,6 +81,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the text description.
    *   textOutput();
@@ -101,6 +106,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the text description and
    *   // display it for debugging.
