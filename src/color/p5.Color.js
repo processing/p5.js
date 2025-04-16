@@ -492,7 +492,7 @@ class Color {
    * }
    * </code>
    * </div>
-   **/
+   */
   setAlpha(new_alpha, max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
