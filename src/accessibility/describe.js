@@ -75,6 +75,11 @@ function describe(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * };
+   * 
    * function draw() {
    *   background(200);
    *
@@ -96,6 +101,11 @@ function describe(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   * createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   background(200);
    *
