@@ -41,6 +41,7 @@ function pixels(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
+   *   background(128);
    *
    *   // Load the pixels array.
    *   loadPixels();
