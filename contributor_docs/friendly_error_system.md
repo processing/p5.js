@@ -74,7 +74,7 @@ The basic format of a translation file's item has a key and a value (message) in
 ```json
 { "key": "value" }
 ```
-For example, we have a ASCII logo saved in this format:
+For example, we have an ASCII logo saved in this format:
 ```json
 "logo": "    _ \n /\\| |/\\ \n \\ ` ' /  \n / , . \\  \n \\/|_|\\/ \n\n"
 ```

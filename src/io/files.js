@@ -491,7 +491,7 @@ function files(p5, fn){
    * async function setup() {
    *   // Create a 200x200 canvas
    *   createCanvas(200, 200);
-   *   
+   *
    *   // Load the CSV file with a header row
    *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
@@ -501,7 +501,7 @@ function files(p5, fn){
    *   // Set text properties
    *   fill(0);       // Set text color to black
    *   textSize(16);  // Adjust text size as needed
-   *   
+   *
    *   // Display each column value in the row on the canvas.
    *   // Using an offset for y-position so each value appears on a new line.
    *   for (let c = 0; c < table.getColumnCount(); c++) {
@@ -748,7 +748,7 @@ function files(p5, fn){
    * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
-   * 
+   *
    * <div>
    * <code>
    * let data;
@@ -787,7 +787,7 @@ function files(p5, fn){
       }
     }
   };
-  
+
   /**
    * Loads a file at the given path as a Blob, then returns the resulting data or
    * passes it to a success callback function, if provided. On load, this function
@@ -2187,7 +2187,8 @@ function files(p5, fn){
    *  @private
    */
   fn._isSafari = function () {
-    return window.HTMLElement.toString().includes('Constructor');
+    // The following line is CC BY SA 3 by user Fregante https://stackoverflow.com/a/23522755
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   };
 
   /**

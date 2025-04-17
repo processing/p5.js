@@ -19,6 +19,7 @@ function matrix(p5, fn) {
    * The `Matrix` class represents a mathematical matrix and provides various methods for matrix operations.
    * This class extends the `MatrixInterface` and includes methods for creating, manipulating, and performing
    * operations on matrices. It supports both 3x3 and 4x4 matrices, as well as general NxN matrices.
+   * @private
    * @class p5.Matrix
    * @param {Array} [mat4] column-major array literal of our 4×4 matrix
    * @example
