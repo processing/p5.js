@@ -2677,7 +2677,7 @@ function primitives3D(p5, fn){
    * Note: `curveDetail()` has no effect in 2D mode.
    *
    * @method curveDetail
-   * @param {Number} resolution number of segments to use. Default it 1/4
+   * @param {Number} resolution number of segments to use. Default is 1/4
    * @chainable
    *
    * @example
