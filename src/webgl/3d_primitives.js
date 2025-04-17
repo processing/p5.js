@@ -2671,53 +2671,16 @@ function primitives3D(p5, fn){
    * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
    * more flat segments makes shapes appear smoother.
    *
-   * The parameter, `detail`, is the number of segments to use while drawing a
-   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
-   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
-   * default,`detail` is 20.
+   * The parameter, `detail`, is the density of segments to use while drawing a
+   * spline curve.
    *
    * Note: `curveDetail()` has no effect in 2D mode.
    *
    * @method curveDetail
-   * @param {Number} resolution number of segments to use. Defaults to 20.
+   * @param {Number} resolution number of segments to use. Default is 1/4
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw a black spline curve.
-   *   noFill();
-   *   strokeWeight(1);
-   *   stroke(0);
-   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
-   *
-   *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
-   *
-   *   // Draw the anchor points in black.
-   *   strokeWeight(5);
-   *   stroke(0);
-   *   point(73, 24);
-   *   point(73, 61);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(5, 26);
-   *   point(15, 65);
-   *
-   *   describe(
-   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
    *
    * <div>
    * <code>
@@ -2726,19 +2689,22 @@ function primitives3D(p5, fn){
    *
    *   background(200);
    *
-   *   // Set the curveDetail() to 3.
-   *   curveDetail(3);
+   *   // Set the curveDetail() to 0.5
+   *   curveDetail(0.5);
+   * 
+   *   // Do not show all the vertices
+   *   splineProperty('ends', EXCLUDE)
    *
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
+   *   spline(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
    *
    *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
-   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
+   *   spline(255, 0, 0);
+   *   spline(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
+   *   spline(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);

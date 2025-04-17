@@ -115,6 +115,7 @@ function math(p5, fn) {
    * on shapes and images. The `createMatrix` method can take a column-major
    * array representation of a square matrix as an argument. In the current implementation we only use squared matrices.
    *
+   * @private
    * @method createMatrix
    * @param {Array<Number>} components Column-major array representation of the square matrix.
    *
