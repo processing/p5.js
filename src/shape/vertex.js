@@ -30,7 +30,6 @@ function vertex(p5, fn){
    *
    * After calling `beginShape()`, shapes can be built by calling
    * <a href="#/p5/vertex">vertex()</a>,
-   * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>, and/or
    * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * <a href="#/p5/endShape">endShape()</a> will stop adding vertices to the
@@ -410,20 +409,17 @@ function vertex(p5, fn){
    * <a href="#/p5/bezier">bezier()</a> function. `bezierVertex()` must be
    * called between the
    * <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> functions. The curved segment uses
-   * the previous vertex as the first anchor point, so there must be at least
-   * one call to <a href="#/p5/vertex">vertex()</a> before `bezierVertex()` can
-   * be used.
+   * <a href="#/p5/endShape">endShape()</a> functions. There must be at least
+   * one call to <a href="#/p5/vertex">bezierVertex()</a>, before
+   * a number of `bezierVertex()` calls that is a multiple of the parameter
+   * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
+   * 
+   * Each curve of order 3 requires three calls to `bezierVertext`, so
+   * 2 curves would need 7 calls to `bezierVertex()`:
+   * (1 one initial anchor point, two sets of 3 curves describing the curves)
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
    *
-   * The first four parameters, `x2`, `y2`, `x3`, and `y3`, set the curve’s two
-   * control points. The control points "pull" the curve towards them.
-   *
-   * The fifth and sixth parameters, `x4`, and `y4`, set the last anchor point.
-   * The last anchor point is where the curve ends.
-   *
-   * Bézier curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `bezierVertex()` has eight arguments because each point has x-, y-, and
-   * z-coordinates.
+   * Bézier curves can also be drawn in 3D using WebGL mode.
    *
    * Note: `bezierVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
@@ -449,10 +445,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -489,10 +487,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -549,10 +549,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(x2, y2, 80, 75, 30, 75);
+   *   bezierVertex(x2, y2);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -596,11 +598,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertices.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
-   *   bezierVertex(50, 80, 60, 25, 30, 20);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   * 
+   *   bezierVertex(50, 80);
+   *   bezierVertex(60, 25);
+   *   bezierVertex(30, 20);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -632,16 +639,30 @@ function vertex(p5, fn){
    *
    *   // Draw the first moon.
    *   beginShape();
-   *   vertex(-20, -30, 0);
-   *   bezierVertex(30, -50, 0, 30, 25, 0, -20, 25, 0);
-   *   bezierVertex(0, 30, 0, 10, -25, 0, -20, -30, 0);
+   *   bezierVertex(-20, -30, 0);
+   * 
+   *   bezierVertex(30, -50, 0);
+   *   bezierVertex(30, 25, 0);
+   *   bezierVertex(-20, 25, 0);
+   * 
+   *   bezierVertex(0, 30, 0);
+   *   bezierVertex(10, -25, 0);
+   *   bezierVertex(-20, -30, 0);
    *   endShape();
    *
    *   // Draw the second moon.
    *   beginShape();
-   *   vertex(-20, -30, -20);
-   *   bezierVertex(30, -50, -20, 30, 25, -20, -20, 25, -20);
-   *   bezierVertex(0, 30, -20, 10, -25, -20, -20, -30, -20);
+   * 
+   *   bezierVertex(-20, -30, -20);
+   * 
+   *   bezierVertex(30, -50, -20);
+   *   bezierVertex(30, 25, -20);
+   *   bezierVertex(-20, 25, -20);
+   * 
+   *   bezierVertex(0, 30, -20);
+   *   bezierVertex(10, -25, -20);
+   *   bezierVertex(-20, -30, -20);
+   * 
    *   endShape();
    * }
    * </code>
@@ -1069,8 +1090,7 @@ function vertex(p5, fn){
    *
    * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
    * built by calling <a href="#/p5/vertex">vertex()</a>,
-   * <a href="#/p5/bezierVertex">bezierVertex()</a>,
-   * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
+   * <a href="#/p5/bezierVertex">bezierVertex()</a> and/or
    * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * `endShape()` will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
