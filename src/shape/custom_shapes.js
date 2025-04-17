@@ -832,7 +832,7 @@ class Shape {
   splineProperty(key, value) {
     this._splineProperties[key] = value;
   }
-  
+
   splineProperties(values) {
     if (values) {
       for (const key in values) {
@@ -2371,7 +2371,7 @@ function customShapes(p5, fn) {
    *   vertex(30, 70);
    *   vertex(70, 70);
    *   vertex(70, 30);
-   *   endContour();
+   *   endContour(CLOSE);
    *
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
@@ -2412,7 +2412,7 @@ function customShapes(p5, fn) {
    *   vertex(-20, 20);
    *   vertex(20, 20);
    *   vertex(20, -20);
-   *   endContour();
+   *   endContour(CLOSE);
    *
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
@@ -2425,7 +2425,7 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Stops creating a hole within a flat shape.
+   * Stops creating a hole within a flat shape. 
    *
    * The <a href="#/p5/beginContour">beginContour()</a> and `endContour()`
    * functions allow for creating negative space within custom shapes that are
@@ -2435,6 +2435,10 @@ function customShapes(p5, fn) {
    * called between <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a>.
    *
+   *  By default, 
+   * the controur has an `OPEN` end, and to close it,
+   * call `endContour(CLOSE)`.
+   * 
    * Transformations such as <a href="#/p5/translate">translate()</a>,
    * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
    * don't work between <a href="#/p5/beginContour">beginContour()</a> and
@@ -2448,7 +2452,7 @@ function customShapes(p5, fn) {
    * counter-clockwise order.
    *
    * @method endContour
-   * @param {OPEN|CLOSE} [mode=OPEN]
+   * @param {OPEN|CLOSE} [mode=OPEN] By default, the value is OPEN
    *
    * @example
    * <div>
@@ -2473,7 +2477,7 @@ function customShapes(p5, fn) {
    *   vertex(30, 70);
    *   vertex(70, 70);
    *   vertex(70, 30);
-   *   endContour();
+   *   endContour(CLOSE);
    *
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
@@ -2514,7 +2518,7 @@ function customShapes(p5, fn) {
    *   vertex(-20, 20);
    *   vertex(20, 20);
    *   vertex(20, -20);
-   *   endContour();
+   *   endContour(CLOSE);
    *
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
