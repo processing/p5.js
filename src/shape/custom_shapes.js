@@ -2109,7 +2109,7 @@ function customShapes(p5, fn) {
   /**
    * @method splineProperty
    * @param {String} property
-   * @returns value The current value for the given property.
+   * @returns The current value for the given property.
    */
   fn.splineProperty = function(property, value) {
     return this._renderer.splineProperty(property, value);
