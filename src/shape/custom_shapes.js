@@ -2058,7 +2058,9 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Sets the property of a curve. For example, set tightness,
+   * Sets the property of a curve.
+   * 
+   * For example, set tightness,
    * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
    * at 0 as default.
    * 
@@ -2070,6 +2072,11 @@ function customShapes(p5, fn) {
    * `splineProperty('tightness', 1)`, connects the curve's points
    * using straight lines. Values in the range from –5 to 5
    * deform curves while leaving them recognizable.
+   * 
+   * This function can also be used to set 'ends' property
+   * (see also: the <a href="#/p5/curveDetail">curveDetail()</a> example),
+   * such as: `splineProperty('ends', EXCLUDE)` to exclude
+   * vertices, or `splineProperty('ends', INCLUDE)` to include them.
    * 
    * @method splineProperty
    * @param {String} property

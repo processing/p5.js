@@ -2726,6 +2726,9 @@ function primitives3D(p5, fn){
    *
    *   // Set the curveDetail() to 0.5
    *   curveDetail(0.5);
+   * 
+   *   // Do not show all the vertices
+   *   splineProperty('ends', EXCLUDE)
    *
    *   // Draw a black spline curve.
    *   noFill();
