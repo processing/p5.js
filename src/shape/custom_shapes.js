@@ -2107,7 +2107,7 @@ function customShapes(p5, fn) {
   /**
    * Similar to <a href="#/p5/splineProperty">splineProperty()</a>:
    * `splineProperty('tightness', t)` is the same as
-   * `splineProperties({'tightness': t})``
+   * `splineProperties({'tightness': t})`
    * 
    * @method splineProperties
    * @param {Object} An object containing key-value pairs to set.
