@@ -409,10 +409,16 @@ function vertex(p5, fn){
    * <a href="#/p5/bezier">bezier()</a> function. `bezierVertex()` must be
    * called between the
    * <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> functions. There must be at least
-   * one call to <a href="#/p5/vertex">bezierVertex()</a>, before
+   * <a href="#/p5/endShape">endShape()</a> functions.
+   * Bézier need a starting point. Building a shape
+   * only wiht Bézier curves needs one initial
+   * call to <a href="#/p5/vertex">bezierVertex()</a>, before
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
+   * But shapes can mix different types of vertices, so if there
+   * are some previous vertizes, then the initial anchor is not needed, 
+   * only the multiples of 3 (or the Bézier order) calls to 
+   *  `bezierVertext` for each curve.
    * 
    * Each curve of order 3 requires three calls to `bezierVertext`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
