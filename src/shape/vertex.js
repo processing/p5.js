@@ -420,7 +420,7 @@ function vertex(p5, fn){
    * only the multiples of 3 (or the Bézier order) calls to 
    *  `bezierVertext` for each curve.
    * 
-   * Each curve of order 3 requires three calls to `bezierVertext`, so
+   * Each curve of order 3 requires three calls to `bezierVertex`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
    * (1 one initial anchor point, two sets of 3 curves describing the curves)
    * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
