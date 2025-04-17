@@ -688,8 +688,8 @@ function vertex(p5, fn){
   };
 
   /**
-   * Begins adding vertices to a custom shape.
-   *
+   * Concludes the vertices of a custom shape. 
+   * 
    * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
    * allow for creating custom shapes in 2D or 3D.
    * <a href="#/p5/beginShape">beginShape()</a> begins adding vertices to a
@@ -698,7 +698,9 @@ function vertex(p5, fn){
    * The first parameter, `mode`, is optional. By default, the first and last
    * vertices of a shape aren't connected. If the constant `CLOSE` is passed, as
    * in `endShape(CLOSE)`, then the first and last vertices will be connected.
+   * When CLOSE mode is used for splines (with `splineVeertex()`), the shape is ended smoothly.
    *
+   * 
    * The second parameter, `count`, is also optional. In WebGL mode, it’s more
    * efficient to draw many copies of the same shape using a technique called
    * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html" target="_blank">instancing</a>.
@@ -759,6 +761,28 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
+   * 
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(200);
+   * 
+   *   beginShape();
+   * 
+   *   splineVertex(32, 91);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
+   *   splineVertex(82, 91);
+   * 
+   *   endShape(CLOSE);
+   * 
+   *   describe(
+   *     'A curvy four-sided slightly lopsided blob.'
+   *   );
+   * }
+   * </div>
+   * </code>
    *
    * <div>
    * <code>

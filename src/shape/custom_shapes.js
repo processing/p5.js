@@ -2437,7 +2437,7 @@ function customShapes(p5, fn) {
    *
    *  By default, 
    * the controur has an `OPEN` end, and to close it,
-   * call `endContour(CLOSE)`.
+   * call `endContour(CLOSE)`. The CLOSE contour mode closes splines smoothly.
    * 
    * Transformations such as <a href="#/p5/translate">translate()</a>,
    * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
