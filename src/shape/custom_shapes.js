@@ -832,11 +832,7 @@ class Shape {
   splineProperty(key, value) {
     this._splineProperties[key] = value;
   }
-
-  /**
-   * @method splineProperties
-   * @param  {Number} value
-   */
+  
   splineProperties(values) {
     if (values) {
       for (const key in values) {
