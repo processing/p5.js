@@ -2300,6 +2300,46 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
+   * 
+   * <div>
+   * <code>
+   * let vid;
+   * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('/assets/fingers.mov');
+   *   createCanvas(100, 100, WEBGL);
+   * 
+   *   // Hide the video.
+   *   vid.hide();
+   * 
+   *   // Set the video to loop.
+   *   vid.loop();
+   * 
+   *   describe('A rectangle with video as texture');
+   * }
+   * 
+   * function draw() {
+   *   background(0);
+   * 
+   *   // Rotate around the y-axis.
+   *   rotateY(frameCount * 0.01);
+   * 
+   *   // Set the texture mode.
+   *   textureMode(NORMAL);
+   * 
+   *   // Apply the video as a texture.
+   *   texture(vid);
+   * 
+   *   // Draw a custom shape using uv coordinates.
+   *   beginShape();
+   *   vertex(-40, -40, 0, 0);
+   *   vertex(40, -40, 1, 0);
+   *   vertex(40, 40, 1, 1);
+   *   vertex(-40, 40, 0, 1);
+   *   endShape();
+   * }
+   * </code>
+   * </div>
    */
   /**
    * @method vertex
