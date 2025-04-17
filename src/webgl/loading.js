@@ -487,6 +487,9 @@ function loading(p5, fn){
     }
   };
 
+  /**
+   * @private
+   */
   async function parseMtl(mtlPath) {
     let currentMaterial = null;
     let materials = {};
@@ -532,6 +535,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * Parse OBJ lines into model. For reference, this is what a simple model of a
    * square might look like:
    *
@@ -666,6 +670,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * STL files can be of two types, ASCII and Binary,
    *
    * We need to convert the arrayBuffer to an array of strings,
@@ -720,6 +725,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function matches the `query` at the provided `offset`
    */
   function matchDataViewAt(query, reader, offset) {
@@ -820,6 +826,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * ASCII STL file starts with `solid 'nameOfFile'`
    * Then contain the normal of the face, starting with `facet normal`
    * Next contain a keyword indicating the start of face vertex, `outer loop`
