@@ -416,7 +416,7 @@ function vertex(p5, fn){
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
    * But shapes can mix different types of vertices, so if there
-   * are some previous vertizes, then the initial anchor is not needed, 
+   * are some previous vertices, then the initial anchor is not needed, 
    * only the multiples of 3 (or the Bézier order) calls to 
    *  `bezierVertex` for each curve.
    * 
