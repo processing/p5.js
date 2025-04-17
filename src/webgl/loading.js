@@ -698,6 +698,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function checks if the file is in ASCII format or in Binary format
    *
    * It is done by searching keyword `solid` at the start of the file.
@@ -738,6 +739,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function parses the Binary STL files.
    * https://en.wikipedia.org/wiki/STL_%28file_format%29#Binary_STL
    *

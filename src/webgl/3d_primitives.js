@@ -2681,41 +2681,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw a black spline curve.
-   *   noFill();
-   *   strokeWeight(1);
-   *   stroke(0);
-   *   spline(5, 26, 73, 24, 73, 61, 15, 65);
-   *
-   *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   spline(5, 26, 5, 26, 73, 24, 73, 61);
-   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
-   *
-   *   // Draw the anchor points in black.
-   *   strokeWeight(5);
-   *   stroke(0);
-   *   point(73, 24);
-   *   point(73, 61);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(5, 26);
-   *   point(15, 65);
-   *
-   *   describe(
-   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
    *
    * <div>
    * <code>
