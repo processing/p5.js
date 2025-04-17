@@ -1638,9 +1638,15 @@ function customShapes(p5, fn) {
    * </code>
    * </div>
    */
+  /**
+   * @method bezierOrder
+   * @returns {Number} The current Bézier order.
+   */
   fn.bezierOrder = function(order) {
     return this._renderer.bezierOrder(order);
   };
+
+
 /**
    * Adds a spline curve segment to a custom shape.
    *
@@ -2089,28 +2095,39 @@ function customShapes(p5, fn) {
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
-   *   curveVertex(10, 26);
-   *   curveVertex(10, 26);
-   *   curveVertex(83, 24);
-   *   curveVertex(83, 61);
-   *   curveVertex(25, 65);
-   *   curveVertex(25, 65);
+   *   splineVertex(10, 26);
+   *   splineVertex(10, 26);
+   *   splineVertex(83, 24);
+   *   splineVertex(83, 61);
+   *   splineVertex(25, 65);
+   *   splineVertex(25, 65);
    *   endShape();
    * }
    * </code>
    * </div>
+   */
+  /**
+   * @method splineProperty
+   * @param {String} property
+   * @returns value The current value for the given property.
    */
   fn.splineProperty = function(property, value) {
     return this._renderer.splineProperty(property, value);
   };
 
   /**
+   * Get or set multiple spline properties at once.
+   * 
    * Similar to <a href="#/p5/splineProperty">splineProperty()</a>:
    * `splineProperty('tightness', t)` is the same as
    * `splineProperties({'tightness': t})`
    * 
    * @method splineProperties
    * @param {Object} properties An object containing key-value pairs to set.
+   */
+  /**
+   * @method splineProperties
+   * @returns {Object} The current spline properties.
    */
   fn.splineProperties = function(values) {
     return this._renderer.splineProperties(values);
