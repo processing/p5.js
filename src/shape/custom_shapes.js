@@ -894,6 +894,10 @@ class Shape {
     this._splineProperties[key] = value;
   }
 
+  /**
+   * @method splineProperties
+   * @param  {Number} value
+   */
   splineProperties(values) {
     if (values) {
       for (const key in values) {
@@ -1680,24 +1684,63 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * @method splineProperty
-   * @param {String} property
-   * @returns value The current value for the given property.
-   */
-  /**
+   * Sets the property of a curve. For example, set tightness,
+   * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
+   * at 0 as default.
+   * 
+   * Spline curves are like cables that are attached to a set of points.
+   * Adjusting tightness adjusts how tightly the cable is
+   * attached to the points. The parameter, tightness, determines
+   * how the curve fits to the vertex points. By default,
+   * tightness is set to 0. Setting tightness to 1, as in
+   * `splineProperty('tightness', 1)`, connects the curve's points
+   * using straight lines. Values in the range from –5 to 5
+   * deform curves while leaving them recognizable.
+   * 
    * @method splineProperty
    * @param {String} property
    * @param value Value to set the given property to.
+   * 
+   * @example
+   * <div>
+   * <code>
+   * // Move the mouse left and right to see the curve change.
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
+   * }
+   * 
+   * function draw() {
+   *   background(200);
+   * 
+   *   // Set the curve's tightness using the mouse.
+   *   let t = map(mouseX, 0, 100, -5, 5, true);
+   *   splineProperty('tightness', t);
+   * 
+   *   // Draw the curve.
+   *   noFill();
+   *   beginShape();
+   *   curveVertex(10, 26);
+   *   curveVertex(10, 26);
+   *   curveVertex(83, 24);
+   *   curveVertex(83, 61);
+   *   curveVertex(25, 65);
+   *   curveVertex(25, 65);
+   *   endShape();
+   * }
+   * </code>
+   * </div>
    */
   fn.splineProperty = function(property, value) {
     return this._renderer.splineProperty(property, value);
   };
 
   /**
-   * @method splineProperties
-   * @returns {Object} The current spline properties.
-   */
-  /**
+   * Similar to <a href="#/p5/splineProperty">splineProperty()</a>:
+   * `splineProperty('tightness', t)` is the same as
+   * `splineProperties({'tightness': t})``
+   * 
    * @method splineProperties
    * @param {Object} An object containing key-value pairs to set.
    */
