@@ -1,6 +1,6 @@
 /**
  * @module Shape
- * @submodule Vertex
+ * @submodule Custom Shapes
  * @for p5
  * @requires core
  * @requires constants
@@ -728,7 +728,7 @@ function vertex(p5, fn){
    * Note: `splineVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
-   * @method curveVertex
+   * @method splineVertex
    * @param {Number} x x-coordinate of the vertex
    * @param {Number} y y-coordinate of the vertex
    * @chainable
@@ -989,7 +989,7 @@ function vertex(p5, fn){
    */
 
   /**
-   * @method curveVertex
+   * @method splineVertex
    * @param {Number} x
    * @param {Number} y
    * @param {Number} [z] z-coordinate of the vertex.
@@ -1041,8 +1041,8 @@ function vertex(p5, fn){
    * </code>
    * </div>
    */
-  fn.curveVertex = function(...args) {
-    // p5._validateParameters('curveVertex', args);
+  fn.splineVertex = function(...args) {
+    // p5._validateParameters('splineVertex', args);
     this._renderer.splineVertex(...args);
     return this;
   };
@@ -1071,7 +1071,7 @@ function vertex(p5, fn){
    * built by calling <a href="#/p5/vertex">vertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
+   * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * `endShape()` will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
