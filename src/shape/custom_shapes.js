@@ -2110,7 +2110,7 @@ function customShapes(p5, fn) {
    * `splineProperties({'tightness': t})`
    * 
    * @method splineProperties
-   * @param {Object} An object containing key-value pairs to set.
+   * @param {Object} properties An object containing key-value pairs to set.
    */
   fn.splineProperties = function(values) {
     return this._renderer.splineProperties(values);
