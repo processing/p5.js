@@ -411,7 +411,7 @@ function vertex(p5, fn){
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    * Bézier need a starting point. Building a shape
-   * only wiht Bézier curves needs one initial
+   * only with Bézier curves needs one initial
    * call to <a href="#/p5/vertex">bezierVertex()</a>, before
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
