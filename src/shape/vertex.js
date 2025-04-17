@@ -418,7 +418,7 @@ function vertex(p5, fn){
    * But shapes can mix different types of vertices, so if there
    * are some previous vertizes, then the initial anchor is not needed, 
    * only the multiples of 3 (or the Bézier order) calls to 
-   *  `bezierVertext` for each curve.
+   *  `bezierVertex` for each curve.
    * 
    * Each curve of order 3 requires three calls to `bezierVertex`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
