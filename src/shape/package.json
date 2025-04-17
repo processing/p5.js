@@ -1,0 +1,6 @@
+{
+    "type": "module",
+    "dependencies": {
+        "constants.js": "file:../core/constants"
+      }
+}

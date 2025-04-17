@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-suite('Vertex', function() {
+suite('Custom Shapes', function() {
   var myp5;
   let _friendlyErrorSpy;
 
@@ -33,10 +33,10 @@ suite('Vertex', function() {
     });
   });
 
-  suite('p5.prototype.curveVertex', function() {
+  suite('p5.prototype.splineVertex', function() {
     test('should be a function', function() {
-      assert.ok(myp5.curveVertex);
-      assert.typeOf(myp5.curveVertex, 'function');
+      assert.ok(myp5.splineVertex);
+      assert.typeOf(myp5.splineVertex, 'function');
     });
   });
 

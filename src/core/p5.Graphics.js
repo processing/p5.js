@@ -9,7 +9,7 @@ import { RGB, HSB, HSL } from '../color/creating_reading';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
 import curves from '../shape/curves';
-import vertex from '../shape/vertex';
+import customShapes from '../shape/custom_shapes';
 import setting from '../color/setting';
 import image from '../image/image';
 import loadingDisplaying from '../image/loading_displaying';
@@ -676,7 +676,7 @@ function graphics(p5, fn){
   primitives2D(p5, p5.Graphics.prototype);
   attributes(p5, p5.Graphics.prototype);
   curves(p5, p5.Graphics.prototype);
-  vertex(p5, p5.Graphics.prototype);
+  customShapes(p5, p5.Graphics.prototype);
 
   setting(p5, p5.Graphics.prototype);
   loadingDisplaying(p5, p5.Graphics.prototype);
