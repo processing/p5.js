@@ -825,12 +825,67 @@ class Shape {
     return name + 'Src';
   }
 
-  /*
-  Note: Internally, #bezierOrder is stored as an array, in order to accommodate
-  primitives including Bezier segments, Bezier triangles, and Bezier quads. For example,
-  a segment may have #bezierOrder [m], whereas a quad may have #bezierOrder [m, n].
-   */
 
+  /**
+   * Influences the shape of the Bézier curve segment in a custom shape.
+   * By default, this is 3; the other possible parameter is 2. This
+   * results in quadratic Bézier curves.
+   *
+   * `bezierVertex()` adds a curved segment to custom shapes. The Bézier curves
+   * it creates are defined like those made by the
+   * <a href="#/p5/bezier">bezier()</a> function. `bezierVertex()` must be
+   * called between the
+   * <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a> functions. There must be at least
+   * one call to <a href="#/p5/vertex">bezierVertex()</a>, before
+   * a number of `bezierVertex()` calls that is a multiple of the parameter
+   * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
+   * 
+   * Each curve of order 3 requires three calls to `bezierVertex`, so
+   * 2 curves would need 7 calls to `bezierVertex()`:
+   * (1 one initial anchor point, two sets of 3 curves describing the curves)
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
+   *
+   * Bézier curves can also be drawn in 3D using WebGL mode.
+   *
+   * Note: `bezierVertex()` won’t work when an argument is passed to
+   * <a href="#/p5/beginShape">beginShape()</a>.
+   *
+   * @method bezierOrder
+   * @param  {Number} order can be either 2 or 3, by default 3
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the shape.
+   *   noFill();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   * 
+   *   // set the order to 2 for a quadratic Bézier curve
+   *   bezierOrder(2);
+   *
+   *   // Add the first anchor point.
+   *   bezierVertex(30, 20);
+   *
+   *   // Add the Bézier vertex.
+   *   bezierVertex(80, 20);
+   *   bezierVertex(50, 50);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   describe('A black curve drawn on a gray square. The curve starts at the top-left corner and ends at the center.');
+   * }
+   * </code>
+   * </div>
+   */
   bezierOrder(...order) {
     this.#bezierOrder = order;
   }
