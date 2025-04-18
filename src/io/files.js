@@ -950,7 +950,7 @@ function files(p5, fn){
    * }
    *
    * function mousePressed() {
-   *   httpPost(url, 'json', postData, function(result) {
+   *   httpPost(url, postData, 'json', function(result) {
    *     strokeWeight(2);
    *     text(result.body, mouseX, mouseY);
    *   });
@@ -970,8 +970,8 @@ function files(p5, fn){
    * function mousePressed() {
    *   httpPost(
    *     url,
-   *     'json',
    *     postData,
+   *     'json',
    *     function(result) {
    *       // ... won't be called
    *     },
