@@ -1,18 +1,16 @@
-name: 📃 p5.js 2.0 Beta Bug Report
+name: 📃 p5.js 2.0 Bug Report
 description: This template is for submitting a bug report for bugs found in the p5.js 2.0 beta releases.
-title: "[p5.js 2.0 Beta Bug Report]: "
+title: "[p5.js 2.0 Bug Report]: "
 labels: [p5.js 2.0]
 body:
   - type: markdown
     attributes:
       value: |
         ### What falls under this category?
-        There has been many changes to p5.js in 2.0 that is currently released as beta versions. If you suspect there may be a bug, please follow the below steps before opening a bug report using this template:
-
-        1. There are some differences in behavior between p5.js 1.x and 2.0 beta, please check the changelog and/or [proposal list](https://github.com/orgs/processing/projects/21) to see if the difference in behavior is intended. If in doubt, feel free to open the issue anyway and ask.
-        2. Breaking changes may still happen between beta versions, please make sure to include the full beta version number and use the latest beta release where possible.
-        3. We are not considering any new proposal for p5.js 2.0 at this stage and if you would like to request new features, please use the "New feature request" issue template.
-        4. The documentation and examples may be outdated at this stage while we work on updating them.
+        There has been many changes to p5.js in 2.0! You can try it in p5.js Editor by updating the version in "Settings," and reference is available [on the beta version of the site](https://beta.p5js.org/). If you suspect there may be a bug, please follow the below steps before opening a bug report using this template:
+        1. There are some differences in behavior between p5.js 1.x and 2.0 beta, please check the changelog and/or [2.0 status board](https://github.com/orgs/processing/projects/21) to see if the difference in behavior is intended. If in doubt, feel free to open the issue anyway and ask.
+        2. New proposals for future p5.js 2.x minor releases may be considered! Please use the "New feature request" issue template, or check the [2.0 status board](https://github.com/orgs/processing/projects/21) is there is already discussion abotu this proposal.
+        3. Reports of errors or potential improvements in documentation and examples is expecially helpful, since many things have been updated from 1.x to 2.0!
   - type: checkboxes
     id: sub-area
     attributes:
