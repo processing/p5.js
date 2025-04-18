@@ -2615,11 +2615,10 @@ function rendererGL(p5, fn) {
    * }
    * </code>
    * </div>
-   * <br>
-   * Now with the antialias attribute set to true.
-   * <br>
+   * 
    * <div>
    * <code>
+   *  // Now with the antialias attribute set to true.
    * function setup() {
    *   setAttributes('antialias', true);
    *   createCanvas(100, 100, WEBGL);
