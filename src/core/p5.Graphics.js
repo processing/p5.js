@@ -671,7 +671,10 @@ function graphics(p5, fn){
    * </div>
    */
   p5.Graphics = Graphics;
-
+  p5.Graphics.prototype.splineVertex = function(x, y, z, u, v) {
+    this._renderer.splineVertex(x, y, z, u, v);
+    return this;
+  };
   // Shapes
   primitives2D(p5, p5.Graphics.prototype);
   attributes(p5, p5.Graphics.prototype);
