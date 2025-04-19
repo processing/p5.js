@@ -1156,7 +1156,17 @@
  * `loadImage()`, `loadJSON()`, `loadSound()`, and so on. This allows you to:
  *   - load files in a more readable, top-to-bottom manner
  *   - decide when the assets are fully available before proceeding
- *   - avoid nested callbacks often referred to as "callback hell"
+ *
+ * Nested callbacks require managing additional information and behavior.
+ * Lazy loading of assets with `async/await` can simplify control flow,
+ * but it also requires you to design your sketch around waiting for
+ * each operation to complete.
+ *
+ * Callbacks are still fully supported, so code that passes success / error
+ * functions to loaders like `loadImage()` or `loadJSON()` will behave exactly
+ * as it always has. This compatibility means sketches written with the older
+ * pattern don’t need any changes, and you can freely mix callbacks and
+ * `async/await` in the same project if that suits your workflow.
  *
  * In the example below, `setup()` is declared as an async function. We `await`
  * the completion of both `loadImage()` and `loadJSON()` before calling
