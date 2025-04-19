@@ -945,7 +945,7 @@ function dom(p5, fn){
    *
    *   // Create a checkbox and place it beneath the canvas.
    *   checkbox = createCheckbox();
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A black square with a checkbox beneath it. The square turns white when the box is checked.');
    * }
@@ -971,7 +971,7 @@ function dom(p5, fn){
    *   // Create a checkbox and place it beneath the canvas.
    *   // Label the checkbox "white".
    *   checkbox = createCheckbox(' white');
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A black square with a checkbox labeled "white" beneath it. The square turns white when the box is checked.');
    * }
@@ -997,7 +997,7 @@ function dom(p5, fn){
    *   // Create a checkbox and place it beneath the canvas.
    *   // Label the checkbox "white" and set its value to true.
    *   checkbox = createCheckbox(' white', true);
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A white square with a checkbox labeled "white" beneath it. The square turns black when the box is unchecked.');
    * }
