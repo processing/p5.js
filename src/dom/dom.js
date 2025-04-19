@@ -352,7 +352,7 @@ function dom(p5, fn){
    * let slider;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *
    *   // Create a paragraph element and place
    *   // it at the top of the canvas.
