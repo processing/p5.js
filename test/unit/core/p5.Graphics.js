@@ -117,6 +117,14 @@ suite('Graphics', function() {
     });
   });
 
+  suite('p5.Graphics.prototype.splineVertex', function() {
+    test('should be a function in graphics', function() {
+      let g = myp5.createGraphics(10, 10);
+      assert.ok(g.splineVertex);
+      assert.typeOf(g.splineVertex, 'function');
+    });
+  });
+  
   suite('p5.Graphics.resizeCanvas', function() {
     let glStub;
 
