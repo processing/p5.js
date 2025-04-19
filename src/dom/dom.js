@@ -1876,7 +1876,7 @@ function dom(p5, fn){
    * let img;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *
    *   // Create a file input and place it beneath
    *   // the canvas.
