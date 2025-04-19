@@ -462,9 +462,10 @@ for (const k in constants) {
  * ```
  *
  * Code placed in `setup()` will run once before code placed in
- * <a href="#/p5/draw">draw()</a> begins looping. If the
- * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
- * run immediately after <a href="#/p5/preload">preload()</a> finishes
+ * <a href="#/p5/draw">draw()</a> begins looping. When `setup()` is declared async, 
+ * execution pauses at each `await` until the promise resolves, ensuring all assets 
+ * are loaded before the sketch continues.
+ * 
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
@@ -535,7 +536,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-
 /**
  * A function that's called repeatedly while the sketch runs.
  *

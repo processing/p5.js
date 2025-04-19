@@ -142,18 +142,18 @@ function acceleration(p5, fn){
    * @example
    * <div>
    * <code>
+   * let rotationX = 0;            // Angle in degrees
+   *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);   // Create 3D canvas
    * }
    *
    * function draw() {
-   *   background(200);
-   *   //rotateZ(radians(rotationZ));
-   *   rotateX(radians(rotationX));
-   *   //rotateY(radians(rotationY));
-   *   box(200, 200, 200);
-   *   describe(`red horizontal line right, green vertical line bottom.
-   *     black background.`);
+   *   background(220);                 // Set light gray background
+   *   rotateX(radians(rotationX));     // Rotate around X-axis
+   *   normalMaterial();                // Apply simple shaded material
+   *   box(60);                         // Draw 3D cube (60 units wide)
+   *   rotationX = (rotationX + 2) % 360; // Increment rotation (2° per frame)
    * }
    * </code>
    * </div>
@@ -175,18 +175,18 @@ function acceleration(p5, fn){
    * @example
    * <div>
    * <code>
+   * let rotationY = 0;            // Angle in degrees
+   *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);   // Create 3D canvas
    * }
    *
    * function draw() {
-   *   background(200);
-   *   //rotateZ(radians(rotationZ));
-   *   //rotateX(radians(rotationX));
-   *   rotateY(radians(rotationY));
-   *   box(200, 200, 200);
-   *   describe(`red horizontal line right, green vertical line bottom.
-   *     black background.`);
+   *   background(220);                 // Set light gray background
+   *   rotateY(radians(rotationY));     // Rotate around Y-axis (vertical)
+   *   normalMaterial();                // Apply simple shaded material
+   *   box(60);                         // Draw 3D cube (60 units wide)
+   *   rotationY = (rotationY + 2) % 360; // Increment rotation (2° per frame)
    * }
    * </code>
    * </div>
@@ -209,18 +209,18 @@ function acceleration(p5, fn){
    * @example
    * <div>
    * <code>
+   * let rotationZ = 0;          // Angle in degrees
+   *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);   // Create 3D canvas
    * }
    *
    * function draw() {
-   *   background(200);
-   *   rotateZ(radians(rotationZ));
-   *   //rotateX(radians(rotationX));
-   *   //rotateY(radians(rotationY));
-   *   box(200, 200, 200);
-   *   describe(`red horizontal line right, green vertical line bottom.
-   *     black background.`);
+   *   background(220);
+   *   rotateZ(radians(rotationZ));     // Rotate around Z-axis
+   *   normalMaterial();                // Apply simple shaded material
+   *   box(60);                         // Draw 3D cube
+   *   rotationZ = (rotationZ + 2) % 360; // Increment rotation angle
    * }
    * </code>
    * </div>

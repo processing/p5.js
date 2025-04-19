@@ -1240,7 +1240,7 @@ function textCore(p5, fn) {
    *   createCanvas(300, 300);
    *   background(220);
    *
-   *   textSize(48);
+   *   textSize(35);
    *   textAlign(LEFT, BASELINE);
    *   textFont('Georgia');
    *
