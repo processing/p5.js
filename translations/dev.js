@@ -1,9 +1,9 @@
-export { default as en_translation } from './en/translation';
-export { default as es_translation } from './es/translation';
-export { default as ko_translation } from './ko/translation';
-export { default as zh_translation } from './zh/translation';
-export { default as hi_translation } from './hi/translation';
-export { default as ja_translation } from './ja/translation';
+export { default as en_translation } from './en/translation.json';
+export { default as es_translation } from './es/translation.json';
+export { default as ko_translation } from './ko/translation.json';
+export { default as zh_translation } from './zh/translation.json';
+export { default as hi_translation } from './hi/translation.json';
+export { default as ja_translation } from './ja/translation.json';
 
 /*
  * When adding a new language, add a new "export" statement above this.
