@@ -137,10 +137,11 @@ class p5 {
         bindGlobal(p);
       }
 
+      const protectedProperties = ['constructor', 'length', 'print'];
       // Attach its properties to the window
       for (const p in this) {
         if (this.hasOwnProperty(p)) {
-          if(p[0] === '_') continue;
+          if(p[0] === '_' || protectedProperties.includes(p)) continue;
           bindGlobal(p);
         }
       }

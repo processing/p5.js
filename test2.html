@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="lib/p5.js"></script>
+</head>
+<body>
+    <script>
+        // Instance mode test
+        new p5((p) => {
+            p.setup = function() {
+                p.createCanvas(400, 400);
+                console.log("Instance mode setup called");
+            }
+
+            // Intentionally miscapitalized function to test error detection
+            p.mousePressed = function() {
+                console.log("correct capitalization");
+            }
+
+            p.MousePressed = function() {
+                console.log("wrong capitalization");
+            }
+
+            // Test constructor-related behavior
+            p.Constructor = function() {
+                console.log("shouldn't trigger error");
+            }
+        });
+    </script>
+</body>
+</html>
