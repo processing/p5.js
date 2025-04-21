@@ -137,7 +137,7 @@ class p5 {
         bindGlobal(p);
       }
 
-      const protectedProperties = ['constructor', 'length', 'print'];
+      const protectedProperties = ['constructor', 'length'];
       // Attach its properties to the window
       for (const p in this) {
         if (this.hasOwnProperty(p)) {
