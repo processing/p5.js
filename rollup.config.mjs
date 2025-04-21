@@ -8,6 +8,10 @@ import dayjs from 'dayjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
+import { globSync } from 'glob';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { rmSync } from 'node:fs';
 
 const plugins = [
   commonjs(),
@@ -80,7 +84,13 @@ const generateModuleBuild = () => {
   });
 };
 
+rmSync("./dist", {
+  force: true,
+  recursive: true
+});
+
 export default [
+  //// Unminified and ESM library build ////
   {
     input: 'src/app.js',
     output: [
@@ -145,6 +155,28 @@ export default [
       }),
       ...plugins
     ]
+  },
+  //// ESM source build ////
+  {
+    input: Object.fromEntries(
+      globSync('src/**/*.js').map(file => [
+        // This removes `src/` as well as the file extension from each
+        // file, so e.g. src/nested/foo.js becomes nested/foo
+        path.relative(
+          'src',
+          file.slice(0, file.length - path.extname(file).length)
+        ),
+        // This expands the relative paths to absolute paths, so e.g.
+        // src/nested/foo becomes /project/src/nested/foo.js
+        fileURLToPath(new URL(file, import.meta.url))
+      ])
+    ),
+    output: {
+      format: 'es',
+      dir: 'dist'
+    },
+    external: /node_modules/,
+    plugins
   }
   // NOTE: comment to NOT build standalone math module
   // ...generateModuleBuild()
