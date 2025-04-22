@@ -375,7 +375,7 @@ visualSuite('WebGL', function() {
     visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       p5.background(255);
-      p5.fill(255, 0, 0, 100);
+      p5.fill(255, 100, 100, 100);
       p5.circle(0, 0, 50);
       screenshot();
     });
@@ -384,7 +384,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       p5.background(255);
       p5.ambientLight(255);
-      p5.fill(255, 0, 0, 100);
+      p5.fill(255, 100, 100, 100);
       p5.circle(0, 0, 50);
       screenshot();
     });
@@ -393,7 +393,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const myShader = p5.baseMaterialShader().modify({
         'Inputs getPixelInputs': `(Inputs inputs) {
-          inputs.color = vec4(1., 0., 0., 100./255.);
+          inputs.color = vec4(1., 0.4, 0.4, 100./255.);
           return inputs;
         }`
       })
@@ -406,7 +406,7 @@ visualSuite('WebGL', function() {
     visualTest('Colors in textures have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = p5.createFramebuffer();
-      tex.draw(() => p5.background(255, 0, 0, 100));
+      tex.draw(() => p5.background(255, 100, 100, 100));
       p5.background(255);
       p5.texture(tex);
       p5.circle(0, 0, 50);
@@ -416,7 +416,7 @@ visualSuite('WebGL', function() {
     visualTest('Colors in tinted textures have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = p5.createFramebuffer();
-      tex.draw(() => p5.background(255, 0, 0, 255));
+      tex.draw(() => p5.background(255, 100, 100, 255));
       p5.background(255);
       p5.texture(tex);
       p5.tint(255, 100);
