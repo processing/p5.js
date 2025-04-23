@@ -912,25 +912,25 @@ function pointer(p5, fn){
 
   fn._updatePointerCoords = function (e) {
     if (this._curElement !== null) {
-       const canvas = this._curElement.elt;
-       const sx = canvas.scrollWidth / this.width || 1;
-       const sy = canvas.scrollHeight / this.height || 1;
+      const canvas = this._curElement.elt;
+      const sx = canvas.scrollWidth / this.width || 1;
+      const sy = canvas.scrollHeight / this.height || 1;
 
-       if (e.pointerType == 'touch') {
+      if (e.pointerType == 'touch') {
           const touches = [];
           for (const touch of this._activePointers.values()) {
-             touches.push(getTouchInfo(canvas, sx, sy, touch));
+            touches.push(getTouchInfo(canvas, sx, sy, touch));
           }
           this.touches = touches;
-       } else {
-          const mousePos = getMouseInfo(canvas, sx, sy, e);
-          this.movedX = e.movementX || 0;
-          this.movedY = e.movementY || 0;
-          this.mouseX = mousePos.x;
-          this.mouseY = mousePos.y;
-          this.winMouseX = mousePos.winX;
-          this.winMouseY = mousePos.winY;
-       }
+      } 
+
+      const mousePos = getMouseInfo(canvas, sx, sy, e);
+      this.movedX = e.movementX || 0;
+      this.movedY = e.movementY || 0;
+      this.mouseX = mousePos.x;
+      this.mouseY = mousePos.y;
+      this.winMouseX = mousePos.winX;
+      this.winMouseY = mousePos.winY;
 
        if (!this._hasMouseInteracted) {
           this._updateMouseCoords();
