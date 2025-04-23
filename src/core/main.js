@@ -14,9 +14,10 @@ import * as constants from './constants';
  * a p5 sketch.  It expects an incoming sketch closure and it can also
  * take an optional node parameter for attaching the generated p5 canvas
  * to a node.  The sketch closure takes the newly created p5 instance as
- * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>,
- * <a href="#/p5/setup">setup()</a>, and/or
- * <a href="#/p5/draw">draw()</a> properties on it for running a sketch.
+ * its sole argument and may optionally set an asynchronous function
+ * using `async/await`, along with the standard <a href="#/p5/setup">setup()</a>,
+ *  and/or <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a>
+ *  properties on it for running a sketch.
  *
  * A p5 sketch can run in "global" or "instance" mode:
  * "global"   - all properties and methods are attached to the window
@@ -466,6 +467,8 @@ for (const k in constants) {
  * <a href="#/p5/draw">draw()</a> begins looping. If the
  * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
  * run immediately after <a href="#/p5/preload">preload()</a> finishes
+ * 
+ * 
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
