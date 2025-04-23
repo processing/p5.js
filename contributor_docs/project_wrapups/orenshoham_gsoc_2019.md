@@ -8,9 +8,9 @@ The AudioWorklet API consists of two classes: [AudioWorkletProcessor](https://de
 
 AudioWorklet replaces [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode), a now-deprecated Web Audio node that runs audio code in the browser's main thread. p5.js-sound used ScriptProcessorNode internally in three classes:
 
-- [p5.SoundFile](https://p5js.org/reference/#/p5.SoundFile), which used a ScriptProcessorNode to keep track of a SoundFile's current playback position.
-- [p5.Amplitude](https://p5js.org/reference/#/p5.Amplitude), which used a ScriptProcessorNode to perform amplitude analysis.
-- [p5.SoundRecorder](https://p5js.org/reference/#/p5.SoundRecorder), which used a ScriptProcessorNode to concatenate audio buffers together during the recording process.
+- [p5.SoundFile](https://p5js.org/reference/p5.SoundFile), which used a ScriptProcessorNode to keep track of a SoundFile's current playback position.
+- [p5.Amplitude](https://p5js.org/reference/p5.Amplitude), which used a ScriptProcessorNode to perform amplitude analysis.
+- [p5.SoundRecorder](https://p5js.org/reference/p5.SoundRecorder), which used a ScriptProcessorNode to concatenate audio buffers together during the recording process.
 
 For each of these classes, I created new AudioWorkletProcessors for [p5.SoundFile](https://github.com/processing/p5.js-sound/blob/4d3a3833de4d30f6770740052a82586444a4482a/src/audioWorklet/soundFileProcessor.js), [p5.Amplitude](https://github.com/processing/p5.js-sound/blob/4d3a3833de4d30f6770740052a82586444a4482a/src/audioWorklet/amplitudeProcessor.js), and [p5.SoundRecorder](https://github.com/processing/p5.js-sound/blob/4d3a3833de4d30f6770740052a82586444a4482a/src/audioWorklet/recorderProcessor.js) that replicated the corresponding ScriptProcessorNode's [onaudioprocess](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess) function.
 

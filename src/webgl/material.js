@@ -3117,7 +3117,9 @@ function material(p5, fn){
     this._renderer.states.setValue('curAmbientColor', color._array);
     this._renderer.states.setValue('_useNormalMaterial', false);
     this._renderer.states.setValue('enableLighting', true);
-    this._renderer.states.setValue('fillColor', true);
+    if (!this._renderer.states.fillColor) {
+      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
+    }
     return this;
   };
 

@@ -636,6 +636,15 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
+
+    const context = this._isGlobal ? window : this;
+    if (typeof context.keyReleased === 'function') {
+      const executeDefault = context.keyReleased(e);
+      if (executeDefault === false) {
+        e.preventDefault();
+      }
+    }
+    
     delete this._downKeyCodes[e.code];
     delete this._downKeys[e.key];
 
@@ -652,14 +661,8 @@ function keyboard(p5, fn){
       this.key = lastPressedKey;
     }
 
-    const context = this._isGlobal ? window : this;
-    if (typeof context.keyReleased === 'function') {
-      const executeDefault = context.keyReleased(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
-    }
   };
+
 
   /**
    * A function that's called once when keys with printable characters are pressed.

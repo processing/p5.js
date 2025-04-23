@@ -184,6 +184,7 @@ class Renderer {
 
   beginShape(...args) {
     this.currentShape.reset();
+    this.updateShapeVertexProperties();
     this.currentShape.beginShape(...args);
   }
 
@@ -224,13 +225,24 @@ class Renderer {
     return this;
   }
 
-  spline(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.splineVertex(x1, y1);
-    this._pInst.splineVertex(x2, y2);
-    this._pInst.splineVertex(x3, y3);
-    this._pInst.splineVertex(x4, y4);
-    this._pInst.endShape();
+  spline(...args) {
+    if (args.length === 2 * 4) {
+      const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1);
+      this._pInst.splineVertex(x2, y2);
+      this._pInst.splineVertex(x3, y3);
+      this._pInst.splineVertex(x4, y4);
+      this._pInst.endShape();
+    } else if (args.length === 3 * 4) {
+      const [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1, z1);
+      this._pInst.splineVertex(x2, y2, z2);
+      this._pInst.splineVertex(x3, y3, z3);
+      this._pInst.splineVertex(x4, y4, z4);
+      this._pInst.endShape();
+    }
     return this;
   }
 

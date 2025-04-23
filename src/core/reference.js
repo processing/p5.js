@@ -1137,6 +1137,115 @@
  * </div>
  */
 
+
+/**
+ * Asynchronous Asset Loading with Async/Await.
+ *
+ * The keywords `async` and `await` let you write asynchronous code in a more
+ * straightforward, linear style. Instead of nesting callbacks or juggling
+ * multiple promise chains, you can pause execution at `await` while waiting
+ * for a promise to resolve. This makes your code flow more naturally, as if
+ * it were synchronous.
+ *
+ * When you mark a function with the `async` keyword—like `async function setup() {...}`—it
+ * signals that the function contains asynchronous operations and will return a
+ * promise. Any time you use the `await` keyword inside this function, JavaScript
+ * will pause the function’s execution until the awaited promise settles.
+ *
+ * In p5.js, you can use `async/await` to handle media loading functions such as
+ * `loadImage()`, `loadJSON()`, `loadSound()`, and so on. This allows you to:
+ *   - load files in a more readable, top-to-bottom manner
+ *   - decide when the assets are fully available before proceeding
+ *
+ * Nested callbacks require managing additional information and behavior.
+ * Lazy loading of assets with `async/await` can simplify control flow,
+ * but it also requires you to design your sketch around waiting for
+ * each operation to complete.
+ *
+ * Callbacks are still fully supported, so code that passes success / error
+ * functions to loaders like `loadImage()` or `loadJSON()` will behave exactly
+ * as it always has. This compatibility means sketches written with the older
+ * pattern don’t need any changes, and you can freely mix callbacks and
+ * `async/await` in the same project if that suits your workflow.
+ *
+ * In the example below, `setup()` is declared as an async function. We `await`
+ * the completion of both `loadImage()` and `loadJSON()` before calling
+ * `createCanvas()`. Only then does the sketch proceed, guaranteeing the assets
+ * are available for immediate use.
+ *
+ * ```js
+ * let img, data;
+ *
+ * async function setup() {
+ *   // Wait until the image and JSON data have fully loaded.
+ *   img = await loadImage("./my-image.png");
+ *   data = await loadJSON("./my-data.json");
+ *
+ *   // Once the assets are loaded, create the canvas.
+ *   createCanvas(400, 400);
+ * }
+ * ```
+ *
+ * @property async_await
+ * @example
+ * <div>
+ * <code>
+ * // Click and drag the mouse to view the scene from different angles.
+ * 
+ * let shape;
+ *
+ * // Load the file and create a p5.Geometry object.
+ * async function setup() {
+ *   shape = await loadModel('/assets/teapot.obj');
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe('A white teapot drawn against a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Enable orbiting with the mouse.
+ *   orbitControl();
+ *
+ *   // Draw the shape.
+ *   model(shape);
+ * }
+ * </code>
+ * </div>
+ * 
+ * <div>
+ * <code>
+ * let font;
+ *
+ * async function setup() {
+ *   // Load a font for WebGL mode.
+ *   font = await loadFont('assets/inconsolata.otf');
+ *
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   describe(
+ *     "A gray square. The mouse's x- and y-coordinates are displayed as the user moves the mouse."
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Style the text.
+ *   textAlign(CENTER);
+ *   textSize(16);
+ *   textFont(font);
+ *   fill(0);
+ *
+ *   // Display the mouse's coordinates.
+ *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+ * }
+ * </code>
+ * </div>
+ */
+
 /**
  * A list that keeps several pieces of data in order.
  *

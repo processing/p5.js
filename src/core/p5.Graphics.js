@@ -23,6 +23,7 @@ import material from '../webgl/material';
 import creatingReading from '../color/creating_reading';
 import trigonometry from '../math/trigonometry';
 import { renderers } from './rendering';
+import customShapes from '../shape/custom_shapes';
 
 class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
@@ -677,6 +678,7 @@ function graphics(p5, fn){
   attributes(p5, p5.Graphics.prototype);
   curves(p5, p5.Graphics.prototype);
   vertex(p5, p5.Graphics.prototype);
+  customShapes(p5, p5.Graphics.prototype);
 
   setting(p5, p5.Graphics.prototype);
   loadingDisplaying(p5, p5.Graphics.prototype);

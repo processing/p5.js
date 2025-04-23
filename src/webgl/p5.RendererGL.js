@@ -1174,7 +1174,6 @@ class RendererGL extends Renderer {
   }
 
   getCommonVertexProperties() {
-    if (!this.states) debugger;
     return {
       ...super.getCommonVertexProperties(),
       stroke: this.states.strokeColor,
