@@ -593,8 +593,8 @@ function dom(p5, fn){
    *   background(200);
    *
    *   let img = createImg(
-   *     'https://p5js.org/assets/img/asterisk-01.png',
-   *     'The p5.js magenta asterisk.'
+   *     '/assets/cat.jpg',
+   *     'image of a cat'
    *   );
    *   img.position(0, 10);
    *
