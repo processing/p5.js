@@ -6803,6 +6803,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jackeddielove",
+      "name": "Jack L",
+      "avatar_url": "https://avatars.githubusercontent.com/u/130420780?v=4",
+      "profile": "http://jackeddielove.github.io",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
