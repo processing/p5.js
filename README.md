@@ -1133,6 +1133,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://git.arts.ac.uk/pages/21034426/My_Portfolio_Website/"><img src="https://avatars.githubusercontent.com/u/92257843?v=4?s=120" width="120px;" alt="Qingfeng Huang"/><br /><sub><b>Qingfeng Huang</b></sub></a><br /><a href="#translation-Darrenhqf" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/HughJacks"><img src="https://avatars.githubusercontent.com/u/102194905?v=4?s=120" width="120px;" alt="HughJacks"/><br /><sub><b>HughJacks</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=HughJacks" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://jackeddielove.github.io"><img src="https://avatars.githubusercontent.com/u/130420780?v=4?s=120" width="120px;" alt="Jack L"/><br /><sub><b>Jack L</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajackeddielove" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=jackeddielove" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
