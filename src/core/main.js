@@ -462,9 +462,14 @@ for (const k in constants) {
  * ```
  *
  * Code placed in `setup()` will run once before code placed in
- * <a href="#/p5/draw">draw()</a> begins looping. When `setup()` is declared async, 
- * execution pauses at each `await` until the promise resolves, ensuring all assets 
- * are loaded before the sketch continues.
+ * <a href="#/p5/draw">draw()</a> begins looping.
+ * If `setup()` is declared `async` (e.g. `async function setup()`),
+ * execution pauses at each `await` until its promise resolves.
+ * For example, `font = await loadFont(...)` waits for the font asset
+ * to load because `loadFont()` function returns a promise, and the await 
+ * keyword means the program will wait for the promise to resolve.
+ * This ensures that all assets are fully loaded before the sketch continues.
+
  * 
  * loading assets.
  *
