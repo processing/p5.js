@@ -31,8 +31,8 @@ function environment(p5, fn){
    * @method print
    * @param {Any} contents content to print to the console.
    * @example
-   * <div>
-   * <code class="norender">
+   * <div class="norender">
+   * <code>
    * function setup() {
    *   // Prints "hello, world" to the console.
    *   print('hello, world');
@@ -40,8 +40,8 @@ function environment(p5, fn){
    * </code>
    * </div>
    *
-   * <div>
-   * <code class="norender">
+   * <div class="norender">
+   * <code>
    * function setup() {
    *   let name = 'ada';
    *   // Prints "hello, ada" to the console.
