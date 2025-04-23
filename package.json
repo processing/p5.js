@@ -23,7 +23,7 @@
       "node ./utils/sample-linter.mjs"
     ]
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
