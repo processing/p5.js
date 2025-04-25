@@ -36,6 +36,7 @@ class p5 {
   // global mode.
   static instance = null;
   static lifecycleHooks = {
+    init: [],
     presetup: [],
     postsetup: [],
     predraw: [],
@@ -137,6 +138,8 @@ class p5 {
         if(p[0] === '_') continue;
         bindGlobal(p);
       }
+
+      this._runLifecycleHook('init');
 
       const protectedProperties = ['constructor', 'length'];
       // Attach its properties to the window
