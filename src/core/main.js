@@ -139,7 +139,7 @@ class p5 {
         bindGlobal(p);
       }
 
-      this._runLifecycleHook('init');
+      this._runLifecycleHookSync('init');
 
       const protectedProperties = ['constructor', 'length'];
       // Attach its properties to the window
@@ -425,8 +425,14 @@ class p5 {
   }
 
   async _runLifecycleHook(hookName) {
-    for(const hook of p5.lifecycleHooks[hookName]){
+    for (const hook of p5.lifecycleHooks[hookName]) {
       await hook.call(this);
+    }
+  }
+
+  _runLifecycleHookSync(hookName) {
+    for (const hook of p5.lifecycleHooks[hookName]) {
+      hook.call(this);
     }
   }
 
