@@ -37,7 +37,7 @@ class p5 {
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
-
+    this._isGlobal = !sketch;
     /**
      * A function that's called once to load assets before the sketch runs.
      *
@@ -286,7 +286,6 @@ class p5 {
     this._glAttributes = null;
     this._requestAnimId = 0;
     this._preloadCount = 0;
-    this._isGlobal = false;
     this._loop = true;
     this._startListener = null;
     this._initializeInstanceVariables();
@@ -661,21 +660,11 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    // call any registered init functions
-    this._registeredMethods.init.forEach(function(f) {
-      if (typeof f !== 'undefined') {
-        f.call(this);
-      }
-    }, this);
-    // Set up promise preloads
-    this._setupPromisePreloads();
-
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
-    if (!sketch) {
-      this._isGlobal = true;
+    if (this._isGlobal) {
       p5.instance = this;
       // Loop through methods on the prototype and attach them to the window
       for (const p in p5.prototype) {
@@ -710,8 +699,14 @@ class p5 {
       p5._checkForUserDefinedFunctions(this);
     }
 
-    // Bind events to window (not using container div bc key events don't work)
+    this._updateWindowSize();
 
+    // call any registered init functions
+    this.callRegisteredHooksFor('init');
+    // Set up promise preloads
+    this._setupPromisePreloads();
+
+    // Bind events to window (not using container div bc key events don't work)
     for (const e in this._events) {
       const f = this[`_on${e}`];
       if (f) {
