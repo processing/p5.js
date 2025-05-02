@@ -928,37 +928,36 @@ class Renderer2D extends p5.Renderer {
           this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
           this.drawingContext.closePath();
           if (!this._clipping && this._doFill) {
-            this._pInst.fill(vertices[i + 2][5]);
+           this._setFill(vertices[i + 2][5]);
             this.drawingContext.fill();
           }
           if (!this._clipping && this._doStroke) {
-            this._pInst.stroke(vertices[i + 2][6]);
+            this._setStroke(vertices[i + 2][6]); 
             this.drawingContext.stroke();
           }
         }
       } else if (shapeKind === constants.TRIANGLE_STRIP) {
-        for (i = 0; i + 1 < numVerts; i++) {
-          v = vertices[i];
-          if (!this._clipping) this.drawingContext.beginPath();
-          this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
-          this.drawingContext.lineTo(v[0], v[1]);
-          if (!this._clipping && this._doStroke) {
-            this._pInst.stroke(vertices[i + 1][6]);
+        if (numVerts > 2) {
+        for (let i = 2; i < numVerts; i++) {
+      if (!this._clipping) {
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[i - 2][0], vertices[i - 2][1]);
+          this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
+          this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+           this.drawingContext.closePath();
+          if (this._doFill) {
+            this._setFill(vertices[i][5]); 
+            this.drawingContext.fill();
           }
-          if (!this._clipping && this._doFill) {
-            this._pInst.fill(vertices[i + 1][5]);
-          }
-          if (i + 2 < numVerts) {
-            this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-            if (!this._clipping && this._doStroke) {
-              this._pInst.stroke(vertices[i + 2][6]);
-            }
-            if (!this._clipping && this._doFill) {
-              this._pInst.fill(vertices[i + 2][5]);
-            }
-          }
-          this._doFillStrokeClose(closeShape);
+           if (this._doStroke) {
+             this._setStroke(vertices[i][6]);
+             this.drawingContext.stroke();
+           }
+         }
         }
+      }
+        
+      
       } else if (shapeKind === constants.TRIANGLE_FAN) {
         if (numVerts > 2) {
           // For performance reasons, try to batch as many of the
@@ -1001,40 +1000,35 @@ class Renderer2D extends p5.Renderer {
           for (j = 1; j < 4; j++) {
             this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
           }
-          this.drawingContext.lineTo(v[0], v[1]);
+         this.drawingContext.closePath();
           if (!this._clipping && this._doFill) {
-            this._pInst.fill(vertices[i + 3][5]);
+            this._setFill(vertices[i + 3][5]);
+            this.drawingContext.fill();
           }
           if (!this._clipping && this._doStroke) {
-            this._pInst.stroke(vertices[i + 3][6]);
+            this._setStroke(vertices[i + 3][6]);
+            this.drawingContext.stroke();
           }
-          this._doFillStrokeClose(closeShape);
         }
       } else if (shapeKind === constants.QUAD_STRIP) {
         if (numVerts > 3) {
-          for (i = 0; i + 1 < numVerts; i += 2) {
-            v = vertices[i];
-            if (!this._clipping) this.drawingContext.beginPath();
-            if (i + 3 < numVerts) {
-              this.drawingContext.moveTo(
-                vertices[i + 2][0], vertices[i + 2][1]);
-              this.drawingContext.lineTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-              this.drawingContext.lineTo(
-                vertices[i + 3][0], vertices[i + 3][1]);
-              if (!this._clipping && this._doFill) {
-                this._pInst.fill(vertices[i + 3][5]);
+          for (i = 0; i + 3 < numVerts; i += 2) {
+            if (!this._clipping) {
+              this.drawingContext.beginPath();
+              this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
+              this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+              this.drawingContext.lineTo(vertices[i+3][0], vertices[i+3][1]);
+              this.drawingContext.lineTo(vertices[i+2][0], vertices[i+2][1]);
+              this.drawingContext.closePath();
+              if (this._doFill) {
+                this._setFill(vertices[i + 3][5]);
+                this.drawingContext.fill();
               }
-              if (!this._clipping && this._doStroke) {
-                this._pInst.stroke(vertices[i + 3][6]);
+              if (this._doStroke) {
+                this._setStroke(vertices[i + 3][6]);
+                this.drawingContext.stroke();
               }
-            } else {
-              this.drawingContext.moveTo(v[0], v[1]);
-              this.drawingContext.lineTo(
-                vertices[i + 1][0], vertices[i + 1][1]);
-            }
-            this._doFillStrokeClose(closeShape);
+            } 
           }
         }
       } else {
