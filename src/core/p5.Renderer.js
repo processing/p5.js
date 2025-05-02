@@ -86,7 +86,9 @@ class Renderer extends p5.Element {
         _textAlign: this._textAlign,
         _textBaseline: this._textBaseline,
         _textStyle: this._textStyle,
-        _textWrap: this._textWrap
+        _textWrap: this._textWrap,
+        _colorMode: this._colorMode,
+        _colorMaxes: this._colorMaxes.slice()
       }
     };
   }
