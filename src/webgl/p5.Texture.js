@@ -188,6 +188,7 @@ class Texture {
     // FramebufferTexture instances wrap raw WebGL textures already, which
     // don't need any extra updating, as they already live on the GPU
     if (this.isFramebufferTexture) {
+      this.src.update();
       return false;
     }
 
