@@ -51,7 +51,6 @@ const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; /
 const fontFaceVariations = ['weight', 'stretch', 'style'];
 
 
-let nextId = 0;
 export class Font {
   constructor(p, fontFace, name, path, data) {
     if (!(fontFace instanceof FontFace)) {
@@ -62,7 +61,6 @@ export class Font {
     this.path = path;
     this.data = data;
     this.face = fontFace;
-    this.id = nextId++;
   }
 
   /**

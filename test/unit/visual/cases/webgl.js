@@ -1,4 +1,6 @@
+import { vi, beforeEach, afterEach } from 'vitest';
 import { visualSuite, visualTest } from '../visualTest';
+import { RendererGL } from '../../../../src/webgl/p5.RendererGL';
 
 visualSuite('WebGL', function() {
   visualSuite('Camera', function() {
@@ -628,6 +630,33 @@ visualSuite('WebGL', function() {
       p5.fill('blue');
       p5.noStroke();
       p5.model(geom);
+      screenshot();
+    });
+  });
+
+  visualSuite('font data', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    visualTest('glyph resource allocation does not corrupt textures', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      vi.spyOn(p5._renderer, 'maxCachedGlyphs').mockReturnValue(6);
+
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+
+      p5.textFont(font);
+      p5.clear();
+      p5.textSize(10);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      for (let i = 0; i < 100; i++) {
+        const x = -p5.width/2 + (i % 10) * 10;
+        const y = -p5.height/2 + p5.floor(i / 10) * 10;
+        p5.text(String.fromCharCode(33 + i), x, y);
+      }
+
       screenshot();
     });
   });
