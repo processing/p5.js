@@ -7,25 +7,8 @@ import { Font, arrayCommandsToObjects } from "../type/p5.Font";
 function text(p5, fn) {
   RendererGL.prototype.maxCachedGlyphs = function() {
     // TODO: use more than vibes to find a good value for this
-    return 200
+    return 200;
   };
-
-  RendererGL.prototype.freeGlyphInfo = function(gi) {
-    const datas = [
-      gi.strokeImageInfo.imageData,
-      gi.rowInfo.cellImageInfo.imageData,
-      gi.rowInfo.dimImageInfo.imageData,
-      gi.colInfo.cellImageInfo.imageData,
-      gi.colInfo.dimImageInfo.imageData,
-    ];
-    for (const data of datas) {
-      const tex = this.textures.get(data);
-      if (tex) {
-        tex.remove();
-        this.textures.delete(data);
-      }
-    }
-  }
 
   Font.prototype._getFontInfo = function(axs) {
     // For WebGL, a cache of font data to use on the GPU.
@@ -792,7 +775,7 @@ function text(p5, fn) {
     sh.setUniform("uMaterialColor", curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
-    this.fontCache = this.fontCache || new Map();
+    this.glyphDataCache = this.glyphDataCache || new Set();
 
     try {
       // fetch the glyphs in the line of text
@@ -801,20 +784,35 @@ function text(p5, fn) {
       for (const glyph of glyphs) {
         const gi = fontInfo.getGlyphInfo(glyph);
         if (gi.uGlyphRect) {
-
-          const cacheKey = JSON.stringify({ font: font.id, axs, glyph: glyph.shape.g });
-          // Bump this font to the end of the cache list by deleting and re-adding it
-          this.fontCache.delete(cacheKey);
-          this.fontCache.set(cacheKey, gi);
-          if (this.fontCache.size > this.maxCachedGlyphs()) {
-            const keyToRemove = this.fontCache.keys().next().value;
-            const val = this.fontCache.get(keyToRemove);
-            this.fontCache.delete(keyToRemove);
-            this.freeGlyphInfo(val);
-          }
-
           const rowInfo = gi.rowInfo;
           const colInfo = gi.colInfo;
+
+          // Bump the resources for this glyph to the end of the cache list by deleting and re-adding
+          const glyphResources = [
+            gi.strokeImageInfo.imageData,
+            rowInfo.cellImageInfo.imageData,
+            rowInfo.dimImageInfo.imageData,
+            colInfo.cellImageInfo.imageData,
+            colInfo.dimImageInfo.imageData
+          ];
+          for (const resource of glyphResources) {
+            this.glyphDataCache.delete(resource);
+            this.glyphDataCache.add(resource);
+          }
+
+          // If we have too many glyph textures, remove the least recently used
+          // ones from GPU memory. The data still exists on the CPU and will be
+          // re-uploaded if it gets actively used again.
+          while (this.glyphDataCache.size > this.maxCachedGlyphs()) {
+            const data = this.glyphDataCache.values().next().value;
+            this.glyphDataCache.delete(data);
+            const tex = this.textures.get(data);
+            if (tex) {
+              tex.remove();
+              this.textures.delete(data);
+            }
+          }
+
           sh.setUniform("uSamplerStrokes", gi.strokeImageInfo.imageData);
           sh.setUniform("uSamplerRowStrokes", rowInfo.cellImageInfo.imageData);
           sh.setUniform("uSamplerRows", rowInfo.dimImageInfo.imageData);
