@@ -1135,6 +1135,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://jackeddielove.github.io"><img src="https://avatars.githubusercontent.com/u/130420780?v=4?s=120" width="120px;" alt="Jack L"/><br /><sub><b>Jack L</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajackeddielove" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=jackeddielove" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/LalitNarayanYadav"><img src="https://avatars.githubusercontent.com/u/162928571?v=4?s=120" width="120px;" alt="Lalit Narayan Yadav"/><br /><sub><b>Lalit Narayan Yadav</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=LalitNarayanYadav" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
