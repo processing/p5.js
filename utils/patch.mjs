@@ -12,13 +12,13 @@ const replace = (path, src, dest) => {
 };
 
 replace(
-    "./src/core/structure.d.ts",
+    "./types/core/structure.d.ts",
     "function p5(sketch: object, node: string | HTMLElement): void;",
     "function p5: typeof p5"
 );
 
 replace(
-    "./src/webgl/p5.Geometry.d.ts",
+    "./types/webgl/p5.Geometry.d.ts",
     "constructor(detailX?: number, detailY?: number, callback?: function);",
     `constructor(
         detailX?: number,
@@ -33,15 +33,9 @@ replace(
 
 // https://github.com/p5-types/p5.ts/issues/31
 replace(
-    "./src/math/random.d.ts",
+    "./types/math/random.d.ts",
     "function random(choices: Array): any;",
     "function random<T>(choices: T[]): T;"
-);
-
-replace(
-    "./src/utilities/array_functions.d.ts",
-    "function append(array: Array, value: Any): Array;",
-    "function append<T>(array: T[], value: T): T[];"
 );
 
 

@@ -47,6 +47,8 @@ jobs:
           CI: true
       - name: Run build
         run: npm run build
+      - name: Generate types
+        run: npm run generate-types
 
       # 2. Prepare release files
       - run: mkdir release && mkdir p5 && cp -r ./lib/* p5/
