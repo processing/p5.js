@@ -903,7 +903,7 @@ function loadingDisplaying(p5, fn){
    * are set to `CENTER`.
    *
    * @method image
-   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img image to display.
+   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics} img image to display.
    * @param  {Number}   x x-coordinate of the top-left corner of the image.
    * @param  {Number}   y y-coordinate of the top-left corner of the image.
    * @param  {Number}   [width]  width to draw the image.

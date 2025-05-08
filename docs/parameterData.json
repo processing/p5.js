@@ -934,7 +934,7 @@
     "image": {
       "overloads": [
         [
-          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture",
+          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics",
           "Number",
           "Number",
           "Number?",
@@ -1431,13 +1431,6 @@
         ]
       ]
     },
-    "createMatrix": {
-      "overloads": [
-        [
-          "Number[]"
-        ]
-      ]
-    },
     "noise": {
       "overloads": [
         [
@@ -1856,14 +1849,23 @@
     },
     "bezierOrder": {
       "overloads": [
-        [],
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "splineVertex": {
       "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
         [
           "Number",
           "Number",
@@ -1882,20 +1884,20 @@
     "splineProperty": {
       "overloads": [
         [
-          "String"
-        ],
-        [
           "String",
           null
+        ],
+        [
+          "String"
         ]
       ]
     },
     "splineProperties": {
       "overloads": [
-        [],
         [
           "Object"
-        ]
+        ],
+        []
       ]
     },
     "vertex": {
@@ -1951,19 +1953,6 @@
           "Number",
           "Number",
           "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "curveVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
           "Number?"
         ]
       ]
@@ -2753,36 +2742,6 @@
           "Boolean?",
           "Boolean?"
         ]
-      ]
-    },
-    "parseObj": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseSTL": {
-      "overloads": [
-        []
-      ]
-    },
-    "isBinary": {
-      "overloads": [
-        []
-      ]
-    },
-    "matchDataViewAt": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseBinarySTL": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseASCIISTL": {
-      "overloads": [
-        []
       ]
     },
     "model": {
