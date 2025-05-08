@@ -22,6 +22,12 @@ suite('Validate Params', function () {
     FramebufferTexture: function() {
       return 'mock p5.FramebufferTexture';
     },
+    Renderer: function() {
+      return 'mock p5.Renderer';
+    },
+    Graphics: function() {
+      return 'mock p5.Graphics';
+    },
     _error: () => {},
   };
   const mockP5Prototype = {};
@@ -124,7 +130,7 @@ suite('Validate Params', function () {
       console.log(result);
       assert.equal(
         result.error,
-        '🌸 p5.js says: Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture at the first parameter in p5.image().'
+        '🌸 p5.js says: Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter in p5.image().'
       );
     });
   });
