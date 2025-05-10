@@ -34,7 +34,7 @@ function math(p5, fn) {
    * <a href="#/p5.Vector">p5.Vector</a> class.
    *
    * @method createVector
-   * @param {...Number} x Each component of the vector.
+   * @param {...Number} x Zero or more numbers, representing each component of the vector.
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
