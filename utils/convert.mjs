@@ -92,6 +92,8 @@ function typeObject(node) {
     return { type: signature };
   } else if (node.type === 'ArrayType') {
     return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
+  } else if (node.type === 'RestType') {
+    return { type: typeObject(node.expression).type, rest: true };
   } else {
     // TODO
     // - handle record types
@@ -518,7 +520,7 @@ function cleanUpClassItems(data) {
 
     const processOverload = overload => {
       if (overload.params) {
-        return Object.values(overload.params).map(param => processOptionalParam(param));
+        return Object.values(overload.params).map(param => processParam(param));
       }
       return overload;
     }
@@ -526,10 +528,13 @@ function cleanUpClassItems(data) {
     // To simplify `parameterData.json`, instead of having a separate field for
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
-    const processOptionalParam = param => {
+    const processParam = param => {
       let type = param.type;
       if (param.optional) {
         type += '?';
+      }
+      if (param.rest) {
+        type = `...${type}`;
       }
       return type;
     }

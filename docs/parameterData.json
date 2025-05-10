@@ -1427,7 +1427,7 @@
     "createVector": {
       "overloads": [
         [
-          null
+          "...Number"
         ]
       ]
     },
