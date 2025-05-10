@@ -1427,7 +1427,7 @@
     "createVector": {
       "overloads": [
         [
-          "...Number"
+          "...Number[]"
         ]
       ]
     },
