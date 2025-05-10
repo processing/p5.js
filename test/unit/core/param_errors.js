@@ -253,6 +253,29 @@ suite('Validate Params', function () {
       ];
       const result = mockP5Prototype.validate('p5.paletteLerp', [colorStops, 0.5]);
       assert.isTrue(result.success);
-    })
-  })
+    });
+  });
+
+  suite('validateParams: rest arguments', function () {
+    test('createVector(): works with no args', function() {
+      const result = mockP5Prototype.validate('p5.createVector', []);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): works with one number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1]);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): works with many numbers', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1, 2, 3, 4]);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): fails with a non-number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', ['1']);
+      assert.isFalse(result.success);
+    });
+    test('createVector(): fails with any non-number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1, 2, '3', 4]);
+      assert.isFalse(result.success);
+    });
+  });
 });

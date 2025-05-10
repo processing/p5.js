@@ -392,6 +392,8 @@ export function generateTypeFromTag(param) {
         const innerTypeStrs = param.type.elements.map(e => generateTypeFromTag({ type: e }));
         return `[${innerTypeStrs.join(', ')}]`;
       }
+      case 'RestType':
+        return `${generateTypeFromTag({ type: param.type.expression })}[]`;
       default:
         return 'any';
     }
@@ -420,6 +422,7 @@ export function generateTypeFromTag(param) {
     if (!param) return 'any';
 
     let type = param.type;
+    let prefix = '';
     const isOptional = param.type?.type === 'OptionalType';
     if (typeof type === 'string') {
       type = normalizeTypeName(type);
@@ -429,7 +432,11 @@ export function generateTypeFromTag(param) {
       type = 'any';
     }
 
-    return `${param.name}${isOptional ? '?' : ''}: ${type}`;
+    if (param.type?.type === 'RestType') {
+      prefix = '...';
+    }
+
+    return `${prefix}${param.name}${isOptional ? '?' : ''}: ${type}`;
   }
 
   export function generateFunctionDeclaration(funcDoc) {
