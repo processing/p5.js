@@ -534,7 +534,7 @@ function cleanUpClassItems(data) {
         type += '?';
       }
       if (param.rest) {
-        type = `...${type}`;
+        type = `...${type}[]`;
       }
       return type;
     }

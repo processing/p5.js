@@ -226,9 +226,14 @@ function validateParams(p5, fn, lifecycles) {
       const isOptional = param?.endsWith('?');
       param = param?.replace(/\?$/, '');
 
-      let schema = generateTypeSchema(param);
+      const isRest = param?.startsWith('...') && param?.endsWith('[]');
+      param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
 
-      return isOptional ? schema.optional() : schema;
+      let schema = generateTypeSchema(param);
+      if (isOptional) {
+        schema = schema.optional();
+      }
+      return { schema, rest: isRest };
     };
 
     // Note that in Zod, `optional()` only checks for undefined, not the absence
@@ -262,14 +267,22 @@ function validateParams(p5, fn, lifecycles) {
     const overloadSchemas = overloads.flatMap(overload => {
       const combinations = generateOverloadCombinations(overload);
 
-      return combinations.map(combo =>
-        z.tuple(
-          combo
-            .map(p => generateParamSchema(p))
-            // For now, ignore schemas that cannot be mapped to a defined type
-            .filter(schema => schema !== undefined)
-        )
-      );
+      return combinations.map(combo => {
+        const params = combo
+          .map(p => generateParamSchema(p))
+          .filter(s => s.schema !== undefined);
+
+        let rest;
+        if (params.at(-1)?.rest) {
+          rest = params.pop();
+        }
+
+        let combined = z.tuple(params.map(s => s.schema));
+        if (rest) {
+          combined = combined.rest(rest.schema);
+        }
+        return combined;
+      });
     });
 
     return overloadSchemas.length === 1
@@ -504,7 +517,7 @@ function validateParams(p5, fn, lifecycles) {
     // theoretically allowed to stay undefined and valid, it is likely that the
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
-    if (Array.isArray(args) && args.every(arg => arg === undefined)) {
+    if (Array.isArray(args) && args.length > 0 && args.every(arg => arg === undefined)) {
       const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
