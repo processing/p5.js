@@ -4,7 +4,6 @@ import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import pkg from './package.json' with { type: 'json' };
-import dayjs from 'dayjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
@@ -27,7 +26,7 @@ const plugins = [
     preventAssignment: true
   })
 ];
-const banner = `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`;
+const banner = `/*! p5.js v${pkg.version} ${new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date())} */`;
 const bundleSize = (name, sourcemap) => {
   return visualizer({
     filename: `analyzer/${name}.html`,
@@ -80,7 +79,7 @@ const generateModuleBuild = () => {
       plugins: [
         ...plugins
       ]
-    }
+    };
   });
 };
 
