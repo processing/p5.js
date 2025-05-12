@@ -807,11 +807,12 @@ p5.prototype._onblur = function(e) {
 };
 
 /**
- * Returns `true` if the key it’s checking is pressed and `false` if not.
+ * Returns `true` if the key specified by `code` is currently pressed and `false`
+ * if not.
  *
- * `keyIsDown()` is helpful when checking for multiple different key presses.
- * For example, `keyIsDown()` can be used to check if both `LEFT_ARROW` and
- * `UP_ARROW` are pressed:
+ * `keyIsDown()` is helpful when checking for multiple different key presses
+ * simultaneously. For example, `keyIsDown()` can be used to check if both
+ * `LEFT_ARROW` and `UP_ARROW` are pressed:
  *
  * ```js
  * if (keyIsDown(LEFT_ARROW) && keyIsDown(UP_ARROW)) {
@@ -819,13 +820,23 @@ p5.prototype._onblur = function(e) {
  * }
  * ```
  *
- * `keyIsDown()` can check for key presses using
- * <a href="#/p5/keyCode">keyCode</a> values, as in `keyIsDown(37)` or
- * `keyIsDown(LEFT_ARROW)`. Key codes can be found on websites such as
- * <a href="https://keycode.info" target="_blank">keycode.info</a>.
+ * `keyIsDown()` checks keys based on their
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code" target="_blank">KeyboardEvent.code</a>
+ * or
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key" target="_blank">KeyboardEvent.key</a>
+ * values. For example, `keyIsDown('ArrowLeft')` or `keyIsDown('a')` will return
+ * `true` if the left arrow key or the 'a' key are currently held down.
+ * p5.js constants such as `LEFT_ARROW` and `RIGHT_ARROW` can also be used.
+ * Note that due to browser inconsistencies, it is recommended to use key codes
+ * (like `LEFT_ARROW`) or `KeyboardEvent.code` strings instead of `KeyboardEvent.key`
+ * strings (like `'ArrowLeft'`) to ensure compatibility across different keyboard
+ * layouts and locales.
+ * You can find a list of key code values at
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values" target="_blank">keycode.info</a>.
  *
  * @method keyIsDown
- * @param {Number}          code key to check.
+ * @param {Constant|String} code The key to check, specified by its `KeyboardEvent.key`,
+ *                               `KeyboardEvent.code` value, or a p5.js constant.
  * @return {Boolean}        whether the key is down or not.
  *
  * @example
@@ -848,19 +859,19 @@ p5.prototype._onblur = function(e) {
  *
  * function draw() {
  *   // Update x and y if an arrow key is pressed.
- *   if (keyIsDown(LEFT_ARROW) === true) {
+ *   if (keyIsDown(LEFT_ARROW)) {
  *     x -= 1;
  *   }
  *
- *   if (keyIsDown(RIGHT_ARROW) === true) {
+ *   if (keyIsDown(RIGHT_ARROW)) {
  *     x += 1;
  *   }
  *
- *   if (keyIsDown(UP_ARROW) === true) {
+ *   if (keyIsDown(UP_ARROW)) {
  *     y -= 1;
  *   }
  *
- *   if (keyIsDown(DOWN_ARROW) === true) {
+ *   if (keyIsDown(DOWN_ARROW)) {
  *     y += 1;
  *   }
  *
@@ -891,20 +902,22 @@ p5.prototype._onblur = function(e) {
  * }
  *
  * function draw() {
- *   // Update x and y if an arrow key is pressed.
- *   if (keyIsDown(37) === true) {
+ *   // Update x and y if an arrow key or WASD is pressed.
+ *   // Check using KeyboardEvent.code strings
+ *   if (keyIsDown('ArrowLeft') || keyIsDown('KeyA')) {
  *     x -= 1;
  *   }
  *
- *   if (keyIsDown(39) === true) {
+ *   if (keyIsDown('ArrowRight') || keyIsDown('KeyD')) {
  *     x += 1;
  *   }
  *
- *   if (keyIsDown(38) === true) {
+ *   // Check using KeyboardEvent.key strings
+ *   if (keyIsDown('ArrowUp') || keyIsDown('w')) {
  *     y -= 1;
  *   }
  *
- *   if (keyIsDown(40) === true) {
+ *   if (keyIsDown('ArrowDown') || keyIsDown('s')) {
  *     y += 1;
  *   }
  *
