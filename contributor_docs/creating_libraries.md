@@ -235,7 +235,7 @@ function loadCSVAddon(p5, fn, lifecycles){
 
 Notice that in the lifecycle functions you have access to `this` which refers to the current `p5` instance same as you would have in the functions attached to `fn`
 
-Here is what your p5.loadcsv.js file should look like at the end of this tutorial:
+Here is what your p5.loadcsv.js file should look like at this point in the tutorial:
 
 ```js
 function loadCSVAddon(p5, fn, lifecycles){
@@ -258,7 +258,30 @@ function loadCSVAddon(p5, fn, lifecycles){
     // Addon library related cleanup
   }
 }
+
+p5.registerAddon(loadCSVAddon);
 ```
+
+## Step 7
+As a final step, we will add a few more changes to our addon to prepare it for distribution. There are a few options you may wish to distribute your addon:
+
+* As a single JavaScript file which your users will include in their HTML with a `<script>` tag.
+* As an ESM module that your users can use with `<script type="module">`, install from NPM, or any other ESM module usage.
+
+Either of the above may also be passed through a build tool to be bundled into a different format. As we can see, there are many different options and below will be a recommendation which is the pattern that p5.js itself uses, you may choose another option that fits your addon.
+
+```js
+export function loadCSVAddon(p5, fn, lifecycles){
+  // Addon code ...
+}
+
+if (typeof p5 !== undefined) {
+  p5.registerAddon(loadCSVAddon);
+}
+```
+
+In the above snippet, an additional `if` condition is added around the call to `p5.registerAddon()`. This is done to support both direct usage in ESM modules (where users can directly import your addon function then call `p5.registerAddon()` themselves) and after bundling support regular `<script>` tag usage without your users needing to call `p5.registerAddon()` directly as long as they have included the addon `<script>` tag after the `<script>` tag including p5.js itself.
+
 
 ## Next steps
 
