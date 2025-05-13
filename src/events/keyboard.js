@@ -663,7 +663,6 @@ function keyboard(p5, fn){
 
   };
 
-
   /**
    * A function that's called once when keys with printable characters are pressed.
    *
@@ -795,7 +794,7 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeypress = function(e) {
-    if (e.which === this._lastKeyCodeTyped) {
+    if (e.which === this._lastKeyCodeTyped && e.repeat) {
       // prevent multiple firings
       return;
     }
