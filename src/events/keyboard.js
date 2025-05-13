@@ -441,11 +441,13 @@ p5.prototype.keyCode = 0;
  * </div>
  */
 p5.prototype._onkeydown = function(e) {
+  // Ignore repeated key events when holding down a key
   if (e.repeat) {
-    // Ignore repeated key events when holding down a key
+    this._setProperty('isKeyRepeated', true);
     return;
   }
 
+  this._setProperty('isKeyRepeated', false);
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
@@ -781,7 +783,7 @@ p5.prototype._onkeyup = function(e) {
  * </div>
  */
 p5.prototype._onkeypress = function(e) {
-  if (e.which === this._lastKeyCodeTyped) {
+  if (e.which === this._lastKeyCodeTyped && this.isKeyRepeated) {
     // prevent multiple firings
     return;
   }
