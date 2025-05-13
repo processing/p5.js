@@ -950,7 +950,7 @@ function files(p5, fn){
    * }
    *
    * function mousePressed() {
-   *   httpPost(url, 'json', postData, function(result) {
+   *   httpPost(url, postData, 'json', function(result) {
    *     strokeWeight(2);
    *     text(result.body, mouseX, mouseY);
    *   });
@@ -970,8 +970,8 @@ function files(p5, fn){
    * function mousePressed() {
    *   httpPost(
    *     url,
-   *     'json',
    *     postData,
+   *     'json',
    *     function(result) {
    *       // ... won't be called
    *     },
@@ -1089,20 +1089,29 @@ function files(p5, fn){
    * let eqFeatureIndex = 0;
    *
    * function setup() {
+   *  createCanvas(100,100);
+   * 
    *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+   * 
+   *   const req = new Request(url, {
+   *    method: 'GET',
+   *    headers: {authorization: 'Bearer secretKey'}
+   *  });
+   *  // httpDo(path, method, datatype, success, error) 
+   * 
    *   httpDo(
-   *     url,
-   *     {
-   *       method: 'GET',
-   *       // Other Request options, like special headers for apis
-   *       headers: { authorization: 'Bearer secretKey' }
+   *     req,
+   *     'GET',
+   *    'json',
+   *     res => {
+   *      earthquakes = res;
    *     },
-   *     function(res) {
-   *       earthquakes = res;
-   *     }
-   *   );
+   *    err => {
+   *      console.error('Error loading data:', err);
+   *    }
+   *  );
    * }
-   *
+   * 
    * function draw() {
    *   // wait until the data is loaded
    *   if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
