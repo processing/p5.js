@@ -819,8 +819,6 @@ p5.prototype.mouseIsPressed = false;
 
 p5.prototype._updateNextMouseCoords = function(e) {
   if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
-    this._updateMouseCoords();
-
     const mousePos = getMousePos(
       this._curElement.elt,
       this.width,
