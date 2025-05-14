@@ -514,6 +514,7 @@ function environment(p5, fn){
    * - `WEBGL2` whose value is `'webgl2'`,
    * - `WEBGL` whose value is `'webgl'`, or
    * - `P2D` whose value is `'p2d'`. This is the default for 2D sketches.
+   * - `P2DHDR` whose value is `'p2d-hdr'` (used for HDR 2D sketches, if available).
    *
    * See <a href="#/p5/setAttributes">setAttributes()</a> for ways to set the
    * WebGL version.
