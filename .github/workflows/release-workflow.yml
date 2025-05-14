@@ -73,6 +73,7 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          tag: r1
           
       # 4. Update p5.js website
       - name: Clone p5.js website
