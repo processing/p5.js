@@ -231,23 +231,22 @@ function getParams(entry) {
   // instead convert it to a string. We want a slightly different conversion to
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
-  return (entry.tags || []).filter(t => t.title === 'param').map(node => {
-    const param = entry.params.find(param => param.name === node.name);
-    if (param) {
+  return (entry.tags || [])
+  
+    // Filter out the nested parameters (eg. options.extrude),
+    // to be treated as part of parent parameters (eg. options)
+    // and not separate entries
+    .filter(t => t.title === 'param' && !t.name.includes('.')) 
+    .map(node => {
+      const param = (entry.params || []).find(param => param.name === node.name);
       return {
         ...node,
-        description: param.description
-      };
-    } else {
-      return {
-        ...node,
-        description: {
+        description: param?.description || {
           type: 'html',
           value: node.description
         }
       };
-    }
-  });
+    });
 }
 
 // ============================================================================
