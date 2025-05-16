@@ -6823,6 +6823,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "IIITM-Jay",
+      "name": "Jay Dev Jha",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65283880?v=4",
+      "profile": "https://github.com/IIITM-Jay",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
