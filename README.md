@@ -1136,6 +1136,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://jackeddielove.github.io"><img src="https://avatars.githubusercontent.com/u/130420780?v=4?s=120" width="120px;" alt="Jack L"/><br /><sub><b>Jack L</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajackeddielove" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=jackeddielove" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/clairep94"><img src="https://avatars.githubusercontent.com/u/128436909?v=4?s=120" width="120px;" alt="Claire Peng"/><br /><sub><b>Claire Peng</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=clairep94" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aclairep94" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/IIITM-Jay"><img src="https://avatars.githubusercontent.com/u/65283880?v=4?s=120" width="120px;" alt="Jay Dev Jha"/><br /><sub><b>Jay Dev Jha</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=IIITM-Jay" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
