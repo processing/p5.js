@@ -74,10 +74,7 @@ class Renderer2D extends Renderer {
       this.filterRenderer = new FilterRenderer2D(this);
     }
     // Set and return p5.Element
-    // this.wrappedElt = new Element(this.elt, this._pInst);
-    // Pass the *sketch* (p5) instance, not the Graphics buffer itself
-    const sketch = this._pInst && this._pInst._pInst ? this._pInst._pInst : this._pInst;
-    this.wrappedElt = new Element(this.elt, sketch);
+    this.wrappedElt = new Element(this.elt, this._pInst);
     this.clipPath = null;
   }
 
