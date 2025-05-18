@@ -696,6 +696,3 @@ function graphics(p5, fn){
 
 export default graphics;
 export { Graphics };
-if (typeof p5 !== 'undefined') {
-  graphics(p5, p5.prototype);
-}
