@@ -6832,6 +6832,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "yugalkaushik",
+      "name": "Yugal Kaushik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/138966980?v=4",
+      "profile": "https://yugalkaushik.vercel.app",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
