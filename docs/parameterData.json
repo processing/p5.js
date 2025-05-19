@@ -2741,6 +2741,10 @@
       "overloads": [
         [
           "p5.Geometry"
+        ],
+        [
+          "p5.Geometry",
+          "Number"
         ]
       ]
     },
