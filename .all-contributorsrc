@@ -6813,6 +6813,44 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "clairep94",
+      "name": "Claire Peng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/128436909?v=4",
+      "profile": "https://github.com/clairep94",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "IIITM-Jay",
+      "name": "Jay Dev Jha",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65283880?v=4",
+      "profile": "https://github.com/IIITM-Jay",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "yugalkaushik",
+      "name": "Yugal Kaushik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/138966980?v=4",
+      "profile": "https://yugalkaushik.vercel.app",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "LalitNarayanYadav",
+      "name": "Lalit Narayan Yadav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/162928571?v=4",
+      "profile": "https://github.com/LalitNarayanYadav",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
