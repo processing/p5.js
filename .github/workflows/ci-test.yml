@@ -24,20 +24,28 @@ jobs:
         env:
           CI: true
       - name: build and test
+        id: test
         run: npm test
+        continue-on-error: true
         env:
           CI: true
       - name: Generate Visual Test Report
+        if: always()
         run: node visual-report.js
         env:
           CI: true
       - name: Upload Visual Test Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-test-report
           path: test/unit/visual/visual-report.html
           retention-days: 14
       - name: report test coverage
+        if: steps.test.outcome == 'success'
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
         env:
           CI: true
+      - name: fail job if tests failed
+        if: steps.test.outcome != 'success'
+        run: exit 1

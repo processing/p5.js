@@ -385,6 +385,18 @@ visualSuite("Typography", function () {
             });
           }
         );
+        visualTest("intentionally failing test", function (p5, screenshot) {
+          p5.createCanvas(100, 100);
+          p5.background(255);
+          // initially put a red circle for storing in screenshots
+          p5.fill(255, 0, 0); // Red fill
+          p5.noStroke();
+          
+          // Then change circle to rect to make it fail
+          p5.rect(30, 30, 40, 40);
+          
+          screenshot();
+        });
       });
     }
   });
