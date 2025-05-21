@@ -125,7 +125,12 @@ class p5 {
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
+      if (window.p5 instanceof p5) {
+        console.warn('p5.js appears to have been imported multiple times. This could cause errors.');
+        return;
+      }
       this._isGlobal = true;
+      window.p5 = this;
       if (window.hitCriticalError) {
         return;
       }
