@@ -987,7 +987,7 @@ function loading(p5, fn){
    * @method model
    * @param  {p5.Geometry} model 3D shape to be drawn.
    *
-   * @param {Number} count number of instances to draw.
+   * @param {Number} [count=1] number of instances to draw.
    * @example
    * <div>
    * <code>
