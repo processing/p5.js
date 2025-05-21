@@ -4,12 +4,30 @@
 
 # Comment to be posted to on first time issues
 newIssueWelcomeComment: >
-  Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, please make sure to fill out the inputs in the issue forms. Thank you!
+  Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, please make sure to fill out the inputs in the issue forms.
+   
+  For guidance on contributing, check out our [contributing guidelines](https://github.com/processing/p5.js/blob/main/CONTRIBUTING.md).
+
+  💬 If you have questions or need support,  feel free to join the [Processing Foundation Forum](https://discourse.processing.org/) or visit our [Community page](https://p5js.org/community/).
+
+  📜 Please also review our [Code of Conduct](https://p5js.org/code-of-conduct/) to understand our community standards.
+  
+  🌟 You can Also check out our [Contribute page](https://p5js.org/contribute/) to learn more ways to get involved!
+
+  Thank You!
 # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
 
 # Comment to be posted to on PRs from first time contributors in your repository
 newPRWelcomeComment: >
   🎉 Thanks for opening this pull request! Please check out our [contributing guidelines](https://github.com/processing/p5.js/blob/main/CONTRIBUTING.md) if you haven't already. And be sure to add yourself to the [list of contributors on the readme page](https://github.com/processing/p5.js#contributors)!
+  
+  💬 If you have questions or need support,  feel free to join the [Processing Foundation Forum](https://discourse.processing.org/) or visit our [Community page](https://p5js.org/community/).
+  
+  📜 Please also review our [Code of Conduct](https://p5js.org/code-of-conduct/) to understand our community standards.
+  
+  🌟 You can Also check out our [Contribute page](https://p5js.org/contribute/) to learn more ways to get involved!
+
+  Thank You!
 
 # Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
 
