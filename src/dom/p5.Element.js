@@ -64,10 +64,16 @@ class Element {
     }
 
     // delete the reference in this._pInst._elements
-    const index = this._pInst._elements.indexOf(this);
-    if (index !== -1) {
-      this._pInst._elements.splice(index, 1);
+    let sketch = this._pInst;
+    if (sketch && !sketch._elements && sketch._pInst) {
+          sketch = sketch._pInst;          // climb one level up
     }
+    
+    if (sketch && sketch._elements) {  // only if the array exists
+      const i = sketch._elements.indexOf(this);
+      if (i !== -1) sketch._elements.splice(i, 1);
+    }
+     
 
     // deregister events
     for (let ev in this._events) {
