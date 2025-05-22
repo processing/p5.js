@@ -184,7 +184,7 @@ Here are the conventions and best practices that p5.js uses for unit tests which
 
 The most straightforward way to run the tests is by using the `npm test` command in your terminal. However, `npm test` usually takes a long time to run simply because of the large number of test cases p5.js has. It can also sometimes be a bit repetitive to make some changes, run `npm test`, make some more changes, and run `npm test` again. Here are some tricks that can help streamline this process:
 
-- Use the `npx grunt watch:main` command to automatically build and test p5.js whenever you save changes to p5.js source files. This will save you from having to manually run tests whenever you are making frequent changes to the codebase.
+- Use `npx vitest --watch` to re-run unit + visual tests on every save to p5.js source files. This will save you from having to manually run tests whenever you are making frequent changes to the codebase.
 - You can mark certain test suites to be skipped or be the only suite that is run with the `.skip` and `.only` syntax.
 
   ```js
@@ -199,7 +199,7 @@ The most straightforward way to run the tests is by using the `npm test` command
   });
   ```
 
-- You can also run `grunt yui:dev` to launch a local server with the reference and a test runner. Once live, you can go to [`http://127.0.0.1:9001/test/test.html`](http://127.0.0.1:9001/test/test.html) to run tests live in your browser. This can be useful if you want to use a debugger in the middle of a test case or if you want to log complex objects. If you want to filter tests by the name of the test case, you can add a search term after a `?grep=` URL parameter, e.g.: [`http://127.0.0.1:9001/test/test.html?grep=framebuffer`](http://127.0.0.1:9001/test/test.html?grep=framebuffer)
+- Run `npx vitest` and open the URL Vitest prints (e.g. http://localhost:63315). This can be useful if you want to use a debugger in the middle of a test case or if you want to log complex objects. If you want to filter tests by the name of the test case, you can add a search term after a `?grep=` URL parameter, e.g.: [`http://127.0.0.1:9001/test/test.html?grep=framebuffer`](http://127.0.0.1:9001/test/test.html?grep=framebuffer)
 
 
 ## Visual tests
@@ -217,13 +217,11 @@ visualTest('2D objects maintain correct size', function(p5, screenshot) {
 });
 ```
 
-If you need to add a new test file, add it to that folder, then add the filename to the list in `test/visual/visualTestList.js`. Additionally, if you want that file to be run automatically as part of continuous integration on every pull request, add the filename to the `visual` list in `test/unit/spec.js`.
+No manual registration necessary. Any file placed in `test/unit/visual/cases` is auto-discovered by Vitest.
 
 When you add a new test, running `npm test` will generate new screenshots for any visual tests that do not yet have them. Those screenshots will then be used as a reference the next time tests run to make sure the sketch looks the same. If a test intentionally needs to look different, you can delete the folder matching the test name in the `test/unit/visual/screenshots` folder, and then re-run `npm test` to generate a new one.
 
-To manually inspect all visual tests, run `grunt yui:dev` to launch a local server, then go to http://127.0.0.1:9001/test/visual.html to see a list of all test cases.
-
-
+Run `npx vitest --ui --browser` to open Vitest’s interactive UI.
 In a continuous integration (CI) environment, optimizing test speed is essential. It is advantageous to keep the code concise, avoid unnecessary frames, minimize canvas size, and load assets only when essential for the specific functionality under test.
 To address scenarios involving operations like asynchronous 3D model rendering, consider returning a promise that resolves upon completing all the necessary tests, ensuring efficiency in your visual testing approach. Here's an example of how you can asynchronous 3D model rendering in your visual tests:
 
