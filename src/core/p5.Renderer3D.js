@@ -11,6 +11,8 @@ import { PrimitiveToVerticesConverter } from "../shape/custom_shapes";
 import { Color } from "../color/p5.Color";
 import { Element } from "../dom/p5.Element";
 import { Framebuffer } from "../webgl/p5.Framebuffer";
+import { DataArray } from "../webgl/p5.DataArray";
+import { RenderBuffer } from "../webgl/p5.RenderBuffer";
 
 export function getStrokeDefs() {
   const STROKE_CAP_ENUM = {};
@@ -258,6 +260,89 @@ export class Renderer3D extends Renderer {
     this.drawShapeCount = 1;
 
     this.scratchMat3 = new Matrix(3);
+
+    this.buffers = {
+      fill: [
+        new RenderBuffer(
+          3,
+          "vertices",
+          "vertexBuffer",
+          "aPosition",
+          this,
+          this._vToNArray
+        ),
+        new RenderBuffer(
+          3,
+          "vertexNormals",
+          "normalBuffer",
+          "aNormal",
+          this,
+          this._vToNArray
+        ),
+        new RenderBuffer(
+          4,
+          "vertexColors",
+          "colorBuffer",
+          "aVertexColor",
+          this
+        ),
+        new RenderBuffer(
+          3,
+          "vertexAmbients",
+          "ambientBuffer",
+          "aAmbientColor",
+          this
+        ),
+        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
+          arr.flat()
+        ),
+      ],
+      stroke: [
+        new RenderBuffer(
+          4,
+          "lineVertexColors",
+          "lineColorBuffer",
+          "aVertexColor",
+          this
+        ),
+        new RenderBuffer(
+          3,
+          "lineVertices",
+          "lineVerticesBuffer",
+          "aPosition",
+          this
+        ),
+        new RenderBuffer(
+          3,
+          "lineTangentsIn",
+          "lineTangentsInBuffer",
+          "aTangentIn",
+          this
+        ),
+        new RenderBuffer(
+          3,
+          "lineTangentsOut",
+          "lineTangentsOutBuffer",
+          "aTangentOut",
+          this
+        ),
+        new RenderBuffer(1, "lineSides", "lineSidesBuffer", "aSide", this),
+      ],
+      text: [
+        new RenderBuffer(
+          3,
+          "vertices",
+          "vertexBuffer",
+          "aPosition",
+          this,
+          this._vToNArray
+        ),
+        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
+          arr.flat()
+        ),
+      ],
+      user: [],
+    };
   }
 
   remove() {
@@ -368,17 +453,11 @@ export class Renderer3D extends Renderer {
         this.shapeBuilder.shapeMode
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
-      if (this.shapeBuilder.shapeMode === constants.POINTS) {
-        this._drawPoints(
-          this.shapeBuilder.geometry.vertices,
-          this.buffers.point
-        );
-      } else {
-        this._drawGeometry(this.shapeBuilder.geometry, {
-          mode: this.shapeBuilder.shapeMode,
-          count: this.drawShapeCount,
-        });
-      }
+      // TODO: handle POINTS mode
+      this._drawGeometry(this.shapeBuilder.geometry, {
+        mode: this.shapeBuilder.shapeMode,
+        count: this.drawShapeCount,
+      });
     }
     this.drawShapeCount = 1;
   }
@@ -419,6 +498,129 @@ export class Renderer3D extends Renderer {
   //////////////////////////////////////////////
   // Rendering
   //////////////////////////////////////////////
+
+  _drawGeometry(geometry, { mode = constants.TRIANGLES, count = 1 } = {}) {
+    for (const propName in geometry.userVertexProperties) {
+      const prop = geometry.userVertexProperties[propName];
+      this.buffers.user.push(
+        new RenderBuffer(
+          prop.getDataSize(),
+          prop.getSrcName(),
+          prop.getDstName(),
+          prop.getName(),
+          this
+        )
+      );
+    }
+
+    if (
+      this.states.fillColor &&
+      geometry.vertices.length >= 3 &&
+      ![constants.LINES, constants.POINTS].includes(mode)
+    ) {
+      this._drawFills(geometry, { mode, count });
+    }
+
+    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
+      this._drawStrokes(geometry, { count });
+    }
+
+    this.buffers.user = [];
+  }
+
+  _drawFills(geometry, { count, mode } = {}) {
+    this._useVertexColor = geometry.vertexColors.length > 0;
+
+    const shader =
+      !this._drawingFilter && this.states.userFillShader
+        ? this.states.userFillShader
+        : this._getFillShader();
+    shader.bindShader();
+    this._setGlobalUniforms(shader);
+    this._setFillUniforms(shader);
+    shader.bindTextures();
+
+    for (const buff of this.buffers.fill) {
+      buff._prepareBuffer(geometry, shader);
+    }
+    this._prepareUserAttributes(geometry, shader);
+    shader.disableRemainingAttributes();
+
+    this._applyColorBlend(
+      this.states.curFillColor,
+      geometry.hasFillTransparency()
+    );
+
+    this._drawBuffers(geometry, { mode, count });
+
+    shader.unbindShader();
+  }
+
+  _drawStrokes(geometry, { count } = {}) {
+    const gl = this.GL;
+
+    this._useLineColor = geometry.vertexStrokeColors.length > 0;
+
+    const shader = this._getStrokeShader();
+    shader.bindShader();
+    this._setGlobalUniforms(shader);
+    this._setStrokeUniforms(shader);
+    shader.bindTextures();
+
+    for (const buff of this.buffers.stroke) {
+      buff._prepareBuffer(geometry, shader);
+    }
+    this._prepareUserAttributes(geometry, shader);
+    shader.disableRemainingAttributes();
+
+    this._applyColorBlend(
+      this.states.curStrokeColor,
+      geometry.hasStrokeTransparency()
+    );
+
+    if (count === 1) {
+      gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
+    } else {
+      try {
+        gl.drawArraysInstanced(
+          gl.TRIANGLES,
+          0,
+          geometry.lineVertices.length / 3,
+          count
+        );
+      } catch (e) {
+        console.log(
+          "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+        );
+      }
+    }
+
+    shader.unbindShader();
+  }
+
+  _prepareUserAttributes(geometry, shader) {
+    for (const buff of this.buffers.user) {
+      if (!this._pInst.constructor.disableFriendleErrors) {
+        // Check for the right data size
+        const prop = geometry.userVertexProperties[buff.attr];
+        if (prop) {
+          const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
+          if (adjustedLength > geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(
+              `One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
+              "vertexProperty()"
+            );
+          } else if (adjustedLength < geometry.vertices.length) {
+            this._pInst.constructor._friendlyError(
+              `One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
+              "vertexProperty()"
+            );
+          }
+        }
+      }
+      buff._prepareBuffer(geometry, shader);
+    }
+  }
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
     let originalModelMatrix = this.states.uModelMatrix;
@@ -1369,5 +1571,20 @@ export class Renderer3D extends Renderer {
       "uPointSize",
       this.states.strokeWeight * this._pixelDensity
     );
+  }
+
+  //////////////////////////////////////////////
+  // Buffers
+  //////////////////////////////////////////////
+
+  _normalizeBufferData(values, type = Float32Array) {
+    if (!values) return null;
+    if (values instanceof DataArray) {
+      return values.dataArray();
+    }
+    if (values instanceof type) {
+      return values;
+    }
+    return new type(values);
   }
 }

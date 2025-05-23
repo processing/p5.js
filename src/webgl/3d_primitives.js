@@ -1670,7 +1670,8 @@ function primitives3D(p5, fn){
 
     const _vertex = [];
     _vertex.push(new Vector(x, y, z));
-    this._drawPoints(_vertex, this.buffers.point);
+    // TODO
+    // this._drawPoints(_vertex, this.buffers.point);
 
     return this;
   };

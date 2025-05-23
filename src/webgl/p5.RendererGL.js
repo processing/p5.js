@@ -2,7 +2,6 @@ import * as constants from "../core/constants";
 import { readPixelsWebGL, readPixelWebGL } from './utils';
 import { Renderer3D, getStrokeDefs } from "../core/p5.Renderer3D";
 import { RenderBuffer } from "./p5.RenderBuffer";
-import { DataArray } from "./p5.DataArray";
 import { Shader } from "./p5.Shader";
 import { Image } from "../image/p5.Image";
 import { Texture, MipmapTexture } from "./p5.Texture";
@@ -99,90 +98,6 @@ class RendererGL extends Renderer3D {
       this.blendExt = this.GL.getExtension("EXT_blend_minmax");
     }
 
-    this.buffers = {
-      fill: [
-        new RenderBuffer(
-          3,
-          "vertices",
-          "vertexBuffer",
-          "aPosition",
-          this,
-          this._vToNArray
-        ),
-        new RenderBuffer(
-          3,
-          "vertexNormals",
-          "normalBuffer",
-          "aNormal",
-          this,
-          this._vToNArray
-        ),
-        new RenderBuffer(
-          4,
-          "vertexColors",
-          "colorBuffer",
-          "aVertexColor",
-          this
-        ),
-        new RenderBuffer(
-          3,
-          "vertexAmbients",
-          "ambientBuffer",
-          "aAmbientColor",
-          this
-        ),
-        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
-          arr.flat()
-        ),
-      ],
-      stroke: [
-        new RenderBuffer(
-          4,
-          "lineVertexColors",
-          "lineColorBuffer",
-          "aVertexColor",
-          this
-        ),
-        new RenderBuffer(
-          3,
-          "lineVertices",
-          "lineVerticesBuffer",
-          "aPosition",
-          this
-        ),
-        new RenderBuffer(
-          3,
-          "lineTangentsIn",
-          "lineTangentsInBuffer",
-          "aTangentIn",
-          this
-        ),
-        new RenderBuffer(
-          3,
-          "lineTangentsOut",
-          "lineTangentsOutBuffer",
-          "aTangentOut",
-          this
-        ),
-        new RenderBuffer(1, "lineSides", "lineSidesBuffer", "aSide", this),
-      ],
-      text: [
-        new RenderBuffer(
-          3,
-          "vertices",
-          "vertexBuffer",
-          "aPosition",
-          this,
-          this._vToNArray
-        ),
-        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
-          arr.flat()
-        ),
-      ],
-      point: this.GL.createBuffer(),
-      user: [],
-    };
-
     this._userEnabledStencil = false;
     // Store original methods for internal use
     this._internalEnable = this.drawingContext.enable;
@@ -219,106 +134,7 @@ class RendererGL extends Renderer3D {
   // Rendering
   //////////////////////////////////////////////
 
-  _drawGeometry(geometry, { mode = constants.TRIANGLES, count = 1 } = {}) {
-    for (const propName in geometry.userVertexProperties) {
-      const prop = geometry.userVertexProperties[propName];
-      this.buffers.user.push(
-        new RenderBuffer(
-          prop.getDataSize(),
-          prop.getSrcName(),
-          prop.getDstName(),
-          prop.getName(),
-          this
-        )
-      );
-    }
-
-    if (
-      this.states.fillColor &&
-      geometry.vertices.length >= 3 &&
-      ![constants.LINES, constants.POINTS].includes(mode)
-    ) {
-      this._drawFills(geometry, { mode, count });
-    }
-
-    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
-      this._drawStrokes(geometry, { count });
-    }
-
-    this.buffers.user = [];
-  }
-
-  _drawFills(geometry, { count, mode } = {}) {
-    this._useVertexColor = geometry.vertexColors.length > 0;
-
-    const shader =
-      !this._drawingFilter && this.states.userFillShader
-        ? this.states.userFillShader
-        : this._getFillShader();
-    shader.bindShader();
-    this._setGlobalUniforms(shader);
-    this._setFillUniforms(shader);
-    shader.bindTextures();
-
-    for (const buff of this.buffers.fill) {
-      buff._prepareBuffer(geometry, shader);
-    }
-    this._prepareUserAttributes(geometry, shader);
-    shader.disableRemainingAttributes();
-
-    this._applyColorBlend(
-      this.states.curFillColor,
-      geometry.hasFillTransparency()
-    );
-
-    this._drawBuffers(geometry, { mode, count });
-
-    shader.unbindShader();
-  }
-
-  _drawStrokes(geometry, { count } = {}) {
-    const gl = this.GL;
-
-    this._useLineColor = geometry.vertexStrokeColors.length > 0;
-
-    const shader = this._getStrokeShader();
-    shader.bindShader();
-    this._setGlobalUniforms(shader);
-    this._setStrokeUniforms(shader);
-    shader.bindTextures();
-
-    for (const buff of this.buffers.stroke) {
-      buff._prepareBuffer(geometry, shader);
-    }
-    this._prepareUserAttributes(geometry, shader);
-    shader.disableRemainingAttributes();
-
-    this._applyColorBlend(
-      this.states.curStrokeColor,
-      geometry.hasStrokeTransparency()
-    );
-
-    if (count === 1) {
-      gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
-    } else {
-      try {
-        gl.drawArraysInstanced(
-          gl.TRIANGLES,
-          0,
-          geometry.lineVertices.length / 3,
-          count
-        );
-      } catch (e) {
-        console.log(
-          "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
-        );
-      }
-    }
-
-    shader.unbindShader();
-  }
-
-  _drawPoints(vertices, vertexBuffer) {
+  /*_drawPoints(vertices, vertexBuffer) {
     const gl = this.GL;
     const pointShader = this._getPointShader();
     pointShader.bindShader();
@@ -341,31 +157,7 @@ class RendererGL extends Renderer3D {
     gl.drawArrays(gl.Points, 0, vertices.length);
 
     pointShader.unbindShader();
-  }
-
-  _prepareUserAttributes(geometry, shader) {
-    for (const buff of this.buffers.user) {
-      if (!this._pInst.constructor.disableFriendleErrors) {
-        // Check for the right data size
-        const prop = geometry.userVertexProperties[buff.attr];
-        if (prop) {
-          const adjustedLength = prop.getSrcArray().length / prop.getDataSize();
-          if (adjustedLength > geometry.vertices.length) {
-            this._pInst.constructor._friendlyError(
-              `One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()"
-            );
-          } else if (adjustedLength < geometry.vertices.length) {
-            this._pInst.constructor._friendlyError(
-              `One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()"
-            );
-          }
-        }
-      }
-      buff._prepareBuffer(geometry, shader);
-    }
-  }
+  }*/
 
   _drawBuffers(geometry, { mode = this.GL.TRIANGLES, count }) {
     const gl = this.GL;
@@ -1182,16 +974,13 @@ class RendererGL extends Renderer3D {
    * the data associated with the buffer
    */
   _bindBuffer(buffer, target, values, type, usage) {
-    if (!target) target = this.GL.ARRAY_BUFFER;
-    this.GL.bindBuffer(target, buffer);
+    const gl = this.GL;
+    if (!target) target = gl.ARRAY_BUFFER;
+    gl.bindBuffer(target, buffer);
+
     if (values !== undefined) {
-      let data = values;
-      if (values instanceof DataArray) {
-        data = values.dataArray();
-      } else if (!(data instanceof (type || Float32Array))) {
-        data = new (type || Float32Array)(data);
-      }
-      this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
+      const data = this._normalizeBufferData(values, type);
+      gl.bufferData(target, data, usage || gl.STATIC_DRAW);
     }
   }
 
@@ -1200,6 +989,72 @@ class RendererGL extends Renderer3D {
       renderer,
       filterShaderVert,
       filterShaderFrags[operation]
+    );
+  }
+
+  _prepareBuffer(renderBuffer, geometry, shader) {
+    const attributes = shader.attributes;
+    const gl = this.GL;
+    const glBuffers = this._getOrMakeCachedBuffers(geometry);
+
+    // loop through each of the buffer definitions
+    const attr = attributes[renderBuffer.attr];
+    if (!attr) {
+      return;
+    }
+    // check if the geometry has the appropriate source array
+    let buffer = glBuffers[renderBuffer.dst];
+    const src = geometry[renderBuffer.src];
+    if (src && src.length > 0) {
+      // check if we need to create the GL buffer
+      const createBuffer = !buffer;
+      if (createBuffer) {
+        // create and remember the buffer
+        glBuffers[renderBuffer.dst] = buffer = gl.createBuffer();
+      }
+      // bind the buffer
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+      // check if we need to fill the buffer with data
+      if (createBuffer || geometry.dirtyFlags[renderBuffer.src] !== false) {
+        const map = renderBuffer.map;
+        // get the values from the geometry, possibly transformed
+        const values = map ? map(src) : src;
+        // fill the buffer with the values
+        this._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
+        // mark the geometry's source array as clean
+        geometry.dirtyFlags[renderBuffer.src] = false;
+      }
+      // enable the attribute
+      shader.enableAttrib(attr, renderBuffer.size);
+    } else {
+      const loc = attr.location;
+      if (loc === -1 || !this.registerEnabled.has(loc)) {
+        return;
+      }
+      // Disable register corresponding to unused attribute
+      gl.disableVertexAttribArray(loc);
+      // Record register availability
+      this.registerEnabled.delete(loc);
+    }
+  }
+
+  _enableAttrib(_shader, attr, size, type, normalized, stride, offset) {
+    const loc = attr.location;
+    const gl = this.GL;
+    // Enable register even if it is disabled
+    if (!this.registerEnabled.has(loc)) {
+      gl.enableVertexAttribArray(loc);
+      // Record register availability
+      this.registerEnabled.add(loc);
+    }
+    gl.vertexAttribPointer(
+      loc,
+      size,
+      type || gl.FLOAT,
+      normalized || false,
+      stride || 0,
+      offset || 0
     );
   }
 

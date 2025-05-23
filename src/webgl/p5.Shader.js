@@ -1311,23 +1311,9 @@ class Shader {
           `The attribute "${attr.name}"passed to enableAttrib does not belong to this shader.`
         );
       }
-      const loc = attr.location;
-      if (loc !== -1) {
-        const gl = this._renderer.GL;
-        // Enable register even if it is disabled
-        if (!this._renderer.registerEnabled.has(loc)) {
-          gl.enableVertexAttribArray(loc);
-          // Record register availability
-          this._renderer.registerEnabled.add(loc);
-        }
-        this._renderer.GL.vertexAttribPointer(
-          loc,
-          size,
-          type || gl.FLOAT,
-          normalized || false,
-          stride || 0,
-          offset || 0
-        );
+
+      if (attr.location !== -1) {
+        this._renderer._enableAttrib(attr, size, type, normalized, stride, offset);
       }
     }
     return this;

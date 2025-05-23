@@ -4,6 +4,8 @@ import * as constants from '../core/constants';
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
     super(pInst, w, h, isMainCanvas, elt)
+
+    this.renderPass = {};
   }
 
   async setupContext() {
@@ -73,6 +75,42 @@ class RendererWebGPU extends Renderer3D {
     passEncoder.end();
 
     this.device.queue.submit([commandEncoder.finish()]);
+  }
+
+
+  _prepareBuffer(renderBuffer, geometry, shader) {
+    const { attr, src, dst, size, map } = renderBuffer;
+    const device = this.device;
+    const buffers = this._getOrMakeCachedBuffers(geometry);
+    const srcData = geometry[src];
+    if (!srcData || srcData.length === 0) return;
+
+    const raw = map ? map(srcData) : srcData;
+    const typed = this._normalizeBufferData(raw, Float32Array);
+
+    let buffer = buffers[dst];
+    if (!buffer || buffer.size < typed.byteLength) {
+      if (buffer) buffer.destroy();
+      buffer = device.createBuffer({
+        size: typed.byteLength,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+      });
+      buffers[dst] = buffer;
+    }
+
+    device.queue.writeBuffer(buffer, 0, typed);
+    geometry.dirtyFlags[src] = false;
+
+    shader._enableAttrib(attr, size);
+  }
+
+  _enableAttrib(attr) {
+    const loc = attr.location;
+    if (!this.registerEnabled.has(loc)) {
+      // TODO
+      // this.renderPass.setVertexBuffer(loc, buffer);
+      this.registerEnabled.add(loc);
+    }
   }
 
   _ensureGeometryBuffers(buffers, indices, indexType) {
