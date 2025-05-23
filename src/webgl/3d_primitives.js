@@ -7,7 +7,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { Matrix } from '../math/p5.Matrix';
@@ -71,7 +71,7 @@ function primitives3D(p5, fn){
  * function draw() {
  *   background(128);
  *   strokeMode(SIMPLE); // Simplifies stroke rendering for better performance.
- *   
+ *
  *   // Draw sphere
  *   push();
  *   strokeWeight(1);
@@ -1632,7 +1632,7 @@ function primitives3D(p5, fn){
   ///////////////////////
   //
   // Note: Documentation is not generated on the p5.js website for functions on
-  // the p5.RendererGL prototype.
+  // the p5.Renderer3D prototype.
 
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel,
@@ -1666,7 +1666,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  RendererGL.prototype.point = function(x, y, z = 0) {
+  Renderer3D.prototype.point = function(x, y, z = 0) {
 
     const _vertex = [];
     _vertex.push(new Vector(x, y, z));
@@ -1675,7 +1675,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.triangle = function(args) {
+  Renderer3D.prototype.triangle = function(args) {
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -1729,7 +1729,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.ellipse = function(args) {
+  Renderer3D.prototype.ellipse = function(args) {
     this.arc(
       args[0],
       args[1],
@@ -1742,7 +1742,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.arc = function(...args) {
+  Renderer3D.prototype.arc = function(...args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -1861,7 +1861,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.rect = function(args) {
+  Renderer3D.prototype.rect = function(args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -2000,7 +2000,7 @@ function primitives3D(p5, fn){
   };
 
   /* eslint-disable max-len */
-  RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
+  Renderer3D.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
     /* eslint-enable max-len */
 
     const gid =
@@ -2064,7 +2064,7 @@ function primitives3D(p5, fn){
   //this implementation of bezier curve
   //is based on Bernstein polynomial
   // pretier-ignore
-  RendererGL.prototype.bezier = function(
+  Renderer3D.prototype.bezier = function(
     x1,
     y1,
     z1, // x2
@@ -2099,7 +2099,7 @@ function primitives3D(p5, fn){
   };
 
   // pretier-ignore
-  RendererGL.prototype.curve = function(
+  Renderer3D.prototype.curve = function(
     x1,
     y1,
     z1, // x2
@@ -2159,7 +2159,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  RendererGL.prototype.line = function(...args) {
+  Renderer3D.prototype.line = function(...args) {
     if (args.length === 6) {
       // TODO shapes refactor
       this.beginShape(constants.LINES);
@@ -2175,7 +2175,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.image = function(
+  Renderer3D.prototype.image = function(
     img,
     sx,
     sy,
@@ -2355,7 +2355,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  RendererGL.prototype.plane = function(
+  Renderer3D.prototype.plane = function(
     width = 50,
     height = width,
     detailX = 1,
@@ -2393,7 +2393,7 @@ function primitives3D(p5, fn){
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, 1);
   }
 
-  RendererGL.prototype.box = function(
+  Renderer3D.prototype.box = function(
     width = 50,
     height = width,
     depth = height,
@@ -2475,7 +2475,7 @@ function primitives3D(p5, fn){
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, depth);
   }
 
-  RendererGL.prototype.sphere = function(
+  Renderer3D.prototype.sphere = function(
     radius = 50,
     detailX = 24,
     detailY = 16
@@ -2483,7 +2483,7 @@ function primitives3D(p5, fn){
     this.ellipsoid(radius, radius, radius, detailX, detailY);
   }
 
-  RendererGL.prototype.ellipsoid = function(
+  Renderer3D.prototype.ellipsoid = function(
     radiusX = 50,
     radiusY = radiusX,
     radiusZ = radiusX,
@@ -2529,7 +2529,7 @@ function primitives3D(p5, fn){
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radiusX, radiusY, radiusZ);
   }
 
-  RendererGL.prototype.cylinder = function(
+  Renderer3D.prototype.cylinder = function(
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2567,7 +2567,7 @@ function primitives3D(p5, fn){
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
   }
 
-  RendererGL.prototype.cone = function(
+  Renderer3D.prototype.cone = function(
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2603,7 +2603,7 @@ function primitives3D(p5, fn){
     this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
   }
 
-  RendererGL.prototype.torus = function(
+  Renderer3D.prototype.torus = function(
     radius = 50,
     tubeRadius = 10,
     detailX = 24,
@@ -2691,7 +2691,7 @@ function primitives3D(p5, fn){
    *
    *   // Set the curveDetail() to 0.5
    *   curveDetail(0.5);
-   * 
+   *
    *   // Do not show all the vertices
    *   splineProperty('ends', EXCLUDE)
    *
@@ -2725,7 +2725,7 @@ function primitives3D(p5, fn){
    * </div>
    */
   fn.curveDetail = function(d) {
-    if (!(this._renderer instanceof RendererGL)) {
+    if (!(this._renderer instanceof Renderer3D)) {
       throw new Error(
         'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
       );

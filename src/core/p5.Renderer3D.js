@@ -12,26 +12,32 @@ import { Color } from "../color/p5.Color";
 import { Element } from "../dom/p5.Element";
 import { Framebuffer } from "../webgl/p5.Framebuffer";
 
-export const STROKE_CAP_ENUM = {};
-export const STROKE_JOIN_ENUM = {};
-export let lineDefs = "";
-const defineStrokeCapEnum = function (key, val) {
-  lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
-  STROKE_CAP_ENUM[constants[key]] = val;
-};
-const defineStrokeJoinEnum = function (key, val) {
-  lineDefs += `#define STROKE_JOIN_${key} ${val}\n`;
-  STROKE_JOIN_ENUM[constants[key]] = val;
-};
+export function getStrokeDefs() {
+  const STROKE_CAP_ENUM = {};
+  const STROKE_JOIN_ENUM = {};
+  let lineDefs = "";
+  const defineStrokeCapEnum = function (key, val) {
+    lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
+    STROKE_CAP_ENUM[constants[key]] = val;
+  };
+  const defineStrokeJoinEnum = function (key, val) {
+    lineDefs += `#define STROKE_JOIN_${key} ${val}\n`;
+    STROKE_JOIN_ENUM[constants[key]] = val;
+  };
 
-// Define constants in line shaders for each type of cap/join, and also record
-// the values in JS objects
-defineStrokeCapEnum("ROUND", 0);
-defineStrokeCapEnum("PROJECT", 1);
-defineStrokeCapEnum("SQUARE", 2);
-defineStrokeJoinEnum("ROUND", 0);
-defineStrokeJoinEnum("MITER", 1);
-defineStrokeJoinEnum("BEVEL", 2);
+  // Define constants in line shaders for each type of cap/join, and also record
+  // the values in JS objects
+  defineStrokeCapEnum("ROUND", 0);
+  defineStrokeCapEnum("PROJECT", 1);
+  defineStrokeCapEnum("SQUARE", 2);
+  defineStrokeJoinEnum("ROUND", 0);
+  defineStrokeJoinEnum("MITER", 1);
+  defineStrokeJoinEnum("BEVEL", 2);
+
+  return { STROKE_CAP_ENUM, STROKE_JOIN_ENUM, lineDefs };
+}
+
+const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs();
 
 export class Renderer3D extends Renderer {
   constructor(pInst, w, h, isMainCanvas, elt) {
@@ -39,7 +45,7 @@ export class Renderer3D extends Renderer {
 
     // Create new canvas
     this.canvas = this.elt = elt || document.createElement("canvas");
-    this.setupContext();
+    this.contextReady = this.setupContext();
 
     if (this._isMainCanvas) {
       // for pixel method sharing with pimage
@@ -78,11 +84,7 @@ export class Renderer3D extends Renderer {
     this.elt.height = h * this._pixelDensity;
     this.elt.style.width = `${w}px`;
     this.elt.style.height = `${h}px`;
-    this._origViewport = {
-      width: this.GL.drawingBufferWidth,
-      height: this.GL.drawingBufferHeight,
-    };
-    this.viewport(this._origViewport.width, this._origViewport.height);
+    this._updateViewport();
 
     // Attach canvas element to DOM
     if (this._pInst._userNode) {
@@ -933,6 +935,7 @@ export class Renderer3D extends Renderer {
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
     this._updateViewport();
+    this._updateSize();
 
     this.states.curCamera._resize();
 

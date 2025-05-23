@@ -1,11 +1,11 @@
 import * as constants from "../core/constants";
-import { RendererGL } from "./p5.RendererGL";
+import { Renderer3D } from "../core/p5.Renderer3D";
 import { Vector } from "../math/p5.Vector";
 import { Geometry } from "./p5.Geometry";
 import { Font, arrayCommandsToObjects } from "../type/p5.Font";
 
 function text(p5, fn) {
-  RendererGL.prototype.maxCachedGlyphs = function() {
+  Renderer3D.prototype.maxCachedGlyphs = function() {
     // TODO: use more than vibes to find a good value for this
     return 200;
   };
@@ -27,7 +27,7 @@ function text(p5, fn) {
 
   // Text/Typography (see src/type/textCore.js)
   /*
-  RendererGL.prototype.textWidth = function(s) {
+  Renderer3D.prototype.textWidth = function(s) {
     if (this._isOpenType()) {
       return this.states.textFont.font._textWidth(s, this.states.textSize);
     }
@@ -674,7 +674,7 @@ function text(p5, fn) {
     }
   }
 
-  RendererGL.prototype._renderText = function (line, x, y, maxY, minY) {
+  Renderer3D.prototype._renderText = function (line, x, y, maxY, minY) {
     if (!this.states.textFont || typeof this.states.textFont === "string") {
       console.log(
         "WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.",

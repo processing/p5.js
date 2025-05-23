@@ -151,7 +151,11 @@ function rendering(p5, fn){
       });
     }
 
-    return this._renderer;
+    if (this._renderer.contextReady) {
+      return this._renderer.contextReady.then(() => this._renderer);
+    } else {
+      return this._renderer;
+    }
   };
 
   /**

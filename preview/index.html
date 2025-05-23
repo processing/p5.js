@@ -18,29 +18,21 @@
 <body>
   <script type="module">
     import p5 from '../src/app.js';
+    import rendererWebGPU from '../src/webgpu/p5.RendererWebGPU.js';
+
+    p5.registerAddon(rendererWebGPU);
 
     const sketch = function (p) {
       let fbo;
       p.setup = async function () {
-        p.createCanvas(400, 400, p.WEBGL);
-        fbo = p.createFramebuffer()
+        await p.createCanvas(400, 400, p.WEBGPU);
       };
 
       p.draw = function () {
-        p.push();
         p.background(200);
-        fbo.begin()
-        p.background('blue')
-        p.strokeWeight(10);
-        p.push()
-        p.stroke('red')
-        p.line(-100, -100, 100, 100);
-        p.pop()
-        p.translate(200, 200)
-        p.line(-100, -100, 100, 100);
-        fbo.end()
-        p.image(fbo, 0, 0)
-        p.pop();
+        p.noStroke();
+        p.fill('red');
+        p.circle(0, 0, 100);
       };
     };
 

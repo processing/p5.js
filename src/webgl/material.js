@@ -6,7 +6,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from './p5.Shader';
 import { request } from '../io/files';
 import { Color } from '../color/p5.Color';
@@ -3668,7 +3668,7 @@ function material(p5, fn){
    * transparency internally, e.g. via vertex colors
    * @return {Number[]}  Normalized numbers array
    */
-  RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
+  Renderer3D.prototype._applyColorBlend = function (colors, hasTransparency) {
     const gl = this.GL;
 
     const isTexture = this.states.drawMode === constants.TEXTURE;
@@ -3704,7 +3704,7 @@ function material(p5, fn){
    * @param  {Number[]} color [description]
    * @return {Number[]}  Normalized numbers array
    */
-  RendererGL.prototype._applyBlendMode = function () {
+  Renderer3D.prototype._applyBlendMode = function () {
     if (this._cachedBlendMode === this.states.curBlendMode) {
       return;
     }
@@ -3775,14 +3775,14 @@ function material(p5, fn){
         break;
       default:
         console.error(
-          'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
+          'Oops! Somehow Renderer3D set curBlendMode to an unsupported mode.'
         );
         break;
     }
     this._cachedBlendMode = this.states.curBlendMode;
   };
 
-  RendererGL.prototype.shader = function(s) {
+  Renderer3D.prototype.shader = function(s) {
     // Always set the shader as a fill shader
     this.states.setValue('userFillShader', s);
     this.states.setValue('_useNormalMaterial', false);
@@ -3790,32 +3790,32 @@ function material(p5, fn){
     s.setDefaultUniforms();
   }
 
-  RendererGL.prototype.strokeShader = function(s) {
+  Renderer3D.prototype.strokeShader = function(s) {
     this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
-  RendererGL.prototype.imageShader = function(s) {
+  Renderer3D.prototype.imageShader = function(s) {
     this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
-  RendererGL.prototype.resetShader = function() {
+  Renderer3D.prototype.resetShader = function() {
     this.states.setValue('userFillShader', null);
     this.states.setValue('userStrokeShader', null);
     this.states.setValue('userImageShader', null);
   }
 
-  RendererGL.prototype.texture = function(tex) {
+  Renderer3D.prototype.texture = function(tex) {
     this.states.setValue('drawMode', constants.TEXTURE);
     this.states.setValue('_useNormalMaterial', false);
     this.states.setValue('_tex', tex);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
-  RendererGL.prototype.normalMaterial = function(...args) {
+  Renderer3D.prototype.normalMaterial = function(...args) {
     this.states.setValue('drawMode', constants.FILL);
     this.states.setValue('_useSpecularMaterial', false);
     this.states.setValue('_useEmissiveMaterial', false);
@@ -3825,23 +3825,23 @@ function material(p5, fn){
     this.states.setValue('strokeColor', null);
   }
 
-  // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
+  // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
   // }
 
-  // RendererGL.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+  // Renderer3D.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   // }
 
-  // RendererGL.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+  // Renderer3D.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   // }
 
-  RendererGL.prototype.shininess = function(shine) {
+  Renderer3D.prototype.shininess = function(shine) {
     if (shine < 1) {
       shine = 1;
     }
     this.states.setValue('_useShininess', shine);
   }
 
-  RendererGL.prototype.metalness = function(metallic) {
+  Renderer3D.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
     this.states.setValue('_useMetalness', metalMix);
   }
