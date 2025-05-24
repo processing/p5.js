@@ -183,7 +183,6 @@ export class Renderer3D extends Renderer {
     this.specularTextures = new Map();
 
     this.preEraseBlend = undefined;
-    this._cachedBlendMode = undefined;
     this._cachedFillStyle = [1, 1, 1, 1];
     this._cachedStrokeStyle = [0, 0, 0, 1];
     this._isBlending = false;
@@ -535,7 +534,7 @@ export class Renderer3D extends Renderer {
       !this._drawingFilter && this.states.userFillShader
         ? this.states.userFillShader
         : this._getFillShader();
-    shader.bindShader();
+    shader.bindShader('fill', this._shaderOptions(mode));
     this._setGlobalUniforms(shader);
     this._setFillUniforms(shader);
     shader.bindTextures();
@@ -562,7 +561,7 @@ export class Renderer3D extends Renderer {
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
     const shader = this._getStrokeShader();
-    shader.bindShader();
+    shader.bindShader('stroke', this._shaderOptions(constants.TRIANGLES));
     this._setGlobalUniforms(shader);
     this._setStrokeUniforms(shader);
     shader.bindTextures();
@@ -1042,6 +1041,10 @@ export class Renderer3D extends Renderer {
       this._isErasing = false;
       this._applyBlendMode();
     }
+  }
+
+  _applyBlendMode() {
+    // By default, a noop
   }
 
   drawTarget() {

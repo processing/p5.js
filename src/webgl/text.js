@@ -724,7 +724,7 @@ function text(p5, fn) {
     const initializeShader = !this._defaultFontShader;
     const sh = this._getFontShader();
     sh.init();
-    sh.bindShader(); // first time around, bind the shader fully
+    sh.bindShader('text'); // first time around, bind the shader fully
 
     if (initializeShader) {
       // these are constants, really. just initialize them one-time.

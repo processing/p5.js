@@ -1,7 +1,6 @@
 import * as constants from "../core/constants";
 import { readPixelsWebGL, readPixelWebGL } from './utils';
 import { Renderer3D, getStrokeDefs } from "../core/p5.Renderer3D";
-import { RenderBuffer } from "./p5.RenderBuffer";
 import { Shader } from "./p5.Shader";
 import { Image } from "../image/p5.Image";
 import { Texture, MipmapTexture } from "./p5.Texture";
@@ -120,6 +119,8 @@ class RendererGL extends Renderer3D {
       }
       return this._internalDisable.call(this.drawingContext, key);
     };
+
+    this._cachedBlendMode = undefined;
   }
 
   setupContext() {
@@ -158,6 +159,98 @@ class RendererGL extends Renderer3D {
 
     pointShader.unbindShader();
   }*/
+
+  /**
+   * @private sets blending in gl context to curBlendMode
+   * @param  {Number[]} color [description]
+   * @return {Number[]}  Normalized numbers array
+   */
+  _applyBlendMode () {
+    if (this._cachedBlendMode === this.states.curBlendMode) {
+      return;
+    }
+    const gl = this.GL;
+    switch (this.states.curBlendMode) {
+      case constants.BLEND:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        break;
+      case constants.ADD:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ONE, gl.ONE);
+        break;
+      case constants.REMOVE:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
+        break;
+      case constants.MULTIPLY:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA);
+        break;
+      case constants.SCREEN:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
+        break;
+      case constants.EXCLUSION:
+        gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+        gl.blendFuncSeparate(
+          gl.ONE_MINUS_DST_COLOR,
+          gl.ONE_MINUS_SRC_COLOR,
+          gl.ONE,
+          gl.ONE
+        );
+        break;
+      case constants.REPLACE:
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFunc(gl.ONE, gl.ZERO);
+        break;
+      case constants.SUBTRACT:
+        gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        break;
+      case constants.DARKEST:
+        if (this.blendExt) {
+          gl.blendEquationSeparate(
+            this.blendExt.MIN || this.blendExt.MIN_EXT,
+            gl.FUNC_ADD
+          );
+          gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+        } else {
+          console.warn(
+            'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+          );
+        }
+        break;
+      case constants.LIGHTEST:
+        if (this.blendExt) {
+          gl.blendEquationSeparate(
+            this.blendExt.MAX || this.blendExt.MAX_EXT,
+            gl.FUNC_ADD
+          );
+          gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+        } else {
+          console.warn(
+            'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+          );
+        }
+        break;
+      default:
+        console.error(
+          'Oops! Somehow Renderer3D set curBlendMode to an unsupported mode.'
+        );
+        break;
+    }
+    this._cachedBlendMode = this.states.curBlendMode;
+  }
+
+  _shaderOptions() {
+    return undefined;
+  }
+
+  _useShader(shader) {
+    const gl = this.GL;
+    gl.useProgram(shader._glProgram);
+  }
 
   _drawBuffers(geometry, { mode = this.GL.TRIANGLES, count }) {
     const gl = this.GL;
@@ -1097,6 +1190,43 @@ class RendererGL extends Renderer3D {
     freeBuffers(this.buffers.stroke);
     freeBuffers(this.buffers.fill);
     freeBuffers(this.buffers.user);
+  }
+
+  _initShader(shader) {
+    const gl = this.GL;
+
+    const vertShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertShader, shader.vertSrc());
+    gl.compileShader(vertShader);
+    if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+      throw new Error(`Yikes! An error occurred compiling the vertex shader: ${
+        gl.getShaderInfoLog(vertShader)
+      }`);
+    }
+
+    const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragShader, shader.fragSrc());
+    gl.compileShader(fragShader);
+    if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+      throw new Error(`Darn! An error occurred compiling the fragment shader: ${
+        gl.getShaderInfoLog(fragShader)
+      }`);
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertShader);
+    gl.attachShader(program, fragShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(
+        `Snap! Error linking shader program: ${gl.getProgramInfoLog(program)}`
+      );
+    }
+
+    shader._glProgram = program;
+    shader._vertShader = vertShader;
+    shader._fragShader = fragShader;
   }
 
   ///////////////////////////////

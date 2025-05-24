@@ -1,4 +1,5 @@
 import { Renderer3D } from '../core/p5.Renderer3D';
+import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
 
 class RendererWebGPU extends Renderer3D {
@@ -133,7 +134,6 @@ class RendererWebGPU extends Renderer3D {
     buffers.indexBufferType = indexType === Uint32Array ? 'uint32' : 'uint16';
   }
 
-
   _freeBuffers(buffers) {
     const destroyIfExists = (buf) => {
       if (buf && buf.destroy) {
@@ -155,12 +155,319 @@ class RendererWebGPU extends Renderer3D {
     freeDefs(this.renderer.buffers.user);
   }
 
+  _shaderOptions(mode) {
+    return {
+      topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
+      blendMode: this.blendMode(),
+      sampleCount: (this.activeFramebuffer() || this).antialias || 1, // TODO
+      format: this.activeFramebuffer()?.format || this.presentationFormat, // TODO
+    }
+  }
+
+  _initShader(shader) {
+    const device = this.device;
+
+    shader.vertModule = device.createShaderModule({ code: shader.vertSrc() });
+    shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
+
+    shader._pipelineCache = new Map();
+    shader.getPipeline = ({ topology, blendMode, sampleCount, format }) => {
+      const key = `${topology}_${blendMode}_${sampleCount}_${format}`;
+      if (!shader._pipelineCache.has(key)) {
+        const pipeline = device.createRenderPipeline({
+          layout: 'auto',
+          vertex: {
+            module: shader.vertModule,
+            entryPoint: 'main',
+            buffers: this._getVertexLayout(shader),
+          },
+          fragment: {
+            module: shader.fragModule,
+            entryPoint: 'main',
+            targets: [{
+              format,
+              blend: getBlendState(blendMode),
+            }],
+          },
+          primitive: { topology },
+          multisample: { count: sampleCount },
+          depthStencil: { format: 'depth24plus', depthWriteEnabled: true, depthCompare: 'less' },
+        });
+        shader._pipelineCache.set(key, pipeline);
+      }
+      return shader._pipelineCache.get(key);
+    }
+  }
+
+  _getBlendState(mode) {
+    switch (mode) {
+      case constants.BLEND:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one-minus-src-alpha'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one-minus-src-alpha'
+          }
+        };
+
+      case constants.ADD:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          }
+        };
+
+      case constants.REMOVE:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'zero',
+            dstFactor: 'one-minus-src-alpha'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'zero',
+            dstFactor: 'one-minus-src-alpha'
+          }
+        };
+
+      case constants.MULTIPLY:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'dst-color',
+            dstFactor: 'one-minus-src-alpha'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'dst-alpha',
+            dstFactor: 'one-minus-src-alpha'
+          }
+        };
+
+      case constants.SCREEN:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one-minus-src-color'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one-minus-src-alpha'
+          }
+        };
+
+      case constants.EXCLUSION:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'one-minus-dst-color',
+            dstFactor: 'one-minus-src-color'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          }
+        };
+
+      case constants.REPLACE:
+        return {
+          color: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'zero'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'zero'
+          }
+        };
+
+      case constants.SUBTRACT:
+        return {
+          color: {
+            operation: 'reverse-subtract',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          },
+          alpha: {
+            operation: 'add',
+            srcFactor: 'one',
+            dstFactor: 'one-minus-src-alpha'
+          }
+        };
+
+      case constants.DARKEST:
+        return {
+          color: {
+            operation: 'min',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          },
+          alpha: {
+            operation: 'min',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          }
+        };
+
+      case constants.LIGHTEST:
+        return {
+          color: {
+            operation: 'max',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          },
+          alpha: {
+            operation: 'max',
+            srcFactor: 'one',
+            dstFactor: 'one'
+          }
+        };
+
+      default:
+        console.warn(`Unsupported blend mode: ${mode}`);
+        return undefined;
+    }
+  }
+
+  _getVertexLayout(shader) {
+    // You’ll probably want to cache this per shader
+    const layouts = [];
+
+    for (const attrName in shader.attributes) {
+      const attr = shader.attributes[attrName];
+      if (!attr || attr.location === -1) continue;
+
+      // Get the vertex buffer info associated with this attribute
+      const renderBuffer =
+        this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
+        this.buffers.user.find(buf => buf.attr === attrName);
+      if (!renderBuffer) continue;
+
+      const { size } = renderBuffer;
+      // Convert from the number of floats (e.g. 3) to a recognized WebGPU
+      // format (e.g. "float32x3")
+      const format = this._getFormatFromSize(size);
+
+      layouts.push({
+        arrayStride: size * 4,
+        stepMode: 'vertex',
+        attributes: [
+          {
+            shaderLocation: attr.location,
+            offset: 0,
+            format,
+          },
+        ],
+      });
+    }
+
+    return layouts;
+  }
+
+  _getFormatFromSize(size) {
+    switch (size) {
+      case 1: return 'float32';
+      case 2: return 'float32x2';
+      case 3: return 'float32x3';
+      case 4: return 'float32x4';
+      default: throw new Error(`Unsupported attribute size: ${size}`);
+    }
+  }
+
+  _useShader(shader, options) {
+    if (!options) throw new Error('Shader usage options need to be provided in WebGPU!');
+    const pipeline = shader.getPipeline(options);
+    this._passEncoder.setPipeline(pipeline);
+  }
+
   _updateViewport() {
 
   }
 
   _resetBuffersBeforeDraw() {
     // TODO
+  }
+
+  //////////////////////////////////////////////
+  // SHADER
+  //////////////////////////////////////////////
+
+  _getColorShader() {
+    if (!this._defaultColorShader) {
+      this._defaultColorShader = new Shader(this, `
+        struct VertexInput {
+          @location(0) aPosition: vec3<f32>,
+          @location(1) aNormal: vec3<f32>,
+          @location(2) aTexCoord: vec2<f32>,
+          @location(3) aVertexColor: vec4<f32>,
+        };
+
+        struct VertexOutput {
+          @builtin(position) Position: vec4<f32>,
+          @location(0) vVertexNormal: vec3<f32>,
+          @location(1) vVertTexCoord: vec2<f32>,
+          @location(2) vColor: vec4<f32>,
+        };
+
+        struct Uniforms {
+          uModelViewMatrix: mat4x4<f32>,
+          uProjectionMatrix: mat4x4<f32>,
+          uNormalMatrix: mat3x3<f32>,
+          uMaterialColor: vec4<f32>,
+          uUseVertexColor: u32,
+        };
+
+        @group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+        @vertex
+        fn main(input: VertexInput) -> VertexOutput {
+          var output: VertexOutput;
+
+          let useVertex = (uniforms.uUseVertexColor != 0u);
+          let color = select(uniforms.uMaterialColor, input.aVertexColor, useVertex);
+
+          let pos4 = vec4<f32>(input.aPosition, 1.0);
+          let worldPos = uniforms.uModelViewMatrix * pos4;
+          output.Position = uniforms.uProjectionMatrix * worldPos;
+
+          output.vVertexNormal = normalize(uniforms.uNormalMatrix * input.aNormal);
+          output.vVertTexCoord = input.aTexCoord;
+          output.vColor = color;
+
+          return output;
+        }
+      `, `
+        struct FragmentInput {
+          @location(0) vVertexNormal: vec3<f32>,
+          @location(1) vVertTexCoord: vec2<f32>,
+          @location(2) vColor: vec4<f32>,
+        };
+
+        @fragment
+        fn main(input: FragmentInput) -> @location(0) vec4<f32> {
+          return vec4<f32>(input.vColor.rgb * input.vColor.a, input.vColor.a);
+        }
+      `)
+    }
+    return this._defaultColorShader;
   }
 
   //////////////////////////////////////////////

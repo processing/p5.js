@@ -10,9 +10,6 @@ import { Texture } from './p5.Texture';
 
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
-    // TODO: adapt this to not take ids, but rather,
-    // to take the source for a vertex and fragment shader
-    // to enable custom shaders at some later date
     this._renderer = renderer;
     this._vertSrc = vertSrc;
     this._fragSrc = fragSrc;
@@ -126,6 +123,8 @@ class Shader {
   }
 
   shaderSrc(src, shaderType) {
+    // TODO: handle WGSL
+    if (!src.includes('void main')) return src;
     const main = 'void main';
     let [preMain, postMain] = src.split(main);
 
@@ -425,68 +424,23 @@ class Shader {
    * @private
    */
   init() {
-    if (this._glProgram === 0 /* or context is stale? */) {
-      const gl = this._renderer.GL;
-
-      // @todo: once custom shading is allowed,
-      // friendly error messages should be used here to share
-      // compiler and linker errors.
-
-      //set up the shader by
-      // 1. creating and getting a gl id for the shader program,
-      // 2. compliling its vertex & fragment sources,
-      // 3. linking the vertex and fragment shaders
-      this._vertShader = gl.createShader(gl.VERTEX_SHADER);
-      //load in our default vertex shader
-      gl.shaderSource(this._vertShader, this.vertSrc());
-      gl.compileShader(this._vertShader);
-      // if our vertex shader failed compilation?
-      if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-        const glError = gl.getShaderInfoLog(this._vertShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
-          console.error(glError);
-        } else {
-          throw glError;
-          p5._friendlyError(
-            `Yikes! An error occurred compiling the vertex shader:${glError}`
-          );
-        }
-        return null;
-      }
-
-      this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-      //load in our material frag shader
-      gl.shaderSource(this._fragShader, this.fragSrc());
-      gl.compileShader(this._fragShader);
-      // if our frag shader failed compilation?
-      if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-        const glError = gl.getShaderInfoLog(this._fragShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
-          console.error(glError);
-        } else {
-          throw glError;
-          p5._friendlyError(
-            `Darn! An error occurred compiling the fragment shader:${glError}`
-          );
-        }
-        return null;
-      }
-
-      this._glProgram = gl.createProgram();
-      gl.attachShader(this._glProgram, this._vertShader);
-      gl.attachShader(this._glProgram, this._fragShader);
-      gl.linkProgram(this._glProgram);
-      if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
-        p5._friendlyError(
-          `Snap! Error linking shader program: ${gl.getProgramInfoLog(
-            this._glProgram
-          )}`
+    // If the shader is uninitialized or context was lost
+    if (!this._initialized) {
+      try {
+        this._renderer._initShader(this); // Backend-specific shader init
+      } catch (err) {
+        throw new Error(
+          `Whoops! Something went wrong initializing the shader:\n${err.message || err}`
         );
+        return null;
       }
 
       this._loadAttributes();
       this._loadUniforms();
+
+      this._initialized = true;
     }
+
     return this;
   }
 
@@ -816,10 +770,16 @@ class Shader {
    * initializes (if needed) and binds the shader program.
    * @private
    */
-  bindShader() {
+  bindShader(shaderType, options) {
+    if (this.shaderType && this.shaderType !== shaderType) {
+      throw new Error(
+        `You've already used this shader as a ${this.shaderType} shader, but are now using it as a ${shaderType}.`
+      );
+    }
+    this.shaderType = shaderType;
     this.init();
     if (!this._bound) {
-      this.useProgram();
+      this.useProgram(options);
       this._bound = true;
     }
   }
@@ -889,10 +849,9 @@ class Shader {
    * @chainable
    * @private
    */
-  useProgram() {
-    const gl = this._renderer.GL;
+  useProgram(options) {
     if (this._renderer._curShader !== this) {
-      gl.useProgram(this._glProgram);
+      this._renderer._useShader(this, options);
       this._renderer._curShader = this;
     }
     return this;

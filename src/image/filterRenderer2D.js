@@ -218,7 +218,7 @@ class FilterRenderer2D {
    */
   _renderPass() {
     const gl = this.gl;
-    this._shader.bindShader();
+    this._shader.bindShader('fill');
     const pixelDensity = this.pInst.pixelDensity ? this.pInst.pixelDensity() : 1;
 
     const texelSize = [
@@ -235,7 +235,7 @@ class FilterRenderer2D {
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
     this._shader.setDefaultUniforms();
-    
+
     this.pInst.states.setValue('rectMode', constants.CORNER);
     this.pInst.states.setValue('imageMode', constants.CORNER);
     this.pInst.blendMode(constants.BLEND);
