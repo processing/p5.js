@@ -13,6 +13,8 @@ import { Element } from "../dom/p5.Element";
 import { Framebuffer } from "../webgl/p5.Framebuffer";
 import { DataArray } from "../webgl/p5.DataArray";
 import { RenderBuffer } from "../webgl/p5.RenderBuffer";
+import { Image } from "../image/p5.Image";
+import { Texture } from "../webgl/p5.Texture";
 
 export function getStrokeDefs() {
   const STROKE_CAP_ENUM = {};
@@ -494,6 +496,10 @@ export class Renderer3D extends Renderer {
     }
   }
 
+  _getOrMakeCachedBuffers(geometry) {
+    return this.geometryBufferCache.ensureCached(geometry);
+  }
+
   //////////////////////////////////////////////
   // Rendering
   //////////////////////////////////////////////
@@ -534,7 +540,7 @@ export class Renderer3D extends Renderer {
       !this._drawingFilter && this.states.userFillShader
         ? this.states.userFillShader
         : this._getFillShader();
-    shader.bindShader('fill', this._shaderOptions(mode));
+    shader.bindShader('fill');
     this._setGlobalUniforms(shader);
     this._setFillUniforms(shader);
     shader.bindTextures();
@@ -543,7 +549,7 @@ export class Renderer3D extends Renderer {
       buff._prepareBuffer(geometry, shader);
     }
     this._prepareUserAttributes(geometry, shader);
-    shader.disableRemainingAttributes();
+    this._disableRemainingAttributes(shader);
 
     this._applyColorBlend(
       this.states.curFillColor,
@@ -561,7 +567,7 @@ export class Renderer3D extends Renderer {
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
     const shader = this._getStrokeShader();
-    shader.bindShader('stroke', this._shaderOptions(constants.TRIANGLES));
+    shader.bindShader('stroke');
     this._setGlobalUniforms(shader);
     this._setStrokeUniforms(shader);
     shader.bindTextures();
@@ -570,7 +576,7 @@ export class Renderer3D extends Renderer {
       buff._prepareBuffer(geometry, shader);
     }
     this._prepareUserAttributes(geometry, shader);
-    shader.disableRemainingAttributes();
+    this._disableRemainingAttributes(shader);
 
     this._applyColorBlend(
       this.states.curStrokeColor,
@@ -1574,6 +1580,22 @@ export class Renderer3D extends Renderer {
       "uPointSize",
       this.states.strokeWeight * this._pixelDensity
     );
+  }
+
+  /**
+   * @private
+   * Note: DO NOT CALL THIS while in the middle of binding another texture,
+   * since it will change the texture binding in order to allocate the empty
+   * texture! Grab its value beforehand!
+   */
+  _getEmptyTexture() {
+    if (!this._emptyTexture) {
+      // a plain white texture RGBA, full alpha, single pixel.
+      const im = new Image(1, 1);
+      im.set(0, 0, 255);
+      this._emptyTexture = new Texture(this, im);
+    }
+    return this._emptyTexture;
   }
 
   //////////////////////////////////////////////

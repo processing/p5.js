@@ -15,24 +15,29 @@ import { Graphics } from '../core/p5.Graphics';
 import { FramebufferTexture } from './p5.Framebuffer';
 
 class Texture {
-  constructor (renderer, obj, settings) {
+  constructor (renderer, obj, settings = {}) {
     this._renderer = renderer;
 
-    const gl = this._renderer.GL;
-
-    settings = settings || {};
-
     this.src = obj;
-    this.glTex = undefined;
-    this.glTarget = gl.TEXTURE_2D;
-    this.glFormat = settings.format || gl.RGBA;
-    this.mipmaps = false;
-    this.glMinFilter = settings.minFilter || gl.LINEAR;
-    this.glMagFilter = settings.magFilter || gl.LINEAR;
-    this.glWrapS = settings.wrapS || gl.CLAMP_TO_EDGE;
-    this.glWrapT = settings.wrapT || gl.CLAMP_TO_EDGE;
-    this.glDataType = settings.dataType || gl.UNSIGNED_BYTE;
 
+    this.format = settings.format || 'rgba8unorm';
+    this.minFilter = settings.minFilter || constants.LINEAR;
+    this.magFilter = settings.magFilter || constants.LINEAR;
+    this.wrapS = settings.wrapS || constants.CLAMP;
+    this.wrapT = settings.wrapT || constants.CLAMP;
+    this.dataType = settings.dataType || 'uint8';
+
+    this.textureHandle = null;
+
+    this._detectSourceType();
+
+    const textureData = this._getTextureDataFromSource();
+    this.width = textureData.width;
+    this.height = textureData.height;
+
+    this.init(textureData);
+  }
+  /*
     const support = checkWebGLCapabilities(renderer);
     if (this.glFormat === gl.HALF_FLOAT && !support.halfFloat) {
       console.log('This device does not support dataType HALF_FLOAT. Falling back to FLOAT.');
@@ -60,37 +65,29 @@ class Texture {
       if (this.glMinFilter === gl.LINEAR) this.glMinFilter = gl.NEAREST;
       if (this.glMagFilter === gl.LINEAR) this.glMagFilter = gl.NEAREST;
     }
+  }*/
 
-    // used to determine if this texture might need constant updating
-    // because it is a video or gif.
-    this.isSrcMediaElement = false;
-      typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
-    this._videoPrevUpdateTime = 0;
-    this.isSrcHTMLElement =
-      typeof Element !== 'undefined' &&
-      obj instanceof Element &&
-      !(obj instanceof Graphics) &&
-      !(obj instanceof Renderer);
+  _detectSourceType() {
+    const obj = this.src;
+    this.isFramebufferTexture = obj instanceof FramebufferTexture;
     this.isSrcP5Image = obj instanceof Image;
     this.isSrcP5Graphics = obj instanceof Graphics;
     this.isSrcP5Renderer = obj instanceof Renderer;
-    this.isImageData =
-      typeof ImageData !== 'undefined' && obj instanceof ImageData;
-    this.isFramebufferTexture = obj instanceof FramebufferTexture;
-
-    const textureData = this._getTextureDataFromSource();
-    this.width = textureData.width;
-    this.height = textureData.height;
-
-    this.init(textureData);
-    return this;
+    this.isImageData = typeof ImageData !== 'undefined' && obj instanceof ImageData;
+    this.isSrcMediaElement =
+      typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
+    this.isSrcHTMLElement =
+      typeof Element !== 'undefined' &&
+      obj instanceof Element &&
+      !this.isSrcMediaElement &&
+      !this.isSrcP5Graphics &&
+      !this.isSrcP5Renderer;
   }
 
   remove() {
-    if (this.glTex) {
-      const gl = this._renderer.GL;
-      gl.deleteTexture(this.glTex);
-      this.glTex = undefined;
+    if (this.textureHandle) {
+      this._renderer.deleteTexture(this.textureHandle);
+      this.textureHandle = null;
     }
   }
 
@@ -123,54 +120,48 @@ class Texture {
    * tries to upload the texture for the first time if data is
    * already available.
    */
-  init (data) {
-    const gl = this._renderer.GL;
+  init(textureData) {
     if (!this.isFramebufferTexture) {
-      this.glTex = gl.createTexture();
+      this.textureHandle = this._renderer.createTexture({
+        format: this.format,
+        dataType: this.dataType,
+        width: textureData.width,
+        height: textureData.height,
+      });
     }
 
-    this.glWrapS = this._renderer.states.textureWrapX;
-    this.glWrapT = this._renderer.states.textureWrapY;
+    this._renderer.setTextureParams(this.textureHandle, {
+      minFilter: this.minFilter,
+      magFilter: this.magFilter,
+      wrapS: this.wrapS,
+      wrapT: this.wrapT
+    });
 
-    this.setWrapMode(this.glWrapS, this.glWrapT);
     this.bindTexture();
 
-    //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+    if (this._shouldDeferUpload()) {
+      this._renderer.uploadTextureFromData(
+        this.textureHandle,
+        new Uint8Array(1, 1, 1, 1),
+        1,
+        1
+      );
+    } else if (!this.isFramebufferTexture) {
+      this._renderer.uploadTextureFromSource(
+        this.textureHandle,
+        textureData
+      );
+    }
 
-    if (this.isFramebufferTexture) {
-      // Do nothing, the framebuffer manages its own content
-    } else if (
+    this.unbindTexture();
+  }
+
+  _shouldDeferUpload() {
+    return (
       this.width === 0 ||
       this.height === 0 ||
       (this.isSrcMediaElement && !this.src.loadedmetadata)
-    ) {
-    // assign a 1×1 empty texture initially, because data is not yet ready,
-    // so that no errors occur in gl console!
-      const tmpdata = new Uint8Array([1, 1, 1, 1]);
-      gl.texImage2D(
-        this.glTarget,
-        0,
-        gl.RGBA,
-        1,
-        1,
-        0,
-        this.glFormat,
-        this.glDataType,
-        tmpdata
-      );
-    } else {
-    // data is ready: just push the texture!
-      gl.texImage2D(
-        this.glTarget,
-        0,
-        this.glFormat,
-        this.glFormat,
-        this.glDataType,
-        data
-      );
-    }
+    );
   }
 
   /**
@@ -179,7 +170,23 @@ class Texture {
    * possible or to expensive to do a calculation to determine wheter or
    * not the data has occurred, this method simply re-uploads the texture.
    */
-  update () {
+  update() {
+    const textureData = this._getTextureDataFromSource();
+    if (!textureData) return false;
+
+    let updated = false;
+
+    if (this._shouldUpdate(textureData)) {
+      this.bindTexture();
+      this._renderer.uploadTextureFromSource(this.textureHandle, textureData);
+      this.unbindTexture();
+      updated = true;
+    }
+
+    return updated;
+  }
+
+  shouldUpdate(textureData) {
     const data = this.src;
     if (data.width === 0 || data.height === 0) {
       return false; // nothing to do!
@@ -192,10 +199,7 @@ class Texture {
       return false;
     }
 
-    const textureData = this._getTextureDataFromSource();
     let updated = false;
-
-    const gl = this._renderer.GL;
     // pull texture from data, make sure width & height are appropriate
     if (
       textureData.width !== this.width ||
@@ -260,40 +264,16 @@ class Texture {
       updated = true;
     }
 
-    if (updated) {
-      this.bindTexture();
-      gl.texImage2D(
-        this.glTarget,
-        0,
-        this.glFormat,
-        this.glFormat,
-        this.glDataType,
-        textureData
-      );
-    }
-
     return updated;
   }
 
-  /**
-   * Binds the texture to the appropriate GL target.
-   */
-  bindTexture () {
-    // bind texture using gl context + glTarget and
-    // generated gl texture object
-    const gl = this._renderer.GL;
-    gl.bindTexture(this.glTarget, this.getTexture());
-
+  bindTexture() {
+    this._renderer.bindTexture(this);
     return this;
   }
 
-  /**
-   * Unbinds the texture from the appropriate GL target.
-   */
   unbindTexture () {
-    // unbind per above, disable texturing on glTarget
-    const gl = this._renderer.GL;
-    gl.bindTexture(this.glTarget, null);
+    this._renderer.unbindTexture();
   }
 
   getTexture() {
@@ -304,130 +284,20 @@ class Texture {
     }
   }
 
-  /**
-   * Sets how a texture is be interpolated when upscaled or downscaled.
-   * Nearest filtering uses nearest neighbor scaling when interpolating
-   * Linear filtering uses WebGL's linear scaling when interpolating
-   * @param {String} downScale Specifies the texture filtering when
-   *                           textures are shrunk. Options are LINEAR or NEAREST
-   * @param {String} upScale Specifies the texture filtering when
-   *                         textures are magnified. Options are LINEAR or NEAREST
-   * @todo implement mipmapping filters
-   */
-  setInterpolation (downScale, upScale) {
-    const gl = this._renderer.GL;
-
-    this.glMinFilter = this.glFilter(downScale);
-    this.glMagFilter = this.glFilter(upScale);
-
-    this.bindTexture();
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
-    this.unbindTexture();
+  getSampler() {
+    return this._renderer.getSampler(this);
   }
 
-  glFilter(filter) {
-    const gl = this._renderer.GL;
-    if (filter === constants.NEAREST) {
-      return gl.NEAREST;
-    } else {
-      return gl.LINEAR;
-    }
+  setInterpolation(minFilter, magFilter) {
+    this.minFilter = minFilter;
+    this.magFilter = magFilter;
+    this._renderer.setTextureParams(this);
   }
 
-  /**
-   * Sets the texture wrapping mode. This controls how textures behave
-   * when their uv's go outside of the 0 - 1 range. There are three options:
-   * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
-   * is a power of two size (128, 256, 512, 1024, etc.).
-   * @param {String} wrapX Controls the horizontal texture wrapping behavior
-   * @param {String} wrapY Controls the vertical texture wrapping behavior
-   */
-  setWrapMode (wrapX, wrapY) {
-    const gl = this._renderer.GL;
-
-    // for webgl 1 we need to check if the texture is power of two
-    // if it isn't we will set the wrap mode to CLAMP
-    // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
-    const isPowerOfTwo = x => (x & (x - 1)) === 0;
-    const textureData = this._getTextureDataFromSource();
-
-    let wrapWidth;
-    let wrapHeight;
-
-    if (textureData.naturalWidth && textureData.naturalHeight) {
-      wrapWidth = textureData.naturalWidth;
-      wrapHeight = textureData.naturalHeight;
-    } else {
-      wrapWidth = this.width;
-      wrapHeight = this.height;
-    }
-
-    const widthPowerOfTwo = isPowerOfTwo(wrapWidth);
-    const heightPowerOfTwo = isPowerOfTwo(wrapHeight);
-
-    if (wrapX === constants.REPEAT) {
-      if (
-        this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
-      ) {
-        this.glWrapS = gl.REPEAT;
-      } else {
-        console.warn(
-          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
-        );
-        this.glWrapS = gl.CLAMP_TO_EDGE;
-      }
-    } else if (wrapX === constants.MIRROR) {
-      if (
-        this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
-      ) {
-        this.glWrapS = gl.MIRRORED_REPEAT;
-      } else {
-        console.warn(
-          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
-        );
-        this.glWrapS = gl.CLAMP_TO_EDGE;
-      }
-    } else {
-      // falling back to default if didn't get a proper mode
-      this.glWrapS = gl.CLAMP_TO_EDGE;
-    }
-
-    if (wrapY === constants.REPEAT) {
-      if (
-        this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
-      ) {
-        this.glWrapT = gl.REPEAT;
-      } else {
-        console.warn(
-          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
-        );
-        this.glWrapT = gl.CLAMP_TO_EDGE;
-      }
-    } else if (wrapY === constants.MIRROR) {
-      if (
-        this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
-      ) {
-        this.glWrapT = gl.MIRRORED_REPEAT;
-      } else {
-        console.warn(
-          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
-        );
-        this.glWrapT = gl.CLAMP_TO_EDGE;
-      }
-    } else {
-      // falling back to default if didn't get a proper mode
-      this.glWrapT = gl.CLAMP_TO_EDGE;
-    }
-
-    this.bindTexture();
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
-    this.unbindTexture();
+  setWrapMode(wrapX, wrapY) {
+    this.wrapS = wrapX;
+    this.wrapT = wrapY;
+    this._renderer.setTextureParams(this);
   }
 }
 

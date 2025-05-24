@@ -2,7 +2,6 @@ import * as constants from "../core/constants";
 import { readPixelsWebGL, readPixelWebGL } from './utils';
 import { Renderer3D, getStrokeDefs } from "../core/p5.Renderer3D";
 import { Shader } from "./p5.Shader";
-import { Image } from "../image/p5.Image";
 import { Texture, MipmapTexture } from "./p5.Texture";
 import { Framebuffer } from "./p5.Framebuffer";
 import { Graphics } from "../core/p5.Graphics";
@@ -252,7 +251,26 @@ class RendererGL extends Renderer3D {
     gl.useProgram(shader._glProgram);
   }
 
-  _drawBuffers(geometry, { mode = this.GL.TRIANGLES, count }) {
+  /**
+   * Once all buffers have been bound, this checks to see if there are any
+   * remaining active attributes, likely left over from previous renders,
+   * and disables them so that they don't affect rendering.
+   * @private
+   */
+  _disableRemainingAttributes(shader) {
+    for (const location of this.registerEnabled.values()) {
+      if (
+        !Object.keys(shader.attributes).some(
+          key => shader.attributes[key].location === location
+        )
+      ) {
+        this.GL.disableVertexAttribArray(location);
+        this.registerEnabled.delete(location);
+      }
+    }
+  }
+
+  _drawBuffers(geometry, { mode = constants.TRIANGLES, count }) {
     const gl = this.GL;
     const glBuffers = this.geometryBufferCache.getCached(geometry);
 
@@ -297,11 +315,12 @@ class RendererGL extends Renderer3D {
         }
       }
     } else {
+      const glMode = mode === constants.TRIANGLES ? gl.TRIANGLES : gl.TRIANGLE_STRIP;
       if (count === 1) {
-        gl.drawArrays(mode, 0, geometry.vertices.length);
+        gl.drawArrays(glMode, 0, geometry.vertices.length);
       } else {
         try {
-          gl.drawArraysInstanced(mode, 0, geometry.vertices.length, count);
+          gl.drawArraysInstanced(glMode, 0, geometry.vertices.length, count);
         } catch (e) {
           console.log(
             "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
@@ -309,10 +328,6 @@ class RendererGL extends Renderer3D {
         }
       }
     }
-  }
-
-  _getOrMakeCachedBuffers(geometry) {
-    return this.geometryBufferCache.ensureCached(geometry);
   }
 
   //////////////////////////////////////////////
@@ -928,22 +943,6 @@ class RendererGL extends Renderer3D {
     return code;
   }
 
-  /**
-   * @private
-   * Note: DO NOT CALL THIS while in the middle of binding another texture,
-   * since it will change the texture binding in order to allocate the empty
-   * texture! Grab its value beforehand!
-   */
-  _getEmptyTexture() {
-    if (!this._emptyTexture) {
-      // a plain white texture RGBA, full alpha, single pixel.
-      const im = new Image(1, 1);
-      im.set(0, 0, 255);
-      this._emptyTexture = new Texture(this, im);
-    }
-    return this._emptyTexture;
-  }
-
   getTexture(input) {
     let src = input;
     if (src instanceof Framebuffer) {
@@ -1227,6 +1226,389 @@ class RendererGL extends Renderer3D {
     shader._glProgram = program;
     shader._vertShader = vertShader;
     shader._fragShader = fragShader;
+  }
+
+  _getShaderAttributes(shader) {
+    const attributes = {};
+
+    const gl = this.GL;
+
+    const numAttributes = gl.getProgramParameter(
+      shader._glProgram,
+      gl.ACTIVE_ATTRIBUTES
+    );
+    for (let i = 0; i < numAttributes; ++i) {
+      const attributeInfo = gl.getActiveAttrib(shader._glProgram, i);
+      const name = attributeInfo.name;
+      const location = gl.getAttribLocation(shader._glProgram, name);
+      const attribute = {};
+      attribute.name = name;
+      attribute.location = location;
+      attribute.index = i;
+      attribute.type = attributeInfo.type;
+      attribute.size = attributeInfo.size;
+      attributes[name] = attribute;
+    }
+
+    return attributes;
+  }
+
+  getUniformMetadata(shader) {
+    const gl = this.GL;
+    const program = shader._glProgram;
+
+    const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+    const result = [];
+
+    let samplerIndex = 0;
+
+    for (let i = 0; i < numUniforms; ++i) {
+      const uniformInfo = gl.getActiveUniform(program, i);
+      const uniform = {};
+      uniform.location = gl.getUniformLocation(
+        program,
+        uniformInfo.name
+      );
+      uniform.size = uniformInfo.size;
+      let uniformName = uniformInfo.name;
+      //uniforms that are arrays have their name returned as
+      //someUniform[0] which is a bit silly so we trim it
+      //off here. The size property tells us that its an array
+      //so we dont lose any information by doing this
+      if (uniformInfo.size > 1) {
+        uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
+      }
+      uniform.name = uniformName;
+      uniform.type = uniformInfo.type;
+      uniform._cachedData = undefined;
+      if (uniform.type === gl.SAMPLER_2D) {
+        uniform.isSampler = true;
+        uniform.samplerIndex = samplerIndex;
+        samplerIndex++;
+      }
+
+      uniform.isArray =
+        uniformInfo.size > 1 ||
+        uniform.type === gl.FLOAT_MAT3 ||
+        uniform.type === gl.FLOAT_MAT4 ||
+        uniform.type === gl.FLOAT_VEC2 ||
+        uniform.type === gl.FLOAT_VEC3 ||
+        uniform.type === gl.FLOAT_VEC4 ||
+        uniform.type === gl.INT_VEC2 ||
+        uniform.type === gl.INT_VEC4 ||
+        uniform.type === gl.INT_VEC3;
+
+      result.push(uniform);
+    }
+
+    return result;
+  }
+
+  updateUniformValue(shader, uniform, data) {
+    const gl = this.GL;
+    const location = uniform.location;
+    shader.useProgram();
+
+    switch (uniform.type) {
+      case gl.BOOL:
+        if (data === true) {
+          gl.uniform1i(location, 1);
+        } else {
+          gl.uniform1i(location, 0);
+        }
+        break;
+      case gl.INT:
+        if (uniform.size > 1) {
+          data.length && gl.uniform1iv(location, data);
+        } else {
+          gl.uniform1i(location, data);
+        }
+        break;
+      case gl.FLOAT:
+        if (uniform.size > 1) {
+          data.length && gl.uniform1fv(location, data);
+        } else {
+          gl.uniform1f(location, data);
+        }
+        break;
+      case gl.FLOAT_MAT3:
+        gl.uniformMatrix3fv(location, false, data);
+        break;
+      case gl.FLOAT_MAT4:
+        gl.uniformMatrix4fv(location, false, data);
+        break;
+      case gl.FLOAT_VEC2:
+        if (uniform.size > 1) {
+          data.length && gl.uniform2fv(location, data);
+        } else {
+          gl.uniform2f(location, data[0], data[1]);
+        }
+        break;
+      case gl.FLOAT_VEC3:
+        if (uniform.size > 1) {
+          data.length && gl.uniform3fv(location, data);
+        } else {
+          gl.uniform3f(location, data[0], data[1], data[2]);
+        }
+        break;
+      case gl.FLOAT_VEC4:
+        if (uniform.size > 1) {
+          data.length && gl.uniform4fv(location, data);
+        } else {
+          gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+        }
+        break;
+      case gl.INT_VEC2:
+        if (uniform.size > 1) {
+          data.length && gl.uniform2iv(location, data);
+        } else {
+          gl.uniform2i(location, data[0], data[1]);
+        }
+        break;
+      case gl.INT_VEC3:
+        if (uniform.size > 1) {
+          data.length && gl.uniform3iv(location, data);
+        } else {
+          gl.uniform3i(location, data[0], data[1], data[2]);
+        }
+        break;
+      case gl.INT_VEC4:
+        if (uniform.size > 1) {
+          data.length && gl.uniform4iv(location, data);
+        } else {
+          gl.uniform4i(location, data[0], data[1], data[2], data[3]);
+        }
+        break;
+      case gl.SAMPLER_2D:
+        if (typeof data == 'number') {
+          if (
+            data < gl.TEXTURE0 ||
+            data > gl.TEXTURE31 ||
+            data !== Math.ceil(data)
+          ) {
+            console.log(
+              '🌸 p5.js says: ' +
+                "You're trying to use a number as the data for a texture." +
+                'Please use a texture.'
+            );
+            return this;
+          }
+          gl.activeTexture(data);
+          gl.uniform1i(location, data);
+        } else {
+          gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+          uniform.texture =
+            data instanceof Texture ? data : this._renderer.getTexture(data);
+          gl.uniform1i(location, uniform.samplerIndex);
+          if (uniform.texture.src.gifProperties) {
+            uniform.texture.src._animateGif(this._renderer._pInst);
+          }
+        }
+        break;
+      case gl.SAMPLER_CUBE:
+      case gl.SAMPLER_3D:
+      case gl.SAMPLER_2D_SHADOW:
+      case gl.SAMPLER_2D_ARRAY:
+      case gl.SAMPLER_2D_ARRAY_SHADOW:
+      case gl.SAMPLER_CUBE_SHADOW:
+      case gl.INT_SAMPLER_2D:
+      case gl.INT_SAMPLER_3D:
+      case gl.INT_SAMPLER_CUBE:
+      case gl.INT_SAMPLER_2D_ARRAY:
+      case gl.UNSIGNED_INT_SAMPLER_2D:
+      case gl.UNSIGNED_INT_SAMPLER_3D:
+      case gl.UNSIGNED_INT_SAMPLER_CUBE:
+      case gl.UNSIGNED_INT_SAMPLER_2D_ARRAY:
+        if (typeof data !== 'number') {
+          break;
+        }
+        if (
+          data < gl.TEXTURE0 ||
+          data > gl.TEXTURE31 ||
+          data !== Math.ceil(data)
+        ) {
+          console.log(
+            '🌸 p5.js says: ' +
+              "You're trying to use a number as the data for a texture." +
+              'Please use a texture.'
+          );
+          break;
+        }
+        gl.activeTexture(data);
+        gl.uniform1i(location, data);
+        break;
+      //@todo complete all types
+    }
+  }
+
+  _updateTexture(uniform, tex) {
+    const gl = this.GL;
+    gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+    tex.bindTexture();
+    tex.update();
+    gl.uniform1i(uniform.location, uniform.samplerIndex);
+  }
+
+  bindTexture(tex) {
+    // bind texture using gl context + glTarget and
+    // generated gl texture object
+    this.GL.bindTexture(this.GL.TEXTURE_2D, tex.getTexture());
+  }
+
+  unbindTexture() {
+    // unbind per above, disable texturing on glTarget
+    this.GL.bindTexture(this.GL.TEXTURE_2D, null);
+  }
+
+  _unbindFramebufferTexture(uniform) {
+    // Make sure an empty texture is bound to the slot so that we don't
+    // accidentally leave a framebuffer bound, causing a feedback loop
+    // when something else tries to write to it
+    const gl = this.GL;
+    const empty = this._renderer._getEmptyTexture();
+    gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+    empty.bindTexture();
+    gl.uniform1i(uniform.location, uniform.samplerIndex);
+  }
+
+  createTexture({ width, height, format, dataType }) {
+    const gl = this.GL;
+    const tex = gl.createTexture();
+    this.gl.bindTexture(gl.TEXTURE_2D, tex);
+    this.gl.texImage2D(gl.TEXTURE_2D, 0, this.gl.RGBA, width, height, 0,
+                       gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+    // TODO use format and data type
+    return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
+  }
+
+  uploadTextureFromSource({ texture, glFormat, glDataType }, source) {
+    const gl = this.GL;
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, glFormat, glFormat, glDataType, source);
+  }
+
+  uploadTextureFromData({ texture, glFormat, glDataType }, data, width, height) {
+    const gl = this.GL;
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      glFormat,
+      width,
+      height,
+      0,
+      glFormat,
+      glDataType,
+      data
+    );
+  }
+
+  getSampler(_texture) {
+    return undefined;
+  }
+
+  bindTextureToShader({ texture }, sampler, uniformName, unit) {
+    const gl = this.GL;
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    const location = gl.getUniformLocation(glProgram, uniformName);
+    gl.uniform1i(location, unit);
+  }
+
+  setTextureParams(texture) {
+    const gl = this.GL;
+    texture.bindTexture();
+    const glMinFilter = texture.minFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
+    const glMagFilter = texture.magFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
+
+    // for webgl 1 we need to check if the texture is power of two
+    // if it isn't we will set the wrap mode to CLAMP
+    // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
+    const isPowerOfTwo = x => (x & (x - 1)) === 0;
+    const textureData = texture._getTextureDataFromSource();
+
+    let wrapWidth;
+    let wrapHeight;
+
+    if (textureData.naturalWidth && textureData.naturalHeight) {
+      wrapWidth = textureData.naturalWidth;
+      wrapHeight = textureData.naturalHeight;
+    } else {
+      wrapWidth = this.width;
+      wrapHeight = this.height;
+    }
+
+    const widthPowerOfTwo = isPowerOfTwo(wrapWidth);
+    const heightPowerOfTwo = isPowerOfTwo(wrapHeight);
+    let glWrapS, glWrapT;
+
+    if (texture.wrapS === constants.REPEAT) {
+      if (
+        this.webglVersion === constants.WEBGL2 ||
+        (widthPowerOfTwo && heightPowerOfTwo)
+      ) {
+        glWrapS = gl.REPEAT;
+      } else {
+        console.warn(
+          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+        );
+        glWrapS = gl.CLAMP_TO_EDGE;
+      }
+    } else if (texture.wrapS === constants.MIRROR) {
+      if (
+        this.webglVersion === constants.WEBGL2 ||
+        (widthPowerOfTwo && heightPowerOfTwo)
+      ) {
+        glWrapS = gl.MIRRORED_REPEAT;
+      } else {
+        console.warn(
+          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+        );
+        glWrapS = gl.CLAMP_TO_EDGE;
+      }
+    } else {
+      // falling back to default if didn't get a proper mode
+      glWrapS = gl.CLAMP_TO_EDGE;
+    }
+
+    if (texture.wrapT === constants.REPEAT) {
+      if (
+        this._renderer.webglVersion === constants.WEBGL2 ||
+        (widthPowerOfTwo && heightPowerOfTwo)
+      ) {
+        glWrapT = gl.REPEAT;
+      } else {
+        console.warn(
+          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+        );
+        glWrapT = gl.CLAMP_TO_EDGE;
+      }
+    } else if (texture.wrapT === constants.MIRROR) {
+      if (
+        this._renderer.webglVersion === constants.WEBGL2 ||
+        (widthPowerOfTwo && heightPowerOfTwo)
+      ) {
+        glWrapT = gl.MIRRORED_REPEAT;
+      } else {
+        console.warn(
+          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+        );
+        glWrapT = gl.CLAMP_TO_EDGE;
+      }
+    } else {
+      // falling back to default if didn't get a proper mode
+      glWrapT = gl.CLAMP_TO_EDGE;
+    }
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, glMinFilter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, glMagFilter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, glWrapS);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, glWrapT);
+    texture.unbindTexture();
+  }
+
+  deleteTexture({ texture }) {
+    this.GL.deleteTexture(texture);
   }
 
   ///////////////////////////////
