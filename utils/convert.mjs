@@ -39,7 +39,7 @@ function descriptionString(node, parent) {
       classes.push(node.meta);
     }
     if (classes.length > 0) {
-      attrs=` class="${classes.join(' ')}"`;
+      attrs = ` class="${classes.join(' ')}"`;
     }
     return `<pre><code${attrs}>${node.value}</code></pre>`;
   } else if (node.type === 'inlineCode') {
@@ -85,11 +85,21 @@ function typeObject(node) {
   } else if (node.type === 'UndefinedLiteral') {
     return { type: 'undefined' };
   } else if (node.type === 'FunctionType') {
-    let signature = `function(${node.params.map(p => typeObject(p).type).join(', ')})`;
-    if (node.result) {
-      signature += `: ${typeObject(node.result).type}`;
-    }
-    return { type: signature };
+    // Map each parameter node to its type representation.
+    const parameters = node.params.map(p => typeObject(p));
+
+    // If a return type exists, extract its type; otherwise leave undefined.
+    const returnType = node.result ? typeObject(node.result).type : undefined;
+
+    // Return a structured representation of the function type:
+    // - 'type' is a label indicating it's a function
+    // - 'parameters' is an array of parameter type objects
+    // - 'returnType' is included only if it's defined
+    return {
+      type: 'Function',
+      parameters,
+      ...(returnType && { returnType }) // conditionally include returnType
+    };
   } else if (node.type === 'ArrayType') {
     return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
   } else if (node.type === 'RestType') {
@@ -231,23 +241,54 @@ function getParams(entry) {
   // instead convert it to a string. We want a slightly different conversion to
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
-  return (entry.tags || [])
-  
-    // Filter out the nested parameters (eg. options.extrude),
-    // to be treated as part of parent parameters (eg. options)
-    // and not separate entries
-    .filter(t => t.title === 'param' && !t.name.includes('.')) 
-    .map(node => {
-      const param = (entry.params || []).find(param => param.name === node.name);
-      return {
-        ...node,
-        description: param?.description || {
-          type: 'html',
-          value: node.description
+
+  const paramsMap = {};
+
+  // Build a nested parameter structure from tag names like "options.width"
+  for (const tag of (entry.tags || [])) {
+    if (tag.title !== 'param') continue;
+
+    const path = tag.name.split('.');
+    const typeInfo = typeObject(tag.type);
+
+    let current = paramsMap;
+
+    for (let i = 0; i < path.length; i++) {
+      const key = path[i];
+
+      if (i === path.length - 1) {
+        // Leaf node: assign the type info directly
+        current[key] = { ...typeInfo };
+
+        // If the param is a function, populate parameters explicitly (only if not already done)
+        if (
+          typeInfo.type === 'Function' &&
+          !current[key].parameters &&
+          tag.type?.expression?.type === 'FunctionType'
+        ) {
+          current[key].parameters = tag.type.expression.params.map(p => typeObject(p));
         }
-      };
-    });
+
+      } else {
+        // Intermediate node: create object structure for nested params
+        current[key] = current[key] || { type: 'Object', optional: true, properties: {} };
+
+        // Ensure properties object exists
+        if (!current[key].properties) {
+          current[key].properties = {};
+        }
+
+        // Traverse deeper
+        current = current[key].properties;
+      }
+    }
+  }
+
+  // Flatten top-level entries into an array, preserving name
+  return Object.entries(paramsMap).map(([key, val]) => ({ name: key, ...val }));
 }
+
+
 
 // ============================================================================
 // Constants
@@ -292,13 +333,10 @@ for (const entry of allData) {
       description: descriptionString(entry.description),
       example: entry.examples.map(getExample),
       alt: getAlt(entry),
-      params: getParams(entry).map(p => {
-        return {
-          name: p.name,
-          description: p.description && descriptionString(p.description),
-          ...typeObject(p.type)
-        };
-      }),
+
+      // getParams(entry) returns full structured and formatted parameter Objects
+      params: getParams(entry),
+
       return: entry.returns[0] && {
         description: descriptionString(entry.returns[0].description),
         ...typeObject(entry.returns[0].type)
@@ -458,13 +496,8 @@ for (const entry of allData) {
       overloads: [
         ...(prevItem.overloads || []),
         {
-          params: getParams(entry).map(p => {
-            return {
-              name: p.name,
-              description: p.description && descriptionString(p.description),
-              ...typeObject(p.type)
-            };
-          }),
+          // getParams(entry) returns full structured and formatted parameter Objects
+          params: getParams(entry),
           return: entry.returns[0] && {
             description: descriptionString(entry.returns[0].description),
             ...typeObject(entry.returns[0].type)
@@ -512,51 +545,166 @@ function cleanUpClassItems(data) {
     }
   }
 
-  // Reduce the amount of information in each function's overloads, while
-  // keeping all the essential data available.
+  // Recursively processes a parameter object to normalize its structure.
+  // Handles function types, rest parameters, union types, array tuples, and nested properties.
+  const processParam = param => {
+    const result = {};
+
+    if (!param.type) return result;
+
+    // Handle function parameters
+    if (param.type === 'Function') {
+      result.type = 'Function';
+
+      if (param.parameters) {
+        // Convert numeric-keyed object or array to array of processed params
+        if (Array.isArray(param.parameters)) {
+          result.parameters = param.parameters.map(processParam);
+        } else if (typeof param.parameters === 'object') {
+          result.parameters = Object.values(param.parameters).map(processParam);
+        }
+      }
+
+      if (param.optional) result.optional = true;
+      if (param.rest) result.rest = true;
+      return result;
+    }
+
+    // Handle rest parameters (e.g., "...string[]")
+    let typeStr = param.type;
+    if (typeStr.startsWith('...')) {
+      result.rest = true;
+      typeStr = typeStr.slice(3);
+      if (typeStr.endsWith('[]')) {
+        typeStr = typeStr.slice(0, -2);
+      }
+    }
+
+    // Parse union type strings
+    const parseUnion = unionStr => {
+      const parts = [];
+      let current = '';
+      let bracketDepth = 0;
+
+      for (const ch of unionStr) {
+        if (ch === '[') bracketDepth++;
+        if (ch === ']') bracketDepth--;
+        if (ch === '|' && bracketDepth === 0) {
+          parts.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      if (current) parts.push(current.trim());
+
+      return parts.map(part => {
+        const arrayMatch = part.match(/^(.+)\[\]$/);
+        if (arrayMatch) {
+          return {
+            type: "Array",
+            element: arrayMatch[1],
+            optional: true
+          };
+        }
+        return {
+          type: part,
+          optional: true
+        };
+      });
+    };
+
+    // Handle array of tuples (e.g., [number, string][])
+    const arrayTupleMatch = typeStr.match(/^\[(.+)\]\[\]$/);
+    if (arrayTupleMatch) {
+      const tupleStr = arrayTupleMatch[1];
+      const elements = [];
+      let current = '';
+      let depth = 0;
+
+      for (let i = 0; i < tupleStr.length; i++) {
+        const ch = tupleStr[i];
+        if (ch === '[') depth++;
+        if (ch === ']') depth--;
+        if (ch === ',' && depth === 0) {
+          elements.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      if (current) elements.push(current.trim());
+
+      result.type = "Array";
+      result.element = {
+        type: "Tuple",
+        elements: elements.map(el => {
+          if (el.includes('|')) {
+            return {
+              type: "union",
+              elements: parseUnion(el)
+            };
+          } else if (el.endsWith('[]')) {
+            return {
+              type: "Array",
+              element: el.slice(0, -2),
+              optional: true
+            };
+          } else {
+            return { type: el };
+          }
+        })
+      };
+    } else if (typeStr.includes('|')) {
+      // Handle union types
+      result.type = "union";
+      result.elements = parseUnion(typeStr);
+    } else if (typeStr.match(/^(.+)\[\]$/)) {
+      // Handle simple arrays
+      const match = typeStr.match(/^(.+)\[\]$/);
+      result.type = "Array";
+      result.element = match[1];
+    } else {
+      // Simple type
+      result.type = typeStr;
+    }
+
+    // Handle nested object properties
+    if (param.properties) {
+      result.properties = {};
+      for (const [key, val] of Object.entries(param.properties)) {
+        result.properties[key] = processParam(val);
+      }
+    }
+
+    if (param.optional) result.optional = true;
+    if (param.rest) result.rest = true;
+
+    return result;
+  };
+
+  // Normalizes function overloads and removes duplicate signatures.
   const flattenOverloads = funcObj => {
     const result = {};
 
-    const processOverload = overload => {
-      if (overload.params) {
-        return Object.values(overload.params).map(param => processParam(param));
-      }
-      return overload;
-    }
-
-    // To simplify `parameterData.json`, instead of having a separate field for
-    // optional parameters, we'll add a ? to the end of parameter type to
-    // indicate that it's optional.
-    const processParam = param => {
-      let type = param.type;
-      if (param.optional) {
-        type += '?';
-      }
-      if (param.rest) {
-        type = `...${type}[]`;
-      }
-      return type;
-    }
-
-    // In some cases, even when the arguments are intended to mean different
-    // things, their types and order are identical. Since the exact meaning
-    // of the arguments is less important for parameter validation, we'll
-    // perform overload deduplication here.
     const removeDuplicateOverloads = (overload, uniqueOverloads) => {
       const overloadString = JSON.stringify(overload);
-      if (uniqueOverloads.has(overloadString)) {
-        return false;
-      }
+      if (uniqueOverloads.has(overloadString)) return false;
       uniqueOverloads.add(overloadString);
       return true;
-    }
+    };
 
     for (const [key, value] of Object.entries(funcObj)) {
       if (value && typeof value === 'object' && value.overloads) {
         const uniqueOverloads = new Set();
+
         result[key] = {
-          overloads: Object.values(value.overloads)
-            .map(overload => processOverload(overload))
+          overloads: Object.values(value.overloads || {})
+            .map(overload => {
+              return Array.isArray(overload.params)
+                ? overload.params.map(processParam)
+                : Object.values(overload.params || {}).map(processParam);
+            })
             .filter(overload => removeDuplicateOverloads(overload, uniqueOverloads))
         };
       } else {
@@ -567,6 +715,7 @@ function cleanUpClassItems(data) {
     return result;
   };
 
+  // Apply flattenOverloads to each class item
   for (const classItem in data) {
     if (typeof data[classItem] === 'object') {
       data[classItem] = flattenOverloads(data[classItem]);
@@ -575,41 +724,51 @@ function cleanUpClassItems(data) {
 
   return data;
 }
-
+/**
+ * Builds a filtered and simplified representation of documented class items.
+ * Only includes items with overloads and required fields.
+ * 
+ * @param {Object} docs - Documentation object containing classitems.
+ * @returns {Object} Cleaned class items grouped by class and name.
+ */
 function buildParamDocs(docs) {
-  let newClassItems = {};
-  // the fields we need—note that `name` and `class` are needed at this step because it's used to group classitems together. They will be removed later in cleanUpClassItems.
-  let allowed = new Set(['name', 'class', 'params', 'overloads']);
+  const newClassItems = {};
+  const allowed = new Set(['name', 'class', 'params', 'overloads']);
 
-  for (let classitem of docs.classitems) {
-    // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case
+  for (const classitem of docs.classitems) {
+    // Skip non-function class items (those without overloads)
     if (classitem.name && classitem.class && classitem.hasOwnProperty('overloads')) {
-      // Skip if the item already exists in newClassItems
-      if (newClassItems[classitem.class] && newClassItems[classitem.class][classitem.name]) {
+      // Skip if already processed
+      if (newClassItems[classitem.class]?.[classitem.name]) {
         continue;
       }
 
-      // Clean up fields that will not be used in each classitem's overloads
+      // Normalize overloads
       classitem.overloads?.forEach(overload => {
+        if (overload.params && !Array.isArray(overload.params)) {
+          overload.params = Object.values(overload.params);
+        }
+
         delete overload.line;
         delete overload.return;
+
         overload.params.forEach(param => {
           delete param.description;
           delete param.name;
         });
       });
 
+      // Retain only allowed fields
       Object.keys(classitem).forEach(key => {
         if (!allowed.has(key)) delete classitem[key];
       });
 
+      // Group by class and function name
       newClassItems[classitem.class] = newClassItems[classitem.class] || {};
       newClassItems[classitem.class][classitem.name] = classitem;
     }
   }
-
   const cleanedClassItems = cleanUpClassItems(newClassItems);
-
   let out = fs.createWriteStream(
     path.join(__dirname, '../docs/parameterData.json'),
     {
@@ -617,6 +776,7 @@ function buildParamDocs(docs) {
       mode: '0644'
     }
   );
+
   out.write(JSON.stringify(cleanedClassItems, null, 2));
   out.end();
 }
