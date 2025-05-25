@@ -432,11 +432,11 @@ class Shader {
         throw new Error(
           `Whoops! Something went wrong initializing the shader:\n${err.message || err}`
         );
-        return null;
       }
 
       this._loadAttributes();
       this._loadUniforms();
+      this._renderer._finalizeShader(this);
 
       this._initialized = true;
     }

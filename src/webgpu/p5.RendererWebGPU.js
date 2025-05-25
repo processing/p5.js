@@ -170,12 +170,13 @@ class RendererWebGPU extends Renderer3D {
     freeDefs(this.renderer.buffers.user);
   }
 
-  _shaderOptions(mode) {
+  _shaderOptions({ mode, useVertexColor }) {
     return {
       topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
-      blendMode: this.blendMode(),
+      blendMode: this.states.curBlendMode,
       sampleCount: (this.activeFramebuffer() || this).antialias || 1, // TODO
       format: this.activeFramebuffer()?.format || this.presentationFormat, // TODO
+      useVertexColor,
     }
   }
 
@@ -190,7 +191,7 @@ class RendererWebGPU extends Renderer3D {
       const key = `${topology}_${blendMode}_${sampleCount}_${format}_${useVertexColor}`;
       if (!shader._pipelineCache.has(key)) {
         const pipeline = device.createRenderPipeline({
-          layout: 'auto',
+          layout: shader._pipelineLayout,
           vertex: {
             module: shader.vertModule,
             entryPoint: 'main',
@@ -221,6 +222,63 @@ class RendererWebGPU extends Renderer3D {
       }
       return shader._pipelineCache.get(key);
     }
+  }
+
+  _finalizeShader(shader) {
+    // Compute total uniform buffer size (ensure multiple of 16 bytes)
+    const uniformSize = Math.ceil(
+      Object.values(shader.uniforms)
+        .filter(u => !u.isSampler)
+        .reduce((sum, u) => sum + u.bytes, 0) / 16
+    ) * 16;
+    shader._uniformData = new Float32Array(uniformSize / 4);
+
+    shader._uniformBuffer = this.device.createBuffer({
+      size: uniformSize,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+
+    const bindGroupLayouts = new Map(); // group index -> bindGroupLayout
+    const groupEntries = new Map(); // group index -> array of entries
+
+    // We're enforcing that every shader have a single uniform struct in binding 0
+    groupEntries.set(0, [{
+      binding: 0,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform' },
+    }]);
+
+    // Add the variable amount of samplers and texture bindings that can come after
+    for (const sampler of shader.samplers) {
+      const group = sampler.group;
+      const entries = groupEntries.get(group) || [];
+
+      entries.push({
+        binding: sampler.binding,
+        visibility: GPUShaderStage.FRAGMENT,
+        sampler: sampler.type === 'sampler'
+          ? { type: 'filtering' }
+          : undefined,
+        texture: sampler.type === 'texture'
+          ? { sampleType: 'float', viewDimension: '2d' }
+          : undefined,
+        uniform: sampler,
+      });
+
+      groupEntries.set(group, entries);
+    }
+
+    // Create layouts and bind groups
+    for (const [group, entries] of groupEntries) {
+      const layout = this.device.createBindGroupLayout({ entries });
+      bindGroupLayouts.set(group, layout);
+    }
+
+    shader._groupEntries = groupEntries;
+    shader._bindGroupLayouts = [...bindGroupLayouts.values()];
+    shader._pipelineLayout = this.device.createPipelineLayout({
+      bindGroupLayouts: shader._bindGroupLayouts,
+    });
   }
 
   _getBlendState(mode) {
@@ -480,12 +538,49 @@ class RendererWebGPU extends Renderer3D {
 
     // Bind vertex buffers
     for (const buffer of this._getVertexBuffers(this._curShader)) {
-      passEncoder.setVertexBuffer(this._curShader.attributes[buffer.attr].location, buffers[buffer.dst], 0);
+      passEncoder.setVertexBuffer(
+        this._curShader.attributes[buffer.attr].location,
+        buffers[buffer.dst],
+        0
+      );
     }
-    /*for (let slot = 0; slot < buffers.vertexBuffers.length; slot++) {
-      const { buffer, offset = 0 } = buffers.vertexBuffers[slot];
-      passEncoder.setVertexBuffer(slot, buffer, offset);
-    }*/
+
+    // Bind uniforms
+    this._packUniforms(this._curShader);
+    this.device.queue.writeBuffer(
+      this._curShader._uniformBuffer,
+      0,
+      this._curShader._uniformData.buffer,
+      this._curShader._uniformData.byteOffset,
+      this._curShader._uniformData.byteLength
+    );
+
+    // Bind sampler/texture uniforms
+    for (const [group, entries] of this._curShader._groupEntries) {
+      const bgEntries = entries.map(entry => {
+        if (group === 0 && entry.binding === 0) {
+          return {
+            binding: 0,
+            resource: { buffer: this._curShader._uniformBuffer },
+          };
+        }
+
+        return {
+          binding: entry.binding,
+          resource: sampler.type === 'sampler'
+            ? sampler.uniform._cachedData.getSampler()
+            : sampler.uniform.textureHandle.view,
+        };
+      });
+
+      const layout = this._curShader._bindGroupLayouts[group];
+      const bindGroup = this.device.createBindGroup({
+        layout,
+        entries: bgEntries,
+      });
+
+      passEncoder.setBindGroup(group, bindGroup);
+    }
 
     // Bind index buffer and issue draw
     if (buffers.indexBuffer) {
@@ -504,6 +599,20 @@ class RendererWebGPU extends Renderer3D {
   // SHADER
   //////////////////////////////////////////////
 
+  _packUniforms(shader) {
+    let offset = 0;
+    for (const name in shader.uniforms) {
+      const uniform = shader.uniforms[name];
+      if (uniform.isSampler) continue;
+      if (uniform.size === 1) {
+        shader._uniformData.set([uniform._cachedData], offset);
+      } else {
+        shader._uniformData.set(uniform._cachedData, offset);
+      }
+      offset += uniform.size;
+    }
+  }
+
   _parseStruct(shaderSource, structName) {
     const structMatch = shaderSource.match(
       new RegExp(`struct\\s+${structName}\\s*\\{([^\\}]+)\\}`)
@@ -517,16 +626,23 @@ class RendererWebGPU extends Renderer3D {
     let match;
     let index = 0;
 
-    const elementRegex = /(?:@location\((\d+)\)\s+)?(\w+):\s+((vec[234](?:<f32>|f))|f32|i32|u32|bool)/g
+    const elementRegex =
+      /(?:@location\((\d+)\)\s+)?(\w+):\s+((?:mat[234]x[234]|vec[234]|float|int|uint|bool|f32|i32|u32|bool)(?:<f32>)?)/g
     while ((match = elementRegex.exec(structBody)) !== null) {
       const [_, location, name, type] = match;
-      const size = type.startsWith('vec') ? parseInt(type[3]) : 1;
+      const size = type.startsWith('vec')
+        ? parseInt(type[3])
+        : type.startsWith('mat')
+          ? Math.pow(parseInt(type[3]), 2)
+          : 1;
+      const bytes = 4 * size; // TODO handle non 32 bit sizes?
       elements[name] = {
         name,
         location: location ? parseInt(location) : undefined,
         index,
         type,
         size,
+        bytes,
       };
       index++;
     }

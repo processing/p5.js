@@ -1228,6 +1228,8 @@ class RendererGL extends Renderer3D {
     shader._fragShader = fragShader;
   }
 
+  _finalizeShader() {}
+
   _getShaderAttributes(shader) {
     const attributes = {};
 
