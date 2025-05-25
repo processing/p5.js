@@ -534,7 +534,8 @@ export class Renderer3D extends Renderer {
   }
 
   _drawFills(geometry, { count, mode } = {}) {
-    this._useVertexColor = geometry.vertexColors.length > 0;
+    this._useVertexColor = geometry.vertexColors.length > 0 &&
+      !geometry.vertexColors.isDefault;
 
     const shader =
       !this._drawingFilter && this.states.userFillShader

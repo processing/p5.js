@@ -68,8 +68,8 @@ class RendererWebGPU extends Renderer3D {
         depthClearValue: 1.0,
         depthLoadOp: 'clear',
         depthStoreOp: 'store',
-        stencilLoadOp: "load",
-        stencilStoreOp: "store",
+        stencilLoadOp: 'load',
+        stencilStoreOp: 'store',
       }
       : undefined;
 
@@ -96,6 +96,7 @@ class RendererWebGPU extends Renderer3D {
     if (!srcData || srcData.length === 0) {
       if (renderBuffer.default) {
         srcData = geometry[src] = renderBuffer.default(geometry);
+        srcData.isDefault = true;
       } else {
         return;
       }
@@ -215,7 +216,7 @@ class RendererWebGPU extends Renderer3D {
           multisample: { count: sampleCount },
           depthStencil: {
             format: this.depthFormat,
-            depthWriteEnabled: false, // true
+            depthWriteEnabled: true,
             depthCompare: 'less',
             stencilFront: {
               compare: 'always',

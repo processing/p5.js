@@ -1614,6 +1614,47 @@ class RendererGL extends Renderer3D {
   deleteTexture({ texture }) {
     this.GL.deleteTexture(texture);
   }
+
+
+  /**
+   * @private blends colors according to color components.
+   * If alpha value is less than 1, or non-standard blendMode
+   * we need to enable blending on our gl context.
+   * @param  {Number[]} color The currently set color, with values in 0-1 range
+   * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
+   * transparency internally, e.g. via vertex colors
+   * @return {Number[]}  Normalized numbers array
+   */
+  _applyColorBlend(colors, hasTransparency) {
+    const gl = this.GL;
+
+    const isTexture = this.states.drawMode === constants.TEXTURE;
+    const doBlend =
+      hasTransparency ||
+      this.states.userFillShader ||
+      this.states.userStrokeShader ||
+      this.states.userPointShader ||
+      isTexture ||
+      this.states.curBlendMode !== constants.BLEND ||
+      colors[colors.length - 1] < 1.0 ||
+      this._isErasing;
+
+    if (doBlend !== this._isBlending) {
+      if (
+        doBlend ||
+        (this.states.curBlendMode !== constants.BLEND &&
+          this.states.curBlendMode !== constants.ADD)
+      ) {
+        gl.enable(gl.BLEND);
+      } else {
+        gl.disable(gl.BLEND);
+      }
+      gl.depthMask(true);
+      this._isBlending = doBlend;
+    }
+    this._applyBlendMode();
+    return colors;
+  }
 }
 
 function rendererGL(p5, fn) {

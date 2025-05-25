@@ -29,10 +29,20 @@
       };
 
       p.draw = function () {
+        const t = p.millis() * 0.008;
         p.background(200);
         p.noStroke();
-        p.fill('red');
-        p.circle(0, 0, 200);
+        for (const [i, c] of ['red', 'lime', 'blue'].entries()) {
+          p.push();
+          p.fill(c);
+          p.translate(
+            p.width/3 * p.sin(t + i * Math.E),
+            p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
+            p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
+          )
+          p.sphere(30);
+          p.pop();
+        }
       };
     };
 
