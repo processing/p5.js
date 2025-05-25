@@ -1191,6 +1191,7 @@ class Camera {
    * </div>
    */
   perspective(fovy, aspect, near, far) {
+    const range = this._renderer.zClipRange();
     this.cameraType = arguments.length > 0 ? 'custom' : 'default';
     if (typeof fovy === 'undefined') {
       fovy = this.defaultCameraFOV;
@@ -1235,11 +1236,22 @@ class Camera {
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
+    let A, B;
+    if (range[0] === 0) {
+      // WebGPU clip space, z in [0, 1]
+      A = far * nf;
+      B = far * near * nf;
+    } else {
+      // WebGL clip space, z in [-1, 1]
+      A = (far + near) * nf;
+      B = (2 * far * near) * nf;
+    }
+
     /* eslint-disable indent */
     this.projMatrix.set(f / aspect, 0, 0, 0,
       0, -f * this.yScale, 0, 0,
-      0, 0, (far + near) * nf, -1,
-      0, 0, (2 * far * near) * nf, 0);
+      0, 0, A, -1,
+      0, 0, B, 0);
     /* eslint-enable indent */
 
     if (this._isActive()) {

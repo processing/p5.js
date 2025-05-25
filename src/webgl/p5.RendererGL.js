@@ -611,7 +611,9 @@ class RendererGL extends Renderer3D {
     this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
   }
 
-
+  zClipRange() {
+    return [-1, 1];
+  }
 
   viewport(w, h) {
     this._viewport = [0, 0, w, h];
@@ -1611,37 +1613,6 @@ class RendererGL extends Renderer3D {
 
   deleteTexture({ texture }) {
     this.GL.deleteTexture(texture);
-  }
-
-  ///////////////////////////////
-  //// UTILITY FUNCTIONS
-  //////////////////////////////
-  _arraysEqual(a, b) {
-    const aLength = a.length;
-    if (aLength !== b.length) return false;
-    return a.every((ai, i) => ai === b[i]);
-  }
-
-  _isTypedArray(arr) {
-    return [
-      Float32Array,
-      Float64Array,
-      Int16Array,
-      Uint16Array,
-      Uint32Array,
-    ].some((x) => arr instanceof x);
-  }
-
-  /**
-   * turn a p5.Vector Array into a one dimensional number array
-   * @private
-   * @param  {p5.Vector[]} arr  an array of p5.Vector
-   * @return {Number[]}     a one dimensional array of numbers
-   * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
-   * [1, 2, 3, 4, 5, 6]
-   */
-  _vToNArray(arr) {
-    return arr.flatMap((item) => [item.x, item.y, item.z]);
   }
 }
 

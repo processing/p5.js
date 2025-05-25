@@ -8,6 +8,11 @@ class RenderBuffer {
     this.map = map; // optional, a transformation function to apply to src
   }
 
+  default(cb) {
+    this.default = cb;
+    return this;
+  }
+
   /**
    * Enables and binds the buffers used by shader when the appropriate data exists in geometry.
    * Must always be done prior to drawing geometry in WebGL.

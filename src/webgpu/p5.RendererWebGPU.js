@@ -94,15 +94,20 @@ class RendererWebGPU extends Renderer3D {
     const buffers = this._getOrMakeCachedBuffers(geometry);
     let srcData = geometry[src];
     if (!srcData || srcData.length === 0) {
-      // TODO handle this case
-      // geometry[src] = srcData = geometry.vertices.map
+      if (renderBuffer.default) {
+        srcData = geometry[src] = renderBuffer.default(geometry);
+      } else {
+        return;
+      }
     }
 
     const raw = map ? map(srcData) : srcData;
     const typed = this._normalizeBufferData(raw, Float32Array);
 
     let buffer = buffers[dst];
+    let recreated = false;
     if (!buffer || buffer.size < typed.byteLength) {
+      recreated = true;
       if (buffer) buffer.destroy();
       buffer = device.createBuffer({
         size: typed.byteLength,
@@ -111,8 +116,10 @@ class RendererWebGPU extends Renderer3D {
       buffers[dst] = buffer;
     }
 
-    device.queue.writeBuffer(buffer, 0, typed);
-    geometry.dirtyFlags[src] = false;
+    if (recreated || geometry.dirtyFlags[src] !== false) {
+      device.queue.writeBuffer(buffer, 0, typed);
+      geometry.dirtyFlags[src] = false;
+    }
 
     shader.enableAttrib(attr, size);
   }
@@ -170,13 +177,12 @@ class RendererWebGPU extends Renderer3D {
     freeDefs(this.renderer.buffers.user);
   }
 
-  _shaderOptions({ mode, useVertexColor }) {
+  _shaderOptions({ mode }) {
     return {
       topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
       blendMode: this.states.curBlendMode,
       sampleCount: (this.activeFramebuffer() || this).antialias || 1, // TODO
       format: this.activeFramebuffer()?.format || this.presentationFormat, // TODO
-      useVertexColor,
     }
   }
 
@@ -187,8 +193,8 @@ class RendererWebGPU extends Renderer3D {
     shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
 
     shader._pipelineCache = new Map();
-    shader.getPipeline = ({ topology, blendMode, sampleCount, format, useVertexColor }) => {
-      const key = `${topology}_${blendMode}_${sampleCount}_${format}_${useVertexColor}`;
+    shader.getPipeline = ({ topology, blendMode, sampleCount, format }) => {
+      const key = `${topology}_${blendMode}_${sampleCount}_${format}`;
       if (!shader._pipelineCache.has(key)) {
         const pipeline = device.createRenderPipeline({
           layout: shader._pipelineLayout,
@@ -196,9 +202,6 @@ class RendererWebGPU extends Renderer3D {
             module: shader.vertModule,
             entryPoint: 'main',
             buffers: this._getVertexLayout(shader),
-            constants: {
-              useVertexColor,
-            },
           },
           fragment: {
             module: shader.fragModule,
@@ -212,8 +215,22 @@ class RendererWebGPU extends Renderer3D {
           multisample: { count: sampleCount },
           depthStencil: {
             format: this.depthFormat,
-            depthWriteEnabled: true,
+            depthWriteEnabled: false, // true
             depthCompare: 'less',
+            stencilFront: {
+              compare: 'always',
+              failOp: 'keep',
+              depthFailOp: 'keep',
+              passOp: 'keep',
+            },
+            stencilBack: {
+              compare: 'always',
+              failOp: 'keep',
+              depthFailOp: 'keep',
+              passOp: 'keep',
+            },
+            stencilReadMask: 0xFFFFFFFF, // TODO
+            stencilWriteMask: 0xFFFFFFFF,
             stencilLoadOp: "load",
             stencilStoreOp: "store",
           },
@@ -225,12 +242,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   _finalizeShader(shader) {
-    // Compute total uniform buffer size (ensure multiple of 16 bytes)
-    const uniformSize = Math.ceil(
-      Object.values(shader.uniforms)
-        .filter(u => !u.isSampler)
-        .reduce((sum, u) => sum + u.bytes, 0) / 16
-    ) * 16;
+    const uniformSize = Object.values(shader.uniforms)
+      .filter(u => !u.isSampler)
+      .reduce((sum, u) => sum + u.alignedBytes, 0);
     shader._uniformData = new Float32Array(uniformSize / 4);
 
     shader._uniformBuffer = this.device.createBuffer({
@@ -429,6 +443,8 @@ class RendererWebGPU extends Renderer3D {
     }
   }
 
+  _applyColorBlend() {}
+
   _getVertexLayout(shader) {
     const layouts = [];
 
@@ -494,12 +510,36 @@ class RendererWebGPU extends Renderer3D {
 
   _useShader(shader, options) {}
 
-  _updateViewport() {
+  _updateViewport() {}
 
+  zClipRange() {
+    return [0, 1];
   }
 
   _resetBuffersBeforeDraw() {
-    // TODO
+    const commandEncoder = this.device.createCommandEncoder();
+
+    const depthTextureView = this.depthTexture?.createView();
+    const depthAttachment = depthTextureView
+      ? {
+        view: depthTextureView,
+        depthClearValue: 1.0,
+        depthLoadOp: 'clear',
+        depthStoreOp: 'store',
+        stencilLoadOp: 'load',
+        stencilStoreOp: "store",
+      }
+      : undefined;
+
+    const renderPassDescriptor = {
+      colorAttachments: [],
+      ...(depthAttachment ? { depthStencilAttachment: depthAttachment } : {}),
+    };
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.end();
+
+    this.queue.submit([commandEncoder.finish()]);
   }
 
   //////////////////////////////////////////////
@@ -528,13 +568,14 @@ class RendererWebGPU extends Renderer3D {
             depthClearValue: 1.0,
             stencilLoadOp: "load",
             stencilStoreOp: "store",
+            depthReadOnly: false,
+            stencilReadOnly: false,
           }
         : undefined,
     };
 
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    const useVertexColor = false; // TODO grab this from geometry
-    passEncoder.setPipeline(this._curShader.getPipeline(this._shaderOptions({ mode, useVertexColor })));
+    passEncoder.setPipeline(this._curShader.getPipeline(this._shaderOptions({ mode })));
 
     // Bind vertex buffers
     for (const buffer of this._getVertexBuffers(this._curShader)) {
@@ -609,7 +650,7 @@ class RendererWebGPU extends Renderer3D {
       } else {
         shader._uniformData.set(uniform._cachedData, offset);
       }
-      offset += uniform.size;
+      offset += uniform.alignedBytes / 4;
     }
   }
 
@@ -636,6 +677,7 @@ class RendererWebGPU extends Renderer3D {
           ? Math.pow(parseInt(type[3]), 2)
           : 1;
       const bytes = 4 * size; // TODO handle non 32 bit sizes?
+      const alignedBytes = Math.ceil(bytes / 16) * 16;
       elements[name] = {
         name,
         location: location ? parseInt(location) : undefined,
@@ -643,6 +685,7 @@ class RendererWebGPU extends Renderer3D {
         type,
         size,
         bytes,
+        alignedBytes,
       };
       index++;
     }
@@ -692,7 +735,7 @@ class RendererWebGPU extends Renderer3D {
         sampler: true,
       });
     }
-    return [...Object.values(uniforms), ...samplers];
+    return [...Object.values(uniforms).sort((a, b) => a.index - b.index), ...samplers];
   }
 
   updateUniformValue(_shader, _uniform, _data) {}
@@ -787,16 +830,16 @@ class RendererWebGPU extends Renderer3D {
           uProjectionMatrix: mat4x4<f32>,
           uNormalMatrix: mat3x3<f32>,
           uMaterialColor: vec4<f32>,
+          uUseVertexColor: f32,
         };
 
         @group(0) @binding(0) var<uniform> uniforms: Uniforms;
-
-        override useVertexColor: bool;
 
         @vertex
         fn main(input: VertexInput) -> VertexOutput {
           var output: VertexOutput;
 
+          let useVertexColor = (uniforms.uUseVertexColor != 0.0);
           let color = select(uniforms.uMaterialColor, input.aVertexColor, useVertexColor);
 
           let pos4 = vec4<f32>(input.aPosition, 1.0);

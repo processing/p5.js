@@ -286,7 +286,7 @@ export class Renderer3D extends Renderer {
           "colorBuffer",
           "aVertexColor",
           this
-        ),
+        ).default((geometry) => geometry.vertices.flatMap(() => [-1, -1, -1, -1])),
         new RenderBuffer(
           3,
           "vertexAmbients",
@@ -305,7 +305,7 @@ export class Renderer3D extends Renderer {
           "lineColorBuffer",
           "aVertexColor",
           this
-        ),
+        ).default((geometry) => geometry.lineVertices.flatMap(() => [-1, -1, -1, -1])),
         new RenderBuffer(
           3,
           "lineVertices",
@@ -1611,5 +1611,36 @@ export class Renderer3D extends Renderer {
       return values;
     }
     return new type(values);
+  }
+
+  ///////////////////////////////
+  //// UTILITY FUNCTIONS
+  //////////////////////////////
+  _arraysEqual(a, b) {
+    const aLength = a.length;
+    if (aLength !== b.length) return false;
+    return a.every((ai, i) => ai === b[i]);
+  }
+
+  _isTypedArray(arr) {
+    return [
+      Float32Array,
+      Float64Array,
+      Int16Array,
+      Uint16Array,
+      Uint32Array,
+    ].some((x) => arr instanceof x);
+  }
+
+  /**
+   * turn a p5.Vector Array into a one dimensional number array
+   * @private
+   * @param  {p5.Vector[]} arr  an array of p5.Vector
+   * @return {Number[]}     a one dimensional array of numbers
+   * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
+   * [1, 2, 3, 4, 5, 6]
+   */
+  _vToNArray(arr) {
+    return arr.flatMap((item) => [item.x, item.y, item.z]);
   }
 }
