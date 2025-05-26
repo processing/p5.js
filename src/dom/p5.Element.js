@@ -63,8 +63,18 @@ class Element {
       }
     }
 
-    // delete the reference in this._pInst._elements
-    let sketch = this._pInst;
+    // `this._pInst` is usually the p5 “sketch” object that owns the global
+    // `_elements` array.  But when an element lives inside an off-screen
+    // `p5.Graphics` layer, `this._pInst` is that wrapper Graphics object
+    // instead.  The wrapper keeps a back–pointer (`_pInst`) to the real
+    // sketch but has no `_elements` array of its own. 
+   
+   let sketch = this._pInst;
+  
+    // If `sketch` doesn’t own an `_elements` array it means
+    // we’re still at the graphics-layer “wrapper”.  
+    // Jump one level up to the real p5 sketch stored in sketch._pInst.
+
     if (sketch && !sketch._elements && sketch._pInst) {
           sketch = sketch._pInst;          // climb one level up
     }
