@@ -177,7 +177,8 @@ class Renderer2D extends Renderer {
       // create background rect
       const color = this._pInst.color(...args);
 
-      //accessible Outputs
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
       if (this._pInst._addAccsOutput?.()) {
         this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
       }
@@ -210,7 +211,8 @@ class Renderer2D extends Renderer {
     const color = this.states.fillColor;
     this._setFill(color.toString());
 
-    //accessible Outputs
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
     }
@@ -221,7 +223,8 @@ class Renderer2D extends Renderer {
     const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
-    //accessible Outputs
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
     }
