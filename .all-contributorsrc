@@ -6803,7 +6803,8 @@
       "contributions": [
         "tool",
         "security",
-        "maintenance"
+        "maintenance",
+        "doc"
       ]
     }
   ],
