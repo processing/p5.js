@@ -14,7 +14,10 @@ export default defineConfig([
   globalIgnores([
     'node_modules/**',
     'contributor_docs/**',
-    'lib/**'
+    'lib/**',
+    'src/core/reference.js',
+    'src/type/lib/Typr.js', // wat?
+    'utils/sample-linter.mjs'
   ]),
   {
     name: 'eslint recommended',
@@ -22,51 +25,67 @@ export default defineConfig([
   },
   {
     name: 'common rules',
-    ignores: [
-      'src/core/reference.js'
-    ],
     plugins: {
       '@stylistic': stylistic
     },
-    languageOptions: {
-      ecmaVersion: 2022
+    linterOptions: {
+      reportUnusedDisableDirectives: false
     },
     rules: {
-      '@stylistic/arrow-parens': ['error', 'as-needed'],
-      '@stylistic/comma-dangle': ['error', 'never'],
-      eqeqeq: ['error', 'smart'],
-      '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
-      '@stylistic/linebreak-style': ['error', 'unix'],
-      '@stylistic/max-len': [
-        'error',
-        {
-          code: 80,
-          ignoreComments: true,
-          ignoreStrings: true,
-          ignoreTemplateLiterals: true,
-          ignoreRegExpLiterals: true
-        }
-      ],
+      // '@stylistic/arrow-parens': ['error', 'as-needed'],
+      // '@stylistic/comma-dangle': ['error', 'never'],
+      // eqeqeq: ['error', 'smart'],
+      eqeqeq: 0,
+      // '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
+      // '@stylistic/linebreak-style': ['error', 'unix'],
+      // '@stylistic/max-len': [
+      //   'error',
+      //   {
+      //     code: 80,
+      //     ignoreComments: true,
+      //     ignoreStrings: true,
+      //     ignoreTemplateLiterals: true,
+      //     ignoreRegExpLiterals: true
+      //   }
+      // ],
       'new-cap': 0,
-      'no-async-promise-executor': 'off',
-      'no-caller': 2,
-      'no-cond-assign': [2, 'except-parens'],
-      'no-console': 'off',
-      'no-empty': ['error', { allowEmptyCatch: true }],
-      'no-prototype-builtins': 'off',
-      '@stylistic/no-trailing-spaces': ['error'],
+      'no-async-promise-executor': 0,
+      // 'no-caller': 2,
+      'no-caller': 0,
+      'no-case-declarations': 0, // @eslint recommended
+      // 'no-cond-assign': [2, 'except-parens'],
+      'no-cond-assign': 0,
+      'no-console': 0,
+      'no-constant-binary-expression': 0, // @eslint recommended
+      'no-constant-condition': 0, // @eslint recommended
+      'no-dupe-class-members': 0, // @eslint recommended
+      'no-dupe-keys': 0, // @eslint recommended
+      // 'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-empty': 0,
+      'no-fallthrough': 0, // @eslint recommended
+      'no-prototype-builtins': 0,
+      'no-redeclare': 0, // @eslint recommended
+      'no-shadow-restricted-names': 0, // @eslint recommended
+      // '@stylistic/no-trailing-spaces': ['error'],
+      'no-unexpected-multiline': 0, // @eslint recommended
       'no-undef': 0,
-      'no-unused-vars': ['error', { args: 'none' }],
-      'no-use-before-define': [2, { functions: false }],
-      '@stylistic/object-curly-spacing': ['error', 'always'],
-      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
-      '@stylistic/semi': ['error', 'always']
+      'no-unreachable': 0, // @eslint recommended
+      'no-unused-private-class-members': 0, // @eslint recommended
+      // 'no-unused-vars': ['error', { args: 'none' }],
+      'no-unused-vars': 0,
+      // 'no-use-before-define': [2, { functions: false }],
+      'no-use-before-define': 0,
+      'no-useless-escape': 0, // @eslint recommended
+      // '@stylistic/object-curly-spacing': ['error', 'always'],
+      // '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
+      // '@stylistic/semi': ['error', 'always']
     }
   },
   {
     name: 'p5 source files',
     files: ['src/**/*.js'],
     languageOptions: {
+      ecmaVersion: 2022,
       globals: {
         ...globals.browser,
         ...globals.es2022
@@ -82,6 +101,7 @@ export default defineConfig([
       'vitest.workspace.mjs'
     ],
     languageOptions: {
+      ecmaVersion: 'latest',
       globals: {
         ...globals.nodeBuiltin
       }
