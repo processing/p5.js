@@ -5,6 +5,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 
 import globals from 'globals';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 
 const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
 
@@ -24,19 +25,19 @@ export default defineConfig([
     ignores: [
       'src/core/reference.js'
     ],
-    // plugins: {
-
-    // },
+    plugins: {
+      '@stylistic': stylistic
+    },
     languageOptions: {
       ecmaVersion: 2022
     },
     rules: {
-      'arrow-parens': ['error', 'as-needed'],
-      'comma-dangle': ['error', 'never'],
+      '@stylistic/arrow-parens': ['error', 'as-needed'],
+      '@stylistic/comma-dangle': ['error', 'never'],
       eqeqeq: ['error', 'smart'],
-      indent: ['error', 2, { SwitchCase: 1 }],
-      'linebreak-style': ['error', 'unix'],
-      'max-len': [
+      '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
+      '@stylistic/linebreak-style': ['error', 'unix'],
+      '@stylistic/max-len': [
         'error',
         {
           code: 80,
@@ -53,13 +54,13 @@ export default defineConfig([
       'no-console': 'off',
       'no-empty': ['error', { allowEmptyCatch: true }],
       'no-prototype-builtins': 'off',
-      'no-trailing-spaces': ['error'],
+      '@stylistic/no-trailing-spaces': ['error'],
       'no-undef': 0,
       'no-unused-vars': ['error', { args: 'none' }],
       'no-use-before-define': [2, { functions: false }],
-      'object-curly-spacing': ['error', 'always'],
-      quotes: ['error', 'single', { avoidEscape: true }],
-      semi: ['error', 'always']
+      '@stylistic/object-curly-spacing': ['error', 'always'],
+      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
+      '@stylistic/semi': ['error', 'always']
     }
   },
   {
