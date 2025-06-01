@@ -6851,6 +6851,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "irina-wang",
+      "name": "Irina Mengqi Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59970384?v=4",
+      "profile": "https://github.com/irina-wang",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
