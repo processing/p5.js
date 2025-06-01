@@ -69,7 +69,7 @@ In conclusion, I am grateful for my time working with p5.js typography during GS
 ## Features Requested
 
 ```jsx
-If they're not dependent/relevant, we should do seperate PRs.
+If they're not dependent/relevant, we should do separate PRs.
 ```
 
 | Topic | Status | Coded? | PR? | Pushed? |

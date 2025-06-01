@@ -108,7 +108,7 @@ vec2 mapTextureToNormal( vec3 v ){
 
 
 vec3 calculateImageDiffuse(vec3 vNormal, vec3 vViewPosition, float metallic){
-  // make 2 seperate builds 
+  // make 2 separate builds 
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
   vec3 worldNormal = normalize(vNormal * uCameraRotation);
   vec2 newTexCoor = mapTextureToNormal( worldNormal );

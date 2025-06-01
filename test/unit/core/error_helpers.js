@@ -522,7 +522,7 @@ suite('Error Helpers', function() {
   });
 });
 
-// seperating in another suite because these don't need to initialize myp5
+// separating in another suite because these don't need to initialize myp5
 // for each test. Instead they initialize p5 in the iframe. These tests are
 // also slower than the above ones.
 suite('Global Error Handling', function() {

@@ -202,7 +202,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Converts code written by the user to an array
-   * every element of which is a seperate line of code.
+   * every element of which is a separate line of code.
    *
    * @method codeToLines
    * @private
