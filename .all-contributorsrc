@@ -6860,6 +6860,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "jennybkowalski",
+      "name": "Jenny Biette Kowalski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11235412?v=4",
+      "profile": "http://jennybkowalski.com",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "repoType": "github",

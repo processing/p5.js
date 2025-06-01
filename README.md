@@ -1141,6 +1141,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/LalitNarayanYadav"><img src="https://avatars.githubusercontent.com/u/162928571?v=4?s=64" width="64px;" alt="Lalit Narayan Yadav"/><br /><sub><b>Lalit Narayan Yadav</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=LalitNarayanYadav" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/irina-wang"><img src="https://avatars.githubusercontent.com/u/59970384?v=4?s=64" width="64px;" alt="Irina Mengqi Wang"/><br /><sub><b>Irina Mengqi Wang</b></sub></a><br /><a href="#example-irina-wang" title="Examples">💡</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://jennybkowalski.com"><img src="https://avatars.githubusercontent.com/u/11235412?v=4?s=64" width="64px;" alt="Jenny Biette Kowalski"/><br /><sub><b>Jenny Biette Kowalski</b></sub></a><br /><a href="#ideas-jennybkowalski" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
   </tbody>
 </table>
 
