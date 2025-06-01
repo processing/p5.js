@@ -1143,6 +1143,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="http://jennybkowalski.com"><img src="https://avatars.githubusercontent.com/u/11235412?v=4?s=64" width="64px;" alt="Jenny Biette Kowalski"/><br /><sub><b>Jenny Biette Kowalski</b></sub></a><br /><a href="#ideas-jennybkowalski" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/wlaith"><img src="https://avatars.githubusercontent.com/u/98265005?v=4?s=64" width="64px;" alt="Laith Alwazani"/><br /><sub><b>Laith Alwazani</b></sub></a><br /><a href="#ideas-Wlaith" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
