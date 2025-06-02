@@ -25,9 +25,7 @@ As you can see, the subfolders in the `unit` subfolder roughly correspond to the
 
 ## Testing frameworks
 
-p5.js 2.0 runs its tests with [Vitest](https://vitest.dev), which provides
-Mocha-compatible globals (`suite`, `test`, etc.) so existing tests still read
-the same. It is responsible for running the test code as well as providing a solid framework for reporting test results (i.e., the very long output you see in the terminal when you run the tests!)
+p5.js 2.0 runs its tests with [Vitest](https://vitest.dev), which provides Mocha-compatible globals (`suite`, `test`, etc.). It is responsible for running the test code as well as providing a solid framework for reporting test results (i.e., the very long output you see in the terminal when you run the tests!)
 
 However, Vitest still needs an assertion layer, and it bundles Chai for that. An assertion library is a collection of handy functions that lets us test various properties of our code, such as whether two values are equal, two values are of the same type, whether a function throws an error, and many more. p5.js uses [Chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how the code should behave. You can also import `assert` and `expect` straight from Vitest (Vitest bundles Chai internally):
 
