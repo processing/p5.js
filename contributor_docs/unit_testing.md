@@ -25,9 +25,15 @@ As you can see, the subfolders in the `unit` subfolder roughly correspond to the
 
 ## Testing frameworks
 
-p5.js uses [Mocha](https://mochajs.org) as a test runner. It is responsible for running the test code as well as providing a solid framework for reporting test results (i.e., the very long output you see in the terminal when you run the tests!)
+p5.js 2.0 runs its tests with [Vitest](https://vitest.dev), which provides
+Mocha-compatible globals (`suite`, `test`, etc.) so existing tests still read
+the same. It is responsible for running the test code as well as providing a solid framework for reporting test results (i.e., the very long output you see in the terminal when you run the tests!)
 
-However, Mocha by itself doesn’t do any testing; for that, we need an assertion library. An assertion library is a collection of handy functions that lets us test various properties of our code, such as whether two values are equal, two values are of the same type, whether a function throws an error, and many more. p5.js uses [Chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how the code should behave.
+However, Vitest still needs an assertion layer, and it bundles Chai for that. An assertion library is a collection of handy functions that lets us test various properties of our code, such as whether two values are equal, two values are of the same type, whether a function throws an error, and many more. p5.js uses [Chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how the code should behave. You can also import `assert` and `expect` straight from Vitest (Vitest bundles Chai internally):
+
+ ```js
+ import { assert, expect } from 'vitest'
+ ```
 
 
 ## Writing unit tests
@@ -40,7 +46,7 @@ To start writing unit tests, first pick a unit. A unit can be a function or a va
 - it should be `true` if multiple keys are pressed
 - it should be `false` if no keys are pressed
 
-In the example below, `suite()` and `test()` are both built-in functions provided by Mocha as part of the test environment. If you look into the test file (eg. `test/unit/events/keyboard.js`) you may find additional built-in functions such as `setup()` and `teardown()` as well. Each `suite()` describes a unit of p5.js that you are writing a test for (a function, a variable, etc). Each `test()` in a `suite()` is an individual test case that checks a single feature/behavior of the unit being tested. The first argument passed to `suite()` and `test()` is a description of the suite/test, and its purpose is to give clear output in the terminal for the test case.
+In the example below, `suite()` and `test()` are both built-in functions provided by Vitest’s Mocha-compatible API. If you look into the test file (eg. `test/unit/events/keyboard.js`) you may find additional built-in functions such as `setup()` and `teardown()` as well. Each `suite()` describes a unit of p5.js that you are writing a test for (a function, a variable, etc). Each `test()` in a `suite()` is an individual test case that checks a single feature/behavior of the unit being tested. The first argument passed to `suite()` and `test()` is a description of the suite/test, and its purpose is to give clear output in the terminal for the test case.
 
 - `p5.prototype.keyIsPressed` is the unit being tested in this suite.
 - There are three tests in this suite:
@@ -81,7 +87,7 @@ setup(function(done) {
 
 The `p` parameter, which is used in instance mode to access various p5.js variables and functions, is then assigned to `myp5`. This setup allows you to use `myp5` to access p5.js variables and functions anywhere in the testing code to test their functionalities.
 
-Remember that, as previously mentioned, Mocha is a test runner but by itself doesn’t do any testing; we need Chai for that. Consider the following:
+Remember, Vitest supplies the runner; Chai (bundled by Vitest) supplies the assertions. Consider the following:
 
 ```js
 test('keyIsPressed is a boolean', function() {
@@ -182,10 +188,9 @@ Here are the conventions and best practices that p5.js uses for unit tests which
 
 ## Running tests
 
-The most straightforward way to run the tests is by using the `npm test` command in your terminal. However, `npm test` usually takes a long time to run simply because of the large number of test cases p5.js has. It can also sometimes be a bit repetitive to make some changes, run `npm test`, make some more changes, and run `npm test` again. Here are some tricks that can help streamline this process:
+The most straightforward way to run the tests is by using the `npm test` command in your terminal. However, `npm test` usually takes a long time to run simply because of the large number of test cases p5.js has. We don’t need to run `npm test` over and over after each change. As soon as we save our code, we can see in the browser or terminal whether the tests pass or not.
 
-- Use `npx vitest --watch` to re-run unit + visual tests on every save to p5.js source files. This will save you from having to manually run tests whenever you are making frequent changes to the codebase.
-- You can mark certain test suites to be skipped or be the only suite that is run with the `.skip` and `.only` syntax.
+- You can also mark certain test suites to be skipped or be the only suite that is run with the `.skip` and `.only` syntax.
 
   ```js
   // This test suite will not run
@@ -199,7 +204,11 @@ The most straightforward way to run the tests is by using the `npm test` command
   });
   ```
 
-- Run `npx vitest` and open the URL Vitest prints (e.g. http://localhost:63315). This can be useful if you want to use a debugger in the middle of a test case or if you want to log complex objects. If you want to filter tests by the name of the test case, you can add a search term after a `?grep=` URL parameter, e.g.: [`http://127.0.0.1:9001/test/test.html?grep=framebuffer`](http://127.0.0.1:9001/test/test.html?grep=framebuffer)
+- When you run `npm test`, Vitest launches two browser windows. The first window (usually at http://localhost:63315) renders and executes all unit and visual tests; it provides a built‐in interface where you can click on filters (for failed, skipped, passed tests, etc.) to narrow down the results. The layout in this window is self-explanatory. Each test suite and spec is listed with its status, and you can easily expand or collapse sections to see details, rerun individual tests, or inspect error messages. 
+
+- The second window hosts Vitest’s DevTools/BiDi control channel, where you’ll see raw JSON frames exchanged between Vitest and the browser. That second window isn’t an extra test suite, it simply facilitates communication and result reporting, so you can safely ignore it unless you’re debugging Vitest’s runner itself.
+
+
 
 
 ## Visual tests
@@ -221,7 +230,7 @@ No manual registration necessary. Any file placed in `test/unit/visual/cases` is
 
 When you add a new test, running `npm test` will generate new screenshots for any visual tests that do not yet have them. Those screenshots will then be used as a reference the next time tests run to make sure the sketch looks the same. If a test intentionally needs to look different, you can delete the folder matching the test name in the `test/unit/visual/screenshots` folder, and then re-run `npm test` to generate a new one.
 
-Run `npx vitest --ui --browser` to open Vitest’s interactive UI.
+Running `npm test` launches Vitest’s interactive UI at http://localhost:63315, where you can view the list of all test cases including visual tests as well. 
 In a continuous integration (CI) environment, optimizing test speed is essential. It is advantageous to keep the code concise, avoid unnecessary frames, minimize canvas size, and load assets only when essential for the specific functionality under test.
 To address scenarios involving operations like asynchronous 3D model rendering, consider returning a promise that resolves upon completing all the necessary tests, ensuring efficiency in your visual testing approach. Here's an example of how you can asynchronous 3D model rendering in your visual tests:
 
