@@ -286,7 +286,8 @@ function generateDeclarationFile(items, organizedData) {
             params: (entry.params || []).map(param => ({
               name: param.name,
               type: generateTypeFromTag(param),
-              optional: param.type?.type === 'OptionalType'
+              optional: param.type?.type === 'OptionalType',
+              rest: param.type?.type === 'RestType'
             })),
             module,
             submodule,
@@ -307,7 +308,8 @@ function generateDeclarationFile(items, organizedData) {
               params: (entry.params || []).map(param => ({
                 name: param.name,
                 type: generateTypeFromTag(param),
-                optional: param.type?.type === 'OptionalType'
+                optional: param.type?.type === 'OptionalType',
+                rest: param.type?.type === 'RestType'
               })),
               returnType: entry.returns?.[0] ? generateTypeFromTag(entry.returns[0]) : 'void',
               module,
@@ -423,7 +425,7 @@ export function generateTypeFromTag(param) {
 
     let type = param.type;
     let prefix = '';
-    const isOptional = param.type?.type === 'OptionalType';
+    const isOptional = param.optional || param.type?.type === 'OptionalType';
     if (typeof type === 'string') {
       type = normalizeTypeName(type);
     } else if (param.type?.type) {
@@ -432,7 +434,7 @@ export function generateTypeFromTag(param) {
       type = 'any';
     }
 
-    if (param.type?.type === 'RestType') {
+    if (param.rest || param.type?.type === 'RestType') {
       prefix = '...';
     }
 
