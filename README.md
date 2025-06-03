@@ -1,4 +1,5 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
+[![CodeQl](https://github.com/processing/p5.js/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/processing/p5.js/actions/workflows/github-code-scanning/codeql)
 [![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449)](#contributors)
 [![Total Downloads](https://img.shields.io/npm/dt/p5)](https://www.npmjs.com/package/p5)
 
