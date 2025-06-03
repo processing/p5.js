@@ -40,7 +40,7 @@ An open source ethos includes [accessibility, education, collaboration, transpar
 
 1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
 2. Helping to **facilitate feature discussions** and resolve technical disagreements
-3. Suporting **releases** of the p5.js software through bug reporting, bug fixing, feature completion
+3. Suporting releases of the p5.js software through **supporting** bug fixing and feature completion
 
 The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
 
