@@ -39,8 +39,8 @@ Whether you are new to p5.js contribution, are already active on the p5.js GitHu
 An open source ethos includes [accessibility, education, collaboration, transparency, and agency](https://www.opensourceethos.net/). To live and practice these values while we write code together needs a lot of community care. These are the community care practices that are part of our definition of stewardship:
 
 1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
-2. Helping to **facilitate feature discussions** and resolve technical disagreements
-3. Suporting releases of the p5.js software through **supporting** bug fixing and feature completion
+2. Helping to **facilitate feature discussions** and resolve technical disagreements. For example, this means making connections to other past discussion, or offering input from prior relevant experience. Suggesting features or working on them is contribution, rather than stewardship.
+3. Participating in releases of the p5.js software through **supporting** bug fixing and feature completion. For example, this means guiding other contributors and reviewing their PRs. Fixing bugs is contribution, rather than stewardship.
 
 The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
 
@@ -59,11 +59,11 @@ As a steward, we hope that you regularly chime in on code reviews on Issues or P
 
 There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
 
-- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader suport via API like `describe(..)` as well as accessibility support on the reference website
+- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader support via API like `describe(..)` as well as accessibility support on the reference website
 - **Core**: Refers to core p5.js API, including rendering and environment
-- **DevOps**: Refers to build process, unit testing,
+- **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
 - **Documentation**: includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
-- i18n (Internationalization / **Translation**): Includes writing and reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
+- i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
 - **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
 - **Color**: Includes Color, ColorMode, accessibility improvements around color usage, colro in 2D and 3D, and so on
 - **Typography**: Refers to all topics on handling text and font
