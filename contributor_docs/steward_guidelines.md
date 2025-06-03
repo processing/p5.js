@@ -49,7 +49,7 @@ Everyone is invited to help steward the community when you can! We are happy to 
 1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
 2. Maintainers are also able to merge PRs and admin other parts of the codebase.
 
-Stewards sit in-between: they can make Issues, PRs, Comments, and Code Reviews, but when they are stewarding a particular area, they can also be tagged by other contributors to help with discussion and review.
+Stewards can also be contributors: they can make Issues and PRs as contributors, while they also take on responsibility, when they are stewarding a particular area, to comment on issues and do code reviews, especially when tagged by other contributors to help with discussion and review.
 
 As a contributor, you can check the current stewards in the p5.js repository's README file and tag relevant stewards - but please be mindful of our contributor guidelines, which emphasize patience and mindfulness that most of the technical work on an open-source project is volunteer.
 
