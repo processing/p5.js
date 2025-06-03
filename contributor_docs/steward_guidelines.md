@@ -2,11 +2,15 @@
 
 # Steward Guidelines
 
-Whether you have just joined us as a steward, are a seasoned maintainer of p5.js, or are somewhere in between, this guide contains information as well as tips and tricks that will help you effectively contribute to p5.js. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, this guide contains information about p5.js stewardship. If you are not sure what to expect from stewards, or if you considering how to volunteer or get started as a steward, read on!
 
 
 ## Table of Contents
 
+- [Stewardship]
+  - [Community Care](#community-care)
+  - [Areas](#areas)
+  - [Becoming a Steward](#becoming-a-steward)
 - [Issues](#issues)
   - [Bug report](#bug-report)
   - [Feature request](#feature-request)
@@ -28,6 +32,59 @@ Whether you have just joined us as a steward, are a seasoned maintainer of p5.js
 
 ---
 
+## Stewardship
+
+### Community Care
+
+An open source ethos includes [accessibility, education, collaboration, transparency, and agency](https://www.opensourceethos.net/). To live and practice these values while we write code together needs a lot of community care. These are the community care practices that are part of our definition of stewardship:
+
+1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
+2. Helping to **facilitate feature discussions** and resolve technical disagreements
+3. Suporting **releases** of the p5.js software through bug reporting, bug fixing, feature completion
+
+The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+
+Everyone is invited to help steward the community when you can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
+
+1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
+2. Maintainers are also able to merge PRs and admin other parts of the codebase.
+
+Stewards sit in-between: they can make Issues, PRs, Comments, and Code Reviews, but when they are stewarding a particular area, they can also be tagged by other contributors to help with discussion and review.
+
+As a contributor, you can check the current stewards in the p5.js repository's README file and tag relevant stewards - but please be mindful of our contributor guidelines, which emphasize patience and mindfulness that most of the technical work on an open-source project is volunteer.
+
+As a steward, we hope that you regularly chime in on code reviews on Issues or PRs that you did not make, if they are in your area and if you are able to provide helpful guidance!
+
+### Areas
+
+There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
+
+- Accessibility: This area specifically refers to digital and web accessibility, including, for example, screen reader suport via API like `describe(..)` as well as accessibility support on the reference website
+- Core: Refers to core p5.js API, including rendering and environment
+- DevOps: Refers to build process, unit testing,
+- Documentation: includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- i18n (Internationalization): Includes writing and reviewing translations, specifically for the supported languages on the reference website (`es`, `hi`, `ko`, `zh`)
+- Graphics: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- Color: Includes Color, ColorMode, accessibility improvements around color usage, colro in 2D and 3D, and so on
+- Typography: Refers to all topics on handling text and font
+- Math: Includes both external Math API and internal performance improvements
+- Shapes: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
+- Maintainers: this is not an area, but rather the group of contributors who have the ability to merge PRs
+- p5.sound.js: The [new p5.sound.js](https://github.com/processing/p5.sound.js) addon library
+- p5.js-website: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+
+These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
+
+### Becoming a Steward
+
+There are two ways to become a steward:
+
+1. Nomination by maintainers or other stewards - this can happen in conversation over Discord or GitHub, and a maintainer may reach out to you
+2. Application by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
+
+To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor (e.g., 2.1.0 or 1.11.0 - when the middle number changes) or major releases (e.g., 2.0 - when the leftmsot number changes). This means supporting other contributors through discussion or code review. 
+
+To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
 
 ## Issues
 
