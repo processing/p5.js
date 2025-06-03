@@ -7,7 +7,7 @@ Whether you are new to p5.js contribution, are already active on the p5.js GitHu
 
 ## Table of Contents
 
-- [Stewardship]
+- [Stewardship](#stewardship)
   - [Community Care](#community-care)
   - [Areas](#areas)
   - [Becoming a Steward](#becoming-a-steward)
@@ -59,19 +59,19 @@ As a steward, we hope that you regularly chime in on code reviews on Issues or P
 
 There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
 
-- Accessibility: This area specifically refers to digital and web accessibility, including, for example, screen reader suport via API like `describe(..)` as well as accessibility support on the reference website
-- Core: Refers to core p5.js API, including rendering and environment
-- DevOps: Refers to build process, unit testing,
-- Documentation: includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
-- i18n (Internationalization): Includes writing and reviewing translations, specifically for the supported languages on the reference website (`es`, `hi`, `ko`, `zh`)
-- Graphics: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
-- Color: Includes Color, ColorMode, accessibility improvements around color usage, colro in 2D and 3D, and so on
-- Typography: Refers to all topics on handling text and font
-- Math: Includes both external Math API and internal performance improvements
-- Shapes: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
-- Maintainers: this is not an area, but rather the group of contributors who have the ability to merge PRs
-- p5.sound.js: The [new p5.sound.js](https://github.com/processing/p5.sound.js) addon library
-- p5.js-website: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader suport via API like `describe(..)` as well as accessibility support on the reference website
+- **Core**: Refers to core p5.js API, including rendering and environment
+- **DevOps**: Refers to build process, unit testing,
+- **Documentation**: includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- i18n (Internationalization / **Translation**): Includes writing and reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Includes Color, ColorMode, accessibility improvements around color usage, colro in 2D and 3D, and so on
+- **Typography**: Refers to all topics on handling text and font
+- **Math**: Includes both external Math API and internal performance improvements
+- **Shapes**: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
+- **Maintainers**: This group can merge PRs
+- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) addon library
+- **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
 
 These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
 
@@ -79,12 +79,10 @@ These focus areas may change over time depending on the needs of the project - s
 
 There are two ways to become a steward:
 
-1. Nomination by maintainers or other stewards - this can happen in conversation over Discord or GitHub, and a maintainer may reach out to you
-2. Application by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
+1. _Nomination_ by maintainers or other stewards, such as in conversation over Discord, Discourse, or GitHub.
+2. _Application_ by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
 
-To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor (e.g., 2.1.0 or 1.11.0 - when the middle number changes) or major releases (e.g., 2.0 - when the leftmsot number changes). This means supporting other contributors through discussion or code review. 
-
-To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
+To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor (e.g., 2.1.0 or 1.11.0 - when the middle number changes). These are not as frequent as patches (e.g., 2.0.3 to 2.0.4 - when the rightmost number changes), and in practice this means that stewards are expected to be active every 4-6 months or so, supporting other contributors through discussion or code review - not necessarily writing code. To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
 
 ## Issues
 
