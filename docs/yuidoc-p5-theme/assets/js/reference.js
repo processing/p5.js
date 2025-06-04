@@ -1317,7 +1317,7 @@ define('typeahead',[], function() {
             wordsOnly: false,
             caseSensitive: false
         };
-        return function hightlight(o) {
+        return function highlight(o) {
             var regex;
             o = _.mixin({}, defaults, o);
             if (!o.node || !o.pattern) {
@@ -1325,8 +1325,8 @@ define('typeahead',[], function() {
             }
             o.pattern = _.isArray(o.pattern) ? o.pattern : [ o.pattern ];
             regex = getRegex(o.pattern, o.caseSensitive, o.wordsOnly);
-            traverse(o.node, hightlightTextNode);
-            function hightlightTextNode(textNode) {
+            traverse(o.node, highlightTextNode);
+            function highlightTextNode(textNode) {
                 var match, patternNode;
                 if (match = regex.exec(textNode.data)) {
                     wrapperNode = doc.createElement(o.tagName);
@@ -1338,14 +1338,14 @@ define('typeahead',[], function() {
                 }
                 return !!match;
             }
-            function traverse(el, hightlightTextNode) {
+            function traverse(el, highlightTextNode) {
                 var childNode, TEXT_NODE_TYPE = 3;
                 for (var i = 0; i < el.childNodes.length; i++) {
                     childNode = el.childNodes[i];
                     if (childNode.nodeType === TEXT_NODE_TYPE) {
-                        i += hightlightTextNode(childNode) ? 1 : 0;
+                        i += highlightTextNode(childNode) ? 1 : 0;
                     } else {
-                        traverse(childNode, hightlightTextNode);
+                        traverse(childNode, highlightTextNode);
                     }
                 }
             }
@@ -3104,7 +3104,7 @@ var prettyPrint;
     * recognized.
     *
     * Shortcut is an optional string of characters, any of which, if the first
-    * character, gurantee that this pattern and only this pattern matches.
+    * character, guarantee that this pattern and only this pattern matches.
     *
     * @param {Array} shortcutStylePatterns patterns that always start with
     *   a known character.  Must have a shortcut string.
@@ -3387,12 +3387,12 @@ var prettyPrint;
       // preprocessor directives.
 
       // This definition of punctuation does not include # in the list of
-      // follow-on exclusions, so # will not be broken before if preceeded
+      // follow-on exclusions, so # will not be broken before if preceded
       // by a punctuation character.  We could try to exclude # after
       // [|&;<>] but that doesn't seem to cause many major problems.
       // If that does turn out to be a problem, we should change the below
       // when hc is truthy to include # in the run of punctuation characters
-      // only when not followint [|&;<>].
+      // only when not following [|&;<>].
       '^.[^\\s\\w.$@\'"`/\\\\]*';
     if (options['regexLiterals']) {
       punctuation += '(?!\s*\/)';
@@ -4546,7 +4546,7 @@ define('pageView',[
   'libraryView'
 ], function(App, searchView, listView, itemView, menuView, libraryView) {
 
-  // Store the original title parts so we can substitue different endings.
+  // Store the original title parts so we can substitute different endings.
   var _originalDocumentTitle = window.document.title;
 
   var pageView = Backbone.View.extend({
