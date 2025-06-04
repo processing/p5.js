@@ -35,7 +35,7 @@ function draw() {
   //drawEllipseCanvas();
 }
 
-// Addtional drawing functions.
+// Additional drawing functions.
 function drawEllipseCanvas() {
   background(120, 180, 200);
   ellipse(width / 2, height / 2, 100, 100);
