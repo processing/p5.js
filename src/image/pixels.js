@@ -1083,7 +1083,7 @@ p5.prototype.loadPixels = function(...args) {
  *   // Update the canvas.
  *   updatePixels();
  *
- *   describe('A horiztonal color gradient from black to white.');
+ *   describe('A horizontal color gradient from black to white.');
  * }
  * </code>
  * </div>
