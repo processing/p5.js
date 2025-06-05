@@ -11,6 +11,7 @@ Whether you are new to p5.js contribution, are already active on the p5.js GitHu
   - [Community Care](#community-care)
   - [Areas](#areas)
   - [Becoming a Steward](#becoming-a-steward)
+  - [Getting Started with Stewardship](#getting-started-with-stewardship)
 - [Issues](#issues)
   - [Bug report](#bug-report)
   - [Feature request](#feature-request)
@@ -83,6 +84,12 @@ There are two ways to become a steward:
 2. _Application_ by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
 
 To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor releases (e.g., 2.1.0 or 1.11.0 - when the middle number changes). These are not as frequent as patches (e.g., 2.0.3 to 2.0.4 - when the rightmost number changes), and in practice this means that stewards are expected to be active every 4-6 months or so, supporting other contributors through discussion or code review - not necessarily writing code. To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
+
+### Getting Started with Stewardship
+
+1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the the p5.js [access statement](access.md) as a steward.
+2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
+3. Join the [p5.js Discord](https://discord.com/invite/SHQ8dH25r9)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
 
 ## Issues
 
