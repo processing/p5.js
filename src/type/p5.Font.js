@@ -950,6 +950,9 @@ async function create(pInst, name, path, descriptors, rawFont) {
   // add it to the document
   document.fonts.add(face);
 
+  // ensure the font is ready to be rendered
+  await document.fonts.ready;
+
   // return a new p5.Font
   return new Font(pInst, face, name, path, rawFont);
 }
