@@ -2,7 +2,7 @@
 
 # Steward Guidelines
 
-Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, this guide contains information about p5.js stewardship. If you are not sure what to expect from stewards, or if you considering how to volunteer or get started as a steward, read on!
+Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, you'll find what you need in this guide to p5.js stewardship. If you are not sure what to expect from stewards, or if you are considering how to volunteer or get started as a steward, read on!
 
 
 ## Table of Contents
@@ -44,7 +44,7 @@ An open source ethos includes [accessibility, education, collaboration, transpar
 
 The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
 
-Everyone is invited to help steward the community when you can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
+Everyone is invited to help steward the community when they can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
 
 1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
 2. Maintainers are also able to merge PRs and admin other parts of the codebase.
@@ -62,15 +62,15 @@ There are different areas of work that stewards can be responsible for. These ar
 - **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader support via API like `describe(..)` as well as accessibility support on the reference website
 - **Core**: Refers to core p5.js API, including rendering and environment
 - **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
-- **Documentation**: includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
 - i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
 - **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
-- **Color**: Includes Color, ColorMode, accessibility improvements around color usage, colro in 2D and 3D, and so on
+- **Color**: Includes Color, ColorMode, accessibility improvements around color usage
 - **Typography**: Refers to all topics on handling text and font
 - **Math**: Includes both external Math API and internal performance improvements
 - **Shapes**: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
 - **Maintainers**: This group can merge PRs
-- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) addon library
+- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
 - **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
 
 These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
