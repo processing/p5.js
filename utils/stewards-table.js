@@ -5,16 +5,12 @@ const yamlData = fs.readFileSync('stewards.yml', 'utf8');
 const parsed = yaml.load(yamlData);
 
 const areaMap = {};
-const maintainers = new Set();
 const supportedi18n = new Set(['hi', 'ko', 'zh', 'es']);
 
 
 for (const [user, roles] of Object.entries(parsed)) {
   roles.forEach(role => {
     if (typeof role === 'string') {
-      if (role.toLowerCase() === 'maintainers') {
-        maintainers.add(user);
-      }
       areaMap[role] = areaMap[role] || new Set();
       areaMap[role].add(`${user}`);
     } else {
