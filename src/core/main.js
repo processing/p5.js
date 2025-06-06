@@ -35,6 +35,7 @@ class p5 {
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
   static instance = null;
+  static sketchCount = 0;
   static lifecycleHooks = {
     presetup: [],
     postsetup: [],
