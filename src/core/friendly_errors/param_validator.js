@@ -415,6 +415,7 @@ function validateParams(p5, fn, lifecycles) {
           }
 
           if (issue.code === 'invalid_type') {
+            actualType = issue.message.split(', received ')[1]
             expectedTypes.add(issue.expected);
           }
           // The case for constants. Since we don't want to print out the actual
@@ -426,6 +427,7 @@ function validateParams(p5, fn, lifecycles) {
           } else if (issue.code === 'custom') {
             const match = issue.message.match(/Input not instance of (\w+)/);
             if (match) expectedTypes.add(match[1]);
+            actualType = undefined
           }
         }
       });
@@ -457,7 +459,7 @@ function validateParams(p5, fn, lifecycles) {
         break;
       }
       case 'invalid_type': {
-        message += buildTypeMismatchMessage(currentError.message, currentError.expected, currentError.path.join('.'));
+        message += buildTypeMismatchMessage(currentError.message.split(', received ')[1], currentError.expected, currentError.path.join('.'));
         break;
       }
       case 'too_big': {
