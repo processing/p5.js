@@ -30,7 +30,7 @@ class Graphics {
     const r = renderer || constants.P2D;
 
     this._pInst = pInst;
-    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
+    this._renderer = new renderers[r](this, w, h, false, canvas);
 
     this._initializeInstanceVariables(this);
 
