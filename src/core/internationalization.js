@@ -1,5 +1,7 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { version } from '../../package.json';
+
 
 let fallbackResources, languages;
 if (typeof IS_MINIFIED === 'undefined') {
@@ -127,6 +129,7 @@ export let translator = (key, values) => {
  * Set up our translation function, with loaded languages
  */
 export const initialize = () => {
+  let latestMinorVersionPath = 'https://cdn.jsdelivr.net/npm/p5@' + version.replace(/^(\d+\.\d+)\.\d+.*$/, '$1');
   let i18init = i18next
     .use(LanguageDetector)
     .use(FetchResources)
@@ -149,8 +152,7 @@ export const initialize = () => {
       },
       backend: {
         fallback: 'en',
-        loadPath:
-          'https://cdn.jsdelivr.net/npm/p5/translations/{{lng}}/{{ns}}.json'
+        loadPath: latestMinorVersionPath + '/translations/{{lng}}/{{ns}}.json'
       },
       partialBundledLanguages: true,
       resources: fallbackResources
