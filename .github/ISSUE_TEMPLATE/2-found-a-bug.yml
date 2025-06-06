@@ -19,11 +19,11 @@ body:
         - label: Math
         - label: Typography
         - label: Utilities
+        - label: p5.strands
         - label: WebGL
-        - label: Build process
-        - label: Unit testing
-        - label: Internationalization
-        - label: Friendly errors
+        - label: DevOps, Build process, Unit testing
+        - label: Internationalization (i18n)
+        - label: Friendly Errors
         - label: Other (specify if possible)
 - type: input
   attributes:
