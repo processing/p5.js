@@ -798,7 +798,7 @@ p5.Image = class {
    *   // Display the image.
    *   image(img, 17, 17);
    *
-   *   describe('A square with a horiztonal color gradient from black to white drawn on a gray background.');
+   *   describe('A square with a horizontal color gradient from black to white drawn on a gray background.');
    * }
    * </code>
    * </div>

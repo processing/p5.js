@@ -53,7 +53,7 @@ The introduction of es6 classes into the JS world , was a great relief for devel
 
 when it comes to AUDIO GRAPHS , where one node is connected to so many other nodes and inherit property from its parent nodes , a more robust and cleaner  implementation of Nodes was required and ES6 classes rocked the way  .
 
-Following PR REVAMPED the p5.sound's   AUDIO NODES from ``funtion syntax`` to  ``ES6 classes syntax``
+Following PR REVAMPED the p5.sound's   AUDIO NODES from ``function syntax`` to  ``ES6 classes syntax``
 
 [#502](https://github.com/processing/p5.js-sound/pull/502)
 [#503](https://github.com/processing/p5.js-sound/pull/503)

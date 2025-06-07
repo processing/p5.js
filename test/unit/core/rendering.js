@@ -174,14 +174,14 @@ suite('Rendering', function() {
         webglMethod + '() should throw a WEBGL assertion Error',
         (function(webglMethod) {
           return function() {
-            var validateParamters = myp5.validateParameters;
+            var validateParameters = myp5.validateParameters;
             myp5.validateParameters = false;
             try {
               expect(function() {
                 myp5[webglMethod].call(myp5);
               }).to.throw(Error, /is only supported in WEBGL mode/);
             } finally {
-              myp5.validateParameters = validateParamters;
+              myp5.validateParameters = validateParameters;
             }
           };
         })(webglMethod)

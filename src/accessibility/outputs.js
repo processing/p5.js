@@ -461,7 +461,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (f === 'line') {
     //make color stroke
     include.color = this.ingredients.colors.stroke;
-    //get lenght
+    //get length
     include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
     //get position of end points
     let p1 = this._getPos(args[0], [1]);

@@ -1196,7 +1196,7 @@ p5.Table = class {
  *
  * function preload() {
  *   // table is comma separated value "CSV"
- *   // and has specifiying header for column labels
+ *   // and has specifying header for column labels
  *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
@@ -1303,7 +1303,7 @@ p5.Table = class {
  *
  * function preload() {
  *   // table is comma separated value "CSV"
- *   // and has specifiying header for column labels
+ *   // and has specifying header for column labels
  *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *

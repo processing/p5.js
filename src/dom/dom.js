@@ -2023,7 +2023,7 @@ p5.prototype.createInput = function (value = '', type = 'text') {
  *     let y = i * 20;
  *
  *     // Draw the image.
- *     image(img, 0, y, 100, 100);
+ *     image(images[i], 0, y, 100, 100);
  *   }
  *
  *   describe('A gray square with a file input beneath it. If the user selects multiple image files to load, they are displayed on the square.');
@@ -2082,15 +2082,6 @@ function createMedia(pInst, type, src, callback) {
     elt.appendChild(sourceEl);
   }
 
-  // If callback is provided, attach to element
-  if (typeof callback === 'function') {
-    const callbackHandler = () => {
-      callback();
-      elt.removeEventListener('canplaythrough', callbackHandler);
-    };
-    elt.addEventListener('canplaythrough', callbackHandler);
-  }
-
   const mediaEl = addElement(elt, pInst, true);
   mediaEl.loadedmetadata = false;
 
@@ -2108,6 +2099,15 @@ function createMedia(pInst, type, src, callback) {
     }
     mediaEl.loadedmetadata = true;
   });
+
+  // If callback is provided, attach to element
+  if (typeof callback === 'function') {
+    const callbackHandler = () => {
+      callback(mediaEl);
+      elt.removeEventListener('canplaythrough', callbackHandler);
+    };
+    elt.addEventListener('canplaythrough', callbackHandler);
+  }
 
   return mediaEl;
 }

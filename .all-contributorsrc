@@ -6851,6 +6851,69 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "irina-wang",
+      "name": "Irina Mengqi Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59970384?v=4",
+      "profile": "https://github.com/irina-wang",
+      "contributions": [
+        "example"
+      ]
+    },
+    {
+      "login": "jennybkowalski",
+      "name": "Jenny Biette Kowalski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11235412?v=4",
+      "profile": "http://jennybkowalski.com",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "Wlaith",
+      "name": "Laith Alwazani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98265005?v=4",
+      "profile": "https://github.com/wlaith",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "jep-a",
+      "name": "jep",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20326207?v=4",
+      "profile": "https://github.com/jep-a",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "dpanshug",
+      "name": "Dipanshu Gupta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/97534722?v=4",
+      "profile": "https://github.com/dpanshug",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "sukrucildirr",
+      "name": "sukrucildirr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32969880?v=4",
+      "profile": "https://github.com/sukrucildirr",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "andrewmcwhae",
+      "name": "Andrew McWhae",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8450380?v=4",
+      "profile": "https://linktr.ee/andrewmcwhae",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

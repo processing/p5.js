@@ -41,7 +41,7 @@ suite('Environment', function() {
             frames += 1;
             assert.equal(myp5.frameCount, frames);
             if (frames === start + 5) {
-              // Test 5 seperate redraws
+              // Test 5 separate redraws
               myp5.noLoop();
               setTimeout(myp5.redraw.bind(myp5), 10);
               setTimeout(myp5.redraw.bind(myp5), 20);

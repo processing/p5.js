@@ -37,7 +37,7 @@ module.exports = function(grunt) {
       if (isDev) {
         globalVars['P5_DEV_BUILD'] = () => true;
       }
-      // Invoke Browserify programatically to bundle the code
+      // Invoke Browserify programmatically to bundle the code
       let browserified = browserify(srcFilePath, {
         standalone: 'p5',
         insertGlobalVars: globalVars
