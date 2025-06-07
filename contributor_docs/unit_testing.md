@@ -229,7 +229,7 @@ visualTest('2D objects maintain correct size', function(p5, screenshot) {
 });
 ```
 
-No manual registration necessary. Any file placed in `test/unit/visual/cases` is auto-discovered by Vitest.
+To add a new test file, place it into `test/unit/visual/cases`. This will be auto-discovered by Vitest - no manual registration needed.
 
 When you add a new test, running `npm test` will generate new screenshots for any visual tests that do not yet have them. Those screenshots will then be used as a reference the next time tests run to make sure the sketch looks the same. If a test intentionally needs to look different, you can delete the folder matching the test name in the `test/unit/visual/screenshots` folder, and then re-run `npm test` to generate a new one.
 
