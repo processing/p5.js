@@ -1638,5 +1638,6 @@ fn.lerp = function (...args) {
 export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
-  p5.registerAddon(shadergenerator)
+  const fn = {};
+  p5.registerAddon((p5) => shadergenerator(p5, fn));
 }
