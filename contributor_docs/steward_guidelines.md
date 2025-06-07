@@ -175,55 +175,68 @@ Dependabot PRs are usually only visible to repo admins so if this does not apply
 
 This section will not cover the general build setup nor commands but rather details about what's happening behind the scenes. Please see the [contributor’s guidelines](contributor_guidelines.md#working-on-p5js-codebase) for more detailed build info.
 
-The Gruntfile.js file contains the main build definitions for p5.js. Among the different tools used to build the library and documentation includes but not limited to Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify, and Mocha. It may be helpful for us to start with the `default` task and work backward from there. It may be helpful at this point to open up the Gruntfile.js document while going through the explainer below.
+Starting with p5.js version 2.0, the project no longer uses Grunt for task automation. Instead, the build and test processes are handled using modern tools like npm scripts, ESLint, and [Vitest](https://vitest.dev/).
 
 
 ### Main build task
 
+To run lint checks and unit tests, simply run:
+
 ```
-grunt.registerTask('default', ['lint', 'test']);
+npm test
 ```
 
-When we run `grunt` or the npm script `npm test`, we run the default task consisting of `lint` then `test`.
-
+This command will run ESLint to check code style and then execute unit and visual tests using Vitest.
 
 #### `lint` Task
 
+In p5.js 2.0, ESLint is used directly via npm scripts for all linting tasks.
+
+To run lint checks on the codebase:
+
 ```
-grunt.registerTask('lint', ['lint:source', 'lint:samples']);
+npm run lint
 ```
 
-The `lint` task consists of two sub tasks: `lint:source` and `lint:samples`. `lint:source` is further subdivided into three more sub tasks `eslint:build`, `eslint:source`, and `eslint:test`, which uses ESLint to check the build scripts, the source code, and the test scripts.
+This checks the source files, build scripts, test files, and documentation examples using ESLint.
 
-The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively.
+If you only want to run linting for specific files or directories, you can use ESLint directly:
 
-Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [../tasks/build/eslint-samples.js](../tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+```
+npx eslint src/
+npx eslint test/
+```
 
+There is no separate sample linter or YUIDoc-based pipeline anymore, as documentation is now managed through simpler, modern tooling.
 
 #### `test` Task
 
-```js
-grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
-]);
+In p5.js 2.0, the testing system no longer uses Mocha via Grunt. Instead, tests are run using [Vitest](https://vitest.dev/) through npm scripts.
+
+To run the full test suite (unit and visual tests), use:
+
+```
+npm test
 ```
 
-First let's look at the `build` task under `test`.
+This command performs:
+- Linting via ESLint
+- Unit tests using Vitest
+- Visual tests (render-based snapshots)
 
-```js
-grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
-]);
+Tests are located in the `test/unit` folder, organized to mirror the `src` directory structure. For example, tests for `src/color/p5.Color.js` live in `test/unit/color/p5.Color.js`.
+
+To run tests interactively in a browser-like environment (useful for debugging), run:
+
+```
+npx vitest --ui
 ```
 
-Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all have similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Code coverage is also supported using Vitest's built-in tools. Run:
+
+```
+npx vitest run --coverage
+```
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
@@ -266,21 +279,24 @@ And that covers the default task in the Gruntfile.js configuration!
 
 ### Miscellaneous tasks
 
-All of the steps can be run directly with `npx grunt [step]`. There are also a few tasks that are not covered above but could be useful in certain cases.
+All of the steps can now be run using npm scripts or directly with Vitest. The Grunt build system and tasks have been removed in the dev-2.0 branch.
+
+You can use the equivalent npm script or local development commands (please refer to the package.json scripts section).
+
+For testing, run:
 
 ```
-grunt yui:dev
+npm test
 ```
 
-This task will run the documentation and library builds described above, followed by spinning up a web server that serves a functionally similar version of the reference page you will find on the website on [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). It will then monitor the source code for changes and rebuild the documentation and library.
-
-`grunt` `yui:dev` is useful when you are working on the reference in the inline documentation because you don't have to move built files from the p5.js repository to a local p5.js-website repository and rebuild the website each time you make a change, and you can just preview your changes with this slightly simplified version of the reference in your browser. This way, you can also be more confident that the changes you made are likely to show up correctly on the website. Note that this is only meant for modifications to the inline documentation; changes to the reference page itself, including styling and layout, should be made and tested on the website repository.
+For running watchers, use:
 
 ```
-grunt watch
-grunt watch:main
-grunt watch:quick
+npm run watch
 ```
+
+Note: The previous `grunt yui:dev` task that served the documentation locally and watched for changes is replaced by modern tooling; please check the updated documentation or package.json for exact commands to serve and watch.
+
 
 The watch tasks will watch a series of files for changes and run associated tasks to build the reference or the library according to what files have changed. These tasks all do the same thing, with the only difference being the scope.
 
