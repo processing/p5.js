@@ -1655,6 +1655,54 @@ class RendererGL extends Renderer3D {
     this._applyBlendMode();
     return colors;
   }
+
+  //////////////////////////////////////////////
+  // Shader hooks
+  //////////////////////////////////////////////
+  fillHooks(shader, src, shaderType) {
+    const main = 'void main';
+    if (!src.includes(main)) return src;
+
+    let [preMain, postMain] = src.split(main);
+
+    let hooks = '';
+    let defines = '';
+    for (const key in shader.hooks.uniforms) {
+      hooks += `uniform ${key};\n`;
+    }
+    if (shader.hooks.declarations) {
+      hooks += shader.hooks.declarations + '\n';
+    }
+    if (shader.hooks[shaderType].declarations) {
+      hooks += shader.hooks[shaderType].declarations + '\n';
+    }
+    for (const hookDef in shader.hooks.helpers) {
+      hooks += `${hookDef}${shader.hooks.helpers[hookDef]}\n`;
+    }
+    for (const hookDef in shader.hooks[shaderType]) {
+      if (hookDef === 'declarations') continue;
+      const [hookType, hookName] = hookDef.split(' ');
+
+      // Add a #define so that if the shader wants to use preprocessor directives to
+      // optimize away the extra function calls in main, it can do so
+      if (shader.hooks.modified[shaderType][hookDef]) {
+        defines += '#define AUGMENTED_HOOK_' + hookName + '\n';
+      }
+
+      hooks +=
+        hookType + ' HOOK_' + hookName + shader.hooks[shaderType][hookDef] + '\n';
+    }
+
+    // Allow shaders to specify the location of hook #define statements. Normally these
+    // go after function definitions, but one might want to have them defined earlier
+    // in order to only conditionally make uniforms.
+    if (preMain.indexOf('#define HOOK_DEFINES') !== -1) {
+      preMain = preMain.replace('#define HOOK_DEFINES', '\n' + defines + '\n');
+      defines = '';
+    }
+
+    return preMain + '\n' + defines + hooks + main + postMain;
+  }
 }
 
 function rendererGL(p5, fn) {

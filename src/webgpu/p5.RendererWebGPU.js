@@ -1,6 +1,7 @@
 import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
+import { colorVertexShader, colorFragmentShader } from './shaders/color';
 
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
@@ -699,7 +700,7 @@ class RendererWebGPU extends Renderer3D {
     if (!mainMatch) throw new Error("Can't find `fn main` in vertex shader source");
     const inputType = mainMatch[1];
 
-    return this._parseStruct(shader._vertSrc, inputType);
+    return this._parseStruct(shader.vertSrc(), inputType);
   }
 
   getUniformMetadata(shader) {
@@ -714,7 +715,7 @@ class RendererWebGPU extends Renderer3D {
       throw new Error('Expected a uniform struct bound to @group(0) @binding(0)');
     }
     const structType = uniformVarMatch[2];
-    const uniforms = this._parseStruct(shader._vertSrc, structType);
+    const uniforms = this._parseStruct(shader.vertSrc(), structType);
 
     // Extract samplers from group bindings
     const samplers = [];
@@ -811,60 +812,25 @@ class RendererWebGPU extends Renderer3D {
 
   _getColorShader() {
     if (!this._defaultColorShader) {
-      this._defaultColorShader = new Shader(this, `
-        struct VertexInput {
-          @location(0) aPosition: vec3<f32>,
-          @location(1) aNormal: vec3<f32>,
-          @location(2) aTexCoord: vec2<f32>,
-          @location(3) aVertexColor: vec4<f32>,
-        };
-
-        struct VertexOutput {
-          @builtin(position) Position: vec4<f32>,
-          @location(0) vVertexNormal: vec3<f32>,
-          @location(1) vVertTexCoord: vec2<f32>,
-          @location(2) vColor: vec4<f32>,
-        };
-
-        struct Uniforms {
-          uModelViewMatrix: mat4x4<f32>,
-          uProjectionMatrix: mat4x4<f32>,
-          uNormalMatrix: mat3x3<f32>,
-          uMaterialColor: vec4<f32>,
-          uUseVertexColor: f32,
-        };
-
-        @group(0) @binding(0) var<uniform> uniforms: Uniforms;
-
-        @vertex
-        fn main(input: VertexInput) -> VertexOutput {
-          var output: VertexOutput;
-
-          let useVertexColor = (uniforms.uUseVertexColor != 0.0);
-          let color = select(uniforms.uMaterialColor, input.aVertexColor, useVertexColor);
-
-          let pos4 = vec4<f32>(input.aPosition, 1.0);
-          let worldPos = uniforms.uModelViewMatrix * pos4;
-          output.Position = uniforms.uProjectionMatrix * worldPos;
-
-          output.vVertexNormal = normalize(uniforms.uNormalMatrix * input.aNormal);
-          output.vVertTexCoord = input.aTexCoord;
-          output.vColor = color;
-
-          return output;
+      this._defaultColorShader = new Shader(
+        this,
+        colorVertexShader,
+        colorFragmentShader,
+        {
+          vertex: {
+            "void beforeVertex": "() {}",
+            "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
+            "void afterVertex": "() {}",
+          },
+          fragment: {
+            "void beforeFragment": "() {}",
+            "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+            "void afterFragment": "() {}",
+          },
         }
-      `, `
-        struct FragmentInput {
-          @location(0) vVertexNormal: vec3<f32>,
-          @location(1) vVertTexCoord: vec2<f32>,
-          @location(2) vColor: vec4<f32>,
-        };
-
-        @fragment
-        fn main(input: FragmentInput) -> @location(0) vec4<f32> {
-          return vec4<f32>(input.vColor.rgb * input.vColor.a, input.vColor.a);
-        }
-      `)
+      );
     }
     return this._defaultColorShader;
   }
@@ -879,6 +845,84 @@ class RendererWebGPU extends Renderer3D {
 
   _applyStencilTestIfClipping() {
     // TODO
+  }
+
+  //////////////////////////////////////////////
+  // Shader hooks
+  //////////////////////////////////////////////
+  fillHooks(shader, src, shaderType) {
+    if (!src.includes('fn main')) return src;
+
+    // Apply some p5-specific preprocessing. WGSL doesn't have preprocessor
+    // statements, but some of our shaders might need it, so we add a lightweight
+    // way to add code if a hook is augmented. e.g.:
+    //   struct Uniforms {
+    //   // @p5 ifdef Vertex getWorldInputs
+    //     uModelMatrix: mat4,
+    //     uViewMatrix: mat4,
+    //   // @p5 endif
+    //   // @p5 ifndef Vertex getWorldInputs
+    //     uModelViewMatrix: mat4,
+    //   // @p5 endif
+    //   }
+    src = src.replace(
+      /\/\/ @p5 (ifdef|ifndef) (\w+)\s+(\w+)\n((?:(?!\/\/ @p5)(?:.|\n))*)\/\/ @p5 endif/g,
+      (_, condition, hookType, hookName, body) => {
+        const target = condition === 'ifdef';
+        if (!!shader.hooks.modified[shaderType][`${hookType} ${hookName}`] === target) {
+          return body;
+        } else {
+          return '';
+        }
+      }
+    );
+
+    let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment)\s*)?fn main)/);
+
+    let uniforms = '';
+    for (const key in shader.hooks.uniforms) {
+      const [type, name] = key.split(/\s+/);
+      uniforms += `${name}: ${type},\n`;
+    }
+    preMain = preMain.replace(/struct\s+Uniforms\s+\{/, `$&\n${uniforms}`);
+
+    let hooks = '';
+    let defines = '';
+    if (shader.hooks.declarations) {
+      hooks += shader.hooks.declarations + '\n';
+    }
+    if (shader.hooks[shaderType].declarations) {
+      hooks += shader.hooks[shaderType].declarations + '\n';
+    }
+    for (const hookDef in shader.hooks.helpers) {
+      const [hookType, hookName] = hookDef.split(' ');
+      const [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks.helpers[hookDef]);
+      if (hookType === 'void') {
+        hooks += `fn ${hookName}${params}${body}\n`;
+      } else {
+        hooks += `fn ${hookName}${params} -> ${hookType}${body}\n`;
+      }
+    }
+    for (const hookDef in shader.hooks[shaderType]) {
+      if (hookDef === 'declarations') continue;
+      const [hookType, hookName] = hookDef.split(' ');
+
+      // Add a const so that if the shader wants to
+      // optimize away the extra function calls in main, it can do so
+      defines += `const AUGMENTED_HOOK_${hookName} = ${
+        shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
+      };\n`;
+
+      const [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
+      if (hookType === 'void') {
+        hooks += `fn HOOK_${hookName}${params}${body}\n`;
+      } else {
+        hooks += `fn HOOK_${hookName}${params} -> ${hookType}${body}\n`;
+      }
+    }
+
+    console.log(preMain + '\n' + defines + hooks + main + postMain)
+    return preMain + '\n' + defines + hooks + main + postMain;
   }
 }
 

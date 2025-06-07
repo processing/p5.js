@@ -123,48 +123,7 @@ class Shader {
   }
 
   shaderSrc(src, shaderType) {
-    // TODO: handle WGSL
-    if (!src.includes('void main')) return src;
-    const main = 'void main';
-    let [preMain, postMain] = src.split(main);
-
-    let hooks = '';
-    let defines = '';
-    for (const key in this.hooks.uniforms) {
-      hooks += `uniform ${key};\n`;
-    }
-    if (this.hooks.declarations) {
-      hooks += this.hooks.declarations + '\n';
-    }
-    if (this.hooks[shaderType].declarations) {
-      hooks += this.hooks[shaderType].declarations + '\n';
-    }
-    for (const hookDef in this.hooks.helpers) {
-      hooks += `${hookDef}${this.hooks.helpers[hookDef]}\n`;
-    }
-    for (const hookDef in this.hooks[shaderType]) {
-      if (hookDef === 'declarations') continue;
-      const [hookType, hookName] = hookDef.split(' ');
-
-      // Add a #define so that if the shader wants to use preprocessor directives to
-      // optimize away the extra function calls in main, it can do so
-      if (this.hooks.modified[shaderType][hookDef]) {
-        defines += '#define AUGMENTED_HOOK_' + hookName + '\n';
-      }
-
-      hooks +=
-        hookType + ' HOOK_' + hookName + this.hooks[shaderType][hookDef] + '\n';
-    }
-
-    // Allow shaders to specify the location of hook #define statements. Normally these
-    // go after function definitions, but one might want to have them defined earlier
-    // in order to only conditionally make uniforms.
-    if (preMain.indexOf('#define HOOK_DEFINES') !== -1) {
-      preMain = preMain.replace('#define HOOK_DEFINES', '\n' + defines + '\n');
-      defines = '';
-    }
-
-    return preMain + '\n' + defines + hooks + main + postMain;
+    return this._renderer.fillHooks(this, src, shaderType);
   }
 
   /**
