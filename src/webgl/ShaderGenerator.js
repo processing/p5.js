@@ -9,6 +9,9 @@ import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
 function shadergenerator(p5, fn) {
+   if (!fn || typeof fn !== 'object') {
+    throw new Error("fn is not defined or is not an object. Ensure it is passed correctly to shadergenerator.");
+     
   let GLOBAL_SHADER;
   let BRANCH;
 
