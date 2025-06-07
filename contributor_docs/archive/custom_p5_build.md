@@ -10,29 +10,20 @@ This feature was suggested as a part of a proposal for Google Summer of Code 201
 
 ## Usage
 
-Currently, the usage is through invoking a Grunt task manually from the command line:
+
+p5.js has migrated to modern tooling. Use the following to build and test:
 
 ```sh
 git clone https://github.com/processing/p5.js.git
 cd p5.js
 npm ci
-npm run grunt
-npm run grunt combineModules:module_x:module_y
+npm run build      # builds the full p5.js bundle
+npm test           # runs linter and tests using Vitest
 ```
 
-Here, `module_n` refers to the name of the modules which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name as their folders in `/src` directory to work correctly. While `core` is included by default, `core/shape` needs to be included for shapes like line() and other core features to work.
+To include only selected modules in a custom build, refer to the CONTRIBUTING guide or module-specific documentation. Rollup or tree-shaking through ES modules may be used for advanced setups.
 
-The above usage example will likely output a `p5Custom.js` larger than the complete `p5.min.js` as the output is not minified using the `uglify` task.
-
-The recommended steps to reduce bundle size as much as possible are:
-
-```sh
-git clone https://github.com/processing/p5.js.git
-cd p5.js
-npm ci
-npm run grunt
-npm run grunt combineModules:min:module_x:module_y uglify
-```
+---
 
 ## Examples
 
