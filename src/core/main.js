@@ -657,9 +657,6 @@ class p5 {
       }
     };
 
-    // ensure correct reporting of window dimensions
-    this._updateWindowSize();
-
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
     // If the user has created a global setup or draw function,
@@ -699,6 +696,7 @@ class p5 {
       p5._checkForUserDefinedFunctions(this);
     }
 
+    // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
     // call any registered init functions
