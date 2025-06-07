@@ -188,6 +188,11 @@ Here are the conventions and best practices that p5.js uses for unit tests which
 
 The most straightforward way to run the tests is by using the `npm test` command in your terminal. However, `npm test` usually takes a long time to run simply because of the large number of test cases p5.js has. We don’t need to run `npm test` over and over after each change. As soon as we save our code, we can see in the browser or terminal whether the tests pass or not.
 
+This screenshot shows how the test executes on the website and in the terminal.
+
+<img src="./images/unit-visual-test.png" width="300" alt="Web test" /> | <img src="./images/unit-visual-test-terminal.png" width="250" alt="Terminal test" /> 
+
+
 - You can also mark certain test suites to be skipped or be the only suite that is run with the `.skip` and `.only` syntax.
 
   ```js
