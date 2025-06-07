@@ -8,6 +8,7 @@ import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
+const fn = {};
 function shadergenerator(p5, fn) {
    if (!fn || typeof fn !== 'object') {
     throw new Error("fn is not defined or is not an object. Ensure it is passed correctly to shadergenerator.");
@@ -1638,6 +1639,5 @@ fn.lerp = function (...args) {
 export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
-  const fn = {};
   p5.registerAddon((p5) => shadergenerator(p5, fn));
 }
