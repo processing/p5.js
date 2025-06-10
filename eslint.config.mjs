@@ -5,6 +5,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 
 import globals from 'globals';
 import js from '@eslint/js';
+import markdown from '@eslint/markdown';
 import stylistic from '@stylistic/eslint-plugin';
 
 const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
@@ -147,6 +148,7 @@ export default defineConfig([
     'node_modules/**',
     '.github/**',
     '.vscode/**',
+    'contributor_docs/archive/**',
     'contributor_docs/images/**',
     'dist/**',
     'lib/**',
@@ -208,7 +210,7 @@ export default defineConfig([
         'expect': false
       }
     }
-  }
+  },
   // @todo adjust globally ignored files
   // @todo depends on globals.d.ts
   // {
@@ -226,5 +228,29 @@ export default defineConfig([
   //     'no-undef': off,
   //     'no-unused-vars': off
   //   }
-  // }
+  // },
+  {
+    name: 'p5 contributor docs',
+    files: ['**/*.md'],
+    plugins: {
+      markdown
+    },
+    language: 'markdown/commonmark',
+    rules: {
+      'margkdown/fenced-code-language': off,
+      'markdown/heading-invrement': off,
+      'markdown/no-duplicate-definitions': warn,
+      // 'markdown/no-duplicate-headings': ["error", { checkSiblingsOnly: true }], // @todo waiting for @eslint/markdown@6.6.0
+      'markdown/no-empty-definitions': warn,
+      'markdown/no-empty-images': warn,
+      'markdown/no-empty-links': warn,
+      'markdown/no-html': off,
+      'markdown/no-invalid-label-refs': off,
+      'markdown/no-missing-atx-heading-space': warn,
+      'markdown/no-missing-label-refs': off, // @todo
+      'markdown/no-multiple-h1': off,
+      'markdown/require-alt-text': warn,
+      'markdown/table-column-count': warn
+    }
+  }
 ]);
