@@ -1,0 +1,41 @@
+name: Update Steward Table in README
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - stewards.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      - name: Run table generator
+        run: node utils/stewards-table.js
+        
+      - name: Reset all changes except README.md
+        run: |
+          git restore --staged .
+          git add README.md
+          git checkout -- .
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Update README table from stewards.yml"
+          branch: update-readme-table
+          title: 'chore: update README table from stewards.yml'
+          body: 'This PR updates the README.md table to reflect changes in stewards.yml.'
+          add: README.md
+          token: ${{ secrets.ACCESS_TOKEN }}

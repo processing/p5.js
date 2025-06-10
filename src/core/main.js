@@ -846,9 +846,11 @@ class p5 {
                 value: newValue,
                 writable: true
               });
-              log(
-                `You just changed the value of "${prop}", which was a p5 function. This could cause problems later if you're not careful.`
-              );
+              if (!p5.disableFriendlyErrors) {
+                log(
+                  `You just changed the value of "${prop}", which was a p5 function. This could cause problems later if you're not careful.`
+                );
+              }
             }
           });
         } catch (e) {
