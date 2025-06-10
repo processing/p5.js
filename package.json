@@ -14,14 +14,9 @@
     "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
   },
   "lint-staged": {
-    "Gruntfile.js": "eslint",
-    "docs/preprocessor.js": "eslint",
-    "utils/**/*.js": "eslint",
-    "tasks/**/*.js": "eslint",
-    "src/**/*.js": [
-      "eslint",
-      "node ./utils/sample-linter.mjs"
-    ]
+    "src/**/*.js": "eslint",
+    "test/**/*.js": "eslint",
+    "utils/**/*.{js,mjs}": "eslint"
   },
   "version": "2.0.3",
   "dependencies": {
