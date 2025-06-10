@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { version } from '../../package.json';
+import * as constants from './constants';
 
 
 let fallbackResources, languages;
@@ -129,7 +129,7 @@ export let translator = (key, values) => {
  * Set up our translation function, with loaded languages
  */
 export const initialize = () => {
-  let latestMinorVersionPath = 'https://cdn.jsdelivr.net/npm/p5@' + version.replace(/^(\d+\.\d+)\.\d+.*$/, '$1');
+  let latestMinorVersionPath = 'https://cdn.jsdelivr.net/npm/p5@' + constants.VERSION.replace(/^(\d+\.\d+)\.\d+.*$/, '$1');
   let i18init = i18next
     .use(LanguageDetector)
     .use(FetchResources)
