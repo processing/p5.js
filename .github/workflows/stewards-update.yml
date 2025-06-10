@@ -24,6 +24,12 @@ jobs:
       - name: Run table generator
         run: node utils/stewards-table.js
         
+      - name: Reset all changes except README.md
+        run: |
+          git restore --staged .
+          git add README.md
+          git checkout -- .
+          
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
