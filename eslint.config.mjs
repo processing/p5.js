@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { includeIgnoreFile } from '@eslint/compat';
 
+import globals from 'globals'
 import js from '@eslint/js';
 
 const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
@@ -130,7 +131,11 @@ export default defineConfig([
     name: 'p5 source files',
     files: ['src/**/*.js'],
     languageOptions: {
-      ecmaVersion: 2024
+      ecmaVersion: 2024,
+      globals: {
+        ...globals.browser,
+        ...globals.es2024
+      }
     }
   },
 ]);
