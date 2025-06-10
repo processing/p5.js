@@ -115,7 +115,9 @@ export default defineConfig([
     'lib/**',
     'src/core/reference.js',
     'src/type/lib/Typr.js',
-    'test/**',
+    'test/**/*',
+    '!test/unit/',
+    '!test/unit/**/*',
     'translations/**',
     'types/**',
     'utils/sample-linter.mjs'
@@ -138,4 +140,51 @@ export default defineConfig([
       }
     }
   },
+  {
+    name: 'p5 node env',
+    files: [
+      'test/**/*.js',
+      'utils/**/*.js',
+      '**/*.config.mjs',
+      'vitest.workspace.mjs'
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      globals: {
+        ...globals.nodeBuiltin
+      }
+    }
+  },
+  {
+    name: 'p5 test files',
+    files: [
+      'test/unit/**/*.js'
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+        // @todo test/js/helpers.js
+        'assert': false,
+        'expect': false
+      }
+    }
+  }
+  // @todo adjust globally ignored files
+  // @todo depends on globals.d.ts
+  // {
+  //   name: 'p5 manuals test examples',
+  //   files: [
+  //     'test/manual-test-examples/**/*.js'
+  //   ],
+  //   languageOptions: {
+  //     globals: {
+  //       ...globals.browser,
+  //       ...globals.es2024
+  //     }
+  //   },
+  //   rules: {
+  //     'no-undef': off,
+  //     'no-unused-vars': off
+  //   }
+  // }
 ]);
