@@ -5,6 +5,7 @@ import { includeIgnoreFile } from '@eslint/compat';
 
 import globals from 'globals';
 import js from '@eslint/js';
+import jsdoc from 'eslint-plugin-jsdoc';
 import markdown from '@eslint/markdown';
 import stylistic from '@stylistic/eslint-plugin';
 
@@ -142,6 +143,22 @@ const commonRules = {
   '@stylistic/semi': [warn, 'always']
 };
 
+/**  @type {import('eslint').Linter.RulesRecord} */
+const jsdocRules = {
+  // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-alignment.md
+  'jsdoc/check-alignment': warn,
+
+  // @todo
+  // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-line-alignment.md#readme
+  // 'jsdoc/check-line-alignment': [warn, 'always'],
+
+  // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/no-multi-asterisks.md#readme
+  'jsdoc/no-multi-asterisks': [warn, { allowWhitespace: true }],
+
+  // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/require-asterisk-prefix.md#readme
+  'jsdoc/require-asterisk-prefix': warn
+};
+
 export default defineConfig([
   includeIgnoreFile(gitignore),
   globalIgnores([
@@ -174,12 +191,18 @@ export default defineConfig([
   {
     name: 'p5 source files',
     files: ['src/**/*.js'],
+    plugins: {
+      jsdoc
+    },
     languageOptions: {
       ecmaVersion: 2024,
       globals: {
         ...globals.browser,
         ...globals.es2024
       }
+    },
+    rules: {
+      ...jsdocRules
     }
   },
   {

@@ -52,6 +52,7 @@
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
     "eslint": "^9.28.0",
+    "eslint-plugin-jsdoc": "^50.7.1",
     "glob": "^11.0.1",
     "globals": "^16.2.0",
     "husky": "^4.2.3",
