@@ -29,5 +29,6 @@ jobs:
           commit-message: "Update README table from stewards.yml"
           branch: update-readme-table
           title: 'chore: update README table from stewards.yml'
-          body: 'This PR updates the README.md table to refelct changes in stewards.yml.'
+          body: 'This PR updates the README.md table to reflect changes in stewards.yml.'
           add: README.md
+          token: ${{ secrets.ACCESS_TOKEN }}
