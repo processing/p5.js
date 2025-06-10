@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - stewards.yml
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
