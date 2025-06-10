@@ -3,8 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { includeIgnoreFile } from '@eslint/compat';
 
-import globals from 'globals'
+import globals from 'globals';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 
 const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
 
@@ -102,6 +103,42 @@ const commonRules = {
   // https://eslint.org/docs/latest/rules/no-useless-escape
   // @eslint recommended
   'no-useless-escape': warn,
+
+  // https://eslint.style/rules/js/arrow-parens#arrow-parens
+  '@stylistic/arrow-parens': [warn, 'as-needed'],
+
+  // https://eslint.style/rules/default/comma-dangle
+  '@stylistic/comma-dangle': [warn, 'never'],
+
+  // https://eslint.style/rules/js/indent#indent
+  '@stylistic/indent': [warn, 2, { SwitchCase: 1 }],
+
+  // https://eslint.style/rules/js/linebreak-style#linebreak-style
+  '@stylistic/linebreak-style': [warn, 'unix'],
+
+  // https://eslint.style/rules/js/max-len#max-len
+  '@stylistic/max-len': [
+    warn,
+    {
+      code: 80,
+      ignoreComments: true,
+      ignoreStrings: true,
+      ignoreTemplateLiterals: true,
+      ignoreRegExpLiterals: true
+    }
+  ],
+
+  // https://eslint.style/rules/js/no-trailing-spaces#no-trailing-spaces
+  '@stylistic/no-trailing-spaces': warn,
+
+  // https://eslint.style/rules/js/object-curly-spacing#object-curly-spacing
+  '@stylistic/object-curly-spacing': [warn, 'always'],
+
+  // https://eslint.style/rules/js/quotes#quotes
+  '@stylistic/quotes': [warn, 'single', { avoidEscape: true }],
+
+  // https://eslint.style/rules/js/semi#semi
+  '@stylistic/semi': [warn, 'always']
 };
 
 export default defineConfig([
@@ -125,6 +162,9 @@ export default defineConfig([
   {
     name: 'common p5 rules',
     files: ['**/*.js', '**/*.mjs'],
+    plugins: {
+      '@stylistic': stylistic
+    },
     rules: {
       ...commonRules
     }
