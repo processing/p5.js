@@ -137,7 +137,7 @@ export default defineConfig([
     'utils/sample-linter.mjs'
   ]),
   {
-    name: 'common p5 rules',
+    name: 'p5/common-rules',
     files: ['**/*.js', '**/*.mjs'],
     plugins: {
       '@stylistic': stylistic
@@ -147,7 +147,7 @@ export default defineConfig([
     }
   },
   {
-    name: 'p5 source files',
+    name: 'p5/source-files',
     files: ['src/**/*.js'],
     plugins: {
       jsdoc
@@ -170,7 +170,7 @@ export default defineConfig([
   // @todo failed **unexpected** due to `Parsing Error`
   // * src/webgl/p5.Geometry.js - 49:42
   // {
-  //   name: 'jsdoc example processor',
+  //   name: 'p5/jsdoc-examples-processor',
   //   files: ['src/**/*.js'],
   //   plugins: {
   //     examples: getJsdocProcessorPlugin({
@@ -183,7 +183,7 @@ export default defineConfig([
   // {
   //   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/processors.md#processors
   //   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/src/index.js#L414
-  //   name: 'jsdoc example rules',
+  //   name: 'p5/jsdoc-example-rules',
   //   files: ['src/**/*.md/*.js'],
   //   rules: {
   //     ...commonRules,
@@ -192,7 +192,7 @@ export default defineConfig([
   //   }
   // },
   {
-    name: 'p5 node env',
+    name: 'p5/node-env',
     files: [
       'test/**/*.js',
       'utils/**/*.js',
@@ -207,7 +207,7 @@ export default defineConfig([
     }
   },
   {
-    name: 'p5 test files',
+    name: 'p5/test-files',
     files: [
       'test/unit/**/*.js'
     ],
@@ -223,7 +223,7 @@ export default defineConfig([
   // @todo adjust globally ignored files
   // @todo depends on globals.d.ts
   // {
-  //   name: 'p5 manuals test examples',
+  //   name: 'p5/manual-test-examples',
   //   files: [
   //     'test/manual-test-examples/**/*.js'
   //   ],
@@ -240,7 +240,7 @@ export default defineConfig([
   // },
   {
     // https://github.com/eslint/markdown?tab=readme-ov-file#rules
-    name: 'p5 contributor docs',
+    name: 'p5/contributor-docs',
     files: ['**/*.md'],
     plugins: {
       markdown
