@@ -281,6 +281,7 @@ export default defineConfig([
   //   }
   // },
   {
+    // https://github.com/eslint/markdown?tab=readme-ov-file#rules
     name: 'p5 contributor docs',
     files: ['**/*.md'],
     plugins: {
@@ -288,8 +289,8 @@ export default defineConfig([
     },
     language: 'markdown/commonmark',
     rules: {
-      'margkdown/fenced-code-language': off,
-      'markdown/heading-invrement': off,
+      'markdown/fenced-code-language': off,
+      'markdown/heading-increment': off,
       'markdown/no-duplicate-definitions': warn,
       // 'markdown/no-duplicate-headings': ["error", { checkSiblingsOnly: true }], // @todo waiting for @eslint/markdown@6.6.0
       'markdown/no-empty-definitions': warn,
@@ -299,6 +300,7 @@ export default defineConfig([
       'markdown/no-invalid-label-refs': off,
       'markdown/no-missing-atx-heading-space': warn,
       'markdown/no-missing-label-refs': off, // @todo
+      'markdown/no-missing-link-fragments': off,
       'markdown/no-multiple-h1': off,
       'markdown/require-alt-text': warn,
       'markdown/table-column-count': warn
