@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import { defineConfig, globalIgnores } from 'eslint/config';
 import { includeIgnoreFile } from '@eslint/compat';
-import { getJsdocProcessorPlugin } from 'eslint-plugin-jsdoc/getJsdocProcessorPlugin.js';
+// import { getJsdocProcessorPlugin } from 'eslint-plugin-jsdoc/getJsdocProcessorPlugin.js';
 
 import globals from 'globals';
 import js from '@eslint/js';
@@ -206,27 +206,33 @@ export default defineConfig([
       ...jsdocRules
     }
   },
-  {
-    name: 'jsdoc example processor',
-    files: ['src/**/*.js'],
-    plugins: {
-      examples: getJsdocProcessorPlugin({
-        allowedLanguagesToProcess: ['js', 'javascript'],
-        exampleCodeRegex: /<code>\s([\s\S]*?)<\/code>/
-      })
-    },
-    processor: 'examples/examples'
-  },
-  {
-    // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/processors.md#processors
-    // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/src/index.js#L414
-    name: 'jsdoc example rules',
-    files: ['src/**/*.md/*.js'],
-    rules: {
-      'no-undef': off,
-      'no-unused-vars': off
-    }
-  },
+  // @todo no errors are reported in IDE/CLI
+  // {
+  //   name: 'jsdoc example processor',
+  //   files: ['src/**/*.js'],
+  //   plugins: {
+  //     examples: getJsdocProcessorPlugin({
+  //       // allowedLanguagesToProcess: ['js', 'javascript'],
+  //       // @todo
+  //       // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-examples.md#examplecoderegex-and-rejectexamplecoderegex
+  //       // without the regex jsdoc fails to parse the examples
+  //       // the processor expects js but gets html
+  //       // "343:6   error    @example error: Fatal: Parsing error: Unexpected token <"
+  //       exampleCodeRegex: '^<code>.*</code>$'
+  //     })
+  //   },
+  //   processor: 'examples/examples'
+  // },
+  // {
+  //   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/processors.md#processors
+  //   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/src/index.js#L414
+  //   name: 'jsdoc example rules',
+  //   files: ['src/**/*.md/*.js'],
+  //   rules: {
+  //     ...commonRules,
+  //     'no-undef': off
+  //   }
+  // },
   {
     name: 'p5 node env',
     files: [
