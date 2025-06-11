@@ -163,19 +163,19 @@ export default defineConfig([
       ...jsdocRules
     }
   },
-  // @todo no errors are reported in IDE/CLI
+  // https://github.com/processing/p5.js/actions/runs/15584716142/job/43887979759#step:5:5160
+  // @todo failed as **expected** due to `Parsing Error`s
+  // * src/io/p5.Table.js - 256:6
+  // * src/math/Matrices/Matrix.js - 532:12
+  // @todo failed **unexpected** due to `Parsing Error`
+  // * src/webgl/p5.Geometry.js - 49:42
   // {
   //   name: 'jsdoc example processor',
   //   files: ['src/**/*.js'],
   //   plugins: {
   //     examples: getJsdocProcessorPlugin({
-  //       // allowedLanguagesToProcess: ['js', 'javascript'],
-  //       // @todo
-  //       // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-examples.md#examplecoderegex-and-rejectexamplecoderegex
-  //       // without the regex jsdoc fails to parse the examples
-  //       // the processor expects js but gets html
-  //       // "343:6   error    @example error: Fatal: Parsing error: Unexpected token <"
-  //       exampleCodeRegex: '^<code>.*</code>$'
+  //       allowedLanguagesToProcess: ['js', 'javascript'],
+  //       exampleCodeRegex: /<code>\s([\s\S]*?)<\/code>/
   //     })
   //   },
   //   processor: 'examples/examples'
@@ -187,7 +187,8 @@ export default defineConfig([
   //   files: ['src/**/*.md/*.js'],
   //   rules: {
   //     ...commonRules,
-  //     'no-undef': off
+  //     'no-undef': off,
+  //     'no-unused-vars': off
   //   }
   // },
   {
@@ -263,6 +264,7 @@ export default defineConfig([
       'markdown/table-column-count': warn
     }
   }
+  // https://github.com/eslint/markdown?tab=readme-ov-file#file-name-details
   // @todo
   // works out of the box but results in some `Parsing error`s
   // which will make github workflows & actions fail e.g.
