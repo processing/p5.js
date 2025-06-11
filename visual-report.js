@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const SLASH_REGEX = /\//g;
 
 async function generateVisualReport() {
   const expectedDir = path.join(process.cwd(), 'test/unit/visual/screenshots');
@@ -82,7 +83,7 @@ async function generateVisualReport() {
         };
         
         // Create flattened name for lookup
-        const flattenedName = testDir.replace(/\//g, '-');
+        const flattenedName = testDir.replace(SLASH_REGEX, '-');
         
         // Collect all screenshots for this test
         for (let i = 0; i < test.numScreenshots; i++) {
