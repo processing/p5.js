@@ -306,4 +306,11 @@ export default defineConfig([
       'markdown/table-column-count': warn
     }
   }
+  // @todo
+  // works out of the box but results in some `Parsing error`s
+  // which will make github workflows & actions fail e.g.
+  // * contributor_docs/fes_contribution_guide.md 354:1  error  Parsing error: Unexpected character '🌸'
+  // * contributor_docs/zh-Hans/unit_testing.md 35:1  error  Parsing error: Unexpected token
+  // * rfc_p5js_2.md 205:50  error  Parsing error: Binding arguments in strict mode
+  // ...markdown.configs.processor
 ]);
