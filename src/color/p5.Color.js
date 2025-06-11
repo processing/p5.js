@@ -774,14 +774,21 @@ p5.Color = class Color {
   _getBlue() {
     return this._array[2] * this.maxes[constants.RGB][2];
   }
-
+  /**
+   *  Brightness obtains the HSB brightness value from either a p5.Color object, an array of color components, or a CSS color string.
+   * Depending on value, when colorMode() is set a HSB value, this function will returns the brightness value in the range. By default, this function will return
+   * the HSB brightness within the range 0 to 100.
+   */
   _getBrightness() {
     if (!this.hsba) {
       this.hsba = color_conversion._rgbaToHSBA(this._array);
     }
     return this.hsba[2] * this.maxes[constants.HSB][2];
   }
-
+  /**
+   * This function extracts the green value from a color object, returns green value in the range of 0 to 255 by default. When colorMode() is set to an RBG value, the green
+   * value within the givin range is returned
+   */
   _getGreen() {
     return this._array[1] * this.maxes[constants.RGB][1];
   }
