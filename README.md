@@ -1152,6 +1152,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sukrucildirr"><img src="https://avatars.githubusercontent.com/u/32969880?v=4?s=64" width="64px;" alt="sukrucildirr"/><br /><sub><b>sukrucildirr</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sukrucildirr" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://linktr.ee/andrewmcwhae"><img src="https://avatars.githubusercontent.com/u/8450380?v=4?s=64" width="64px;" alt="Andrew McWhae"/><br /><sub><b>Andrew McWhae</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=andrewmcwhae" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/atmajaa"><img src="https://avatars.githubusercontent.com/u/69838867?v=4?s=64" width="64px;" alt="Atmaja P."/><br /><sub><b>Atmaja P.</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=atmajaa" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
