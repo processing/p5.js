@@ -1619,18 +1619,19 @@ function shadergenerator(p5, fn) {
       }
     }
   })
+  // Alias GLSL's mix function as lerp in p5.strands
+  // Bridging p5.js lerp and GLSL mix for consistency in shader expressions
+  const originalLerp = fn.lerp;
+  fn.lerp = function (...args) {
+    if (GLOBAL_SHADER?.isGenerating) {
+      return this.mix(...args); // Use mix inside p5.strands
+    } else {
+      return originalLerp.apply(this, args); // Fallback to normal p5.js lerp
+    }
+  };
 }
-
-// Alias GLSL's mix function as lerp in p5.strands
-// Bridging p5.js lerp and GLSL mix for consistency in shader expressions
-const originalLerp = fn.lerp;
-fn.lerp = function (...args) {
-  if (GLOBAL_SHADER?.isGenerating) {
-    return this.mix(...args); // Use mix inside p5.strands
-  } else {
-    return originalLerp.apply(this, args); // Fallback to normal p5.js lerp
-  }
-};
+  
+  
 
 export default shadergenerator;
 
