@@ -8,7 +8,6 @@ import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
-const fn = {};
 function shadergenerator(p5, fn) {
 
   let GLOBAL_SHADER;
@@ -1627,7 +1626,7 @@ function shadergenerator(p5, fn) {
 const originalLerp = fn.lerp;
 fn.lerp = function (...args) {
   if (GLOBAL_SHADER?.isGenerating) {
-    return fn.mix(...args); // Use mix inside p5.strands
+    return this.mix(...args); // Use mix inside p5.strands
   } else {
     return originalLerp.apply(this, args); // Fallback to normal p5.js lerp
   }
