@@ -255,8 +255,8 @@ class TableRow {
    * let table;
    *
    * async function setup() {
-   *   // Create a 200x100 canvas and set a white background
-   *   createCanvas(200, 100);
+   *   // Create a 300x100 canvas and set a white background
+   *   createCanvas(300, 100);
    *   background(255);
    *
    *   // Load the CSV file with a header row

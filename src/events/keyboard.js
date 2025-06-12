@@ -663,7 +663,6 @@ function keyboard(p5, fn){
 
   };
 
-
   /**
    * A function that's called once when keys with printable characters are pressed.
    *
@@ -795,7 +794,7 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeypress = function(e) {
-    if (e.which === this._lastKeyCodeTyped) {
+    if (e.which === this._lastKeyCodeTyped && e.repeat) {
       // prevent multiple firings
       return;
     }
@@ -833,10 +832,16 @@ function keyboard(p5, fn){
    * }
    * ```
    *
-   * `keyIsDown()` can check for key presses using
-   * <a href="#/p5/keyCode">keyCode</a> values, as in `keyIsDown(37)` or
-   * `keyIsDown(LEFT_ARROW)`. Key codes can be found on websites such as
-   * <a href="https://keycode.info" target="_blank">keycode.info</a>.
+   * `keyIsDown()` can check for key presses using strings based on
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key" target="_blank">KeyboardEvent.key</a>
+   * or <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code" target="_blank">KeyboardEvent.code</a> values,
+   * such as `keyIsDown('x')` or `keyIsDown('ArrowLeft')`.
+   *
+   * Note: In p5.js 2.0 and newer, numeric keycodes (such as 88 for 'X') are no longer supported.
+   * This is a breaking change from previous versions.
+   *
+   * You can still use the p5 constants like `LEFT_ARROW` which now map to string values
+   * internally rather than numeric codes.
    *
    * @method keyIsDown
    * @param {Number|String}   code key to check.

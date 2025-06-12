@@ -51,7 +51,6 @@ const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; /
 const fontFaceVariations = ['weight', 'stretch', 'style'];
 
 
-let nextId = 0;
 export class Font {
   constructor(p, fontFace, name, path, data) {
     if (!(fontFace instanceof FontFace)) {
@@ -62,7 +61,6 @@ export class Font {
     this.path = path;
     this.data = data;
     this.face = fontFace;
-    this.id = nextId++;
   }
 
   /**
@@ -951,6 +949,9 @@ async function create(pInst, name, path, descriptors, rawFont) {
 
   // add it to the document
   document.fonts.add(face);
+
+  // ensure the font is ready to be rendered
+  await document.fonts.ready;
 
   // return a new p5.Font
   return new Font(pInst, face, name, path, rawFont);

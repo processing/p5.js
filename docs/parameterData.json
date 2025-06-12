@@ -934,7 +934,7 @@
     "image": {
       "overloads": [
         [
-          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture",
+          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics",
           "Number",
           "Number",
           "Number?",
@@ -1427,14 +1427,7 @@
     "createVector": {
       "overloads": [
         [
-          null
-        ]
-      ]
-    },
-    "createMatrix": {
-      "overloads": [
-        [
-          "Number[]"
+          "...Number[]"
         ]
       ]
     },
@@ -1856,14 +1849,23 @@
     },
     "bezierOrder": {
       "overloads": [
-        [],
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "splineVertex": {
       "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
         [
           "Number",
           "Number",
@@ -1882,20 +1884,20 @@
     "splineProperty": {
       "overloads": [
         [
-          "String"
-        ],
-        [
           "String",
           null
+        ],
+        [
+          "String"
         ]
       ]
     },
     "splineProperties": {
       "overloads": [
-        [],
         [
           "Object"
-        ]
+        ],
+        []
       ]
     },
     "vertex": {
@@ -1955,19 +1957,6 @@
         ]
       ]
     },
-    "curveVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ]
-      ]
-    },
     "endShape": {
       "overloads": [
         [
@@ -2002,7 +1991,6 @@
           "String",
           "String?",
           "Object?",
-          "String|String[]?",
           "Function?",
           "Function?"
         ],
@@ -2745,50 +2733,15 @@
         ],
         [
           "String|Request",
-          "Object?",
-          "String?",
-          "function(p5.Geometry)?",
-          "function(Event)?",
-          "Boolean?",
-          "Boolean?",
-          "Boolean?"
+          "Object?"
         ]
-      ]
-    },
-    "parseObj": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseSTL": {
-      "overloads": [
-        []
-      ]
-    },
-    "isBinary": {
-      "overloads": [
-        []
-      ]
-    },
-    "matchDataViewAt": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseBinarySTL": {
-      "overloads": [
-        []
-      ]
-    },
-    "parseASCIISTL": {
-      "overloads": [
-        []
       ]
     },
     "model": {
       "overloads": [
         [
-          "p5.Geometry"
+          "p5.Geometry",
+          "Number?"
         ]
       ]
     },
@@ -2810,12 +2763,7 @@
         [
           "String",
           "String?",
-          "Object?",
-          "function(p5.Geometry)?",
-          "function(Event)?",
-          "boolean?",
-          "boolean?",
-          "boolean?"
+          "Object?"
         ]
       ]
     },
@@ -4515,9 +4463,7 @@
           "Number",
           "Number",
           "Number",
-          "Object?",
-          "Number?",
-          "Number?"
+          "Object?"
         ]
       ]
     }

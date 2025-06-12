@@ -473,7 +473,7 @@ function light(p5, fn){
    * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
    * current <a href="#/p5/colorMode">colorMode()</a>. The last parameter,
    * `direction` sets the light’s direction using a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object. For example,
+   * <a href="#/p5.Vector">p5.Vector</a> object. For example,
    * `directionalLight(255, 0, 0, lightDir)` creates a red `(255, 0, 0)` light
    * that shines in the direction the `lightDir` vector points.
    *
@@ -488,7 +488,7 @@ function light(p5, fn){
    * parameter, `color`, sets the light’s color using a
    * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
    * second parameter, `direction`, sets the light’s direction using a
-   * <a href="#/p5.Color">p5.Color</a> object. For example,
+   * <a href="#/p5.Vector">p5.Vector</a> object. For example,
    * `directionalLight(myColor, lightDir)` creates a light that shines in the
    * direction the `lightDir` vector points with the color value of `myColor`.
    *

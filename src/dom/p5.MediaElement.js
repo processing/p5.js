@@ -1335,15 +1335,6 @@ function media(p5, fn){
       elt.appendChild(sourceEl);
     }
 
-    // If callback is provided, attach to element
-    if (typeof callback === 'function') {
-      const callbackHandler = () => {
-        callback();
-        elt.removeEventListener('canplaythrough', callbackHandler);
-      };
-      elt.addEventListener('canplaythrough', callbackHandler);
-    }
-
     const mediaEl = addElement(elt, pInst, true);
     mediaEl.loadedmetadata = false;
 
@@ -1361,6 +1352,15 @@ function media(p5, fn){
       }
       mediaEl.loadedmetadata = true;
     });
+
+    // If callback is provided, attach to element
+    if (typeof callback === 'function') {
+      const callbackHandler = () => {
+        callback(mediaEl);
+        elt.removeEventListener('canplaythrough', callbackHandler);
+      };
+      elt.addEventListener('canplaythrough', callbackHandler);
+    }
 
     return mediaEl;
   }

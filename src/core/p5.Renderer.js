@@ -4,6 +4,16 @@
  * @for p5
  */
 
+/**
+ * `pInst` may be:
+ *  
+ *  The main sketch-wide `p5` instance (global canvas), or
+ *  an off-screen `p5.Graphics` wrapper.
+ *
+ * Therefore a renderer must only call properties / methods that exist
+ * on both objects.
+ */
+
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';

@@ -23,7 +23,7 @@
       "node ./utils/sample-linter.mjs"
     ]
   },
-  "version": "2.0.1",
+  "version": "2.0.3",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
@@ -51,7 +51,6 @@
     "@vitest/browser": "^2.1.5",
     "all-contributors-cli": "^6.19.0",
     "concurrently": "^8.2.2",
-    "dayjs": "^1.11.10",
     "documentation": "^14.0.3",
     "eslint": "^8.54.0",
     "glob": "^11.0.1",

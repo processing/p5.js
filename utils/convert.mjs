@@ -92,6 +92,8 @@ function typeObject(node) {
     return { type: signature };
   } else if (node.type === 'ArrayType') {
     return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
+  } else if (node.type === 'RestType') {
+    return { type: typeObject(node.expression).type, rest: true };
   } else {
     // TODO
     // - handle record types
@@ -229,23 +231,22 @@ function getParams(entry) {
   // instead convert it to a string. We want a slightly different conversion to
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
-  return (entry.tags || []).filter(t => t.title === 'param').map(node => {
-    const param = entry.params.find(param => param.name === node.name);
-    if (param) {
+  return (entry.tags || [])
+  
+    // Filter out the nested parameters (eg. options.extrude),
+    // to be treated as part of parent parameters (eg. options)
+    // and not separate entries
+    .filter(t => t.title === 'param' && !t.name.includes('.')) 
+    .map(node => {
+      const param = (entry.params || []).find(param => param.name === node.name);
       return {
         ...node,
-        description: param.description
-      };
-    } else {
-      return {
-        ...node,
-        description: {
+        description: param?.description || {
           type: 'html',
           value: node.description
         }
       };
-    }
-  });
+    });
 }
 
 // ============================================================================
@@ -518,7 +519,7 @@ function cleanUpClassItems(data) {
 
     const processOverload = overload => {
       if (overload.params) {
-        return Object.values(overload.params).map(param => processOptionalParam(param));
+        return Object.values(overload.params).map(param => processParam(param));
       }
       return overload;
     }
@@ -526,10 +527,13 @@ function cleanUpClassItems(data) {
     // To simplify `parameterData.json`, instead of having a separate field for
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
-    const processOptionalParam = param => {
+    const processParam = param => {
       let type = param.type;
       if (param.optional) {
         type += '?';
+      }
+      if (param.rest) {
+        type = `...${type}[]`;
       }
       return type;
     }

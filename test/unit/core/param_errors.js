@@ -22,6 +22,12 @@ suite('Validate Params', function () {
     FramebufferTexture: function() {
       return 'mock p5.FramebufferTexture';
     },
+    Renderer: function() {
+      return 'mock p5.Renderer';
+    },
+    Graphics: function() {
+      return 'mock p5.Graphics';
+    },
     _error: () => {},
   };
   const mockP5Prototype = {};
@@ -124,7 +130,7 @@ suite('Validate Params', function () {
       console.log(result);
       assert.equal(
         result.error,
-        '🌸 p5.js says: Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture at the first parameter in p5.image().'
+        '🌸 p5.js says: Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter in p5.image().'
       );
     });
   });
@@ -247,6 +253,29 @@ suite('Validate Params', function () {
       ];
       const result = mockP5Prototype.validate('p5.paletteLerp', [colorStops, 0.5]);
       assert.isTrue(result.success);
-    })
-  })
+    });
+  });
+
+  suite('validateParams: rest arguments', function () {
+    test('createVector(): works with no args', function() {
+      const result = mockP5Prototype.validate('p5.createVector', []);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): works with one number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1]);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): works with many numbers', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1, 2, 3, 4]);
+      assert.isTrue(result.success);
+    });
+    test('createVector(): fails with a non-number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', ['1']);
+      assert.isFalse(result.success);
+    });
+    test('createVector(): fails with any non-number', function() {
+      const result = mockP5Prototype.validate('p5.createVector', [1, 2, '3', 4]);
+      assert.isFalse(result.success);
+    });
+  });
 });

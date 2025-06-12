@@ -71,7 +71,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -88,9 +88,6 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -125,7 +122,7 @@ class Camera {
    *   cam.setPosition(x, -400, 800);
    *
    *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -183,7 +180,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 55);
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -237,7 +234,7 @@ class Camera {
    *   cam.setPosition(0, y, 800);
    *
    *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 55);
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -295,7 +292,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -349,7 +346,7 @@ class Camera {
    *   cam.setPosition(0, -400, z);
    *
    *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -408,7 +405,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -462,7 +459,7 @@ class Camera {
    *   cam.lookAt(x, 20, -30);
    *
    *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -521,7 +518,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -575,7 +572,7 @@ class Camera {
    *   cam.lookAt(10, y, -30);
    *
    *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -634,7 +631,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -651,9 +648,6 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -688,7 +682,7 @@ class Camera {
    *   cam.lookAt(10, 20, z);
    *
    *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -746,7 +740,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -799,7 +793,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, x, 1, 0);
    *
    *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -857,7 +851,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -910,7 +904,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, 0, y, 0);
    *
    *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -968,7 +962,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -1021,7 +1015,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, z);
    *
    *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
