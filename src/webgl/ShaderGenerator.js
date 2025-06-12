@@ -10,10 +10,7 @@ import escodegen from 'escodegen';
 
 const fn = {};
 function shadergenerator(p5, fn) {
-   if (!fn || typeof fn !== 'object') {
-    throw new Error("fn is not defined or is not an object. Ensure it is passed correctly to shadergenerator.");
-   }
-     
+
   let GLOBAL_SHADER;
   let BRANCH;
 
@@ -1639,5 +1636,5 @@ fn.lerp = function (...args) {
 export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
-  p5.registerAddon((p5) => shadergenerator(p5, fn));
+  p5.registerAddon(shadergenerator)
 }
