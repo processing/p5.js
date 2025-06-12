@@ -18,7 +18,7 @@ git clone https://github.com/processing/p5.js.git
 cd p5.js
 npm ci
 npm run build      # builds the full p5.js bundle
-npm test           # runs linter and tests using Vitest
+npm run lint           # runs linter and tests using Vitest
 ```
 
 To include only selected modules in a custom build, refer to the CONTRIBUTING guide or module-specific documentation. Rollup or tree-shaking through ES modules may be used for advanced setups.
