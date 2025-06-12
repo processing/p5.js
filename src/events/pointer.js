@@ -8,7 +8,26 @@
 
 import * as constants from '../core/constants';
 
-function pointer(p5, fn){
+function pointer(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      "pointerdown",
+      "pointerup",
+      "pointermove",
+      "dragend",
+      "dragover",
+      "click",
+      "dblclick",
+      "wheel"
+    ];
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
+
   /**
    * A `Number` system variable that tracks the mouse's horizontal movement.
    *
@@ -765,7 +784,7 @@ function pointer(p5, fn){
     center: false
   };
 
-   /**
+  /**
    * An `Array` of all the current touch points on a touchscreen device.
    *
    * The `touches` array is empty by default. When the user touches their
@@ -848,8 +867,8 @@ function pointer(p5, fn){
    * </code>
    * </div>
    */
-   fn.touches = [];
-   fn._activePointers = new Map();
+  fn.touches = [];
+  fn._activePointers = new Map();
 
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -937,7 +956,7 @@ function pointer(p5, fn){
           this._hasMouseInteracted = true;
        }
     }
- };
+  };
 
   fn._updateMouseCoords = function() {
     this.pmouseX = this.mouseX;
@@ -955,31 +974,31 @@ function pointer(p5, fn){
        winX: evt.clientX,
        winY: evt.clientY,
     };
- }
+  }
 
- function getTouchInfo(canvas, sx, sy, touch) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-     x: (touch.clientX - rect.left) / sx,
-     y: (touch.clientY - rect.top) / sy,
-     winX: touch.clientX,
-     winY: touch.clientY,
-     id: touch.pointerId,
+  function getTouchInfo(canvas, sx, sy, touch) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+       x: (touch.clientX - rect.left) / sx,
+       y: (touch.clientY - rect.top) / sy,
+       winX: touch.clientX,
+       winY: touch.clientY,
+       id: touch.pointerId,
+    };
+  }
+
+  fn._setMouseButton = function(e) {
+    // Check all active touches to determine button states
+    this.mouseButton.left = Array.from(this._activePointers.values()).some(touch =>
+      (touch.buttons & 1) !== 0
+    );
+    this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
+      (touch.buttons & 4) !== 0
+    );
+    this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
+      (touch.buttons & 2) !== 0
+    );
   };
-}
-
-fn._setMouseButton = function(e) {
-  // Check all active touches to determine button states
-  this.mouseButton.left = Array.from(this._activePointers.values()).some(touch => 
-    (touch.buttons & 1) !== 0
-  );
-  this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 4) !== 0
-  );
-  this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 2) !== 0
-  );
-};
 
   /**
    * A function that's called when the mouse moves.
@@ -1155,24 +1174,22 @@ fn._setMouseButton = function(e) {
    * </div>
    */
   fn._onpointermove = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
     
-
-      if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
-        executeDefault = context.mouseMoved(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
-      } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
-        executeDefault = context.mouseDragged(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
+    if (!this.mouseIsPressed && this.userDefinedFunctions.mouseMoved) {
+      executeDefault = this.userDefinedFunctions.mouseMoved(e);
+      if (executeDefault === false) {
+        e.preventDefault();
       }
+    } else if (this.mouseIsPressed && this.userDefinedFunctions.mouseDragged) {
+      executeDefault = this.userDefinedFunctions.mouseDragged(e);
+      if (executeDefault === false) {
+        e.preventDefault();
+      }
+    }
   };
 
   /**
@@ -1318,7 +1335,6 @@ fn._setMouseButton = function(e) {
    * </div>
    */
   fn._onpointerdown = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = true;
 
@@ -1326,8 +1342,8 @@ fn._setMouseButton = function(e) {
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (typeof context.mousePressed === 'function') {
-      executeDefault = context.mousePressed(e);
+    if (this.userDefinedFunctions.mousePressed) {
+      executeDefault = this.userDefinedFunctions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1478,7 +1494,6 @@ fn._setMouseButton = function(e) {
    * </div>
    */
   fn._onpointerup = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = false;
 
@@ -1487,8 +1502,8 @@ fn._setMouseButton = function(e) {
 
     this._updatePointerCoords(e);
    
-    if (typeof context.mouseReleased === 'function') {
-      executeDefault = context.mouseReleased(e);
+    if (this.userDefinedFunctions.mouseReleased) {
+      executeDefault = this.userDefinedFunctions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1642,9 +1657,8 @@ fn._setMouseButton = function(e) {
    * </div>
    */
   fn._onclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.mouseClicked === 'function') {
-      const executeDefault = context.mouseClicked(e);
+    if (this.userDefinedFunctions.mouseClicked) {
+      const executeDefault = this.userDefinedFunctions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1773,9 +1787,8 @@ fn._setMouseButton = function(e) {
    */
 
   fn._ondblclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.doubleClicked === 'function') {
-      const executeDefault = context.doubleClicked(e);
+    if (this.userDefinedFunctions.doubleClicked) {
+      const executeDefault = this.userDefinedFunctions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1921,11 +1934,10 @@ fn._setMouseButton = function(e) {
    * </div>
    */
   fn._onwheel = function(e) {
-    const context = this._isGlobal ? window : this;
     this._mouseWheelDeltaY = e.deltaY;
-    if (typeof context.mouseWheel === 'function') {
+    if (this.userDefinedFunctions.mouseWheel) {
       e.delta = e.deltaY;
-      const executeDefault = context.mouseWheel(e);
+      const executeDefault = this.userDefinedFunctions.mouseWheel(e);
       if (executeDefault === false) {
         e.preventDefault();
       }

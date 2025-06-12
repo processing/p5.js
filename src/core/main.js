@@ -65,22 +65,14 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      pointerdown: null,
-      pointerup: null,
-      pointermove: null,
-      dragend: null,
-      dragover: null,
-      click: null,
-      dblclick: null,
-      mouseover: null,
-      mouseout: null,
       keydown: null,
       keyup: null,
       keypress: null,
-      wheel: null,
       resize: null,
       blur: null
     };
+    this._removeAbortController = new AbortController();
+    this._removeSignal = this._removeAbortController.signal;
     this._millisStart = -1;
     this._recording = false;
 
@@ -208,6 +200,20 @@ class p5 {
     }
   }
 
+  _userDefinedFunctions = {};
+  userDefinedFunctions = new Proxy({}, {
+    get: (target, prop) => {
+      if(!this._userDefinedFunctions[prop]){
+        const context = this._isGlobal ? window : this;
+        if(typeof context[prop] === 'function'){
+          this._userDefinedFunctions[prop] = context[prop].bind(this);
+        }
+      }
+
+      return this._userDefinedFunctions[prop];
+    }
+  })
+
   async #_start() {
     if (this.hitCriticalError) return;
     // Find node if id given
@@ -247,18 +253,13 @@ class p5 {
     }
     if (this.hitCriticalError) return;
 
-    // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
-
-    // Apply touchAction = 'none' to canvases if pointer events exist
-    if (Object.keys(this._events).some(event => event.startsWith('pointer'))) {
-      for (const k of canvases) {
-        k.style.touchAction = 'none';
-      }
-    }
-
-
     for (const k of canvases) {
+      // Apply touchAction = 'none' to canvases to prevent scrolling
+      // when dragging on canvas elements
+      k.style.touchAction = 'none';
+
+      // unhide any hidden canvases that were created
       if (k.dataset.hidden === 'true') {
         k.style.visibility = '';
         delete k.dataset.hidden;
@@ -384,6 +385,7 @@ class p5 {
       for (const ev in this._events) {
         window.removeEventListener(ev, this._events[ev]);
       }
+      this._removeAbortController.abort();
 
       // remove DOM elements created by p5, and listeners
       for (const e of this._elements) {
