@@ -1152,6 +1152,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/sukrucildirr"><img src="https://avatars.githubusercontent.com/u/32969880?v=4?s=64" width="64px;" alt="sukrucildirr"/><br /><sub><b>sukrucildirr</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sukrucildirr" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://linktr.ee/andrewmcwhae"><img src="https://avatars.githubusercontent.com/u/8450380?v=4?s=64" width="64px;" alt="Andrew McWhae"/><br /><sub><b>Andrew McWhae</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=andrewmcwhae" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/atmajaa"><img src="https://avatars.githubusercontent.com/u/69838867?v=4?s=64" width="64px;" alt="Atmaja P."/><br /><sub><b>Atmaja P.</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=atmajaa" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/SonyaCode"><img src="https://avatars.githubusercontent.com/u/99513449?v=4?s=64" width="64px;" alt="SonyaCode"/><br /><sub><b>SonyaCode</b></sub></a><br /><a href="#a11y-SonyaCode" title="Accessibility">️️️️♿️</a> <a href="#blog-SonyaCode" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ASonyaCode" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=SonyaCode" title="Code">💻</a> <a href="#design-SonyaCode" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=SonyaCode" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

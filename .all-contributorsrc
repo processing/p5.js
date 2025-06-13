@@ -6914,6 +6914,29 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "atmajaa",
+      "name": "Atmaja P.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69838867?v=4",
+      "profile": "https://github.com/atmajaa",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "SonyaCode",
+      "name": "SonyaCode",
+      "avatar_url": "https://avatars.githubusercontent.com/u/99513449?v=4",
+      "profile": "https://github.com/SonyaCode",
+      "contributions": [
+        "a11y",
+        "blog",
+        "bug",
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
