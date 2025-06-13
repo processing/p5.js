@@ -212,7 +212,7 @@ function keyboard(p5, fn){
    * of the current keyboard layout (QWERTY, Dvorak, AZERTY, etc.) or the character 
    * that appears in a text field.
    * 
-   * The code property returns a plain string (e.g. 'ArrowRight'), you can 
+   * The code property returns a plain string (e.g., 'ArrowRight'). You can 
    * compare it directly with string literals:
    * ```js
    *  if (code === 'ArrowRight') {
