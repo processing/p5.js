@@ -230,8 +230,8 @@ function validateParams(p5, fn, lifecycles) {
       param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
 
       let schema = generateTypeSchema(param);
-      if (!schema || typeof schema.optional !== 'function') {
-        schema = z.any(); 
+      if (schema.def.type === 'function') {
+        schema = z.any()
       }
 
       if (isOptional) {
