@@ -270,9 +270,33 @@ class RendererGL extends Renderer3D {
     }
   }
 
+  // Stroke version for now:
+  //
+//  {
+//    const gl = this.GL;
+//    // move this to _drawBuffers ?
+//    if (count === 1) {
+//      gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
+//     } else {
+//     try {
+ //       gl.drawArraysInstanced(
+ //       gl.TRIANGLES,
+ //         0,
+ //         geometry.lineVertices.length / 3,
+ //         count
+ //       );
+ //     } catch (e) {
+ //       console.log(
+ //         "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+ //       );
+ //     }
+ //   }
+ // }
+
   _drawBuffers(geometry, { mode = constants.TRIANGLES, count }) {
     const gl = this.GL;
     const glBuffers = this.geometryBufferCache.getCached(geometry);
+    //console.log(glBuffers);
 
     if (!glBuffers) return;
 
@@ -1157,7 +1181,7 @@ class RendererGL extends Renderer3D {
 
     if (indices) {
       const buffer = gl.createBuffer();
-      this.renderer._bindBuffer(buffer, gl.ELEMENT_ARRAY_BUFFER, indices, indexType);
+      this._bindBuffer(buffer, gl.ELEMENT_ARRAY_BUFFER, indices, indexType);
 
       buffers.indexBuffer = buffer;
 
@@ -1478,9 +1502,9 @@ class RendererGL extends Renderer3D {
   createTexture({ width, height, format, dataType }) {
     const gl = this.GL;
     const tex = gl.createTexture();
-    this.gl.bindTexture(gl.TEXTURE_2D, tex);
-    this.gl.texImage2D(gl.TEXTURE_2D, 0, this.gl.RGBA, width, height, 0,
-                       gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
+                       gl.RGBA, gl.UNSIGNED_BYTE, null);
     // TODO use format and data type
     return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
   }

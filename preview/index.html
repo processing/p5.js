@@ -27,32 +27,19 @@
       let sh;
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
-        sh = p.baseColorShader().modify({
-          uniforms: {
-            'f32 time': () => p.millis(),
-          },
-          'Vertex getWorldInputs': `(inputs: Vertex) {
-            var result = inputs;
-            result.position.y += 40.0 * sin(uniforms.time * 0.01);
-            return result;
-          }`,
-        })
       };
-
+	p.disableFriendlyErrors = true; 
       p.draw = function () {
+	p.orbitControl()
         const t = p.millis() * 0.008;
-        p.background(200);
-        p.noStroke();
-        p.shader(sh);
-        for (const [i, c] of ['red', 'lime', 'blue'].entries()) {
-          p.push();
+        p.background(0);
+        // p.noStroke();
+        for (const [i, c] of ['red'].entries()) {
+	  p.stroke(0);
+	  p.strokeWeight(10);
+	  p.push();
           p.fill(c);
-          p.translate(
-            p.width/3 * p.sin(t + i * Math.E),
-            0, //p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
-            p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
-          )
-          p.sphere(30);
+	  p.sphere(60, 4, 2);
           p.pop();
         }
       };

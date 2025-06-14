@@ -271,6 +271,7 @@ void main() {
     }
   } else {
     vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+
     vTangent = tangent;
     vec2 normal = vec2(-tangent.y, tangent.x);
 

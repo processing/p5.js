@@ -2,6 +2,7 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
+import { lineVertexShader, lineFragmentShader} from './shaders/line';
 
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
@@ -248,7 +249,6 @@ class RendererWebGPU extends Renderer3D {
       .filter(u => !u.isSampler)
       .reduce((sum, u) => sum + u.alignedBytes, 0);
     shader._uniformData = new Float32Array(uniformSize / 4);
-
     shader._uniformBuffer = this.device.createBuffer({
       size: uniformSize,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -453,7 +453,6 @@ class RendererWebGPU extends Renderer3D {
     for (const attrName in shader.attributes) {
       const attr = shader.attributes[attrName];
       if (!attr || attr.location === -1) continue;
-
       // Get the vertex buffer info associated with this attribute
       const renderBuffer =
         this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
@@ -477,7 +476,6 @@ class RendererWebGPU extends Renderer3D {
         ],
       });
     }
-
     return layouts;
   }
 
@@ -512,7 +510,9 @@ class RendererWebGPU extends Renderer3D {
 
   _useShader(shader, options) {}
 
-  _updateViewport() {}
+  _updateViewport() {
+    this._viewport = [0, 0, this.width, this.height];
+  }
 
   zClipRange() {
     return [0, 1];
@@ -548,13 +548,14 @@ class RendererWebGPU extends Renderer3D {
   // Rendering
   //////////////////////////////////////////////
 
-  _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }) {
+  _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }, stroke) {
     const buffers = this.geometryBufferCache.getCached(geometry);
     if (!buffers) return;
 
     const commandEncoder = this.device.createCommandEncoder();
+    const currentTexture = this.drawingContext.getCurrentTexture();
     const colorAttachment = {
-      view: this.drawingContext.getCurrentTexture().createView(),
+      view: currentTexture.createView(),
       loadOp: "load",
       storeOp: "store",
     };
@@ -578,7 +579,6 @@ class RendererWebGPU extends Renderer3D {
 
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.setPipeline(this._curShader.getPipeline(this._shaderOptions({ mode })));
-
     // Bind vertex buffers
     for (const buffer of this._getVertexBuffers(this._curShader)) {
       passEncoder.setVertexBuffer(
@@ -587,9 +587,9 @@ class RendererWebGPU extends Renderer3D {
         0
       );
     }
-
     // Bind uniforms
     this._packUniforms(this._curShader);
+    console.log(this._curShader);
     this.device.queue.writeBuffer(
       this._curShader._uniformBuffer,
       0,
@@ -621,18 +621,21 @@ class RendererWebGPU extends Renderer3D {
         layout,
         entries: bgEntries,
       });
-
       passEncoder.setBindGroup(group, bindGroup);
     }
 
+    if (buffers.lineVerticesBuffer && geometry.lineVertices && stroke) {
+      passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
+    }
     // Bind index buffer and issue draw
+    if (!stroke) {
     if (buffers.indexBuffer) {
       const indexFormat = buffers.indexFormat || "uint16";
       passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
       passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
     } else {
       passEncoder.draw(geometry.vertices.length, count, 0, 0);
-    }
+    }}
 
     passEncoder.end();
     this.queue.submit([commandEncoder.finish()]);
@@ -644,6 +647,7 @@ class RendererWebGPU extends Renderer3D {
 
   _packUniforms(shader) {
     let offset = 0;
+    let i = 0;
     for (const name in shader.uniforms) {
       const uniform = shader.uniforms[name];
       if (uniform.isSampler) continue;
@@ -661,7 +665,7 @@ class RendererWebGPU extends Renderer3D {
       new RegExp(`struct\\s+${structName}\\s*\\{([^\\}]+)\\}`)
     );
     if (!structMatch) {
-      throw new Error(`Can't find a struct definition for ${structName}`);
+      throw new Error(`Can't find a struct defnition for ${structName}`);
     }
 
     const structBody = structMatch[1];
@@ -716,7 +720,6 @@ class RendererWebGPU extends Renderer3D {
     }
     const structType = uniformVarMatch[2];
     const uniforms = this._parseStruct(shader.vertSrc(), structType);
-
     // Extract samplers from group bindings
     const samplers = [];
     const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(\w+);/g;
@@ -835,6 +838,28 @@ class RendererWebGPU extends Renderer3D {
     return this._defaultColorShader;
   }
 
+  _getLineShader() {
+    if (!this._defaultLineShader) {
+      this._defaultLineShader = new Shader(
+        this,
+        lineVertexShader,
+        lineFragmentShader,
+        {
+          vertex: {
+            "void beforeVertex": "() {}",
+            "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
+          },
+          fragment: {
+            "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }"
+          },
+        }
+      );
+    }
+    return this._defaultLineShader;
+  }
+
   //////////////////////////////////////////////
   // Setting
   //////////////////////////////////////////////
@@ -921,7 +946,7 @@ class RendererWebGPU extends Renderer3D {
       }
     }
 
-    console.log(preMain + '\n' + defines + hooks + main + postMain)
+    //console.log(preMain + '\n' + defines + hooks + main + postMain)
     return preMain + '\n' + defines + hooks + main + postMain;
   }
 }

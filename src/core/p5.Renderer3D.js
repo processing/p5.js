@@ -557,13 +557,12 @@ export class Renderer3D extends Renderer {
       geometry.hasFillTransparency()
     );
 
-    this._drawBuffers(geometry, { mode, count });
+    this._drawBuffers(geometry, { mode, count }, false);
 
     shader.unbindShader();
   }
 
   _drawStrokes(geometry, { count } = {}) {
-    const gl = this.GL;
 
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
@@ -584,22 +583,7 @@ export class Renderer3D extends Renderer {
       geometry.hasStrokeTransparency()
     );
 
-    if (count === 1) {
-      gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
-    } else {
-      try {
-        gl.drawArraysInstanced(
-          gl.TRIANGLES,
-          0,
-          geometry.lineVertices.length / 3,
-          count
-        );
-      } catch (e) {
-        console.log(
-          "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
-        );
-      }
-    }
+    this._drawBuffers(geometry, {count}, true)
 
     shader.unbindShader();
   }
@@ -1430,7 +1414,7 @@ export class Renderer3D extends Renderer {
       this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
       shader.setUniform("uCameraRotation", this.scratchMat3.mat3);
     }
-    shader.setUniform("uViewport", this._viewport);
+    shader.setUniform("uViewport", [0, 0, 400, 400]);
   }
 
   _setStrokeUniforms(strokeShader) {
