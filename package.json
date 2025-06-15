@@ -68,8 +68,14 @@
   "license": "LGPL-2.1",
   "browser": "./lib/p5.min.js",
   "exports": {
-    ".": "./dist/app.js",
-    "./core": "./dist/core/main.js",
+    ".": {
+      "types": "./types/p5.d.ts",
+      "default": "./dist/app.js"
+    },
+    "./core": {
+      "types": "./types/core/main.d.ts",
+      "default": "./dist/core/main.js"
+    },
     "./shape": "./dist/shape/index.js",
     "./accessibility": "./dist/accessibility/index.js",
     "./friendlyErrors": "./dist/core/friendlyErrors/index.js",
