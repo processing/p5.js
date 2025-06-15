@@ -1515,17 +1515,20 @@ export class Renderer3D extends Renderer {
     );
 
     // TODO: sum these here...
-    const ambientLightCount = this.states.ambientLightColors.length / 3;
-    this.mixedAmbientLight = [...this.states.ambientLightColors];
-
-    if (this.states._useMetalness > 0) {
-      this.mixedAmbientLight = this.mixedAmbientLight.map((ambientColors) => {
-        let mixing = ambientColors - this.states._useMetalness;
-        return Math.max(0, mixing);
-      });
+    let mixedAmbientLight = [0, 0, 0];
+    for (let i = 0; i < this.states.ambientLightColors.length; i += 3) {
+      for (let off = 0; off < 3; off++) {
+        if (this.states._useMetalness > 0) {
+          mixedAmbientLight[off] += Math.max(
+            0,
+            this.states.ambientLightColors[i + off] - this.states._useMetalness
+          );
+        } else {
+          mixedAmbientLight[off] += this.states.ambientLightColors[i + off];
+        }
+      }
     }
-    fillShader.setUniform("uAmbientLightCount", ambientLightCount);
-    fillShader.setUniform("uAmbientColor", this.mixedAmbientLight);
+    fillShader.setUniform("uAmbientColor", mixedAmbientLight);
 
     const spotLightCount = this.states.spotLightDiffuseColors.length / 3;
     fillShader.setUniform("uSpotLightCount", spotLightCount);

@@ -2,6 +2,7 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
+import { materialVertexShader, materialFragmentShader } from './shaders/material';
 
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
@@ -244,13 +245,16 @@ class RendererWebGPU extends Renderer3D {
   }
 
   _finalizeShader(shader) {
-    const uniformSize = Object.values(shader.uniforms)
-      .filter(u => !u.isSampler)
-      .reduce((sum, u) => sum + u.alignedBytes, 0);
-    shader._uniformData = new Float32Array(uniformSize / 4);
+    const rawSize = Math.max(
+      0,
+      ...Object.values(shader.uniforms).map(u => u.offsetEnd)
+    );
+    const alignedSize = Math.ceil(rawSize / 16) * 16;
+    shader._uniformData = new Float32Array(alignedSize / 4);
+    shader._uniformDataView = new DataView(shader._uniformData.buffer);
 
     shader._uniformBuffer = this.device.createBuffer({
-      size: uniformSize,
+      size: alignedSize,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
@@ -643,16 +647,16 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
 
   _packUniforms(shader) {
-    let offset = 0;
     for (const name in shader.uniforms) {
       const uniform = shader.uniforms[name];
       if (uniform.isSampler) continue;
-      if (uniform.size === 1) {
-        shader._uniformData.set([uniform._cachedData], offset);
+      if (uniform.type === 'u32') {
+        shader._uniformDataView.setUint32(uniform.offset, uniform._cachedData, true);
+      } else if (uniform.size === 4) {
+        shader._uniformData.set([uniform._cachedData], uniform.offset / 4);
       } else {
-        shader._uniformData.set(uniform._cachedData, offset);
+        shader._uniformData.set(uniform._cachedData, uniform.offset / 4);
       }
-      offset += uniform.alignedBytes / 4;
     }
   }
 
@@ -668,31 +672,99 @@ class RendererWebGPU extends Renderer3D {
     const elements = {};
     let match;
     let index = 0;
+    let offset = 0;
 
     const elementRegex =
-      /(?:@location\((\d+)\)\s+)?(\w+):\s+((?:mat[234]x[234]|vec[234]|float|int|uint|bool|f32|i32|u32|bool)(?:<f32>)?)/g
+      /(?:@location\((\d+)\)\s+)?(\w+):\s*([^\n]+?),?\n/g
+
+    const baseAlignAndSize = (type) => {
+      if (['f32', 'i32', 'u32', 'bool'].includes(type)) {
+        return { align: 4, size: 4, items: 1 };
+      }
+      if (/^vec[2-4](<f32>|f)$/.test(type)) {
+        const n = parseInt(type.match(/^vec([2-4])/)[1]);
+        const size = 4 * n;
+        const align = n === 2 ? 8 : 16;
+        return { align, size, items: n };
+      }
+      if (/^mat[2-4](?:x[2-4])?(<f32>|f)$/.test(type)) {
+        if (type[4] === 'x' && type[3] !== type[5]) {
+          throw new Error('Non-square matrices not implemented yet');
+        }
+        const dim = parseInt(type[3]);
+        const align = dim === 2 ? 8 : 16;
+        // Each column must be aligned
+        const size = Math.ceil(dim * 4 / align) * align * dim;
+        const pack = dim === 3
+          ? (data) => [
+            ...data.slice(0, 3),
+            0,
+            ...data.slice(3, 6),
+            0,
+            ...data.slice(6, 9),
+            0
+          ]
+          : undefined;
+        return { align, size, pack, items: dim * dim };
+      }
+      if (/^array<.+>$/.test(type)) {
+        const [, subtype, rawLength] = type.match(/^array<(.+),\s*(\d+)>/);
+        const length = parseInt(rawLength);
+        const {
+          align: elemAlign,
+          size: elemSize,
+          items: elemItems,
+          pack: elemPack = (data) => [...data]
+        } = baseAlignAndSize(subtype);
+        const stride = Math.ceil(elemSize / elemAlign) * elemAlign;
+        const pack = (data) => {
+          const result = [];
+          for (let i = 0; i < data.length; i += elemItems) {
+            const elemData = elemPack(data.slice(i, elemItems))
+            result.push(...elemData);
+            for (let j = 0; j < stride / 4 - elemData.length; j++) {
+              result.push(0);
+            }
+          }
+          return result;
+        };
+        return {
+          align: elemAlign,
+          size: stride * length,
+          items: elemItems * length,
+          pack,
+        };
+      }
+      throw new Error(`Unknown type in WGSL struct: ${type}`);
+    };
+
     while ((match = elementRegex.exec(structBody)) !== null) {
       const [_, location, name, type] = match;
-      const size = type.startsWith('vec')
-        ? parseInt(type[3])
-        : type.startsWith('mat')
-          ? Math.pow(parseInt(type[3]), 2)
-          : 1;
-      const bytes = 4 * size; // TODO handle non 32 bit sizes?
-      const alignedBytes = Math.ceil(bytes / 16) * 16;
+      const { size, align, pack } = baseAlignAndSize(type);
+      offset = Math.ceil(offset / align) * align;
+      const offsetEnd = offset + size;
       elements[name] = {
         name,
         location: location ? parseInt(location) : undefined,
         index,
         type,
         size,
-        bytes,
-        alignedBytes,
+        offset,
+        offsetEnd,
+        pack
       };
       index++;
+      offset = offsetEnd;
     }
 
     return elements;
+  }
+
+  _mapUniformData(uniform, data) {
+    if (uniform.pack) {
+      return uniform.pack(data);
+    }
+    return data;
   }
 
   _getShaderAttributes(shader) {
@@ -810,6 +882,40 @@ class RendererWebGPU extends Renderer3D {
     gpuTexture.destroy();
   }
 
+  _getLightShader() {
+    if (!this._defaultLightShader) {
+      this._defaultLightShader = new Shader(
+        this,
+        materialVertexShader,
+        materialFragmentShader,
+        {
+          vertex: {
+            "void beforeVertex": "() {}",
+            "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
+            "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
+            "void afterVertex": "() {}",
+          },
+          fragment: {
+            "void beforeFragment": "() {}",
+            "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
+            "vec4f combineColors": `(components: ColorComponents) {
+              var rgb = vec3<f32>(0.0);
+              rgb += components.diffuse * components.baseColor;
+              rgb += components.ambient * components.ambientColor;
+              rgb += components.specular * components.specularColor;
+              rgb += components.emissive;
+              return vec4<f32>(rgb, components.opacity);
+            }`,
+            "vec4f getFinalColor": "(color: vec4<f32>) { return color; }",
+            "void afterFragment": "() {}",
+          },
+        }
+      );
+    }
+    return this._defaultLightShader;
+  }
+
   _getColorShader() {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new Shader(
@@ -858,18 +964,23 @@ class RendererWebGPU extends Renderer3D {
     // way to add code if a hook is augmented. e.g.:
     //   struct Uniforms {
     //   // @p5 ifdef Vertex getWorldInputs
-    //     uModelMatrix: mat4,
-    //     uViewMatrix: mat4,
+    //     uModelMatrix: mat4f,
+    //     uViewMatrix: mat4f,
     //   // @p5 endif
     //   // @p5 ifndef Vertex getWorldInputs
-    //     uModelViewMatrix: mat4,
+    //     uModelViewMatrix: mat4f,
     //   // @p5 endif
     //   }
     src = src.replace(
       /\/\/ @p5 (ifdef|ifndef) (\w+)\s+(\w+)\n((?:(?!\/\/ @p5)(?:.|\n))*)\/\/ @p5 endif/g,
       (_, condition, hookType, hookName, body) => {
         const target = condition === 'ifdef';
-        if (!!shader.hooks.modified[shaderType][`${hookType} ${hookName}`] === target) {
+        if (
+          (
+            shader.hooks.modified.vertex[`${hookType} ${hookName}`] ||
+            shader.hooks.modified.fragment[`${hookType} ${hookName}`]
+          ) === target
+        ) {
           return body;
         } else {
           return '';
@@ -921,7 +1032,6 @@ class RendererWebGPU extends Renderer3D {
       }
     }
 
-    console.log(preMain + '\n' + defines + hooks + main + postMain)
     return preMain + '\n' + defines + hooks + main + postMain;
   }
 }
