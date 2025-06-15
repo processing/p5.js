@@ -311,7 +311,11 @@ function generateDeclarationFile(items, organizedData) {
                 optional: param.type?.type === 'OptionalType',
                 rest: param.type?.type === 'RestType'
               })),
-              returnType: entry.returns?.[0] ? generateTypeFromTag(entry.returns[0]) : 'void',
+              returnType: entry.tags?.find(tag => tag.title === "chainable")
+                ? "this"
+                : entry.returns?.[0]
+                  ? generateTypeFromTag(entry.returns[0])
+                  : 'void',
               module,
               submodule,
               class: className,
