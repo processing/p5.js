@@ -983,7 +983,6 @@ class Shader {
     if (!uniform) {
       return;
     }
-    const gl = this._renderer.GL;
 
     if (uniform.isArray) {
       if (
