@@ -977,8 +977,8 @@ class RendererWebGPU extends Renderer3D {
         const target = condition === 'ifdef';
         if (
           (
-            shader.hooks.modified.vertex[`${hookType} ${hookName}`] ||
-            shader.hooks.modified.fragment[`${hookType} ${hookName}`]
+            !!shader.hooks.modified.vertex[`${hookType} ${hookName}`] ||
+            !!shader.hooks.modified.fragment[`${hookType} ${hookName}`]
           ) === target
         ) {
           return body;
