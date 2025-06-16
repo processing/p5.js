@@ -1378,7 +1378,7 @@ p5.prototype.tint = function(...args) {
  * </div>
  */
 p5.prototype.noTint = function() {
-  this._renderer._tint = null;
+  this._renderer._tint = [255, 255, 255, 255];
 };
 
 /**
