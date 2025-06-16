@@ -1414,7 +1414,7 @@ export class Renderer3D extends Renderer {
       this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
       shader.setUniform("uCameraRotation", this.scratchMat3.mat3);
     }
-    shader.setUniform("uViewport", [0, 0, 400, 400]);
+    shader.setUniform("uViewport", this._viewport);
   }
 
   _setStrokeUniforms(strokeShader) {
