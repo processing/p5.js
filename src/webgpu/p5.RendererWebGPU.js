@@ -948,7 +948,6 @@ class RendererWebGPU extends Renderer3D {
       }
     }
 
-    //console.log(preMain + '\n' + defines + hooks + main + postMain)
     return preMain + '\n' + defines + hooks + main + postMain;
   }
 }
