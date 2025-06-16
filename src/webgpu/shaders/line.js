@@ -179,8 +179,8 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   var qIn = uniforms.uProjectionMatrix * posqIn;
   var qOut = uniforms.uProjectionMatrix * posqOut;
 
-  var tangentIn = normalize((qIn.xy * p.w - p.xy * qIn.w) * viewport.zw);
-  var tangentOut = normalize((qOut.xy * p.w - p.xy * qOut.w) * viewport.zw);
+  var tangentIn = normalize((qIn.xy * p.w - p.xy * qIn.w) * uniforms.uViewport.zw);
+  var tangentOut = normalize((qOut.xy * p.w - p.xy * qOut.w) * uniforms.uViewport.zw);
 
   var curPerspScale = vec2<f32>();
   if (uniforms.uPerspective == 1) {
@@ -195,7 +195,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
     // No Perspective ---
     // multiply by W (to cancel out division by W later in the pipeline) and
     // convert from screen to clip (derived from clip to screen above)
-    curPerspScale = p.w / (0.5 * viewport.zw);
+    curPerspScale = p.w / (0.5 * uniforms.uViewport.zw);
   }
 
   var offset = vec2<f32>();
@@ -234,14 +234,14 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
         // the magnitude to avoid lines going across the whole screen when this
         // happens.
         var mag = length(offset);
-        var maxMag = 3 * inputs.weight;
+        var maxMag = 3. * inputs.weight;
         if (mag > maxMag) {
-          offset = vec2<f32>(maxMag / mag);
-        } else if (sideEnum == 1.) {
-          offset = side * normalIn * inputs.weight / 2.;
-        } else if (sideEnum == 3.) {
-          offset = side * normalOut * inputs.weight / 2.;
+          offset *= maxMag / mag;
         }
+      } else if (sideEnum == 1.) {
+          offset = side * normalIn * inputs.weight / 2.;
+      } else if (sideEnum == 3.) {
+          offset = side * normalOut * inputs.weight / 2.;
       }
     }
     if (uniforms.uStrokeJoin == 2) {
@@ -258,7 +258,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
       tangent = tangentIn;
     }
     output.vTangent = tangent;
-    var normal = vec2<f32>(-tangent.y, tangent.y);
+    var normal = vec2<f32>(-tangent.y, tangent.x);
 
     var normalOffset = sign(input.aSide);
     // Caps will have side values of -2 or 2 on the edge of the cap that
@@ -274,17 +274,8 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
 
   output.Position = vec4<f32>(
     p.xy + offset.xy * curPerspScale,
-    p.zy
+    p.zw
   );
-  var clip_pos: vec4<f32>;
-  if (input.aSide == 1.0) {
-    clip_pos = vec4<f32>(-0.1, 0.1, 0.5, 1.);
-  } else if (input.aSide == -1.0) {
-    clip_pos = vec4<f32>(-0.5, 0.5, 0.5, 1.0);
-  } else {
-    clip_pos = vec4<f32>(0.0, -0.5, 0.5 ,1.0);
-  }
-  output.Position = clip_pos;
   return output;
 }
 
