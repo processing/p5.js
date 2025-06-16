@@ -675,7 +675,7 @@ class RendererWebGPU extends Renderer3D {
       new RegExp(`struct\\s+${structName}\\s*\\{([^\\}]+)\\}`)
     );
     if (!structMatch) {
-      throw new Error(`Can't find a struct defnition for ${structName}`);
+      throw new Error(`Can't find a struct definition for ${structName}`);
     }
 
     const structBody = structMatch[1];
