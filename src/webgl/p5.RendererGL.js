@@ -276,7 +276,11 @@ class RendererGL extends Renderer3D {
 
     if (!glBuffers) return;
 
+<<<<<<< HEAD
     if (this._curShader.shaderType === 'stroke') {
+=======
+    if (this._curShader.shaderType === 'stroke'){
+>>>>>>> f0875d795be9297bcdf9b312dffcafeda4741536
       if (count === 1) {
         gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
        } else {
@@ -292,7 +296,10 @@ class RendererGL extends Renderer3D {
             "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
           );
         }
+<<<<<<< HEAD
        }
+=======
+>>>>>>> f0875d795be9297bcdf9b312dffcafeda4741536
     } else if (glBuffers.indexBuffer) {
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
