@@ -75,7 +75,6 @@ fn lineIntersection(aPoint: vec2f, aDir: vec2f, bPoint: vec2f, bDir: vec2f) -> v
 fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   HOOK_beforeVertex();
   var output: StrokeVertexOutput;
-  let viewport = vec4<f32>(0.,0.,400.,400.);
   let simpleLines = (uniforms.uSimpleLines != 0.);
   if (!simpleLines) {
     if (all(input.aTangentIn == vec3<f32>()) != all(input.aTangentOut == vec3<f32>())) {
@@ -219,7 +218,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
       if (sideEnum == 2.) {
         // Calculate the position + tangent on either side of the join, and
         // find where the lines intersect to find the elbow of the join
-        var c = (posp.xy / posp.w + vec2<f32>(1.)) * 0.5 * viewport.zw;
+        var c = (posp.xy / posp.w + vec2<f32>(1.)) * 0.5 * uniforms.uViewport.zw;
 
         var intersection = lineIntersection(
           c + (side * normalIn * inputs.weight / 2.),
