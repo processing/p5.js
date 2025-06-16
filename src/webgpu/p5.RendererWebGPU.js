@@ -548,7 +548,7 @@ class RendererWebGPU extends Renderer3D {
   // Rendering
   //////////////////////////////////////////////
 
-  _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }, stroke) {
+  _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }) {
     const buffers = this.geometryBufferCache.getCached(geometry);
     if (!buffers) return;
 
@@ -578,33 +578,33 @@ class RendererWebGPU extends Renderer3D {
     };
 
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(this._curShader.getPipeline(this._shaderOptions({ mode })));
+    const currentShader = this._curShader;
+    passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
     // Bind vertex buffers
-    for (const buffer of this._getVertexBuffers(this._curShader)) {
+    for (const buffer of this._getVertexBuffers(currentShader)) {
       passEncoder.setVertexBuffer(
-        this._curShader.attributes[buffer.attr].location,
+        currentShader.attributes[buffer.attr].location,
         buffers[buffer.dst],
         0
       );
     }
     // Bind uniforms
     this._packUniforms(this._curShader);
-    console.log(this._curShader);
     this.device.queue.writeBuffer(
-      this._curShader._uniformBuffer,
+      currentShader._uniformBuffer,
       0,
-      this._curShader._uniformData.buffer,
-      this._curShader._uniformData.byteOffset,
-      this._curShader._uniformData.byteLength
+      currentShader._uniformData.buffer,
+      currentShader._uniformData.byteOffset,
+      currentShader._uniformData.byteLength
     );
 
     // Bind sampler/texture uniforms
-    for (const [group, entries] of this._curShader._groupEntries) {
+    for (const [group, entries] of currentShader._groupEntries) {
       const bgEntries = entries.map(entry => {
         if (group === 0 && entry.binding === 0) {
           return {
             binding: 0,
-            resource: { buffer: this._curShader._uniformBuffer },
+            resource: { buffer: currentShader._uniformBuffer },
           };
         }
 
@@ -616,7 +616,7 @@ class RendererWebGPU extends Renderer3D {
         };
       });
 
-      const layout = this._curShader._bindGroupLayouts[group];
+      const layout = currentShader._bindGroupLayouts[group];
       const bindGroup = this.device.createBindGroup({
         layout,
         entries: bgEntries,
@@ -624,18 +624,20 @@ class RendererWebGPU extends Renderer3D {
       passEncoder.setBindGroup(group, bindGroup);
     }
 
-    if (buffers.lineVerticesBuffer && geometry.lineVertices && stroke) {
+    if (currentShader.shaderType === "fill") {
+      // Bind index buffer and issue draw
+      if (buffers.indexBuffer) {
+        const indexFormat = buffers.indexFormat || "uint16";
+        passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
+        passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
+      } else {
+        passEncoder.draw(geometry.vertices.length, count, 0, 0);
+      }
+    }
+
+    if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
       passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
     }
-    // Bind index buffer and issue draw
-    if (!stroke) {
-    if (buffers.indexBuffer) {
-      const indexFormat = buffers.indexFormat || "uint16";
-      passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
-      passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
-    } else {
-      passEncoder.draw(geometry.vertices.length, count, 0, 0);
-    }}
 
     passEncoder.end();
     this.queue.submit([commandEncoder.finish()]);

@@ -557,7 +557,7 @@ export class Renderer3D extends Renderer {
       geometry.hasFillTransparency()
     );
 
-    this._drawBuffers(geometry, { mode, count }, false);
+    this._drawBuffers(geometry, { mode, count });
 
     shader.unbindShader();
   }
@@ -583,7 +583,7 @@ export class Renderer3D extends Renderer {
       geometry.hasStrokeTransparency()
     );
 
-    this._drawBuffers(geometry, {count}, true)
+    this._drawBuffers(geometry, {count})
 
     shader.unbindShader();
   }
