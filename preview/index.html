@@ -25,21 +25,52 @@
     const sketch = function (p) {
       let fbo;
       let sh;
+      let ssh;
+
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
+        sh = p.baseMaterialShader().modify({
+          uniforms: {
+            'f32 time': () => p.millis(),
+          },
+          'Vertex getWorldInputs': `(inputs: Vertex) {
+            var result = inputs;
+            result.position.y += 40.0 * sin(uniforms.time * 0.01);
+            return result;
+          }`,
+        })
+	ssh = p.baseStrokeShader().modify({
+          uniforms: {
+            'f32 time': () => p.millis(),
+          },
+          'StrokeVertex getWorldInputs': `(inputs: StrokeVertex) {
+            var result = inputs;
+            result.position.y += 40.0 * sin(uniforms.time * 0.01);
+            return result;
+          }`,
+	})
       };
-	p.disableFriendlyErrors = true; 
+
       p.draw = function () {
-	p.orbitControl()
         const t = p.millis() * 0.008;
-        p.background(0);
-        // p.noStroke();
-        for (const [i, c] of ['red'].entries()) {
-	  p.stroke(0);
-	  p.strokeWeight(2);
-	  p.push();
+        p.background(200);
+        p.shader(sh);
+	p.strokeShader(ssh)
+        p.ambientLight(50);
+        p.directionalLight(100, 100, 100, 0, 1, -1);
+        p.pointLight(155, 155, 155, 0, -200, 500);
+        p.specularMaterial(255);
+        p.shininess(300);
+	p.stroke('white')
+        for (const [i, c] of ['red', 'lime', 'blue'].entries()) {
+          p.push();
           p.fill(c);
-	  p.sphere(60);
+          p.translate(
+            p.width/3 * p.sin(t + i * Math.E),
+            0, //p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
+            p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
+          )
+          p.sphere(30);
           p.pop();
         }
       };
