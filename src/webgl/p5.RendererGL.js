@@ -270,37 +270,30 @@ class RendererGL extends Renderer3D {
     }
   }
 
-  // Stroke version for now:
-  //
-//  {
-//    const gl = this.GL;
-//    // move this to _drawBuffers ?
-//    if (count === 1) {
-//      gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
-//     } else {
-//     try {
- //       gl.drawArraysInstanced(
- //       gl.TRIANGLES,
- //         0,
- //         geometry.lineVertices.length / 3,
- //         count
- //       );
- //     } catch (e) {
- //       console.log(
- //         "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
- //       );
- //     }
- //   }
- // }
-
   _drawBuffers(geometry, { mode = constants.TRIANGLES, count }) {
     const gl = this.GL;
     const glBuffers = this.geometryBufferCache.getCached(geometry);
-    //console.log(glBuffers);
 
     if (!glBuffers) return;
 
-    if (glBuffers.indexBuffer) {
+    if (this._curShader.shaderType === 'stroke') {
+      if (count === 1) {
+        gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
+       } else {
+       try {
+          gl.drawArraysInstanced(
+          gl.TRIANGLES,
+            0,
+            geometry.lineVertices.length / 3,
+            count
+          );
+        } catch (e) {
+          console.log(
+            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+          );
+        }
+       }
+    } else if (glBuffers.indexBuffer) {
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
       // If this model is using a Uint32Array we need to ensure the
