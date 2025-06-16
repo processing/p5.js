@@ -2,11 +2,11 @@ import { getTexture } from './utils'
 
 const uniforms = `
 struct Uniforms {
-// @p5 ifdef Vertex getWorldInputs
+// @p5 ifdef StrokeVertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
   uViewMatrix: mat4x4<f32>,
 // @p5 endif
-// @p5 ifndef Vertex getWorldInputs
+// @p5 ifndef StrokeVertex getWorldInputs
   uModelViewMatrix: mat4x4<f32>,
 // @p5 endif
   uMaterialColor: vec4<f32>,
@@ -15,10 +15,10 @@ struct Uniforms {
   uUseLineColor: f32,
   uSimpleLines: f32,
   uViewport: vec4<f32>,
-  uPerspective: i32,
-  uStrokeJoin: i32,
-}
-`;
+  uPerspective: u32,
+  uStrokeCap: u32,
+  uStrokeJoin: u32,
+}`;
 
 export const lineVertexShader = `
 struct StrokeVertexInput {
@@ -44,7 +44,7 @@ struct StrokeVertexOutput {
 ${uniforms}
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
-struct Vertex {
+struct StrokeVertex {
   position: vec3<f32>,
   tangentIn: vec3<f32>,
   tangentOut: vec3<f32>,
@@ -97,7 +97,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   } else {
     lineColor = uniforms.uMaterialColor;
   }
-  var inputs = Vertex(
+  var inputs = StrokeVertex(
     input.aPosition.xyz,
     input.aTangentIn,
     input.aTangentOut,
@@ -105,29 +105,30 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
     uniforms.uStrokeWeight
   );
 
-// @p5 ifdef Vertex getObjectInputs
+// @p5 ifdef StrokeVertex getObjectInputs
   inputs = HOOK_getObjectInputs(inputs);
 // @p5 endif
 
-// @p5 ifdef Vertex getWorldInputs
-  inputs.position = (uModelMatrix * vec4<f32>(inputs.position, 1.)).xyz;
-  inputs.tangentIn = (uModelMatrix * vec4<f32>(input.aTangentIn, 1.)).xyz;
-  inputs.tangentOut = (uModelMatrix * vec4<f32>(input.aTangentOut, 1.)).xyz;
+// @p5 ifdef StrokeVertex getWorldInputs
+  inputs.position = (uniforms.uModelMatrix * vec4<f32>(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (uniforms.uModelMatrix * vec4<f32>(input.aTangentIn, 1.)).xyz;
+  inputs.tangentOut = (uniforms.uModelMatrix * vec4<f32>(input.aTangentOut, 1.)).xyz;
+  inputs = HOOK_getWorldInputs(inputs);
 // @p5 endif
 
-// @p5 ifdef Vertex getWorldInputs
+// @p5 ifdef StrokeVertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
   inputs.position = (uniforms.uViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
   inputs.tangentIn = (uniforms.uViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
   inputs.tangentOut = (uniforms.uViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
 // @p5 endif
-// @p5 ifndef Vertex getWorldInputs
+// @p5 ifndef StrokeVertex getWorldInputs
   // Apply both at once
   inputs.position = (uniforms.uModelViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
   inputs.tangentIn = (uniforms.uModelViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
   inputs.tangentOut = (uniforms.uModelViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
 // @p5 endif
-// @p5 ifdef Vertex getCameraInputs
+// @p5 ifdef StrokeVertex getCameraInputs
   inputs = HOOK_getCameraInputs(inputs);
 // @p5 endif
 
@@ -276,11 +277,9 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
     p.xy + offset.xy * curPerspScale,
     p.zw
   );
+  HOOK_afterVertex();
   return output;
-}
-
-
-`;
+}`;
 
 export const lineFragmentShader = `
 struct StrokeFragmentInput {
@@ -299,9 +298,62 @@ ${uniforms}
 
 ${getTexture}
 
+fn distSquared(a: vec2<f32>, b: vec2<f32>) -> f32 {
+  return dot(b - a, b - a);
+}
+
+struct Inputs {
+  color: vec4<f32>,
+  tangent: vec2<f32>,
+  center: vec2<f32>,
+  position: vec2<f32>,
+  strokeWeight: f32,
+}
+
 @fragment
 fn main(input: StrokeFragmentInput) -> @location(0) vec4<f32> {
-  return vec4<f32>(1., 1., 1., 1.);
+  HOOK_beforeFragment();
+
+  var inputs: Inputs;
+  inputs.color = input.vColor;
+  inputs.tangent = input.vTangent;
+  inputs.center = input.vCenter;
+  inputs.position = input.vPosition;
+  inputs.strokeWeight = input.vStrokeWeight;
+  inputs = HOOK_getPixelInputs(inputs);
+
+  if (input.vCap > 0.) {
+    if (
+      uniforms.uStrokeCap == STROKE_CAP_ROUND &&
+      HOOK_shouldDiscard(distSquared(inputs.position, inputs.center) > inputs.strokeWeight * inputs.strokeWeight * 0.25)
+    ) {
+      discard;
+    } else if (
+      uniforms.uStrokeCap == STROKE_CAP_SQUARE &&
+      HOOK_shouldDiscard(dot(inputs.position - inputs.center, inputs.tangent) > 0.)
+    ) {
+      discard;
+    } else if (HOOK_shouldDiscard(false)) {
+      discard;
+    }
+  } else if (input.vJoin > 0.) {
+    if (
+      uniforms.uStrokeJoin == STROKE_JOIN_ROUND &&
+      HOOK_shouldDiscard(distSquared(inputs.position, inputs.center) > inputs.strokeWeight * inputs.strokeWeight * 0.25)
+    ) {
+      discard;
+    } else if (uniforms.uStrokeJoin == STROKE_JOIN_BEVEL) {
+      let normal = vec2<f32>(-inputs.tangent.y, -inputs.tangent.x);
+      if (HOOK_shouldDiscard(abs(dot(inputs.position - inputs.center, normal)) > input.vMaxDist)) {
+        discard;
+      }
+    } else if (HOOK_shouldDiscard(false)) {
+      discard;
+    }
+  }
+  var col = HOOK_getFinalColor(vec4<f32>(inputs.color.rgb, 1.) * inputs.color.a);
+  HOOK_afterFragment();
+  return vec4<f32>(col);
 }
 `;
 

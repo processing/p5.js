@@ -123,7 +123,7 @@ class Shader {
   }
 
   shaderSrc(src, shaderType) {
-    return this._renderer.fillHooks(this, src, shaderType);
+    return this._renderer.populateHooks(this, src, shaderType);
   }
 
   /**

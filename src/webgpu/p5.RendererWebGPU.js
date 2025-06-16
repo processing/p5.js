@@ -954,17 +954,22 @@ class RendererWebGPU extends Renderer3D {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new Shader(
         this,
-        lineVertexShader,
-        lineFragmentShader,
+        lineDefs + lineVertexShader,
+        lineDefs + lineFragmentShader,
         {
           vertex: {
             "void beforeVertex": "() {}",
-            "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
-            "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
-            "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
+            "StrokeVertex getObjectInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "StrokeVertex getWorldInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "StrokeVertex getCameraInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "void afterVertex": "() {}",
           },
           fragment: {
-            "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }"
+            "void beforeFragment": "() {}",
+            "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
+            "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+            "bool shouldDiscard": "(outside: bool) { return outside; };",
+            "void afterFragment": "() {}",
           },
         }
       );
@@ -987,7 +992,7 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
-  fillHooks(shader, src, shaderType) {
+  populateHooks(shader, src, shaderType) {
     if (!src.includes('fn main')) return src;
 
     // Apply some p5-specific preprocessing. WGSL doesn't have preprocessor

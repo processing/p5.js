@@ -1683,7 +1683,7 @@ class RendererGL extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
-  fillHooks(shader, src, shaderType) {
+  populateHooks(shader, src, shaderType) {
     const main = 'void main';
     if (!src.includes(main)) return src;
 
