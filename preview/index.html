@@ -25,6 +25,8 @@
     const sketch = function (p) {
       let fbo;
       let sh;
+      let ssh;
+
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
         sh = p.baseMaterialShader().modify({
@@ -37,18 +39,29 @@
             return result;
           }`,
         })
+	ssh = p.baseStrokeShader().modify({
+          uniforms: {
+            'f32 time': () => p.millis(),
+          },
+          'StrokeVertex getWorldInputs': `(inputs: StrokeVertex) {
+            var result = inputs;
+            result.position.y += 40.0 * sin(uniforms.time * 0.01);
+            return result;
+          }`,
+	})
       };
 
       p.draw = function () {
         const t = p.millis() * 0.008;
         p.background(200);
-        p.noStroke();
         p.shader(sh);
+	p.strokeShader(ssh)
         p.ambientLight(50);
         p.directionalLight(100, 100, 100, 0, 1, -1);
         p.pointLight(155, 155, 155, 0, -200, 500);
         p.specularMaterial(255);
         p.shininess(300);
+	p.stroke('white')
         for (const [i, c] of ['red', 'lime', 'blue'].entries()) {
           p.push();
           p.fill(c);

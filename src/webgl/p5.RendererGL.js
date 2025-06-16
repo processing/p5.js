@@ -39,7 +39,7 @@ import filterInvertFrag from "./shaders/filters/invert.frag";
 import filterThresholdFrag from "./shaders/filters/threshold.frag";
 import filterShaderVert from "./shaders/filters/default.vert";
 
-const { lineDefs } = getStrokeDefs();
+const { lineDefs } = getStrokeDefs((n, v) => `#define ${n} ${v};\n`);
 
 const defaultShaders = {
   normalVert,
@@ -276,7 +276,24 @@ class RendererGL extends Renderer3D {
 
     if (!glBuffers) return;
 
-    if (glBuffers.indexBuffer) {
+    if (this._curShader.shaderType === 'stroke'){
+      if (count === 1) {
+        gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
+       } else {
+       try {
+          gl.drawArraysInstanced(
+          gl.TRIANGLES,
+            0,
+            geometry.lineVertices.length / 3,
+            count
+          );
+        } catch (e) {
+          console.log(
+            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+          );
+        }
+       }
+    } else if (glBuffers.indexBuffer) {
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
       // If this model is using a Uint32Array we need to ensure the
@@ -1157,7 +1174,7 @@ class RendererGL extends Renderer3D {
 
     if (indices) {
       const buffer = gl.createBuffer();
-      this.renderer._bindBuffer(buffer, gl.ELEMENT_ARRAY_BUFFER, indices, indexType);
+      this._bindBuffer(buffer, gl.ELEMENT_ARRAY_BUFFER, indices, indexType);
 
       buffers.indexBuffer = buffer;
 
@@ -1478,9 +1495,9 @@ class RendererGL extends Renderer3D {
   createTexture({ width, height, format, dataType }) {
     const gl = this.GL;
     const tex = gl.createTexture();
-    this.gl.bindTexture(gl.TEXTURE_2D, tex);
-    this.gl.texImage2D(gl.TEXTURE_2D, 0, this.gl.RGBA, width, height, 0,
-                       gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
+                       gl.RGBA, gl.UNSIGNED_BYTE, null);
     // TODO use format and data type
     return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
   }
@@ -1659,7 +1676,7 @@ class RendererGL extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
-  fillHooks(shader, src, shaderType) {
+  populateHooks(shader, src, shaderType) {
     const main = 'void main';
     if (!src.includes(main)) return src;
 

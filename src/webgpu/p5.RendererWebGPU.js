@@ -1,8 +1,13 @@
-import { Renderer3D } from '../core/p5.Renderer3D';
+import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
+
+
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
+import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
+
+const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
@@ -457,7 +462,6 @@ class RendererWebGPU extends Renderer3D {
     for (const attrName in shader.attributes) {
       const attr = shader.attributes[attrName];
       if (!attr || attr.location === -1) continue;
-
       // Get the vertex buffer info associated with this attribute
       const renderBuffer =
         this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
@@ -481,7 +485,6 @@ class RendererWebGPU extends Renderer3D {
         ],
       });
     }
-
     return layouts;
   }
 
@@ -516,7 +519,9 @@ class RendererWebGPU extends Renderer3D {
 
   _useShader(shader, options) {}
 
-  _updateViewport() {}
+  _updateViewport() {
+    this._viewport = [0, 0, this.width, this.height];
+  }
 
   zClipRange() {
     return [0, 1];
@@ -557,8 +562,9 @@ class RendererWebGPU extends Renderer3D {
     if (!buffers) return;
 
     const commandEncoder = this.device.createCommandEncoder();
+    const currentTexture = this.drawingContext.getCurrentTexture();
     const colorAttachment = {
-      view: this.drawingContext.getCurrentTexture().createView(),
+      view: currentTexture.createView(),
       loadOp: "load",
       storeOp: "store",
     };
@@ -581,34 +587,33 @@ class RendererWebGPU extends Renderer3D {
     };
 
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(this._curShader.getPipeline(this._shaderOptions({ mode })));
-
+    const currentShader = this._curShader;
+    passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
     // Bind vertex buffers
-    for (const buffer of this._getVertexBuffers(this._curShader)) {
+    for (const buffer of this._getVertexBuffers(currentShader)) {
       passEncoder.setVertexBuffer(
-        this._curShader.attributes[buffer.attr].location,
+        currentShader.attributes[buffer.attr].location,
         buffers[buffer.dst],
         0
       );
     }
-
     // Bind uniforms
     this._packUniforms(this._curShader);
     this.device.queue.writeBuffer(
-      this._curShader._uniformBuffer,
+      currentShader._uniformBuffer,
       0,
-      this._curShader._uniformData.buffer,
-      this._curShader._uniformData.byteOffset,
-      this._curShader._uniformData.byteLength
+      currentShader._uniformData.buffer,
+      currentShader._uniformData.byteOffset,
+      currentShader._uniformData.byteLength
     );
 
     // Bind sampler/texture uniforms
-    for (const [group, entries] of this._curShader._groupEntries) {
+    for (const [group, entries] of currentShader._groupEntries) {
       const bgEntries = entries.map(entry => {
         if (group === 0 && entry.binding === 0) {
           return {
             binding: 0,
-            resource: { buffer: this._curShader._uniformBuffer },
+            resource: { buffer: currentShader._uniformBuffer },
           };
         }
 
@@ -620,22 +625,27 @@ class RendererWebGPU extends Renderer3D {
         };
       });
 
-      const layout = this._curShader._bindGroupLayouts[group];
+      const layout = currentShader._bindGroupLayouts[group];
       const bindGroup = this.device.createBindGroup({
         layout,
         entries: bgEntries,
       });
-
       passEncoder.setBindGroup(group, bindGroup);
     }
 
-    // Bind index buffer and issue draw
-    if (buffers.indexBuffer) {
-      const indexFormat = buffers.indexFormat || "uint16";
-      passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
-      passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
-    } else {
-      passEncoder.draw(geometry.vertices.length, count, 0, 0);
+    if (currentShader.shaderType === "fill") {
+      // Bind index buffer and issue draw
+      if (buffers.indexBuffer) {
+        const indexFormat = buffers.indexFormat || "uint16";
+        passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
+        passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
+      } else {
+        passEncoder.draw(geometry.vertices.length, count, 0, 0);
+      }
+    }
+
+    if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
+      passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
     }
 
     passEncoder.end();
@@ -788,7 +798,6 @@ class RendererWebGPU extends Renderer3D {
     }
     const structType = uniformVarMatch[2];
     const uniforms = this._parseStruct(shader.vertSrc(), structType);
-
     // Extract samplers from group bindings
     const samplers = [];
     const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(\w+);/g;
@@ -941,6 +950,33 @@ class RendererWebGPU extends Renderer3D {
     return this._defaultColorShader;
   }
 
+  _getLineShader() {
+    if (!this._defaultLineShader) {
+      this._defaultLineShader = new Shader(
+        this,
+        lineDefs + lineVertexShader,
+        lineDefs + lineFragmentShader,
+        {
+          vertex: {
+            "void beforeVertex": "() {}",
+            "StrokeVertex getObjectInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "StrokeVertex getWorldInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "StrokeVertex getCameraInputs": "(inputs: StrokeVertex) { return inputs; }",
+            "void afterVertex": "() {}",
+          },
+          fragment: {
+            "void beforeFragment": "() {}",
+            "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
+            "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+            "bool shouldDiscard": "(outside: bool) { return outside; };",
+            "void afterFragment": "() {}",
+          },
+        }
+      );
+    }
+    return this._defaultLineShader;
+  }
+
   //////////////////////////////////////////////
   // Setting
   //////////////////////////////////////////////
@@ -956,7 +992,7 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
-  fillHooks(shader, src, shaderType) {
+  populateHooks(shader, src, shaderType) {
     if (!src.includes('fn main')) return src;
 
     // Apply some p5-specific preprocessing. WGSL doesn't have preprocessor
