@@ -39,7 +39,7 @@ import filterInvertFrag from "./shaders/filters/invert.frag";
 import filterThresholdFrag from "./shaders/filters/threshold.frag";
 import filterShaderVert from "./shaders/filters/default.vert";
 
-const { lineDefs } = getStrokeDefs();
+const { lineDefs } = getStrokeDefs((n, v) => `#define ${n} ${v};\n`);
 
 const defaultShaders = {
   normalVert,

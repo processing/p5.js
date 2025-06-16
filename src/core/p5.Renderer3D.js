@@ -16,16 +16,16 @@ import { RenderBuffer } from "../webgl/p5.RenderBuffer";
 import { Image } from "../image/p5.Image";
 import { Texture } from "../webgl/p5.Texture";
 
-export function getStrokeDefs() {
+export function getStrokeDefs(shaderConstant) {
   const STROKE_CAP_ENUM = {};
   const STROKE_JOIN_ENUM = {};
   let lineDefs = "";
   const defineStrokeCapEnum = function (key, val) {
-    lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
+    lineDefs += shaderConstant(`STROKE_CAP_${key}`, `${val}`, 'u32');
     STROKE_CAP_ENUM[constants[key]] = val;
   };
   const defineStrokeJoinEnum = function (key, val) {
-    lineDefs += `#define STROKE_JOIN_${key} ${val}\n`;
+    lineDefs += shaderConstant(`STROKE_JOIN_${key}`, `${val}`, 'u32');
     STROKE_JOIN_ENUM[constants[key]] = val;
   };
 
@@ -41,7 +41,7 @@ export function getStrokeDefs() {
   return { STROKE_CAP_ENUM, STROKE_JOIN_ENUM, lineDefs };
 }
 
-const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs();
+const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(()=>"");
 
 export class Renderer3D extends Renderer {
   constructor(pInst, w, h, isMainCanvas, elt) {

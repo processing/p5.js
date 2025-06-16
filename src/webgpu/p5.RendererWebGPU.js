@@ -1,9 +1,13 @@
-import { Renderer3D } from '../core/p5.Renderer3D';
+import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import * as constants from '../core/constants';
+
+
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
+
+const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
 class RendererWebGPU extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
