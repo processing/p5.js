@@ -1620,6 +1620,8 @@ function light(p5, fn){
     angle,
     concentration
   ) {
+    if (this.states.spotLightDiffuseColors.length / 3 >= 4) return;
+
     let color, position, direction;
     const length = arguments.length;
 
@@ -1777,18 +1779,26 @@ function light(p5, fn){
         return;
     }
     this.states.setValue('spotLightDiffuseColors', [
+      ...this.states.spotLightDiffuseColors,
       color._array[0],
       color._array[1],
       color._array[2]
     ]);
 
     this.states.setValue('spotLightSpecularColors', [
+      ...this.states.spotLightSpecularColors,
       ...this.states.specularColors
     ]);
 
-    this.states.setValue('spotLightPositions', [position.x, position.y, position.z]);
+    this.states.setValue('spotLightPositions', [
+      ...this.states.spotLightPositions,
+      position.x,
+      position.y,
+      position.z
+    ]);
     direction.normalize();
     this.states.setValue('spotLightDirections', [
+      ...this.states.spotLightDirections,
       direction.x,
       direction.y,
       direction.z
@@ -1808,8 +1818,8 @@ function light(p5, fn){
     }
 
     angle = this._pInst._toRadians(angle);
-    this.states.setValue('spotLightAngle', [Math.cos(angle)]);
-    this.states.setValue('spotLightConc', [concentration]);
+    this.states.setValue('spotLightAngle', [...this.states.spotLightAngle, Math.cos(angle)]);
+    this.states.setValue('spotLightConc', [...this.states.spotLightConc, concentration]);
 
     this.states.setValue('enableLighting', true);
   }

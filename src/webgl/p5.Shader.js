@@ -976,13 +976,17 @@ class Shader {
    * </code>
    * </div>
    */
-  setUniform(uniformName, data) {
+  setUniform(uniformName, rawData) {
     this.init();
 
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
     }
+
+    const data = this._renderer._mapUniformData
+      ? this._renderer._mapUniformData(uniform, rawData)
+      : rawData;
 
     if (uniform.isArray) {
       if (

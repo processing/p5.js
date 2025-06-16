@@ -14,7 +14,7 @@ struct Uniforms {
 // @p5 endif
   uProjectionMatrix: mat4x4<f32>,
   uMaterialColor: vec4<f32>,
-  uUseVertexColor: f32,
+  uUseVertexColor: u32,
 };
 `;
 
@@ -48,7 +48,7 @@ fn main(input: VertexInput) -> VertexOutput {
   HOOK_beforeVertex();
   var output: VertexOutput;
 
-  let useVertexColor = (uniforms.uUseVertexColor != 0.0);
+  let useVertexColor = (uniforms.uUseVertexColor != 0);
   var inputs = Vertex(
     input.aPosition,
     input.aNormal,
@@ -107,9 +107,8 @@ ${getTexture}
 @fragment
 fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   HOOK_beforeFragment();
-  var outColor = HOOK_getFinalColor(
-    vec4<f32>(input.vColor.rgb * input.vColor.a, input.vColor.a)
-  );
+  var outColor = HOOK_getFinalColor(input.vColor);
+  outColor = vec4<f32>(outColor.rgb * outColor.a, outColor.a);
   HOOK_afterFragment();
   return outColor;
 }
