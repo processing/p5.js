@@ -635,7 +635,7 @@ class Color {
    * an array of color components, or a CSS color string. Depending on value,
    * when colorMode() is set a HSB value, this function will returns the
    * brightness value within the current range. By default, this function will return
-   * the HSB brightness within the range 0 - 100.
+   * the HSB brightness within the range 0–100.
    */
 
   _getBrightness(max=[0, 100]) {
