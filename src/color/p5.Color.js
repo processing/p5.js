@@ -547,8 +547,8 @@ class Color {
   }
 
   /**
-   * This function extracts the green value from a color object, returns green
-   * value in the range of 0 to 255 by default. When colorMode() is given to an
+   * This function extracts the green value from a color object and
+   * returns it in the range 0–255 by default. When colorMode() is given to an
    * RBG value, the green value within the givin range is returned
    */
   _getGreen(max=[0, 1]) {
@@ -633,7 +633,7 @@ class Color {
   /**
    * Brightness obtains the HSB brightness value from either a p5.Color object,
    * an array of color components, or a CSS color string.Depending on value,
-   * when colorMode() is set a HSB value, this function will return the
+   * wwhen `colorMode()` is set to HSB, this function will return the
    * brightness value in the range. By default, this function will return
    * the HSB brightness within the range 0 - 100.
    */
