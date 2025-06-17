@@ -709,7 +709,17 @@ class Shader {
 
     for (const uniform of this.samplers) {
       let tex = uniform.texture;
-      if (tex === undefined) {
+      if (
+        tex === undefined ||
+        (
+          // Make sure we unbind a framebuffer uniform if it's the same
+          // framebuffer that is actvely being drawn to in order to
+          // prevent a feedback cycle
+          tex.isFramebufferTexture &&
+          !tex.src.framebuffer.antialias &&
+          tex.src.framebuffer === this._renderer.activeFramebuffer()
+        )
+      ) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
         // so we supply a default texture instead.
@@ -1026,7 +1036,7 @@ class Shader {
       }
 
       if (attr.location !== -1) {
-        this._renderer._enableAttrib(attr, size, type, normalized, stride, offset);
+        this._renderer._enableAttrib(this, attr, size, type, normalized, stride, offset);
       }
     }
     return this;

@@ -107,10 +107,9 @@ suite('p5.RendererGL', function() {
       // Make a red texture
       const tex = myp5.createFramebuffer();
       tex.draw(() => myp5.background('red'));
-      console.log(tex.get().canvas.toDataURL());
 
       myp5.shader(myShader);
-      myp5.fill('red')
+      myp5.fill('blue')
       myp5.noStroke();
       myShader.setUniform('myTex', tex);
 

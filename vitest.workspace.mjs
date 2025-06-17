@@ -5,7 +5,8 @@ const plugins = [
   vitePluginString({
     include: [
       'src/webgl/shaders/**/*'
-    ]
+    ],
+    compress: false,
   })
 ];
 

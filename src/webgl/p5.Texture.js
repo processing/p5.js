@@ -130,7 +130,7 @@ class Texture {
       });
     }
 
-    this._renderer.setTextureParams(this.textureHandle, {
+    this._renderer.setTextureParams(this, {
       minFilter: this.minFilter,
       magFilter: this.magFilter,
       wrapS: this.wrapS,
@@ -179,14 +179,13 @@ class Texture {
     if (this._shouldUpdate(textureData)) {
       this.bindTexture();
       this._renderer.uploadTextureFromSource(this.textureHandle, textureData);
-      this.unbindTexture();
       updated = true;
     }
 
     return updated;
   }
 
-  shouldUpdate(textureData) {
+  _shouldUpdate(textureData) {
     const data = this.src;
     if (data.width === 0 || data.height === 0) {
       return false; // nothing to do!
@@ -280,7 +279,7 @@ class Texture {
     if (this.isFramebufferTexture) {
       return this.src.rawTexture();
     } else {
-      return this.glTex;
+      return this.textureHandle;
     }
   }
 

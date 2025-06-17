@@ -1667,11 +1667,9 @@ function primitives3D(p5, fn){
    * </div>
    */
   Renderer3D.prototype.point = function(x, y, z = 0) {
-
-    const _vertex = [];
-    _vertex.push(new Vector(x, y, z));
-    // TODO
-    // this._drawPoints(_vertex, this.buffers.point);
+    this.beginShape(constants.POINTS);
+    this.vertex(x, y, z);
+    this.endShape();
 
     return this;
   };

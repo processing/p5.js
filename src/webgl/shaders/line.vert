@@ -127,7 +127,7 @@ void main() {
   inputs.tangentOut = (uModelViewMatrix * vec4(aTangentOut, 0.)).xyz;
 #endif
 #ifdef AUGMENTED_HOOK_getCameraInputs
-  inputs = hook_getCameraInputs(inputs);
+  inputs = HOOK_getCameraInputs(inputs);
 #endif
 
   vec4 posp = vec4(inputs.position, 1.);

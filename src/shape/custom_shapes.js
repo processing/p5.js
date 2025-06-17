@@ -1170,10 +1170,12 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   contours = [];
   curveDetail;
+  pointsToLines;
 
-  constructor({ curveDetail = 1 } = {}) {
+  constructor({ curveDetail = 1, pointsToLines = true } = {}) {
     super();
     this.curveDetail = curveDetail;
+    this.pointsToLines = pointsToLines;
   }
 
   lastContour() {
@@ -1246,7 +1248,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     }
   }
   visitPoint(point) {
-    this.contours.push(point.vertices.slice());
+    if (this.pointsToLines) {
+      this.contours.push(...point.vertices.map(v => [v, v]));
+    } else {
+      this.contours.push(point.vertices.slice());
+    }
   }
   visitLine(line) {
     this.contours.push(line.vertices.slice());
@@ -1592,11 +1598,11 @@ function customShapes(p5, fn) {
    * one call to <a href="#/p5/vertex">bezierVertex()</a>, before
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
-   * 
+   *
    * Each curve of order 3 requires three calls to `bezierVertex`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
    * (1 one initial anchor point, two sets of 3 curves describing the curves)
-   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2.
    *
    * Bézier curves can also be drawn in 3D using WebGL mode.
    *
@@ -1605,7 +1611,7 @@ function customShapes(p5, fn) {
    *
    * @method bezierOrder
    * @param {Number} order The new order to set. Can be either 2 or 3, by default 3
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1619,7 +1625,7 @@ function customShapes(p5, fn) {
    *
    *   // Start drawing the shape.
    *   beginShape();
-   * 
+   *
    *   // set the order to 2 for a quadratic Bézier curve
    *   bezierOrder(2);
    *
@@ -2059,11 +2065,11 @@ function customShapes(p5, fn) {
 
   /**
    * Sets the property of a curve.
-   * 
+   *
    * For example, set tightness,
    * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
    * at 0 as default.
-   * 
+   *
    * Spline curves are like cables that are attached to a set of points.
    * Adjusting tightness adjusts how tightly the cable is
    * attached to the points. The parameter, tightness, determines
@@ -2072,33 +2078,33 @@ function customShapes(p5, fn) {
    * `splineProperty('tightness', 1)`, connects the curve's points
    * using straight lines. Values in the range from –5 to 5
    * deform curves while leaving them recognizable.
-   * 
+   *
    * This function can also be used to set 'ends' property
    * (see also: the <a href="#/p5/curveDetail">curveDetail()</a> example),
    * such as: `splineProperty('ends', EXCLUDE)` to exclude
    * vertices, or `splineProperty('ends', INCLUDE)` to include them.
-   * 
+   *
    * @method splineProperty
    * @param {String} property
    * @param value Value to set the given property to.
-   * 
+   *
    * @example
    * <div>
    * <code>
    * // Move the mouse left and right to see the curve change.
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
    *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
    * }
-   * 
+   *
    * function draw() {
    *   background(200);
-   * 
+   *
    *   // Set the curve's tightness using the mouse.
    *   let t = map(mouseX, 0, 100, -5, 5, true);
    *   splineProperty('tightness', t);
-   * 
+   *
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
@@ -2124,11 +2130,11 @@ function customShapes(p5, fn) {
 
   /**
    * Get or set multiple spline properties at once.
-   * 
+   *
    * Similar to <a href="#/p5/splineProperty">splineProperty()</a>:
    * `splineProperty('tightness', t)` is the same as
    * `splineProperties({'tightness': t})`
-   * 
+   *
    * @method splineProperties
    * @param {Object} properties An object containing key-value pairs to set.
    */
@@ -2307,7 +2313,7 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * let vid;
@@ -2315,28 +2321,28 @@ function customShapes(p5, fn) {
    *   // Load a video and create a p5.MediaElement object.
    *   vid = createVideo('/assets/fingers.mov');
    *   createCanvas(100, 100, WEBGL);
-   * 
+   *
    *   // Hide the video.
    *   vid.hide();
-   * 
+   *
    *   // Set the video to loop.
    *   vid.loop();
-   * 
+   *
    *   describe('A rectangle with video as texture');
    * }
-   * 
+   *
    * function draw() {
    *   background(0);
-   * 
+   *
    *   // Rotate around the y-axis.
    *   rotateY(frameCount * 0.01);
-   * 
+   *
    *   // Set the texture mode.
    *   textureMode(NORMAL);
-   * 
+   *
    *   // Apply the video as a texture.
    *   texture(vid);
-   * 
+   *
    *   // Draw a custom shape using uv coordinates.
    *   beginShape();
    *   vertex(-40, -40, 0, 0);
@@ -2489,7 +2495,7 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Stops creating a hole within a flat shape. 
+   * Stops creating a hole within a flat shape.
    *
    * The <a href="#/p5/beginContour">beginContour()</a> and `endContour()`
    * functions allow for creating negative space within custom shapes that are
@@ -2499,10 +2505,10 @@ function customShapes(p5, fn) {
    * called between <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a>.
    *
-   *  By default, 
+   *  By default,
    * the controur has an `OPEN` end, and to close it,
    * call `endContour(CLOSE)`. The CLOSE contour mode closes splines smoothly.
-   * 
+   *
    * Transformations such as <a href="#/p5/translate">translate()</a>,
    * <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a>
    * don't work between <a href="#/p5/beginContour">beginContour()</a> and

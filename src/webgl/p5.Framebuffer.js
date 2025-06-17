@@ -52,7 +52,8 @@ class FramebufferTexture {
   }
 
   rawTexture() {
-    return this.framebuffer[this.property];
+    // TODO: handle webgpu texture handle
+    return { texture: this.framebuffer[this.property] };
   }
 }
 
@@ -586,7 +587,7 @@ class Framebuffer {
 
     if (this.useDepth) {
       this.depth = new FramebufferTexture(this, 'depthTexture');
-      const depthFilter = gl.NEAREST;
+      const depthFilter = constants.NEAREST;
       this.depthP5Texture = new Texture(
         this.renderer,
         this.depth,
@@ -600,8 +601,8 @@ class Framebuffer {
 
     this.color = new FramebufferTexture(this, 'colorTexture');
     const filter = this.textureFiltering === constants.LINEAR
-      ? gl.LINEAR
-      : gl.NEAREST;
+      ? constants.LINEAR
+      : constants.NEAREST;
     this.colorP5Texture = new Texture(
       this.renderer,
       this.color,
@@ -921,7 +922,7 @@ class Framebuffer {
    */
   _deleteTexture(texture) {
     const gl = this.gl;
-    gl.deleteTexture(texture.rawTexture());
+    gl.deleteTexture(texture.rawTexture().texture);
 
     this.renderer.textures.delete(texture);
   }
@@ -1115,12 +1116,17 @@ class Framebuffer {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
       const partsToCopy = {
-        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
+        colorTexture: [
+          gl.COLOR_BUFFER_BIT,
+          // TODO: move to renderer
+          this.colorP5Texture.magFilter === constants.LINEAR ? gl.LINEAR : gl.NEAREST
+        ],
       };
       if (this.useDepth) {
         partsToCopy.depthTexture = [
           gl.DEPTH_BUFFER_BIT,
-          this.depthP5Texture.glMagFilter
+          // TODO: move to renderer
+          this.depthP5Texture.magFilter === constants.LINEAR ? gl.LINEAR : gl.NEAREST
         ];
       }
       const [flag, filter] = partsToCopy[property];
