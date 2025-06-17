@@ -156,7 +156,7 @@ suite('p5.Framebuffer', function() {
       expect(fbo.density).to.equal(1);
 
       // The texture should not be recreated
-      expect(fbo.color.rawTexture()).to.equal(oldTexture);
+      expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
     });
 
     test('manually-sized framebuffers can be made auto-sized', function() {
@@ -216,7 +216,7 @@ suite('p5.Framebuffer', function() {
         expect(fbo.density).to.equal(2);
 
         // The texture should not be recreated
-        expect(fbo.color.rawTexture()).to.equal(oldTexture);
+        expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
       });
 
       test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
@@ -638,10 +638,10 @@ suite('p5.Framebuffer', function() {
         });
 
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.NEAREST
+          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.NEAREST
         );
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.NEAREST
+          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.NEAREST
         );
       });
     test('can create a framebuffer that uses LINEAR texture filtering',
@@ -651,10 +651,10 @@ suite('p5.Framebuffer', function() {
         const fbo = myp5.createFramebuffer({});
 
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.LINEAR
+          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.LINEAR
         );
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.LINEAR
+          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.LINEAR
         );
       });
   });

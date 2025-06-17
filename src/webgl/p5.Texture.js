@@ -23,8 +23,8 @@ class Texture {
     this.format = settings.format || 'rgba8unorm';
     this.minFilter = settings.minFilter || constants.LINEAR;
     this.magFilter = settings.magFilter || constants.LINEAR;
-    this.wrapS = settings.wrapS || constants.CLAMP;
-    this.wrapT = settings.wrapT || constants.CLAMP;
+    this.wrapS = settings.wrapS || renderer.states.textureWrapX;
+    this.wrapT = settings.wrapT || renderer.states.textureWrapY;
     this.dataType = settings.dataType || 'uint8';
 
     this.textureHandle = null;

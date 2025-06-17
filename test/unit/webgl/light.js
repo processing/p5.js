@@ -67,6 +67,7 @@ suite('light', function() {
   });
 
   suite('spotlight inputs', function() {
+    beforeEach(() => myp5.noLights());
     let angle = Math.PI / 4;
     let defaultAngle = Math.cos(Math.PI / 3);
     let cosAngle = Math.cos(angle);

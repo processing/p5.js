@@ -60,8 +60,8 @@ class FilterRenderer2D {
       _emptyTexture: null,
       webglVersion,
       states: {
-        textureWrapX: this.gl.CLAMP_TO_EDGE,
-        textureWrapY: this.gl.CLAMP_TO_EDGE,
+        textureWrapX: constants.CLAMP,
+        textureWrapY: constants.CLAMP,
       },
       _arraysEqual: (a, b) => JSON.stringify(a) === JSON.stringify(b),
       _getEmptyTexture: () => {

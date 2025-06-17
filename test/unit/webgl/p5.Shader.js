@@ -67,7 +67,6 @@ suite('p5.Shader', function() {
         'uModelViewMatrix',
         'uProjectionMatrix',
         'uNormalMatrix',
-        'uAmbientLightCount',
         'uDirectionalLightCount',
         'uPointLightCount',
         'uAmbientColor',
