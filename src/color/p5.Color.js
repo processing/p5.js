@@ -634,7 +634,7 @@ class Color {
    * Brightness obtains the HSB brightness value from either a p5.Color object,
    * an array of color components, or a CSS color string. Depending on value,
    * when colorMode() is set a HSB value, this function will returns the
-   * brightness value in the range. By default, this function will return
+   * brightness value within the current range. By default, this function will return
    * the HSB brightness within the range 0 - 100.
    */
 
