@@ -548,7 +548,7 @@ class Color {
 
   /**
    * This function extracts the green value from a color object and
-   * returns it in the range 0–255 by default. When colorMode() is given to an
+   * returns it in the range 0–255 by default. When `colorMode()` is given to an
    * RBG value, the green value within the givin range is returned
    */
   _getGreen(max=[0, 1]) {
