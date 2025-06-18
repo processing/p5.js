@@ -7,6 +7,7 @@
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
+import noiseGLSL from './shaders/functions/noise.glsl.js';
 
 function shadergenerator(p5, fn) {
 
@@ -1578,6 +1579,7 @@ function shadergenerator(p5, fn) {
     ],
     'sqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'step': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'noise': { args: ['vec2'], returnType: 'float', isp5Function: false },
     'trunc': { args: ['genType'], returnType: 'genType', isp5Function: false},
 
     ////////// Vector //////////
@@ -1632,6 +1634,7 @@ function shadergenerator(p5, fn) {
 }
   
   
+GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
 
 export default shadergenerator;
 
