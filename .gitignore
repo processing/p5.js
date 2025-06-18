@@ -17,7 +17,7 @@ lib/p5.*
 lib/p5-test.js
 lib/modules
 p5-website/
-# preview/
+preview/
 release/
 __screenshots__/
 
