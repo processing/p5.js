@@ -540,7 +540,7 @@ p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
  *
  *   background(200);
  *
- *   // Caclulate the angle conversion.
+ *   // Calculate the angle conversion.
  *   let deg = 45;
  *   let rad = radians(deg);
  *
