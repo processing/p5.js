@@ -100,7 +100,7 @@ Lead/Mentor Alumni
 | Documentation | [@VANSH3104](https://github.com/VANSH3104), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
 | Friendly Errors | [@IIITM-Jay](https://github.com/IIITM-Jay) |
 | Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
-| Graphics (WebGL) | [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
 | Math | [@GregStanton](https://github.com/GregStanton), [@holomorfo](https://github.com/holomorfo) |
@@ -108,7 +108,6 @@ Lead/Mentor Alumni
 | p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
 | Shapes | [@GregStanton](https://github.com/GregStanton) |
 | Typography | [@dhowe](https://github.com/dhowe) |
-| WebGL | [@RandomGamingDev](https://github.com/RandomGamingDev) |
 <!-- STEWARDS-LIST:END -->
 
 ## Contributors
