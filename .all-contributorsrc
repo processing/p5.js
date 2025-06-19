@@ -6956,6 +6956,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "bensgilbert",
+      "name": "Ben Gilbert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68397475?v=4",
+      "profile": "http://bensgilbert.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
