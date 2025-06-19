@@ -6849,7 +6849,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/162928571?v=4",
       "profile": "https://github.com/LalitNarayanYadav",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -6935,6 +6936,24 @@
         "bug",
         "code",
         "design",
+        "doc"
+      ]
+    },
+    {
+      "login": "vtjl10",
+      "name": "fuder.eth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139509124?v=4",
+      "profile": "https://github.com/vtjl10",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "FerrinThreatt",
+      "name": "FerrinThreatt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51208056?v=4",
+      "profile": "https://github.com/FerrinThreatt",
+      "contributions": [
         "doc"
       ]
     }
