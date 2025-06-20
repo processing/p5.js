@@ -142,9 +142,9 @@ function validateParams(p5, fn, lifecycles) {
    */
   fn.generateZodSchemasForFunc = function (func) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
-    let funcInfo = dataDoc[funcClass][funcName];
+    let funcInfo = dataDoc?.[funcClass]?.[funcName];
 
-    if(!funcInfo) return;
+    if (!funcInfo) return;
 
     let overloads = [];
     if (funcInfo.hasOwnProperty('overloads')) {
@@ -206,12 +206,25 @@ function validateParams(p5, fn, lifecycles) {
       // our constants sometimes have numeric or non-primitive values.
       // 2) In some cases, the type can be constants or strings, making z.enum()
       // insufficient for the use case.
-      else if (baseType.includes('|') && baseType.split('|').every(t => validBracketNesting(t))) {
-        const types = baseType.split('|');
-        typeSchema = z.union(types
-          .map(t => generateTypeSchema(t))
-          .filter(s => s !== undefined));
-      } else if (baseType.endsWith('[]')) {
+      else if (baseType.includes('|') && baseType.split('|').every(validBracketNesting)) {
+        const types = baseType.split('|').map(t => t.trim()); // Trim whitespace
+
+        const schemas = types.map(type => {
+          try {
+            return generateTypeSchema(type);
+          } catch (e) {
+            console.warn(`Error generating schema for union type: ${type}`, e);
+            return undefined;
+          }
+        }).filter(Boolean);
+
+        if (schemas.length === 0) {
+          throw new Error(`Unable to generate schema for union type: ${baseType}`);
+        }
+
+        typeSchema = z.union(schemas);
+      }
+      else if (baseType.endsWith('[]')) {
         typeSchema = z.array(generateTypeSchema(baseType.slice(0, -2)));
       } else {
         throw new Error(`Unsupported type '${baseType}' in parameter validation. Please report this issue.`);
@@ -223,18 +236,85 @@ function validateParams(p5, fn, lifecycles) {
     // Generate a schema for a single parameter. In the case where a parameter can
     // be of multiple types, `generateTypeSchema` is called for each type.
     const generateParamSchema = param => {
-      const isOptional = param?.endsWith('?');
-      param = param?.replace(/\?$/, '');
+  // If param is not an object, return a generic schema.
+  if (!param || typeof param !== 'object') return z.any();
 
-      const isRest = param?.startsWith('...') && param?.endsWith('[]');
-      param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
+  /**
+   * Recursively builds a Zod schema from a type descriptor object.
+   *
+   * @param {object} typeObj - An object describing the type.
+   * @returns {ZodType} - A Zod schema representing the type.
+   */
+  const buildSchema = typeObj => {
+    if (!typeObj || typeof typeObj !== 'object' || !typeObj.type) return z.any();
 
-      let schema = generateTypeSchema(param);
-      if (isOptional) {
-        schema = schema.optional();
-      }
-      return { schema, rest: isRest };
-    };
+    let schema;
+
+    switch (typeObj.type) {
+      // Direct mappings from type names to Zod schemas
+      case "String":
+      case "Number":
+      case "Boolean":
+      case "Function":
+      case "Object":
+      case "Integer":
+        schema = schemaMap[typeObj.type];
+        break;
+
+      // Array type handling
+      case "Array":
+        if (typeObj.element) {
+          // Handle element type recursively or through direct map
+          let elementSchema;
+          if (typeof typeObj.element === 'string') {
+            elementSchema = schemaMap[typeObj.element] || z.any();
+          } else {
+            elementSchema = buildSchema(typeObj.element);
+          }
+          schema = z.array(elementSchema);
+        } else {
+          schema = z.array(z.any());
+        }
+        break;
+
+      // Union type handling
+      case "union":
+        schema = z.union(typeObj.elements.map(buildSchema));
+        break;
+
+      // Tuple type handling
+      case "Tuple":
+        schema = z.tuple(typeObj.elements.map(buildSchema));
+        break;
+
+      default:
+        // Literal constant mapping if defined in constantsMap
+        if (constantsMap.hasOwnProperty(typeObj.type)) {
+          schema = z.literal(constantsMap[typeObj.type]);
+        }
+        // Handle p5.js custom class instance types
+        else if (typeObj.type.startsWith('p5.')) {
+          const className = typeObj.type.split('.')[1];
+          schema = z.instanceof(p5Constructors[className]);
+        }
+        // Fallback to known types or generic
+        else if (schemaMap[typeObj.type]) {
+          schema = schemaMap[typeObj.type];
+        } else {
+          schema = z.any();
+        }
+    }
+
+    // Mark schema as optional if specified
+    if (typeObj.optional) {
+      schema = schema.optional();
+    }
+
+    return schema;
+  };
+
+  return { schema: buildSchema(param), rest: param.rest };
+};
 
     // Note that in Zod, `optional()` only checks for undefined, not the absence
     // of value.
@@ -248,20 +328,19 @@ function validateParams(p5, fn, lifecycles) {
     // Therefore, on top of using `optional()`, we also have to generate parameter
     // combinations that are valid for all numbers of parameters.
     const generateOverloadCombinations = params => {
-      // No optional parameters, return the original parameter list right away.
-      if (!params.some(p => p?.endsWith('?'))) {
-        return [params];
-      }
-
-      const requiredParamsCount = params.filter(p => p === null || !p.endsWith('?')).length;
       const result = [];
 
-      for (let i = requiredParamsCount; i <= params.length; i++) {
+      const requiredCount = params.findIndex(p => p.optional);
+      if (requiredCount === -1) return [params];
+
+      result.push([]); // support empty if all are optional
+      for (let i = requiredCount; i <= params.length; i++) {
         result.push(params.slice(0, i));
       }
-
       return result;
     };
+
+
 
     // Generate schemas for each function overload and merge them
     const overloadSchemas = overloads.flatMap(overload => {
@@ -390,7 +469,9 @@ function validateParams(p5, fn, lifecycles) {
 
     // Helper function to build a type mismatch message.
     const buildTypeMismatchMessage = (actualType, expectedTypeStr, position) => {
-      const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
+      const positionStr = (position !== null && position !== undefined && ordinals[position])
+        ? `at the ${ordinals[position]} parameter`
+        : '';
       const actualTypeStr = actualType ? `, but received ${actualType}` : '';
       return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
     }
@@ -426,16 +507,17 @@ function validateParams(p5, fn, lifecycles) {
       });
 
       if (expectedTypes.size > 0) {
-        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
+        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise) {
           message += 'Did you mean to put `await` before a loading function? ' +
             'An unexpected Promise was found. ';
           isVersionError = true;
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
-        const position = error.path.join('.');
+        const position = error.path.length > 0 ? error.path[0] : null;
 
         message += buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+        message += ` in ${func}().`; 
       }
 
       return message;
@@ -443,8 +525,7 @@ function validateParams(p5, fn, lifecycles) {
 
     switch (currentError.code) {
       case 'invalid_union': {
-        processUnionError(currentError);
-        break;
+        return processUnionError(currentError);
       }
       case 'too_small': {
         const minArgs = currentError.minimum;
@@ -452,9 +533,14 @@ function validateParams(p5, fn, lifecycles) {
         break;
       }
       case 'invalid_type': {
-        message += buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
-        break;
+        let position = null;
+        if (currentError.path.length > 0) {
+          position = currentError.path[0]; 
+        }
+        const received = currentError.received ?? (Array.isArray(args[position]) ? 'array' : typeof args[position]);
+        return message + buildTypeMismatchMessage(received, currentError.expected, position) + ` in ${func}().`;
       }
+
       case 'too_big': {
         const maxArgs = currentError.maximum;
         message += `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
@@ -529,10 +615,9 @@ function validateParams(p5, fn, lifecycles) {
     let funcSchemas = schemaRegistry.get(func);
     if (!funcSchemas) {
       funcSchemas = fn.generateZodSchemasForFunc(func);
-      if (!funcSchemas) return;
+      if (!funcSchemas) return
       schemaRegistry.set(func, funcSchemas);
     }
-
     try {
       return {
         success: true,
@@ -550,15 +635,15 @@ function validateParams(p5, fn, lifecycles) {
     }
   };
 
-  lifecycles.presetup = function(){
+  lifecycles.presetup = function () {
     loadP5Constructors();
 
     const excludes = ['validate'];
-    for(const f in this){
-      if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
+    for (const f in this) {
+      if (!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function') {
         const copy = this[f];
 
-        this[f] = function(...args) {
+        this[f] = function (...args) {
           this.validate(f, args);
           return copy.call(this, ...args);
         };
