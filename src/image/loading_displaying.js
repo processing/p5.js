@@ -924,7 +924,7 @@ function _sAssign(sVal, iVal) {
  * destination rectangle. This may have the effect of zooming into the
  * subsection.
  *
- * The tenth and eleventh paremeters, `xAlign` and `yAlign`, are also
+ * The tenth and eleventh parameters, `xAlign` and `yAlign`, are also
  * optional. They determine how to align the fitted subsection. `xAlign` can
  * be set to either `LEFT`, `RIGHT`, or `CENTER`. `yAlign` can be set to
  * either `TOP`, `BOTTOM`, or `CENTER`. By default, both `xAlign` and `yAlign`
