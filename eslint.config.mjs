@@ -101,6 +101,7 @@ const commonRules = {
   '@stylistic/semi': [error, 'always']
 };
 
+// https://github.com/gajus/eslint-plugin-jsdoc?tab=readme-ov-file#rules
 /**  @type {import('eslint').Linter.RulesRecord} */
 const jsdocRules = {
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-alignment.md
@@ -115,6 +116,26 @@ const jsdocRules = {
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/require-asterisk-prefix.md#readme
   'jsdoc/require-asterisk-prefix': error
+};
+
+// https://github.com/eslint/markdown?tab=readme-ov-file#rules
+/**  @type {import('eslint').Linter.RulesRecord} */
+const markdownRules = {
+  'markdown/fenced-code-language': off,
+  'markdown/heading-increment': off,
+  'markdown/no-duplicate-definitions': warn,
+  'markdown/no-duplicate-headings': [warn, { checkSiblingsOnly: true }],
+  'markdown/no-empty-definitions': warn,
+  'markdown/no-empty-images': warn,
+  'markdown/no-empty-links': warn,
+  'markdown/no-html': off,
+  'markdown/no-invalid-label-refs': off,
+  'markdown/no-missing-atx-heading-space': warn,
+  'markdown/no-missing-label-refs': off, // @todo
+  'markdown/no-missing-link-fragments': off,
+  'markdown/no-multiple-h1': off,
+  'markdown/require-alt-text': warn,
+  'markdown/table-column-count': warn
 };
 
 export default defineConfig([
@@ -246,23 +267,7 @@ export default defineConfig([
       markdown
     },
     language: 'markdown/commonmark',
-    rules: {
-      'markdown/fenced-code-language': off,
-      'markdown/heading-increment': off,
-      'markdown/no-duplicate-definitions': warn,
-      'markdown/no-duplicate-headings': [warn, { checkSiblingsOnly: true }],
-      'markdown/no-empty-definitions': warn,
-      'markdown/no-empty-images': warn,
-      'markdown/no-empty-links': warn,
-      'markdown/no-html': off,
-      'markdown/no-invalid-label-refs': off,
-      'markdown/no-missing-atx-heading-space': warn,
-      'markdown/no-missing-label-refs': off, // @todo
-      'markdown/no-missing-link-fragments': off,
-      'markdown/no-multiple-h1': off,
-      'markdown/require-alt-text': warn,
-      'markdown/table-column-count': warn
-    }
+    rules: markdownRules
   },
   // https://github.com/eslint/markdown?tab=readme-ov-file#file-name-details
   // @todo
