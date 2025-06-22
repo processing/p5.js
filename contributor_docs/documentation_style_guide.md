@@ -4,7 +4,7 @@
 
 Hello! Welcome to the guidelines for writing p5.js documentation. This document is a remix of the following resources:
 
-- Ruby on Rails [API Documentation Guidlines](https://guides.rubyonrails.org/api_documentation_guidelines.html) (CC BY-SA 4.0)
+- Ruby on Rails [API Documentation Guidelines](https://guides.rubyonrails.org/api_documentation_guidelines.html) (CC BY-SA 4.0)
 - WordPress documentation guidelines for [accessibility](https://make.wordpress.org/docs/style-guide/general-guidelines/accessibility/) and [inclusivity](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/) (CC0)
 - Airbnb [JavaScript Style Guide](https://airbnb.io/javascript/) (MIT)
 
