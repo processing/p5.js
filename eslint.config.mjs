@@ -16,18 +16,13 @@ const off = 0;
 const warn = 1;
 const error = 2;
 
-const mitigatedJsRules = Object.fromEntries(
-  Object.entries(js.configs.recommended.rules).map(([rule]) => [rule, warn])
-);
-
 /**  @type {import('eslint').Linter.RulesRecord} */
 const commonRules = {
   // https://github.com/eslint/eslint/blob/main/packages/js/src/configs/eslint-recommended.js
-  // ...js.configs.recommended.rules,
-  ...mitigatedJsRules,
+  ...js.configs.recommended.rules,
 
   // https://eslint.org/docs/latest/rules/eqeqeq
-  eqeqeq: [warn, 'smart'],
+  eqeqeq: [error, 'smart'],
 
   // https://eslint.org/docs/latest/rules/new-cap
   'new-cap': off,
@@ -36,16 +31,16 @@ const commonRules = {
   'no-async-promise-executor': off,
 
   // https://eslint.org/docs/latest/rules/no-caller
-  'no-caller': warn,
+  'no-caller': error,
 
   // https://eslint.org/docs/latest/rules/no-cond-assign
-  'no-cond-assign': [warn, 'except-parens'],
+  'no-cond-assign': [error, 'except-parens'],
 
   // https://eslint.org/docs/latest/rules/no-console
   'no-console': off,
 
   // https://eslint.org/docs/latest/rules/no-empty
-  'no-empty': [warn, { allowEmptyCatch: true }],
+  'no-empty': [error, { allowEmptyCatch: true }],
 
   // https://eslint.org/docs/latest/rules/no-prototype-builtins
   'no-prototype-builtins': off,
@@ -55,26 +50,26 @@ const commonRules = {
 
   // https://eslint.org/docs/latest/rules/no-unused-vars
   'no-unused-vars': [
-    warn,
+    error,
     {
       args: 'none'
     }
   ],
 
   // https://eslint.org/docs/latest/rules/no-use-before-define
-  'no-use-before-define': [warn, { functions: false }],
+  'no-use-before-define': [error, { functions: false }],
 
   // https://eslint.style/rules/js/arrow-parens#arrow-parens
   '@stylistic/arrow-parens': [warn, 'as-needed'],
 
   // https://eslint.style/rules/default/comma-dangle
-  '@stylistic/comma-dangle': [error, 'never'],
+  '@stylistic/comma-dangle': [warn, 'never'],
 
   // https://eslint.style/rules/js/indent#indent
-  '@stylistic/indent': [error, 2, { SwitchCase: 1 }],
+  '@stylistic/indent': [warn, 2, { SwitchCase: 1 }],
 
   // https://eslint.style/rules/js/linebreak-style#linebreak-style
-  '@stylistic/linebreak-style': [error, 'unix'],
+  '@stylistic/linebreak-style': [warn, 'unix'],
 
   // https://eslint.style/rules/js/max-len#max-len
   '@stylistic/max-len': [
@@ -89,33 +84,33 @@ const commonRules = {
   ],
 
   // https://eslint.style/rules/js/no-trailing-spaces#no-trailing-spaces
-  '@stylistic/no-trailing-spaces': error,
+  '@stylistic/no-trailing-spaces': warn,
 
   // https://eslint.style/rules/js/object-curly-spacing#object-curly-spacing
-  '@stylistic/object-curly-spacing': [error, 'always'],
+  '@stylistic/object-curly-spacing': [warn, 'always'],
 
   // https://eslint.style/rules/js/quotes#quotes
-  '@stylistic/quotes': [error, 'single', { avoidEscape: true }],
+  '@stylistic/quotes': [warn, 'single', { avoidEscape: true }],
 
   // https://eslint.style/rules/js/semi#semi
-  '@stylistic/semi': [error, 'always']
+  '@stylistic/semi': [warn, 'always']
 };
 
 // https://github.com/gajus/eslint-plugin-jsdoc?tab=readme-ov-file#rules
 /**  @type {import('eslint').Linter.RulesRecord} */
 const jsdocRules = {
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-alignment.md
-  'jsdoc/check-alignment': error,
+  'jsdoc/check-alignment': warn,
 
   // @todo
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-line-alignment.md#readme
   // 'jsdoc/check-line-alignment': [warn, 'always'],
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/no-multi-asterisks.md#readme
-  'jsdoc/no-multi-asterisks': [error, { allowWhitespace: true }],
+  'jsdoc/no-multi-asterisks': [warn, { allowWhitespace: true }],
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/require-asterisk-prefix.md#readme
-  'jsdoc/require-asterisk-prefix': error
+  'jsdoc/require-asterisk-prefix': warn
 };
 
 // https://github.com/eslint/markdown?tab=readme-ov-file#rules
