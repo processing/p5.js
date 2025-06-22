@@ -104,17 +104,17 @@ const commonRules = {
 /**  @type {import('eslint').Linter.RulesRecord} */
 const jsdocRules = {
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-alignment.md
-  'jsdoc/check-alignment': warn,
+  'jsdoc/check-alignment': error,
 
   // @todo
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-line-alignment.md#readme
   // 'jsdoc/check-line-alignment': [warn, 'always'],
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/no-multi-asterisks.md#readme
-  'jsdoc/no-multi-asterisks': [warn, { allowWhitespace: true }],
+  'jsdoc/no-multi-asterisks': [error, { allowWhitespace: true }],
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/require-asterisk-prefix.md#readme
-  'jsdoc/require-asterisk-prefix': warn
+  'jsdoc/require-asterisk-prefix': error
 };
 
 export default defineConfig([
