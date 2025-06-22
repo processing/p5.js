@@ -14,7 +14,7 @@ const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 const off = 0;
 const warn = 1;
-// const error = 2;
+const error = 2;
 
 const mitigatedJsRules = Object.fromEntries(
   Object.entries(js.configs.recommended.rules).map(([rule]) => [rule, warn])
@@ -68,13 +68,13 @@ const commonRules = {
   '@stylistic/arrow-parens': [warn, 'as-needed'],
 
   // https://eslint.style/rules/default/comma-dangle
-  '@stylistic/comma-dangle': [warn, 'never'],
+  '@stylistic/comma-dangle': [error, 'never'],
 
   // https://eslint.style/rules/js/indent#indent
-  '@stylistic/indent': [warn, 2, { SwitchCase: 1 }],
+  '@stylistic/indent': [error, 2, { SwitchCase: 1 }],
 
   // https://eslint.style/rules/js/linebreak-style#linebreak-style
-  '@stylistic/linebreak-style': [warn, 'unix'],
+  '@stylistic/linebreak-style': [error, 'unix'],
 
   // https://eslint.style/rules/js/max-len#max-len
   '@stylistic/max-len': [
@@ -89,16 +89,16 @@ const commonRules = {
   ],
 
   // https://eslint.style/rules/js/no-trailing-spaces#no-trailing-spaces
-  '@stylistic/no-trailing-spaces': warn,
+  '@stylistic/no-trailing-spaces': error,
 
   // https://eslint.style/rules/js/object-curly-spacing#object-curly-spacing
-  '@stylistic/object-curly-spacing': [warn, 'always'],
+  '@stylistic/object-curly-spacing': [error, 'always'],
 
   // https://eslint.style/rules/js/quotes#quotes
-  '@stylistic/quotes': [warn, 'single', { avoidEscape: true }],
+  '@stylistic/quotes': [error, 'single', { avoidEscape: true }],
 
   // https://eslint.style/rules/js/semi#semi
-  '@stylistic/semi': [warn, 'always']
+  '@stylistic/semi': [error, 'always']
 };
 
 /**  @type {import('eslint').Linter.RulesRecord} */
