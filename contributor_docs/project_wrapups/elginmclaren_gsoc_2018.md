@@ -30,7 +30,7 @@ hello.p5js.org is likely to be many users’ first introduction to p5.js (and po
 
 
 ## Challenges
-* Crowdsourcing the video content was fun and filled with delightful suprises; however, it was challenging to coordinate video-making tasks with community members over the summer (e.g. tight GSOC time constraints, people's summer vacations).
+* Crowdsourcing the video content was fun and filled with delightful surprises; however, it was challenging to coordinate video-making tasks with community members over the summer (e.g. tight GSOC time constraints, people's summer vacations).
 * Creating a dynamic, post-production greenscreen effect was more difficult than I imagined. Using seriously.js for the canvas background removal worked well; however, setting videos to a neutral background color in After Effects was difficult without a neutral background.
 * When incorporating browserify to pre-process my javascript, I missed one crucial line of code. This required tremendous digging to figure out why it wouldn't compile. It set me back several days, but I learned  a lot!
 
