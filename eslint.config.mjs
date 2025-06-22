@@ -250,7 +250,7 @@ export default defineConfig([
       'markdown/fenced-code-language': off,
       'markdown/heading-increment': off,
       'markdown/no-duplicate-definitions': warn,
-      // 'markdown/no-duplicate-headings': ["error", { checkSiblingsOnly: true }], // @todo waiting for @eslint/markdown@6.6.0
+      'markdown/no-duplicate-headings': [warn, { checkSiblingsOnly: true }],
       'markdown/no-empty-definitions': warn,
       'markdown/no-empty-images': warn,
       'markdown/no-empty-links': warn,
@@ -263,7 +263,7 @@ export default defineConfig([
       'markdown/require-alt-text': warn,
       'markdown/table-column-count': warn
     }
-  }
+  },
   // https://github.com/eslint/markdown?tab=readme-ov-file#file-name-details
   // @todo
   // works out of the box but results in some `Parsing error`s
@@ -271,5 +271,5 @@ export default defineConfig([
   // * contributor_docs/fes_contribution_guide.md 354:1  error  Parsing error: Unexpected character '🌸'
   // * contributor_docs/zh-Hans/unit_testing.md 35:1  error  Parsing error: Unexpected token
   // * rfc_p5js_2.md 205:50  error  Parsing error: Binding arguments in strict mode
-  // ...markdown.configs.processor
+  ...markdown.configs.processor
 ]);
