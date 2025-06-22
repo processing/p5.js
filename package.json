@@ -53,10 +53,12 @@
     "test": "vitest"
   },
   "husky": {
-    "hooks": {}
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-    "src/**/*.js": "eslint",
+    "src/**/*.js": "eslint --max-warnings=0",
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
