@@ -1157,6 +1157,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vtjl10"><img src="https://avatars.githubusercontent.com/u/139509124?v=4?s=64" width="64px;" alt="fuder.eth"/><br /><sub><b>fuder.eth</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vtjl10" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/FerrinThreatt"><img src="https://avatars.githubusercontent.com/u/51208056?v=4?s=64" width="64px;" alt="FerrinThreatt"/><br /><sub><b>FerrinThreatt</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=FerrinThreatt" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/leopardracer"><img src="https://avatars.githubusercontent.com/u/136604165?v=4?s=64" width="64px;" alt="leopardracer"/><br /><sub><b>leopardracer</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=leopardracer" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/kilavvy"><img src="https://avatars.githubusercontent.com/u/140459108?v=4?s=64" width="64px;" alt="kilavvy"/><br /><sub><b>kilavvy</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kilavvy" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
