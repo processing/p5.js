@@ -136,7 +136,10 @@ class RendererGL extends Renderer {
       // hide if offscreen buffer by default
       this.canvas.style.display = "none";
     }
-    this.elt.id = "defaultCanvas0";
+
+    if(!this.elt.id){
+      this.elt.id = `defaultCanvas${p5.sketchCount++}`;
+    }
     this.elt.classList.add("p5Canvas");
 
     // Set and return p5.Element
