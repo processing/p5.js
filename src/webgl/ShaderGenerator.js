@@ -1094,13 +1094,12 @@ function shadergenerator(p5, fn) {
       GLOBAL_SHADER = this;
       this.userCallback = userCallback;
       this.srcLocations = srcLocations;
-      this.cleanup = () => {};
       this.generateHookOverrides(originalShader);
       this.output = {
         vertexDeclarations: new Set(),
         fragmentDeclarations: new Set(),
         uniforms: {},
-      }
+      };
       this.uniformNodes = [];
       this.resetGLSLContext();
       this.isGenerating = false;
