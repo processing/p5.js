@@ -708,6 +708,7 @@ class Shader {
     const empty = this._renderer._getEmptyTexture();
 
     for (const uniform of this.samplers) {
+      if (uniform.noData) continue;
       let tex = uniform.texture;
       if (
         tex === undefined ||

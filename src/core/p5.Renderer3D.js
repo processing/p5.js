@@ -1586,6 +1586,22 @@ export class Renderer3D extends Renderer {
     return this._emptyTexture;
   }
 
+  getTexture(input) {
+    let src = input;
+    if (src instanceof Framebuffer) {
+      src = src.color;
+    }
+
+    const texture = this.textures.get(src);
+    if (texture) {
+      return texture;
+    }
+
+    const tex = new Texture(this, src);
+    this.textures.set(src, tex);
+    return tex;
+  }
+
   //////////////////////////////////////////////
   // Buffers
   //////////////////////////////////////////////

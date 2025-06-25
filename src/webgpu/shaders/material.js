@@ -145,6 +145,9 @@ struct FragmentInput {
 ${uniforms}
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
+@group(0) @binding(1) var uSampler: texture_2d<f32>;
+@group(0) @binding(2) var uSampler_sampler: sampler;
+
 struct ColorComponents {
   baseColor: vec3<f32>,
   opacity: f32,
@@ -305,7 +308,11 @@ fn totalLight(
 fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   HOOK_beforeFragment();
 
-  let color = input.vColor; // TODO: check isTexture and apply tint
+  let color = select(
+    input.vColor,
+    getTexture(uSampler, uSampler_sampler, input.vTexCoord) * (uniforms.uTint/255.0),
+    uniforms.isTexture == 1
+  ); // TODO: check isTexture and apply tint
   var inputs = Inputs(
     normalize(input.vNormal),
     input.vTexCoord,

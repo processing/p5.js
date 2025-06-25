@@ -1,5 +1,6 @@
 import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
+import { Texture } from '../webgl/p5.Texture';
 import * as constants from '../core/constants';
 
 
@@ -252,7 +253,7 @@ class RendererWebGPU extends Renderer3D {
   _finalizeShader(shader) {
     const rawSize = Math.max(
       0,
-      ...Object.values(shader.uniforms).map(u => u.offsetEnd)
+      ...Object.values(shader.uniforms).filter(u => !u.isSampler).map(u => u.offsetEnd)
     );
     const alignedSize = Math.ceil(rawSize / 16) * 16;
     shader._uniformData = new Float32Array(alignedSize / 4);
@@ -277,14 +278,17 @@ class RendererWebGPU extends Renderer3D {
     for (const sampler of shader.samplers) {
       const group = sampler.group;
       const entries = groupEntries.get(group) || [];
+      if (!['sampler', 'texture_2d<f32>'].includes(sampler.type)) {
+        throw new Error(`Unsupported texture type: ${sampler.type}`);
+      }
 
       entries.push({
         binding: sampler.binding,
-        visibility: GPUShaderStage.FRAGMENT,
+        visibility: sampler.visibility,
         sampler: sampler.type === 'sampler'
           ? { type: 'filtering' }
           : undefined,
-        texture: sampler.type === 'texture'
+        texture: sampler.type === 'texture_2d<f32>'
           ? { sampleType: 'float', viewDimension: '2d' }
           : undefined,
         uniform: sampler,
@@ -300,6 +304,7 @@ class RendererWebGPU extends Renderer3D {
     }
 
     shader._groupEntries = groupEntries;
+    console.log(shader._groupEntries);
     shader._bindGroupLayouts = [...bindGroupLayouts.values()];
     shader._pipelineLayout = this.device.createPipelineLayout({
       bindGroupLayouts: shader._bindGroupLayouts,
@@ -617,11 +622,17 @@ class RendererWebGPU extends Renderer3D {
           };
         }
 
+        if (!entry.uniform.isSampler) {
+          throw new Error(
+            'All non-texture/sampler uniforms should be in the uniform struct!'
+          );
+        }
+
         return {
           binding: entry.binding,
-          resource: sampler.type === 'sampler'
-            ? sampler.uniform._cachedData.getSampler()
-            : sampler.uniform.textureHandle.view,
+          resource: entry.uniform.type === 'sampler'
+            ? (entry.uniform.textureSource.texture || this._getEmptyTexture()).getSampler()
+            : (entry.uniform.texture || this._getEmptyTexture()).textureHandle.view,
         };
       });
 
@@ -799,29 +810,59 @@ class RendererWebGPU extends Renderer3D {
     const structType = uniformVarMatch[2];
     const uniforms = this._parseStruct(shader.vertSrc(), structType);
     // Extract samplers from group bindings
-    const samplers = [];
-    const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(\w+);/g;
-    let match;
-    while ((match = samplerRegex.exec(shader._vertSrc)) !== null) {
-      const [_, group, binding, name, type] = match;
-      const groupIndex = parseInt(group);
-      // We're currently reserving group 0 for non-sampler stuff, which we parse
-      // above, so we can skip it here while we grab the remaining sampler
-      // uniforms
-      if (groupIndex === 0) continue;
+    const samplers = {};
+    // TODO: support other texture types
+    const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
+    for (const [src, visibility] of [
+      [shader._vertSrc, GPUShaderStage.VERTEX],
+      [shader._fragSrc, GPUShaderStage.FRAGMENT]
+    ]) {
+      let match;
+      while ((match = samplerRegex.exec(src)) !== null) {
+        const [_, group, binding, name, type] = match;
+        const groupIndex = parseInt(group);
+        const bindingIndex = parseInt(binding);
+        // We're currently reserving group 0 for non-sampler stuff, which we parse
+        // above, so we can skip it here while we grab the remaining sampler
+        // uniforms
+        if (groupIndex === 0 && bindingIndex === 0) continue;
 
-      samplers.push({
-        group: groupIndex,
-        binding: parseInt(binding),
-        name,
-        type, // e.g., 'sampler', 'texture_2d<f32>'
-        sampler: true,
-      });
+        const key = `${groupIndex},${bindingIndex}`;
+        samplers[key] = {
+          visibility: (samplers[key]?.visibility || 0) | visibility,
+          group: groupIndex,
+          binding: bindingIndex,
+          name,
+          type,
+          isSampler: true,
+          noData: type === 'sampler',
+        };
+      }
+
+      for (const sampler of Object.values(samplers)) {
+        if (sampler.type.startsWith('texture')) {
+          const samplerName = sampler.name + '_sampler';
+          const samplerNode = Object
+            .values(samplers)
+            .find((s) => s.name === samplerName);
+          if (!samplerNode) {
+            throw new Error(
+              `Every shader texture needs an accompanying sampler. Could not find sampler ${samplerName} for texture ${sampler.name}`
+            );
+          }
+          samplerNode.textureSource = sampler;
+        }
+      }
     }
-    return [...Object.values(uniforms).sort((a, b) => a.index - b.index), ...samplers];
+    return [...Object.values(uniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers)];
   }
 
-  updateUniformValue(_shader, _uniform, _data) {}
+  updateUniformValue(_shader, uniform, data) {
+    if (uniform.isSampler) {
+      uniform.texture =
+        data instanceof Texture ? data : this.getTexture(data);
+    }
+  }
 
   _updateTexture(uniform, tex) {
     tex.update();
@@ -879,7 +920,7 @@ class RendererWebGPU extends Renderer3D {
       magFilter: constantMapping[texture.magFilter],
       minFilter: constantMapping[texture.minFilter],
       addressModeU: constantMapping[texture.wrapS],
-      addressModeV: constantMapping[params.addressModeV],
+      addressModeV: constantMapping[texture.wrapT],
     });
     this.samplers.set(key, sampler);
     return sampler;
