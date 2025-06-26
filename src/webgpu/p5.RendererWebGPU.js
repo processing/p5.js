@@ -36,6 +36,7 @@ class RendererWebGPU extends Renderer3D {
     // TODO disablable stencil
     this.depthFormat = 'depth24plus-stencil8';
     this._updateSize();
+    this._update();
   }
 
   _updateSize() {
@@ -662,6 +663,15 @@ class RendererWebGPU extends Renderer3D {
     this.queue.submit([commandEncoder.finish()]);
   }
 
+  async ensureTexture(source) {
+    await this.queue.onSubmittedWorkDone();
+    await new Promise((res) => requestAnimationFrame(res));
+    const tex = this.getTexture(source);
+    tex.update();
+    await this.queue.onSubmittedWorkDone();
+    await new Promise((res) => requestAnimationFrame(res));
+  }
+
   //////////////////////////////////////////////
   // SHADER
   //////////////////////////////////////////////
@@ -885,7 +895,6 @@ class RendererWebGPU extends Renderer3D {
   }
 
   uploadTextureFromSource({ gpuTexture }, source) {
-    this.uploadedTexture = true;
     this.queue.copyExternalImageToTexture(
       { source },
       { texture: gpuTexture },
@@ -894,7 +903,6 @@ class RendererWebGPU extends Renderer3D {
   }
 
   uploadTextureFromData({ gpuTexture }, data, width, height) {
-    this.uploadedTexture = true;
     this.queue.writeTexture(
       { texture: gpuTexture },
       data,
@@ -1118,6 +1126,9 @@ function rendererWebGPU(p5, fn) {
   p5.RendererWebGPU = RendererWebGPU;
 
   p5.renderers[constants.WEBGPU] = p5.RendererWebGPU;
+  fn.ensureTexture = function(source) {
+    return this._renderer.ensureTexture(source);
+  }
 }
 
 export default rendererWebGPU;

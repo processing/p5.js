@@ -83,9 +83,7 @@ visualSuite('WebGPU', function() {
       screenshot();
     });
 
-    // TODO: turns out textures are only available in the next animation frame!
-    // need to figure out a workaround before uncommenting this test.
-    /*visualTest('Textures in the material shader work', async function(p5, screenshot) {
+    visualTest('Textures in the material shader work', async function(p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
       const tex = p5.createImage(50, 50);
       tex.loadPixels();
@@ -103,6 +101,6 @@ visualSuite('WebGPU', function() {
       p5.plane(p5.width, p5.height);
 
       screenshot();
-    });*/
+    });
   });
 });
