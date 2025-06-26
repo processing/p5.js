@@ -304,7 +304,6 @@ class RendererWebGPU extends Renderer3D {
     }
 
     shader._groupEntries = groupEntries;
-    console.log(shader._groupEntries);
     shader._bindGroupLayouts = [...bindGroupLayouts.values()];
     shader._pipelineLayout = this.device.createPipelineLayout({
       bindGroupLayouts: shader._bindGroupLayouts,
@@ -886,6 +885,7 @@ class RendererWebGPU extends Renderer3D {
   }
 
   uploadTextureFromSource({ gpuTexture }, source) {
+    this.uploadedTexture = true;
     this.queue.copyExternalImageToTexture(
       { source },
       { texture: gpuTexture },
@@ -894,6 +894,7 @@ class RendererWebGPU extends Renderer3D {
   }
 
   uploadTextureFromData({ gpuTexture }, data, width, height) {
+    this.uploadedTexture = true;
     this.queue.writeTexture(
       { texture: gpuTexture },
       data,
