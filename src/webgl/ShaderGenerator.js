@@ -1633,6 +1633,7 @@ function shadergenerator(p5, fn) {
   };
   fn.noise = function (...args) {
     if (GLOBAL_SHADER?.isGenerating) {
+      GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL); 
       GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
       return fnNodeConstructor('noise', args, { args: ['vec2'], returnType: 'float' });
     } else {
