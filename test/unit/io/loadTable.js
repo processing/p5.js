@@ -84,6 +84,7 @@ suite('loadTable', function() {
     // TODO: Current parsing does not handle quoted fields
     const table = await mockP5Prototype.loadTable(validFile);
     assert.equal(table.getRowCount(), 4);
-    assert.equal(table.getRow(3).get(0), 'David,\nSr. "the boss"');
+    const value = table.getRow(3).get(0).replace(/\r\n/g, '\n');
+    assert.equal(value, 'David,\nSr. "the boss"');
   });
 });
