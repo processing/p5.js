@@ -8,6 +8,7 @@
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
+
 import {
   ColorSpace,
   to,
@@ -25,10 +26,9 @@ import {
 
   OKLab,
   OKLCH as OKLCHSpace,
-
+  contrast,
   P3
 } from 'colorjs.io/fn';
-
 import HSBSpace from './color_spaces/hsb.js';
 
 const map = (n, start1, stop1, start2, stop2, clamp) => {
@@ -42,16 +42,8 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
 
 const serializationMap = {};
 
-const SRGB_THRESHOLD = 0.03928;
-const SRGB_DIVISOR = 12.92;
-const GAMMA_OFFSET = 0.055;
-const GAMMA_DIVISOR = 1.055;
-const GAMMA_EXPONENT = 2.4;
-const LUMINANCE_RED = 0.2126;
-const LUMINANCE_GREEN = 0.7152;
-const LUMINANCE_BLUE = 0.0722;
-const EPSILON = 0.05;
-const THRESHOLD = 4.5;
+
+
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -302,7 +294,6 @@ class Color {
     }
     return colorString;
   }
-
 /**
    * Checks if two colors contrast ratio is WCAG 2.1 compliant and returns the ratio
    *
@@ -326,34 +317,11 @@ class Color {
    * </code>
    * </div>
    */
-
-    contrast(new_other) { 
-      //Constants for contrast ratio cutoffs 
-      const CONTRAST_AA_NORMAL = 4.5;
-      const CONTRAST_AA_LARGE = 3.0;
-      const CONTRAST_AAA_NORMAL = 7.0;
-      const CONTRAST_AAA_LARGE = 4.5;    
-
-      //helper function for luminance aka brightness
-      let luminance = (c) => {
-        //putting RGB values into array and convert colors to value between 0-1
-        let rgb = [red(c), green(c), blue(c)].map(v => {
-          v /= 255;
-          return v <= SRGB_THRESHOLD
-            ? v / SRGB_DIVISOR
-            : Math.pow((v + GAMMA_OFFSET) / GAMMA_DIVISOR, GAMMA_EXPONENT);
-        });
-        return LUMINANCE_RED * rgb[0] + LUMINANCE_GREEN * rgb[1] + LUMINANCE_BLUE * rgb[2];
+      contrast(new_other) { 
+        const contrast_method = 'WCAG21';                   
+        const ratio = contrast(this._color, new_other._color, contrast_method);            
+        return ratio;    
       };
-
-      let l1 = luminance(this);
-      let l2 = luminance(new_other);
-      //Epsilon to avoid dividing by zero
-      let ratio = (Math.max(l1, l2) + EPSILON) / (Math.min(l1, l2) + EPSILON);
-
-      return { ratio, pass: ratio >= THRESHOLD };
-    
-    };
 
   /**
    * Sets the red component of a color.
