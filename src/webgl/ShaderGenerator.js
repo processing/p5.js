@@ -7,7 +7,7 @@
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
-import noiseGLSL from './shaders/functions/noise.glsl.js';
+import noiseGLSL from './shaders/functions/noiseGLSL.glsl';
 
 function shadergenerator(p5, fn) {
 
