@@ -15,6 +15,7 @@ import camera from './p5.Camera';
 import texture from './p5.Texture';
 import rendererGL from './p5.RendererGL';
 import shadergenerator from './ShaderGenerator';
+import strands from '../strands/p5.strands';
 
 export default function(p5){
   rendererGL(p5, p5.prototype);
@@ -34,4 +35,5 @@ export default function(p5){
   shader(p5, p5.prototype);
   texture(p5, p5.prototype);
   shadergenerator(p5, p5.prototype);
+  strands(p5, p5.prototype);
 }
