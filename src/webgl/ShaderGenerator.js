@@ -521,24 +521,29 @@ function shadergenerator(p5, fn) {
   class FunctionCallNode extends BaseNode {
     constructor(name, userArgs, properties, isInternal = false) {
       let functionSignature;
-      const determineFunctionSignature = (props) => {
+      const determineFunctionSignature = (props, userArgs) => {
         let genType;
         let similarity = 0;
 
         const valid = userArgs.every((userArg, i) => {
           const userType = getType(userArg);
           let expectedArgType = props.args[i];
-
+          let coercedUserType = userType;
           if (expectedArgType === 'genType') {
-            // We allow conversions from float -> vec if one argument is a vector.
-            if (genType === undefined || (genType === 'float' && userType.startsWith('vec'))) {
-              genType = userType
-            };
+            if (userType === 'int') coercedUserType = 'float';
+            if (!validGenTypes.includes(coercedUserType)) return false;
+
+            if (genType === undefined) {
+              genType = coercedUserType;
+            }
+
             expectedArgType = genType;
           }
           similarity += (userType === expectedArgType);
           return userType === expectedArgType || (userType === 'float' && expectedArgType.startsWith('vec'));
         })
+        console.log('userArgs:', userArgs);
+        console.log('props.args:', props.args);
 
         return { ...props, valid, similarity, genType }
       }
