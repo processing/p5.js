@@ -130,8 +130,8 @@ function material(p5, fn){
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = await request(vertFilename, 'text');
-      loadedShader._fragSrc = await request(fragFilename, 'text');
+      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
+      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
         return successCallback(loadedShader);
@@ -533,7 +533,7 @@ function material(p5, fn){
    * let myShader;
    *
    * async function setup() {
-   *   myShader = await loadFilterShader('assets/shader.frag');
+   *   myShader = await loadFilterShader('assets/basic.frag');
    *   createCanvas(100, 100, WEBGL);
    *   noStroke();
    * }
@@ -543,7 +543,7 @@ function material(p5, fn){
    *   shader(myShader);
    *
    *   // rect gives us some geometry on the screen
-   *   rect(0, 0, width, height);
+   *   rect(-50, -50, width, height);
    * }
    * </code>
    * </div>
@@ -551,7 +551,7 @@ function material(p5, fn){
    * A rectangle with a shader applied to it.
    */
   fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
-    p5._validateParameters('loadFilterShader', arguments);
+    // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
@@ -748,8 +748,8 @@ function material(p5, fn){
    * <p>
    *
    * If you want to apply shaders to strokes or images, use the following methods:
-   * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
-   * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
    *
    * </p>
    * </div>
@@ -794,7 +794,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   noStroke();
    *   describe('A rotating torus with simulated directional lighting.');
@@ -844,7 +844,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   shader(fillShader);
    *   noStroke();
@@ -869,7 +869,7 @@ function material(p5, fn){
    * let myShader;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *
    *   myShader = baseMaterialShader().modify({
    *     declarations: 'uniform float time;',
@@ -1006,7 +1006,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   animatedStrokeShader = createShader(vertSrc, fragSrc);
    *   strokeShader(animatedStrokeShader);
    *   strokeWeight(4);
@@ -1103,12 +1103,10 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1170,12 +1168,10 @@ function material(p5, fn){
    * let img;
    * let imgShader;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_image.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1263,7 +1259,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1377,15 +1373,13 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *   myShader = baseMaterialShader().modify(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
-   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1441,23 +1435,19 @@ function material(p5, fn){
    * let myShader;
    * let environment;
    *
-   * function preload() {
-   *   environment = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       float factor =
-   *         sin(
-   *           inputs.texCoord.x * ${TWO_PI} +
-   *           inputs.texCoord.y * ${TWO_PI}
-   *         ) * 0.4 + 0.5;
-   *       inputs.shininess = mix(1., 100., factor);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       let factor = sin(
+   *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
+   *       );
+   *       inputs.shininess = mix(1, 100, factor);
    *       inputs.metalness = factor;
    *       return inputs;
-   *     }`
+   *     })
    *   });
    * }
    *
@@ -1482,25 +1472,17 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       vec3 newNormal = inputs.normal;
-   *       // Simple bump mapping: adjust the normal based on position
-   *       newNormal.x += 0.2 * sin(
-   *           sin(
-   *             inputs.texCoord.y * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.x * ${TWO_PI} * 25.0
-   *           )
-   *         );
-   *       newNormal.y += 0.2 * sin(
-   *         sin(
-   *             inputs.texCoord.x * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.y * ${TWO_PI} * 25.0
-   *           )
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.normal.x += 0.2 * sin(
+   *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
    *       );
-   *       inputs.normal = normalize(newNormal);
+   *       inputs.normal.y += 0.2 * sin(
+   *         sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
+   *       );
+   *       inputs.normal = normalize(inputs.normal);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1524,6 +1506,77 @@ function material(p5, fn){
   fn.baseMaterialShader = function() {
     this._assert3d('baseMaterialShader');
     return this._renderer.baseMaterialShader();
+  };
+
+  /**
+   * Get the base shader for filters.
+   *
+   * You can then call <a href="#/p5.Shader/modify">`baseFilterShader().modify()`</a>
+   * and change the following hook:
+   *
+   * <table>
+   * <tr><th>Hook</th><th>Description</th></tr>
+   * <tr><td>
+   *
+   * `vec4 getColor`
+   *
+   * </td><td>
+   *
+   * Output the final color for the current pixel. It takes in two parameters:
+   * `FilterInputs inputs`, and `in sampler2D canvasContent`, and must return a color
+   * as a `vec4`.
+   *
+   * `FilterInputs inputs` is a scruct with the following properties:
+   * - `vec2 texCoord`, the position on the canvas, with coordinates between 0 and 1. Calling
+   *   `getTexture(canvasContent, texCoord)` returns the original color of the current pixel.
+   * - `vec2 canvasSize`, the width and height of the sketch.
+   * - `vec2 texelSize`, the size of one real pixel relative to the size of the whole canvas.
+   *   This is equivalent to `1 / (canvasSize * pixelDensity)`.
+   *
+   * `in sampler2D canvasContent` is a texture with the contents of the sketch, pre-filter. Call
+   * `getTexture(canvasContent, someCoordinate)` to retrieve the color of the sketch at that coordinate,
+   * with coordinate values between 0 and 1.
+   *
+   * </td></tr>
+   * </table>
+   *
+   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
+   * are using WebGL 1, write your hooks in GLSL ES 100 instead.
+   *
+   * @method baseFilterShader
+   * @beta
+   * @returns {p5.Shader} The filter shader
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * let img;
+   * let myShader;
+   *
+   * async function setup() {
+   *   img = await loadImage('assets/bricks.jpg');
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = baseFilterShader().modify(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getColor((inputs, canvasContent) => {
+   *       inputs.texCoord.y +=
+   *         0.02 * sin(time * 0.001 + inputs.texCoord.x * 5);
+   *       return texture(canvasContent, inputs.texCoord);
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   image(img, -50, -50);
+   *   filter(myShader);
+   *   describe('an image of bricks, distorting over time');
+   * }
+   * </code>
+   * </div>
+   */
+  fn.baseFilterShader = function() {
+    return (this._renderer.filterRenderer || this._renderer)
+      .baseFilterShader();
   };
 
   /**
@@ -1552,7 +1605,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1718,7 +1771,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -2046,7 +2099,7 @@ function material(p5, fn){
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
+   *   strokeShader(myShader);
    *   strokeWeight(10);
    *   beginShape();
    *   for (let i = 0; i <= 50; i++) {
@@ -2190,12 +2243,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('A spinning cube with an image of a ceiling on each face.');
@@ -2256,12 +2307,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2292,12 +2341,10 @@ function material(p5, fn){
    * <code>
    * let vid;
    *
-   * // Load a video and create a p5.MediaElement object.
-   * function preload() {
-   *   vid = createVideo('assets/fingers.mov');
-   * }
-   *
    * function setup() {
+   *   // Load a video and create a p5.MediaElement object.
+   *   vid = createVideo('assets/fingers.mov');
+   *
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Hide the video.
@@ -2450,12 +2497,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2483,12 +2528,10 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * // Load an image and create a p5.Image object.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load an image and create a p5.Image object.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('An image of a ceiling against a black background.');
@@ -2521,7 +2564,7 @@ function material(p5, fn){
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.states.textureMode = mode;
+      this._renderer.states.setValue('textureMode', mode);
     }
   };
 
@@ -2632,11 +2675,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2676,11 +2717,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe('Four identical images of a landscape arranged in a grid.');
@@ -2717,11 +2756,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2760,11 +2797,9 @@ function material(p5, fn){
    * <code>
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/rockies128.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/rockies128.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   describe(
@@ -2800,8 +2835,8 @@ function material(p5, fn){
    * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.states.textureWrapX = wrapX;
-    this._renderer.states.textureWrapY = wrapY;
+    this._renderer.states.setValue('textureWrapX', wrapX);
+    this._renderer.states.setValue('textureWrapY', wrapY);
 
     for (const texture of this._renderer.textures.values()) {
       texture.setWrapMode(wrapX, wrapY);
@@ -3078,11 +3113,13 @@ function material(p5, fn){
     // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states._hasSetAmbient = true;
-    this._renderer.states.curAmbientColor = color._array;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
-    this._renderer.states.fillColor = true;
+    this._renderer.states.setValue('_hasSetAmbient', true);
+    this._renderer.states.setValue('curAmbientColor', color._array);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
+    if (!this._renderer.states.fillColor) {
+      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
+    }
     return this;
   };
 
@@ -3174,10 +3211,10 @@ function material(p5, fn){
     // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.curEmissiveColor = color._array;
-    this._renderer.states._useEmissiveMaterial = true;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
+    this._renderer.states.setValue('curEmissiveColor', color._array);
+    this._renderer.states.setValue('_useEmissiveMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3429,10 +3466,10 @@ function material(p5, fn){
     // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.curSpecularColor = color._array;
-    this._renderer.states._useSpecularMaterial = true;
-    this._renderer.states._useNormalMaterial = false;
-    this._renderer.states.enableLighting = true;
+    this._renderer.states.setValue('curSpecularColor', color._array);
+    this._renderer.states.setValue('_useSpecularMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3575,11 +3612,9 @@ function material(p5, fn){
    *
    * let img;
    *
-   * function preload() {
-   *   img = loadImage('assets/outdoor_spheremap.jpg');
-   * }
+   * async function setup() {
+   *   img = await loadImage('assets/outdoor_spheremap.jpg');
    *
-   * function setup() {
    *   createCanvas(100 ,100 ,WEBGL);
    *
    *   describe(
@@ -3749,45 +3784,45 @@ function material(p5, fn){
 
   RendererGL.prototype.shader = function(s) {
     // Always set the shader as a fill shader
-    this.states.userFillShader = s;
-    this.states._useNormalMaterial = false;
+    this.states.setValue('userFillShader', s);
+    this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.strokeShader = function(s) {
-    this.states.userStrokeShader = s;
+    this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.imageShader = function(s) {
-    this.states.userImageShader = s;
+    this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   }
 
   RendererGL.prototype.resetShader = function() {
-    this.states.userFillShader = null;
-    this.states.userStrokeShader = null;
-    this.states.userImageShader = null;
+    this.states.setValue('userFillShader', null);
+    this.states.setValue('userStrokeShader', null);
+    this.states.setValue('userImageShader', null);
   }
 
   RendererGL.prototype.texture = function(tex) {
-    this.states.drawMode = constants.TEXTURE;
-    this.states._useNormalMaterial = false;
-    this.states._tex = tex;
-    this.states.fillColor = new Color([1, 1, 1]);
+    this.states.setValue('drawMode', constants.TEXTURE);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', tex);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
   RendererGL.prototype.normalMaterial = function(...args) {
-    this.states.drawMode = constants.FILL;
-    this.states._useSpecularMaterial = false;
-    this.states._useEmissiveMaterial = false;
-    this.states._useNormalMaterial = true;
-    this.states.curFillColor = [1, 1, 1, 1];
-    this.states.fillColor = new Color([1, 1, 1]);
-    this.states.strokeColor = null;
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useSpecularMaterial', false);
+    this.states.setValue('_useEmissiveMaterial', false);
+    this.states.setValue('_useNormalMaterial', true);
+    this.states.setValue('curFillColor', [1, 1, 1, 1]);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
+    this.states.setValue('strokeColor', null);
   }
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -3803,12 +3838,12 @@ function material(p5, fn){
     if (shine < 1) {
       shine = 1;
     }
-    this.states._useShininess = shine;
+    this.states.setValue('_useShininess', shine);
   }
 
   RendererGL.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
-    this.states._useMetalness = metalMix;
+    this.states.setValue('_useMetalness', metalMix);
   }
 }
 

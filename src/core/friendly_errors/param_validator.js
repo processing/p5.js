@@ -105,6 +105,19 @@ function validateParams(p5, fn, lifecycles) {
     return { funcName, funcClass };
   }
 
+  function validBracketNesting(type) {
+    let level = 0;
+    for (let i = 0; i < type.length; i++) {
+      if (type[i] === '[') {
+        level++;
+      } else if (type[i] === ']') {
+        level--;
+        if (level < 0) return false;
+      }
+    }
+    return level === 0;
+  }
+
   /**
    * This is a helper function that generates Zod schemas for a function based on
    * the parameter data from `docs/parameterData.json`.
@@ -139,11 +152,8 @@ function validateParams(p5, fn, lifecycles) {
     }
 
     // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
-    const generateTypeSchema = type => {
-      if (!type) return z.any();
-
-      const isArray = type.endsWith('[]');
-      const baseType = isArray ? type.slice(0, -2) : type;
+    const generateTypeSchema = baseType => {
+      if (!baseType) return z.any();
 
       let typeSchema;
 
@@ -162,7 +172,7 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = z.function();
       }
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
-      else if (baseType.startsWith('p5')) {
+      else if (/^p5\.[a-zA-Z0-9]+$/.exec(baseType) || baseType === 'p5') {
         const className = baseType.substring(baseType.indexOf('.') + 1);
         typeSchema = z.instanceof(p5Constructors[className]);
       }
@@ -171,7 +181,11 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = schemaMap[baseType];
       }
       // Tuple types
-      else if (baseType.startsWith('[') && baseType.endsWith(']')) {
+      else if (
+        baseType.startsWith('[') &&
+        baseType.endsWith(']') &&
+        validBracketNesting(baseType.slice(1, -1))
+      ) {
         typeSchema = z.tuple(
           baseType
             .slice(1, -1)
@@ -182,21 +196,7 @@ function validateParams(p5, fn, lifecycles) {
       // JavaScript classes, e.g. Request
       else if (baseType.match(/^[A-Z]/) && baseType in window) {
         typeSchema = z.instanceof(window[baseType]);
-      } else {
-        throw new Error(`Unsupported type '${type}' in parameter validation. Please report this issue.`);
       }
-
-      return isArray ? z.array(typeSchema) : typeSchema;
-    };
-
-    // Generate a schema for a single parameter. In the case where a parameter can
-    // be of multiple types, `generateTypeSchema` is called for each type.
-    const generateParamSchema = param => {
-      const isOptional = param?.endsWith('?');
-      param = param?.replace(/\?$/, '');
-
-      let schema;
-
       // Generate a schema for a single parameter that can be of multiple
       // types / constants, i.e. `String|Number|Array`.
       //
@@ -206,16 +206,34 @@ function validateParams(p5, fn, lifecycles) {
       // our constants sometimes have numeric or non-primitive values.
       // 2) In some cases, the type can be constants or strings, making z.enum()
       // insufficient for the use case.
-      if (param?.includes('|')) {
-        const types = param.split('|');
-        schema = z.union(types
+      else if (baseType.includes('|') && baseType.split('|').every(t => validBracketNesting(t))) {
+        const types = baseType.split('|');
+        typeSchema = z.union(types
           .map(t => generateTypeSchema(t))
           .filter(s => s !== undefined));
+      } else if (baseType.endsWith('[]')) {
+        typeSchema = z.array(generateTypeSchema(baseType.slice(0, -2)));
       } else {
-        schema = generateTypeSchema(param);
+        throw new Error(`Unsupported type '${baseType}' in parameter validation. Please report this issue.`);
       }
 
-      return isOptional ? schema.optional() : schema;
+      return typeSchema;
+    };
+
+    // Generate a schema for a single parameter. In the case where a parameter can
+    // be of multiple types, `generateTypeSchema` is called for each type.
+    const generateParamSchema = param => {
+      const isOptional = param?.endsWith('?');
+      param = param?.replace(/\?$/, '');
+
+      const isRest = param?.startsWith('...') && param?.endsWith('[]');
+      param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
+
+      let schema = generateTypeSchema(param);
+      if (isOptional) {
+        schema = schema.optional();
+      }
+      return { schema, rest: isRest };
     };
 
     // Note that in Zod, `optional()` only checks for undefined, not the absence
@@ -249,14 +267,22 @@ function validateParams(p5, fn, lifecycles) {
     const overloadSchemas = overloads.flatMap(overload => {
       const combinations = generateOverloadCombinations(overload);
 
-      return combinations.map(combo =>
-        z.tuple(
-          combo
-            .map(p => generateParamSchema(p))
-            // For now, ignore schemas that cannot be mapped to a defined type
-            .filter(schema => schema !== undefined)
-        )
-      );
+      return combinations.map(combo => {
+        const params = combo
+          .map(p => generateParamSchema(p))
+          .filter(s => s.schema !== undefined);
+
+        let rest;
+        if (params.at(-1)?.rest) {
+          rest = params.pop();
+        }
+
+        let combined = z.tuple(params.map(s => s.schema));
+        if (rest) {
+          combined = combined.rest(rest.schema);
+        }
+        return combined;
+      });
     });
 
     return overloadSchemas.length === 1
@@ -271,6 +297,7 @@ function validateParams(p5, fn, lifecycles) {
    * arguments, in the case of an initial validation error. We will then use the
    * closest schema to generate a friendly error message.
    *
+   * @private
    * @param {z.ZodSchema} schema - Zod schema.
    * @param {Array} args - User input arguments.
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
@@ -352,8 +379,9 @@ function validateParams(p5, fn, lifecycles) {
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {String} The friendly error message.
    */
-  fn.friendlyParamError = function (zodErrorObj, func) {
+  fn.friendlyParamError = function (zodErrorObj, func, args) {
     let message = '🌸 p5.js says: ';
+    let isVersionError = false;
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
     // always print the first error so that user can work through the errors
@@ -398,6 +426,12 @@ function validateParams(p5, fn, lifecycles) {
       });
 
       if (expectedTypes.size > 0) {
+        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
+          message += 'Did you mean to put `await` before a loading function? ' +
+            'An unexpected Promise was found. ';
+          isVersionError = true;
+        }
+
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
         const position = error.path.join('.');
 
@@ -450,7 +484,11 @@ function validateParams(p5, fn, lifecycles) {
       message += ` For more information, see ${documentationLink}.`;
     }
 
-    console.log(message);
+    if (isVersionError) {
+      p5._error(this, message);
+    } else {
+      console.log(message);
+    }
     return message;
   }
 
@@ -458,6 +496,7 @@ function validateParams(p5, fn, lifecycles) {
    * Runs parameter validation by matching the input parameters to Zod schemas
    * generated from the parameter data from `docs/parameterData.json`.
    *
+   * @private
    * @param {String} func - Name of the function.
    * @param {Array} args - User input arguments.
    * @returns {Object} The validation result.
@@ -478,7 +517,7 @@ function validateParams(p5, fn, lifecycles) {
     // theoretically allowed to stay undefined and valid, it is likely that the
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
-    if (Array.isArray(args) && args.every(arg => arg === undefined)) {
+    if (Array.isArray(args) && args.length > 0 && args.every(arg => arg === undefined)) {
       const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
@@ -502,7 +541,7 @@ function validateParams(p5, fn, lifecycles) {
     } catch (error) {
       const closestSchema = fn.findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
-      const errorMessage = fn.friendlyParamError(zodError, func);
+      const errorMessage = fn.friendlyParamError(zodError, func, args);
 
       return {
         success: false,

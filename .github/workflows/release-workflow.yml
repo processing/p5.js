@@ -7,8 +7,8 @@ permissions:
 on:
   push:
     tags:
-      - 'v*.*.*' # Push events to matching v*.*.*, i.e. v20.15.10
-      - 'v*.*.*-*' # Push events to matching v*.*.*-*, i.e. v20.15.10-0
+      - 'v1.*.*' # Push events to matching v*.*.*, i.e. v20.15.10
+      - 'v1.*.*-*' # Push events to matching v*.*.*-*, i.e. v20.15.10-0
 
 jobs:
   release:
@@ -89,11 +89,11 @@ jobs:
         run: |
           cd website
           npm install
+          npm run build:p5-version
           npm run build:contributor-docs
           npm run build:contributors
           npm run build:reference
           npm run build:search
-          npm run build:p5-version
       - name: Commit updated website files
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         run: |

@@ -24,3 +24,11 @@ out vec4 outColor;
 #endif
 
 #endif
+
+#ifdef FRAGMENT_SHADER
+vec4 getTexture(in sampler2D content, vec2 coord) {
+  vec4 color = TEXTURE(content, coord);
+  color.rgb /= color.a;
+  return color;
+}
+#endif

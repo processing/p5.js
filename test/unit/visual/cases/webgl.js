@@ -1,4 +1,6 @@
+import { vi, beforeEach, afterEach } from 'vitest';
 import { visualSuite, visualTest } from '../visualTest';
+import { RendererGL } from '../../../../src/webgl/p5.RendererGL';
 
 visualSuite('WebGL', function() {
   visualSuite('Camera', function() {
@@ -70,6 +72,31 @@ visualSuite('WebGL', function() {
         screenshot();
       }
     );
+
+    for (const mode of ['webgl', '2d']) {
+      visualSuite(`In ${mode} mode`, function() {
+        visualTest('It can use filter shader hooks', function(p5, screenshot) {
+          p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+
+          const s = p5.baseFilterShader().modify({
+            'vec4 getColor': `(FilterInputs inputs, in sampler2D content) {
+              vec4 c = getTexture(content, inputs.texCoord);
+              float avg = (c.r + c.g + c.b) / 3.0;
+              return vec4(avg, avg, avg, c.a);
+            }`
+          });
+
+          if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+          p5.background(255);
+          p5.fill('red');
+          p5.noStroke();
+          p5.circle(15, 15, 20);
+          p5.circle(30, 30, 20);
+          p5.filter(s);
+          screenshot();
+        });
+      });
+    }
 
     for (const mode of ['webgl', '2d']) {
       visualSuite(`In ${mode} mode`, function() {
@@ -350,7 +377,7 @@ visualSuite('WebGL', function() {
     visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       p5.background(255);
-      p5.fill(255, 0, 0, 100);
+      p5.fill(255, 100, 100, 100);
       p5.circle(0, 0, 50);
       screenshot();
     });
@@ -359,7 +386,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       p5.background(255);
       p5.ambientLight(255);
-      p5.fill(255, 0, 0, 100);
+      p5.fill(255, 100, 100, 100);
       p5.circle(0, 0, 50);
       screenshot();
     });
@@ -368,7 +395,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const myShader = p5.baseMaterialShader().modify({
         'Inputs getPixelInputs': `(Inputs inputs) {
-          inputs.color = vec4(1., 0., 0., 100./255.);
+          inputs.color = vec4(1., 0.4, 0.4, 100./255.);
           return inputs;
         }`
       })
@@ -381,7 +408,7 @@ visualSuite('WebGL', function() {
     visualTest('Colors in textures have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = p5.createFramebuffer();
-      tex.draw(() => p5.background(255, 0, 0, 100));
+      tex.draw(() => p5.background(255, 100, 100, 100));
       p5.background(255);
       p5.texture(tex);
       p5.circle(0, 0, 50);
@@ -391,7 +418,7 @@ visualSuite('WebGL', function() {
     visualTest('Colors in tinted textures have opacity applied correctly', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = p5.createFramebuffer();
-      tex.draw(() => p5.background(255, 0, 0, 255));
+      tex.draw(() => p5.background(255, 100, 100, 255));
       p5.background(255);
       p5.texture(tex);
       p5.tint(255, 100);
@@ -603,6 +630,33 @@ visualSuite('WebGL', function() {
       p5.fill('blue');
       p5.noStroke();
       p5.model(geom);
+      screenshot();
+    });
+  });
+
+  visualSuite('font data', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    visualTest('glyph resource allocation does not corrupt textures', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      vi.spyOn(p5._renderer, 'maxCachedGlyphs').mockReturnValue(6);
+
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+
+      p5.textFont(font);
+      p5.clear();
+      p5.textSize(10);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      for (let i = 0; i < 100; i++) {
+        const x = -p5.width/2 + (i % 10) * 10;
+        const y = -p5.height/2 + p5.floor(i / 10) * 10;
+        p5.text(String.fromCharCode(33 + i), x, y);
+      }
+
       screenshot();
     });
   });

@@ -47,7 +47,7 @@ void main(void) {
   inputs.texCoord = vTexCoord;
   inputs.ambientLight = vAmbientColor;
   inputs.color = isTexture
-      ? TEXTURE(uSampler, vTexCoord) * uTint/255.
+      ? TEXTURE(uSampler, vTexCoord) * (vec4(uTint.rgb/255., 1.) * uTint.a/255.)
       : vColor;
   if (isTexture && inputs.color.a > 0.0) {
     // Textures come in with premultiplied alpha. Temporarily unpremultiply it

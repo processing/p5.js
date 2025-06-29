@@ -215,109 +215,6 @@ function curves(p5, fn){
   };
 
   /**
-   * Sets the number of segments used to draw Bézier curves in WebGL mode.
-   *
-   * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
-   * more flat segments makes shapes appear smoother.
-   *
-   * The parameter, `detail`, is the number of segments to use while drawing a
-   * Bézier curve. For example, calling `bezierDetail(5)` will use 5 segments to
-   * draw curves with the <a href="#/p5/bezier">bezier()</a> function. By
-   * default,`detail` is 20.
-   *
-   * Note: `bezierDetail()` has no effect in 2D mode.
-   *
-   * @method bezierDetail
-   * @param {Number} detail number of segments to use. Defaults to 20.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Draw the original curve.
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   strokeWeight(5);
-   *   point(85, 20);
-   *   point(15, 80);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(10, 10);
-   *   point(90, 90);
-   *
-   *   // Draw a black bezier curve.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
-   *   bezier(85, 20, 10, 10, 90, 90, 15, 80);
-   *
-   *   // Draw red lines from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   line(85, 20, 10, 10);
-   *   line(15, 80, 90, 90);
-   *
-   *   describe(
-   *     'A gray square with three curves. A black s-curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Draw the curve with less detail.
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Set the curveDetail() to 5.
-   *   bezierDetail(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   strokeWeight(5);
-   *   point(35, -30, 0);
-   *   point(-35, 30, 0);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(-40, -40, 0);
-   *   point(40, 40, 0);
-   *
-   *   // Draw a black bezier curve.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
-   *   bezier(35, -30, 0, -40, -40, 0, 40, 40, 0, -35, 30, 0);
-   *
-   *   // Draw red lines from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   line(35, -30, -40, -40);
-   *   line(-35, 30, 40, 40);
-   *
-   *   describe(
-   *     'A gray square with three curves. A black s-curve is drawn with jagged segments. Two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   */
-  fn.bezierDetail = function(d) {
-    // p5._validateParameters('bezierDetail', arguments);
-    this._bezierDetail = d;
-    return this;
-  };
-
-  /**
    * Calculates coordinates along a Bézier curve using interpolation.
    *
    * `bezierPoint()` calculates coordinates along a Bézier curve using the
@@ -582,10 +479,10 @@ function curves(p5, fn){
    * point.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `curve()` has twelve arguments because each point has x-, y-, and
+   * `spline()` has twelve arguments because each point has x-, y-, and
    * z-coordinates.
    *
-   * @method curve
+   * @method spline
    * @param  {Number} x1 x-coordinate of the first control point.
    * @param  {Number} y1 y-coordinate of the first control point.
    * @param  {Number} x2 x-coordinate of the first anchor point.
@@ -608,12 +505,12 @@ function curves(p5, fn){
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
+   *   spline(5, 26, 73, 24, 73, 61, 15, 65);
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(5, 26, 5, 26, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -654,12 +551,12 @@ function curves(p5, fn){
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(x1, y1, 73, 24, 73, 61, 15, 65);
+   *   spline(x1, y1, 73, 24, 73, 61, 15, 65);
    *
    *   // Draw red spline curves from the anchor points to the control points.
    *   stroke(255, 0, 0);
-   *   curve(x1, y1, x1, y1, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
+   *   spline(x1, y1, x1, y1, 73, 24, 73, 61);
+   *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
@@ -704,7 +601,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-150, 275, 50, 60, 50, 60, 250, 275);
+   *   spline(-150, 275, 50, 60, 50, 60, 250, 275);
    *
    *   // Draw the balloon string.
    *   line(50, 60, 50, 80);
@@ -730,7 +627,7 @@ function curves(p5, fn){
    *
    *   // Draw the red balloon.
    *   fill('red');
-   *   curve(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
+   *   spline(-200, 225, 0, 0, 10, 0, 0, 10, 0, 200, 225, 0);
    *
    *   // Draw the balloon string.
    *   line(0, 10, 0, 0, 30, 0);
@@ -740,7 +637,7 @@ function curves(p5, fn){
    */
 
   /**
-   * @method curve
+   * @method spline
    * @param  {Number} x1
    * @param  {Number} y1
    * @param  {Number} z1 z-coordinate of the first control point.
@@ -755,12 +652,11 @@ function curves(p5, fn){
    * @param  {Number} z4 z-coordinate of the second control point.
    * @chainable
    */
-  fn.curve = function(...args) {
-    // p5._validateParameters('curve', args);
-
-    if (this._renderer.states.strokeColor) {
-      this._renderer.curve(...args);
+  fn.spline = function(...args) {
+    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+      return this;
     }
+    this._renderer.spline(...args);
 
     return this;
   };
@@ -768,9 +664,9 @@ function curves(p5, fn){
   /**
    * Calculates coordinates along a spline curve using interpolation.
    *
-   * `curvePoint()` calculates coordinates along a spline curve using the
+   * `splinePoint()` calculates coordinates along a spline curve using the
    * anchor and control points. It expects points in the same order as the
-   * <a href="#/p5/curve">curve()</a> function. `curvePoint()` works one axis
+   * <a href="#/p5/spline">spline()</a> function. `splinePoint()` works one axis
    * at a time. Passing the anchor and control points' x-coordinates will
    * calculate the x-coordinate of a point on the curve. Passing the anchor and
    * control points' y-coordinates will calculate the y-coordinate of a point on
@@ -787,7 +683,7 @@ function curves(p5, fn){
    * is the first anchor point, 1 is the second anchor point, and 0.5 is halfway
    * between them.
    *
-   * @method curvePoint
+   * @method splinePoint
    * @param {Number} a coordinate of first anchor point.
    * @param {Number} b coordinate of first control point.
    * @param {Number} c coordinate of second control point.
@@ -815,24 +711,24 @@ function curves(p5, fn){
    *
    *   // Draw the curve.
    *   noFill();
-   *   curve(x1, y1, x2, y2, x3, y3, x4, y4);
+   *   spline(x1, y1, x2, y2, x3, y3, x4, y4);
    *
    *   // Draw circles along the curve's path.
    *   fill(255);
    *
    *   // Top.
-   *   let x = curvePoint(x1, x2, x3, x4, 0);
-   *   let y = curvePoint(y1, y2, y3, y4, 0);
+   *   let x = splinePoint(x1, x2, x3, x4, 0);
+   *   let y = splinePoint(y1, y2, y3, y4, 0);
    *   circle(x, y, 5);
    *
    *   // Center.
-   *   x = curvePoint(x1, x2, x3, x4, 0.5);
-   *   y = curvePoint(y1, y2, y3, y4, 0.5);
+   *   x = splinePoint(x1, x2, x3, x4, 0.5);
+   *   y = splinePoint(y1, y2, y3, y4, 0.5);
    *   circle(x, y, 5);
    *
    *   // Bottom.
-   *   x = curvePoint(x1, x2, x3, x4, 1);
-   *   y = curvePoint(y1, y2, y3, y4, 1);
+   *   x = splinePoint(x1, x2, x3, x4, 1);
+   *   y = splinePoint(y1, y2, y3, y4, 1);
    *   circle(x, y, 5);
    *
    *   describe('A black curve on a gray square. The endpoints and center of the curve are marked with white circles.');
@@ -863,12 +759,12 @@ function curves(p5, fn){
    *
    *   // Draw the curve.
    *   noFill();
-   *   curve(x1, y1, x2, y2, x3, y3, x4, y4);
+   *   spline(x1, y1, x2, y2, x3, y3, x4, y4);
    *
    *   // Calculate the circle's coordinates.
    *   let t = 0.5 * sin(frameCount * 0.01) + 0.5;
-   *   let x = curvePoint(x1, x2, x3, x4, t);
-   *   let y = curvePoint(y1, y2, y3, y4, t);
+   *   let x = splinePoint(x1, x2, x3, x4, t);
+   *   let y = splinePoint(y1, y2, y3, y4, t);
    *
    *   // Draw the circle.
    *   fill(255);
@@ -877,8 +773,7 @@ function curves(p5, fn){
    * </code>
    * </div>
    */
-  fn.curvePoint = function(a, b, c, d, t) {
-    // p5._validateParameters('curvePoint', arguments);
+  fn.splinePoint = function(a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       t3 = t * t * t,
       t2 = t * t,
@@ -895,9 +790,9 @@ function curves(p5, fn){
    * Tangent lines skim the surface of a curve. A tangent line's slope equals
    * the curve's slope at the point where it intersects.
    *
-   * `curveTangent()` calculates coordinates along a tangent line using the
+   * `splineTangent()` calculates coordinates along a tangent line using the
    * spline curve's anchor and control points. It expects points in the same
-   * order as the <a href="#/p5/curve">curve()</a> function. `curveTangent()`
+   * order as the <a href="#/p5/spline">spline()</a> function. `splineTangent()`
    * works one axis at a time. Passing the anchor and control points'
    * x-coordinates will calculate the x-coordinate of a point on the tangent
    * line. Passing the anchor and control points' y-coordinates will calculate
@@ -914,7 +809,7 @@ function curves(p5, fn){
    * is the first anchor point, 1 is the second anchor point, and 0.5 is halfway
    * between them.
    *
-   * @method curveTangent
+   * @method splineTangent
    * @param {Number} a coordinate of first control point.
    * @param {Number} b coordinate of first anchor point.
    * @param {Number} c coordinate of second anchor point.
@@ -942,48 +837,48 @@ function curves(p5, fn){
    *
    *   // Draw the curve.
    *   noFill();
-   *   curve(x1, y1, x2, y2, x3, y3, x4, y4);
+   *   spline(x1, y1, x2, y2, x3, y3, x4, y4);
    *
    *   // Draw tangents along the curve's path.
    *   fill(255);
    *
    *   // Top circle.
    *   stroke(0);
-   *   let x = curvePoint(x1, x2, x3, x4, 0);
-   *   let y = curvePoint(y1, y2, y3, y4, 0);
+   *   let x = splinePoint(x1, x2, x3, x4, 0);
+   *   let y = splinePoint(y1, y2, y3, y4, 0);
    *   circle(x, y, 5);
    *
    *   // Top tangent line.
    *   // Scale the tangent point to draw a shorter line.
    *   stroke(255, 0, 0);
-   *   let tx = 0.2 * curveTangent(x1, x2, x3, x4, 0);
-   *   let ty = 0.2 * curveTangent(y1, y2, y3, y4, 0);
+   *   let tx = 0.2 * splineTangent(x1, x2, x3, x4, 0);
+   *   let ty = 0.2 * splineTangent(y1, y2, y3, y4, 0);
    *   line(x + tx, y + ty, x - tx, y - ty);
    *
    *   // Center circle.
    *   stroke(0);
-   *   x = curvePoint(x1, x2, x3, x4, 0.5);
-   *   y = curvePoint(y1, y2, y3, y4, 0.5);
+   *   x = splinePoint(x1, x2, x3, x4, 0.5);
+   *   y = splinePoint(y1, y2, y3, y4, 0.5);
    *   circle(x, y, 5);
    *
    *   // Center tangent line.
    *   // Scale the tangent point to draw a shorter line.
    *   stroke(255, 0, 0);
-   *   tx = 0.2 * curveTangent(x1, x2, x3, x4, 0.5);
-   *   ty = 0.2 * curveTangent(y1, y2, y3, y4, 0.5);
+   *   tx = 0.2 * splineTangent(x1, x2, x3, x4, 0.5);
+   *   ty = 0.2 * splineTangent(y1, y2, y3, y4, 0.5);
    *   line(x + tx, y + ty, x - tx, y - ty);
    *
    *   // Bottom circle.
    *   stroke(0);
-   *   x = curvePoint(x1, x2, x3, x4, 1);
-   *   y = curvePoint(y1, y2, y3, y4, 1);
+   *   x = splinePoint(x1, x2, x3, x4, 1);
+   *   y = splinePoint(y1, y2, y3, y4, 1);
    *   circle(x, y, 5);
    *
    *   // Bottom tangent line.
    *   // Scale the tangent point to draw a shorter line.
    *   stroke(255, 0, 0);
-   *   tx = 0.2 * curveTangent(x1, x2, x3, x4, 1);
-   *   ty = 0.2 * curveTangent(y1, y2, y3, y4, 1);
+   *   tx = 0.2 * splineTangent(x1, x2, x3, x4, 1);
+   *   ty = 0.2 * splineTangent(y1, y2, y3, y4, 1);
    *   line(x + tx, y + ty, x - tx, y - ty);
    *
    *   describe(
@@ -993,9 +888,7 @@ function curves(p5, fn){
    * </code>
    * </div>
    */
-  fn.curveTangent = function(a, b, c, d, t) {
-    // p5._validateParameters('curveTangent', arguments);
-
+  fn.splineTangent = function(a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       tt3 = t * t * 3,
       t2 = t * 2,

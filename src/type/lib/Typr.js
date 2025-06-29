@@ -1,4 +1,6 @@
-
+import { inflate } from 'pako';
+// Mocking the pako module to just have inflate for a smaller package size
+const pako = { inflate };
 
 var Typr = {};
 
@@ -82,13 +84,18 @@ Typr["parse"] = function (buff) {
 
       otf.set(tab, toff); toff += oLe;
     }
-    //console.log(otf);  
+    //console.log(otf);
     return otf;
   }
 
 
   var data = new Uint8Array(buff);
-  if (data[0] == 0x77) data = woffToOtf(data);
+  // PATCHED: keep around the compressed data if we inflate it
+  let compressedData;
+  if (data[0] == 0x77) {
+    compressedData = data;
+    data = woffToOtf(data);
+  }
 
   var tmap = {};
   var tag = bin.readASCII(data, 0, 4);
@@ -105,6 +112,7 @@ Typr["parse"] = function (buff) {
     return fnts;
   }
   var fnt = readFont(data, 0, 0, tmap);  //console.log(fnt);  throw "e";
+  fnt._compressedData = compressedData; // PATCH: make compressed data accessible
   var fvar = fnt["fvar"];
   if (fvar) {
     var out = [fnt];
@@ -143,7 +151,7 @@ Typr["splitBy"] = function(data,tag) {
   data = new Uint8Array(data);  console.log(data.slice(0,64));
   var bin = Typr["B"];
   var ttcf = bin.readASCII(data, 0, 4);  if(ttcf!="ttcf") return {};
-	
+
   var offset = 8;
   var numF = bin.readUint  (data, offset);  offset+=4;
   var colls = [], used={};
@@ -156,12 +164,12 @@ Typr["splitBy"] = function(data,tag) {
   for(var toff in used) {
     var offs = used[toff];
     var hlen = 12+4*offs.length;
-    var out = new Uint8Array(hlen);		
+    var out = new Uint8Array(hlen);
     for(var i=0; i<8; i++) out[i]=data[i];
     bin.writeUint(out,8,offs.length);
-  	
+
     for(var i=0; i<offs.length; i++) hlen += 12+offs[i][1]*16;
-  	
+
     var hdrs = [out], tabs = [], hoff=out.length, toff=hlen, noffs={};
     for(var i=0; i<offs.length; i++) {
       bin.writeUint(out, 12+i*4, hoff);  hoff+=12+offs[i][1]*16;
@@ -176,7 +184,7 @@ Typr["splitFonts"] = function(data) {
   data = new Uint8Array(data);
   var bin = Typr["B"];
   var ttcf = bin.readASCII(data, 0, 4);  if(ttcf!="ttcf") return {};
-	
+
   var offset = 8;
   var numF = bin.readUint  (data, offset);  offset+=4;
   var fnts = [];
@@ -191,26 +199,26 @@ Typr["splitFonts"] = function(data) {
 Typr["_cutFont"] = function(data,foff,hdrs,tabs,toff, noffs) {
   var bin = Typr["B"];
   var numTables = bin.readUshort(data, foff+4);
-	
+
   var out = new Uint8Array(12+numTables*16);  hdrs.push(out);
   for(var i=0; i<12; i++) out[i]=data[foff+i];  //console.log(out);
-	
+
   var off = 12;
   for(var i=0; i<numTables; i++)
   {
-    var tag      = bin.readASCII(data, foff+off, 4); 
+    var tag      = bin.readASCII(data, foff+off, 4);
     var checkSum = bin.readUint (data, foff+off+ 4);
-    var toffset  = bin.readUint (data, foff+off+ 8); 
+    var toffset  = bin.readUint (data, foff+off+ 8);
     var length   = bin.readUint (data, foff+off+12);
-  	
+
     while((length&3)!=0) length++;
-  	
+
     for(var j=0; j<16; j++) out[off+j]=data[foff+off+j];
-  	
+
     if(noffs[toffset]!=null) bin.writeUint(out,off+8,noffs[toffset]);
     else {
       noffs[toffset] = toff;
-      bin.writeUint(out, off+8, toff);  
+      bin.writeUint(out, off+8, toff);
       tabs.push(new Uint8Array(data.buffer, toffset, length));  toff+=length;
     }
     off+=16;
@@ -396,7 +404,7 @@ Typr["T"].CFF = {
     for (var i = 0; i < sinds.length - 1; i++) strings.push(bin.readASCII(data, offset + sinds[i], sinds[i + 1] - sinds[i]));
     offset += sinds[sinds.length - 1];
 
-    // Global Subr INDEX  (subroutines)		
+    // Global Subr INDEX  (subroutines)
     CFF.readSubrs(data, offset, topdict);
 
     // charstrings
@@ -522,12 +530,12 @@ Typr["T"].CFF = {
   /*readEncoding : function(data, offset, num)
   {
     var bin = Typr["B"];
-  	
+
     var array = ['.notdef'];
     var format = data[offset];  offset++;
     //console.log("Encoding");
     //console.log(format);
-  	
+
     if(format==0)
     {
       var nCodes = data[offset];  offset++;
@@ -545,9 +553,9 @@ Typr["T"].CFF = {
         for(var i=0; i<=nLeft; i++)  {  charset.push(first);  first++;  }
       }
     }
-  	
+
     else throw "error: unknown encoding format: " + format;
-  	
+
     return array;
   },*/
 
@@ -809,7 +817,7 @@ Typr["T"].cmap = {
     var lang = rU(data, offset); offset += 4;
     var nGroups = rU(data, offset) * 3; offset += 4;
 
-    var gps = obj.groups = new Uint32Array(nGroups);//new Uint32Array(data.slice(offset, offset+nGroups*12).buffer);  
+    var gps = obj.groups = new Uint32Array(nGroups);//new Uint32Array(data.slice(offset, offset+nGroups*12).buffer);
 
     for (var i = 0; i < nGroups; i += 3) {
       gps[i] = rU(data, offset + (i << 2));
@@ -1092,7 +1100,7 @@ Typr["T"].kern = {
   parseV1: function (data, offset, length, font) {
     var bin = Typr["B"], kern = Typr["T"].kern;
 
-    var version = bin.readFixed(data, offset);   // 0x00010000 
+    var version = bin.readFixed(data, offset);   // 0x00010000
     var nTables = bin.readUint(data, offset + 4); offset += 8;
 
     var map = { glyph1: [], rval: [] };
@@ -1495,12 +1503,12 @@ Typr["T"].cpal = {
       return new Uint8Array(data.buffer, ooff + fst, tot * 4);
       /*
       var coff=ooff+fst;
-    	
+
       for(var i=0; i<tot; i++) {
         console.log(data[coff],data[coff+1],data[coff+2],data[coff+3]);
         coff+=4;
       }
-    	
+
       console.log(ets,pts,tot); */
     }
     else throw vsn;//console.log("unknown color palette",vsn);
@@ -1768,7 +1776,7 @@ Typr["T"].HVAR = {
 
     off = oo + varO;  // item variation store
 
-    // ItemVariationStore 
+    // ItemVariationStore
     var ioff = off;
 
     var fmt = bin.readUshort(data, off); off += 2; if (fmt != 1) throw "e";
@@ -1777,7 +1785,7 @@ Typr["T"].HVAR = {
     var vcnt = bin.readUshort(data, off); off += 2;
 
     var offs = []; for (var i = 0; i < vcnt; i++) offs.push(bin.readUint(data, off + i * 4)); off += vcnt * 4;  //if(offs.length!=1) throw "e";
-    //console.log(vregO,vcnt,offs);		
+    //console.log(vregO,vcnt,offs);
 
     off = ioff + vregO;
     var acnt = bin.readUshort(data, off); off += 2;
@@ -1799,7 +1807,7 @@ Typr["T"].HVAR = {
     var i8 = new Int8Array(data.buffer);
     var varStore = [];
     for (var i = 0; i < offs.length; i++) {
-      // ItemVariationData 
+      // ItemVariationData
       off = oo + varO + offs[i]; var vdata = []; varStore.push(vdata);
       var icnt = bin.readUshort(data, off); off += 2;  // itemCount
       var dcnt = bin.readUshort(data, off); off += 2; if (dcnt & 0x8000) throw "e";
@@ -1828,7 +1836,7 @@ Typr["T"].HVAR = {
 
     off = oo + advO;  // advance widths
 
-    // DeltaSetIndexMap 
+    // DeltaSetIndexMap
 
     var fmt = data[off++]; if (fmt != 0) throw "e";
     var entryFormat = data[off++];
@@ -1970,19 +1978,19 @@ Typr["U"] = function () {
       var data=font["_data"], off = cmap.off+tab.off+6, bin=Typr["B"];
       var shKey = bin.readUshort(data,off + 2*(code>>>8));
       var shInd = off + 256*2 + shKey*8;
-    	
+
       var firstCode = bin.readUshort(data,shInd);
       var entryCount= bin.readUshort(data,shInd+2);
       var idDelta   = bin.readShort (data,shInd+4);
       var idRangeOffset = bin.readUshort(data,shInd+6);
-    	
+
       if(firstCode<=code && code<=firstCode+entryCount) {
         // not completely correct
         gid = bin.readUshort(data, shInd+6+idRangeOffset + (code&255)*2);
       }
       else gid=0;
       //if(code>256) console.log(code,(code>>>8),shKey,firstCode,entryCount,idDelta,idRangeOffset);
-    	
+
       //throw "e";
       //console.log(tab,  bin.readUshort(data,off));
       //throw "e";

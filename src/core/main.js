@@ -14,9 +14,10 @@ import * as constants from './constants';
  * a p5 sketch.  It expects an incoming sketch closure and it can also
  * take an optional node parameter for attaching the generated p5 canvas
  * to a node.  The sketch closure takes the newly created p5 instance as
- * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>,
- * <a href="#/p5/setup">setup()</a>, and/or
- * <a href="#/p5/draw">draw()</a> properties on it for running a sketch.
+ * its sole argument and may optionally set an asynchronous function
+ * using `async/await`, along with the standard <a href="#/p5/setup">setup()</a>,
+ *  and/or <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a>
+ *  properties on it for running a sketch.
  *
  * A p5 sketch can run in "global" or "instance" mode:
  * "global"   - all properties and methods are attached to the window
@@ -51,6 +52,7 @@ class p5 {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this.hitCriticalError = false;
     this._setupDone = false;
     this._userNode = node;
     this._curElement = null;
@@ -124,6 +126,9 @@ class p5 {
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
+      if (window.hitCriticalError) {
+        return;
+      }
       p5.instance = this;
 
       // Loop through methods on the prototype and attach them to the window
@@ -133,10 +138,11 @@ class p5 {
         bindGlobal(p);
       }
 
+      const protectedProperties = ['constructor', 'length'];
       // Attach its properties to the window
       for (const p in this) {
         if (this.hasOwnProperty(p)) {
-          if(p[0] === '_') continue;
+          if(p[0] === '_' || protectedProperties.includes(p)) continue;
           bindGlobal(p);
         }
       }
@@ -186,6 +192,10 @@ class p5 {
     return this._renderer.pixels;
   }
 
+  get drawingContext(){
+    return this._renderer.drawingContext;
+  }
+
   static registerAddon(addon) {
     const lifecycles = {};
     addon(p5, p5.prototype, lifecycles);
@@ -199,6 +209,7 @@ class p5 {
   }
 
   async #_start() {
+    if (this.hitCriticalError) return;
     // Find node if id given
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
@@ -207,6 +218,7 @@ class p5 {
     }
 
     await this.#_setup();
+    if (this.hitCriticalError) return;
     if (!this._recording) {
       this._draw();
     }
@@ -215,6 +227,7 @@ class p5 {
   async #_setup() {
     // Run `presetup` hooks
     await this._runLifecycleHook('presetup');
+    if (this.hitCriticalError) return;
 
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
@@ -232,6 +245,7 @@ class p5 {
     if (typeof context.setup === 'function') {
       await context.setup();
     }
+    if (this.hitCriticalError) return;
 
     // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
@@ -268,6 +282,7 @@ class p5 {
   // current frame finish awaiting. The same goes for lifecycle hooks 'predraw'
   // and 'postdraw'.
   async _draw(requestAnimationFrameTimestamp) {
+    if (this.hitCriticalError) return;
     const now = requestAnimationFrameTimestamp || window.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
@@ -422,6 +437,7 @@ class p5 {
 
     this._styles = [];
     this._downKeys = {}; //Holds the key codes of currently pressed keys
+    this._downKeyCodes = {};
   }
 }
 
@@ -448,9 +464,15 @@ for (const k in constants) {
  * ```
  *
  * Code placed in `setup()` will run once before code placed in
- * <a href="#/p5/draw">draw()</a> begins looping. If the
- * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
- * run immediately after <a href="#/p5/preload">preload()</a> finishes
+ * <a href="#/p5/draw">draw()</a> begins looping.
+ * If `setup()` is declared `async` (e.g. `async function setup()`),
+ * execution pauses at each `await` until its promise resolves.
+ * For example, `font = await loadFont(...)` waits for the font asset
+ * to load because `loadFont()` function returns a promise, and the await 
+ * keyword means the program will wait for the promise to resolve.
+ * This ensures that all assets are fully loaded before the sketch continues.
+
+ * 
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
@@ -498,11 +520,9 @@ for (const k in constants) {
  * <code>
  * let img;
  *
- * function preload() {
- *   img = loadImage('assets/bricks.jpg');
- * }
+ * async function setup() {
+ *   img = await loadImage('assets/bricks.jpg');
  *
- * function setup() {
  *   createCanvas(100, 100);
  *
  *   // Draw the image.
@@ -523,7 +543,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-
 /**
  * A function that's called repeatedly while the sketch runs.
  *

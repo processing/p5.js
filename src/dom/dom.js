@@ -352,7 +352,7 @@ function dom(p5, fn){
    * let slider;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *
    *   // Create a paragraph element and place
    *   // it at the top of the canvas.
@@ -593,10 +593,10 @@ function dom(p5, fn){
    *   background(200);
    *
    *   let img = createImg(
-   *     'https://p5js.org/assets/img/asterisk-01.png',
-   *     'The p5.js magenta asterisk.'
+   *     '/assets/cat.jpg',
+   *     'image of a cat'
    *   );
-   *   img.position(0, -10);
+   *   img.position(0, 10);
    *
    *   describe('A gray square with a magenta asterisk in its center.');
    * }
@@ -945,7 +945,7 @@ function dom(p5, fn){
    *
    *   // Create a checkbox and place it beneath the canvas.
    *   checkbox = createCheckbox();
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A black square with a checkbox beneath it. The square turns white when the box is checked.');
    * }
@@ -971,7 +971,7 @@ function dom(p5, fn){
    *   // Create a checkbox and place it beneath the canvas.
    *   // Label the checkbox "white".
    *   checkbox = createCheckbox(' white');
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A black square with a checkbox labeled "white" beneath it. The square turns white when the box is checked.');
    * }
@@ -997,7 +997,7 @@ function dom(p5, fn){
    *   // Create a checkbox and place it beneath the canvas.
    *   // Label the checkbox "white" and set its value to true.
    *   checkbox = createCheckbox(' white', true);
-   *   checkbox.position(0, 100);
+   *   checkbox.position(0, 70);
    *
    *   describe('A white square with a checkbox labeled "white" beneath it. The square turns black when the box is unchecked.');
    * }
@@ -1755,7 +1755,7 @@ function dom(p5, fn){
       inst.push();
       if (value) {
         if (value.mode) {
-          inst.colorMode(value.mode, ...value?.maxes[value.mode]);
+          inst.colorMode(value.mode, ...(value?.maxes ? value.maxes[value.mode] || [] : []));
         }
       }
       const c = inst.color(this.elt.value);
@@ -1876,7 +1876,7 @@ function dom(p5, fn){
    * let img;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *
    *   // Create a file input and place it beneath
    *   // the canvas.
@@ -1932,7 +1932,7 @@ function dom(p5, fn){
    *     let y = i * 20;
    *
    *     // Draw the image.
-   *     image(img, 0, y, 100, 100);
+   *     image(images[i], 0, y, 100, 100);
    *   }
    *
    *   describe('A gray square with a file input beneath it. If the user selects multiple image files to load, they are displayed on the square.');

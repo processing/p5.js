@@ -47,6 +47,10 @@ class FramebufferTexture {
     return this.framebuffer.height * this.framebuffer.density;
   }
 
+  update() {
+    this.framebuffer._update(this.property);
+  }
+
   rawTexture() {
     return this.framebuffer[this.property];
   }
@@ -58,6 +62,8 @@ class Framebuffer {
     this.renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
+
+    this.dirty = { colorTexture: false, depthTexture: false };
 
     this.pixels = [];
 
@@ -129,7 +135,7 @@ class Framebuffer {
     const prevCam = this.renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.renderer.states.curCamera = prevCam;
+    this.renderer.states.setValue('curCamera', prevCam);
 
     this.draw(() => this.renderer.clear());
   }
@@ -256,12 +262,10 @@ class Framebuffer {
    * let myBuffer;
    * let myFont;
    *
-   * // Load a font and create a p5.Font object.
-   * function preload() {
-   *   myFont = loadFont('assets/inconsolata.otf');
-   * }
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   myFont = await loadFont('assets/inconsolata.otf');
    *
-   * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   background(200);
@@ -905,7 +909,6 @@ class Framebuffer {
     const cam = new FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
     cam._setDefaultCamera();
-    this.renderer.states.curCamera = cam;
     return cam;
   }
 
@@ -1067,9 +1070,11 @@ class Framebuffer {
     // RendererGL.reset() does, but this does not try to clear any buffers;
     // it only sets the camera.
     // this.renderer.setCamera(this.defaultCamera);
-    this.renderer.states.curCamera = this.defaultCamera;
+    this.renderer.states.setValue('curCamera', this.defaultCamera);
     // set the projection matrix (which is not normally updated each frame)
+    this.renderer.states.setValue('uPMatrix', this.renderer.states.uPMatrix.clone());
     this.renderer.states.uPMatrix.set(this.defaultCamera.projMatrix);
+    this.renderer.states.setValue('uViewMatrix', this.renderer.states.uViewMatrix.clone());
     this.renderer.states.uViewMatrix.set(this.defaultCamera.cameraMatrix);
 
     this.renderer.resetMatrix();
@@ -1100,6 +1105,49 @@ class Framebuffer {
   }
 
   /**
+   * Ensure all readable textures are up-to-date.
+   * @private
+   * @property {'colorTexutre'|'depthTexture'} property The property to update
+   */
+  _update(property) {
+    if (this.dirty[property] && this.antialias) {
+      const gl = this.gl;
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
+      const partsToCopy = {
+        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
+      };
+      if (this.useDepth) {
+        partsToCopy.depthTexture = [
+          gl.DEPTH_BUFFER_BIT,
+          this.depthP5Texture.glMagFilter
+        ];
+      }
+      const [flag, filter] = partsToCopy[property];
+      gl.blitFramebuffer(
+        0,
+        0,
+        this.width * this.density,
+        this.height * this.density,
+        0,
+        0,
+        this.width * this.density,
+        this.height * this.density,
+        flag,
+        filter
+      );
+      this.dirty[property] = false;
+
+      const activeFbo = this.renderer.activeFramebuffer();
+      if (activeFbo) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, activeFbo._framebufferToBind());
+      } else {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
+    }
+  }
+
+  /**
    * Ensures that the framebuffer is ready to be drawn to
    *
    * @private
@@ -1120,27 +1168,7 @@ class Framebuffer {
    */
   _beforeEnd() {
     if (this.antialias) {
-      const gl = this.gl;
-      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
-      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
-      const partsToCopy = [
-        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
-      ];
-      if (this.useDepth) {
-        partsToCopy.push(
-          [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
-        );
-      }
-      for (const [flag, filter] of partsToCopy) {
-        gl.blitFramebuffer(
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          flag,
-          filter
-        );
-      }
+      this.dirty = { colorTexture: true, depthTexture: true };
     }
   }
 
@@ -1320,6 +1348,7 @@ class Framebuffer {
    * </div>
    */
   loadPixels() {
+    this._update('colorTexture');
     const gl = this.gl;
     const prevFramebuffer = this.renderer.activeFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
@@ -1378,6 +1407,7 @@ class Framebuffer {
    * @return {Number[]}  color of the pixel at `(x, y)` as an array of color values `[R, G, B, A]`.
    */
   get(x, y, w, h) {
+    this._update('colorTexture');
     // p5._validateParameters('p5.Framebuffer.get', arguments);
     const colorFormat = this._glColorFormat();
     if (x === undefined && y === undefined) {
@@ -1544,6 +1574,7 @@ class Framebuffer {
       this.pixels
     );
     this.colorP5Texture.unbindTexture();
+    this.dirty.colorTexture = false;
 
     const prevFramebuffer = this.renderer.activeFramebuffer();
     if (this.antialias) {
@@ -1557,10 +1588,10 @@ class Framebuffer {
       this.begin();
       this.renderer.push();
       // this.renderer.imageMode(constants.CENTER);
-      this.renderer.states.imageMode = constants.CORNER;
+      this.renderer.states.setValue('imageMode', constants.CORNER);
       this.renderer.setCamera(this.filterCamera);
       this.renderer.resetMatrix();
-      this.renderer.states.strokeColor = null;
+      this.renderer.states.setValue('strokeColor', null);
       this.renderer.clear();
       this.renderer._drawingFilter = true;
       this.renderer.image(

@@ -57,7 +57,7 @@ export default new ColorSpace({
   toBase,
 
   formats: {
-    default :{
+    default: {
       type: 'custom',
       serialize: (coords, alpha) => {
         const rgb = toBase(coords);

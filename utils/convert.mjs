@@ -1,22 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getAllEntries } from './helper.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
-
-function getEntries(entry) {
-  return [
-    entry,
-    ...getAllEntries(entry.members.global),
-    ...getAllEntries(entry.members.inner),
-    ...getAllEntries(entry.members.instance),
-    ...getAllEntries(entry.members.events),
-    ...getAllEntries(entry.members.static)
-  ];
-}
-
-function getAllEntries(arr) {
-  return arr.flatMap(getEntries);
-}
 
 const allData = getAllEntries(data);
 
@@ -39,6 +29,19 @@ function descriptionString(node, parent) {
     const content = node.children.map(n => descriptionString(n, node)).join('');
     if (parent && parent.children.length === 1) return content;
     return '<p>' + content + '</p>\n';
+  } else if (node.type === 'code') {
+    let classes = [];
+    let attrs = '';
+    if (node.lang) {
+      classes.push(`language-${node.lang}`);
+    }
+    if (node.meta) {
+      classes.push(node.meta);
+    }
+    if (classes.length > 0) {
+      attrs=` class="${classes.join(' ')}"`;
+    }
+    return `<pre><code${attrs}>${node.value}</code></pre>`;
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
@@ -89,6 +92,8 @@ function typeObject(node) {
     return { type: signature };
   } else if (node.type === 'ArrayType') {
     return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
+  } else if (node.type === 'RestType') {
+    return { type: typeObject(node.expression).type, rest: true };
   } else {
     // TODO
     // - handle record types
@@ -123,6 +128,14 @@ function locationInfo(node) {
     file: node.context.file.slice(node.context.file.indexOf('src/')),
     line: node.context.loc.start.line
   };
+}
+
+function deprecationInfo(node) {
+  if (!node.deprecated) {
+    return {};
+  }
+
+  return { deprecated: true, deprecationMessage: descriptionString(node.deprecated) };
 }
 
 function getExample(node) {
@@ -200,6 +213,7 @@ function getModuleInfo(entry) {
   const file = entry.context.file;
   let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
   let memberof = entry.memberof;
+  if (memberof === 'fn') memberof = 'p5';
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
@@ -217,23 +231,22 @@ function getParams(entry) {
   // instead convert it to a string. We want a slightly different conversion to
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
-  return (entry.tags || []).filter(t => t.title === 'param').map(node => {
-    const param = entry.params.find(param => param.name === node.name);
-    if (param) {
+  return (entry.tags || [])
+  
+    // Filter out the nested parameters (eg. options.extrude),
+    // to be treated as part of parent parameters (eg. options)
+    // and not separate entries
+    .filter(t => t.title === 'param' && !t.name.includes('.')) 
+    .map(node => {
+      const param = (entry.params || []).find(param => param.name === node.name);
       return {
         ...node,
-        description: param.description
-      };
-    } else {
-      return {
-        ...node,
-        description: {
+        description: param?.description || {
           type: 'html',
           value: node.description
         }
       };
-    }
-  });
+    });
 }
 
 // ============================================================================
@@ -251,6 +264,7 @@ for (const entry of allData) {
       name: entry.name,
       ...locationInfo(entry),
       ...typeObject(entry.type),
+      ...deprecationInfo(entry),
       description: descriptionString(entry.description),
       example: examples.length > 0 ? examples : undefined,
       alt: getAlt(entry),
@@ -273,6 +287,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       extends: entry.augments && entry.augments[0] && entry.augments[0].name,
       description: descriptionString(entry.description),
       example: entry.examples.map(getExample),
@@ -330,6 +345,7 @@ for (const entry of allData) {
       ...location,
       line: property.lineNumber || location.line,
       ...typeObject(property.type),
+      ...deprecationInfo(entry),
       module,
       submodule,
       class: entry.name
@@ -347,6 +363,7 @@ for (const entry of allData) {
   const propTag = entry.tags.find(tag => tag.title === 'property');
   const forTag = entry.tags.find(tag => tag.title === 'for');
   let memberof = entry.memberof;
+  if (memberof === 'fn') memberof = 'p5';
   if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
     memberof = 'p5.' + memberof;
   }
@@ -364,6 +381,7 @@ for (const entry of allData) {
     name: propTag.name,
     ...locationInfo(entry),
     ...typeObject(propTag.type),
+    ...deprecationInfo(entry),
     module,
     submodule,
     class: forName
@@ -394,6 +412,7 @@ for (const entry of allData) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
 
     let memberof = entry.memberof;
+    if (memberof === 'fn') memberof = 'p5';
     if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
       memberof = 'p5.' + memberof;
     }
@@ -425,6 +444,7 @@ for (const entry of allData) {
     const item = {
       name: entry.name,
       ...locationInfo(entry),
+      ...deprecationInfo(entry),
       itemtype: 'method',
       chainable: (prevItem.chainable || entry.tags.some(tag => tag.title === 'chainable'))
         ? 1
@@ -499,7 +519,7 @@ function cleanUpClassItems(data) {
 
     const processOverload = overload => {
       if (overload.params) {
-        return Object.values(overload.params).map(param => processOptionalParam(param));
+        return Object.values(overload.params).map(param => processParam(param));
       }
       return overload;
     }
@@ -507,10 +527,13 @@ function cleanUpClassItems(data) {
     // To simplify `parameterData.json`, instead of having a separate field for
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
-    const processOptionalParam = param => {
+    const processParam = param => {
       let type = param.type;
       if (param.optional) {
         type += '?';
+      }
+      if (param.rest) {
+        type = `...${type}[]`;
       }
       return type;
     }
@@ -602,3 +625,4 @@ fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
 fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
+

@@ -81,6 +81,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the text description.
    *   textOutput();
@@ -101,6 +106,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the text description and
    *   // display it for debugging.
@@ -215,6 +225,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the grid description.
    *   gridOutput();
@@ -235,6 +250,11 @@ function outputs(p5, fn){
    *
    * <div>
    * <code>
+   * 
+   * function setup(){
+   *  createCanvas(100, 100);
+   * }
+   * 
    * function draw() {
    *   // Add the grid description and
    *   // display it for debugging.
@@ -254,6 +274,7 @@ function outputs(p5, fn){
    * </code>
    * </div>
    */
+
 
   fn.gridOutput = function(display) {
     // p5._validateParameters('gridOutput', arguments);
@@ -540,14 +561,9 @@ function outputs(p5, fn){
 
   //gets position of shape in the canvas
   fn._getPos = function (x, y) {
-    const untransformedPosition = new DOMPointReadOnly(x, y);
-    const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.calculateCombinedMatrix()) :
-      this.drawingContext.getTransform();
-    const { x: transformedX, y: transformedY } = untransformedPosition
-      .matrixTransform(currentTransform);
-    const canvasWidth = this.width * this._renderer._pixelDensity;
-    const canvasHeight = this.height * this._renderer._pixelDensity;
+    const { x: transformedX, y: transformedY } = this.worldToScreen(new p5.Vector(x, y));
+    const canvasWidth = this.width;
+    const canvasHeight = this.height;
     if (transformedX < 0.4 * canvasWidth) {
       if (transformedY < 0.4 * canvasHeight) {
         return 'top left';
@@ -662,7 +678,7 @@ function outputs(p5, fn){
     ];
     //  Apply the inverse of the current transformations to the canvas corners
     const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.states.uMVMatrix.mat4) :
+      new DOMMatrix(this._renderer.uMVMatrix.mat4) :
       this.drawingContext.getTransform();
     const invertedTransform = currentTransform.inverse();
     const tc = canvasCorners.map(

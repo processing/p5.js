@@ -4,7 +4,21 @@
  * @for p5
  * @requires core
  */
-
+export function isCode(input) {
+  const leftRightKeys = [
+    'Alt',
+    'Shift',
+    'Control',
+    'Meta',
+  ];
+  if (leftRightKeys.includes(input)) {
+    return false;
+  }
+  if (typeof input !== 'string') {
+    return false;
+  }
+  return input.length > 1;
+}
 function keyboard(p5, fn){
   /**
    * A `Boolean` system variable that's `true` if any key is currently pressed
@@ -95,7 +109,9 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
+
   fn.keyIsPressed = false;
+  fn.code = null;
 
   /**
    * A `String` system variable that contains the value of the last key typed.
@@ -180,32 +196,36 @@ function keyboard(p5, fn){
   fn.key = '';
 
   /**
-   * A `Number` system variable that contains the code of the last key typed.
+   * A `Number` system variable that contains the code of the last key pressed.
    *
-   * All keys have a `keyCode`. For example, the `a` key has the `keyCode` 65.
-   * The `keyCode` variable is helpful for checking whether a special key has
-   * been typed. For example, the following conditional checks whether the enter
-   * key has been typed:
+   * Every key has a numeric key code. For example, the letter `a` key has the key code 65.
+   * Use this key code to determine which key was pressed by comparing it to the numeric value
+   * of the desired key.
+   *
+   * For example, to detect when the Enter key is pressed:
    *
    * ```js
-   * if (keyCode === 13) {
-   *   // Code to run if the enter key was pressed.
+   * if (keyCode === 13) { // Enter key
+   *   // Code to run if the Enter key was pressed.
    * }
    * ```
    *
-   * The same code can be written more clearly using the system variable `ENTER`
-   * which has a value of 13:
+   * Alternatively, you can use the <a href="#/p5/key">key</a> function to directly compare the key value:
    *
    * ```js
-   * if (keyCode === ENTER) {
-   *   // Code to run if the enter key was pressed.
+   * if (key === 'Enter') { // Enter key
+   *   // Code to run if the Enter key was pressed.
    * }
    * ```
    *
-   * The system variables `BACKSPACE`, `DELETE`, `ENTER`, `RETURN`, `TAB`,
-   * `ESCAPE`, `SHIFT`, `CONTROL`, `OPTION`, `ALT`, `UP_ARROW`, `DOWN_ARROW`,
-   * `LEFT_ARROW`, and `RIGHT_ARROW` are all helpful shorthands the key codes of
-   * special keys. Key codes can be found on websites such as
+   * Use the following numeric codes for the arrow keys:
+   *
+   *   Up Arrow: 38  
+   *   Down Arrow: 40  
+   *   Left Arrow: 37  
+   *   Right Arrow: 39
+   *
+   * More key codes can be found at websites such as 
    * <a href="http://keycode.info/">keycode.info</a>.
    *
    * @property {Integer} keyCode
@@ -257,13 +277,13 @@ function keyboard(p5, fn){
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
    *   if (keyIsPressed === true) {
-   *     if (keyCode === UP_ARROW) {
+   *     if (keyCode === 38) { // Up arrow key
    *       y -= 1;
-   *     } else if (keyCode === DOWN_ARROW) {
+   *     } else if (keyCode === 40) { // Down arrow key
    *       y += 1;
-   *     } else if (keyCode === LEFT_ARROW) {
+   *     } else if (keyCode === 37) { // Left arrow key
    *       x -= 1;
-   *     } else if (keyCode === RIGHT_ARROW) {
+   *     } else if (keyCode === 39) { // Right arrow key
    *       x += 1;
    *     }
    *   }
@@ -301,7 +321,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) { // Enter key
    *     // Code to run.
    *   }
    * }
@@ -427,9 +447,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user presses an arrow key.
    * function keyPressed() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) { // Left arrow key
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) { // Right arrow key
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -439,23 +459,16 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeydown = function(e) {
-    if (e.repeat) {
-      // Ignore repeated key events when holding down a key
+    if (this._downKeys[e.code]) {
       return;
     }
 
     this.keyIsPressed = true;
     this.keyCode = e.which;
-    this._downKeys[e.which] = true;
-    this.key = e.key || String.fromCharCode(e.which) || e.which;
-
-    // Track keys pressed with meta key
-    if (e.metaKey) {
-      if (!this._metaKeys) {
-        this._metaKeys = [];
-      }
-      this._metaKeys.push(e.which);
-    }
+    this.key = e.key;
+    this.code = e.code;
+    this._downKeyCodes[e.code] = true;
+    this._downKeys[e.key] = true;
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyPressed === 'function' && !e.charCode) {
@@ -488,7 +501,7 @@ function keyboard(p5, fn){
    *     // Code to run.
    *   }
    *
-   *   if (keyCode === ENTER) {
+   *   if (keyCode === 13) { // Enter key
    *     // Code to run.
    *   }
    * }
@@ -611,9 +624,9 @@ function keyboard(p5, fn){
    *
    * // Toggle the background color when the user releases an arrow key.
    * function keyReleased() {
-   *   if (keyCode === LEFT_ARROW) {
+   *   if (keyCode === 37) { // Left arrow key
    *     value = 255;
-   *   } else if (keyCode === RIGHT_ARROW) {
+   *   } else if (keyCode === 39) { // Right arrow key
    *     value = 0;
    *   }
    *   // Uncomment to prevent any default behavior.
@@ -623,19 +636,6 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-    this._downKeys[e.which] = false;
-    this.keyIsPressed = false;
-    this._lastKeyCodeTyped = null;
-
-    if (e.key === 'Meta') { // Meta key codes
-      // When meta key is released, clear all keys pressed with it
-      if (this._metaKeys) {
-        this._metaKeys.forEach(key => {
-          this._downKeys[key] = false;
-        });
-        this._metaKeys = [];
-      }
-    }
 
     const context = this._isGlobal ? window : this;
     if (typeof context.keyReleased === 'function') {
@@ -644,6 +644,23 @@ function keyboard(p5, fn){
         e.preventDefault();
       }
     }
+    
+    delete this._downKeyCodes[e.code];
+    delete this._downKeys[e.key];
+
+
+    if (!this._areDownKeys()) {
+      this.keyIsPressed = false;
+      this.key = '';
+      this.code = null;
+    } else {
+      // If other keys are still pressed, update code to the last pressed key
+      const lastPressedCode = Object.keys(this._downKeyCodes).pop();
+      this.code = lastPressedCode;
+      const lastPressedKey = Object.keys(this._downKeys).pop();
+      this.key = lastPressedKey;
+    }
+
   };
 
   /**
@@ -672,7 +689,7 @@ function keyboard(p5, fn){
    *   }
    *
    *   // Check for "c" using keyCode.
-   *   if (keyCode === 67) {
+   *   if (keyCode === 67) { // 67 is the ASCII code for 'c'
    *     // Code to run.
    *   }
    * }
@@ -777,7 +794,7 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeypress = function(e) {
-    if (e.which === this._lastKeyCodeTyped) {
+    if (e.which === this._lastKeyCodeTyped && e.repeat) {
       // prevent multiple firings
       return;
     }
@@ -815,13 +832,19 @@ function keyboard(p5, fn){
    * }
    * ```
    *
-   * `keyIsDown()` can check for key presses using
-   * <a href="#/p5/keyCode">keyCode</a> values, as in `keyIsDown(37)` or
-   * `keyIsDown(LEFT_ARROW)`. Key codes can be found on websites such as
-   * <a href="https://keycode.info" target="_blank">keycode.info</a>.
+   * `keyIsDown()` can check for key presses using strings based on
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key" target="_blank">KeyboardEvent.key</a>
+   * or <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code" target="_blank">KeyboardEvent.code</a> values,
+   * such as `keyIsDown('x')` or `keyIsDown('ArrowLeft')`.
+   *
+   * Note: In p5.js 2.0 and newer, numeric keycodes (such as 88 for 'X') are no longer supported.
+   * This is a breaking change from previous versions.
+   *
+   * You can still use the p5 constants like `LEFT_ARROW` which now map to string values
+   * internally rather than numeric codes.
    *
    * @method keyIsDown
-   * @param {Number}          code key to check.
+   * @param {Number|String}   code key to check.
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
@@ -888,19 +911,19 @@ function keyboard(p5, fn){
    *
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
-   *   if (keyIsDown(37) === true) {
+   *   if (keyIsDown('ArrowLeft') === true) {
    *     x -= 1;
    *   }
    *
-   *   if (keyIsDown(39) === true) {
+   *   if (keyIsDown('ArrowRight') === true) {
    *     x += 1;
    *   }
    *
-   *   if (keyIsDown(38) === true) {
+   *   if (keyIsDown('ArrowUp') === true) {
    *     y -= 1;
    *   }
    *
-   *   if (keyIsDown(40) === true) {
+   *   if (keyIsDown('ArrowDown') === true) {
    *     y += 1;
    *   }
    *
@@ -913,11 +936,14 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-  fn.keyIsDown = function(code) {
-    // p5._validateParameters('keyIsDown', arguments);
-    return this._downKeys[code] || false;
-  };
 
+  fn.keyIsDown = function(input) {
+    if (isCode(input)) {
+      return this._downKeyCodes[input] || this._downKeys[input] || false;
+    } else {
+      return this._downKeys[input] || this._downKeyCodes[input] || false;
+    }
+  }
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.

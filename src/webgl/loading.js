@@ -98,11 +98,11 @@ function loading(p5, fn){
    *
    * @method loadModel
    * @param  {String|Request} path      path of the model to be loaded.
+   * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
-   * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
@@ -168,8 +168,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', true, handleModel);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', true, handleModel);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -202,8 +202,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/wrong.obj', true, handleModel, handleError);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -241,8 +241,8 @@ function loading(p5, fn){
    * let shape;
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', true, handleModel, handleError, '.obj');
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', '.obj', true, handleModel, handleError);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -279,15 +279,15 @@ function loading(p5, fn){
    *
    * let shape;
    * let options = {
+   *   fileType: '.obj',
    *   normalize: true,
    *   successCallback: handleModel,
-   *   failureCallback: handleError,
-   *   fileType: '.obj'
+   *   failureCallback: handleError
    * };
    *
    * // Load the file and create a p5.Geometry object.
-   * function setup() {
-   *   loadModel('assets/teapot.obj', options);
+   * async function setup() {
+   *   await loadModel('assets/teapot.obj', options);
    *
    *   createCanvas(100, 100, WEBGL);
    *
@@ -321,18 +321,18 @@ function loading(p5, fn){
   /**
    * @method loadModel
    * @param  {String|Request} path
+   * @param  {String} [fileType]
    * @param  {function(p5.Geometry)} [successCallback]
    * @param  {function(Event)} [failureCallback]
-   * @param  {String} [fileType]
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
   /**
    * @method loadModel
    * @param  {String|Request} path
    * @param  {Object} [options] loading options.
+   * @param  {String} [options.fileType]
    * @param  {function(p5.Geometry)} [options.successCallback]
    * @param  {function(Event)} [options.failureCallback]
-   * @param  {String} [options.fileType]
    * @param  {Boolean} [options.normalize]
    * @param  {Boolean} [options.flipU]
    * @param  {Boolean} [options.flipV]
@@ -487,6 +487,9 @@ function loading(p5, fn){
     }
   };
 
+  /**
+   * @private
+   */
   async function parseMtl(mtlPath) {
     let currentMaterial = null;
     let materials = {};
@@ -532,6 +535,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * Parse OBJ lines into model. For reference, this is what a simple model of a
    * square might look like:
    *
@@ -666,6 +670,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * STL files can be of two types, ASCII and Binary,
    *
    * We need to convert the arrayBuffer to an array of strings,
@@ -693,6 +698,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function checks if the file is in ASCII format or in Binary format
    *
    * It is done by searching keyword `solid` at the start of the file.
@@ -720,6 +726,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function matches the `query` at the provided `offset`
    */
   function matchDataViewAt(query, reader, offset) {
@@ -732,6 +739,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * This function parses the Binary STL files.
    * https://en.wikipedia.org/wiki/STL_%28file_format%29#Binary_STL
    *
@@ -820,6 +828,7 @@ function loading(p5, fn){
   }
 
   /**
+   * @private
    * ASCII STL file starts with `solid 'nameOfFile'`
    * Then contain the normal of the face, starting with `facet normal`
    * Next contain a keyword indicating the start of face vertex, `outer loop`
@@ -978,6 +987,7 @@ function loading(p5, fn){
    * @method model
    * @param  {p5.Geometry} model 3D shape to be drawn.
    *
+   * @param {Number} [count=1] number of instances to draw.
    * @example
    * <div>
    * <code>

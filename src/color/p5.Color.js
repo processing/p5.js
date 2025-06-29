@@ -30,8 +30,16 @@ import {
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
 
-const map = (n, start1, stop1, start2, stop2) =>
-  ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
+const map = (n, start1, stop1, start2, stop2, clamp) => {
+  let result = ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
+  if (clamp) {
+    result = Math.max(result, Math.min(start2, stop2));
+    result = Math.min(result, Math.max(start2, stop2));
+  }
+  return result;
+}
+
+const serializationMap = {};
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -42,21 +50,26 @@ class Color {
 
   static colorMap = {};
   static #colorjsMaxes = {};
+  static #grayscaleMap = {};
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
   static addColorMode(mode, definition){
     ColorSpace.register(definition);
     Color.colorMap[mode] = definition.id;
+
     // Get colorjs maxes
     Color.#colorjsMaxes[mode] = Object.values(definition.coords).reduce((acc, v) => {
         acc.push(v.refRange || v.range);
         return acc;
       }, []);
     Color.#colorjsMaxes[mode].push([0, 1]);
+
+    // Get grayscale mapping
+    Color.#grayscaleMap[mode] = definition.fromGray;
   }
 
-  constructor(vals, colorMode, colorMaxes) {
+  constructor(vals, colorMode, colorMaxes, { clamp = false } = {}) {
     // This changes with the color object
     this.mode = colorMode || RGB;
 
@@ -97,15 +110,39 @@ class Color {
       let mappedVals;
 
       if(colorMaxes){
+        // NOTE: need to consider different number of arguments (eg. CMYK)
         if(vals.length === 4){
-          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes);
+          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes, clamp);
         }else if(vals.length === 3){
-          mappedVals = Color.mapColorRange([vals[0], vals[1], vals[2]], this.mode, colorMaxes);
+          mappedVals = Color.mapColorRange([vals[0], vals[1], vals[2]], this.mode, colorMaxes, clamp);
           mappedVals.push(1);
         }else if(vals.length === 2){
-          mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0], vals[1]], this.mode, colorMaxes);
+          // Grayscale with alpha
+          if(Color.#grayscaleMap[this.mode]){
+            mappedVals = Color.#grayscaleMap[this.mode](vals[0], colorMaxes, clamp);
+          }else{
+            mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes, clamp);
+          }
+          const alphaMaxes = Array.isArray(colorMaxes[colorMaxes.length-1]) ?
+            colorMaxes[colorMaxes.length-1] :
+            [0, colorMaxes[colorMaxes.length-1]];
+          mappedVals.push(
+            map(
+              vals[1],
+              alphaMaxes[0],
+              alphaMaxes[1],
+              0,
+              1,
+              clamp
+            )
+          );
         }else if(vals.length === 1){
-          mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes);
+          // Grayscale only
+          if(Color.#grayscaleMap[this.mode]){
+            mappedVals = Color.#grayscaleMap[this.mode](vals[0], colorMaxes, clamp);
+          }else{
+            mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes, clamp);
+          }
           mappedVals.push(1);
         }else{
           throw new Error('Invalid color');
@@ -127,7 +164,7 @@ class Color {
   }
 
   // Convert from p5 color range to color.js color range
-  static mapColorRange(origin, mode, maxes){
+  static mapColorRange(origin, mode, maxes, clamp){
     const p5Maxes = maxes.map((max) => {
       if(!Array.isArray(max)){
         return [0, max];
@@ -138,7 +175,7 @@ class Color {
     const colorjsMaxes = Color.#colorjsMaxes[mode];
 
     return origin.map((channel, i) => {
-      const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1]);
+      const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1], clamp);
       return newval;
     });
   }
@@ -167,7 +204,7 @@ class Color {
 
   // Get raw coordinates of underlying library, can differ between libraries
   get _array() {
-    return [...this._color.coords, this._color.alpha];
+    return this._getRGBA();
   }
 
   array(){
@@ -242,10 +279,16 @@ class Color {
    * </div>
    */
   toString(format) {
-    // NOTE: memoize
-    return serialize(this._color, {
-      format
-    });
+    const key = `${this._color.space.id}-${this._color.coords.join(",")}-${this._color.alpha}-${format}`;
+    let colorString = serializationMap[key];
+
+    if(!colorString){
+      colorString = serialize(this._color, {
+        format
+      });
+      serializationMap[key] = colorString;
+    }
+    return colorString;
   }
 
   /**
@@ -338,7 +381,7 @@ class Color {
    * }
    * </code>
    * </div>
-   **/
+   */
   setGreen(new_green, max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -449,7 +492,7 @@ class Color {
    * }
    * </code>
    * </div>
-   **/
+   */
   setAlpha(new_alpha, max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -463,7 +506,7 @@ class Color {
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
     // Get colorjs maxes
-    const colorjsMaxes = Color.#colorjsMaxes[this.mode];
+    const colorjsMaxes = Color.#colorjsMaxes[RGB];
 
     // Normalize everything to 0,1 or the provided range (map)
     let coords = structuredClone(to(this._color, 'srgb').coords);
@@ -503,6 +546,11 @@ class Color {
     }
   }
 
+  /**
+   * This function extracts the green value from a color object and
+   * returns it in the range 0–255 by default. When `colorMode()` is given to an
+   * RBG value, the green value within the givin range is returned
+   */
   _getGreen(max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -582,6 +630,13 @@ class Color {
       return map(to(this._color, 'hsl').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
+  /**
+   * Brightness obtains the HSB brightness value from either a p5.Color object,
+   * an array of color components, or a CSS color string.Depending on value,
+   * when `colorMode()` is set to HSB, this function will return the
+   * brightness value in the range. By default, this function will return
+   * the HSB brightness within the range 0 - 100.
+   */
 
   _getBrightness(max=[0, 100]) {
     if(!Array.isArray(max)){
@@ -643,6 +698,78 @@ function color(p5, fn, lifecycles){
    *                                          or CSS color.
    */
   p5.Color = Color;
+
+  sRGB.fromGray = P3.fromGray = function(val, maxes, clamp){
+    // Use blue max
+    const p5Maxes = maxes.map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
+    });
+
+    const v = map(val, p5Maxes[2][0], p5Maxes[2][1], 0, 1, clamp);
+    return [v, v, v];
+  };
+
+  HSBSpace.fromGray = HSLSpace.fromGray = function(val, maxes, clamp){
+    // Use brightness max
+    const p5Maxes = maxes.map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
+    });
+
+    const v = map(val, p5Maxes[2][0], p5Maxes[2][1], 0, 100, clamp);
+    return [0, 0, v];
+  };
+
+  HWBSpace.fromGray = function(val, maxes, clamp){
+    // Use Whiteness and Blackness to create number line
+    const p5Maxes = maxes.map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
+    });
+
+    const wbMax =
+      (Math.abs(p5Maxes[1][0] - p5Maxes[1][1])) / 2 +
+      (Math.abs(p5Maxes[2][0] - p5Maxes[2][1])) / 2;
+
+    const nVal = map(val, 0, wbMax, 0, 100);
+    let white, black;
+    if(nVal < 50){
+      black = nVal;
+      white = 100 - nVal;
+    }else if(nVal >= 50){
+      white = nVal;
+      black = 100 - nVal;
+    }
+    return [0, white, black];
+  };
+
+  Lab.fromGray =
+  LCHSpace.fromGray =
+  OKLab.fromGray =
+  OKLCHSpace.fromGray =
+  function(val, maxes, clamp){
+    // Use lightness max
+    const p5Maxes = maxes.map((max) => {
+      if(!Array.isArray(max)){
+        return [0, max];
+      }else{
+        return max;
+      }
+    });
+
+    const v = map(val, p5Maxes[0][0], p5Maxes[0][1], 0, 100, clamp);
+    return [v, 0, 0];
+  };
 
   // Register color modes and initialize Color maxes to what p5 has set for itself
   p5.Color.addColorMode(RGB, sRGB);

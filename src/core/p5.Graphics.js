@@ -23,13 +23,14 @@ import material from '../webgl/material';
 import creatingReading from '../color/creating_reading';
 import trigonometry from '../math/trigonometry';
 import { renderers } from './rendering';
+import customShapes from '../shape/custom_shapes';
 
 class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
     const r = renderer || constants.P2D;
 
     this._pInst = pInst;
-    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
+    this._renderer = new renderers[r](this, w, h, false, canvas);
 
     this._initializeInstanceVariables(this);
 
@@ -573,9 +574,6 @@ class Graphics {
 
     this._styles = [];
 
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
     // this._colorMode = RGB;
     // this._colorMaxes = {
     //   rgb: [255, 255, 255, 255],
@@ -609,7 +607,7 @@ function graphics(p5, fn){
    * @extends p5.Element
    * @param {Number} w            width width of the graphics buffer in pixels.
    * @param {Number} h            height height of the graphics buffer in pixels.
-   * @param {(P2D|WEBGL)} renderer   the renderer to use, either P2D or WEBGL.
+   * @param {(P2D|WEBGL|P2DHDR)} renderer   the renderer to use, either P2D or WEBGL.
    * @param {p5} [pInst]          sketch instance.
    * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
    *
@@ -680,6 +678,7 @@ function graphics(p5, fn){
   attributes(p5, p5.Graphics.prototype);
   curves(p5, p5.Graphics.prototype);
   vertex(p5, p5.Graphics.prototype);
+  customShapes(p5, p5.Graphics.prototype);
 
   setting(p5, p5.Graphics.prototype);
   loadingDisplaying(p5, p5.Graphics.prototype);

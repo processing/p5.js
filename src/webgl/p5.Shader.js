@@ -52,6 +52,79 @@ class Shader {
     };
   }
 
+  hookTypes(hookName) {
+    let fullSrc = this._vertSrc;
+    let body = this.hooks.vertex[hookName];
+    if (!body) {
+      body = this.hooks.fragment[hookName];
+      fullSrc = this._fragSrc;
+    }
+    if (!body) {
+      throw new Error(`Can't find hook ${hookName}!`);
+    }
+    const nameParts = hookName.split(/\s+/g);
+    const functionName = nameParts.pop();
+    const returnType = nameParts.pop();
+    const returnQualifiers = [...nameParts];
+
+    const parameterMatch = /\(([^\)]*)\)/.exec(body);
+    if (!parameterMatch) {
+      throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
+    }
+
+    const structProperties = structName => {
+      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
+      if (!structDefMatch) return undefined;
+
+      const properties = [];
+      for (const defSrc of structDefMatch[1].split(';')) {
+        // E.g. `int var1, var2;` or `MyStruct prop;`
+        const parts = defSrc.trim().split(/\s+|,/g);
+        const typeName = parts.shift();
+        const names = [...parts];
+        const typeProperties = structProperties(typeName);
+        for (const name of names) {
+          properties.push({
+            name,
+            type: {
+              typeName,
+              qualifiers: [],
+              properties: typeProperties,
+            },
+          });
+        }
+      }
+      return properties;
+    };
+
+    const parameters = parameterMatch[1].split(',').map(paramString => {
+      // e.g. `int prop` or `in sampler2D prop` or `const float prop`
+      const parts = paramString.trim().split(/\s+/g);
+      const name = parts.pop();
+      const typeName = parts.pop();
+      const qualifiers = [...parts];
+      const properties = structProperties(typeName);
+      return {
+        name,
+        type: {
+          typeName,
+          qualifiers,
+          properties,
+        }
+      }
+    });
+
+    return {
+      name: functionName,
+      returnType: {
+        typeName: returnType,
+        qualifiers: returnQualifiers,
+        properties: structProperties(returnType)
+      },
+      parameters
+    };
+  }
+
   shaderSrc(src, shaderType) {
     const main = 'void main';
     let [preMain, postMain] = src.split(main);
@@ -243,22 +316,23 @@ class Shader {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify({
    *     uniforms: {
-   *       'float time': () => millis()
+   *       'float time': () => millis() // Uniform for time
    *     },
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   sphere(50);
+   *   shader(myShader); // Apply the custom shader
+   *   lights();         // Enable lighting
+   *   noStroke();       // Disable stroke
+   *   fill('red');      // Set fill color to red
+   *   sphere(50);       // Draw a sphere with the shader applied
    * }
    * </code>
    * </div>
@@ -273,9 +347,10 @@ class Shader {
    *   myShader = baseMaterialShader().modify({
    *     // Manually specifying a uniform
    *     declarations: 'uniform float time;',
-   *     'vec3 getWorldPosition': `(vec3 pos) {
-   *       pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
-   *       return pos;
+   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *       inputs.position.y +=
+   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *       return inputs;
    *     }`
    *   });
    * }
@@ -451,7 +526,7 @@ class Shader {
    * <a href="#/p5.Graphics">p5.Graphics</a>, as in
    * `myShader.copyToContext(pg)`. The shader can also be copied from a
    * <a href="#/p5.Graphics">p5.Graphics</a> object to the main canvas using
-   * the `window` variable, as in `myShader.copyToContext(window)`.
+   * the `p5.instance` variable, as in `myShader.copyToContext(p5.instance)`.
    *
    * Note: A <a href="#/p5.Shader">p5.Shader</a> object created with
    * <a href="#/p5/createShader">createShader()</a>,
@@ -592,7 +667,7 @@ class Shader {
    *   pg.shader(original);
    *
    *   // Copy the original shader to the main canvas.
-   *   copied = original.copyToContext(window);
+   *   copied = original.copyToContext(p5.instance);
    *
    *   // Apply the copied shader to the main canvas.
    *   shader(copied);
@@ -768,7 +843,15 @@ class Shader {
 
     for (const uniform of this.samplers) {
       let tex = uniform.texture;
-      if (tex === undefined) {
+      if (
+        tex === undefined ||
+        (
+          false &&
+          tex.isFramebufferTexture &&
+          !tex.src.framebuffer.antialias &&
+          tex.src.framebuffer === this._renderer.activeFramebuffer()
+        )
+      ) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
         // so we supply a default texture instead.

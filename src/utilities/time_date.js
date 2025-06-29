@@ -117,11 +117,10 @@ function timeDate(p5, fn){
    *
    * If a sketch has a
    * <a href="#/p5/setup">setup()</a> function, then `millis()` begins tracking
-   * time before the code in <a href="#/p5/setup">setup()</a> runs. If a
-   * sketch includes a <a href="#/p5/preload">preload()</a> function, then
-   * `millis()` begins tracking time as soon as the code in
-   * <a href="#/p5/preload">preload()</a> starts running.
-   *
+   * time before the code in <a href="#/p5/setup">setup()</a> runs.  If a
+   * sketch includes asynchronous loading using `async`/`await`, then
+   * `millis()` begins tracking time as soon as the asynchronous code
+   * starts running.
    * @method millis
    * @return {Number} number of milliseconds since starting the sketch.
    *
@@ -201,12 +200,9 @@ function timeDate(p5, fn){
    *
    * <div>
    * <code>
-   * // Load the GeoJSON.
-   * function preload() {
-   *   loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the GeoJSON.
+   *   await loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
    *   createCanvas(100, 100);
    *
    *   background(200);

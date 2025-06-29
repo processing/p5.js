@@ -66,9 +66,9 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads.
-   *   loadImage('assets/laDefense.jpg', handleImage);
+   *   await loadImage('assets/laDefense.jpg', handleImage);
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
@@ -82,10 +82,10 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
-   *   loadImage('assets/laDefense.jpg', handleImage, handleError);
+   *   await loadImage('assets/laDefense.jpg', handleImage, handleError);
    * }
    *
    * // Display the image.
@@ -854,6 +854,24 @@ function loadingDisplaying(p5, fn){
    * destination image's top left corner. See
    * <a href="#/p5/imageMode">imageMode()</a> for other ways to position images.
    *
+   * ```js example
+   * let img;
+   *
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
+   *
+   *   createCanvas(100, 100);
+   *
+   *   background(50);
+   *
+   *   // Draw the image.
+   *   image(img, 0, 0);
+   *
+   *   describe('An image of the underside of a white umbrella with a gridded ceiling above.');
+   * }
+   * ```
+   *
    * Here's a diagram that explains how optional parameters work in `image()`:
    *
    * <img src="assets/drawImage.png"></img>
@@ -885,7 +903,7 @@ function loadingDisplaying(p5, fn){
    * are set to `CENTER`.
    *
    * @method image
-   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img image to display.
+   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics} img image to display.
    * @param  {Number}   x x-coordinate of the top-left corner of the image.
    * @param  {Number}   y y-coordinate of the top-left corner of the image.
    * @param  {Number}   [width]  width to draw the image.
@@ -896,34 +914,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(50);
-   *
-   *   // Draw the image.
-   *   image(img, 0, 0);
-   *
-   *   describe('An image of the underside of a white umbrella with a gridded ceiling above.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let img;
-   *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -940,12 +934,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -962,12 +954,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -984,12 +974,9 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/moonwalk.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/moonwalk.jpg');
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -1006,13 +993,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   // Image is 50 x 50 pixels.
-   *   img = loadImage('assets/laDefense50.png');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense50.png');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(50);
@@ -1173,12 +1157,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left image.
@@ -1198,12 +1180,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left image.
@@ -1222,13 +1202,11 @@ function loadingDisplaying(p5, fn){
    * <div>
    * <code>
    * let img;
+   **
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
-   *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1248,12 +1226,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1293,7 +1269,7 @@ function loadingDisplaying(p5, fn){
   fn.tint = function(...args) {
     // p5._validateParameters('tint', args);
     const c = this.color(...args);
-    this._renderer.states.tint = c._getRGBA([255, 255, 255, 255]);
+    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
   };
 
   /**
@@ -1308,12 +1284,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/laDefense.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/laDefense.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Left.
@@ -1332,7 +1306,7 @@ function loadingDisplaying(p5, fn){
    * </div>
    */
   fn.noTint = function() {
-    this._renderer.states.tint = null;
+    this._renderer.states.setValue('tint', null);
   };
 
   /**
@@ -1373,12 +1347,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1398,12 +1370,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1423,12 +1393,10 @@ function loadingDisplaying(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1451,7 +1419,7 @@ function loadingDisplaying(p5, fn){
       m === constants.CORNERS ||
       m === constants.CENTER
     ) {
-      this._renderer.states.imageMode = m;
+      this._renderer.states.setValue('imageMode', m);
     }
   };
 }

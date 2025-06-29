@@ -4,11 +4,22 @@
  * @for p5
  */
 
+/**
+ * `pInst` may be:
+ *  
+ *  The main sketch-wide `p5` instance (global canvas), or
+ *  an off-screen `p5.Graphics` wrapper.
+ *
+ * Therefore a renderer must only call properties / methods that exist
+ * on both objects.
+ */
+
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
 import { Vector } from '../math/p5.Vector';
 import { Shape } from '../shape/custom_shapes';
+import { States } from './States';
 
 class ClonableObject {
   constructor(obj = {}) {
@@ -70,18 +81,10 @@ class Renderer {
     }
 
     // Renderer state machine
-    this.states = Object.assign({}, Renderer.states);
-    // Clone properties that support it
-    for (const key in this.states) {
-      if (this.states[key] instanceof Array) {
-        this.states[key] = this.states[key].slice();
-      } else if (this.states[key] && this.states[key].clone instanceof Function) {
-        this.states[key] = this.states[key].clone();
-      }
-    }
+    this.states = new States(Renderer.states);
 
     this.states.strokeColor = new Color([0, 0, 0]);
-    this.states.fillColor = new Color([255, 255, 255]);
+    this.states.fillColor = new Color([1, 1, 1]);
 
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -122,33 +125,25 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    const currentStates = Object.assign({}, this.states);
-    // Clone properties that support it
-    for (const key in currentStates) {
-      if (currentStates[key] instanceof Array) {
-        currentStates[key] = currentStates[key].slice();
-      } else if (currentStates[key] && currentStates[key].clone instanceof Function) {
-        currentStates[key] = currentStates[key].clone();
-      }
-    }
-    this._pushPopStack.push(currentStates);
-    return currentStates;
+    this._pushPopStack.push(this.states.getDiff());
   }
 
   // Pop the previous states out of the push pop stack and
   // assign it back to the current state
   pop() {
     this._pushPopDepth--;
-    Object.assign(this.states, this._pushPopStack.pop());
-    this.updateShapeVertexProperties();
-    this.updateShapeProperties();
+    const diff = this._pushPopStack.pop() || {};
+    const modified = this.states.getModified();
+    this.states.applyDiff(diff);
+    this.updateShapeVertexProperties(modified);
+    this.updateShapeProperties(modified);
   }
 
   bezierOrder(order) {
     if (order === undefined) {
       return this.states.bezierOrder;
     } else {
-      this.states.bezierOrder = order;
+      this.states.setValue('bezierOrder', order);
       this.updateShapeProperties();
     }
   }
@@ -165,9 +160,20 @@ class Renderer {
     if (value === undefined) {
       return this.states.splineProperties[key];
     } else {
+      this.states.setValue('splineProperties', this.states.splineProperties.clone());
       this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();
+  }
+
+  splineProperties(values) {
+    if (values) {
+      for (const key in values) {
+        this.splineProperty(key, values[key]);
+      }
+    } else {
+      return { ...this.states.splineProperties };
+    }
   }
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
@@ -182,12 +188,13 @@ class Renderer {
     if (d === undefined) {
       return this.states.curveDetail;
     } else {
-      this.states.curveDetail = d;
+      this.states.setValue('curveDetail', d);
     }
   }
 
   beginShape(...args) {
     this.currentShape.reset();
+    this.updateShapeVertexProperties();
     this.currentShape.beginShape(...args);
   }
 
@@ -214,6 +221,39 @@ class Renderer {
       ? new Vector(u, v)
       : undefined;
     this.currentShape.vertex(position, textureCoordinates);
+  }
+
+  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
+    const oldOrder = this._pInst.bezierOrder();
+    this._pInst.bezierOrder(oldOrder);
+    this._pInst.beginShape();
+    this._pInst.bezierVertex(x1, y1);
+    this._pInst.bezierVertex(x2, y2);
+    this._pInst.bezierVertex(x3, y3);
+    this._pInst.bezierVertex(x4, y4);
+    this._pInst.endShape();
+    return this;
+  }
+
+  spline(...args) {
+    if (args.length === 2 * 4) {
+      const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1);
+      this._pInst.splineVertex(x2, y2);
+      this._pInst.splineVertex(x3, y3);
+      this._pInst.splineVertex(x4, y4);
+      this._pInst.endShape();
+    } else if (args.length === 3 * 4) {
+      const [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1, z1);
+      this._pInst.splineVertex(x2, y2, z2);
+      this._pInst.splineVertex(x3, y3, z3);
+      this._pInst.splineVertex(x4, y4, z4);
+      this._pInst.endShape();
+    }
+    return this;
   }
 
   beginClip(options = {}) {
@@ -277,31 +317,31 @@ class Renderer {
   }
 
   fill(...args) {
-    this.states.fillSet = true;
-    this.states.fillColor = this._pInst.color(...args);
+    this.states.setValue('fillSet', true);
+    this.states.setValue('fillColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
   }
 
   noFill() {
-    this.states.fillColor = null;
+    this.states.setValue('fillColor', null);
   }
 
   strokeWeight(w) {
     if (w === undefined) {
       return this.states.strokeWeight;
     } else {
-      this.states.strokeWeight = w;
+      this.states.setValue('strokeWeight', w);
     }
   }
 
   stroke(...args) {
-    this.states.strokeSet = true;
-    this.states.strokeColor = this._pInst.color(...args);
+    this.states.setValue('strokeSet', true);
+    this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
   }
 
   noStroke() {
-    this.states.strokeColor = null;
+    this.states.setValue('strokeColor', null);
   }
 
   getCommonVertexProperties() {
@@ -314,381 +354,29 @@ class Renderer {
     }
   }
 
-  updateShapeProperties() {
-    this.currentShape.bezierOrder(this.states.bezierOrder);
-    this.currentShape.splineProperty('ends', this.states.splineProperties.ends);
-    this.currentShape.splineProperty('tightness', this.states.splineProperties.tightness);
+  updateShapeProperties(modified) {
+    if (!modified || modified.bezierOrder || modified.splineProperties) {
+      const shape = this.currentShape;
+      shape.bezierOrder(this.states.bezierOrder);
+      shape.splineProperty('ends', this.states.splineProperties.ends);
+      shape.splineProperty('tightness', this.states.splineProperties.tightness);
+    }
   }
 
-  updateShapeVertexProperties() {
+  updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    for (const key in props) {
-      this.currentShape[key](props[key]);
-    }
-  }
-
-  textSize(s) {
-    if (typeof s === 'number') {
-      this.states.textSize = s;
-      if (!this.states.leadingSet) {
-      // only use a default value if not previously set (#5181)
-        this.states.textLeading = s * constants._DEFAULT_LEADMULT;
-      }
-      return this._applyTextProperties();
-    }
-
-    return this.states.textSize;
-  }
-
-  textLeading (l) {
-    if (typeof l === 'number') {
-      this.states.leadingSet = true;
-      this.states.textLeading = l;
-      return this._pInst;
-    }
-
-    return this.states.textLeading;
-  }
-
-  textStyle (s) {
-    if (s) {
-      if (
-        s === constants.NORMAL ||
-        s === constants.ITALIC ||
-        s === constants.BOLD ||
-        s === constants.BOLDITALIC
-      ) {
-        this.states.fontStyle = s;
-      }
-
-      return this._applyTextProperties();
-    }
-
-    return this.states.fontStyle;
-  }
-
-  textAscent () {
-    if (this.states.textAscent === null) {
-      this._updateTextMetrics();
-    }
-    return this.states.textAscent;
-  }
-
-  textDescent () {
-    if (this.states.textDescent === null) {
-      this._updateTextMetrics();
-    }
-    return this.states.textDescent;
-  }
-
-  textAlign (h, v) {
-    if (typeof h !== 'undefined') {
-      this.states.textAlign = h;
-
-      if (typeof v !== 'undefined') {
-        this.states.textBaseline = v;
-      }
-
-      return this._applyTextProperties();
-    } else {
-      return {
-        horizontal: this.states.textAlign,
-        vertical: this.states.textBaseline
-      };
-    }
-  }
-
-  textWrap (wrapStyle) {
-    this.states.textWrap = wrapStyle;
-    return this.states.textWrap;
-  }
-
-  text(str, x, y, maxWidth, maxHeight) {
-    const p = this._pInst;
-    const textWrapStyle = this.states.textWrap;
-
-    let lines;
-    let line;
-    let testLine;
-    let testWidth;
-    let words;
-    let chars;
-    let shiftedY;
-    let finalMaxHeight = Number.MAX_VALUE;
-    // fix for #5785 (top of bounding box)
-    let finalMinHeight = y;
-
-    if (!(this.states.fillColor || this.states.strokeColor)) {
-      return;
-    }
-
-    if (typeof str === 'undefined') {
-      return;
-    } else if (typeof str !== 'string') {
-      str = str.toString();
-    }
-
-    // Replaces tabs with double-spaces and splits string on any line
-    // breaks present in the original string
-    str = str.replace(/(\t)/g, '  ');
-    lines = str.split('\n');
-
-    if (typeof maxWidth !== 'undefined') {
-      if (this.states.rectMode === constants.CENTER) {
-        x -= maxWidth / 2;
-      }
-
-      switch (this.states.textAlign) {
-        case constants.CENTER:
-          x += maxWidth / 2;
-          break;
-        case constants.RIGHT:
-          x += maxWidth;
-          break;
-      }
-
-      if (typeof maxHeight !== 'undefined') {
-        if (this.states.rectMode === constants.CENTER) {
-          y -= maxHeight / 2;
-          finalMinHeight -= maxHeight / 2;
-        }
-
-        let originalY = y;
-        let ascent = p.textAscent();
-
-        switch (this.states.textBaseline) {
-          case constants.BOTTOM:
-            shiftedY = y + maxHeight;
-            y = Math.max(shiftedY, y);
-            // fix for #5785 (top of bounding box)
-            finalMinHeight += ascent;
-            break;
-          case constants.CENTER:
-            shiftedY = y + maxHeight / 2;
-            y = Math.max(shiftedY, y);
-            // fix for #5785 (top of bounding box)
-            finalMinHeight += ascent / 2;
-            break;
-        }
-
-        // remember the max-allowed y-position for any line (fix to #928)
-        finalMaxHeight = y + maxHeight - ascent;
-
-        // fix for #5785 (bottom of bounding box)
-        if (this.states.textBaseline === constants.CENTER) {
-          finalMaxHeight = originalY + maxHeight - ascent / 2;
-        }
-      } else {
-      // no text-height specified, show warning for BOTTOM / CENTER
-        if (this.states.textBaseline === constants.BOTTOM ||
-        this.states.textBaseline === constants.CENTER) {
-        // use rectHeight as an approximation for text height
-          let rectHeight = p.textSize() * this.states.textLeading;
-          finalMinHeight = y - rectHeight / 2;
-          finalMaxHeight = y + rectHeight / 2;
-        }
-      }
-
-      // Render lines of text according to settings of textWrap
-      // Splits lines at spaces, for loop adds one word + space
-      // at a time and tests length with next word added
-      if (textWrapStyle === constants.WORD) {
-        let nlines = [];
-        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-          line = '';
-          words = lines[lineIndex].split(' ');
-          for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
-            testLine = `${line + words[wordIndex]}` + ' ';
-            testWidth = this.textWidth(testLine);
-            if (testWidth > maxWidth && line.length > 0) {
-              nlines.push(line);
-              line = `${words[wordIndex]}` + ' ';
-            } else {
-              line = testLine;
-            }
-          }
-          nlines.push(line);
-        }
-
-        let offset = 0;
-        if (this.states.textBaseline === constants.CENTER) {
-          offset = (nlines.length - 1) * p.textLeading() / 2;
-        } else if (this.states.textBaseline === constants.BOTTOM) {
-          offset = (nlines.length - 1) * p.textLeading();
-        }
-
-        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-          line = '';
-          words = lines[lineIndex].split(' ');
-          for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
-            testLine = `${line + words[wordIndex]}` + ' ';
-            testWidth = this.textWidth(testLine);
-            if (testWidth > maxWidth && line.length > 0) {
-              this._renderText(
-                p,
-                line.trim(),
-                x,
-                y - offset,
-                finalMaxHeight,
-                finalMinHeight
-              );
-              line = `${words[wordIndex]}` + ' ';
-              y += p.textLeading();
-            } else {
-              line = testLine;
-            }
-          }
-          this._renderText(
-            p,
-            line.trim(),
-            x,
-            y - offset,
-            finalMaxHeight,
-            finalMinHeight
-          );
-          y += p.textLeading();
-        }
-      } else {
-        let nlines = [];
-        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-          line = '';
-          chars = lines[lineIndex].split('');
-          for (let charIndex = 0; charIndex < chars.length; charIndex++) {
-            testLine = `${line + chars[charIndex]}`;
-            testWidth = this.textWidth(testLine);
-            if (testWidth <= maxWidth) {
-              line += chars[charIndex];
-            } else if (testWidth > maxWidth && line.length > 0) {
-              nlines.push(line);
-              line = `${chars[charIndex]}`;
-            }
-          }
-        }
-
-        nlines.push(line);
-        let offset = 0;
-        if (this.states.textBaseline === constants.CENTER) {
-          offset = (nlines.length - 1) * p.textLeading() / 2;
-        } else if (this.states.textBaseline === constants.BOTTOM) {
-          offset = (nlines.length - 1) * p.textLeading();
-        }
-
-        // Splits lines at characters, for loop adds one char at a time
-        // and tests length with next char added
-        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-          line = '';
-          chars = lines[lineIndex].split('');
-          for (let charIndex = 0; charIndex < chars.length; charIndex++) {
-            testLine = `${line + chars[charIndex]}`;
-            testWidth = this.textWidth(testLine);
-            if (testWidth <= maxWidth) {
-              line += chars[charIndex];
-            } else if (testWidth > maxWidth && line.length > 0) {
-              this._renderText(
-                p,
-                line.trim(),
-                x,
-                y - offset,
-                finalMaxHeight,
-                finalMinHeight
-              );
-              y += p.textLeading();
-              line = `${chars[charIndex]}`;
-            }
-          }
-        }
-        this._renderText(
-          p,
-          line.trim(),
-          x,
-          y - offset,
-          finalMaxHeight,
-          finalMinHeight
-        );
-        y += p.textLeading();
-      }
-    } else {
-    // Offset to account for vertically centering multiple lines of text - no
-    // need to adjust anything for vertical align top or baseline
-      let offset = 0;
-      if (this.states.textBaseline === constants.CENTER) {
-        offset = (lines.length - 1) * p.textLeading() / 2;
-      } else if (this.states.textBaseline === constants.BOTTOM) {
-        offset = (lines.length - 1) * p.textLeading();
-      }
-
-      // Renders lines of text at any line breaks present in the original string
-      for (let i = 0; i < lines.length; i++) {
-        this._renderText(
-          p,
-          lines[i],
-          x,
-          y - offset,
-          finalMaxHeight,
-          finalMinHeight - offset
-        );
-        y += p.textLeading();
+    if (!modified || Object.keys(modified).some((k) => k in props)) {
+      const shape = this.currentShape;
+      for (const key in props) {
+        shape[key](props[key]);
       }
     }
-
-    return p;
   }
 
   _applyDefaults() {
     return this;
   }
 
-  /**
- * Helper function to check font type (system or otf)
- */
-  _isOpenType({ font: f } = this.states.textFont) {
-    return typeof f === 'object' && f.data;
-  }
-
-  _updateTextMetrics() {
-    if (this._isOpenType()) {
-      this.states.textAscent = this.states.textFont._textAscent();
-      this.states.textDescent = this.states.textFont._textDescent();
-      return this;
-    }
-
-    // Adapted from http://stackoverflow.com/a/25355178
-    const text = document.createElement('span');
-    text.style.fontFamily = this.states.textFont;
-    text.style.fontSize = `${this.states.textSize}px`;
-    text.innerHTML = 'ABCjgq|';
-
-    const block = document.createElement('div');
-    block.style.display = 'inline-block';
-    block.style.width = '1px';
-    block.style.height = '0px';
-
-    const container = document.createElement('div');
-    container.appendChild(text);
-    container.appendChild(block);
-
-    container.style.height = '0px';
-    container.style.overflow = 'hidden';
-    document.body.appendChild(container);
-
-    block.style.verticalAlign = 'baseline';
-    let blockOffset = calculateOffset(block);
-    let textOffset = calculateOffset(text);
-    const ascent = blockOffset[1] - textOffset[1];
-
-    block.style.verticalAlign = 'bottom';
-    blockOffset = calculateOffset(block);
-    textOffset = calculateOffset(text);
-    const height = blockOffset[1] - textOffset[1];
-    const descent = height - ascent;
-
-    document.body.removeChild(container);
-
-    this.states.textAscent = ascent;
-    this.states.textDescent = descent;
-
-    return this;
-  }
 };
 
 function renderer(p5, fn){
@@ -701,6 +389,7 @@ function renderer(p5, fn){
    * @param {HTMLElement} elt DOM node that is wrapped
    * @param {p5} [pInst] pointer to p5 instance
    * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   * @private
    */
   p5.Renderer = Renderer;
 }
@@ -708,6 +397,7 @@ function renderer(p5, fn){
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
+ * @private
  */
 function calculateOffset(object) {
   let currentLeft = 0,

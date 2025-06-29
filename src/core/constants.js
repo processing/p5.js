@@ -15,12 +15,28 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
 
 // GRAPHICS RENDERER
 /**
- * The default, two-dimensional renderer.
- * @typedef {unique symbol} P2D
+ * The default, two-dimensional renderer in p5.js.
+ *
+ * Use this when calling <a href="#/p5/createCanvas"> (for example,
+ * `createCanvas(400, 400, P2D)`) to specify a 2D context.
+ *
+ * @typedef {'p2d'} P2D
  * @property {P2D} P2D
  * @final
  */
 export const P2D = 'p2d';
+
+/**
+ * A high-dynamic-range (HDR) variant of the default, two-dimensional renderer.
+ *
+ * When available, this mode can allow for extended color ranges and more
+ * dynamic color representation. Use it similarly to `P2D`:
+ * `createCanvas(400, 400, P2DHDR)`.
+ *
+ * @typedef {'p2d-hdr'} P2DHDR
+ * @property {P2DHDR} P2DHDR
+ * @final
+ */
 
 export const P2DHDR = 'p2d-hdr';
 
@@ -838,36 +854,6 @@ export const BEVEL = 'bevel';
  */
 export const MITER = 'miter';
 
-// COLOR
-/**
- * @typedef {'rgb'} RGB
- * @property {RGB} RGB
- * @final
- */
-// export const RGB = 'rgb';
-/**
- * HSB (hue, saturation, brightness) is a type of color model.
- * You can learn more about it at
- * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
- *
- * @typedef {'hsb'} HSB
- * @property {HSB} HSB
- * @final
- */
-// export const HSB = 'hsb';
-/**
- * @typedef {'hsl'} HSL
- * @property {HSL} HSL
- * @final
- */
-// export const HSL = 'hsl';
-/**
- * @typedef {'rgba'} RGBA
- * @property {RGBA} RGBA
- * @final
- */
-// export const RGBA = 'rgba';
-
 // DOM EXTENSION
 /**
  * AUTO allows us to automatically set the width or height of an element (but not both),
@@ -879,92 +865,104 @@ export const MITER = 'miter';
  * @final
  */
 export const AUTO = 'auto';
-
+// INPUT
 /**
- * @typedef {18} ALT
+ * @typedef {'Alt'} ALT
  * @property {ALT} ALT
  * @final
  */
-// INPUT
-export const ALT = 18;
+export const ALT = 'Alt';
+
 /**
- * @typedef {8} BACKSPACE
+ * @typedef {'Backspace'} BACKSPACE
  * @property {BACKSPACE} BACKSPACE
  * @final
  */
-export const BACKSPACE = 8;
+export const BACKSPACE = 'Backspace';
+
 /**
- * @typedef {17} CONTROL
+ * @typedef {'Control' | 'Control'} CONTROL
  * @property {CONTROL} CONTROL
  * @final
  */
-export const CONTROL = 17;
+export const CONTROL = 'Control';
+
 /**
- * @typedef {46} DELETE
+ * @typedef {'Delete'} DELETE
  * @property {DELETE} DELETE
  * @final
  */
-export const DELETE = 46;
+export const DELETE = 'Delete';
+
 /**
- * @typedef {40} DOWN_ARROW
+ * @typedef {'ArrowDown'} DOWN_ARROW
  * @property {DOWN_ARROW} DOWN_ARROW
  * @final
  */
-export const DOWN_ARROW = 40;
+export const DOWN_ARROW = 'ArrowDown';
+
 /**
- * @typedef {13} ENTER
+ * @typedef {'Enter'} ENTER
  * @property {ENTER} ENTER
  * @final
  */
-export const ENTER = 13;
+export const ENTER = 'Enter';
+
 /**
- * @typedef {27} ESCAPE
+ * @typedef {'Escape'} ESCAPE
  * @property {ESCAPE} ESCAPE
  * @final
  */
-export const ESCAPE = 27;
+export const ESCAPE = 'Escape';
+
 /**
- * @typedef {37} LEFT_ARROW
+ * @typedef {'ArrowLeft'} LEFT_ARROW
  * @property {LEFT_ARROW} LEFT_ARROW
  * @final
  */
-export const LEFT_ARROW = 37;
+export const LEFT_ARROW = 'ArrowLeft';
+
 /**
- * @typedef {18} OPTION
+ * @typedef {'Alt'} OPTION
  * @property {OPTION} OPTION
  * @final
  */
-export const OPTION = 18;
+export const OPTION = 'Alt';
+
 /**
- * @typedef {13} RETURN
+ * @typedef {'Enter'} RETURN
  * @property {RETURN} RETURN
  * @final
  */
-export const RETURN = 13;
+export const RETURN = 'Enter';
+
 /**
- * @typedef {39} RIGHT_ARROW
+ * @typedef {'ArrowRight'} RIGHT_ARROW
  * @property {RIGHT_ARROW} RIGHT_ARROW
  * @final
  */
-export const RIGHT_ARROW = 39;
+export const RIGHT_ARROW = 'ArrowRight';
+
 /**
- * @typedef {16} SHIFT
+ * @typedef {'Shift'} SHIFT
  * @property {SHIFT} SHIFT
  * @final
  */
-export const SHIFT = 16;
+export const SHIFT = 'Shift';
+
 /**
- * @typedef {9} TAB
+ * @typedef {'Tab'} TAB
  * @property {TAB} TAB
  * @final
  */
-export const TAB = 9;
+export const TAB = 'Tab';
+
 /**
- * @typedef {38} UP_ARROW
+ * @typedef {'ArrowUp'} UP_ARROW
  * @property {UP_ARROW} UP_ARROW
  * @final
  */
-export const UP_ARROW = 38;
+export const UP_ARROW = 'ArrowUp';
 
 // RENDERING
 /**

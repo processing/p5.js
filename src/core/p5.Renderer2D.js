@@ -7,6 +7,7 @@ import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
+import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 
 
@@ -67,9 +68,6 @@ class Renderer2D extends Renderer {
     if(attributes.colorSpace === 'display-p3'){
       this.states.colorMode = RGBHDR;
     }
-    if (isMainCanvas) {
-      this._pInst.drawingContext = this.drawingContext;
-    }
     this.scale(this._pixelDensity, this._pixelDensity);
 
     if(!this.filterRenderer){
@@ -77,7 +75,6 @@ class Renderer2D extends Renderer {
     }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
-
     this.clipPath = null;
   }
 
@@ -119,7 +116,8 @@ class Renderer2D extends Renderer {
   }
 
   _applyDefaults() {
-    this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+    this.states.setValue('_cachedFillStyle', undefined);
+    this.states.setValue('_cachedStrokeStyle', undefined);
     this._cachedBlendMode = constants.BLEND;
     this._setFill(constants._DEFAULT_FILL);
     this._setStroke(constants._DEFAULT_STROKE);
@@ -163,7 +161,7 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   background(...args) {
-    this.drawingContext.save();
+    this.push();
     this.resetMatrix();
 
     if (args[0] instanceof Image) {
@@ -176,13 +174,13 @@ class Renderer2D extends Renderer {
         this._pInst.image(args[0], 0, 0, this.width, this.height);
       }
     } else {
-      const curFill = this._getFill();
       // create background rect
       const color = this._pInst.color(...args);
 
-      //accessible Outputs
-      if (this._pInst._addAccsOutput()) {
-        this._pInst._accsBackground(color._getRGBA([255, 255, 255, 255]));
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
+      if (this._pInst._addAccsOutput?.()) {
+        this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
       }
 
       const newFill = color.toString();
@@ -193,14 +191,12 @@ class Renderer2D extends Renderer {
       }
 
       this.drawingContext.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      this._setFill(curFill);
 
       if (this._isErasing) {
         this._pInst.erase();
       }
     }
-    this.drawingContext.restore();
+    this.pop();
   }
 
   clear() {
@@ -215,9 +211,10 @@ class Renderer2D extends Renderer {
     const color = this.states.fillColor;
     this._setFill(color.toString());
 
-    //accessible Outputs
-    if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('fill', color._getRGBA([255, 255, 255, 255]));
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -226,21 +223,22 @@ class Renderer2D extends Renderer {
     const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
-    //accessible Outputs
-    if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('stroke', color._getRGBA([255, 255, 255, 255]));
+      // Add accessible outputs if the method exists; on success, 
+      // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
   erase(opacityFill, opacityStroke) {
     if (!this._isErasing) {
       // cache the fill style
-      this._cachedFillStyle = this.drawingContext.fillStyle;
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
       const newFill = this._pInst.color(255, opacityFill).toString();
       this.drawingContext.fillStyle = newFill;
 
       // cache the stroke style
-      this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
       const newStroke = this._pInst.color(255, opacityStroke).toString();
       this.drawingContext.strokeStyle = newStroke;
 
@@ -255,8 +253,8 @@ class Renderer2D extends Renderer {
 
   noErase() {
     if (this._isErasing) {
-      this.drawingContext.fillStyle = this._cachedFillStyle;
-      this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+      this.drawingContext.fillStyle = this.states._cachedFillStyle;
+      this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
 
       this.blendMode(this._cachedBlendMode);
       this._isErasing = false;
@@ -268,6 +266,7 @@ class Renderer2D extends Renderer {
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
+      this.clipPath.closePath();
     } else {
       if (this.states.fillColor) {
         this.drawingContext.fill(visitor.path);
@@ -282,12 +281,12 @@ class Renderer2D extends Renderer {
     super.beginClip(options);
 
     // cache the fill style
-    this._cachedFillStyle = this.drawingContext.fillStyle;
+    this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     const newFill = this._pInst.color(255, 0).toString();
     this.drawingContext.fillStyle = newFill;
 
     // cache the stroke style
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     const newStroke = this._pInst.color(255, 0).toString();
     this.drawingContext.strokeStyle = newStroke;
 
@@ -330,8 +329,8 @@ class Renderer2D extends Renderer {
 
     super.endClip();
 
-    this.drawingContext.fillStyle = this._cachedFillStyle;
-    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+    this.drawingContext.fillStyle = this.states._cachedFillStyle;
+    this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
 
     this.blendMode(this._cachedBlendMode);
   }
@@ -945,52 +944,31 @@ class Renderer2D extends Renderer {
   }
 
   _getFill() {
-    if (!this._cachedFillStyle) {
-      this._cachedFillStyle = this.drawingContext.fillStyle;
+    if (!this.states._cachedFillStyle) {
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     }
-    return this._cachedFillStyle;
+    return this.states._cachedFillStyle;
   }
 
   _setFill(fillStyle) {
-    if (fillStyle !== this._cachedFillStyle) {
+    if (fillStyle !== this.states._cachedFillStyle) {
       this.drawingContext.fillStyle = fillStyle;
-      this._cachedFillStyle = fillStyle;
+      this.states.setValue('_cachedFillStyle', fillStyle);
     }
   }
 
   _getStroke() {
-    if (!this._cachedStrokeStyle) {
-      this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    if (!this.states._cachedStrokeStyle) {
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
     }
-    return this._cachedStrokeStyle;
+    return this.states._cachedStrokeStyle;
   }
 
   _setStroke(strokeStyle) {
-    if (strokeStyle !== this._cachedStrokeStyle) {
+    if (strokeStyle !== this.states._cachedStrokeStyle) {
       this.drawingContext.strokeStyle = strokeStyle;
-      this._cachedStrokeStyle = strokeStyle;
+      this.states.setValue('_cachedStrokeStyle', strokeStyle);
     }
-  }
-
-  //////////////////////////////////////////////
-  // SHAPE | Curves
-  //////////////////////////////////////////////
-  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.vertex(x1, y1);
-    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
-    this._pInst.endShape();
-    return this;
-  }
-
-  curve(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.splineVertex(x1, y1);
-    this._pInst.splineVertex(x2, y2);
-    this._pInst.splineVertex(x3, y3);
-    this._pInst.splineVertex(x4, y4);
-    this._pInst.endShape();
-    return this;
   }
 
   //////////////////////////////////////////////
@@ -999,6 +977,13 @@ class Renderer2D extends Renderer {
 
   applyMatrix(a, b, c, d, e, f) {
     this.drawingContext.transform(a, b, c, d, e, f);
+  }
+
+  getWorldToScreenMatrix() {
+    let domMatrix = new DOMMatrix()
+      .scale(1 / this._pixelDensity)
+      .multiply(this.drawingContext.getTransform());
+    return new Matrix(domMatrix.toFloat32Array());
   }
 
   resetMatrix() {
@@ -1030,107 +1015,8 @@ class Renderer2D extends Renderer {
   }
 
   //////////////////////////////////////////////
-  // TYPOGRAPHY
-  //
+  // TYPOGRAPHY (see src/type/textCore.js)
   //////////////////////////////////////////////
-
-
-
-  _renderText(p, line, x, y, maxY, minY) {
-    if (y < minY || y >= maxY) {
-      return; // don't render lines beyond our minY/maxY bounds (see #5785)
-    }
-
-    p.push(); // fix to #803
-
-    if (!this._isOpenType()) {
-      // a system/browser font
-
-      // no stroke unless specified by user
-      if (this.states.strokeColor && this.states.strokeSet) {
-        this.drawingContext.strokeText(line, x, y);
-      }
-
-      if (!this._clipping && this.states.fillColor) {
-        // if fill hasn't been set by user, use default text fill
-        if (!this.states.fillSet) {
-          this._setFill(constants._DEFAULT_TEXT_FILL);
-        }
-
-        this.drawingContext.fillText(line, x, y);
-      }
-    } else {
-      // an opentype font, let it handle the rendering
-
-      this.states.textFont._renderPath(line, x, y, { renderer: this });
-    }
-
-    p.pop();
-    return p;
-  }
-
-  textWidth(s) {
-    if (this._isOpenType()) {
-      return this.states.textFont._textWidth(s, this.states.textSize);
-    }
-
-    return this.drawingContext.measureText(s).width;
-  }
-
-  text(str, x, y, maxWidth, maxHeight) {
-    let baselineHacked;
-
-    // baselineHacked: (HACK)
-    // A temporary fix to conform to Processing's implementation
-    // of BASELINE vertical alignment in a bounding box
-
-    if (typeof maxWidth !== 'undefined') {
-      if (this.drawingContext.textBaseline === constants.BASELINE) {
-        baselineHacked = true;
-        this.drawingContext.textBaseline = constants.TOP;
-      }
-    }
-
-    const p = super.text(...arguments);
-
-    if (baselineHacked) {
-      this.drawingContext.textBaseline = constants.BASELINE;
-    }
-
-    return p;
-  }
-
-  /*_applyTextProperties() {
-    let font;
-    const p = this._pInst;
-
-    this.states.textAscent = null;
-    this.states.textDescent = null;
-
-    font = this.states.textFont;
-
-    if (this._isOpenType()) {
-      font = this.states.textFont.font.familyName;
-      this.states.textStyle = this._textFont.font.styleName;
-    }
-
-    let fontNameString = font || 'sans-serif';
-    if (/\s/.exec(fontNameString)) {
-      // If the name includes spaces, surround in quotes
-      fontNameString = `"${fontNameString}"`;
-    }
-    this.drawingContext.font = `${this.states.textStyle || 'normal'} ${this.states.textSize ||
-      12}px ${fontNameString}`;
-
-    this.drawingContext.textAlign = this.states.textAlign;
-    if (this.states.textBaseline === constants.CENTER) {
-      this.drawingContext.textBaseline = constants._CTX_MIDDLE;
-    } else {
-      this.drawingContext.textBaseline = this.states.textBaseline;
-    }
-
-    return p;
-  }*/
 
   //////////////////////////////////////////////
   // STRUCTURE
@@ -1155,9 +1041,6 @@ class Renderer2D extends Renderer {
   // class' pop method
   pop(style) {
     this.drawingContext.restore();
-    // Re-cache the fill / stroke state
-    this._cachedFillStyle = this.drawingContext.fillStyle;
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
 
     super.pop(style);
   }

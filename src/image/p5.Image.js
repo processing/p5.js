@@ -12,6 +12,7 @@
  */
 import Filters from './filters';
 import { Renderer } from '../core/p5.Renderer';
+import { downloadFile, _checkFileExtension } from '../io/utilities';
 
 class Image {
   constructor(width, height) {
@@ -346,12 +347,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -374,12 +373,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -404,12 +401,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -595,12 +590,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Create a p5.Image object.
@@ -707,12 +700,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -733,12 +724,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -759,12 +748,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -894,12 +881,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Copy one region of the image to another.
@@ -923,13 +908,10 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks.jpg');
    *   createCanvas(100, 100);
    *
    *   // Calculate the center of the bricks image.
@@ -958,7 +940,87 @@ class Image {
    * @param  {Integer} dh
    */
   copy(...args) {
-    fn.copy.apply(this, args);
+    // NOTE: Duplicate implementation here and pixels.js
+    let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+    if (args.length === 9) {
+      srcImage = args[0];
+      sx = args[1];
+      sy = args[2];
+      sw = args[3];
+      sh = args[4];
+      dx = args[5];
+      dy = args[6];
+      dw = args[7];
+      dh = args[8];
+    } else if (args.length === 8) {
+      srcImage = this;
+      sx = args[0];
+      sy = args[1];
+      sw = args[2];
+      sh = args[3];
+      dx = args[4];
+      dy = args[5];
+      dw = args[6];
+      dh = args[7];
+    } else {
+      throw new Error('Signature not supported');
+    }
+
+    this._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  }
+
+  _copyHelper(
+    dstImage,
+    srcImage,
+    sx,
+    sy,
+    sw,
+    sh,
+    dx,
+    dy,
+    dw,
+    dh
+  ){
+    const s = srcImage.canvas.width / srcImage.width;
+    // adjust coord system for 3D when renderer
+    // ie top-left = -width/2, -height/2
+    let sxMod = 0;
+    let syMod = 0;
+    if (srcImage._renderer && srcImage._renderer.isP3D) {
+      sxMod = srcImage.width / 2;
+      syMod = srcImage.height / 2;
+    }
+    if (dstImage._renderer && dstImage._renderer.isP3D) {
+      dstImage.push();
+      dstImage.resetMatrix();
+      dstImage.noLights();
+      dstImage.blendMode(dstImage.BLEND);
+      dstImage.imageMode(dstImage.CORNER);
+      dstImage._renderer.image(
+        srcImage,
+        sx + sxMod,
+        sy + syMod,
+        sw,
+        sh,
+        dx,
+        dy,
+        dw,
+        dh
+      );
+      dstImage.pop();
+    } else {
+      dstImage.drawingContext.drawImage(
+        srcImage.canvas,
+        s * (sx + sxMod),
+        s * (sy + syMod),
+        s * sw,
+        s * sh,
+        dx,
+        dy,
+        dw,
+        dh
+      );
+    }
   }
 
   /**
@@ -977,13 +1039,10 @@ class Image {
    * let photo;
    * let maskImage;
    *
-   * // Load the images.
-   * function preload() {
-   *   photo = loadImage('assets/rockies.jpg');
-   *   maskImage = loadImage('assets/mask2.png');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   photo = await loadImage('assets/rockies.jpg');
+   *   maskImage = await loadImage('assets/mask2.png');
    *   createCanvas(100, 100);
    *
    *   // Apply the mask.
@@ -1095,12 +1154,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the INVERT filter.
@@ -1118,12 +1175,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the GRAY filter.
@@ -1141,12 +1196,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the THRESHOLD filter.
@@ -1164,12 +1217,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the OPAQUE filter.
@@ -1187,12 +1238,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the POSTERIZE filter.
@@ -1210,12 +1259,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the BLUR filter.
@@ -1233,12 +1280,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the DILATE filter.
@@ -1256,12 +1301,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the ERODE filter.
@@ -1326,13 +1369,10 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
-   *
-   * function setup() {
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1354,13 +1394,11 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1382,13 +1420,11 @@ class Image {
    * let mountains;
    * let bricks;
    *
-   * // Load the images.
-   * function preload() {
-   *   mountains = loadImage('assets/rockies.jpg');
-   *   bricks = loadImage('assets/bricks_third.jpg');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   mountains = await loadImage('assets/rockies.jpg');
+   *   bricks = await loadImage('assets/bricks_third.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Blend the bricks image into the mountains.
@@ -1417,8 +1453,13 @@ class Image {
    * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
   blend(...args) {
-    // p5._validateParameters('p5.Image.blend', arguments);
-    fn.blend.apply(this, args);
+    const currBlend = this.drawingContext.globalCompositeOperation;
+    const blendMode = args[args.length - 1];
+    const copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
+
+    this.drawingContext.globalCompositeOperation = blendMode;
+    this.copy(...copyArgs);
+    this.drawingContext.globalCompositeOperation = currBlend;
     this.setModified(true);
   }
 
@@ -1426,7 +1467,7 @@ class Image {
    * helper method for web GL mode to indicate that an image has been
    * changed or unchanged since last upload. gl texture upload will
    * set this value to false after uploading the texture.
-   * @param {boolean} val sets whether or not the image has been
+   * @param {Boolean} val sets whether or not the image has been
    * modified.
    * @private
    */
@@ -1477,12 +1518,10 @@ class Image {
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -1506,9 +1545,32 @@ class Image {
    */
   save(filename, extension) {
     if (this.gifProperties) {
-      fn.encodeAndDownloadGif(this, filename);
+      encodeAndDownloadGif(this, filename);
     } else {
-      fn.saveCanvas(this.canvas, filename, extension);
+      let htmlCanvas = this.canvas;
+      extension =
+        extension ||
+        _checkFileExtension(filename, extension)[1] ||
+        'png';
+
+      let mimeType;
+      switch (extension) {
+        default:
+          //case 'png':
+          mimeType = 'image/png';
+          break;
+        case 'webp':
+          mimeType = 'image/webp';
+          break;
+        case 'jpeg':
+        case 'jpg':
+          mimeType = 'image/jpeg';
+          break;
+      }
+
+      htmlCanvas.toBlob(blob => {
+        downloadFile(blob, filename, extension);
+      }, mimeType);
     }
   }
 
@@ -1527,12 +1589,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-wink-loop-once.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon face winks once and then freezes. Clicking resets the face and makes it wink again.');
@@ -1575,12 +1635,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon eye repeatedly looks around, then outwards. A number displayed in the bottom-left corner increases from 0 to 124, then repeats.');
@@ -1617,12 +1675,10 @@ class Image {
    * let gif;
    * let frameSlider;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Get the index of the last frame.
@@ -1675,12 +1731,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A cartoon eye looks around. The text "n / 125" is shown at the bottom of the canvas.');
@@ -1713,12 +1767,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/nancy-liang-wind-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
@@ -1758,12 +1810,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/nancy-liang-wind-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   describe('A drawing of a child with hair blowing in the wind. The animation freezes when clicked and resumes when released.');
@@ -1812,13 +1862,11 @@ class Image {
    * let gifFast;
    * let gifSlow;
    *
-   * // Load the images.
-   * function preload() {
-   *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the images.
+   *   gifFast = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+   *   gifSlow = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -1846,12 +1894,10 @@ class Image {
    * <code>
    * let gif;
    *
-   * // Load the image.
-   * function preload() {
-   *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Set the delay of frame 67.
@@ -1882,6 +1928,231 @@ class Image {
   }
 };
 
+function encodeAndDownloadGif(pImg, filename) {
+  const props = pImg.gifProperties;
+
+  //convert loopLimit back into Netscape Block formatting
+  let loopLimit = props.loopLimit;
+  if (loopLimit === 1) {
+    loopLimit = null;
+  } else if (loopLimit === null) {
+    loopLimit = 0;
+  }
+  const buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
+
+  const allFramesPixelColors = [];
+
+  // Used to determine the occurrence of unique palettes and the frames
+  // which use them
+  const paletteFreqsAndFrames = {};
+
+  // Pass 1:
+  //loop over frames and get the frequency of each palette
+  for (let i = 0; i < props.numFrames; i++) {
+    const paletteSet = new Set();
+    const data = props.frames[i].image.data;
+    const dataLength = data.length;
+    // The color for each pixel in this frame ( for easier lookup later )
+    const pixelColors = new Uint32Array(pImg.width * pImg.height);
+    for (let j = 0, k = 0; j < dataLength; j += 4, k++) {
+      const r = data[j + 0];
+      const g = data[j + 1];
+      const b = data[j + 2];
+      const color = (r << 16) | (g << 8) | (b << 0);
+      paletteSet.add(color);
+
+      // What color does this pixel have in this frame ?
+      pixelColors[k] = color;
+    }
+
+    // A way to put use the entire palette as an object key
+    const paletteStr = [...paletteSet].sort().toString();
+    if (paletteFreqsAndFrames[paletteStr] === undefined) {
+      paletteFreqsAndFrames[paletteStr] = { freq: 1, frames: [i] };
+    } else {
+      paletteFreqsAndFrames[paletteStr].freq += 1;
+      paletteFreqsAndFrames[paletteStr].frames.push(i);
+    }
+
+    allFramesPixelColors.push(pixelColors);
+  }
+
+  let framesUsingGlobalPalette = [];
+
+  // Now to build the global palette
+  // Sort all the unique palettes in descending order of their occurrence
+  const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
+    a,
+    b
+  ) {
+    return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+  });
+
+  // The initial global palette is the one with the most occurrence
+  const globalPalette = palettesSortedByFreq[0]
+    .split(',')
+    .map(a => parseInt(a));
+
+  framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+    paletteFreqsAndFrames[globalPalette].frames
+  );
+
+  const globalPaletteSet = new Set(globalPalette);
+
+  // Build a more complete global palette
+  // Iterate over the remaining palettes in the order of
+  // their occurrence and see if the colors in this palette which are
+  // not in the global palette can be added there, while keeping the length
+  // of the global palette <= 256
+  for (let i = 1; i < palettesSortedByFreq.length; i++) {
+    const palette = palettesSortedByFreq[i].split(',').map(a => parseInt(a));
+
+    const difference = palette.filter(x => !globalPaletteSet.has(x));
+    if (globalPalette.length + difference.length <= 256) {
+      for (let j = 0; j < difference.length; j++) {
+        globalPalette.push(difference[j]);
+        globalPaletteSet.add(difference[j]);
+      }
+
+      // All frames using this palette now use the global palette
+      framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+        paletteFreqsAndFrames[palettesSortedByFreq[i]].frames
+      );
+    }
+  }
+
+  framesUsingGlobalPalette = new Set(framesUsingGlobalPalette);
+
+  // Build a lookup table of the index of each color in the global palette
+  // Maps a color to its index
+  const globalIndicesLookup = {};
+  for (let i = 0; i < globalPalette.length; i++) {
+    if (!globalIndicesLookup[globalPalette[i]]) {
+      globalIndicesLookup[globalPalette[i]] = i;
+    }
+  }
+
+  // force palette to be power of 2
+  let powof2 = 1;
+  while (powof2 < globalPalette.length) {
+    powof2 <<= 1;
+  }
+  globalPalette.length = powof2;
+
+  // global opts
+  const opts = {
+    loop: loopLimit,
+    palette: new Uint32Array(globalPalette)
+  };
+  const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  let previousFrame = {};
+
+  // Pass 2
+  // Determine if the frame needs a local palette
+  // Also apply transparency optimization. This function will often blow up
+  // the size of a GIF if not for transparency. If a pixel in one frame has
+  // the same color in the previous frame, that pixel can be marked as
+  // transparent. We decide one particular color as transparent and make all
+  // transparent pixels take this color. This helps in later in compression.
+  for (let i = 0; i < props.numFrames; i++) {
+    const localPaletteRequired = !framesUsingGlobalPalette.has(i);
+    const palette = localPaletteRequired ? [] : globalPalette;
+    const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+
+    // Lookup table mapping color to its indices
+    const colorIndicesLookup = {};
+
+    // All the colors that cannot be marked transparent in this frame
+    const cannotBeTransparent = new Set();
+
+    allFramesPixelColors[i].forEach((color, k) => {
+      if (localPaletteRequired) {
+        if (colorIndicesLookup[color] === undefined) {
+          colorIndicesLookup[color] = palette.length;
+          palette.push(color);
+        }
+        pixelPaletteIndex[k] = colorIndicesLookup[color];
+      } else {
+        pixelPaletteIndex[k] = globalIndicesLookup[color];
+      }
+
+      if (i > 0) {
+        // If even one pixel of this color has changed in this frame
+        // from the previous frame, we cannot mark it as transparent
+        if (allFramesPixelColors[i - 1][k] !== color) {
+          cannotBeTransparent.add(color);
+        }
+      }
+    });
+
+    const frameOpts = {};
+
+    // Transparency optimization
+    const canBeTransparent = palette.filter(a => !cannotBeTransparent.has(a));
+    if (canBeTransparent.length > 0) {
+      // Select a color to mark as transparent
+      const transparent = canBeTransparent[0];
+      const transparentIndex = localPaletteRequired
+        ? colorIndicesLookup[transparent]
+        : globalIndicesLookup[transparent];
+      if (i > 0) {
+        for (let k = 0; k < allFramesPixelColors[i].length; k++) {
+          // If this pixel in this frame has the same color in previous frame
+          if (allFramesPixelColors[i - 1][k] === allFramesPixelColors[i][k]) {
+            pixelPaletteIndex[k] = transparentIndex;
+          }
+        }
+        frameOpts.transparent = transparentIndex;
+        // If this frame has any transparency, do not dispose the previous frame
+        previousFrame.frameOpts.disposal = 1;
+      }
+    }
+    frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
+    if (localPaletteRequired) {
+      // force palette to be power of 2
+      let powof2 = 1;
+      while (powof2 < palette.length) {
+        powof2 <<= 1;
+      }
+      palette.length = powof2;
+      frameOpts.palette = new Uint32Array(palette);
+    }
+    if (i > 0) {
+      // add the frame that came before the current one
+      gifWriter.addFrame(
+        0,
+        0,
+        pImg.width,
+        pImg.height,
+        previousFrame.pixelPaletteIndex,
+        previousFrame.frameOpts
+      );
+    }
+    // previous frame object should now have details of this frame
+    previousFrame = {
+      pixelPaletteIndex,
+      frameOpts
+    };
+  }
+
+  previousFrame.frameOpts.disposal = 1;
+  // add the last frame
+  gifWriter.addFrame(
+    0,
+    0,
+    pImg.width,
+    pImg.height,
+    previousFrame.pixelPaletteIndex,
+    previousFrame.frameOpts
+  );
+
+  const extension = 'gif';
+  const blob = new Blob([buffer.slice(0, gifWriter.end())], {
+    type: 'image/gif'
+  });
+  downloadFile(blob, filename, extension);
+};
+
 function image(p5, fn){
   /**
    * A class to describe an image.
@@ -1899,12 +2170,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -1919,12 +2188,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/bricks.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/bricks.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Apply the GRAY filter.
@@ -1989,12 +2256,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.
@@ -2027,12 +2292,10 @@ function image(p5, fn){
    * <code>
    * let img;
    *
-   * // Load the image.
-   * function preload() {
-   *   img = loadImage('assets/rockies.jpg');
-   * }
+   * async function setup() {
+   *   // Load the image.
+   *   img = await loadImage('assets/rockies.jpg');
    *
-   * function setup() {
    *   createCanvas(100, 100);
    *
    *   // Display the image.

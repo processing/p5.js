@@ -64,7 +64,7 @@ export const verifierUtils = {
    *
    * @private
    * @method extractUserDefinedVariablesAndFuncs
-   * @param {string} code - The code to extract variables and functions from.
+   * @param {String} code - The code to extract variables and functions from.
    * @returns {Object} An object containing the user's defined variables and functions.
    * @returns {Array<{name: string, line: number}>} [userDefinitions.variables] Array of user-defined variable names and their line numbers.
    * @returns {Array<{name: string, line: number}>} [userDefinitions.functions] Array of user-defined function names and their line numbers.
@@ -218,10 +218,6 @@ export const verifierUtils = {
   }
 };
 
-/**
- * @for p5
- * @requires core
- */
 function sketchVerifier(p5, _fn, lifecycles) {
   lifecycles.presetup = async function() {
     if (!p5.disableFriendlyErrors) {

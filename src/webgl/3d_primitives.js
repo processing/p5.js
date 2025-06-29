@@ -26,7 +26,7 @@ function primitives3D(p5, fn){
  * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
  *
  * @method strokeMode
- * @param {string} mode - The stroke mode to set. Possible values are:
+ * @param {String} mode - The stroke mode to set. Possible values are:
  *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
  *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
  *
@@ -35,8 +35,7 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- *
- *   describe('A sphere with red stroke and a red, wavy line on a gray background.');
+ *   describe('A sphere with red stroke and a red, wavy line on a gray background. The wavy line have caps, joins and colors.');
  * }
  *
  * function draw() {
@@ -47,13 +46,16 @@ function primitives3D(p5, fn){
  *   translate(0, -50, 0);
  *   sphere(50);
  *   pop();
+ *   orbitControl();
  *
  *   noFill();
  *   strokeWeight(15);
- *   beginShape();
- *   vertex(-150, 100);
  *   stroke('red');
- *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   beginShape();
+ *   bezierOrder(2); // Sets the order of the Bezier curve.
+ *   bezierVertex(80, 80);
+ *   bezierVertex(50, -40);
+ *   bezierVertex(-80, 80);
  *   endShape();
  * }
  * </code>
@@ -63,25 +65,30 @@ function primitives3D(p5, fn){
  * <code>
  * function setup() {
  *   createCanvas(300, 300, WEBGL);
- *
  *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
  * }
  *
  * function draw() {
  *   background(128);
- *   strokeMode(SIMPLE); // Enables simple rendering without caps, joins, and stroke color.
+ *   strokeMode(SIMPLE); // Simplifies stroke rendering for better performance.
+ *   
+ *   // Draw sphere
  *   push();
  *   strokeWeight(1);
  *   translate(0, -50, 0);
  *   sphere(50);
  *   pop();
+ *   orbitControl();
  *
+ *   // Draw modified wavy red line
  *   noFill();
  *   strokeWeight(15);
- *   beginShape();
- *   vertex(-150, 100);
  *   stroke('red');
- *   bezierVertex(-50, -100, 30, 300, 130, 50);
+ *   beginShape();
+ *   bezierOrder(2); // Sets the order of the Bezier curve.
+ *   bezierVertex(80, 80);
+ *   bezierVertex(50, -40);
+ *   bezierVertex(-80, 80);
  *   endShape();
  * }
  * </code>
@@ -1712,11 +1719,11 @@ function primitives3D(p5, fn){
         x1, y1, 0, 1            // the resulting origin
       ]).mult(this.states.uModelMatrix);
 
-      this.states.uModelMatrix = mult;
+      this.states.setValue('uModelMatrix', mult);
 
       this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
-      this.states.uModelMatrix = uModelMatrix;
+      this.states.setValue('uModelMatrix', uModelMatrix);
     }
 
     return this;
@@ -1839,7 +1846,8 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(arcGeom);
     }
 
-    const uModelMatrix = this.states.uModelMatrix.copy();
+    const uModelMatrix = this.states.uModelMatrix;
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
 
     try {
       this.states.uModelMatrix.translate([x, y, 0]);
@@ -1847,7 +1855,7 @@ function primitives3D(p5, fn){
 
       this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
-      this.states.uModelMatrix = uModelMatrix;
+      this.states.setValue('uModelMatrix', uModelMatrix);
     }
 
     return this;
@@ -1900,14 +1908,15 @@ function primitives3D(p5, fn){
       // opposite corners at (0,0) & (1,1).
       //
       // before rendering, this square is scaled & moved to the required location.
-      const uModelMatrix = this.states.uModelMatrix.copy();
+      const uModelMatrix = this.states.uModelMatrix;
+      this.states.setValue('uModelMatrix', this.states.uModelMatrix.copy());
       try {
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
         this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
-        this.states.uModelMatrix = uModelMatrix;
+        this.states.setValue('uModelMatrix', uModelMatrix);
       }
     } else {
       // Use Immediate mode to round the rectangle corner,
@@ -1949,7 +1958,7 @@ function primitives3D(p5, fn){
       let y2 = d;
 
       const prevMode = this.states.textureMode;
-      this.states.textureMode = constants.NORMAL;
+      this.states.setValue('textureMode', constants.NORMAL);
       const prevOrder = this.bezierOrder();
       this.bezierOrder(2);
       this.beginShape();
@@ -1984,7 +1993,7 @@ function primitives3D(p5, fn){
       }
 
       this.endShape(constants.CLOSE);
-      this.states.textureMode = prevMode;
+      this.states.setValue('textureMode', prevMode);
       this.bezierOrder(prevOrder);
     }
     return this;
@@ -2184,10 +2193,10 @@ function primitives3D(p5, fn){
 
     this.push();
     this.noLights();
-    this.states.strokeColor = null;;
+    this.states.setValue('strokeColor', null);
 
     this.texture(img);
-    this.states.textureMode = constants.NORMAL;
+    this.states.setValue('textureMode', constants.NORMAL);
 
     let u0 = 0;
     if (sx <= img.width) {
@@ -2662,53 +2671,16 @@ function primitives3D(p5, fn){
    * In WebGL mode, smooth shapes are drawn using many flat segments. Adding
    * more flat segments makes shapes appear smoother.
    *
-   * The parameter, `detail`, is the number of segments to use while drawing a
-   * spline curve. For example, calling `curveDetail(5)` will use 5 segments to
-   * draw curves with the <a href="#/p5/curve">curve()</a> function. By
-   * default,`detail` is 20.
+   * The parameter, `detail`, is the density of segments to use while drawing a
+   * spline curve.
    *
    * Note: `curveDetail()` has no effect in 2D mode.
    *
    * @method curveDetail
-   * @param {Number} resolution number of segments to use. Defaults to 20.
+   * @param {Number} resolution number of segments to use. Default is 1/4
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Draw a black spline curve.
-   *   noFill();
-   *   strokeWeight(1);
-   *   stroke(0);
-   *   curve(5, 26, 73, 24, 73, 61, 15, 65);
-   *
-   *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(5, 26, 5, 26, 73, 24, 73, 61);
-   *   curve(73, 24, 73, 61, 15, 65, 15, 65);
-   *
-   *   // Draw the anchor points in black.
-   *   strokeWeight(5);
-   *   stroke(0);
-   *   point(73, 24);
-   *   point(73, 61);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(5, 26);
-   *   point(15, 65);
-   *
-   *   describe(
-   *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
-   *   );
-   * }
-   * </code>
-   * </div>
    *
    * <div>
    * <code>
@@ -2717,19 +2689,22 @@ function primitives3D(p5, fn){
    *
    *   background(200);
    *
-   *   // Set the curveDetail() to 3.
-   *   curveDetail(3);
+   *   // Set the curveDetail() to 0.5
+   *   curveDetail(0.5);
+   * 
+   *   // Do not show all the vertices
+   *   splineProperty('ends', EXCLUDE)
    *
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
    *   stroke(0);
-   *   curve(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
+   *   spline(-45, -24, 0, 23, -26, 0, 23, 11, 0, -35, 15, 0);
    *
    *   // Draw red spline curves from the anchor points to the control points.
-   *   stroke(255, 0, 0);
-   *   curve(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
-   *   curve(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
+   *   spline(255, 0, 0);
+   *   spline(-45, -24, 0, -45, -24, 0, 23, -26, 0, 23, 11, 0);
+   *   spline(23, -26, 0, 23, 11, 0, -35, 15, 0, -35, 15, 0);
    *
    *   // Draw the anchor points in black.
    *   strokeWeight(5);
