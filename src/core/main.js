@@ -361,14 +361,11 @@ class p5 {
       // Send sketch remove signal
       this._removeAbortController.abort();
 
-      // remove DOM elements created by p5, and listeners
+      // remove DOM elements created by p5
       for (const e of this._elements) {
         if (e.elt && e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
         }
-        // for (const elt_ev in e._events) {
-        //   e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
-        // }
       }
 
       // Run `remove` hooks
