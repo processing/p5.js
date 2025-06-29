@@ -1740,27 +1740,27 @@ suite('p5.RendererGL', function() {
 
       assert.equal(renderer.shapeBuilder.geometry.vertexNormals.length, 6);
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[1].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
         [-1, 1, 1]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[2].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[1].array(),
         [-1, -1, 1]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[2].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
         [1, -1, 1]
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertexNormals[4].array(),
-        [1, -1, 1]
-      );
-      assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[5].array(),
         [1, 1, 1]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
+        renderer.shapeBuilder.geometry.vertexNormals[5].array(),
         [-1, 1, 1]
       );
 
@@ -1834,17 +1834,20 @@ suite('p5.RendererGL', function() {
 
       // UVs are correctly translated through libtess
       assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
-        1, 0,
         0, 1,
         0, 0,
-
-        0, 1,
         1, 0,
-        1, 1
+
+        1, 0,
+        1, 1,
+        0, 1,
       ]);
     });
 
-    test('PATH interpolates vertex data at intersections', function() {
+    // This is an edge case. libtess used to handle it, so we have a test for it, but
+    // we now use earcut.js, which no longer does. This is OK because this is not something
+    // we expect users to do.
+    /*test('PATH interpolates vertex data at intersections', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       // Hourglass shape:
@@ -1873,6 +1876,7 @@ suite('p5.RendererGL', function() {
       myp5.vertex(-10, 10, 0, 1);
       myp5.endShape(myp5.CLOSE);
 
+      console.log(renderer.shapeBuilder.geometry.vertices.flatMap(v => v.array()))
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[0].array(),
@@ -1942,7 +1946,7 @@ suite('p5.RendererGL', function() {
         0.5, 0.5,
         1, 0
       ]);
-    });
+    });*/
 
     test('PATH handles vertex data perpendicular to the camera', function() {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
@@ -1958,7 +1962,7 @@ suite('p5.RendererGL', function() {
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[0].array(),
-        [10, 0, 10]
+        [-10, 0, 10]
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[1].array(),
@@ -1970,7 +1974,7 @@ suite('p5.RendererGL', function() {
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[3].array(),
-        [-10, 0, -10]
+        [10, 0, -10]
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[4].array(),
