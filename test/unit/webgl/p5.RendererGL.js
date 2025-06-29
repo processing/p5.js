@@ -1715,34 +1715,30 @@ suite('p5.RendererGL', function() {
       assert.equal(renderer.shapeBuilder.geometry.vertices.length, 6);
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[0].array(),
-        [10, -10, 0]
+        [-10, 10, 0]
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertices[1].array(),
-        [-10, 10, 0]
-      );
-      assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertices[2].array(),
         [-10, -10, 0]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertices[3].array(),
-        [-10, 10, 0]
-      );
-      assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertices[4].array(),
+        renderer.shapeBuilder.geometry.vertices[2].array(),
         [10, -10, 0]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertices[5].array(),
+        renderer.shapeBuilder.geometry.vertices[3].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.shapeBuilder.geometry.vertices[4].array(),
         [10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.shapeBuilder.geometry.vertices[5].array(),
+        [-10, 10, 0]
       );
 
       assert.equal(renderer.shapeBuilder.geometry.vertexNormals.length, 6);
-      assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
-        [1, -1, 1]
-      );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertexNormals[1].array(),
         [-1, 1, 1]
@@ -1752,8 +1748,8 @@ suite('p5.RendererGL', function() {
         [-1, -1, 1]
       );
       assert.deepEqual(
-        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
-        [-1, 1, 1]
+        renderer.shapeBuilder.geometry.vertexNormals[0].array(),
+        [1, -1, 1]
       );
       assert.deepEqual(
         renderer.shapeBuilder.geometry.vertexNormals[4].array(),
@@ -1763,32 +1759,36 @@ suite('p5.RendererGL', function() {
         renderer.shapeBuilder.geometry.vertexNormals[5].array(),
         [1, 1, 1]
       );
+      assert.deepEqual(
+        renderer.shapeBuilder.geometry.vertexNormals[3].array(),
+        [-1, 1, 1]
+      );
 
       assert.deepEqual(renderer.shapeBuilder.geometry.aCustomSrc, [
-          1, 0, 0,
           0, 0, 1,
           1, 1, 1,
-          0, 0, 1,
           1, 0, 0,
-          0, 1, 0
+          1, 0, 0,
+          0, 1, 0,
+          0, 0, 1,
         ]);
 
       assert.deepEqual(renderer.shapeBuilder.geometry.vertexColors, [
-        1, 0, 0, 1,
         0, 0, 1, 1,
         1, 1, 1, 1,
-        0, 0, 1, 1,
         1, 0, 0, 1,
-        0, 1, 0, 1
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
       ]);
 
       assert.deepEqual(renderer.shapeBuilder.geometry.uvs, [
-        1, 0,
         0, 1,
         0, 0,
-        0, 1,
         1, 0,
-        1, 1
+        1, 0,
+        1, 1,
+        0, 1,
       ]);
     });
 
