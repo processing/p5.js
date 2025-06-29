@@ -9,7 +9,7 @@
 import * as C from './constants';
 import { Vector } from '../math/p5.Vector';
 
-function environment(p5, fn){
+function environment(p5, fn, lifecycles){
   const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
   fn._frameRate = 0;
@@ -18,6 +18,19 @@ function environment(p5, fn){
 
   const _windowPrint = window.print;
   let windowPrintDisabled = false;
+
+  lifecycles.presetup = function(){
+    const events = [
+      'resize'
+    ];
+
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
 
   /**
    * Displays text in the web browser's console.
@@ -715,7 +728,7 @@ function environment(p5, fn){
    * can be used for debugging or other purposes.
    *
    * @method windowResized
-   * @param {UIEvent} [event] optional resize Event.
+   * @param {Event} [event] optional resize Event.
    * @example
    * <div class="norender">
    * <code>
@@ -770,10 +783,9 @@ function environment(p5, fn){
   fn._onresize = function(e) {
     this.windowWidth = getWindowWidth();
     this.windowHeight = getWindowHeight();
-    const context = this._isGlobal ? window : this;
     let executeDefault;
-    if (typeof context.windowResized === 'function') {
-      executeDefault = context.windowResized(e);
+    if (this.userDefinedFunctions.windowResized) {
+      executeDefault = this.userDefinedFunctions.windowResized(e);
       if (executeDefault !== undefined && !executeDefault) {
         e.preventDefault();
       }

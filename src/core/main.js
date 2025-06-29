@@ -65,7 +65,8 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      resize: null
+      deviceorientation: null,
+      devicemotion: null
     };
     this._removeAbortController = new AbortController();
     this._removeSignal = this._removeAbortController.signal;
@@ -75,13 +76,6 @@ class p5 {
     // States used in the custom random generators
     this._lcg_random_state = null; // NOTE: move to random.js
     this._gaussian_previous = false; // NOTE: move to random.js
-
-    if (window.DeviceOrientationEvent) {
-      this._events.deviceorientation = null;
-    }
-    if (window.DeviceMotionEvent && !window._isNodeWebkit) {
-      this._events.devicemotion = null;
-    }
 
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
