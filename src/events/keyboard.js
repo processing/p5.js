@@ -9,7 +9,7 @@ export function isCode(input) {
     'Alt',
     'Shift',
     'Control',
-    'Meta',
+    'Meta'
   ];
   if (leftRightKeys.includes(input)) {
     return false;
@@ -19,7 +19,24 @@ export function isCode(input) {
   }
   return input.length > 1;
 }
-function keyboard(p5, fn){
+
+function keyboard(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      'keydown',
+      'keyup',
+      'keypress',
+      'blur'
+    ];
+
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
+
   /**
    * A `Boolean` system variable that's `true` if any key is currently pressed
    * and `false` if not.
@@ -109,7 +126,6 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-
   fn.keyIsPressed = false;
   fn.code = null;
 
@@ -470,9 +486,8 @@ function keyboard(p5, fn){
     this._downKeyCodes[e.code] = true;
     this._downKeys[e.key] = true;
 
-    const context = this._isGlobal ? window : this;
-    if (typeof context.keyPressed === 'function' && !e.charCode) {
-      const executeDefault = context.keyPressed(e);
+    if (this.userDefinedFunctions.keyPressed && !e.charCode) {
+      const executeDefault = this.userDefinedFunctions.keyPressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -636,15 +651,13 @@ function keyboard(p5, fn){
    * </div>
    */
   fn._onkeyup = function(e) {
-
-    const context = this._isGlobal ? window : this;
-    if (typeof context.keyReleased === 'function') {
-      const executeDefault = context.keyReleased(e);
+    if (this.userDefinedFunctions.keyReleased) {
+      const executeDefault = this.userDefinedFunctions.keyReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
     }
-    
+
     delete this._downKeyCodes[e.code];
     delete this._downKeys[e.key];
 
@@ -801,14 +814,14 @@ function keyboard(p5, fn){
     this._lastKeyCodeTyped = e.which; // track last keyCode
     this.key = e.key || String.fromCharCode(e.which) || e.which;
 
-    const context = this._isGlobal ? window : this;
-    if (typeof context.keyTyped === 'function') {
-      const executeDefault = context.keyTyped(e);
+    if (this.userDefinedFunctions.keyTyped) {
+      const executeDefault = this.userDefinedFunctions.keyTyped(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
     }
   };
+
   /**
    * The onblur function is called when the user is no longer focused
    * on the p5 element. Because the keyup events will not fire if the user is
@@ -936,23 +949,23 @@ function keyboard(p5, fn){
    * </code>
    * </div>
    */
-
   fn.keyIsDown = function(input) {
     if (isCode(input)) {
       return this._downKeyCodes[input] || this._downKeys[input] || false;
     } else {
       return this._downKeys[input] || this._downKeyCodes[input] || false;
     }
-  }
+  };
+
   /**
    * The _areDownKeys function returns a boolean true if any keys pressed
    * and a false if no keys are currently pressed.
-
+   *
    * Helps avoid instances where multiple keys are pressed simultaneously and
    * releasing a single key will then switch the
    * keyIsPressed property to true.
    * @private
-  **/
+   */
   fn._areDownKeys = function() {
     for (const key in this._downKeys) {
       if (this._downKeys.hasOwnProperty(key) && this._downKeys[key] === true) {
