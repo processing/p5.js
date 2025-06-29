@@ -34,7 +34,7 @@
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
     "pixelmatch": "^7.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.25.51"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
