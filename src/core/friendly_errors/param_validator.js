@@ -230,8 +230,10 @@ function validateParams(p5, fn, lifecycles) {
       param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
 
       let schema = generateTypeSchema(param);
+      // Fallback to z.custom() because function types are no longer 
+      // returns a Zod schema.
       if (schema.def.type === 'function') {
-        schema = z.any()
+        schema = z.custom(val => val instanceof Function)
       }
 
       if (isOptional) {
