@@ -11,14 +11,14 @@ import * as constants from '../core/constants';
 function pointer(p5, fn, lifecycles){
   lifecycles.presetup = function(){
     const events = [
-      "pointerdown",
-      "pointerup",
-      "pointermove",
-      "dragend",
-      "dragover",
-      "click",
-      "dblclick",
-      "wheel"
+      'pointerdown',
+      'pointerup',
+      'pointermove',
+      'dragend',
+      'dragover',
+      'click',
+      'dblclick',
+      'wheel'
     ];
     for(const event of events){
       window.addEventListener(event, this[`_on${event}`].bind(this), {
@@ -117,6 +117,7 @@ function pointer(p5, fn, lifecycles){
    * </div>
    */
   fn.movedY = 0;
+
   /*
    * This is a flag which is false until the first time
    * we receive a mouse event. The pmouseX and pmouseY
