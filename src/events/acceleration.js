@@ -6,7 +6,21 @@
  * @main Events
  */
 
-function acceleration(p5, fn){
+function acceleration(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      'deviceorientation',
+      'devicemotion'
+    ];
+
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
+
   /**
    * The system variable deviceOrientation always contains the orientation of
    * the device. The value of this variable will either be set 'landscape'
@@ -614,7 +628,6 @@ function acceleration(p5, fn){
    * </code>
    * </div>
    */
-
   fn._ondeviceorientation = function (e) {
     this._updatePRotations();
 
@@ -624,6 +637,7 @@ function acceleration(p5, fn){
     this.rotationZ = this._fromDegrees(e.alpha);
     this._handleMotion();
   };
+
   fn._ondevicemotion = function (e) {
     this._updatePAccelerations();
     this.accelerationX = e.acceleration.x * 2;
@@ -631,6 +645,7 @@ function acceleration(p5, fn){
     this.accelerationZ = e.acceleration.z * 2;
     this._handleMotion();
   };
+
   fn._handleMotion = function () {
     if (window.orientation === 90 || window.orientation === -90) {
       this.deviceOrientation = 'landscape';
@@ -639,18 +654,18 @@ function acceleration(p5, fn){
     } else if (window.orientation === undefined) {
       this.deviceOrientation = 'undefined';
     }
-    const context = this._isGlobal ? window : this;
-    if (typeof context.deviceMoved === 'function') {
+
+    if (this.userDefinedFunctions.deviceMoved) {
       if (
         Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
         Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
       ) {
-        context.deviceMoved();
+        this.userDefinedFunctions.deviceMoved();
       }
     }
 
-    if (typeof context.deviceTurned === 'function') {
+    if (this.userDefinedFunctions.deviceTurned) {
       // The angles given by rotationX etc is from range [-180 to 180].
       // The following will convert them to [0 to 360] for ease of calculation
       // of cases when the angles wrapped around.
@@ -671,7 +686,7 @@ function acceleration(p5, fn){
       if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
         wSAX = wRX;
         this.turnAxis = 'X';
-        context.deviceTurned();
+        this.userDefinedFunctions.deviceTurned();
       }
       this.pRotateDirectionX = rotateDirectionX;
       startAngleX = wSAX - 180;
@@ -691,7 +706,7 @@ function acceleration(p5, fn){
       if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
         wSAY = wRY;
         this.turnAxis = 'Y';
-        context.deviceTurned();
+        this.userDefinedFunctions.deviceTurned();
       }
       this.pRotateDirectionY = rotateDirectionY;
       startAngleY = wSAY - 180;
@@ -720,12 +735,12 @@ function acceleration(p5, fn){
       ) {
         startAngleZ = rotZ;
         this.turnAxis = 'Z';
-        context.deviceTurned();
+        this.userDefinedFunctions.deviceTurned();
       }
       this.pRotateDirectionZ = rotateDirectionZ;
       this.turnAxis = undefined;
     }
-    if (typeof context.deviceShaken === 'function') {
+    if (this.userDefinedFunctions.deviceShaken) {
       let accelerationChangeX;
       let accelerationChangeY;
       // Add accelerationChangeZ if acceleration change on Z is needed
@@ -734,7 +749,7 @@ function acceleration(p5, fn){
         accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
       }
       if (accelerationChangeX + accelerationChangeY > shake_threshold) {
-        context.deviceShaken();
+        this.userDefinedFunctions.deviceShaken();
       }
     }
   };

@@ -64,9 +64,6 @@ class p5 {
     this._startListener = null;
     this._initializeInstanceVariables();
     this._events = {
-      // keep track of user-events for unregistering later
-      deviceorientation: null,
-      devicemotion: null
     };
     this._removeAbortController = new AbortController();
     this._removeSignal = this._removeAbortController.signal;
@@ -136,16 +133,6 @@ class p5 {
       // Run a check to see if the user has misspelled 'setup', 'draw', etc
       // detects capitalization mistakes only ( Setup, SETUP, MouseClicked, etc)
       p5._checkForUserDefinedFunctions(this);
-    }
-
-    // Bind events to window (not using container div bc key events don't work)
-    for (const e in this._events) {
-      const f = this[`_on${e}`];
-      if (f) {
-        const m = f.bind(this);
-        window.addEventListener(e, m, { passive: false });
-        this._events[e] = m;
-      }
     }
 
     const focusHandler = () => {
@@ -371,10 +358,7 @@ class p5 {
         window.cancelAnimationFrame(this._requestAnimId);
       }
 
-      // unregister events sketch-wide
-      for (const ev in this._events) {
-        window.removeEventListener(ev, this._events[ev]);
-      }
+      // Send sketch remove signal
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5, and listeners
@@ -382,9 +366,9 @@ class p5 {
         if (e.elt && e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
         }
-        for (const elt_ev in e._events) {
-          e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
-        }
+        // for (const elt_ev in e._events) {
+        //   e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
+        // }
       }
 
       // Run `remove` hooks
