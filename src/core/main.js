@@ -65,11 +65,7 @@ class p5 {
     this._initializeInstanceVariables();
     this._events = {
       // keep track of user-events for unregistering later
-      keydown: null,
-      keyup: null,
-      keypress: null,
-      resize: null,
-      blur: null
+      resize: null
     };
     this._removeAbortController = new AbortController();
     this._removeSignal = this._removeAbortController.signal;

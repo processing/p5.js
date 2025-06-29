@@ -936,13 +936,13 @@ function pointer(p5, fn, lifecycles){
       const sx = canvas.scrollWidth / this.width || 1;
       const sy = canvas.scrollHeight / this.height || 1;
 
-      if (e.pointerType == 'touch') {
-          const touches = [];
-          for (const touch of this._activePointers.values()) {
-            touches.push(getTouchInfo(canvas, sx, sy, touch));
-          }
-          this.touches = touches;
-      } 
+      if (e.pointerType === 'touch') {
+        const touches = [];
+        for (const touch of this._activePointers.values()) {
+          touches.push(getTouchInfo(canvas, sx, sy, touch));
+        }
+        this.touches = touches;
+      }
 
       const mousePos = getMouseInfo(canvas, sx, sy, e);
       this.movedX = e.movementX || 0;
@@ -952,10 +952,10 @@ function pointer(p5, fn, lifecycles){
       this.winMouseX = mousePos.winX;
       this.winMouseY = mousePos.winY;
 
-       if (!this._hasMouseInteracted) {
-          this._updateMouseCoords();
-          this._hasMouseInteracted = true;
-       }
+      if (!this._hasMouseInteracted) {
+        this._updateMouseCoords();
+        this._hasMouseInteracted = true;
+      }
     }
   };
 
@@ -970,21 +970,21 @@ function pointer(p5, fn, lifecycles){
   function getMouseInfo(canvas, sx, sy, evt) {
     const rect = canvas.getBoundingClientRect();
     return {
-       x: (evt.clientX - rect.left) / sx,
-       y: (evt.clientY - rect.top) / sy,
-       winX: evt.clientX,
-       winY: evt.clientY,
+      x: (evt.clientX - rect.left) / sx,
+      y: (evt.clientY - rect.top) / sy,
+      winX: evt.clientX,
+      winY: evt.clientY
     };
   }
 
   function getTouchInfo(canvas, sx, sy, touch) {
     const rect = canvas.getBoundingClientRect();
     return {
-       x: (touch.clientX - rect.left) / sx,
-       y: (touch.clientY - rect.top) / sy,
-       winX: touch.clientX,
-       winY: touch.clientY,
-       id: touch.pointerId,
+      x: (touch.clientX - rect.left) / sx,
+      y: (touch.clientY - rect.top) / sy,
+      winX: touch.clientX,
+      winY: touch.clientY,
+      id: touch.pointerId
     };
   }
 
@@ -1179,7 +1179,7 @@ function pointer(p5, fn, lifecycles){
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
-    
+
     if (!this.mouseIsPressed && this.userDefinedFunctions.mouseMoved) {
       executeDefault = this.userDefinedFunctions.mouseMoved(e);
       if (executeDefault === false) {
