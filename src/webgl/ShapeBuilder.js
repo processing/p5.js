@@ -1,6 +1,6 @@
 import * as constants from '../core/constants';
 import { Geometry } from './p5.Geometry';
-import earcut, {flatten, deviation} from 'earcut';
+import earcut, { flatten } from 'earcut';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
 
@@ -368,7 +368,7 @@ export class ShapeBuilder {
   _triangulate(contours) {
     const allTriangleVerts = [];
     const vertexSize = this.tessyVertexSize;
-  
+
     // (A) Collect all 3D points from every contour.
     const allPoints3D = [];
     for (const contour of contours) {
@@ -378,7 +378,7 @@ export class ShapeBuilder {
     }
     // Compute a projection basis from all points.
     const basis = this._computeProjectionBasis(allPoints3D);
-  
+
     // (B) For each contour, build its 2D projection.
     let classifiedContours = contours.map(contour => {
       const polygon = [];
@@ -393,7 +393,7 @@ export class ShapeBuilder {
         vertexData: contour
       };
     });
-  
+
     const outerContours = [];
     const holeContours = [];
     for (let i = 0; i < classifiedContours.length; i++) {
@@ -417,13 +417,13 @@ export class ShapeBuilder {
       outer,
       holes: holeContours.filter(hole => this._contains(outer.polygon, hole.polygon[0]))
     }));
-  
+
     for (const group of contourGroups) {
       const { outer, holes } = group;
       const polygons = [outer.polygon, ...holes.map(h => h.polygon)];
       const { vertices: verts2D, holes: earcutHoles, dimensions } = flatten(polygons);
       const indices = earcut(verts2D, earcutHoles, dimensions);
-  
+
       const vertexDataChunks = [];
       for (let j = 0; j < outer.vertexData.length; j += vertexSize) {
         vertexDataChunks.push(outer.vertexData.slice(j, j + vertexSize));
@@ -441,12 +441,12 @@ export class ShapeBuilder {
     }
     return allTriangleVerts;
   };
-  
+
   _projectPoint(pt, basis) {
     const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     return [dot(pt, basis.u), dot(pt, basis.v)];
   };
-  
+
   _computeProjectionBasis(points) {
     const epsilon = 1e-6;
     const firstZ = points[0][2];
@@ -491,7 +491,7 @@ export class ShapeBuilder {
     ];
     return { normal, u, v };
   };
-  
+
   _contains(outerPolygon, [x, y]) {
     let inside = false;
     for (let i = 0, j = outerPolygon.length - 1; i < outerPolygon.length; j = i++) {
