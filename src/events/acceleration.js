@@ -463,9 +463,7 @@ function acceleration(p5, fn, lifecycles){
    * </code>
    * </div>
    */
-
   fn.setMoveThreshold = function (val) {
-    // p5._validateParameters('setMoveThreshold', arguments);
     move_threshold = val;
   };
 
@@ -505,9 +503,7 @@ function acceleration(p5, fn, lifecycles){
    * </code>
    * </div>
    */
-
   fn.setShakeThreshold = function (val) {
-    // p5._validateParameters('setShakeThreshold', arguments);
     shake_threshold = val;
   };
 
@@ -647,11 +643,17 @@ function acceleration(p5, fn, lifecycles){
   };
 
   fn._handleMotion = function () {
-    if (window.orientation === 90 || window.orientation === -90) {
+    if (
+      screen.orientation.type === 'landscape-primary' ||
+      screen.orientation.type === 'landscape-secondary'
+    ) {
       this.deviceOrientation = 'landscape';
-    } else if (window.orientation === 0) {
+    } else if (
+      screen.orientation.type === 'portrait-primary' ||
+      screen.orientation.type === 'portrait-secondary'
+    ) {
       this.deviceOrientation = 'portrait';
-    } else if (window.orientation === undefined) {
+    } else {
       this.deviceOrientation = 'undefined';
     }
 
