@@ -9,16 +9,18 @@ export const NodeType = {
   LITERAL: 1,
   VARIABLE: 2,
   CONSTANT: 3,
+  PHI: 4,
 };
 
 export const NodeTypeRequiredFields = {
-  [NodeType.OPERATION]: ['opCodes', 'dependsOn'],
-  [NodeType.LITERAL]: ['values'],
-  [NodeType.VARIABLE]: ['identifiers'],
-  [NodeType.CONSTANT]: ['values'],
+  [NodeType.OPERATION]: ['opCode', 'dependsOn'],
+  [NodeType.LITERAL]: ['value'],
+  [NodeType.VARIABLE]: ['identifier', 'dataType'],
+  [NodeType.CONSTANT]: ['value'],
+  [NodeType.PHI]: ['dependsOn', 'phiBlocks']
 };
 
-export const NodeTypeName = Object.fromEntries(
+export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );
 
@@ -105,5 +107,13 @@ for (const { arity: args, symbol, opcode } of OperatorTable) {
   SymbolToOpCode[symbol] = opcode;
   OpCodeToSymbol[opcode] = symbol;
   OpCodeArgs[opcode] = args;
-  
+}
+
+export const BlockType = {
+  GLOBAL: 0,
+  IF: 1,
+  ELSE_IF: 2,
+  ELSE: 3,
+  FOR: 4,
+  MERGE: 5,
 }
