@@ -1632,15 +1632,16 @@ function shadergenerator(p5, fn) {
     }
   };
   fn.noise = function (...args) {
-    if (GLOBAL_SHADER?.isGenerating) {
-      GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL); 
-      GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
-      return fnNodeConstructor('noise', args, { args: ['vec2'], returnType: 'float' });
-    } else {
+    if (!GLOBAL_SHADER?.isGenerating) {
       p5._friendlyError(
-        `It looks like you've called noise() outside of a shader's modify() function.`
-      );
+      `It looks like you've called noise() outside of a shader's modify() function.`
+    );
+      return;
     }
+    
+    GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
+    GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
+    return fnNodeConstructor('noise', args, { args: ['vec2'], returnType: 'float' });
   };
 }
   
