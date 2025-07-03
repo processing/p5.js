@@ -660,4 +660,57 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('buildGeometry stroke colors', () => {
+    visualTest('Geometry without stroke colors, global stroke override', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      
+      // Build geometry without any stroke() calls inside
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape();
+        p5.vertex(-15, -15, 0);
+        p5.vertex(15, -15, 0);
+        p5.vertex(15, 15, 0);
+        p5.vertex(-15, 15, 0);
+        p5.endShape(p5.CLOSE);
+      });
+      
+      p5.background(220);
+      p5.stroke('red'); // Should override and make all strokes red
+      p5.strokeWeight(2);
+      p5.noFill();
+      p5.model(geom);
+      screenshot();
+    });
+
+    visualTest('Geometry with internal stroke colors not overridden', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      
+      // Build geometry WITH stroke() calls inside
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape();
+        
+        p5.stroke('blue');
+        p5.vertex(-15, -15, 0);
+        
+        p5.stroke('green');
+        p5.vertex(15, -15, 0);
+        
+        p5.stroke('purple');
+        p5.vertex(15, 15, 0);
+        
+        p5.stroke('orange');
+        p5.vertex(-15, 15, 0);
+        
+        p5.endShape(p5.CLOSE);
+      });
+      
+      p5.background(220);
+      p5.stroke('red'); // This should NOT override the internal colors
+      p5.strokeWeight(2);
+      p5.noFill();
+      p5.model(geom);
+      screenshot();
+    });
+  });
 });

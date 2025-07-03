@@ -99,7 +99,7 @@ void main() {
 
   StrokeVertex inputs;
   inputs.position = aPosition.xyz;
-  inputs.color = uUseLineColor ? aVertexColor : uMaterialColor;
+  inputs.color = (uUseLineColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor;
   inputs.weight = uStrokeWeight;
   inputs.tangentIn = aTangentIn;
   inputs.tangentOut = aTangentOut;
