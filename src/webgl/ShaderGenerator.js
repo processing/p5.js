@@ -1638,3 +1638,141 @@ export default shadergenerator;
 if (typeof p5 !== 'undefined') {
   p5.registerAddon(shadergenerator)
 }
+
+
+
+/* ------------------------------------------------------------- */
+/**
+ * @function getWorldInputs
+ * @experimental
+ * @description
+ * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives a vertex object containing position (vec3), normal (vec3), texCoord (vec2), and color (vec4) properties. The function should return the modified vertex object.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify(() => {
+ *     getWorldInputs(inputs => {
+ *       // Move the vertex up and down in a wave
+ *       inputs.position.y += 20 * sin(
+ *         millis() * 0.001 + inputs.position.x * 0.05
+ *       );
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function combineColors
+ * @experimental
+ * @description
+ * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives color components (baseColor, diffuse, ambientColor, ambient, specularColor, specular, emissive, opacity) and returns a vec4 for the final color.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives color components (baseColor, diffuse, ambientColor, ambient, specularColor, specular, emissive, opacity) and returns a vec4 for the final color.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify(() => {
+ *     combineColors(components => {
+ *       // Custom color combination: add a red tint
+ *       let r = components.baseColor.r * components.diffuse.r +
+ *               components.ambientColor.r * components.ambient.r +
+ *               components.specularColor.r * components.specular.r +
+ *               components.emissive.r + 0.2;
+ *       let g = components.baseColor.g * components.diffuse.g +
+ *               components.ambientColor.g * components.ambient.g +
+ *               components.specularColor.g * components.specular.g +
+ *               components.emissive.g;
+ *       let b = components.baseColor.b * components.diffuse.b +
+ *               components.ambientColor.b * components.ambient.b +
+ *               components.specularColor.b * components.specular.b +
+ *               components.emissive.b;
+ *       let a = components.opacity;
+ *       return vec4(r, g, b, a);
+ *     });
+ *   });
+ * }
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getPointSize
+ * @experimental
+ * @description
+ * Registers a callback to modify the size of points when rendering with a shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() or similar, when drawing points (e.g., with the point() function in WEBGL mode). The callback receives the current point size (number) and should return the new size (number).
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives and returns the point size.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify(() => {
+ *     getPointSize(size => {
+ *       // Make points pulse in size over time
+ *       return size * (1.0 + 0.5 * sin(millis() * 0.002));
+ *     });
+ *   });
+ * }
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   strokeWeight(20);
+ *   stroke('blue');
+ *   point(0, 0);
+ * }
+ * </code>
+ * </div>
+ */
