@@ -455,6 +455,10 @@ class RendererGL extends Renderer {
       }
       return this._internalDisable.call(this.drawingContext, key);
     };
+
+    // Whether or not to remove degenerate faces from geometry. This is usually
+    // set to false for performance.
+    this._validateFaces = false;
   }
 
   remove() {
@@ -562,7 +566,8 @@ class RendererGL extends Renderer {
     if (this.geometryBuilder) {
       this.geometryBuilder.addImmediate(
         this.shapeBuilder.geometry,
-        this.shapeBuilder.shapeMode
+        this.shapeBuilder.shapeMode,
+        { validateFaces: this._validateFaces }
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
       if (this.shapeBuilder.shapeMode === constants.POINTS) {
@@ -2614,7 +2619,7 @@ function rendererGL(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    *  // Now with the antialias attribute set to true.

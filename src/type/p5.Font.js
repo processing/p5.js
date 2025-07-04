@@ -537,8 +537,11 @@ export class Font {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
     const contours = this.textToContours(str, x, y, width, height, options);
+
     const geom = this._pInst.buildGeometry(() => {
       if (extrude === 0) {
+        const prevValidateFaces = this._pInst._renderer._validateFaces;
+        this._pInst._renderer._validateFaces = true;
         this._pInst.beginShape();
         this._pInst.normal(0, 0, 1);
         for (const contour of contours) {
@@ -549,7 +552,11 @@ export class Font {
           this._pInst.endContour(this._pInst.CLOSE);
         }
         this._pInst.endShape();
+        this._pInst._renderer._validateFaces = prevValidateFaces;
       } else {
+        const prevValidateFaces = this._pInst._renderer._validateFaces;
+        this._pInst._renderer._validateFaces = true;
+
         // Draw front faces
         for (const side of [1, -1]) {
           this._pInst.beginShape();
@@ -561,8 +568,9 @@ export class Font {
             this._pInst.endContour(this._pInst.CLOSE);
           }
           this._pInst.endShape();
-          this._pInst.beginShape();
         }
+        this._pInst._renderer._validateFaces = prevValidateFaces;
+
         // Draw sides
         for (const contour of contours) {
           this._pInst.beginShape(this._pInst.QUAD_STRIP);
