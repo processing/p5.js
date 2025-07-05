@@ -10,6 +10,7 @@ import { DataType, NodeType, SymbolToOpCode, OperatorTable, BlockType } from './
 
 import * as DAG from './DAG';
 import * as CFG from './CFG'
+import { generateGLSL } from './GLSL_generator';
 
 function strands(p5, fn) {
   //////////////////////////////////////////////
@@ -19,7 +20,8 @@ function strands(p5, fn) {
     ctx.cfg = CFG.createControlFlowGraph();
     ctx.dag = DAG.createDirectedAcyclicGraph();
     ctx.blockStack = [];
-    ctx.currentBlock = null;
+    ctx.currentBlock = -1;
+    ctx.blockConditions = {};
     ctx.uniforms = [];
     ctx.hooks = [];
   }
@@ -50,7 +52,7 @@ function strands(p5, fn) {
   for (const { name, symbol, arity } of OperatorTable) {
     if (arity === 'binary') {
       StrandsNode.prototype[name] = function (rightNode) {
-        const id = emitBinaryOp(this.id, rightNode, SymbolToOpCode[symbol]);
+        const id = createBinaryOpNode(this.id, rightNode.id, SymbolToOpCode[symbol]);
         return new StrandsNode(id);
       };
     }
@@ -62,23 +64,7 @@ function strands(p5, fn) {
     }
   }
   
-  //////////////////////////////////////////////
-  // Entry Point
-  //////////////////////////////////////////////
-  const strandsContext = {};
-  initStrands(strandsContext);
-  
-  function recordInBlock(blockID, nodeID) {
-    const graph = strandsContext.cfg
-    if (graph.blockInstructionsCount[blockID] === undefined) {
-      graph.blockInstructionsStart[blockID] = graph.blockInstructionsList.length;
-      graph.blockInstructionsCount[blockID] = 0;
-    }
-    graph.blockInstructionsList.push(nodeID);
-    graph.blockInstructionsCount[blockID] += 1;
-  }
-  
-  function emitLiteralNode(dataType, value) {
+  function createLiteralNode(dataType, value) {
     const nodeData = DAG.createNodeData({
       nodeType: NodeType.LITERAL,
       dataType,
@@ -86,67 +72,82 @@ function strands(p5, fn) {
     });
     const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
     const b = strandsContext.currentBlock;
-    recordInBlock(strandsContext.currentBlock, id);
+    CFG.recordInBasicBlock(strandsContext.cfg, strandsContext.currentBlock, id);
     return id;
   }
 
-  function emitBinaryOp(left, right, opCode) {
+  function createBinaryOpNode(left, right, opCode) {
     const nodeData = DAG.createNodeData({
       nodeType: NodeType.OPERATION,
       dependsOn: [left, right],
       opCode
     });
     const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
-    recordInBlock(strandsContext.currentBlock, id);
+    CFG.recordInBasicBlock(strandsContext.cfg, strandsContext.currentBlock, id);
     return id;
   }
 
-  function emitVariableNode(dataType, identifier) {
+  function createVariableNode(dataType, identifier) {
     const nodeData = DAG.createNodeData({
       nodeType: NodeType.VARIABLE,
       dataType, 
       identifier
     })
     const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
-    recordInBlock(strandsContext.currentBlock, id);
+    CFG.recordInBasicBlock(strandsContext.cfg, strandsContext.currentBlock, id);
     return id;
   }
   
-  function enterBlock(blockID) {
-    if (strandsContext.currentBlock) {
-      CFG.addEdge(strandsContext.cfg, strandsContext.currentBlock, blockID);
-    }
-    strandsContext.currentBlock = blockID;
+  function pushBlockWithEdgeFromCurrent(blockID) {
+    CFG.addEdge(strandsContext.cfg, strandsContext.currentBlock, blockID);
+    pushBlock(blockID);
+  }
+
+  function pushBlock(blockID) {
     strandsContext.blockStack.push(blockID);
+    strandsContext.currentBlock = blockID;
   }
   
-  function exitBlock() {
+  function popBlock() {
     strandsContext.blockStack.pop();
-    strandsContext.currentBlock = strandsContext.blockStack[strandsContext.blockStack-1];
+    const len = strandsContext.blockStack.length;
+    strandsContext.currentBlock = strandsContext.blockStack[len-1];
   }
   
   fn.uniformFloat = function(name, defaultValue) {
-    const id = emitVariableNode(DataType.FLOAT, name);
+    const id = createVariableNode(DataType.FLOAT, name);
     strandsContext.uniforms.push({ name, dataType: DataType.FLOAT, defaultValue });
     return new StrandsNode(id);
   } 
   
   fn.createFloat = function(value) {
-    const id = emitLiteralNode(DataType.FLOAT, value);
+    const id = createLiteralNode(DataType.FLOAT, value);
     return new StrandsNode(id);
   }
   
-  fn.strandsIf = function(condition, ifBody, elseBody) {
-    const conditionBlock = CFG.createBasicBlock(strandsContext.cfg, BlockType.IF_COND);
-    enterBlock(conditionBlock);
+  fn.strandsIf = function(conditionNode, ifBody) {
+    const { cfg } = strandsContext; 
     
-    const trueBlock = CFG.createBasicBlock(strandsContext.cfg, BlockType.IF);
-    enterBlock(trueBlock);
+    const conditionBlock = CFG.createBasicBlock(cfg, BlockType.COND);
+    pushBlockWithEdgeFromCurrent(conditionBlock);
+    strandsContext.blockConditions[conditionBlock] = conditionNode.id;
+    
+    const thenBlock = CFG.createBasicBlock(cfg, BlockType.IF);
+    pushBlockWithEdgeFromCurrent(thenBlock);
     ifBody();
-    exitBlock();
     
-    const mergeBlock = CFG.createBasicBlock(strandsContext.cfg, BlockType.MERGE);
-    enterBlock(mergeBlock);
+    const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
+    if (strandsContext.currentBlock !== thenBlock) {
+      const nestedBlock = strandsContext.currentBlock;
+      CFG.addEdge(cfg, nestedBlock, mergeBlock);
+      // Pop the previous merge!
+      popBlock();
+    }
+    // Pop the thenBlock after checking
+    popBlock();
+
+    pushBlock(mergeBlock);
+    CFG.addEdge(cfg, conditionBlock, mergeBlock);
   }
   
   function createHookArguments(parameters){
@@ -157,12 +158,12 @@ function strands(p5, fn) {
       const T = param.type;
       if(structTypes.includes(T.typeName)) {
         const propertiesNodes = T.properties.map(
-          (prop) => [prop.name, emitVariableNode(DataType[prop.dataType], prop.name)]
+          (prop) => [prop.name, createVariableNode(DataType[prop.dataType], prop.name)]
         );
         const argObj = Object.fromEntries(propertiesNodes);
         args.push(argObj);
       } else {
-        const arg = emitVariableNode(DataType[param.dataType], param.name);
+        const arg = createVariableNode(DataType[param.dataType], param.name);
         args.push(arg)
       }
     }
@@ -175,34 +176,28 @@ function strands(p5, fn) {
       ...shader.hooks.fragment,
     }
     const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
-    
     for (const hookType of hookTypes) {
       window[hookType.name] = function(callback) {
-        const funcBlock = CFG.createBasicBlock(strandsContext.cfg, BlockType.FUNCTION);
-        enterBlock(funcBlock);
+        const entryBlockID = CFG.createBasicBlock(strandsContext.cfg, BlockType.FUNCTION);
+        pushBlockWithEdgeFromCurrent(entryBlockID);
         const args = createHookArguments(hookType.parameters);
-        console.log(hookType, args);
-        runHook(hookType, callback, args);
-        exitBlock();
+        const rootNodeID = callback(args).id;
+        strandsContext.hooks.push({
+          hookType, 
+          entryBlockID,
+          rootNodeID,
+        });
+        popBlock();
       }
     }
   }
-  
-  function runHook(hookType, callback, inputs) {
-    const blockID = CFG.createBasicBlock(strandsContext.cfg, BlockType.FUNCTION)
-    
-    enterBlock(blockID);
-    const rootNode = callback(inputs);
-    exitBlock();
-    
-    strandsContext.hooks.push({
-      hookType, 
-      blockID,
-      rootNode,
-    });
-  }
 
+  //////////////////////////////////////////////
+  // Entry Point
+  //////////////////////////////////////////////
+  const strandsContext = {};
   const oldModify = p5.Shader.prototype.modify
+
   p5.Shader.prototype.newModify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
     if (shaderModifier instanceof Function) {
       // Reset the context object every time modify is called;
@@ -218,15 +213,14 @@ function strands(p5, fn) {
       
       // 2. Build the IR from JavaScript API
       const globalScope = CFG.createBasicBlock(strandsContext.cfg, BlockType.GLOBAL);
-      enterBlock(globalScope);
+      pushBlock(globalScope);
       strandsCallback();
-      exitBlock();
+      popBlock();
       
       // 3. Generate shader code hooks object from the IR
       // .......
-      for (const {hookType, blockID, rootNode} of strandsContext.hooks) {
-        // console.log(hookType);
-      }
+      const glsl = generateGLSL(strandsContext);
+      console.log(glsl.getFinalColor);
       
       // Call modify with the generated hooks object
       // return oldModify.call(this, generatedModifyArgument);

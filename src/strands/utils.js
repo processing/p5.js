@@ -116,4 +116,28 @@ export const BlockType = {
   ELSE: 3,
   FOR: 4,
   MERGE: 5,
+  COND: 6,
+  FUNCTION: 7
+}
+
+////////////////////////////
+// Graph utils
+////////////////////////////
+export function dfsPostOrder(adjacencyList, start) {
+  const visited = new Set();
+  const postOrder = [];
+
+  function dfs(v) {
+    if (visited.has(v)) {
+      return;
+    }
+    visited.add(v);
+    for (let w of adjacencyList[v] || []) {
+      dfs(w);
+    }
+    postOrder.push(v);
+  }
+  
+  dfs(start);
+  return postOrder;
 }

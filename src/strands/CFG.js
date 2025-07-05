@@ -1,35 +1,39 @@
 export function createControlFlowGraph() {
-  const graph = {
+  return {
     nextID: 0,
+    graphType: 'CFG',
     blockTypes: [],
-    incomingEdges:[],
-    incomingEdgesIndex: [],
-    incomingEdgesCount: [],
+    incomingEdges: [],
     outgoingEdges: [],
-    outgoingEdgesIndex: [],
-    outgoingEdgesCount: [],
-    blockInstructionsStart: [],
-    blockInstructionsCount: [],
-    blockInstructionsList: [],
+    blockInstructions: [],
   };
-  
-  return graph;
 }
 
 export function createBasicBlock(graph, blockType) {
-  const i = graph.nextID++;
-  graph.blockTypes.push(blockType),
-  graph.incomingEdges.push(graph.incomingEdges.length);
-  graph.incomingEdgesCount.push(0);
-  graph.outgoingEdges.push(graph.outgoingEdges.length);
-  graph.outgoingEdges.push(0);
-  return i;
+  const id = graph.nextID++;
+  graph.blockTypes[id] = blockType;
+  graph.incomingEdges[id] = [];
+  graph.outgoingEdges[id] = [];
+  graph.blockInstructions[id]= [];
+  return id;
 }
 
-
 export function addEdge(graph, from, to) {
-  graph.incomingEdges.push(from);
-  graph.outgoingEdges.push(to);
-  graph.outgoingEdgesCount[from]++;
-  graph.incomingEdgesCount[to]++;
+  graph.outgoingEdges[from].push(to);
+  graph.incomingEdges[to].push(from);
+}
+
+export function recordInBasicBlock(graph, blockID, nodeID) {
+  graph.blockInstructions[blockID] = graph.blockInstructions[blockID] || [];
+  graph.blockInstructions[blockID].push(nodeID);
+}
+
+export function getBlockDataFromID(graph, id) {
+  return {
+    id,
+    blockType: graph.blockTypes[id],
+    incomingEdges: graph.incomingEdges[id],
+    outgoingEdges: graph.outgoingEdges[id],
+    blockInstructions: graph.blockInstructions[id],
+  }
 }
