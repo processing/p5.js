@@ -7,6 +7,7 @@
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
+import noiseGLSL from './shaders/functions/noiseGLSL.glsl';
 
 function shadergenerator(p5, fn) {
 
@@ -1578,6 +1579,7 @@ function shadergenerator(p5, fn) {
     ],
     'sqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'step': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
+    'noise': { args: ['vec2'], returnType: 'float', isp5Function: false },
     'trunc': { args: ['genType'], returnType: 'genType', isp5Function: false},
 
     ////////// Vector //////////
@@ -1629,10 +1631,19 @@ function shadergenerator(p5, fn) {
       return originalLerp.apply(this, args); // Fallback to normal p5.js lerp
     }
   };
+  const originalNoise = fn.noise;
+  fn.noise = function (...args) {
+    if (!GLOBAL_SHADER?.isGenerating) {
+      return originalNoise.apply(this, args); // fallback to regular p5.js noise
+    }
+    
+    GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
+    GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
+    return fnNodeConstructor('noise', args, { args: ['vec2'], returnType: 'float' });
+  };
 }
   
   
-
 export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
