@@ -1631,12 +1631,10 @@ function shadergenerator(p5, fn) {
       return originalLerp.apply(this, args); // Fallback to normal p5.js lerp
     }
   };
+  const originalNoise = fn.noise;
   fn.noise = function (...args) {
     if (!GLOBAL_SHADER?.isGenerating) {
-      p5._friendlyError(
-      `It looks like you've called noise() outside of a shader's modify() function.`
-    );
-      return;
+      return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
     
     GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
