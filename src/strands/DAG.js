@@ -1,48 +1,32 @@
-import { NodeTypeRequiredFields, NodeType, NodeTypeToName } from './utils'
+import { NodeTypeRequiredFields, NodeTypeToName } from './utils'
 import * as FES from './strands_FES'
 
-// Properties of the Directed Acyclic Graph and its nodes
-const graphProperties = [
-  'nodeTypes', 
-  'dataTypes', 
-  'opCodes', 
-  'values', 
-  'identifiers',
-  // sparse adjancey list for dependencies (indegree)
-  'dependsOnStart',
-  'dependsOnCount',
-  'dependsOnList',
-  // sparse adjacency list for phi inputs
-  'phiBlocksStart',
-  'phiBlocksCount',
-  'phiBlocksList'
-];
-
-const nodeProperties = [
-  'nodeType', 
-  'dataType', 
-  'opCode', 
-  'value', 
-  'identifier',
-  'dependsOn',
-];
-
+/////////////////////////////////
 // Public functions for for strands runtime
+/////////////////////////////////
+
 export function createDirectedAcyclicGraph() {
-  const graph = {
-    nextID: 0,
+  const graph = { 
+    nextID: 0, 
     cache: new Map(),
-  }
-  for (const prop of graphProperties) {
-    graph[prop] = [];
-  }
+    nodeTypes: [],
+    dataTypes: [],
+    opCodes: [],
+    values: [],
+    identifiers: [],
+    phiBlocks: [],
+    dependsOn: [],
+    usedBy: [],
+    graphType: 'DAG',
+  };
+  
   return graph;
 }
 
 export function getOrCreateNode(graph, node) {
   const key = getNodeKey(node);
   const existing = graph.cache.get(key);
-
+  
   if (existing !== undefined) {
     return existing; 
   } else {
@@ -53,17 +37,51 @@ export function getOrCreateNode(graph, node) {
 }
 
 export function createNodeData(data = {}) {
-  const node = {};
-  for (const key of nodeProperties) {
-    node[key] = data[key] ?? NaN;
-  }
+  const node = {
+    nodeType:   data.nodeType   ?? null,
+    dataType:   data.dataType   ?? null,
+    opCode:     data.opCode     ?? null,
+    value:      data.value      ?? null,
+    identifier: data.identifier ?? null,
+    dependsOn:  Array.isArray(data.dependsOn) ? data.dependsOn : [],
+    usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
+    phiBlocks:  Array.isArray(data.phiBlocks) ? data.phiBlocks : []
+  };
   validateNode(node);
   return node;
+}
+
+export function getNodeDataFromID(graph, id) {
+  return {
+    nodeType:   graph.nodeTypes[id],
+    dataType:   graph.dataTypes[id],
+    opCode:     graph.opCodes[id],
+    value:      graph.values[id],
+    identifier: graph.identifiers[id],
+    dependsOn:  graph.dependsOn[id],
+    usedBy:     graph.usedBy[id],
+    phiBlocks:  graph.phiBlocks[id],
+  }
 }
 
 /////////////////////////////////
 // Private functions
 /////////////////////////////////
+function createNode(graph, node) {
+  const id = graph.nextID++;
+  graph.nodeTypes[id]   = node.nodeType;
+  graph.dataTypes[id]   = node.dataType;
+  graph.opCodes[id]     = node.opCode;
+  graph.values[id]      = node.value;
+  graph.identifiers[id] = node.identifier;
+  graph.dependsOn[id]   = node.dependsOn.slice();
+  graph.usedBy[id]      = node.usedBy;
+  graph.phiBlocks[id]   = node.phiBlocks.slice();
+  for (const dep of node.dependsOn) {
+    graph.usedBy[dep].push(id);
+  }
+  return id;
+}
 
 function getNodeKey(node) {
   const key = JSON.stringify(node);
@@ -81,29 +99,4 @@ function validateNode(node){
   if (missingFields.length > 0) {
     FES.internalError(`[p5.strands internal error]: Missing fields ${missingFields.join(', ')} for a node type ${NodeTypeToName(node.nodeType)}`);
   }
-}
-
-function createNode(graph, node) {
-  const id = graph.nextID++;
-
-  for (const prop of nodeProperties) {
-    if (prop === 'dependsOn' || 'phiBlocks') {
-      continue;
-    }
-
-    const plural = prop + 's';
-    graph[plural][id] = node[prop];
-  }
-
-  const depends = Array.isArray(node.dependsOn) ? node.dependsOn : [];
-  graph.dependsOnStart[id] = graph.dependsOnList.length;
-  graph.dependsOnCount[id] = depends.length;
-  graph.dependsOnList.push(...depends);
-
-  const phis = Array.isArray(node.phiBlocks) ? node.phiBlocks : [];
-  graph.phiBlocksStart[id] = graph.phiBlocksList.length;
-  graph.phiBlocksCount[id] = phis.length;
-  graph.phiBlocksList.push(...phis);
-
-  return id;
 }
