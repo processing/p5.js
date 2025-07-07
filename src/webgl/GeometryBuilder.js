@@ -108,7 +108,7 @@ class GeometryBuilder {
    * Adds geometry from the renderer's immediate mode into the builder's
    * combined geometry.
    */
-  addImmediate(geometry, shapeMode) {
+  addImmediate(geometry, shapeMode, { validateFaces = false } = {}) {
     const faces = [];
 
     if (this.renderer.states.fillColor) {
@@ -129,7 +129,14 @@ class GeometryBuilder {
         }
       } else {
         for (let i = 0; i < geometry.vertices.length; i += 3) {
-          faces.push([i, i + 1, i + 2]);
+          if (
+            !validateFaces ||
+            geometry.vertices[i].copy().sub(geometry.vertices[i+1])
+              .cross(geometry.vertices[i].copy().sub(geometry.vertices[i+2]))
+              .magSq() > 0
+          ) {
+            faces.push([i, i + 1, i + 2]);
+          }
         }
       }
     }
