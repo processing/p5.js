@@ -1,4 +1,4 @@
-import { dfsPostOrder, NodeType, OpCodeToSymbol, BlockType } from "./utils";
+import { dfsPostOrder, NodeType, OpCodeToSymbol, BlockType, OpCodeToOperation, BlockTypeToName } from "./utils";
 import { getNodeDataFromID } from "./DAG";
 import { getBlockDataFromID } from "./CFG";
 
@@ -18,6 +18,10 @@ function nodeToGLSL(dag, nodeID, hookContext) {
 
     case NodeType.OPERATION:
       const [lID, rID] = node.dependsOn;
+      // if (dag.nodeTypes[lID] === NodeType.LITERAL && dag.nodeTypes[lID] === dag.nodeTypes[rID]) {
+      //   const constantFolded = OpCodeToOperation[dag.opCodes[nodeID]](dag.values[lID], dag.values[rID]);
+      //   if (!(constantFolded === undefined)) return constantFolded;
+      // }
       const left  = nodeToGLSL(dag, lID, hookContext);
       const right = nodeToGLSL(dag, rID, hookContext);
       const opSym = OpCodeToSymbol[node.opCode];
@@ -34,9 +38,8 @@ function computeDeclarations(dag, dagOrder) {
     usedCount[nodeID] = (dag.usedBy[nodeID] || []).length;
   }
 
-  const tempName = {};
+  const tempNames = {};
   const declarations = [];
-
   for (const nodeID of dagOrder) {
     if (dag.nodeTypes[nodeID] !== NodeType.OPERATION) {
       continue;
@@ -44,14 +47,14 @@ function computeDeclarations(dag, dagOrder) {
 
     if (usedCount[nodeID] > 1) {
       const tmp = `t${globalTempCounter++}`;
-      tempName[nodeID] = tmp;
+      tempNames[nodeID] = tmp;
 
       const expr = nodeToGLSL(dag, nodeID, {});
       declarations.push(`float ${tmp} = ${expr};`);
     }
   }
   
-  return { declarations, tempName };
+  return { declarations, tempNames };
 }
 
 const cfgHandlers = {
@@ -72,44 +75,48 @@ export function generateGLSL(strandsContext) {
         const dagSorted = dfsPostOrder(dag.dependsOn, rootNodeID);
         const cfgSorted = dfsPostOrder(cfg.outgoingEdges, entryBlockID).reverse();
 
-        console.log("BLOCK ORDER: ", cfgSorted.map(id => getBlockDataFromID(cfg, id)));
+        console.log("BLOCK ORDER: ", cfgSorted.map(id => {
+            const node = getBlockDataFromID(cfg, id);
+            node.blockType = BlockTypeToName[node.blockType];
+            return node;
+          }
+        ));
 
         const hookContext = {
           ...computeDeclarations(dag, dagSorted),
           indent: 0,
-          currentBlock: cfgSorted[0]
         };
 
         let indent = 0;
-        let nested = 1;
         let codeLines = hookContext.declarations.map((decl) => pad() + decl);
         const write = (line) => codeLines.push('  '.repeat(indent) + line);
 
-        cfgSorted.forEach((blockID, i) => {
+        cfgSorted.forEach((blockID) => {
           const type = cfg.blockTypes[blockID];
-          const nextID = cfgSorted[i + 1];
-          const nextType = cfg.blockTypes[nextID];
-
           switch (type) {
-            case BlockType.COND:
+            case BlockType.CONDITION:
               const condID = strandsContext.blockConditions[blockID];
               const condExpr = nodeToGLSL(dag, condID, hookContext);
               write(`if (${condExpr}) {`)
               indent++;
               return;
+            // case BlockType.ELSE_BODY:
+            //   write('else {');
+            //   indent++;
+              // return;
             case BlockType.MERGE:
               indent--;
-              write('MERGE');
               write('}');
               return;
             default:
-              const instructions = new Set(cfg.blockInstructions[blockID] || []);
+              const blockInstructions = new Set(cfg.blockInstructions[blockID] || []);
+              console.log(blockID, blockInstructions);
               for (let nodeID of dagSorted) {
-                if (!instructions.has(nodeID)) {
+                if (!blockInstructions.has(nodeID)) {
                   continue;
                 }
-                const snippet = hookContext.tempName[nodeID]
-                  ? hookContext.tempName[nodeID]
+                const snippet = hookContext.tempNames[nodeID]
+                  ? hookContext.tempNames[nodeID]
                   : nodeToGLSL(dag, nodeID, hookContext);
                 write(snippet);
               }

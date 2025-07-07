@@ -125,29 +125,38 @@ function strands(p5, fn) {
     return new StrandsNode(id);
   }
   
-  fn.strandsIf = function(conditionNode, ifBody) {
-    const { cfg } = strandsContext; 
+  fn.strandsIf = function(conditionNode, ifBody, elseBody) {
+    const { cfg } = strandsContext;
+    const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
     
-    const conditionBlock = CFG.createBasicBlock(cfg, BlockType.COND);
+    const conditionBlock = CFG.createBasicBlock(cfg, BlockType.CONDITION);
     pushBlockWithEdgeFromCurrent(conditionBlock);
     strandsContext.blockConditions[conditionBlock] = conditionNode.id;
     
-    const thenBlock = CFG.createBasicBlock(cfg, BlockType.IF);
-    pushBlockWithEdgeFromCurrent(thenBlock);
+    const ifBodyBlock = CFG.createBasicBlock(cfg, BlockType.IF_BODY);
+    pushBlockWithEdgeFromCurrent(ifBodyBlock);
     ifBody();
-    
-    const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
-    if (strandsContext.currentBlock !== thenBlock) {
-      const nestedBlock = strandsContext.currentBlock;
-      CFG.addEdge(cfg, nestedBlock, mergeBlock);
-      // Pop the previous merge!
+    if (strandsContext.currentBlock !== ifBodyBlock) {
+      CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
       popBlock();
     }
-    // Pop the thenBlock after checking
+    popBlock();
+    
+    const elseBodyBlock = CFG.createBasicBlock(cfg, BlockType.ELSE_BODY);
+    pushBlock(elseBodyBlock);
+    CFG.addEdge(cfg, conditionBlock, elseBodyBlock);
+    if (elseBody) { 
+      elseBody();
+      if (strandsContext.currentBlock !== ifBodyBlock) {
+        CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
+        popBlock();
+      }
+    }
     popBlock();
 
     pushBlock(mergeBlock);
-    CFG.addEdge(cfg, conditionBlock, mergeBlock);
+    CFG.addEdge(cfg, elseBodyBlock, mergeBlock);
+    CFG.addEdge(cfg, ifBodyBlock, mergeBlock);
   }
   
   function createHookArguments(parameters){

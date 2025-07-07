@@ -98,27 +98,50 @@ export const OperatorTable = [
   { arity: "binary", name: "or", symbol: "||", opcode: OpCode.Binary.LOGICAL_OR },
 ];
 
+const BinaryOperations = {
+  "+": (a, b) => a + b,
+  "-": (a, b) => a - b,
+  "*": (a, b) => a * b,
+  "/": (a, b) => a / b,
+  "%": (a, b) => a % b,
+  "==": (a, b) => a == b,
+  "!=": (a, b) => a != b,
+  ">": (a, b) => a > b,
+  ">=": (a, b) => a >= b,
+  "<": (a, b) => a < b,
+  "<=": (a, b) => a <= b,
+  "&&": (a, b) => a && b,
+  "||": (a, b) => a || b,
+};
+
 
 export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
 export const OpCodeArgs = {};
+export const OpCodeToOperation = {};
 
-for (const { arity: args, symbol, opcode } of OperatorTable) {
+for (const { arity, symbol, opcode } of OperatorTable) {
   SymbolToOpCode[symbol] = opcode;
   OpCodeToSymbol[opcode] = symbol;
   OpCodeArgs[opcode] = args;
+  if (arity === "binary" && BinaryOperations[symbol]) {
+    OpCodeToOperation[opcode] = BinaryOperations[symbol];
+  }
 }
 
 export const BlockType = {
   GLOBAL: 0,
-  IF: 1,
-  ELSE_IF: 2,
-  ELSE: 3,
-  FOR: 4,
-  MERGE: 5,
-  COND: 6,
-  FUNCTION: 7
+  FUNCTION: 1,
+  IF_BODY: 2,
+  ELSE_BODY: 3,
+  EL_IF_BODY: 4,
+  CONDITION: 5,
+  FOR: 6,
+  MERGE: 7,
 }
+export const BlockTypeToName = Object.fromEntries(
+  Object.entries(BlockType).map(([key, val]) => [val, key])
+);
 
 ////////////////////////////
 // Graph utils
@@ -132,7 +155,7 @@ export function dfsPostOrder(adjacencyList, start) {
       return;
     }
     visited.add(v);
-    for (let w of adjacencyList[v] || []) {
+    for (let w of adjacencyList[v].sort((a, b) => b-a) || []) {
       dfs(w);
     }
     postOrder.push(v);
