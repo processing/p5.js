@@ -19,7 +19,7 @@ function shadergenerator(p5, fn) {
     if (shaderModifier instanceof Function) {
       let generatorFunction;
       if (options.parser) {
-        const sourceString = shaderModifier.toString()
+        const sourceString = `(${shaderModifier.toString()})`;
         const ast = parse(sourceString, {
           ecmaVersion: 2021,
           locations: options.srcLocations
