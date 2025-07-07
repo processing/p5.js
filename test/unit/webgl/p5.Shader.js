@@ -324,6 +324,11 @@ suite('p5.Shader', function() {
         expect(modified.fragSrc()).not.to.match(/#define AUGMENTED_HOOK_getVertexColor/);
       });
 
+      test('anonymous function shaderModifier does not throw when parsed', function() {
+        const callModify = () => myShader.modify(function() {});
+        expect(callModify).not.toThrowError();
+      });
+
       test('filled hooks do have an AUGMENTED_HOOK define', function() {
         const modified = myShader.modify({
           'vec4 getVertexColor': `(vec4 c) {
