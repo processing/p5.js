@@ -207,6 +207,8 @@ function keyboard(p5, fn){
    * Unlike <a href="#/p5/key">key</a>, the `code` property differentiates between 
    * physical keys that generate the same character—for example, `CtrlLeft` and 
    * `CtrlRight`—so each can be handled independently.
+   * Here's the MDN docs for <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code" target="_blank">KeyboardEvent.code</a>
+
    * 
    * Pressing the key physically labeled “A” always yields `KeyA`, regardless 
    * of the current keyboard layout (QWERTY, Dvorak, AZERTY, etc.) or the character 
@@ -215,20 +217,31 @@ function keyboard(p5, fn){
    * The code property returns a plain string (e.g., 'ArrowRight'). You can 
    * compare it directly with string literals:
    * ```js
-   *  if (code === 'ArrowRight') {
-   *  // …
+   * if (keyIsDown(RIGHT_ARROW)) {
+   *   // …
+   * }
+   * // The line above is equivalent to:
+   * if (code === 'ArrowRight') {
+   *   // …
+   * }
+   * ```
+   * if (key  === 'ArrowRight') { 
+   * // …
    * }
    * ```
    * 
-   * For extra clarity, you can instead use the predefined key-code constants 
-   * provided by p5.js—`BACKSPACE`, `DELETE`, `ENTER`, `RETURN`, `TAB`, `ESCAPE`, `SHIFT`, 
-   * `CONTROL`, `OPTION`, `ALT`, `UP_ARROW`, `DOWN_ARROW`, `LEFT_ARROW`, and `RIGHT_ARROW`. 
+   * The system variables `BACKSPACE`, `DELETE`, `ENTER`, `RETURN`, `TAB`,
+   * `ESCAPE`, `SHIFT`, `CONTROL`, `OPTION`, `ALT`, `UP_ARROW`, `DOWN_ARROW`,
+   * `LEFT_ARROW`, and `RIGHT_ARROW` are all helpful shorthands the key codes of
+   * special keys.
    * These are simply shorthands for the same string values:
    * ```js
    * if (code === RIGHT_ARROW) {
    * // ..
    * }
    * ```
+   * 
+   * 
    * 
    * @property {String} code
    * @readOnly
@@ -258,48 +271,77 @@ function keyboard(p5, fn){
    * }
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   * }
    *
+   * function draw() {
+   *   background(220);
+   *   fill("black");
+   *   if (keyIsDown(BACKSPACE) || keyIsDown(ENTER) ||
+   *       keyIsDown(DELETE) || keyIsDown(RETURN) ||
+   *       keyIsDown(TAB) || keyIsDown(ESCAPE) ||
+   *       keyIsDown(CONTROL) || keyIsDown(OPTION) ||
+   *       keyIsDown(UP_ARROW) || keyIsDown(LEFT_ARROW) ||
+   *       keyIsDown(RIGHT_ARROW) || keyIsDown(DOWN_ARROW) ||
+   *       keyIsDown(SHIFT)) {
+   *     fill("red");
+   *     text("System Variable", 7, 75);
+   *   }
+   *
+   *   text(key, 30, 25);
+   *   text(keyCode, 7, 25);
+   *   text(code || " ", 30, 50);
+   * }
+   * </div>
+   * </code>
    * <div>
    * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
    * let y = 50;
-   *
+   *  
    * function setup() {
    *   createCanvas(100, 100);
-   *
+   *  
    *   background(200);
-   *
+   *  
    *   describe(
    *     'A gray square with a black circle at its center. The circle moves when the user presses an arrow key. It leaves a trail as it moves.'
    *   );
    * }
-   *
+   *  
    * function draw() {
    *   // Update x and y if an arrow key is pressed.
-   *   if (code === LEFT_ARROW) {
-   *     x -= 1;
+   *   if (keyIsPressed){
+   *     if (keyIsDown(LEFT_ARROW)){
+   *       x -= 1;
+   *     }
+   *  
+   *     if (keyIsDown(RIGHT_ARROW)) {
+   *       x += 1;
+   *     }
+   *  
+   *     if (keyIsDown(UP_ARROW)) {
+   *       y -= 1;
+   *     }
+   *  
+   *     if (keyIsDown(DOWN_ARROW)) {
+   *       y += 1;
+   *     }
    *   }
-   *
-   *   if (code === RIGHT_ARROW) {
-   *     x += 1;
-   *   }
-   *
-   *   if (code === UP_ARROW) {
-   *     y -= 1;
-   *   }
-   *
-   *   if (code === DOWN_ARROW) {
-   *     y += 1;
-   *   }
-   *
+   *  
    *   // Style the circle.
    *   fill(0);
-   *
+   *  
    *   // Draw the circle.
    *   circle(x, y, 5);
    * }
+   *
    * </code>
    * </div>
    */
