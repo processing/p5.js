@@ -7,7 +7,7 @@ vec2 random2(vec2 st) {
   return -1.0 + 2.0 * fract(sin(st) * 43758.5453123);
 }
 
-float baseNoise(vec2 st) {
+float noise(vec2 st) {
   vec2 i = floor(st);
   vec2 f = fract(st);
 
