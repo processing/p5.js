@@ -395,9 +395,9 @@ class p5 {
   }
 
   async _runLifecycleHook(hookName) {
-    for(const hook of p5.lifecycleHooks[hookName]){
-      await hook.call(this);
-    }
+    await Promise.all(p5.lifecycleHooks[hookName].map(hook => {
+      return hook.call(this);
+    }));
   }
 
   _initializeInstanceVariables() {
