@@ -20,7 +20,9 @@ function shadergenerator(p5, fn) {
     if (shaderModifier instanceof Function) {
       let generatorFunction;
       if (options.parser) {
-        const sourceString = shaderModifier.toString()
+        // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
+        // https://github.com/acornjs/acorn/issues/1385
+        const sourceString = `(${shaderModifier.toString()})`;
         const ast = parse(sourceString, {
           ecmaVersion: 2021,
           locations: options.srcLocations
