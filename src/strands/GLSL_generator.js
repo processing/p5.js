@@ -1,6 +1,5 @@
 import { dfsPostOrder, NodeType, OpCodeToSymbol, BlockType, OpCodeToOperation, BlockTypeToName } from "./utils";
 import { getNodeDataFromID } from "./DAG";
-import { getBlockDataFromID } from "./CFG";
 
 let globalTempCounter = 0;
 
@@ -75,13 +74,6 @@ export function generateGLSL(strandsContext) {
         const dagSorted = dfsPostOrder(dag.dependsOn, rootNodeID);
         const cfgSorted = dfsPostOrder(cfg.outgoingEdges, entryBlockID).reverse();
 
-        console.log("BLOCK ORDER: ", cfgSorted.map(id => {
-            const node = getBlockDataFromID(cfg, id);
-            node.blockType = BlockTypeToName[node.blockType];
-            return node;
-          }
-        ));
-
         const hookContext = {
           ...computeDeclarations(dag, dagSorted),
           indent: 0,
@@ -110,7 +102,6 @@ export function generateGLSL(strandsContext) {
               return;
             default:
               const blockInstructions = new Set(cfg.blockInstructions[blockID] || []);
-              console.log(blockID, blockInstructions);
               for (let nodeID of dagSorted) {
                 if (!blockInstructions.has(nodeID)) {
                   continue;

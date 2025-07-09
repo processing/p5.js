@@ -56,12 +56,12 @@ function strands(p5, fn) {
         return new StrandsNode(id);
       };
     }
-    if (arity === 'unary') {
-      StrandsNode.prototype[name] = function () {
-        const id = NaN; //createUnaryExpressionNode(this, SymbolToOpCode[symbol]);
-        return new StrandsNode(id);
-      };
-    }
+    // if (arity === 'unary') {
+    //   StrandsNode.prototype[name] = function () {
+    //     const id = createUnaryExpressionNode(this, SymbolToOpCode[symbol]);
+    //     return new StrandsNode(id);
+    //   };
+    // }
   }
   
   function createLiteralNode(dataType, value) {
@@ -124,40 +124,125 @@ function strands(p5, fn) {
     const id = createLiteralNode(DataType.FLOAT, value);
     return new StrandsNode(id);
   }
-  
-  fn.strandsIf = function(conditionNode, ifBody, elseBody) {
-    const { cfg } = strandsContext;
-    const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
-    
-    const conditionBlock = CFG.createBasicBlock(cfg, BlockType.CONDITION);
-    pushBlockWithEdgeFromCurrent(conditionBlock);
-    strandsContext.blockConditions[conditionBlock] = conditionNode.id;
-    
-    const ifBodyBlock = CFG.createBasicBlock(cfg, BlockType.IF_BODY);
-    pushBlockWithEdgeFromCurrent(ifBodyBlock);
-    ifBody();
-    if (strandsContext.currentBlock !== ifBodyBlock) {
-      CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
-      popBlock();
+
+  class StrandsConditional {
+    constructor(condition, branchCallback) {
+      // Condition must be a node...
+      this.branches = [{
+        condition,
+        branchCallback,
+        blockType: BlockType.IF_BODY
+      }];
     }
-    popBlock();
     
-    const elseBodyBlock = CFG.createBasicBlock(cfg, BlockType.ELSE_BODY);
-    pushBlock(elseBodyBlock);
-    CFG.addEdge(cfg, conditionBlock, elseBodyBlock);
-    if (elseBody) { 
-      elseBody();
-      if (strandsContext.currentBlock !== ifBodyBlock) {
+    ElseIf(condition, branchCallback) {
+      this.branches.push({ 
+        condition,
+        branchCallback,
+        blockType: BlockType.EL_IF_BODY 
+      });
+      return this;
+    }
+    
+    Else(branchCallback = () => ({})) {
+      this.branches.push({ 
+        condition: null, 
+        branchCallback, 
+        blockType: BlockType.ELSE_BODY 
+      });
+      return buildConditional(this);
+    }
+  }
+  
+  function buildConditional(conditional) {
+    const { blockConditions, cfg } = strandsContext;
+    const branches  = conditional.branches;
+    const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
+    const allResults = [];
+    // First conditional connects from outer block, everything else
+    // connects to previous condition (when false)
+    let prevCondition = strandsContext.currentBlock
+    
+    for (let i = 0; i < branches.length; i++) {
+      console.log(branches[i]);
+      const { condition, branchCallback, blockType } = branches[i];
+      const isElseBlock = (i === branches.length - 1);
+  
+      if (!isElseBlock) {
+        const conditionBlock = CFG.createBasicBlock(cfg, BlockType.CONDITION);
+        CFG.addEdge(cfg, prevCondition, conditionBlock);
+        pushBlock(conditionBlock);
+        blockConditions[conditionBlock] = condition.id;
+        prevCondition = conditionBlock;
+        popBlock();
+      }
+  
+      const branchBlock = CFG.createBasicBlock(cfg, blockType);
+      CFG.addEdge(cfg, prevCondition, branchBlock);
+      
+      pushBlock(branchBlock);
+      const branchResults = branchCallback();
+      allResults.push(branchResults);
+      if (strandsContext.currentBlock !== branchBlock) {
         CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
         popBlock();
       }
+      CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
+      popBlock();
     }
-    popBlock();
-
     pushBlock(mergeBlock);
-    CFG.addEdge(cfg, elseBodyBlock, mergeBlock);
-    CFG.addEdge(cfg, ifBodyBlock, mergeBlock);
+
+    return allResults;
   }
+
+    
+  fn.strandsIf = function(conditionNode, ifBody) {
+    return new StrandsConditional(conditionNode, ifBody);
+  }
+  // fn.strandsIf = function(conditionNode, ifBody, elseBody) {
+  //   const { cfg } = strandsContext;
+
+  //   console.log('Before if:', strandsContext.blockStack)
+  //   strandsContext.blockStack.forEach(block => {
+  //     CFG.printBlockData(cfg, block)
+  //   })
+
+  //   const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
+    
+  //   const conditionBlock = CFG.createBasicBlock(cfg, BlockType.CONDITION);
+  //   pushBlockWithEdgeFromCurrent(conditionBlock);
+  //   strandsContext.blockConditions[conditionBlock] = conditionNode.id;
+    
+  //   const ifBodyBlock = CFG.createBasicBlock(cfg, BlockType.IF_BODY);
+  //   pushBlockWithEdgeFromCurrent(ifBodyBlock);
+  //   ifBody();
+  //   if (strandsContext.currentBlock !== ifBodyBlock) {
+  //     CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
+  //     popBlock();
+  //   }
+  //   popBlock();
+    
+  //   const elseBodyBlock = CFG.createBasicBlock(cfg, BlockType.ELSE_BODY);
+  //   pushBlock(elseBodyBlock);
+  //   CFG.addEdge(cfg, conditionBlock, elseBodyBlock);
+  //   if (elseBody) { 
+  //     elseBody();
+  //     if (strandsContext.currentBlock !== ifBodyBlock) {
+  //       CFG.addEdge(cfg, strandsContext.currentBlock, mergeBlock);
+  //       popBlock();
+  //     }
+  //   }
+  //   popBlock();
+  //   popBlock();
+
+  //   pushBlock(mergeBlock);
+  //   console.log('After if:', strandsContext.blockStack)
+  //   strandsContext.blockStack.forEach(block => {
+  //     CFG.printBlockData(cfg, block)
+  //   })
+  //   CFG.addEdge(cfg, elseBodyBlock, mergeBlock);
+  //   CFG.addEdge(cfg, ifBodyBlock, mergeBlock);
+  // }
   
   function createHookArguments(parameters){
     const structTypes = ['Vertex', ]
