@@ -1689,7 +1689,18 @@ if (typeof p5 !== 'undefined') {
  * @function combineColors
  * @experimental
  * @description
- * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives color components (baseColor, diffuse, ambientColor, ambient, specularColor, specular, emissive, opacity) and returns a vec4 for the final color.
+ * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives an object with the following properties:
+ *
+ * - `baseColor`: a vector with three components representing the base color (red, green, blue)
+ * - `diffuse`: a single number representing the diffuse reflection
+ * - `ambientColor`: a vector with three components representing the ambient color
+ * - `ambient`: a single number representing the ambient reflection
+ * - `specularColor`: a vector with three components representing the specular color
+ * - `specular`: a single number representing the specular reflection
+ * - `emissive`: a vector with three components representing the emissive color
+ * - `opacity`: a single number representing the opacity
+ *
+ * The callback should return a vector with four components (red, green, blue, alpha) for the final color.
  *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
@@ -1698,7 +1709,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
  * @param {function} callback
- *        A callback function which receives color components (baseColor, diffuse, ambientColor, ambient, specularColor, specular, emissive, opacity) and returns a vec4 for the final color.
+ *        A callback function which receives the object described above and returns a vector with four components for the final color.
  *
  * @example
  * <div modernizr='webgl'>
@@ -1709,20 +1720,19 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseMaterialShader().modify(() => {
  *     combineColors(components => {
  *       // Custom color combination: add a red tint
- *       let r = components.baseColor.r * components.diffuse.r +
- *               components.ambientColor.r * components.ambient.r +
- *               components.specularColor.r * components.specular.r +
- *               components.emissive.r + 0.2;
- *       let g = components.baseColor.g * components.diffuse.g +
- *               components.ambientColor.g * components.ambient.g +
- *               components.specularColor.g * components.specular.g +
- *               components.emissive.g;
- *       let b = components.baseColor.b * components.diffuse.b +
- *               components.ambientColor.b * components.ambient.b +
- *               components.specularColor.b * components.specular.b +
- *               components.emissive.b;
- *       let a = components.opacity;
- *       return vec4(r, g, b, a);
+ *       let r = components.baseColor[0] * components.diffuse +
+ *               components.ambientColor[0] * components.ambient +
+ *               components.specularColor[0] * components.specular +
+ *               components.emissive[0] + 0.2;
+ *       let g = components.baseColor[1] * components.diffuse +
+ *               components.ambientColor[1] * components.ambient +
+ *               components.specularColor[1] * components.specular +
+ *               components.emissive[1];
+ *       let b = components.baseColor[2] * components.diffuse +
+ *               components.ambientColor[2] * components.ambient +
+ *               components.specularColor[2] * components.specular +
+ *               components.emissive[2];
+ *       return [r, g, b, components.opacity];
  *     });
  *   });
  * }
@@ -1742,13 +1752,24 @@ if (typeof p5 !== 'undefined') {
  * @function getPointSize
  * @experimental
  * @description
- * Registers a callback to modify the size of points when rendering with a shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() or similar, when drawing points (e.g., with the point() function in WEBGL mode). The callback receives the current point size (number) and should return the new size (number).
+ * Registers a callback to modify the size of points when rendering with a shader.
+ *
+ * This hook can be used inside the following shader modify functions:
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify()
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>.modify()
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>.modify()
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify()
+ * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify()
+ *
+ * Use this hook when drawing points (for example, with the point() function in WEBGL mode).
+ * The callback receives the current point size (number) and should return the new size (number).
  *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
  *
  * @param {function} callback
  *        A callback function which receives and returns the point size.
