@@ -279,13 +279,96 @@ class Shader {
    * of shader code replacing default behaviour.
    *
    * Each shader may let you override bits of its behavior. Each bit is called
-   * a *hook.* A hook is either for the *vertex* shader, if it affects the
-   * position of vertices, or in the *fragment* shader, if it affects the pixel
-   * color. You can inspect the different hooks available by calling
+   * a *hook.* For example, a hook can let you adjust positions of vertices, or
+   * the color of a pixel. You can inspect the different hooks available by calling
    * <a href="#/p5.Shader/inspectHooks">`yourShader.inspectHooks()`</a>. You can
    * also read the reference for the default material, normal material, color, line, and point shaders to
    * see what hooks they have available.
    *
+   * `modify()` can be passed a function as a parameter. Inside, you can override hooks
+   * by calling them as functions. Each hook will take in a callback that takes in inputs
+   * and is expected to return an output. For example, here is a function that changes the
+   * material color to red:
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [1, 0, 0, 1];
+   *       return inputs;
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader); // Apply the custom shader
+   *   plane(width, height); // Draw a plane with the shader applied
+   * }
+   * ```
+   *
+   * In addition to calling hooks, you can create uniforms, which are special variables
+   * used to pass data from p5.js into the shader. They can be created by calling `uniform` + the
+   * type of the data, such as `uniformFloat` for a number of `uniformVector2` for a two-component vector.
+   * They take in a function that returns the data for the variable. You can then reference these
+   * variables in your hooks, and their values will update every time you apply
+   * the shader with the result of your function.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     // Get the current time from p5.js
+   *     let t = uniformFloat(() => millis());
+   *
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [sin(t * 0.01) / 2 + 0.5, 0, 0, 1];
+   *       return inputs;
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader); // Apply the custom shader
+   *   plane(width, height); // Draw a plane with the shader applied
+   * }
+   * ```
+   *
+   * p5.strands functions are special, since they get turned into a shader instead of being
+   * run like the rest of your code. They only have access to p5.js functions, and variables
+   * you declare inside the `modify` callback. If you need access to local variables, you
+   * can pass them into `modify` with an optional second parameter, `variables`. If you are
+   * using instance mode, you will need to pass your sketch object in this way.
+   *
+   * ```js example
+   * new p5((sketch) => {
+   *   let myShader;
+   *
+   *   sketch.setup = function() {
+   *     sketch.createCanvas(200, 200, sketch.WEBGL);
+   *     myShader = sketch.baseMaterialShader().modify(() => {
+   *       sketch.getPixelInputs((inputs) => {
+   *         inputs.color = [1, 0, 0, 1];
+   *         return inputs;
+   *       });
+   *     }, { sketch });
+   *   }
+   *
+   *   sketch.draw = function() {
+   *     sketch.background(255);
+   *     sketch.shader(myShader); // Apply the custom shader
+   *     sketch.plane(sketch.width, sketch.height); // Draw a plane with the shader applied
+   *   }
+   * });
+   * ```
+   *
+   * You can also write GLSL directly in `modify` if you need direct access. To do so,
    * `modify()` takes one parameter, `hooks`, an object with the hooks you want
    * to override. Each key of the `hooks` object is the name
    * of a hook, and the value is a string with the GLSL code for your hook.
@@ -298,18 +381,7 @@ class Shader {
    * a default value as its value. These will be automatically set when the shader is set
    * with `shader(yourShader)`.
    *
-   * You can also add a `declarations` key, where the value is a GLSL string declaring
-   * custom uniform variables, globals, and functions shared
-   * between hooks. To add declarations just in a vertex or fragment shader, add
-   * `vertexDeclarations` and `fragmentDeclarations` keys.
-   *
-   * @beta
-   * @param {Object} [hooks] The hooks in the shader to replace.
-   * @returns {p5.Shader}
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -334,12 +406,14 @@ class Shader {
    *   fill('red');      // Set fill color to red
    *   sphere(50);       // Draw a sphere with the shader applied
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * You can also add a `declarations` key, where the value is a GLSL string declaring
+   * custom uniform variables, globals, and functions shared
+   * between hooks. To add declarations just in a vertex or fragment shader, add
+   * `vertexDeclarations` and `fragmentDeclarations` keys.
+   *
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -364,8 +438,17 @@ class Shader {
    *   fill('red');
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * @beta
+   * @param {Function} callback A function with p5.strands code to modify the shader.
+   * @param {Object} [variables] An optional object with local variables p5.strands
+   * should have access to.
+   * @returns {p5.Shader}
+   */
+  /**
+   * @param {Object} [hooks] The hooks in the shader to replace.
+   * @returns {p5.Shader}
    */
   modify(hooks) {
     // p5._validateParameters('p5.Shader.modify', arguments);

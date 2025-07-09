@@ -413,4 +413,25 @@ suite('p5.Shader', function() {
       });
     });
   });
+
+  suite('p5.strands', () => {
+    it('does not break when arrays are in uniform callbacks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      const myShader = myp5.baseMaterialShader().modify(() => {
+        const size = myp5.uniformVector2(() => [myp5.width, myp5.height]);
+        myp5.getPixelInputs((inputs) => {
+          inputs.color = [
+            size / 1000,
+            0,
+            1
+          ];
+          return inputs;
+        });
+      }, { myp5 });
+      expect(() => {
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+  });
 });
