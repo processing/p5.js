@@ -1,3 +1,5 @@
+import { BlockTypeToName } from "./utils";
+
 export function createControlFlowGraph() {
   return {
     nextID: 0,
@@ -36,4 +38,10 @@ export function getBlockDataFromID(graph, id) {
     outgoingEdges: graph.outgoingEdges[id],
     blockInstructions: graph.blockInstructions[id],
   }
+}
+
+export function printBlockData(graph, id) {
+  const block = getBlockDataFromID(graph, id);
+  block.blockType = BlockTypeToName[block.blockType];
+  console.log(block);
 }

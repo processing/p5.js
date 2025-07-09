@@ -6,8 +6,14 @@ function callback() {
     let x = createFloat(2.5);
 
     strandsIf(x.greaterThan(createFloat(0.0)), () => {
-      x = createFloat(100);
-    });
+      return {x: createFloat(100)}
+    }).Else();
+    // strandsIf(x.greaterThan(createFloat(0.0)), () => {
+    //   strandsIf(x.greaterThan(createFloat(0.0)), () => {
+    //     return x = createFloat(100);
+    //   });
+    //   return x = createFloat(100);
+    // });
 
     return x;
   });
