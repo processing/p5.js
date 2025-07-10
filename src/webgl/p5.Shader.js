@@ -297,7 +297,7 @@ class Shader {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify(() => {
    *     getPixelInputs((inputs) => {
-   *       inputs.color = [1, 0, 0, 1];
+   *       inputs.color = [inputs.texCoord, 0, 1];
    *       return inputs;
    *     });
    *   });
@@ -305,6 +305,7 @@ class Shader {
    *
    * function draw() {
    *   background(255);
+   *   noStroke();
    *   shader(myShader); // Apply the custom shader
    *   plane(width, height); // Draw a plane with the shader applied
    * }
@@ -327,7 +328,11 @@ class Shader {
    *     let t = uniformFloat(() => millis());
    *
    *     getPixelInputs((inputs) => {
-   *       inputs.color = [sin(t * 0.01) / 2 + 0.5, 0, 0, 1];
+   *       inputs.color = [
+   *         inputs.texCoord,
+   *         sin(t * 0.01) / 2 + 0.5,
+   *         1,
+   *       ];
    *       return inputs;
    *     });
    *   });
@@ -335,6 +340,7 @@ class Shader {
    *
    * function draw() {
    *   background(255);
+   *   noStroke(255);
    *   shader(myShader); // Apply the custom shader
    *   plane(width, height); // Draw a plane with the shader applied
    * }
@@ -354,7 +360,7 @@ class Shader {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
    *     myShader = sketch.baseMaterialShader().modify(() => {
    *       sketch.getPixelInputs((inputs) => {
-   *         inputs.color = [1, 0, 0, 1];
+   *         inputs.color = [inputs.texCoord, 0, 1];
    *         return inputs;
    *       });
    *     }, { sketch });
@@ -362,6 +368,7 @@ class Shader {
    *
    *   sketch.draw = function() {
    *     sketch.background(255);
+   *     sketch.noStroke();
    *     sketch.shader(myShader); // Apply the custom shader
    *     sketch.plane(sketch.width, sketch.height); // Draw a plane with the shader applied
    *   }
