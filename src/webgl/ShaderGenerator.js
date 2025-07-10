@@ -16,8 +16,10 @@ function shadergenerator(p5, fn) {
 
   const oldModify = p5.Shader.prototype.modify
 
-  p5.Shader.prototype.modify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
+  p5.Shader.prototype.modify = function(shaderModifier, scope = {}) {
     if (shaderModifier instanceof Function) {
+      // TODO make this public. Currently for debugging only.
+      const options = { parser: true, srcLocations: false };
       let generatorFunction;
       if (options.parser) {
         // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
@@ -29,13 +31,17 @@ function shadergenerator(p5, fn) {
         });
         ancestor(ast, ASTCallbacks, undefined, { varyings: {} });
         const transpiledSource = escodegen.generate(ast);
-        generatorFunction = new Function(
+        const scopeKeys = Object.keys(scope);
+        const internalGeneratorFunction = new Function(
+          'p5',
+          ...scopeKeys,
           transpiledSource
           .slice(
             transpiledSource.indexOf('{') + 1,
             transpiledSource.lastIndexOf('}')
           ).replaceAll(';', '')
         );
+        generatorFunction = () => internalGeneratorFunction(p5, ...scopeKeys.map(key => scope[key]));
       } else {
         generatorFunction = shaderModifier;
       }
@@ -66,15 +72,24 @@ function shadergenerator(p5, fn) {
     }
   }
 
-  function ancestorIsUniform(ancestor) {
+  function nodeIsUniform(ancestor) {
     return ancestor.type === 'CallExpression'
-      && ancestor.callee?.type === 'Identifier'
-      && ancestor.callee?.name.startsWith('uniform');
+      && (
+        (
+          // Global mode
+          ancestor.callee?.type === 'Identifier' &&
+          ancestor.callee?.name.startsWith('uniform')
+        ) || (
+          // Instance mode
+          ancestor.callee?.type === 'MemberExpression' &&
+          ancestor.callee?.property.name.startsWith('uniform')
+        )
+      );
   }
 
   const ASTCallbacks = {
-    UnaryExpression(node, _state, _ancestors) {
-      if (_ancestors.some(ancestorIsUniform)) { return; }
+    UnaryExpression(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
 
       const signNode = {
         type: 'Literal',
@@ -85,7 +100,7 @@ function shadergenerator(p5, fn) {
           node.type = 'CallExpression'
           node.callee = {
             type: 'Identifier',
-            name: 'unaryNode',
+            name: 'p5.unaryNode',
           }
           node.arguments = [node.argument, signNode]
       }
@@ -108,7 +123,7 @@ function shadergenerator(p5, fn) {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
-              name: 'unaryNode'
+              name: 'p5.unaryNode'
             },
             arguments: [node.argument.object, signNode],
           };
@@ -125,8 +140,9 @@ function shadergenerator(p5, fn) {
       delete node.argument;
       delete node.operator;
     },
-    VariableDeclarator(node, _state, _ancestors) {
-      if (node.init.callee && node.init.callee.name?.startsWith('uniform')) {
+    VariableDeclarator(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
+      if (nodeIsUniform(node.init)) {
         const uniformNameLiteral = {
           type: 'Literal',
           value: node.id.name
@@ -142,7 +158,8 @@ function shadergenerator(p5, fn) {
         _state.varyings[node.id.name] = varyingNameLiteral;
       }
     },
-    Identifier(node, _state, _ancestors) {
+    Identifier(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
       if (_state.varyings[node.name]
           && !_ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)) {
         node.type = 'ExpressionStatement';
@@ -165,16 +182,18 @@ function shadergenerator(p5, fn) {
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
     // operator overloading including +=, *= assignment expressions
-    ArrayExpression(node, _state, _ancestors) {
+    ArrayExpression(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
       const original = JSON.parse(JSON.stringify(node));
       node.type = 'CallExpression';
       node.callee = {
         type: 'Identifier',
-        name: 'dynamicNode',
+        name: 'p5.dynamicNode',
       };
       node.arguments = [original];
     },
-    AssignmentExpression(node, _state, _ancestors) {
+    AssignmentExpression(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
@@ -211,10 +230,10 @@ function shadergenerator(p5, fn) {
           }
         }
       },
-    BinaryExpression(node, _state, _ancestors) {
+    BinaryExpression(node, _state, ancestors) {
       // Don't convert uniform default values to node methods, as
       // they should be evaluated at runtime, not compiled.
-      if (_ancestors.some(ancestorIsUniform)) { return; }
+      if (ancestors.some(nodeIsUniform)) { return; }
       // If the left hand side of an expression is one of these types,
       // we should construct a node from it.
       const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
@@ -223,7 +242,7 @@ function shadergenerator(p5, fn) {
           type: 'CallExpression',
           callee: {
             type: 'Identifier',
-            name: 'dynamicNode',
+            name: 'p5.dynamicNode',
           },
           arguments: [node.left]
         }
@@ -1012,7 +1031,7 @@ function shadergenerator(p5, fn) {
     return length
   }
 
-  fn.dynamicNode = function (input) {
+  p5.dynamicNode = function (input) {
     if (isShaderNode(input)) {
       return input;
     }
@@ -1025,8 +1044,8 @@ function shadergenerator(p5, fn) {
   }
 
   // For replacing unary expressions
-  fn.unaryNode = function(input, sign) {
-    input = dynamicNode(input);
+  p5.unaryNode = function(input, sign) {
+    input = p5.dynamicNode(input);
     return dynamicAddSwizzleTrap(new UnaryExpressionNode(input, sign));
   }
 
@@ -1133,6 +1152,7 @@ function shadergenerator(p5, fn) {
       }
 
       const windowOverrides = {};
+      const fnOverrides = {};
 
       Object.keys(availableHooks).forEach((hookName) => {
         const hookTypes = originalShader.hookTypes(hookName);
@@ -1168,7 +1188,7 @@ function shadergenerator(p5, fn) {
           // If the expected return type is a struct we need to evaluate each of its properties
           if (!isGLSLNativeType(expectedReturnType.typeName)) {
             Object.entries(returnedValue).forEach(([propertyName, propertyNode]) => {
-              propertyNode = dynamicNode(propertyNode);
+              propertyNode = p5.dynamicNode(propertyNode);
               toGLSLResults[propertyName] = propertyNode.toGLSLBase(this.context);
               this.context.updateComponents(propertyNode);
             });
@@ -1218,9 +1238,13 @@ function shadergenerator(p5, fn) {
           this.resetGLSLContext();
         }
         windowOverrides[hookTypes.name] = window[hookTypes.name];
+        fnOverrides[hookTypes.name] = fn[hookTypes.name];
 
         // Expose the Functions to global scope for users to use
         window[hookTypes.name] = function(userOverride) {
+          GLOBAL_SHADER[hookTypes.name](userOverride);
+        };
+        fn[hookTypes.name] = function(userOverride) {
           GLOBAL_SHADER[hookTypes.name](userOverride);
         };
       });
@@ -1229,6 +1253,9 @@ function shadergenerator(p5, fn) {
       this.cleanup = () => {
         for (const key in windowOverrides) {
           window[key] = windowOverrides[key];
+        }
+        for (const key in fnOverrides) {
+          fn[key] = fnOverrides[key];
         }
       };
     }
@@ -1638,14 +1665,14 @@ function shadergenerator(p5, fn) {
     if (!GLOBAL_SHADER?.isGenerating) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
-    
+
     GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
     GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
     return fnNodeConstructor('noise', args, { args: ['vec2'], returnType: 'float' });
   };
 }
-  
-  
+
+
 export default shadergenerator;
 
 if (typeof p5 !== 'undefined') {
