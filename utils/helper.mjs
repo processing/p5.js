@@ -51,10 +51,13 @@ function generateP5TypeDefinitions(organizedData) {
         if (constData.description) {
           output += `  /**\n   * ${constData.description}\n   */\n`;
         }
-        if (constData.kind === 'constant') {
-          output += `  readonly ${constData.name.toUpperCase()}: ${constData.type};\n\n`;
-        } else {
-          output += `  static ${constData.name}: ${constData.type};\n\n`;
+        output += `  readonly ${constData.name}: ${constData.typeName};\n\n`;
+
+        if (constData.name === 'VERSION') { // #todo: hardcoded special case
+          if (constData.description) {
+            output += `  /**\n   * ${constData.description}\n   */\n`;
+          }
+          output += `  static readonly ${constData.name}: ${constData.typeName};\n\n`;
         }
       }
     });
@@ -123,7 +126,7 @@ function generateGlobalTypeDefinitions(organizedData) {
         if (constData.description) {
           output += `  /**\n${formatJSDocComment(constData.description, 2)}\n   */\n`;
        }
-        output += `  const ${constData.name.toUpperCase()}: p5.${constData.name.toUpperCase()};\n\n`;
+        output += `  const ${constData.name}: ${constData.typeName};\n\n`;
       }
     });
 
@@ -142,7 +145,7 @@ function generateGlobalTypeDefinitions(organizedData) {
         if (constData.description) {
           output += `    /**\n     * ${constData.description}\n     */\n`;
         }
-        output += `    readonly ${constData.name.toUpperCase()}: typeof ${constData.name.toUpperCase()};\n`;
+        output += `    readonly ${constData.name}: ${constData.typeName};\n`;
       }
     });
 
@@ -250,14 +253,17 @@ function generateDeclarationFile(items, organizedData) {
           case 'typedef':
             const constData = organizedData.consts[item.name];
             if (constData) {
+              if (constData.kind === 'typedef') {
+                if (constData.description) {
+                  output += `  /**\n   * ${constData.description}\n   */\n`;
+                }
+                output += `  type ${constData.name} = ${constData.type};\n\n`;
+              }
+
               if (constData.description) {
                 output += `  /**\n   * ${constData.description}\n   */\n`;
               }
-              if (constData.kind === 'constant') {
-                output += `  const ${constData.name}: ${constData.type};\n\n`;
-              } else {
-                output += `  type ${constData.name} = ${constData.type};\n\n`;
-              }
+              output += `  const ${constData.name}: ${constData.typeName};\n\n`;
             }
             break;
         }
@@ -355,11 +361,21 @@ function generateDeclarationFile(items, organizedData) {
             }); break;
           case 'constant':
           case 'typedef':
+            let type = generateTypeFromTag(entry);
+            if (type === 'any') {
+              // find fallback type from property
+              const property = entry.properties?.find(x => x.name === entry.name);
+              const type2 = generateTypeFromTag(property);
+              if (type2 !== entry.name) {
+                type = type2;
+              }
+            }
             organized.consts[entry.name] = {
               name: entry.name,
               kind: entry.kind,
               description: extractDescription(entry.description),
-              type: entry.kind === 'constant' ? `P5.${entry.name.toUpperCase()}` : (entry.type ? generateTypeFromTag(entry) : 'any'),
+              type,
+              typeName: entry.kind === 'typedef' ? `p5.${entry.name}` : type,
               module,
               submodule,
               class: forEntry || 'p5'
@@ -460,6 +476,10 @@ export function generateTypeFromTag(param) {
     if (!type) return 'any';
 
     if (type === '[object Object]') return 'any';
+
+    const constData = organized.consts[type];
+    if (constData)
+      return constData.typeName;
 
     const primitiveTypes = {
       'String': 'string',
