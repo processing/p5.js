@@ -1318,7 +1318,7 @@ function media(p5, fn){
     return c;
   }
 
-  /** VIDEO STUFF **/
+  /*** VIDEO STUFF ***/
 
   // Helps perform similar tasks for media element methods.
   function createMedia(pInst, type, src, callback) {
@@ -1460,7 +1460,7 @@ function media(p5, fn){
     return createMedia(this, 'video', src, callback);
   };
 
-  /** AUDIO STUFF **/
+  /*** AUDIO STUFF ***/
 
   /**
    * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
@@ -1507,7 +1507,7 @@ function media(p5, fn){
     return createMedia(this, 'audio', src, callback);
   };
 
-  /** CAMERA STUFF **/
+  /*** CAMERA STUFF ***/
 
   fn.VIDEO = 'video';
 

@@ -740,7 +740,7 @@ export const POINTS = 0x0000;
  */
 export const LINES = 0x0001;
 /**
- * @property {0x0003} LINE_STRIP
+ * @typedef {0x0003} LINE_STRIP
  * @property {LINE_STRIP} LINE_STRIP
  * @final
  */

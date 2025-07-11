@@ -475,7 +475,7 @@
     "applyMatrix": {
       "overloads": [
         [
-          "Array"
+          "Number[]"
         ],
         [
           "Number",
@@ -1300,9 +1300,6 @@
           "Number",
           "Number",
           "Number"
-        ],
-        [
-          "p5.Vector"
         ]
       ]
     },
@@ -2602,7 +2599,7 @@
     "imageLight": {
       "overloads": [
         [
-          "p5.image"
+          "p5.Image"
         ]
       ]
     },
@@ -3052,7 +3049,6 @@
     },
     "createAudio": {
       "overloads": [
-        [],
         [
           "String|String[]?",
           "Function?"
@@ -4129,6 +4125,9 @@
     "mult": {
       "overloads": [
         [
+          "Number"
+        ],
+        [
           "Number",
           "Number",
           "Number?"
@@ -4225,6 +4224,18 @@
       ]
     },
     "cross": {
+      "overloads": [
+        [
+          "p5.Vector"
+        ],
+        [],
+        [
+          "p5.Vector",
+          "p5.Vector"
+        ]
+      ]
+    },
+    "dist": {
       "overloads": [
         [
           "p5.Vector"
@@ -4385,6 +4396,11 @@
         ]
       ]
     },
+    "clampToZero": {
+      "overloads": [
+        []
+      ]
+    },
     "fromAngle": {
       "overloads": [
         [
@@ -4410,15 +4426,6 @@
     "random3D": {
       "overloads": [
         []
-      ]
-    },
-    "dist": {
-      "overloads": [
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
-        ]
       ]
     }
   },
