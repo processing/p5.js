@@ -1644,9 +1644,8 @@ if (typeof p5 !== 'undefined') {
 /* ------------------------------------------------------------- */
 /**
  * @function getWorldInputs
- * @experimental
  * @description
- * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
@@ -1687,7 +1686,6 @@ if (typeof p5 !== 'undefined') {
 
 /**
  * @function combineColors
- * @experimental
  * @description
  * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives an object with the following properties:
  *
@@ -1704,9 +1702,6 @@ if (typeof p5 !== 'undefined') {
  *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
  * @param {function} callback
  *        A callback function which receives the object described above and returns a vector with four components for the final color.
@@ -1743,6 +1738,338 @@ if (typeof p5 !== 'undefined') {
  *   noStroke();
  *   fill('red');
  *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function beforeVertex
+ * @description
+ * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which is called before each vertex is processed.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     beforeVertex(() => {
+ *       // Set up a variable for later use
+ *       let wave = sin(millis() * 0.001);
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getObjectInputs
+ * @description
+ * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
+ * - `position`: `[x, y, z]` — the original position of the vertex
+ * - `normal`: `[x, y, z]` — the direction the surface is facing
+ * - `texCoord`: `[u, v]` — the texture coordinates
+ * - `color`: `[r, g, b, a]` — the color of the vertex
+ *
+ * Return the modified object to update the vertex.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the vertex object and should return it after making any changes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getObjectInputs(inputs => {
+ *       // Raise all vertices by 10 units
+ *       inputs.position[1] += 10;
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getCameraInputs
+ * @description
+ * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
+ * - `position`: `[x, y, z]` — the position after camera transformation
+ * - `normal`: `[x, y, z]` — the normal after camera transformation
+ * - `texCoord`: `[u, v]` — the texture coordinates
+ * - `color`: `[r, g, b, a]` — the color of the vertex
+ *
+ * Return the modified object to update the vertex.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the vertex object and should return it after making any changes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getCameraInputs(inputs => {
+ *       // Tint all vertices blue
+ *       inputs.color[2] = 1.0;
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function afterVertex
+ * @description
+ * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which is called after each vertex is processed.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     afterVertex(() => {
+ *       // Example: store the y position for use in the fragment shader
+ *       myVarying = position.y;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function beforeFragment
+ * @description
+ * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which is called before each fragment is processed.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     beforeFragment(() => {
+ *       // Set up a variable for later use
+ *       let brightness = 0.5;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getPixelInputs
+ * @description
+ * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to change opacity or other per-pixel properties. The callback receives an object with the following properties:
+ * - `opacity`: a number between 0 and 1 for the pixel's transparency
+ * (Other properties may be available depending on the shader.)
+ *
+ * Return the modified object to update the fragment.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the fragment inputs object and should return it after making any changes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseMaterialShader().modify(() => {
+ *     getPixelInputs(inputs => {
+ *       // Make the fragment half as opaque
+ *       inputs.opacity *= 0.5;
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function shouldDiscard
+ * @description
+ * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader modify calls to create effects like round points or custom masking. The callback receives a boolean:
+ * - `willDiscard`: true if the fragment would be discarded by default
+ *
+ * Return true to discard the fragment, or false to keep it.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives a boolean and should return a boolean.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify(() => {
+ *     shouldDiscard(willDiscard => {
+ *       // Never discard any fragments
+ *       return false;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getFinalColor
+ * @description
+ * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a color array:
+ * - `[r, g, b, a]`: the current color (red, green, blue, alpha)
+ *
+ * Return a new color array to change the output color.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the color array and should return a color array.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getFinalColor(color => {
+ *       // Make the output color fully opaque
+ *       color[3] = 1.0;
+ *       return color;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function afterFragment
+ * @description
+ * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which is called after each fragment is processed.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     afterFragment(() => {
+ *       // Example: darken the final color of each pixel
+ *       finalColor.rgb *= 0.8;
+ *     });
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getColor
+ * @description
+ * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader modify calls to control the output color for each pixel. The callback receives the following arguments:
+ * - `inputs`: an object with properties like `texCoord`, `canvasSize`, `texelSize`, etc.
+ * - `canvasContent`: a sampler2D texture with the sketch's contents before the filter is applied
+ *
+ * Return a color array `[r, g, b, a]` for the pixel.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the inputs object and canvasContent, and should return a color array.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseFilterShader().modify(() => {
+ *     getColor((inputs, canvasContent) => {
+ *       // Return the original color
+ *       return getTexture(canvasContent, inputs.texCoord);
+ *     });
+ *   });
  * }
  * </code>
  * </div>
