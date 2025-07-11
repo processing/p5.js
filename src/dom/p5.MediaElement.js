@@ -5,6 +5,19 @@
 
 import { Element } from './p5.Element';
 
+/**
+ * @typedef {'video'} VIDEO
+ * @property {VIDEO} VIDEO
+ * @final
+ */
+export const VIDEO = 'video';
+/**
+ * @typedef {'audio'} AUDIO
+ * @property {AUDIO} AUDIO
+ * @final
+ */
+export const AUDIO = 'audio';
+
 class MediaElement extends Element {
   constructor(elt, pInst) {
     super(elt, pInst);
@@ -1457,7 +1470,7 @@ function media(p5, fn){
    */
   fn.createVideo = function (src, callback) {
     // p5._validateParameters('createVideo', arguments);
-    return createMedia(this, 'video', src, callback);
+    return createMedia(this, VIDEO, src, callback);
   };
 
   /*** AUDIO STUFF ***/
@@ -1504,14 +1517,14 @@ function media(p5, fn){
    */
   fn.createAudio = function (src, callback) {
     // p5._validateParameters('createAudio', arguments);
-    return createMedia(this, 'audio', src, callback);
+    return createMedia(this, AUDIO, src, callback);
   };
 
   /*** CAMERA STUFF ***/
 
-  fn.VIDEO = 'video';
+  fn.VIDEO = VIDEO;
 
-  fn.AUDIO = 'audio';
+  fn.AUDIO = AUDIO;
 
   // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   // Older browsers might not implement mediaDevices at all, so we set an empty object first
@@ -1693,7 +1706,7 @@ function media(p5, fn){
 
     const videoConstraints = { video: useVideo, audio: useAudio };
     constraints = Object.assign({}, videoConstraints, constraints);
-    const domElement = document.createElement('video');
+    const domElement = document.createElement(VIDEO);
     // required to work in iOS 11 & up:
     domElement.setAttribute('playsinline', '');
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
