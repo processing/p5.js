@@ -130,6 +130,8 @@ function generateGlobalTypeDefinitions(organizedData) {
     output += `  interface Window {\n`;
 
     instanceItems.forEach(item => {
+      if (item !== instanceItems.find(x => x.name === item.name))
+        return;
       if (item.kind === 'function') {
         output += `    ${item.name}: typeof ${item.name};\n`;
       }
@@ -238,10 +240,11 @@ function generateDeclarationFile(items, organizedData) {
     }
 
     items.forEach(item => {
-      if (item.kind !== 'class' && (!item.memberof || item.memberof !== classDoc?.name)) {
+      if (item.kind !== 'class' && (!item.memberof || normalizeClassName(item.memberof) !== normalizeClassName(classDoc?.name))) {
         switch (item.kind) {
           case 'function':
-            output += generateFunctionDeclaration(item);
+            if (!item.name.startsWith("_"))
+              output += generateFunctionDeclaration(item);
             break;
           case 'constant':
           case 'typedef':
@@ -266,6 +269,38 @@ function generateDeclarationFile(items, organizedData) {
     return output;
   }
 
+  // #todo: repeated in convert.mjs
+  function getParams(entry) {
+    // Documentation.js seems to try to grab params from the function itself in
+    // the code if we don't document all the parameters. This messes with our
+    // manually-documented overloads. Instead of using the provided entry.params
+    // array, we'll instead only rely on manually included @param tags.
+    //
+    // However, the tags don't include a tree-structured description field, and
+    // instead convert it to a string. We want a slightly different conversion to
+    // string, so we match these params to the Documentation.js-provided `params`
+    // array and grab the description from those.
+    return (entry.tags || [])
+    
+      // Filter out the nested parameters (eg. options.extrude),
+      // to be treated as part of parent parameters (eg. options)
+      // and not separate entries
+      .filter(t => t.title === 'param' && !t.name.includes('.')) 
+      .map(node => {
+        const param = (entry.params || []).find(param => param.name === node.name);
+        return {
+          name: normalizeIdentifier(node.name),
+          description: extractDescription(param?.description || {
+            type: 'text', // 'html',
+            value: node.description
+          }),
+          type: node.type, // generateTypeFromTag(node),
+          optional: node.type?.type === 'OptionalType',
+          rest: node.type?.type === 'RestType',
+        };
+      });
+  }
+
   export function organizeData(data) {
     const allData = getAllEntries(data);
 
@@ -283,36 +318,32 @@ function generateDeclarationFile(items, organizedData) {
           organized.classes[className] = {
             name: entry.name,
             description: extractDescription(entry.description),
-            params: (entry.params || []).map(param => ({
-              name: param.name,
-              type: generateTypeFromTag(param),
-              optional: param.type?.type === 'OptionalType',
-              rest: param.type?.type === 'RestType'
-            })),
+            params: getParams(entry),
             module,
             submodule,
             extends: entry.tags?.find(tag => tag.title === 'extends')?.name || null
           }; break;
           case 'function':
-          case 'property':
-            const overloads = entry.overloads?.map(overload => ({
+          case 'property': // #todo: unreachable
+          case 'member':
+            const overloads = entry.overloads?.map(overload => ({ // #todo: unreachable
               params: overload.params,
               returns: overload.returns,
               description: extractDescription(overload.description)
             }));
 
             organized.classitems.push({
-              name: entry.name,
+              // #todo: assumes all members are accessors
+              memberName: entry.name,
+              name: entry.kind === 'member'
+                ? entry.returns?.length > 0 ? `get ${entry.name}` : `set ${entry.name}`
+                : entry.name,
               kind: entry.kind,
+              // #todo: method (and sometimes param) descriptions only present on first overload
               description: extractDescription(entry.description),
-              params: (entry.params || []).map(param => ({
-                name: param.name,
-                type: generateTypeFromTag(param),
-                optional: param.type?.type === 'OptionalType',
-                rest: param.type?.type === 'RestType'
-              })),
-              returnType: entry.tags?.find(tag => tag.title === "chainable")
-                ? "this"
+              params: getParams(entry),
+              returnType: entry.tags?.find(tag => tag.title === 'chainable')
+                ? 'this'
                 : entry.returns?.[0]
                   ? generateTypeFromTag(entry.returns[0])
                   : 'void',
@@ -366,7 +397,7 @@ export function generateTypeFromTag(param) {
       case 'NameExpression':
         return normalizeTypeName(param.type.name);
       case 'TypeApplication': {
-        const baseType = normalizeTypeName(param.type.expression.name);
+        const baseType = normalizeTypeName(param.type.expression.name, { inApplication: true });
 
         if (baseType === 'Array') {
           const innerType = param.type.applications[0];
@@ -390,9 +421,13 @@ export function generateTypeFromTag(param) {
         return 'any';
       case 'RecordType':
         return 'object';
+      case 'NumericLiteralType':
+        return `${param.type.value}`;
       case 'StringLiteralType':
         return `'${param.type.value}'`;
-      case 'UndefinedLiteralType':
+      case 'NullLiteral':
+        return 'null';
+      case 'UndefinedLiteral':
         return 'undefined';
       case 'ArrayType': {
         const innerTypeStrs = param.type.elements.map(e => generateTypeFromTag({ type: e }));
@@ -400,12 +435,28 @@ export function generateTypeFromTag(param) {
       }
       case 'RestType':
         return `${generateTypeFromTag({ type: param.type.expression })}[]`;
+      case 'FunctionType':
+        const params = (param.type.params || [])
+          .map((param2, i) => generateParamDeclaration({ name: `arg${i}`, type: param2 }))
+          .join(', ');
+
+        const returnType = param.type.result
+          ? generateTypeFromTag({ type: param.type.result })
+          : 'void';
+        return `(${params}) => ${returnType}`;
       default:
         return 'any';
     }
   }
 
-  export function normalizeTypeName(type) {
+  export function normalizeIdentifier(name) {
+    return (
+      '0123456789'.includes(name[0]) ||
+      name === 'class'
+    ) ? '$' + name : name;
+  }
+
+  export function normalizeTypeName(type, { inApplication = false } = {}) {
     if (!type) return 'any';
 
     if (type === '[object Object]') return 'any';
@@ -417,7 +468,9 @@ export function generateTypeFromTag(param) {
       'Boolean': 'boolean',
       'Void': 'void',
       'Object': 'object',
-      'Array': 'Array',
+      'Any': 'any',
+      'Array': !inApplication && 'any[]',
+      'Promise': !inApplication && 'Promise<any>',
       'Function': 'Function'
     };
 
@@ -426,6 +479,8 @@ export function generateTypeFromTag(param) {
 
   export function generateParamDeclaration(param) {
     if (!param) return 'any';
+
+    const name = normalizeIdentifier(param.name);
 
     let type = param.type;
     let prefix = '';
@@ -442,32 +497,35 @@ export function generateTypeFromTag(param) {
       prefix = '...';
     }
 
-    return `${prefix}${param.name}${isOptional ? '?' : ''}: ${type}`;
+    return `${prefix}${name}${isOptional ? '?' : ''}: ${type}`;
   }
 
   export function generateFunctionDeclaration(funcDoc) {
 
     let output = '';
 
-    if (funcDoc.description || funcDoc.tags?.length > 0) {
-      output += '/**\n';
+    let comment = '';
+    if (funcDoc.description) {
       const description = extractDescription(funcDoc.description);
       if (description) {
-        output += formatJSDocComment(description) + '\n';
+        comment += (comment === "") ? '/**\n' : ' *\n';
+        comment += formatJSDocComment(description) + '\n';
       }
-      if (funcDoc.tags) {
-        if (description) {
-          output += ' *\n';
-        }
-        funcDoc.tags.forEach(tag => {
-          if (tag.description) {
-            const tagDesc = extractDescription(tag.description);
-            output += formatJSDocComment(`@${tag.title} ${tagDesc}`, 0) + '\n';
-          }
-        });
-      }
-      output += ' */\n';
     }
+    if (funcDoc.tags) {
+      comment += (comment === "") ? '/**\n' : ' *\n';
+      funcDoc.tags.forEach(tag => {
+        if (tag.description) {
+          const tagDesc = extractDescription(tag.description);
+          comment += formatJSDocComment(`@${tag.title} ${tag.name ? tag.name + ' ' : ''}${tagDesc}`, 0) + '\n';
+        }
+      });
+    }
+    if (comment !== "")
+      comment += ' */\n';
+    output += comment;
+
+    const name = normalizeIdentifier(funcDoc.name);
 
     const params = (funcDoc.params || [])
       .map(param => generateParamDeclaration(param))
@@ -477,33 +535,40 @@ export function generateTypeFromTag(param) {
       ? generateTypeFromTag(funcDoc.returns[0])
       : 'void';
 
-    output += `function ${funcDoc.name}(${params}): ${returnType};\n\n`;
+    output += `function ${name}(${params}): ${returnType};\n\n`;
     return output;
   }
 
   export function generateMethodDeclarations(item, isStatic = false, isGlobal = false) {
     let output = '';
 
+    let comment = '';
     if (item.description) {
-      output += '  /**\n';
       const itemDesc = extractDescription(item.description);
-      output += formatJSDocComment(itemDesc, 2) + '\n';
-      if (item.params?.length > 0) {
-        output += ' *\n';
-        item.params.forEach(param => {
-          const paramDesc = extractDescription(param.description);
-          output += formatJSDocComment(`@param ${paramDesc}`, 2) + '\n';
-        });
+      if (itemDesc) {
+        comment += (comment === "") ? '  /**\n' : '   *\n';
+        comment += formatJSDocComment(itemDesc, 2) + '\n';
       }
-      if (item.returns) {
-        output += ' *\n';
-        const returnDesc = extractDescription(item.returns[0]?.description);
-        output += formatJSDocComment(`@return ${returnDesc}`, 2) + '\n';
-      }
-      output += '   */\n';
     }
+    if (item.params?.length > 0) {
+      comment += (comment === "") ? '  /**\n' : '   *\n';
+      item.params.forEach(param => {
+        const paramDesc = extractDescription(param.description);
+        comment += formatJSDocComment(`@param ${param.name} ${paramDesc}`, 2) + '\n';
+      });
+    }
+    if (item.returns) {
+      const returnDesc = extractDescription(item.returns[0]?.description);
+      if (returnDesc) {
+        comment += (comment === "") ? '  /**\n' : '   *\n';
+        comment += formatJSDocComment(`@return ${returnDesc}`, 2) + '\n';
+      }
+    }
+    if (comment !== "")
+      comment += '   */\n';
+    output += comment;
 
-    if (item.kind === 'function') {
+    if (item.kind === 'function' || item.kind === 'member') {
       const staticPrefix = isStatic ? 'static ' : '';
 
       if (item.overloads?.length > 0) {
@@ -521,7 +586,11 @@ export function generateTypeFromTag(param) {
       const params = (item.params || [])
         .map(param => generateParamDeclaration(param))
         .join(', ');
-      output += `  ${staticPrefix}${item.name}(${params}): ${item.returnType};\n\n`;
+      if (item.kind === 'member' && item.name.startsWith('set ')) {
+        output += `  ${staticPrefix}${item.name}(${params});\n\n`; // return type annotation illegal
+      } else {
+        output += `  ${staticPrefix}${item.name}(${params}): ${item.returnType};\n\n`;
+      }
     } else {
       const staticPrefix = isStatic ? 'static ' : '';
       output += `  ${staticPrefix}${item.name}: ${item.returnType};\n\n`;

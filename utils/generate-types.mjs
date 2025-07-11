@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
-  generateTypeDefinitions
+  generateTypeDefinitions,
+  normalizeIdentifier
 } from "./helper.mjs";
 
 // Fix for __dirname equivalent in ES modules
@@ -53,7 +54,7 @@ export function generateAllDeclarationFiles() {
       `${parsedPath.name}.d.ts`
     );
 
-    const exportName = parsedPath.name.replace('.', '_');
+    const exportName = normalizeIdentifier(parsedPath.name.replace('.', '_'));
     const contentWithExport = content + `export default function ${exportName}(p5: any, fn: any): void;\n`;
 
     fs.mkdirSync(path.dirname(dtsPath), { recursive: true });
@@ -68,6 +69,8 @@ export function generateAllDeclarationFiles() {
   // Add references to all other .d.ts files
   const dtsFiles = findDtsFiles(path.join(__dirname, '..'));
   for (const file of dtsFiles) {
+    if (file === 'p5.d.ts')
+      continue;
     p5Types += `/// <reference path="./${file}" />\n`;
   }
   p5Types += '\n';
