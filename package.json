@@ -1,14 +1,18 @@
 {
   "name": "p5",
-  "repository": "processing/p5.js",
+  "repository": "processing/p5.js", 
   "scripts": {
     "build": "grunt build",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
-    "test": "grunt",
+    "test":  "grunt eslint && node test/integration.test.js",
+    "test:unit": "grunt",
+    "test:integration": "jest --testPathPatterns test/integration.test.js",
+    "test:all": "npm run build && npm run test:unit && npm run test:integration",
     "lint": "grunt lint",
-    "lint:fix": "grunt lint-fix"
+    "lint:fix": "grunt lint-fix",
+    "build:esm": "rollup -c build/rollup.config.mjs"
   },
   "lint-staged": {
     "ignore": [
@@ -29,6 +33,10 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
     "@babel/register": "^7.7.7",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/jest": "^30.0.0",
     "all-contributors-cli": "^6.19.0",
     "babel-plugin-i18next-extract": "^0.5.0",
     "babel-plugin-istanbul": "^5.2.0",
@@ -60,6 +68,7 @@
     "husky": "^4.2.3",
     "i18next": "^19.0.2",
     "i18next-browser-languagedetector": "^4.0.1",
+    "jest": "^30.0.4",
     "libtess": "^1.2.2",
     "lint-staged": "^4.3.0",
     "marked": "^4.0.10",
@@ -72,6 +81,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
+    "rollup": "^4.44.2",
     "simple-git": "^3.16.1",
     "whatwg-fetch": "^2.0.4"
   },

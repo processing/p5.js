@@ -1,0 +1,18 @@
+{
+  "name": "p5-vue-test",
+  "private": true,
+  "scripts": {
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "p5": "^1.11.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/p5": "^1.7.6",
+    "@vue/compiler-sfc": "^3.4.0",
+    "@vue/tsconfig": "^0.4.0",
+    "typescript": "5.2.2",
+    "vue-tsc": "1.8.13"
+  }
+}

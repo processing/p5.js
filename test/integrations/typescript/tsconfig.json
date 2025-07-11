@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,        
+    "types": ["p5/global"],         // p5’s global‑mode helpers
+    "lib": ["dom", "es2020"],
+    "skipLibCheck": true           
+  },
+  "include": ["index.ts"]
+}

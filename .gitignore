@@ -20,3 +20,6 @@ lib/p5-test.js
 release/
 parameterData.json
 yarn.lock
+test/integrations/typescript/node_modules/
+test/integrations/react/node_modules/
+test/integrations/vuejs/node_modules/

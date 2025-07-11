@@ -1,0 +1,12 @@
+{
+  "name": "p5-ts-integration",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/p5": "^1.7.6",
+    "p5": "file:../../../dist/app.js",
+    "typescript": "^5.0.0"
+  }
+}
