@@ -41,7 +41,8 @@ module.exports = grunt => {
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
-        format: 'unix'
+        format: 'unix',
+        quiet: true
       },
       build: {
         src: [
@@ -60,9 +61,12 @@ module.exports = grunt => {
       fix: {
         // src: is calculated below...
         options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
+          overrideConfig: {
+            ignorePatterns: ['node_modules/**/*'],
+            rules: {
+              'no-undef': 0,
+              'no-unused-vars': 0
+            }
           },
           fix: true
         }

@@ -1,1 +1,4 @@
+node_modules/
+test/integrations/**/node_modules/
+dist/**
 src/core/reference.js
