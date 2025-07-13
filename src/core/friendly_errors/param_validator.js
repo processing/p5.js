@@ -562,15 +562,17 @@ function validateParams(p5, fn, lifecycles) {
   lifecycles.presetup = function(){
     loadP5Constructors();
 
-    const excludes = ['validate'];
-    for(const f in this){
-      if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
-        const copy = this[f];
+    if(p5.disableParameterValidator !== true){
+      const excludes = ['validate'];
+      for(const f in this){
+        if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
+          const copy = this[f];
 
-        this[f] = function(...args) {
-          this.validate(f, args);
-          return copy.call(this, ...args);
-        };
+          this[f] = function(...args) {
+            this.validate(f, args);
+            return copy.call(this, ...args);
+          };
+        }
       }
     }
   };
