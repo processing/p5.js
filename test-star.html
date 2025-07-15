@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>p5.js Star测试</title>
+  <script src="lib/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    function setup() {
+      createCanvas(600, 400);
+      background(220);
+      
+      // 绘制一个基本的五角星在左侧
+      fill(255, 255, 0);
+      stroke(0);
+      strokeWeight(2);
+      star(150, 200, 60, 30, 5);
+      
+      // 绘制一个八角星在中间
+      fill(0, 255, 255);
+      stroke(0);
+      strokeWeight(2);
+      star(300, 200, 60, 40, 8);
+      
+      // 绘制一个多角星在右侧
+      fill(255, 0, 255);
+      stroke(0);
+      strokeWeight(2);
+      star(450, 200, 60, 50, 12);
+    }
+    
+    function draw() {
+      // 静态绘制，不需要反复执行
+    }
+  </script>
+</body>
+</html> 
