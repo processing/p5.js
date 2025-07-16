@@ -2,7 +2,7 @@ import { NodeTypeRequiredFields, NodeTypeToName } from './utils'
 import * as FES from './strands_FES'
 
 /////////////////////////////////
-// Public functions for for strands runtime
+// Public functions for strands runtime
 /////////////////////////////////
 
 export function createDirectedAcyclicGraph() {
@@ -11,6 +11,8 @@ export function createDirectedAcyclicGraph() {
     cache: new Map(),
     nodeTypes: [],
     dataTypes: [],
+    baseTypes: [],
+    dimensions: [],
     opCodes: [],
     values: [],
     identifiers: [],
@@ -40,12 +42,14 @@ export function createNodeData(data = {}) {
   const node = {
     nodeType:   data.nodeType   ?? null,
     dataType:   data.dataType   ?? null,
+    baseType:   data.baseType   ?? null,
+    dimension:  data.baseType   ?? null,
     opCode:     data.opCode     ?? null,
     value:      data.value      ?? null,
     identifier: data.identifier ?? null,
     dependsOn:  Array.isArray(data.dependsOn) ? data.dependsOn : [],
     usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
-    phiBlocks:  Array.isArray(data.phiBlocks) ? data.phiBlocks : []
+    phiBlocks:  Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
   };
   validateNode(node);
   return node;
@@ -61,6 +65,8 @@ export function getNodeDataFromID(graph, id) {
     dependsOn:  graph.dependsOn[id],
     usedBy:     graph.usedBy[id],
     phiBlocks:  graph.phiBlocks[id],
+    dimension:  graph.dimensions[id],  
+    baseType:   graph.baseTypes[id],
   }
 }
 
@@ -77,7 +83,15 @@ function createNode(graph, node) {
   graph.dependsOn[id]   = node.dependsOn.slice();
   graph.usedBy[id]      = node.usedBy;
   graph.phiBlocks[id]   = node.phiBlocks.slice();
+
+  graph.baseTypes[id]   = node.baseType
+  graph.dimensions[id]  = node.dimension;
+
+
   for (const dep of node.dependsOn) {
+    if (!Array.isArray(graph.usedBy[dep])) {
+      graph.usedBy[dep] = [];
+    }
     graph.usedBy[dep].push(id);
   }
   return id;
@@ -89,14 +103,18 @@ function getNodeKey(node) {
 }
 
 function validateNode(node){
-  const requiredFields = NodeTypeRequiredFields[node.nodeType];
+  const nodeType = node.nodeType;
+  const requiredFields = [...NodeTypeRequiredFields[nodeType], 'baseType', 'dimension'];
+  if (requiredFields.length === 2) { 
+    FES.internalError(`Required fields for node type '${NodeTypeToName[nodeType]}' not defined. Please add them to the utils.js file in p5.strands!`)
+  }
   const missingFields = [];
   for (const field of requiredFields) {
-    if (node[field] === NaN) {
+    if (node[field] === null) {
       missingFields.push(field);
     }
   }
   if (missingFields.length > 0) {
-    FES.internalError(`[p5.strands internal error]: Missing fields ${missingFields.join(', ')} for a node type ${NodeTypeToName(node.nodeType)}`);
+    FES.internalError(`Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`);
   }
 }
