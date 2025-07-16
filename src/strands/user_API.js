@@ -5,7 +5,7 @@ import {
   createStatementNode,
   createTypeConstructorNode,
 } from './builder'
-import { DataType, OperatorTable, SymbolToOpCode, BlockType, arrayToFloatType } from './utils'
+import { OperatorTable, SymbolToOpCode, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './utils'
 import { strandsShaderFunctions } from './shader_functions'
 import { StrandsConditional } from './strands_conditionals'
 import * as CFG from './control_flow_graph'
@@ -25,7 +25,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // this means methods like .add, .sub, etc can be chained
   for (const { name, symbol, arity } of OperatorTable) {
     if (arity === 'binary') {
-      StrandsNode.prototype[name] = function (right) {
+      StrandsNode.prototype[name] = function (...right) {
         const id = createBinaryOpNode(strandsContext, this, right, SymbolToOpCode[symbol]);
         return new StrandsNode(id);
       };
@@ -58,7 +58,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (args.length > 4) {
       FES.userError('type error', "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const id = createTypeConstructorNode(strandsContext, DataType.DEFER, args);
+    const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, args);
     return new StrandsNode(id); 
   }
   
@@ -91,37 +91,40 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
   
   // Next is type constructors and uniform functions
-  for (const typeName in DataType) {
-    const lowerTypeName = typeName.toLowerCase();
+  for (const type in TypeInfo) {
+    if (type === BaseType.DEFER) {
+      continue;
+    }
+    const typeInfo = TypeInfo[type];
+
     let pascalTypeName;
-    if (/^[ib]vec/.test(lowerTypeName)) {
-      pascalTypeName = lowerTypeName
+    if (/^[ib]vec/.test(typeInfo.fnName)) {
+      pascalTypeName = typeInfo.fnName
       .slice(0, 2).toUpperCase()
-      + lowerTypeName
+      + typeInfo.fnName
       .slice(2)
       .toLowerCase();
     } else {
-      pascalTypeName = lowerTypeName.charAt(0).toUpperCase()
-      + lowerTypeName.slice(1).toLowerCase();
+      pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
+      + typeInfo.fnName.slice(1).toLowerCase();
     }
     
-    fn[`uniform${pascalTypeName}`] = function(...args) {
-      let [name, ...defaultValue] = args;
-      const id = createVariableNode(strandsContext, DataType.FLOAT, name);
-      strandsContext.uniforms.push({ name, dataType: DataType.FLOAT, defaultValue });
+    fn[`uniform${pascalTypeName}`] = function(name, ...defaultValue) {
+      const id = createVariableNode(strandsContext, typeInfo, name);
+      strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return new StrandsNode(id);
     };
     
-    const typeConstructor = fn[lowerTypeName];
-    fn[lowerTypeName] = function(...args) {
+    const originalp5Fn = fn[typeInfo.fnName];
+    fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
-        const id = createTypeConstructorNode(strandsContext, DataType[typeName], args);
+        const id = createTypeConstructorNode(strandsContext, typeInfo, args);
         return new StrandsNode(id);
-      } else if (typeConstructor) {
-        return typeConstructor.apply(this, args);
+      } else if (originalp5Fn) {
+        return originalp5Fn.apply(this, args);
       } else {
         p5._friendlyError(
-          `It looks like you've called ${lowerTypeName} outside of a shader's modify() function.`
+          `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
         );
       }
     }
@@ -136,15 +139,16 @@ function createHookArguments(strandsContext, parameters){
   const args = [];
   
   for (const param of parameters) {
-    const T = param.type;
-    if(structTypes.includes(T.typeName)) {
-      const propertiesNodes = T.properties.map(
-        (prop) => [prop.name, createVariableNode(strandsContext, DataType[prop.dataType], prop.name)]
+    const paramType = param.type;
+    if(structTypes.includes(paramType.typeName)) {
+      const propertiesNodes = paramType.properties.map(
+        (prop) => [prop.name, createVariableNode(strandsContext, TypeInfoFromGLSLName[prop.dataType], prop.name)]
       );
       const argObject = Object.fromEntries(propertiesNodes);
       args.push(argObject);
     } else {
-      const arg = createVariableNode(strandsContext, DataType[param.dataType], param.name);
+      const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
+      const arg = createVariableNode(strandsContext, typeInfo, param.name);
       args.push(arg)
     }
   }

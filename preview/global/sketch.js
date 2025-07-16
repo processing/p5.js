@@ -3,9 +3,7 @@ p5.disableFriendlyErrors = true;
 function callback() {
 
   getFinalColor((col) => {
-
-    // return vec3(1, 2, 4).add(float(2.0).sub(10));
-    return (float(10).sub(10));
+    return ivec3(1, 2, 4).mult(2.0, 2, 3);
   });
 }
 

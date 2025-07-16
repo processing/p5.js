@@ -1,5 +1,5 @@
-import { NodeTypeRequiredFields, NodeTypeToName } from './utils'
-import * as FES from './strands_FES'
+import { NodeTypeRequiredFields, NodeTypeToName, TypeInfo } from './utils';
+import * as FES from './strands_FES';
 
 /////////////////////////////////
 // Public functions for strands runtime
@@ -10,7 +10,6 @@ export function createDirectedAcyclicGraph() {
     nextID: 0, 
     cache: new Map(),
     nodeTypes: [],
-    dataTypes: [],
     baseTypes: [],
     dimensions: [],
     opCodes: [],
@@ -41,9 +40,8 @@ export function getOrCreateNode(graph, node) {
 export function createNodeData(data = {}) {
   const node = {
     nodeType:   data.nodeType   ?? null,
-    dataType:   data.dataType   ?? null,
     baseType:   data.baseType   ?? null,
-    dimension:  data.baseType   ?? null,
+    dimension:  data.dimension  ?? null,
     opCode:     data.opCode     ?? null,
     value:      data.value      ?? null,
     identifier: data.identifier ?? null,
@@ -58,7 +56,6 @@ export function createNodeData(data = {}) {
 export function getNodeDataFromID(graph, id) {
   return {
     nodeType:   graph.nodeTypes[id],
-    dataType:   graph.dataTypes[id],
     opCode:     graph.opCodes[id],
     value:      graph.values[id],
     identifier: graph.identifiers[id],
@@ -76,7 +73,6 @@ export function getNodeDataFromID(graph, id) {
 function createNode(graph, node) {
   const id = graph.nextID++;
   graph.nodeTypes[id]   = node.nodeType;
-  graph.dataTypes[id]   = node.dataType;
   graph.opCodes[id]     = node.opCode;
   graph.values[id]      = node.value;
   graph.identifiers[id] = node.identifier;

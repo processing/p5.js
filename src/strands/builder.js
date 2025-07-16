@@ -1,7 +1,7 @@
 import * as DAG from './directed_acyclic_graph'
 import * as CFG from './control_flow_graph'
 import * as FES from './strands_FES'
-import { DataType, DataTypeInfo, NodeType, OpCode, DataTypeName} from './utils';
+import { NodeType, OpCode, BaseType, BasePriority } from './utils';
 import { StrandsNode } from './user_API';
 
 //////////////////////////////////////////////
@@ -9,9 +9,15 @@ import { StrandsNode } from './user_API';
 //////////////////////////////////////////////
 export function createLiteralNode(strandsContext, typeInfo, value) {
   const { cfg, dag } = strandsContext
+  let { dimension, baseType } = typeInfo;
+
+  if (dimension !== 1) {
+    FES.internalError('Created a literal node with dimension > 1.')
+  }
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.LITERAL,
-    dataType,
+    dimension, 
+    baseType,
     value
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
@@ -21,9 +27,11 @@ export function createLiteralNode(strandsContext, typeInfo, value) {
 
 export function createVariableNode(strandsContext, typeInfo, identifier) {
   const { cfg, dag } = strandsContext;
+  const { dimension, baseType } = typeInfo;
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.VARIABLE,
-    dataType, 
+    dimension,
+    baseType,
     identifier
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
@@ -31,71 +39,78 @@ export function createVariableNode(strandsContext, typeInfo, identifier) {
   return id;
 }
 
-export function createBinaryOpNode(strandsContext, leftNode, rightArg, opCode) {
-  const { dag, cfg } = strandsContext;
-  
-  let inferRightType, rightNodeID, rightNode;
-  if (rightArg instanceof StrandsNode) {
-    rightNode = rightArg;
-    rightNodeID = rightArg.id;
-    inferRightType = dag.dataTypes[rightNodeID];
-  } else {
-    const rightDependsOn = Array.isArray(rightArg) ? rightArg : [rightArg];
-    inferRightType = DataType.DEFER;
-    rightNodeID = createTypeConstructorNode(strandsContext, inferRightType, rightDependsOn);
-    rightNode = new StrandsNode(rightNodeID);
-  }
-  const origRightType = inferRightType;
-  const leftNodeID = leftNode.id;
-  const origLeftType = dag.dataTypes[leftNodeID];
+function extractTypeInfo(strandsContext, nodeID) {
+  const dag = strandsContext.dag;
+  const baseType = dag.baseTypes[nodeID];
+  return {
+    baseType,
+    dimension: dag.dimensions[nodeID],
+    priority: BasePriority[baseType],
+  };
+}
 
-  
-  const cast = { node: null, toType: origLeftType };
+export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) {
+  const { dag, cfg } = strandsContext;
+  // Construct a node for right if its just an array or number etc.
+  let rightStrandsNode;
+  if (rightArg[0] instanceof StrandsNode && rightArg.length === 1) {
+    rightStrandsNode = rightArg[0];
+  } else {
+    const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, rightArg);
+    rightStrandsNode = new StrandsNode(id);
+  }
+  let finalLeftNodeID = leftStrandsNode.id;
+  let finalRightNodeID = rightStrandsNode.id;
+
   // Check if we have to cast either node
-  if (origLeftType !== origRightType) {
-    const L = DataTypeInfo[origLeftType];
-    const R = DataTypeInfo[origRightType];
+  const leftType = extractTypeInfo(strandsContext, leftStrandsNode.id);
+  const rightType = extractTypeInfo(strandsContext, rightStrandsNode.id);
+  const cast = { node: null, toType: leftType };
+  const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
+
+  if (bothDeferred) {
+    finalLeftNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
+    finalRightNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
+  }
+  else if (leftType.baseType !== rightType.baseType || 
+    leftType.dimension !== rightType.dimension) {
     
-    if (L.base === DataType.DEFER) {
-      L.dimension = dag.dependsOn[leftNodeID].length;
-    }
-    if (R.base === DataType.DEFER) {
-      R.dimension = dag.dependsOn[rightNodeID].length;
-    }
-    
-    if (L.dimension === 1 && R.dimension > 1) {
+    if (leftType.dimension === 1 && rightType.dimension > 1) {
       // e.g. op(scalar, vector): cast scalar up
-      cast.node = leftNode;
-      cast.toType = origRightType;
+      cast.node = leftStrandsNode;
+      cast.toType = rightType;
     }
-    else if (R.dimension === 1 && L.dimension > 1) {
-      cast.node = rightNode;
-      cast.toType = origLeftType;
+    else if (rightType.dimension === 1 && leftType.dimension > 1) {
+      cast.node = rightStrandsNode;
+      cast.toType = leftType;
     }
-    else if (L.priority > R.priority && L.dimension === R.dimension) {
+    else if (leftType.priority > rightType.priority) {
       // e.g. op(float vector, int vector): cast priority is float > int > bool
-      cast.node = rightNode;
-      cast.toType = origLeftType;
+      cast.node = rightStrandsNode;
+      cast.toType = leftType;
     }
-    else if (R.priority > L.priority && L.dimension === R.dimension) {
-      cast.node = leftNode;
-      cast.toType = origRightType;
+    else if (rightType.priority > leftType.priority) {
+      cast.node = leftStrandsNode;
+      cast.toType = rightType;
     }
     else {
-      FES.userError('type error', `A vector of length ${L.dimension} operated with a vector of length ${R.dimension} is not allowed.`);
+      FES.userError('type error', `A vector of length ${leftType.dimension} operated with a vector of length ${rightType.dimension} is not allowed.`);
     }
+
     const castedID = createTypeConstructorNode(strandsContext, cast.toType, cast.node);
-    if (cast.node === leftNode) {
-      leftNodeID = castedID;
+    if (cast.node === leftStrandsNode) {
+      finalLeftNodeID = castedID;
     } else {
-      rightNodeID = castedID;
+      finalRightNodeID = castedID;
     }
   }
-  
+
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
-    dependsOn: [leftNodeID, rightNodeID],
-    dataType: cast.toType,
+    dependsOn: [finalLeftNodeID, finalRightNodeID],
+    dimension,
+    baseType: cast.toType.baseType,
+    dimension: cast.toType.dimension,
     opCode
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
@@ -104,8 +119,9 @@ export function createBinaryOpNode(strandsContext, leftNode, rightArg, opCode) {
 }
 
 function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
-  const mapped = [];
-  const T = DataTypeInfo[dataType];
+  const mappedDependencies = [];
+  let { dimension, baseType } = typeInfo;
+
   const dag = strandsContext.dag;
   let calculatedDimensions = 0;
 
@@ -113,40 +129,48 @@ function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
     if (dep instanceof StrandsNode) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
 
-      if (node.opCode === OpCode.Nary.CONSTRUCTOR && dataType === dataType) {
+      if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         for (const inner of node.dependsOn) {
-          mapped.push(inner);
+          mappedDependencies.push(inner);
         }
+      } else {
+        mappedDependencies.push(dep.id);
       }
-      const depDataType = dag.dataTypes[dep.id];
-      calculatedDimensions += DataTypeInfo[depDataType].dimension;
+
+      calculatedDimensions += node.dimension;
       continue;
     }
     if (typeof dep === 'number') {
-      const newNode = createLiteralNode(strandsContext, T.base, dep);
+      const newNode = createLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
+      mappedDependencies.push(newNode);
       calculatedDimensions += 1;
-      mapped.push(newNode);
       continue;
     }
     else {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
   }
-
-  if(calculatedDimensions !== 1 && calculatedDimensions !== T.dimension) {
-    FES.userError('type error', `You've tried to construct a ${DataTypeName[dataType]} with ${calculatedDimensions} components`);
+  if (dimension === null) {
+    dimension = calculatedDimensions;
+  } else if (dimension > calculatedDimensions && calculatedDimensions === 1) {
+    calculatedDimensions = dimension;
+  } else if(calculatedDimensions !== 1 && calculatedDimensions !== dimension) {
+    FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
   }
-  return mapped;
+
+  return { mappedDependencies, dimension };
 }
 
 export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
   const { cfg, dag } = strandsContext;
   dependsOn = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
-  const mappedDependencies = mapConstructorDependencies(strandsContext, dataType, dependsOn);
+  const { mappedDependencies, dimension } = mapConstructorDependencies(strandsContext, typeInfo, dependsOn);
+  
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.CONSTRUCTOR,
-    dataType,
+    dimension,
+    baseType: typeInfo.baseType,
     dependsOn: mappedDependencies
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
@@ -156,14 +180,16 @@ export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
 
 export function createFunctionCallNode(strandsContext, identifier, overrides, dependsOn) {
   const { cfg, dag } = strandsContext;
-  let dataType = dataType.DEFER;
+  let typeInfo = { baseType: null, dimension: null };
+
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.FUNCTION_CALL,
     identifier,
     overrides, 
     dependsOn,
-    dataType
+    // no type info yet
+    ...typeInfo,
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
