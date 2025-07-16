@@ -224,7 +224,6 @@ function keyboard(p5, fn){
    * if (code === 'ArrowRight') {
    *   // …
    * }
-   * ```
    * if (key  === 'ArrowRight') { 
    * // …
    * }
@@ -241,8 +240,41 @@ function keyboard(p5, fn){
    * }
    * ```
    * 
-   * 
-   * 
+   *
+   * <p>The table below summarizes how the main keyboard-related system variables changed between p5.js 1.x and 2.x.</p>
+   * <table>
+   *   <thead>
+   *     <tr>
+   *       <th>Variable</th>
+   *       <th>p5.js 1.x </th>
+   *       <th>p5.js 2.x </th>
+   *     </tr>
+   *   </thead>
+   *   <tbody>
+   *     <tr>
+   *       <td><code>key</code></td>
+   *       <td>Text string (e.g., <code>"ArrowUp"</code>).</td>
+   *       <td>Text string (e.g., <code>"ArrowUp"</code>, <code>"f"</code> or <code>"F"</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td><code>code</code></td>
+   *       <td><em>Not supported.</em></td>
+   *       <td>Text String (e.g., <code>"ArrowUp"</code>, <code>"KeyF"</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td><code>keyCode</code></td>
+   *       <td>Number (e.g., <code>70</code>).</td>
+   *       <td>Number (unchanged; e.g., <code>70</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td>System variables (<code>BACKSPACE</code>, <code>UP_ARROW</code>, …)</td>
+   *       <td>Number</td>
+   *       <td>Text String (e.g., <code>"ArrowUp"</code>).</td>
+   *     </tr>
+   *   </tbody>
+   * </table>
+   *
+   *
    * @property {String} code
    * @readOnly
    *
