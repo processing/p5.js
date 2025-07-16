@@ -39,7 +39,7 @@ export function createVariableNode(strandsContext, typeInfo, identifier) {
   return id;
 }
 
-function extractTypeInfo(strandsContext, nodeID) {
+export function extractTypeInfo(strandsContext, nodeID) {
   const dag = strandsContext.dag;
   const baseType = dag.baseTypes[nodeID];
   return {
