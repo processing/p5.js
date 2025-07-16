@@ -9,6 +9,10 @@ export const NodeType = {
   PHI: 4,
 };
 
+export const NodeTypeToName = Object.fromEntries(
+  Object.entries(NodeType).map(([key, val]) => [val, key])
+);
+
 export const NodeTypeRequiredFields = {
   [NodeType.OPERATION]: ['opCode', 'dependsOn'],
   [NodeType.LITERAL]: ['value'],
@@ -17,101 +21,49 @@ export const NodeTypeRequiredFields = {
   [NodeType.PHI]: ['dependsOn', 'phiBlocks']
 };
 
-export const NodeTypeToName = Object.fromEntries(
-  Object.entries(NodeType).map(([key, val]) => [val, key])
-);
-
 export const BaseType = {
   FLOAT: 'float',
   INT: 'int',
-  BOOl: 'bool',
+  BOOL: 'bool',
   MAT: 'mat',
-  DEFER: 'deferred',
+  DEFER: 'defer',
 };
 
-export const AllTypes = [
-  'float1',
-  'float2',
-  'float3',
-  'float4',
-  'int1',
-  'int2',
-  'int3',
-  'int4',
-  'bool1',
-  'bool2',
-  'bool3',
-  'bool4',
-  'mat2x2',
-  'mat3x3',
-  'mat4x4',
-]
+export const BasePriority = {
+  [BaseType.FLOAT]: 3,
+  [BaseType.INT]: 2,
+  [BaseType.BOOL]: 1,
+  [BaseType.MAT]: 0,
+  [BaseType.DEFER]: -1,
+};
 
-export const DataType = {
-  FLOAT: 0,
-  VEC2: 1,
-  VEC3: 2,
-  VEC4: 3,
-  
-  INT: 100,
-  IVEC2: 101,
-  IVEC3: 102,
-  IVEC4: 103,
-  
-  BOOL: 200,
-  BVEC2: 201,
-  BVEC3: 202,
-  BVEC4: 203,
-  
-  MAT2X2: 300,
-  MAT3X3: 301,
-  MAT4X4: 302,
+export const TypeInfo = {
+  'float1': { fnName: 'float',  baseType: BaseType.FLOAT,  dimension:1,  priority: 3,  },
+  'float2': { fnName: 'vec2',   baseType: BaseType.FLOAT,  dimension:2,  priority: 3,  },
+  'float3': { fnName: 'vec3',   baseType: BaseType.FLOAT,  dimension:3,  priority: 3,  },
+  'float4': { fnName: 'vec4',   baseType: BaseType.FLOAT,  dimension:4,  priority: 3,  },
 
-  DEFER: 999,
+  'int1':   { fnName: 'int',    baseType: BaseType.INT,    dimension:1,  priority: 2,  },
+  'int2':   { fnName: 'ivec2',  baseType: BaseType.INT,    dimension:2,  priority: 2,  },
+  'int3':   { fnName: 'ivec3',  baseType: BaseType.INT,    dimension:3,  priority: 2,  },
+  'int4':   { fnName: 'ivec4',  baseType: BaseType.INT,    dimension:4,  priority: 2,  },
+
+  'bool1':  { fnName: 'bool',   baseType: BaseType.BOOL,   dimension:1,  priority: 1,  },
+  'bool2':  { fnName: 'bvec2',  baseType: BaseType.BOOL,   dimension:2,  priority: 1,  },
+  'bool3':  { fnName: 'bvec3',  baseType: BaseType.BOOL,   dimension:3,  priority: 1,  },
+  'bool4':  { fnName: 'bvec4',  baseType: BaseType.BOOL,   dimension:4,  priority: 1,  },
+
+  'mat2':   { fnName: 'mat2x2', baseType: BaseType.MAT,    dimension:2,  priority: 0,  },
+  'mat3':   { fnName: 'mat3x3', baseType: BaseType.MAT,    dimension:3,  priority: 0,  },
+  'mat4':   { fnName: 'mat4x4', baseType: BaseType.MAT,    dimension:4,  priority: 0,  },
+
+  'defer':  { fnName:  null,    baseType: BaseType.DEFER,  dimension: null, priority: -1 },
 }
 
-export const DataTypeInfo = {
-  [DataType.FLOAT]: { base: DataType.FLOAT, dimension: 1, priority: 2 },
-  [DataType.VEC2]:  { base: DataType.FLOAT, dimension: 2, priority: 2 },
-  [DataType.VEC3]:  { base: DataType.FLOAT, dimension: 3, priority: 2 },
-  [DataType.VEC4]:  { base: DataType.FLOAT, dimension: 4, priority: 2 },
-  [DataType.INT]:   { base: DataType.INT,   dimension: 1, priority: 1 },
-  [DataType.IVEC2]: { base: DataType.INT,   dimension: 2, priority: 1 },
-  [DataType.IVEC3]: { base: DataType.INT,   dimension: 3, priority: 1 },
-  [DataType.IVEC4]: { base: DataType.INT,   dimension: 4, priority: 1 },
-  [DataType.BOOL]:  { base: DataType.BOOL,  dimension: 1, priority: 0 },
-  [DataType.BVEC2]: { base: DataType.BOOL,  dimension: 2, priority: 0 },
-  [DataType.BVEC3]: { base: DataType.BOOL,  dimension: 3, priority: 0 },
-  [DataType.BVEC4]: { base: DataType.BOOL,  dimension: 4, priority: 0 },
-  [DataType.MAT2]:  { base: DataType.FLOAT, dimension: 2, priority: -1 },
-  [DataType.MAT3]:  { base: DataType.FLOAT, dimension: 3, priority: -1 },
-  [DataType.MAT4]:  { base: DataType.FLOAT, dimension: 4, priority: -1 },
-
-  [DataType.DEFER]: { base: DataType.DEFER, dimension: null, priority: -2 },
-  [DataType.DEFER]: { base: DataType.DEFER, dimension: null, priority: -2 },
-  [DataType.DEFER]: { base: DataType.DEFER, dimension: null, priority: -2 },
-  [DataType.DEFER]: { base: DataType.DEFER, dimension: null, priority: -2 },
-};
-
-// 2) A separate nested lookup table:
-export const DataTypeTable = {
-  [DataType.FLOAT]: {  1: DataType.FLOAT, 2: DataType.VEC2, 3: DataType.VEC3, 4: DataType.VEC4 },
-  [DataType.INT]:   {  1: DataType.INT,   2: DataType.IVEC2, 3: DataType.IVEC3, 4: DataType.IVEC4 },
-  [DataType.BOOL]:  {  1: DataType.BOOL,  2: DataType.BVEC2, 3: DataType.BVEC3, 4: DataType.BVEC4 },
-  // [DataType.MAT2]:  {  2: DataType.MAT2,  3: DataType.MAT3,  4: DataType.MAT4 },
-  [DataType.DEFER]: {  0: DataType.DEFER, 1: DataType.DEFER, 2: DataType.DEFER, 3: DataType.DEFER, 4: DataType.DEFER },
-};
-
-export function lookupDataType(baseCode, dim) {
-  const map = DataTypeTable[baseCode];
-  if (!map || map[dim] == null) {
-    throw new Error(`Invalid type combination: base=${baseCode}, dim=${dim}`);
-  }
-  return map[dim];
-}
-
-export const DataTypeName = Object.fromEntries(
-  Object.entries(DataType).map(([key,val])=>[val, key.toLowerCase()])
+export const TypeInfoFromGLSLName = Object.fromEntries(
+  Object.values(TypeInfo)
+    .filter(info => info.fnName !== null)
+    .map(info => [info.fnName, info])
 );
 
 export const OpCode = {
@@ -168,20 +120,20 @@ export const OperatorTable = [
   { arity: "binary", name: "or", symbol: "||", opcode: OpCode.Binary.LOGICAL_OR },
 ];
 
-const BinaryOperations = {
-  "+": (a, b) => a + b,
-  "-": (a, b) => a - b,
-  "*": (a, b) => a * b,
-  "/": (a, b) => a / b,
-  "%": (a, b) => a % b,
-  "==": (a, b) => a == b,
-  "!=": (a, b) => a != b,
-  ">": (a, b) => a > b,
-  ">=": (a, b) => a >= b,
-  "<": (a, b) => a < b,
-  "<=": (a, b) => a <= b,
-  "&&": (a, b) => a && b,
-  "||": (a, b) => a || b,
+export const ConstantFolding = {
+  [OpCode.Binary.ADD]: (a, b) => a + b,
+  [OpCode.Binary.SUBTRACT]: (a, b) => a - b,
+  [OpCode.Binary.MULTIPLY]: (a, b) => a * b,
+  [OpCode.Binary.DIVIDE]: (a, b) => a / b,
+  [OpCode.Binary.MODULO]: (a, b) => a % b,
+  [OpCode.Binary.EQUAL]: (a, b) => a == b,
+  [OpCode.Binary.NOT_EQUAL]: (a, b) => a != b,
+  [OpCode.Binary.GREATER_THAN]: (a, b) => a > b,
+  [OpCode.Binary.GREATER_EQUAL]: (a, b) => a >= b,
+  [OpCode.Binary.LESS_THAN]: (a, b) => a < b,
+  [OpCode.Binary.LESS_EQUAL]: (a, b) => a <= b,
+  [OpCode.Binary.LOGICAL_AND]: (a, b) => a && b,
+  [OpCode.Binary.LOGICAL_OR]: (a, b) => a || b,
 };
 
 export const SymbolToOpCode = {};
@@ -193,9 +145,6 @@ for (const { arity, symbol, opcode } of OperatorTable) {
   SymbolToOpCode[symbol] = opcode;
   OpCodeToSymbol[opcode] = symbol;
   OpCodeArgs[opcode] = args;
-  if (arity === "binary" && BinaryOperations[symbol]) {
-    OpCodeToOperation[opcode] = BinaryOperations[symbol];
-  }
 }
 
 export const BlockType = {

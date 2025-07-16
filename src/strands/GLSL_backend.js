@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, DataType, DataTypeName} from "./utils";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./utils";
 import { getNodeDataFromID } from "./directed_acyclic_graph";
 import * as FES from './strands_FES'
 
@@ -57,8 +57,8 @@ export const glslBackend = {
     }).join(', ')}) {`;
     return firstLine;
   },
-  generateDataTypeName(dataType) {
-    return DataTypeName[dataType];
+  generateDataTypeName(baseType, dimension) {
+    return baseType + dimension; 
   },
   generateDeclaration() {
     
@@ -77,7 +77,7 @@ export const glslBackend = {
       
       case NodeType.OPERATION:
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
-        const T = this.generateDataTypeName(node.dataType);
+        const T = this.generateDataTypeName(node.baseType, node.dimension);
         const deps = node.dependsOn.map((dep) => this.generateExpression(dag, dep, generationContext));
         return `${T}(${deps.join(', ')})`;
       } 
@@ -89,7 +89,7 @@ export const glslBackend = {
         const left  = this.generateExpression(dag, lID, generationContext);
         const right = this.generateExpression(dag, rID, generationContext);
         const opSym = OpCodeToSymbol[node.opCode];
-        return `${left} ${opSym} ${right}`;
+        return `(${left} ${opSym} ${right})`;
       }
       if (node.dependsOn.length === 1) {
         const [i] = node.dependsOn;
