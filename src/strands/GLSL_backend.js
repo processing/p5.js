@@ -4,16 +4,16 @@ import * as FES from './strands_FES'
 
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
-    const { dag, cfg } = strandsContext;
+    // const { dag, cfg } = strandsContext;
     
-    const blockInstructions = new Set(cfg.blockInstructions[blockID] || []);
-    for (let nodeID of generationContext.dagSorted) {
-      if (!blockInstructions.has(nodeID)) {
-        continue; 
-      }
+    // const blockInstructions = new Set(cfg.blockInstructions[blockID] || []);
+    // for (let nodeID of generationContext.dagSorted) {
+    //   if (!blockInstructions.has(nodeID)) {
+    //     continue; 
+    //   }
       // const snippet = glslBackend.generateExpression(dag, nodeID, generationContext);
       // generationContext.write(snippet);
-    }
+    // }
   },
   
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
@@ -76,7 +76,12 @@ export const glslBackend = {
       return node.identifier;
       
       case NodeType.OPERATION:
+      const useParantheses = node.usedBy.length > 0;
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
+        if (node.dependsOn.length === 1 && node.dimension === 1) {
+          console.log("AARK")
+          return this.generateExpression(dag, node.dependsOn[0], generationContext);
+        }
         const T = this.generateDataTypeName(node.baseType, node.dimension);
         const deps = node.dependsOn.map((dep) => this.generateExpression(dag, dep, generationContext));
         return `${T}(${deps.join(', ')})`;
@@ -89,7 +94,11 @@ export const glslBackend = {
         const left  = this.generateExpression(dag, lID, generationContext);
         const right = this.generateExpression(dag, rID, generationContext);
         const opSym = OpCodeToSymbol[node.opCode];
-        return `(${left} ${opSym} ${right})`;
+        if (useParantheses) {
+          return `(${left} ${opSym} ${right})`;
+        } else {
+          return `${left} ${opSym} ${right}`;
+        }
       }
       if (node.dependsOn.length === 1) {
         const [i] = node.dependsOn;

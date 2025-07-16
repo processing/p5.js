@@ -1,12 +1,14 @@
 import { WEBGL } from '../core/constants';
 import { glslBackend } from './GLSL_backend';
 import { dfsPostOrder, dfsReversePostOrder, NodeType } from './utils';
+import { extractTypeInfo } from './builder';
 
 let globalTempCounter = 0;
 let backend;
 
-function generateTopLevelDeclarations(dag, dagOrder) {
+function generateTopLevelDeclarations(strandsContext, dagOrder) {
   const usedCount = {};
+  const dag = strandsContext.dag;
   for (const nodeID of dagOrder) {
     usedCount[nodeID] = (dag.usedBy[nodeID] || []).length;
   }
@@ -18,13 +20,14 @@ function generateTopLevelDeclarations(dag, dagOrder) {
       continue;
     }
     
-    // if (usedCount[nodeID] > 1) {
-    //   const tmp = `t${globalTempCounter++}`;
-    //   tempNames[nodeID] = tmp;
+    if (usedCount[nodeID] > 0) {
+      const expr = backend.generateExpression(dag, nodeID, { tempNames });
+      const tmp = `T${globalTempCounter++}`;
+      tempNames[nodeID] = tmp;
       
-    //   const expr = backend.generateExpression(dag, nodeID, {});
-    //   declarations.push(`float ${tmp} = ${expr};`);
-    // }
+      const T = extractTypeInfo(strandsContext, nodeID);
+      declarations.push(`${T.baseType+T.dimension} ${tmp} = ${expr};`);
+    }
   }
   
   return { declarations, tempNames };
@@ -42,7 +45,7 @@ export function generateShaderCode(strandsContext) {
     const cfgSorted = dfsReversePostOrder(cfg.outgoingEdges, entryBlockID);
     
     const generationContext = {
-      ...generateTopLevelDeclarations(dag, dagSorted),
+      ...generateTopLevelDeclarations(strandsContext, dagSorted),
       indent: 1,
       codeLines: [],
       write(line) {
