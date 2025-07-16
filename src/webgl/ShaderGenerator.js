@@ -1421,17 +1421,6 @@ function shadergenerator(p5, fn) {
     return fnNodeConstructor('getTexture', userArgs,  props);
   }
 
-  // Generating uniformFloat, uniformVec, createFloat, etc functions
-  // Maps a GLSL type to the name suffix for method names
-  const GLSLTypesToIdentifiers = {
-    int:    'Int',
-    float:  'Float',
-    vec2:   'Vector2',
-    vec3:   'Vector3',
-    vec4:   'Vector4',
-    sampler2D: 'Texture',
-  };
-
   function dynamicAddSwizzleTrap(node, _size) {
     if (node.type.startsWith('vec') || _size) {
       const size = _size ? _size : parseInt(node.type.slice(3));
@@ -1485,6 +1474,17 @@ function shadergenerator(p5, fn) {
       const size = computeVectorLength(value);
       return this[`vec${size}`](value);
     },
+  };
+
+  // Generating uniformFloat, uniformVec, createFloat, etc functions
+  // Maps a GLSL type to the name suffix for method names
+  const GLSLTypesToIdentifiers = {
+    int:    'Int',
+    float:  'Float',
+    vec2:   'Vector2',
+    vec3:   'Vector3',
+    vec4:   'Vector4',
+    sampler2D: 'Texture',
   };
 
   for (const glslType in GLSLTypesToIdentifiers) {

@@ -2,13 +2,28 @@ import { BlockTypeToName } from "./utils";
 
 export function createControlFlowGraph() {
   return {
-    nextID: 0,
-    graphType: 'CFG',
+    // graph structure
     blockTypes: [],
     incomingEdges: [],
     outgoingEdges: [],
     blockInstructions: [],
+    // runtime data for constructing graph
+    nextID: 0,
+    blockStack: [],
+    blockConditions: {},
+    currentBlock: -1,
   };
+}
+
+export function pushBlock(graph, blockID) {
+  graph.blockStack.push(blockID);
+  graph.currentBlock = blockID;
+}
+
+export function popBlock(graph) {
+  graph.blockStack.pop();
+  const len = graph.blockStack.length;
+  graph.currentBlock = graph.blockStack[len-1];
 }
 
 export function createBasicBlock(graph, blockType) {

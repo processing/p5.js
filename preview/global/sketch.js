@@ -3,19 +3,9 @@ p5.disableFriendlyErrors = true;
 function callback() {
 
   getFinalColor((col) => {
-    let x = createFloat(2.5);
 
-    strandsIf(x.greaterThan(createFloat(0.0)), () => {
-      return {x: createFloat(100)}
-    }).Else();
-    // strandsIf(x.greaterThan(createFloat(0.0)), () => {
-    //   strandsIf(x.greaterThan(createFloat(0.0)), () => {
-    //     return x = createFloat(100);
-    //   });
-    //   return x = createFloat(100);
-    // });
-
-    return x;
+    // return vec3(1, 2, 4).add(float(2.0).sub(10));
+    return (float(10).sub(10));
   });
 }
 
@@ -25,4 +15,5 @@ async function setup(){
 }
 
 function draw(){
+  
 }
