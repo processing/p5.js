@@ -1664,10 +1664,9 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
  *     getWorldInputs(inputs => {
- *       // Move the vertex up and down in a wave
- *       inputs.position.y += 20 * sin(
- *         millis() * 0.001 + inputs.position.x * 0.05
- *       );
+ *       // Move the vertex up and down in a wave in world space
+ *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
+ *       inputs.position.y += 20 * sin(millis() * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -1714,19 +1713,19 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
  *     combineColors(components => {
- *       // Custom color combination: add a red tint
- *       let r = components.baseColor[0] * components.diffuse +
- *               components.ambientColor[0] * components.ambient +
- *               components.specularColor[0] * components.specular +
- *               components.emissive[0] + 0.2;
- *       let g = components.baseColor[1] * components.diffuse +
- *               components.ambientColor[1] * components.ambient +
- *               components.specularColor[1] * components.specular +
- *               components.emissive[1];
- *       let b = components.baseColor[2] * components.diffuse +
- *               components.ambientColor[2] * components.ambient +
- *               components.specularColor[2] * components.specular +
- *               components.emissive[2];
+ *       // Custom color combination: add a red tint using vector properties
+ *       let r = components.baseColor.r * components.diffuse +
+ *               components.ambientColor.r * components.ambient +
+ *               components.specularColor.r * components.specular +
+ *               components.emissive.r + 0.2;
+ *       let g = components.baseColor.g * components.diffuse +
+ *               components.ambientColor.g * components.ambient +
+ *               components.specularColor.g * components.specular +
+ *               components.emissive.g;
+ *       let b = components.baseColor.b * components.diffuse +
+ *               components.ambientColor.b * components.ambient +
+ *               components.specularColor.b * components.specular +
+ *               components.emissive.b;
  *       return [r, g, b, components.opacity];
  *     });
  *   });
@@ -1748,6 +1747,8 @@ if (typeof p5 !== 'undefined') {
  * @description
  * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
  *
+ * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
+ *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
@@ -1756,104 +1757,14 @@ if (typeof p5 !== 'undefined') {
  *
  * @param {function} callback
  *        A callback function which is called before each vertex is processed.
- *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * let myShader;
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     beforeVertex(() => {
- *       // Set up a variable for later use
- *       let wave = sin(millis() * 0.001);
- *     });
- *   });
- * }
- * </code>
- * </div>
- */
-
-/**
- * @function getObjectInputs
- * @description
- * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
- * - `position`: `[x, y, z]` — the original position of the vertex
- * - `normal`: `[x, y, z]` — the direction the surface is facing
- * - `texCoord`: `[u, v]` — the texture coordinates
- * - `color`: `[r, g, b, a]` — the color of the vertex
- *
- * Return the modified object to update the vertex.
- *
- * This hook is available in:
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {function} callback
- *        A callback function which receives the vertex object and should return it after making any changes.
- *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * let myShader;
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     getObjectInputs(inputs => {
- *       // Raise all vertices by 10 units
- *       inputs.position[1] += 10;
- *       return inputs;
- *     });
- *   });
- * }
- * </code>
- * </div>
- */
-
-/**
- * @function getCameraInputs
- * @description
- * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
- * - `position`: `[x, y, z]` — the position after camera transformation
- * - `normal`: `[x, y, z]` — the normal after camera transformation
- * - `texCoord`: `[u, v]` — the texture coordinates
- * - `color`: `[r, g, b, a]` — the color of the vertex
- *
- * Return the modified object to update the vertex.
- *
- * This hook is available in:
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {function} callback
- *        A callback function which receives the vertex object and should return it after making any changes.
- *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * let myShader;
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     getCameraInputs(inputs => {
- *       // Tint all vertices blue
- *       inputs.color[2] = 1.0;
- *       return inputs;
- *     });
- *   });
- * }
- * </code>
- * </div>
  */
 
 /**
  * @function afterVertex
  * @description
  * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
+ *
+ * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
  *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
@@ -1863,22 +1774,6 @@ if (typeof p5 !== 'undefined') {
  *
  * @param {function} callback
  *        A callback function which is called after each vertex is processed.
- *
- * @example
- * <div modernizr='webgl'>
- * <code>
- * let myShader;
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     afterVertex(() => {
- *       // Example: store the y position for use in the fragment shader
- *       myVarying = position.y;
- *     });
- *   });
- * }
- * </code>
- * </div>
  */
 
 /**
@@ -1903,10 +1798,22 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseColorShader().modify(() => {
  *     beforeFragment(() => {
- *       // Set up a variable for later use
- *       let brightness = 0.5;
+ *       // Set a value for use in getFinalColor
+ *       this.brightness = 0.5 + 0.5 * sin(millis() * 0.001);
+ *     });
+ *     getFinalColor(color => {
+ *       // Use the value set in beforeFragment to tint the color
+ *       color[0] *= this.brightness; // Tint red channel
+ *       return color;
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('teal');
+ *   box(100);
  * }
  * </code>
  * </div>
@@ -1917,7 +1824,7 @@ if (typeof p5 !== 'undefined') {
  * @description
  * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to change opacity or other per-pixel properties. The callback receives an object with the following properties:
  * - `opacity`: a number between 0 and 1 for the pixel's transparency
- * (Other properties may be available depending on the shader.)
+ * - (Other properties may be available depending on the shader.)
  *
  * Return the modified object to update the fragment.
  *
@@ -1936,11 +1843,19 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
  *     getPixelInputs(inputs => {
- *       // Make the fragment half as opaque
- *       inputs.opacity *= 0.5;
+ *       // Animate opacity based on x position
+ *       inputs.opacity = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + millis() * 0.002);
  *       return inputs;
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(240);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('purple');
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -1968,10 +1883,16 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseStrokeShader().modify(() => {
  *     shouldDiscard(willDiscard => {
- *       // Never discard any fragments
- *       return false;
+ *       // Discard fragments outside a circular region
+ *       return willDiscard || (inputs.position.x * inputs.position.x + inputs.position.y * inputs.position.y > 2500.0);
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(255);
+ *   strokeShader(myShader);
+ *   strokeWeight(30);
+ *   line(-width/3, 0, width/3, 0);
  * }
  * </code>
  * </div>
@@ -2002,11 +1923,19 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
- *       // Make the output color fully opaque
+ *       // Make the output color fully opaque and add a green tint
  *       color[3] = 1.0;
+ *       color[1] += 0.2;
  *       return color;
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(230);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('green');
+ *   circle(0, 0, 100);
  * }
  * </code>
  * </div>
@@ -2033,11 +1962,23 @@ if (typeof p5 !== 'undefined') {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseColorShader().modify(() => {
+ *     getFinalColor(color => {
+ *       // Add a purple tint to the color
+ *       color[2] += 0.2;
+ *       return color;
+ *     });
  *     afterFragment(() => {
- *       // Example: darken the final color of each pixel
- *       finalColor.rgb *= 0.8;
+ *       // This hook runs after the final color is set for each fragment.
+ *       // You could use this for debugging or advanced effects.
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(240);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('purple');
+ *   sphere(60);
  * }
  * </code>
  * </div>
@@ -2066,10 +2007,110 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseFilterShader().modify(() => {
  *     getColor((inputs, canvasContent) => {
- *       // Return the original color
- *       return getTexture(canvasContent, inputs.texCoord);
+ *       // Warp the texture coordinates for a wavy effect
+ *       let warped = [inputs.texCoord.x, inputs.texCoord.y + 0.1 * sin(inputs.texCoord.x * 10.0)];
+ *       return getTexture(canvasContent, warped);
  *     });
  *   });
+ * }
+ * function draw() {
+ *   background(180);
+ *   // Draw something to the canvas
+ *   fill('yellow');
+ *   ellipse(0, 0, 150, 150);
+ *   filter(myShader);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getObjectInputs
+ * @description
+ * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
+ * - `position`: a vector with three components representing the original position of the vertex
+ * - `normal`: a vector with three components representing the direction the surface is facing
+ * - `texCoord`: a vector with two components representing the texture coordinates
+ * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ *
+ * Return the modified object to update the vertex.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the vertex object and should return it after making any changes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getObjectInputs(inputs => {
+ *       // Create a sine wave along the x axis in object space
+ *       inputs.position.y += 20 * sin(inputs.position.x * 0.1 + millis() * 0.002);
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('orange');
+ *   box(100);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @function getCameraInputs
+ * @description
+ * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
+ * - `position`: a vector with three components representing the position after camera transformation
+ * - `normal`: a vector with three components representing the normal after camera transformation
+ * - `texCoord`: a vector with two components representing the texture coordinates
+ * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ *
+ * Return the modified object to update the vertex.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {function} callback
+ *        A callback function which receives the vertex object and should return it after making any changes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getCameraInputs(inputs => {
+ *       // Move vertices in camera space based on their x position
+ *       inputs.position.y += 30 * sin(inputs.position.x * 0.05 + millis() * 0.001);
+ *       // Tint all vertices blue
+ *       inputs.color.b = 1.0;
+ *       return inputs;
+ *     });
+ *   });
+ * }
+ * function draw() {
+ *   background(200);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('blue');
+ *   box(100);
  * }
  * </code>
  * </div>
