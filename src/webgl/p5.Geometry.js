@@ -11,6 +11,7 @@
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
+import { downloadFile } from '../io/utilities';
 
 class Geometry {
   constructor(detailX, detailY, callback, renderer) {
@@ -413,7 +414,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName , 'obj');
+    downloadFile(blob, fileName , 'obj');
 
   }
 
@@ -536,7 +537,7 @@ class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName, 'stl');
+    downloadFile(blob, fileName, 'stl');
   }
 
   /**
