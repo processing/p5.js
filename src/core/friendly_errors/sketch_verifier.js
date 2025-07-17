@@ -220,7 +220,7 @@ export const verifierUtils = {
 
 function sketchVerifier(p5, _fn, lifecycles) {
   lifecycles.presetup = async function() {
-    if (!p5.disableFriendlyErrors) {
+    if (!p5.disableFriendlyErrors && !p5.disableSketchChecker) {
       verifierUtils.runFES(p5);
     }
   };
