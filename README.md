@@ -1163,6 +1163,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shivasankaran18"><img src="https://avatars.githubusercontent.com/u/148421597?v=4?s=64" width="64px;" alt="Shiva"/><br /><sub><b>Shiva</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shivasankaran18" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/madhav2348"><img src="https://avatars.githubusercontent.com/u/161720210?v=4?s=64" width="64px;" alt="Madhav Majumdar"/><br /><sub><b>Madhav Majumdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=madhav2348" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nking07049925"><img src="https://avatars.githubusercontent.com/u/11886663?v=4?s=64" width="64px;" alt="Nikita Korol"/><br /><sub><b>Nikita Korol</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nking07049925" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/skools-here"><img src="https://avatars.githubusercontent.com/u/174816600?v=4?s=64" width="64px;" alt="skools-here"/><br /><sub><b>skools-here</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skools-here" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
