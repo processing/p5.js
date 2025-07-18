@@ -3,6 +3,10 @@
 .nyc_output/*
 # .vscode/settings.json
 node_modules/*
+test/integrations/typescript/node_modules/
+test/integrations/react/node_modules/
+test/integrations/vuejs/node_modules/
+
 
 analyzer/
 bower-repo/
