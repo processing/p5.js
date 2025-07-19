@@ -8,6 +8,7 @@ import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 import noiseGLSL from './shaders/functions/noiseGLSL.glsl';
+import noise3DGLSL from './shaders/functions/noise3DGLSL.glsl';
 
 function shadergenerator(p5, fn) {
 
@@ -1663,23 +1664,34 @@ function shadergenerator(p5, fn) {
   const originalNoise = fn.noise;
   fn.noise = function (...args) {
     if (!GLOBAL_SHADER?.isGenerating) {
-      return originalNoise.apply(this, args); // fallback to regular p5.js noise
-    }
-
-    GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
-    GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
-    // Handle noise(x, y) as noise(vec2)
-    let nodeArgs;
-    if (args.length === 2) {
-      nodeArgs = [fn.vec2(args[0], args[1])];
-    } else {
-      nodeArgs = args;
+      return originalNoise.apply(this, args); // fallback to p5.js noise
     }
     
-    return fnNodeConstructor('noise', nodeArgs, {
-      args: ['vec2'],
-      returnType: 'float'
-    });
+    let nodeArgs;
+    
+    if (args.length === 3) {
+    // GLSL vec3 noise(x, y, z)
+      nodeArgs = [fn.vec3(args[0], args[1], args[2])];
+      GLOBAL_SHADER.output.vertexDeclarations.add(noise3DGLSL);
+      GLOBAL_SHADER.output.fragmentDeclarations.add(noise3DGLSL);
+      
+      return fnNodeConstructor('noise', nodeArgs, {
+        args: ['vec3'],
+        returnType: 'float',
+      });
+    } else if (args.length === 2) {
+    // GLSL vec2 noise(x, y)
+      nodeArgs = [fn.vec2(args[0], args[1])];
+      GLOBAL_SHADER.output.vertexDeclarations.add(noiseGLSL);
+      GLOBAL_SHADER.output.fragmentDeclarations.add(noiseGLSL);
+      
+      return fnNodeConstructor('noise', nodeArgs, {
+        args: ['vec2'],
+        returnType: 'float',
+      });
+    }
+    
+    return originalNoise.apply(this, args); // fallback again if unexpected
   };
 
 }
