@@ -816,7 +816,7 @@ class MediaElement extends Element {
   }
   copy(...args) {
     this._ensureCanvas();
-    fn.copy.apply(this, args);
+    p5.prototype.copy.apply(this, args);
   }
   mask(...args) {
     this.loadPixels();
