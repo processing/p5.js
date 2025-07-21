@@ -177,19 +177,19 @@ class p5 {
     }
   }
 
-  _userDefinedFunctions = {};
-  userDefinedFunctions = new Proxy({}, {
+  #customActions = {};
+  customActions = new Proxy({}, {
     get: (target, prop) => {
-      if(!this._userDefinedFunctions[prop]){
+      if(!this.#customActions[prop]){
         const context = this._isGlobal ? window : this;
         if(typeof context[prop] === 'function'){
-          this._userDefinedFunctions[prop] = context[prop].bind(this);
+          this.#customActions[prop] = context[prop].bind(this);
         }
       }
 
-      return this._userDefinedFunctions[prop];
+      return this.#customActions[prop];
     }
-  })
+  });
 
   async #_start() {
     if (this.hitCriticalError) return;

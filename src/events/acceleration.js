@@ -657,17 +657,17 @@ function acceleration(p5, fn, lifecycles){
       this.deviceOrientation = 'undefined';
     }
 
-    if (this.userDefinedFunctions.deviceMoved) {
+    if (this.customActions.deviceMoved) {
       if (
         Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
         Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
       ) {
-        this.userDefinedFunctions.deviceMoved();
+        this.customActions.deviceMoved();
       }
     }
 
-    if (this.userDefinedFunctions.deviceTurned) {
+    if (this.customActions.deviceTurned) {
       // The angles given by rotationX etc is from range [-180 to 180].
       // The following will convert them to [0 to 360] for ease of calculation
       // of cases when the angles wrapped around.
@@ -688,7 +688,7 @@ function acceleration(p5, fn, lifecycles){
       if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
         wSAX = wRX;
         this.turnAxis = 'X';
-        this.userDefinedFunctions.deviceTurned();
+        this.customActions.deviceTurned();
       }
       this.pRotateDirectionX = rotateDirectionX;
       startAngleX = wSAX - 180;
@@ -708,7 +708,7 @@ function acceleration(p5, fn, lifecycles){
       if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
         wSAY = wRY;
         this.turnAxis = 'Y';
-        this.userDefinedFunctions.deviceTurned();
+        this.customActions.deviceTurned();
       }
       this.pRotateDirectionY = rotateDirectionY;
       startAngleY = wSAY - 180;
@@ -737,12 +737,12 @@ function acceleration(p5, fn, lifecycles){
       ) {
         startAngleZ = rotZ;
         this.turnAxis = 'Z';
-        this.userDefinedFunctions.deviceTurned();
+        this.customActions.deviceTurned();
       }
       this.pRotateDirectionZ = rotateDirectionZ;
       this.turnAxis = undefined;
     }
-    if (this.userDefinedFunctions.deviceShaken) {
+    if (this.customActions.deviceShaken) {
       let accelerationChangeX;
       let accelerationChangeY;
       // Add accelerationChangeZ if acceleration change on Z is needed
@@ -751,7 +751,7 @@ function acceleration(p5, fn, lifecycles){
         accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
       }
       if (accelerationChangeX + accelerationChangeY > shake_threshold) {
-        this.userDefinedFunctions.deviceShaken();
+        this.customActions.deviceShaken();
       }
     }
   };

@@ -1180,13 +1180,13 @@ function pointer(p5, fn, lifecycles){
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
-    if (!this.mouseIsPressed && this.userDefinedFunctions.mouseMoved) {
-      executeDefault = this.userDefinedFunctions.mouseMoved(e);
+    if (!this.mouseIsPressed && this.customActions.mouseMoved) {
+      executeDefault = this.customActions.mouseMoved(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (this.mouseIsPressed && this.userDefinedFunctions.mouseDragged) {
-      executeDefault = this.userDefinedFunctions.mouseDragged(e);
+    } else if (this.mouseIsPressed && this.customActions.mouseDragged) {
+      executeDefault = this.customActions.mouseDragged(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1343,12 +1343,12 @@ function pointer(p5, fn, lifecycles){
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (this.userDefinedFunctions.mousePressed) {
-      executeDefault = this.userDefinedFunctions.mousePressed(e);
+    if (this.customActions.mousePressed) {
+      executeDefault = this.customActions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } 
+    }
   };
 
   /**
@@ -1502,9 +1502,9 @@ function pointer(p5, fn, lifecycles){
     this._setMouseButton(e);
 
     this._updatePointerCoords(e);
-   
-    if (this.userDefinedFunctions.mouseReleased) {
-      executeDefault = this.userDefinedFunctions.mouseReleased(e);
+
+    if (this.customActions.mouseReleased) {
+      executeDefault = this.customActions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1658,8 +1658,8 @@ function pointer(p5, fn, lifecycles){
    * </div>
    */
   fn._onclick = function(e) {
-    if (this.userDefinedFunctions.mouseClicked) {
-      const executeDefault = this.userDefinedFunctions.mouseClicked(e);
+    if (this.customActions.mouseClicked) {
+      const executeDefault = this.customActions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1788,8 +1788,8 @@ function pointer(p5, fn, lifecycles){
    */
 
   fn._ondblclick = function(e) {
-    if (this.userDefinedFunctions.doubleClicked) {
-      const executeDefault = this.userDefinedFunctions.doubleClicked(e);
+    if (this.customActions.doubleClicked) {
+      const executeDefault = this.customActions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1936,9 +1936,9 @@ function pointer(p5, fn, lifecycles){
    */
   fn._onwheel = function(e) {
     this._mouseWheelDeltaY = e.deltaY;
-    if (this.userDefinedFunctions.mouseWheel) {
+    if (this.customActions.mouseWheel) {
       e.delta = e.deltaY;
-      const executeDefault = this.userDefinedFunctions.mouseWheel(e);
+      const executeDefault = this.customActions.mouseWheel(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
