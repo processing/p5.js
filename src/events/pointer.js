@@ -1180,13 +1180,13 @@ function pointer(p5, fn, lifecycles){
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
-    if (!this.mouseIsPressed && this.customActions.mouseMoved) {
-      executeDefault = this.customActions.mouseMoved(e);
+    if (!this.mouseIsPressed && this._customActions.mouseMoved) {
+      executeDefault = this._customActions.mouseMoved(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (this.mouseIsPressed && this.customActions.mouseDragged) {
-      executeDefault = this.customActions.mouseDragged(e);
+    } else if (this.mouseIsPressed && this._customActions.mouseDragged) {
+      executeDefault = this._customActions.mouseDragged(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1343,8 +1343,8 @@ function pointer(p5, fn, lifecycles){
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (this.customActions.mousePressed) {
-      executeDefault = this.customActions.mousePressed(e);
+    if (this._customActions.mousePressed) {
+      executeDefault = this._customActions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1503,8 +1503,8 @@ function pointer(p5, fn, lifecycles){
 
     this._updatePointerCoords(e);
 
-    if (this.customActions.mouseReleased) {
-      executeDefault = this.customActions.mouseReleased(e);
+    if (this._customActions.mouseReleased) {
+      executeDefault = this._customActions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1658,8 +1658,8 @@ function pointer(p5, fn, lifecycles){
    * </div>
    */
   fn._onclick = function(e) {
-    if (this.customActions.mouseClicked) {
-      const executeDefault = this.customActions.mouseClicked(e);
+    if (this._customActions.mouseClicked) {
+      const executeDefault = this._customActions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1788,8 +1788,8 @@ function pointer(p5, fn, lifecycles){
    */
 
   fn._ondblclick = function(e) {
-    if (this.customActions.doubleClicked) {
-      const executeDefault = this.customActions.doubleClicked(e);
+    if (this._customActions.doubleClicked) {
+      const executeDefault = this._customActions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1936,9 +1936,9 @@ function pointer(p5, fn, lifecycles){
    */
   fn._onwheel = function(e) {
     this._mouseWheelDeltaY = e.deltaY;
-    if (this.customActions.mouseWheel) {
+    if (this._customActions.mouseWheel) {
       e.delta = e.deltaY;
-      const executeDefault = this.customActions.mouseWheel(e);
+      const executeDefault = this._customActions.mouseWheel(e);
       if (executeDefault === false) {
         e.preventDefault();
       }

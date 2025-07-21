@@ -784,8 +784,8 @@ function environment(p5, fn, lifecycles){
     this.windowWidth = getWindowWidth();
     this.windowHeight = getWindowHeight();
     let executeDefault;
-    if (this.customActions.windowResized) {
-      executeDefault = this.customActions.windowResized(e);
+    if (this._customActions.windowResized) {
+      executeDefault = this._customActions.windowResized(e);
       if (executeDefault !== undefined && !executeDefault) {
         e.preventDefault();
       }

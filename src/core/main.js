@@ -99,7 +99,7 @@ class p5 {
             console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
           }
         }
-      })
+      });
     };
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
@@ -178,7 +178,7 @@ class p5 {
   }
 
   #customActions = {};
-  customActions = new Proxy({}, {
+  _customActions = new Proxy({}, {
     get: (target, prop) => {
       if(!this.#customActions[prop]){
         const context = this._isGlobal ? window : this;
