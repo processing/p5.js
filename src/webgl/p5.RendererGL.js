@@ -2537,7 +2537,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 p5.prototype._assert3d = function (name) {
   if (!this._renderer.isP3D)
     throw new Error(
-      `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
+      `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see https://p5js.org/examples/3d-geometries/ for more information.`
     );
 };
 

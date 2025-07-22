@@ -7010,6 +7010,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mudit06mah",
+      "name": "Mudit Maheshwari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/140621191?v=4",
+      "profile": "https://leetcode.com/u/mudit_mah/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
