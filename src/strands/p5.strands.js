@@ -70,13 +70,14 @@ function strands(p5, fn) {
       // 3. Generate shader code hooks object from the IR
       // .......
       const hooksObject = generateShaderCode(strandsContext);
-      console.log(hooksObject.getFinalColor);
-      
-      // Call modify with the generated hooks object
-      // return oldModify.call(this, generatedModifyArgument);
+      console.log(hooksObject);
+      console.log(hooksObject['vec4 getFinalColor']);
       
       // Reset the strands runtime context
       // deinitStrandsContext(strandsContext);
+
+      // Call modify with the generated hooks object
+      return oldModify.call(this, hooksObject);      
     }
     else {
       return oldModify.call(this, shaderModifier)

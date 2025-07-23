@@ -1,7 +1,7 @@
 import * as DAG from './directed_acyclic_graph'
 import * as CFG from './control_flow_graph'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, BasePriority } from './utils';
+import { NodeType, OpCode, BaseType, extractTypeInfo } from './utils';
 import { StrandsNode } from './user_API';
 
 //////////////////////////////////////////////
@@ -37,16 +37,6 @@ export function createVariableNode(strandsContext, typeInfo, identifier) {
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
   return id;
-}
-
-export function extractTypeInfo(strandsContext, nodeID) {
-  const dag = strandsContext.dag;
-  const baseType = dag.baseTypes[nodeID];
-  return {
-    baseType,
-    dimension: dag.dimensions[nodeID],
-    priority: BasePriority[baseType],
-  };
 }
 
 export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) {

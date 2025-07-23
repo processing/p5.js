@@ -1,11 +1,9 @@
 p5.disableFriendlyErrors = true;
 
 function callback() {
-
   getFinalColor((col) => {
-    let x = vec4(1);
-    // return 1;
-    return vec4(1).div(ivec4(1).mult(ivec4(2.0, 3.0, 2, 3)));
+    let y = col.sub(-1,1,0,0);
+    return col.add(y);
   });
 }
 
@@ -15,5 +13,8 @@ async function setup(){
 }
 
 function draw(){
-  
+  orbitControl();
+  background(0);
+  shader(bloomShader);
+  sphere(100)
 }

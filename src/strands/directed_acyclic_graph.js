@@ -1,4 +1,4 @@
-import { NodeTypeRequiredFields, NodeTypeToName } from './utils';
+import { NodeTypeRequiredFields, NodeTypeToName, BasePriority } from './utils';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -67,6 +67,13 @@ export function getNodeDataFromID(graph, id) {
   }
 }
 
+export function extractTypeInfo(dag, nodeID) {
+  return {
+    baseType: dag.baseTypes[nodeID],
+    dimension: dag.dimensions[nodeID],
+    priority: BasePriority[dag.baseTypes[nodeID]],
+  };
+}
 /////////////////////////////////
 // Private functions
 /////////////////////////////////

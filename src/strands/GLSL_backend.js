@@ -1,6 +1,27 @@
 import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./utils";
-import { getNodeDataFromID } from "./directed_acyclic_graph";
+import { getNodeDataFromID, extractTypeInfo } from "./directed_acyclic_graph";
 import * as FES from './strands_FES'
+
+const TypeNames = {
+  'float1': 'float',
+  'float2': 'vec2',
+  'float3': 'vec3',
+  'float4': 'vec4',
+
+  'int1':   'int',
+  'int2':   'ivec2',
+  'int3':   'ivec3',
+  'int4':   'ivec4',
+
+  'bool1':  'bool',
+  'bool2':  'bvec2',
+  'bool3':  'bvec3',
+  'bool4':  'bvec4',
+
+  'mat2':   'mat2x2',
+  'mat3':   'mat3x3',
+  'mat4':   'mat4x4',
+}
 
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
@@ -19,7 +40,7 @@ const cfgHandlers = {
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
-    const condExpr = glslBackend.generateExpression (dag, conditionID, generationContext);
+    const condExpr = glslBackend.generateExpression(generationContext, dag, conditionID);
     generationContext.write(`if (${condExpr}) {`)
     generationContext.indent++;
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
@@ -57,13 +78,26 @@ export const glslBackend = {
     }).join(', ')}) {`;
     return firstLine;
   },
-  generateDataTypeName(baseType, dimension) {
-    return baseType + dimension; 
+
+  getTypeName(baseType, dimension) {
+    return TypeNames[baseType + dimension]
   },
-  generateDeclaration() {
+
+  generateDeclaration(generationContext, dag, nodeID) {
+    const expr = this.generateExpression(generationContext, dag, nodeID);
+    const tmp = `T${generationContext.nextTempID++}`;
+    generationContext.tempNames[nodeID] = tmp;
     
+    const T = extractTypeInfo(dag, nodeID);
+    const typeName = this.getTypeName(T.baseType, T.dimension);
+    return `${typeName} ${tmp} = ${expr};`;
   },
-  generateExpression(dag, nodeID, generationContext) {
+
+  generateReturn(generationContext, dag, nodeID) {
+
+  },
+
+  generateExpression(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
     if (generationContext.tempNames?.[nodeID]) {
       return generationContext.tempNames[nodeID];
@@ -80,10 +114,10 @@ export const glslBackend = {
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         if (node.dependsOn.length === 1 && node.dimension === 1) {
           console.log("AARK")
-          return this.generateExpression(dag, node.dependsOn[0], generationContext);
+          return this.generateExpression(generationContext, dag, node.dependsOn[0]);
         }
-        const T = this.generateDataTypeName(node.baseType, node.dimension);
-        const deps = node.dependsOn.map((dep) => this.generateExpression(dag, dep, generationContext));
+        const T = this.getTypeName(node.baseType, node.dimension);
+        const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
         return `${T}(${deps.join(', ')})`;
       } 
       if (node.opCode === OpCode.Nary.FUNCTION) {
@@ -91,8 +125,8 @@ export const glslBackend = {
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;
-        const left  = this.generateExpression(dag, lID, generationContext);
-        const right = this.generateExpression(dag, rID, generationContext);
+        const left  = this.generateExpression(generationContext, dag, lID);
+        const right = this.generateExpression(generationContext, dag, rID);
         const opSym = OpCodeToSymbol[node.opCode];
         if (useParantheses) {
           return `(${left} ${opSym} ${right})`;
@@ -102,7 +136,7 @@ export const glslBackend = {
       }
       if (node.dependsOn.length === 1) {
         const [i] = node.dependsOn;
-        const val  = this.generateExpression(dag, i, generationContext);
+        const val  = this.generateExpression(generationContext, dag, i);
         const sym  = OpCodeToSymbol[node.opCode];
         return `${sym}${val}`;
       }
@@ -111,6 +145,7 @@ export const glslBackend = {
       FES.internalError(`${node.nodeType} not working yet`)
     }
   },
+
   generateBlock(blockID, strandsContext, generationContext) {
     const type = strandsContext.cfg.blockTypes[blockID];
     const handler = cfgHandlers[type] || cfgHandlers[BlockType.DEFAULT];
