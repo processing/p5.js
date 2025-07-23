@@ -196,6 +196,19 @@ export function createFunctionCallNode(strandsContext, identifier, overrides, de
   return id;
 }
 
+export function createUnaryOpNode(strandsContext, strandsNode, opCode) {
+  const { dag, cfg } = strandsContext;
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode,
+    dependsOn: strandsNode.id,
+    baseType: dag.baseTypes[strandsNode.id],
+    dimension: dag.dimensions[strandsNode.id],
+  })
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  return id;
+}
+
 export function createStatementNode(strandsContext, type) {
   return -99;
 }

@@ -12,7 +12,7 @@ import { BlockType } from './utils';
 import { createDirectedAcyclicGraph } from './directed_acyclic_graph'
 import { createControlFlowGraph, createBasicBlock, pushBlock, popBlock } from './control_flow_graph';
 import { generateShaderCode } from './code_generation';
-import { initGlobalStrandsAPI, initShaderHooksFunctions } from './user_API';
+import { initGlobalStrandsAPI, createShaderHooksFunctions } from './user_API';
 
 function strands(p5, fn) {
   //////////////////////////////////////////////
@@ -51,7 +51,7 @@ function strands(p5, fn) {
       // Reset the context object every time modify is called;
       const backend = WEBGL;
       initStrandsContext(strandsContext, backend);
-      initShaderHooksFunctions(strandsContext, fn, this);
+      createShaderHooksFunctions(strandsContext, fn, this);
       
       // 1. Transpile from strands DSL to JS
       let strandsCallback;

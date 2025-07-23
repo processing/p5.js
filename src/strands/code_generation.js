@@ -1,7 +1,9 @@
 import { WEBGL } from '../core/constants';
 import { glslBackend } from './GLSL_backend';
-import { dfsPostOrder, dfsReversePostOrder, NodeType } from './utils';
+import { NodeType } from './utils';
 import { extractTypeInfo } from './builder';
+import { sortCFG } from './control_flow_graph';
+import { sortDAG } from './directed_acyclic_graph';
 
 let globalTempCounter = 0;
 let backend;
@@ -41,8 +43,8 @@ export function generateShaderCode(strandsContext) {
   
   for (const { hookType, entryBlockID, rootNodeID} of strandsContext.hooks) {
     const { cfg, dag } = strandsContext;
-    const dagSorted = dfsPostOrder(dag.dependsOn, rootNodeID);
-    const cfgSorted = dfsReversePostOrder(cfg.outgoingEdges, entryBlockID);
+    const dagSorted = sortDAG(dag.dependsOn, rootNodeID);
+    const cfgSorted = sortCFG(cfg.outgoingEdges, entryBlockID);
     
     const generationContext = {
       ...generateTopLevelDeclarations(strandsContext, dagSorted),
