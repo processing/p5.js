@@ -102,22 +102,22 @@ export const OpCode = {
 };
 
 export const OperatorTable = [
-  { arity: "unary", name: "not", symbol: "!", opcode: OpCode.Unary.LOGICAL_NOT },
-  { arity: "unary", name: "neg", symbol: "-", opcode: OpCode.Unary.NEGATE },
-  { arity: "unary", name: "plus", symbol: "+", opcode: OpCode.Unary.PLUS },
-  { arity: "binary", name: "add", symbol: "+", opcode: OpCode.Binary.ADD },
-  { arity: "binary", name: "sub", symbol: "-", opcode: OpCode.Binary.SUBTRACT },
-  { arity: "binary", name: "mult", symbol: "*", opcode: OpCode.Binary.MULTIPLY },
-  { arity: "binary", name: "div", symbol: "/", opcode: OpCode.Binary.DIVIDE },
-  { arity: "binary", name: "mod", symbol: "%", opcode: OpCode.Binary.MODULO },
-  { arity: "binary", name: "equalTo", symbol: "==", opcode: OpCode.Binary.EQUAL },
-  { arity: "binary", name: "notEqual", symbol: "!=", opcode: OpCode.Binary.NOT_EQUAL },
-  { arity: "binary", name: "greaterThan", symbol: ">", opcode: OpCode.Binary.GREATER_THAN },
-  { arity: "binary", name: "greaterEqual", symbol: ">=", opcode: OpCode.Binary.GREATER_EQUAL },
-  { arity: "binary", name: "lessThan", symbol: "<", opcode: OpCode.Binary.LESS_THAN },
-  { arity: "binary", name: "lessEqual", symbol: "<=", opcode: OpCode.Binary.LESS_EQUAL },
-  { arity: "binary", name: "and", symbol: "&&", opcode: OpCode.Binary.LOGICAL_AND },
-  { arity: "binary", name: "or", symbol: "||", opcode: OpCode.Binary.LOGICAL_OR },
+  { arity: "unary", name: "not", symbol: "!", opCode: OpCode.Unary.LOGICAL_NOT },
+  { arity: "unary", name: "neg", symbol: "-", opCode: OpCode.Unary.NEGATE },
+  { arity: "unary", name: "plus", symbol: "+", opCode: OpCode.Unary.PLUS },
+  { arity: "binary", name: "add", symbol: "+", opCode: OpCode.Binary.ADD },
+  { arity: "binary", name: "sub", symbol: "-", opCode: OpCode.Binary.SUBTRACT },
+  { arity: "binary", name: "mult", symbol: "*", opCode: OpCode.Binary.MULTIPLY },
+  { arity: "binary", name: "div", symbol: "/", opCode: OpCode.Binary.DIVIDE },
+  { arity: "binary", name: "mod", symbol: "%", opCode: OpCode.Binary.MODULO },
+  { arity: "binary", name: "equalTo", symbol: "==", opCode: OpCode.Binary.EQUAL },
+  { arity: "binary", name: "notEqual", symbol: "!=", opCode: OpCode.Binary.NOT_EQUAL },
+  { arity: "binary", name: "greaterThan", symbol: ">", opCode: OpCode.Binary.GREATER_THAN },
+  { arity: "binary", name: "greaterEqual", symbol: ">=", opCode: OpCode.Binary.GREATER_EQUAL },
+  { arity: "binary", name: "lessThan", symbol: "<", opCode: OpCode.Binary.LESS_THAN },
+  { arity: "binary", name: "lessEqual", symbol: "<=", opCode: OpCode.Binary.LESS_EQUAL },
+  { arity: "binary", name: "and", symbol: "&&", opCode: OpCode.Binary.LOGICAL_AND },
+  { arity: "binary", name: "or", symbol: "||", opCode: OpCode.Binary.LOGICAL_OR },
 ];
 
 export const ConstantFolding = {
@@ -138,13 +138,10 @@ export const ConstantFolding = {
 
 export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
-export const OpCodeArgs = {};
-export const OpCodeToOperation = {};
 
-for (const { arity, symbol, opcode } of OperatorTable) {
-  SymbolToOpCode[symbol] = opcode;
-  OpCodeToSymbol[opcode] = symbol;
-  OpCodeArgs[opcode] = args;
+for (const { symbol, opCode } of OperatorTable) {
+  SymbolToOpCode[symbol] = opCode;
+  OpCodeToSymbol[opCode] = symbol;
 }
 
 export const BlockType = {
@@ -158,63 +155,8 @@ export const BlockType = {
   FOR: 7,
   MERGE: 8,
   DEFAULT: 9,
-
 }
+
 export const BlockTypeToName = Object.fromEntries(
   Object.entries(BlockType).map(([key, val]) => [val, key])
 );
-
-////////////////////////////
-// Type Checking helpers
-////////////////////////////
-export function arrayToFloatType(array) {
-  let type = false;
-  if (array.length === 1) {
-    type = `FLOAT`;
-  } else if (array.length >= 2 && array.length <= 4) {
-    type = `VEC${array.length}`;
-  } else {
-    throw new Error('Tried to construct a float / vector with and empty array, or more than 4 components!')
-  }
-}
-
-////////////////////////////
-// Graph utils
-////////////////////////////
-export function dfsPostOrder(adjacencyList, start) {
-  const visited = new Set();
-  const postOrder = [];
-
-  function dfs(v) {
-    if (visited.has(v)) {
-      return;
-    }
-    visited.add(v);
-    for (let w of adjacencyList[v]) {
-      dfs(w);
-    }
-    postOrder.push(v);
-  }
-  
-  dfs(start);
-  return postOrder;
-}
-
-export function dfsReversePostOrder(adjacencyList, start) {
-  const visited = new Set();
-  const postOrder = [];
-
-  function dfs(v) {
-    if (visited.has(v)) {
-      return;
-    }
-    visited.add(v);
-    for (let w of adjacencyList[v].sort((a, b) => b-a) || []) {
-      dfs(w);
-    }
-    postOrder.push(v);
-  }
-  
-  dfs(start);
-  return postOrder.reverse();
-}

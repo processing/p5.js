@@ -1,4 +1,4 @@
-import { NodeTypeRequiredFields, NodeTypeToName, TypeInfo } from './utils';
+import { NodeTypeRequiredFields, NodeTypeToName } from './utils';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -113,4 +113,23 @@ function validateNode(node){
   if (missingFields.length > 0) {
     FES.internalError(`Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`);
   }
+}
+
+export function sortDAG(adjacencyList, start) {
+  const visited = new Set();
+  const postOrder = [];
+
+  function dfs(v) {
+    if (visited.has(v)) {
+      return;
+    }
+    visited.add(v);
+    for (let w of adjacencyList[v]) {
+      dfs(w);
+    }
+    postOrder.push(v);
+  }
+  
+  dfs(start);
+  return postOrder;
 }

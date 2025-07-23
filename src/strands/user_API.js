@@ -4,8 +4,9 @@ import {
   createVariableNode,
   createStatementNode,
   createTypeConstructorNode,
+  createUnaryOpNode,
 } from './builder'
-import { OperatorTable, SymbolToOpCode, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './utils'
+import { OperatorTable, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './utils'
 import { strandsShaderFunctions } from './shader_functions'
 import { StrandsConditional } from './strands_conditionals'
 import * as CFG from './control_flow_graph'
@@ -23,19 +24,19 @@ export class StrandsNode {
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // We augment the strands node with operations programatically 
   // this means methods like .add, .sub, etc can be chained
-  for (const { name, symbol, arity } of OperatorTable) {
+  for (const { name, arity, opCode, symbol } of OperatorTable) {
     if (arity === 'binary') {
       StrandsNode.prototype[name] = function (...right) {
-        const id = createBinaryOpNode(strandsContext, this, right, SymbolToOpCode[symbol]);
+        const id = createBinaryOpNode(strandsContext, this, right, opCode);
         return new StrandsNode(id);
       };
     }
-    // if (arity === 'unary') {
-    //   StrandsNode.prototype[name] = function () {
-    //     const id = createUnaryExpressionNode(this, SymbolToOpCode[symbol]);
-    //     return new StrandsNode(id);
-    //   };
-    // }
+    if (arity === 'unary') {
+      fn[name] = function (strandsNode) {
+        const id = createUnaryOpNode(strandsContext, strandsNode, opCode);
+        return new StrandsNode(id);
+      }
+    }
   }
   
   //////////////////////////////////////////////
@@ -134,17 +135,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 //////////////////////////////////////////////
 // Per-Hook functions
 //////////////////////////////////////////////
+const structTypes = ['Vertex', ]
+
 function createHookArguments(strandsContext, parameters){
-  const structTypes = ['Vertex', ]
   const args = [];
   
   for (const param of parameters) {
     const paramType = param.type;
     if(structTypes.includes(paramType.typeName)) {
-      const propertiesNodes = paramType.properties.map(
-        (prop) => [prop.name, createVariableNode(strandsContext, TypeInfoFromGLSLName[prop.dataType], prop.name)]
-      );
-      const argObject = Object.fromEntries(propertiesNodes);
+      const propertyEntries = paramType.properties.map((prop) => {
+        const typeInfo = TypeInfoFromGLSLName[prop.dataType];
+        const variableNode = createVariableNode(strandsContext, typeInfo, prop.name);
+        return [prop.name, variableNode];
+      });
+      const argObject = Object.fromEntries(propertyEntries);
       args.push(argObject);
     } else {
       const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
@@ -155,24 +159,63 @@ function createHookArguments(strandsContext, parameters){
   return args;
 }
 
-export function initShaderHooksFunctions(strandsContext, fn, shader) { 
+export function createShaderHooksFunctions(strandsContext, fn, shader) { 
   const availableHooks = {
     ...shader.hooks.vertex,
     ...shader.hooks.fragment,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
-  const { cfg } = strandsContext;
+  const { cfg, dag } = strandsContext;
+
   for (const hookType of hookTypes) {
     window[hookType.name] = function(hookUserCallback) {
       const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
+      
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const rootNodeID = hookUserCallback(args).id;
+      const returned = hookUserCallback(args);
+      let returnedNode;
+
+      const expectedReturnType = hookType.returnType;
+      if(structTypes.includes(expectedReturnType.typeName)) {
+
+      } 
+      else {
+        // In this case we are expecting a native shader type, probably vec4 or vec3.
+        const expected = TypeInfoFromGLSLName[expectedReturnType.typeName];
+        // User may have returned a raw value like [1,1,1,1] or 25.
+        if (!(returned instanceof StrandsNode)) {
+          const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, returned);
+          returnedNode = new StrandsNode(id);
+        } 
+        else {
+          returnedNode = returned;
+        }
+
+        const received = {
+          baseType: dag.baseTypes[returnedNode.id],
+          dimension: dag.dimensions[returnedNode.id],
+        }
+        if (received.dimension !== expected.dimension) {
+          if (received.dimension !== 1) {
+            FES.userError('type error', `You have returned a vector with ${received.dimension} components in ${hookType.name} when a ${expected.baseType + expected.dimension} was expected!`);
+          } 
+          else {
+            const newID = createTypeConstructorNode(strandsContext, expected, returnedNode);
+            returnedNode = new StrandsNode(newID);
+          }
+        } 
+        else if (received.baseType !== expected.baseType) {
+            const newID = createTypeConstructorNode(strandsContext, expected, returnedNode);
+            returnedNode = new StrandsNode(newID);
+        }
+      }
+
       strandsContext.hooks.push({
         hookType, 
         entryBlockID,
-        rootNodeID,
+        rootNodeID: returnedNode.id,
       });
       CFG.popBlock(cfg);
     }
