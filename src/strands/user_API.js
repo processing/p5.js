@@ -152,8 +152,9 @@ function createHookArguments(strandsContext, parameters){
       args.push(argObject);
     } else {
       const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
-      const arg = createVariableNode(strandsContext, typeInfo, param.name);
-      args.push(arg)
+      const id = createVariableNode(strandsContext, typeInfo, param.name);
+      const arg = new StrandsNode(id);
+      args.push(arg);
     }
   }
   return args;
@@ -174,7 +175,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.pushBlock(cfg, entryBlockID);
       
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const returned = hookUserCallback(args);
+      const returned = hookUserCallback(...args);
       let returnedNode;
 
       const expectedReturnType = hookType.returnType;
