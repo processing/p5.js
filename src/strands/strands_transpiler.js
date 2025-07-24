@@ -2,8 +2,6 @@ import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
 
-// TODO: Switch this to operator table, cleanup whole file too
-
 function replaceBinaryOperator(codeSource) {
   switch (codeSource) {
     case '+': return 'add';

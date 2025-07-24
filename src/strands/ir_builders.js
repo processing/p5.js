@@ -1,8 +1,10 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType } from './ir_types';
+import { NodeType, OpCode, BaseType, typeEquals, GenType } from './ir_types';
 import { StrandsNode } from './strands_api';
+import { strandsBuiltinFunctions } from './strands_builtins';
+import { ar } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js';
 
 //////////////////////////////////////////////
 // Builders for node graphs
@@ -167,18 +169,86 @@ export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
   return id;
 }
 
-export function createFunctionCallNode(strandsContext, identifier, overrides, dependsOn) {
+export function createFunctionCallNode(strandsContext, functionName, userArgs) {
   const { cfg, dag } = strandsContext;
-  let typeInfo = { baseType: null, dimension: null };
+  console.log("HELLOOOOOOOO")
+  const overloads = strandsBuiltinFunctions[functionName];
+  const matchingArgsCounts = overloads.filter(overload => overload.params.length === userArgs.length);
+  if (matchingArgsCounts.length === 0) {
+    const argsLengthSet = new Set();
+    const argsLengthArr = [];
+    overloads.forEach((overload) => argsLengthSet.add(overload.params.length));
+    argsLengthSet.forEach((len) => argsLengthArr.push(`${len}`));
+    const argsLengthStr = argsLengthArr.join(' or ');
+    FES.userError("parameter validation error",`Function '${functionName}' has ${overloads.length} variants which expect ${argsLengthStr} arguments, but ${userArgs.length} arguments were provided.`);
+  }
+
+  let bestOverload = null;
+  let bestScore = 0;
+  let inferredReturnType = null;
+  for (const overload of matchingArgsCounts) {
+    let isValid = true;
+    let overloadParamTypes = [];
+    let inferredDimension = null;
+    let similarity = 0;
+
+    for (let i = 0; i < userArgs.length; i++) {
+      const argType = DAG.extractNodeTypeInfo(userArgs[i]);
+      const expectedType = overload.params[i];
+      let dimension = expectedType.dimension;
+
+      const isGeneric = (T) => T.dimension === null;
+      if (isGeneric(expectedType)) {
+        if (inferredDimension === null || inferredDimension === 1) {
+          inferredDimension = argType.dimension;
+        }
+        if (inferredDimension !== argType.dimension) {
+          isValid = false;
+        }
+        dimension = inferredDimension;
+      } 
+      else {
+        if (argType.dimension > dimension) {
+          isValid = false;
+        }
+      }
+
+      if (argType.baseType === expectedType.baseType) {
+        similarity += 2;
+      }
+      else if(expectedType.priority > argType.priority) {
+        similarity += 1;
+      }
+
+      overloadParamTypes.push({ baseType: expectedType.baseType, dimension });
+    }
+
+    if (isValid && (!bestOverload || similarity > bestScore)) {
+      bestOverload = overloadParamTypes;
+      bestScore = similarity;
+      inferredReturnType = overload.returnType;
+      if (isGeneric(inferredReturnType)) {
+        inferredReturnType.dimension = inferredDimension;
+      }
+    }
+  }
+
+  if (bestOverload === null) {
+    const paramsString = (params) => `(${params.map((param) => param).join(', ')})`;
+    const expectedArgsString = overloads.map(overload => paramsString(overload.params)).join(' or ');
+    const providedArgsString = paramsString(userArgs.map((arg)=>arg.baseType+arg.dimension));
+      throw new Error(`Function '${functionName}' was called with wrong arguments. Most likely, you provided mixed lengths vectors as arguments.\nExpected argument types: ${expectedArgsString}\nProvided argument types: ${providedArgsString}\nAll of the arguments with expected type 'genType' should have a matching type. If one of those is different, try to find where it was created.
+    `);
+  } 
 
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.FUNCTION_CALL,
-    identifier,
-    overrides, 
-    dependsOn,
+    identifier: functionName,
+    dependsOn: userArgs,
     // no type info yet
-    ...typeInfo,
+    baseType: inferredReturnType.baseType,
+    dimension: inferredReturnType.dimension
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);

@@ -6,8 +6,8 @@ import {
   createTypeConstructorNode,
   createUnaryOpNode,
 } from './ir_builders'
-import { OperatorTable, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './ir_types'
-import { strandsShaderFunctions } from './strands_builtins'
+import { OperatorTable, BlockType, DataType, BaseType, TypeInfoFromGLSLName } from './ir_types'
+import { strandsBuiltinFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
@@ -66,25 +66,25 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
-  for (const [fnName, overrides] of Object.entries(strandsShaderFunctions)) {
+  for (const [functionName, overrides] of Object.entries(strandsBuiltinFunctions)) {
     const isp5Function = overrides[0].isp5Function;
     
     if (isp5Function) {
-      const originalFn = fn[fnName];
-      fn[fnName] = function(...args) {
+      const originalFn = fn[functionName];
+      fn[functionName] = function(...args) {
         if (strandsContext.active) {
-          return createFunctionCallNode(strandsContext, fnName, overrides, args);
+          return createFunctionCallNode(strandsContext, functionName, args);
         } else {
           return originalFn.apply(this, args);
         }
       }
     } else {
-      fn[fnName] = function (...args) {
+      fn[functionName] = function (...args) {
         if (strandsContext.active) {
-          return createFunctionCallNode(strandsContext, fnName, overrides, args);
+          return createFunctionCallNode(strandsContext, functionName, args);
         } else {
           p5._friendlyError(
-            `It looks like you've called ${fnName} outside of a shader's modify() function.`
+            `It looks like you've called ${functionName} outside of a shader's modify() function.`
           )
         }
       }
@@ -92,11 +92,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
   
   // Next is type constructors and uniform functions
-  for (const type in TypeInfo) {
+  for (const type in DataType) {
     if (type === BaseType.DEFER) {
       continue;
     }
-    const typeInfo = TypeInfo[type];
+    const typeInfo = DataType[type];
 
     let pascalTypeName;
     if (/^[ib]vec/.test(typeInfo.fnName)) {

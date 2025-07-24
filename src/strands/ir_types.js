@@ -37,7 +37,7 @@ export const BasePriority = {
   [BaseType.DEFER]: -1,
 };
 
-export const TypeInfo = {
+export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
   float2: { fnName: "vec2", baseType: BaseType.FLOAT, dimension:2, priority: 3,  },
   float3: { fnName: "vec3", baseType: BaseType.FLOAT, dimension:3, priority: 3,  },
@@ -56,12 +56,18 @@ export const TypeInfo = {
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
 }
 
+export const GenType = {
+  FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
+  INT: { baseType: BaseType.INT, dimension: null, priority: 2 },
+  BOOL: { baseType: BaseType.BOOL, dimension: null, priority: 1 },
+}
+
 export function typeEquals(nodeA, nodeB) {
   return (nodeA.dimension === nodeB.dimension) && (nodeA.baseType === nodeB.baseType);
 }
 
 export const TypeInfoFromGLSLName = Object.fromEntries(
-  Object.values(TypeInfo)
+  Object.values(DataType)
     .filter(info => info.fnName !== null)
     .map(info => [info.fnName, info])
 );
