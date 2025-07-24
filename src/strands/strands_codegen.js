@@ -1,15 +1,11 @@
-import { WEBGL } from '../core/constants';
-import { glslBackend } from './GLSL_backend';
-import { NodeType } from './utils';
-import { sortCFG } from './control_flow_graph';
-import { sortDAG } from './directed_acyclic_graph';
-
-let globalTempCounter = 0;
-let backend;
+import { NodeType } from './ir_types';
+import { sortCFG } from './ir_cfg';
+import { sortDAG } from './ir_dag';
 
 function generateTopLevelDeclarations(strandsContext, generationContext, dagOrder) {
+  const { dag, backend } = strandsContext;
+
   const usedCount = {};
-  const dag = strandsContext.dag;
   for (const nodeID of dagOrder) {
     usedCount[nodeID] = (dag.usedBy[nodeID] || []).length;
   }
@@ -30,13 +26,11 @@ function generateTopLevelDeclarations(strandsContext, generationContext, dagOrde
 }
 
 export function generateShaderCode(strandsContext) {
-  if (strandsContext.backend === WEBGL) {
-    backend = glslBackend;
-  }
+  const { cfg, dag, backend } = strandsContext;
+
   const hooksObj = {};
   
   for (const { hookType, entryBlockID, rootNodeID} of strandsContext.hooks) {
-    const { cfg, dag } = strandsContext;
     const dagSorted = sortDAG(dag.dependsOn, rootNodeID);
     const cfgSorted = sortCFG(cfg.outgoingEdges, entryBlockID);
     

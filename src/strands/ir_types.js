@@ -14,19 +14,19 @@ export const NodeTypeToName = Object.fromEntries(
 );
 
 export const NodeTypeRequiredFields = {
-  [NodeType.OPERATION]: ['opCode', 'dependsOn'],
-  [NodeType.LITERAL]: ['value'],
-  [NodeType.VARIABLE]: ['identifier'],
-  [NodeType.CONSTANT]: ['value'],
-  [NodeType.PHI]: ['dependsOn', 'phiBlocks']
+  [NodeType.OPERATION]: ["opCode", "dependsOn"],
+  [NodeType.LITERAL]: ["value"],
+  [NodeType.VARIABLE]: ["identifier"],
+  [NodeType.CONSTANT]: ["value"],
+  [NodeType.PHI]: ["dependsOn", "phiBlocks"]
 };
 
 export const BaseType = {
-  FLOAT: 'float',
-  INT: 'int',
-  BOOL: 'bool',
-  MAT: 'mat',
-  DEFER: 'defer',
+  FLOAT: "float",
+  INT: "int",
+  BOOL: "bool",
+  MAT: "mat",
+  DEFER: "defer",
 };
 
 export const BasePriority = {
@@ -38,26 +38,26 @@ export const BasePriority = {
 };
 
 export const TypeInfo = {
-  'float1': { fnName: 'float',  baseType: BaseType.FLOAT,  dimension:1,  priority: 3,  },
-  'float2': { fnName: 'vec2',   baseType: BaseType.FLOAT,  dimension:2,  priority: 3,  },
-  'float3': { fnName: 'vec3',   baseType: BaseType.FLOAT,  dimension:3,  priority: 3,  },
-  'float4': { fnName: 'vec4',   baseType: BaseType.FLOAT,  dimension:4,  priority: 3,  },
+  float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
+  float2: { fnName: "vec2", baseType: BaseType.FLOAT, dimension:2, priority: 3,  },
+  float3: { fnName: "vec3", baseType: BaseType.FLOAT, dimension:3, priority: 3,  },
+  float4: { fnName: "vec4", baseType: BaseType.FLOAT, dimension:4, priority: 3,  },
+  int1: { fnName: "int", baseType: BaseType.INT, dimension:1, priority: 2,  },
+  int2: { fnName: "ivec2", baseType: BaseType.INT, dimension:2, priority: 2,  },
+  int3: { fnName: "ivec3", baseType: BaseType.INT, dimension:3, priority: 2,  },
+  int4: { fnName: "ivec4", baseType: BaseType.INT, dimension:4, priority: 2,  },
+  bool1: { fnName: "bool", baseType: BaseType.BOOL, dimension:1, priority: 1,  },
+  bool2: { fnName: "bvec2", baseType: BaseType.BOOL, dimension:2, priority: 1,  },
+  bool3: { fnName: "bvec3", baseType: BaseType.BOOL, dimension:3, priority: 1,  },
+  bool4: { fnName: "bvec4", baseType: BaseType.BOOL, dimension:4, priority: 1,  },
+  mat2: { fnName: "mat2x2", baseType: BaseType.MAT, dimension:2, priority: 0,  },
+  mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
+  mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
+  defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
+}
 
-  'int1':   { fnName: 'int',    baseType: BaseType.INT,    dimension:1,  priority: 2,  },
-  'int2':   { fnName: 'ivec2',  baseType: BaseType.INT,    dimension:2,  priority: 2,  },
-  'int3':   { fnName: 'ivec3',  baseType: BaseType.INT,    dimension:3,  priority: 2,  },
-  'int4':   { fnName: 'ivec4',  baseType: BaseType.INT,    dimension:4,  priority: 2,  },
-
-  'bool1':  { fnName: 'bool',   baseType: BaseType.BOOL,   dimension:1,  priority: 1,  },
-  'bool2':  { fnName: 'bvec2',  baseType: BaseType.BOOL,   dimension:2,  priority: 1,  },
-  'bool3':  { fnName: 'bvec3',  baseType: BaseType.BOOL,   dimension:3,  priority: 1,  },
-  'bool4':  { fnName: 'bvec4',  baseType: BaseType.BOOL,   dimension:4,  priority: 1,  },
-
-  'mat2':   { fnName: 'mat2x2', baseType: BaseType.MAT,    dimension:2,  priority: 0,  },
-  'mat3':   { fnName: 'mat3x3', baseType: BaseType.MAT,    dimension:3,  priority: 0,  },
-  'mat4':   { fnName: 'mat4x4', baseType: BaseType.MAT,    dimension:4,  priority: 0,  },
-
-  'defer':  { fnName:  null,    baseType: BaseType.DEFER,  dimension: null, priority: -1 },
+export function typeEquals(nodeA, nodeB) {
+  return (nodeA.dimension === nodeB.dimension) && (nodeA.baseType === nodeB.baseType);
 }
 
 export const TypeInfoFromGLSLName = Object.fromEntries(

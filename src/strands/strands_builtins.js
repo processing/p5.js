@@ -38,15 +38,15 @@ const builtInGLSLFunctions = {
   'log2': [{ args: ['genType'], returnType: 'genType', isp5Function: false}],
   'max': [
     { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
-    { args: ['genType', 'float'], returnType: 'genType', isp5Function: true},
+    { args: ['genType', 'float1'], returnType: 'genType', isp5Function: true},
   ],
   'min': [
     { args: ['genType', 'genType'], returnType: 'genType', isp5Function: true},
-    { args: ['genType', 'float'], returnType: 'genType', isp5Function: true},
+    { args: ['genType', 'float1'], returnType: 'genType', isp5Function: true},
   ],
   'mix': [
     { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
-    { args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false},
+    { args: ['genType', 'genType', 'float1'], returnType: 'genType', isp5Function: false},
   ],
   // 'mod': [{}],
   // 'modf': [{}],
@@ -56,7 +56,7 @@ const builtInGLSLFunctions = {
   // 'sign': [{}],
   'smoothstep': [
     { args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false},
-    { args: ['float', 'float', 'genType'], returnType: 'genType', isp5Function: false},
+    { args: ['float1', 'float1', 'genType'], returnType: 'genType', isp5Function: false},
   ],
   'sqrt': [{ args: ['genType'], returnType: 'genType', isp5Function: true}],
   'step': [{ args: ['genType', 'genType'], returnType: 'genType', isp5Function: false}],
@@ -64,18 +64,18 @@ const builtInGLSLFunctions = {
   
   ////////// Vector //////////
   'cross': [{ args: ['vec3', 'vec3'], returnType: 'vec3', isp5Function: true}],
-  'distance': [{ args: ['genType', 'genType'], returnType: 'float', isp5Function: true}],
-  'dot': [{ args: ['genType', 'genType'], returnType: 'float', isp5Function: true}],
+  'distance': [{ args: ['genType', 'genType'], returnType: 'float1', isp5Function: true}],
+  'dot': [{ args: ['genType', 'genType'], returnType: 'float1', isp5Function: true}],
   // 'equal': [{}],
   'faceforward': [{ args: ['genType', 'genType', 'genType'], returnType: 'genType', isp5Function: false}],
-  'length': [{ args: ['genType'], returnType: 'float', isp5Function: false}],
+  'length': [{ args: ['genType'], returnType: 'float1', isp5Function: false}],
   'normalize': [{ args: ['genType'], returnType: 'genType', isp5Function: true}],
   // 'notEqual': [{}],
   'reflect': [{ args: ['genType', 'genType'], returnType: 'genType', isp5Function: false}],
-  'refract': [{ args: ['genType', 'genType', 'float'], returnType: 'genType', isp5Function: false}],
+  'refract': [{ args: ['genType', 'genType', 'float1'], returnType: 'genType', isp5Function: false}],
   
   ////////// Texture sampling //////////
-  'texture': [{args: ['sampler2D', 'vec2'], returnType: 'vec4', isp5Function: true}],
+  'texture': [{args: ['sampler2D', 'float2'], returnType: 'float4', isp5Function: true}],
 }
 
 export const strandsShaderFunctions = {

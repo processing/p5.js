@@ -1,5 +1,5 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./utils";
-import { getNodeDataFromID, extractNodeTypeInfo } from "./directed_acyclic_graph";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./ir_types";
+import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 
 const TypeNames = {

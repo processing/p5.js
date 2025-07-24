@@ -1,4 +1,4 @@
-import { BlockTypeToName } from "./utils";
+import { BlockTypeToName } from "./ir_types";
 
 export function createControlFlowGraph() {
   return {

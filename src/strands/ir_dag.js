@@ -1,4 +1,4 @@
-import { NodeTypeRequiredFields, NodeTypeToName, BasePriority } from './utils';
+import { NodeTypeRequiredFields, NodeTypeToName, BasePriority } from './ir_types';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -39,15 +39,15 @@ export function getOrCreateNode(graph, node) {
 
 export function createNodeData(data = {}) {
   const node = {
-    nodeType:   data.nodeType   ?? null,
-    baseType:   data.baseType   ?? null,
-    dimension:  data.dimension  ?? null,
-    opCode:     data.opCode     ?? null,
-    value:      data.value      ?? null,
+    nodeType: data.nodeType ?? null,
+    baseType: data.baseType ?? null,
+    dimension: data.dimension ?? null,
+    opCode: data.opCode ?? null,
+    value: data.value ?? null,
     identifier: data.identifier ?? null,
-    dependsOn:  Array.isArray(data.dependsOn) ? data.dependsOn : [],
+    dependsOn: Array.isArray(data.dependsOn) ? data.dependsOn : [],
     usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
-    phiBlocks:  Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
+    phiBlocks: Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
   };
   validateNode(node);
   return node;
@@ -55,15 +55,15 @@ export function createNodeData(data = {}) {
 
 export function getNodeDataFromID(graph, id) {
   return {
-    nodeType:   graph.nodeTypes[id],
-    opCode:     graph.opCodes[id],
-    value:      graph.values[id],
+    nodeType: graph.nodeTypes[id],
+    opCode: graph.opCodes[id],
+    value: graph.values[id],
     identifier: graph.identifiers[id],
-    dependsOn:  graph.dependsOn[id],
-    usedBy:     graph.usedBy[id],
-    phiBlocks:  graph.phiBlocks[id],
-    dimension:  graph.dimensions[id],  
-    baseType:   graph.baseTypes[id],
+    dependsOn: graph.dependsOn[id],
+    usedBy: graph.usedBy[id],
+    phiBlocks: graph.phiBlocks[id],
+    dimension: graph.dimensions[id],  
+    baseType: graph.baseTypes[id],
   }
 }
 
@@ -79,18 +79,16 @@ export function extractNodeTypeInfo(dag, nodeID) {
 /////////////////////////////////
 function createNode(graph, node) {
   const id = graph.nextID++;
-  graph.nodeTypes[id]   = node.nodeType;
-  graph.opCodes[id]     = node.opCode;
-  graph.values[id]      = node.value;
+  graph.nodeTypes[id] = node.nodeType;
+  graph.opCodes[id] = node.opCode;
+  graph.values[id] = node.value;
   graph.identifiers[id] = node.identifier;
-  graph.dependsOn[id]   = node.dependsOn.slice();
-  graph.usedBy[id]      = node.usedBy;
-  graph.phiBlocks[id]   = node.phiBlocks.slice();
-
-  graph.baseTypes[id]   = node.baseType
-  graph.dimensions[id]  = node.dimension;
-
-
+  graph.dependsOn[id] = node.dependsOn.slice();
+  graph.usedBy[id] = node.usedBy;
+  graph.phiBlocks[id] = node.phiBlocks.slice();
+  graph.baseTypes[id] = node.baseType
+  graph.dimensions[id] = node.dimension;
+  
   for (const dep of node.dependsOn) {
     if (!Array.isArray(graph.usedBy[dep])) {
       graph.usedBy[dep] = [];
@@ -125,7 +123,7 @@ function validateNode(node){
 export function sortDAG(adjacencyList, start) {
   const visited = new Set();
   const postOrder = [];
-
+  
   function dfs(v) {
     if (visited.has(v)) {
       return;

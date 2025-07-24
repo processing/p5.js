@@ -5,13 +5,14 @@
 * @requires core
 */
 import { WEBGL, /*WEBGPU*/ } from '../core/constants'
+import { glslBackend } from './strands_glslBackend';
 
-import { transpileStrandsToJS } from './code_transpiler';
-import { BlockType } from './utils';
+import { transpileStrandsToJS } from './strands_transpiler';
+import { BlockType } from './ir_types';
 
-import { createDirectedAcyclicGraph } from './directed_acyclic_graph'
-import { createControlFlowGraph, createBasicBlock, pushBlock, popBlock } from './control_flow_graph';
-import { generateShaderCode } from './code_generation';
+import { createDirectedAcyclicGraph } from './ir_dag'
+import { createControlFlowGraph, createBasicBlock, pushBlock, popBlock } from './ir_cfg';
+import { generateShaderCode } from './strands_codegen';
 import { initGlobalStrandsAPI, createShaderHooksFunctions } from './strands_api';
 
 function strands(p5, fn) {
@@ -49,8 +50,8 @@ function strands(p5, fn) {
   p5.Shader.prototype.newModify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
     if (shaderModifier instanceof Function) {
       // Reset the context object every time modify is called;
-      const backend = WEBGL;
-      initStrandsContext(strandsContext, backend);
+      const backend = glslBackend;
+      initStrandsContext(strandsContext, glslBackend);
       createShaderHooksFunctions(strandsContext, fn, this);
       
       // 1. Transpile from strands DSL to JS
