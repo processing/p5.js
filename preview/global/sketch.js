@@ -2,9 +2,7 @@ p5.disableFriendlyErrors = true;
 
 function callback() {
   getFinalColor((col) => {
-    let y = col.sub(-1,1,0,0);
-
-    return mix(float(0), col.add(y), float(1));
+    return mix(vec4(1,0, 1, 1), vec4(1, 1, 0.3, 1), float(1));
   });
 }
 

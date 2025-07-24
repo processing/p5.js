@@ -73,7 +73,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       const originalFn = fn[functionName];
       fn[functionName] = function(...args) {
         if (strandsContext.active) {
-          return createFunctionCallNode(strandsContext, functionName, args);
+          const id =  createFunctionCallNode(strandsContext, functionName, args);
+          return new StrandsNode(id);
         } else {
           return originalFn.apply(this, args);
         }
@@ -81,7 +82,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     } else {
       fn[functionName] = function (...args) {
         if (strandsContext.active) {
-          return createFunctionCallNode(strandsContext, functionName, args);
+          const id = createFunctionCallNode(strandsContext, functionName, args);
+          return new StrandsNode(id);
         } else {
           p5._friendlyError(
             `It looks like you've called ${functionName} outside of a shader's modify() function.`

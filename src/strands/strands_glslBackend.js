@@ -113,15 +113,15 @@ export const glslBackend = {
       const useParantheses = node.usedBy.length > 0;
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         if (node.dependsOn.length === 1 && node.dimension === 1) {
-          console.log("AARK")
           return this.generateExpression(generationContext, dag, node.dependsOn[0]);
         }
         const T = this.getTypeName(node.baseType, node.dimension);
         const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
         return `${T}(${deps.join(', ')})`;
       } 
-      if (node.opCode === OpCode.Nary.FUNCTION) {
-        return "functioncall!";
+      if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+        const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
+        return `${node.identifier}(${functionArgs.join(', ')})`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;
