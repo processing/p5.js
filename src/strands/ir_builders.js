@@ -1,7 +1,7 @@
-import * as DAG from './directed_acyclic_graph'
-import * as CFG from './control_flow_graph'
+import * as DAG from './ir_dag'
+import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType } from './utils';
+import { NodeType, OpCode, BaseType } from './ir_types';
 import { StrandsNode } from './strands_api';
 
 //////////////////////////////////////////////
@@ -57,7 +57,6 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   const rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
-
   if (bothDeferred) {
     finalLeftNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
     finalRightNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);

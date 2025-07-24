@@ -1,5 +1,5 @@
-import * as CFG from './control_flow_graph'
-import { BlockType } from './utils';
+import * as CFG from './ir_cfg'
+import { BlockType } from './ir_types';
 
 export class StrandsConditional {
   constructor(strandsContext, condition, branchCallback) {

@@ -5,11 +5,11 @@ import {
   createStatementNode,
   createTypeConstructorNode,
   createUnaryOpNode,
-} from './builder'
-import { OperatorTable, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './utils'
-import { strandsShaderFunctions } from './shader_functions'
+} from './ir_builders'
+import { OperatorTable, BlockType, TypeInfo, BaseType, TypeInfoFromGLSLName } from './ir_types'
+import { strandsShaderFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
-import * as CFG from './control_flow_graph'
+import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 
 //////////////////////////////////////////////
