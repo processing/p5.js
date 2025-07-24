@@ -12,7 +12,7 @@ import { BlockType } from './utils';
 import { createDirectedAcyclicGraph } from './directed_acyclic_graph'
 import { createControlFlowGraph, createBasicBlock, pushBlock, popBlock } from './control_flow_graph';
 import { generateShaderCode } from './code_generation';
-import { initGlobalStrandsAPI, createShaderHooksFunctions } from './user_API';
+import { initGlobalStrandsAPI, createShaderHooksFunctions } from './strands_api';
 
 function strands(p5, fn) {
   //////////////////////////////////////////////

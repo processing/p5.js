@@ -1,8 +1,8 @@
 import * as DAG from './directed_acyclic_graph'
 import * as CFG from './control_flow_graph'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, extractTypeInfo } from './utils';
-import { StrandsNode } from './user_API';
+import { NodeType, OpCode, BaseType } from './utils';
+import { StrandsNode } from './strands_api';
 
 //////////////////////////////////////////////
 // Builders for node graphs
