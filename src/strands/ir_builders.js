@@ -4,7 +4,6 @@ import * as FES from './strands_FES'
 import { NodeType, OpCode, BaseType, typeEquals, GenType } from './ir_types';
 import { StrandsNode } from './strands_api';
 import { strandsBuiltinFunctions } from './strands_builtins';
-import { ar } from 'vitest/dist/chunks/reporters.D7Jzd9GS.js';
 
 //////////////////////////////////////////////
 // Builders for node graphs
@@ -171,7 +170,6 @@ export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
 
 export function createFunctionCallNode(strandsContext, functionName, userArgs) {
   const { cfg, dag } = strandsContext;
-  console.log("HELLOOOOOOOO")
   const overloads = strandsBuiltinFunctions[functionName];
   const matchingArgsCounts = overloads.filter(overload => overload.params.length === userArgs.length);
   if (matchingArgsCounts.length === 0) {
@@ -179,7 +177,7 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
     const argsLengthArr = [];
     overloads.forEach((overload) => argsLengthSet.add(overload.params.length));
     argsLengthSet.forEach((len) => argsLengthArr.push(`${len}`));
-    const argsLengthStr = argsLengthArr.join(' or ');
+    const argsLengthStr = argsLengthArr.join(', or ');
     FES.userError("parameter validation error",`Function '${functionName}' has ${overloads.length} variants which expect ${argsLengthStr} arguments, but ${userArgs.length} arguments were provided.`);
   }
 
@@ -187,17 +185,17 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
   let bestScore = 0;
   let inferredReturnType = null;
   for (const overload of matchingArgsCounts) {
+    const isGeneric = (T) => T.dimension === null;
     let isValid = true;
     let overloadParamTypes = [];
     let inferredDimension = null;
     let similarity = 0;
 
     for (let i = 0; i < userArgs.length; i++) {
-      const argType = DAG.extractNodeTypeInfo(userArgs[i]);
+      const argType = DAG.extractNodeTypeInfo(dag, userArgs[i].id);
       const expectedType = overload.params[i];
       let dimension = expectedType.dimension;
 
-      const isGeneric = (T) => T.dimension === null;
       if (isGeneric(expectedType)) {
         if (inferredDimension === null || inferredDimension === 1) {
           inferredDimension = argType.dimension;
@@ -234,18 +232,14 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
   }
 
   if (bestOverload === null) {
-    const paramsString = (params) => `(${params.map((param) => param).join(', ')})`;
-    const expectedArgsString = overloads.map(overload => paramsString(overload.params)).join(' or ');
-    const providedArgsString = paramsString(userArgs.map((arg)=>arg.baseType+arg.dimension));
-      throw new Error(`Function '${functionName}' was called with wrong arguments. Most likely, you provided mixed lengths vectors as arguments.\nExpected argument types: ${expectedArgsString}\nProvided argument types: ${providedArgsString}\nAll of the arguments with expected type 'genType' should have a matching type. If one of those is different, try to find where it was created.
-    `);
+    FES.userError('parameter validation', 'No matching overload found!');
   } 
 
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.FUNCTION_CALL,
     identifier: functionName,
-    dependsOn: userArgs,
+    dependsOn: userArgs.map(arg => arg.id),
     // no type info yet
     baseType: inferredReturnType.baseType,
     dimension: inferredReturnType.dimension
