@@ -1,5 +1,5 @@
 import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./utils";
-import { getNodeDataFromID, extractTypeInfo } from "./directed_acyclic_graph";
+import { getNodeDataFromID, extractNodeTypeInfo } from "./directed_acyclic_graph";
 import * as FES from './strands_FES'
 
 const TypeNames = {
@@ -88,7 +88,7 @@ export const glslBackend = {
     const tmp = `T${generationContext.nextTempID++}`;
     generationContext.tempNames[nodeID] = tmp;
     
-    const T = extractTypeInfo(dag, nodeID);
+    const T = extractNodeTypeInfo(dag, nodeID);
     const typeName = this.getTypeName(T.baseType, T.dimension);
     return `${typeName} ${tmp} = ${expr};`;
   },
