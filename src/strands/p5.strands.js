@@ -4,7 +4,6 @@
 * @for p5
 * @requires core
 */
-import { WEBGL, /*WEBGPU*/ } from '../core/constants'
 import { glslBackend } from './strands_glslBackend';
 
 import { transpileStrandsToJS } from './strands_transpiler';

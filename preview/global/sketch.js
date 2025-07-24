@@ -4,7 +4,7 @@ function callback() {
   getFinalColor((col) => {
     let y = col.sub(-1,1,0,0);
 
-    return y//mix(0, col.add(y), 1);
+    return mix(float(0), col.add(y), float(1));
   });
 }
 
