@@ -53,8 +53,8 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   let finalRightNodeID = rightStrandsNode.id;
 
   // Check if we have to cast either node
-  const leftType = extractTypeInfo(strandsContext, leftStrandsNode.id);
-  const rightType = extractTypeInfo(strandsContext, rightStrandsNode.id);
+  const leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
+  const rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
 

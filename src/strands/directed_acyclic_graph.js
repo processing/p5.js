@@ -67,7 +67,7 @@ export function getNodeDataFromID(graph, id) {
   }
 }
 
-export function extractTypeInfo(dag, nodeID) {
+export function extractNodeTypeInfo(dag, nodeID) {
   return {
     baseType: dag.baseTypes[nodeID],
     dimension: dag.dimensions[nodeID],
