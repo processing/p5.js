@@ -56,6 +56,26 @@ export const DataType = {
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
 }
 
+export const StructType = {
+  Vertex: {
+    identifer: 'Vertex',
+    properties: [
+      { name: "position", dataType: DataType.float3 },
+      { name: "normal", dataType: DataType.float3 },
+      { name: "color", dataType: DataType.float4 },
+      { name: "texCoord", dataType: DataType.float2 },
+    ]
+  }
+}
+
+export function isStructType(typeName) {
+  return Object.keys(StructType).includes(typeName);
+}
+
+export function isNativeType(typeName) {
+  return Object.keys(DataType).includes(typeName);
+}
+
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
   INT: { baseType: BaseType.INT, dimension: null, priority: 2 },
