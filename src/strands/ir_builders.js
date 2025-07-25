@@ -1,7 +1,7 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, typeEquals, GenType } from './ir_types';
+import { NodeType, OpCode, BaseType, DataType, BasePriority, } from './ir_types';
 import { StrandsNode } from './strands_api';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
@@ -108,17 +108,20 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   return id;
 }
 
-function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
+function mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn) {
+  dependsOn = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
   const mappedDependencies = [];
   let { dimension, baseType } = typeInfo;
 
   const dag = strandsContext.dag;
   let calculatedDimensions = 0;
-
-  for (const dep of dependsOn.flat()) {
+  let originalNodeID = null;
+  for (const dep of dependsOn.flat(Infinity)) {
     if (dep instanceof StrandsNode) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
-
+      originalNodeID = dep.id;
+      baseType = node.baseType;
+      
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         for (const inner of node.dependsOn) {
           mappedDependencies.push(inner);
@@ -130,7 +133,7 @@ function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
       calculatedDimensions += node.dimension;
       continue;
     }
-    if (typeof dep === 'number') {
+    else if (typeof dep === 'number') {
       const newNode = createLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
       mappedDependencies.push(newNode);
       calculatedDimensions += 1;
@@ -140,6 +143,7 @@ function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
   }
+  // Sometimes, the dimension is undefined
   if (dimension === null) {
     dimension = calculatedDimensions;
   } else if (dimension > calculatedDimensions && calculatedDimensions === 1) {
@@ -147,38 +151,52 @@ function mapConstructorDependencies(strandsContext, typeInfo, dependsOn) {
   } else if(calculatedDimensions !== 1 && calculatedDimensions !== dimension) {
     FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
   }
+  const inferredTypeInfo = {
+    dimension, 
+    baseType,
+    priority: BasePriority[baseType],
+  }
+  return { originalNodeID, mappedDependencies, inferredTypeInfo };
+}
 
-  return { mappedDependencies, dimension };
+function constructTypeFromIDs(strandsContext, strandsNodesArray, newTypeInfo) {
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Nary.CONSTRUCTOR,
+    dimension: newTypeInfo.dimension,
+    baseType: newTypeInfo.baseType,
+    dependsOn: strandsNodesArray
+  });
+  const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
+  return id;
 }
 
 export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
   const { cfg, dag } = strandsContext;
-  dependsOn = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
-  const { mappedDependencies, dimension } = mapConstructorDependencies(strandsContext, typeInfo, dependsOn);
-  
-  const nodeData = DAG.createNodeData({
-    nodeType: NodeType.OPERATION,
-    opCode: OpCode.Nary.CONSTRUCTOR,
-    dimension,
-    baseType: typeInfo.baseType,
-    dependsOn: mappedDependencies
-  })
-  const id = DAG.getOrCreateNode(dag, nodeData);
+  const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn);
+  const finalType = {
+    baseType: typeInfo.baseType, 
+    dimension: inferredTypeInfo.dimension
+  };
+  const id = constructTypeFromIDs(strandsContext, mappedDependencies, finalType);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
   return id;
 }
 
-export function createFunctionCallNode(strandsContext, functionName, userArgs) {
+export function createFunctionCallNode(strandsContext, functionName, rawUserArgs) {
   const { cfg, dag } = strandsContext;
   const overloads = strandsBuiltinFunctions[functionName];
-  const matchingArgsCounts = overloads.filter(overload => overload.params.length === userArgs.length);
+
+  const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDependencies(strandsContext, DataType.defer, rawUserArg));
+  console.log(preprocessedArgs);
+  const matchingArgsCounts = overloads.filter(overload => overload.params.length === preprocessedArgs.length);
   if (matchingArgsCounts.length === 0) {
     const argsLengthSet = new Set();
     const argsLengthArr = [];
     overloads.forEach((overload) => argsLengthSet.add(overload.params.length));
     argsLengthSet.forEach((len) => argsLengthArr.push(`${len}`));
     const argsLengthStr = argsLengthArr.join(', or ');
-    FES.userError("parameter validation error",`Function '${functionName}' has ${overloads.length} variants which expect ${argsLengthStr} arguments, but ${userArgs.length} arguments were provided.`);
+    FES.userError("parameter validation error",`Function '${functionName}' has ${overloads.length} variants which expect ${argsLengthStr} arguments, but ${preprocessedArgs.length} arguments were provided.`);
   }
 
   let bestOverload = null;
@@ -187,12 +205,13 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
   for (const overload of matchingArgsCounts) {
     const isGeneric = (T) => T.dimension === null;
     let isValid = true;
-    let overloadParamTypes = [];
+    let overloadParameters = [];
     let inferredDimension = null;
     let similarity = 0;
 
-    for (let i = 0; i < userArgs.length; i++) {
-      const argType = DAG.extractNodeTypeInfo(dag, userArgs[i].id);
+    for (let i = 0; i < preprocessedArgs.length; i++) {
+      const preArg = preprocessedArgs[i];
+      const argType = preArg.inferredTypeInfo;
       const expectedType = overload.params[i];
       let dimension = expectedType.dimension;
 
@@ -218,11 +237,11 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
         similarity += 1;
       }
 
-      overloadParamTypes.push({ baseType: expectedType.baseType, dimension });
+      overloadParameters.push({ baseType: expectedType.baseType, dimension });
     }
 
     if (isValid && (!bestOverload || similarity > bestScore)) {
-      bestOverload = overloadParamTypes;
+      bestOverload = overloadParameters;
       bestScore = similarity;
       inferredReturnType = overload.returnType;
       if (isGeneric(inferredReturnType)) {
@@ -233,14 +252,27 @@ export function createFunctionCallNode(strandsContext, functionName, userArgs) {
 
   if (bestOverload === null) {
     FES.userError('parameter validation', 'No matching overload found!');
-  } 
+  }
+
+  let dependsOn = [];
+  for (let i = 0; i < bestOverload.length; i++) {
+    const arg = preprocessedArgs[i];
+    if (arg.originalNodeID) {
+      dependsOn.push(arg.originalNodeID);
+    }
+    else {
+      const paramType = bestOverload[i];
+      const castedArgID = constructTypeFromIDs(strandsContext, arg.mappedDependencies, paramType);
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, castedArgID);
+      dependsOn.push(castedArgID);
+    }
+  }
 
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.FUNCTION_CALL,
     identifier: functionName,
-    dependsOn: userArgs.map(arg => arg.id),
-    // no type info yet
+    dependsOn,
     baseType: inferredReturnType.baseType,
     dimension: inferredReturnType.dimension
   })

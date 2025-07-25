@@ -2,7 +2,10 @@ p5.disableFriendlyErrors = true;
 
 function callback() {
   getFinalColor((col) => {
-    return mix(vec4(1,0, 1, 1), vec4(1, 1, 0.3, 1), float(1));
+    let x = [12, 1];
+    let y= [10, 100];
+    let z = [x, y];
+    return mix(vec4([1,0], 1, 1), z, 0.4);
   });
 }
 
@@ -15,7 +18,7 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function draw(){
+function draw() {
   orbitControl();
   background(0);
   shader(bloomShader);

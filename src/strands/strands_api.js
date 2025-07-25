@@ -57,9 +57,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   
   fn.strandsNode = function(...args) {
     if (args.length > 4) {
-      FES.userError('type error', "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
+      FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, args);
+    const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, args.flat());
     return new StrandsNode(id); 
   }
   
