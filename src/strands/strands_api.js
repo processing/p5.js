@@ -146,9 +146,9 @@ function createHookArguments(strandsContext, parameters){
     const paramType = param.type;
     if(structTypes.includes(paramType.typeName)) {
       const propertyEntries = paramType.properties.map((prop) => {
-        const typeInfo = TypeInfoFromGLSLName[prop.dataType];
+        const typeInfo = TypeInfoFromGLSLName[prop.type.typeName];
         const variableNode = createVariableNode(strandsContext, typeInfo, prop.name);
-        return [prop.name, variableNode];
+        return [prop.name, new StrandsNode(variableNode)];
       });
       const argObject = Object.fromEntries(propertyEntries);
       args.push(argObject);
@@ -182,7 +182,36 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
       const expectedReturnType = hookType.returnType;
       if(structTypes.includes(expectedReturnType.typeName)) {
+        const rootStruct = {
+          identifier: expectedReturnType.typeName,
+          properties: {}
+        };
 
+        const expectedProperties = expectedReturnType.properties;
+        for (let i = 0; i < expectedProperties.length; i++) {
+          const expectedProp = expectedProperties[i];
+          const propName = expectedProp.name;
+          const receivedValue = returned[propName];
+          
+          if (receivedValue === undefined) {
+            FES.userError('type error', `You've returned an incomplete object from ${hookType.name}.\n` + 
+              `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
+              `Received: { ${Object.keys(returned).join(', ')} }\n` +
+              `All of the properties are required!`);
+          }
+          
+          let propID = receivedValue?.id;
+          if (!(receivedValue instanceof StrandsNode)) {
+            const typeInfo = TypeInfoFromGLSLName[expectedProp.type.typeName];
+            propID = createTypeConstructorNode(strandsContext, typeInfo, receivedValue);
+          }
+          rootStruct.properties[propName] = propID;
+        }
+        strandsContext.hooks.push({
+          hookType,
+          entryBlockID,
+          rootStruct
+        });
       } 
       else {
         // In this case we are expecting a native shader type, probably vec4 or vec3.
@@ -213,13 +242,12 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             const newID = createTypeConstructorNode(strandsContext, expected, returnedNode);
             returnedNode = new StrandsNode(newID);
         }
+        strandsContext.hooks.push({
+          hookType, 
+          entryBlockID,
+          rootNodeID: returnedNode.id,
+        });
       }
-
-      strandsContext.hooks.push({
-        hookType, 
-        entryBlockID,
-        rootNodeID: returnedNode.id,
-      });
       CFG.popBlock(cfg);
     }
   }

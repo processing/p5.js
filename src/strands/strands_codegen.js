@@ -30,7 +30,8 @@ export function generateShaderCode(strandsContext) {
 
   const hooksObj = {};
   
-  for (const { hookType, entryBlockID, rootNodeID} of strandsContext.hooks) {
+  for (const { hookType, entryBlockID, rootNodeID, rootStruct} of strandsContext.hooks) {
+    console.log(rootStruct)
     const dagSorted = sortDAG(dag.dependsOn, rootNodeID);
     const cfgSorted = sortCFG(cfg.outgoingEdges, entryBlockID);
     

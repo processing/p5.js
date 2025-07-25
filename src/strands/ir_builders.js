@@ -188,7 +188,6 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
   const overloads = strandsBuiltinFunctions[functionName];
 
   const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDependencies(strandsContext, DataType.defer, rawUserArg));
-  console.log(preprocessedArgs);
   const matchingArgsCounts = overloads.filter(overload => overload.params.length === preprocessedArgs.length);
   if (matchingArgsCounts.length === 0) {
     const argsLengthSet = new Set();
