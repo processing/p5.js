@@ -1,10 +1,13 @@
 p5.disableFriendlyErrors = true;
 
 function callback() {
-  getFinalColor((col) => {
+  // getFinalColor((col) => {
 
-    return [1, 1, 0, 1];
-  });
+  //   return [1, 1, 0, 1];
+  // });
+  // getWorldInputs(inputs => {
+  //   return inputs;
+  // })
   getWorldInputs(inputs => {
     return inputs;
   })
