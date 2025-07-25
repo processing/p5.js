@@ -123,7 +123,7 @@ const ASTCallbacks = {
       node.type = 'CallExpression';
       node.callee = {
         type: 'Identifier',
-        name: 'dynamicNode',
+        name: 'strandsNode',
       };
       node.arguments = [original];
     },
@@ -176,7 +176,7 @@ const ASTCallbacks = {
           type: 'CallExpression',
           callee: {
             type: 'Identifier',
-            name: 'dynamicNode',
+            name: 'strandsNode',
           },
           arguments: [node.left]
         }
