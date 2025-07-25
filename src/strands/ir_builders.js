@@ -26,6 +26,10 @@ export function createLiteralNode(strandsContext, typeInfo, value) {
   return id;
 }
 
+export function createStructNode(strandsContext, structTypeInfo, dependsOn) {
+  
+}
+
 export function createVariableNode(strandsContext, typeInfo, identifier) {
   const { cfg, dag } = strandsContext;
   const { dimension, baseType } = typeInfo;
@@ -159,12 +163,12 @@ function mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn) {
   return { originalNodeID, mappedDependencies, inferredTypeInfo };
 }
 
-function constructTypeFromIDs(strandsContext, strandsNodesArray, newTypeInfo) {
+function constructTypeFromIDs(strandsContext, strandsNodesArray, typeInfo) {
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.CONSTRUCTOR,
-    dimension: newTypeInfo.dimension,
-    baseType: newTypeInfo.baseType,
+    dimension: typeInfo.dimension,
+    baseType: typeInfo.baseType,
     dependsOn: strandsNodesArray
   });
   const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
@@ -188,7 +192,6 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
   const overloads = strandsBuiltinFunctions[functionName];
 
   const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDependencies(strandsContext, DataType.defer, rawUserArg));
-  console.log(preprocessedArgs);
   const matchingArgsCounts = overloads.filter(overload => overload.params.length === preprocessedArgs.length);
   if (matchingArgsCounts.length === 0) {
     const argsLengthSet = new Set();
