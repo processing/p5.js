@@ -71,7 +71,7 @@ function strands(p5, fn) {
       // .......
       const hooksObject = generateShaderCode(strandsContext);
       console.log(hooksObject);
-      console.log(hooksObject['vec4 getFinalColor']);
+      console.log(hooksObject['Vertex getWorldInputs']);
       
       // Reset the strands runtime context
       // deinitStrandsContext(strandsContext);

@@ -1,6 +1,7 @@
 import { NodeType } from './ir_types';
 import { sortCFG } from './ir_cfg';
 import { sortDAG } from './ir_dag';
+import strands from './p5.strands';
 
 function generateTopLevelDeclarations(strandsContext, generationContext, dagOrder) {
   const { dag, backend } = strandsContext;
@@ -28,7 +29,14 @@ function generateTopLevelDeclarations(strandsContext, generationContext, dagOrde
 export function generateShaderCode(strandsContext) {
   const { cfg, dag, backend } = strandsContext;
 
-  const hooksObj = {};
+  const hooksObj = {
+    uniforms: {},
+  };
+
+  for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
+    const declaration = backend.generateUniformDeclaration(name, typeInfo);
+    hooksObj.uniforms[declaration] = defaultValue;
+  }
   
   for (const { hookType, entryBlockID, rootNodeID, rootStruct} of strandsContext.hooks) {
     const dagSorted = sortDAG(dag.dependsOn, rootNodeID);
@@ -54,8 +62,8 @@ export function generateShaderCode(strandsContext) {
     }
     
     const firstLine = backend.hookEntry(hookType);
-    const finalExpression = `return ${backend.generateExpression(generationContext, dag, rootNodeID)};`;
-    generationContext.write(finalExpression);
+    backend.generateReturnStatement(strandsContext, generationContext, rootNodeID);
+    // generationContext.write(finalExpression);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
   }
   

@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 
@@ -80,7 +80,15 @@ export const glslBackend = {
   },
 
   getTypeName(baseType, dimension) {
-    return TypeNames[baseType + dimension]
+    const primitiveTypeName = TypeNames[baseType + dimension]
+    if (!primitiveTypeName) {
+      return baseType;
+    }
+    return primitiveTypeName;
+  },
+
+  generateUniformDeclaration(name, typeInfo) {
+    return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
   },
 
   generateDeclaration(generationContext, dag, nodeID) {
@@ -93,8 +101,22 @@ export const glslBackend = {
     return `${typeName} ${tmp} = ${expr};`;
   },
 
-  generateReturn(generationContext, dag, nodeID) {
-
+  generateReturnStatement(strandsContext, generationContext, rootNodeID) {
+    const dag = strandsContext.dag;
+    const rootNode = getNodeDataFromID(dag, rootNodeID);
+    if (isStructType(rootNode.baseType)) {
+      const structTypeInfo = StructType[rootNode.baseType];
+      for (let i = 0; i < structTypeInfo.properties.length; i++) {
+        const prop = structTypeInfo.properties[i];
+        const val = this.generateExpression(generationContext, dag, rootNode.dependsOn[i]);
+        if (prop.name !== val) {
+          generationContext.write(
+            `${rootNode.identifier}.${prop.name} = ${val};`
+          )
+        }
+      }
+    } 
+    generationContext.write(`return ${this.generateExpression(generationContext, dag, rootNodeID)};`);
   },
 
   generateExpression(generationContext, dag, nodeID) {
@@ -123,6 +145,12 @@ export const glslBackend = {
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }
+      if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
+        const [lID, rID] = node.dependsOn;
+        const lName = this.generateExpression(generationContext, dag, lID);
+        const rName = this.generateExpression(generationContext, dag, rID);
+        return `${lName}.${rName}`;
+      }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;
         const left  = this.generateExpression(generationContext, dag, lID);
@@ -142,7 +170,7 @@ export const glslBackend = {
       }
 
       default:
-      FES.internalError(`${node.nodeType} not working yet`)
+      FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
     }
   },
 

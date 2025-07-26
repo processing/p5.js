@@ -6,7 +6,8 @@ export const NodeType = {
   LITERAL: 1,
   VARIABLE: 2,
   CONSTANT: 3,
-  PHI: 4,
+  STRUCT: 4,
+  PHI: 5,
 };
 
 export const NodeTypeToName = Object.fromEntries(
@@ -18,6 +19,7 @@ export const NodeTypeRequiredFields = {
   [NodeType.LITERAL]: ["value"],
   [NodeType.VARIABLE]: ["identifier"],
   [NodeType.CONSTANT]: ["value"],
+  [NodeType.STRUCT]: [""],
   [NodeType.PHI]: ["dependsOn", "phiBlocks"]
 };
 
@@ -58,12 +60,12 @@ export const DataType = {
 
 export const StructType = {
   Vertex: {
-    identifer: 'Vertex',
+    name: 'Vertex',
     properties: [
       { name: "position", dataType: DataType.float3 },
       { name: "normal", dataType: DataType.float3 },
-      { name: "color", dataType: DataType.float4 },
       { name: "texCoord", dataType: DataType.float2 },
+      { name: "color", dataType: DataType.float4 },
     ]
   }
 }
@@ -162,11 +164,11 @@ export const ConstantFolding = {
   [OpCode.Binary.LOGICAL_OR]: (a, b) => a || b,
 };
 
-export const SymbolToOpCode = {};
+// export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
 
 for (const { symbol, opCode } of OperatorTable) {
-  SymbolToOpCode[symbol] = opCode;
+  // SymbolToOpCode[symbol] = opCode;
   OpCodeToSymbol[opCode] = symbol;
 }
 
