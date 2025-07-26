@@ -23,11 +23,7 @@ export function createLiteralNode(strandsContext, typeInfo, value) {
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
-}
-
-export function createStructNode(strandsContext, structTypeInfo, dependsOn) {
-  
+  return { id, components: dimension };
 }
 
 export function createVariableNode(strandsContext, typeInfo, identifier) {
@@ -41,7 +37,7 @@ export function createVariableNode(strandsContext, typeInfo, identifier) {
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
+  return { id, components: dimension };
 }
 
 export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) {
@@ -51,7 +47,7 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   if (rightArg[0] instanceof StrandsNode && rightArg.length === 1) {
     rightStrandsNode = rightArg[0];
   } else {
-    const id = createTypeConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, rightArg);
+    const { id, components } = createPrimitiveConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, rightArg);
     rightStrandsNode = new StrandsNode(id);
   }
   let finalLeftNodeID = leftStrandsNode.id;
@@ -63,8 +59,8 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
-    finalLeftNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
-    finalRightNodeID = createTypeConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
+    finalLeftNodeID = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
+    finalRightNodeID = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
   }
   else if (leftType.baseType !== rightType.baseType || 
     leftType.dimension !== rightType.dimension) {
@@ -91,28 +87,73 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
       FES.userError('type error', `A vector of length ${leftType.dimension} operated with a vector of length ${rightType.dimension} is not allowed.`);
     }
 
-    const castedID = createTypeConstructorNode(strandsContext, cast.toType, cast.node);
+    const casted = createPrimitiveConstructorNode(strandsContext, cast.toType, cast.node);
     if (cast.node === leftStrandsNode) {
-      finalLeftNodeID = castedID;
+      finalLeftNodeID = casted.id;
     } else {
-      finalRightNodeID = castedID;
+      finalRightNodeID = casted.id;
     }
   }
 
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
+    opCode,
     dependsOn: [finalLeftNodeID, finalRightNodeID],
-    dimension,
     baseType: cast.toType.baseType,
     dimension: cast.toType.dimension,
-    opCode
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
+  return { id, components: nodeData.dimension };
 }
 
-function mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn) {
+export function createMemberAccessNode(strandsContext, parentNode, componentNode, memberTypeInfo) {
+  const { dag, cfg } = strandsContext;
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Binary.MEMBER_ACCESS,
+    dimension: memberTypeInfo.dimension,
+    baseType: memberTypeInfo.baseType,
+    dependsOn: [parentNode.id, componentNode.id],
+  });
+  const id = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  return { id, components: memberTypeInfo.dimension };
+}
+
+
+export function createStructInstanceNode(strandsContext, structTypeInfo, identifier, dependsOn) {
+  const { cfg, dag, } = strandsContext;
+
+  if (dependsOn.length === 0) {
+    for (const prop of structTypeInfo.properties) {
+      const typeInfo = prop.dataType;
+      const nodeData = DAG.createNodeData({
+        nodeType: NodeType.VARIABLE,
+        baseType: typeInfo.baseType,
+        dimension: typeInfo.dimension,
+        identifier: `${identifier}.${prop.name}`,
+      });
+      const component = DAG.getOrCreateNode(dag, nodeData);
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, component.id);
+      dependsOn.push(component);
+    }
+  }
+
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.VARIABLE,
+    dimension: structTypeInfo.properties.length,
+    baseType: structTypeInfo.name,
+    identifier,
+    dependsOn
+  })
+  const structID = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, structID);
+
+  return { id: structID, components: dependsOn };
+}
+
+function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
   dependsOn = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
   const mappedDependencies = [];
   let { dimension, baseType } = typeInfo;
@@ -138,8 +179,8 @@ function mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn) {
       continue;
     }
     else if (typeof dep === 'number') {
-      const newNode = createLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
-      mappedDependencies.push(newNode);
+      const { id, components } = createLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
+      mappedDependencies.push(id);
       calculatedDimensions += 1;
       continue;
     }
@@ -163,7 +204,7 @@ function mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn) {
   return { originalNodeID, mappedDependencies, inferredTypeInfo };
 }
 
-function constructTypeFromIDs(strandsContext, strandsNodesArray, typeInfo) {
+export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray) {
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.CONSTRUCTOR,
@@ -175,23 +216,61 @@ function constructTypeFromIDs(strandsContext, strandsNodesArray, typeInfo) {
   return id;
 }
 
-export function createTypeConstructorNode(strandsContext, typeInfo, dependsOn) {
+export function createPrimitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const { cfg, dag } = strandsContext;
-  const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDependencies(strandsContext, typeInfo, dependsOn);
+  const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
   const finalType = {
     baseType: typeInfo.baseType, 
     dimension: inferredTypeInfo.dimension
   };
-  const id = constructTypeFromIDs(strandsContext, mappedDependencies, finalType);
+  const id = constructTypeFromIDs(strandsContext, finalType, mappedDependencies);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
+  return { id, components: finalType.dimension };
+}
+
+export function createStructConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {
+  const { cfg, dag } = strandsContext;
+  const { identifer, properties } = structTypeInfo;
+
+  if (!(rawUserArgs.length === properties.length)) {
+    FES.userError('type error', 
+      `You've tried to construct a ${structTypeInfo.name} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` + 
+      `The properties it expects are:\n` + 
+      `${properties.map(prop => prop.name + ' ' + prop.DataType.baseType + prop.DataType.dimension)}`
+    );
+  }
+
+  const dependsOn = [];
+  for (let i = 0; i < properties.length; i++) {
+    const expectedProperty = properties[i];
+    const { originalNodeID, mappedDependencies } = mapPrimitiveDepsToIDs(strandsContext, expectedProperty.dataType, rawUserArgs[i]);
+    if (originalNodeID) { 
+      dependsOn.push(originalNodeID);
+    } 
+    else {
+      dependsOn.push(
+        constructTypeFromIDs(strandsContext, expectedProperty.dataType, mappedDependencies)
+      );
+    }
+  }
+
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Nary.CONSTRUCTOR,
+    dimension: properties.length,
+    baseType: structTypeInfo.name,
+    dependsOn
+  });
+  const id = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  return { id, components: structTypeInfo.components };
 }
 
 export function createFunctionCallNode(strandsContext, functionName, rawUserArgs) {
   const { cfg, dag } = strandsContext;
   const overloads = strandsBuiltinFunctions[functionName];
 
-  const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDependencies(strandsContext, DataType.defer, rawUserArg));
+  const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDepsToIDs(strandsContext, DataType.defer, rawUserArg));
   const matchingArgsCounts = overloads.filter(overload => overload.params.length === preprocessedArgs.length);
   if (matchingArgsCounts.length === 0) {
     const argsLengthSet = new Set();
@@ -265,7 +344,7 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
     }
     else {
       const paramType = bestOverload[i];
-      const castedArgID = constructTypeFromIDs(strandsContext, arg.mappedDependencies, paramType);
+      const castedArgID = constructTypeFromIDs(strandsContext, paramType, arg.mappedDependencies);
       CFG.recordInBasicBlock(cfg, cfg.currentBlock, castedArgID);
       dependsOn.push(castedArgID);
     }
@@ -281,7 +360,7 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
+  return { id, components: nodeData.dimension };
 }
 
 export function createUnaryOpNode(strandsContext, strandsNode, opCode) {
@@ -294,7 +373,7 @@ export function createUnaryOpNode(strandsContext, strandsNode, opCode) {
     dimension: dag.dimensions[strandsNode.id],
   })
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return id;
+  return { id, components: nodeData.dimension };
 }
 
 export function createStatementNode(strandsContext, type) {
