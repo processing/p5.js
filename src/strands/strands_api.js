@@ -159,7 +159,7 @@ function createHookArguments(strandsContext, parameters){
       const structType = StructType[paramType.typeName];
       const originalInstanceInfo = createStructInstanceNode(strandsContext, structType, param.name, []);
       const structNode = new StrandsNode(originalInstanceInfo.id);
-      const componentNodes = originalInstanceInfo.components.map(id => new StrandsNode(id))
+      // const componentNodes = originalInstanceInfo.components.map(id => new StrandsNode(id))
 
       for (let i = 0; i < structType.properties.length; i++) {
         const componentTypeInfo = structType.properties[i];
