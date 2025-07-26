@@ -1,7 +1,7 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, DataType, BasePriority, } from './ir_types';
+import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, } from './ir_types';
 import { StrandsNode } from './strands_api';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
@@ -59,16 +59,31 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
-    const l = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
-    const r = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
-    finalLeftNodeID = l.id; 
+    cast.toType.baseType = BaseType.FLOAT;
+    if (leftType.dimension === rightType.dimension) {
+      cast.toType.dimension = leftType.dimension;
+    }
+    else if (leftType.dimension === 1 && rightType.dimension > 1) {
+      cast.toType.dimension = rightType.dimension;
+    }
+    else if (rightType.dimension === 1 && leftType.dimension > 1) {
+      cast.toType.dimension = leftType.dimension;
+    }
+    else {
+      FES.userError("type error", `You have tried to perform a binary operation:\n`+
+        `${leftType.baseType+leftType.dimension} ${OpCodeToSymbol[opCode]} ${rightType.baseType+rightType.dimension}\n` +
+        `It's only possible to operate on two nodes with the same dimension, or a scalar value and a vector.`
+      );
+    }
+    const l = createPrimitiveConstructorNode(strandsContext, cast.toType, leftStrandsNode);
+    const r = createPrimitiveConstructorNode(strandsContext, cast.toType, rightStrandsNode);
+    finalLeftNodeID = l.id;
     finalRightNodeID = r.id;
   }
   else if (leftType.baseType !== rightType.baseType || 
     leftType.dimension !== rightType.dimension) {
     
     if (leftType.dimension === 1 && rightType.dimension > 1) {
-      // e.g. op(scalar, vector): cast scalar up
       cast.node = leftStrandsNode;
       cast.toType = rightType;
     }

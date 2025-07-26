@@ -69,6 +69,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
   
   fn.strandsNode = function(...args) {
+    if (args.length === 1 && args[0] instanceof StrandsNode) {
+      return args[0];
+    }
     if (args.length > 4) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
