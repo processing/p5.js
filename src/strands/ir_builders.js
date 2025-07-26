@@ -59,8 +59,10 @@ export function createBinaryOpNode(strandsContext, leftStrandsNode, rightArg, op
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
-    finalLeftNodeID = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
-    finalRightNodeID = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
+    const l = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, leftStrandsNode);
+    const r = createPrimitiveConstructorNode(strandsContext, { baseType:BaseType.FLOAT, dimension: leftType.dimension }, rightStrandsNode);
+    finalLeftNodeID = l.id; 
+    finalRightNodeID = r.id;
   }
   else if (leftType.baseType !== rightType.baseType || 
     leftType.dimension !== rightType.dimension) {
