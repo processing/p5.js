@@ -7019,6 +7019,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shawdm",
+      "name": "Darren Shaw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/157414?v=4",
+      "profile": "https://darrenshaw.org",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
