@@ -262,6 +262,10 @@ export class Renderer3D extends Renderer {
 
     this.scratchMat3 = new Matrix(3);
 
+    // Whether or not to remove degenerate faces from geometry. This is usually
+    // set to false for performance.
+    this._validateFaces = false;
+
     this.buffers = {
       fill: [
         new RenderBuffer(
@@ -451,7 +455,8 @@ export class Renderer3D extends Renderer {
     if (this.geometryBuilder) {
       this.geometryBuilder.addImmediate(
         this.shapeBuilder.geometry,
-        this.shapeBuilder.shapeMode
+        this.shapeBuilder.shapeMode,
+        { validateFaces: this._validateFaces }
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
       // TODO: handle POINTS mode

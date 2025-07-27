@@ -546,6 +546,11 @@ class Color {
     }
   }
 
+  /**
+   * This function extracts the green value from a color object and
+   * returns it in the range 0–255 by default. When `colorMode()` is given to an
+   * RBG value, the green value within the givin range is returned
+   */
   _getGreen(max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -625,6 +630,13 @@ class Color {
       return map(to(this._color, 'hsl').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
+  /**
+   * Brightness obtains the HSB brightness value from either a p5.Color object,
+   * an array of color components, or a CSS color string.Depending on value,
+   * when `colorMode()` is set to HSB, this function will return the
+   * brightness value in the range. By default, this function will return
+   * the HSB brightness within the range 0 - 100.
+   */
 
   _getBrightness(max=[0, 100]) {
     if(!Array.isArray(max)){
