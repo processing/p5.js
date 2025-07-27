@@ -128,4 +128,17 @@ visualSuite('WebGL', function() {
       }
     );
   });
+
+  visualSuite('Strokes', function() {
+    visualTest('Strokes do not cut into fills in ortho mode', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(220);
+      p5.stroke(8);
+      p5.ortho();
+      p5.rotateX(p5.PI/4);
+      p5.rotateY(p5.PI/4);
+      p5.box(30);
+      screenshot();
+    });
+  });
 });
