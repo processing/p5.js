@@ -1164,6 +1164,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/madhav2348"><img src="https://avatars.githubusercontent.com/u/161720210?v=4?s=64" width="64px;" alt="Madhav Majumdar"/><br /><sub><b>Madhav Majumdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=madhav2348" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nking07049925"><img src="https://avatars.githubusercontent.com/u/11886663?v=4?s=64" width="64px;" alt="Nikita Korol"/><br /><sub><b>Nikita Korol</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nking07049925" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://leetcode.com/u/mudit_mah/"><img src="https://avatars.githubusercontent.com/u/140621191?v=4?s=64" width="64px;" alt="Mudit Maheshwari"/><br /><sub><b>Mudit Maheshwari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=mudit06mah" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://acgillette.net"><img src="https://avatars.githubusercontent.com/u/18038450?v=4?s=64" width="64px;" alt="AC"/><br /><sub><b>AC</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=acgillette" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
