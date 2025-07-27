@@ -18,7 +18,8 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump int;
+precision highp int;
+precision highp float;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -116,7 +117,7 @@ void main() {
 
   // Moving vertices slightly toward camera when far away 
   // https://github.com/processing/p5.js/issues/6956 
-  float zOffset = mix(-0.00045, -1., facingCamera);
+  float zOffset = mix(0., -1., facingCamera);
   float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
 
   posp.z -= dynamicZAdjustment;
