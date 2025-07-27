@@ -237,10 +237,10 @@ function curves(p5, fn){
    * between them.
    *
    * @method bezierPoint
-   * @param {Number} a coordinate of first control point.
-   * @param {Number} b coordinate of first anchor point.
-   * @param {Number} c coordinate of second anchor point.
-   * @param {Number} d coordinate of second control point.
+   * @param {Number} a coordinate of first anchor point.
+   * @param {Number} b coordinate of first control point.
+   * @param {Number} c coordinate of second control point.
+   * @param {Number} d coordinate of second anchor point.
    * @param {Number} t amount to interpolate between 0 and 1.
    * @return {Number} coordinate of the point on the curve.
    *
@@ -684,10 +684,10 @@ function curves(p5, fn){
    * between them.
    *
    * @method splinePoint
-   * @param {Number} a coordinate of first anchor point.
-   * @param {Number} b coordinate of first control point.
-   * @param {Number} c coordinate of second control point.
-   * @param {Number} d coordinate of second anchor point.
+   * @param {Number} a coordinate of first control point.
+   * @param {Number} b coordinate of first anchor point.
+   * @param {Number} c coordinate of second anchor point.
+   * @param {Number} d coordinate of second control point.
    * @param {Number} t amount to interpolate between 0 and 1.
    * @return {Number} coordinate of a point on the curve.
    *
