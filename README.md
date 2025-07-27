@@ -1134,6 +1134,15 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/franolichdesign"><img src="https://avatars.githubusercontent.com/u/74784668?v=4?s=120" width="120px;" alt="Franolich Design"/><br /><sub><b>Franolich Design</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Afranolichdesign" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=franolichdesign" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/HritvikBhatia"><img src="https://avatars.githubusercontent.com/u/149999573?v=4?s=120" width="120px;" alt="Vik"/><br /><sub><b>Vik</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=HritvikBhatia" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3AHritvikBhatia" title="Bug reports">🐛</a> <a href="#translation-HritvikBhatia" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://git.arts.ac.uk/pages/21034426/My_Portfolio_Website/"><img src="https://avatars.githubusercontent.com/u/92257843?v=4?s=120" width="120px;" alt="Qingfeng Huang"/><br /><sub><b>Qingfeng Huang</b></sub></a><br /><a href="#translation-Darrenhqf" title="Translation">🌍</a></td>
+            <td align="center" valign="top" width="16.66%">
+  <a href="https://github.com/NalinDalal">
+    <img src="https://avatars.githubusercontent.com/u/92257843?v=4?s=120" width="120px;" alt="Nalin Dalal"/><br />
+    <sub><b>Nalin Dalal</b></sub>
+  </a><br />
+  <a href="#infrastructure-NalinDalal" title="GitHub Actions / Automation">⚙️</a> 
+  <a href="#content-NalinDalal" title="Content Updates">📝</a>
+</td>
+
     </tr>
   </tbody>
 </table>
