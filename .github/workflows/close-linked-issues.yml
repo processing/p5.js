@@ -1,0 +1,39 @@
+name: Close Linked Issues on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 2.0
+      - dev-2.0
+
+jobs:
+  close_issues:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract and Close Issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prBody = context.payload.pull_request.body;
+            const issueRegex = /(Fixes|Resolves|Closes)\s+#(\d+)/gi;
+            let match;
+            while ((match = issueRegex.exec(prBody)) !== null) {
+              const issueNumber = parseInt(match[2], 10);
+              console.log(`Closing issue #${issueNumber}`);
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `Closed by merged PR #${context.payload.pull_request.number}`
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                state: "closed"
+              });
+            }
+
