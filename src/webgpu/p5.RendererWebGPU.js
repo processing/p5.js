@@ -1,6 +1,8 @@
 import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
 import { Texture } from '../webgl/p5.Texture';
+import { Image } from '../image/p5.Image';
+import { RGB, RGBA } from '../color/creating_reading';
 import * as constants from '../core/constants';
 
 
@@ -17,6 +19,10 @@ class RendererWebGPU extends Renderer3D {
     this.renderPass = {};
 
     this.samplers = new Map();
+
+    // Single reusable staging buffer for pixel reading
+    this.pixelReadBuffer = null;
+    this.pixelReadBufferSize = 0;
   }
 
   async setupContext() {
@@ -1119,6 +1125,382 @@ class RendererWebGPU extends Renderer3D {
     }
 
     return preMain + '\n' + defines + hooks + main + postMain;
+  }
+
+  //////////////////////////////////////////////
+  // Buffer management for pixel reading
+  //////////////////////////////////////////////
+
+  _ensurePixelReadBuffer(requiredSize) {
+    // Create or resize staging buffer if needed
+    if (!this.pixelReadBuffer || this.pixelReadBufferSize < requiredSize) {
+      // Clean up old buffer
+      if (this.pixelReadBuffer) {
+        this.pixelReadBuffer.destroy();
+      }
+
+      // Create new buffer with padding to avoid frequent recreations
+      // Scale by 2 to ensure integer size and reasonable headroom
+      const bufferSize = Math.max(requiredSize, this.pixelReadBufferSize * 2);
+      this.pixelReadBuffer = this.device.createBuffer({
+        size: bufferSize,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+      });
+      this.pixelReadBufferSize = bufferSize;
+    }
+    return this.pixelReadBuffer;
+  }
+
+  //////////////////////////////////////////////
+  // Framebuffer methods
+  //////////////////////////////////////////////
+
+  supportsFramebufferAntialias() {
+    return true;
+  }
+
+  createFramebufferResources(framebuffer) {
+  }
+
+  validateFramebufferFormats(framebuffer) {
+    if (![
+      constants.UNSIGNED_BYTE,
+      constants.FLOAT,
+      constants.HALF_FLOAT
+    ].includes(framebuffer.format)) {
+      console.warn(
+        'Unknown Framebuffer format. ' +
+          'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
+          'Defaulting to UNSIGNED_BYTE.'
+      );
+      framebuffer.format = constants.UNSIGNED_BYTE;
+    }
+
+    if (framebuffer.useDepth && ![
+      constants.UNSIGNED_INT,
+      constants.FLOAT
+    ].includes(framebuffer.depthFormat)) {
+      console.warn(
+        'Unknown Framebuffer depth format. ' +
+          'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
+      );
+      framebuffer.depthFormat = constants.FLOAT;
+    }
+  }
+
+  recreateFramebufferTextures(framebuffer) {
+    if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
+      framebuffer.colorTexture.destroy();
+    }
+    if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
+      framebuffer.depthTexture.destroy();
+    }
+
+    const colorTextureDescriptor = {
+      size: {
+        width: framebuffer.width * framebuffer.density,
+        height: framebuffer.height * framebuffer.density,
+        depthOrArrayLayers: 1,
+      },
+      format: this._getWebGPUColorFormat(framebuffer),
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+      sampleCount: framebuffer.antialias ? framebuffer.antialiasSamples : 1,
+    };
+
+    framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
+
+    if (framebuffer.useDepth) {
+      const depthTextureDescriptor = {
+        size: {
+          width: framebuffer.width * framebuffer.density,
+          height: framebuffer.height * framebuffer.density,
+          depthOrArrayLayers: 1,
+        },
+        format: this._getWebGPUDepthFormat(framebuffer),
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+        sampleCount: framebuffer.antialias ? framebuffer.antialiasSamples : 1,
+      };
+
+      framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
+    }
+  }
+
+  _getWebGPUColorFormat(framebuffer) {
+    if (framebuffer.format === constants.FLOAT) {
+      return framebuffer.channels === RGBA ? 'rgba32float' : 'rgba32float';
+    } else if (framebuffer.format === constants.HALF_FLOAT) {
+      return framebuffer.channels === RGBA ? 'rgba16float' : 'rgba16float';
+    } else {
+      return framebuffer.channels === RGBA ? 'rgba8unorm' : 'rgba8unorm';
+    }
+  }
+
+  _getWebGPUDepthFormat(framebuffer) {
+    if (framebuffer.useStencil) {
+      return framebuffer.depthFormat === constants.FLOAT ? 'depth32float-stencil8' : 'depth24plus-stencil8';
+    } else {
+      return framebuffer.depthFormat === constants.FLOAT ? 'depth32float' : 'depth24plus';
+    }
+  }
+
+  _deleteFramebufferTexture(texture) {
+    const handle = texture.rawTexture();
+    if (handle.texture && handle.texture.destroy) {
+      handle.texture.destroy();
+    }
+    this.textures.delete(texture);
+  }
+
+  deleteFramebufferTextures(framebuffer) {
+    this._deleteFramebufferTexture(framebuffer.color)
+    if (framebuffer.depth) this._deleteFramebufferTexture(framebuffer.depth);
+  }
+
+  deleteFramebufferResources(framebuffer) {
+    if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
+      framebuffer.colorTexture.destroy();
+    }
+    if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
+      framebuffer.depthTexture.destroy();
+    }
+  }
+
+  getFramebufferToBind(framebuffer) {
+  }
+
+  updateFramebufferTexture(framebuffer, property) {
+    // No-op for WebGPU since antialiasing is handled at pipeline level
+  }
+
+  bindFramebuffer(framebuffer) {}
+
+  async readFramebufferPixels(framebuffer) {
+    const width = framebuffer.width * framebuffer.density;
+    const height = framebuffer.height * framebuffer.density;
+    const bytesPerPixel = 4;
+    const bufferSize = width * height * bytesPerPixel;
+
+    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
+
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      { texture: framebuffer.colorTexture },
+      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel },
+      { width, height, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
+    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
+    const result = new Uint8Array(mappedRange.slice(0, bufferSize));
+
+    stagingBuffer.unmap();
+    return result;
+  }
+
+  async readFramebufferPixel(framebuffer, x, y) {
+    const bytesPerPixel = 4;
+    const stagingBuffer = this._ensurePixelReadBuffer(bytesPerPixel);
+
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      {
+        texture: framebuffer.colorTexture,
+        origin: { x, y, z: 0 }
+      },
+      { buffer: stagingBuffer, bytesPerRow: bytesPerPixel },
+      { width: 1, height: 1, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bytesPerPixel);
+    const mappedRange = stagingBuffer.getMappedRange(0, bytesPerPixel);
+    const pixelData = new Uint8Array(mappedRange);
+    const result = [pixelData[0], pixelData[1], pixelData[2], pixelData[3]];
+
+    stagingBuffer.unmap();
+    return result;
+  }
+
+  async readFramebufferRegion(framebuffer, x, y, w, h) {
+    const width = w * framebuffer.density;
+    const height = h * framebuffer.density;
+    const bytesPerPixel = 4;
+    const bufferSize = width * height * bytesPerPixel;
+
+    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
+
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      {
+        texture: framebuffer.colorTexture,
+        origin: { x: x * framebuffer.density, y: y * framebuffer.density, z: 0 }
+      },
+      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel },
+      { width, height, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
+    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
+    const pixelData = new Uint8Array(mappedRange.slice(0, bufferSize));
+
+    // WebGPU doesn't need vertical flipping unlike WebGL
+    const region = new Image(width, height);
+    region.imageData = region.canvas.getContext('2d').createImageData(width, height);
+    region.imageData.data.set(pixelData);
+    region.pixels = region.imageData.data;
+    region.updatePixels();
+
+    if (framebuffer.density !== 1) {
+      region.pixelDensity(framebuffer.density);
+    }
+
+    stagingBuffer.unmap();
+    return region;
+  }
+
+  updateFramebufferPixels(framebuffer) {
+    const width = framebuffer.width * framebuffer.density;
+    const height = framebuffer.height * framebuffer.density;
+    const bytesPerPixel = 4;
+
+    const expectedLength = width * height * bytesPerPixel;
+    if (!framebuffer.pixels || framebuffer.pixels.length !== expectedLength) {
+      throw new Error(
+        'The pixels array has not been set correctly. Please call loadPixels() before updatePixels().'
+      );
+    }
+
+    this.device.queue.writeTexture(
+      { texture: framebuffer.colorTexture },
+      framebuffer.pixels,
+      {
+        bytesPerRow: width * bytesPerPixel,
+        rowsPerImage: height
+      },
+      { width, height, depthOrArrayLayers: 1 }
+    );
+  }
+
+  //////////////////////////////////////////////
+  // Main canvas pixel methods
+  //////////////////////////////////////////////
+
+  async loadPixels() {
+    const width = this.width * this._pixelDensity;
+    const height = this.height * this._pixelDensity;
+    const bytesPerPixel = 4;
+    const bufferSize = width * height * bytesPerPixel;
+
+    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
+
+    // Get the current canvas texture
+    const canvasTexture = this.drawingContext.getCurrentTexture();
+
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      { texture: canvasTexture },
+      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel },
+      { width, height, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
+    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
+    this.pixels = new Uint8Array(mappedRange.slice(0, bufferSize));
+
+    stagingBuffer.unmap();
+    return this.pixels;
+  }
+
+  async _getPixel(x, y) {
+    const bytesPerPixel = 4;
+    const stagingBuffer = this._ensurePixelReadBuffer(bytesPerPixel);
+
+    const canvasTexture = this.drawingContext.getCurrentTexture();
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      {
+        texture: canvasTexture,
+        origin: { x, y, z: 0 }
+      },
+      { buffer: stagingBuffer, bytesPerRow: bytesPerPixel },
+      { width: 1, height: 1, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bytesPerPixel);
+    const mappedRange = stagingBuffer.getMappedRange(0, bytesPerPixel);
+    const pixelData = new Uint8Array(mappedRange);
+    const result = [pixelData[0], pixelData[1], pixelData[2], pixelData[3]];
+
+    stagingBuffer.unmap();
+    return result;
+  }
+
+  async get(x, y, w, h) {
+    const pd = this._pixelDensity;
+
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      // get() - return entire canvas
+      x = y = 0;
+      w = this.width;
+      h = this.height;
+    } else {
+      x *= pd;
+      y *= pd;
+
+      if (typeof w === 'undefined' && typeof h === 'undefined') {
+        // get(x,y) - single pixel
+        if (x < 0 || y < 0 || x >= this.width * pd || y >= this.height * pd) {
+          return [0, 0, 0, 0];
+        }
+
+        return this._getPixel(x, y);
+      }
+      // get(x,y,w,h) - region
+    }
+
+    // Read region and create p5.Image
+    const width = w * pd;
+    const height = h * pd;
+    const bytesPerPixel = 4;
+    const bufferSize = width * height * bytesPerPixel;
+
+    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
+
+    const canvasTexture = this.drawingContext.getCurrentTexture();
+    const commandEncoder = this.device.createCommandEncoder();
+    commandEncoder.copyTextureToBuffer(
+      {
+        texture: canvasTexture,
+        origin: { x, y, z: 0 }
+      },
+      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel },
+      { width, height, depthOrArrayLayers: 1 }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
+    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
+    const pixelData = new Uint8Array(mappedRange.slice(0, bufferSize));
+
+    const region = new Image(width, height);
+    region.pixelDensity(pd);
+    region.imageData = region.canvas.getContext('2d').createImageData(width, height);
+    region.imageData.data.set(pixelData);
+    region.pixels = region.imageData.data;
+    region.updatePixels();
+
+    stagingBuffer.unmap();
+    return region;
   }
 }
 

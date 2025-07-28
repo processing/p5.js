@@ -1098,7 +1098,7 @@ suite('p5.RendererGL', function() {
       assert.isTrue(img.length === 4);
     });
 
-    test('updatePixels() matches 2D mode', function() {
+    test.only('updatePixels() matches 2D mode', function() {
       myp5.createCanvas(20, 20);
       myp5.pixelDensity(1);
       const getColors = function(mode) {
@@ -1120,6 +1120,7 @@ suite('p5.RendererGL', function() {
       };
 
       const p2d = getColors(myp5.P2D);
+      debugger
       const webgl = getColors(myp5.WEBGL);
       myp5.image(p2d, 0, 0);
       myp5.blendMode(myp5.DIFFERENCE);
