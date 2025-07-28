@@ -210,7 +210,7 @@ class RendererWebGPU extends Renderer3D {
       this._getWebGPUColorFormat(activeFramebuffer) :
       this.presentationFormat;
 
-    const requestedSampleCount = activeFramebuffer ? 
+    const requestedSampleCount = activeFramebuffer ?
       (activeFramebuffer.antialias ? activeFramebuffer.antialiasSamples : 1) :
       (this.antialias || 1);
     const sampleCount = this._getValidSampleCount(requestedSampleCount);
@@ -564,6 +564,12 @@ class RendererWebGPU extends Renderer3D {
     this._viewport = [0, 0, this.width, this.height];
   }
 
+  _createPixelsArray() {
+    this.pixels = new Uint8Array(
+      this.width * this.pixelDensity() * this.height * this.pixelDensity() * 4
+    );
+  }
+
   viewport() {}
 
   zClipRange() {
@@ -605,25 +611,25 @@ class RendererWebGPU extends Renderer3D {
     if (!buffers) return;
 
     const commandEncoder = this.device.createCommandEncoder();
-    
+
     // Use framebuffer texture if active, otherwise use canvas texture
     const activeFramebuffer = this.activeFramebuffer();
-    const colorTexture = activeFramebuffer ? 
-      (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) : 
+    const colorTexture = activeFramebuffer ?
+      (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) :
       this.drawingContext.getCurrentTexture();
-    
+
     const colorAttachment = {
       view: colorTexture.createView(),
       loadOp: "load",
       storeOp: "store",
       // If using multisampled texture, resolve to non-multisampled texture
-      resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ? 
+      resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ?
         activeFramebuffer.colorTexture.createView() : undefined,
     };
 
     // Use framebuffer depth texture if active, otherwise use canvas depth texture
-    const depthTexture = activeFramebuffer ? 
-      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) : 
+    const depthTexture = activeFramebuffer ?
+      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
       this.depthTexture;
     const depthTextureView = depthTexture?.createView();
     const renderPassDescriptor = {
@@ -1313,14 +1319,14 @@ class RendererWebGPU extends Renderer3D {
         framebuffer.aaDepthTexture = this.device.createTexture(aaDepthTextureDescriptor);
       }
     }
-    
+
     // Clear the framebuffer textures after creation
     this._clearFramebufferTextures(framebuffer);
   }
 
   _clearFramebufferTextures(framebuffer) {
     const commandEncoder = this.device.createCommandEncoder();
-    
+
     // Clear the color texture (and multisampled texture if it exists)
     const colorTexture = framebuffer.aaColorTexture || framebuffer.colorTexture;
     const colorAttachment = {
@@ -1328,7 +1334,7 @@ class RendererWebGPU extends Renderer3D {
       loadOp: "clear",
       storeOp: "store",
       clearValue: { r: 0, g: 0, b: 0, a: 0 },
-      resolveTarget: framebuffer.aaColorTexture ? 
+      resolveTarget: framebuffer.aaColorTexture ?
         framebuffer.colorTexture.createView() : undefined,
     };
 
@@ -1664,7 +1670,6 @@ class RendererWebGPU extends Renderer3D {
     await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
     const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
     const pixelData = new Uint8Array(mappedRange.slice(0, bufferSize));
-    console.log(pixelData)
 
     const region = new Image(width, height);
     region.pixelDensity(pd);

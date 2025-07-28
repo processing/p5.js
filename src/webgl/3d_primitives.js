@@ -1869,7 +1869,7 @@ function primitives3D(p5, fn){
     if (typeof args[4] === 'undefined') {
       // Use the retained mode for drawing rectangle,
       // if args for rounding rectangle is not provided by user.
-      const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
+      const perPixelLighting = this._pInst._glAttributes?.perPixelLighting;
       const detailX = args[4] || (perPixelLighting ? 1 : 24);
       const detailY = args[5] || (perPixelLighting ? 1 : 16);
       const gid = `rect|${detailX}|${detailY}`;

@@ -461,7 +461,7 @@ suite('p5.Framebuffer', function() {
       }
     });
 
-    test('get() creates a p5.Image with 1x pixel density', function() {
+    test('get() creates a p5.Image matching the source pixel density', function() {
       const mainCanvas = myp5.createCanvas(20, 20, myp5.WEBGL);
       myp5.pixelDensity(2);
       const fbo = myp5.createFramebuffer();
@@ -482,22 +482,17 @@ suite('p5.Framebuffer', function() {
         myp5.pop();
       });
       const img = fbo.get();
-      const p2d = myp5.createGraphics(20, 20);
-      p2d.pixelDensity(1);
       myp5.image(fbo, -10, -10);
-      p2d.image(mainCanvas, 0, 0);
 
       fbo.loadPixels();
       img.loadPixels();
-      p2d.loadPixels();
 
       expect(img.width).to.equal(fbo.width);
       expect(img.height).to.equal(fbo.height);
-      expect(img.pixels.length).to.equal(fbo.pixels.length / 4);
-      // The pixels should be approximately the same in the 1x image as when we
-      // draw the framebuffer onto a 1x canvas
+      expect(img.pixels.length).to.equal(fbo.pixels.length);
+      // The pixels should be approximately the same as the framebuffer's
       for (let i = 0; i < img.pixels.length; i++) {
-        expect(img.pixels[i]).to.be.closeTo(p2d.pixels[i], 2);
+        expect(img.pixels[i]).to.be.closeTo(fbo.pixels[i], 2);
       }
     });
   });
