@@ -27,7 +27,10 @@ class RendererWebGPU extends Renderer3D {
 
   async setupContext() {
     this.adapter = await navigator.gpu?.requestAdapter();
-    this.device = await this.adapter?.requestDevice();
+    this.device = await this.adapter?.requestDevice({
+      // Todo: check support
+      requiredFeatures: ['depth32float-stencil8']
+    });
     if (!this.device) {
       throw new Error('Your browser does not support WebGPU.');
     }
@@ -36,7 +39,8 @@ class RendererWebGPU extends Renderer3D {
     this.presentationFormat = navigator.gpu.getPreferredCanvasFormat();
     this.drawingContext.configure({
       device: this.device,
-      format: this.presentationFormat
+      format: this.presentationFormat,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
     });
 
     // TODO disablable stencil
@@ -193,12 +197,34 @@ class RendererWebGPU extends Renderer3D {
     freeDefs(this.renderer.buffers.user);
   }
 
+  _getValidSampleCount(requestedCount) {
+    // WebGPU supports sample counts of 1, 4 (and sometimes 8)
+    if (requestedCount <= 1) return 1;
+    if (requestedCount <= 4) return 4;
+    return 4; // Cap at 4 for broader compatibility
+  }
+
   _shaderOptions({ mode }) {
+    const activeFramebuffer = this.activeFramebuffer();
+    const format = activeFramebuffer ?
+      this._getWebGPUColorFormat(activeFramebuffer) :
+      this.presentationFormat;
+
+    const requestedSampleCount = activeFramebuffer ? 
+      (activeFramebuffer.antialias ? activeFramebuffer.antialiasSamples : 1) :
+      (this.antialias || 1);
+    const sampleCount = this._getValidSampleCount(requestedSampleCount);
+
+    const depthFormat = activeFramebuffer && activeFramebuffer.useDepth ?
+      this._getWebGPUDepthFormat(activeFramebuffer) :
+      this.depthFormat;
+
     return {
       topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
       blendMode: this.states.curBlendMode,
-      sampleCount: (this.activeFramebuffer() || this).antialias || 1, // TODO
-      format: this.activeFramebuffer()?.format || this.presentationFormat, // TODO
+      sampleCount,
+      format,
+      depthFormat,
     }
   }
 
@@ -209,8 +235,8 @@ class RendererWebGPU extends Renderer3D {
     shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
 
     shader._pipelineCache = new Map();
-    shader.getPipeline = ({ topology, blendMode, sampleCount, format }) => {
-      const key = `${topology}_${blendMode}_${sampleCount}_${format}`;
+    shader.getPipeline = ({ topology, blendMode, sampleCount, format, depthFormat }) => {
+      const key = `${topology}_${blendMode}_${sampleCount}_${format}_${depthFormat}`;
       if (!shader._pipelineCache.has(key)) {
         const pipeline = device.createRenderPipeline({
           layout: shader._pipelineLayout,
@@ -230,7 +256,7 @@ class RendererWebGPU extends Renderer3D {
           primitive: { topology },
           multisample: { count: sampleCount },
           depthStencil: {
-            format: this.depthFormat,
+            format: depthFormat,
             depthWriteEnabled: true,
             depthCompare: 'less',
             stencilFront: {
@@ -531,8 +557,14 @@ class RendererWebGPU extends Renderer3D {
   _useShader(shader, options) {}
 
   _updateViewport() {
+    this._origViewport = {
+      width: this.width,
+      height: this.height,
+    };
     this._viewport = [0, 0, this.width, this.height];
   }
+
+  viewport() {}
 
   zClipRange() {
     return [0, 1];
@@ -573,14 +605,27 @@ class RendererWebGPU extends Renderer3D {
     if (!buffers) return;
 
     const commandEncoder = this.device.createCommandEncoder();
-    const currentTexture = this.drawingContext.getCurrentTexture();
+    
+    // Use framebuffer texture if active, otherwise use canvas texture
+    const activeFramebuffer = this.activeFramebuffer();
+    const colorTexture = activeFramebuffer ? 
+      (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) : 
+      this.drawingContext.getCurrentTexture();
+    
     const colorAttachment = {
-      view: currentTexture.createView(),
+      view: colorTexture.createView(),
       loadOp: "load",
       storeOp: "store",
+      // If using multisampled texture, resolve to non-multisampled texture
+      resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ? 
+        activeFramebuffer.colorTexture.createView() : undefined,
     };
 
-    const depthTextureView = this.depthTexture?.createView();
+    // Use framebuffer depth texture if active, otherwise use canvas depth texture
+    const depthTexture = activeFramebuffer ? 
+      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) : 
+      this.depthTexture;
+    const depthTextureView = depthTexture?.createView();
     const renderPassDescriptor = {
       colorAttachments: [colorAttachment],
       depthStencilAttachment: depthTextureView
@@ -1155,6 +1200,14 @@ class RendererWebGPU extends Renderer3D {
   // Framebuffer methods
   //////////////////////////////////////////////
 
+  defaultFramebufferAlpha() {
+    return true
+  }
+
+  defaultFramebufferAntialias() {
+    return true;
+  }
+
   supportsFramebufferAntialias() {
     return true;
   }
@@ -1189,40 +1242,138 @@ class RendererWebGPU extends Renderer3D {
   }
 
   recreateFramebufferTextures(framebuffer) {
+    // Clean up existing textures
     if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
       framebuffer.colorTexture.destroy();
+    }
+    if (framebuffer.aaColorTexture && framebuffer.aaColorTexture.destroy) {
+      framebuffer.aaColorTexture.destroy();
     }
     if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
       framebuffer.depthTexture.destroy();
     }
+    if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
+      framebuffer.aaDepthTexture.destroy();
+    }
+    // Clear cached views when recreating textures
+    framebuffer._colorTextureView = null;
 
-    const colorTextureDescriptor = {
+    const baseDescriptor = {
       size: {
         width: framebuffer.width * framebuffer.density,
         height: framebuffer.height * framebuffer.density,
         depthOrArrayLayers: 1,
       },
       format: this._getWebGPUColorFormat(framebuffer),
-      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
-      sampleCount: framebuffer.antialias ? framebuffer.antialiasSamples : 1,
     };
 
+    // Create non-multisampled texture for texture binding (always needed)
+    const colorTextureDescriptor = {
+      ...baseDescriptor,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+      sampleCount: 1,
+    };
     framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
 
+    // Create multisampled texture for rendering if antialiasing is enabled
+    if (framebuffer.antialias) {
+      const aaColorTextureDescriptor = {
+        ...baseDescriptor,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
+      };
+      framebuffer.aaColorTexture = this.device.createTexture(aaColorTextureDescriptor);
+    }
+
     if (framebuffer.useDepth) {
-      const depthTextureDescriptor = {
+      const depthBaseDescriptor = {
         size: {
           width: framebuffer.width * framebuffer.density,
           height: framebuffer.height * framebuffer.density,
           depthOrArrayLayers: 1,
         },
         format: this._getWebGPUDepthFormat(framebuffer),
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
-        sampleCount: framebuffer.antialias ? framebuffer.antialiasSamples : 1,
       };
 
+      // Create non-multisampled depth texture for texture binding (always needed)
+      const depthTextureDescriptor = {
+        ...depthBaseDescriptor,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+        sampleCount: 1,
+      };
       framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
+
+      // Create multisampled depth texture for rendering if antialiasing is enabled
+      if (framebuffer.antialias) {
+        const aaDepthTextureDescriptor = {
+          ...depthBaseDescriptor,
+          usage: GPUTextureUsage.RENDER_ATTACHMENT,
+          sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
+        };
+        framebuffer.aaDepthTexture = this.device.createTexture(aaDepthTextureDescriptor);
+      }
     }
+    
+    // Clear the framebuffer textures after creation
+    this._clearFramebufferTextures(framebuffer);
+  }
+
+  _clearFramebufferTextures(framebuffer) {
+    const commandEncoder = this.device.createCommandEncoder();
+    
+    // Clear the color texture (and multisampled texture if it exists)
+    const colorTexture = framebuffer.aaColorTexture || framebuffer.colorTexture;
+    const colorAttachment = {
+      view: colorTexture.createView(),
+      loadOp: "clear",
+      storeOp: "store",
+      clearValue: { r: 0, g: 0, b: 0, a: 0 },
+      resolveTarget: framebuffer.aaColorTexture ? 
+        framebuffer.colorTexture.createView() : undefined,
+    };
+
+    // Clear the depth texture if it exists
+    const depthTexture = framebuffer.aaDepthTexture || framebuffer.depthTexture;
+    const depthStencilAttachment = depthTexture ? {
+      view: depthTexture.createView(),
+      depthLoadOp: "clear",
+      depthStoreOp: "store",
+      depthClearValue: 1.0,
+      stencilLoadOp: "clear",
+      stencilStoreOp: "store",
+      depthReadOnly: false,
+      stencilReadOnly: false,
+    } : undefined;
+
+    const renderPassDescriptor = {
+      colorAttachments: [colorAttachment],
+      depthStencilAttachment: depthStencilAttachment,
+    };
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.end();
+
+    this.queue.submit([commandEncoder.finish()]);
+  }
+
+  _getFramebufferColorTextureView(framebuffer) {
+    if (!framebuffer._colorTextureView && framebuffer.colorTexture) {
+      framebuffer._colorTextureView = framebuffer.colorTexture.createView();
+    }
+    return framebuffer._colorTextureView;
+  }
+
+  createFramebufferTextureHandle(framebufferTexture) {
+    const src = framebufferTexture;
+    let renderer = this;
+    return {
+      get view() {
+        return renderer._getFramebufferColorTextureView(src.framebuffer);
+      },
+      get gpuTexture() {
+        return src.framebuffer.colorTexture;
+      }
+    };
   }
 
   _getWebGPUColorFormat(framebuffer) {
@@ -1263,6 +1414,9 @@ class RendererWebGPU extends Renderer3D {
     if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
       framebuffer.depthTexture.destroy();
     }
+    if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
+      framebuffer.aaDepthTexture.destroy();
+    }
   }
 
   getFramebufferToBind(framebuffer) {
@@ -1275,6 +1429,9 @@ class RendererWebGPU extends Renderer3D {
   bindFramebuffer(framebuffer) {}
 
   async readFramebufferPixels(framebuffer) {
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     const width = framebuffer.width * framebuffer.density;
     const height = framebuffer.height * framebuffer.density;
     const bytesPerPixel = 4;
@@ -1284,8 +1441,8 @@ class RendererWebGPU extends Renderer3D {
 
     const commandEncoder = this.device.createCommandEncoder();
     commandEncoder.copyTextureToBuffer(
-      { texture: framebuffer.colorTexture },
-      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel },
+      { texture: framebuffer.colorTexture, origin: { x: 0, y: 0, z: 0 } },
+      { buffer: stagingBuffer, bytesPerRow: width * bytesPerPixel, rowsPerImage: height },
       { width, height, depthOrArrayLayers: 1 }
     );
 
@@ -1300,6 +1457,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async readFramebufferPixel(framebuffer, x, y) {
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     const bytesPerPixel = 4;
     const stagingBuffer = this._ensurePixelReadBuffer(bytesPerPixel);
 
@@ -1325,6 +1485,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async readFramebufferRegion(framebuffer, x, y, w, h) {
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     const width = w * framebuffer.density;
     const height = h * framebuffer.density;
     const bytesPerPixel = 4;
@@ -1391,6 +1554,9 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
 
   async loadPixels() {
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     const width = this.width * this._pixelDensity;
     const height = this.height * this._pixelDensity;
     const bytesPerPixel = 4;
@@ -1419,6 +1585,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async _getPixel(x, y) {
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     const bytesPerPixel = 4;
     const stagingBuffer = this._ensurePixelReadBuffer(bytesPerPixel);
 
@@ -1467,6 +1636,9 @@ class RendererWebGPU extends Renderer3D {
       // get(x,y,w,h) - region
     }
 
+    // Ensure all pending GPU work is complete before reading pixels
+    await this.queue.onSubmittedWorkDone();
+
     // Read region and create p5.Image
     const width = w * pd;
     const height = h * pd;
@@ -1487,17 +1659,19 @@ class RendererWebGPU extends Renderer3D {
     );
 
     this.device.queue.submit([commandEncoder.finish()]);
+    await this.queue.onSubmittedWorkDone();
 
     await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
     const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
     const pixelData = new Uint8Array(mappedRange.slice(0, bufferSize));
+    console.log(pixelData)
 
     const region = new Image(width, height);
     region.pixelDensity(pd);
-    region.imageData = region.canvas.getContext('2d').createImageData(width, height);
-    region.imageData.data.set(pixelData);
-    region.pixels = region.imageData.data;
-    region.updatePixels();
+    const ctx = region.canvas.getContext('2d');
+    const imageData = ctx.createImageData(width, height);
+    imageData.data.set(pixelData);
+    ctx.putImageData(imageData, 0, 0);
 
     stagingBuffer.unmap();
     return region;

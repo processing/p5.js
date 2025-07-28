@@ -67,7 +67,7 @@ class Framebuffer {
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
-      this.renderer._pInst._glAttributes.alpha
+      this.renderer.defaultFramebufferAlpha()
         ? RGBA
         : RGB
     );
@@ -75,7 +75,7 @@ class Framebuffer {
     this.depthFormat = settings.depthFormat || constants.FLOAT;
     this.textureFiltering = settings.textureFiltering || constants.LINEAR;
     if (settings.antialias === undefined) {
-      this.antialiasSamples = this.renderer._pInst._glAttributes.antialias
+      this.antialiasSamples = this.renderer.defaultFramebufferAntialias()
         ? 2
         : 0;
     } else if (typeof settings.antialias === 'number') {

@@ -1302,6 +1302,11 @@ class RendererGL extends Renderer3D {
     return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
   }
 
+  createFramebufferTextureHandle(framebufferTexture) {
+    // For WebGL, framebuffer texture handles are designed to be null
+    return null;
+  }
+
   uploadTextureFromSource({ texture, glFormat, glDataType }, source) {
     const gl = this.GL;
     gl.texImage2D(gl.TEXTURE_2D, 0, glFormat, glFormat, glDataType, source);
@@ -1393,6 +1398,16 @@ class RendererGL extends Renderer3D {
   //////////////////////////////////////////////
   // Framebuffer methods
   //////////////////////////////////////////////
+
+  defaultFramebufferAlpha() {
+    return this._pInst._glAttributes.alpha;
+  }
+
+  defaultFramebufferAntialias() {
+    return this.supportsFramebufferAntialias()
+      ? this._pInst._glAttributes.antialias
+      : false;
+  }
 
   supportsFramebufferAntialias() {
     return this.webglVersion === constants.WEBGL2;

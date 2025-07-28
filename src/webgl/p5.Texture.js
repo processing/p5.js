@@ -128,6 +128,8 @@ class Texture {
         width: textureData.width,
         height: textureData.height,
       });
+    } else {
+      this.textureHandle = this._renderer.createFramebufferTextureHandle(this.src);
     }
 
     this._renderer.setTextureParams(this, {
