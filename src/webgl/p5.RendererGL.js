@@ -1940,6 +1940,7 @@ class RendererGL extends Renderer3D {
       framebuffer.pixels
     );
     framebuffer.colorP5Texture.unbindTexture();
+    framebuffer.dirty.colorTexture = false;
 
     const prevFramebuffer = this.activeFramebuffer();
     if (framebuffer.antialias) {

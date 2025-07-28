@@ -1170,7 +1170,6 @@ class Framebuffer {
   updatePixels() {
     // Let renderer handle the pixel update process
     this.renderer.updateFramebufferPixels(this);
-    this.dirty.colorTexture = false;
   }
 }
 
