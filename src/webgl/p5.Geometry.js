@@ -6,7 +6,6 @@
  * @requires p5.Geometry
  */
 
-//some of the functions are adjusted from Three.js(http://threejs.org)
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
