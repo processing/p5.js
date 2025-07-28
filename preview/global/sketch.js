@@ -71,14 +71,26 @@ function pixellizeShaderCallback() {
 
 function bloomShaderCallback() {
   const preBlur = uniformTexture(() => originalFrameBuffer);
+  const mouse = uniformVec2(() => [mouseX, mouseY]);
+  const resolution = uniformVec2(() => [width, height]);
+  const millisUniform = uniformFloat(() => millis());
+  const frameCountUniform = uniformFloat(() => frameCount);
+  const deltaTimeUniform = uniformFloat(() => deltaTime);
+
   getColor((input, canvasContent) => {
-    const blurredCol = texture(canvasContent, input.texCoord);
-    const originalCol = texture(preBlur, input.texCoord);
-    const brightPass = max(originalCol, 0.3) * 1.5;
-    const bloom = originalCol + blurredCol * brightPass;
-    return bloom;
+    const uv = input.texCoord;
+    const blurredCol = texture(canvasContent, uv);
+    const originalCol = texture(preBlur, uv);
+
+    // Simple animated bloom effect
+    const brightness = dot(originalCol.rgb, vec3(0.2126, 0.7152, 0.0722));
+    const pulse = sin(millisUniform * 0.001 + uv.x * 10.0);
+    const bloomGlow = originalCol.rgb * smoothstep(0.8, 1.0, brightness * pulse);
+
+    return vec4(originalCol.rgb + bloomGlow, originalCol.a);
   });
 }
+
 
 async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
