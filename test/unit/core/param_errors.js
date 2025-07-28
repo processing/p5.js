@@ -150,7 +150,7 @@ suite('Validate Params', function () {
       { fn: 'rect', name: 'null, non-trailing, optional parameter', input: [0, 0, 0, 0, null, 0, 0, 0], msg: '🌸 p5.js says: Expected number at the fifth parameter, but received null in p5.rect().' },
       { fn: 'color', name: 'too many args + wrong types too', input: ['A', 'A', 0, 0, 0, 0, 0, 0, 0, 0], msg: '🌸 p5.js says: Expected at most 4 arguments, but received more in p5.color(). For more information, see https://p5js.org/reference/p5/color.' },
       { fn: 'line', name: 'null string given', input: [1, 2, 4, 'null'], msg: '🌸 p5.js says: Expected number at the fourth parameter, but received string in p5.line().' },
-      { fn: 'line', name: 'NaN value given', input: [1, 2, 4, NaN], msg: '🌸 p5.js says: Expected number at the fourth parameter, but received nan in p5.line().' }
+      { fn: 'line', name: 'NaN value given', input: [1, 2, 4, NaN], msg: '🌸 p5.js says: Expected number at the fourth parameter, but received NaN in p5.line().' }
     ];
 
     invalidInputs.forEach(({ name, input, fn, msg }) => {

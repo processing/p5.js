@@ -3,7 +3,7 @@
  * @requires core
  */
 import * as constants from '../constants.js';
-import * as z from 'zod';
+import { z } from 'zod/v4';
 import dataDoc from '../../../docs/parameterData.json';
 
 function validateParams(p5, fn, lifecycles) {
@@ -230,6 +230,12 @@ function validateParams(p5, fn, lifecycles) {
       param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
 
       let schema = generateTypeSchema(param);
+      // Fallback to z.custom() because function types are no longer 
+      // returns a Zod schema.
+      if (schema.def.type === 'function') {
+        schema = z.custom(val => val instanceof Function)
+      }
+
       if (isOptional) {
         schema = schema.optional();
       }
@@ -318,7 +324,7 @@ function validateParams(p5, fn, lifecycles) {
       }
 
       const numArgs = args.length;
-      const schemaItems = schema.items;
+      const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
       const numRequiredSchemaItems = schemaItems.filter(item => !item.isOptional()).length;
 
@@ -353,11 +359,11 @@ function validateParams(p5, fn, lifecycles) {
     };
 
     // Default to the first schema, so that we are guaranteed to return a result.
-    let closestSchema = schema._def.options[0];
+    let closestSchema = schema.def.options[0];
     // We want to return the schema with the lowest score.
     let bestScore = Infinity;
 
-    const schemaUnion = schema._def.options;
+    const schemaUnion = schema.def.options;
     schemaUnion.forEach(schema => {
       const score = scoreSchema(schema);
       if (score < bestScore) {
@@ -386,7 +392,7 @@ function validateParams(p5, fn, lifecycles) {
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
     // always print the first error so that user can work through the errors
     // one by one.
-    let currentError = zodErrorObj.errors[0];
+    let currentError = zodErrorObj.issues[0];
 
     // Helper function to build a type mismatch message.
     const buildTypeMismatchMessage = (actualType, expectedTypeStr, position) => {
@@ -403,24 +409,27 @@ function validateParams(p5, fn, lifecycles) {
       const expectedTypes = new Set();
       let actualType;
 
-      error.unionErrors.forEach(err => {
-        const issue = err.issues[0];
+      error.errors.forEach(err => {
+        const issue = err[0];
         if (issue) {
           if (!actualType) {
-            actualType = issue.received;
+            actualType = issue.message;
           }
 
           if (issue.code === 'invalid_type') {
+            actualType = issue.message.split(', received ')[1]
             expectedTypes.add(issue.expected);
           }
           // The case for constants. Since we don't want to print out the actual
           // constant values in the error message, the error message will
           // direct users to the documentation.
-          else if (issue.code === 'invalid_literal') {
+          else if (issue.code === 'invalid_value') {
             expectedTypes.add("constant (please refer to documentation for allowed values)");
+              actualType = args[error.path[0]];
           } else if (issue.code === 'custom') {
             const match = issue.message.match(/Input not instance of (\w+)/);
             if (match) expectedTypes.add(match[1]);
+            actualType = undefined
           }
         }
       });
@@ -452,7 +461,7 @@ function validateParams(p5, fn, lifecycles) {
         break;
       }
       case 'invalid_type': {
-        message += buildTypeMismatchMessage(currentError.received, currentError.expected, currentError.path.join('.'));
+        message += buildTypeMismatchMessage(currentError.message.split(', received ')[1], currentError.expected, currentError.path.join('.'));
         break;
       }
       case 'too_big': {
@@ -553,15 +562,17 @@ function validateParams(p5, fn, lifecycles) {
   lifecycles.presetup = function(){
     loadP5Constructors();
 
-    const excludes = ['validate'];
-    for(const f in this){
-      if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
-        const copy = this[f];
+    if(p5.disableParameterValidator !== true){
+      const excludes = ['validate'];
+      for(const f in this){
+        if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
+          const copy = this[f];
 
-        this[f] = function(...args) {
-          this.validate(f, args);
-          return copy.call(this, ...args);
-        };
+          this[f] = function(...args) {
+            this.validate(f, args);
+            return copy.call(this, ...args);
+          };
+        }
       }
     }
   };

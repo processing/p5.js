@@ -2,7 +2,9 @@
 
 # Creating an Addon Library
 
-A p5.js addon library is JavaScript code that extends or adds to the p5.js core functionality. While p5.js itself already provides a wide range of functionality, it doesn’t aim to cover everything you can do with JavaScript and the Web API. Addon libraries let you extend p5.js without needing to incorporate the features into p5.js. This guide will take you through the steps of creating an addon library that loads a simple CSV file by implementing a `loadCSV()` function.
+A p5.js addon library is JavaScript code that extends or adds to the p5.js core functionality. While p5.js itself already provides a wide range of functionality, it doesn’t aim to cover everything you can do with JavaScript and the Web API. Addon libraries let you extend p5.js without needing to incorporate the features into p5.js. Learning how to write an addon library is also a great way to learn how the internals of p5.js works and how it is implemented: all the features of p5.js are implemented in the same way!
+
+This guide will take you through the steps of creating an addon library that loads a simple CSV file by implementing a `loadCSV()` function.
 
 Here are some examples of why you may want to create an addon library:
 
@@ -30,28 +32,51 @@ Here are some examples of why you may want to create an addon library:
 
 First, let’s create a blank JavaScript file for the addon library. We’ll call this file p5.loadcsv.js.
 
-The main way to extend p5.js is by adding methods to the p5.prototype object. For example, the following code extends p5 to add a `loadCSV()` method to the p5.prototype object:
+The main way to extend p5.js is to pass an addon function to the static `p5.registerAddon()` function. An addon function is any function that takes three arguments which are usually named `p5`, `fn`, and `lifecycles` respectively. To start writing our addon, put the following code into p5.loadcsv.js.
 
 ```js
-p5.prototype.loadCSV = function(){
-  console.log('I will load a CSV file soon!');
-};
+function loadCSVAddon(p5, fn, lifecycles){
+
+}
 ```
 
-When someone includes your p5.loadcsv.js file in a project, they can call `loadCSV()` as a global function just like `createCanvas()` or `background()`.
+Before we implement our `loadCSV()` function, let's have a look at what the three function arguments are starting with the first two and we will introduce the third later in this article.
+
+* `p5` - This is the `p5` object/constructor. You will use this to access any static `p5` object member or define any static `p5` object member. For example to access `p5.Vector` or `p5.Renderer`.
+* `fn` - This is an alias to `p5.prototype`. For any variable or functions that you wish for p5.js to expose to the `window` in global mode or to the `p5` instance in instance mode, it must be assigned as a member of `fn`. We will look into the usage of `fn` below in more detail as it is likely one of the most used feature of the addon API.
+
+Now let's add a `loadCSV()` function to our addon, we do this by defining an object member named `loadCSV` within `fn`:
+
+```js
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = function(){
+    console.log('I will load a CSV file soon!');
+  }
+}
+```
+
+This `loadCSVAddon()` function that we have just defined in our file is the main addon function that we will pass to the `p5.registerAddon()` static function, let's do this now, add the following to the bottom of the p5.loadcsv.js file under the `loadCSVAddon()` function:
+
+```js
+p5.registerAddon(loadCSVAddon);
+```
+
+When someone includes your p5.loadcsv.js file in a project as a script tag, they can now call `loadCSV()` as a global function just like `createCanvas()` or `background()`.
 
 You can also extend p5.js classes such as` p5.Element` or` p5.Graphics` by adding methods to their prototypes. In the example below, `p5.Element.prototype` is extended with the `shout()` method. It adds an exclamation mark to the end of the element’s inner HTML.
 
 ```js
-p5.Element.prototype.shout = function () {
-  this.elt.innerHTML += '<span>!</span>';
-};
+function loadCSVAddon(p5, fn, lifecycles){
+  p5.Element.prototype.shout = function () {
+    this.elt.innerHTML += '<span>!</span>';
+  };
+}
 ```
 
 
 ## Step 2
 
-You now have a p5.loadcsv.js file with one method attached to the `p5.prototype` object. This method,` loadCSV()`, doesn’t do much currently; it just logs a message to the console. Run the following code in a new sketch that loads both p5.js and p5.loadcsv.js in the` <head>` tag.
+You now have a p5.loadcsv.js file with one new function created for p5.js. This method,` loadCSV()`, doesn’t do much currently; it just logs a message to the console. Run the following code in a new sketch that loads both p5.js and p5.loadcsv.js in the` <head>` tag.
 
 ```js
 function setup() {
@@ -84,12 +109,12 @@ Running the sketch should print a single message in the console saying “I will
 To load a CSV file with your `loadCSV()` function, the function needs to accept an argument. This can be defined in the same way as any other function parameter.
 
 ```js
-p5.prototype.loadCSV = function (filename) {
-  console.log(`I will load the CSV file ${filename} soon!`);
-};
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = function (filename) {
+    console.log(`I will load the CSV file ${filename} soon!`);
+  };
+}
 ```
-
-
 
 In our test sketch, we can use it like so:
 
@@ -108,23 +133,27 @@ function setup() {
 You can access p5.js functions and variables such as `circle()` and `PI` in your addon code using the “`this`” object. We’ll use the `hour()` and `minute()` functions to further customize the `loadCSV()` function’s console message. This will give us some information about when the function is called.
 
 <details>
-<summary>You should always use the “<code>function()</code>” keyword to attach methods to the <code>p5.prototype</code> object.</summary> Don’t use the arrow function syntax “<code>() =></code>” because the value of “<code>this</code>” when using the “<code>function()</code>” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “<code>this</code>” is whatever the value of “<code>this</code>” is when the arrow function is defined. In the example below, “<code>this</code>” will refer to “<code>window</code>” instead of the p5 sketch, which is usually not what we want.
+<summary>You should always use the “<code>function()</code>” keyword to attach methods to the <code>fn</code> argument object.</summary> Don’t use the arrow function syntax “<code>() =></code>” because the value of “<code>this</code>” when using the “<code>function()</code>” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “<code>this</code>” is whatever the value of “<code>this</code>” is when the arrow function is defined. In the example below, “<code>this</code>” will refer to “<code>window</code>” instead of the p5 sketch, which is usually not what we want.
 </details>
 
 ```js
-p5.prototype.loadCSV = (filename) => {
-  // this === window is true because
-  // "this" refers to the window object.
-  // This is almost never what you want.
-  console.log(this === window);
-};
-
-
-p5.prototype.loadCSV = function (filename) {
-  // Prints 'I will load the CSV file data.csv at 10:30'
-  // to the console.
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
-};
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = (filename) => {
+    // this === window is true because
+    // "this" refers to the window object.
+    // This is almost never what you want.
+    console.log(this === window);
+  };
+}
+```
+```js
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = function (filename) {
+    // Prints 'I will load the CSV file data.csv at 10:30'
+    // to the console.
+    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+  };
+}
 ```
 
 
@@ -137,24 +166,22 @@ However, we have not made our `loadCSV()` function load any CSV file yet! To be 
 First make the following changes to your `loadCSV()` method:
 
 ```js
-p5.prototype.loadCSV = function(filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = async function(filename){
+    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
 
-  let result = [];
-
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
+    let res = await fetch(filename);
+    let data = await res.text();
+    return data.split('\n').map((line) => {
+      return line.split(',');
     });
-
-  return result;
-};
+  };
+}
 ```
 
-The method now creates an empty array in the variable “`result`”, load in the CSV file specified in the filename with the Fetch API, parse the CSV file in a simplified way (split each line into rows, then each row into words) and return the variable “`result`” at the end.
+Note that we have added an `async` keyword before `function(filename)` to mark that this is an asynchronous function. You can read more about asynchronicity in Javascript [here](https://dev.to/limzykenneth/asynchronous-p5js-20-458f).
+
+The function now uses the Fetch API to fetch a CSV file according to the filename provided by the user, parse the CSV file in a simplified way (split each line into rows, then each row into words), and return the parsed data.
 
 Now, when you run the sketch, pass a file path to a simple CSV file to your `loadCSV()` function and log the output:
 
@@ -166,116 +193,107 @@ function setup(){
 }
 ```
 
-You will notice that it is logging an empty array instead of an array containing data you have in your CSV file. This is because of the same reason why we need to load in data such as with `loadJSON()` or `loadStrings()` in the `preload()` function; the asynchronous nature of JavaScript makes it so that the “result” variable is returned from the `loadCSV()` function before the `fetch()` function can finish fetching the CSV file so we only get an empty array as it is first defined.
-
-Simply moving where you call `loadCSV()` to `preload()` in this case is not enough to solve this problem.
+You will notice that it is logging something called a Promise instead of the array you containing data you have in your CSV file. This is because of the same reason why we need to use an `async function setup()` with `loadJSON()` or `loadStrings()`, we need to `await` our asynchronous function in an `async` setup function:
 
 ```js
-let myCSV;
-
-function preload(){
-  myCSV = loadCSV('data.csv');
-}
-
-function setup(){
+async function setup(){
   createCanvas(400, 400);
-  print(myCSV); // Still prints []
+  let myCSV = await loadCSV('data.csv');
+  print(myCSV);
 }
 ```
 
-p5 will need to be told that the addon’s `loadCSV()` function is something it should wait for in the `preload()` function for this to work. To do that, we use the “`registerPreloadMethod()`” in the `p5.prototype` object.
-
-```js
-p5.prototype.loadCSV = function (filename){
-  console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
-
-  let result = [];
-
-  fetch(filename)
-    .then((res) => res.text())
-    .then((data) => {
-      data.split('\n').forEach((line) => {
-        result.push(line.split(','));
-      });
-
-      this._decrementPreload();
-    });
-
-  return result;
-};
-
-p5.prototype.registerPreloadMethod('loadCSV', p5.prototype);
-```
-
-Note two things from the code above:
-
-1. We call the `p5.prototype.registerPreloadMethod()` function passing in the name of the `loadCSV()` function as a string as the first parameter and `p5.prototype` as the second parameter.
-2. At the end of `fetch()`, after the CSV data has been parsed and pushed into the result array, `this._decrementPreload()` function is called.
-3) Now, if you test your sketch again, you should see that the “`myCSV`” variable is populated with the data from the CSV file!
-4. Note that due to inherent limitations of this technique, the returned “`result`” variable must be an object (array is also a type of object in Javascript) and must not be overwritten in the function body. You can set properties of the object (or push to the array), but you cannot reassign the variable (i.e., you cannot do “``result = data.split(`\n`)``”).
-
-<details>
-<summary>Quite a bit of magic is happening here: firstly, why does “<code>result</code>” now contain the additional data when <code>fetch()</code>code> should still have been asynchronous and thus running after “<code>result</code>” has returned?</summary>
-
-This is related to why the return type must be an object. In Javascript, objects are passed by reference while most other types such as strings and numbers are passed by value. What this means is that when an object is returned from a function, it points to the original object that was created (in this case, the empty array we create in the line “`let result = [];`”.) In contrast, pass by value types, when returning from a function, will be copied and lose their relation to the original reference. This behavior allows us to modify the properties of the returned objects after they have been returned from the function as long as we don’t reassign the variable, which will create a new reference separate from the original object.
-</details>
-
-<details>
-<summary>Secondly, what is <code>registerPreloadMethod()</code> doing and what about <code>this._decrementPreload()</code>?</summary>
-
-Without going into all the details, `registerPreloadMethod()` adds the function we specified into an internal list of functions that p5 keeps track of whenever it is called in `preload()`. When p5 detects such a function is called, it will add 1 to an internal counter. If this internal counter is larger than 0, it will keep waiting in `preload()` and defer running `setup()` and starting the `draw()` loop. Loading functions can decrement that internal counter by calling `this._decrementPreload()`, effectively signaling to p5 that a loading function in `preload()` is complete. If the internal counter reaches 0 after the decrement, it means all loadings are complete and the whole sketch can start.
-</details>
 
 ## Step 6
 
-Your `loadCSV()` function should now work as expected and you can add additional features such as callback function support, additional methods attached to `p5.prototypes`, or anything else you can think of.
+Your `loadCSV()` function should now work as expected and you can add additional features such as callback function support, additional methods attached to `fn`, or anything else you can think of.
 
-There is one more major feature that is available for addon libraries and these are action hooks. Action hooks are functions that will be run at certain points in the p5 object’s lifetime. For example, if you want your addon library to run some code just before p5 runs the `setup()` function or if your addon library needs to do some clean up after a sketch is removed using the `remove()` function, hooks are what will enable your addon library to do so.
+There is one more major feature that is available for addon libraries and these are lifecycle hooks. Lifecycle hooks are functions that will be run at certain points in the p5 object’s lifetime. For example, if you want your addon library to run some code just before p5 runs the `setup()` function or if your addon library needs to do some clean up after a sketch is removed using the `remove()` function, hooks are what will enable your addon library to do so.
 
 The available hooks, in order of execution, are:
 
-- `init` — Called when the sketch is first initialized, just before the sketch initialization function (the one that was passed into the `p5` constructor) is executed. This is also called before any global mode setup, so your library can add anything to the sketch and it will automatically be assigned to the `window` object if global mode is active.
-- `beforePreload` — Called before the `preload()` function is executed.
-- `afterPreload` — Called after the `preload()` function is executed.
-- `beforeSetup` — Called before the `setup()` function is executed.
-- `afterSetup` — Called after the `setup()` function is executed.
-- `pre` — Called at the beginning of `draw()`. Called repeatedly the same as `draw()`.
-- `post` — Called at the end of `draw()`. Called repeatedly the same as `draw()`.
+- `presetup` — Called before the `setup()` function is executed.
+- `postsetup` — Called after the `setup()` function is executed.
+- `predraw` — Called at the beginning of `draw()`. Called repeatedly the same as `draw()`.
+- `postdraw` — Called at the end of `draw()`. Called repeatedly the same as `draw()`.
 - `remove` — Called when `remove()` is called.
 
-To create an action hook, you can use the snippet below.
+You may have noticed that we have not yet introduced the third parameter to our `loadCSVAddon()` which is called `lifecycles`, this is where you will define the lifecycle hooks your addon wish to use, see the snippet below.
 
 ```js
-p5.prototype.doRemoveStuff = function (){
-  // Addon library related cleanup
-};
-p5.prototype.registerMethod("remove", p5.prototype.doRemoveStuff);
+function loadCSVAddon(p5, fn, lifecycles){
+  lifecycles.predraw = function(){
+    // Set background to be p5 pink by default
+    this.background("#ed225d");
+  };
 
-p5.prototype.setDefaultBackground = function(){
-  // Set background to be p5 pink by default
-  this.background("#ed225d");
-};
-p5.prototype.registerMethod("pre", p5.prototype.setDefaultBackground);
+  lifecycles.remove = function(){
+    // Addon library related cleanup
+  }
+}
 ```
 
-You can also unregister the hook when it is no longer needed.
+Notice that in the lifecycle functions you have access to `this` which refers to the current `p5` instance same as you would have in the functions attached to `fn`
+
+Here is what your p5.loadcsv.js file should look like at this point in the tutorial:
 
 ```js
-p5.prototype.unregisterMethod('remove', p5.prototype.doRemoveStuff);
+function loadCSVAddon(p5, fn, lifecycles){
+  fn.loadCSV = async function(filename){
+    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+
+    let res = await fetch(filename);
+    let data = await res.text();
+    return data.split('\n').map((line) => {
+      return line.split(',');
+    });
+  };
+
+  lifecycles.predraw = function(){
+    // Set background to be p5 pink by default
+    this.background("#ed225d");
+  };
+
+  lifecycles.remove = function(){
+    // Addon library related cleanup
+  }
+}
+
+p5.registerAddon(loadCSVAddon);
 ```
+
+## Step 7
+As a final step, we will add a few more changes to our addon to prepare it for distribution. There are a few options you may wish to distribute your addon:
+
+* As a single JavaScript file which your users will include in their HTML with a `<script>` tag.
+* As an ESM module that your users can use with `<script type="module">`, install from NPM, or any other ESM module usage.
+
+Either of the above may also be passed through a build tool to be bundled into a different format. As we can see, there are many different options and below will be a recommendation which is the pattern that p5.js itself uses, you may choose another option that fits your addon.
+
+```js
+export function loadCSVAddon(p5, fn, lifecycles){
+  // Addon code ...
+}
+
+if (typeof p5 !== undefined) {
+  p5.registerAddon(loadCSVAddon);
+}
+```
+
+In the above snippet, an additional `if` condition is added around the call to `p5.registerAddon()`. This is done to support both direct usage in ESM modules (where users can directly import your addon function then call `p5.registerAddon()` themselves) and after bundling support regular `<script>` tag usage without your users needing to call `p5.registerAddon()` directly as long as they have included the addon `<script>` tag after the `<script>` tag including p5.js itself.
 
 
 ## Next steps
 
 Below are some extra tips about authoring your addon library.
 
-**Must an addon library extend** `p5.prototype` **or the prototype object of p5.\* classes?**
+**Must an addon library extend** `fn` **or the prototype object of p5.\* classes?**
 
-Your addon library may not extend p5 or p5 classes at all, but instead just offer extra classes, functions, or constants that can be instantiated and used with p5, or it may do some mix of both: offering extra classes but with convenience methods attached to the `p5.prototype` object for example.
+Your addon library may or may not extend p5 or p5 classes at all, but instead just offer extra classes, functions, or constants that can be instantiated and used with p5, or it may do some mix of both: offering extra classes but with convenience methods attached to the `fn` object for example.
 
 **Naming conventions**
 
-**Don't overwrite p5 functions or properties.** When extending a `p5.prototype` or prototype object of p5 classes, be careful not to use the names of existing properties or functions unless you intend to replace their functionalities entirely.
+**Do not overwrite p5 functions or properties.** When extending `fn` or prototype object of p5 classes, be careful not to use the names of existing properties or functions unless you intend to replace their functionalities entirely.
 
 **p5.js has two modes, global mode and instance mode.** In global mode, all p5 properties and methods are bound to the `window` object, allowing users to call methods like `background()` without having to prefix them with anything. However, this means you need to be careful not to overwrite native JavaScript functionality. For example “`Math`” and “`console`” are both native Javascript functionalities so you shouldn’t have methods named “`Math`” or “`console`”.
 
@@ -283,15 +301,15 @@ Your addon library may not extend p5 or p5 classes at all, but instead just offe
 
 ```js
 // Do not do this
-p5.prototype.p5.MyClass = class {
+fn.p5.MyClass = class {
 };
 
 // Do this
-p5.prototype.myAddon.MyClass = class {
+fn.myAddon.MyClass = class {
 };
 
 // Or this
-p5.prototype.myMethod = function(){
+fn.myMethod = function(){
 };
 ```
 

@@ -1991,7 +1991,6 @@
           "String",
           "String?",
           "Object?",
-          "String|String[]?",
           "Function?",
           "Function?"
         ],
@@ -2734,20 +2733,15 @@
         ],
         [
           "String|Request",
-          "Object?",
-          "String?",
-          "function(p5.Geometry)?",
-          "function(Event)?",
-          "Boolean?",
-          "Boolean?",
-          "Boolean?"
+          "Object?"
         ]
       ]
     },
     "model": {
       "overloads": [
         [
-          "p5.Geometry"
+          "p5.Geometry",
+          "Number?"
         ]
       ]
     },
@@ -2769,12 +2763,7 @@
         [
           "String",
           "String?",
-          "Object?",
-          "function(p5.Geometry)?",
-          "function(Event)?",
-          "boolean?",
-          "boolean?",
-          "boolean?"
+          "Object?"
         ]
       ]
     },
@@ -4474,9 +4463,7 @@
           "Number",
           "Number",
           "Number",
-          "Object?",
-          "Number?",
-          "Number?"
+          "Object?"
         ]
       ]
     }
