@@ -16,7 +16,6 @@ function generateTopLevelDeclarations(strandsContext, generationContext, dagOrde
     if (dag.nodeTypes[nodeID] !== NodeType.OPERATION) {
       continue;
     }
-    
     if (usedCount[nodeID] > 0) {
       const newDeclaration = backend.generateDeclaration(generationContext, dag, nodeID);
       declarations.push(newDeclaration);

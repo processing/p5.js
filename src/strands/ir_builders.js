@@ -1,7 +1,7 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, } from './ir_types';
+import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, } from './ir_types';
 import { StrandsNode } from './strands_api';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
@@ -298,14 +298,14 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
     FES.userError("parameter validation error",`Function '${functionName}' has ${overloads.length} variants which expect ${argsLengthStr} arguments, but ${preprocessedArgs.length} arguments were provided.`);
   }
 
+  const isGeneric = (T) => T.dimension === null;
   let bestOverload = null;
   let bestScore = 0;
   let inferredReturnType = null;
+  let inferredDimension = null;
+
   for (const overload of matchingArgsCounts) {
-    const isGeneric = (T) => T.dimension === null;
     let isValid = true;
-    let overloadParameters = [];
-    let inferredDimension = null;
     let similarity = 0;
 
     for (let i = 0; i < preprocessedArgs.length; i++) {
@@ -318,7 +318,10 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
         if (inferredDimension === null || inferredDimension === 1) {
           inferredDimension = argType.dimension;
         }
-        if (inferredDimension !== argType.dimension) {
+
+        if (inferredDimension !== argType.dimension &&
+          !(argType.dimension === 1 && inferredDimension >= 1)
+          ) {
           isValid = false;
         }
         dimension = inferredDimension;
@@ -336,13 +339,12 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
         similarity += 1;
       }
 
-      overloadParameters.push({ baseType: expectedType.baseType, dimension });
     }
 
     if (isValid && (!bestOverload || similarity > bestScore)) {
-      bestOverload = overloadParameters;
+      bestOverload = overload;
       bestScore = similarity;
-      inferredReturnType = overload.returnType;
+      inferredReturnType =  {...overload.returnType };
       if (isGeneric(inferredReturnType)) {
         inferredReturnType.dimension = inferredDimension;
       }
@@ -350,17 +352,20 @@ export function createFunctionCallNode(strandsContext, functionName, rawUserArgs
   }
 
   if (bestOverload === null) {
-    FES.userError('parameter validation', 'No matching overload found!');
+    FES.userError('parameter validation', `No matching overload for ${functionName} was found!`);
   }
 
   let dependsOn = [];
-  for (let i = 0; i < bestOverload.length; i++) {
+  for (let i = 0; i < bestOverload.params.length; i++) {
     const arg = preprocessedArgs[i];
-    if (arg.originalNodeID) {
+    const paramType = { ...bestOverload.params[i] };
+    if (isGeneric(paramType)) {
+      paramType.dimension = inferredDimension;
+    }
+    if (arg.originalNodeID && typeEquals(arg.inferredTypeInfo, paramType)) {
       dependsOn.push(arg.originalNodeID);
     }
     else {
-      const paramType = bestOverload[i];
       const castedArgID = constructTypeFromIDs(strandsContext, paramType, arg.mappedDependencies);
       CFG.recordInBasicBlock(cfg, cfg.currentBlock, castedArgID);
       dependsOn.push(castedArgID);

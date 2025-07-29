@@ -1,13 +1,11 @@
 p5.disableFriendlyErrors = true;
 
 function callback() {
-  // getFinalColor((col) => {
+  const time = uniformFloat(() =>millis()*0.001)
+  getFinalColor((col) => {
+    return [1,0,0, 1] +[1, 0, 0.1, 0] + pow(col,sin(time));
+  });
 
-  //   return [1, 1, 0, 1];
-  // });
-  // getWorldInputs(inputs => {
-  //   return inputs;
-  // })
   getWorldInputs(inputs => {
     inputs.color = vec4(inputs.position, 1);
     inputs.position = inputs.position + sin(time) * 100;
