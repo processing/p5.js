@@ -39,14 +39,17 @@ export default defineWorkspace([
         name: 'chrome',
         provider: 'webdriverio',
         screenshotFailures: false,
-        launchOptions: {
-          args: [
-            '--enable-unsafe-webgpu',
-            '--headless=new',
-            '--disable-gpu-sandbox',
-            '--no-sandbox',
-          ],
-        },
+        providerOptions: {
+          capabilities: {
+            'goog:chromeOptions': {
+              args: [
+                '--enable-unsafe-webgpu',
+                '--enable-features=Vulkan',
+                '--disable-vulkan-fallback-to-gl-for-testing'
+              ]
+            }
+          }
+        }
       }
     }
   }
