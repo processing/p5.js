@@ -38,7 +38,15 @@ export default defineWorkspace([
         enabled: true,
         name: 'chrome',
         provider: 'webdriverio',
-        screenshotFailures: false
+        screenshotFailures: false,
+        launchOptions: {
+          args: [
+            '--enable-unsafe-webgpu',
+            '--headless=new',
+            '--disable-gpu-sandbox',
+            '--no-sandbox',
+          ],
+        },
       }
     }
   }
