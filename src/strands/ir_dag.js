@@ -25,16 +25,16 @@ export function createDirectedAcyclicGraph() {
 }
 
 export function getOrCreateNode(graph, node) {
-  const key = getNodeKey(node);
-  const existing = graph.cache.get(key);
+  // const key = getNodeKey(node);
+  // const existing = graph.cache.get(key);
   
-  if (existing !== undefined) {
-    return existing; 
-  } else {
+  // if (existing !== undefined) {
+    // return existing; 
+  // } else {
     const id = createNode(graph, node);
-    graph.cache.set(key, id);
+    // graph.cache.set(key, id);
     return id;
-  }
+  // }
 }
 
 export function createNodeData(data = {}) {
@@ -74,6 +74,26 @@ export function extractNodeTypeInfo(dag, nodeID) {
     priority: BasePriority[dag.baseTypes[nodeID]],
   };
 }
+
+export function sortDAG(adjacencyList, start) {
+  const visited = new Set();
+  const postOrder = [];
+  
+  function dfs(v) {
+    if (visited.has(v)) {
+      return;
+    }
+    visited.add(v);
+    for (let w of adjacencyList[v]) {
+      dfs(w);
+    }
+    postOrder.push(v);
+  }
+  
+  dfs(start);
+  return postOrder;
+}
+
 /////////////////////////////////
 // Private functions
 /////////////////////////////////
@@ -118,23 +138,4 @@ function validateNode(node){
   if (missingFields.length > 0) {
     FES.internalError(`Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`);
   }
-}
-
-export function sortDAG(adjacencyList, start) {
-  const visited = new Set();
-  const postOrder = [];
-  
-  function dfs(v) {
-    if (visited.has(v)) {
-      return;
-    }
-    visited.add(v);
-    for (let w of adjacencyList[v]) {
-      dfs(w);
-    }
-    postOrder.push(v);
-  }
-  
-  dfs(start);
-  return postOrder;
 }
