@@ -1,5 +1,6 @@
 import { defineWorkspace } from 'vitest/config';
 import vitePluginString from 'vite-plugin-string';
+console.log(`CI: ${process.env.CI}`)
 
 const plugins = [
   vitePluginString({

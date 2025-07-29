@@ -28,6 +28,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
           which google-chrome
+          google-chrome --version
       - name: Get node modules
         run: npm ci
         env:
