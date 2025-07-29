@@ -40,15 +40,19 @@ export default defineWorkspace([
         provider: 'webdriverio',
         screenshotFailures: false,
         providerOptions: {
-          capabilities: {
+          capabilities: process.env.CI ? {
             'goog:chromeOptions': {
+              binary: '/usr/bin/google-chrome',
               args: [
                 '--enable-unsafe-webgpu',
+                '--disable-dawn-features=disallow_unsafe_apis',
+                '--use-angle=default',
                 '--enable-features=Vulkan',
-                '--disable-vulkan-fallback-to-gl-for-testing'
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
               ]
             }
-          }
+          } : undefined
         }
       }
     }

@@ -1,10 +1,9 @@
-import describe from '../../../src/accessibility/describe.js';
 import p5 from '../../../src/app.js';
 import rendererWebGPU from "../../../src/webgpu/p5.RendererWebGPU";
 
 p5.registerAddon(rendererWebGPU);
 
-suite.sequential('WebGPU p5.Framebuffer', function() {
+suite('WebGPU p5.Framebuffer', function() {
   let myp5;
   let prevPixelRatio;
 
