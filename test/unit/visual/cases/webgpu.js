@@ -130,7 +130,7 @@ visualSuite("WebGPU", function () {
           p5.background(255, 0, 0); // Red background
           p5.fill(0, 255, 0); // Green circle
           p5.noStroke();
-          p5.circle(12.5, 12.5, 20);
+          p5.circle(0, 0, 20);
         });
 
         // Draw the framebuffer to the main canvas
@@ -157,7 +157,7 @@ visualSuite("WebGPU", function () {
           p5.background(255, 100, 100);
           p5.fill(255, 255, 0);
           p5.noStroke();
-          p5.rect(5, 5, 10, 10);
+          p5.rect(-5, -5, 10, 10);
         });
 
         // Draw to second framebuffer
@@ -165,7 +165,7 @@ visualSuite("WebGPU", function () {
           p5.background(100, 255, 100);
           p5.fill(255, 0, 255);
           p5.noStroke();
-          p5.circle(7.5, 7.5, 10);
+          p5.circle(0, 0, 10);
         });
 
         // Draw both to main canvas
@@ -197,6 +197,7 @@ visualSuite("WebGPU", function () {
       // Draw to the framebuffer
       fbo.draw(() => {
         p5.background(0);
+        p5.translate(-fbo.width / 2, -fbo.height / 2)
         p5.stroke(255);
         p5.strokeWeight(2);
         p5.noFill();
@@ -234,6 +235,7 @@ visualSuite("WebGPU", function () {
         // Draw to the framebuffer after resize
         fbo.draw(() => {
           p5.background(100, 0, 100);
+          p5.translate(-fbo.width / 2, -fbo.height / 2)
           p5.fill(0, 255, 255);
           p5.noStroke();
           // Draw a shape that fills the new size
@@ -264,7 +266,7 @@ visualSuite("WebGPU", function () {
           p5.background(255, 200, 100);
           p5.fill(0, 100, 200);
           p5.noStroke();
-          p5.circle(10, 10, 15);
+          p5.circle(0, 0, 15);
         });
 
         // Manually resize the framebuffer
@@ -273,6 +275,7 @@ visualSuite("WebGPU", function () {
         // Draw new content to the resized framebuffer
         fbo.draw(() => {
           p5.background(200, 255, 100);
+          p5.translate(-fbo.width / 2, -fbo.height / 2)
           p5.fill(200, 0, 100);
           p5.noStroke();
           // Draw content that uses the new size
