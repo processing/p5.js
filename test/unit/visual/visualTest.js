@@ -52,7 +52,7 @@ let shiftThreshold = 2;
 export function visualSuite(
   name,
   callback,
-  { focus = false, skip = false, shiftThreshold: newShiftThreshold } = {}
+  { focus = false, skip = false, sequential = false, shiftThreshold: newShiftThreshold } = {}
 ) {
   let suiteFn = describe;
   if (focus) {
@@ -60,6 +60,9 @@ export function visualSuite(
   }
   if (skip) {
     suiteFn = suiteFn.skip;
+  }
+  if (sequential) {
+    suiteFn = suiteFn.sequential;
   }
   suiteFn(name, () => {
     let lastShiftThreshold

@@ -311,4 +311,4 @@ visualSuite("WebGPU", function () {
       },
     );
   });
-});
+}, { sequential: true });
