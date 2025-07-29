@@ -268,7 +268,6 @@ visualSuite("WebGPU", function () {
 
         await screenshot();
       },
-      { focus: true }
     );
 
     visualTest(

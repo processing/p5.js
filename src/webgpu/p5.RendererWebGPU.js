@@ -66,6 +66,9 @@ class RendererWebGPU extends Renderer3D {
       usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
 
+    // Clear the main canvas after resize
+    this.clear();
+
     // Destroy existing readback texture when size changes
     if (this.canvasReadbackTexture && this.canvasReadbackTexture.destroy) {
       this.canvasReadbackTexture.destroy();
@@ -1287,8 +1290,6 @@ class RendererWebGPU extends Renderer3D {
     if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
       framebuffer.aaDepthTexture.destroy();
     }
-    // Clear cached views when recreating textures
-    framebuffer._colorTextureView = null;
 
     const baseDescriptor = {
       size: {
@@ -1389,10 +1390,10 @@ class RendererWebGPU extends Renderer3D {
   }
 
   _getFramebufferColorTextureView(framebuffer) {
-    if (!framebuffer._colorTextureView && framebuffer.colorTexture) {
-      framebuffer._colorTextureView = framebuffer.colorTexture.createView();
+    if (framebuffer.colorTexture) {
+      return framebuffer.colorTexture.createView();
     }
-    return framebuffer._colorTextureView;
+    return null;
   }
 
   createFramebufferTextureHandle(framebufferTexture) {
