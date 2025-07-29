@@ -1,4 +1,7 @@
 import p5 from '../../../src/app.js';
+import rendererWebGPU from "../../../src/webgpu/p5.RendererWebGPU";
+
+p5.registerAddon(rendererWebGPU);
 
 suite('WebGPU p5.Framebuffer', function() {
   let myp5;
@@ -9,7 +12,6 @@ suite('WebGPU p5.Framebuffer', function() {
     window.devicePixelRatio = 1;
     myp5 = new p5(function(p) {
       p.setup = function() {};
-      p.draw = function() {};
     });
   });
 
@@ -153,16 +155,26 @@ suite('WebGPU p5.Framebuffer', function() {
       await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
-      let drawCallbackExecuted = false;
-      fbo.draw(() => {
-        drawCallbackExecuted = true;
-        myp5.background(255, 0, 0);
-        myp5.fill(0, 255, 0);
-        myp5.noStroke();
-        myp5.circle(5, 5, 8);
-      });
+      myp5.background(0, 255, 0);
 
-      expect(drawCallbackExecuted).to.equal(true);
+      fbo.draw(() => {
+        myp5.background(0, 0, 255);
+        // myp5.fill(0, 255, 0);
+      });
+      await myp5.loadPixels();
+      // Drawing should have gone to the framebuffer, leaving the main
+      // canvas the same
+      expect([...myp5.pixels.slice(0, 3)]).toEqual([0, 255, 0]);
+      await fbo.loadPixels();
+      // The framebuffer should have content
+      expect([...fbo.pixels.slice(0, 3)]).toEqual([0, 0, 255]);
+
+      // The content can be drawn back to the main canvas
+      myp5.imageMode(myp5.CENTER);
+      myp5.image(fbo, 0, 0);
+      await myp5.loadPixels();
+      expect([...fbo.pixels.slice(0, 3)]).toEqual([0, 0, 255]);
+      expect([...myp5.pixels.slice(0, 3)]).toEqual([0, 0, 255]);
     });
 
     test('can use framebuffer as texture', async function() {
@@ -194,8 +206,9 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(result).to.be.a('promise');
 
       const pixels = await result;
-      expect(pixels).to.be.an('array');
+      expect(pixels).toBeInstanceOf(Uint8Array);
       expect(pixels.length).to.equal(10 * 10 * 4);
+      expect([...pixels.slice(0, 4)]).toEqual([255, 0, 0, 255]);
     });
 
     test('pixels property is set after loadPixels resolves', async function() {
@@ -225,6 +238,7 @@ suite('WebGPU p5.Framebuffer', function() {
       const color = await result;
       expect(color).to.be.an('array');
       expect(color).to.have.length(4);
+      expect([...color]).toEqual([100, 150, 200, 255]);
     });
 
     test('get() returns a promise for region in WebGPU', async function() {
@@ -242,6 +256,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(region).to.be.an('object'); // Should be a p5.Image
       expect(region.width).to.equal(4);
       expect(region.height).to.equal(4);
+      expect([...region.pixels.slice(0, 4)]).toEqual([100, 150, 200, 255]);
     });
   });
 });

@@ -468,11 +468,11 @@ for (const k in constants) {
  * If `setup()` is declared `async` (e.g. `async function setup()`),
  * execution pauses at each `await` until its promise resolves.
  * For example, `font = await loadFont(...)` waits for the font asset
- * to load because `loadFont()` function returns a promise, and the await 
+ * to load because `loadFont()` function returns a promise, and the await
  * keyword means the program will wait for the promise to resolve.
  * This ensures that all assets are fully loaded before the sketch continues.
 
- * 
+ *
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
