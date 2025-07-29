@@ -109,13 +109,9 @@ p5.prototype._hasMouseInteracted = false;
 /**
  * A `Number` system variable that tracks the mouse's horizontal position.
  *
- * In 2D mode, `mouseX` keeps track of the mouse's position relative to the
+ * `mouseX` keeps track of the mouse's position relative to the
  * top-left corner of the canvas. For example, if the mouse is 50 pixels from
  * the left edge of the canvas, then `mouseX` will be 50.
- *
- * In WebGL mode, `mouseX` keeps track of the mouse's position relative to the
- * center of the canvas. For example, if the mouse is 50 pixels to the right
- * of the canvas' center, then `mouseX` will be 50.
  *
  * If touch is used instead of the mouse, then `mouseX` will hold the
  * x-coordinate of the most recent touch point.
@@ -220,13 +216,9 @@ p5.prototype.mouseX = 0;
 /**
  * A `Number` system variable that tracks the mouse's vertical position.
  *
- * In 2D mode, `mouseY` keeps track of the mouse's position relative to the
+ * `mouseY` keeps track of the mouse's position relative to the
  * top-left corner of the canvas. For example, if the mouse is 50 pixels from
  * the top edge of the canvas, then `mouseY` will be 50.
- *
- * In WebGL mode, `mouseY` keeps track of the mouse's position relative to the
- * center of the canvas. For example, if the mouse is 50 pixels below the
- * canvas' center, then `mouseY` will be 50.
  *
  * If touch is used instead of the mouse, then `mouseY` will hold the
  * y-coordinate of the most recent touch point.
@@ -332,15 +324,11 @@ p5.prototype.mouseY = 0;
  * A `Number` system variable that tracks the mouse's previous horizontal
  * position.
  *
- * In 2D mode, `pmouseX` keeps track of the mouse's position relative to the
+ * `pmouseX` keeps track of the mouse's position relative to the
  * top-left corner of the canvas. Its value is
  * <a href="#/p5/mouseX">mouseX</a> from the previous frame. For example, if
  * the mouse was 50 pixels from the left edge of the canvas during the last
  * frame, then `pmouseX` will be 50.
- *
- * In WebGL mode, `pmouseX` keeps track of the mouse's position relative to the
- * center of the canvas. For example, if the mouse was 50 pixels to the right
- * of the canvas' center during the last frame, then `pmouseX` will be 50.
  *
  * If touch is used instead of the mouse, then `pmouseX` will hold the
  * x-coordinate of the last touch point.
@@ -401,15 +389,11 @@ p5.prototype.pmouseX = 0;
  * A `Number` system variable that tracks the mouse's previous vertical
  * position.
  *
- * In 2D mode, `pmouseY` keeps track of the mouse's position relative to the
+ * `pmouseY` keeps track of the mouse's position relative to the
  * top-left corner of the canvas. Its value is
  * <a href="#/p5/mouseY">mouseY</a> from the previous frame. For example, if
  * the mouse was 50 pixels from the top edge of the canvas during the last
  * frame, then `pmouseY` will be 50.
- *
- * In WebGL mode, `pmouseY` keeps track of the mouse's position relative to the
- * center of the canvas. For example, if the mouse was 50 pixels below the
- * canvas' center during the last frame, then `pmouseY` will be 50.
  *
  * If touch is used instead of the mouse, then `pmouseY` will hold the
  * y-coordinate of the last touch point.
