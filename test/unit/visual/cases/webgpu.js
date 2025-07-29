@@ -116,6 +116,23 @@ visualSuite("WebGPU", function () {
     );
   });
 
+  visualSuite("Canvas Resizing", function () {
+    visualTest(
+      "Main canvas drawing after resize",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        // Resize the canvas
+        p5.resizeCanvas(30, 30);
+        // Draw to the main canvas after resize
+        p5.background(100, 0, 100);
+        p5.fill(0, 255, 255);
+        p5.noStroke();
+        p5.circle(0, 0, 20);
+        await screenshot();
+      },
+    );
+  });
+
   visualSuite("Framebuffers", function () {
     visualTest(
       "Basic framebuffer draw to canvas",
@@ -251,6 +268,7 @@ visualSuite("WebGPU", function () {
 
         await screenshot();
       },
+      { focus: true }
     );
 
     visualTest(
