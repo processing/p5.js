@@ -48,9 +48,10 @@ export default defineWorkspace([
                 '--enable-unsafe-webgpu',
                 '--disable-dawn-features=disallow_unsafe_apis',
                 '--use-angle=default',
-                '--enable-features=Vulkan',
+                '--enable-features=Vulkan,SharedArrayBuffer',
                 '--no-sandbox',
                 '--disable-dev-shm-usage',
+                '--headless=new',
               ]
             }
           } : undefined
