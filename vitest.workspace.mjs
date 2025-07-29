@@ -46,12 +46,11 @@ export default defineWorkspace([
               binary: '/usr/bin/google-chrome',
               args: [
                 '--enable-unsafe-webgpu',
-                '--disable-dawn-features=disallow_unsafe_apis',
-                '--use-angle=default',
                 '--enable-features=Vulkan,SharedArrayBuffer',
+                '--disable-dawn-features=disallow_unsafe_apis',
+                '--disable-gpu-sandbox',
                 '--no-sandbox',
-                '--disable-dev-shm-usage',
-                '--headless=new',
+                '--disable-dev-shm-usage'
               ]
             }
           } : undefined
