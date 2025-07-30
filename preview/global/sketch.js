@@ -2,12 +2,14 @@ p5.disableFriendlyErrors = true;
 
 function callback() {
   const time = uniformFloat(() =>millis()*0.001)
-  getFinalColor((col) => {
-    return [1,0,0, 1] +[1, 0, 0.1, 0] + pow(col,sin(time));
-  });
+  // getFinalColor((col) => {
+    // return vec4(1,0,0,1).rgba;
+  // });
 
   getWorldInputs(inputs => {
-    inputs.color = vec4(inputs.position, 1);
+    // strandsIf(inputs.position === vec3(1), () => 0).Else()
+    console.log(inputs.position);
+    inputs.color = vec4(inputs.position.xyz, 1);
     inputs.position = inputs.position + sin(time) * 100;
     return inputs;
   });

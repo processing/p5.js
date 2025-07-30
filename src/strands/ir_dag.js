@@ -1,4 +1,4 @@
-import { NodeTypeRequiredFields, NodeTypeToName, BasePriority } from './ir_types';
+import { NodeTypeRequiredFields, NodeTypeToName, BasePriority, StatementType } from './ir_types';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -18,7 +18,8 @@ export function createDirectedAcyclicGraph() {
     phiBlocks: [],
     dependsOn: [],
     usedBy: [],
-    graphType: 'DAG',
+    statementTypes: [],
+    swizzles: [],
   };
   
   return graph;
@@ -45,6 +46,8 @@ export function createNodeData(data = {}) {
     opCode: data.opCode ?? null,
     value: data.value ?? null,
     identifier: data.identifier ?? null,
+    statementType: data.statementType ?? null,
+    swizzle: data.swizzles ?? null,
     dependsOn: Array.isArray(data.dependsOn) ? data.dependsOn : [],
     usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
     phiBlocks: Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
@@ -55,6 +58,7 @@ export function createNodeData(data = {}) {
 
 export function getNodeDataFromID(graph, id) {
   return {
+    id,
     nodeType: graph.nodeTypes[id],
     opCode: graph.opCodes[id],
     value: graph.values[id],
@@ -64,6 +68,8 @@ export function getNodeDataFromID(graph, id) {
     phiBlocks: graph.phiBlocks[id],
     dimension: graph.dimensions[id],  
     baseType: graph.baseTypes[id],
+    statementType: graph.statementTypes[id],
+    swizzle: graph.swizzles[id],
   }
 }
 
@@ -73,25 +79,6 @@ export function extractNodeTypeInfo(dag, nodeID) {
     dimension: dag.dimensions[nodeID],
     priority: BasePriority[dag.baseTypes[nodeID]],
   };
-}
-
-export function sortDAG(adjacencyList, start) {
-  const visited = new Set();
-  const postOrder = [];
-  
-  function dfs(v) {
-    if (visited.has(v)) {
-      return;
-    }
-    visited.add(v);
-    for (let w of adjacencyList[v]) {
-      dfs(w);
-    }
-    postOrder.push(v);
-  }
-  
-  dfs(start);
-  return postOrder;
 }
 
 /////////////////////////////////
@@ -108,7 +95,9 @@ function createNode(graph, node) {
   graph.phiBlocks[id] = node.phiBlocks.slice();
   graph.baseTypes[id] = node.baseType
   graph.dimensions[id] = node.dimension;
-  
+  graph.statementTypes[id] = node.statementType;
+  graph.swizzles[id] = node.swizzle
+
   for (const dep of node.dependsOn) {
     if (!Array.isArray(graph.usedBy[dep])) {
       graph.usedBy[dep] = [];
@@ -125,7 +114,7 @@ function getNodeKey(node) {
 
 function validateNode(node){
   const nodeType = node.nodeType;
-  const requiredFields = [...NodeTypeRequiredFields[nodeType], 'baseType', 'dimension'];
+  const requiredFields = NodeTypeRequiredFields[nodeType];
   if (requiredFields.length === 2) { 
     FES.internalError(`Required fields for node type '${NodeTypeToName[nodeType]}' not defined. Please add them to the utils.js file in p5.strands!`)
   }

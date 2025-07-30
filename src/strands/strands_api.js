@@ -5,9 +5,9 @@ import {
   createStatementNode,
   createPrimitiveConstructorNode,
   createUnaryOpNode,
-  createMemberAccessNode,
   createStructInstanceNode,
   createStructConstructorNode,
+  createSwizzleNode,
 } from './ir_builders'
 import { 
   OperatorTable,
@@ -16,7 +16,8 @@ import {
   BaseType, 
   StructType, 
   TypeInfoFromGLSLName, 
-  isStructType, 
+  isStructType,
+  OpCode, 
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
@@ -28,10 +29,68 @@ import { getNodeDataFromID } from './ir_dag'
 //////////////////////////////////////////////
 // User nodes 
 //////////////////////////////////////////////
+const swizzlesSet = new Set();
+
 export class StrandsNode {
-  constructor(id) {
+  constructor(id, dimension, strandsContext) {
     this.id = id;
+    this.strandsContext = strandsContext;
+    this.dimension = dimension; 
+    installSwizzlesForDimension.call(this, strandsContext, dimension)
   }
+}
+
+function generateSwizzles(chars, maxLen = 4) {
+  const result = [];
+
+  function build(current) {
+    if (current.length > 0) result.push(current);
+    if (current.length === maxLen) return;
+
+    for (let c of chars) {
+      build(current + c); 
+    }
+  }
+
+  build('');
+  return result;
+}
+
+function installSwizzlesForDimension(strandsContext, dimension) {
+  if (swizzlesSet.has(dimension)) return;
+  swizzlesSet.add(dimension);
+
+  const swizzleVariants = [
+    ['x', 'y', 'z', 'w'],
+    ['r', 'g', 'b', 'a'],
+    ['s', 't', 'p', 'q']
+  ].map(chars => chars.slice(0, dimension));
+
+  const descriptors = {};
+
+  for (const variant of swizzleVariants) {
+    const swizzleStrings = generateSwizzles(variant);
+    for (const swizzle of swizzleStrings) {
+      if (swizzle.length < 1 || swizzle.length > 4) continue;
+      if (descriptors[swizzle]) continue;
+
+      const hasDuplicates = new Set(swizzle).size !== swizzle.length;
+
+      descriptors[swizzle] = {
+        get() {
+          const id = createSwizzleNode(strandsContext, this, swizzle);
+          return new StrandsNode(id, 0, strandsContext);
+        },
+        ...(hasDuplicates ? {} : {
+          set(value) {
+            return assignSwizzleNode(strandsContext, this, swizzle, value);
+          }
+        })
+      };
+    }
+  }
+
+  Object.defineProperties(this, descriptors);
 }
 
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
@@ -41,23 +100,22 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (arity === 'binary') {
       StrandsNode.prototype[name] = function (...right) {
         const { id, components } = createBinaryOpNode(strandsContext, this, right, opCode);
-        return new StrandsNode(id);
+        return new StrandsNode(id, components, strandsContext);
       };
     }
     if (arity === 'unary') {
       fn[name] = function (strandsNode) {
         const { id, components } = createUnaryOpNode(strandsContext, strandsNode, opCode);
-        return new StrandsNode(id);
+        return new StrandsNode(id, components, strandsContext);
       }
     }
   }
-  
+
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
   fn.discard = function() {
-    const { id, components } = createStatementNode('discard');
-    CFG.recordInBasicBlock(strandsContext.cfg, strandsContext.cfg.currentBlock, id);
+    createStatementNode(strandsContext, OpCode.ControlFlow.DISCARD);
   }
   
   fn.strandsIf = function(conditionNode, ifBody) {
@@ -76,7 +134,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
     const { id, components } = createPrimitiveConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, args.flat());
-    return new StrandsNode(id); 
+    return new StrandsNode(id, components, strandsContext); 
   }
   
   //////////////////////////////////////////////
@@ -90,7 +148,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       fn[functionName] = function(...args) {
         if (strandsContext.active) {
           const { id, components } =  createFunctionCallNode(strandsContext, functionName, args);
-          return new StrandsNode(id);
+          return new StrandsNode(id, components, strandsContext);
         } else {
           return originalFn.apply(this, args);
         }
@@ -99,7 +157,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       fn[functionName] = function (...args) {
         if (strandsContext.active) {
           const { id, components } = createFunctionCallNode(strandsContext, functionName, args);
-          return new StrandsNode(id);
+          return new StrandsNode(id, components, strandsContext);
         } else {
           p5._friendlyError(
             `It looks like you've called ${functionName} outside of a shader's modify() function.`
@@ -131,14 +189,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
       const { id, components } = createVariableNode(strandsContext, typeInfo, name);
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
-      return new StrandsNode(id);
+      return new StrandsNode(id, components, strandsContext);
     };
     
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
         const { id, components } = createPrimitiveConstructorNode(strandsContext, typeInfo, args);
-        return new StrandsNode(id);
+        return new StrandsNode(id, components, strandsContext);
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
@@ -155,26 +213,28 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 //////////////////////////////////////////////
 function createHookArguments(strandsContext, parameters){
   const args = [];
+  const dag = strandsContext.dag;
   
   for (const param of parameters) {
     const paramType = param.type;
     if(isStructType(paramType.typeName)) {
       const structType = StructType[paramType.typeName];
       const originalInstanceInfo = createStructInstanceNode(strandsContext, structType, param.name, []);
-      const structNode = new StrandsNode(originalInstanceInfo.id);
-      // const componentNodes = originalInstanceInfo.components.map(id => new StrandsNode(id))
+      const structNode = new StrandsNode(originalInstanceInfo.id, 0, strandsContext);
+      // const componentNodes = originalInstanceInfo.components.map(id => new StrandsNode(id, components))
 
       for (let i = 0; i < structType.properties.length; i++) {
         const componentTypeInfo = structType.properties[i];
         Object.defineProperty(structNode, componentTypeInfo.name, {
           get() {
-            return new StrandsNode(strandsContext.dag.dependsOn[structNode.id][i])
+            const propNode = getNodeDataFromID(dag, dag.dependsOn[structNode.id][i])
+            return new StrandsNode(propNode.id, propNode.dimension, strandsContext);
             // const { id, components } = createMemberAccessNode(strandsContext, structNode, componentNodes[i], componentTypeInfo.dataType);
-            // const memberAccessNode = new StrandsNode(id);
+            // const memberAccessNode = new StrandsNode(id, components);
             // return memberAccessNode;
           },
           set(val) {
-            const oldDependsOn = strandsContext.dag.dependsOn[structNode.id];
+            const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
 
             let newValueID;
@@ -198,7 +258,7 @@ function createHookArguments(strandsContext, parameters){
     else /*if(isNativeType(paramType.typeName))*/ {
       const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
       const { id, components } = createVariableNode(strandsContext, typeInfo, param.name);
-      const arg = new StrandsNode(id);
+      const arg = new StrandsNode(id, components, strandsContext);
       args.push(arg);
     }
   }
