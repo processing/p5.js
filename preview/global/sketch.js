@@ -8,8 +8,7 @@ function callback() {
 
   getWorldInputs(inputs => {
     // strandsIf(inputs.position === vec3(1), () => 0).Else()
-    console.log(inputs.position);
-    inputs.color = vec4(inputs.position.xyz, 1);
+    inputs.color = vec4(inputs.position, 1);
     inputs.position = inputs.position + sin(time) * 100;
     return inputs;
   });
