@@ -1,4 +1,5 @@
 import { BlockTypeToName } from "./ir_types";
+import * as FES from './strands_FES'
 
 export function createControlFlowGraph() {
   return {
@@ -41,6 +42,12 @@ export function addEdge(graph, from, to) {
 }
 
 export function recordInBasicBlock(graph, blockID, nodeID) {
+  if (nodeID === undefined) {
+    FES.internalError('undefined nodeID in `recordInBasicBlock()`');
+  }
+  if (blockID === undefined) {
+    FES.internalError('undefined blockID in `recordInBasicBlock()');
+  }
   graph.blockInstructions[blockID] = graph.blockInstructions[blockID] || [];
   graph.blockInstructions[blockID].push(nodeID);
 }

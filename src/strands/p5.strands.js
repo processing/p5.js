@@ -28,7 +28,7 @@ function strands(p5, fn) {
     ctx.previousFES = p5.disableFriendlyErrors;
     p5.disableFriendlyErrors = true;
   }
-  
+
   function deinitStrandsContext(ctx) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
@@ -36,11 +36,11 @@ function strands(p5, fn) {
     ctx.hooks = [];
     p5.disableFriendlyErrors = ctx.previousFES;
   }
-  
+
   const strandsContext = {};
   initStrandsContext(strandsContext);
   initGlobalStrandsAPI(p5, fn, strandsContext)
-  
+
   //////////////////////////////////////////////
   // Entry Point
   //////////////////////////////////////////////
@@ -52,7 +52,7 @@ function strands(p5, fn) {
       const backend = glslBackend;
       initStrandsContext(strandsContext, glslBackend);
       createShaderHooksFunctions(strandsContext, fn, this);
-      
+
       // 1. Transpile from strands DSL to JS
       let strandsCallback;
       if (options.parser) {

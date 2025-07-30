@@ -1,6 +1,13 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType, StatementType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
+
+function shouldCreateTemp(dag, nodeID) {
+  const nodeType = dag.nodeTypes[nodeID];
+  if (nodeType !== NodeType.OPERATION) return false;
+  const uses = dag.usedBy[nodeID] || [];
+  return uses.length > 1;
+}
 
 const TypeNames = {
   'float1': 'float',
@@ -25,16 +32,20 @@ const TypeNames = {
 
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
-    // const { dag, cfg } = strandsContext;
-    
-    // const blockInstructions = new Set(cfg.blockInstructions[blockID] || []);
-    // for (let nodeID of generationContext.dagSorted) {
-    //   if (!blockInstructions.has(nodeID)) {
-    //     continue; 
-    //   }
-      // const snippet = glslBackend.generateExpression(dag, nodeID, generationContext);
-      // generationContext.write(snippet);
-    // }
+    const { dag, cfg } = strandsContext;
+
+    const instructions = cfg.blockInstructions[blockID] || [];
+    for (const nodeID of instructions) {
+      const nodeType = dag.nodeTypes[nodeID];
+      if (shouldCreateTemp(dag, nodeID)) {
+        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        generationContext.write(declaration);
+      }
+      if (nodeType === NodeType.STATEMENT) {
+        console.log("HELLO")
+        glslBackend.generateStatement(generationContext, dag, nodeID);
+      }
+    }
   },
   
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
@@ -89,6 +100,13 @@ export const glslBackend = {
 
   generateUniformDeclaration(name, typeInfo) {
     return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
+  },
+
+  generateStatement(generationContext, dag, nodeID) {
+    const node = getNodeDataFromID(dag, nodeID);
+    if (node.statementType = OpCode.ControlFlow.DISCARD) {
+      generationContext.write('discard;');
+    }
   },
 
   generateDeclaration(generationContext, dag, nodeID) {
@@ -150,6 +168,11 @@ export const glslBackend = {
         const lName = this.generateExpression(generationContext, dag, lID);
         const rName = this.generateExpression(generationContext, dag, rID);
         return `${lName}.${rName}`;
+      }
+      if (node.opCode === OpCode.Unary.SWIZZLE) {
+        const parentID = node.dependsOn[0];
+        const parentExpr = this.generateExpression(generationContext, dag, parentID);
+        return `${parentExpr}.${node.swizzle}`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;

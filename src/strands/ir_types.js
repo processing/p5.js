@@ -8,19 +8,26 @@ export const NodeType = {
   CONSTANT: 3,
   STRUCT: 4,
   PHI: 5,
+  STATEMENT: 6,
 };
+
 
 export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );
 
 export const NodeTypeRequiredFields = {
-  [NodeType.OPERATION]: ["opCode", "dependsOn"],
-  [NodeType.LITERAL]: ["value"],
-  [NodeType.VARIABLE]: ["identifier"],
-  [NodeType.CONSTANT]: ["value"],
+  [NodeType.OPERATION]: ["opCode", "dependsOn", "dimension", "baseType"],
+  [NodeType.LITERAL]: ["value", "dimension", "baseType"],
+  [NodeType.VARIABLE]: ["identifier", "dimension", "baseType"],
+  [NodeType.CONSTANT]: ["value", "dimension", "baseType"],
   [NodeType.STRUCT]: [""],
-  [NodeType.PHI]: ["dependsOn", "phiBlocks"]
+  [NodeType.PHI]: ["dependsOn", "phiBlocks", "dimension", "baseType"],
+  [NodeType.STATEMENT]: ["opCode"]
+};
+
+export const StatementType = {
+  DISCARD: 'discard',
 };
 
 export const BaseType = {
