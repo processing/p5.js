@@ -1170,6 +1170,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://darrenshaw.org"><img src="https://avatars.githubusercontent.com/u/157414?v=4?s=64" width="64px;" alt="Darren Shaw"/><br /><sub><b>Darren Shaw</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shawdm" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://ericrabinowitz.com/"><img src="https://avatars.githubusercontent.com/u/3066943?v=4?s=64" width="64px;" alt="Eric Rabinowitz"/><br /><sub><b>Eric Rabinowitz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ericrav" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/abuharish02"><img src="https://avatars.githubusercontent.com/u/111338069?v=4?s=64" width="64px;" alt="Abu Harish Faridi"/><br /><sub><b>Abu Harish Faridi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=abuharish02" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
