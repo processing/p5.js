@@ -1917,18 +1917,18 @@ p5.prototype.texture = function (tex) {
  * to the pixel at coordinates `(u, v)` within an image. For example, the
  * corners of a rectangular image are mapped to the corners of a rectangle by default:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
  * // Draw the rectangle.
  * rect(0, 0, 30, 50);
- * </code>
+ * ```
  *
  * If the image in the code snippet above has dimensions of 300 x 500 pixels,
  * the same result could be achieved as follows:
  *
- * <code>
+ * ```js
  * // Apply the image as a texture.
  * texture(img);
  *
@@ -1952,7 +1952,7 @@ p5.prototype.texture = function (tex) {
  * vertex(0, 50, 0, 0, 500);
  *
  * endShape();
- * </code>
+ * ```
  *
  * `textureMode()` changes the coordinate system for uv coordinates.
  *
@@ -1962,7 +1962,7 @@ p5.prototype.texture = function (tex) {
  * be helpful for using the same code for multiple images of different sizes.
  * For example, the code snippet above could be rewritten as follows:
  *
- * <code>
+ * ```js
  * // Set the texture mode to use normalized coordinates.
  * textureMode(NORMAL);
  *
@@ -1989,7 +1989,7 @@ p5.prototype.texture = function (tex) {
  * vertex(0, 50, 0, 0, 1);
  *
  * endShape();
- * </code>
+ * ```
  *
  * By default, `mode` is `IMAGE`, which scales uv coordinates to the
  * dimensions of the image. Calling `textureMode(IMAGE)` applies the default.
