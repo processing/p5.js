@@ -238,7 +238,8 @@ class p5 {
       constants.P2D
     );
 
-    // Record the time when sketch starts
+    // Record the time when setup starts. millis() will start at 0 within
+    // setup, but this isn't documented, locked-in behavior yet.
     this._millisStart = window.performance.now();
 
     const context = this._isGlobal ? window : this;
@@ -274,6 +275,10 @@ class p5 {
 
     // Run `postsetup` hooks
     await this._runLifecycleHook('postsetup');
+
+    // Record the time when the draw loop starts so that millis() starts at 0
+    // when the draw loop begins.
+    this._millisStart = window.performance.now();
   }
 
   // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
@@ -468,11 +473,11 @@ for (const k in constants) {
  * If `setup()` is declared `async` (e.g. `async function setup()`),
  * execution pauses at each `await` until its promise resolves.
  * For example, `font = await loadFont(...)` waits for the font asset
- * to load because `loadFont()` function returns a promise, and the await 
+ * to load because `loadFont()` function returns a promise, and the await
  * keyword means the program will wait for the promise to resolve.
  * This ensures that all assets are fully loaded before the sketch continues.
 
- * 
+ *
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
