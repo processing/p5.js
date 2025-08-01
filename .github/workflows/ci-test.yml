@@ -19,6 +19,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20.x
+      - name: Install Vulkan SwiftShader
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvulkan1 vulkan-tools mesa-vulkan-drivers
+          mkdir -p $HOME/swiftshader
+          curl -L https://github.com/google/swiftshader/releases/download/latest/Linux.zip -o swiftshader.zip
+          unzip swiftshader.zip -d $HOME/swiftshader
+          export VK_ICD_FILENAMES=$HOME/swiftshader/Linux/vk_swiftshader_icd.json
+          export VK_LAYER_PATH=$HOME/swiftshader/Linux
+          echo "VK_ICD_FILENAMES=$VK_ICD_FILENAMES" >> $GITHUB_ENV
+          echo "VK_LAYER_PATH=$VK_LAYER_PATH" >> $GITHUB_ENV
       - name: Install Chrome (latest stable)
         run: |
           sudo apt-get update
@@ -34,7 +45,7 @@ jobs:
         env:
           CI: true
       - name: build and test
-        run: xvfb-run --auto-servernum --server-args='-screen 0 1920x1080x24' npm test
+        run: npm test
         env:
           CI: true
       - name: report test coverage
