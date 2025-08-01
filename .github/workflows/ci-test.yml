@@ -38,7 +38,7 @@ jobs:
         env:
           CI: true
       - name: build and test
-        run: npm test
+        run: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' npm test
         env:
           CI: true
       - name: report test coverage
