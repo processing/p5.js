@@ -306,7 +306,9 @@ function myAddonButtonClicked(){
 }
 ```
 
-This approach supports accessing the custom action functions in both global mode and instance mode with the same code, simplifying your code from what it otherwise may need to be.
+Please note that in the above example, if the user does not define `function myAddonButtonClicked()` in their code, `this._customActions.myAddonButtonClicked` will return `undefined`. This means that if you are planning to call the custom action function directly in your code, you should include an `if` statement check to make sure that `this._customActions.myAddonButtonClicked` is defined.
+
+Overall, this custom actions approach supports accessing the custom action functions in both global mode and instance mode with the same code, simplifying your code from what it otherwise may need to be.
 
 ## Next steps
 
