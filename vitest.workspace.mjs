@@ -46,8 +46,13 @@ export default defineWorkspace([
               binary: '/usr/bin/google-chrome',
               args: [
                 '--enable-unsafe-webgpu',
-                '--use-angle=swiftshader',
-                '--enable-features=ReduceOpsTaskSplitting,Vulkan,VulkanFromANGLE,DefaultANGLEVulkan',
+                '--enable-features=Vulkan',
+                '--use-cmd-decoder=passthrough',
+                '--disable-gpu-sandbox',
+                '--disable-software-rasterizer=false',
+                '--disable-dawn-features=disallow_unsafe_apis',
+                '--use-angle=vulkan',
+                '--use-vulkan=swiftshader',
               ]
             }
           } : undefined
