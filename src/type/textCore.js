@@ -486,46 +486,46 @@ function textCore(p5, fn) {
    * </div>
    */
 
-/**
- * Sets the spacing between lines of text when
- * <a href="#/p5/text">text()</a> is called.
- *
- * Note: Spacing is measured in pixels.
- *
- * Calling `textLeading()` without an argument returns the current spacing.
- *
- * @method textLeading
- * @for p5
- * @param {Number} leading The new text leading to apply, in pixels
- * @returns {Number} If no arguments are provided, the current text leading
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // "\n" starts a new line of text.
- *   let lines = 'one\ntwo';
- *
- *   // Left.
- *   text(lines, 10, 25);
- *
- *   // Right.
- *   textLeading(30);
- *   text(lines, 70, 25);
- *
- *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
- * }
- * </code>
- * </div>
- */
- /*
-  * @method textLeading
-  * @for p5
-  */
+  /**
+   * Sets the spacing between lines of text when
+   * <a href="#/p5/text">text()</a> is called.
+   *
+   * Note: Spacing is measured in pixels.
+   *
+   * Calling `textLeading()` without an argument returns the current spacing.
+   *
+   * @method textLeading
+   * @for p5
+   * @param {Number} leading The new text leading to apply, in pixels
+   * @returns {Number} If no arguments are provided, the current text leading
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // "\n" starts a new line of text.
+   *   let lines = 'one\ntwo';
+   *
+   *   // Left.
+   *   text(lines, 10, 25);
+   *
+   *   // Right.
+   *   textLeading(30);
+   *   text(lines, 70, 25);
+   *
+   *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
+   * }
+   * </code>
+   * </div>
+   */
+  /*
+   * @method textLeading
+   * @for p5
+   */
 
   /**
    * Sets the font used by the <a href="#/p5/text">text()</a> function.
@@ -683,11 +683,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textSize
-    * @for p5
-    * @returns {Number} The current text size in pixels.
-    */
+  /**
+   * @method textSize
+   * @for p5
+   * @returns {Number} The current text size in pixels.
+   */
 
   /**
    * Sets the style for system fonts when
@@ -930,11 +930,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textWrap
-    * @for p5
-    * @returns {CHAR|WORD} The current wrapping style
-    */
+  /**
+   * @method textWrap
+   * @for p5
+   * @returns {CHAR|WORD} The current wrapping style
+   */
 
 
   /**
@@ -1034,11 +1034,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textDirection
-    * @for p5
-    * @returns {String} The current text direction, either "ltr", "rtl", or "inherit"
-    */
+  /**
+   * @method textDirection
+   * @for p5
+   * @returns {String} The current text direction, either "ltr", "rtl", or "inherit"
+   */
 
   /**
    * Sets or gets a single text property for the renderer.
@@ -1090,12 +1090,12 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textProperty
-    * @for p5
-    * @param {String} prop - The name of the text property to set or get.
-    * @returns The current value of the specified text property
-    */
+  /**
+   * @method textProperty
+   * @for p5
+   * @param {String} prop - The name of the text property to set or get.
+   * @returns The current value of the specified text property
+   */
 
   /**
    * Gets or sets text properties in batch, similar to calling `textProperty()`
@@ -1841,19 +1841,15 @@ function textCore(p5, fn) {
     let boxes = lines.map((line, i) => this[type].bind(this)
       (line, x, y + i * textLeading));
 
-    // adjust the bounding boxes based on horiz. text alignment
-    if (lines.length > 1) {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
+    if (lines.length > 1 && typeof width !== 'undefined') { // fix for #7984
+      // adjust the bounding boxes for horizontal text alignment in 2d
+      // the WebGL mode version does additional alignment adjustments
       boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
     }
 
-    // adjust the bounding boxes based on vert. text alignment
-    if (typeof height !== 'undefined') {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
-      p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height);
-    }
+    // adjust the bounding boxes for vertical text alignment in 2d
+    // the WebGL mode version does additional alignment adjustments
+    p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height || 0); // fix for #7984
 
     // get the bounds for the text block
     let bounds = boxes[0];
@@ -1868,12 +1864,12 @@ function textCore(p5, fn) {
       }
     }
 
-    if (0 && opts?.ignoreRectMode) boxes.forEach((b, i) => { // draw bounds for debugging
+    if (0 && opts?.ignoreRectMode) { // draw bounds for debugging
       let ss = context.strokeStyle;
       context.strokeStyle = 'green';
       context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
       context.strokeStyle = ss;
-    });
+    }
 
     context.textBaseline = setBaseline; // restore baseline
 
@@ -2543,7 +2539,7 @@ function textCore(p5, fn) {
   }
 
   if (p5.RendererGL) {
-    p5.RendererGL.prototype.textCanvas = function() {
+    p5.RendererGL.prototype.textCanvas = function () {
       if (!this._textCanvas) {
         this._textCanvas = document.createElement('canvas');
         this._textCanvas.width = 1;
@@ -2554,7 +2550,7 @@ function textCore(p5, fn) {
       }
       return this._textCanvas;
     };
-    p5.RendererGL.prototype.textDrawingContext = function() {
+    p5.RendererGL.prototype.textDrawingContext = function () {
       if (!this._textDrawingContext) {
         const textCanvas = this.textCanvas();
         this._textDrawingContext = textCanvas.getContext('2d');
@@ -2562,7 +2558,7 @@ function textCore(p5, fn) {
       return this._textDrawingContext;
     };
     const oldRemove = p5.RendererGL.prototype.remove;
-    p5.RendererGL.prototype.remove = function() {
+    p5.RendererGL.prototype.remove = function () {
       if (this._textCanvas) {
         this._textCanvas.parentElement.removeChild(this._textCanvas);
       }
