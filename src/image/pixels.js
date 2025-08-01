@@ -933,7 +933,7 @@ function pixels(p5, fn){
    */
   fn.loadPixels = function(...args) {
     // p5._validateParameters('loadPixels', args);
-    this._renderer.loadPixels();
+    return this._renderer.loadPixels();
   };
 
   /**

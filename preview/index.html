@@ -30,6 +30,7 @@
 
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
+        fbo = p.createFramebuffer();
 
         tex = p.createImage(100, 100);
         tex.loadPixels();
@@ -43,6 +44,10 @@
           }
         }
         tex.updatePixels();
+        fbo.draw(() => {
+          p.imageMode(p.CENTER);
+          p.image(tex, 0, 0, p.width, p.height);
+        });
 
         sh = p.baseMaterialShader().modify({
           uniforms: {
@@ -87,7 +92,7 @@
             0, //p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
             p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
           )
-          p.texture(tex)
+          p.texture(fbo)
           p.sphere(30);
           p.pop();
         }

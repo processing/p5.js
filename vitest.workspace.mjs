@@ -1,5 +1,6 @@
 import { defineWorkspace } from 'vitest/config';
 import vitePluginString from 'vite-plugin-string';
+console.log(`CI: ${process.env.CI}`)
 
 const plugins = [
   vitePluginString({
@@ -38,7 +39,24 @@ export default defineWorkspace([
         enabled: true,
         name: 'chrome',
         provider: 'webdriverio',
-        screenshotFailures: false
+        screenshotFailures: false,
+        providerOptions: {
+          capabilities: process.env.CI ? {
+            'goog:chromeOptions': {
+              binary: '/usr/bin/google-chrome',
+              args: [
+                '--enable-unsafe-webgpu',
+                '--enable-features=Vulkan',
+                '--use-cmd-decoder=passthrough',
+                '--disable-gpu-sandbox',
+                '--disable-software-rasterizer=false',
+                '--disable-dawn-features=disallow_unsafe_apis',
+                '--use-angle=vulkan',
+                '--use-vulkan=swiftshader',
+              ]
+            }
+          } : undefined
+        }
       }
     }
   }
