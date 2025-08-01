@@ -45,11 +45,6 @@ export default defineWorkspace([
             'goog:chromeOptions': {
               binary: '/usr/bin/google-chrome',
               args: [
-                '--disable-dawn-features=disallow_unsafe_apis',
-                '--disable-gpu-sandbox',
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-
                 '--enable-unsafe-webgpu',
                 '--use-angle=swiftshader',
                 '--enable-features=ReduceOpsTaskSplitting,Vulkan,VulkanFromANGLE,DefaultANGLEVulkan',
