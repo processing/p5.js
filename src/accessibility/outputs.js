@@ -493,7 +493,6 @@ p5.prototype._accsOutput = function(f, args) {
     this.ingredients.shapes[f] = [include];
     //if other shapes of this type have been created
   } else {
-``
     //for every shape of this type
     for (let y in this.ingredients.shapes[f]) {
       //compare it with current shape and if it already exists make add false
