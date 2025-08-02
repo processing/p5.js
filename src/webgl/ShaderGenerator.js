@@ -54,6 +54,23 @@ function shadergenerator(p5, fn) {
     }
   }
 
+  /**
+ * Built-in uniforms for p5.strands shaders:
+ *
+ * These uniforms are automatically available in shaders created
+ * using p5.strands (e.g., baseFilterShader().modify(...)):
+ *
+ * - `mouse`: A vec2 uniform containing the current mouse position (mouseX, mouseY)
+ * - `resolution`: A vec2 uniform of the current canvas size (width, height)
+ * - `millis`: A float uniform representing elapsed time in milliseconds
+ * - `frameCount`: A float uniform counting total frames rendered
+ * - `deltaTime`: A float uniform for time difference between frames
+ *
+ * These allow shader authors to access common time/input data
+ * without manually setting them via setUniform().
+ */
+
+
   // AST Transpiler Callbacks and helper functions
   function replaceBinaryOperator(codeSource) {
     switch (codeSource) {
