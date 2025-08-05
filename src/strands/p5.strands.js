@@ -45,9 +45,9 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Entry Point
   //////////////////////////////////////////////
-  const oldModify = p5.Shader.prototype.modify
+  const oldModify = p5.Shader.prototype.modify;
   
-  p5.Shader.prototype.newModify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
+  p5.Shader.prototype.modify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
     if (shaderModifier instanceof Function) {
       // Reset the context object every time modify is called;
       const backend = glslBackend;

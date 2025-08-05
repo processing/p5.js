@@ -1686,6 +1686,6 @@ function shadergenerator(p5, fn) {
 
 export default shadergenerator;
 
-if (typeof p5 !== 'undefined') {
-  p5.registerAddon(shadergenerator)
-}
+// if (typeof p5 !== 'undefined') {
+//   p5.registerAddon(shadergenerator)
+// }

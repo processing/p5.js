@@ -16,7 +16,7 @@ function callback() {
 
 async function setup(){
   createCanvas(windowWidth,windowHeight, WEBGL)
-  bloomShader = baseColorShader().newModify(callback);
+  bloomShader = baseColorShader().modify(callback);
 }
 
 function windowResized() {
