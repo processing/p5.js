@@ -3847,6 +3847,60 @@ function material(p5, fn){
   }
 }
 
+/**
+ * Shortcut: Modify the base material shader.
+ * @param {Function|Object} modifier - Function or hooks object for .modify()
+ * @returns {p5.Shader}
+ */
+function modifyMaterialShader(modifier) {
+  return this.baseMaterialShader().modify(modifier);
+}
+
+/**
+ * Shortcut: Modify the base filter shader.
+ * @param {Function|Object} modifier - Function or hooks object for .modify()
+ * @returns {p5.Shader}
+ */
+function modifyFilterShader(modifier) {
+  return this.baseFilterShader().modify(modifier);
+}
+
+/**
+ * Shortcut: Modify the base normal shader.
+ * @param {Function|Object} modifier - Function or hooks object for .modify()
+ * @returns {p5.Shader}
+ */
+function modifyNormalShader(modifier) {
+  return this.baseNormalShader().modify(modifier);
+}
+
+/**
+ * Shortcut: Modify the base color shader.
+ * @param {Function|Object} modifier - Function or hooks object for .modify()
+ * @returns {p5.Shader}
+ */
+function modifyColorShader(modifier) {
+  return this.baseColorShader().modify(modifier);
+}
+
+/**
+ * Shortcut: Modify the base stroke shader.
+ * @param {Function|Object} modifier - Function or hooks object for .modify()
+ * @returns {p5.Shader}
+ */
+function modifyStrokeShader(modifier) {
+  return this.baseStrokeShader().modify(modifier);
+}
+
+// Attach shortcuts to p5 prototype so they're available in sketches
+if (typeof p5 !== 'undefined') {
+  p5.prototype.modifyMaterialShader = modifyMaterialShader;
+  p5.prototype.modifyFilterShader = modifyFilterShader;
+  p5.prototype.modifyNormalShader = modifyNormalShader;
+  p5.prototype.modifyColorShader = modifyColorShader;
+  p5.prototype.modifyStrokeShader = modifyStrokeShader;
+}
+
 export default material;
 
 if(typeof p5 !== 'undefined'){
