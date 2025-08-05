@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType, StatementType } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 
@@ -73,7 +73,7 @@ const cfgHandlers = {
   },
   
   [BlockType.MERGE](blockID, strandsContext, generationContext) {
-    
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
   
   [BlockType.FUNCTION](blockID, strandsContext, generationContext) {
@@ -112,6 +112,7 @@ export const glslBackend = {
   generateDeclaration(generationContext, dag, nodeID) {
     const expr = this.generateExpression(generationContext, dag, nodeID);
     const tmp = `T${generationContext.nextTempID++}`;
+    console.log(expr);
     generationContext.tempNames[nodeID] = tmp;
     
     const T = extractNodeTypeInfo(dag, nodeID);

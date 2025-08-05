@@ -2,13 +2,13 @@
 // Enums for nodes //
 /////////////////////
 export const NodeType = {
-  OPERATION: 0,
-  LITERAL: 1,
-  VARIABLE: 2,
-  CONSTANT: 3,
-  STRUCT: 4,
-  PHI: 5,
-  STATEMENT: 6,
+  OPERATION: 'operation',
+  LITERAL: 'literal',
+  VARIABLE: 'variable',
+  CONSTANT: 'constant',
+  STRUCT: 'struct',
+  PHI: 'phi',
+  STATEMENT: 'statement',
 };
 
 
@@ -180,16 +180,16 @@ for (const { symbol, opCode } of OperatorTable) {
 }
 
 export const BlockType = {
-  GLOBAL: 0,
-  FUNCTION: 1,
-  IF_COND: 2,
-  IF_BODY: 3,
-  ELIF_BODY: 4,
-  ELIF_COND: 5,
-  ELSE_BODY: 6,
-  FOR: 7,
-  MERGE: 8,
-  DEFAULT: 9,
+  GLOBAL: 'global',
+  FUNCTION: 'function',
+  IF_COND: 'if_cond',
+  IF_BODY: 'if_body',
+  ELIF_BODY: 'elif_body',
+  ELIF_COND: 'elif_cond',
+  ELSE_BODY: 'else_body',
+  FOR: 'for',
+  MERGE: 'merge',
+  DEFAULT: 'default',
 }
 
 export const BlockTypeToName = Object.fromEntries(

@@ -35,6 +35,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.hooks = [];
     p5.disableFriendlyErrors = ctx.previousFES;
+    ctx.active = false;
   }
 
   const strandsContext = {};
@@ -74,7 +75,7 @@ function strands(p5, fn) {
       console.log(hooksObject['Vertex getWorldInputs']);
       
       // Reset the strands runtime context
-      // deinitStrandsContext(strandsContext);
+      deinitStrandsContext(strandsContext);
 
       // Call modify with the generated hooks object
       return oldModify.call(this, hooksObject);      

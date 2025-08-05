@@ -1,6 +1,8 @@
 import { BlockTypeToName } from "./ir_types";
 import * as FES from './strands_FES'
 
+// Todo: remove edges to simplify. Block order is always ordered already.
+
 export function createControlFlowGraph() {
   return {
     // graph structure
@@ -11,6 +13,7 @@ export function createControlFlowGraph() {
     // runtime data for constructing graph
     nextID: 0,
     blockStack: [],
+    blockOrder: [],
     blockConditions: {},
     currentBlock: -1,
   };
@@ -18,6 +21,7 @@ export function createControlFlowGraph() {
 
 export function pushBlock(graph, blockID) {
   graph.blockStack.push(blockID);
+  graph.blockOrder.push(blockID);
   graph.currentBlock = blockID;
 }
 
@@ -66,23 +70,4 @@ export function printBlockData(graph, id) {
   const block = getBlockDataFromID(graph, id);
   block.blockType = BlockTypeToName[block.blockType];
   console.log(block);
-}
-
-export function sortCFG(adjacencyList, start) {
-  const visited = new Set();
-  const postOrder = [];
-
-  function dfs(v) {
-    if (visited.has(v)) {
-      return;
-    }
-    visited.add(v);
-    for (let w of adjacencyList[v].sort((a, b) => b-a) || []) {
-      dfs(w);
-    }
-    postOrder.push(v);
-  }
-  
-  dfs(start);
-  return postOrder.reverse();
 }

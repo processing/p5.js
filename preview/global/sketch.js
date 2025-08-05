@@ -7,8 +7,8 @@ function callback() {
   // });
 
   getWorldInputs(inputs => {
-    // strandsIf(inputs.position === vec3(1), () => 0).Else()
     inputs.color = vec4(inputs.position, 1);
+    strandsIf(inputs.position === vec3(1), () => 0).Else()
     inputs.position = inputs.position + sin(time) * 100;
     return inputs;
   });

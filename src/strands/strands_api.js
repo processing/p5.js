@@ -304,6 +304,8 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 
+// TODO: track overridden functions and restore them
+
 export function createShaderHooksFunctions(strandsContext, fn, shader) { 
   const availableHooks = {
     ...shader.hooks.vertex,
@@ -313,7 +315,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const cfg = strandsContext.cfg;
 
   for (const hookType of hookTypes) {
-    window[hookType.name] = function(hookUserCallback) {
+    fn[hookType.name] = function(hookUserCallback) {
       const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
