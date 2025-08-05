@@ -13,7 +13,7 @@ export function createScalarLiteralNode(strandsContext, typeInfo, value) {
   let { dimension, baseType } = typeInfo;
 
   if (dimension !== 1) {
-    FES.internalError('Created a literal node with dimension > 1.')
+    FES.internalError('Created a scalar literal node with dimension > 1.')
   }
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.LITERAL,
