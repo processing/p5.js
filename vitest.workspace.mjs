@@ -43,16 +43,14 @@ export default defineWorkspace([
         providerOptions: {
           capabilities: process.env.CI ? {
             'goog:chromeOptions': {
-              binary: '/usr/bin/google-chrome',
               args: [
                 '--enable-unsafe-webgpu',
-                '--enable-features=Vulkan',
-                '--use-cmd-decoder=passthrough',
-                '--disable-gpu-sandbox',
-                '--disable-software-rasterizer=false',
-                '--disable-dawn-features=disallow_unsafe_apis',
-                '--use-angle=vulkan',
-                '--use-vulkan=swiftshader',
+                '--headless=new',
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--use-gl=angle',
+                '--use-angle=d3d11-warp',
+                '--disable-gpu-sandbox'
               ]
             }
           } : undefined
