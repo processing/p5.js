@@ -5,7 +5,6 @@
  * @requires core
  */
 
-import p5 from '../core/main';
 import * as constants from '../core/constants';
 import './p5.Texture';
 
