@@ -11,27 +11,54 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            browser: firefox
+            test-workspace: unit-tests-firefox
+          - os: ubuntu-latest
+            browser: chrome
+            test-workspace: unit-tests-chrome
+    
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
+      
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Install Chrome (latest stable)
+      
+      - name: Verify Firefox (Windows)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'firefox'
         run: |
-          choco install googlechrome
-          & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
+          & "C:\Program Files\Mozilla Firefox\firefox.exe" --version
+      
+      - name: Verify Chrome (Ubuntu)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: |
+          google-chrome --version
+      
       - name: Get node modules
         run: npm ci
         env:
           CI: true
-      - name: build and test
-        run: npm test
+      
+      - name: Build and test (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm test -- --project=${{ matrix.test-workspace }}
         env:
           CI: true
-      - name: report test coverage
+      
+      - name: Build and test (Windows)
+        if: matrix.os == 'windows-latest'
+        run: npm test -- --project=${{ matrix.test-workspace }}
+        env:
+          CI: true
+      
+      - name: Report test coverage
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
         env:
           CI: true
