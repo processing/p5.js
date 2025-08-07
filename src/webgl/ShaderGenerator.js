@@ -1,6 +1,6 @@
 /**
 * @module 3D
-* @submodule ShaderGenerator
+* @submodule Material
 * @for p5
 * @requires core
 */
@@ -1643,7 +1643,7 @@ if (typeof p5 !== 'undefined') {
 
 /* ------------------------------------------------------------- */
 /**
- * @function getWorldInputs
+ * @method getWorldInputs
  * @description
  * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  *
@@ -1666,7 +1666,8 @@ if (typeof p5 !== 'undefined') {
  *     getWorldInputs(inputs => {
  *       // Move the vertex up and down in a wave in world space
  *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
- *       inputs.position.y += 20 * sin(millis() * 0.001 + inputs.position.x * 0.05);
+ *       let t = uniformFloat(() => millis());
+ *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -1684,7 +1685,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function combineColors
+ * @method combineColors
  * @description
  * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives an object with the following properties:
  *
@@ -1743,7 +1744,8 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function beforeVertex
+ * @method beforeVertex
+ * @private
  * @description
  * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
  *
@@ -1760,7 +1762,8 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function afterVertex
+ * @method afterVertex
+ * @private
  * @description
  * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
  *
@@ -1777,7 +1780,8 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function beforeFragment
+ * @method beforeFragment
+ * @private
  * @description
  * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
  *
@@ -1803,7 +1807,7 @@ if (typeof p5 !== 'undefined') {
  *     });
  *     getFinalColor(color => {
  *       // Use the value set in beforeFragment to tint the color
- *       color[0] *= this.brightness; // Tint red channel
+ *       color.r *= this.brightness; // Tint red channel
  *       return color;
  *     });
  *   });
@@ -1820,7 +1824,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function getPixelInputs
+ * @method getPixelInputs
  * @description
  * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to change opacity or other per-pixel properties. The callback receives an object with the following properties:
  * - `opacity`: a number between 0 and 1 for the pixel's transparency
@@ -1844,7 +1848,8 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseMaterialShader().modify(() => {
  *     getPixelInputs(inputs => {
  *       // Animate opacity based on x position
- *       inputs.opacity = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + millis() * 0.002);
+ *       let t = uniformFloat(() => millis());
+ *       inputs.opacity = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
  *       return inputs;
  *     });
  *   });
@@ -1862,7 +1867,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function shouldDiscard
+ * @method shouldDiscard
  * @description
  * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader modify calls to create effects like round points or custom masking. The callback receives a boolean:
  * - `willDiscard`: true if the fragment would be discarded by default
@@ -1899,7 +1904,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function getFinalColor
+ * @method getFinalColor
  * @description
  * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a color array:
  * - `[r, g, b, a]`: the current color (red, green, blue, alpha)
@@ -1924,8 +1929,8 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
  *       // Make the output color fully opaque and add a green tint
- *       color[3] = 1.0;
- *       color[1] += 0.2;
+ *       color.a = 1;
+ *       color.g += 0.2;
  *       return color;
  *     });
  *   });
@@ -1942,7 +1947,8 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function afterFragment
+ * @method afterFragment
+ * @private
  * @description
  * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
  *
@@ -1964,7 +1970,7 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
  *       // Add a purple tint to the color
- *       color[2] += 0.2;
+ *       color.b += 0.2;
  *       return color;
  *     });
  *     afterFragment(() => {
@@ -1985,7 +1991,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function getColor
+ * @method getColor
  * @description
  * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader modify calls to control the output color for each pixel. The callback receives the following arguments:
  * - `inputs`: an object with properties like `texCoord`, `canvasSize`, `texelSize`, etc.
@@ -2017,7 +2023,7 @@ if (typeof p5 !== 'undefined') {
  *   background(180);
  *   // Draw something to the canvas
  *   fill('yellow');
- *   ellipse(0, 0, 150, 150);
+ *   circle(0, 0, 150);
  *   filter(myShader);
  * }
  * </code>
@@ -2025,7 +2031,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function getObjectInputs
+ * @method getObjectInputs
  * @description
  * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
  * - `position`: a vector with three components representing the original position of the vertex
@@ -2053,7 +2059,8 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getObjectInputs(inputs => {
  *       // Create a sine wave along the x axis in object space
- *       inputs.position.y += 20 * sin(inputs.position.x * 0.1 + millis() * 0.002);
+ *       let t = uniformFloat(() => millis());
+ *       inputs.position.y += 20 * sin(inputs.position.x * 0.1 + t * 0.002);
  *       return inputs;
  *     });
  *   });
@@ -2070,7 +2077,7 @@ if (typeof p5 !== 'undefined') {
  */
 
 /**
- * @function getCameraInputs
+ * @method getCameraInputs
  * @description
  * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
  * - `position`: a vector with three components representing the position after camera transformation
@@ -2098,9 +2105,10 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getCameraInputs(inputs => {
  *       // Move vertices in camera space based on their x position
- *       inputs.position.y += 30 * sin(inputs.position.x * 0.05 + millis() * 0.001);
+ *       let t = uniformFloat(() => millis());
+ *       inputs.position.y += 30 * sin(inputs.position.x * 0.05 + t * 0.001);
  *       // Tint all vertices blue
- *       inputs.color.b = 1.0;
+ *       inputs.color.b = 1;
  *       return inputs;
  *     });
  *   });
@@ -2110,7 +2118,7 @@ if (typeof p5 !== 'undefined') {
  *   shader(myShader);
  *   noStroke();
  *   fill('blue');
- *   box(100);
+ *   sphere(100);
  * }
  * </code>
  * </div>
