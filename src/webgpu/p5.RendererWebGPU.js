@@ -631,7 +631,7 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
 
   _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }) {
-    const buffers = this.geometryBufferCache.ensureCached(geometry);
+    const buffers = this.geometryBufferCache.getCached(geometry);
     if (!buffers) return;
 
     const commandEncoder = this.device.createCommandEncoder();
