@@ -13,7 +13,6 @@ import { Renderer3D, getStrokeDefs } from "../core/p5.Renderer3D";
 import { Shader } from "./p5.Shader";
 import { Texture, MipmapTexture } from "./p5.Texture";
 import { Framebuffer } from "./p5.Framebuffer";
-import { Graphics } from "../core/p5.Graphics";
 import { RGB, RGBA } from '../color/creating_reading';
 import { Element } from "../dom/p5.Element";
 import { Image } from '../image/p5.Image';
@@ -448,76 +447,6 @@ class RendererGL extends Renderer3D {
     }
 
     return { adjustedWidth, adjustedHeight };
-  }
-
-  //This is helper function to reset the context anytime the attributes
-  //are changed with setAttributes()
-
-  _resetContext(options, callback) {
-    const w = this.width;
-    const h = this.height;
-    const defaultId = this.canvas.id;
-    const isPGraphics = this._pInst instanceof Graphics;
-
-    // Preserve existing position and styles before recreation
-    const prevStyle = {
-      position: this.canvas.style.position,
-      top: this.canvas.style.top,
-      left: this.canvas.style.left,
-    };
-
-    if (isPGraphics) {
-      // Handle PGraphics: remove and recreate the canvas
-      const pg = this._pInst;
-      pg.canvas.parentNode.removeChild(pg.canvas);
-      pg.canvas = document.createElement("canvas");
-      const node = pg._pInst._userNode || document.body;
-      node.appendChild(pg.canvas);
-      Element.call(pg, pg.canvas, pg._pInst);
-      // Restore previous width and height
-      pg.width = w;
-      pg.height = h;
-    } else {
-      // Handle main canvas: remove and recreate it
-      let c = this.canvas;
-      if (c) {
-        c.parentNode.removeChild(c);
-      }
-      c = document.createElement("canvas");
-      c.id = defaultId;
-      // Attach the new canvas to the correct parent node
-      if (this._pInst._userNode) {
-        this._pInst._userNode.appendChild(c);
-      } else {
-        document.body.appendChild(c);
-      }
-      this._pInst.canvas = c;
-      this.canvas = c;
-
-      // Restore the saved position
-      this.canvas.style.position = prevStyle.position;
-      this.canvas.style.top = prevStyle.top;
-      this.canvas.style.left = prevStyle.left;
-    }
-
-    const renderer = new RendererGL(
-      this._pInst,
-      w,
-      h,
-      !isPGraphics,
-      this._pInst.canvas
-    );
-    this._pInst._renderer = renderer;
-
-    renderer._applyDefaults();
-
-    if (typeof callback === "function") {
-      //setTimeout with 0 forces the task to the back of the queue, this ensures that
-      //we finish switching out the renderer
-      setTimeout(() => {
-        callback.apply(window._renderer, options);
-      }, 0);
-    }
   }
 
   _resetBuffersBeforeDraw() {
@@ -2196,7 +2125,7 @@ function rendererGL(p5, fn) {
       }
     }
 
-    this._renderer._resetContext();
+    this._renderer._resetContext(null, null, RendererGL);
 
     if (this._renderer.states.curCamera) {
       this._renderer.states.curCamera._renderer = this._renderer;

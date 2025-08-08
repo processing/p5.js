@@ -58,6 +58,7 @@ class p5 {
     this._curElement = null;
     this._elements = [];
     this._glAttributes = null;
+    this._webgpuAttributes = null;
     this._requestAnimId = 0;
     this._isGlobal = false;
     this._loop = true;

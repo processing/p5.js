@@ -15,6 +15,13 @@ suite('WebGPU p5.Framebuffer', function() {
     });
   });
 
+  beforeEach(async function() {
+    const renderer = await myp5.createCanvas(10, 10, 'webgpu');
+    await myp5.setAttributes({
+      forceFallbackAdapter: true
+    });
+  })
+
   afterAll(function() {
     myp5.remove();
     window.devicePixelRatio = prevPixelRatio;
@@ -22,7 +29,6 @@ suite('WebGPU p5.Framebuffer', function() {
 
   suite('Creation and basic properties', function() {
     test('framebuffers can be created with WebGPU renderer', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       expect(fbo).to.be.an('object');
@@ -32,7 +38,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('framebuffers can be created with custom dimensions', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer({ width: 20, height: 30 });
 
       expect(fbo.width).to.equal(20);
@@ -41,7 +46,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('framebuffers have color texture', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       expect(fbo.color).to.be.an('object');
@@ -49,7 +53,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('framebuffers can specify different formats', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer({
         format: 'float',
         channels: 'rgb'
@@ -63,7 +66,6 @@ suite('WebGPU p5.Framebuffer', function() {
 
   suite('Auto-sizing behavior', function() {
     test('auto-sized framebuffers change size with canvas', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -80,7 +82,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('manually-sized framebuffers do not change size with canvas', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       myp5.pixelDensity(3);
       const fbo = myp5.createFramebuffer({ width: 25, height: 30, density: 1 });
 
@@ -97,7 +98,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('manually-sized framebuffers can be made auto-sized', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer({ width: 25, height: 30, density: 2 });
 
@@ -120,7 +120,6 @@ suite('WebGPU p5.Framebuffer', function() {
 
   suite('Manual resizing', function() {
     test('framebuffers can be manually resized', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -135,7 +134,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('resizing affects pixel density', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -152,7 +150,6 @@ suite('WebGPU p5.Framebuffer', function() {
 
   suite('Drawing functionality', function() {
     test('can draw to framebuffer with draw() method', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       myp5.background(0, 255, 0);
@@ -178,7 +175,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('can use framebuffer as texture', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -195,7 +191,6 @@ suite('WebGPU p5.Framebuffer', function() {
 
   suite('Pixel access', function() {
     test('loadPixels returns a promise in WebGPU', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -212,7 +207,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('pixels property is set after loadPixels resolves', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -225,7 +219,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('get() returns a promise for single pixel in WebGPU', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -242,7 +235,6 @@ suite('WebGPU p5.Framebuffer', function() {
     });
 
     test('get() returns a promise for region in WebGPU', async function() {
-      await myp5.createCanvas(10, 10, myp5.WEBGPU);
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {

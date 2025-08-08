@@ -11,6 +11,9 @@ visualSuite("WebGPU", function () {
       "The color shader runs successfully",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         p5.background("white");
         for (const [i, color] of ["red", "lime", "blue"].entries()) {
           p5.push();
@@ -29,6 +32,9 @@ visualSuite("WebGPU", function () {
       "The stroke shader runs successfully",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         p5.background("white");
         for (const [i, color] of ["red", "lime", "blue"].entries()) {
           p5.push();
@@ -47,6 +53,9 @@ visualSuite("WebGPU", function () {
       "The material shader runs successfully",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         p5.background("white");
         p5.ambientLight(50);
         p5.directionalLight(100, 100, 100, 0, 1, -1);
@@ -68,6 +77,9 @@ visualSuite("WebGPU", function () {
 
     visualTest("Shader hooks can be used", async function (p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
+      await p5.setAttributes({
+        forceFallbackAdapter: true
+      });
       const myFill = p5.baseMaterialShader().modify({
         "Vertex getWorldInputs": `(inputs: Vertex) {
           var result = inputs;
@@ -96,6 +108,9 @@ visualSuite("WebGPU", function () {
       "Textures in the material shader work",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         const tex = p5.createImage(50, 50);
         tex.loadPixels();
         for (let x = 0; x < tex.width; x++) {
@@ -121,6 +136,9 @@ visualSuite("WebGPU", function () {
       "Main canvas drawing after resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         // Resize the canvas
         p5.resizeCanvas(30, 30);
         // Draw to the main canvas after resize
@@ -138,7 +156,9 @@ visualSuite("WebGPU", function () {
       "Basic framebuffer draw to canvas",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
-
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         // Create a framebuffer
         const fbo = p5.createFramebuffer({ width: 25, height: 25 });
 
@@ -164,7 +184,9 @@ visualSuite("WebGPU", function () {
       "Framebuffer with different sizes",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
-
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         // Create two different sized framebuffers
         const fbo1 = p5.createFramebuffer({ width: 20, height: 20 });
         const fbo2 = p5.createFramebuffer({ width: 15, height: 15 });
@@ -207,7 +229,9 @@ visualSuite("WebGPU", function () {
 
     visualTest("Auto-sized framebuffer", async function (p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
-
+      await p5.setAttributes({
+        forceFallbackAdapter: true
+      });
       // Create auto-sized framebuffer (should match canvas size)
       const fbo = p5.createFramebuffer();
 
@@ -242,7 +266,9 @@ visualSuite("WebGPU", function () {
       "Auto-sized framebuffer after canvas resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
-
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         // Create auto-sized framebuffer
         const fbo = p5.createFramebuffer();
 
@@ -274,7 +300,9 @@ visualSuite("WebGPU", function () {
       "Fixed-size framebuffer after manual resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
-
+        await p5.setAttributes({
+          forceFallbackAdapter: true
+        });
         // Create fixed-size framebuffer
         const fbo = p5.createFramebuffer({ width: 20, height: 20 });
 

@@ -9,6 +9,8 @@ import * as constants from '../core/constants';
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
+import {Graphics} from "../core/p5.Graphics";
+import {Element} from "../dom/p5.Element";
 
 const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
@@ -29,7 +31,25 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async setupContext() {
-    this.adapter = await navigator.gpu?.requestAdapter();
+    this._setAttributeDefaults(this._pInst);
+    await this._initContext();
+  }
+
+  _setAttributeDefaults(pInst) {
+    const defaults = {
+      forceFallbackAdapter: false,
+      powerPreference: 'high-performance',
+    };
+    if (pInst._webgpuAttributes === null) {
+      pInst._webgpuAttributes = defaults;
+    } else {
+      pInst._webgpuAttributes = Object.assign(defaults, pInst._webgpuAttributes);
+    }
+    return;
+  }
+
+  async _initContext() {
+    this.adapter = await navigator.gpu?.requestAdapter(this._webgpuAttributes);
     this.device = await this.adapter?.requestDevice({
       // Todo: check support
       requiredFeatures: ['depth32float-stencil8']
@@ -1853,6 +1873,55 @@ function rendererWebGPU(p5, fn) {
   p5.renderers[constants.WEBGPU] = p5.RendererWebGPU;
   fn.ensureTexture = function(source) {
     return this._renderer.ensureTexture(source);
+  }
+
+  fn.setAttributes = async function (key, value) {
+    if (typeof this._webgpuAttributes === "undefined") {
+      console.log(
+        "You are trying to use setAttributes on a p5.Graphics object " +
+        "that does not use a WebGPU renderer."
+      );
+      return;
+    }
+    let unchanged = true;
+
+    if (typeof value !== "undefined") {
+      //first time modifying the attributes
+      if (this._webgpuAttributes === null) {
+        this._webgpuAttributes = {};
+      }
+      if (this._webgpuAttributes[key] !== value) {
+        //changing value of previously altered attribute
+        this._webgpuAttributes[key] = value;
+        unchanged = false;
+      }
+      //setting all attributes with some change
+    } else if (key instanceof Object) {
+      if (this._webgpuAttributes !== key) {
+        this._webgpuAttributes = key;
+        unchanged = false;
+      }
+    }
+    //@todo_FES
+    if (!this._renderer.isP3D || unchanged) {
+      return;
+    }
+
+    if (!this._setupDone) {
+      if (this._renderer.geometryBufferCache.numCached() > 0) {
+        p5._friendlyError(
+          "Sorry, Could not set the attributes, you need to call setAttributes() " +
+          "before calling the other drawing methods in setup()"
+        );
+        return;
+      }
+    }
+
+    await this._renderer._resetContext(null, null, RendererWebGPU);
+
+    if (this._renderer.states.curCamera) {
+      this._renderer.states.curCamera._renderer = this._renderer;
+    }
   }
 }
 
