@@ -7,6 +7,7 @@
 
 import * as constants from '../core/constants';
 import './p5.Texture';
+import p5 from '../core/main';
 
 /**
  * Loads vertex and fragment shaders to create a
