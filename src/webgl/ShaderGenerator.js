@@ -1883,10 +1883,8 @@ if (typeof p5 !== 'undefined') {
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseStrokeShader().modify(() => {
- *     shouldDiscard(willDiscard => {
- *       // Discard fragments based only on the default logic
- *       return willDiscard;
+ *   myShader = baseStrokeShader().modify({
+ *      'bool shouldDiscard': '(bool outside) { return outside; }'
  *   });
  * }
  * function draw() {
