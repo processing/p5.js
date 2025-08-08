@@ -1663,11 +1663,11 @@ if (typeof p5 !== 'undefined') {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
+ *     let t = uniformFloat(() => millis());
  *     getWorldInputs(inputs => {
  *       // Move the vertex up and down in a wave in world space
  *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
- *       let t = uniformFloat(() => millis());
- *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
+ *       inputs.position.y += 0.5 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -1714,20 +1714,15 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
  *     combineColors(components => {
- *       // Custom color combination: add a red tint using vector properties
- *       let r = components.baseColor.r * components.diffuse +
- *               components.ambientColor.r * components.ambient +
- *               components.specularColor.r * components.specular +
- *               components.emissive.r + 0.2;
- *       let g = components.baseColor.g * components.diffuse +
- *               components.ambientColor.g * components.ambient +
- *               components.specularColor.g * components.specular +
- *               components.emissive.g;
- *       let b = components.baseColor.b * components.diffuse +
- *               components.ambientColor.b * components.ambient +
- *               components.specularColor.b * components.specular +
- *               components.emissive.b;
- *       return [r, g, b, components.opacity];
+ *       // Custom color combination: add a green tint using vector properties
+ *       return [
+ *         components.baseColor * components.diffuse +
+ *           components.ambientColor * components.ambient +
+ *           components.specularColor * components.specular +
+ *           components.emissive +
+ *           [0, 0.2, 0], // Green tint for visibility
+ *         components.opacity
+ *       ];
  *     });
  *   });
  * }
@@ -1846,10 +1841,12 @@ if (typeof p5 !== 'undefined') {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseMaterialShader().modify(() => {
+ *     let t = uniformFloat(() => millis());
  *     getPixelInputs(inputs => {
- *       // Animate opacity based on x position
- *       let t = uniformFloat(() => millis());
- *       inputs.opacity = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
+ *       // Animate alpha (transparency) based on x position
+ *       if (inputs.color && inputs.texCoord) {
+ *         inputs.color.a = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
+ *       }
  *       return inputs;
  *     });
  *   });
@@ -1888,9 +1885,8 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseStrokeShader().modify(() => {
  *     shouldDiscard(willDiscard => {
- *       // Discard fragments outside a circular region
- *       return willDiscard || (inputs.position.x * inputs.position.x + inputs.position.y * inputs.position.y > 2500.0);
- *     });
+ *       // Discard fragments based only on the default logic
+ *       return willDiscard;
  *   });
  * }
  * function draw() {
@@ -1906,7 +1902,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getFinalColor
  * @description
- * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a color array:
+ * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha:
  * - `[r, g, b, a]`: the current color (red, green, blue, alpha)
  *
  * Return a new color array to change the output color.
@@ -1929,8 +1925,8 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
  *       // Make the output color fully opaque and add a green tint
- *       color.a = 1;
- *       color.g += 0.2;
+ *       // Add a blue tint to the output color
+ *       color.b += 0.2;
  *       return color;
  *     });
  *   });
@@ -1994,10 +1990,15 @@ if (typeof p5 !== 'undefined') {
  * @method getColor
  * @description
  * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader modify calls to control the output color for each pixel. The callback receives the following arguments:
- * - `inputs`: an object with properties like `texCoord`, `canvasSize`, `texelSize`, etc.
+ *   - `inputs`: an object with the following properties:
+ *   - `texCoord`: a vec2 representing the texture coordinates of the pixel
+ *   - `canvasSize`: a vec2 representing the size of the canvas in pixels
+ *   - `texelSize`: a vec2 representing the size of a single texel (pixel) in texture space
+ *   - `color`: a vec4 representing the color of the pixel before the filter is applied
+ *   - (other properties may be available depending on the shader)
  * - `canvasContent`: a sampler2D texture with the sketch's contents before the filter is applied
  *
- * Return a color array `[r, g, b, a]` for the pixel.
+ * Return a four component vector `[r, g, b, a]` for the pixel.
  *
  * This hook is available in:
  * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
@@ -2057,10 +2058,10 @@ if (typeof p5 !== 'undefined') {
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseColorShader().modify(() => {
+ *     let t = uniformFloat(() => millis());
  *     getObjectInputs(inputs => {
  *       // Create a sine wave along the x axis in object space
- *       let t = uniformFloat(() => millis());
- *       inputs.position.y += 20 * sin(inputs.position.x * 0.1 + t * 0.002);
+ *       inputs.position.y += 0.5 * sin(inputs.position.x * 0.1 + t * 0.002);
  *       return inputs;
  *     });
  *   });
