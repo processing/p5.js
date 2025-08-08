@@ -1821,23 +1821,27 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getPixelInputs
  * @description
- * Registers a callback to modify per-fragment inputs before the final color is computed in the fragment shader. The available properties differ by shader:
- * - For baseMaterialShader():
- *   - `normal` (vec3): surface normal
- *   - `texCoord` (vec2): texture coordinates
- *   - `ambientLight` (vec3): ambient light color
- *   - `ambientMaterial` (vec3): ambient material color
- *   - `specularMaterial` (vec3): specular material color
- *   - `emissiveMaterial` (vec3): emissive material color
- *   - `color` (vec4): base color (unpremultiplied)
- *   - `shininess` (float)
- *   - `metalness` (float)
- * - For baseStrokeShader():
- *   - `color` (vec4): base color
- *   - `tangent` (vec2): tangent direction
- *   - `center` (vec2): stroke center for the current fragment
- *   - `position` (vec2): fragment position in stroke space
- *   - `strokeWeight` (float)
+ * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to adjust per-pixel data before lighting/mixing.
+ *
+ * The callback receives an `Inputs` object. Available fields depend on the shader:
+ *
+ * - In <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>:
+ *   - `normal`: a vector with three components representing the surface normal
+ *   - `texCoord`: a vector with two components representing the texture coordinates (u, v)
+ *   - `ambientLight`: a vector with three components representing the ambient light color
+ *   - `ambientMaterial`: a vector with three components representing the material's ambient color
+ *   - `specularMaterial`: a vector with three components representing the material's specular color
+ *   - `emissiveMaterial`: a vector with three components representing the material's emissive color
+ *   - `color`: a vector with four components representing the base color (red, green, blue, alpha)
+ *   - `shininess`: a number controlling specular highlights
+ *   - `metalness`: a number controlling the metalness factor
+ *
+ * - In <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>:
+ *   - `color`: a vector with four components representing the stroke color (red, green, blue, alpha)
+ *   - `tangent`: a vector with two components representing the stroke tangent
+ *   - `center`: a vector with two components representing the cap/join center
+ *   - `position`: a vector with two components representing the current fragment position
+ *   - `strokeWeight`: a number representing the stroke weight in pixels
  *
  * Return the modified object to update the fragment.
  *
@@ -2001,15 +2005,14 @@ if (typeof p5 !== 'undefined') {
  * @method getColor
  * @description
  * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader modify calls to control the output color for each pixel. The callback receives the following arguments:
- *   - `inputs`: an object with the following properties:
- *   - `texCoord`: a vec2 representing the texture coordinates of the pixel
- *   - `canvasSize`: a vec2 representing the size of the canvas in pixels
- *   - `texelSize`: a vec2 representing the size of a single texel (pixel) in texture space
- *   - `color`: a vec4 representing the color of the pixel before the filter is applied
- *   - (other properties may be available depending on the shader)
- * - `canvasContent`: a sampler2D texture with the sketch's contents before the filter is applied
+ * - `inputs`: an object with the following properties:
+ *   - `texCoord`: a vector with two components representing the texture coordinates (u, v)
+ *   - `canvasSize`: a vector with two components representing the canvas size in pixels (width, height)
+ *   - `texelSize`: a vector with two components representing the size of a single texel in texture space
+ *   - `color`: a vector with four components representing the current pixel color (red, green, blue, alpha)
+ * - `canvasContent`: a texture containing the sketch's contents before the filter is applied
  *
- * Return a four component vector `[r, g, b, a]` for the pixel.
+ * Return a four-component vector `[r, g, b, a]` for the pixel.
  *
  * This hook is available in:
  * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
