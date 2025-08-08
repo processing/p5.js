@@ -1821,9 +1821,23 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getPixelInputs
  * @description
- * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to change opacity or other per-pixel properties. The callback receives an object with the following properties:
- * - `opacity`: a number between 0 and 1 for the pixel's transparency
- * - (Other properties may be available depending on the shader.)
+ * Registers a callback to modify per-fragment inputs before the final color is computed in the fragment shader. The available properties differ by shader:
+ * - For baseMaterialShader():
+ *   - `normal` (vec3): surface normal
+ *   - `texCoord` (vec2): texture coordinates
+ *   - `ambientLight` (vec3): ambient light color
+ *   - `ambientMaterial` (vec3): ambient material color
+ *   - `specularMaterial` (vec3): specular material color
+ *   - `emissiveMaterial` (vec3): emissive material color
+ *   - `color` (vec4): base color (unpremultiplied)
+ *   - `shininess` (float)
+ *   - `metalness` (float)
+ * - For baseStrokeShader():
+ *   - `color` (vec4): base color
+ *   - `tangent` (vec2): tangent direction
+ *   - `center` (vec2): stroke center for the current fragment
+ *   - `position` (vec2): fragment position in stroke space
+ *   - `strokeWeight` (float)
  *
  * Return the modified object to update the fragment.
  *
@@ -1922,7 +1936,6 @@ if (typeof p5 !== 'undefined') {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
- *       // Make the output color fully opaque and add a green tint
  *       // Add a blue tint to the output color
  *       color.b += 0.2;
  *       return color;
