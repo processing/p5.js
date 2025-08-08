@@ -886,7 +886,7 @@ p5.prototype.shader = function (s) {
  * Get the default shader used with lights, materials,
  * and textures.
  *
- * You can call <a href="#/p5.Shader/modify">`baseMaterialShader().modify()`</a>
+ * You can call <a href="#/p5.Shader/modify">`createMaterialShader()`</a>
  * and change any of the following hooks:
  *
  * <table>
@@ -1045,7 +1045,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify({
+ *   myShader = createMaterialShader({
  *     uniforms: {
  *       'float time': () => millis()
  *     },
@@ -1074,7 +1074,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify({
+ *   myShader = createMaterialShader({
  *     declarations: 'vec3 myNormal;',
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       myNormal = inputs.normal;
@@ -1114,7 +1114,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify({
+ *   myShader = createMaterialShader({
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       float factor =
  *         sin(
@@ -1149,7 +1149,7 @@ p5.prototype.shader = function (s) {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify({
+ *   myShader = createMaterialShader({
  *     'Inputs getPixelInputs': `(Inputs inputs) {
  *       vec3 newNormal = inputs.normal;
  *       // Simple bump mapping: adjust the normal based on position
@@ -1580,7 +1580,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseStrokeShader().modify({
+ *   myShader = createMaterialShader({
  *     'float random': `(vec2 p) {
  *       vec3 p3  = fract(vec3(p.xyx) * .1031);
  *       p3 += dot(p3, p3.yzx + 33.33);
