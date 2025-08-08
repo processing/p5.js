@@ -207,7 +207,7 @@ class Shader {
    * For example, this shader will produce the following output:
    *
    * ```js
-   * myShader = createMaterialShader({
+   * myShader = baseMaterialShader().modify({
    *   declarations: 'uniform float time;',
    *   'vec3 getWorldPosition': `(vec3 pos) {
    *     pos.y += 20. * sin(time * 0.001 + pos.x * 0.05);
@@ -215,15 +215,6 @@ class Shader {
    *   }`
    * });
    * myShader.inspectHooks();
-   *
-   * // Inside the callback, you can use:
-   * //   - modifyFragment()
-   * //   - modifyVertex()
-   * //   - addUniform()
-   * //   - etc.
-   * // These functions are shorthand for calling `.modify()` on the corresponding base shader.
-   * // For example: `createMaterialShader({...})` is equivalent to `baseMaterialShader().modify({...})`.
-   * // For full details, see the [modify() documentation](https://github.com/processing/p5.js/wiki/Shaders-Reference#modify).
    * ```
    *
    * ```
@@ -301,32 +292,23 @@ class Shader {
    *
    * ```js example
    * let myShader;
-
+   *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader({
-   *     modifyFragment(frag) {
-   *       frag.color = [frag.texCoord, 0, 1];
-   *       return frag;
-   *     }
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [inputs.texCoord, 0, 1];
+   *       return inputs;
+   *     });
    *   });
    * }
-
+   *
    * function draw() {
    *   background(255);
    *   noStroke();
    *   shader(myShader); // Apply the custom shader
    *   plane(width, height); // Draw a plane with the shader applied
    * }
-   *
-   * // Inside the callback, you can use:
-   * //   - modifyFragment()
-   * //   - modifyVertex()
-   * //   - addUniform()
-   * //   - etc.
-   * // These functions are shorthand for calling `.modify()` on the corresponding base shader.
-   * // For example: `createMaterialShader({...})` is equivalent to `baseMaterialShader().modify({...})`.
-   * // For full details, see the [modify() documentation](https://github.com/processing/p5.js/wiki/Shaders-Reference#modify).
    * ```
    *
    * In addition to calling hooks, you can create uniforms, which are special variables
@@ -338,37 +320,30 @@ class Shader {
    *
    * ```js example
    * let myShader;
-
+   *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader({
-   *     addUniform('u_time', 'float'),
-   *     modifyFragment(frag) {
-   *       frag.color = [
-   *         frag.texCoord,
-   *         sin(frag.u_time * 0.01) / 2 + 0.5,
+   *   myShader = baseMaterialShader().modify(() => {
+   *     // Get the current time from p5.js
+   *     let t = uniformFloat(() => millis());
+   *
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [
+   *         inputs.texCoord,
+   *         sin(t * 0.01) / 2 + 0.5,
    *         1,
    *       ];
-   *       return frag;
-   *     }
+   *       return inputs;
+   *     });
    *   });
    * }
-
+   *
    * function draw() {
    *   background(255);
    *   noStroke(255);
    *   shader(myShader); // Apply the custom shader
    *   plane(width, height); // Draw a plane with the shader applied
    * }
-   *
-   * // Inside the callback, you can use:
-   * //   - modifyFragment()
-   * //   - modifyVertex()
-   * //   - addUniform()
-   * //   - etc.
-   * // These functions are shorthand for calling `.modify()` on the corresponding base shader.
-   * // For example: `createMaterialShader({...})` is equivalent to `baseMaterialShader().modify({...})`.
-   * // For full details, see the [modify() documentation](https://github.com/processing/p5.js/wiki/Shaders-Reference#modify).
    * ```
    *
    * p5.strands functions are special, since they get turned into a shader instead of being
@@ -380,18 +355,17 @@ class Shader {
    * ```js example
    * new p5((sketch) => {
    *   let myShader;
-
+   *
    *   sketch.setup = function() {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
-   *     myShader = sketch.createMaterialShader({
-   *       modifyFragment(frag) {
-   *         frag.color = [frag.texCoord, 0, 1];
-   *         return frag;
-   *       },
-   *       addUniform('u_time', 'float'),
+   *     myShader = sketch.baseMaterialShader().modify(() => {
+   *       sketch.getPixelInputs((inputs) => {
+   *         inputs.color = [inputs.texCoord, 0, 1];
+   *         return inputs;
+   *       });
    *     }, { sketch });
    *   }
-
+   *
    *   sketch.draw = function() {
    *     sketch.background(255);
    *     sketch.noStroke();
@@ -399,15 +373,6 @@ class Shader {
    *     sketch.plane(sketch.width, sketch.height); // Draw a plane with the shader applied
    *   }
    * });
-   *
-   * // Inside the callback, you can use:
-   * //   - modifyFragment()
-   * //   - modifyVertex()
-   * //   - addUniform()
-   * //   - etc.
-   * // These functions are shorthand for calling `.modify()` on the corresponding base shader.
-   * // For example: `createMaterialShader({...})` is equivalent to `baseMaterialShader().modify({...})`.
-   * // For full details, see the [modify() documentation](https://github.com/processing/p5.js/wiki/Shaders-Reference#modify).
    * ```
    *
    * You can also write GLSL directly in `modify` if you need direct access. To do so,
@@ -457,10 +422,10 @@ class Shader {
    *
    * ```js example
    * let myShader;
-
+   *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader({
+   *   myShader = baseMaterialShader().modify({
    *     // Manually specifying a uniform
    *     declarations: 'uniform float time;',
    *     'Vertex getWorldInputs': `(Vertex inputs) {
@@ -470,7 +435,7 @@ class Shader {
    *     }`
    *   });
    * }
-
+   *
    * function draw() {
    *   background(255);
    *   shader(myShader);
@@ -480,15 +445,6 @@ class Shader {
    *   fill('red');
    *   sphere(50);
    * }
-   *
-   * // Inside the callback, you can use:
-   * //   - modifyFragment()
-   * //   - modifyVertex()
-   * //   - addUniform()
-   * //   - etc.
-   * // These functions are shorthand for calling `.modify()` on the corresponding base shader.
-   * // For example: `createMaterialShader({...})` is equivalent to `baseMaterialShader().modify({...})`.
-   * // For full details, see the [modify() documentation](https://github.com/processing/p5.js/wiki/Shaders-Reference#modify).
    * ```
    *
    * @beta
@@ -1637,4 +1593,3 @@ export { Shader };
 if(typeof p5 !== 'undefined'){
   shader(p5, p5.prototype);
 }
-
