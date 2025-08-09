@@ -1646,7 +1646,13 @@ if (typeof p5 !== 'undefined') {
  * @method getWorldInputs
  * @description
  * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
- *
+ * 
+ * The callback receives a vertex object with the following properties:
+ * - `position`: a vector with three components representing the original position of the vertex
+ * - `normal`: a vector with three components representing the direction the surface is facing
+ * - `texCoord`: a vector with two components representing the texture coordinates
+ * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ * 
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
@@ -1667,7 +1673,8 @@ if (typeof p5 !== 'undefined') {
  *     getWorldInputs(inputs => {
  *       // Move the vertex up and down in a wave in world space
  *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
- *       inputs.position.y += 0.5 * sin(t * 0.001 + inputs.position.x * 0.05);
+*       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
+ *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -1862,9 +1869,7 @@ if (typeof p5 !== 'undefined') {
  *     let t = uniformFloat(() => millis());
  *     getPixelInputs(inputs => {
  *       // Animate alpha (transparency) based on x position
- *       if (inputs.color && inputs.texCoord) {
- *         inputs.color.a = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
- *       }
+ *       inputs.color.a = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
  *       return inputs;
  *     });
  *   });
@@ -1875,7 +1880,7 @@ if (typeof p5 !== 'undefined') {
  *   lights();
  *   noStroke();
  *   fill('purple');
- *   sphere(50);
+ *   circle(0, 0, 100);
  * }
  * </code>
  * </div>
@@ -1883,6 +1888,7 @@ if (typeof p5 !== 'undefined') {
 
 /**
  * @method shouldDiscard
+ * @private
  * @description
  * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader modify calls to create effects like round points or custom masking. The callback receives a boolean:
  * - `willDiscard`: true if the fragment would be discarded by default
@@ -1918,8 +1924,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getFinalColor
  * @description
- * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha:
- * - `[r, g, b, a]`: the current color (red, green, blue, alpha)
+ * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
  *
  * Return a new color array to change the output color.
  *
@@ -2009,7 +2014,6 @@ if (typeof p5 !== 'undefined') {
  *   - `texCoord`: a vector with two components representing the texture coordinates (u, v)
  *   - `canvasSize`: a vector with two components representing the canvas size in pixels (width, height)
  *   - `texelSize`: a vector with two components representing the size of a single texel in texture space
- *   - `color`: a vector with four components representing the current pixel color (red, green, blue, alpha)
  * - `canvasContent`: a texture containing the sketch's contents before the filter is applied
  *
  * Return a four-component vector `[r, g, b, a]` for the pixel.
@@ -2075,7 +2079,7 @@ if (typeof p5 !== 'undefined') {
  *     let t = uniformFloat(() => millis());
  *     getObjectInputs(inputs => {
  *       // Create a sine wave along the x axis in object space
- *       inputs.position.y += 0.5 * sin(inputs.position.x * 0.1 + t * 0.002);
+ *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -2085,7 +2089,7 @@ if (typeof p5 !== 'undefined') {
  *   shader(myShader);
  *   noStroke();
  *   fill('orange');
- *   box(100);
+ *   sphere(100);
  * }
  * </code>
  * </div>
