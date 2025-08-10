@@ -7055,6 +7055,18 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "vivekbopaliya",
+      "name": "Vivek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/122638553?v=4",
+      "profile": "https://github.com/vivekbopaliya",
+      "contributions": [
+        "code",
+        "design",
+        "userTesting",
+        "blog"
+      ]
     }
   ],
   "repoType": "github",
