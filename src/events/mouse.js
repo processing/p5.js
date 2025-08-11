@@ -810,15 +810,13 @@ p5.prototype._updateNextMouseCoords = function(e) {
       e
     );
 
+    this._setProperty('movedX', e.movementX);
+    this._setProperty('movedY', e.movementY);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
     this._setProperty('winMouseY', mousePos.winY);
 
-    const deltaX = this.mouseX - this.pmouseX;
-    const deltaY = this.mouseY - this.pmouseY;
-    this._setProperty('movedX', deltaX);
-    this._setProperty('movedY', deltaY);
   }
 
   if (!this._hasMouseInteracted) {
