@@ -2061,17 +2061,21 @@ function customShapes(p5, fn) {
    * Sets the property of a curve.
    * 
    * For example, set tightness,
-   * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
-   * at 0 as default.
+   * To set tightness, use `splineProperty('tightness', t)`, 
+   * (default: t = 0).
    * 
-   * Spline curves are like cables that are attached to a set of points.
-   * Adjusting tightness adjusts how tightly the cable is
-   * attached to the points. The parameter, tightness, determines
-   * how the curve fits to the vertex points. By default,
-   * tightness is set to 0. Setting tightness to 1, as in
-   * `splineProperty('tightness', 1)`, connects the curve's points
-   * using straight lines. Values in the range from –5 to 5
-   * deform curves while leaving them recognizable.
+   * 
+   * Spline curves behave like a cable threaded through a 
+   * set of vertices (points). The tightness parameter controls
+   * how closely that cable is attached to the vertices. By default, 
+   * the value of `tightness (t)` is 0, which produces a smooth
+   * spline. Setting `t = 1` (for example, `splineProperty('tightness', 1)`) 
+   * connects the vertices with straight line segments. 
+   * Values between 0 and 1 make the curve follow the vertices more tightly. 
+   * Negative values loosen the curve and create rounder bulges whereas values 
+   * greater than 1 can create sharper corners or slight overshoot. In
+   * practice, values in the range `–5 to 5` deform the curve while keeping 
+   * it recognizable.
    * 
    * This function can also be used to set 'ends' property
    * (see also: the <a href="#/p5/curveDetail">curveDetail()</a> example),
