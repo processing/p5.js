@@ -2058,7 +2058,7 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Sets the property of a curve.
+   * Sets the property of a spline.
    * 
    * For example, set tightness,
    * To set tightness, use `splineProperty('tightness', t)`, 
