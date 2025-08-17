@@ -2092,7 +2092,7 @@ function customShapes(p5, fn) {
    * // Move the mouse left and right to see the curve change.
    * 
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(200, 200);
    *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
    * }
    * 
@@ -2107,12 +2107,12 @@ function customShapes(p5, fn) {
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
-   *   splineVertex(10, 26);
-   *   splineVertex(10, 26);
-   *   splineVertex(83, 24);
-   *   splineVertex(83, 61);
-   *   splineVertex(25, 65);
-   *   splineVertex(25, 65);
+   *   splineVertex(60, 76);
+   *   splineVertex(60, 76);
+   *   splineVertex(133, 74);
+   *   splineVertex(133, 111);
+   *   splineVertex(75, 115);
+   *   splineVertex(75, 115);
    *   endShape();
    * }
    * </code>
