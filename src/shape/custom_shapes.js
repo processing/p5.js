@@ -2123,7 +2123,69 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   * createCanvas(360, 140);
+   * background(240);
+   * noFill();
+   * 
+   * // Right panel: ends = INCLUDE (all spans).
+   * push();
+   * translate(10, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * fill(30);
+   * textSize(11);
+   * text('ends: INCLUDE (all spans)', 8, 16);
+   * noFill();
+   * 
+   * splineProperty('ends', INCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * pop();
+   * 
+   * // Right panel: ends = EXCLUDE (middle only).
+   * push();
+   * translate(190, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * noStroke();
+   * fill(30);
+   * text('ends: EXCLUDE ', 18, 16);
+   * noFill();
+   * 
+   * splineProperty('ends', EXCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   *  pop();
+   * 
+   * describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
+   * }
+   * </code>
+   * </div>
    */
+
   /**
    * @method splineProperty
    * @param {String} property
