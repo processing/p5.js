@@ -1652,7 +1652,7 @@ function customShapes(p5, fn) {
    *
    * `splineVertex()` adds a curved segment to custom shapes. The spline curves
    * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
+   * <a href="#/p5/spline">spline()</a> function. `splineVertex()` must be called
    * between the <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
