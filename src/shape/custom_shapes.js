@@ -2102,7 +2102,8 @@ function customShapes(p5, fn) {
    *   // Set the curve's tightness using the mouse.
    *   let t = map(mouseX, 0, 100, -5, 5, true);
    *   splineProperty('tightness', t);
-   * 
+   *   // 'ends' defaults to INCLUDE; uncomment to see the effect:
+   *   // splineProperty('ends', EXCLUDE);
    *   // Draw the curve.
    *   noFill();
    *   beginShape();
