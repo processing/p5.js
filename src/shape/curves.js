@@ -710,7 +710,10 @@ function curves(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
-   *
+   * 
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Set the coordinates for the curve's anchor and control points.
    *   let x1 = 5;
    *   let y1 = 26;
@@ -758,7 +761,10 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background(200);
-   *
+   * 
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Set the coordinates for the curve's anchor and control points.
    *   let x1 = 5;
    *   let y1 = 26;
@@ -837,6 +843,9 @@ function curves(p5, fn){
    *
    *   background(200);
    *
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Set the coordinates for the curve's anchor and control points.
    *   let x1 = 5;
    *   let y1 = 26;
