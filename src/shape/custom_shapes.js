@@ -1648,7 +1648,7 @@ function customShapes(p5, fn) {
 
 
 /**
-   * Adds a spline curve segment to a custom shape.
+   * Connects points with a smooth curve (a spline).
    *
    * `splineVertex()` adds a curved segment to custom shapes. The spline curves
    * it creates are defined like those made by the
