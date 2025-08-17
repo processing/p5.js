@@ -2082,6 +2082,12 @@ function customShapes(p5, fn) {
    * such as: `splineProperty('ends', EXCLUDE)` to exclude
    * vertices, or `splineProperty('ends', INCLUDE)` to include them.
    * 
+   * Set `splineProperty('ends', EXCLUDE)` to draw only the middle 
+   * segment of a spline with four points. For example, with points 
+   * `(a,b)`, `(c,d)`, `(e,f)`, `(g,h)` the call `spline(a,b, c,d, e,f, g,h)`
+   *  will render only the segment from `(c,d)` to `(e,f)`, 
+   * skipping the outer spans `(a,b)->(c,d)` and `(e,f)->(g,h)`.
+   * 
    * @method splineProperty
    * @param {String} property
    * @param value Value to set the given property to.
