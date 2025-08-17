@@ -501,6 +501,9 @@ function curves(p5, fn){
    *
    *   background(200);
    *
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
@@ -546,7 +549,10 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background(200);
-   *
+   * 
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
@@ -598,7 +604,10 @@ function curves(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background('skyblue');
-   *
+   * 
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Draw the red balloon.
    *   fill('red');
    *   spline(-150, 275, 50, 60, 50, 60, 250, 275);
@@ -621,7 +630,10 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background('skyblue');
-   *
+   * 
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
+   *   splineProperty('ends', EXCLUDE);
+   * 
    *   // Rotate around the y-axis.
    *   rotateY(frameCount * 0.01);
    *
