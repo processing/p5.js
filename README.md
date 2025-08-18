@@ -103,6 +103,7 @@ Lead/Mentor Alumni
 | Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| i18n (ko) | [@hana-cho](https://github.com/hana-cho) |
 | Math | [@GregStanton](https://github.com/GregStanton), [@holomorfo](https://github.com/holomorfo) |
 | p5.js-website | [@clairep94](https://github.com/clairep94), [@ksen0](https://github.com/ksen0) |
 | p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
