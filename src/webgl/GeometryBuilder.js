@@ -102,6 +102,17 @@ class GeometryBuilder {
       vertexColors.push(...this.renderer.states.curFillColor);
     }
     this.geometry.vertexColors.push(...vertexColors);
+    // After the existing vertexColors code, add this:
+    const vertexStrokeColors = [...input.vertexStrokeColors];
+    while (vertexStrokeColors.length < input.vertices.length * 4) {
+      if (this.renderer.states.strokeColor) {
+        vertexStrokeColors.push(...this.renderer.states.curStrokeColor);
+      } else {
+        // Use -1, -1, -1, -1 to indicate fallback to global stroke color
+        vertexStrokeColors.push(-1, -1, -1, -1);
+      }
+    }
+    this.geometry.vertexStrokeColors.push(...vertexStrokeColors);
   }
 
   /**
