@@ -764,7 +764,7 @@ class RendererGL extends Renderer {
 
   _prepareUserAttributes(geometry, shader) {
     for (const buff of this.buffers.user) {
-      if (!this._pInst.constructor.disableFriendleErrors) {
+      if (!this._pInst.constructor.disableFriendlyErrors) {
         // Check for the right data size
         const prop = geometry.userVertexProperties[buff.attr];
         if (prop) {
