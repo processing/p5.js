@@ -7067,6 +7067,16 @@
         "userTesting",
         "blog"
       ]
+    },
+    {
+      "login": "Iron-56",
+      "name": "Nandu Krishna",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79905912?v=4",
+      "profile": "https://github.com/Iron-56",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
