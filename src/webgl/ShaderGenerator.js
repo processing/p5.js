@@ -1645,7 +1645,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getWorldInputs
  * @description
- * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  * 
  * The callback receives a vertex object with the following properties:
  * - `position`: a three-component vector representing the original position of the vertex.
@@ -1694,7 +1694,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method combineColors
  * @description
- * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to control the final color output of a material. The callback receives an object with the following properties:
+ * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to control the final color output of a material. The callback receives an object with the following properties:
  *
  * - `baseColor`: a three-component vector representing the base color (red, green, blue).
  * - `diffuse`: a single number representing the diffuse reflection.
@@ -1749,7 +1749,7 @@ if (typeof p5 !== 'undefined') {
  * @method beforeVertex
  * @private
  * @description
- * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
+ * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
  *
  * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
  *
@@ -1767,7 +1767,7 @@ if (typeof p5 !== 'undefined') {
  * @method afterVertex
  * @private
  * @description
- * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
+ * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
  *
  * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
  *
@@ -1785,7 +1785,7 @@ if (typeof p5 !== 'undefined') {
  * @method beforeFragment
  * @private
  * @description
- * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
+ * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
  *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
@@ -1828,7 +1828,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getPixelInputs
  * @description
- * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to adjust per-pixel data before lighting/mixing.
+ * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to adjust per-pixel data before lighting/mixing.
  *
  * The callback receives an `Inputs` object. Available fields depend on the shader:
  *
@@ -1890,7 +1890,7 @@ if (typeof p5 !== 'undefined') {
  * @method shouldDiscard
  * @private
  * @description
- * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to create effects like round points or custom masking. The callback receives a boolean:
+ * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects like round points or custom masking. The callback receives a boolean:
  * - `willDiscard`: true if the fragment would be discarded by default
  *
  * Return true to discard the fragment, or false to keep it.
@@ -1924,7 +1924,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getFinalColor
  * @description
- * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
+ * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
  *
  * Return a new color array to change the output color.
  *
@@ -1966,7 +1966,7 @@ if (typeof p5 !== 'undefined') {
  * @method afterFragment
  * @private
  * @description
- * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
+ * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
  *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
@@ -2009,7 +2009,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getColor
  * @description
- * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to control the output color for each pixel. The callback receives the following arguments:
+ * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to control the output color for each pixel. The callback receives the following arguments:
  * - `inputs`: an object with the following properties:
  *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
  *   - `canvasSize`: a two-component vector representing the canvas size in pixels (width, height).
@@ -2052,7 +2052,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getObjectInputs
  * @description
- * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
+ * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
  * 
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
@@ -2099,7 +2099,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getCameraInputs
  * @description
- * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
+ * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
  * 
  * - `position`: a three-component vector representing the position after camera transformation.
  * - `normal`: a three-component vector representing the normal after camera transformation.
