@@ -1645,13 +1645,13 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getWorldInputs
  * @description
- * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  * 
  * The callback receives a vertex object with the following properties:
- * - `position`: a vector with three components representing the original position of the vertex
- * - `normal`: a vector with three components representing the direction the surface is facing
- * - `texCoord`: a vector with two components representing the texture coordinates
- * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ * - `position`: a three-component vector representing the original position of the vertex.
+ * - `normal`: a three-component vector representing the direction the surface is facing.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  * 
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
@@ -1659,7 +1659,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives a vertex object containing position (vec3), normal (vec3), texCoord (vec2), and color (vec4) properties. The function should return the modified vertex object.
  *
  * @example
@@ -1694,23 +1694,23 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method combineColors
  * @description
- * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to control the final color output of a material. The callback receives an object with the following properties:
+ * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to control the final color output of a material. The callback receives an object with the following properties:
  *
- * - `baseColor`: a vector with three components representing the base color (red, green, blue)
- * - `diffuse`: a single number representing the diffuse reflection
- * - `ambientColor`: a vector with three components representing the ambient color
- * - `ambient`: a single number representing the ambient reflection
- * - `specularColor`: a vector with three components representing the specular color
- * - `specular`: a single number representing the specular reflection
- * - `emissive`: a vector with three components representing the emissive color
- * - `opacity`: a single number representing the opacity
+ * - `baseColor`: a three-component vector representing the base color (red, green, blue).
+ * - `diffuse`: a single number representing the diffuse reflection.
+ * - `ambientColor`: a three-component vector representing the ambient color.
+ * - `ambient`: a single number representing the ambient reflection.
+ * - `specularColor`: a three-component vector representing the specular color.
+ * - `specular`: a single number representing the specular reflection.
+ * - `emissive`: a three-component vector representing the emissive color.
+ * - `opacity`: a single number representing the opacity.
  *
  * The callback should return a vector with four components (red, green, blue, alpha) for the final color.
  *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the object described above and returns a vector with four components for the final color.
  *
  * @example
@@ -1738,7 +1738,7 @@ if (typeof p5 !== 'undefined') {
  *   shader(myShader);
  *   lights();
  *   noStroke();
- *   fill('red');
+ *   fill('white');
  *   sphere(50);
  * }
  * </code>
@@ -1749,7 +1749,7 @@ if (typeof p5 !== 'undefined') {
  * @method beforeVertex
  * @private
  * @description
- * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
+ * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
  *
  * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
  *
@@ -1759,7 +1759,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which is called before each vertex is processed.
  */
 
@@ -1767,7 +1767,7 @@ if (typeof p5 !== 'undefined') {
  * @method afterVertex
  * @private
  * @description
- * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
+ * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
  *
  * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
  *
@@ -1777,7 +1777,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which is called after each vertex is processed.
  */
 
@@ -1785,7 +1785,7 @@ if (typeof p5 !== 'undefined') {
  * @method beforeFragment
  * @private
  * @description
- * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
+ * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
  *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
@@ -1793,7 +1793,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which is called before each fragment is processed.
  *
  * @example
@@ -1828,27 +1828,27 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getPixelInputs
  * @description
- * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader modify calls to adjust per-pixel data before lighting/mixing.
+ * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to adjust per-pixel data before lighting/mixing.
  *
  * The callback receives an `Inputs` object. Available fields depend on the shader:
  *
  * - In <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>:
- *   - `normal`: a vector with three components representing the surface normal
- *   - `texCoord`: a vector with two components representing the texture coordinates (u, v)
- *   - `ambientLight`: a vector with three components representing the ambient light color
- *   - `ambientMaterial`: a vector with three components representing the material's ambient color
- *   - `specularMaterial`: a vector with three components representing the material's specular color
- *   - `emissiveMaterial`: a vector with three components representing the material's emissive color
- *   - `color`: a vector with four components representing the base color (red, green, blue, alpha)
- *   - `shininess`: a number controlling specular highlights
- *   - `metalness`: a number controlling the metalness factor
+ *   - `normal`: a three-component vector representing the surface normal.
+ *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
+ *   - `ambientLight`: a three-component vector representing the ambient light color.
+ *   - `ambientMaterial`: a three-component vector representing the material's ambient color.
+ *   - `specularMaterial`: a three-component vector representing the material's specular color.
+ *   - `emissiveMaterial`: a three-component vector representing the material's emissive color.
+ *   - `color`: a four-component vector representing the base color (red, green, blue, alpha).
+ *   - `shininess`: a number controlling specular highlights.
+ *   - `metalness`: a number controlling the metalness factor.
  *
  * - In <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>:
- *   - `color`: a vector with four components representing the stroke color (red, green, blue, alpha)
- *   - `tangent`: a vector with two components representing the stroke tangent
- *   - `center`: a vector with two components representing the cap/join center
- *   - `position`: a vector with two components representing the current fragment position
- *   - `strokeWeight`: a number representing the stroke weight in pixels
+ *   - `color`: a four-component vector representing the stroke color (red, green, blue, alpha).
+ *   - `tangent`: a two-component vector representing the stroke tangent.
+ *   - `center`: a two-component vector representing the cap/join center.
+ *   - `position`: a two-component vector representing the current fragment position.
+ *   - `strokeWeight`: a number representing the stroke weight in pixels.
  *
  * Return the modified object to update the fragment.
  *
@@ -1856,7 +1856,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the fragment inputs object and should return it after making any changes.
  *
  * @example
@@ -1890,7 +1890,7 @@ if (typeof p5 !== 'undefined') {
  * @method shouldDiscard
  * @private
  * @description
- * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader modify calls to create effects like round points or custom masking. The callback receives a boolean:
+ * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to create effects like round points or custom masking. The callback receives a boolean:
  * - `willDiscard`: true if the fragment would be discarded by default
  *
  * Return true to discard the fragment, or false to keep it.
@@ -1898,7 +1898,7 @@ if (typeof p5 !== 'undefined') {
  * This hook is available in:
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives a boolean and should return a boolean.
  *
  * @example
@@ -1924,7 +1924,7 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getFinalColor
  * @description
- * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
+ * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
  *
  * Return a new color array to change the output color.
  *
@@ -1934,7 +1934,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the color array and should return a color array.
  *
  * @example
@@ -1946,7 +1946,7 @@ if (typeof p5 !== 'undefined') {
  *   myShader = baseColorShader().modify(() => {
  *     getFinalColor(color => {
  *       // Add a blue tint to the output color
- *       color.b += 0.2;
+ *       color.b += 0.4;
  *       return color;
  *     });
  *   });
@@ -1966,7 +1966,7 @@ if (typeof p5 !== 'undefined') {
  * @method afterFragment
  * @private
  * @description
- * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
+ * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
  *
  * This hook is available in:
  * - <a href="#/p5/baseColorShader">baseColorShader()</a>
@@ -1974,7 +1974,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which is called after each fragment is processed.
  *
  * @example
@@ -2009,19 +2009,19 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getColor
  * @description
- * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader modify calls to control the output color for each pixel. The callback receives the following arguments:
+ * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to control the output color for each pixel. The callback receives the following arguments:
  * - `inputs`: an object with the following properties:
- *   - `texCoord`: a vector with two components representing the texture coordinates (u, v)
- *   - `canvasSize`: a vector with two components representing the canvas size in pixels (width, height)
- *   - `texelSize`: a vector with two components representing the size of a single texel in texture space
- * - `canvasContent`: a texture containing the sketch's contents before the filter is applied
+ *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
+ *   - `canvasSize`: a two-component vector representing the canvas size in pixels (width, height).
+ *   - `texelSize`: a two-component vector representing the size of a single texel in texture space.
+ * - `canvasContent`: a texture containing the sketch's contents before the filter is applied.
  *
  * Return a four-component vector `[r, g, b, a]` for the pixel.
  *
  * This hook is available in:
  * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the inputs object and canvasContent, and should return a color array.
  *
  * @example
@@ -2052,11 +2052,12 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getObjectInputs
  * @description
- * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
- * - `position`: a vector with three components representing the original position of the vertex
- * - `normal`: a vector with three components representing the direction the surface is facing
- * - `texCoord`: a vector with two components representing the texture coordinates
- * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
+ * 
+ * - `position`: a three-component vector representing the original position of the vertex.
+ * - `normal`: a three-component vector representing the direction the surface is facing.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  *
  * Return the modified object to update the vertex.
  *
@@ -2066,7 +2067,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the vertex object and should return it after making any changes.
  *
  * @example
@@ -2079,7 +2080,7 @@ if (typeof p5 !== 'undefined') {
  *     let t = uniformFloat(() => millis());
  *     getObjectInputs(inputs => {
  *       // Create a sine wave along the x axis in object space
- *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
+ *       inputs.position.y += 3 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
  *   });
@@ -2098,11 +2099,12 @@ if (typeof p5 !== 'undefined') {
 /**
  * @method getCameraInputs
  * @description
- * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader modify calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
- * - `position`: a vector with three components representing the position after camera transformation
- * - `normal`: a vector with three components representing the normal after camera transformation
- * - `texCoord`: a vector with two components representing the texture coordinates
- * - `color`: a vector with four components representing the color of the vertex (red, green, blue, alpha)
+ * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
+ * 
+ * - `position`: a three-component vector representing the position after camera transformation.
+ * - `normal`: a three-component vector representing the normal after camera transformation.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  *
  * Return the modified object to update the vertex.
  *
@@ -2112,7 +2114,7 @@ if (typeof p5 !== 'undefined') {
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
  * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
  *
- * @param {function} callback
+ * @param {Function} callback
  *        A callback function which receives the vertex object and should return it after making any changes.
  *
  * @example
@@ -2137,7 +2139,7 @@ if (typeof p5 !== 'undefined') {
  *   shader(myShader);
  *   noStroke();
  *   fill('blue');
- *   sphere(100);
+ *   sphere(50);
  * }
  * </code>
  * </div>
