@@ -2080,7 +2080,7 @@ if (typeof p5 !== 'undefined') {
  *     let t = uniformFloat(() => millis());
  *     getObjectInputs(inputs => {
  *       // Create a sine wave along the x axis in object space
- *       inputs.position.y += 3 * sin(t * 0.001 + inputs.position.x * 0.05);
+ *       inputs.position.y += sin(t * 0.001 + inputs.position.x);
  *       return inputs;
  *     });
  *   });
@@ -2090,7 +2090,7 @@ if (typeof p5 !== 'undefined') {
  *   shader(myShader);
  *   noStroke();
  *   fill('orange');
- *   sphere(100);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -2138,7 +2138,7 @@ if (typeof p5 !== 'undefined') {
  *   background(200);
  *   shader(myShader);
  *   noStroke();
- *   fill('blue');
+ *   fill('red');
  *   sphere(50);
  * }
  * </code>
