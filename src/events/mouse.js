@@ -19,6 +19,11 @@ import * as constants from '../core/constants';
  *
  * Note: `movedX` continues updating even when
  * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
+ * But keep in mind that during an active pointer lock, mouseX and pmouseX
+ * are not locked, so `movedX` is based on
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/movementX">the MouseEvent's movementX</a>
+ * value. This value may behave different in different browsers when the user
+ * is zoomed in or out.
  *
  * @property {Number} movedX
  * @readOnly
@@ -810,13 +815,31 @@ p5.prototype._updateNextMouseCoords = function(e) {
       e
     );
 
-    this._setProperty('movedX', e.movementX);
-    this._setProperty('movedY', e.movementY);
+
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
     this._setProperty('winMouseY', mousePos.winY);
 
+    if (document.pointerLockElement === null) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerLockElement
+      // "The pointerLockElement ... is null if lock is pending, pointer is unlocked,
+      // or the target is in another document."
+      // In this case, we use mouseX/Y and pmousX/Y to calculate the distance,
+      // which allows movedX/Y to look consistent at different zoom levels acorss
+      // browsers.
+      const deltaX = this.mouseX - this.pmouseX;
+      const deltaY = this.mouseY - this.pmouseY;
+      this._setProperty('movedX', deltaX);
+      this._setProperty('movedY', deltaY);
+    }
+    else {
+      // Because mouseX/Y and pmouseX/Y are locked, the elements movementX/Y
+      // is used for movedX/Y - this maz behave differently on different
+      // browsers at different zoom levels.
+      this._setProperty('movedX', e.movementX);
+      this._setProperty('movedY', e.movementY);
+    }
   }
 
   if (!this._hasMouseInteracted) {
