@@ -33,7 +33,11 @@ function shadergenerator(p5, fn) {
         const transpiledSource = escodegen.generate(ast);
         const scopeKeys = Object.keys(scope);
         const internalGeneratorFunction = new Function(
-          'p5',
+          // Create a parameter called __p5, not just p5, because users of instance mode
+          // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+          // p5, then the scope variable called p5 might accidentally override internal function
+          // calls to p5 static methods.
+          '__p5',
           ...scopeKeys,
           transpiledSource
           .slice(
@@ -100,7 +104,7 @@ function shadergenerator(p5, fn) {
           node.type = 'CallExpression'
           node.callee = {
             type: 'Identifier',
-            name: 'p5.unaryNode',
+            name: '__p5.unaryNode',
           }
           node.arguments = [node.argument, signNode]
       }
@@ -123,7 +127,7 @@ function shadergenerator(p5, fn) {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
-              name: 'p5.unaryNode'
+              name: '__p5.unaryNode'
             },
             arguments: [node.argument.object, signNode],
           };
@@ -188,7 +192,7 @@ function shadergenerator(p5, fn) {
       node.type = 'CallExpression';
       node.callee = {
         type: 'Identifier',
-        name: 'p5.dynamicNode',
+        name: '__p5.dynamicNode',
       };
       node.arguments = [original];
     },
@@ -242,7 +246,7 @@ function shadergenerator(p5, fn) {
           type: 'CallExpression',
           callee: {
             type: 'Identifier',
-            name: 'p5.dynamicNode',
+            name: '__p5.dynamicNode',
           },
           arguments: [node.left]
         }
@@ -1608,7 +1612,6 @@ function shadergenerator(p5, fn) {
     ],
     'sqrt': { args: ['genType'], returnType: 'genType', isp5Function: true},
     'step': { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
-    'noise': { args: ['vec2'], returnType: 'float', isp5Function: false },
     'trunc': { args: ['genType'], returnType: 'genType', isp5Function: false},
 
     ////////// Vector //////////
@@ -1675,7 +1678,7 @@ function shadergenerator(p5, fn) {
     } else {
       nodeArgs = args;
     }
-    
+
     return fnNodeConstructor('noise', nodeArgs, {
       args: ['vec2'],
       returnType: 'float'
