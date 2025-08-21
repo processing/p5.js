@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <script language="javascript" type="text/javascript" src="../../../../lib/p5.js"></script>
+  </head>
+
+  <body>
+    <h1>Manual test for movedX/Y with/without zoom and with/without pointer lock</h1>
+    <ul>
+      <li>If you move the mouse around, you should see 1 moving circle and 1 still. While <strong>dragging mouse</strong>, they should move at the same rate.</li>
+      <li>After zooming in/out, on all browsers, the circles should still move visually a constant distance relative to each other.</li>
+      <li>Press any key to request pointer lock. Background will be pink if and only if pointer is locked. Now, if you <strong>drag the mouse</strong>, the small circle should be static (because mouseX/Y are locked) and the big circle should move unsurprisingly.</li>
+    </ul>
+      <script language="javascript" type="text/javascript" src="sketch.js"></script>
+  </body>
+</html>
