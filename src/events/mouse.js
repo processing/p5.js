@@ -21,9 +21,9 @@ import * as constants from '../core/constants';
  * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
  * But keep in mind that during an active pointer lock, mouseX and pmouseX
  * are not locked, so `movedX` is based on
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/movementX">the MouseEvent's movementX</a>
- * value. This value may behave different in different browsers when the user
- * is zoomed in or out.
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/movementX">the MouseEvent's movementX value</a>
+ * (which may behave differently in different browsers when the user
+ * is zoomed in or out).
  *
  * @property {Number} movedX
  * @readOnly
@@ -835,7 +835,7 @@ p5.prototype._updateNextMouseCoords = function(e) {
     }
     else {
       // Because mouseX/Y and pmouseX/Y are locked, the elements movementX/Y
-      // is used for movedX/Y - this maz behave differently on different
+      // is used for movedX/Y - this may behave differently on different
       // browsers at different zoom levels.
       this._setProperty('movedX', e.movementX);
       this._setProperty('movedY', e.movementY);
