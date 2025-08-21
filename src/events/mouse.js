@@ -826,7 +826,7 @@ p5.prototype._updateNextMouseCoords = function(e) {
       // "The pointerLockElement ... is null if lock is pending, pointer is unlocked,
       // or the target is in another document."
       // In this case, we use mouseX/Y and pmouseX/Y to calculate the distance,
-      // which allows movedX/Y to look consistent at different zoom levels acorss
+      // which allows movedX/Y to look consistent at different zoom levels across
       // browsers.
       const deltaX = this.mouseX - this.pmouseX;
       const deltaY = this.mouseY - this.pmouseY;
