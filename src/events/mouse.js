@@ -20,7 +20,7 @@ import * as constants from '../core/constants';
  * Note: `movedX` continues updating even when
  * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
  * But keep in mind that during an active pointer lock, mouseX and pmouseX
- * are not locked, so `movedX` is based on
+ * are locked, so `movedX` is based on
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/movementX">the MouseEvent's movementX value</a>
  * (which may behave differently in different browsers when the user
  * is zoomed in or out).
@@ -69,6 +69,11 @@ p5.prototype.movedX = 0;
  *
  * Note: `movedY` continues updating even when
  * <a href="#/p5/requestPointerLock">requestPointerLock()</a> is active.
+ * But keep in mind that during an active pointer lock, mouseX and pmouseX
+ * are locked, so `movedX` is based on
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/movementX">the MouseEvent's movementX value</a>
+ * (which may behave differently in different browsers when the user
+ * is zoomed in or out).
  *
  * @property {Number} movedY
  * @readOnly
