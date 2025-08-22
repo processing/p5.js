@@ -7077,6 +7077,20 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "MissTipo",
+      "name": "Dorine Tipo ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105214329?v=4",
+      "profile": "https://dorinetipo.vercel.app/",
+      "contributions": [
+        "blog",
+        "code",
+        "eventOrganizing",
+        "research",
+        "promotion",
+        "tutorial"
+      ]
     }
   ],
   "repoType": "github",
