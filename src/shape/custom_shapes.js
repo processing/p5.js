@@ -1680,7 +1680,7 @@ function customShapes(p5, fn) {
    * ```
    *
    * The code snippet above would only draw the curve between the anchor points,
-   * similar to the <a href="#/p5/curve">curve()</a> function. The segments
+   * similar to the <a href="#/p5/spline">spline()</a> function. The segments
    * between the control and anchor points can be drawn by calling
    * `splineVertex()` with the coordinates of the control points:
    *
