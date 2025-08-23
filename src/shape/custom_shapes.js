@@ -1657,37 +1657,40 @@ function customShapes(p5, fn) {
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
    * Spline curves can form shapes and curves that slope gently. They’re like
-   * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `splineVertex()` must be called at
-   * least four times between
+   * cables that are attached to a set of points. `splineVertex()` draws a smooth 
+   * curve through the points you give it.
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
    *
+   * 
    * ```js
    * beginShape();
    *
-   * // Add the first control point.
+   * // Add the first point.
    * splineVertex(84, 91);
    *
-   * // Add the anchor points to draw between.
+   * // Add the next points in order.
    * splineVertex(68, 19);
    * splineVertex(21, 17);
    *
-   * // Add the second control point.
+   * // Add the last point.
    * splineVertex(32, 91);
    *
    * endShape();
    * ```
    *
-   * The code snippet above would only draw the curve between the anchor points,
-   * similar to the <a href="#/p5/spline">spline()</a> function. The segments
-   * between the control and anchor points can be drawn by calling
-   * `splineVertex()` with the coordinates of the control points:
-   *
+   * 
+   * By default (`ends: INCLUDE`), the curve passes through
+   * all the points you add with `splineVertex()`, similar to 
+   * the <a href="#/p5/spline">spline()</a> function. To draw only
+   * the middle span p1->p2 (skipping p0->p1 and p2->p3), set 
+   * `splineProperty('ends', EXCLUDE)`. You don’t need to duplicate
+   * vertices to draw those spans.
+
    * ```js
    * beginShape();
    *
-   * // Add the first control point and draw a segment to it.
+   * // Add the first point and draw a segment to it.
    * splineVertex(84, 91);
    * splineVertex(84, 91);
    *
@@ -1695,10 +1698,10 @@ function customShapes(p5, fn) {
    * splineVertex(68, 19);
    * splineVertex(21, 17);
    *
-   * // Add the second control point.
+   * // Add the second point.
    * splineVertex(32, 91);
    *
-   * // Uncomment the next line to draw the segment to the second control point.
+   * // Uncomment the next line to draw the segment to the second point.
    * // splineVertex(32, 91);
    *
    * endShape();
@@ -1735,20 +1738,20 @@ function customShapes(p5, fn) {
    *   // Start drawing the shape.
    *   beginShape();
    *
-   *   // Add the first control point.
+   *   // Add the first point.
    *   splineVertex(32, 91);
    *
    *   // Add the anchor points.
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *
-   *   // Add the second control point.
+   *   // Add the second point.
    *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
    *
-   *   // Style the anchor and control points.
+   *   // Style the points.
    *   strokeWeight(5);
    *
    *   // Draw the anchor points in black.
@@ -1756,7 +1759,7 @@ function customShapes(p5, fn) {
    *   point(21, 17);
    *   point(68, 19);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(32, 91);
    *   point(84, 91);
@@ -1782,7 +1785,7 @@ function customShapes(p5, fn) {
    *   // Start drawing the shape.
    *   beginShape();
    *
-   *   // Add the first control point and draw a segment to it.
+   *   // Add the first point and draw a segment to it.
    *   splineVertex(32, 91);
    *   splineVertex(32, 91);
    *
@@ -1790,13 +1793,13 @@ function customShapes(p5, fn) {
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *
-   *   // Add the second control point.
+   *   // Add the second point.
    *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
    *
-   *   // Style the anchor and control points.
+   *   // Style the points.
    *   strokeWeight(5);
    *
    *   // Draw the anchor points in black.
@@ -1804,7 +1807,7 @@ function customShapes(p5, fn) {
    *   point(21, 17);
    *   point(68, 19);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(32, 91);
    *   point(84, 91);
@@ -1830,7 +1833,7 @@ function customShapes(p5, fn) {
    *   // Start drawing the shape.
    *   beginShape();
    *
-   *   // Add the first control point and draw a segment to it.
+   *   // Add the first point and draw a segment to it.
    *   splineVertex(32, 91);
    *   splineVertex(32, 91);
    *
@@ -1838,14 +1841,14 @@ function customShapes(p5, fn) {
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *
-   *   // Add the second control point and draw a segment to it.
+   *   // Add the second point and draw a segment to it.
    *   splineVertex(84, 91);
    *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
    *
-   *   // Style the anchor and control points.
+   *   // Style the points.
    *   strokeWeight(5);
    *
    *   // Draw the anchor points in black.
@@ -1853,7 +1856,7 @@ function customShapes(p5, fn) {
    *   point(21, 17);
    *   point(68, 19);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(32, 91);
    *   point(84, 91);
@@ -1893,7 +1896,7 @@ function customShapes(p5, fn) {
    *   // Start drawing the shape.
    *   beginShape();
    *
-   *   // Add the first control point and draw a segment to it.
+   *   // Add the first point and draw a segment to it.
    *   splineVertex(x1, y1);
    *   splineVertex(x1, y1);
    *
@@ -1901,14 +1904,14 @@ function customShapes(p5, fn) {
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *
-   *   // Add the second control point and draw a segment to it.
+   *   // Add the second point and draw a segment to it.
    *   splineVertex(84, 91);
    *   splineVertex(84, 91);
    *
    *   // Stop drawing the shape.
    *   endShape();
    *
-   *   // Style the anchor and control points.
+   *   // Style the anchor and points.
    *   strokeWeight(5);
    *
    *   // Draw the anchor points in black.
@@ -1916,25 +1919,25 @@ function customShapes(p5, fn) {
    *   point(21, 17);
    *   point(68, 19);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(x1, y1);
    *   point(84, 91);
    * }
    *
-   * // Start changing the first control point if the user clicks near it.
+   * // Start changing the first point if the user clicks near it.
    * function mousePressed() {
    *   if (dist(mouseX, mouseY, x1, y1) < 20) {
    *     isChanging = true;
    *   }
    * }
    *
-   * // Stop changing the first control point when the user releases the mouse.
+   * // Stop changing the first point when the user releases the mouse.
    * function mouseReleased() {
    *   isChanging = false;
    * }
    *
-   * // Update the first control point while the user drags the mouse.
+   * // Update the first point while the user drags the mouse.
    * function mouseDragged() {
    *   if (isChanging === true) {
    *     x1 = mouseX;
@@ -1954,7 +1957,7 @@ function customShapes(p5, fn) {
    *   // Start drawing the shape.
    *   beginShape();
    *
-   *   // Add the first control point and draw a segment to it.
+   *   // Add the first point and draw a segment to it.
    *   splineVertex(32, 91);
    *   splineVertex(32, 91);
    *
@@ -1962,7 +1965,7 @@ function customShapes(p5, fn) {
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *
-   *   // Add the second control point.
+   *   // Add the second point.
    *   splineVertex(84, 91);
    *   splineVertex(84, 91);
    *
