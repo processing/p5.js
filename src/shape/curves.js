@@ -12,7 +12,7 @@ function curves(p5, fn){
    * Bézier curves can form shapes and curves that slope gently. They're defined
    * by two anchor points and two control points. Bézier curves provide more
    * control than the spline curves created with the
-   * <a href="#/p5/curve">curve()</a> function.
+   * <a href="#/p5/spline">spline()</a> function.
    *
    * The first two parameters, `x1` and `y1`, set the first anchor point. The
    * first anchor point is where the curve starts.
@@ -462,35 +462,27 @@ function curves(p5, fn){
 
   /**
    * Draws a curve using a Catmull-Rom spline.
-   *
+   * 
    * Spline curves can form shapes and curves that slope gently. They’re like
-   * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points.
-   *
-   * The first two parameters, `x1` and `y1`, set the first control point. This
-   * point isn’t drawn and can be thought of as the curve’s starting point.
-   *
-   * The next four parameters, `x2`, `y2`, `x3`, and `y3`, set the two anchor
-   * points. The anchor points are the start and end points of the curve’s
-   * visible segment.
-   *
-   * The seventh and eighth parameters, `x4` and `y4`, set the last control
-   * point. This point isn’t drawn and can be thought of as the curve’s ending
-   * point.
+   * cables that are attached to a set of points. By default (`ends: INCLUDE`),
+   * the curve passes through all four points you provide, in order
+   * `p0(x1,y1)` -> `p1(x2,y2)` -> `p2(x3,y3)` -> `p3(x4,y4)`. Think of them simply as
+   * “points on the curve.” If you switch to `ends: EXCLUDE`, p0 and p3 act
+   * like control points and only the middle span `p1->p2` is drawn.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
    * `spline()` has twelve arguments because each point has x-, y-, and
    * z-coordinates.
    *
    * @method spline
-   * @param  {Number} x1 x-coordinate of the first control point.
-   * @param  {Number} y1 y-coordinate of the first control point.
-   * @param  {Number} x2 x-coordinate of the first anchor point.
-   * @param  {Number} y2 y-coordinate of the first anchor point.
-   * @param  {Number} x3 x-coordinate of the second anchor point.
-   * @param  {Number} y3 y-coordinate of the second anchor point.
-   * @param  {Number} x4 x-coordinate of the second control point.
-   * @param  {Number} y4 y-coordinate of the second control point.
+   * @param  {Number} x1 x-coordinate of point p0.
+   * @param  {Number} y1 y-coordinate of point p0.
+   * @param  {Number} x2 x-coordinate of point p1.
+   * @param  {Number} y2 y-coordinate of point p1.
+   * @param  {Number} x3 x-coordinate of point p2.
+   * @param  {Number} y3 y-coordinate of point p2.
+   * @param  {Number} x4 x-coordinate of point p3.
+   * @param  {Number} y4 y-coordinate of point p3.
    * @chainable
    *
    * @example
@@ -501,7 +493,7 @@ function curves(p5, fn){
    *
    *   background(200);
    *
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
    * 
    *   // Draw a black spline curve.
@@ -510,18 +502,18 @@ function curves(p5, fn){
    *   stroke(0);
    *   spline(5, 26, 73, 24, 73, 61, 15, 65);
    *
-   *   // Draw red spline curves from the anchor points to the control points.
+   *   // Draw red spline curves from the points.
    *   stroke(255, 0, 0);
    *   spline(5, 26, 5, 26, 73, 24, 73, 61);
    *   spline(73, 24, 73, 61, 15, 65, 15, 65);
    *
-   *   // Draw the anchor points in black.
+   *   // Draw the points in black.
    *   strokeWeight(5);
    *   stroke(0);
    *   point(73, 24);
    *   point(73, 61);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(5, 26);
    *   point(15, 65);
@@ -550,7 +542,7 @@ function curves(p5, fn){
    * function draw() {
    *   background(200);
    * 
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
    * 
    *   // Draw a black spline curve.
@@ -559,7 +551,7 @@ function curves(p5, fn){
    *   stroke(0);
    *   spline(x1, y1, 73, 24, 73, 61, 15, 65);
    *
-   *   // Draw red spline curves from the anchor points to the control points.
+   *   // Draw red spline curves from the points.
    *   stroke(255, 0, 0);
    *   spline(x1, y1, x1, y1, 73, 24, 73, 61);
    *   spline(73, 24, 73, 61, 15, 65, 15, 65);
@@ -570,25 +562,25 @@ function curves(p5, fn){
    *   point(73, 24);
    *   point(73, 61);
    *
-   *   // Draw the control points in red.
+   *   // Draw the points in red.
    *   stroke(255, 0, 0);
    *   point(x1, y1);
    *   point(15, 65);
    * }
    *
-   * // Start changing the first control point if the user clicks near it.
+   * // Start changing the first point if the user clicks near it.
    * function mousePressed() {
    *   if (dist(mouseX, mouseY, x1, y1) < 20) {
    *     isChanging = true;
    *   }
    * }
    *
-   * // Stop changing the first control point when the user releases the mouse.
+   * // Stop changing the first point when the user releases the mouse.
    * function mouseReleased() {
    *   isChanging = false;
    * }
    *
-   * // Update the first control point while the user drags the mouse.
+   * // Update the first point while the user drags the mouse.
    * function mouseDragged() {
    *   if (isChanging === true) {
    *     x1 = mouseX;
@@ -605,7 +597,7 @@ function curves(p5, fn){
    *
    *   background('skyblue');
    * 
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
    * 
    *   // Draw the red balloon.
@@ -631,7 +623,7 @@ function curves(p5, fn){
    * function draw() {
    *   background('skyblue');
    * 
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
    * 
    *   // Rotate around the y-axis.
@@ -652,16 +644,16 @@ function curves(p5, fn){
    * @method spline
    * @param  {Number} x1
    * @param  {Number} y1
-   * @param  {Number} z1 z-coordinate of the first control point.
+   * @param  {Number} z1 z-coordinate of point p0.
    * @param  {Number} x2
    * @param  {Number} y2
-   * @param  {Number} z2 z-coordinate of the first anchor point.
+   * @param  {Number} z2 z-coordinate of point p1.
    * @param  {Number} x3
    * @param  {Number} y3
-   * @param  {Number} z3 z-coordinate of the second anchor point.
+   * @param  {Number} z3 z-coordinate of point p2.
    * @param  {Number} x4
    * @param  {Number} y4
-   * @param  {Number} z4 z-coordinate of the second control point.
+   * @param  {Number} z4 z-coordinate of point p3.
    * @chainable
    */
   fn.spline = function(...args) {
@@ -676,30 +668,30 @@ function curves(p5, fn){
   /**
    * Calculates coordinates along a spline curve using interpolation.
    *
-   * `splinePoint()` calculates coordinates along a spline curve using the
-   * anchor and control points. It expects points in the same order as the
+   * `splinePoint()` calculates coordinates along a spline curve using four
+   * points p0, p1, p2, p3. It expects points in the same order as the
    * <a href="#/p5/spline">spline()</a> function. `splinePoint()` works one axis
-   * at a time. Passing the anchor and control points' x-coordinates will
-   * calculate the x-coordinate of a point on the curve. Passing the anchor and
-   * control points' y-coordinates will calculate the y-coordinate of a point on
+   * at a time. Passing the points' x-coordinates will
+   * calculate the x-coordinate of a point on the curve. Passing the
+   * points' y-coordinates will calculate the y-coordinate of a point on
    * the curve.
    *
-   * The first parameter, `a`, is the coordinate of the first control point.
+   * The first parameter, `a`, is the coordinate of point p0.
    *
-   * The second and third parameters, `b` and `c`, are the coordinates of the
-   * anchor points.
+   * The second and third parameters, `b` and `c`, are the coordinates of
+   * points p1 and p2.
    *
-   * The fourth parameter, `d`, is the coordinate of the last control point.
+   * The fourth parameter, `d`, is the coordinate of point p3.
    *
-   * The fifth parameter, `t`, is the amount to interpolate along the curve. 0
-   * is the first anchor point, 1 is the second anchor point, and 0.5 is halfway
+   * The fifth parameter, `t`, is the amount to interpolate along the span
+   * from p1 to p2. `t = 0` is p1, `t = 1` is p2, and `t = 0.5` is halfway
    * between them.
    *
    * @method splinePoint
-   * @param {Number} a coordinate of first control point.
-   * @param {Number} b coordinate of first anchor point.
-   * @param {Number} c coordinate of second anchor point.
-   * @param {Number} d coordinate of second control point.
+   * @param {Number} a coordinate of point p0.
+   * @param {Number} b coordinate of point p1.
+   * @param {Number} c coordinate of point p2.
+   * @param {Number} d coordinate of point p3.
    * @param {Number} t amount to interpolate between 0 and 1.
    * @return {Number} coordinate of a point on the curve.
    *
@@ -710,11 +702,11 @@ function curves(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
-   * 
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *
+   *   // Exclude the ends-skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
-   *   // Set the coordinates for the curve's anchor and control points.
+   *
+   *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
    *   let y1 = 26;
    *   let x2 = 73;
@@ -761,11 +753,11 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background(200);
-   * 
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *
+   *   // Exclude the ends-skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
-   *   // Set the coordinates for the curve's anchor and control points.
+   *
+   *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
    *   let y1 = 26;
    *   let x2 = 73;
@@ -791,6 +783,7 @@ function curves(p5, fn){
    * </code>
    * </div>
    */
+
   fn.splinePoint = function(a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       t3 = t * t * t,
@@ -808,30 +801,27 @@ function curves(p5, fn){
    * Tangent lines skim the surface of a curve. A tangent line's slope equals
    * the curve's slope at the point where it intersects.
    *
-   * `splineTangent()` calculates coordinates along a tangent line using the
-   * spline curve's anchor and control points. It expects points in the same
-   * order as the <a href="#/p5/spline">spline()</a> function. `splineTangent()`
-   * works one axis at a time. Passing the anchor and control points'
-   * x-coordinates will calculate the x-coordinate of a point on the tangent
-   * line. Passing the anchor and control points' y-coordinates will calculate
-   * the y-coordinate of a point on the tangent line.
+   * `splineTangent()` calculates coordinates along a tangent line using four
+   * points p0, p1, p2, p3. It expects points in the same order as the
+   * <a href="#/p5/spline">spline()</a> function. `splineTangent()` works one
+   * axis at a time.Passing the points' x-coordinates returns the x-component of 
+   * the tangent vector; passing the points' y-coordinates returns the y-component.
+   * The first parameter, `a`, is the coordinate of point p0.
    *
-   * The first parameter, `a`, is the coordinate of the first control point.
+   * The second and third parameters, `b` and `c`, are the coordinates of
+   * points p1 and p2.
    *
-   * The second and third parameters, `b` and `c`, are the coordinates of the
-   * anchor points.
+   * The fourth parameter, `d`, is the coordinate of point p3.
    *
-   * The fourth parameter, `d`, is the coordinate of the last control point.
-   *
-   * The fifth parameter, `t`, is the amount to interpolate along the curve. 0
-   * is the first anchor point, 1 is the second anchor point, and 0.5 is halfway
+   * The fifth parameter, `t`, is the amount to interpolate along the span
+   * from p1 to p2. `t = 0` is p1, `t = 1` is p2, and `t = 0.5` is halfway
    * between them.
    *
    * @method splineTangent
-   * @param {Number} a coordinate of first control point.
-   * @param {Number} b coordinate of first anchor point.
-   * @param {Number} c coordinate of second anchor point.
-   * @param {Number} d coordinate of second control point.
+   * @param {Number} a coordinate of point p0.
+   * @param {Number} b coordinate of point p1.
+   * @param {Number} c coordinate of point p2.
+   * @param {Number} d coordinate of point p3.
    * @param {Number} t amount to interpolate between 0 and 1.
    * @return {Number} coordinate of a point on the tangent line.
    *
@@ -843,10 +833,10 @@ function curves(p5, fn){
    *
    *   background(200);
    *
-   *   // Exclude the ends and skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
+   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
    * 
-   *   // Set the coordinates for the curve's anchor and control points.
+   *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
    *   let y1 = 26;
    *   let x2 = 73;
