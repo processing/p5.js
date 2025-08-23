@@ -2117,10 +2117,8 @@ function customShapes(p5, fn) {
    *   noFill();
    *   beginShape();
    *   splineVertex(60, 76);
-   *   splineVertex(60, 76);
    *   splineVertex(133, 74);
    *   splineVertex(133, 111);
-   *   splineVertex(75, 115);
    *   splineVertex(75, 115);
    *   endShape();
    * }
