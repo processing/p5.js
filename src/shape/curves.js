@@ -489,7 +489,7 @@ function curves(p5, fn){
    * 
    * <div>
    * <code>
-   *    * function setup() {
+   * function setup() {
    *   createCanvas(200, 200);
    *   background(240);
    *   noFill();
