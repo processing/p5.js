@@ -67,23 +67,22 @@ class Element {
     // `_elements` array.  But when an element lives inside an off-screen
     // `p5.Graphics` layer, `this._pInst` is that wrapper Graphics object
     // instead.  The wrapper keeps a back–pointer (`_pInst`) to the real
-    // sketch but has no `_elements` array of its own. 
-   
-   let sketch = this._pInst;
-  
+    // sketch but has no `_elements` array of its own.
+
+    let sketch = this._pInst;
+
     // If `sketch` doesn’t own an `_elements` array it means
-    // we’re still at the graphics-layer “wrapper”.  
+    // we’re still at the graphics-layer “wrapper”.
     // Jump one level up to the real p5 sketch stored in sketch._pInst.
 
     if (sketch && !sketch._elements && sketch._pInst) {
-          sketch = sketch._pInst;          // climb one level up
+      sketch = sketch._pInst;          // climb one level up
     }
-    
+
     if (sketch && sketch._elements) {  // only if the array exists
       const i = sketch._elements.indexOf(this);
       if (i !== -1) sketch._elements.splice(i, 1);
     }
-     
 
     // deregister events
     for (let ev in this._events) {
@@ -1865,7 +1864,7 @@ class Element {
     return this;
   }
 
-    /**
+  /**
    * Calls a function when a file is dragged over the element.
    *
    * Calling `myElement.dragOver(false)` disables the function.
@@ -2416,7 +2415,10 @@ class Element {
       Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
-    ctx.elt.addEventListener(ev, f, false);
+    ctx.elt.addEventListener(ev, f, {
+      capture: false,
+      signal: ctx._pInst._removeSignal
+    });
     ctx._events[ev] = f;
   }
 
