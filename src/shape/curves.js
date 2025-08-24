@@ -486,6 +486,29 @@ function curves(p5, fn){
    * @chainable
    *
    * @example
+   * 
+   * <div>
+   * <code>
+   *    * function setup() {
+   *   createCanvas(200, 200);
+   *   background(240);
+   *   noFill();
+   *
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(40, 60, 100, 40, 120, 120, 60, 140);
+   *
+   *   strokeWeight(5);
+   *   point(40, 60);
+   *   point(100, 40);
+   *   point(120, 120);
+   *   point(60, 140);
+   *
+   *   describe('A black spline passes smoothly through four points');
+   * }
+   * </code>
+   * </div>
+   * 
    * <div>
    * <code>
    * function setup() {
@@ -703,8 +726,6 @@ function curves(p5, fn){
    *
    *   background(200);
    *
-   *   // Exclude the ends-skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
-   *   splineProperty('ends', EXCLUDE);
    *
    *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
@@ -753,9 +774,6 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background(200);
-   *
-   *   // Exclude the ends-skip the outer spans (p0->p1 and p2->p3) so only the middle span (p1->p2) is drawn.
-   *   splineProperty('ends', EXCLUDE);
    *
    *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
@@ -828,14 +846,54 @@ function curves(p5, fn){
    * @example
    * <div>
    * <code>
+   *    * function setup() {
+   *   createCanvas(220, 160);
+   *   describe('A black spline on a gray canvas. A red dot moves along the curve on its own. A short line shows the tangent direction at the dot.');
+   * }
+   *
+   * function draw() {
+   *   background(240);
+   *
+   *   const x1 = 15, y1 = 40;
+   *   const x2 = 90, y2 = 25;
+   *   const x3 = 95, y3 = 95;
+   *   const x4 = 30, y4 = 110;
+   *
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(x1, y1, x2, y2, x3, y3, x4, y4);
+   *
+   *   const t = 0.5 + 0.5 * sin(frameCount * 0.03);
+   *
+   *   const px = splinePoint(x1, x2, x3, x4, t);
+   *   const py = splinePoint(y1, y2, y3, y4, t);
+   *
+   *   let tx = splineTangent(x1, x2, x3, x4, t);
+   *   let ty = splineTangent(y1, y2, y3, y4, t);
+   *
+   *   const m = Math.hypot(tx, ty) || 1;
+   *   tx = (tx / m) * 16;
+   *   ty = (ty / m) * 16;
+   *
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   line(px, py, px + tx, py + ty);
+   *
+   *   noStroke();
+   *   fill('red');
+   *   circle(px, py, 7);
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
    *
-   *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
-   *   splineProperty('ends', EXCLUDE);
-   * 
    *   // Set the coordinates for the curve's four points (p0, p1, p2, p3).
    *   let x1 = 5;
    *   let y1 = 26;
