@@ -846,7 +846,7 @@ function curves(p5, fn){
    * @example
    * <div>
    * <code>
-   *    * function setup() {
+   * function setup() {
    *   createCanvas(220, 160);
    *   describe('A black spline on a gray canvas. A red dot moves along the curve on its own. A short line shows the tangent direction at the dot.');
    * }
