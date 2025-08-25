@@ -822,7 +822,7 @@ function curves(p5, fn){
    * `splineTangent()` calculates coordinates along a tangent line using four
    * points p0, p1, p2, p3. It expects points in the same order as the
    * <a href="#/p5/spline">spline()</a> function. `splineTangent()` works one
-   * axis at a time.Passing the points' x-coordinates returns the x-component of 
+   * axis at a time. Passing the points' x-coordinates returns the x-component of 
    * the tangent vector; passing the points' y-coordinates returns the y-component.
    * The first parameter, `a`, is the coordinate of point p0.
    *
@@ -847,7 +847,7 @@ function curves(p5, fn){
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(220, 160);
+   *   createCanvas(120, 120);
    *   describe('A black spline on a gray canvas. A red dot moves along the curve on its own. A short line shows the tangent direction at the dot.');
    * }
    *
