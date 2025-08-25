@@ -1670,6 +1670,7 @@ function customShapes(p5, fn) {
    * It works the same way with any number of points.
    * 
    * 
+   * 
    * ```js
    * beginShape();
    *
@@ -1684,6 +1685,8 @@ function customShapes(p5, fn) {
    *
    * endShape();
    * ```
+   * 
+   * <img src="assets/openCurveSpline.png"></img>
    * 
    * 
    * Passing in `CLOSE` to `endShape()` closes the spline smoothly.
@@ -1701,6 +1704,9 @@ function customShapes(p5, fn) {
    * 
    * endShape(CLOSE);
    * ```
+   * 
+   * <img src="assets/closeCurveSpline.png"></img>
+   * 
    * 
    * By default (`ends: INCLUDE`), the curve passes through
    * all the points you add with `splineVertex()`, similar to 
@@ -1913,13 +1919,11 @@ function customShapes(p5, fn) {
    * You can also set it to `EXCLUDE` i.e. `splineProperty('ends', EXCLUDE)`, 
    * which makes the spline pass through all points except the endpoints.
    * 
-   * INCLUDE case will have the spline passing through
+   * `INCLUDE` case will have the spline passing through
    * all points, like this:
    * 
-   * // TODO: add images.
-   * 
    * ```js
-   * splineProperty('ends', INCLUDE);
+   * splineProperty('ends', INCLUDE); // no need to set this, as it is the default
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    * 
    * point(25, 46);
@@ -1927,10 +1931,14 @@ function customShapes(p5, fn) {
    * point(93, 81);
    * point(35, 85);
    * ```
+   * 
+   * <img src="assets/includeSpline.png"></img>
+   * 
    * 
    * EXCLUDE case will have the spline passing through
    * the middle points, like this: 
    * 
+   * 
    * ```js
    * splineProperty('ends', INCLUDE);
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
@@ -1940,6 +1948,8 @@ function customShapes(p5, fn) {
    * point(93, 81);
    * point(35, 85);
    * ```
+   * 
+   * <img src="assets/excludeSpline.png"></img>
    * 
    * By default, the tightness property is set to `0`, 
    * producing a smooth curve that passes evenly through 
@@ -1971,9 +1981,9 @@ function customShapes(p5, fn) {
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    * ```
    * 
-   * In all cases, the splines in p5.js are cardinal splines.
+   * In all cases, the splines in p5.js are <a href = "https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline">cardinal splines</a>.
    * When tightness is 0, these splines are often known as 
-   * Catmull-Rom splines. (TODO: add links.)
+   * <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline">Catmull-Rom splines</a>
    * 
    * @method splineProperty
    * @param {String} property
@@ -1989,11 +1999,6 @@ function customShapes(p5, fn) {
    * function setup() {
    *   createCanvas(100, 100);
    *
-   *   describe('A black spline forms a sideways U shape through 
-   *   four points. The spline passes through the points more loosely 
-   *   as the mouse moves left of center (negative tightness), and more 
-   *   tightly as it moves right of center (positive tightness). The 
-   *   tightness is displayed at the bottom.');
    * }
    *
    * function draw() {
@@ -2027,6 +2032,7 @@ function customShapes(p5, fn) {
    *   noStroke();
    *   textSize(10);
    *   text(`tightness: ${round(t, 1)}`, 15, 90);
+   *   describe('A black spline forms a sideways U shape through four points. The spline passes through the points more loosely as the mouse moves left of center (negative tightness), and more tightly as it moves right of center (positive tightness). The tightness is displayed at the bottom.');
    * }
    * </code>
    * </div>
