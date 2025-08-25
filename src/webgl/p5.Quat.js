@@ -15,7 +15,7 @@ class Quat {
      * Returns a Quaternion for the
      * axis angle representation of the rotation
      *
-     * @method fromAxisAngle
+     * @private
      * @param {Number} [angle] Angle with which the points needs to be rotated
      * @param {Number} [x] x component of the axis vector
      * @param {Number} [y] y component of the axis vector
@@ -34,7 +34,7 @@ class Quat {
 
   /**
      * Multiplies a quaternion with other quaternion.
-     * @method mult
+     * @private
      * @param  {p5.Quat} [quat] quaternion to multiply with the quaternion calling the method.
      * @chainable
      */
@@ -55,6 +55,7 @@ class Quat {
    * the multiplication can be simplified to the below formula.
    * This was taken from the below stackexchange link
    * https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion/50545#50545
+   * @private
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
    */
   rotateVector(p) {
@@ -68,7 +69,7 @@ class Quat {
      * Rotates the Quaternion by the quaternion passed
      * which contains the axis of roation and angle of rotation
      *
-     * @method rotateBy
+     * @private
      * @param {p5.Quat} [axesQuat] axis quaternion which contains
      *  the axis of rotation and angle of rotation
      * @chainable
