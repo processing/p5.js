@@ -7091,6 +7091,15 @@
         "promotion",
         "tutorial"
       ]
+    },
+    {
+      "login": "kangjung",
+      "name": "JUNGMIN KANG",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28768760?v=4",
+      "profile": "https://kangjung.github.io/game/index.html",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",

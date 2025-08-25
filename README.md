@@ -1176,6 +1176,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Iron-56"><img src="https://avatars.githubusercontent.com/u/79905912?v=4?s=64" width="64px;" alt="Nandu Krishna"/><br /><sub><b>Nandu Krishna</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AIron-56" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Iron-56" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://dorinetipo.vercel.app/"><img src="https://avatars.githubusercontent.com/u/105214329?v=4?s=64" width="64px;" alt="Dorine Tipo "/><br /><sub><b>Dorine Tipo </b></sub></a><br /><a href="#blog-MissTipo" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/commits?author=MissTipo" title="Code">💻</a> <a href="#eventOrganizing-MissTipo" title="Event Organizing">📋</a> <a href="#research-MissTipo" title="Research">🔬</a> <a href="#promotion-MissTipo" title="Promotion">📣</a> <a href="#tutorial-MissTipo" title="Tutorials">✅</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://kangjung.github.io/game/index.html"><img src="https://avatars.githubusercontent.com/u/28768760?v=4?s=64" width="64px;" alt="JUNGMIN KANG"/><br /><sub><b>JUNGMIN KANG</b></sub></a><br /><a href="#translation-kangjung" title="Translation">🌍</a></td>
+    </tr>
   </tbody>
 </table>
 
