@@ -7091,6 +7091,15 @@
         "promotion",
         "tutorial"
       ]
+    },
+    {
+      "login": "hana-cho",
+      "name": "Hana Cho",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51312538?v=4",
+      "profile": "https://github.com/hana-cho",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
