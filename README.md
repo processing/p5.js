@@ -1178,6 +1178,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://kangjung.github.io/game/index.html"><img src="https://avatars.githubusercontent.com/u/28768760?v=4?s=64" width="64px;" alt="JUNGMIN KANG"/><br /><sub><b>JUNGMIN KANG</b></sub></a><br /><a href="#translation-kangjung" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/AlzaAlzaki76"><img src="https://avatars.githubusercontent.com/u/202525131?v=4?s=64" width="64px;" alt="Alza Alzaki"/><br /><sub><b>Alza Alzaki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AlzaAlzaki76" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
