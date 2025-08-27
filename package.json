@@ -69,20 +69,62 @@
   "license": "LGPL-2.1",
   "browser": "./lib/p5.min.js",
   "exports": {
-    ".": "./dist/app.js",
-    "./core": "./dist/core/main.js",
-    "./shape": "./dist/shape/index.js",
-    "./accessibility": "./dist/accessibility/index.js",
-    "./friendlyErrors": "./dist/core/friendlyErrors/index.js",
-    "./data": "./dist/data/index.js",
-    "./dom": "./dist/dom/index.js",
-    "./events": "./dist/events/index.js",
-    "./image": "./dist/image/index.js",
-    "./io": "./dist/io/index.js",
-    "./math": "./dist/math/index.js",
-    "./utilities": "./dist/utilities/index.js",
-    "./webgl": "./dist/webgl/index.js",
-    "./type": "./dist/type/index.js"
+    ".": {
+      "default": "./dist/app.js",
+      "types": "./types/p5.d.ts"
+    },
+    "./core": {
+      "default": "./dist/core/main.js",
+      "types": "./types/core/main.d.ts"
+    },
+    "./shape": {
+      "default": "./dist/shape/index.js",
+      "types": "./types/shape/index.d.ts"
+    },
+    "./accessibility": {
+      "default": "./dist/accessibility/index.js",
+      "types": "./types/accessibility/index.d.ts"
+    },
+    "./friendly_errors": {
+      "default": "./dist/core/friendly_errors/index.js",
+      "types": "./types/core/friendly_errors/index.d.ts"
+    },
+    "./data": {
+      "default": "./dist/data/index.js",
+      "types": "./types/data/index.d.ts"
+    },
+    "./dom": {
+      "default": "./dist/dom/index.js",
+      "types": "./types/dom/index.d.ts"
+    },
+    "./events": {
+      "default": "./dist/events/index.js",
+      "types": "./types/events/index.d.ts"
+    },
+    "./image": {
+      "default": "./dist/image/index.js",
+      "types": "./types/image/index.d.ts"
+    },
+    "./io": {
+      "default": "./dist/io/index.js",
+      "types": "./types/io/index.d.ts"
+    },
+    "./math": {
+      "default": "./dist/math/index.js",
+      "types": "./types/math/index.d.ts"
+    },
+    "./utilities": {
+      "default": "./dist/utilities/index.js",
+      "types": "./types/utilities/index.d.ts"
+    },
+    "./webgl": {
+      "default": "./dist/webgl/index.js",
+      "types": "./types/webgl/index.d.ts"
+    },
+    "./type": {
+      "default": "./dist/type/index.js",
+      "types": "./types/type/index.d.ts"
+    }
   },
   "files": [
     "dist/**",
@@ -111,6 +153,5 @@
     "workerDirectory": [
       "test"
     ]
-  },
-  "types": "./types/p5.d.ts"
+  }
 }
