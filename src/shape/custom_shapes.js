@@ -1647,7 +1647,6 @@ function customShapes(p5, fn) {
   };
 
 
- // TODO (add image of how the curves looks like).
  
 /**
    * Connects points with a smooth curve (a spline).
