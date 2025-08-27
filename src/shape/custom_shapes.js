@@ -1647,67 +1647,73 @@ function customShapes(p5, fn) {
   };
 
 
+ 
 /**
-   * Adds a spline curve segment to a custom shape.
+   * Connects points with a smooth curve (a spline).
    *
-   * `splineVertex()` adds a curved segment to custom shapes. The spline curves
-   * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
-   * between the <a href="#/p5/beginShape">beginShape()</a> and
+   * `splineVertex()` adds a curved segment to custom shapes. 
+   * The curve it creates follows the same rules as the ones 
+   * made with the <a href="#/p5/spline">spline()</a> function.
+   * `splineVertex()` must be called between the 
+   * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
    * Spline curves can form shapes and curves that slope gently. They’re like
-   * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `splineVertex()` must be called at
-   * least four times between
+   * cables that are attached to a set of points. `splineVertex()` draws a smooth 
+   * curve through the points you give it.
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
    *
+   * 
+   * If you provide three points, the spline will pass through them. 
+   * It works the same way with any number of points.
+   * 
+   * 
+   * 
    * ```js
    * beginShape();
    *
-   * // Add the first control point.
-   * splineVertex(84, 91);
+   * // Add the first point.
+   * splineVertex(25, 80);
    *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
+   * // Add the second point.
+   * splineVertex(20, 30);
    *
-   * // Add the second control point.
-   * splineVertex(32, 91);
+   * // Add the last point.
+   * splineVertex(85, 60);
    *
    * endShape();
    * ```
-   *
-   * The code snippet above would only draw the curve between the anchor points,
-   * similar to the <a href="#/p5/curve">curve()</a> function. The segments
-   * between the control and anchor points can be drawn by calling
-   * `splineVertex()` with the coordinates of the control points:
-   *
+   * 
+   * <img src="assets/openCurveSpline.png"></img>
+   * 
+   * 
+   * Passing in `CLOSE` to `endShape()` closes the spline smoothly.
    * ```js
    * beginShape();
-   *
-   * // Add the first control point and draw a segment to it.
-   * splineVertex(84, 91);
-   * splineVertex(84, 91);
-   *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
-   *
-   * // Add the second control point.
-   * splineVertex(32, 91);
-   *
-   * // Uncomment the next line to draw the segment to the second control point.
-   * // splineVertex(32, 91);
-   *
-   * endShape();
+   * 
+   * // Add the first point.
+   * splineVertex(25, 80);
+   * 
+   * // Add the second point.
+   * splineVertex(20, 30);
+   * 
+   * // Add the second point.
+   * splineVertex(85, 60);
+   * 
+   * endShape(CLOSE);
    * ```
-   *
-   * The first two parameters, `x` and `y`, set the vertex’s location. For
-   * example, calling `splineVertex(10, 10)` adds a point to the curve at
-   * `(10, 10)`.
-   *
+   * 
+   * <img src="assets/closeCurveSpline.png"></img>
+   * 
+   * 
+   * By default (`ends: INCLUDE`), the curve passes through
+   * all the points you add with `splineVertex()`, similar to 
+   * the <a href="#/p5/spline">spline()</a> function. To draw only
+   * the middle span p1->p2 (skipping p0->p1 and p2->p3), set 
+   * `splineProperty('ends', EXCLUDE)`. You don’t need to duplicate
+   * vertices to draw those spans.
+   * 
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
    * `splineVertex()` has three arguments because each point has x-, y-, and
    * z-coordinates. By default, the vertex’s z-coordinate is set to 0.
@@ -1725,46 +1731,29 @@ function customShapes(p5, fn) {
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
+   * 
+   *   background(220);
    *   noFill();
    *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
+   * 
    *   beginShape();
-   *
-   *   // Add the first control point.
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
+   *   splineVertex(25, 80);
+   *   splineVertex(20, 30);
+   *   splineVertex(85, 60);
    *   endShape();
-   *
-   *   // Style the anchor and control points.
+   * 
    *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
    *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
+   * 
+   *   point(25, 80);
+   *   point(20, 30);
+   *   point(85, 60);
+   * 
    *   describe(
-   *     'A black curve drawn on a gray background. The curve has black dots at its ends. Two red dots appear near the bottom of the canvas.'
+   *     'On a gray background, a black spline passes through three marked points.'
    *   );
    * }
+   * 
    * </code>
    * </div>
    *
@@ -1772,204 +1761,63 @@ function customShapes(p5, fn) {
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
+   *   background(220);
    *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
    *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
+   *   splineVertex(25, 80);
+   *   splineVertex(20, 30);
+   *   splineVertex(85, 60);
+   *   endShape(CLOSE);
    *
    *   describe(
-   *     'A black curve drawn on a gray background. The curve passes through one red dot and two black dots. Another red dot appears near the bottom of the canvas.'
+   *     'On a gray background, a closed black spline with a white interior forms a triangular shape with smooth corners.'
    *   );
    * }
+   * 
    * </code>
    * </div>
    *
    * <div>
    * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
-   *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click the mouse near the red dot in the bottom-left corner
-   * // and drag to change the curve's shape.
-   *
-   * let x1 = 32;
-   * let y1 = 91;
-   * let isChanging = false;
+   * let ringInnerRadius, ringWidth;
+   * let radius, dRadius;
+   * let theta, dTheta;
+   * let time, dTime;
+   * let vertexCount, unit, offset;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(400, 400);
+   *
+   *   vertexCount = 15;
+   *   unit = createVector(1, 0);
+   *   dTheta = TAU / vertexCount;
+   *   dTime = 0.004;
+   *
+   *   ringInnerRadius = 25;
+   *   ringWidth = 5 * ringInnerRadius;
+   *
+   *   offset = width;
    *
    *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
+   *     'A white blob with a black outline changes its shape over time.'
    *   );
    * }
    *
    * function draw() {
-   *   background(200);
+   *   background(220);
+   *   strokeWeight(2);
+   *   translate(width / 2, height / 2);
    *
-   *   // Style the shape.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
+   *   time = dTime * frameCount;
    *
-   *   // Start drawing the shape.
    *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(x1, y1);
-   *   splineVertex(x1, y1);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(x1, y1);
-   *   point(84, 91);
-   * }
-   *
-   * // Start changing the first control point if the user clicks near it.
-   * function mousePressed() {
-   *   if (dist(mouseX, mouseY, x1, y1) < 20) {
-   *     isChanging = true;
+   *   for (let i = 0; i < vertexCount; i++) {
+   *     unit.rotate(dTheta);
+   *     dRadius = noise(offset + unit.x, offset + unit.y, time) * ringWidth;
+   *     radius = ringInnerRadius + dRadius;
+   *     splineVertex(radius * unit.x, radius * unit.y);
    *   }
-   * }
-   *
-   * // Stop changing the first control point when the user releases the mouse.
-   * function mouseReleased() {
-   *   isChanging = false;
-   * }
-   *
-   * // Update the first control point while the user drags the mouse.
-   * function mouseDragged() {
-   *   if (isChanging === true) {
-   *     x1 = mouseX;
-   *     y1 = mouseY;
-   *   }
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   describe('A ghost shape drawn in white on a gray background.');
+   *   endShape(CLOSE);
    * }
    * </code>
    * </div>
@@ -2058,25 +1906,83 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Sets the property of a curve.
+   * Gets or sets a given spline property.
    * 
-   * For example, set tightness,
-   * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
-   * at 0 as default.
+   * Use `splineProperty()` to adjust the behavior of splines 
+   * created with `splineVertex()` or `spline()`. You can control
+   * two key aspects of a spline: its end behavior (`ends`) and
+   * its curvature (`tightness`).
    * 
-   * Spline curves are like cables that are attached to a set of points.
-   * Adjusting tightness adjusts how tightly the cable is
-   * attached to the points. The parameter, tightness, determines
-   * how the curve fits to the vertex points. By default,
-   * tightness is set to 0. Setting tightness to 1, as in
-   * `splineProperty('tightness', 1)`, connects the curve's points
-   * using straight lines. Values in the range from –5 to 5
-   * deform curves while leaving them recognizable.
+   * By default, the ends property is set to `INCLUDE`, which means
+   * the spline passes through every point, including the endpoints.
+   * You can also set it to `EXCLUDE` i.e. `splineProperty('ends', EXCLUDE)`, 
+   * which makes the spline pass through all points except the endpoints.
    * 
-   * This function can also be used to set 'ends' property
-   * (see also: the <a href="#/p5/curveDetail">curveDetail()</a> example),
-   * such as: `splineProperty('ends', EXCLUDE)` to exclude
-   * vertices, or `splineProperty('ends', INCLUDE)` to include them.
+   * `INCLUDE` case will have the spline passing through
+   * all points, like this:
+   * 
+   * ```js
+   * splineProperty('ends', INCLUDE); // no need to set this, as it is the default
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * ```
+   * 
+   * <img src="assets/includeSpline.png"></img>
+   * 
+   * 
+   * EXCLUDE case will have the spline passing through
+   * the middle points, like this: 
+   * 
+   * 
+   * ```js
+   * splineProperty('ends', INCLUDE);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * ```
+   * 
+   * <img src="assets/excludeSpline.png"></img>
+   * 
+   * By default, the tightness property is set to `0`, 
+   * producing a smooth curve that passes evenly through 
+   * the vertices. Negative values make the curve looser,
+   * while positive values make it tighter. Common values 
+   * range between -1 and 1, though values outside this 
+   * range can also be used for different effects.
+   * 
+   * For example, To set tightness, use `splineProperty('tightness', t)`, 
+   * (default: t = 0).
+   * 
+   * Here's the example showing negetive value of tightness,
+   * which creates a rounder bulge:
+   * 
+   * ```js
+   * splineProperty('tightness', -5)
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * ```
+   * 
+   * Here's the example showing positive value of tightness,
+   * which makes the curve tighter and more angular:
+   * 
+   * ```js
+   * splineProperty('tightness', 5)
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * ```
+   * 
+   * In all cases, the splines in p5.js are <a href = "https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline">cardinal splines</a>.
+   * When tightness is 0, these splines are often known as 
+   * <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline">Catmull-Rom splines</a>
    * 
    * @method splineProperty
    * @param {String} property
@@ -2086,33 +1992,111 @@ function customShapes(p5, fn) {
    * <div>
    * <code>
    * // Move the mouse left and right to see the curve change.
-   * 
+   *
+   * let t;
+   *
    * function setup() {
    *   createCanvas(100, 100);
-   *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
+   *
    * }
-   * 
+   *
    * function draw() {
-   *   background(200);
-   * 
-   *   // Set the curve's tightness using the mouse.
-   *   let t = map(mouseX, 0, 100, -5, 5, true);
+   *   background(240);
+   *
+   *   t = map(mouseX, 0, width, -5, 5, true);
    *   splineProperty('tightness', t);
-   * 
-   *   // Draw the curve.
+   *
    *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *
    *   beginShape();
    *   splineVertex(10, 26);
-   *   splineVertex(10, 26);
    *   splineVertex(83, 24);
+   *
    *   splineVertex(83, 61);
    *   splineVertex(25, 65);
-   *   splineVertex(25, 65);
    *   endShape();
+   *
+   *   push();
+   *   strokeWeight(5);
+   *   point(10, 26);
+   *   point(83, 24);
+   *   point(83, 61);
+   *   point(25, 65);
+   *   pop();
+   *
+   *   fill(0);
+   *   noStroke();
+   *   textSize(10);
+   *   text(`tightness: ${round(t, 1)}`, 15, 90);
+   *   describe('A black spline forms a sideways U shape through four points. The spline passes through the points more loosely as the mouse moves left of center (negative tightness), and more tightly as it moves right of center (positive tightness). The tightness is displayed at the bottom.');
+   * }
+   * </code>
+   * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   * createCanvas(360, 140);
+   * background(240);
+   * noFill();
+   * 
+   * // Right panel: ends = INCLUDE (all spans).
+   * push();
+   * translate(10, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * fill(30);
+   * textSize(11);
+   * text('ends: INCLUDE (all spans)', 8, 16);
+   * noFill();
+   * 
+   * splineProperty('ends', INCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * pop();
+   * 
+   * // Right panel: ends = EXCLUDE (middle only).
+   * push();
+   * translate(190, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * noStroke();
+   * fill(30);
+   * text('ends: EXCLUDE ', 18, 16);
+   * noFill();
+   * 
+   * splineProperty('ends', EXCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * 
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   *  pop();
+   * 
+   * describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
    * }
    * </code>
    * </div>
    */
+
   /**
    * @method splineProperty
    * @param {String} property
