@@ -380,7 +380,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const fesCodeReader = () => {
     //moveAhead will determine if a match is found outside
     //the setup and draw function. If a match is found then
-    //to prevent further potential reporting we will exit immidiately
+    //to prevent further potential reporting we will exit immediately
     let moveAhead = globalConstFuncCheck();
     if (moveAhead) return;
     let code = '';
