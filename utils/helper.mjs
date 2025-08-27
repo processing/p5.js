@@ -276,7 +276,7 @@ export function organizeData(data) {
 
   allData.forEach(entry => {
     const { module, submodule, forEntry } = getModuleInfo(entry);
-    const cassName = normalizeClassNam(forEntry || entry.memberof || 'p5');
+    const className = normalizeClassName(forEntry || entry.memberof || 'p5');
 
     switch (entry.kind) {
       case 'class':
@@ -293,7 +293,7 @@ export function organizeData(data) {
           extends: entry.tags?.find(tag => tag.title === 'extends')?.name || null
         }; break;
       case 'function':
-      case 'property':
+      case 'property': {
         const overloads = entry.overloads?.map(overload => ({
           params: overload.params,
           returns: overload.returns,
@@ -315,7 +315,9 @@ export function organizeData(data) {
           class: className,
           isStatic: entry.path?.[0]?.scope === 'static',
           overloads
-        }); break;
+        });
+        break;
+      }
       case 'constant':
       case 'typedef':
         organized.consts[entry.name] = {
@@ -326,7 +328,8 @@ export function organizeData(data) {
           module,
           submodule,
           class: forEntry || 'p5'
-        }; break;
+        };
+        break;
     }
   });
   return organized;
@@ -373,11 +376,12 @@ export function generateTypeFromTag(param) {
         .join(', ');
       return `${baseType}<${typeParams}>`;
     }
-    case 'UnionType':
+    case 'UnionType': {
       const unionTypes = param.type.elements
         .map(el => generateTypeFromTag({ type: el }))
         .join(' | ');
       return unionTypes;
+    }
     case 'OptionalType':
       return generateTypeFromTag({ type: param.type.expression });
     case 'AllLiteral':

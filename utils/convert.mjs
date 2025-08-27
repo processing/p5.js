@@ -517,13 +517,6 @@ function cleanUpClassItems(data) {
   const flattenOverloads = funcObj => {
     const result = {};
 
-    const processOverload = overload => {
-      if (overload.params) {
-        return Object.values(overload.params).map(param => processParam(param));
-      }
-      return overload;
-    };
-
     // To simplify `parameterData.json`, instead of having a separate field for
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
@@ -536,6 +529,13 @@ function cleanUpClassItems(data) {
         type = `...${type}[]`;
       }
       return type;
+    };
+
+    const processOverload = overload => {
+      if (overload.params) {
+        return Object.values(overload.params).map(param => processParam(param));
+      }
+      return overload;
     };
 
     // In some cases, even when the arguments are intended to mean different
