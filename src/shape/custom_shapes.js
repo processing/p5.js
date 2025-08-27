@@ -2013,10 +2013,9 @@ function customShapes(p5, fn) {
    *
    *   beginShape();
    *   splineVertex(10, 26);
-   *   splineVertex(10, 26);
    *   splineVertex(83, 24);
+   *
    *   splineVertex(83, 61);
-   *   splineVertex(25, 65);
    *   splineVertex(25, 65);
    *   endShape();
    *
