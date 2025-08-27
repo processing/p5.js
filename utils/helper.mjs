@@ -256,6 +256,7 @@ function generateDeclarationFile(items, organizedData) {
             }
           }
           break;
+        }
       }
     }
   });
