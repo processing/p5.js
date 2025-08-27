@@ -466,8 +466,8 @@ function curves(p5, fn){
    * Spline curves can form shapes and curves that slope gently. They’re like
    * cables that are attached to a set of points. By default (`ends: INCLUDE`),
    * the curve passes through all four points you provide, in order
-   * `p0(x1,y1)` -> `p1(x2,y2)` -> `p2(x3,y3)` -> `p3(x4,y4)`. Think of them simply as
-   * “points on the curve.” If you switch to `ends: EXCLUDE`, p0 and p3 act
+   * `p0(x1,y1)` -> `p1(x2,y2)` -> `p2(x3,y3)` -> `p3(x4,y4)`. Think of them as 
+   * points on a curve. If you switch to `ends: EXCLUDE`, p0 and p3 act
    * like control points and only the middle span `p1->p2` is drawn.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
