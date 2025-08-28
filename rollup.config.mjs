@@ -10,7 +10,7 @@ import alias from '@rollup/plugin-alias';
 import { globSync } from 'glob';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { rmSync, readdirSync } from 'node:fs';
+import { rmSync } from 'node:fs';
 
 const plugins = [
   commonjs(),
@@ -33,54 +33,6 @@ const bundleSize = (name, sourcemap) => {
     gzipSize: true,
     brotliSize: true,
     sourcemap
-  });
-};
-
-const modules =
-  readdirSync('./src', { withFileTypes: true })
-    .filter(dirent => {
-      return dirent.isDirectory() &&
-      !['color'].includes(dirent.name);
-    })
-    .map(dirent => dirent.name);
-const generateModuleBuild = () => {
-  return modules.map(mod => {
-    return {
-      input: `src/${mod}/index.js`,
-      output: [
-        {
-          file: `./lib/p5.${mod}.js`,
-          format: 'iife',
-          name: mod === 'core' ? 'p5' : undefined,
-          plugins: [
-            bundleSize(`p5.${mod}.js`)
-          ]
-        },
-        {
-          file: `./lib/p5.${mod}.min.js`,
-          format: 'iife',
-          name: mod === 'core' ? 'p5' : undefined,
-          sourcemap: 'hidden',
-          plugins: [
-            terser({
-              compress: {
-                global_defs: {
-                  IS_MINIFIED: true
-                }
-              },
-              format: {
-                comments: false
-              }
-            }),
-            bundleSize(`p5.${mod}.min.js`)
-          ]
-        }
-      ],
-      external: ['../core/main'],
-      plugins: [
-        ...plugins
-      ]
-    };
   });
 };
 
@@ -196,8 +148,5 @@ export default [
     },
     external: /node_modules/,
     plugins
-  },
-
-  // NOTE: comment to NOT build standalone modules
-  ...generateModuleBuild()
+  }
 ];

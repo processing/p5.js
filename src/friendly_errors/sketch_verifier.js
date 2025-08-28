@@ -24,17 +24,10 @@ const ignoreFunction = [
   'keyPressed',
   'keyReleased',
   'keyTyped',
-  'windowResized',
-  // 'name',
-  // 'parent',
-  // 'toString',
-  // 'print',
-  // 'stop',
-  // 'onended'
+  'windowResized'
 ];
 
 export const verifierUtils = {
-
   /**
    * Fetches the contents of a script element in the user's sketch.
    *
@@ -42,7 +35,7 @@ export const verifierUtils = {
    * @method fetchScript
    * @param {HTMLScriptElement} script
    * @returns {Promise<string>}
- */
+   */
   fetchScript: async function (script) {
     if (script.src) {
       try {

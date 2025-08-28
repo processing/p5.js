@@ -52,8 +52,6 @@ function fesCore(p5, fn){
   } else {
     let doFriendlyWelcome = false; // TEMP until we get it all working LM
 
-    // const errorTable = require('./browser_errors').default;
-
     // -- Borrowed from jQuery 1.11.3 --
     const class2type = {};
     const toString = class2type.toString;
