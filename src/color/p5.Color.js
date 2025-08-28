@@ -859,5 +859,6 @@ export default color;
 export { Color }
 
 if(typeof p5 !== 'undefined'){
-  color(p5, p5.prototype);
+  // color(p5, p5.prototype);
+  p5.registerAddon(color);
 }

@@ -10,7 +10,7 @@ import alias from '@rollup/plugin-alias';
 import { globSync } from 'glob';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { rmSync } from 'node:fs';
+import { rmSync, readdirSync } from 'node:fs';
 
 const plugins = [
   commonjs(),
@@ -36,22 +36,30 @@ const bundleSize = (name, sourcemap) => {
   });
 };
 
-const modules = ['math'];
+const modules =
+  readdirSync('./src', { withFileTypes: true })
+    .filter(dirent => {
+      return dirent.isDirectory() &&
+      !['color'].includes(dirent.name);
+    })
+    .map(dirent => dirent.name);
 const generateModuleBuild = () => {
-  return modules.map((module) => {
+  return modules.map(mod => {
     return {
-      input: `src/${module}/index.js`,
+      input: `src/${mod}/index.js`,
       output: [
         {
-          file: `./lib/p5.${module}.js`,
+          file: `./lib/p5.${mod}.js`,
           format: 'iife',
+          name: mod === 'core' ? 'p5' : undefined,
           plugins: [
-            bundleSize(`p5.${module}.js`)
+            bundleSize(`p5.${mod}.js`)
           ]
         },
         {
-          file: `./lib/p5.${module}.min.js`,
+          file: `./lib/p5.${mod}.min.js`,
           format: 'iife',
+          name: mod === 'core' ? 'p5' : undefined,
           sourcemap: 'hidden',
           plugins: [
             terser({
@@ -64,14 +72,7 @@ const generateModuleBuild = () => {
                 comments: false
               }
             }),
-            bundleSize(`p5.${module}.min.js`)
-          ]
-        },
-        {
-          file: `./lib/p5.${module}.esm.js`,
-          format: 'esm',
-          plugins: [
-            bundleSize(`p5.${module}.esm.js`)
+            bundleSize(`p5.${mod}.min.js`)
           ]
         }
       ],
@@ -83,13 +84,13 @@ const generateModuleBuild = () => {
   });
 };
 
-rmSync("./dist", {
+rmSync('./dist', {
   force: true,
   recursive: true
 });
 
 export default [
-  //// Library builds (IIFE and ESM) ////
+  // Library builds (IIFE and ESM) ////
   {
     input: 'src/app.js',
     output: [
@@ -137,7 +138,7 @@ export default [
       ...plugins
     ]
   },
-  //// Minified build ////
+  // Minified build ////
   {
     input: 'src/app.js',
     output: [
@@ -174,7 +175,7 @@ export default [
       ...plugins
     ]
   },
-  //// ESM source build ////
+  // ESM source build ////
   {
     input: Object.fromEntries(
       globSync('src/**/*.js').map(file => [
@@ -195,7 +196,8 @@ export default [
     },
     external: /node_modules/,
     plugins
-  }
-  // NOTE: comment to NOT build standalone math module
-  // ...generateModuleBuild()
+  },
+
+  // NOTE: comment to NOT build standalone modules
+  ...generateModuleBuild()
 ];

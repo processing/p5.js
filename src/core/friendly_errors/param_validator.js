@@ -124,15 +124,15 @@ function validateParams(p5, fn, lifecycles) {
    *
    * Example parameter data for function `background`:
    * "background": {
-        "overloads": [
-          ["p5.Color"],
-          ["String", "Number?"],
-          ["Number", "Number?"],
-          ["Number", "Number", "Number", "Number?"],
-          ["Number[]"],
-          ["p5.Image", "Number?"]
-        ]
-      }
+   *    "overloads": [
+   *      ["p5.Color"],
+   *      ["String", "Number?"],
+   *      ["Number", "Number?"],
+   *      ["Number", "Number", "Number", "Number?"],
+   *      ["Number[]"],
+   *      ["p5.Image", "Number?"]
+   *    ]
+   *  }
    * Where each array in `overloads` represents a set of valid overloaded
    * parameters, and `?` is a shorthand for `Optional`.
    *
@@ -174,6 +174,8 @@ function validateParams(p5, fn, lifecycles) {
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
       else if (/^p5\.[a-zA-Z0-9]+$/.exec(baseType) || baseType === 'p5') {
         const className = baseType.substring(baseType.indexOf('.') + 1);
+        // NOTE: Will need to refactor to account for classes not imported
+        if(!p5Constructors[className]) return z.any();
         typeSchema = z.instanceof(p5Constructors[className]);
       }
       // For primitive types and web API objects.
@@ -294,7 +296,7 @@ function validateParams(p5, fn, lifecycles) {
     return overloadSchemas.length === 1
       ? overloadSchemas[0]
       : z.union(overloadSchemas);
-  }
+  };
 
   /**
    * Finds the closest schema to the input arguments.
@@ -373,7 +375,7 @@ function validateParams(p5, fn, lifecycles) {
     });
 
     return closestSchema;
-  }
+  };
 
   /**
    * Prints a friendly error message after parameter validation, if validation
@@ -499,7 +501,7 @@ function validateParams(p5, fn, lifecycles) {
       console.log(message);
     }
     return message;
-  }
+  };
 
   /**
    * Runs parameter validation by matching the input parameters to Zod schemas
