@@ -10,7 +10,7 @@ import accessibility from '../accessibility';
 accessibility(p5);
 
 // FES
-import friendlyErrors from './friendly_errors';
+import friendlyErrors from '../friendly_errors';
 friendlyErrors(p5);
 
 import { waitForDocumentReady, waitingForTranslator, _globalInit } from './init';

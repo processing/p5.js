@@ -1,6 +1,6 @@
 import { parse } from 'acorn';
 import { simple as walk } from 'acorn-walk';
-import * as constants from '../constants';
+import * as constants from '../core/constants';
 
 // List of functions to ignore as they either are meant to be re-defined or
 // generate false positive outputs.

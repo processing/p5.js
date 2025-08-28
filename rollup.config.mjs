@@ -169,7 +169,7 @@ export default [
     plugins: [
       alias({
         entries: [
-          { find: './core/friendly_errors', replacement: './core/noop' }
+          { find: './friendly_errors', replacement: './core/noop' }
         ]
       }),
       ...plugins

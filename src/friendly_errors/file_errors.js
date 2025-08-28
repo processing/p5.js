@@ -2,7 +2,7 @@
  * @for p5
  * @requires core
  */
-import { translator } from '../internationalization';
+import { translator } from '../core/internationalization';
 
 function fileErrors(p5, fn){
   // mapping used by `_friendlyFileLoadError`
