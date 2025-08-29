@@ -6,8 +6,6 @@
  * @requires constants
  */
 
-import * as constants from '../core/constants';
-
 function pointer(p5, fn){
   /**
    * A `Number` system variable that tracks the mouse's horizontal movement.
@@ -749,7 +747,7 @@ function pointer(p5, fn){
     center: false
   };
 
-   /**
+  /**
    * An `Array` of all the current touch points on a touchscreen device.
    *
    * The `touches` array is empty by default. When the user touches their
@@ -832,8 +830,8 @@ function pointer(p5, fn){
    * </code>
    * </div>
    */
-   fn.touches = [];
-   fn._activePointers = new Map();
+  fn.touches = [];
+  fn._activePointers = new Map();
 
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -900,13 +898,13 @@ function pointer(p5, fn){
       const sx = canvas.scrollWidth / this.width || 1;
       const sy = canvas.scrollHeight / this.height || 1;
 
-      if (e.pointerType == 'touch') {
-          const touches = [];
-          for (const touch of this._activePointers.values()) {
-            touches.push(getTouchInfo(canvas, sx, sy, touch));
-          }
-          this.touches = touches;
-      } 
+      if (e.pointerType === 'touch') {
+        const touches = [];
+        for (const touch of this._activePointers.values()) {
+          touches.push(getTouchInfo(canvas, sx, sy, touch));
+        }
+        this.touches = touches;
+      }
 
       const mousePos = getMouseInfo(canvas, sx, sy, e);
       this.movedX = e.movementX || 0;
@@ -916,12 +914,12 @@ function pointer(p5, fn){
       this.winMouseX = mousePos.winX;
       this.winMouseY = mousePos.winY;
 
-       if (!this._hasMouseInteracted) {
-          this._updateMouseCoords();
-          this._hasMouseInteracted = true;
-       }
+      if (!this._hasMouseInteracted) {
+        this._updateMouseCoords();
+        this._hasMouseInteracted = true;
+      }
     }
- };
+  };
 
   fn._updateMouseCoords = function() {
     this.pmouseX = this.mouseX;
@@ -934,36 +932,39 @@ function pointer(p5, fn){
   function getMouseInfo(canvas, sx, sy, evt) {
     const rect = canvas.getBoundingClientRect();
     return {
-       x: (evt.clientX - rect.left) / sx,
-       y: (evt.clientY - rect.top) / sy,
-       winX: evt.clientX,
-       winY: evt.clientY,
+      x: (evt.clientX - rect.left) / sx,
+      y: (evt.clientY - rect.top) / sy,
+      winX: evt.clientX,
+      winY: evt.clientY
     };
- }
+  }
 
- function getTouchInfo(canvas, sx, sy, touch) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-     x: (touch.clientX - rect.left) / sx,
-     y: (touch.clientY - rect.top) / sy,
-     winX: touch.clientX,
-     winY: touch.clientY,
-     id: touch.pointerId,
+  function getTouchInfo(canvas, sx, sy, touch) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (touch.clientX - rect.left) / sx,
+      y: (touch.clientY - rect.top) / sy,
+      winX: touch.clientX,
+      winY: touch.clientY,
+      id: touch.pointerId
+    };
+  }
+
+  fn._setMouseButton = function(e) {
+    // Check all active touches to determine button states
+    this.mouseButton.left = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 1) !== 0
+      );
+    this.mouseButton.center = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 4) !== 0
+      );
+    this.mouseButton.right = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 2) !== 0
+      );
   };
-}
-
-fn._setMouseButton = function(e) {
-  // Check all active touches to determine button states
-  this.mouseButton.left = Array.from(this._activePointers.values()).some(touch => 
-    (touch.buttons & 1) !== 0
-  );
-  this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 4) !== 0
-  );
-  this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 2) !== 0
-  );
-};
 
   /**
    * A function that's called when the mouse moves.
@@ -1144,19 +1145,18 @@ fn._setMouseButton = function(e) {
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
-    
 
-      if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
-        executeDefault = context.mouseMoved(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
-      } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
-        executeDefault = context.mouseDragged(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
+    if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
+      executeDefault = context.mouseMoved(e);
+      if (executeDefault === false) {
+        e.preventDefault();
       }
+    } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
+      executeDefault = context.mouseDragged(e);
+      if (executeDefault === false) {
+        e.preventDefault();
+      }
+    }
   };
 
   /**
@@ -1315,7 +1315,7 @@ fn._setMouseButton = function(e) {
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } 
+    }
   };
 
   /**
@@ -1470,7 +1470,7 @@ fn._setMouseButton = function(e) {
     this._setMouseButton(e);
 
     this._updatePointerCoords(e);
-   
+
     if (typeof context.mouseReleased === 'function') {
       executeDefault = context.mouseReleased(e);
       if (executeDefault === false) {
