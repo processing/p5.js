@@ -1,7 +1,6 @@
-import { readdirSync } from 'node:fs';
+import { readdirSync, mkdirSync, rmSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { rollup } from 'rollup';
-
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
@@ -10,66 +9,75 @@ import replace from '@rollup/plugin-replace';
 import pkg from './package.json' with { type: 'json' };
 import terser from '@rollup/plugin-terser';
 
-const plugins = [
-  commonjs(),
-  nodeResolve(),
-  json(),
-  string({
-    include: 'src/webgl/shaders/**/*'
-  }),
-  replace({
-    values: {
-      'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
-    },
-    preventAssignment: true
-  })
-];
-
+const coreModules = ['accessibility', 'color', 'friendly_errors'];
 const modules =
   readdirSync('./src', { withFileTypes: true })
     .filter(dirent => {
       return dirent.isDirectory() &&
-      !['color'].includes(dirent.name);
+      !coreModules.includes(dirent.name);
     })
     .map(dirent => dirent.name);
 
-const builds = modules.map(mod => {
-  const inputOptions = {
-    input: `src/${mod}/index.js`,
-    plugins
-  };
+await buildModules(modules);
 
-  const outputOptions = [
-    {
-      file: `./lib/p5.${mod}.js`,
-      format: 'iife',
-      name: mod === 'core' ? 'p5' : undefined
-    },
-    {
-      file: `./lib/p5.${mod}.min.js`,
-      format: 'iife',
-      name: mod === 'core' ? 'p5' : undefined,
-      sourcemap: 'hidden',
-      plugins: [
-        terser({
-          compress: {
-            global_defs: {
-              IS_MINIFIED: true
-            }
-          },
-          format: {
-            comments: false
-          }
-        })
-      ]
-    }
+// Build modules given by array of module name strings
+export async function buildModules(modules){
+  const plugins = [
+    commonjs(),
+    nodeResolve(),
+    json(),
+    string({
+      include: 'src/webgl/shaders/**/*'
+    }),
+    replace({
+      values: {
+        'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+      },
+      preventAssignment: true
+    })
   ];
 
-  return build(inputOptions, outputOptions);
-});
+  const builds = modules.map(mod => {
+    const inputOptions = {
+      input: `src/${mod}/index.js`,
+      plugins
+    };
 
-await Promise.all(builds);
+    const outputOptions = [
+      {
+        file: `./lib/modules/p5.${mod}.js`,
+        format: 'iife',
+        name: mod === 'core' ? 'p5' : undefined
+      },
+      {
+        file: `./lib/modules/p5.${mod}.min.js`,
+        format: 'iife',
+        name: mod === 'core' ? 'p5' : undefined,
+        sourcemap: 'hidden',
+        plugins: [
+          terser({
+            compress: {
+              global_defs: {
+                IS_MINIFIED: true
+              }
+            },
+            format: {
+              comments: false
+            }
+          })
+        ]
+      }
+    ];
 
+    rmSync('./lib/modules', { recursive: true, force: true });
+    mkdirSync('./lib/modules', { recursive: true });
+    return build(inputOptions, outputOptions);
+  });
+
+  await Promise.all(builds);
+}
+
+// Rollup build simple pipeline
 async function build(inputOptions, outputOptionsList){
   let bundle;
   try {
