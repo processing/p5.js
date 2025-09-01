@@ -1371,3 +1371,18 @@ export const EXCLUDE = Symbol('exclude');
  * @private
  */
 export const JOIN = Symbol('join');
+
+/**
+ * @typedef {'color-contrast-threshold-aa'} COLOR_CONTRAST_THRESHOLD_AA
+ * @property {COLOR_CONTRAST_THRESHOLD_AA} COLOR_CONTRAST_THRESHOLD_AA
+ * @final
+ */
+export const COLOR_CONTRAST_THRESHOLD_AA = 4.5;
+
+
+/**
+ * @typedef {'color-contrast-threshold-aaa'} COLOR_CONTRAST_THRESHOLD_AAA
+ * @property {COLOR_CONTRAST_THRESHOLD_AAA} COLOR_CONTRAST_THRESHOLD_AAA
+ * @final
+ */
+export const COLOR_CONTRAST_THRESHOLD_AAA = 7.0;

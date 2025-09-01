@@ -8,6 +8,7 @@
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
+
 import {
   ColorSpace,
   to,
@@ -25,7 +26,7 @@ import {
 
   OKLab,
   OKLCH as OKLCHSpace,
-
+  contrast,
   P3
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
@@ -40,6 +41,9 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
 }
 
 const serializationMap = {};
+
+
+
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -290,6 +294,34 @@ class Color {
     }
     return colorString;
   }
+/**
+   * Checks if two colors contrast ratio is WCAG 2.1 compliant and returns the ratio
+   *
+   * @param {Color} other
+   * @returns {{ ratio: Number, passes: boolean }}
+   * @example
+   * <div>
+   * <code>
+   * 
+   * function setup() {
+   *   // Define colors
+   *   let color1 = color(255, 255, 255);
+   *   let color2 = color(0);
+   *  
+   *   // Test for contrast
+   *   let result = color1.contrast(color2)
+   * 
+   *   console.log(result)
+   * 
+   * }
+   * </code>
+   * </div>
+   */
+      contrast(new_other) { 
+        const contrast_method = 'WCAG21';                   
+        const ratio = contrast(this._color, new_other._color, contrast_method);            
+        return ratio;    
+      };
 
   /**
    * Sets the red component of a color.
