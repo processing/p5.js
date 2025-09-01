@@ -232,11 +232,11 @@ function getParams(entry) {
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
   return (entry.tags || [])
-  
+
     // Filter out the nested parameters (eg. options.extrude),
     // to be treated as part of parent parameters (eg. options)
     // and not separate entries
-    .filter(t => t.title === 'param' && !t.name.includes('.')) 
+    .filter(t => t.title === 'param' && !t.name.includes('.'))
     .map(node => {
       const param = (entry.params || []).find(param => param.name === node.name);
       return {
@@ -517,13 +517,6 @@ function cleanUpClassItems(data) {
   const flattenOverloads = funcObj => {
     const result = {};
 
-    const processOverload = overload => {
-      if (overload.params) {
-        return Object.values(overload.params).map(param => processParam(param));
-      }
-      return overload;
-    }
-
     // To simplify `parameterData.json`, instead of having a separate field for
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
@@ -536,7 +529,14 @@ function cleanUpClassItems(data) {
         type = `...${type}[]`;
       }
       return type;
-    }
+    };
+
+    const processOverload = overload => {
+      if (overload.params) {
+        return Object.values(overload.params).map(param => processParam(param));
+      }
+      return overload;
+    };
 
     // In some cases, even when the arguments are intended to mean different
     // things, their types and order are identical. Since the exact meaning
@@ -549,7 +549,7 @@ function cleanUpClassItems(data) {
       }
       uniqueOverloads.add(overloadString);
       return true;
-    }
+    };
 
     for (const [key, value] of Object.entries(funcObj)) {
       if (value && typeof value === 'object' && value.overloads) {

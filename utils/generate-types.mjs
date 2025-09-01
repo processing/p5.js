@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   generateTypeDefinitions
-} from "./helper.mjs";
+} from './helper.mjs';
 
 // Fix for __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +19,7 @@ function findDtsFiles(dir, files = []) {
   }
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
@@ -44,7 +44,7 @@ export function generateAllDeclarationFiles() {
   fileTypes.forEach((content, filePath) => {
     const parsedPath = path.parse(filePath);
     const relativePath = path.relative(
-      path.join(__dirname, "../src"),
+      path.join(__dirname, '../src'),
       filePath
     );
     const dtsPath = path.join(
