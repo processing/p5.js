@@ -16,4 +16,5 @@ jobs:
         uses: processing/branch-pr-close-issue@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          branch: dev-2.0
 
