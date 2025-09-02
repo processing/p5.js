@@ -203,12 +203,14 @@ Now that your issue has been discussed, an implementation approved, and you are 
 
 Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
 
-**You should not "jump the queue"** by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. 
+You should not "jump the queue" by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. **If you file a PR for an issue while someone else is still working on the same issue, your PR will likely be closed.**
 
-If you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since the last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for a reasonably long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis, or it simply takes more time for them to work on the feature. 
+If you see that it has been a few weeks since the last activity on an issue with an assigned individual, you can leave a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for people to work on their contributions at their own pace, as we understand that most people will often be working on a volunteer basis, or it simply takes more time for them to work on the feature.
 
-Similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
 
+In some cases, issues may be time sensitive - so either maintainers will work on these directly, or explain any important deadlines. If the issue has a deadline, and a contributor isn't able to finish on time, it may be reassigned. This is an exception, though, and not the rule. Generally, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. If you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
+
+If you've been assigned to an issue and are working on it, the p5.js maintainers (you can check who in the README!) might comment and tag you in that comment to check in. Please reply **within 1 week** with any questions or updates; if you don't respond in a week, we may reassign the issue. This doesn't mean you need to finish the work in 1 week: only to confirm you're still on it.
 
 ## Quick Get Started For Developers
 
@@ -484,6 +486,7 @@ In the template, there is this line `Resolves #[Add issue number here]`, which y
 
 You should clearly describe the changes you have made in this PR. Include any implementation details and decisions you made here that are relevant to whoever will review it.
 
+**Important:** any PR that changes more than ~10 files or more than ~100 lines may be closed, unless this is specifically required by the issue and previously approved. Be sure to click the "Files Changed" tab in your PR to review changes. Unless required by the issue and approved, your PR should not make changes to `package.json` or `package-lock.json`; formatting changes; or changes not related to the issue.
 
 ### Screenshots of the change
 

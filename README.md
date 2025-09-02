@@ -102,6 +102,7 @@ Lead/Mentor Alumni
 | Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
 | Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
+| i18n (ko) | [@hana-cho](https://github.com/hana-cho) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
 | Math | [@GregStanton](https://github.com/GregStanton), [@holomorfo](https://github.com/holomorfo) |
 | p5.js-website | [@clairep94](https://github.com/clairep94), [@ksen0](https://github.com/ksen0) |
@@ -112,7 +113,7 @@ Lead/Mentor Alumni
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://allcontributors.org/docs/en/emoji-key) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://allcontributors.org/docs/en/emoji-key)) and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md)) and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -1171,6 +1172,14 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://darrenshaw.org"><img src="https://avatars.githubusercontent.com/u/157414?v=4?s=64" width="64px;" alt="Darren Shaw"/><br /><sub><b>Darren Shaw</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shawdm" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://ericrabinowitz.com/"><img src="https://avatars.githubusercontent.com/u/3066943?v=4?s=64" width="64px;" alt="Eric Rabinowitz"/><br /><sub><b>Eric Rabinowitz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ericrav" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/abuharish02"><img src="https://avatars.githubusercontent.com/u/111338069?v=4?s=64" width="64px;" alt="Abu Harish Faridi"/><br /><sub><b>Abu Harish Faridi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=abuharish02" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/vivekbopaliya"><img src="https://avatars.githubusercontent.com/u/122638553?v=4?s=64" width="64px;" alt="Vivek"/><br /><sub><b>Vivek</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vivekbopaliya" title="Code">💻</a> <a href="#design-vivekbopaliya" title="Design">🎨</a> <a href="#userTesting-vivekbopaliya" title="User Testing">📓</a> <a href="#blog-vivekbopaliya" title="Blogposts">📝</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Iron-56"><img src="https://avatars.githubusercontent.com/u/79905912?v=4?s=64" width="64px;" alt="Nandu Krishna"/><br /><sub><b>Nandu Krishna</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AIron-56" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=Iron-56" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://dorinetipo.vercel.app/"><img src="https://avatars.githubusercontent.com/u/105214329?v=4?s=64" width="64px;" alt="Dorine Tipo "/><br /><sub><b>Dorine Tipo </b></sub></a><br /><a href="#blog-MissTipo" title="Blogposts">📝</a> <a href="https://github.com/processing/p5.js/commits?author=MissTipo" title="Code">💻</a> <a href="#eventOrganizing-MissTipo" title="Event Organizing">📋</a> <a href="#research-MissTipo" title="Research">🔬</a> <a href="#promotion-MissTipo" title="Promotion">📣</a> <a href="#tutorial-MissTipo" title="Tutorials">✅</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/hana-cho"><img src="https://avatars.githubusercontent.com/u/51312538?v=4?s=64" width="64px;" alt="Hana Cho"/><br /><sub><b>Hana Cho</b></sub></a><br /><a href="#translation-hana-cho" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://kangjung.github.io/game/index.html"><img src="https://avatars.githubusercontent.com/u/28768760?v=4?s=64" width="64px;" alt="JUNGMIN KANG"/><br /><sub><b>JUNGMIN KANG</b></sub></a><br /><a href="#translation-kangjung" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/AlzaAlzaki76"><img src="https://avatars.githubusercontent.com/u/202525131?v=4?s=64" width="64px;" alt="Alza Alzaki"/><br /><sub><b>Alza Alzaki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AlzaAlzaki76" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

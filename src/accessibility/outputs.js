@@ -492,7 +492,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (!this.ingredients.shapes[f]) {
     this.ingredients.shapes[f] = [include];
     //if other shapes of this type have been created
-  } else if (this.ingredients.shapes[f] !== [include]) {
+  } else {
     //for every shape of this type
     for (let y in this.ingredients.shapes[f]) {
       //compare it with current shape and if it already exists make add false
@@ -579,19 +579,17 @@ p5.prototype._getPos = function (x, y) {
 function _canvasLocator(args, canvasWidth, canvasHeight) {
   const noRows = 10;
   const noCols = 10;
+
   let x = args[0];
   let y = args[1];
-  if (x < 0 || x >= canvasWidth || y < 0 || y >= canvasHeight) {
-    return null;
-  }
+
   let locX = Math.floor(x / canvasWidth * noRows);
   let locY = Math.floor(y / canvasHeight * noCols);
-  if (locX === noRows) {
-    locX = locX - 1;
-  }
-  if (locY === noCols) {
-    locY = locY - 1;
-  }
+
+  // clamp out of bounds values
+  locX = Math.min(Math.max(locX, 0), noRows - 1);
+  locY = Math.min(Math.max(locY, 0), noCols - 1);
+
   return {
     locX,
     locY
