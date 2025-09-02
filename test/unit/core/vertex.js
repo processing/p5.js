@@ -5,7 +5,6 @@ suite('Vertex', function() {
   var myp5;
 
   beforeEach(function() {
-    _friendlyErrorSpy = vi.spyOn(p5, '_friendlyError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
