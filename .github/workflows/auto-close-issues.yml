@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - main
       - 2.0
       - dev-2.0
 
@@ -17,5 +16,5 @@ jobs:
         uses: processing/branch-pr-close-issue@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.base_ref }}
+          branch: dev-2.0
 
