@@ -25,7 +25,7 @@ suite('loadModel', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadModel(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -38,7 +38,7 @@ suite('loadModel', function() {
       mockP5Prototype.loadModel(validFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -96,7 +96,7 @@ suite('loadModel', function() {
   });
 
   test('passes an object with correct data to callback', async function() {
-    await mockP5Prototype.loadModel(validFile, (model) => {
+    await mockP5Prototype.loadModel(validFile, model => {
       assert.instanceOf(model, Geometry);
     });
   });

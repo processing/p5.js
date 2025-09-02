@@ -110,7 +110,7 @@ function dataArray(p5, fn){
 }
 
 export default dataArray;
-export { DataArray }
+export { DataArray };
 
 if(typeof p5 !== 'undefined'){
   dataArray(p5, p5.prototype);

@@ -1,6 +1,6 @@
-import nj from "@d4c/numjs/build/module/numjs.min.js";
-import { Vector } from "../p5.Vector";
-import { MatrixInterface } from "./MatrixInterface";
+import nj from '@d4c/numjs/build/module/numjs.min.js';
+import { Vector } from '../p5.Vector';
+import { MatrixInterface } from './MatrixInterface';
 
 /**
  * @requires constants
@@ -12,10 +12,10 @@ import { MatrixInterface } from "./MatrixInterface";
  */
 
 let GLMAT_ARRAY_TYPE = Array;
-let isMatrixArray = (x) => Array.isArray(x);
-if (typeof Float32Array !== "undefined") {
+let isMatrixArray = x => Array.isArray(x);
+if (typeof Float32Array !== 'undefined') {
   GLMAT_ARRAY_TYPE = Float32Array;
-  isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
+  isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
 }
 
 /**
@@ -49,7 +49,7 @@ if (typeof Float32Array !== "undefined") {
 export class MatrixNumjs extends MatrixInterface{
   constructor(...args) {
     // This is default behavior when object
-    super(...args)
+    super(...args);
 
     if (args[0] === 3) {
       this._mat3 = Array.isArray(args[1]) ? nj.array(args[1]) : nj.identity(3);

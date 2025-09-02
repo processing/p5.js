@@ -2,22 +2,22 @@
  * @module Math
  */
 
-import { Vector } from "../p5.Vector";
-import { MatrixInterface } from "./MatrixInterface";
+import { Vector } from '../p5.Vector';
+import { MatrixInterface } from './MatrixInterface';
 
-const isPerfectSquare = (arr) => {
+const isPerfectSquare = arr => {
   const sqDimention = Math.sqrt(Array.from(arr).length);
   if (sqDimention % 1 !== 0) {
-    throw new Error("Array length must be a perfect square.");
+    throw new Error('Array length must be a perfect square.');
   }
   return true;
 };
 
 export let GLMAT_ARRAY_TYPE = Array;
-export let isMatrixArray = (x) => Array.isArray(x);
-if (typeof Float32Array !== "undefined") {
+export let isMatrixArray = x => Array.isArray(x);
+if (typeof Float32Array !== 'undefined') {
   GLMAT_ARRAY_TYPE = Float32Array;
-  isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
+  isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
 }
 
 export class Matrix extends MatrixInterface {
@@ -32,7 +32,7 @@ export class Matrix extends MatrixInterface {
       const sqDimention = Math.sqrt(Array.from(args[0]).length);
       this.#sqDimention = sqDimention;
       this.matrix = GLMAT_ARRAY_TYPE.from(args[0]);
-    } else if (typeof args[0] === "number") {
+    } else if (typeof args[0] === 'number') {
       this.#sqDimention = Number(args[0]);
       this.matrix = this.#createIdentityMatrix(args[0]);
     }
@@ -96,7 +96,7 @@ export class Matrix extends MatrixInterface {
    */
   add(matrix) {
     if (this.matrix.length !== matrix.matrix.length) {
-      throw new Error("Matrices must be of the same dimension to add.");
+      throw new Error('Matrices must be of the same dimension to add.');
     }
     for (let i = 0; i < this.matrix.length; i++) {
       this.matrix[i] += matrix.matrix[i];
@@ -255,7 +255,7 @@ export class Matrix extends MatrixInterface {
     if (refArray.length !== this.matrix.length) {
       p5._friendlyError(
         `Expected same dimensions values but received different ${refArray.length}.`,
-        "p5.Matrix.set"
+        'p5.Matrix.set'
       );
       return this;
     }
@@ -672,7 +672,7 @@ export class Matrix extends MatrixInterface {
       return this.#invert3x3(a);
     } else {
       throw new Error(
-        "Invert is not implemented for N>4 at the moment, we are working on it"
+        'Invert is not implemented for N>4 at the moment, we are working on it'
       );
     }
   }
@@ -726,7 +726,7 @@ export class Matrix extends MatrixInterface {
       result.mat3[8] = this.matrix[10];
       return result;
     } else {
-      throw new Error("Matrix dimension must be 4 to create a 3x3 submatrix.");
+      throw new Error('Matrix dimension must be 4 to create a 3x3 submatrix.');
     }
   }
 
@@ -767,7 +767,7 @@ export class Matrix extends MatrixInterface {
    */
   inverseTranspose4x4({ mat4 }) {
     if (this.#sqDimention !== 3) {
-      throw new Error("This function only works with 3×3 matrices.");
+      throw new Error('This function only works with 3×3 matrices.');
     } else {
       // Convert mat4 -> mat3 by extracting the top-left 3×3 portion
       this.matrix[0] = mat4[0];
@@ -1663,7 +1663,7 @@ export class Matrix extends MatrixInterface {
       return new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
     if (dimension === 4)
       return new GLMAT_ARRAY_TYPE([
-        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
       ]);
     const identityMatrix = new GLMAT_ARRAY_TYPE(dimension * dimension).fill(0);
     for (let i = 0; i < dimension; i++) {
@@ -1750,7 +1750,7 @@ export class Matrix extends MatrixInterface {
    */
   #multNxN(multMatrix) {
     if (multMatrix.length !== this.matrix.length) {
-      throw new Error("Matrices must be of the same dimension to multiply.");
+      throw new Error('Matrices must be of the same dimension to multiply.');
     }
     const result = new GLMAT_ARRAY_TYPE(this.matrix.length).fill(0);
     for (let i = 0; i < this.#sqDimention; i++) {
@@ -1829,7 +1829,7 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #transpose4x4(a) {
-    console.log("====> 4x4");
+    console.log('====> 4x4');
     let a01, a02, a03, a12, a13, a23;
     if (a instanceof Matrix) {
       a01 = a.matrix[1];
@@ -2047,7 +2047,7 @@ export class Matrix extends MatrixInterface {
   #determinant4x4() {
     if (this.#sqDimention !== 4) {
       throw new Error(
-        "Determinant is only implemented for 4x4 matrices. We are working on it."
+        'Determinant is only implemented for 4x4 matrices. We are working on it.'
       );
     }
 

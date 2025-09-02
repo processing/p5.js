@@ -71,7 +71,8 @@ function gridOutput(p5, fn){
           //if empty cell of location of shape is undefined
           if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
             //fill it with shape info
-            cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
+            cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
+              fill;
             //if a shape is already in that location
           } else {
             //add it

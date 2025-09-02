@@ -3,7 +3,7 @@ import { visualSuite, visualTest } from '../visualTest';
 visualSuite('Shape drawing', function() {
   for (const mode of ['2D', 'WebGL']) {
     visualSuite(`${mode} mode`, function() {
-      const setup = (p5) => {
+      const setup = p5 => {
         p5.createCanvas(50, 50, mode === '2D' ? p5.P2D : p5.WEBGL);
         if (mode !== '2D') {
           p5.translate(-p5.width / 2, -p5.height / 2);
@@ -11,7 +11,7 @@ visualSuite('Shape drawing', function() {
         p5.background(200);
         p5.fill(255);
         p5.stroke(0);
-      }
+      };
 
       visualTest('Drawing polylines', function(p5, screenshot) {
         setup(p5);
@@ -33,7 +33,7 @@ visualSuite('Shape drawing', function() {
             const angle = p5.map(i, 0, 12, 0, p5.TWO_PI) * direction;
             p5.vertex(x + r * p5.cos(angle), y + r * p5.sin(angle));
           }
-        }
+        };
 
         p5.beginShape();
         vertexCircle(15, 15, 10, 1);
@@ -199,8 +199,8 @@ visualSuite('Shape drawing', function() {
         p5.bezierVertex(15, 40);
         p5.bezierVertex(40, 35);
 
-        p5.bezierVertex(25, 15)
-        p5.bezierVertex(15, 25)
+        p5.bezierVertex(25, 15);
+        p5.bezierVertex(15, 25);
         p5.bezierVertex(15, 25);
         p5.endShape();
         screenshot();

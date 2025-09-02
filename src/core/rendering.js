@@ -127,7 +127,7 @@ function rendering(p5, fn){
     // p5._validateParameters('createCanvas', arguments);
     //optional: renderer, otherwise defaults to p2d
 
-    let selectedRenderer = constants.P2D
+    let selectedRenderer = constants.P2D;
     // Check third argument whether it is renderer constants
     if(Reflect.ownKeys(renderers).includes(renderer)){
       selectedRenderer = renderer;
@@ -394,9 +394,9 @@ function rendering(p5, fn){
    */
   fn.createGraphics = function (w, h, ...args) {
     /**
-      * args[0] is expected to be renderer
-      * args[1] is expected to be canvas
-      */
+     * args[0] is expected to be renderer
+     * args[1] is expected to be canvas
+     */
     if (args[0] instanceof HTMLCanvasElement) {
       args[1] = args[0];
       args[0] = constants.P2D;

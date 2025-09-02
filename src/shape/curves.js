@@ -205,7 +205,10 @@ function curves(p5, fn){
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+    if (
+      !this._renderer.states.strokeColor &&
+      !this._renderer.states.fillColor
+    ) {
       return this;
     }
 
@@ -462,11 +465,11 @@ function curves(p5, fn){
 
   /**
    * Draws a curve using a Catmull-Rom spline.
-   * 
+   *
    * Spline curves can form shapes and curves that slope gently. They’re like
    * cables that are attached to a set of points. By default (`ends: INCLUDE`),
    * the curve passes through all four points you provide, in order
-   * `p0(x1,y1)` -> `p1(x2,y2)` -> `p2(x3,y3)` -> `p3(x4,y4)`. Think of them as 
+   * `p0(x1,y1)` -> `p1(x2,y2)` -> `p2(x3,y3)` -> `p3(x4,y4)`. Think of them as
    * points on a curve. If you switch to `ends: EXCLUDE`, p0 and p3 act
    * like control points and only the middle span `p1->p2` is drawn.
    *
@@ -486,7 +489,7 @@ function curves(p5, fn){
    * @chainable
    *
    * @example
-   * 
+   *
    * <div>
    * <code>
    * function setup() {
@@ -508,7 +511,7 @@ function curves(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * function setup() {
@@ -518,7 +521,7 @@ function curves(p5, fn){
    *
    *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
+   *
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
@@ -564,10 +567,10 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background(200);
-   * 
+   *
    *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
+   *
    *   // Draw a black spline curve.
    *   noFill();
    *   strokeWeight(1);
@@ -619,10 +622,10 @@ function curves(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background('skyblue');
-   * 
+   *
    *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
+   *
    *   // Draw the red balloon.
    *   fill('red');
    *   spline(-150, 275, 50, 60, 50, 60, 250, 275);
@@ -645,10 +648,10 @@ function curves(p5, fn){
    *
    * function draw() {
    *   background('skyblue');
-   * 
+   *
    *   // Exclude the ends—skip the outer spans (p0→p1 and p2→p3) so only the middle span (p1→p2) is drawn.
    *   splineProperty('ends', EXCLUDE);
-   * 
+   *
    *   // Rotate around the y-axis.
    *   rotateY(frameCount * 0.01);
    *
@@ -680,7 +683,10 @@ function curves(p5, fn){
    * @chainable
    */
   fn.spline = function(...args) {
-    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+    if (
+      !this._renderer.states.strokeColor &&
+      !this._renderer.states.fillColor
+    ) {
       return this;
     }
     this._renderer.spline(...args);
@@ -822,7 +828,7 @@ function curves(p5, fn){
    * `splineTangent()` calculates coordinates along a tangent line using four
    * points p0, p1, p2, p3. It expects points in the same order as the
    * <a href="#/p5/spline">spline()</a> function. `splineTangent()` works one
-   * axis at a time. Passing the points' x-coordinates returns the x-component of 
+   * axis at a time. Passing the points' x-coordinates returns the x-component of
    * the tangent vector; passing the points' y-coordinates returns the y-component.
    * The first parameter, `a`, is the coordinate of point p0.
    *
@@ -886,7 +892,7 @@ function curves(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * function setup() {

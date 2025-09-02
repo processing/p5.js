@@ -39,7 +39,7 @@ class Renderer2D extends Renderer {
           get() {
             return this.wrappedElt[p];
           }
-        })
+        });
       }
     }
 
@@ -177,7 +177,7 @@ class Renderer2D extends Renderer {
       // create background rect
       const color = this._pInst.color(...args);
 
-      // Add accessible outputs if the method exists; on success, 
+      // Add accessible outputs if the method exists; on success,
       // set the accessible output background to white.
       if (this._pInst._addAccsOutput?.()) {
         this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
@@ -211,8 +211,8 @@ class Renderer2D extends Renderer {
     const color = this.states.fillColor;
     this._setFill(color.toString());
 
-      // Add accessible outputs if the method exists; on success, 
-      // set the accessible output background to white.
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
     }
@@ -223,8 +223,8 @@ class Renderer2D extends Renderer {
     const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
-      // Add accessible outputs if the method exists; on success, 
-      // set the accessible output background to white.
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
     }
@@ -262,7 +262,9 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
@@ -421,7 +423,11 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
-    if (this.states.tint[0] < 255 || this.states.tint[1] < 255 || this.states.tint[2] < 255) {
+    if (
+      this.states.tint[0] < 255 ||
+      this.states.tint[1] < 255 ||
+      this.states.tint[2] < 255
+    ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
       // the image. To accommodate, we first get a version of the image with full
@@ -1057,9 +1063,9 @@ function renderer2D(p5, fn){
   p5.renderers[constants.P2D] = Renderer2D;
   p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
-      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
+      return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }
-  })
+  });
 }
 
 export default renderer2D;

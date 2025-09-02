@@ -13,7 +13,12 @@ class GeometryBuilder {
     renderer._pInst.push();
     this.identityMatrix = new Matrix(4);
     renderer.states.setValue('uModelMatrix', new Matrix(4));
-    this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
+    this.geometry = new Geometry(
+      undefined,
+      undefined,
+      undefined,
+      this.renderer
+    );
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
     this.hasTransform = false;
@@ -26,7 +31,9 @@ class GeometryBuilder {
   transformVertices(vertices) {
     if (!this.hasTransform) return vertices;
 
-    return vertices.map(v => this.renderer.states.uModelMatrix.multiplyPoint(v));
+    return vertices.map(v =>
+      this.renderer.states.uModelMatrix.multiplyPoint(v)
+    );
   }
 
   /**
@@ -51,7 +58,9 @@ class GeometryBuilder {
       .every((v, i) => v === this.identityMatrix.mat4[i]);
 
     if (this.hasTransform) {
-      this.renderer.scratchMat3.inverseTranspose4x4(this.renderer.states.uModelMatrix);
+      this.renderer.scratchMat3.inverseTranspose4x4(
+        this.renderer.states.uModelMatrix
+      );
     }
 
     let startIdx = this.geometry.vertices.length;
@@ -63,13 +72,14 @@ class GeometryBuilder {
 
     const inputUserVertexProps = input.userVertexProperties;
     const builtUserVertexProps = this.geometry.userVertexProperties;
-    const numPreviousVertices = this.geometry.vertices.length - input.vertices.length;
+    const numPreviousVertices =
+      this.geometry.vertices.length - input.vertices.length;
 
     for (const propName in builtUserVertexProps){
       if (propName in inputUserVertexProps){
         continue;
       }
-      const prop = builtUserVertexProps[propName]
+      const prop = builtUserVertexProps[propName];
       const size = prop.getDataSize();
       const numMissingValues = size * input.vertices.length;
       const missingValues = Array(numMissingValues).fill(0);

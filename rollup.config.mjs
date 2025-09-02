@@ -38,7 +38,7 @@ const bundleSize = (name, sourcemap) => {
 
 const modules = ['math'];
 const generateModuleBuild = () => {
-  return modules.map((module) => {
+  return modules.map(module => {
     return {
       input: `src/${module}/index.js`,
       output: [
@@ -83,7 +83,7 @@ const generateModuleBuild = () => {
   });
 };
 
-rmSync("./dist", {
+rmSync('./dist', {
   force: true,
   recursive: true
 });

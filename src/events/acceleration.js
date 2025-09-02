@@ -730,8 +730,12 @@ function acceleration(p5, fn){
       let accelerationChangeY;
       // Add accelerationChangeZ if acceleration change on Z is needed
       if (this.pAccelerationX !== null) {
-        accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);
-        accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
+        accelerationChangeX = Math.abs(
+          this.accelerationX - this.pAccelerationX
+        );
+        accelerationChangeY = Math.abs(
+          this.accelerationY - this.pAccelerationY
+        );
       }
       if (accelerationChangeX + accelerationChangeY > shake_threshold) {
         context.deviceShaken();

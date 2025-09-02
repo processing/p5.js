@@ -45,7 +45,7 @@ suite('loading images', function() {
   beforeAll(async function() {
     loadingDisplaying(mockP5, mockP5Prototype);
     image(mockP5, mockP5Prototype);
-    await httpMock.start({quiet: true});
+    await httpMock.start({ quiet: true });
   });
 
   test('throws error when encountering HTTP errors', async () => {
@@ -57,7 +57,7 @@ suite('loading images', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadImage(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -70,7 +70,7 @@ suite('loading images', function() {
       mockP5Prototype.loadImage(imagePath, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -83,7 +83,7 @@ suite('loading images', function() {
   });
 
   test('passes an object with correct data to success callback', async () => {
-    await mockP5Prototype.loadImage(imagePath, (pImg) => {
+    await mockP5Prototype.loadImage(imagePath, pImg => {
       assert.ok(pImg, 'cat.jpg loaded');
       assert.isTrue(pImg instanceof mockP5.Image);
     });

@@ -7,7 +7,7 @@
  */
 
 import * as C from './constants';
-import { Vector } from '../math/p5.Vector';
+// import { Vector } from '../math/p5.Vector';
 
 function environment(p5, fn){
   const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
@@ -1383,7 +1383,7 @@ function environment(p5, fn){
    *
    */
   fn.worldToScreen = function(worldPosition) {
-    if (typeof worldPosition === "number") {
+    if (typeof worldPosition === 'number') {
       // We got passed numbers, convert to vector
       worldPosition = this.createVector(...arguments);
     }
@@ -1436,14 +1436,14 @@ function environment(p5, fn){
    *
    */
   fn.screenToWorld = function(screenPosition) {
-    if (typeof screenPosition === "number") {
+    if (typeof screenPosition === 'number') {
       // We got passed numbers, convert to vector
       screenPosition = this.createVector(...arguments);
     }
 
     const matrix = this._renderer.getWorldToScreenMatrix();
 
-    if (screenPosition.dimensions == 2) {
+    if (screenPosition.dimensions === 2) {
       // Calculate a sensible Z value for the current camera projection that
       // will result in 0 once converted to world coordinates
       let z = matrix.mat4[14] / matrix.mat4[15];
@@ -1452,7 +1452,8 @@ function environment(p5, fn){
 
     const matrixInverse = matrix.invert(matrix);
 
-    const worldPosition = matrixInverse.multiplyAndNormalizePoint(screenPosition);
+    const worldPosition = matrixInverse
+      .multiplyAndNormalizePoint(screenPosition);
     return worldPosition;
   };
 }

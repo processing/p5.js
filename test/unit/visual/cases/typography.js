@@ -1,21 +1,21 @@
-import { visualSuite, visualTest } from "../visualTest";
+import { visualSuite, visualTest } from '../visualTest';
 
-visualSuite("Typography", function () {
-  visualSuite("textFont", function () {
-    visualTest("with the default font", function (p5, screenshot) {
+visualSuite('Typography', function () {
+  visualSuite('textFont', function () {
+    visualTest('with the default font', function (p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.textSize(20);
       p5.textAlign(p5.LEFT, p5.TOP);
-      p5.text("test", 0, 0);
+      p5.text('test', 0, 0);
       screenshot();
     });
 
-    visualTest("with the default monospace font", function (p5, screenshot) {
+    visualTest('with the default monospace font', function (p5, screenshot) {
       p5.createCanvas(50, 50);
       p5.textSize(20);
-      p5.textFont("monospace");
+      p5.textFont('monospace');
       p5.textAlign(p5.LEFT, p5.TOP);
-      p5.text("test", 0, 0);
+      p5.text('test', 0, 0);
       screenshot();
     });
 
@@ -57,7 +57,7 @@ visualSuite("Typography", function () {
 
     visualTest('with a directly set font string', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
-      p5.textFont(`italic bold 32px serif`);
+      p5.textFont('italic bold 32px serif');
       p5.text('p5*js', 0, 10, p5.width);
       screenshot();
     });
@@ -112,7 +112,7 @@ visualSuite("Typography", function () {
     visualTest('can control variable fonts from files', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/BricolageGrotesque-Variable.ttf',
+        '/unit/assets/BricolageGrotesque-Variable.ttf'
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.background(255);
@@ -128,7 +128,7 @@ visualSuite("Typography", function () {
     visualTest('can control variable fonts from files in WebGL', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/BricolageGrotesque-Variable.ttf',
+        '/unit/assets/BricolageGrotesque-Variable.ttf'
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.push();
@@ -145,10 +145,10 @@ visualSuite("Typography", function () {
     });
   });
 
-  visualSuite("textAlign", function () {
+  visualSuite('textAlign', function () {
     for (const mode of ['2d', 'webgl']) {
       visualSuite(`${mode} mode`, () => {
-        visualTest("all alignments with single word", async function (p5, screenshot) {
+        visualTest('all alignments with single word', async function (p5, screenshot) {
           const alignments = [
             { alignX: p5.LEFT, alignY: p5.TOP },
             { alignX: p5.CENTER, alignY: p5.TOP },
@@ -158,7 +158,7 @@ visualSuite("Typography", function () {
             { alignX: p5.RIGHT, alignY: p5.CENTER },
             { alignX: p5.LEFT, alignY: p5.BOTTOM },
             { alignX: p5.CENTER, alignY: p5.BOTTOM },
-            { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+            { alignX: p5.RIGHT, alignY: p5.BOTTOM }
           ];
 
           p5.createCanvas(300, 300, mode === 'webgl' ? p5.WEBGL : undefined);
@@ -168,21 +168,21 @@ visualSuite("Typography", function () {
             '/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
-          alignments.forEach((alignment) => {
+          alignments.forEach(alignment => {
             p5.background(255);
             p5.textAlign(alignment.alignX, alignment.alignY);
-            p5.text("Single Line", p5.width / 2, p5.height / 2);
-            const bb = p5.textBounds("Single Line", p5.width / 2, p5.height / 2);
+            p5.text('Single Line', p5.width / 2, p5.height / 2);
+            const bb = p5.textBounds('Single Line', p5.width / 2, p5.height / 2);
             p5.push();
             p5.noFill();
-            p5.stroke("red");
+            p5.stroke('red');
             p5.rect(bb.x, bb.y, bb.w, bb.h);
             p5.pop();
             screenshot();
-          })
+          });
         });
 
-        visualTest("all alignments with single line", async function (p5, screenshot) {
+        visualTest('all alignments with single line', async function (p5, screenshot) {
           const alignments = [
             { alignX: p5.LEFT, alignY: p5.TOP },
             { alignX: p5.CENTER, alignY: p5.TOP },
@@ -192,7 +192,7 @@ visualSuite("Typography", function () {
             { alignX: p5.RIGHT, alignY: p5.CENTER },
             { alignX: p5.LEFT, alignY: p5.BOTTOM },
             { alignX: p5.CENTER, alignY: p5.BOTTOM },
-            { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+            { alignX: p5.RIGHT, alignY: p5.BOTTOM }
           ];
 
           p5.createCanvas(300, 300, mode === 'webgl' ? p5.WEBGL : undefined);
@@ -202,21 +202,21 @@ visualSuite("Typography", function () {
             '/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
-          alignments.forEach((alignment) => {
+          alignments.forEach(alignment => {
             p5.background(255);
             p5.textAlign(alignment.alignX, alignment.alignY);
-            p5.text("Single Line", p5.width / 2, p5.height / 2);
-            const bb = p5.textBounds("Single Line", p5.width / 2, p5.height / 2);
+            p5.text('Single Line', p5.width / 2, p5.height / 2);
+            const bb = p5.textBounds('Single Line', p5.width / 2, p5.height / 2);
             p5.push();
             p5.noFill();
-            p5.stroke("red");
+            p5.stroke('red');
             p5.rect(bb.x, bb.y, bb.w, bb.h);
             p5.pop();
             screenshot();
           });
         });
 
-        visualTest("all alignments with multi-lines and wrap word",
+        visualTest('all alignments with multi-lines and wrap word',
           async function (p5, screenshot) {
             const alignments = [
               { alignX: p5.LEFT, alignY: p5.TOP },
@@ -227,7 +227,7 @@ visualSuite("Typography", function () {
               { alignX: p5.RIGHT, alignY: p5.CENTER },
               { alignX: p5.LEFT, alignY: p5.BOTTOM },
               { alignX: p5.CENTER, alignY: p5.BOTTOM },
-              { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
             ];
 
             p5.createCanvas(150, 100, mode === 'webgl' ? p5.WEBGL : undefined);
@@ -257,21 +257,21 @@ visualSuite("Typography", function () {
               p5.fill(0);
               p5.noStroke();
               p5.text(
-                "A really long text that should wrap automatically as it reaches the end of the box",
+                'A really long text that should wrap automatically as it reaches the end of the box',
                 xPos,
                 yPos,
                 boxWidth,
                 boxHeight
               );
               const bb = p5.textBounds(
-                "A really long text that should wrap automatically as it reaches the end of the box",
+                'A really long text that should wrap automatically as it reaches the end of the box',
                 xPos,
                 yPos,
                 boxWidth,
                 boxHeight
               );
               p5.noFill();
-              p5.stroke("red");
+              p5.stroke('red');
               p5.rect(bb.x, bb.y, bb.w, bb.h);
               p5.pop();
 
@@ -281,7 +281,7 @@ visualSuite("Typography", function () {
         );
 
         visualTest(
-          "all alignments with multi-lines and wrap char",
+          'all alignments with multi-lines and wrap char',
           async function (p5, screenshot) {
             const alignments = [
               { alignX: p5.LEFT, alignY: p5.TOP },
@@ -292,7 +292,7 @@ visualSuite("Typography", function () {
               { alignX: p5.RIGHT, alignY: p5.CENTER },
               { alignX: p5.LEFT, alignY: p5.BOTTOM },
               { alignX: p5.CENTER, alignY: p5.BOTTOM },
-              { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
             ];
 
             p5.createCanvas(150, 100, mode === 'webgl' ? p5.WEBGL : undefined);
@@ -322,21 +322,21 @@ visualSuite("Typography", function () {
               p5.fill(0);
               p5.noStroke();
               p5.text(
-                "A really long text that should wrap automatically as it reaches the end of the box",
+                'A really long text that should wrap automatically as it reaches the end of the box',
                 xPos,
                 yPos,
                 boxWidth,
                 boxHeight
               );
               const bb = p5.textBounds(
-                "A really long text that should wrap automatically as it reaches the end of the box",
+                'A really long text that should wrap automatically as it reaches the end of the box',
                 xPos,
                 yPos,
                 boxWidth,
                 boxHeight
               );
               p5.noFill();
-              p5.stroke("red");
+              p5.stroke('red');
               p5.rect(bb.x, bb.y, bb.w, bb.h);
               p5.pop();
 
@@ -346,7 +346,7 @@ visualSuite("Typography", function () {
         );
 
         visualTest(
-          "all alignments with multi-line manual text",
+          'all alignments with multi-line manual text',
           async function (p5, screenshot) {
             const alignments = [
               { alignX: p5.LEFT, alignY: p5.TOP },
@@ -357,7 +357,7 @@ visualSuite("Typography", function () {
               { alignX: p5.RIGHT, alignY: p5.CENTER },
               { alignX: p5.LEFT, alignY: p5.BOTTOM },
               { alignX: p5.CENTER, alignY: p5.BOTTOM },
-              { alignX: p5.RIGHT, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
             ];
 
             p5.createCanvas(150, 100, mode === 'webgl' ? p5.WEBGL : undefined);
@@ -386,16 +386,16 @@ visualSuite("Typography", function () {
 
               p5.fill(0);
               p5.noStroke();
-              p5.text("Line 1\nLine 2\nLine 3", xPos, yPos, boxWidth, boxHeight);
+              p5.text('Line 1\nLine 2\nLine 3', xPos, yPos, boxWidth, boxHeight);
               const bb = p5.textBounds(
-                "Line 1\nLine 2\nLine 3",
+                'Line 1\nLine 2\nLine 3',
                 xPos,
                 yPos,
                 boxWidth,
                 boxHeight
               );
               p5.noFill();
-              p5.stroke("red");
+              p5.stroke('red');
               p5.rect(bb.x, bb.y, bb.w, bb.h);
               p5.pop();
 
@@ -407,8 +407,8 @@ visualSuite("Typography", function () {
     }
   });
 
-  visualSuite("textStyle", function () {
-    visualTest("all text styles", async function (p5, screenshot) {
+  visualSuite('textStyle', function () {
+    visualTest('all text styles', async function (p5, screenshot) {
       p5.createCanvas(150, 150);
       const font = await p5.loadFont(
         'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap'
@@ -417,27 +417,27 @@ visualSuite("Typography", function () {
       p5.textFont(font);
       p5.textAlign(p5.LEFT, p5.TOP);
 
-      p5.text("Regular Text", 0, 0);
+      p5.text('Regular Text', 0, 0);
       p5.textStyle(p5.BOLD);
-      p5.text("Bold Text", 0, 30);
+      p5.text('Bold Text', 0, 30);
       p5.textStyle(p5.ITALIC);
-      p5.text("Italic Text", 0, 60);
+      p5.text('Italic Text', 0, 60);
       p5.textStyle(p5.BOLDITALIC);
-      p5.text("Bold Italic Text", 0, 90);
+      p5.text('Bold Italic Text', 0, 90);
       screenshot();
     });
   });
 
-  visualSuite("textSize", function () {
-    const units = ["px"];
+  visualSuite('textSize', function () {
+    const units = ['px'];
     const sizes = [12, 16, 20, 24, 30];
 
-    visualTest("text sizes comparison", function (p5, screenshot) {
+    visualTest('text sizes comparison', function (p5, screenshot) {
       p5.createCanvas(300, 200);
       let yOffset = 0;
 
-      units.forEach((unit) => {
-        sizes.forEach((size) => {
+      units.forEach(unit => {
+        sizes.forEach(size => {
           p5.textSize(size);
           p5.textAlign(p5.LEFT, p5.TOP);
           p5.text(`Size: ${size}${unit}`, 0, yOffset);
@@ -448,8 +448,8 @@ visualSuite("Typography", function () {
     });
   });
 
-  visualSuite("textLeading", function () {
-    visualTest("text leading with different values", function (p5, screenshot) {
+  visualSuite('textLeading', function () {
+    visualTest('text leading with different values', function (p5, screenshot) {
       p5.createCanvas(300, 200);
       const leadingValues = [10, 20, 30];
       let yOffset = 0;
@@ -457,26 +457,26 @@ visualSuite("Typography", function () {
       p5.textSize(20);
       p5.textAlign(p5.LEFT, p5.TOP);
 
-      leadingValues.forEach((leading) => {
+      leadingValues.forEach(leading => {
         p5.textLeading(leading);
         p5.text(`Leading: ${leading}`, 0, yOffset);
-        p5.text("This is a line of text.", 0, yOffset + 30);
-        p5.text("This is another line of text.", 0, yOffset + 30 + leading);
+        p5.text('This is a line of text.', 0, yOffset + 30);
+        p5.text('This is another line of text.', 0, yOffset + 30 + leading);
         yOffset += 30 + leading;
       });
       screenshot();
     });
   });
 
-  visualSuite("textWidth", function () {
-    visualTest("verify width of a string", function (p5, screenshot) {
+  visualSuite('textWidth', function () {
+    visualTest('verify width of a string', function (p5, screenshot) {
       p5.createCanvas(100, 100);
       p5.textSize(20);
-      const text = "Width Test";
+      const text = 'Width Test';
       const width = p5.textWidth(text);
       p5.text(text, 0, 30);
       p5.noFill();
-      p5.stroke("red");
+      p5.stroke('red');
       p5.rect(0, 30 - 20, width, 20);
       screenshot();
     });
@@ -550,7 +550,7 @@ visualSuite("Typography", function () {
       p5.background(200);
       p5.strokeWeight(2);
       p5.textSize(50);
-      const contours = font.textToContours('p5*js', 0, 50, { sampleFactor: 0.5 })
+      const contours = font.textToContours('p5*js', 0, 50, { sampleFactor: 0.5 });
       p5.beginShape();
       for (const pts of contours) {
         p5.beginContour();
@@ -571,7 +571,7 @@ visualSuite("Typography", function () {
       p5.background(200);
       p5.strokeWeight(2);
       p5.textSize(50);
-      const cmds = font.textToPaths('p5*js', 0, 50)
+      const cmds = font.textToPaths('p5*js', 0, 50);
       p5.drawingContext.beginPath();
       for (const [type, ...args] of cmds) {
         if (type === 'M') {

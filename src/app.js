@@ -51,7 +51,7 @@ import webgl from './webgl';
 webgl(p5);
 
 // typography
-import type from './type'
+import type from './type';
 type(p5);
 
 import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';

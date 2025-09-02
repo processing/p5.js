@@ -9,7 +9,7 @@ suite('p5.MediaElement', () => {
     media(mockP5, mockP5Prototype);
     pixels(mockP5, mockP5Prototype);
     navigator.mediaDevices.getUserMedia = vi.fn()
-      .mockResolvedValue("stream-value");
+      .mockResolvedValue('stream-value');
   });
 
   afterAll(() => {
@@ -18,7 +18,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createVideo', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const mediaSources = [
@@ -153,7 +153,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createAudio', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const mediaSources = [
@@ -205,7 +205,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createCapture', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -238,14 +238,14 @@ suite('p5.MediaElement', () => {
     });
   });
 
-  suite("p5.MediaElement.copy", function () {
+  suite('p5.MediaElement.copy', function () {
     beforeAll(() => {
       globalThis.p5 = { prototype: mockP5Prototype };
     });
 
     afterAll(() => {
       delete globalThis.p5;
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should not throw an error', function() {
@@ -254,5 +254,5 @@ suite('p5.MediaElement', () => {
         testElement.copy(0, 0, 10, 10, 0, 0, 10, 10);
       });
     });
-  })
+  });
 });

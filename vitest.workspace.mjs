@@ -18,18 +18,18 @@ export default defineWorkspace([
       root: './',
       include: [
         './test/bench/**/*.js'
-      ],
+      ]
     },
     test: {
       name: 'unit',
       root: './',
       include: [
-        './test/unit/**/*.js',
+        './test/unit/**/*.js'
       ],
       exclude: [
         './test/unit/spec.js',
         './test/unit/assets/**/*',
-        './test/unit/visual/visualTest.js',
+        './test/unit/visual/visualTest.js'
       ],
       testTimeout: 1000,
       globals: true,
@@ -40,8 +40,8 @@ export default defineWorkspace([
         screenshotFailures: false
       },
       fakeTimers: {
-        toFake: [...(configDefaults.fakeTimers.toFake ?? []), 'performance'],
-      },
+        toFake: [...(configDefaults.fakeTimers.toFake ?? []), 'performance']
+      }
     }
   }
 ]);

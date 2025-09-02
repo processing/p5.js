@@ -1518,7 +1518,10 @@ function dom(p5, fn){
     const arg0 = args[0];
     if (
       arg0 instanceof Element &&
-      (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
+      (
+        arg0.elt instanceof HTMLDivElement ||
+        arg0.elt instanceof HTMLSpanElement
+      )
     ) {
       // If given argument is p5.Element of div/span type
       self = arg0;
@@ -1755,7 +1758,10 @@ function dom(p5, fn){
       inst.push();
       if (value) {
         if (value.mode) {
-          inst.colorMode(value.mode, ...(value?.maxes ? value.maxes[value.mode] || [] : []));
+          inst.colorMode(
+            value.mode,
+            ...(value?.maxes ? value.maxes[value.mode] || [] : [])
+          );
         }
       }
       const c = inst.color(this.elt.value);

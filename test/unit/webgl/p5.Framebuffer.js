@@ -4,17 +4,17 @@ import * as fileSaver from 'file-saver';
 vi.mock('file-saver');
 
 expect.extend({
-  tobePng: (received) => {
+  tobePng: received => {
     if (received.type === 'image/png') {
       return {
         message: 'expect blob to have type image/png',
         pass: true
-      }
+      };
     } else {
       return {
         message: 'expect blob to have type image/png',
         pass: false
-      }
+      };
     }
   }
 });
@@ -674,6 +674,6 @@ suite('p5.Framebuffer', function() {
           expect.tobePng(),
           'untitled.png'
         );
-    })
-  })
+    });
+  });
 });

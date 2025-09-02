@@ -181,7 +181,7 @@ suite('Core', function () {
   });
 
   suite('millis()', () => {
-    let myp5
+    let myp5;
 
     beforeEach(() => {
       vi.useFakeTimers();
@@ -195,8 +195,8 @@ suite('Core', function () {
     });
 
     test('millis() starts at 0 when the draw loop begins', async () => {
-      const t = await new Promise((resolve) => {
-        myp5 = new p5((p) => {
+      const t = await new Promise(resolve => {
+        myp5 = new p5(p => {
           p.setup = () => {
             // Pretend setup takes 1s
             vi.advanceTimersByTime(1000);

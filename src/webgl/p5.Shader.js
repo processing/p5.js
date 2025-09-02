@@ -89,8 +89,8 @@ class Shader {
             type: {
               typeName,
               qualifiers: [],
-              properties: typeProperties,
-            },
+              properties: typeProperties
+            }
           });
         }
       }
@@ -109,9 +109,9 @@ class Shader {
         type: {
           typeName,
           qualifiers,
-          properties,
+          properties
         }
-      }
+      };
     });
 
     return {
@@ -536,10 +536,10 @@ class Shader {
         if (typeof IS_MINIFIED !== 'undefined') {
           console.error(glError);
         } else {
-          throw glError;
           p5._friendlyError(
             `Yikes! An error occurred compiling the vertex shader:${glError}`
           );
+          throw glError;
         }
         return null;
       }
@@ -554,10 +554,10 @@ class Shader {
         if (typeof IS_MINIFIED !== 'undefined') {
           console.error(glError);
         } else {
-          throw glError;
           p5._friendlyError(
             `Darn! An error occurred compiling the fragment shader:${glError}`
           );
+          throw glError;
         }
         return null;
       }

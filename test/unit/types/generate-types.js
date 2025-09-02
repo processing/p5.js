@@ -11,180 +11,180 @@ import {
 
 // Move absFuncDoc to the top level
 const absFuncDoc = {
-  "description": {
-    "type": "root",
-    "children": [
+  'description': {
+    'type': 'root',
+    'children': [
       {
-        "type": "paragraph",
-        "children": [
+        'type': 'paragraph',
+        'children': [
           {
-            "type": "text",
-            "value": "Calculates the absolute value of a number."
+            'type': 'text',
+            'value': 'Calculates the absolute value of a number.'
           }
         ]
       },
       {
-        "type": "paragraph",
-        "children": [
+        'type': 'paragraph',
+        'children': [
           {
-            "type": "text",
-            "value": "A number's absolute value is its distance from zero on the number line.\n-5 and 5 are both five units away from zero, so calling "
+            'type': 'text',
+            'value': "A number's absolute value is its distance from zero on the number line.\n-5 and 5 are both five units away from zero, so calling "
           },
           {
-            "type": "inlineCode",
-            "value": "abs(-5)"
+            'type': 'inlineCode',
+            'value': 'abs(-5)'
           },
           {
-            "type": "text",
-            "value": " and\n"
+            'type': 'text',
+            'value': ' and\n'
           },
           {
-            "type": "inlineCode",
-            "value": "abs(5)"
+            'type': 'inlineCode',
+            'value': 'abs(5)'
           },
           {
-            "type": "text",
-            "value": " both return 5. The absolute value of a number is always positive."
+            'type': 'text',
+            'value': ' both return 5. The absolute value of a number is always positive.'
           }
         ]
       }
     ]
   },
-  "tags": [
+  'tags': [
     {
-      "title": "method",
-      "description": null,
-      "lineNumber": 7,
-      "name": "abs"
+      'title': 'method',
+      'description': null,
+      'lineNumber': 7,
+      'name': 'abs'
     },
     {
-      "title": "param",
-      "description": "number to compute.",
-      "lineNumber": 8,
-      "type": {
-        "type": "NameExpression",
-        "name": "Number"
+      'title': 'param',
+      'description': 'number to compute.',
+      'lineNumber': 8,
+      'type': {
+        'type': 'NameExpression',
+        'name': 'Number'
       },
-      "name": "n"
+      'name': 'n'
     },
     {
-      "title": "return",
-      "description": "absolute value of given number.",
-      "lineNumber": 9,
-      "type": {
-        "type": "NameExpression",
-        "name": "Number"
+      'title': 'return',
+      'description': 'absolute value of given number.',
+      'lineNumber': 9,
+      'type': {
+        'type': 'NameExpression',
+        'name': 'Number'
       }
     },
     {
-      "title": "example",
-      "description": "<div>\n<code>\nfunction setup() {\n  createCanvas(100, 100);\n\n  describe('A gray square with a vertical black line that divides it in half. A white rectangle gets taller when the user moves the mouse away from the line.');\n}\n\nfunction draw() {\n  background(200);\n\n  // Divide the canvas.\n  line(50, 0, 50, 100);\n\n  // Calculate the mouse's distance from the middle.\n  let h = abs(mouseX - 50);\n\n  // Draw a rectangle based on the mouse's distance\n  // from the middle.\n  rect(0, 100 - h, 100, h);\n}\n</code>\n</div>",
-      "lineNumber": 11
+      'title': 'example',
+      'description': "<div>\n<code>\nfunction setup() {\n  createCanvas(100, 100);\n\n  describe('A gray square with a vertical black line that divides it in half. A white rectangle gets taller when the user moves the mouse away from the line.');\n}\n\nfunction draw() {\n  background(200);\n\n  // Divide the canvas.\n  line(50, 0, 50, 100);\n\n  // Calculate the mouse's distance from the middle.\n  let h = abs(mouseX - 50);\n\n  // Draw a rectangle based on the mouse's distance\n  // from the middle.\n  rect(0, 100 - h, 100, h);\n}\n</code>\n</div>",
+      'lineNumber': 11
     }
   ],
-  "loc": {
-    "start": {
-      "line": 9,
-      "column": 2,
-      "index": 112
+  'loc': {
+    'start': {
+      'line': 9,
+      'column': 2,
+      'index': 112
     },
-    "end": {
-      "line": 44,
-      "column": 5,
-      "index": 1167
+    'end': {
+      'line': 44,
+      'column': 5,
+      'index': 1167
     }
   },
-  "context": {
-    "loc": {
-      "start": {
-        "line": 45,
-        "column": 2,
-        "index": 1170
+  'context': {
+    'loc': {
+      'start': {
+        'line': 45,
+        'column': 2,
+        'index': 1170
       },
-      "end": {
-        "line": 45,
-        "column": 20,
-        "index": 1188
+      'end': {
+        'line': 45,
+        'column': 20,
+        'index': 1188
       }
     },
-    "file": "C:\\Users\\diyas\\Documents\\p5.js\\src\\math\\calculation.js"
+    'file': 'C:\\Users\\diyas\\Documents\\p5.js\\src\\math\\calculation.js'
   },
-  "augments": [],
-  "examples": [
+  'augments': [],
+  'examples': [
     {
-      "description": "<div>\n<code>\nfunction setup() {\n  createCanvas(100, 100);\n\n  describe('A gray square with a vertical black line that divides it in half. A white rectangle gets taller when the user moves the mouse away from the line.');\n}\n\nfunction draw() {\n  background(200);\n\n  // Divide the canvas.\n  line(50, 0, 50, 100);\n\n  // Calculate the mouse's distance from the middle.\n  let h = abs(mouseX - 50);\n\n  // Draw a rectangle based on the mouse's distance\n  // from the middle.\n  rect(0, 100 - h, 100, h);\n}\n</code>\n</div>"
+      'description': "<div>\n<code>\nfunction setup() {\n  createCanvas(100, 100);\n\n  describe('A gray square with a vertical black line that divides it in half. A white rectangle gets taller when the user moves the mouse away from the line.');\n}\n\nfunction draw() {\n  background(200);\n\n  // Divide the canvas.\n  line(50, 0, 50, 100);\n\n  // Calculate the mouse's distance from the middle.\n  let h = abs(mouseX - 50);\n\n  // Draw a rectangle based on the mouse's distance\n  // from the middle.\n  rect(0, 100 - h, 100, h);\n}\n</code>\n</div>"
     }
   ],
-  "implements": [],
-  "params": [
+  'implements': [],
+  'params': [
     {
-      "title": "param",
-      "name": "n",
-      "lineNumber": 8,
-      "description": {
-        "type": "root",
-        "children": [
+      'title': 'param',
+      'name': 'n',
+      'lineNumber': 8,
+      'description': {
+        'type': 'root',
+        'children': [
           {
-            "type": "paragraph",
-            "children": [
+            'type': 'paragraph',
+            'children': [
               {
-                "type": "text",
-                "value": "number to compute."
+                'type': 'text',
+                'value': 'number to compute.'
               }
             ]
           }
         ]
       },
-      "type": {
-        "type": "NameExpression",
-        "name": "Number"
+      'type': {
+        'type': 'NameExpression',
+        'name': 'Number'
       }
     }
   ],
-  "properties": [],
-  "returns": [
+  'properties': [],
+  'returns': [
     {
-      "description": {
-        "type": "root",
-        "children": [
+      'description': {
+        'type': 'root',
+        'children': [
           {
-            "type": "paragraph",
-            "children": [
+            'type': 'paragraph',
+            'children': [
               {
-                "type": "text",
-                "value": "absolute value of given number."
+                'type': 'text',
+                'value': 'absolute value of given number.'
               }
             ]
           }
         ]
       },
-      "title": "returns",
-      "type": {
-        "type": "NameExpression",
-        "name": "Number"
+      'title': 'returns',
+      'type': {
+        'type': 'NameExpression',
+        'name': 'Number'
       }
     }
   ],
-  "sees": [],
-  "throws": [],
-  "todos": [],
-  "yields": [],
-  "kind": "function",
-  "name": "abs",
-  "members": {
-    "global": [],
-    "inner": [],
-    "instance": [],
-    "events": [],
-    "static": []
+  'sees': [],
+  'throws': [],
+  'todos': [],
+  'yields': [],
+  'kind': 'function',
+  'name': 'abs',
+  'members': {
+    'global': [],
+    'inner': [],
+    'instance': [],
+    'events': [],
+    'static': []
   },
-  "path": [
+  'path': [
     {
-      "name": "abs",
-      "kind": "function"
+      'name': 'abs',
+      'kind': 'function'
     }
   ],
-  "namespace": "abs"
+  'namespace': 'abs'
 };
 
 suite('normalizeClassName', () => {
@@ -317,7 +317,6 @@ suite('generateMethodDeclarations', () => {
       class: 'p5.Shader',
       module: 'p5',
       submodule: null,
-      class: 'p5.Shader',
       isStatic: false,
       overloads: undefined
     };
@@ -371,10 +370,10 @@ suite('generateTypeDefinitions', () => {
     const filePath = 'C:\\Users\\diyas\\Documents\\p5.js\\src\\math\\calculation.js';
 
     // Helper function to normalize whitespace and newlines
-    const normalizeString = (str) =>
+    const normalizeString = str =>
       str.replace(/\s+/g, ' ')
-         .replace(/\n\s*/g, '\n')
-         .trim();
+        .replace(/\n\s*/g, '\n')
+        .trim();
 
     // Compare normalized strings
     expect(

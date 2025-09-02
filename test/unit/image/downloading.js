@@ -9,50 +9,50 @@ import p5Image from '../../../src/image/p5.Image';
 vi.mock('file-saver');
 
 expect.extend({
-  tobeGif: (received) => {
+  tobeGif: received => {
     if (received.type === 'image/gif') {
       return {
         message: 'expect blob to have type image/gif',
         pass: true
-      }
+      };
     } else {
       return {
         message: 'expect blob to have type image/gif',
         pass: false
-      }
+      };
     }
   },
-  tobePng: (received) => {
+  tobePng: received => {
     if (received.type === 'image/png') {
       return {
         message: 'expect blob to have type image/png',
         pass: true
-      }
+      };
     } else {
       return {
         message: 'expect blob to have type image/png',
         pass: false
-      }
+      };
     }
   },
-  tobeJpg: (received) => {
+  tobeJpg: received => {
     if (received.type === 'image/jpeg') {
       return {
         message: 'expect blob to have type image/jpeg',
         pass: true
-      }
+      };
     } else {
       return {
         message: 'expect blob to have type image/jpeg',
         pass: false
-      }
+      };
     }
   }
 });
 
-const wait = async (time) => {
+const wait = async time => {
   return new Promise(resolve => setTimeout(resolve, time));
-}
+};
 
 suite('Downloading', () => {
   beforeAll(async function() {
@@ -107,10 +107,10 @@ suite('Downloading', () => {
       await wait(100);
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
-          .toHaveBeenCalledWith(
-            expect.tobePng(),
-            'untitled.png'
-          );
+        .toHaveBeenCalledWith(
+          expect.tobePng(),
+          'untitled.png'
+        );
     });
 
     test('should download a jpg file I', async () => {
@@ -118,10 +118,10 @@ suite('Downloading', () => {
       await wait(100);
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
-          .toHaveBeenCalledWith(
-            expect.tobeJpg(),
-            'filename.jpg'
-          );
+        .toHaveBeenCalledWith(
+          expect.tobeJpg(),
+          'filename.jpg'
+        );
     });
 
     test('should download a jpg file II', async () => {
@@ -129,10 +129,10 @@ suite('Downloading', () => {
       await wait(100);
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
-          .toHaveBeenCalledWith(
-            expect.tobeJpg(),
-            'filename.jpg'
-          );
+        .toHaveBeenCalledWith(
+          expect.tobeJpg(),
+          'filename.jpg'
+        );
     });
   });
 
@@ -190,10 +190,10 @@ suite('Downloading', () => {
       await mockP5Prototype.saveGif('myGif', 3, 2);
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
-          .toHaveBeenCalledWith(
-            expect.tobeGif(),
-            'myGif.gif'
-          );
+        .toHaveBeenCalledWith(
+          expect.tobeGif(),
+          'myGif.gif'
+        );
     });
   });
 });

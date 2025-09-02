@@ -5,7 +5,6 @@
  */
 
 import * as constants from './constants';
-import { RGB, HSB, HSL } from '../color/creating_reading';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
 import curves from '../shape/curves';

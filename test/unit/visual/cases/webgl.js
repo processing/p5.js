@@ -1,6 +1,5 @@
-import { vi, beforeEach, afterEach } from 'vitest';
+import { vi, afterEach } from 'vitest';
 import { visualSuite, visualTest } from '../visualTest';
-import { RendererGL } from '../../../../src/webgl/p5.RendererGL';
 
 visualSuite('WebGL', function() {
   visualSuite('Camera', function() {
@@ -217,7 +216,7 @@ visualSuite('WebGL', function() {
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.background('white');
         const myShader = p5.createShader(vertSrc, fragSrc);
-        p5.shader(myShader)
+        p5.shader(myShader);
         p5.beginShape(p5.QUADS);
         p5.noStroke();
         p5.translate(-25,-25);
@@ -253,18 +252,18 @@ visualSuite('WebGL', function() {
           p5.sphere(5);
           p5.pop();
           p5.beginShape(p5.TRIANGLES);
-          p5.vertexProperty('aCol', [1,0,0])
+          p5.vertexProperty('aCol', [1,0,0]);
           p5.vertex(-5, 5, 0);
-          p5.vertexProperty('aCol', [0,1,0])
+          p5.vertexProperty('aCol', [0,1,0]);
           p5.vertex(5, 5, 0);
-          p5.vertexProperty('aCol', [0,0,1])
+          p5.vertexProperty('aCol', [0,0,1]);
           p5.vertex(0, -5, 0);
           p5.endShape(p5.CLOSE);
           p5.push();
           p5.translate(-15,10,0);
           p5.box(10);
           p5.pop();
-        })
+        });
         p5.model(shape);
         screenshot();
       }
@@ -370,8 +369,8 @@ visualSuite('WebGL', function() {
       p5.rotateY(p5.PI/4);
       p5.box(30);
       screenshot();
-    })
-  })
+    });
+  });
 
   visualSuite('Opacity', function() {
     visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
@@ -398,7 +397,7 @@ visualSuite('WebGL', function() {
           inputs.color = vec4(1., 0.4, 0.4, 100./255.);
           return inputs;
         }`
-      })
+      });
       p5.background(255);
       p5.shader(myShader);
       p5.circle(0, 0, 50);
@@ -495,26 +494,26 @@ visualSuite('WebGL', function() {
 
         visualTest('Combined vs split matrices', (p5, screenshot) => {
           p5.createCanvas(50, 50, p5.WEBGL);
-            for (const space of ['Object', 'World', 'Camera']) {
-              const myShader = p5[base]().modify({
-                [`Vertex get${space}Inputs`]: `(Vertex inputs) {
+          for (const space of ['Object', 'World', 'Camera']) {
+            const myShader = p5[base]().modify({
+              [`Vertex get${space}Inputs`]: `(Vertex inputs) {
                   // No-op
                   return inputs;
                 }`
-              });
-              p5.background(255);
-              p5.push();
-              p5.lights();
-              p5.fill('red');
-              p5.noStroke();
-              p5.translate(20, -10, 5);
-              p5.rotate(p5.PI * 0.1);
-              p5.camera(-800, 0, 0, 0, 0, 0);
-              p5.shader(myShader);
-              p5.box(30);
-              p5.pop();
-              screenshot();
-            }
+            });
+            p5.background(255);
+            p5.push();
+            p5.lights();
+            p5.fill('red');
+            p5.noStroke();
+            p5.translate(20, -10, 5);
+            p5.rotate(p5.PI * 0.1);
+            p5.camera(-800, 0, 0, 0, 0, 0);
+            p5.shader(myShader);
+            p5.box(30);
+            p5.pop();
+            screenshot();
+          }
         });
       });
     }

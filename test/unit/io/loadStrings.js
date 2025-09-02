@@ -21,7 +21,7 @@ suite('loadStrings', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadStrings(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -34,7 +34,7 @@ suite('loadStrings', function() {
       mockP5Prototype.loadStrings(validFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -49,7 +49,7 @@ suite('loadStrings', function() {
   });
 
   test('passes an array to success callback',  async () => {
-    await mockP5Prototype.loadStrings(validFile, (strings) => {
+    await mockP5Prototype.loadStrings(validFile, strings => {
       assert.isArray(strings);
       for(let string of strings){
         assert.isString(string);

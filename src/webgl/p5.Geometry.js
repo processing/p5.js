@@ -71,103 +71,103 @@ class Geometry {
   }
 
   /**
- * Calculates the position and size of the smallest box that contains the geometry.
- *
- * A bounding box is the smallest rectangular prism that contains the entire
- * geometry. It's defined by the box's minimum and maximum coordinates along
- * each axis, as well as the size (length) and offset (center).
- *
- * Calling `myGeometry.calculateBoundingBox()` returns an object with four
- * properties that describe the bounding box:
- *
- * ```js
- * // Get myGeometry's bounding box.
- * let bbox = myGeometry.calculateBoundingBox();
- *
- * // Print the bounding box to the console.
- * console.log(bbox);
- *
- * // {
- * //  // The minimum coordinate along each axis.
- * //  min: { x: -1, y: -2, z: -3 },
- * //
- * //  // The maximum coordinate along each axis.
- * //  max: { x: 1, y: 2, z: 3},
- * //
- * //  // The size (length) along each axis.
- * //  size: { x: 2, y: 4, z: 6},
- * //
- * //  // The offset (center) along each axis.
- * //  offset: { x: 0, y: 0, z: 0}
- * // }
- * ```
- *
- * @returns {Object} bounding box of the geometry.
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let particles;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a new p5.Geometry object with random spheres.
- *   particles = buildGeometry(createParticles);
- *
- *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the particles.
- *   noStroke();
- *   fill(255);
- *
- *   // Draw the particles.
- *   model(particles);
- *
- *   // Calculate the bounding box.
- *   let bbox = particles.calculateBoundingBox();
- *
- *   // Translate to the bounding box's center.
- *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
- *
- *   // Style the bounding box.
- *   stroke(255);
- *   noFill();
- *
- *   // Draw the bounding box.
- *   box(bbox.size.x, bbox.size.y, bbox.size.z);
- * }
- *
- * function createParticles() {
- *   for (let i = 0; i < 10; i += 1) {
- *     // Calculate random coordinates.
- *     let x = randomGaussian(0, 15);
- *     let y = randomGaussian(0, 15);
- *     let z = randomGaussian(0, 15);
- *
- *     push();
- *     // Translate to the particle's coordinates.
- *     translate(x, y, z);
- *     // Draw the particle.
- *     sphere(3);
- *     pop();
- *   }
- * }
- * </code>
- * </div>
- */
+   * Calculates the position and size of the smallest box that contains the geometry.
+   *
+   * A bounding box is the smallest rectangular prism that contains the entire
+   * geometry. It's defined by the box's minimum and maximum coordinates along
+   * each axis, as well as the size (length) and offset (center).
+   *
+   * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+   * properties that describe the bounding box:
+   *
+   * ```js
+   * // Get myGeometry's bounding box.
+   * let bbox = myGeometry.calculateBoundingBox();
+   *
+   * // Print the bounding box to the console.
+   * console.log(bbox);
+   *
+   * // {
+   * //  // The minimum coordinate along each axis.
+   * //  min: { x: -1, y: -2, z: -3 },
+   * //
+   * //  // The maximum coordinate along each axis.
+   * //  max: { x: 1, y: 2, z: 3},
+   * //
+   * //  // The size (length) along each axis.
+   * //  size: { x: 2, y: 4, z: 6},
+   * //
+   * //  // The offset (center) along each axis.
+   * //  offset: { x: 0, y: 0, z: 0}
+   * // }
+   * ```
+   *
+   * @returns {Object} bounding box of the geometry.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let particles;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a new p5.Geometry object with random spheres.
+   *   particles = buildGeometry(createParticles);
+   *
+   *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the particles.
+   *   noStroke();
+   *   fill(255);
+   *
+   *   // Draw the particles.
+   *   model(particles);
+   *
+   *   // Calculate the bounding box.
+   *   let bbox = particles.calculateBoundingBox();
+   *
+   *   // Translate to the bounding box's center.
+   *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+   *
+   *   // Style the bounding box.
+   *   stroke(255);
+   *   noFill();
+   *
+   *   // Draw the bounding box.
+   *   box(bbox.size.x, bbox.size.y, bbox.size.z);
+   * }
+   *
+   * function createParticles() {
+   *   for (let i = 0; i < 10; i += 1) {
+   *     // Calculate random coordinates.
+   *     let x = randomGaussian(0, 15);
+   *     let y = randomGaussian(0, 15);
+   *     let z = randomGaussian(0, 15);
+   *
+   *     push();
+   *     // Translate to the particle's coordinates.
+   *     translate(x, y, z);
+   *     // Draw the particle.
+   *     sphere(3);
+   *     pop();
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available

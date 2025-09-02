@@ -21,8 +21,8 @@ suite('loadXML', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadXML(invalidFile, () => {
-        console.log("here");
-        reject("Success callback executed");
+        console.log('here');
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -35,7 +35,7 @@ suite('loadXML', function() {
       mockP5Prototype.loadXML(validFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -49,7 +49,7 @@ suite('loadXML', function() {
   });
 
   test('passes an object with correct data to success callback', async () => {
-    await mockP5Prototype.loadXML(validFile, (xml) => {
+    await mockP5Prototype.loadXML(validFile, xml => {
       assert.isObject(xml);
       const children = xml.getChildren('book');
       assert.lengthOf(children, 12);

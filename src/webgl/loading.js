@@ -338,7 +338,13 @@ function loading(p5, fn){
    * @param  {Boolean} [options.flipV]
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
-  fn.loadModel = async function (path, fileType, normalize, successCallback, failureCallback) {
+  fn.loadModel = async function (
+    path,
+    fileType,
+    normalize,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadModel', arguments);
 
     let flipU = false;
@@ -494,7 +500,7 @@ function loading(p5, fn){
     let currentMaterial = null;
     let materials = {};
 
-    const { data } = await request(mtlPath, "text");
+    const { data } = await request(mtlPath, 'text');
     const lines = data.split('\n');
 
     for (let line = 0; line < lines.length; ++line) {
@@ -847,7 +853,11 @@ function loading(p5, fn){
       const line = lines[iterator].trim();
       const parts = line.split(' ');
 
-      for (let partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+      for (
+        let partsiterator = 0;
+        partsiterator < parts.length;
+        ++partsiterator
+      ) {
         if (parts[partsiterator] === '') {
           // Ignoring multiple whitespaces
           parts.splice(partsiterator, 1);

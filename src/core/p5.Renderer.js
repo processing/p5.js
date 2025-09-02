@@ -6,7 +6,7 @@
 
 /**
  * `pInst` may be:
- *  
+ *
  *  The main sketch-wide `p5` instance (global canvas), or
  *  an off-screen `p5.Graphics` wrapper.
  *
@@ -53,7 +53,10 @@ class Renderer {
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
     bezierOrder: 3,
-    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
     textWrap: constants.WORD,
 
     // added v2.0
@@ -63,7 +66,7 @@ class Renderer {
     lineHeight: constants.NORMAL,
     fontVariant: constants.NORMAL,
     direction: 'inherit'
-  }
+  };
 
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
@@ -150,7 +153,8 @@ class Renderer {
 
   bezierVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.bezierVertex(position, textureCoordinates);
@@ -178,7 +182,8 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.splineVertex(position, textureCoordinates);
@@ -212,12 +217,13 @@ class Renderer {
   }
 
   drawShape(shape, count) {
-    throw new Error('Unimplemented')
+    throw new Error('Unimplemented');
   }
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.vertex(position, textureCoordinates);
@@ -345,13 +351,13 @@ class Renderer {
   }
 
   getCommonVertexProperties() {
-    return {}
+    return {};
   }
 
   getSupportedIndividualVertexProperties() {
     return {
-      textureCoordinates: false,
-    }
+      textureCoordinates: false
+    };
   }
 
   updateShapeProperties(modified) {
@@ -365,7 +371,7 @@ class Renderer {
 
   updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    if (!modified || Object.keys(modified).some((k) => k in props)) {
+    if (!modified || Object.keys(modified).some(k => k in props)) {
       const shape = this.currentShape;
       for (const key in props) {
         shape[key](props[key]);

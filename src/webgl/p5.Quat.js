@@ -12,16 +12,16 @@ class Quat {
   }
 
   /**
-     * Returns a Quaternion for the
-     * axis angle representation of the rotation
-     *
-     * @method fromAxisAngle
-     * @param {Number} [angle] Angle with which the points needs to be rotated
-     * @param {Number} [x] x component of the axis vector
-     * @param {Number} [y] y component of the axis vector
-     * @param {Number} [z] z component of the axis vector
-     * @chainable
-    */
+   * Returns a Quaternion for the
+   * axis angle representation of the rotation
+   *
+   * @method fromAxisAngle
+   * @param {Number} [angle] Angle with which the points needs to be rotated
+   * @param {Number} [x] x component of the axis vector
+   * @param {Number} [y] y component of the axis vector
+   * @param {Number} [z] z component of the axis vector
+   * @chainable
+   */
   static fromAxisAngle(angle, x, y, z) {
     const w = Math.cos(angle/2);
     const vec = new Vector(x, y, z).normalize().mult(Math.sin(angle/2));
@@ -33,20 +33,20 @@ class Quat {
   }
 
   /**
-     * Multiplies a quaternion with other quaternion.
-     * @method mult
-     * @param  {p5.Quat} [quat] quaternion to multiply with the quaternion calling the method.
-     * @chainable
-     */
+   * Multiplies a quaternion with other quaternion.
+   * @method mult
+   * @param  {p5.Quat} [quat] quaternion to multiply with the quaternion calling the method.
+   * @chainable
+   */
   multiply(quat) {
-    /* eslint-disable max-len */
+
     return new Quat(
       this.w * quat.w - this.vec.x * quat.vec.x - this.vec.y * quat.vec.y - this.vec.z - quat.vec.z,
       this.w * quat.vec.x + this.vec.x * quat.w + this.vec.y * quat.vec.z - this.vec.z * quat.vec.y,
       this.w * quat.vec.y - this.vec.x * quat.vec.z + this.vec.y * quat.w + this.vec.z * quat.vec.x,
       this.w * quat.vec.z + this.vec.x * quat.vec.y - this.vec.y * quat.vec.x + this.vec.z * quat.w
     );
-    /* eslint-enable max-len */
+
   }
 
   /**
@@ -65,14 +65,14 @@ class Quat {
   }
 
   /**
-     * Rotates the Quaternion by the quaternion passed
-     * which contains the axis of roation and angle of rotation
-     *
-     * @method rotateBy
-     * @param {p5.Quat} [axesQuat] axis quaternion which contains
-     *  the axis of rotation and angle of rotation
-     * @chainable
-     */
+   * Rotates the Quaternion by the quaternion passed
+   * which contains the axis of roation and angle of rotation
+   *
+   * @method rotateBy
+   * @param {p5.Quat} [axesQuat] axis quaternion which contains
+   *  the axis of rotation and angle of rotation
+   * @chainable
+   */
   rotateBy(axesQuat) {
     return axesQuat.multiply(this).multiply(axesQuat.conjugate()).
       vec.clampToZero();

@@ -757,7 +757,7 @@ function setting(p5, fn){
    *          Instead of saturation and lightness, HWB defines colors based on the percentage
    *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
    *          Pure red in HWB is represented as `color(0, 0, 0)` (i.e., hue 0 with 0% whiteness and 0% blackness).
-   *    
+   *
    *          <img src="assets/hwb.png"></img>
    *
    * `LAB`    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
@@ -777,14 +777,14 @@ function setting(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
    * created in. Changing modes doesn't affect their appearance.
    *
-   *  `Single-value (Grayscale) Colors`:    
+   *  `Single-value (Grayscale) Colors`:
    *  When a color is specified with only one parameter (e.g., `color(g)`), p5.js will interpret it
    *  as a grayscale color. However, how that single parameter translates into a grayscale value
    *  depends on the color mode:
    *
-   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum 
-   *   (i.e., the single parameter is mapped to the blue channel's max). 
-   *   In HSB and HSL, the single value is mapped to Brightness and Lightness max respectively with hue=0 . 
+   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum
+   *   (i.e., the single parameter is mapped to the blue channel's max).
+   *   In HSB and HSL, the single value is mapped to Brightness and Lightness max respectively with hue=0 .
    *   and saturation=0.
    *
    * - `LAB, LCH, OKLAB, and OKLCH`: The single value is taken to be the `lightness (L)` component,
@@ -889,78 +889,78 @@ function setting(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background using the default color mode.
-   *   background(200); 
-   *   
+   *   background(200);
+   *
    *   // Switch to HWB color mode.
    *   // (Assuming p5.js supports HWB with a range of:
    *   // hue: 0–360, whiteness: 0–100, blackness: 0–100.)
    *   colorMode(HWB);
-   *   
+   *
    *   // Set fill to pure red in HWB.
    *   // Pure red in HWB is: hue = 0°, whiteness = 0%, blackness = 0%.
    *   fill(0, 0, 0);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using HWB color mode.');
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background using the default color mode.
    *   background(200);
-   *   
+   *
    *   // Switch to LAB color mode.
    *   // In this mode, L typically ranges from 0 to 100 while a and b span roughly -128 to 127.
    *   colorMode(LAB);
-   *   
+   *
    *   // Set fill to pure red in LAB.
    *   // The sRGB red (255, 0, 0) converts approximately to LAB as:
    *   // L = 53, a = 80, b = 67.
    *   fill(53, 80, 67);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using LAB color mode.');
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background.
    *   background(200);
-   *   
+   *
    *   // Switch to LCH color mode.
    *   // In LCH, colors are defined by Lightness, Chroma, and Hue (in degrees).
    *   colorMode(LCH);
-   *   
+   *
    *   // Set fill to an approximation of pure red in LCH:
    *   // Lightness ≈ 53, Chroma ≈ 104, Hue ≈ 40°.
    *   fill(53, 104, 40);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using LCH color mode.');
    * }
-   * </code>  
+   * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1056,7 +1056,7 @@ function setting(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1111,7 +1111,7 @@ function setting(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1128,7 +1128,7 @@ function setting(p5, fn){
    * function draw() {
    *   // Set color mode to RGB with range 0-255
    *   colorMode(RGB, 255);
-   *   
+   *
    *   // Fill with single grayscale value
    *   fill(128);
    *   rect(0, 0, 100, 100);

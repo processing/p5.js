@@ -133,7 +133,8 @@ suite('Files', function() {
       test('should call saveCanvas', async () => {
         mockP5Prototype.save();
         expect(mockP5Prototype.saveCanvas).toHaveBeenCalledTimes(1);
-        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledWith(mockP5Prototype.elt);
+        expect(mockP5Prototype.saveCanvas)
+          .toHaveBeenCalledWith(mockP5Prototype.elt);
       });
 
       test('should call saveCanvas with filename', async () => {
