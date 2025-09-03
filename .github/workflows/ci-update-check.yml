@@ -1,0 +1,38 @@
+name: Checking if generated files are up to date
+
+on:
+  push:
+    branches:
+      - main
+      - dev-2.0
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+      - name: Get node modules
+        run: npm ci
+        env:
+          CI: true
+      - name: Build documentation
+        run: npm docs
+        env:
+          CI: true
+      - name: Check Git status
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "There are uncommitted changes in the generated files. Please run 'npm docs' and commit the changes."
+            git status
+            exit 1
+          else
+            echo "All generated files are up to date."
+          fi
