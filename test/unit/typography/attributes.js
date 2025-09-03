@@ -98,6 +98,10 @@ suite('Typography Attributes', function() {
     test('should return a number for number input', function() {
       assert.isNumber(myp5.textWidth('p5.js'));
     });
+    test('should ignore leading and trailing spaces', function() {
+      assert.strictEqual(myp5.textWidth('  Hello  '), myp5.textWidth('Hello'));
+      assert.strictEqual(myp5.textWidth('    Hello    '), myp5.textWidth('Hello'));
+    });
   });
 
   suite('p5.prototype.textAscent', function() {
