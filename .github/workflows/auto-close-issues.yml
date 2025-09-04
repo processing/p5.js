@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 2.0
       - dev-2.0
 
 jobs:
@@ -17,4 +16,3 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: dev-2.0
-
