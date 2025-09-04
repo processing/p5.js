@@ -817,7 +817,7 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
-   * <strong>Note:</strong> In p5.js 2.0+, leading and trailing spaces are ignored.
+   * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
    * <code>textWidth("  Hello  ")</code> returns the same width as <code>textWidth("Hello")</code>.
    *
    * @example
