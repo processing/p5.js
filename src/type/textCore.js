@@ -817,6 +817,49 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    *
+   * <strong>Note:</strong> In p5.js 2.0+, leading and trailing spaces are ignored.
+   * <code>textWidth("  Hello  ")</code> returns the same width as <code>textWidth("Hello")</code>.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   textSize(16);
+   *
+   *   // Demonstrate that leading/trailing spaces are ignored
+   *   let text1 = 'Hello';
+   *   let text2 = '  Hello  ';
+   *   let text3 = '    Hello    ';
+   *
+   *   // All three texts have the same width
+   *   let w1 = textWidth(text1);
+   *   let w2 = textWidth(text2);
+   *   let w3 = textWidth(text3);
+   *
+   *   textAlign(LEFT, TOP);
+   *   text(text1, 20, 20);
+   *   text(text2, 20, 50);
+   *   text(text3, 20, 80);
+   *
+   *   // Show the widths (they should be the same)
+   *   text(`Width: ${w1}`, 150, 30);
+   *   text(`Width: ${w1}`, 150, 60);
+   *   text(`Width: ${w1}`, 150, 90);
+   *
+   *   // Draw rectangles around each text to show the tight bounding box
+   *   noFill();
+   *   stroke(255, 0, 0);
+   *   rect(20, 15, w1, 20);
+   *   rect(20, 45, w2, 20);
+   *   rect(20, 75, w3, 20);
+   *
+   *   describe('Three versions of "Hello" with different amounts of leading/trailing spaces, all showing the same width measurement.');
+   * }
+   * </code>
+   * </div>
+   *
    * @example
    * <div>
    * <code>
