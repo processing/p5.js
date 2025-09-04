@@ -824,38 +824,40 @@ function textCore(p5, fn) {
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(100, 100);
-   *   background(200);
-   *   textSize(16);
+   *   createCanvas(200, 160);
+   *   background(235);
+   *   noLoop();
    *
-   *   // Demonstrate that leading/trailing spaces are ignored
-   *   let text1 = 'Hello';
-   *   let text2 = '  Hello  ';
-   *   let text3 = '    Hello    ';
-   *
-   *   // All three texts have the same width
-   *   let w1 = textWidth(text1);
-   *   let w2 = textWidth(text2);
-   *   let w3 = textWidth(text3);
-   *
+   *   textSize(18);
    *   textAlign(LEFT, TOP);
-   *   text(text1, 20, 20);
-   *   text(text2, 20, 50);
-   *   text(text3, 20, 80);
    *
-   *   // Show the widths (they should be the same)
-   *   text(`Width: ${w1}`, 150, 30);
-   *   text(`Width: ${w1}`, 150, 60);
-   *   text(`Width: ${w1}`, 150, 90);
+   *   const x = 12, h = 24;
+   *   const s1 = 'Hello';
+   *   const s2 = 'Hello  ';      // 2 trailing spaces
+   *   const s3 = 'Hello     ';   // many trailing spaces
    *
-   *   // Draw rectangles around each text to show the tight bounding box
-   *   noFill();
-   *   stroke(255, 0, 0);
-   *   rect(20, 15, w1, 20);
-   *   rect(20, 45, w2, 20);
-   *   rect(20, 75, w3, 20);
+   *   // draw text
+   *   fill(0);
+   *   text(s1, x, 12);
+   *   text(s2, x, 56);
+   *   text(s3, x, 100);
    *
-   *   describe('Three versions of "Hello" with different amounts of leading/trailing spaces, all showing the same width measurement.');
+   *   // measure and draw tight boxes (all same width)
+   *   noFill(); stroke(255, 0, 0);
+   *   const w1 = textWidth(s1);
+   *   const w2 = textWidth(s2);
+   *   const w3 = textWidth(s3);
+   *   rect(x, 10,  w1, h);
+   *   rect(x, 54, w2, h);
+   *   rect(x, 98, w3, h);
+   *
+   *   // small captions show the actual strings (spaces as ·)
+   *   textSize(10); noStroke(); fill(30);
+   *   text('"' + s1.replace(/ /g, '·') + '"  w=' + w1.toFixed(1), x, 10 + h + 2);
+   *   text('"' + s2.replace(/ /g, '·') + '"  w=' + w2.toFixed(1), x, 54 + h + 2);
+   *   text('"' + s3.replace(/ /g, '·') + '"  w=' + w3.toFixed(1), x, 98 + h + 2);
+   *
+   *   describe('Three lines: Hello with 0, 2, and many trailing spaces. Red boxes use textWidth and are identical. Captions show spaces as dots.');
    * }
    * </code>
    * </div>
