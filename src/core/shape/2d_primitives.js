@@ -111,8 +111,7 @@ p5.prototype._normalizeArcAngles = (
  * The fifth and sixth parameters, `start` and `stop`, set the angles
  * between which to draw the arc. Arcs are always drawn clockwise from
  * `start` to `stop`. The fifth and sixth parameters, start and stop, set the
- * angles between which to draw the arc. Arcs are always drawn clockwise from
- * start to stop. By default, angles are given in radians, but if angleMode
+ * angles between which to draw the arc. By default, angles are given in radians, but if angleMode
  * (DEGREES) is set, the function interprets the values in degrees.
  *
  * The seventh parameter, `mode`, is optional. It determines the arc's fill

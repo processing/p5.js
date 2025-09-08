@@ -1181,7 +1181,7 @@ p5.prototype.shearX = function(angle) {
  * function draw() {
  *   background(200);
  *
- *   // Shear the coordinate system along the x-axis.
+ *   // Shear the coordinate system along the y-axis.
  *   shearY(QUARTER_PI);
  *
  *   // Draw the square.
@@ -1204,7 +1204,7 @@ p5.prototype.shearX = function(angle) {
  * function draw() {
  *   background(200);
  *
- *   // Shear the coordinate system along the x-axis.
+ *   // Shear the coordinate system along the y-axis.
  *   shearY(45);
  *
  *   // Draw the square.

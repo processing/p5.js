@@ -487,6 +487,19 @@ p5.prototype.clip = function(callback, options) {
  * function setup() {
  *   createCanvas(100, 100);
  *
+ *   // R, G, B, and Alpha values.
+ *   background(255, 0, 0, 128);
+ *
+ *   describe('A canvas with a semi-transparent red background.');
+ * }
+ * </code>
+ * </div>
+ * 
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
  *   // Use HSB color.
  *   colorMode(HSB);
  *
@@ -1035,6 +1048,22 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // R, G, B, and Alpha values.
+ *   fill(255, 0, 0, 128);
+ *   square(20, 20, 60);
+ *
+ *   describe('A semi-transparent red square with a black outline.');
+ * }
+ * </code>
+ * </div>
+ * 
  * <div>
  * <code>
  * function setup() {
