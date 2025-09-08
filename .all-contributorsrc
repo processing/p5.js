@@ -7136,6 +7136,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Homaid",
+      "name": "Homaid",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69979731?v=4",
+      "profile": "https://github.com/Homaid",
+      "contributions": [
+        "a11y",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
