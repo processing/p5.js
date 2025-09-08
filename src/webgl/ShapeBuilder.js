@@ -1,6 +1,6 @@
 import * as constants from '../core/constants';
 import { Geometry } from './p5.Geometry';
-import libtess from 'libtess'; // Fixed with exporting module from libtess
+import earcut, { flatten } from 'earcut';
 import { Vector } from '../math/p5.Vector';
 import { RenderBuffer } from './p5.RenderBuffer';
 
@@ -22,7 +22,7 @@ export class ShapeBuilder {
     this.renderer = renderer;
     this.shapeMode = constants.PATH;
     this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
-    this.geometry.gid = '__IMMEDIATE_MODE_GEOMETRY__';
+    this.geometry.gid = '_IMMEDIATE_MODE_GEOMETRY_';
 
     this.contourIndices = [];
     this._useUserVertexProperties = undefined;
@@ -33,9 +33,6 @@ export class ShapeBuilder {
 
     // Used to distinguish between user calls to vertex() and internal calls
     this.isProcessingVertices = false;
-
-    // Used for converting shape outlines into triangles for rendering
-    this._tessy = this._initTessy();
     this.tessyVertexSize = INITIAL_VERTEX_SIZE;
     this.bufferStrides = { ...INITIAL_BUFFER_STRIDES };
   }
@@ -259,19 +256,14 @@ export class ShapeBuilder {
    * @private
    */
   _tesselateShape() {
-    // TODO: handle non-PATH shape modes that have contours
     this.shapeMode = constants.TRIANGLES;
-    // const contours = [[]];
     const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
-      if (
-        this.contourIndices.length > 0 &&
-        this.contourIndices[0] === i
-      ) {
+      if (this.contourIndices.length > 0 && this.contourIndices[0] === i) {
         this.contourIndices.shift();
         contours.push([]);
       }
-      contours[contours.length-1].push(
+      contours[contours.length - 1].push(
         this.geometry.vertices[i].x,
         this.geometry.vertices[i].y,
         this.geometry.vertices[i].z,
@@ -293,7 +285,6 @@ export class ShapeBuilder {
         contours[contours.length-1].push(...vals);
       }
     }
-
     const polyTriangles = this._triangulate(contours);
     const originalVertices = this.geometry.vertices;
     this.geometry.vertices = [];
@@ -304,11 +295,8 @@ export class ShapeBuilder {
       prop.resetSrcArray();
     }
     const colors = [];
-    for (
-      let j = 0, polyTriLength = polyTriangles.length;
-      j < polyTriLength;
-      j = j + this.tessyVertexSize
-    ) {
+    // Loop over each vertex (remember: each triangle vertex is packed in tessyVertexSize floats)
+    for (let j = 0, len = polyTriangles.length; j < len; j += this.tessyVertexSize) {
       colors.push(...polyTriangles.slice(j + 5, j + 9));
       this.geometry.vertexNormals.push(new Vector(...polyTriangles.slice(j + 9, j + 12)));
       {
@@ -377,108 +365,142 @@ export class ShapeBuilder {
     this.geometry.vertexColors = colors;
   }
 
-  _initTessy() {
-    // function called for each vertex of tesselator output
-    function vertexCallback(data, polyVertArray) {
-      for (const element of data) {
-        polyVertArray.push(element);
-      }
-    }
-
-    function begincallback(type) {
-      if (type !== libtess.primitiveType.GL_TRIANGLES) {
-        console.log(`expected TRIANGLES but got type: ${type}`);
-      }
-    }
-
-    function errorcallback(errno) {
-      console.log('error callback');
-      console.log(`error number: ${errno}`);
-    }
-
-    // callback for when segments intersect and must be split
-    const combinecallback = (coords, data, weight) => {
-      const result = new Array(this.tessyVertexSize).fill(0);
-      for (let i = 0; i < weight.length; i++) {
-        for (let j = 0; j < result.length; j++) {
-          if (weight[i] === 0 || !data[i]) continue;
-          result[j] += data[i][j] * weight[i];
-        }
-      }
-      return result;
-    };
-
-    function edgeCallback(flag) {
-      // don't really care about the flag, but need no-strip/no-fan behavior
-    }
-
-    const tessy = new libtess.GluTesselator();
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
-    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
-    tessy.gluTessProperty(
-      libtess.gluEnum.GLU_TESS_WINDING_RULE,
-      libtess.windingRule.GLU_TESS_WINDING_NONZERO
-    );
-
-    return tessy;
-  }
-
-  /**
-   * Runs vertices through libtess to convert them into triangles
-   * @private
-   */
   _triangulate(contours) {
-    // libtess will take 3d verts and flatten to a plane for tesselation.
-    // libtess is capable of calculating a plane to tesselate on, but
-    // if all of the vertices have the same z values, we'll just
-    // assume the face is facing the camera, letting us skip any performance
-    // issues or bugs in libtess's automatic calculation.
-    const z = contours[0] ? contours[0][2] : undefined;
-    let allSameZ = true;
+    const allTriangleVerts = [];
+    const vertexSize = this.tessyVertexSize;
+
+    // (A) Collect all 3D points from every contour.
+    const allPoints3D = [];
     for (const contour of contours) {
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
-        if (contour[j + 2] !== z) {
-          allSameZ = false;
+      for (let j = 0; j < contour.length; j += vertexSize) {
+        allPoints3D.push([contour[j], contour[j + 1], contour[j + 2]]);
+      }
+    }
+    // Compute a projection basis from all points.
+    const basis = this._computeProjectionBasis(allPoints3D);
+
+    // (B) For each contour, build its 2D projection.
+    let classifiedContours = contours.map(contour => {
+      const polygon = [];
+      for (let j = 0; j < contour.length; j += vertexSize) {
+        const pt3 = [contour[j], contour[j + 1], contour[j + 2]];
+        const pt2 = this._projectPoint(pt3, basis);
+        polygon.push(pt2);
+      }
+      return {
+        // We will decide later if this contour is outer or a hole.
+        polygon,
+        vertexData: contour
+      };
+    });
+
+    const outerContours = [];
+    const holeContours = [];
+    for (let i = 0; i < classifiedContours.length; i++) {
+      const c = classifiedContours[i];
+      let contained = false;
+      for (let j = 0; j < classifiedContours.length; j++) {
+        if (i === j) continue;
+        if (this._contains(classifiedContours[j].polygon, c.polygon[0])) {
+          contained = true;
           break;
         }
       }
-    }
-    if (allSameZ) {
-      this._tessy.gluTessNormal(0, 0, 1);
-    } else {
-      // Let libtess pick a plane for us
-      this._tessy.gluTessNormal(0, 0, 0);
-    }
-
-    const triangleVerts = [];
-    this._tessy.gluTessBeginPolygon(triangleVerts);
-
-    for (const contour of contours) {
-      this._tessy.gluTessBeginContour();
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
-        const coords = contour.slice(
-          j,
-          j + this.tessyVertexSize
-        );
-        this._tessy.gluTessVertex(coords, coords);
+      if (!contained) {
+        outerContours.push(c);
+      } else {
+        holeContours.push(c);
       }
-      this._tessy.gluTessEndContour();
     }
+    // Group each outer contour with all holes contained in it.
+    const contourGroups = outerContours.map(outer => ({
+      outer,
+      holes: holeContours.filter(hole => this._contains(outer.polygon, hole.polygon[0]))
+    }));
 
-    // finish polygon
-    this._tessy.gluTessEndPolygon();
+    for (const group of contourGroups) {
+      const { outer, holes } = group;
+      const polygons = [outer.polygon, ...holes.map(h => h.polygon)];
+      const { vertices: verts2D, holes: earcutHoles, dimensions } = flatten(polygons);
+      const indices = earcut(verts2D, earcutHoles, dimensions);
 
-    return triangleVerts;
+      const vertexDataChunks = [];
+      for (let j = 0; j < outer.vertexData.length; j += vertexSize) {
+        vertexDataChunks.push(outer.vertexData.slice(j, j + vertexSize));
+      }
+      // Then add the holes’ vertexData (in the same order as flatten() does).
+      for (const h of holes) {
+        for (let j = 0; j < h.vertexData.length; j += vertexSize) {
+          vertexDataChunks.push(h.vertexData.slice(j, j + vertexSize));
+        }
+      }
+      // Build triangles using earcut’s indices.
+      for (const idx of indices) {
+        allTriangleVerts.push(...vertexDataChunks[idx]);
+      }
+    }
+    return allTriangleVerts;
+  };
+
+  _projectPoint(pt, basis) {
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    return [dot(pt, basis.u), dot(pt, basis.v)];
+  };
+
+  _computeProjectionBasis(points) {
+    const epsilon = 1e-6;
+    const firstZ = points[0][2];
+    const isFlat2D = points.every(p => Math.abs(p[2] - firstZ) < epsilon);
+    if (isFlat2D) {
+      return {
+        normal: [0, 0, 1],
+        u: [1, 0, 0],
+        v: [0, 1, 0]
+      };
+    }
+    // Otherwise compute a normal via Newell's method.
+    let normal = [0, 0, 0];
+    for (let i = 0; i < points.length; i++) {
+      const current = points[i];
+      const next = points[(i + 1) % points.length];
+      normal[0] += (current[1] - next[1]) * (current[2] + next[2]);
+      normal[1] += (current[2] - next[2]) * (current[0] + next[0]);
+      normal[2] += (current[0] - next[0]) * (current[1] + next[1]);
+    }
+    let len = Math.hypot(normal[0], normal[1], normal[2]);
+    if (len === 0) {
+      normal = [0, 0, 1];
+    } else {
+      normal = normal.map(n => n / len);
+    }
+    // Choose an arbitrary vector not parallel to the normal.
+    let u;
+    if (Math.abs(normal[0]) > Math.abs(normal[1])) {
+      u = [-normal[2], 0, normal[0]];
+    } else {
+      u = [0, normal[2], -normal[1]];
+    }
+    let uLen = Math.hypot(u[0], u[1], u[2]);
+    if (uLen === 0) u = [1, 0, 0];
+    else u = u.map(x => x / uLen);
+    // Compute v = normal cross u.
+    const v = [
+      normal[1] * u[2] - normal[2] * u[1],
+      normal[2] * u[0] - normal[0] * u[2],
+      normal[0] * u[1] - normal[1] * u[0]
+    ];
+    return { normal, u, v };
+  };
+
+  _contains(outerPolygon, [x, y]) {
+    let inside = false;
+    for (let i = 0, j = outerPolygon.length - 1; i < outerPolygon.length; j = i++) {
+      const [xi, yi] = outerPolygon[i];
+      const [xj, yj] = outerPolygon[j];
+      const intersect = ((yi > y) !== (yj > y)) &&
+        (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
   }
 };
