@@ -129,13 +129,9 @@ function pointer(p5, fn, lifecycles){
   /**
    * A `Number` system variable that tracks the mouse's horizontal position.
    *
-   * In 2D mode, `mouseX` keeps track of the mouse's position relative to the
+   * `mouseX` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. For example, if the mouse is 50 pixels from
    * the left edge of the canvas, then `mouseX` will be 50.
-   *
-   * In WebGL mode, `mouseX` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse is 50 pixels to the right
-   * of the canvas' center, then `mouseX` will be 50.
    *
    * If touch is used instead of the mouse, then `mouseX` will hold the
    * x-coordinate of the most recent touch point.
@@ -177,7 +173,7 @@ function pointer(p5, fn, lifecycles){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
    * </code>
    * </div>
@@ -228,7 +224,7 @@ function pointer(p5, fn, lifecycles){
    *   fill(0);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
    * </code>
    * </div>
@@ -238,13 +234,9 @@ function pointer(p5, fn, lifecycles){
   /**
    * A `Number` system variable that tracks the mouse's vertical position.
    *
-   * In 2D mode, `mouseY` keeps track of the mouse's position relative to the
+   * `mouseY` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. For example, if the mouse is 50 pixels from
    * the top edge of the canvas, then `mouseY` will be 50.
-   *
-   * In WebGL mode, `mouseY` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse is 50 pixels below the
-   * canvas' center, then `mouseY` will be 50.
    *
    * If touch is used instead of the mouse, then `mouseY` will hold the
    * y-coordinate of the most recent touch point.
@@ -286,7 +278,7 @@ function pointer(p5, fn, lifecycles){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
    * </code>
    * </div>
@@ -337,7 +329,7 @@ function pointer(p5, fn, lifecycles){
    *   fill(0);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
    * </code>
    * </div>
@@ -348,15 +340,11 @@ function pointer(p5, fn, lifecycles){
    * A `Number` system variable that tracks the mouse's previous horizontal
    * position.
    *
-   * In 2D mode, `pmouseX` keeps track of the mouse's position relative to the
+   * `pmouseX` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. Its value is
    * <a href="#/p5/mouseX">mouseX</a> from the previous frame. For example, if
    * the mouse was 50 pixels from the left edge of the canvas during the last
    * frame, then `pmouseX` will be 50.
-   *
-   * In WebGL mode, `pmouseX` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse was 50 pixels to the right
-   * of the canvas' center during the last frame, then `pmouseX` will be 50.
    *
    * If touch is used instead of the mouse, then `pmouseX` will hold the
    * x-coordinate of the last touch point.
@@ -417,15 +405,11 @@ function pointer(p5, fn, lifecycles){
    * A `Number` system variable that tracks the mouse's previous vertical
    * position.
    *
-   * In 2D mode, `pmouseY` keeps track of the mouse's position relative to the
+   * `pmouseY` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. Its value is
    * <a href="#/p5/mouseY">mouseY</a> from the previous frame. For example, if
    * the mouse was 50 pixels from the top edge of the canvas during the last
    * frame, then `pmouseY` will be 50.
-   *
-   * In WebGL mode, `pmouseY` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse was 50 pixels below the
-   * canvas' center during the last frame, then `pmouseY` will be 50.
    *
    * If touch is used instead of the mouse, then `pmouseY` will hold the
    * y-coordinate of the last touch point.
@@ -516,7 +500,7 @@ function pointer(p5, fn, lifecycles){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates within the browser window.
-   *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
+   *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
    * </code>
    * </div>
@@ -557,7 +541,7 @@ function pointer(p5, fn, lifecycles){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates within the browser window.
-   *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
+   *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
    * </code>
    * </div>
@@ -990,15 +974,18 @@ function pointer(p5, fn, lifecycles){
 
   fn._setMouseButton = function(e) {
     // Check all active touches to determine button states
-    this.mouseButton.left = Array.from(this._activePointers.values()).some(touch =>
-      (touch.buttons & 1) !== 0
-    );
-    this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
-      (touch.buttons & 4) !== 0
-    );
-    this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
-      (touch.buttons & 2) !== 0
-    );
+    this.mouseButton.left = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 1) !== 0
+      );
+    this.mouseButton.center = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 4) !== 0
+      );
+    this.mouseButton.right = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 2) !== 0
+      );
   };
 
   /**
@@ -1180,12 +1167,18 @@ function pointer(p5, fn, lifecycles){
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
-    if (!this.mouseIsPressed && this._customActions.mouseMoved) {
+    if (
+      !this.mouseIsPressed &&
+      typeof this._customActions.mouseMoved === 'function'
+    ) {
       executeDefault = this._customActions.mouseMoved(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (this.mouseIsPressed && this._customActions.mouseDragged) {
+    } else if (
+      this.mouseIsPressed &&
+      typeof this._customActions.mouseDragged === 'function'
+    ) {
       executeDefault = this._customActions.mouseDragged(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -1503,7 +1496,7 @@ function pointer(p5, fn, lifecycles){
 
     this._updatePointerCoords(e);
 
-    if (this._customActions.mouseReleased) {
+    if (typeof this._customActions.mouseReleased === 'function') {
       executeDefault = this._customActions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();

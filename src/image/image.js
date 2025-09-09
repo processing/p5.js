@@ -386,12 +386,13 @@ function image(p5, fn){
 
     // Now to build the global palette
     // Sort all the unique palettes in descending order of their occurrence
-    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
-      a,
-      b
-    ) {
-      return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
-    });
+    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames)
+      .sort(function(
+        a,
+        b
+      ) {
+        return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+      });
 
     // The initial global palette is the one with the most occurrence
     const globalPalette = palettesSortedByFreq[0]
@@ -449,7 +450,12 @@ function image(p5, fn){
       loop: loopLimit,
       palette: new Uint32Array(globalPalette)
     };
-    const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+    const gifWriter = new omggif.GifWriter(
+      buffer,
+      pImg.width,
+      pImg.height,
+      opts
+    );
     let previousFrame = {};
 
     // Pass 2
@@ -596,11 +602,11 @@ function image(p5, fn){
    * @param  {Number}   duration  duration in seconds to record. This parameter will be constrained to be less or equal to 15.
    * @param  {Number}   framerate number of frames to save per second. This parameter will be constrained to be less or equal to 22.
    * @param  {function(Array)} [callback] callback function that will be executed
-                                    to handle the image data. This function
-                                    should accept an array as argument. The
-                                    array will contain the specified number of
-                                    frames of objects. Each object has three
-                                    properties: `imageData`, `filename`, and `extension`.
+   *                                to handle the image data. This function
+   *                                should accept an array as argument. The
+   *                                array will contain the specified number of
+   *                                frames of objects. Each object has three
+   *                                properties: `imageData`, `filename`, and `extension`.
    * @example
    * <div>
    * <code>

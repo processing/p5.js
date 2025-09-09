@@ -722,7 +722,9 @@ class Element {
 
     this.position(0, 0);
     const wOffset = Math.abs(this.parent().offsetWidth - this.elt.offsetWidth);
-    const hOffset = Math.abs(this.parent().offsetHeight - this.elt.offsetHeight);
+    const hOffset = Math.abs(
+      this.parent().offsetHeight - this.elt.offsetHeight
+    );
 
     if (align === 'both' || align === undefined) {
       this.position(
@@ -1032,7 +1034,10 @@ class Element {
           this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
           this.elt.style.width = aW + 'px';
           this.elt.style.height = aH + 'px';
-          this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+          this._pInst.scale(
+            this._pInst._pixelDensity,
+            this._pInst._pixelDensity
+          );
           for (prop in j) {
             this.elt.getContext('2d')[prop] = j[prop];
           }
@@ -2374,7 +2379,11 @@ class Element {
     }
 
     function closeDragElement() {
-      document.removeEventListener(closeDragElementEvt, closeDragElement, false);
+      document.removeEventListener(
+        closeDragElementEvt,
+        closeDragElement,
+        false
+      );
       document.removeEventListener(elementDragEvt, elementDrag, false);
     }
 
