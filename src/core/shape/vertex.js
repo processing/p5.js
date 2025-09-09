@@ -1414,17 +1414,17 @@ p5.prototype.endContour = function () {
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
  *   createCanvas(200, 100);
- * 
+ *
  *   background(240);
- * 
+ *
  *   noFill();
  *   stroke(0);
- * 
+ *
  *   // Open shape (left)
  *   beginShape();
  *   vertex(20, 20);

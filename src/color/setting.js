@@ -494,7 +494,7 @@ p5.prototype.clip = function(callback, options) {
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
@@ -1063,7 +1063,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * }
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * function setup() {
