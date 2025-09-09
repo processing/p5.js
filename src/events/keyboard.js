@@ -670,7 +670,7 @@ function keyboard(p5, fn, lifecycles){
     this._downKeyCodes[e.code] = true;
     this._downKeys[e.key] = true;
 
-    if (this._customActions.keyPressed && !e.charCode) {
+    if (typeof this._customActions.keyPressed === 'function' && !e.charCode) {
       const executeDefault = this._customActions.keyPressed(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -835,7 +835,7 @@ function keyboard(p5, fn, lifecycles){
    * </div>
    */
   fn._onkeyup = function(e) {
-    if (this._customActions.keyReleased) {
+    if (typeof this._customActions.keyReleased === 'function') {
       const executeDefault = this._customActions.keyReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -998,7 +998,7 @@ function keyboard(p5, fn, lifecycles){
     this._lastKeyCodeTyped = e.which; // track last keyCode
     this.key = e.key || String.fromCharCode(e.which) || e.which;
 
-    if (this._customActions.keyTyped) {
+    if (typeof this._customActions.keyTyped === 'function') {
       const executeDefault = this._customActions.keyTyped(e);
       if (executeDefault === false) {
         e.preventDefault();

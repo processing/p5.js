@@ -657,7 +657,7 @@ function acceleration(p5, fn, lifecycles){
       this.deviceOrientation = 'undefined';
     }
 
-    if (this._customActions.deviceMoved) {
+    if (typeof this._customActions.deviceMoved === 'function') {
       if (
         Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
@@ -667,7 +667,7 @@ function acceleration(p5, fn, lifecycles){
       }
     }
 
-    if (this._customActions.deviceTurned) {
+    if (typeof this._customActions.deviceTurned === 'function') {
       // The angles given by rotationX etc is from range [-180 to 180].
       // The following will convert them to [0 to 360] for ease of calculation
       // of cases when the angles wrapped around.
@@ -742,7 +742,7 @@ function acceleration(p5, fn, lifecycles){
       this.pRotateDirectionZ = rotateDirectionZ;
       this.turnAxis = undefined;
     }
-    if (this._customActions.deviceShaken) {
+    if (typeof this._customActions.deviceShaken === 'function') {
       let accelerationChangeX;
       let accelerationChangeY;
       // Add accelerationChangeZ if acceleration change on Z is needed

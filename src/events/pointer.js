@@ -6,8 +6,6 @@
  * @requires constants
  */
 
-import * as constants from '../core/constants';
-
 function pointer(p5, fn, lifecycles){
   lifecycles.presetup = function(){
     const events = [
@@ -1336,7 +1334,7 @@ function pointer(p5, fn, lifecycles){
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (this._customActions.mousePressed) {
+    if (typeof this._customActions.mousePressed === 'function') {
       executeDefault = this._customActions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -1651,7 +1649,7 @@ function pointer(p5, fn, lifecycles){
    * </div>
    */
   fn._onclick = function(e) {
-    if (this._customActions.mouseClicked) {
+    if (typeof this._customActions.mouseClicked === 'function') {
       const executeDefault = this._customActions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -1781,7 +1779,7 @@ function pointer(p5, fn, lifecycles){
    */
 
   fn._ondblclick = function(e) {
-    if (this._customActions.doubleClicked) {
+    if (typeof this._customActions.doubleClicked === 'function') {
       const executeDefault = this._customActions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
@@ -1929,7 +1927,7 @@ function pointer(p5, fn, lifecycles){
    */
   fn._onwheel = function(e) {
     this._mouseWheelDeltaY = e.deltaY;
-    if (this._customActions.mouseWheel) {
+    if (typeof this._customActions.mouseWheel === 'function') {
       e.delta = e.deltaY;
       const executeDefault = this._customActions.mouseWheel(e);
       if (executeDefault === false) {
