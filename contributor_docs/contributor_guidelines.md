@@ -201,7 +201,7 @@ To proceed you should be minimally familiar with working with the command line, 
 
 Now that your issue has been discussed, an implementation approved, and you are willing to make the code changes, you are ready to start working on the codebase.
 
-Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
+Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards or maintainers assign the issue to you.
 
 You should not "jump the queue" by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. **If you file a PR for an issue while someone else is still working on the same issue, your PR will likely be closed.**
 
@@ -210,7 +210,7 @@ If you see that it has been a few weeks since the last activity on an issue with
 
 In some cases, issues may be time sensitive - so either maintainers will work on these directly, or explain any important deadlines. If the issue has a deadline, and a contributor isn't able to finish on time, it may be reassigned. This is an exception, though, and not the rule. Generally, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. If you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
 
-If you've been assigned to an issue and are working on it, the p5.js maintainers (you can check who in the README!) might comment and tag you in that comment to check in. Please reply **within 1 week** with any questions or updates; if you don't respond in a week, we may reassign the issue. This doesn't mean you need to finish the work in 1 week: only to confirm you're still on it.
+If you've been assigned to an issue and are working on it, the p5.js stewards or maintainers (you can check who this is in the README!) might comment and tag you in that comment to check in. Please reply **within 1 week** with any questions or updates; if you don't respond in a week, stewards or maintainers may reassign the issue. This doesn't mean you need to finish the work in 1 week: only to confirm you're still on it.
 
 ## Quick Get Started For Developers
 
