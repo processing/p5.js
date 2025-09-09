@@ -3,7 +3,7 @@
  * @requires constants
  */
 
-import * as constants from "../core/constants";
+import * as constants from '../core/constants';
 
 /// HELPERS FOR REMAINDER METHOD
 const calculateRemainder2D = function (xComponent, yComponent) {
@@ -33,12 +33,12 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let values = args.map((arg) => arg || 0);
-    if (typeof args[0] === "function") {
+    let values = args.map(arg => arg || 0);
+    if (typeof args[0] === 'function') {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      values = args.slice(2).map((arg) => arg || 0);
+      values = args.slice(2).map(arg => arg || 0);
     }
     let dimensions = values.length; // TODO: make default 3 if no arguments
     if (dimensions === 0) {
@@ -121,8 +121,8 @@ class Vector {
       return this._values[index];
     } else {
       p5._friendlyError(
-        "The index parameter is trying to set a value outside the bounds of the vector",
-        "p5.Vector.setValue"
+        'The index parameter is trying to set a value outside the bounds of the vector',
+        'p5.Vector.setValue'
       );
     }
   }
@@ -146,8 +146,8 @@ class Vector {
       this._values[index] = value;
     } else {
       p5._friendlyError(
-        "The index parameter is trying to set a value outside the bounds of the vector",
-        "p5.Vector.setValue"
+        'The index parameter is trying to set a value outside the bounds of the vector',
+        'p5.Vector.setValue'
       );
     }
   }
@@ -272,7 +272,7 @@ class Vector {
    * </div>
    */
   toString() {
-    return `[${this.values.join(", ")}]`;
+    return `[${this.values.join(', ')}]`;
   }
 
   /**
@@ -336,9 +336,9 @@ class Vector {
     if (args[0] instanceof Vector) {
       this.values = args[0].values.slice();
     } else if (Array.isArray(args[0])) {
-      this.values = args[0].map((arg) => arg || 0);
+      this.values = args[0].map(arg => arg || 0);
     } else {
-      this.values = args.map((arg) => arg || 0);
+      this.values = args.map(arg => arg || 0);
     }
     this.dimensions = this.values.length;
     return this;
@@ -660,7 +660,7 @@ class Vector {
         );
       }
     } else if (Array.isArray(x)) {
-      if (x.every((element) => Number.isFinite(element))) {
+      if (x.every(element => Number.isFinite(element))) {
         if (x.length === 2) {
           return calculateRemainder2D.call(this, x[0], x[1]);
         }
@@ -677,7 +677,7 @@ class Vector {
       }
     } else if (arguments.length === 2) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every((element) => Number.isFinite(element))) {
+      if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
           return calculateRemainder2D.call(
             this,
@@ -688,7 +688,7 @@ class Vector {
       }
     } else if (arguments.length === 3) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every((element) => Number.isFinite(element))) {
+      if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
           return calculateRemainder3D.call(
             this,
@@ -1046,12 +1046,12 @@ class Vector {
       const v = args[0];
       const maxLen = Math.min(this.values.length, v.values.length);
       for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(v.values[i]) && typeof v.values[i] === "number") {
+        if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
           this._values[i] *= v.values[i];
         } else {
           console.warn(
-            "p5.Vector.prototype.mult:",
-            "v contains components that are either undefined or not finite numbers"
+            'p5.Vector.prototype.mult:',
+            'v contains components that are either undefined or not finite numbers'
           );
           return this;
         }
@@ -1060,19 +1060,19 @@ class Vector {
       const arr = args[0];
       const maxLen = Math.min(this.values.length, arr.length);
       for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(arr[i]) && typeof arr[i] === "number") {
+        if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
           this._values[i] *= arr[i];
         } else {
           console.warn(
-            "p5.Vector.prototype.mult:",
-            "arr contains elements that are either undefined or not finite numbers"
+            'p5.Vector.prototype.mult:',
+            'arr contains elements that are either undefined or not finite numbers'
           );
           return this;
         }
       }
     } else if (
       args.length === 1 &&
-      typeof args[0] === "number" &&
+      typeof args[0] === 'number' &&
       Number.isFinite(args[0])
     ) {
       for (let i = 0; i < this._values.length; i++) {
@@ -1282,18 +1282,18 @@ class Vector {
       const v = args[0];
       if (
         v._values.every(
-          (val) => Number.isFinite(val) && typeof val === "number"
+          val => Number.isFinite(val) && typeof val === 'number'
         )
       ) {
-        if (v._values.some((val) => val === 0)) {
-          console.warn("p5.Vector.prototype.div:", "divide by 0");
+        if (v._values.some(val => val === 0)) {
+          console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
         this._values = this._values.map((val, i) => val / v._values[i]);
       } else {
         console.warn(
-          "p5.Vector.prototype.div:",
-          "vector contains components that are either undefined or not finite numbers"
+          'p5.Vector.prototype.div:',
+          'vector contains components that are either undefined or not finite numbers'
         );
       }
       return this;
@@ -1301,31 +1301,31 @@ class Vector {
 
     if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
-      if (arr.every((val) => Number.isFinite(val) && typeof val === "number")) {
-        if (arr.some((val) => val === 0)) {
-          console.warn("p5.Vector.prototype.div:", "divide by 0");
+      if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
+        if (arr.some(val => val === 0)) {
+          console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
         this._values = this._values.map((val, i) => val / arr[i]);
       } else {
         console.warn(
-          "p5.Vector.prototype.div:",
-          "array contains components that are either undefined or not finite numbers"
+          'p5.Vector.prototype.div:',
+          'array contains components that are either undefined or not finite numbers'
         );
       }
       return this;
     }
 
-    if (args.every((val) => Number.isFinite(val) && typeof val === "number")) {
-      if (args.some((val) => val === 0)) {
-        console.warn("p5.Vector.prototype.div:", "divide by 0");
+    if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
+      if (args.some(val => val === 0)) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
       this._values = this._values.map((val, i) => val / args[0]);
     } else {
       console.warn(
-        "p5.Vector.prototype.div:",
-        "arguments contain components that are either undefined or not finite numbers"
+        'p5.Vector.prototype.div:',
+        'arguments contain components that are either undefined or not finite numbers'
       );
     }
 
@@ -3152,7 +3152,7 @@ class Vector {
    * </div>
    */
   static fromAngle(angle, length) {
-    if (typeof length === "undefined") {
+    if (typeof length === 'undefined') {
       length = 1;
     }
     return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
@@ -3214,7 +3214,7 @@ class Vector {
    * </div>
    */
   static fromAngles(theta, phi, length) {
-    if (typeof length === "undefined") {
+    if (typeof length === 'undefined') {
       length = 1;
     }
     const cosPhi = Math.cos(phi);
@@ -3347,8 +3347,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.add"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.add'
         );
       }
     } else {
@@ -3394,8 +3394,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.sub"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.sub'
         );
       }
     } else {
@@ -3438,8 +3438,8 @@ class Vector {
       target = v.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.mult"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.mult'
         );
       }
     } else {
@@ -3464,8 +3464,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.rotate"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.rotate'
         );
       }
       target.set(v);
@@ -3508,8 +3508,8 @@ class Vector {
 
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.div"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.div'
         );
       }
     } else {
@@ -3576,8 +3576,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.lerp"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.lerp'
         );
       }
     } else {
@@ -3606,8 +3606,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.slerp"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.slerp'
         );
       }
     } else {
@@ -3660,8 +3660,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.normalize"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.normalize'
         );
       }
       target.set(v);
@@ -3686,8 +3686,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.limit"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.limit'
         );
       }
       target.set(v);
@@ -3712,8 +3712,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.setMag"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.setMag'
         );
       }
       target.set(v);
@@ -3768,8 +3768,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.reflect"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.reflect'
         );
       }
       target.set(incidentVector);
@@ -3809,8 +3809,8 @@ class Vector {
       v = new Vector().set(v1);
     } else {
       p5._friendlyError(
-        "The v1 parameter should be of type Array or p5.Vector",
-        "p5.Vector.equals"
+        'The v1 parameter should be of type Array or p5.Vector',
+        'p5.Vector.equals'
       );
     }
     return v.equals(v2);
@@ -3931,6 +3931,6 @@ function vector(p5, fn) {
 export default vector;
 export { Vector };
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   vector(p5, p5.prototype);
 }

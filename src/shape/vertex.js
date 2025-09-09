@@ -6,8 +6,6 @@
  * @requires constants
  */
 
-import * as constants from '../core/constants';
-
 function vertex(p5, fn){
   /**
    * Begins adding vertices to a custom shape.
@@ -416,14 +414,14 @@ function vertex(p5, fn){
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
    * But shapes can mix different types of vertices, so if there
-   * are some previous vertices, then the initial anchor is not needed, 
-   * only the multiples of 3 (or the Bézier order) calls to 
+   * are some previous vertices, then the initial anchor is not needed,
+   * only the multiples of 3 (or the Bézier order) calls to
    *  `bezierVertex` for each curve.
-   * 
+   *
    * Each curve of order 3 requires three calls to `bezierVertex`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
    * (1 one initial anchor point, two sets of 3 curves describing the curves)
-   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2.
    *
    * Bézier curves can also be drawn in 3D using WebGL mode.
    *
@@ -610,7 +608,7 @@ function vertex(p5, fn){
    *   bezierVertex(80, 0);
    *   bezierVertex(80, 75);
    *   bezierVertex(30, 75);
-   * 
+   *
    *   bezierVertex(50, 80);
    *   bezierVertex(60, 25);
    *   bezierVertex(30, 20);
@@ -646,11 +644,11 @@ function vertex(p5, fn){
    *   // Draw the first moon.
    *   beginShape();
    *   bezierVertex(-20, -30, 0);
-   * 
+   *
    *   bezierVertex(30, -50, 0);
    *   bezierVertex(30, 25, 0);
    *   bezierVertex(-20, 25, 0);
-   * 
+   *
    *   bezierVertex(0, 30, 0);
    *   bezierVertex(10, -25, 0);
    *   bezierVertex(-20, -30, 0);
@@ -658,17 +656,17 @@ function vertex(p5, fn){
    *
    *   // Draw the second moon.
    *   beginShape();
-   * 
+   *
    *   bezierVertex(-20, -30, -20);
-   * 
+   *
    *   bezierVertex(30, -50, -20);
    *   bezierVertex(30, 25, -20);
    *   bezierVertex(-20, 25, -20);
-   * 
+   *
    *   bezierVertex(0, 30, -20);
    *   bezierVertex(10, -25, -20);
    *   bezierVertex(-20, -30, -20);
-   * 
+   *
    *   endShape();
    * }
    * </code>
@@ -688,8 +686,8 @@ function vertex(p5, fn){
   };
 
   /**
-   * Concludes the vertices of a custom shape. 
-   * 
+   * Concludes the vertices of a custom shape.
+   *
    * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
    * allow for creating custom shapes in 2D or 3D.
    * <a href="#/p5/beginShape">beginShape()</a> begins adding vertices to a
@@ -700,7 +698,7 @@ function vertex(p5, fn){
    * in `endShape(CLOSE)`, then the first and last vertices will be connected.
    * When CLOSE mode is used for splines (with `splineVeertex()`), the shape is ended smoothly.
    *
-   * 
+   *
    * The second parameter, `count`, is also optional. In WebGL mode, it’s more
    * efficient to draw many copies of the same shape using a technique called
    * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html" target="_blank">instancing</a>.
@@ -761,22 +759,22 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
-   * 
+   *
    *   beginShape();
-   * 
+   *
    *   splineVertex(32, 91);
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *   splineVertex(82, 91);
-   * 
+   *
    *   endShape(CLOSE);
-   * 
+   *
    *   describe(
    *     'A curvy four-sided slightly lopsided blob.'
    *   );

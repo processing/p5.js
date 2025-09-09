@@ -98,7 +98,7 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    const bindGlobal = (property) => {
+    const bindGlobal = property => {
       Object.defineProperty(window, property, {
         configurable: true,
         enumerable: true,
@@ -109,7 +109,7 @@ class p5 {
             return this[property];
           }
         },
-        set: (newValue) => {
+        set: newValue => {
           Object.defineProperty(window, property, {
             configurable: true,
             enumerable: true,
@@ -120,7 +120,7 @@ class p5 {
             console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
           }
         }
-      })
+      });
     };
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
@@ -476,7 +476,7 @@ for (const k in constants) {
  * to load because `loadFont()` function returns a promise, and the await
  * keyword means the program will wait for the promise to resolve.
  * This ensures that all assets are fully loaded before the sketch continues.
-
+ *
  *
  * loading assets.
  *

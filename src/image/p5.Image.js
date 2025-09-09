@@ -1326,7 +1326,7 @@ class Image {
   /**
    * Copies a region of pixels from another image into this one.
    *
-    * The first parameter, `srcImage`, is the
+   * The first parameter, `srcImage`, is the
    * <a href="#/p5.Image">p5.Image</a> object to blend.
    *
    * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region
