@@ -2424,7 +2424,10 @@ class Element {
       Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
-    ctx.elt.addEventListener(ev, f, false);
+    ctx.elt.addEventListener(ev, f, {
+      capture: false,
+      signal: ctx._pInst._removeSignal
+    });
     ctx._events[ev] = f;
   }
 

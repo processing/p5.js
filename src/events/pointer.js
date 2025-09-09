@@ -6,7 +6,26 @@
  * @requires constants
  */
 
-function pointer(p5, fn){
+function pointer(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      'pointerdown',
+      'pointerup',
+      'pointermove',
+      'dragend',
+      'dragover',
+      'click',
+      'dblclick',
+      'wheel'
+    ];
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
+
   /**
    * A `Number` system variable that tracks the mouse's horizontal movement.
    *
@@ -96,6 +115,7 @@ function pointer(p5, fn){
    * </div>
    */
   fn.movedY = 0;
+
   /*
    * This is a flag which is false until the first time
    * we receive a mouse event. The pmouseX and pmouseY
@@ -1140,19 +1160,24 @@ function pointer(p5, fn){
    * </div>
    */
   fn._onpointermove = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
-    if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
-      executeDefault = context.mouseMoved(e);
+    if (
+      !this.mouseIsPressed &&
+      typeof this._customActions.mouseMoved === 'function'
+    ) {
+      executeDefault = this._customActions.mouseMoved(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
-      executeDefault = context.mouseDragged(e);
+    } else if (
+      this.mouseIsPressed &&
+      typeof this._customActions.mouseDragged === 'function'
+    ) {
+      executeDefault = this._customActions.mouseDragged(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1302,7 +1327,6 @@ function pointer(p5, fn){
    * </div>
    */
   fn._onpointerdown = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = true;
 
@@ -1310,8 +1334,8 @@ function pointer(p5, fn){
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (typeof context.mousePressed === 'function') {
-      executeDefault = context.mousePressed(e);
+    if (typeof this._customActions.mousePressed === 'function') {
+      executeDefault = this._customActions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1462,7 +1486,6 @@ function pointer(p5, fn){
    * </div>
    */
   fn._onpointerup = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = false;
 
@@ -1471,8 +1494,8 @@ function pointer(p5, fn){
 
     this._updatePointerCoords(e);
 
-    if (typeof context.mouseReleased === 'function') {
-      executeDefault = context.mouseReleased(e);
+    if (typeof this._customActions.mouseReleased === 'function') {
+      executeDefault = this._customActions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1626,9 +1649,8 @@ function pointer(p5, fn){
    * </div>
    */
   fn._onclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.mouseClicked === 'function') {
-      const executeDefault = context.mouseClicked(e);
+    if (typeof this._customActions.mouseClicked === 'function') {
+      const executeDefault = this._customActions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1757,9 +1779,8 @@ function pointer(p5, fn){
    */
 
   fn._ondblclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.doubleClicked === 'function') {
-      const executeDefault = context.doubleClicked(e);
+    if (typeof this._customActions.doubleClicked === 'function') {
+      const executeDefault = this._customActions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1905,11 +1926,10 @@ function pointer(p5, fn){
    * </div>
    */
   fn._onwheel = function(e) {
-    const context = this._isGlobal ? window : this;
     this._mouseWheelDeltaY = e.deltaY;
-    if (typeof context.mouseWheel === 'function') {
+    if (typeof this._customActions.mouseWheel === 'function') {
       e.delta = e.deltaY;
-      const executeDefault = context.mouseWheel(e);
+      const executeDefault = this._customActions.mouseWheel(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
