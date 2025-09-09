@@ -755,6 +755,9 @@ function textCore(p5, fn) {
    *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
+   * 
+   * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
+   * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *
    * @method textWidth
    * @for p5
@@ -813,6 +816,48 @@ function textCore(p5, fn) {
    *   line(22, 55, 22 + w, 55);
    *
    *   describe('The word "yoyo" underlined.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 160);
+   *   background(235);
+   *   noLoop();
+   *
+   *   textSize(18);
+   *   textAlign(LEFT, TOP);
+   *
+   *   const x = 12, h = 24;
+   *   const s1 = 'Hello';
+   *   const s2 = 'Hello  ';      // 2 trailing spaces
+   *   const s3 = 'Hello     ';   // many trailing spaces
+   *
+   *   // draw text
+   *   fill(0);
+   *   text(s1, x, 12);
+   *   text(s2, x, 56);
+   *   text(s3, x, 100);
+   *
+   *   // measure and draw tight boxes (all same width)
+   *   noFill(); stroke(255, 0, 0);
+   *   const w1 = textWidth(s1);
+   *   const w2 = textWidth(s2);
+   *   const w3 = textWidth(s3);
+   *   rect(x, 10,  w1, h);
+   *   rect(x, 54, w2, h);
+   *   rect(x, 98, w3, h);
+   *
+   *   // small captions show the actual strings (spaces as ·)
+   *   textSize(10); noStroke(); fill(30);
+   *   text('"' + s1.replace(/ /g, '·') + '"  w=' + w1.toFixed(1), x, 10 + h + 2);
+   *   text('"' + s2.replace(/ /g, '·') + '"  w=' + w2.toFixed(1), x, 54 + h + 2);
+   *   text('"' + s3.replace(/ /g, '·') + '"  w=' + w3.toFixed(1), x, 98 + h + 2);
+   *
+   *   describe('Three lines: Hello with 0, 2, and many trailing spaces. Red boxes use textWidth and are identical. Captions show spaces as dots.');
    * }
    * </code>
    * </div>

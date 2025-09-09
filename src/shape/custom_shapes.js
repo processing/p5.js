@@ -1941,7 +1941,7 @@ function customShapes(p5, fn) {
    *
    *
    * ```js
-   * splineProperty('ends', INCLUDE);
+   * splineProperty('ends', EXCLUDE);
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    *
    * point(25, 46);
@@ -1971,7 +1971,7 @@ function customShapes(p5, fn) {
    * strokeWeight(2);
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    * ```
-   *
+   * <img src="assets/roundBulge.png"></img>
    * Here's the example showing positive value of tightness,
    * which makes the curve tighter and more angular:
    *
@@ -1981,7 +1981,8 @@ function customShapes(p5, fn) {
    * strokeWeight(2);
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    * ```
-   *
+   * <img src="assets/anglurBulge.png"></img>
+   * 
    * In all cases, the splines in p5.js are <a href = "https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline">cardinal splines</a>.
    * When tightness is 0, these splines are often known as
    * <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline">Catmull-Rom splines</a>
