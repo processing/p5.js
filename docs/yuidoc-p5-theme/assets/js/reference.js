@@ -2349,7 +2349,7 @@ define('listView',[
             var hash = App.router.getHash(item);
 
             // fixes broken links for #/p5/> and #/p5/>=
-            item.hash = item.hash.replace('>', '&gt;');
+            item.hash = item.hash.replace(/>/g, '&gt;');
 
             // Create a group list
             if (!self.groups[group]) {
