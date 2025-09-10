@@ -3395,7 +3395,7 @@ var prettyPrint;
       // only when not following [|&;<>].
       '^.[^\\s\\w.$@\'"`/\\\\]*';
     if (options['regexLiterals']) {
-      punctuation += '(?!\s*\/)';
+      punctuation += '(?!\\s*\\/)';
     }
 
     fallthroughStylePatterns.push(
