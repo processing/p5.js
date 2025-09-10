@@ -515,6 +515,48 @@ function curves(p5, fn){
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(200, 200);
+   *   background(245);
+   * 
+   *   // Ensure the curve includes both end spans p0->p1 and p2->p3
+   *   splineProperty('ends', INCLUDE);
+   * 
+   *   // Control / anchor points
+   *   const p0 = createVector(30, 160);
+   *   const p1 = createVector(60, 40);
+   *   const p2 = createVector(140, 40);
+   *   const p3 = createVector(170, 160);
+   * 
+   *   // Draw the spline that passes through ALL four points (INCLUDE)
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+   * 
+   *   // Draw markers + labels
+   *   fill(255);
+   *   stroke(0);
+   *   const r = 6;
+   *   circle(p0.x, p0.y, r);
+   *   circle(p1.x, p1.y, r);
+   *   circle(p2.x, p2.y, r);
+   *   circle(p3.x, p3.y, r);
+   * 
+   *   noStroke();
+   *   fill(0);
+   *   text('p0', p0.x - 14, p0.y + 14);
+   *   text('p1', p1.x - 14, p1.y - 8);
+   *   text('p2', p2.x + 4, p2.y - 8);
+   *   text('p3', p3.x + 4, p3.y + 14);
+   * 
+   *   describe('A black Catmull-Rom spline passes through p0, p1, p2, p3 with endpoints included.');
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
@@ -806,6 +848,68 @@ function curves(p5, fn){
    * }
    * </code>
    * </div>
+   * 
+   * <div>
+   * <code>
+   * let p0, p1, p2, p3;
+   * 
+   * function setup() {
+   *   createCanvas(200, 200);
+   *   splineProperty('ends', INCLUDE); // make endpoints part of the curve
+   * 
+   *   // Four points forming a gentle arch
+   *   p0 = createVector(30, 160);
+   *   p1 = createVector(60, 50);
+   *   p2 = createVector(140, 50);
+   *   p3 = createVector(170, 160);
+   * 
+   *   describe('Black spline through p0–p3. A red dot marks the location at parameter t on p1->p2 using splinePoint.');
+   * }
+   * 
+   * function draw() {
+   *   background(245);
+   * 
+   *   // Draw the spline for context
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+   * 
+   *   // Map mouse X to t in [0, 1] (span p1->p2)
+   *   let t = constrain(map(mouseX, 0, width, 0, 1), 0, 1);
+   * 
+   *   // Evaluate the curve point by axis (splinePoint works one axis at a time)
+   *   let x = splinePoint(p0.x, p1.x, p2.x, p3.x, t);
+   *   let y = splinePoint(p0.y, p1.y, p2.y, p3.y, t);
+   * 
+   *   // Marker at the evaluated position
+   *   noStroke();
+   *   fill('red');
+   *   circle(x, y, 8);
+   * 
+   *   // Draw control/anchor points
+   *   stroke(0);
+   *   strokeWeight(1);
+   *   fill(255);
+   *   const r = 6;
+   *   circle(p0.x, p0.y, r);
+   *   circle(p1.x, p1.y, r);
+   *   circle(p2.x, p2.y, r);
+   *   circle(p3.x, p3.y, r);
+   * 
+   *   // Labels + UI hint
+   *   noStroke();
+   *   fill(20);
+   *   textSize(10);
+   *   text('p0', p0.x - 12, p0.y + 14);
+   *   text('p1', p1.x - 12, p1.y - 8);
+   *   text('p2', p2.x + 4, p2.y - 8);
+   *   text('p3', p3.x + 4, p3.y + 14);
+   *   text('t = ' + nf(t, 1, 2) + ' (p1→p2)', 8, 16);
+   * }
+   * </code>
+   * </div>
+   * 
    */
 
   fn.splinePoint = function(a, b, c, d, t) {

@@ -1823,6 +1823,93 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
+   * 
+   * @example
+   * <div>
+   * <code>
+   * let vertexA;
+   * let vertexB;
+   * let vertexC;
+   * let vertexD;
+   * let vertexE;
+   * let vertexF;
+   * 
+   * let markerRadius;
+   * 
+   * let vectorAB;
+   * let vectorFE;
+   * 
+   * let endOfTangentB;
+   * let endOfTangentE;
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   
+   *   // Initialize variables
+   *   // Adjusting vertices A and F affects the slopes at B and E
+   *   
+   *   vertexA = createVector(35, 85);
+   *   vertexB = createVector(25, 70);
+   *   vertexC = createVector(30, 30);
+   *   vertexD = createVector(70, 30);
+   *   vertexE = createVector(75, 70);
+   *   vertexF = createVector(65, 85);
+   *   
+   *   markerRadius = 4;
+   *   
+   *   vectorAB = p5.Vector.sub(vertexB, vertexA);
+   *   vectorFE = p5.Vector.sub(vertexE, vertexF);
+   *   
+   *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
+   *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
+   *   
+   *   splineProperty(`ends`, EXCLUDE);
+   *   
+   *   // Draw figure
+   *   
+   *   background(220);
+   *   
+   *   noFill();
+   *   
+   *   beginShape();
+   *   splineVertex(vertexA.x, vertexA.y);
+   *   splineVertex(vertexB.x, vertexB.y);
+   *   splineVertex(vertexC.x, vertexC.y);
+   *   splineVertex(vertexD.x, vertexD.y);
+   *   splineVertex(vertexE.x, vertexE.y);
+   *   splineVertex(vertexF.x, vertexF.y);
+   *   endShape();
+   *   
+   *   stroke('red');
+   *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
+   *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
+   *   
+   *   stroke('blue');
+   *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
+   *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
+   *     
+   *   fill('white');
+   *   stroke('black');
+   *   circle(vertexA.x, vertexA.y, markerRadius);
+   *   circle(vertexB.x, vertexB.y, markerRadius);
+   *   circle(vertexC.x, vertexC.y, markerRadius);
+   *   circle(vertexD.x, vertexD.y, markerRadius);
+   *   circle(vertexE.x, vertexE.y, markerRadius);
+   *   circle(vertexF.x, vertexF.y, markerRadius);
+   *   
+   *   fill('black');
+   *   noStroke();
+   *   text('A', vertexA.x - 15, vertexA.y + 5);
+   *   text('B', vertexB.x - 15, vertexB.y + 5);
+   *   text('C', vertexC.x - 5, vertexC.y - 5);
+   *   text('D', vertexD.x - 5, vertexD.y - 5);
+   *   text('E', vertexE.x + 5, vertexE.y + 5);
+   *   text('F', vertexF.x + 5, vertexF.y + 5);
+   *   
+   *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
+   * }
+   * </code>
+   * </div>
    */
 
   /**
@@ -2098,6 +2185,95 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
+   * 
+   * @example
+   * 
+   * <div>
+   * <code>
+   * let vertexA;
+   * let vertexB;
+   * let vertexC;
+   * let vertexD;
+   * let vertexE;
+   * let vertexF;
+   * 
+   * let markerRadius;
+   * 
+   * let vectorAB;
+   * let vectorFE;
+   * 
+   * let endOfTangentB;
+   * let endOfTangentE;
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   
+   *   // Initialize variables
+   *   // Adjusting vertices A and F affects the slopes at B and E
+   *   
+   *   vertexA = createVector(35, 85);
+   *   vertexB = createVector(25, 70);
+   *   vertexC = createVector(30, 30);
+   *   vertexD = createVector(70, 30);
+   *   vertexE = createVector(75, 70);
+   *   vertexF = createVector(65, 85);
+   *   
+   *   markerRadius = 4;
+   *   
+   *   vectorAB = p5.Vector.sub(vertexB, vertexA);
+   *   vectorFE = p5.Vector.sub(vertexE, vertexF);
+   *   
+   *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
+   *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
+   *   
+   *   splineProperty(`ends`, EXCLUDE);
+   *   
+   *   // Draw figure
+   *   
+   *   background(220);
+   *   
+   *   noFill();
+   *   
+   *   beginShape();
+   *   splineVertex(vertexA.x, vertexA.y);
+   *   splineVertex(vertexB.x, vertexB.y);
+   *   splineVertex(vertexC.x, vertexC.y);
+   *   splineVertex(vertexD.x, vertexD.y);
+   *   splineVertex(vertexE.x, vertexE.y);
+   *   splineVertex(vertexF.x, vertexF.y);
+   *   endShape();
+   *   
+   *   stroke('red');
+   *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
+   *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
+   *   
+   *   stroke('blue');
+   *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
+   *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
+   *     
+   *   fill('white');
+   *   stroke('black');
+   *   circle(vertexA.x, vertexA.y, markerRadius);
+   *   circle(vertexB.x, vertexB.y, markerRadius);
+   *   circle(vertexC.x, vertexC.y, markerRadius);
+   *   circle(vertexD.x, vertexD.y, markerRadius);
+   *   circle(vertexE.x, vertexE.y, markerRadius);
+   *   circle(vertexF.x, vertexF.y, markerRadius);
+   *   
+   *   fill('black');
+   *   noStroke();
+   *   text('A', vertexA.x - 15, vertexA.y + 5);
+   *   text('B', vertexB.x - 15, vertexB.y + 5);
+   *   text('C', vertexC.x - 5, vertexC.y - 5);
+   *   text('D', vertexD.x - 5, vertexD.y - 5);
+   *   text('E', vertexE.x + 5, vertexE.y + 5);
+   *   text('F', vertexF.x + 5, vertexF.y + 5);
+   *   
+   *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
+   * }
+   * </code>
+   * </div>
+   * 
    */
 
   /**
