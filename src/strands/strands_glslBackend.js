@@ -14,20 +14,17 @@ const TypeNames = {
   'float2': 'vec2',
   'float3': 'vec3',
   'float4': 'vec4',
-
-  'int1':   'int',
-  'int2':   'ivec2',
-  'int3':   'ivec3',
-  'int4':   'ivec4',
-
-  'bool1':  'bool',
-  'bool2':  'bvec2',
-  'bool3':  'bvec3',
-  'bool4':  'bvec4',
-
-  'mat2':   'mat2x2',
-  'mat3':   'mat3x3',
-  'mat4':   'mat4x4',
+  'int1': 'int',
+  'int2': 'ivec2',
+  'int3': 'ivec3',
+  'int4': 'ivec4',
+  'bool1': 'bool',
+  'bool2': 'bvec2',
+  'bool3': 'bvec3',
+  'bool4': 'bvec4',
+  'mat2': 'mat2x2',
+  'mat3': 'mat3x3',
+  'mat4': 'mat4x4',
 }
 
 const cfgHandlers = {
@@ -104,7 +101,7 @@ export const glslBackend = {
 
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
-    if (node.statementType = OpCode.ControlFlow.DISCARD) {
+    if (node.statementType === OpCode.ControlFlow.DISCARD) {
       generationContext.write('discard;');
     }
   },
@@ -186,13 +183,15 @@ export const glslBackend = {
           return `${left} ${opSym} ${right}`;
         }
       }
-      if (node.dependsOn.length === 1) {
+      if (node.opCode === OpCode.Unary.LOGICAL_NOT
+        || node.opCode === OpCode.Unary.NEGATE
+        || node.opCode === OpCode.Unary.PLUS
+        ) {
         const [i] = node.dependsOn;
         const val  = this.generateExpression(generationContext, dag, i);
         const sym  = OpCodeToSymbol[node.opCode];
         return `${sym}${val}`;
       }
-
       default:
       FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
     }

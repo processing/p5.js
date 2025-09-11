@@ -26,6 +26,8 @@ function strands(p5, fn) {
     ctx.backend = backend;
     ctx.active = true;
     ctx.previousFES = p5.disableFriendlyErrors;
+    ctx.windowOverrides = {};
+    ctx.fnOverrides = {};
     p5.disableFriendlyErrors = true;
   }
 
@@ -34,8 +36,14 @@ function strands(p5, fn) {
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
     ctx.hooks = [];
-    p5.disableFriendlyErrors = ctx.previousFES;
     ctx.active = false;
+    p5.disableFriendlyErrors = ctx.previousFES;
+    for (const key in ctx.windowOverrides) {
+      window[key] = ctx.windowOverrides[key];
+    }
+    for (const key in ctx.fnOverrides) {
+      fn[key] = ctx.fnOverrides[key];
+    }
   }
 
   const strandsContext = {};
@@ -47,17 +55,21 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
   
-  p5.Shader.prototype.modify = function(shaderModifier, options = { parser: true, srcLocations: false }) {
+  p5.Shader.prototype.modify = function(shaderModifier, scope = {}) {
     if (shaderModifier instanceof Function) {
       // Reset the context object every time modify is called;
-      const backend = glslBackend;
+      // const backend = glslBackend;
       initStrandsContext(strandsContext, glslBackend);
       createShaderHooksFunctions(strandsContext, fn, this);
+      const options = { parser: true, srcLocations: false };
 
       // 1. Transpile from strands DSL to JS
       let strandsCallback;
       if (options.parser) {
-        strandsCallback = transpileStrandsToJS(shaderModifier.toString(), options.srcLocations);
+        // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
+        // https://github.com/acornjs/acorn/issues/1385
+        const sourceString = `(${shaderModifier.toString()})`;
+        strandsCallback = transpileStrandsToJS(sourceString, options.srcLocations, scope);
       } else {
         strandsCallback = shaderModifier;
       }
@@ -72,10 +84,11 @@ function strands(p5, fn) {
       // .......
       const hooksObject = generateShaderCode(strandsContext);
       console.log(hooksObject);
+      console.log(hooksObject['vec4 getFinalColor']);
       console.log(hooksObject['Vertex getWorldInputs']);
       
       // Reset the strands runtime context
-      deinitStrandsContext(strandsContext);
+      // deinitStrandsContext(strandsContext);
 
       // Call modify with the generated hooks object
       return oldModify.call(this, hooksObject);      

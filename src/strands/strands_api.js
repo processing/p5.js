@@ -1,14 +1,4 @@
-import {
-  createBinaryOpNode, 
-  createFunctionCallNode,
-  createVariableNode,
-  createStatementNode,
-  createPrimitiveConstructorNode,
-  createUnaryOpNode,
-  createStructInstanceNode,
-  createStructConstructorNode,
-  createSwizzleNode,
-} from './ir_builders'
+import * as build from './ir_builders'
 import { 
   OperatorTable,
   BlockType,
@@ -29,68 +19,19 @@ import { getNodeDataFromID } from './ir_dag'
 //////////////////////////////////////////////
 // User nodes 
 //////////////////////////////////////////////
-const swizzlesSet = new Set();
-
 export class StrandsNode {
   constructor(id, dimension, strandsContext) {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension; 
-    installSwizzlesForDimension.call(this, strandsContext, dimension)
   }
 }
 
-function generateSwizzles(chars, maxLen = 4) {
-  const result = [];
-
-  function build(current) {
-    if (current.length > 0) result.push(current);
-    if (current.length === maxLen) return;
-
-    for (let c of chars) {
-      build(current + c); 
-    }
-  }
-
-  build('');
-  return result;
-}
-
-function installSwizzlesForDimension(strandsContext, dimension) {
-  if (swizzlesSet.has(dimension)) return;
-  swizzlesSet.add(dimension);
-
-  const swizzleVariants = [
-    ['x', 'y', 'z', 'w'],
-    ['r', 'g', 'b', 'a'],
-    ['s', 't', 'p', 'q']
-  ].map(chars => chars.slice(0, dimension));
-
-  const descriptors = {};
-
-  for (const variant of swizzleVariants) {
-    const swizzleStrings = generateSwizzles(variant);
-    for (const swizzle of swizzleStrings) {
-      if (swizzle.length < 1 || swizzle.length > 4) continue;
-      if (descriptors[swizzle]) continue;
-
-      const hasDuplicates = new Set(swizzle).size !== swizzle.length;
-
-      descriptors[swizzle] = {
-        get() {
-          const id = createSwizzleNode(strandsContext, this, swizzle);
-          return new StrandsNode(id, 0, strandsContext);
-        },
-        ...(hasDuplicates ? {} : {
-          set(value) {
-            return assignSwizzleNode(strandsContext, this, swizzle, value);
-          }
-        })
-      };
-    }
-  }
-
-  Object.defineProperties(this, descriptors);
+export function createStrandsNode(id, dimension, strandsContext) {
+  return new Proxy(
+    new StrandsNode(id, dimension, strandsContext),
+    build.swizzleTrap(id, dimension, strandsContext) 
+  );
 }
 
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
@@ -99,14 +40,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   for (const { name, arity, opCode } of OperatorTable) {
     if (arity === 'binary') {
       StrandsNode.prototype[name] = function (...right) {
-        const { id, components } = createBinaryOpNode(strandsContext, this, right, opCode);
-        return new StrandsNode(id, components, strandsContext);
+        const { id, dimension } = build.binaryOpNode(strandsContext, this, right, opCode);
+        return createStrandsNode(id, dimension, strandsContext);
       };
     }
     if (arity === 'unary') {
-      fn[name] = function (strandsNode) {
-        const { id, components } = createUnaryOpNode(strandsContext, strandsNode, opCode);
-        return new StrandsNode(id, components, strandsContext);
+      fn[name] = function (nodeOrValue) {
+        const { id, dimension } = build.unaryOpNode(strandsContext, nodeOrValue, opCode);
+        return createStrandsNode(id, dimension, strandsContext);
       }
     }
   }
@@ -115,7 +56,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // Unique Functions
   //////////////////////////////////////////////
   fn.discard = function() {
-    createStatementNode(strandsContext, OpCode.ControlFlow.DISCARD);
+    build.statementNode(strandsContext, OpCode.ControlFlow.DISCARD);
+  }
+
+  fn.instanceID = function() {
+    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
+    return createStrandsNode(node.id, node.dimension, strandsContext);
   }
   
   fn.strandsIf = function(conditionNode, ifBody) {
@@ -133,8 +79,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (args.length > 4) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const { id, components } = createPrimitiveConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, args.flat());
-    return new StrandsNode(id, components, strandsContext); 
+    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
+    return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext); 
   }
   
   //////////////////////////////////////////////
@@ -147,8 +93,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       const originalFn = fn[functionName];
       fn[functionName] = function(...args) {
         if (strandsContext.active) {
-          const { id, components } =  createFunctionCallNode(strandsContext, functionName, args);
-          return new StrandsNode(id, components, strandsContext);
+          const { id, dimension } =  build.functionCallNode(strandsContext, functionName, args);
+          return createStrandsNode(id, dimension, strandsContext);
         } else {
           return originalFn.apply(this, args);
         }
@@ -156,8 +102,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     } else {
       fn[functionName] = function (...args) {
         if (strandsContext.active) {
-          const { id, components } = createFunctionCallNode(strandsContext, functionName, args);
-          return new StrandsNode(id, components, strandsContext);
+          const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
+          return createStrandsNode(id, dimension, strandsContext);
         } else {
           p5._friendlyError(
             `It looks like you've called ${functionName} outside of a shader's modify() function.`
@@ -187,16 +133,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
     
     fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
-      const { id, components } = createVariableNode(strandsContext, typeInfo, name);
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
-      return new StrandsNode(id, components, strandsContext);
+      return createStrandsNode(id, dimension, strandsContext);
     };
     
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
-        const { id, components } = createPrimitiveConstructorNode(strandsContext, typeInfo, args);
-        return new StrandsNode(id, components, strandsContext);
+        const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
+        return createStrandsNode(id, dimension, strandsContext);
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
@@ -219,16 +165,15 @@ function createHookArguments(strandsContext, parameters){
     const paramType = param.type;
     if(isStructType(paramType.typeName)) {
       const structType = StructType[paramType.typeName];
-      const originalInstanceInfo = createStructInstanceNode(strandsContext, structType, param.name, []);
-      const structNode = new StrandsNode(originalInstanceInfo.id, 0, strandsContext);
-      // const componentNodes = originalInstanceInfo.components.map(id => new StrandsNode(id, components))
+      const { id, dimension } = build.structInstanceNode(strandsContext, structType, param.name, []);
+      const structNode = createStrandsNode(id, dimension, strandsContext);//new StrandsNode(originalInstanceInfo.id, 0, strandsContext);
 
       for (let i = 0; i < structType.properties.length; i++) {
         const componentTypeInfo = structType.properties[i];
         Object.defineProperty(structNode, componentTypeInfo.name, {
           get() {
             const propNode = getNodeDataFromID(dag, dag.dependsOn[structNode.id][i])
-            return new StrandsNode(propNode.id, propNode.dimension, strandsContext);
+            return createStrandsNode(propNode.id, propNode.dimension, strandsContext);
             // const { id, components } = createMemberAccessNode(strandsContext, structNode, componentNodes[i], componentTypeInfo.dataType);
             // const memberAccessNode = new StrandsNode(id, components);
             // return memberAccessNode;
@@ -242,12 +187,12 @@ function createHookArguments(strandsContext, parameters){
               newValueID = val.id;
             }
             else {
-              let newVal = createPrimitiveConstructorNode(strandsContext, componentTypeInfo.dataType, val);
+              let newVal = build.primitiveConstructorNode(strandsContext, componentTypeInfo.dataType, val);
               newValueID = newVal.id;
             }
 
             newDependsOn[i] = newValueID;
-            const newStructInfo = createStructInstanceNode(strandsContext, structType, param.name, newDependsOn);
+            const newStructInfo = build.structInstanceNode(strandsContext, structType, param.name, newDependsOn);
             structNode.id = newStructInfo.id;
           }
         })
@@ -257,8 +202,8 @@ function createHookArguments(strandsContext, parameters){
     } 
     else /*if(isNativeType(paramType.typeName))*/ {
       const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
-      const { id, components } = createVariableNode(strandsContext, typeInfo, param.name);
-      const arg = new StrandsNode(id, components, strandsContext);
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
+      const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
     }
   }
@@ -268,7 +213,7 @@ function createHookArguments(strandsContext, parameters){
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
   if (!(returned instanceof StrandsNode)) {
     // try {
-      const result = createPrimitiveConstructorNode(strandsContext, expectedType, returned);
+      const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
     // } catch (e) {
       // FES.userError('type error', 
@@ -289,15 +234,15 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   }
   if (receivedType.dimension !== expectedType.dimension) {
     if (receivedType.dimension !== 1) {
-      FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookType.name} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
+      FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookName} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
     } 
     else {
-      const result = createPrimitiveConstructorNode(strandsContext, expectedType, returned);
+      const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       returnedNodeID = result.id;
     }
   } 
   else if (receivedType.baseType !== expectedType.baseType) {
-    const result = createPrimitiveConstructorNode(strandsContext, expectedType, returned);
+    const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
     returnedNodeID = result.id;
   }
 
@@ -315,7 +260,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const cfg = strandsContext.cfg;
 
   for (const hookType of hookTypes) {
-    fn[hookType.name] = function(hookUserCallback) {
+    const hookImplementation = function(hookUserCallback) {
       const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
@@ -352,7 +297,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             const returnedPropID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, receivedValue, hookType.name);
             newStructDependencies.push(returnedPropID);
           }
-          const newStruct = createStructConstructorNode(strandsContext, expectedStructType, newStructDependencies);
+          const newStruct = build.structConstructorNode(strandsContext, expectedStructType, newStructDependencies);
           rootNodeID = newStruct.id;
         }
 
@@ -369,5 +314,10 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       });
       CFG.popBlock(cfg);
     }
+    strandsContext.windowOverrides[hookType.name] = window[hookType.name];
+    strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
+
+    window[hookType.name] = hookImplementation;
+    fn[hookType.name] = hookImplementation;
   }
 }

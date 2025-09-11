@@ -1,3 +1,5 @@
+import { sortCFG } from "./ir_cfg";
+
 export function generateShaderCode(strandsContext) {
   const { cfg, backend } = strandsContext;
 
@@ -10,7 +12,7 @@ export function generateShaderCode(strandsContext) {
     hooksObj.uniforms[declaration] = defaultValue;
   }
   
-  for (const { hookType, entryBlockID, rootNodeID} of strandsContext.hooks) {
+  for (const { hookType, rootNodeID, entryBlockID } of strandsContext.hooks) {
     const generationContext = {
       indent: 1,
       codeLines: [],
@@ -22,7 +24,8 @@ export function generateShaderCode(strandsContext) {
       nextTempID: 0,
     };
 
-    for (const blockID of cfg.blockOrder) {
+    const blocks = sortCFG(cfg.outgoingEdges, entryBlockID);
+    for (const blockID of blocks) {
       backend.generateBlock(blockID, strandsContext, generationContext);
     }
     

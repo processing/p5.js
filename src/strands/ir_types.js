@@ -74,6 +74,16 @@ export const StructType = {
       { name: "texCoord", dataType: DataType.float2 },
       { name: "color", dataType: DataType.float4 },
     ]
+  },
+    StrokeVertex: {
+    name: 'StrokeVertex',
+    properties: [
+      { name: "position", dataType: DataType.float3 },
+      { name: "tangentIn", dataType: DataType.float3 },
+      { name: "tangentOut", dataType: DataType.float3 },
+      { name: "color", dataType: DataType.float4 },
+      { name: "weight", dataType: DataType.float1 },
+    ]
   }
 }
 
@@ -173,10 +183,18 @@ export const ConstantFolding = {
 
 // export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
+export const UnarySymbolToName = {};
+export const BinarySymbolToName = {};
 
-for (const { symbol, opCode } of OperatorTable) {
+for (const { symbol, opCode, name, arity } of OperatorTable) {
   // SymbolToOpCode[symbol] = opCode;
   OpCodeToSymbol[opCode] = symbol;
+  if (arity === 'unary') {
+    UnarySymbolToName[symbol] = name;
+  }
+  if (arity === 'binary') {
+    BinarySymbolToName[symbol] = name;
+  }
 }
 
 export const BlockType = {

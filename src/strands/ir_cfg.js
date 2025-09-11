@@ -71,3 +71,22 @@ export function printBlockData(graph, id) {
   block.blockType = BlockTypeToName[block.blockType];
   console.log(block);
 }
+
+export function sortCFG(adjacencyList, start) {
+  const visited = new Set();
+  const postOrder = [];
+
+  function dfs(v) {
+    if (visited.has(v)) {
+      return;
+    }
+    visited.add(v);
+    for (let w of adjacencyList[v].sort((a, b) => b-a) || []) {
+      dfs(w);
+    }
+    postOrder.push(v);
+  }
+  
+  dfs(start);
+  return postOrder.reverse();
+}

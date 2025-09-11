@@ -47,7 +47,7 @@ export function createNodeData(data = {}) {
     value: data.value ?? null,
     identifier: data.identifier ?? null,
     statementType: data.statementType ?? null,
-    swizzle: data.swizzles ?? null,
+    swizzle: data.swizzle ?? null,
     dependsOn: Array.isArray(data.dependsOn) ? data.dependsOn : [],
     usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
     phiBlocks: Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
@@ -96,7 +96,7 @@ function createNode(graph, node) {
   graph.baseTypes[id] = node.baseType
   graph.dimensions[id] = node.dimension;
   graph.statementTypes[id] = node.statementType;
-  graph.swizzles[id] = node.swizzle
+  graph.swizzles[id] = node.swizzle;
 
   for (const dep of node.dependsOn) {
     if (!Array.isArray(graph.usedBy[dep])) {
