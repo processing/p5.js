@@ -755,7 +755,7 @@ function textCore(p5, fn) {
    *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
-   * 
+   *
    * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
    * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *

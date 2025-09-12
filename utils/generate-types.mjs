@@ -10,6 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')));
 
 function findDtsFiles(dir, files = []) {
   // Only search in src directory
@@ -79,6 +80,34 @@ export function generateAllDeclarationFiles() {
 
   fs.writeFileSync(path.join(typesDir, 'p5.d.ts'), p5Types, 'utf8');
   fs.writeFileSync(path.join(typesDir, 'global.d.ts'), globalTypes, 'utf8');
+
+  // Create `index.d.ts` for every sub-module directory
+  /** @type { Record<string, string> } */
+  const subModuleDefinitions = {};
+  for (const entrypoint of Object.values(packageJson.exports)) {
+    if (entrypoint === '.') continue;
+    const subModuleName = entrypoint.default.replace('./dist', '').replace(/\/index\.js$/, '');
+    subModuleDefinitions[subModuleName] = '// This file is auto-generated from JSDoc documentation\n\n';
+  }
+
+  for (const file of dtsFiles) {
+    for (const subModuleName of Object.keys(subModuleDefinitions)) {
+      if (file.startsWith(subModuleName + '/') && file !== subModuleName + '/index.d.ts') {
+        subModuleDefinitions[subModuleName] += `/// <reference path="./${file.replace(subModuleName + '/', '')}" />\n`;
+      }
+    }
+  }
+
+  for (const [subModuleName, content] of Object.entries(subModuleDefinitions)) {
+    const subModuleDir = path.join(typesDir, subModuleName);
+    const destPath = path.join(
+      path.relative(process.cwd(), subModuleDir),
+      'index.d.ts'
+    );
+    fs.mkdirSync(subModuleDir, { recursive: true });
+    fs.writeFileSync(destPath, content, 'utf8');
+    console.log(`Generated ${destPath}`);
+  }
 }
 
 generateAllDeclarationFiles();

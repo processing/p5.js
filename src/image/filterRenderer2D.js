@@ -257,9 +257,9 @@ class FilterRenderer2D {
 
 
     const identityMatrix = [1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1];
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1];
     this._shader.setUniform('uModelViewMatrix', identityMatrix);
     this._shader.setUniform('uProjectionMatrix', identityMatrix);
 

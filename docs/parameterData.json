@@ -4656,6 +4656,10 @@
     "modify": {
       "overloads": [
         [
+          "Function",
+          "Object?"
+        ],
+        [
           "Object?"
         ]
       ]
