@@ -24,7 +24,7 @@ jobs:
         env:
           CI: true
       - name: Build documentation
-        run: npm docs
+        run: npm run docs
         env:
           CI: true
       - name: Check Git status
