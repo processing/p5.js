@@ -1342,7 +1342,7 @@ p5.prototype.endContour = function () {
 };
 
 /**
- * Completes the custom shape defined with vertex() calls, and optionally closes it if CLOSE is passed.
+ * Stops adding vertices to a custom shape.
  *
  * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
  * allow for creating custom shapes in 2D or 3D.
