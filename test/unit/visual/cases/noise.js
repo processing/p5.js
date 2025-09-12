@@ -18,7 +18,7 @@ visualSuite('Noise', function() {
   visualTest('Drawn in a shader', function(p5, screenshot) {
     p5.createCanvas(50, 50, p5.WEBGL);
     const shader = p5.baseFilterShader().modify(() => {
-      p5.getColor((inputs) => {
+      p5.getColor(inputs => {
         const value = p5.clamp(p5.noise(inputs.texCoord * 4) * 2, 0, 1);
         return [value, value, value, 1];
       });

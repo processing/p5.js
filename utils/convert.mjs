@@ -135,7 +135,10 @@ function deprecationInfo(node) {
     return {};
   }
 
-  return { deprecated: true, deprecationMessage: descriptionString(node.deprecated) };
+  return {
+    deprecated: true,
+    deprecationMessage: descriptionString(node.deprecated)
+  };
 }
 
 function getExample(node) {
@@ -238,7 +241,8 @@ function getParams(entry) {
     // and not separate entries
     .filter(t => t.title === 'param' && !t.name.includes('.'))
     .map(node => {
-      const param = (entry.params || []).find(param => param.name === node.name);
+      const param = (entry.params || [])
+        .find(param => param.name === node.name);
       return {
         ...node,
         description: param?.description || {
@@ -557,7 +561,9 @@ function cleanUpClassItems(data) {
         result[key] = {
           overloads: Object.values(value.overloads)
             .map(overload => processOverload(overload))
-            .filter(overload => removeDuplicateOverloads(overload, uniqueOverloads))
+            .filter(overload =>
+              removeDuplicateOverloads(overload, uniqueOverloads)
+            )
         };
       } else {
         result[key] = value;
@@ -585,7 +591,10 @@ function buildParamDocs(docs) {
     // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case
     if (classitem.name && classitem.class && classitem.hasOwnProperty('overloads')) {
       // Skip if the item already exists in newClassItems
-      if (newClassItems[classitem.class] && newClassItems[classitem.class][classitem.name]) {
+      if (
+        newClassItems[classitem.class] &&
+        newClassItems[classitem.class][classitem.name]
+      ) {
         continue;
       }
 

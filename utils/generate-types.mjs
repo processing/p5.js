@@ -36,7 +36,11 @@ function findDtsFiles(dir, files = []) {
 }
 
 export function generateAllDeclarationFiles() {
-  const { p5Types: rawP5Types, globalTypes, fileTypes } = generateTypeDefinitions(data);
+  const {
+    p5Types: rawP5Types,
+    globalTypes,
+    fileTypes
+  } = generateTypeDefinitions(data);
   const typesDir = path.join(process.cwd(), 'types');
   fs.mkdirSync(typesDir, { recursive: true });
 
