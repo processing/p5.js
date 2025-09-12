@@ -9,6 +9,5 @@
 	"editor.defaultFormatter": null,
 	"editor.formatOnSave": false,
   "editor.codeActionsOnSave": {},
-	"javascript.format.enable": false,
-	"liveServer.settings.port": 5501
+	"javascript.format.enable": false
 }
