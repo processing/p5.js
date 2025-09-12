@@ -18,7 +18,6 @@ export function normalizeClassName(className) {
 }
 
 export function generateTypeDefinitions(data) {
-
   const organized = organizeData(data);
 
   return {
@@ -244,7 +243,7 @@ function generateDeclarationFile(items, organizedData) {
           output += generateFunctionDeclaration(item);
           break;
         case 'constant':
-        case 'typedef':
+        case 'typedef': {
           const constData = organizedData.consts[item.name];
           if (constData) {
             if (constData.description) {
@@ -257,6 +256,7 @@ function generateDeclarationFile(items, organizedData) {
             }
           }
           break;
+        }
       }
     }
   });
@@ -278,7 +278,7 @@ export function organizeData(data) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
     const className = normalizeClassName(forEntry || entry.memberof || 'p5');
 
-    switch(entry.kind) {
+    switch (entry.kind) {
       case 'class':
         organized.classes[className] = {
           name: entry.name,
@@ -293,7 +293,7 @@ export function organizeData(data) {
           extends: entry.tags?.find(tag => tag.title === 'extends')?.name || null
         }; break;
       case 'function':
-      case 'property':
+      case 'property': {
         const overloads = entry.overloads?.map(overload => ({
           params: overload.params,
           returns: overload.returns,
@@ -315,7 +315,9 @@ export function organizeData(data) {
           class: className,
           isStatic: entry.path?.[0]?.scope === 'static',
           overloads
-        }); break;
+        });
+        break;
+      }
       case 'constant':
       case 'typedef':
         organized.consts[entry.name] = {
@@ -326,7 +328,8 @@ export function organizeData(data) {
           module,
           submodule,
           class: forEntry || 'p5'
-        }; break;
+        };
+        break;
     }
   });
   return organized;
@@ -373,11 +376,12 @@ export function generateTypeFromTag(param) {
         .join(', ');
       return `${baseType}<${typeParams}>`;
     }
-    case 'UnionType':
+    case 'UnionType': {
       const unionTypes = param.type.elements
         .map(el => generateTypeFromTag({ type: el }))
         .join(' | ');
       return unionTypes;
+    }
     case 'OptionalType':
       return generateTypeFromTag({ type: param.type.expression });
     case 'AllLiteral':
@@ -441,7 +445,6 @@ export function generateParamDeclaration(param) {
 }
 
 export function generateFunctionDeclaration(funcDoc) {
-
   let output = '';
 
   if (funcDoc.description || funcDoc.tags?.length > 0) {

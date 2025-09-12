@@ -101,7 +101,7 @@ const plugin = {
         return globalSamples.map(s => s.code + userFunctionTrailer);
       },
 
-      postprocess: function(sampleMessages, filename) {
+      postprocess: function(sampleMessages, _filename) {
         const problems = [];
 
         for (let i = 0; i < sampleMessages.length; i++) {

@@ -21,14 +21,14 @@ replace(
   './types/webgl/p5.Geometry.d.ts',
   'constructor(detailX?: number, detailY?: number, callback?: function);',
   `constructor(
-        detailX?: number,
-        detailY?: number,
-        callback?: (this: {
-            detailY: number,
-            detailX: number,
-            vertices: p5.Vector[],
-            uvs: number[]
-        }) => void);`
+    detailX?: number,
+    detailY?: number,
+    callback?: (this: {
+        detailY: number,
+        detailX: number,
+        vertices: p5.Vector[],
+        uvs: number[]
+    }) => void);`
 );
 
 // https://github.com/p5-types/p5.ts/issues/31
@@ -37,5 +37,3 @@ replace(
   'function random(choices: Array): any;',
   'function random<T>(choices: T[]): T;'
 );
-
-
