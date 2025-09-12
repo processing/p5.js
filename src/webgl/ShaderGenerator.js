@@ -1,9 +1,9 @@
 /**
-* @module 3D
-* @submodule Material
-* @for p5
-* @requires core
-*/
+ * @module 3D
+ * @submodule Material
+ * @for p5
+ * @requires core
+ */
 import { parse } from 'acorn';
 import { ancestor } from 'acorn-walk';
 import escodegen from 'escodegen';
@@ -1759,13 +1759,13 @@ if (typeof p5 !== 'undefined') {
  * @method getWorldInputs
  * @description
  * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
- * 
+ *
  * The callback receives a vertex object with the following properties:
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
  * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
- * 
+ *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
@@ -1786,7 +1786,7 @@ if (typeof p5 !== 'undefined') {
  *     getWorldInputs(inputs => {
  *       // Move the vertex up and down in a wave in world space
  *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
-*       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
+ *       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
  *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });
@@ -2166,7 +2166,7 @@ if (typeof p5 !== 'undefined') {
  * @method getObjectInputs
  * @description
  * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
- * 
+ *
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
@@ -2213,7 +2213,7 @@ if (typeof p5 !== 'undefined') {
  * @method getCameraInputs
  * @description
  * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
- * 
+ *
  * - `position`: a three-component vector representing the position after camera transformation.
  * - `normal`: a three-component vector representing the normal after camera transformation.
  * - `texCoord`: a two-component vector representing the texture coordinates.

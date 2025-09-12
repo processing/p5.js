@@ -278,11 +278,7 @@ export function organizeData(data) {
     const { module, submodule, forEntry } = getModuleInfo(entry);
     const className = normalizeClassName(forEntry || entry.memberof || 'p5');
 
-<<<<<<< HEAD
     switch (entry.kind) {
-=======
-    switch(entry.kind) {
->>>>>>> upstream/dev-2.0
       case 'class':
         organized.classes[className] = {
           name: entry.name,
@@ -297,11 +293,7 @@ export function organizeData(data) {
           extends: entry.tags?.find(tag => tag.title === 'extends')?.name || null
         }; break;
       case 'function':
-<<<<<<< HEAD
       case 'property': {
-=======
-      case 'property':
->>>>>>> upstream/dev-2.0
         const overloads = entry.overloads?.map(overload => ({
           params: overload.params,
           returns: overload.returns,
@@ -323,13 +315,9 @@ export function organizeData(data) {
           class: className,
           isStatic: entry.path?.[0]?.scope === 'static',
           overloads
-<<<<<<< HEAD
         });
         break;
       }
-=======
-        }); break;
->>>>>>> upstream/dev-2.0
       case 'constant':
       case 'typedef':
         organized.consts[entry.name] = {
@@ -340,12 +328,8 @@ export function organizeData(data) {
           module,
           submodule,
           class: forEntry || 'p5'
-<<<<<<< HEAD
         };
         break;
-=======
-        }; break;
->>>>>>> upstream/dev-2.0
     }
   });
   return organized;
@@ -392,19 +376,12 @@ export function generateTypeFromTag(param) {
         .join(', ');
       return `${baseType}<${typeParams}>`;
     }
-<<<<<<< HEAD
     case 'UnionType': {
-=======
-    case 'UnionType':
->>>>>>> upstream/dev-2.0
       const unionTypes = param.type.elements
         .map(el => generateTypeFromTag({ type: el }))
         .join(' | ');
       return unionTypes;
-<<<<<<< HEAD
     }
-=======
->>>>>>> upstream/dev-2.0
     case 'OptionalType':
       return generateTypeFromTag({ type: param.type.expression });
     case 'AllLiteral':
@@ -416,12 +393,8 @@ export function generateTypeFromTag(param) {
     case 'UndefinedLiteralType':
       return 'undefined';
     case 'ArrayType': {
-<<<<<<< HEAD
-      const innerTypeStrs = param.type.elements.map(e => generateTypeFromTag({ type: e }));
-=======
       const innerTypeStrs = param.type.elements
         .map(e => generateTypeFromTag({ type: e }));
->>>>>>> upstream/dev-2.0
       return `[${innerTypeStrs.join(', ')}]`;
     }
     case 'RestType':
@@ -472,10 +445,6 @@ export function generateParamDeclaration(param) {
 }
 
 export function generateFunctionDeclaration(funcDoc) {
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/dev-2.0
   let output = '';
 
   if (funcDoc.description || funcDoc.tags?.length > 0) {
@@ -510,15 +479,11 @@ export function generateFunctionDeclaration(funcDoc) {
   return output;
 }
 
-<<<<<<< HEAD
-export function generateMethodDeclarations(item, isStatic = false, isGlobal = false) {
-=======
 export function generateMethodDeclarations(
   item,
   isStatic = false,
   isGlobal = false
 ) {
->>>>>>> upstream/dev-2.0
   let output = '';
 
   if (item.description) {
@@ -609,11 +574,7 @@ export function generateClassDeclaration(classDoc, organizedData) {
 
   const classItems = organizedData.classitems.filter(item =>
     item.class === fullClassName ||
-<<<<<<< HEAD
-    item.class === fullClassName.replace('p5.', '')
-=======
       item.class === fullClassName.replace('p5.', '')
->>>>>>> upstream/dev-2.0
   );
   const staticItems = classItems.filter(item => item.isStatic);
   const instanceItems = classItems.filter(item => !item.isStatic);

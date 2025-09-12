@@ -47,6 +47,6 @@ The tutorials can be found on the p5.js websites Learn section here (to be added
 
 And the code and commits for these contributions can be found at (to be added):
 
-##Acknowledgements 
+## Acknowledgements 
 
 I want to express my gratitude towards my mentor Kate Hollenbach for her guidance throughout this project, as well as towards the p5.js community for its openness and helpfulness. 
