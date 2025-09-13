@@ -439,6 +439,11 @@ p5.prototype.clip = function(callback, options) {
  * in RGB values. Calling `background(255, 204, 0)` sets the background a bright
  * yellow color.
  *
+ * The version of `background()` with four parameters interprets them as RGBA,
+ * HSBA, or HSLA colors, depending on the current
+ * <a href="#/p5/colorMode">colorMode()</a>. The last parameter sets the alpha
+ * (transparency) value.
+ *
  * @method background
  * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
  * @chainable
@@ -478,6 +483,19 @@ p5.prototype.clip = function(callback, options) {
  *   background(255, 204, 0);
  *
  *   describe('A canvas with a yellow background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // R, G, B, and Alpha values.
+ *   background(255, 0, 0, 128);
+ *
+ *   describe('A canvas with a semi-transparent red background.');
  * }
  * </code>
  * </div>
@@ -996,6 +1014,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <a href="#/p5/colorMode">colorMode()</a>. The default color space is RGB,
  * with each value in the range from 0 to 255.
  *
+ * The version of `fill()` with four parameters interprets them as `RGBA`, `HSBA`,
+ * or `HSLA` colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>. The last parameter
+ * sets the alpha (transparency) value.
+ *
  * @method fill
  * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
  * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
@@ -1031,6 +1053,22 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  *   square(20, 20, 60);
  *
  *   describe('A yellow square with a black outline.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // R, G, B, and Alpha values.
+ *   fill(255, 0, 0, 128);
+ *   square(20, 20, 60);
+ *
+ *   describe('A semi-transparent red square with a black outline.');
  * }
  * </code>
  * </div>
@@ -1336,7 +1374,7 @@ p5.prototype.noStroke = function() {
  * Sets the color used to draw points, lines, and the outlines of shapes.
  *
  * Calling `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn
- * after calling `stroke()` will be filled with the color orange. The way
+ * after calling `stroke()` will be outlined with the color orange. The way
  * these parameters are interpreted may be changed with the
  * <a href="#/p5/colorMode">colorMode()</a> function.
  *

@@ -116,7 +116,7 @@ let isFirstContour = true;
  * </code>
  * </div>
  */
-p5.prototype.beginContour = function() {
+p5.prototype.beginContour = function () {
   if (this._renderer.isP3D) {
     this._renderer.beginContour();
   } else {
@@ -515,7 +515,7 @@ p5.prototype.beginContour = function() {
  * </code>
  * </div>
  */
-p5.prototype.beginShape = function(kind) {
+p5.prototype.beginShape = function (kind) {
   p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.beginShape(...arguments);
@@ -802,7 +802,7 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate of the anchor point.
  * @chainable
  */
-p5.prototype.bezierVertex = function(...args) {
+p5.prototype.bezierVertex = function (...args) {
   p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.bezierVertex(...args);
@@ -1210,7 +1210,7 @@ p5.prototype.bezierVertex = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.curveVertex = function(...args) {
+p5.prototype.curveVertex = function (...args) {
   p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.curveVertex(...args);
@@ -1319,7 +1319,7 @@ p5.prototype.curveVertex = function(...args) {
  * </code>
  * </div>
  */
-p5.prototype.endContour = function() {
+p5.prototype.endContour = function () {
   if (this._renderer.isP3D) {
     return this;
   }
@@ -1342,7 +1342,7 @@ p5.prototype.endContour = function() {
 };
 
 /**
- * Begins adding vertices to a custom shape.
+ * Stops adding vertices to a custom shape.
  *
  * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
  * allow for creating custom shapes in 2D or 3D.
@@ -1410,6 +1410,37 @@ p5.prototype.endContour = function() {
  *
  *   describe(
  *     'Two sets of black lines drawn on a gray background. The three lines on the left form a right triangle. The two lines on the right form a right angle.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(200, 100);
+ *
+ *   background(240);
+ *
+ *   noFill();
+ *   stroke(0);
+ *
+ *   // Open shape (left)
+ *   beginShape();
+ *   vertex(20, 20);
+ *   vertex(80, 20);
+ *   vertex(80, 80);
+ *   endShape();  // Not closed
+ *
+ *   // Closed shape (right)
+ *   beginShape();
+ *   vertex(120, 20);
+ *   vertex(180, 20);
+ *   vertex(180, 80);
+ *   endShape(CLOSE);  // Closed
+ *
+ *   describe(
+ *     'Two right-angled shapes on a light gray background. The left shape is open with three lines. The right shape is closed, forming a triangle.'
  *   );
  * }
  * </code>
@@ -1504,7 +1535,7 @@ p5.prototype.endContour = function() {
  * </code>
  * </div>
  */
-p5.prototype.endShape = function(mode, count = 1) {
+p5.prototype.endShape = function (mode, count = 1) {
   p5._validateParameters('endShape', arguments);
   if (count < 1) {
     console.log('🌸 p5.js says: You can not have less than one instance');
@@ -1807,7 +1838,7 @@ p5.prototype.endShape = function(mode, count = 1) {
  * @param  {Number} y3
  * @param  {Number} z3 z-coordinate of the anchor point.
  */
-p5.prototype.quadraticVertex = function(...args) {
+p5.prototype.quadraticVertex = function (...args) {
   p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
     this._renderer.quadraticVertex(...args);
@@ -2034,7 +2065,7 @@ p5.prototype.quadraticVertex = function(...args) {
  * @param  {Number} [v]   v-coordinate of the vertex's texture. Defaults to 0.
  * @chainable
  */
-p5.prototype.vertex = function(x, y, moveTo, u, v) {
+p5.prototype.vertex = function (x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
     this._renderer.vertex(...arguments);
   } else {
@@ -2245,7 +2276,7 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
  * @param  {Number} z z-component of the vertex normal.
  * @chainable
  */
-p5.prototype.normal = function(x, y, z) {
+p5.prototype.normal = function (x, y, z) {
   this._assert3d('normal');
   p5._validateParameters('normal', arguments);
   this._renderer.normal(...arguments);
