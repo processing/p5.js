@@ -1184,6 +1184,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Abhayaj247"><img src="https://avatars.githubusercontent.com/u/139991819?v=4?s=64" width="64px;" alt="Abhay M Joshi"/><br /><sub><b>Abhay M Joshi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Abhayaj247" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Homaid"><img src="https://avatars.githubusercontent.com/u/69979731?v=4?s=64" width="64px;" alt="Homaid"/><br /><sub><b>Homaid</b></sub></a><br /><a href="#a11y-Homaid" title="Accessibility">️️️️♿️</a> <a href="https://github.com/processing/p5.js/commits?author=Homaid" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/junseok44"><img src="https://avatars.githubusercontent.com/u/81099627?v=4?s=64" width="64px;" alt="JangJunseok"/><br /><sub><b>JangJunseok</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=junseok44" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
