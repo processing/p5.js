@@ -1014,7 +1014,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * <a href="#/p5/colorMode">colorMode()</a>. The default color space is RGB,
  * with each value in the range from 0 to 255.
  *
- * The version of `fill()` with four parameters interprets them as RGBA, HSBA,
+ * The version of `fill()` with four parameters interprets them as `RGBA`, `HSBA`,
  * or HSLA colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>. The last parameter
  * sets the alpha (transparency) value.
  *
