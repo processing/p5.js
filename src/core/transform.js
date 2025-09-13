@@ -1180,7 +1180,7 @@ function transform(p5, fn){
    * function draw() {
    *   background(200);
    *
-   *   // Shear the coordinate system along the x-axis.
+   *   // Shear the coordinate system along the y-axis.
    *   shearY(QUARTER_PI);
    *
    *   // Draw the square.
@@ -1203,7 +1203,7 @@ function transform(p5, fn){
    * function draw() {
    *   background(200);
    *
-   *   // Shear the coordinate system along the x-axis.
+   *   // Shear the coordinate system along the y-axis.
    *   shearY(45);
    *
    *   // Draw the square.
