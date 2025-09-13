@@ -1906,9 +1906,7 @@ function textCore(p5, fn) {
     // adjust the bounding boxes based on horiz. text alignment
     if (lines.length > 1) {
       // When width is not provided (e.g., fontBounds path), fall back to the widest line.
-      const maxWidth = boxes.length
-      ? boxes.reduce((m, b) => Math.max(m, b.w || 0), 0)
-      : 0;
+      const maxWidth = boxes.reduce((m, b) => Math.max(m, b.w || 0), 0);
 
       boxes.forEach((bb) => {
           const w = (width ?? maxWidth);
