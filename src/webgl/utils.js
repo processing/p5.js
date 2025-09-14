@@ -448,3 +448,24 @@ export function populateGLSLHooks(shader, src, shaderType) {
 
   return preMain + '\n' + defines + hooks + main + postMain;
 }
+
+export function checkWebGLCapabilities({ GL, webglVersion }) {
+  const gl = GL;
+  const supportsFloat = webglVersion === constants.WEBGL2
+    ? (gl.getExtension('EXT_color_buffer_float') &&
+        gl.getExtension('EXT_float_blend'))
+    : gl.getExtension('OES_texture_float');
+  const supportsFloatLinear = supportsFloat &&
+    gl.getExtension('OES_texture_float_linear');
+  const supportsHalfFloat = webglVersion === constants.WEBGL2
+    ? gl.getExtension('EXT_color_buffer_float')
+    : gl.getExtension('OES_texture_half_float');
+  const supportsHalfFloatLinear = supportsHalfFloat &&
+    gl.getExtension('OES_texture_half_float_linear');
+  return {
+    float: supportsFloat,
+    floatLinear: supportsFloatLinear,
+    halfFloat: supportsHalfFloat,
+    halfFloatLinear: supportsHalfFloatLinear
+  };
+}

@@ -89,43 +89,43 @@ export function visualSuite(
 
 /**
  * Image Diff Algorithm for p5.js Visual Tests
- * 
+ *
  * This algorithm addresses the challenge of cross-platform rendering differences in p5.js visual tests.
  * Different operating systems and browsers render graphics with subtle variations, particularly with
  * anti-aliasing, text rendering, and sub-pixel positioning. This can cause false negatives in tests
  * when the visual differences are acceptable rendering variations rather than actual bugs.
- * 
+ *
  * Key components of the approach:
- * 
+ *
  * 1. Initial pixel-by-pixel comparison:
  *    - Uses pixelmatch to identify differences between expected and actual images
  *    - Sets a moderate threshold (0.5) to filter out minor color/intensity variations
  *    - Produces a diff image with red pixels marking differences
- * 
+ *
  * 2. Cluster identification using BFS (Breadth-First Search):
  *    - Groups connected difference pixels into clusters
  *    - Uses a queue-based BFS algorithm to find all connected pixels
  *    - Defines connectivity based on 8-way adjacency (all surrounding pixels)
- * 
+ *
  * 3. Cluster categorization by type:
  *    - Analyzes each pixel's neighborhood characteristics
  *    - Specifically identifies "line shift" clusters - differences that likely represent
  *      the same visual elements shifted by 1px due to platform rendering differences
  *    - Line shifts are identified when >80% of pixels in a cluster have ≤2 neighboring diff pixels
- * 
+ *
  * 4. Intelligent failure criteria:
  *    - Filters out clusters smaller than MIN_CLUSTER_SIZE pixels (noise reduction)
  *    - Applies different thresholds for regular differences vs. line shifts
  *    - Considers both the total number of significant pixels and number of distinct clusters
- * 
- * This approach balances the need to catch genuine visual bugs (like changes to shape geometry, 
+ *
+ * This approach balances the need to catch genuine visual bugs (like changes to shape geometry,
  * colors, or positioning) while tolerating acceptable cross-platform rendering variations.
- * 
+ *
  * Parameters:
  * - MIN_CLUSTER_SIZE: Minimum size for a cluster to be considered significant (default: 4)
  * - MAX_TOTAL_DIFF_PIXELS: Maximum allowed non-line-shift difference pixels (default: 40)
  * Note: These can be adjusted for further updation
- * 
+ *
  * Note for contributors: When running tests locally, you may not see these differences as they
  * mainly appear when tests run on different operating systems or browser rendering engines.
  * However, the same code may produce slightly different renderings on CI environments, particularly
@@ -140,7 +140,7 @@ export async function checkMatch(actual, expected, p5) {
   if (narrow) {
     scale *= 2;
   }
-  
+
   for (const img of [actual, expected]) {
     img.resize(
       Math.ceil(img.width * scale),
@@ -151,28 +151,28 @@ export async function checkMatch(actual, expected, p5) {
   // Ensure both images have the same dimensions
   const width = expected.width;
   const height = expected.height;
-  
+
   // Create canvases with background color
   const actualCanvas = p5.createGraphics(width, height);
   const expectedCanvas = p5.createGraphics(width, height);
   actualCanvas.pixelDensity(1);
   expectedCanvas.pixelDensity(1);
-  
+
   actualCanvas.background(BG);
   expectedCanvas.background(BG);
-  
+
   actualCanvas.image(actual, 0, 0);
   expectedCanvas.image(expected, 0, 0);
-  
+
   // Load pixel data
   actualCanvas.loadPixels();
   expectedCanvas.loadPixels();
-  
+
   // Create diff output canvas
   const diffCanvas = p5.createGraphics(width, height);
   diffCanvas.pixelDensity(1);
   diffCanvas.loadPixels();
-  
+
   // Run pixelmatch
   const diffCount = pixelmatch(
     actualCanvas.pixels,
@@ -180,13 +180,13 @@ export async function checkMatch(actual, expected, p5) {
     diffCanvas.pixels,
     width,
     height,
-    { 
+    {
       threshold: 0.5,
       includeAA: false,
       alpha: 0.1
     }
   );
-  
+
   // If no differences, return early
   if (diffCount === 0) {
     actualCanvas.remove();
@@ -194,19 +194,19 @@ export async function checkMatch(actual, expected, p5) {
     diffCanvas.updatePixels();
     return { ok: true, diff: diffCanvas };
   }
-  
+
   // Post-process to identify and filter out isolated differences
   const visited = new Set();
   const clusterSizes = [];
-  
+
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const pos = (y * width + x) * 4;
-      
+
       // If this is a diff pixel (red in pixelmatch output) and not yet visited
       if (
-        diffCanvas.pixels[pos] === 255 && 
-        diffCanvas.pixels[pos + 1] === 0 && 
+        diffCanvas.pixels[pos] === 255 &&
+        diffCanvas.pixels[pos + 1] === 0 &&
         diffCanvas.pixels[pos + 2] === 0 &&
         !visited.has(pos)
       ) {
@@ -216,37 +216,37 @@ export async function checkMatch(actual, expected, p5) {
       }
     }
   }
-  
+
   // Define significance thresholds
   const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
   const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
 
   // Determine if the differences are significant
   const nonLineShiftClusters = clusterSizes.filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
-  
+
   // Calculate significant differences excluding line shifts
   const significantDiffPixels = nonLineShiftClusters.reduce((sum, c) => sum + c.size, 0);
 
   // Update the diff canvas
   diffCanvas.updatePixels();
-  
+
   // Clean up canvases
   actualCanvas.remove();
   expectedCanvas.remove();
-  
+
   // Determine test result
   const ok = (
-    diffCount === 0 ||  
+    diffCount === 0 ||
     (
-      significantDiffPixels === 0 ||  
+      significantDiffPixels === 0 ||
       (
-        (significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS) &&  
+        (significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS) &&
         (nonLineShiftClusters.length <= 2)  // Not too many significant clusters
       )
     )
   );
 
-  return { 
+  return {
     ok,
     diff: diffCanvas,
     details: {
@@ -264,31 +264,31 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
   const queue = [{x: startX, y: startY}];
   let size = 0;
   const clusterPixels = [];
-  
+
   while (queue.length > 0) {
     const {x, y} = queue.shift();
     const pos = (y * width + x) * 4;
-    
+
     // Skip if already visited
     if (visited.has(pos)) continue;
-    
+
     // Skip if not a diff pixel
     if (pixels[pos] !== 255 || pixels[pos + 1] !== 0 || pixels[pos + 2] !== 0) continue;
-    
+
     // Mark as visited
     visited.add(pos);
     size++;
     clusterPixels.push({x, y});
-    
+
     // Add neighbors to queue
     for (let dy = -radius; dy <= radius; dy++) {
       for (let dx = -radius; dx <= radius; dx++) {
         const nx = x + dx;
         const ny = y + dy;
-        
+
         // Skip if out of bounds
         if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-        
+
         // Skip if already visited
         const npos = (ny * width + nx) * 4;
         if (!visited.has(npos)) {
@@ -302,20 +302,20 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
   if (clusterPixels.length > 0) {
     // Count pixels with limited neighbors (line-like characteristic)
     let linelikePixels = 0;
-    
+
     for (const {x, y} of clusterPixels) {
       // Count neighbors
       let neighbors = 0;
       for (let dy = -1; dy <= 1; dy++) {
         for (let dx = -1; dx <= 1; dx++) {
           if (dx === 0 && dy === 0) continue; // Skip self
-          
+
           const nx = x + dx;
           const ny = y + dy;
-          
+
           // Skip if out of bounds
           if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-          
+
           const npos = (ny * width + nx) * 4;
           // Check if neighbor is a diff pixel
           if (pixels[npos] === 255 && pixels[npos + 1] === 0 && pixels[npos + 2] === 0) {
@@ -323,13 +323,13 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
           }
         }
       }
-      
+
       // Line-like pixels typically have 1-2 neighbors
       if (neighbors <= 2) {
         linelikePixels++;
       }
     }
-    
+
     // If most pixels (>80%) in the cluster have ≤2 neighbors, it's likely a line shift
     isLineShift = linelikePixels / clusterPixels.length > 0.8;
   }
@@ -407,8 +407,8 @@ export function visualTest(
       const actual = [];
 
       // Generate screenshots
-      await callback(myp5, () => {
-        const img = myp5.get();
+      await callback(myp5, async () => {
+        const img = await myp5.get();
         img.pixelDensity(1);
         actual.push(img);
       });
