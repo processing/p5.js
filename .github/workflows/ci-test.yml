@@ -27,13 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-
-      - name: Install Chrome with SwiftShader
-        run: |
-          sudo apt-get update
-          curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb
-          sudo apt-get install -y ./chrome.deb
-          ls -R /opt/google/chrome/swiftshader
       
       - name: Verify Chrome (Ubuntu)
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
