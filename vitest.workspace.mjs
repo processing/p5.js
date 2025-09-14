@@ -1,6 +1,5 @@
 import { defineWorkspace } from 'vitest/config';
 import vitePluginString from 'vite-plugin-string';
-console.log(`CI: ${process.env.CI}`)
 
 const plugins = [
   vitePluginString({
@@ -35,7 +34,7 @@ export default defineWorkspace([
         './test/unit/visual/cases/webgpu.js',
         './test/unit/webgpu/*.js',
       ],
-      testTimeout: 10000,
+      testTimeout: 1000,
       globals: true,
       browser: {
         enabled: true,
@@ -84,7 +83,7 @@ export default defineWorkspace([
         './test/unit/visual/visualTest.js',
         // './test/unit/visual/cases/webgpu.js',
       ],
-      testTimeout: 10000,
+      testTimeout: 1000,
       globals: true,
       browser: {
         enabled: true,

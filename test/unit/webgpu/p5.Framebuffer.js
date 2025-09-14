@@ -16,10 +16,7 @@ suite('WebGPU p5.Framebuffer', function() {
   });
 
   beforeEach(async function() {
-    const renderer = await myp5.createCanvas(10, 10, 'webgpu');
-    await myp5.setAttributes({
-      forceFallbackAdapter: true
-    });
+    await myp5.createCanvas(10, 10, 'webgpu');
   })
 
   afterAll(function() {

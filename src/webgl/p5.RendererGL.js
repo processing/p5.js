@@ -382,6 +382,54 @@ class RendererGL extends Renderer3D {
     return;
   }
 
+  _setAttributes(key, value) {
+    if (typeof this._pInst._glAttributes === "undefined") {
+      console.log(
+        "You are trying to use setAttributes on a p5.Graphics object " +
+          "that does not use a WEBGL renderer."
+      );
+      return;
+    }
+    let unchanged = true;
+    if (typeof value !== "undefined") {
+      //first time modifying the attributes
+      if (this._pInst._glAttributes === null) {
+        this._pInst._glAttributes = {};
+      }
+      if (this._pInst._glAttributes[key] !== value) {
+        //changing value of previously altered attribute
+        this._pInst._glAttributes[key] = value;
+        unchanged = false;
+      }
+      //setting all attributes with some change
+    } else if (key instanceof Object) {
+      if (this._pInst._glAttributes !== key) {
+        this._pInst._glAttributes = key;
+        unchanged = false;
+      }
+    }
+    //@todo_FES
+    if (!this.isP3D || unchanged) {
+      return;
+    }
+
+    if (!this._pInst._setupDone) {
+      if (this.geometryBufferCache.numCached() > 0) {
+        p5._friendlyError(
+          "Sorry, Could not set the attributes, you need to call setAttributes() " +
+            "before calling the other drawing methods in setup()"
+        );
+        return;
+      }
+    }
+
+    this._resetContext(null, null, RendererGL);
+
+    if (this.states.curCamera) {
+      this.states.curCamera._renderer = this._renderer;
+    }
+  }
+
   _initContext() {
     if (this._pInst._glAttributes?.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
@@ -2085,51 +2133,7 @@ function rendererGL(p5, fn) {
    * @param  {Object}  obj object with key-value pairs
    */
   fn.setAttributes = function (key, value) {
-    if (typeof this._glAttributes === "undefined") {
-      console.log(
-        "You are trying to use setAttributes on a p5.Graphics object " +
-          "that does not use a WEBGL renderer."
-      );
-      return;
-    }
-    let unchanged = true;
-    if (typeof value !== "undefined") {
-      //first time modifying the attributes
-      if (this._glAttributes === null) {
-        this._glAttributes = {};
-      }
-      if (this._glAttributes[key] !== value) {
-        //changing value of previously altered attribute
-        this._glAttributes[key] = value;
-        unchanged = false;
-      }
-      //setting all attributes with some change
-    } else if (key instanceof Object) {
-      if (this._glAttributes !== key) {
-        this._glAttributes = key;
-        unchanged = false;
-      }
-    }
-    //@todo_FES
-    if (!this._renderer.isP3D || unchanged) {
-      return;
-    }
-
-    if (!this._setupDone) {
-      if (this._renderer.geometryBufferCache.numCached() > 0) {
-        p5._friendlyError(
-          "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-        );
-        return;
-      }
-    }
-
-    this._renderer._resetContext(null, null, RendererGL);
-
-    if (this._renderer.states.curCamera) {
-      this._renderer.states.curCamera._renderer = this._renderer;
-    }
+    return this._renderer._setAttributes(key, value);
   };
 
   /**

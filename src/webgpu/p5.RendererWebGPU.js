@@ -50,8 +50,8 @@ class RendererWebGPU extends Renderer3D {
 
   async _initContext() {
     this.adapter = await navigator.gpu?.requestAdapter(this._webgpuAttributes);
-    console.log('Adapter:');
-    console.log(this.adapter);
+    // console.log('Adapter:');
+    // console.log(this.adapter);
     if (this.adapter) {
       console.log([...this.adapter.features]);
     }
@@ -59,8 +59,8 @@ class RendererWebGPU extends Renderer3D {
       // Todo: check support
       requiredFeatures: ['depth32float-stencil8']
     });
-    console.log('Device:');
-    console.log(this.device);
+    // console.log('Device:');
+    // console.log(this.device);
     if (!this.device) {
       throw new Error('Your browser does not support WebGPU.');
     }
@@ -77,6 +77,55 @@ class RendererWebGPU extends Renderer3D {
     this.depthFormat = 'depth24plus-stencil8';
     this._updateSize();
     this._update();
+  }
+
+  async _setAttributes(key, value) {
+    if (typeof this._pInst._webgpuAttributes === "undefined") {
+      console.log(
+        "You are trying to use setAttributes on a p5.Graphics object " +
+        "that does not use a WebGPU renderer."
+      );
+      return;
+    }
+    let unchanged = true;
+
+    if (typeof value !== "undefined") {
+      //first time modifying the attributes
+      if (this._pInst._webgpuAttributes === null) {
+        this._pInst._webgpuAttributes = {};
+      }
+      if (this._pInst._webgpuAttributes[key] !== value) {
+        //changing value of previously altered attribute
+        this._webgpuAttributes[key] = value;
+        unchanged = false;
+      }
+      //setting all attributes with some change
+    } else if (key instanceof Object) {
+      if (this._pInst._webgpuAttributes !== key) {
+        this._pInst._webgpuAttributes = key;
+        unchanged = false;
+      }
+    }
+    //@todo_FES
+    if (!this.isP3D || unchanged) {
+      return;
+    }
+
+    if (!this._pInst._setupDone) {
+      if (this.geometryBufferCache.numCached() > 0) {
+        p5._friendlyError(
+          "Sorry, Could not set the attributes, you need to call setAttributes() " +
+          "before calling the other drawing methods in setup()"
+        );
+        return;
+      }
+    }
+
+    await this._resetContext(null, null, RendererWebGPU);
+
+    if (this.states.curCamera) {
+      this.states.curCamera._renderer = this._renderer;
+    }
   }
 
   _updateSize() {
@@ -1882,53 +1931,9 @@ function rendererWebGPU(p5, fn) {
     return this._renderer.ensureTexture(source);
   }
 
+  // TODO: move this and the duplicate in the WebGL renderer to another file
   fn.setAttributes = async function (key, value) {
-    if (typeof this._webgpuAttributes === "undefined") {
-      console.log(
-        "You are trying to use setAttributes on a p5.Graphics object " +
-        "that does not use a WebGPU renderer."
-      );
-      return;
-    }
-    let unchanged = true;
-
-    if (typeof value !== "undefined") {
-      //first time modifying the attributes
-      if (this._webgpuAttributes === null) {
-        this._webgpuAttributes = {};
-      }
-      if (this._webgpuAttributes[key] !== value) {
-        //changing value of previously altered attribute
-        this._webgpuAttributes[key] = value;
-        unchanged = false;
-      }
-      //setting all attributes with some change
-    } else if (key instanceof Object) {
-      if (this._webgpuAttributes !== key) {
-        this._webgpuAttributes = key;
-        unchanged = false;
-      }
-    }
-    //@todo_FES
-    if (!this._renderer.isP3D || unchanged) {
-      return;
-    }
-
-    if (!this._setupDone) {
-      if (this._renderer.geometryBufferCache.numCached() > 0) {
-        p5._friendlyError(
-          "Sorry, Could not set the attributes, you need to call setAttributes() " +
-          "before calling the other drawing methods in setup()"
-        );
-        return;
-      }
-    }
-
-    await this._renderer._resetContext(null, null, RendererWebGPU);
-
-    if (this._renderer.states.curCamera) {
-      this._renderer.states.curCamera._renderer = this._renderer;
-    }
+    return this._renderer._setAttributes(key, value);
   }
 }
 
