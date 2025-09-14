@@ -49,9 +49,9 @@ export default defineWorkspace([
                 '--no-sandbox',
                 '--headless=new',
                 '--enable-unsafe-webgpu',
-                '--enable-features=Vulkan',
                 '--use-vulkan=swiftshader',
                 '--use-webgpu-adapter=swiftshader',
+                '--use-angle=vulkan',
                 '--no-sandbox',
               ]
             }
