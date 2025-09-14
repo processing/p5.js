@@ -33,6 +33,7 @@ export default defineWorkspace([
         './test/unit/assets/**/*',
         './test/unit/visual/visualTest.js',
         './test/unit/visual/cases/webgpu.js',
+        './test/unit/webgpu/*.js',
       ],
       testTimeout: 10000,
       globals: true,
@@ -75,6 +76,7 @@ export default defineWorkspace([
       include: [
         // './test/unit/**/*.js',
         './test/unit/visual/cases/webgpu.js',
+        './test/unit/webgpu/*.js',
       ],
       exclude: [
         './test/unit/spec.js',
