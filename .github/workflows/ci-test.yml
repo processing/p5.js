@@ -14,11 +14,11 @@ jobs:
     strategy:
       matrix:
         include:
-          #- os: ubuntu-latest
-          #  browser: chrome
-          - os: windows-latest
+          - os: ubuntu-latest
             browser: chrome
-    
+          # - os: windows-latest
+          #   browser: chrome
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -44,18 +44,18 @@ jobs:
         env:
           CI: true
 
-      - name: Build and test (Ubuntu)
-        if: matrix.os == 'windows-latest'
-        run: npm test -- --project=unit-tests-webgpu
-        env:
-          CI: true
-      
           #- name: Build and test (Ubuntu)
-          #  if: matrix.os == 'ubuntu-latest'
-          #  run: npm test -- --project=unit-tests
+          #  if: matrix.os == 'windows-latest'
+          #  run: npm test -- --project=unit-tests-webgpu
           #  env:
           #    CI: true
-      
+
+      - name: Build and test (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm test -- --project=unit-tests
+        env:
+          CI: true
+
       - name: Report test coverage
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
         env:
