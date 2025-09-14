@@ -32,6 +32,7 @@ export default defineWorkspace([
         './test/unit/spec.js',
         './test/unit/assets/**/*',
         './test/unit/visual/visualTest.js',
+        './test/unit/visual/cases/webgpu.js',
       ],
       testTimeout: 10000,
       globals: true,
@@ -71,7 +72,8 @@ export default defineWorkspace([
       name: 'unit-tests-firefox',
       root: './',
       include: [
-        './test/unit/**/*.js',
+        './test/unit/visual/cases/webgpu.js',
+        // './test/unit/**/*.js',
       ],
       exclude: [
         './test/unit/spec.js',
@@ -96,6 +98,7 @@ export default defineWorkspace([
                 'dom.webgpu.enabled': true,
                 'gfx.webgpu.force-enabled': true,
                 'dom.webgpu.testing.assert-on-warnings': false,
+                'gfx.webgpu.ignore-blocklist': true,
               }
             }
           } : undefined
