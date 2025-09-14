@@ -50,6 +50,11 @@ class RendererWebGPU extends Renderer3D {
 
   async _initContext() {
     this.adapter = await navigator.gpu?.requestAdapter(this._webgpuAttributes);
+    console.log('Adapter:');
+    console.log(this.adapter);
+    if (this.adapter) {
+      console.log([...this.adapter.features]);
+    }
     this.device = await this.adapter?.requestDevice({
       // Todo: check support
       requiredFeatures: ['depth32float-stencil8']
