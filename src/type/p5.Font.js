@@ -983,7 +983,9 @@ async function create(pInst, name, path, descriptors, rawFont) {
 
 function createFontFace(name, path, descriptors, rawFont) {
 
-  if (name.includes(' ') || name.includes(',')) name = "'" + name + "'"; // NOTE: must be single-quotes
+  if (!/^[A-Za-z_][\w-]*$/.test(name)) {
+       name = "'" + name.replace(/'/g, "\\'") + "'"; // single quotes
+  }
 
   let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
