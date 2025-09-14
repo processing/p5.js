@@ -1186,6 +1186,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/junseok44"><img src="https://avatars.githubusercontent.com/u/81099627?v=4?s=64" width="64px;" alt="JangJunseok"/><br /><sub><b>JangJunseok</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=junseok44" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://charlotte.fyi"><img src="https://avatars.githubusercontent.com/u/10366310?v=4?s=64" width="64px;" alt="charlotte 🌸"/><br /><sub><b>charlotte 🌸</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tychedelia" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
