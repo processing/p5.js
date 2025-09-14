@@ -983,8 +983,7 @@ async function create(pInst, name, path, descriptors, rawFont) {
 
 function createFontFace(name, path, descriptors, rawFont) {
 
- if (!((name.startsWith("'") && name.endsWith("'")) ||
-       (name.startsWith('"') && name.endsWith('"')))) {
+ if (!/^[A-Za-z_][\w-]*$/.test(name)) {
    name = "'" + name.replace(/'/g, "\\'") + "'";
  }
 
