@@ -14,9 +14,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          #- os: ubuntu-latest
+          #  browser: chrome
+          - os: windows-latest
             browser: chrome
-            test-workspace: unit-tests-chrome
     
     runs-on: ${{ matrix.os }}
 
@@ -32,17 +33,28 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
         run: |
           google-chrome --version
+
+      - name: Verify Chrome (Windows)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        run: |
+          & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
       
       - name: Get node modules
         run: npm ci
         env:
           CI: true
-      
+
       - name: Build and test (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm test -- --project=${{ matrix.test-workspace }}
+        if: matrix.os == 'windows-latest'
+        run: npm test -- --project=unit-tests-webgpu
         env:
           CI: true
+      
+          #- name: Build and test (Ubuntu)
+          #  if: matrix.os == 'ubuntu-latest'
+          #  run: npm test -- --project=unit-tests
+          #  env:
+          #    CI: true
       
       - name: Report test coverage
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
