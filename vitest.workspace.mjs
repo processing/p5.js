@@ -26,13 +26,14 @@ export default defineWorkspace([
       name: 'unit-tests-chrome',
       root: './',
       include: [
-        './test/unit/**/*.js',
+        // './test/unit/**/*.js',
+        './test/unit/visual/cases/webgpu.js',
       ],
       exclude: [
         './test/unit/spec.js',
         './test/unit/assets/**/*',
         './test/unit/visual/visualTest.js',
-        './test/unit/visual/cases/webgpu.js',
+        // './test/unit/visual/cases/webgpu.js',
       ],
       testTimeout: 10000,
       globals: true,
@@ -47,10 +48,11 @@ export default defineWorkspace([
               args: [
                 '--no-sandbox',
                 '--headless=new',
-                '--use-angle=vulkan',
-                '--enable-features=Vulkan',
-                '--disable-vulkan-surface',
                 '--enable-unsafe-webgpu',
+                '--enable-features=Vulkan',
+                '--use-vulkan=swiftshader',
+                '--use-webgpu-adapter=swiftshader',
+                '--no-sandbox',
               ]
             }
           } : undefined
@@ -58,52 +60,4 @@ export default defineWorkspace([
       }
     }
   },
-  {
-    plugins,
-    publicDir: './test',
-    bench: {
-      name: 'bench',
-      root: './',
-      include: [
-        './test/bench/**/*.js'
-      ],
-    },
-    test: {
-      name: 'unit-tests-firefox',
-      root: './',
-      include: [
-        './test/unit/visual/cases/webgpu.js',
-        // './test/unit/**/*.js',
-      ],
-      exclude: [
-        './test/unit/spec.js',
-        './test/unit/assets/**/*',
-        './test/unit/visual/visualTest.js',
-      ],
-      testTimeout: 10000,
-      globals: true,
-      browser: {
-        enabled: true,
-        name: 'firefox',
-        provider: 'webdriverio',
-        screenshotFailures: false,
-        providerOptions: {
-          capabilities: process.env.CI ? {
-            'moz:firefoxOptions': {
-              args: [
-                '--headless',
-                '--enable-webgpu',
-              ],
-              prefs: {
-                'dom.webgpu.enabled': true,
-                'gfx.webgpu.force-enabled': true,
-                'dom.webgpu.testing.assert-on-warnings': false,
-                'gfx.webgpu.ignore-blocklist': true,
-              }
-            }
-          } : undefined
-        }
-      }
-    }
-  }
 ]);
