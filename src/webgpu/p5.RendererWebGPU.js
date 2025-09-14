@@ -59,6 +59,8 @@ class RendererWebGPU extends Renderer3D {
       // Todo: check support
       requiredFeatures: ['depth32float-stencil8']
     });
+    console.log('Device:');
+    console.log(this.device);
     if (!this.device) {
       throw new Error('Your browser does not support WebGPU.');
     }
