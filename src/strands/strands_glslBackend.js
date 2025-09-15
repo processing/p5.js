@@ -1,10 +1,11 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType, BaseType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
+  if (dag.baseTypes[nodeID] === BaseType.SAMPLER2D) return false;
   const uses = dag.usedBy[nodeID] || [];
   return uses.length > 1;
 }
@@ -39,7 +40,6 @@ const cfgHandlers = {
         generationContext.write(declaration);
       }
       if (nodeType === NodeType.STATEMENT) {
-        console.log("HELLO")
         glslBackend.generateStatement(generationContext, dag, nodeID);
       }
     }
@@ -109,7 +109,6 @@ export const glslBackend = {
   generateDeclaration(generationContext, dag, nodeID) {
     const expr = this.generateExpression(generationContext, dag, nodeID);
     const tmp = `T${generationContext.nextTempID++}`;
-    console.log(expr);
     generationContext.tempNames[nodeID] = tmp;
     
     const T = extractNodeTypeInfo(dag, nodeID);
@@ -128,7 +127,7 @@ export const glslBackend = {
         if (prop.name !== val) {
           generationContext.write(
             `${rootNode.identifier}.${prop.name} = ${val};`
-          )
+          ) 
         }
       }
     } 
@@ -142,21 +141,30 @@ export const glslBackend = {
     }
     switch (node.nodeType) {
       case NodeType.LITERAL:
-      return node.value.toFixed(4);
-      
+      if (node.baseType === BaseType.FLOAT) {
+        return node.value.toFixed(4);
+      } 
+      else {
+        return node.value;
+      }
+
       case NodeType.VARIABLE:
       return node.identifier;
       
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
-        if (node.dependsOn.length === 1 && node.dimension === 1) {
+        // TODO: differentiate casts and constructors for more efficient codegen.
+        // if (node.dependsOn.length === 1 && node.dimension === 1) {
+        //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
+        // }
+        if (node.baseType === BaseType.SAMPLER2D) {
           return this.generateExpression(generationContext, dag, node.dependsOn[0]);
         }
         const T = this.getTypeName(node.baseType, node.dimension);
         const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
         return `${T}(${deps.join(', ')})`;
-      } 
+      }
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;

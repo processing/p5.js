@@ -69,7 +69,7 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
   if (rightArg[0] instanceof StrandsNode && rightArg.length === 1) {
     rightStrandsNode = rightArg[0];
   } else {
-    const { id, dimension } = primitiveConstructorNode(strandsContext, { baseType: BaseType.DEFER, dimension: null }, rightArg);
+    const { id, dimension } = primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, rightArg);
     rightStrandsNode = createStrandsNode(id, dimension, strandsContext);
   }
   let finalLeftNodeID = leftStrandsNode.id;
@@ -127,10 +127,13 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
     }
 
     const casted = primitiveConstructorNode(strandsContext, cast.toType, cast.node);
+
     if (cast.node === leftStrandsNode) {
-      finalLeftNodeID = casted.id;
+      leftStrandsNode = createStrandsNode(casted.id, casted.dimension, strandsContext);
+      finalLeftNodeID = leftStrandsNode.id;
     } else {
-      finalRightNodeID = casted.id;
+      rightStrandsNode = createStrandsNode(casted.id, casted.dimension, strandsContext);
+      finalRightNodeID = rightStrandsNode.id;
     }
   }
 
@@ -181,7 +184,7 @@ export function structInstanceNode(strandsContext, structTypeInfo, identifier, d
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.VARIABLE,
     dimension: structTypeInfo.properties.length,
-    baseType: structTypeInfo.name,
+    baseType: structTypeInfo.typeName,
     identifier,
     dependsOn
   })
@@ -192,14 +195,14 @@ export function structInstanceNode(strandsContext, structTypeInfo, identifier, d
 }
 
 function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
-  dependsOn = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
+  const inputs = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
   const mappedDependencies = [];
   let { dimension, baseType } = typeInfo;
 
   const dag = strandsContext.dag;
   let calculatedDimensions = 0;
   let originalNodeID = null;
-  for (const dep of dependsOn.flat(Infinity)) {
+  for (const dep of inputs.flat(Infinity)) {
     if (dep instanceof StrandsNode) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
       originalNodeID = dep.id;
@@ -226,7 +229,6 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
   }
-  // Sometimes, the dimension is undefined
   if (dimension === null) {
     dimension = calculatedDimensions;
   } else if (dimension > calculatedDimensions && calculatedDimensions === 1) {
@@ -278,7 +280,7 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
 
   if (!(rawUserArgs.length === properties.length)) {
     FES.userError('type error', 
-      `You've tried to construct a ${structTypeInfo.name} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` + 
+      `You've tried to construct a ${structTypeInfo.typeName} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` + 
       `The properties it expects are:\n` + 
       `${properties.map(prop => prop.name + ' ' + prop.DataType.baseType + prop.DataType.dimension)}`
     );
@@ -302,7 +304,7 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.CONSTRUCTOR,
     dimension: properties.length,
-    baseType: structTypeInfo.name,
+    baseType: structTypeInfo.typeName ,
     dependsOn
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
@@ -439,8 +441,7 @@ export function swizzleNode(strandsContext, parentNode, swizzle) {
   return { id, dimension: swizzle.length };
 }
 
-export function swizzleTrap(id, dimension, strandsContext) {
-  // const { dimension, baseType } = typeInfo;
+export function swizzleTrap(id, dimension, strandsContext, onRebind) {
     const swizzleSets = [
       ['x', 'y', 'z', 'w'],
       ['r', 'g', 'b', 'a'],
@@ -463,40 +464,72 @@ export function swizzleTrap(id, dimension, strandsContext) {
           }
         }
     },
-    set(target, property, value, receiver) {
-      for (const set of swizzleSets) {
-        const chars = [...property];
-        const valid =
-          chars.every(c => set.includes(c)) 
-          && new Set(chars).size === chars.length
-          && target.dimension >= chars.length;
-        if (valid) {
-          const originalNode = DAG.getNodeDataFromID(strandsContext.dag, target.id);
-          const changed = Object.fromEntries(
-            chars.map((c, i) => [set.indexOf(c), i])
-          )
-          if (typeof value === 'number') {
-            value = new Array(chars.length).fill(value);
-          } 
-          const newValues = mapPrimitiveDepsToIDs(
-            strandsContext,
-            {baseType: originalNode.baseType, dimension: null}, 
-            value
-          ).mappedDependencies;
-          const newDeps = new Array(originalNode.dimension);
-          for (let i = 0; i < target.dimension; i++) {
-            console.log(changed[i])
-            if (changed[i] !== undefined) {
-              newDeps[i] = newValues[changed[i]];
-            }
-          }
-          console.log("AFTER: ", newDeps)
-          // primitiveConstructorNode(strandsContext, {baseType, dimension}, newDeps);
-          return true;
-        }
+  set(target, property, value, receiver) {
+    for (const basis of swizzleSets) {
+      const chars = [...property];
+      const valid =
+        chars.every(c => basis.includes(c)) &&
+        new Set(chars).size === chars.length &&
+        target.dimension >= chars.length;
+
+      if (!valid) continue;
+
+      const dim = target.dimension;
+
+      const lanes = new Array(dim);
+      for (let i = 0; i < dim; i++) {
+        const { id, dimension } = swizzleNode(strandsContext, target, 'xyzw'[i]);
+        lanes[i] = createStrandsNode(id, dimension, strandsContext);
       }
-      return Reflect.set(...arguments);
+
+      let scalars = [];
+      if (value instanceof StrandsNode) {
+        if (value.dimension === 1) {
+          scalars = Array(chars.length).fill(value);
+        } else if (value.dimension >= chars.length) {
+          for (let k = 0; k < chars.length; k++) {
+            const { id, dimension } = swizzleNode(strandsContext, value, 'xyzw'[k]);
+            scalars.push(createStrandsNode(id, dimension, strandsContext));
+          }
+        } else {
+          FES.userError('type error', `Swizzle assignment: RHS vector too short (need ${chars.length}, got ${value.dimension}).`);
+        }
+      } else if (Array.isArray(value)) {
+        const flat = value.flat(Infinity);
+        if (flat.length === 1) {
+          scalars = Array(chars.length).fill(flat[0]);
+        } else if (flat.length === chars.length) {
+          scalars = flat;
+        } else {
+          FES.userError('type error', `Swizzle assignment: RHS length ${flat.length} does not match ${chars.length}.`);
+        }
+      } else if (typeof value === 'number') {
+        scalars = Array(chars.length).fill(value);
+      } else {
+        FES.userError('type error', `Unsupported RHS for swizzle assignment: ${value}`);
+      }
+
+      for (let j = 0; j < chars.length; j++) {
+        const canonicalIndex = basis.indexOf(chars[j]);
+        lanes[canonicalIndex] = scalars[j];
+      }
+
+      const orig = DAG.getNodeDataFromID(strandsContext.dag, target.id);
+      const baseType = orig?.baseType ?? BaseType.FLOAT;
+      const { id: newID } = primitiveConstructorNode(
+        strandsContext,
+        { baseType, dimension: dim },
+        lanes
+      );
+
+      target.id = newID;
+      if (typeof onRebind === 'function') {
+        onRebind(newID);
+      }
+      return true;
     }
+    return Reflect.set(...arguments);
+  }
   };
   return trap;
 }

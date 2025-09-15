@@ -11,7 +11,6 @@ export const NodeType = {
   STATEMENT: 'statement',
 };
 
-
 export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );
@@ -36,6 +35,7 @@ export const BaseType = {
   BOOL: "bool",
   MAT: "mat",
   DEFER: "defer",
+  SAMPLER2D: "sampler2D",
 };
 
 export const BasePriority = {
@@ -44,6 +44,7 @@ export const BasePriority = {
   [BaseType.BOOL]: 1,
   [BaseType.MAT]: 0,
   [BaseType.DEFER]: -1,
+  [BaseType.SAMPLER2D]: -10,
 };
 
 export const DataType = {
@@ -63,7 +64,24 @@ export const DataType = {
   mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
+  sampler2D: { fnName: "texture", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
 }
+export const structType = function (hookType) {
+  // const hookType = hookType?.name ? hookType
+  let T = hookType.type === undefined ? hookType : hookType.type; 
+  const structType = { 
+    name: hookType.name,
+    properties: [],
+    typeName: T.typeName,
+  };
+  for (const prop of T.properties) {
+    const propType = TypeInfoFromGLSLName[prop.type.typeName];
+    structType.properties.push(
+      {name: prop.name, dataType: propType }
+    );
+  }
+  return structType;
+};
 
 export const StructType = {
   Vertex: {
@@ -84,11 +102,16 @@ export const StructType = {
       { name: "color", dataType: DataType.float4 },
       { name: "weight", dataType: DataType.float1 },
     ]
-  }
+  },
+  FitlerInputs: {
+
+  },
 }
 
 export function isStructType(typeName) {
-  return Object.keys(StructType).includes(typeName);
+  const cap = typeName.charAt(0).toUpperCase()
+  return cap === typeName.charAt(0);
+  // return Object.keys(StructType).includes(typeName);
 }
 
 export function isNativeType(typeName) {
@@ -108,7 +131,7 @@ export function typeEquals(nodeA, nodeB) {
 export const TypeInfoFromGLSLName = Object.fromEntries(
   Object.values(DataType)
     .filter(info => info.fnName !== null)
-    .map(info => [info.fnName, info])
+    .map(info => [info.fnName === 'texture' ? 'sampler2D' : info.fnName, info])
 );
 
 export const OpCode = {

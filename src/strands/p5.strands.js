@@ -88,7 +88,7 @@ function strands(p5, fn) {
       console.log(hooksObject['Vertex getWorldInputs']);
       
       // Reset the strands runtime context
-      // deinitStrandsContext(strandsContext);
+      deinitStrandsContext(strandsContext);
 
       // Call modify with the generated hooks object
       return oldModify.call(this, hooksObject);      

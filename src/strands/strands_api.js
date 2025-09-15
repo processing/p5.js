@@ -4,7 +4,7 @@ import {
   BlockType,
   DataType, 
   BaseType, 
-  StructType, 
+  structType,
   TypeInfoFromGLSLName, 
   isStructType,
   OpCode, 
@@ -27,10 +27,10 @@ export class StrandsNode {
   }
 }
 
-export function createStrandsNode(id, dimension, strandsContext) {
+export function createStrandsNode(id, dimension, strandsContext, onRebind) {
   return new Proxy(
     new StrandsNode(id, dimension, strandsContext),
-    build.swizzleTrap(id, dimension, strandsContext) 
+    build.swizzleTrap(id, dimension, strandsContext, onRebind) 
   );
 }
 
@@ -131,13 +131,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
       + typeInfo.fnName.slice(1).toLowerCase();
     }
-    
     fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
     };
-    
+
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
@@ -162,21 +161,27 @@ function createHookArguments(strandsContext, parameters){
   const dag = strandsContext.dag;
   
   for (const param of parameters) {
-    const paramType = param.type;
-    if(isStructType(paramType.typeName)) {
-      const structType = StructType[paramType.typeName];
-      const { id, dimension } = build.structInstanceNode(strandsContext, structType, param.name, []);
-      const structNode = createStrandsNode(id, dimension, strandsContext);//new StrandsNode(originalInstanceInfo.id, 0, strandsContext);
-
-      for (let i = 0; i < structType.properties.length; i++) {
-        const componentTypeInfo = structType.properties[i];
-        Object.defineProperty(structNode, componentTypeInfo.name, {
+    if(isStructType(param.type.typeName)) {
+      const structTypeInfo = structType(param);
+      const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
+      const structNode = createStrandsNode(id, dimension, strandsContext);
+      for (let i = 0; i < structTypeInfo.properties.length; i++) {
+        const propertyType = structTypeInfo.properties[i];
+        Object.defineProperty(structNode, propertyType.name, {
           get() {
             const propNode = getNodeDataFromID(dag, dag.dependsOn[structNode.id][i])
-            return createStrandsNode(propNode.id, propNode.dimension, strandsContext);
+            const onRebind = (newFieldID) => {
+              const oldDeps = dag.dependsOn[structNode.id];
+              const newDeps = oldDeps.slice();
+              newDeps[i] = newFieldID;
+              const rebuilt = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDeps);
+              structNode.id = rebuilt.id;
+            };
+            // TODO: implement member access operations
             // const { id, components } = createMemberAccessNode(strandsContext, structNode, componentNodes[i], componentTypeInfo.dataType);
             // const memberAccessNode = new StrandsNode(id, components);
             // return memberAccessNode;
+            return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
             const oldDependsOn = dag.dependsOn[structNode.id];
@@ -187,12 +192,12 @@ function createHookArguments(strandsContext, parameters){
               newValueID = val.id;
             }
             else {
-              let newVal = build.primitiveConstructorNode(strandsContext, componentTypeInfo.dataType, val);
+              let newVal = build.primitiveConstructorNode(strandsContext, propertyType.dataType, val);
               newValueID = newVal.id;
             }
 
             newDependsOn[i] = newValueID;
-            const newStructInfo = build.structInstanceNode(strandsContext, structType, param.name, newDependsOn);
+            const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDependsOn);
             structNode.id = newStructInfo.id;
           }
         })
@@ -201,7 +206,7 @@ function createHookArguments(strandsContext, parameters){
       args.push(structNode);
     } 
     else /*if(isNativeType(paramType.typeName))*/ {
-      const typeInfo = TypeInfoFromGLSLName[paramType.typeName];
+      const typeInfo = TypeInfoFromGLSLName[param.type.typeName];
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
@@ -272,7 +277,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       let rootNodeID = null;
 
       if(isStructType(expectedReturnType.typeName)) {
-        const expectedStructType = StructType[expectedReturnType.typeName];
+        const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
           if (!returnedNode.baseType === expectedStructType.typeName) {
