@@ -225,7 +225,6 @@ const ASTCallbacks = {
         transpiledSource.lastIndexOf('}')
       ).replaceAll(';', '')
     );
-    console.log(transpiledSource);
     return () => internalStrandsCallback(p5, ...scopeKeys.map(key => scope[key]));
   }
   

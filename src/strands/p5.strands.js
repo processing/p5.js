@@ -83,9 +83,6 @@ function strands(p5, fn) {
       // 3. Generate shader code hooks object from the IR
       // .......
       const hooksObject = generateShaderCode(strandsContext);
-      console.log(hooksObject);
-      console.log(hooksObject['vec4 getFinalColor']);
-      console.log(hooksObject['Vertex getWorldInputs']);
       
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
