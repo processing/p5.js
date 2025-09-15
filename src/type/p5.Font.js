@@ -580,7 +580,8 @@ export class Font {
     if (extrude !== 0) {
       geom.computeNormals();
       for (const face of geom.faces) {
-        if (face.every((idx) => geom.vertices[idx].z <= -extrude * 0.5 + 0.1)) {
+        if (face.every((idx) => geom.vertices[idx].z <= -extrude * 0.5 + 0.1
+       || geom.vertices[idx].z >= extrude * 0.5 - 0.1)) {
           for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
           face.reverse();
         }
