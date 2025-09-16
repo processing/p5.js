@@ -80,6 +80,19 @@ class p5 {
     const bindGlobal = property => {
       if (property === 'constructor') return;
 
+      // Common setter for all property types
+      const createSetter = () => newValue => {
+        Object.defineProperty(window, property, {
+          configurable: true,
+          enumerable: true,
+          value: newValue,
+          writable: true
+        });
+        if (!p5.disableFriendlyErrors) {
+          console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+        }
+      };
+
       // Check if this property has a getter on the instance or prototype
       const instanceDescriptor = Object.getOwnPropertyDescriptor(this, property);
       const prototypeDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, property);
@@ -113,17 +126,7 @@ class p5 {
           get() {
             return boundFunction;
           },
-          set(newValue) {
-            Object.defineProperty(window, property, {
-              configurable: true,
-              enumerable: true,
-              value: newValue,
-              writable: true
-            });
-            if (!p5.disableFriendlyErrors) {
-              console.log(`You just changed the value of "${property}", which was a p5 function. This could cause problems later if you're not careful.`);
-            }
-          }
+          set: createSetter()
         });
       } else if (isConstant) {
         // For constants, cache the value directly
@@ -133,17 +136,7 @@ class p5 {
           get() {
             return constantValue;
           },
-          set(newValue) {
-            Object.defineProperty(window, property, {
-              configurable: true,
-              enumerable: true,
-              value: newValue,
-              writable: true
-            });
-            if (!p5.disableFriendlyErrors) {
-              console.log(`You just changed the value of "${property}", which was a p5 constant. This could cause problems later if you're not careful.`);
-            }
-          }
+          set: createSetter()
         });
       } else if (hasGetter || !isPrototypeFunction) {
         // For properties with getters or non-function properties, use lazy optimization
@@ -180,17 +173,7 @@ class p5 {
               return currentValue;
             }
           },
-          set: newValue => {
-            Object.defineProperty(window, property, {
-              configurable: true,
-              enumerable: true,
-              value: newValue,
-              writable: true
-            });
-            if (!p5.disableFriendlyErrors) {
-              console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-            }
-          }
+          set: createSetter()
         });
       }
     };
