@@ -1237,13 +1237,7 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.saturation = function(c) {
-    const colorMode = (
-      this._renderer.states.colorMode === HSB ||
-      this._renderer.states.colorMode === HSL
-    ) ?
-      this._renderer.states.colorMode :
-      HSL;
-
+    const colorMode = (this._renderer.states.colorMode === HSB) ? HSB : HSL;
     return this.color(c)._getSaturation(
       this._renderer.states.colorMaxes[colorMode][1]
     );
