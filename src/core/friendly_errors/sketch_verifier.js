@@ -24,7 +24,7 @@ const ignoreFunction = [
   'keyPressed',
   'keyReleased',
   'keyTyped',
-  'windowResized',
+  'windowResized'
   // 'name',
   // 'parent',
   // 'toString',
