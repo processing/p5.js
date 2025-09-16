@@ -145,38 +145,40 @@ class p5 {
             }
           }
         });
-      } else if (hasGetter) {
-        // For properties with getters, use dynamic access
+      } else if (hasGetter || !isPrototypeFunction) {
+        // For properties with getters or non-function properties, use lazy optimization
+        // On first access, determine the type and optimize subsequent accesses
+        let lastFunction = null;
+        let boundFunction = null;
+        let isFunction = null; // null = unknown, true = function, false = not function
+
         Object.defineProperty(window, property, {
           configurable: true,
           enumerable: true,
           get: () => {
-            if(typeof this[property] === 'function'){
-              return this[property].bind(this);
-            }else{
-              return this[property];
+            const currentValue = this[property];
+
+            if (isFunction === null) {
+              // First access - determine type and optimize
+              isFunction = typeof currentValue === 'function';
+              if (isFunction) {
+                lastFunction = currentValue;
+                boundFunction = currentValue.bind(this);
+                return boundFunction;
+              } else {
+                return currentValue;
+              }
+            } else if (isFunction) {
+              // Optimized function path - only rebind if function changed
+              if (currentValue !== lastFunction) {
+                lastFunction = currentValue;
+                boundFunction = currentValue.bind(this);
+              }
+              return boundFunction;
+            } else {
+              // Optimized non-function path
+              return currentValue;
             }
-          },
-          set: newValue => {
-            Object.defineProperty(window, property, {
-              configurable: true,
-              enumerable: true,
-              value: newValue,
-              writable: true
-            });
-            if (!p5.disableFriendlyErrors) {
-              console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-            }
-          }
-        });
-      } else {
-        // For non-getter, non-function properties (like windowWidth, windowHeight)
-        // We know they're not functions, so we can optimize by skipping the typeof check
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get: () => {
-            return this[property];
           },
           set: newValue => {
             Object.defineProperty(window, property, {
