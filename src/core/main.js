@@ -90,9 +90,18 @@ class p5 {
       // to avoid actually evaluating getters before things like the
       // renderer are fully constructed
       let isPrototypeFunction = false;
+      let isConstant = false;
+      let constantValue;
+
       if (!hasGetter) {
         const prototypeValue = p5.prototype[property];
         isPrototypeFunction = typeof prototypeValue === 'function';
+
+        // Check if this is a true constant from the constants module
+        if (!isPrototypeFunction && constants[property] !== undefined) {
+          isConstant = true;
+          constantValue = prototypeValue;
+        }
       }
 
       if (isPrototypeFunction) {
@@ -116,8 +125,28 @@ class p5 {
             }
           }
         });
-      } else {
-        // For properties with getters or non-function properties, use dynamic access
+      } else if (isConstant) {
+        // For constants, cache the value directly
+        Object.defineProperty(window, property, {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return constantValue;
+          },
+          set(newValue) {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            if (!p5.disableFriendlyErrors) {
+              console.log(`You just changed the value of "${property}", which was a p5 constant. This could cause problems later if you're not careful.`);
+            }
+          }
+        });
+      } else if (hasGetter) {
+        // For properties with getters, use dynamic access
         Object.defineProperty(window, property, {
           configurable: true,
           enumerable: true,
@@ -127,6 +156,27 @@ class p5 {
             }else{
               return this[property];
             }
+          },
+          set: newValue => {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            if (!p5.disableFriendlyErrors) {
+              console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+            }
+          }
+        });
+      } else {
+        // For non-getter, non-function properties (like windowWidth, windowHeight)
+        // We know they're not functions, so we can optimize by skipping the typeof check
+        Object.defineProperty(window, property, {
+          configurable: true,
+          enumerable: true,
+          get: () => {
+            return this[property];
           },
           set: newValue => {
             Object.defineProperty(window, property, {
