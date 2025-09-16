@@ -78,28 +78,69 @@ class p5 {
     this._updateWindowSize();
 
     const bindGlobal = property => {
-      Object.defineProperty(window, property, {
-        configurable: true,
-        enumerable: true,
-        get: () => {
-          if(typeof this[property] === 'function'){
-            return this[property].bind(this);
-          }else{
-            return this[property];
+      if (property === 'constructor') return;
+
+      // Check if this property has a getter on the instance or prototype
+      const instanceDescriptor = Object.getOwnPropertyDescriptor(this, property);
+      const prototypeDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, property);
+      const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
+                       (prototypeDescriptor && prototypeDescriptor.get);
+
+      // Only check if it's a function if it doesn't have a getter
+      // to avoid actually evaluating getters before things like the
+      // renderer are fully constructed
+      let isPrototypeFunction = false;
+      if (!hasGetter) {
+        const prototypeValue = p5.prototype[property];
+        isPrototypeFunction = typeof prototypeValue === 'function';
+      }
+
+      if (isPrototypeFunction) {
+        // For regular functions, cache the bound function
+        const boundFunction = p5.prototype[property].bind(this);
+        Object.defineProperty(window, property, {
+          configurable: true,
+          enumerable: true,
+          get() {
+            return boundFunction;
+          },
+          set(newValue) {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            if (!p5.disableFriendlyErrors) {
+              console.log(`You just changed the value of "${property}", which was a p5 function. This could cause problems later if you're not careful.`);
+            }
           }
-        },
-        set: newValue => {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            value: newValue,
-            writable: true
-          });
-          if (!p5.disableFriendlyErrors) {
-            console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+        });
+      } else {
+        // For properties with getters or non-function properties, use dynamic access
+        Object.defineProperty(window, property, {
+          configurable: true,
+          enumerable: true,
+          get: () => {
+            if(typeof this[property] === 'function'){
+              return this[property].bind(this);
+            }else{
+              return this[property];
+            }
+          },
+          set: newValue => {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            if (!p5.disableFriendlyErrors) {
+              console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+            }
           }
-        }
-      });
+        });
+      }
     };
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
