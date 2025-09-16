@@ -9,8 +9,8 @@ const builtInGLSLFunctions = {
   asin: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: true}],
   asinh: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
   atan: [
-    { params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false},
-    { params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false},
+    { params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: true},
+    { params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: true},
   ],
   atanh: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
   cos: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: true}],
