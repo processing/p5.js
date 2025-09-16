@@ -69,7 +69,7 @@ function strands(p5, fn) {
         // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
         // https://github.com/acornjs/acorn/issues/1385
         const sourceString = `(${shaderModifier.toString()})`;
-        strandsCallback = transpileStrandsToJS(sourceString, options.srcLocations, scope);
+        strandsCallback = transpileStrandsToJS(p5, sourceString, options.srcLocations, scope);
       } else {
         strandsCallback = shaderModifier;
       }

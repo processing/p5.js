@@ -45,7 +45,7 @@ const ASTCallbacks = {
       node.type = 'CallExpression'
       node.callee = {
         type: 'Identifier',
-        name: unaryFnName,
+        name: `__p5.${unaryFnName}`,
       }
       node.arguments = [node.argument]
     }
@@ -68,7 +68,7 @@ const ASTCallbacks = {
           type: 'CallExpression',
           callee: {
             type: 'Identifier',
-            name: unaryFnName
+            name: `__p5.${unaryFnName}`
           },
           arguments: [node.argument.object],
         };
@@ -133,7 +133,7 @@ const ASTCallbacks = {
       node.type = 'CallExpression';
       node.callee = {
         type: 'Identifier',
-        name: 'strandsNode',
+        name: '__p5.strandsNode',
       };
       node.arguments = [original];
     },
@@ -187,7 +187,7 @@ const ASTCallbacks = {
           type: 'CallExpression',
           callee: {
             type: 'Identifier',
-            name: 'strandsNode',
+            name: '__p5.strandsNode',
           },
           arguments: [node.left]
         }
@@ -208,7 +208,7 @@ const ASTCallbacks = {
     },
   }
   
-  export function transpileStrandsToJS(sourceString, srcLocations, scope) {
+  export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
@@ -217,6 +217,10 @@ const ASTCallbacks = {
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
     const internalStrandsCallback = new Function(
+        // Create a parameter called __p5, not just p5, because users of instance mode
+        // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+        // p5, then the scope variable called p5 might accidentally override internal function
+        // calls to p5 static methods.
       '__p5',
       ...scopeKeys,
       transpiledSource

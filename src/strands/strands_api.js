@@ -45,7 +45,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       };
     }
     if (arity === 'unary') {
-      fn[name] = function (nodeOrValue) {
+      p5[name] = function (nodeOrValue) {
         const { id, dimension } = build.unaryOpNode(strandsContext, nodeOrValue, opCode);
         return createStrandsNode(id, dimension, strandsContext);
       }
@@ -72,7 +72,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return null;
   }
   
-  fn.strandsNode = function(...args) {
+  p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];
     }
@@ -262,7 +262,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     ...shader.hooks.fragment,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
-  const cfg = strandsContext.cfg;
+  const { cfg, dag } = strandsContext;
 
   for (const hookType of hookTypes) {
     const hookImplementation = function(hookUserCallback) {
@@ -280,9 +280,20 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
-          if (!returnedNode.baseType === expectedStructType.typeName) {
+          
+          if (returnedNode.baseType !== expectedStructType.typeName) {
             FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
           }
+
+          const newDeps = returnedNode.dependsOn.slice();
+
+          for (let i = 0; i < expectedStructType.properties.length; i++) {
+            const expectedType = expectedStructType.properties[i].dataType; 
+            const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[userReturned.id], strandsContext);
+            newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
+          }
+          
+          dag.dependsOn[userReturned.id] = newDeps;
           rootNodeID = userReturned.id;
         }
         else {

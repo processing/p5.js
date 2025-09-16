@@ -78,7 +78,6 @@ function bloomShaderCallback() {
     const originalCol = getTexture(preBlur, input.texCoord);
 
     const intensity = max(originalCol, 0.1) * 12.2;
-    
     const bloom = originalCol + blurredCol * intensity;
     return [bloom.rgb, 1];
   });
