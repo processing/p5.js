@@ -61,6 +61,7 @@ function strands(p5, fn) {
       // const backend = glslBackend;
       initStrandsContext(strandsContext, glslBackend);
       createShaderHooksFunctions(strandsContext, fn, this);
+      // TODO: expose this, is internal for debugging for now.
       const options = { parser: true, srcLocations: false };
 
       // 1. Transpile from strands DSL to JS
