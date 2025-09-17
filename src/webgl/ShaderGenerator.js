@@ -20,12 +20,15 @@ function shadergenerator(p5, fn) {
       let generatorFunction;
       if (options.parser) {
         const sourceString = shaderModifier.toString()
-        const ast = parse(sourceString, {
+        // Wrap in parentheses so anonymous functions parse as FunctionExpression
+        const ast = parse(`(${sourceString})`, {
           ecmaVersion: 2021,
           locations: options.srcLocations
         });
-        ancestor(ast, ASTCallbacks, undefined, { varyings: {} });
-        const transpiledSource = escodegen.generate(ast);
+        // For wrapped parsing, the function body is at ast.body[0].expression
+        const astRoot = ast.body?.[0]?.expression || ast;
+        ancestor(astRoot, ASTCallbacks, undefined, { varyings: {} });
+        const transpiledSource = escodegen.generate(astRoot);
         generatorFunction = new Function(
           transpiledSource
           .slice(
