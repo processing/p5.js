@@ -56,7 +56,6 @@ var spec = {
     'webgl',
     'typography',
     'shape_modes',
-    'math'
   ]
 };
 document.write(
