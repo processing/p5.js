@@ -137,6 +137,6 @@ function math(p5, fn) {
 
 export default math;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   math(p5, p5.prototype);
 }

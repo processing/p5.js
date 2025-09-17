@@ -309,7 +309,7 @@ function fesCore(p5, fn){
      */
     p5.isPreloadSupported = function() {
       return false;
-    }
+    };
 
     /**
      * Checks capitalization for user defined functions.

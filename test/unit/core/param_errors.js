@@ -28,7 +28,7 @@ suite('Validate Params', function () {
     Graphics: function() {
       return 'mock p5.Graphics';
     },
-    _error: () => {},
+    _error: () => {}
   };
   const mockP5Prototype = {};
 
@@ -63,7 +63,7 @@ suite('Validate Params', function () {
 
       invalidInputs.forEach(({ input }) => {
         const result = mockP5Prototype.validate('p5.saturation', input);
-        assert.isTrue(result.error.startsWith("🌸 p5.js says: Expected Color or array or string at the first parameter, but received"));
+        assert.isTrue(result.error.startsWith('🌸 p5.js says: Expected Color or array or string at the first parameter, but received'));
       });
     });
   });
@@ -90,7 +90,7 @@ suite('Validate Params', function () {
     invalidInputs.forEach(({ name, input }) => {
       test(`blendMode(): ${name}`, () => {
         const result = mockP5Prototype.validate('p5.blendMode', [input]);
-        const expectedError = "🌸 p5.js says: Expected constant (please refer to documentation for allowed values) at the first parameter, but received " + input + " in p5.blendMode().";
+        const expectedError = '🌸 p5.js says: Expected constant (please refer to documentation for allowed values) at the first parameter, but received ' + input + ' in p5.blendMode().';
         assert.equal(result.error, expectedError);
       });
     });
@@ -139,8 +139,8 @@ suite('Validate Params', function () {
     test('ambientLight(): no firendly-err-msg', function () {
       const result = mockP5Prototype.validate('p5.ambientLight', [new mockP5.Color()]);
       assert.isTrue(result.success);
-    })
-  })
+    });
+  });
 
   suite('validateParams: a few edge cases', function () {
     const invalidInputs = [
@@ -221,7 +221,7 @@ suite('Validate Params', function () {
       });
     });
 
-    test(`set() with Boolean (invalid)`, function () {
+    test('set() with Boolean (invalid)', function () {
       const result = mockP5Prototype.validate('p5.set', [0, 0, true]);
       assert.equal(result.error, '🌸 p5.js says: Expected number or array or object at the third parameter, but received boolean in p5.set().');
     });

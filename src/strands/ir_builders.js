@@ -16,7 +16,7 @@ export function scalarLiteralNode(strandsContext, typeInfo, value) {
   }
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.LITERAL,
-    dimension, 
+    dimension,
     baseType,
     value
   });
@@ -102,9 +102,9 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
     finalLeftNodeID = l.id;
     finalRightNodeID = r.id;
   }
-  else if (leftType.baseType !== rightType.baseType || 
+  else if (leftType.baseType !== rightType.baseType ||
     leftType.dimension !== rightType.dimension) {
-    
+
     if (leftType.dimension === 1 && rightType.dimension > 1) {
       cast.node = leftStrandsNode;
       cast.toType = rightType;
@@ -207,7 +207,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
       originalNodeID = dep.id;
       baseType = node.baseType;
-      
+
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         for (const inner of node.dependsOn) {
           mappedDependencies.push(inner);
@@ -237,7 +237,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
     FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
   }
   const inferredTypeInfo = {
-    dimension, 
+    dimension,
     baseType,
     priority: BasePriority[baseType],
   }
@@ -259,18 +259,18 @@ export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray
 export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const cfg = strandsContext.cfg;
   const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
-  
+
   const finalType = {
-    baseType: typeInfo.baseType, 
+    baseType: typeInfo.baseType,
     dimension: inferredTypeInfo.dimension
   };
-  
+
   const id = constructTypeFromIDs(strandsContext, finalType, mappedDependencies);
-  
+
   if (typeInfo.baseType !== BaseType.DEFER) {
     CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
   }
-  
+
   return { id, dimension: finalType.dimension, components: mappedDependencies };
 }
 
@@ -279,9 +279,9 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
   const { identifer, properties } = structTypeInfo;
 
   if (!(rawUserArgs.length === properties.length)) {
-    FES.userError('type error', 
-      `You've tried to construct a ${structTypeInfo.typeName} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` + 
-      `The properties it expects are:\n` + 
+    FES.userError('type error',
+      `You've tried to construct a ${structTypeInfo.typeName} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` +
+      `The properties it expects are:\n` +
       `${properties.map(prop => prop.name + ' ' + prop.DataType.baseType + prop.DataType.dimension)}`
     );
   }
@@ -290,9 +290,9 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
   for (let i = 0; i < properties.length; i++) {
     const expectedProperty = properties[i];
     const { originalNodeID, mappedDependencies } = mapPrimitiveDepsToIDs(strandsContext, expectedProperty.dataType, rawUserArgs[i]);
-    if (originalNodeID) { 
+    if (originalNodeID) {
       dependsOn.push(originalNodeID);
-    } 
+    }
     else {
       dependsOn.push(
         constructTypeFromIDs(strandsContext, expectedProperty.dataType, mappedDependencies)
@@ -312,9 +312,14 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
   return { id, dimension: properties.length, components: structTypeInfo.components };
 }
 
-export function functionCallNode(strandsContext, functionName, rawUserArgs) {
+export function functionCallNode(
+  strandsContext,
+  functionName,
+  rawUserArgs,
+  { overloads: rawOverloads } = {},
+) {
   const { cfg, dag } = strandsContext;
-  const overloads = strandsBuiltinFunctions[functionName];
+  const overloads = rawOverloads || strandsBuiltinFunctions[functionName];
 
   const preprocessedArgs = rawUserArgs.map((rawUserArg) => mapPrimitiveDepsToIDs(strandsContext, DataType.defer, rawUserArg));
   const matchingArgsCounts = overloads.filter(overload => overload.params.length === preprocessedArgs.length);
@@ -354,7 +359,7 @@ export function functionCallNode(strandsContext, functionName, rawUserArgs) {
           isValid = false;
         }
         dimension = inferredDimension;
-      } 
+      }
       else {
         if (argType.dimension > dimension) {
           isValid = false;

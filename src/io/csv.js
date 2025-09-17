@@ -23,189 +23,189 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 export function parse (csv, options, reviver = v => v) {
-  const ctx = Object.create(null)
-  ctx.options = options || {}
-  ctx.reviver = reviver
-  ctx.value = ''
-  ctx.entry = []
-  ctx.output = []
-  ctx.col = 1
-  ctx.row = 1
+  const ctx = Object.create(null);
+  ctx.options = options || {};
+  ctx.reviver = reviver;
+  ctx.value = '';
+  ctx.entry = [];
+  ctx.output = [];
+  ctx.col = 1;
+  ctx.row = 1;
 
   ctx.options.delimiter = ctx.options.delimiter === undefined ? '"' : options.delimiter;
   if(ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
-    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`)
+    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`);
 
   ctx.options.separator = ctx.options.separator === undefined ? ',' : options.separator;
   if(ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
-    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`)
+    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`);
 
-  const lexer = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r|[^${escapeRegExp(ctx.options.delimiter)}${escapeRegExp(ctx.options.separator)}\r\n]+`, 'y')
-  const isNewline = /^(\r\n|\n|\r)$/
+  const lexer = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r|[^${escapeRegExp(ctx.options.delimiter)}${escapeRegExp(ctx.options.separator)}\r\n]+`, 'y');
+  const isNewline = /^(\r\n|\n|\r)$/;
 
-  let matches = []
-  let match = ''
-  let state = 0
+  let matches = [];
+  let match = '';
+  let state = 0;
 
   while ((matches = lexer.exec(csv)) !== null) {
-    match = matches[0]
+    match = matches[0];
 
     switch (state) {
       case 0: // start of entry
         switch (true) {
           case match === ctx.options.delimiter:
-            state = 3
-            break
+            state = 3;
+            break;
           case match === ctx.options.separator:
-            state = 0
-            valueEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            break;
           case isNewline.test(match):
-            state = 0
-            valueEnd(ctx)
-            entryEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            entryEnd(ctx);
+            break;
           default:
-            ctx.value += match
-            state = 2
-            break
+            ctx.value += match;
+            state = 2;
+            break;
         }
-        break
+        break;
       case 2: // un-delimited input
         switch (true) {
           case match === ctx.options.separator:
-            state = 0
-            valueEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            break;
           case isNewline.test(match):
-            state = 0
-            valueEnd(ctx)
-            entryEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            entryEnd(ctx);
+            break;
           default:
-            state = 4
-            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`)
+            state = 4;
+            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`);
         }
-        break
+        break;
       case 3: // delimited input
         switch (true) {
           case match === ctx.options.delimiter:
-            state = 4
-            break
+            state = 4;
+            break;
           default:
-            state = 3
-            ctx.value += match
-            break
+            state = 3;
+            ctx.value += match;
+            break;
         }
-        break
+        break;
       case 4: // escaped or closing delimiter
         switch (true) {
           case match === ctx.options.delimiter:
-            state = 3
-            ctx.value += match
-            break
+            state = 3;
+            ctx.value += match;
+            break;
           case match === ctx.options.separator:
-            state = 0
-            valueEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            break;
           case isNewline.test(match):
-            state = 0
-            valueEnd(ctx)
-            entryEnd(ctx)
-            break
+            state = 0;
+            valueEnd(ctx);
+            entryEnd(ctx);
+            break;
           default:
-            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`)
+            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`);
         }
-        break
+        break;
     }
   }
 
   // flush the last value
   if (ctx.entry.length !== 0) {
-    valueEnd(ctx)
-    entryEnd(ctx)
+    valueEnd(ctx);
+    entryEnd(ctx);
   }
 
-  return ctx.output
+  return ctx.output;
 }
 
 export function stringify (array, options = {}, replacer = v => v) {
-  const ctx = Object.create(null)
-  ctx.options = options
-  ctx.options.eof = ctx.options.eof !== undefined ? ctx.options.eof : true
-  ctx.row = 1
-  ctx.col = 1
-  ctx.output = ''
+  const ctx = Object.create(null);
+  ctx.options = options;
+  ctx.options.eof = ctx.options.eof !== undefined ? ctx.options.eof : true;
+  ctx.row = 1;
+  ctx.col = 1;
+  ctx.output = '';
 
   ctx.options.delimiter = ctx.options.delimiter === undefined ? '"' : options.delimiter;
   if(ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
-    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`)
+    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`);
 
   ctx.options.separator = ctx.options.separator === undefined ? ',' : options.separator;
   if(ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
-    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`)
+    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`);
 
-  const needsDelimiters = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r`)
+  const needsDelimiters = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r`);
 
   array.forEach((row, rIdx) => {
-    let entry = ''
-    ctx.col = 1
+    let entry = '';
+    ctx.col = 1;
     row.forEach((col, cIdx) => {
       if (typeof col === 'string') {
-        col = col.replace(new RegExp(ctx.options.delimiter, 'g'), `${ctx.options.delimiter}${ctx.options.delimiter}`)
-        col = needsDelimiters.test(col) ? `${ctx.options.delimiter}${col}${ctx.options.delimiter}` : col
+        col = col.replace(new RegExp(ctx.options.delimiter, 'g'), `${ctx.options.delimiter}${ctx.options.delimiter}`);
+        col = needsDelimiters.test(col) ? `${ctx.options.delimiter}${col}${ctx.options.delimiter}` : col;
       }
-      entry += replacer(col, ctx.row, ctx.col)
+      entry += replacer(col, ctx.row, ctx.col);
       if (cIdx !== row.length - 1) {
-        entry += ctx.options.separator
+        entry += ctx.options.separator;
       }
-      ctx.col++
-    })
+      ctx.col++;
+    });
     switch (true) {
       case ctx.options.eof:
       case !ctx.options.eof && rIdx !== array.length - 1:
-        ctx.output += `${entry}\n`
-        break
+        ctx.output += `${entry}\n`;
+        break;
       default:
-        ctx.output += `${entry}`
-        break
+        ctx.output += `${entry}`;
+        break;
     }
-    ctx.row++
-  })
+    ctx.row++;
+  });
 
-  return ctx.output
+  return ctx.output;
 }
 
 function valueEnd (ctx) {
-  const value = ctx.options.typed ? inferType(ctx.value) : ctx.value
-  ctx.entry.push(ctx.reviver(value, ctx.row, ctx.col))
-  ctx.value = ''
-  ctx.col++
+  const value = ctx.options.typed ? inferType(ctx.value) : ctx.value;
+  ctx.entry.push(ctx.reviver(value, ctx.row, ctx.col));
+  ctx.value = '';
+  ctx.col++;
 }
 
 function entryEnd (ctx) {
-  ctx.output.push(ctx.entry)
-  ctx.entry = []
-  ctx.row++
-  ctx.col = 1
+  ctx.output.push(ctx.entry);
+  ctx.entry = [];
+  ctx.row++;
+  ctx.col = 1;
 }
 
 function inferType (value) {
-  const isNumber = /.\./
+  const isNumber = /.\./;
 
   switch (true) {
     case value === 'true':
     case value === 'false':
-      return value === 'true'
+      return value === 'true';
     case isNumber.test(value):
-      return parseFloat(value)
+      return parseFloat(value);
     case isFinite(value):
-      return parseInt(value)
+      return parseInt(value);
     default:
-      return value
+      return value;
   }
 }
 
 function escapeRegExp(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 }
