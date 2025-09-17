@@ -120,24 +120,40 @@ class p5 {
       if (isPrototypeFunction) {
         // For regular functions, cache the bound function
         const boundFunction = p5.prototype[property].bind(this);
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get() {
-            return boundFunction;
-          },
-          set: createSetter()
-        });
+        if (p5.disableFriendlyErrors) {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            value: boundFunction,
+          });
+        } else {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            get() {
+              return boundFunction;
+            },
+            set: createSetter()
+          });
+        }
       } else if (isConstant) {
         // For constants, cache the value directly
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get() {
-            return constantValue;
-          },
-          set: createSetter()
-        });
+        if (p5.disableFriendlyErrors) {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            value: constantValue,
+          });
+        } else {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            get() {
+              return constantValue;
+            },
+            set: createSetter()
+          });
+        }
       } else if (hasGetter || !isPrototypeFunction) {
         // For properties with getters or non-function properties, use lazy optimization
         // On first access, determine the type and optimize subsequent accesses
