@@ -18,23 +18,29 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
-  function initStrandsContext(ctx, backend) {
+  function initStrandsContext(ctx, backend, { active = false } = {}) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
+    ctx.vertexDeclarations = new Set();
+    ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
     ctx.backend = backend;
-    ctx.active = true;
+    ctx.active = active;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
-    p5.disableFriendlyErrors = true;
+    if (active) {
+      p5.disableFriendlyErrors = true;
+    }
   }
 
   function deinitStrandsContext(ctx) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
+    ctx.vertexDeclarations = new Set();
+    ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
     p5.disableFriendlyErrors = ctx.previousFES;
@@ -54,12 +60,12 @@ function strands(p5, fn) {
   // Entry Point
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
-  
+
   p5.Shader.prototype.modify = function(shaderModifier, scope = {}) {
     if (shaderModifier instanceof Function) {
       // Reset the context object every time modify is called;
       // const backend = glslBackend;
-      initStrandsContext(strandsContext, glslBackend);
+      initStrandsContext(strandsContext, glslBackend, { active: true });
       createShaderHooksFunctions(strandsContext, fn, this);
       // TODO: expose this, is internal for debugging for now.
       const options = { parser: true, srcLocations: false };
@@ -74,22 +80,22 @@ function strands(p5, fn) {
       } else {
         strandsCallback = shaderModifier;
       }
-      
+
       // 2. Build the IR from JavaScript API
       const globalScope = createBasicBlock(strandsContext.cfg, BlockType.GLOBAL);
       pushBlock(strandsContext.cfg, globalScope);
       strandsCallback();
       popBlock(strandsContext.cfg);
-      
+
       // 3. Generate shader code hooks object from the IR
       // .......
       const hooksObject = generateShaderCode(strandsContext);
-      
+
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
 
       // Call modify with the generated hooks object
-      return oldModify.call(this, hooksObject);      
+      return oldModify.call(this, hooksObject);
     }
     else {
       return oldModify.call(this, shaderModifier)
@@ -108,13 +114,13 @@ if (typeof p5 !== 'undefined') {
  * @method getWorldInputs
  * @description
  * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
- * 
+ *
  * The callback receives a vertex object with the following properties:
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
  * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
- * 
+ *
  * This hook is available in:
  * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
  * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
@@ -515,7 +521,7 @@ if (typeof p5 !== 'undefined') {
  * @method getObjectInputs
  * @description
  * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
- * 
+ *
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
@@ -562,7 +568,7 @@ if (typeof p5 !== 'undefined') {
  * @method getCameraInputs
  * @description
  * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
- * 
+ *
  * - `position`: a three-component vector representing the position after camera transformation.
  * - `normal`: a three-component vector representing the normal after camera transformation.
  * - `texCoord`: a two-component vector representing the texture coordinates.
