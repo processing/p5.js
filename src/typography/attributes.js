@@ -50,7 +50,7 @@
  * </code>
  * </div>
  */
-
+import p5 from "../core/main";
 /**
  * Sets the way text is aligned when <a href="#/p5/text">text()</a> is called.
  *
