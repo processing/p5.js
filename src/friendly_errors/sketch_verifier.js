@@ -39,7 +39,7 @@ export const verifierUtils = {
   fetchScript: async function (script) {
     if (script.src) {
       try {
-        const contents = await fetch(script.src).then((res) => res.text());
+        const contents = await fetch(script.src).then(res => res.text());
         return contents;
       } catch (error) {
         // TODO: Handle CORS error here.
@@ -205,7 +205,8 @@ export const verifierUtils = {
    */
   runFES: async function (p5) {
     const userCode = await verifierUtils.getUserCode();
-    const userDefinedVariablesAndFuncs = verifierUtils.extractUserDefinedVariablesAndFuncs(userCode);
+    const userDefinedVariablesAndFuncs = verifierUtils
+      .extractUserDefinedVariablesAndFuncs(userCode);
 
     verifierUtils.checkForConstsAndFuncs(userDefinedVariablesAndFuncs, p5);
   }

@@ -300,7 +300,11 @@ function loadingDisplaying(p5, fn){
     // get the project's framerate
     let _frameRate = this._targetFrameRate;
     // if it is undefined or some non useful value, assume it's 60
-    if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    if (
+      _frameRate === Infinity ||
+      _frameRate === undefined ||
+      _frameRate === 0
+    ) {
       _frameRate = 60;
     }
 
@@ -353,7 +357,9 @@ function loadingDisplaying(p5, fn){
       // if we have a WEBGL context, initialize the pixels array
       // and the gl context to use them inside the loop
       gl = this.drawingContext;
-      pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
     }
 
     // stop the loop since we are going to manually redraw
@@ -796,7 +802,12 @@ function loadingDisplaying(p5, fn){
    */
   function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
     if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+      const { x, y, w, h } = _imageCover(
+        xAlign, yAlign,
+        dw, dh,
+        sx, sy,
+        sw, sh
+      );
       sx = x;
       sy = y;
       sw = w;
@@ -1098,7 +1109,11 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
+    let vals = canvas.modeAdjust(
+      _dx, _dy,
+      _dw, _dh,
+      this._renderer.states.imageMode
+    );
     vals = _imageFit(
       fit,
       xAlign,
@@ -1202,7 +1217,7 @@ function loadingDisplaying(p5, fn){
    * <div>
    * <code>
    * let img;
-   **
+   *
    * async function setup() {
    *   // Load the image.
    *   img = await loadImage('assets/laDefense.jpg');

@@ -40,6 +40,16 @@ suite('p5.Font', function () {
     assert.property(bbox, 'h');
   });
 
+   test('fontBounds no NaN (multiline + CENTER)', async () => {
+     const pFont = await myp5.loadFont(fontFile);
+     myp5.textAlign(myp5.CENTER, myp5.CENTER);
+     const b = pFont.fontBounds('Hello,\nWorld!', 50, 50, 24);
+     expect(b.x).not.toBeNaN();
+     expect(b.y).not.toBeNaN();
+     expect(b.w).not.toBeNaN();
+     expect(b.h).not.toBeNaN();
+  });
+
   suite('textToPoints', () => {
     test('contains no NaNs', async () => {
       const pFont = await myp5.loadFont(fontFile);

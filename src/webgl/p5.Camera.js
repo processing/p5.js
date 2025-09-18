@@ -1235,12 +1235,10 @@ class Camera {
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
-    /* eslint-disable indent */
     this.projMatrix.set(f / aspect, 0, 0, 0,
       0, -f * this.yScale, 0, 0,
       0, 0, (far + near) * nf, -1,
       0, 0, (2 * far * near) * nf, 0);
-    /* eslint-enable indent */
 
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -1424,12 +1422,12 @@ class Camera {
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
     this.projMatrix = new Matrix(4);
-    /* eslint-disable indent */
+
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
       0, 0, z, 0,
       tx, ty, tz, 1);
-    /* eslint-enable indent */
+
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uPMatrix.set(this.projMatrix);
@@ -1562,12 +1560,12 @@ class Camera {
 
     this.projMatrix = new Matrix(4);
 
-    /* eslint-disable indent */
+
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
       tx, ty, tz, -1,
       0, 0, z, 0);
-    /* eslint-enable indent */
+
 
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -1599,13 +1597,11 @@ class Camera {
     const rotation = new Matrix(4); // TODO Maybe pass p5
     rotation.rotate4x4(this._renderer._pInst._toRadians(a), x, y, z);
 
-    /* eslint-disable max-len */
     const rotatedCenter = [
       centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
       centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
       centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]
     ];
-    /* eslint-enable max-len */
 
     // add eye position back into center
     rotatedCenter[0] += this.eyeX;
@@ -2143,12 +2139,12 @@ class Camera {
     // the camera affects the model view matrix, insofar as it
     // inverse translates the world to the eye position of the camera
     // and rotates it.
-    /* eslint-disable indent */
+
     this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
       local.x[1], local.y[1], local.z[1], 0,
       local.x[2], local.y[2], local.z[2], 0,
       0, 0, 0, 1);
-    /* eslint-enable indent */
+
 
     const tx = -eyeX;
     const ty = -eyeY;
@@ -2583,16 +2579,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-        this.projMatrix.setElement(
-          0,
-          cam0.projMatrix.mat4[0] *
+      this.projMatrix.setElement(
+        0,
+        cam0.projMatrix.mat4[0] *
             Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
-        );
-        this.projMatrix.setElement(
-          5,
-          cam0.projMatrix.mat4[5] *
+      );
+      this.projMatrix.setElement(
+        5,
+        cam0.projMatrix.mat4[5] *
             Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
-        );
+      );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -3952,11 +3948,11 @@ function camera(p5, fn){
 
   RendererGL.prototype.camera = function(...args) {
     this.states.curCamera.camera(...args);
-  }
+  };
 
   RendererGL.prototype.perspective = function(...args) {
     this.states.curCamera.perspective(...args);
-  }
+  };
 
   RendererGL.prototype.linePerspective = function(enable) {
     if (enable !== undefined) {
@@ -3966,15 +3962,15 @@ function camera(p5, fn){
       // If no argument is provided, return the current value
       return this.states.curCamera.useLinePerspective;
     }
-  }
+  };
 
   RendererGL.prototype.ortho = function(...args) {
     this.states.curCamera.ortho(...args);
-  }
+  };
 
   RendererGL.prototype.frustum = function(...args) {
     this.states.curCamera.frustum(...args);
-  }
+  };
 
   RendererGL.prototype.createCamera = function() {
     // compute default camera settings, then set a default camera
@@ -3983,7 +3979,7 @@ function camera(p5, fn){
     _cam._setDefaultCamera();
 
     return _cam;
-  }
+  };
 
   RendererGL.prototype.setCamera = function(cam) {
     this.states.setValue('curCamera', cam);
@@ -3993,7 +3989,7 @@ function camera(p5, fn){
     this.states.uPMatrix.set(cam.projMatrix);
     this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
-  }
+  };
 }
 
 export default camera;
