@@ -80,7 +80,7 @@ const commonRules = {
   '@stylistic/max-len': [
     warn,
     {
-      code: 80,
+      code: 120,
       ignoreComments: true,
       ignoreStrings: true,
       ignoreTemplateLiterals: true,
