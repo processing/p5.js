@@ -1615,8 +1615,10 @@ function shadergenerator(p5, fn) {
     'asin': { args: ['genType'], returnType: 'genType', isp5Function: true },
     'asinh': { args: ['genType'], returnType: 'genType', isp5Function: false },
     'atan': [
-      { args: ['genType'], returnType: 'genType', isp5Function: false },
-      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false }
+      // Single-argument atan is a normal p5 function and should work outside strands
+      { args: ['genType'], returnType: 'genType', isp5Function: true},
+      // Two-argument atan(y, x) is GLSL-only and remains strands-only
+      { args: ['genType', 'genType'], returnType: 'genType', isp5Function: false},
     ],
     'atanh': { args: ['genType'], returnType: 'genType', isp5Function: false },
     'cos': { args: ['genType'], returnType: 'genType', isp5Function: true },
