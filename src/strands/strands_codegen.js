@@ -32,6 +32,7 @@ export function generateShaderCode(strandsContext) {
     const firstLine = backend.hookEntry(hookType);
     backend.generateReturnStatement(strandsContext, generationContext, rootNodeID);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
+    console.log(hooksObj[`${hookType.returnType.typeName} ${hookType.name}`]);
   }
   
   return hooksObj;

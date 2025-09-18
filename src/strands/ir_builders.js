@@ -465,10 +465,10 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
         }
     },
   set(target, property, value, receiver) {
-    for (const basis of swizzleSets) {
+    for (const swizzleSet of swizzleSets) {
       const chars = [...property];
       const valid =
-        chars.every(c => basis.includes(c)) &&
+        chars.every(c => swizzleSet.includes(c)) &&
         new Set(chars).size === chars.length &&
         target.dimension >= chars.length;
 
@@ -476,23 +476,29 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
 
       const dim = target.dimension;
 
+      // lanes are the underlying values of the target vector 
+      //  e.g. lane 0 holds the value aliased by 'x', 'r', and 's'
+      // the lanes array is in the 'correct' order
       const lanes = new Array(dim);
       for (let i = 0; i < dim; i++) {
         const { id, dimension } = swizzleNode(strandsContext, target, 'xyzw'[i]);
         lanes[i] = createStrandsNode(id, dimension, strandsContext);
       }
 
+      // The scalars array contains the individual components of the users values.
+      // This may not be the most efficient way, as we swizzle each component individually,
+      // so that .xyz becomes .x, .y, .z
       let scalars = [];
       if (value instanceof StrandsNode) {
         if (value.dimension === 1) {
           scalars = Array(chars.length).fill(value);
-        } else if (value.dimension >= chars.length) {
+        } else if (value.dimension === chars.length) {
           for (let k = 0; k < chars.length; k++) {
             const { id, dimension } = swizzleNode(strandsContext, value, 'xyzw'[k]);
             scalars.push(createStrandsNode(id, dimension, strandsContext));
           }
         } else {
-          FES.userError('type error', `Swizzle assignment: RHS vector too short (need ${chars.length}, got ${value.dimension}).`);
+          FES.userError('type error', `Swizzle assignment: RHS vector does not match LHS vector (need ${chars.length}, got ${value.dimension}).`);
         }
       } else if (Array.isArray(value)) {
         const flat = value.flat(Infinity);
@@ -509,8 +515,11 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
         FES.userError('type error', `Unsupported RHS for swizzle assignment: ${value}`);
       }
 
+      // The canonical index refers to the actual value's position in the vector lanes
+      // i.e. we are finding (3,2,1) from .zyx 
+      // We set the correct value in the lanes array
       for (let j = 0; j < chars.length; j++) {
-        const canonicalIndex = basis.indexOf(chars[j]);
+        const canonicalIndex = swizzleSet.indexOf(chars[j]);
         lanes[canonicalIndex] = scalars[j];
       }
 
@@ -523,6 +532,11 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       );
 
       target.id = newID;
+
+      // If we swizzle assign on a struct component i.e. 
+      //   inputs.position.rg = [1, 2]
+      // The onRebind callback will update the structs components so that it refers to the new values, 
+      // and make a new ID for the struct with these new values
       if (typeof onRebind === 'function') {
         onRebind(newID);
       }
