@@ -63,6 +63,48 @@ function shadergenerator(p5, fn) {
     }
   };
 
+  /**
+ * @example
+ * This example demonstrates how to apply a simple bloom effect
+ * using `p5.strands` inside the `filter()` function.
+ * The strands DSL lets you manipulate fragment colors declaratively.
+ *
+ * Uses a spinning box with a blur effect created using a 3x3 kernel.
+ */
+  {
+    let pg;
+    let shader;
+    
+    function setup() {
+      createCanvas(400, 400, WEBGL);
+      pg = createGraphics(width, height, WEBGL);
+      pg.noStroke();
+    }
+    function draw() {
+    // Render spinning cube to offscreen buffer
+      pg.push();
+      pg.background(0);
+      pg.rotateY(frameCount * 0.01);
+      pg.box(100);
+      pg.pop();
+
+    // Apply bloom-like filter using p5.strands
+      filter(
+        modify(() => {
+          let colorSum = vec3(0.0);
+          for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+              colorSum += texture2D(tex, texcoord + vec2(dx, dy) * 0.002).rgb;
+            }
+          }
+          colorSum /= 9.0;
+          return vec4(colorSum, 1.0);
+        })
+      );
+    }
+  }
+
+
   // AST Transpiler Callbacks and helper functions
   function replaceBinaryOperator(codeSource) {
     switch (codeSource) {
