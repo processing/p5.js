@@ -1,4 +1,5 @@
 import { sortCFG } from "./ir_cfg";
+import { structType, TypeInfoFromGLSLName } from './ir_types';
 
 export function generateShaderCode(strandsContext) {
   const {
@@ -35,7 +36,10 @@ export function generateShaderCode(strandsContext) {
     }
 
     const firstLine = backend.hookEntry(hookType);
-    backend.generateReturnStatement(strandsContext, generationContext, rootNodeID);
+    let returnType = hookType.returnType.properties
+      ? structType(hookType.returnType)
+      : TypeInfoFromGLSLName[hookType.returnType.typeName];
+    backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
     console.log(hooksObj[`${hookType.returnType.typeName} ${hookType.name}`]);
   }

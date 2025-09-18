@@ -67,13 +67,13 @@ export const DataType = {
   sampler2D: { fnName: "texture", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
 }
 export const structType = function (hookType) {
-  // const hookType = hookType?.name ? hookType
-  let T = hookType.type === undefined ? hookType : hookType.type; 
-  const structType = { 
+  let T = hookType.type === undefined ? hookType : hookType.type;
+  const structType = {
     name: hookType.name,
     properties: [],
     typeName: T.typeName,
   };
+  // TODO: handle struct properties that are themselves structs
   for (const prop of T.properties) {
     const propType = TypeInfoFromGLSLName[prop.type.typeName];
     structType.properties.push(
@@ -83,35 +83,8 @@ export const structType = function (hookType) {
   return structType;
 };
 
-export const StructType = {
-  Vertex: {
-    name: 'Vertex',
-    properties: [
-      { name: "position", dataType: DataType.float3 },
-      { name: "normal", dataType: DataType.float3 },
-      { name: "texCoord", dataType: DataType.float2 },
-      { name: "color", dataType: DataType.float4 },
-    ]
-  },
-    StrokeVertex: {
-    name: 'StrokeVertex',
-    properties: [
-      { name: "position", dataType: DataType.float3 },
-      { name: "tangentIn", dataType: DataType.float3 },
-      { name: "tangentOut", dataType: DataType.float3 },
-      { name: "color", dataType: DataType.float4 },
-      { name: "weight", dataType: DataType.float1 },
-    ]
-  },
-  FitlerInputs: {
-
-  },
-}
-
 export function isStructType(typeName) {
-  const cap = typeName.charAt(0).toUpperCase()
-  return cap === typeName.charAt(0);
-  // return Object.keys(StructType).includes(typeName);
+  return !isNativeType(typeName);
 }
 
 export function isNativeType(typeName) {
@@ -153,8 +126,8 @@ export const OpCode = {
   },
   Unary: {
     LOGICAL_NOT: 100,
-    NEGATE: 101,     
-    PLUS: 102, 
+    NEGATE: 101,
+    PLUS: 102,
     SWIZZLE: 103,
   },
   Nary: {

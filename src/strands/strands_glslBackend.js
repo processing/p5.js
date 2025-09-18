@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, StructType, BaseType } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 
@@ -44,7 +44,7 @@ const cfgHandlers = {
       }
     }
   },
-  
+
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
@@ -56,23 +56,23 @@ const cfgHandlers = {
     generationContext.write(`}`)
     return;
   },
-  
+
   [BlockType.IF_BODY](blockID, strandsContext, generationContext) {
-    
+
   },
-  
+
   [BlockType.ELIF_BODY](blockID, strandsContext, generationContext) {
-    
+
   },
-  
+
   [BlockType.ELSE_BODY](blockID, strandsContext, generationContext) {
-    
+
   },
-  
+
   [BlockType.MERGE](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-  
+
   [BlockType.FUNCTION](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
@@ -110,27 +110,27 @@ export const glslBackend = {
     const expr = this.generateExpression(generationContext, dag, nodeID);
     const tmp = `T${generationContext.nextTempID++}`;
     generationContext.tempNames[nodeID] = tmp;
-    
+
     const T = extractNodeTypeInfo(dag, nodeID);
     const typeName = this.getTypeName(T.baseType, T.dimension);
     return `${typeName} ${tmp} = ${expr};`;
   },
 
-  generateReturnStatement(strandsContext, generationContext, rootNodeID) {
+  generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
     if (isStructType(rootNode.baseType)) {
-      const structTypeInfo = StructType[rootNode.baseType];
+      const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];
         const val = this.generateExpression(generationContext, dag, rootNode.dependsOn[i]);
         if (prop.name !== val) {
           generationContext.write(
             `${rootNode.identifier}.${prop.name} = ${val};`
-          ) 
+          )
         }
       }
-    } 
+    }
     generationContext.write(`return ${this.generateExpression(generationContext, dag, rootNodeID)};`);
   },
 
@@ -143,14 +143,14 @@ export const glslBackend = {
       case NodeType.LITERAL:
       if (node.baseType === BaseType.FLOAT) {
         return node.value.toFixed(4);
-      } 
+      }
       else {
         return node.value;
       }
 
       case NodeType.VARIABLE:
       return node.identifier;
-      
+
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
