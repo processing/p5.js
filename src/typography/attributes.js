@@ -2,9 +2,9 @@
  * Calculates the advance width of a string of text drawn when
  * <a href="#/p5/text">text()</a> is called.
  *
- * <b>fontWidth()</b> returns the advance width (a "loose" measurement) of the text, including all leading and trailing whitespace. This is the full width the text would occupy, as measured by the browser's <code>measureText().width</code> property.
+ * <b>fontWidth()</b> returns the advance width (a "loose" measurement) of the text, including all leading and trailing whitespace. This is the full width the text would occupy, as measured by the browser's <code>measureText().width</code> property. Use this when you want to know the total space the text will take up, including spaces.
  *
- * <b>textWidth()</b> returns the width of the smallest bounding box containing the text (a "tight" measurement), which may ignore leading and trailing whitespace. This is measured using the bounding box properties of the text.
+ * <b>textWidth()</b> returns the width of the smallest bounding box containing the text (a "tight" measurement), which may ignore leading and trailing whitespace. Use this when you want the width of just the visible glyphs, not including extra space.
  *
  * <b>Comparison:</b>
  * <ul>
@@ -50,30 +50,6 @@
  * </code>
  * </div>
  */
-p5.prototype.fontWidth = function (...args) {
-  args[0] += "";
-  p5._validateParameters("fontWidth", args);
-  if (args[0].length === 0) {
-    return 0;
-  }
-  // Use the renderer's fontWidth method if available, otherwise fallback to measureText width
-  if (typeof this._renderer.fontWidth === "function") {
-    return this._renderer.fontWidth(args[0]);
-  } else {
-    // fallback: use measureText width
-    const ctx = this._renderer.textDrawingContext();
-    return ctx.measureText(args[0]).width;
-  }
-};
-/**
- * @module Typography
- * @submodule Attributes
- * @for p5
- * @requires core
- * @requires constants
- */
-
-import p5 from "../core/main";
 
 /**
  * Sets the way text is aligned when <a href="#/p5/text">text()</a> is called.
@@ -318,12 +294,11 @@ p5.prototype.textStyle = function (theStyle) {
 };
 
 /**
- * Calculates the maximum width of a string of text drawn when
- * <a href="#/p5/text">text()</a> is called.
+ * Measures the tight bounding box width of a string of text, as it would be drawn by <a href="#/p5/text">text()</a>.
  *
- * <b>textWidth()</b> returns the width of the smallest bounding box containing the text (a "tight" measurement), which may ignore leading and trailing whitespace. This is different from <code>fontWidth()</code>, which returns the advance width (a "loose" measurement) including all whitespace.
+ * <b>textWidth()</b> returns the width of the smallest bounding box containing the text (a "tight" measurement), which may ignore leading and trailing whitespace. This is different from <code>fontWidth()</code>, which returns the advance width (a "loose" measurement) including all whitespace. Use <b>textWidth()</b> when you want the width of just the visible glyphs, not including extra space.
  *
- * <b>fontWidth()</b> returns the advance width (loose), the full width the text would occupy, as measured by the browser's <code>measureText().width</code> property.
+ * <b>fontWidth()</b> returns the advance width (loose), the full width the text would occupy, as measured by the browser's <code>measureText().width</code> property. Use <b>fontWidth()</b> when you want to know the total space the text will take up, including spaces.
  *
  * <b>Comparison:</b>
  * <ul>
