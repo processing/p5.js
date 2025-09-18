@@ -1,7 +1,12 @@
 import { sortCFG } from "./ir_cfg";
 
 export function generateShaderCode(strandsContext) {
-  const { cfg, backend } = strandsContext;
+  const {
+    cfg,
+    backend,
+    vertexDeclarations,
+    fragmentDeclarations
+  } = strandsContext;
 
   const hooksObj = {
     uniforms: {},
@@ -11,7 +16,7 @@ export function generateShaderCode(strandsContext) {
     const declaration = backend.generateUniformDeclaration(name, typeInfo);
     hooksObj.uniforms[declaration] = defaultValue;
   }
-  
+
   for (const { hookType, rootNodeID, entryBlockID } of strandsContext.hooks) {
     const generationContext = {
       indent: 1,
@@ -28,12 +33,15 @@ export function generateShaderCode(strandsContext) {
     for (const blockID of blocks) {
       backend.generateBlock(blockID, strandsContext, generationContext);
     }
-    
+
     const firstLine = backend.hookEntry(hookType);
     backend.generateReturnStatement(strandsContext, generationContext, rootNodeID);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
     console.log(hooksObj[`${hookType.returnType.typeName} ${hookType.name}`]);
   }
-  
+
+  hooksObj.vertexDeclarations = [...vertexDeclarations].join('\n');
+  hooksObj.fragmentDeclarations = [...fragmentDeclarations].join('\n');
+
   return hooksObj;
 }

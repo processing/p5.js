@@ -1115,7 +1115,7 @@ class Framebuffer {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
       const partsToCopy = {
-        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
+        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
       };
       if (this.useDepth) {
         partsToCopy.depthTexture = [

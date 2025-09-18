@@ -13,10 +13,10 @@ class Table {
   }
 
   toString(separator=',') {
-    let rows = this.rows.map((row) => row.arr);
+    let rows = this.rows.map(row => row.arr);
 
-    if(!this.columns.some((column) => column === null)){
-      rows = [this.columns, ...rows,]
+    if(!this.columns.some(column => column === null)){
+      rows = [this.columns, ...rows];
     }
 
     return stringify(rows, {
@@ -132,7 +132,7 @@ class Table {
    *     text(rowText, 18, y * 3);
    *     y += 20;
    *   }
-   * 
+   *
    *   describe('no image displayed');
    * }
    * </code>
@@ -168,7 +168,7 @@ class Table {
    *
    *   // Get the row at index 1 (second row)
    *   let row = table.getRow(1);
-   * 
+   *
    *   // Set text properties for drawing on the canvas
    *   fill(0);      // Set text color to black
    *   textSize(12); // Set the text size
@@ -400,7 +400,7 @@ class Table {
    *   // Set text properties for drawing on the canvas
    *   fill(0);       // Text color: black
    *   textSize(12);  // Adjust text size as needed
-   *   
+   *
    *   // Display the species on the canvas
    *   text(species, 10, 30);
    *
@@ -525,7 +525,7 @@ class Table {
    * // 2,Equus zebra,Zebra
    *
    * let table;
-   **
+   *
    * async function setup() {
    *   // The table is comma separated value "csv"
    *   // and has a header specifying the columns labels.
@@ -543,8 +543,8 @@ class Table {
     const ret = [];
     if (typeof value === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
-        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);    
-        }
+        ret.push(this.rows[i].obj[this.columns.indexOf(value)]);
+      }
     } else {
       for (let j = 0; j < this.rows.length; j++) {
         ret.push(this.rows[j].arr[value]);
@@ -578,7 +578,7 @@ class Table {
    *
    *   // Load the CSV file with a header row
    *   table = await loadTable('assets/mammals.csv', ',', 'header');
-  *
+   *
    *   // Clear all rows from the table
    *   table.clearRows();
    *
@@ -1143,7 +1143,7 @@ class Table {
    *
    *   // Compute the result: id at row 1, column 0 plus 100 (i.e. 1 + 100 = 101)
    *   let result = table.getNum(1, 0) + 100;
-   *   
+   *
    *   // Set text properties and display the result on the canvas
    *   fill(0);      // Set text color to black
    *   textSize(12); // Adjust text size as needed
@@ -1400,7 +1400,7 @@ function table(p5, fn){
    * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @for p5.Table
    * @name rows
-  */
+   */
 }
 
 export default table;

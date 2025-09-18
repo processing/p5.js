@@ -1,13 +1,13 @@
 import * as build from './ir_builders'
-import { 
+import {
   OperatorTable,
   BlockType,
-  DataType, 
-  BaseType, 
+  DataType,
+  BaseType,
   structType,
-  TypeInfoFromGLSLName, 
+  TypeInfoFromGLSLName,
   isStructType,
-  OpCode, 
+  OpCode,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
@@ -15,27 +15,28 @@ import { StrandsConditional } from './strands_conditionals'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
+import noiseGLSL from '../webgl/shaders/functions/noiseGLSL.glsl';
 
 //////////////////////////////////////////////
-// User nodes 
+// User nodes
 //////////////////////////////////////////////
 export class StrandsNode {
   constructor(id, dimension, strandsContext) {
     this.id = id;
     this.strandsContext = strandsContext;
-    this.dimension = dimension; 
+    this.dimension = dimension;
   }
 }
 
 export function createStrandsNode(id, dimension, strandsContext, onRebind) {
   return new Proxy(
     new StrandsNode(id, dimension, strandsContext),
-    build.swizzleTrap(id, dimension, strandsContext, onRebind) 
+    build.swizzleTrap(id, dimension, strandsContext, onRebind)
   );
 }
 
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
-  // We augment the strands node with operations programatically 
+  // We augment the strands node with operations programatically
   // this means methods like .add, .sub, etc can be chained
   for (const { name, arity, opCode } of OperatorTable) {
     if (arity === 'binary') {
@@ -63,15 +64,15 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
     return createStrandsNode(node.id, node.dimension, strandsContext);
   }
-  
+
   fn.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
-  
+
   fn.strandsLoop = function(a, b, loopBody) {
     return null;
   }
-  
+
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];
@@ -80,15 +81,15 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
     const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
-    return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext); 
+    return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
   }
-  
+
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
   for (const [functionName, overrides] of Object.entries(strandsBuiltinFunctions)) {
     const isp5Function = overrides[0].isp5Function;
-    
+
     if (isp5Function) {
       const originalFn = fn[functionName];
       fn[functionName] = function(...args) {
@@ -112,7 +113,33 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
-  
+
+  // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
+  const originalNoise = fn.noise;
+  fn.noise = function (...args) {
+    if (!strandsContext.active) {
+      return originalNoise.apply(this, args); // fallback to regular p5.js noise
+    }
+
+    strandsContext.vertexDeclarations.add(noiseGLSL);
+    strandsContext.fragmentDeclarations.add(noiseGLSL);
+    // Handle noise(x, y) as noise(vec2)
+    let nodeArgs;
+    if (args.length === 2) {
+      nodeArgs = [fn.vec2(args[0], args[1])];
+    } else {
+      nodeArgs = args;
+    }
+
+    const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
+      overloads: [{
+        params: [DataType.float2],
+        returnType: DataType.float1,
+      }]
+    });
+    return createStrandsNode(id, dimension, strandsContext);
+  };
+
   // Next is type constructors and uniform functions
   for (const type in DataType) {
     if (type === BaseType.DEFER) {
@@ -136,6 +163,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
     };
+    if (pascalTypeName.startsWith('Vec')) {
+      // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
+      // documented these as
+      fn[`uniform${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`uniform${pascalTypeName}`];
+    }
 
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
@@ -159,7 +191,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 function createHookArguments(strandsContext, parameters){
   const args = [];
   const dag = strandsContext.dag;
-  
+
   for (const param of parameters) {
     if(isStructType(param.type.typeName)) {
       const structTypeInfo = structType(param);
@@ -204,7 +236,7 @@ function createHookArguments(strandsContext, parameters){
       }
 
       args.push(structNode);
-    } 
+    }
     else /*if(isNativeType(paramType.typeName))*/ {
       const typeInfo = TypeInfoFromGLSLName[param.type.typeName];
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
@@ -221,15 +253,15 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
     // } catch (e) {
-      // FES.userError('type error', 
+      // FES.userError('type error',
         // `There was a type mismatch for a value returned from ${hookName}.\n` +
         // `The value in question was supposed to be:\n` +
         // `${expectedType.baseType + expectedType.dimension}\n` +
-        // `But you returned:\n` + 
+        // `But you returned:\n` +
         // `${returned}`
       // );
     // }
-  } 
+  }
 
   const dag = strandsContext.dag;
   let returnedNodeID = returned.id;
@@ -240,12 +272,12 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   if (receivedType.dimension !== expectedType.dimension) {
     if (receivedType.dimension !== 1) {
       FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookName} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
-    } 
+    }
     else {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       returnedNodeID = result.id;
     }
-  } 
+  }
   else if (receivedType.baseType !== expectedType.baseType) {
     const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
     returnedNodeID = result.id;
@@ -254,9 +286,7 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 
-// TODO: track overridden functions and restore them
-
-export function createShaderHooksFunctions(strandsContext, fn, shader) { 
+export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const availableHooks = {
     ...shader.hooks.vertex,
     ...shader.hooks.fragment,
@@ -280,7 +310,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
-          
+
           if (returnedNode.baseType !== expectedStructType.typeName) {
             FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
           }
@@ -288,11 +318,11 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           const newDeps = returnedNode.dependsOn.slice();
 
           for (let i = 0; i < expectedStructType.properties.length; i++) {
-            const expectedType = expectedStructType.properties[i].dataType; 
+            const expectedType = expectedStructType.properties[i].dataType;
             const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[userReturned.id], strandsContext);
             newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
           }
-          
+
           dag.dependsOn[userReturned.id] = newDeps;
           rootNodeID = userReturned.id;
         }
@@ -304,7 +334,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             const propName = expectedProp.name;
             const receivedValue = userReturned[propName];
             if (receivedValue === undefined) {
-              FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` + 
+              FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` +
                 `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
                 `Received: { ${Object.keys(userReturned).join(', ')} }\n` +
                 `All of the properties are required!`);
@@ -317,14 +347,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           rootNodeID = newStruct.id;
         }
 
-      } 
+      }
       else /*if(isNativeType(expectedReturnType.typeName))*/ {
         const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
         rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
       }
 
       strandsContext.hooks.push({
-        hookType, 
+        hookType,
         entryBlockID,
         rootNodeID,
       });
