@@ -77,122 +77,6 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    const bindGlobal = property => {
-      if (property === 'constructor') return;
-
-      // Common setter for all property types
-      const createSetter = () => newValue => {
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          value: newValue,
-          writable: true
-        });
-        if (!p5.disableFriendlyErrors) {
-          console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-        }
-      };
-
-      // Check if this property has a getter on the instance or prototype
-      const instanceDescriptor = Object.getOwnPropertyDescriptor(this, property);
-      const prototypeDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, property);
-      const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
-                       (prototypeDescriptor && prototypeDescriptor.get);
-
-      // Only check if it's a function if it doesn't have a getter
-      // to avoid actually evaluating getters before things like the
-      // renderer are fully constructed
-      let isPrototypeFunction = false;
-      let isConstant = false;
-      let constantValue;
-
-      if (!hasGetter) {
-        const prototypeValue = p5.prototype[property];
-        isPrototypeFunction = typeof prototypeValue === 'function';
-
-        // Check if this is a true constant from the constants module
-        if (!isPrototypeFunction && constants[property] !== undefined) {
-          isConstant = true;
-          constantValue = prototypeValue;
-        }
-      }
-
-      if (isPrototypeFunction) {
-        // For regular functions, cache the bound function
-        const boundFunction = p5.prototype[property].bind(this);
-        if (p5.disableFriendlyErrors) {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            value: boundFunction,
-          });
-        } else {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            get() {
-              return boundFunction;
-            },
-            set: createSetter()
-          });
-        }
-      } else if (isConstant) {
-        // For constants, cache the value directly
-        if (p5.disableFriendlyErrors) {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            value: constantValue,
-          });
-        } else {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            get() {
-              return constantValue;
-            },
-            set: createSetter()
-          });
-        }
-      } else if (hasGetter || !isPrototypeFunction) {
-        // For properties with getters or non-function properties, use lazy optimization
-        // On first access, determine the type and optimize subsequent accesses
-        let lastFunction = null;
-        let boundFunction = null;
-        let isFunction = null; // null = unknown, true = function, false = not function
-
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get: () => {
-            const currentValue = this[property];
-
-            if (isFunction === null) {
-              // First access - determine type and optimize
-              isFunction = typeof currentValue === 'function';
-              if (isFunction) {
-                lastFunction = currentValue;
-                boundFunction = currentValue.bind(this);
-                return boundFunction;
-              } else {
-                return currentValue;
-              }
-            } else if (isFunction) {
-              // Optimized function path - only rebind if function changed
-              if (currentValue !== lastFunction) {
-                lastFunction = currentValue;
-                boundFunction = currentValue.bind(this);
-              }
-              return boundFunction;
-            } else {
-              // Optimized non-function path
-              return currentValue;
-            }
-          },
-          set: createSetter()
-        });
-      }
-    };
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -201,22 +85,6 @@ class p5 {
         return;
       }
       p5.instance = this;
-
-      // Loop through methods on the prototype and attach them to the window
-      // All methods and properties with name starting with '_' will be skipped
-      for (const p of Object.getOwnPropertyNames(p5.prototype)) {
-        if(p[0] === '_') continue;
-        bindGlobal(p);
-      }
-
-      const protectedProperties = ['constructor', 'length'];
-      // Attach its properties to the window
-      for (const p in this) {
-        if (this.hasOwnProperty(p)) {
-          if(p[0] === '_' || protectedProperties.includes(p)) continue;
-          bindGlobal(p);
-        }
-      }
     } else {
       // Else, the user has passed in a sketch closure that may set
       // user-provided 'setup', 'draw', etc. properties on this instance of p5
@@ -303,6 +171,140 @@ class p5 {
     // Run `presetup` hooks
     await this._runLifecycleHook('presetup');
     if (this.hitCriticalError) return;
+
+    if (this._isGlobal) {
+      const bindGlobal = property => {
+        if (property === 'constructor') return;
+
+        // Common setter for all property types
+        const createSetter = () => newValue => {
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            value: newValue,
+            writable: true
+          });
+          if (!p5.disableFriendlyErrors) {
+            console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
+          }
+        };
+
+        // Check if this property has a getter on the instance or prototype
+        const instanceDescriptor = Object.getOwnPropertyDescriptor(this, property);
+        const prototypeDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, property);
+        const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
+                         (prototypeDescriptor && prototypeDescriptor.get);
+
+        // Only check if it's a function if it doesn't have a getter
+        // to avoid actually evaluating getters before things like the
+        // renderer are fully constructed
+        let isPrototypeFunction = false;
+        let isConstant = false;
+        let constantValue;
+
+        if (!hasGetter) {
+          const prototypeValue = p5.prototype[property];
+          isPrototypeFunction = typeof prototypeValue === 'function';
+
+          // Check if this is a true constant from the constants module
+          if (!isPrototypeFunction && constants[property] !== undefined) {
+            isConstant = true;
+            constantValue = prototypeValue;
+          }
+        }
+
+        if (isPrototypeFunction) {
+          // For regular functions, cache the bound function
+          const boundFunction = p5.prototype[property].bind(this);
+          if (p5.disableFriendlyErrors) {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: boundFunction,
+            });
+          } else {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              get() {
+                return boundFunction;
+              },
+              set: createSetter()
+            });
+          }
+        } else if (isConstant) {
+          // For constants, cache the value directly
+          if (p5.disableFriendlyErrors) {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              value: constantValue,
+            });
+          } else {
+            Object.defineProperty(window, property, {
+              configurable: true,
+              enumerable: true,
+              get() {
+                return constantValue;
+              },
+              set: createSetter()
+            });
+          }
+        } else if (hasGetter || !isPrototypeFunction) {
+          // For properties with getters or non-function properties, use lazy optimization
+          // On first access, determine the type and optimize subsequent accesses
+          let lastFunction = null;
+          let boundFunction = null;
+          let isFunction = null; // null = unknown, true = function, false = not function
+
+          Object.defineProperty(window, property, {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+              const currentValue = this[property];
+
+              if (isFunction === null) {
+                // First access - determine type and optimize
+                isFunction = typeof currentValue === 'function';
+                if (isFunction) {
+                  lastFunction = currentValue;
+                  boundFunction = currentValue.bind(this);
+                  return boundFunction;
+                } else {
+                  return currentValue;
+                }
+              } else if (isFunction) {
+                // Optimized function path - only rebind if function changed
+                if (currentValue !== lastFunction) {
+                  lastFunction = currentValue;
+                  boundFunction = currentValue.bind(this);
+                }
+                return boundFunction;
+              } else {
+                // Optimized non-function path
+                return currentValue;
+              }
+            },
+            set: createSetter()
+          });
+        }
+      };
+      // Loop through methods on the prototype and attach them to the window
+      // All methods and properties with name starting with '_' will be skipped
+      for (const p of Object.getOwnPropertyNames(p5.prototype)) {
+        if(p[0] === '_') continue;
+        bindGlobal(p);
+      }
+
+      const protectedProperties = ['constructor', 'length'];
+      // Attach its properties to the window
+      for (const p in this) {
+        if (this.hasOwnProperty(p)) {
+          if(p[0] === '_' || protectedProperties.includes(p)) continue;
+          bindGlobal(p);
+        }
+      }
+    }
 
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
