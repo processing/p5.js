@@ -61,7 +61,7 @@
       "p_8": "",
       "p_9": ""
     },
-    "pre": "🌸 p5.js dice: {{message}}",
+    "pre": " \n🌸 p5.js dice: {{message}}",
     "sketchReaderErrors": {
       "reservedConst": "",
       "reservedFunc": ""

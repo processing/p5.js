@@ -141,4 +141,63 @@ suite('Transform', function() {
       });
     });
   });
+
+  suite('p5.prototype.setViewport', function() {
+    test('should be a function', function() {
+      assert.ok(sketch1.setViewport);
+      assert.typeOf(sketch1.setViewport, 'function');
+    });
+
+    test('wrong param type at #0', function() {
+      assert.validationError(function() {
+        sketch1.setViewport('a', 0, 1, 1);
+      });
+    });
+
+    test('wrong param type at #1', function() {
+      assert.validationError(function() {
+        sketch1.setViewport(0, 'a', 1, 1);
+      });
+    });
+
+    test('wrong param type at #2', function() {
+      assert.validationError(function() {
+        sketch1.setViewport(0, 0, 'a', 1);
+      });
+    });
+
+    test('wrong param type at #3', function() {
+      assert.validationError(function() {
+        sketch1.setViewport(0, 0, 1, 'a');
+      });
+    });
+
+    test('should set the viewport correctly', function() {
+      // On a 100x100 canvas, map to a simple 10x10 grid
+      sketch1.setViewport(0, 10, 0, 10);
+      var t = sketch1.drawingContext.getTransform();
+      // scaleX should be width/10 = 10
+      assert.closeTo(t.a, 10, 0.001);
+      // scaleY should be height/10 = 10
+      assert.closeTo(t.d, 10, 0.001);
+      // translateX should be 0
+      assert.closeTo(t.e, 0, 0.001);
+      // translateY should be 0
+      assert.closeTo(t.f, 0, 0.001);
+    });
+
+    test('should handle inverted viewport y-axis', function() {
+      // On a 100x100 canvas, map to a centered coordinate system with inverted y
+      sketch1.setViewport(-1, 1, 1, -1);
+      var t = sketch1.drawingContext.getTransform();
+      // scaleX should be width/2 = 50
+      assert.closeTo(t.a, 50, 0.001);
+      // scaleY should be height/-2 = -50
+      assert.closeTo(t.d, -50, 0.001);
+      // translateX should be width/2 = 50
+      assert.closeTo(t.e, 50, 0.001);
+      // translateY should be height/2 = 50
+      assert.closeTo(t.f, 50, 0.001);
+    });
+  });
 });

@@ -1406,4 +1406,45 @@ p5.prototype.translate = function(x, y, z) {
   return this;
 };
 
+/**
+ * Sets the coordinate system of the canvas.
+ *
+ * By default, the canvas is mapped to `(0, 0, width, height)`.
+ * `setViewport(xmin, xmax, ymin, ymax)` remaps the canvas from `(0, 0, width, height)` to `(xmin, ymin, xmax, ymax)`.
+ *
+ * This function is useful for creating resolution-independent sketches.
+ *
+ * @method setViewport
+ * @param  {Number} xmin the minimum x-value of the viewport.
+ * @param  {Number} xmax the maximum x-value of the viewport.
+ * @param  {Number} ymin the minimum y-value of the viewport.
+ * @param  {Number} ymax the maximum y-value of the viewport.
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   setViewport(-10, 10, -10, 10);
+ *   describe('A white line from left to right in the middle of a gray background.');
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   line(-10, 0, 10, 0);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.setViewport = function(xmin, xmax, ymin, ymax) {
+  p5._validateParameters('setViewport', arguments);
+  const sx = this.width / (xmax - xmin);
+  const sy = this.height / (ymax - ymin);
+  const tx = -xmin * sx;
+  const ty = -ymin * sy;
+  this.applyMatrix(sx, 0, 0, sy, tx, ty);
+  return this;
+};
+
 export default p5;
