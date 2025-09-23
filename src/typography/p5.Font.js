@@ -362,7 +362,7 @@ p5.Font = class {
       x = xOriginal;
       let line = lines[i];
 
-      line = line.replace('\t', '  ');
+      line = line.replace(/\t/g, '  ');
       const glyphs = this._getGlyphs(line);
 
       for (let j = 0; j < glyphs.length; j++) {
