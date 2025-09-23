@@ -23,23 +23,34 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Accessibility and Disability](#accessibility-and-disability)
 
 ### Code
-- [Code Samples](#code-samples)
-- [Comments](#comments)
-- [Whitespace](#whitespace)
-- [Semicolons](#semicolons)
-- [Naming Conventions](#naming-conventions)
-- [Variables](#variables)
-- [Strings](#strings)
-- [Boolean Operators](#boolean-operators)
-- [Conditionals](#conditionals)
-- [Iteration](#iteration)
-- [Objects](#objects)
-- [Arrays](#arrays)
-- [Functions](#functions)
-- [Arrow Functions](#arrow-functions)
-- [Chaining](#chaining)
-- [Classes](#classes)
-- [Assets](#assets)
+- [Documentation Style Guide](#documentation-style-guide)
+  - [Table of Contents](#table-of-contents)
+    - [Writing](#writing)
+    - [Code](#code)
+  - [YUIDoc](#yuidoc)
+  - [English](#english)
+  - [Oxford Comma](#oxford-comma)
+  - [Wording](#wording)
+  - [Unbiased Documentation](#unbiased-documentation)
+  - [Accessibility and Disability](#accessibility-and-disability)
+  - [Code Samples](#code-samples)
+  - [Comments](#comments)
+  - [Whitespace](#whitespace)
+  - [Semicolons](#semicolons)
+  - [Naming Conventions](#naming-conventions)
+  - [Variables](#variables)
+  - [Strings](#strings)
+  - [Boolean Operators](#boolean-operators)
+  - [Conditionals](#conditionals)
+  - [Iteration](#iteration)
+  - [Objects](#objects)
+  - [Arrays](#arrays)
+  - [Functions](#functions)
+  - [Arrow Functions](#arrow-functions)
+  - [Chaining](#chaining)
+  - [Classes](#classes)
+  - [Assets](#assets)
+  - [Canvas Accessibility Descriptions: `describe()`](#canvas-accessibility-descriptions-describe)
 
 ## YUIDoc
 
@@ -165,7 +176,7 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 
 ```javascript
 // Bad.
-let magicWord = 'Please';  // Remember this.
+let magicWord = 'Please';  //Remember this.
 
 // Good.
 // Remember this.
@@ -174,7 +185,7 @@ let magicWord = 'Please';
 // Bad.
 if (keyIsPressed === true) {
   thing1();
-  // This is an important note.
+  //This is an important note.
   thing2();
 }
 
@@ -204,22 +215,13 @@ let magicWord = 'Please';
 ```javascript
 
 // Bad.
-/**
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- */
-
-//Bad.
 /*
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- */
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+*/
 
 // Good.
 // I will use // for multiline comments.
@@ -1222,11 +1224,12 @@ class Mover {
 
 ## Assets
 
-# Canvas Accessibility Descriptions: `describe()`
+## Canvas Accessibility Descriptions: `describe()`
 
-To make p5.js sketches accessible, every example that draws to the canvas should include a call to [`describe()`](https://p5js.org/reference/#/p5/describe). This provides a concise, visual description for screen readers.
 
-**Best Practices for `describe()`:**
+`describe()` is one of the ways that p5.js sketches can be made accessible to screen readers. All contributions to the reference should include accessible canvas descriptions. For best practices, Do/Don’t examples, and summary guidance on writing effective `describe()` calls, see: [Documentation Style Guide: Canvas Accessibility Descriptions](./documentation_style_guide.md#canvas-accessibility-descriptions-describe).
+
+This section provides more detailed guidance for contributors who want to ensure their examples are accessible:
 
 - **Concise:** 1–3 sentences. Briefly describe what is visually present on the canvas.
 - **Visual-Only:** Focus on what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.

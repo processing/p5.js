@@ -753,42 +753,45 @@ function textCore(p5, fn) {
    * line using the renderer’s measurement functions. The final width is determined as the maximum width
    * among all these lines.
    *
-  * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
-  * will return the width of the longest line.
-  *
-  * <b>Whitespace note:</b> In p5.js 2.0+, leading and trailing spaces are ignored when measuring the bounding box.
-  * <code>textWidth("  Hello  ")</code> returns the same width as <code>textWidth("Hello")</code>.
-  * <code>textWidth(" ")</code> (a single space) may return 0, while <code>fontWidth(" ")</code> returns a nonzero width.
-  *
-  * <b>Comparison:</b>
-  * <ul>
-  *   <li><code>fontWidth('   x y   ')</code> includes all spaces; <code>textWidth('   x y   ')</code> may ignore them.</li>
-  *   <li><code>fontWidth(' ')</code> returns a nonzero width; <code>textWidth(' ')</code> may return 0.</li>
-  * </ul>
+   * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
+   * will return the width of the longest line.
+   * 
+   * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
+   * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *
    * @method textWidth
    * @for p5
    * @param {String} text The text to measure
    * @returns {Number} The width of the text
    *
-  * @example
-  * <div>
-  * <code>
-  * function setup() {
-  *   createCanvas(200, 100);
-  *   textSize(32);
-  *   let s1 = 'x y';
-  *   let s2 = '   x y   ';
-  *   let w1 = textWidth(s1);
-  *   let w2 = textWidth(s2);
-  *   text(s1, 10, 40);
-  *   text(s2, 10, 80);
-  *   line(10, 45, 10 + w1, 45); // underline tight width
-  *   line(10, 85, 10 + w2, 85); // underline tight width (ignores whitespace)
-  *   describe('Shows that textWidth for text with and without leading/trailing spaces is identical, as whitespace is ignored.');
-  * }
-  * </code>
-  * </div>
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 200);
+   *   background(220);
+   *
+   *   // Set text size and alignment
+   *   textSize(48);
+   *   textAlign(LEFT, TOP);
+   *
+   *   let myText = "Hello";
+   *
+   *   // Calculate the width of the text
+   *   let tw = textWidth(myText);
+   *
+   *   // Draw the text on the canvas
+   *   fill(0);
+   *   text(myText, 50, 50);
+   *
+   *   // Display the text width below
+   *   noStroke();
+   *   fill(0);
+   *   textSize(20);
+   *   text("Text width: " + tw, 10, 150);
+   * }
+   * </code>
+   * </div>
    *
    * @example
    * <div>
