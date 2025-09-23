@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import * as constants from './constants';
+import { VERSION } from './constants';
 
 
 let fallbackResources, languages;
@@ -129,7 +129,6 @@ export let translator = (key, values) => {
  * Set up our translation function, with loaded languages
  */
 export const initialize = () => {
-  let latestMinorVersionPath = 'https://cdn.jsdelivr.net/npm/p5@' + constants.VERSION.replace(/^(\d+\.\d+)\.\d+.*$/, '$1');
   let i18init = i18next
     .use(LanguageDetector)
     .use(FetchResources)
@@ -152,7 +151,12 @@ export const initialize = () => {
       },
       backend: {
         fallback: 'en',
-        loadPath: latestMinorVersionPath + '/translations/{{lng}}/{{ns}}.json'
+
+        // ensure that the FES internationalization strings are loaded
+        // from the latest patch of the current minor version of p5.js
+        loadPath: `https://cdn.jsdelivr.net/npm/p5@${
+          VERSION.replace(/^(\d+\.\d+)\.\d+.*$/, '$1')
+        }/translations/{{lng}}/{{ns}}.json`
       },
       partialBundledLanguages: true,
       resources: fallbackResources
