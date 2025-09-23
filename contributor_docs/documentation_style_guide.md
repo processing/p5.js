@@ -35,6 +35,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
   - [Accessibility and Disability](#accessibility-and-disability)
   - [Code Samples](#code-samples)
   - [Comments](#comments)
+  - [Accessible Descriptions](#accessible-descriptions)
   - [Whitespace](#whitespace)
   - [Semicolons](#semicolons)
   - [Naming Conventions](#naming-conventions)
@@ -50,7 +51,6 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
   - [Chaining](#chaining)
   - [Classes](#classes)
   - [Assets](#assets)
-  - [Canvas Accessibility Descriptions: `describe()`](#canvas-accessibility-descriptions-describe)
 
 ## YUIDoc
 
@@ -231,6 +231,29 @@ I will use // for multiline comments.
 // I will use // for multiline comments.
 
 ```
+
+
+## Accessible Descriptions
+
+- Use `describe()` to make p5.js sketches accessible to screen readers. All reference contributions should include a concise, visual canvas description for accessibility.
+
+- **Concise:** 1–3 sentences. Briefly describe what is visually present on the canvas.
+  - Good: `describe('A blue rectangle in the center of a white canvas.');`
+  - Bad: `describe('This code draws a rectangle.');`
+
+- **Visual-Only:** Focus on what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
+  - Good: `describe('A red heart and yellow circle over a pink background.');`
+  - Bad: `describe('Click to draw a heart.');`
+
+- **Non-Redundant:** Avoid repeating information already available in the title or code comments.
+  - Good: `describe('A black dot moves from bottom to top on a gray square.');`
+  - Bad: `describe('A shape.');`
+
+- **Clarity:** Use simple, direct language. End with punctuation for screen reader clarity.
+  - Good: `describe('A green triangle on a white background.');`
+  - Bad: `describe('triangle');`
+
+New to writing accessible canvas descriptions? Please check the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) and [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) next.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1224,52 +1247,11 @@ class Mover {
 
 ## Assets
 
-## Canvas Accessibility Descriptions: `describe()`
-
-
-`describe()` is one of the ways that p5.js sketches can be made accessible to screen readers. All contributions to the reference should include accessible canvas descriptions. For best practices, Do/Don’t examples, and summary guidance on writing effective `describe()` calls, see: [Documentation Style Guide: Canvas Accessibility Descriptions](./documentation_style_guide.md#canvas-accessibility-descriptions-describe).
-
-This section provides more detailed guidance for contributors who want to ensure their examples are accessible:
-
-- **Concise:** 1–3 sentences. Briefly describe what is visually present on the canvas.
-- **Visual-Only:** Focus on what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
-- **Non-Redundant:** Avoid repeating information already available in the title or code comments.
-- **Clarity:** Use simple, direct language. End with punctuation for screen reader clarity.
-
-**Do/Don’t Examples:**
-
-| Do | Don’t |
-| --- | --- |
-| `describe('A blue rectangle in the center of a white canvas.');` | `describe('This code draws a rectangle.');` |
-| `describe('A red heart and yellow circle over a pink background.');` | `describe('Click to draw a heart.');` |
-| `describe('A black dot moves from bottom to top on a gray square.');` | `describe('A shape.');` |
-
-**More Guidance:**
-
-- See the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) for technical details and examples.
-- See the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) for more best practices and rationale.
-- Reference examples must include a `describe()` call. See [Contributing to the p5.js Reference](./contributing_to_the_p5js_reference.md#add-a-canvas-description-using-describe) for details.
-
-
-- Always load assets from a folder called "assets".
-
 > Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
 - Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
 - Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
 - Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
 
 ```javascript
-let img;
 
-// Bad.
-function preload() {
-  img = loadImage('moonwalk.jpg');
-}
-
-// Good.
-function preload() {
-  img = loadImage('assets/moonwalk.jpg');
-}
-```
-
-**[⬆ back to top](#table-of-contents)**
+ Always load assets from a folder called "assets".
