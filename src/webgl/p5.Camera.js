@@ -3980,14 +3980,36 @@ function camera(p5, fn){
     return _cam;
   };
 
-  RendererGL.prototype.setCamera = function(cam) {
+  /**
+   * Sets the active camera.
+   * @method activeCamera
+   * @for p5.RendererGL
+   * @param  {p5.Camera} [cam] camera that should be made active.
+   * @chainable
+   */
+  /**
+   * Returns the active camera.
+   * @method activeCamera
+   * @for p5.RendererGL
+   * @return {p5.Camera} the active camera.
+   */
+  RendererGL.prototype.activeCamera = function(cam) {
+    if (cam === undefined) {
+      return this.states.getValue('curCamera');
+    }
     this.states.setValue('curCamera', cam);
+    return this;
+  };
+
+  RendererGL.prototype.setCamera = function(cam) {
+    this.activeCamera(cam);
 
     // set the projection matrix (which is not normally updated each frame)
     this.states.setValue('uPMatrix', this.states.uPMatrix.clone());
     this.states.uPMatrix.set(cam.projMatrix);
     this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
+    return this;
   };
 }
 
