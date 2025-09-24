@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -573,10 +573,7 @@ function validateParams(p5, fn, lifecycles) {
   lifecycles.presetup = function(){
     loadP5Constructors();
 
-    if(
-      p5.disableParameterValidator !== true &&
-      p5.disableFriendlyErrors !== true
-    ){
+    if(p5.disableParameterValidator !== true){
       const excludes = ['validate'];
       for(const f in this){
         if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
