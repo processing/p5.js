@@ -573,7 +573,10 @@ function validateParams(p5, fn, lifecycles) {
   lifecycles.presetup = function(){
     loadP5Constructors();
 
-    if(p5.disableParameterValidator !== true){
+    if(
+      p5.disableParameterValidator !== true &&
+      p5.disableFriendlyErrors !== true
+    ){
       const excludes = ['validate'];
       for(const f in this){
         if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
