@@ -763,6 +763,37 @@ function vertex(p5, fn){
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(200, 100);
+   *
+   *   background(240);
+   *
+   *   noFill();
+   *   stroke(0);
+   *
+   *   // Open shape (left)
+   *   beginShape();
+   *   vertex(20, 20);
+   *   vertex(80, 20);
+   *   vertex(80, 80);
+   *   endShape();  // Not closed
+   *
+   *   // Closed shape (right)
+   *   beginShape();
+   *   vertex(120, 20);
+   *   vertex(180, 20);
+   *   vertex(180, 80);
+   *   endShape(CLOSE);  // Closed
+   *
+   *   describe(
+   *     'Two right-angled shapes on a light gray background. The left shape is open with three lines. The right shape is closed, forming a triangle.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
    *

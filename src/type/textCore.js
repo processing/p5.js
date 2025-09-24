@@ -1905,12 +1905,13 @@ function textCore(p5, fn) {
 
     // adjust the bounding boxes based on horiz. text alignment
     if (lines.length > 1) {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
-      boxes.forEach(bb =>
-        bb.x += p5.Renderer2D.prototype._xAlignOffset
-          .call(this, textAlign, width)
-      );
+      // When width is not provided (e.g., fontBounds path), fall back to the widest line.
+      const maxWidth = boxes.reduce((m, b) => Math.max(m, b.w || 0), 0);
+
+      boxes.forEach((bb) => {
+          const w = (width ?? maxWidth);
+          bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, w);
+        });
     }
 
     // adjust the bounding boxes based on vert. text alignment
