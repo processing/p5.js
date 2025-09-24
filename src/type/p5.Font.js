@@ -981,12 +981,17 @@ async function create(pInst, name, path, descriptors, rawFont) {
   return new Font(pInst, face, name, path, rawFont);
 }
 
+
+function sanitizeFontName(name) {
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(name)) {
+    name = "'" + String(name).replace(/'/g, "\\'") + "'";
+  }
+  return name;
+}
+
 function createFontFace(name, path, descriptors, rawFont) {
 
- if (!/^[A-Za-z_][\w-]*$/.test(name)) {
-   name = "'" + name.replace(/'/g, "\\'") + "'";
- }
-
+  name = sanitizeFontName(name);
   let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
     if (!validFontTypesRe.test(path)) {
@@ -1532,6 +1537,7 @@ export const arrayCommandsToObjects = commands => commands.map(command => {
   }
 });
 
+export { sanitizeFontName as _sanitizeFontName };
 export default font;
 
 if (typeof p5 !== 'undefined') {
