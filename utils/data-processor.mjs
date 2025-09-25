@@ -110,7 +110,7 @@ export function processData(rawData, strategy) {
 
   // Process constants, typedefs, and properties
   for (const entry of allData) {
-    if (entry.kind === 'constant' || entry.kind === 'typedef' || 
+    if (entry.kind === 'constant' || entry.kind === 'typedef' || entry.kind === 'property' ||
         (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property')) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
       
@@ -119,13 +119,15 @@ export function processData(rawData, strategy) {
         continue;
       }
 
+      const name = entry.name || (entry.properties || [])[0]?.name;
+
       // For properties, get type from the property definition
       const propertyType = entry.properties?.[0]?.type || entry.type;
 
       const examples = entry.examples?.map(getExample) || [];
       const item = {
         itemtype: 'property',
-        name: entry.name,
+        name,
         ...locationInfo(entry),
         ...strategy.processType(propertyType),
         ...deprecationInfo(entry),
@@ -138,7 +140,7 @@ export function processData(rawData, strategy) {
       };
 
       processed.classitems.push(item);
-      processed.consts[entry.name] = item;
+      processed.consts[name] = item;
     }
   }
 
