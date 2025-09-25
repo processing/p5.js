@@ -108,9 +108,10 @@ export function processData(rawData, strategy) {
       ?.join('\n') || undefined;
   }
 
-  // Process constants and typedefs
+  // Process constants, typedefs, and properties
   for (const entry of allData) {
-    if (entry.kind === 'constant' || entry.kind === 'typedef') {
+    if (entry.kind === 'constant' || entry.kind === 'typedef' || 
+        (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property')) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
       
       // Apply strategy filter
@@ -118,12 +119,15 @@ export function processData(rawData, strategy) {
         continue;
       }
 
+      // For properties, get type from the property definition
+      const propertyType = entry.properties?.[0]?.type || entry.type;
+
       const examples = entry.examples?.map(getExample) || [];
       const item = {
         itemtype: 'property',
         name: entry.name,
         ...locationInfo(entry),
-        ...strategy.processType(entry.type),
+        ...strategy.processType(propertyType),
         ...deprecationInfo(entry),
         description: strategy.processDescription(entry.description),
         example: examples.length > 0 ? examples : undefined,

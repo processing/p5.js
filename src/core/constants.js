@@ -57,7 +57,7 @@ export const P2DHDR = 'p2d-hdr';
  *
  * To learn more about WEBGL mode, check out <a href="https://p5js.org/tutorials/#webgl">all the interactive WEBGL tutorials</a> in the "Tutorials" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
- * @typedef {unique symbol} WEBGL
+ * @typedef {'webgl2'} WEBGL
  * @property {WEBGL} WEBGL
  * @final
  */
@@ -66,7 +66,7 @@ export const WEBGL = 'webgl';
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment
  * has.
- * @typedef {unique symbol} WEBGL2
+ * @typedef {'webgl2'} WEBGL2
  * @property {WEBGL2} WEBGL2
  * @final
  */
@@ -754,7 +754,7 @@ export const PIE = 'pie';
 export const PROJECT = 'square'; // PEND: careful this is counterintuitive
 /**
  * @typedef {'butt'} SQUARE
- * @property {SQUERE} SQUARE
+ * @property {SQUARE} SQUARE
  * @final
  */
 export const SQUARE = 'butt';

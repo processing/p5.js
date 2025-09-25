@@ -20,7 +20,7 @@ function trigonometry(p5, fn){
    *
    * Note: `TWO_PI` radians equals 360˚.
    *
-   * @typedef {unique symbol} DEGREES
+   * @typedef {'degrees'} DEGREES
    * @property {DEGREES} DEGREES
    * @final
    *
@@ -63,7 +63,7 @@ function trigonometry(p5, fn){
    *
    * Note: `TWO_PI` radians equals 360˚.
    *
-   * @typedef {unique symbol} RADIANS
+   * @typedef {'radians'} RADIANS
    * @property {RADIANS} RADIANS
    * @final
    *

@@ -2804,7 +2804,7 @@
         [
           "String|Request",
           "String?",
-          "Boolean",
+          "Boolean?",
           "function(p5.Geometry)?",
           "function(Event)?"
         ],
@@ -2833,7 +2833,7 @@
         [
           "String",
           "String?",
-          "Boolean",
+          "Boolean?",
           "function(p5.Geometry)?",
           "function(Event)?"
         ],

@@ -20,9 +20,13 @@ const rawData = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.js
 import { getAllEntries } from './shared-helpers.mjs';
 const allRawData = getAllEntries(rawData);
 const constantsLookup = new Set();
+const typedefs = {};
 allRawData.forEach(entry => {
   if (entry.kind === 'constant' || entry.kind === 'typedef') {
     constantsLookup.add(entry.name);
+    if (entry.kind === 'typedef') {
+      typedefs[entry.name] = entry.type;
+    }
   }
 });
 
@@ -35,7 +39,7 @@ function convertTypeToTypeScript(typeNode, options = {}) {
     throw new Error(`convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`);
   }
   
-  const { currentClass = null, isInsideNamespace = false, global = false } = options;
+  const { currentClass = null, isInsideNamespace = false, inGlobalMode = false } = options;
   
   switch (typeNode.type) {
     case 'NameExpression': {
@@ -69,7 +73,7 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       
       // If we're inside the p5 namespace, remove p5. prefix from other p5 classes
       if (isInsideNamespace && typeName.startsWith('p5.')) {
-        if (global) {
+        if (inGlobalMode) {
           return 'P5.' + typeName.substring(3);
         } else {
           return typeName.substring(3);
@@ -78,10 +82,12 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       
       // Check if this is a p5 constant - use typeof since they're defined as values
       if (constantsLookup.has(typeName)) {
-        if (global) {
+        if (inGlobalMode) {
           return `typeof P5.${typeName}`;
+        } else if (typedefs[typeName]) {
+          return convertTypeToTypeScript(typedefs[typeName], options);
         } else {
-          return `typeof ${typeName}`;
+          return `Symbol`;
         }
       }
       
@@ -170,10 +176,17 @@ const typescriptStrategy = {
   processType: (type) => {
     // Return an object with the original type preserved
     // This matches the expected data structure from the data processor
-    return {
+    const result = {
       type: type, // Keep the original raw type object
       originalType: type // Also store it here for clarity
     };
+    
+    // Extract optional flag from OptionalType
+    if (type?.type === 'OptionalType') {
+      result.optional = true;
+    }
+    
+    return result;
   }
 };
 
@@ -229,29 +242,34 @@ function generateParamDeclaration(param, options = {}) {
 
 function generateMethodDeclaration(method, options = {}) {
   let output = '';
+  const { globalFunction = false } = options;
+  
+  const indent = globalFunction ? '' : '  ';
+  const commentIndent = globalFunction ? 0 : 2;
   
   if (method.description) {
-    output += '  /**\n';
-    output += formatJSDocComment(method.description, 2) + '\n';
+    output += `${indent}/**\n`;
+    output += formatJSDocComment(method.description, commentIndent) + '\n';
     
     // Add param docs from first overload
     if (method.overloads?.[0]?.params) {
       method.overloads[0].params.forEach(param => {
         if (param.description) {
-          output += formatJSDocComment(`@param ${param.name} ${param.description}`, 2) + '\n';
+          output += formatJSDocComment(`@param ${param.name} ${param.description}`, commentIndent) + '\n';
         }
       });
     }
     
     // Add return docs
     if (method.return?.description) {
-      output += formatJSDocComment(`@returns ${method.return.description}`, 2) + '\n';
+      output += formatJSDocComment(`@returns ${method.return.description}`, commentIndent) + '\n';
     }
     
-    output += '   */\n';
+    output += `${indent} */\n`;
   }
   
   const staticPrefix = method.static ? 'static ' : '';
+  const declarationPrefix = globalFunction ? 'function ' : `${indent}${staticPrefix}`;
   
   // Generate overload declarations
   if (method.overloads && method.overloads.length > 0) {
@@ -261,7 +279,7 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
       
       let returnType = 'void';
-      if (method.chainable) {
+      if (method.chainable && !globalFunction) {
         // returnType = currentClass || 'this';
         // TODO: Decide what should be chainable. Many of these are accidental / not thought through
       } else if (overload.return && overload.return.type) {
@@ -270,7 +288,7 @@ function generateMethodDeclaration(method, options = {}) {
         returnType = convertTypeToTypeScript(method.return.type, options);
       }
       
-      output += `  ${staticPrefix}${method.name}(${params}): ${returnType};\n`;
+      output += `${declarationPrefix}${method.name}(${params}): ${returnType};\n`;
     });
   }
   
@@ -325,9 +343,21 @@ function generateTypeDefinitions() {
   let output = '// This file is auto-generated from JSDoc documentation\n\n';
   
   // First, define all constants at the top level with their actual values
-  const p5Constants = processed.classitems.filter(item => 
-    item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts
-  );
+  const seenConstants = new Set();
+  const p5Constants = processed.classitems.filter(item => {
+    if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
+      // Skip defineProperty, undefined and avoid duplicates
+      if (item.name === 'defineProperty' || !item.name) {
+        return false;
+      }
+      if (seenConstants.has(item.name)) {
+        return false;
+      }
+      seenConstants.add(item.name);
+      return true;
+    }
+    return false;
+  });
   
   p5Constants.forEach(constant => {
     if (constant.description) {
@@ -415,6 +445,7 @@ p5: P5;
 `;
 
   p5Constants.forEach(constant => {
+    if (constant.name === 'undefined') return;
     if (constant.description) {
       globalDefinitions += '/**\n';
       globalDefinitions += formatJSDocComment(constant.description, 0) + '\n';
@@ -426,10 +457,35 @@ p5: P5;
   const globalP5Methods = Object.values(processed.classMethods.p5 || {})
     .filter(method => !method.static && method.name !== 'p5');
   globalP5Methods.forEach(method => {
-    globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, global: true });
+    globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true });
   });
 
   globalDefinitions += '}\n\n';
+
+  // Also declare constants in global scope (deduplicated)
+  const alreadyDeclaredConstants = new Set();
+  p5Constants.forEach(constant => {
+    if (alreadyDeclaredConstants.has(constant.name)) {
+      return; // Skip duplicates
+    }
+    if (constant.name === 'defineProperty' || !constant.name) {
+      return; // Skip problematic constants
+    }
+    alreadyDeclaredConstants.add(constant.name);
+    
+    if (constant.description) {
+      globalDefinitions += '/**\n';
+      globalDefinitions += formatJSDocComment(constant.description, 0) + '\n';
+      globalDefinitions += ' */\n';
+    }
+    globalDefinitions += `const ${constant.name}: typeof P5.${constant.name};\n\n`;
+  });
+
+  // Also declare functions in global scope
+  globalP5Methods.forEach(method => {
+    globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true, globalFunction: true });
+  });
+
   globalDefinitions += '}\n\n';
   
   return { instanceDefinitions, globalDefinitions };
