@@ -5,6 +5,20 @@
 
 import { Element } from './p5.Element';
 
+/**
+ * @typedef {'video'} VIDEO
+ * @property {VIDEO} VIDEO
+ * @final
+ */
+const VIDEO = 'video';
+
+/**
+ * @typedef {'audio'} AUDIO
+ * @property {AUDIO} AUDIO
+ * @final
+ */
+const AUDIO = 'audio';
+
 class Cue {
   constructor(callback, time, id, val) {
     this.callback = callback;
@@ -1510,7 +1524,6 @@ function media(p5, fn){
   /* CAMERA STUFF */
 
   fn.VIDEO = VIDEO;
-
   fn.AUDIO = AUDIO;
 
   // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia

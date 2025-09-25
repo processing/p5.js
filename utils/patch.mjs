@@ -52,12 +52,7 @@ replace(
   `constructor(
     detailX?: number,
     detailY?: number,
-    callback?: (this: {
-      detailY: number,
-      detailX: number,
-      vertices: p5.Vector[],
-      uvs: number[]
-    }) => void);`
+    callback?: (this: Geometry) => void);`
 );
 
 // https://github.com/p5-types/p5.ts/issues/31

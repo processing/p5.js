@@ -3848,7 +3848,7 @@ function camera(p5, fn){
    *
    * @class p5.Camera
    * @constructor
-   * @param {rendererGL} rendererGL instance of WebGL renderer
+   * @param {RendererGL} rendererGL instance of WebGL renderer
    *
    * @example
    * <div>

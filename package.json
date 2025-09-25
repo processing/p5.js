@@ -11,7 +11,7 @@
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
+    "generate-types": "npm run docs && node utils/typescript.mjs"
   },
   "lint-staged": {
     "src/**/*.js": "eslint",

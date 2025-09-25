@@ -9,7 +9,91 @@
 import * as constants from '../core/constants';
 
 function trigonometry(p5, fn){
+  /**
+   * A `String` constant that's used to set the
+   * <a href="#/p5/angleMode">angleMode()</a>.
+   *
+   * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
+   * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
+   * Calling `angleMode(DEGREES)` ensures that angles are measured in units of
+   * degrees.
+   *
+   * Note: `TWO_PI` radians equals 360˚.
+   *
+   * @typedef {unique symbol} DEGREES
+   * @property {DEGREES} DEGREES
+   * @final
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Draw a red arc from 0 to HALF_PI radians.
+   *   fill(255, 0, 0);
+   *   arc(50, 50, 80, 80, 0, HALF_PI);
+   *
+   *   // Use degrees.
+   *   angleMode(DEGREES);
+   *
+   *   // Draw a blue arc from 90˚ to 180˚.
+   *   fill(0, 0, 255);
+   *   arc(50, 50, 80, 80, 90, 180);
+   *
+   *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
+   * }
+   * </code>
+   * </div>
+   */
   const DEGREES = fn.DEGREES = 'degrees';
+
+  /**
+   * A `String` constant that's used to set the
+   * <a href="#/p5/angleMode">angleMode()</a>.
+   *
+   * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
+   * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
+   * Calling `angleMode(RADIANS)` ensures that angles are measured in units of
+   * radians. Doing so can be useful if the
+   * <a href="#/p5/angleMode">angleMode()</a> has been set to
+   * <a href="#/p5/DEGREES">DEGREES</a>.
+   *
+   * Note: `TWO_PI` radians equals 360˚.
+   *
+   * @typedef {unique symbol} RADIANS
+   * @property {RADIANS} RADIANS
+   * @final
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Use degrees.
+   *   angleMode(DEGREES);
+   *
+   *   // Draw a red arc from 0˚ to 90˚.
+   *   fill(255, 0, 0);
+   *   arc(50, 50, 80, 80, 0, 90);
+   *
+   *   // Use radians.
+   *   angleMode(RADIANS);
+   *
+   *   // Draw a blue arc from HALF_PI to PI.
+   *   fill(0, 0, 255);
+   *   arc(50, 50, 80, 80, HALF_PI, PI);
+   *
+   *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
+   * }
+   * </code>
+   * </div>
+   */
   const RADIANS = fn.RADIANS = 'radians';
 
   /*

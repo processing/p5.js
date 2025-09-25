@@ -31,6 +31,11 @@
         ]
       ]
     },
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
     "p5": {
       "overloads": [
         [
@@ -292,6 +297,31 @@
         ],
         [
           "String|Number|Array"
+        ]
+      ]
+    },
+    "createVideo": {
+      "overloads": [
+        [
+          "String|String[]",
+          "Function?"
+        ]
+      ]
+    },
+    "createAudio": {
+      "overloads": [
+        [
+          "String|String[]?",
+          "Function?"
+        ]
+      ]
+    },
+    "createCapture": {
+      "overloads": [
+        [
+          "AUDIO|VIDEO|Object?",
+          "Object?",
+          "Function?"
         ]
       ]
     },
@@ -1262,6 +1292,13 @@
         ]
       ]
     },
+    "setContent": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
     "abs": {
       "overloads": [
         [
@@ -1979,6 +2016,55 @@
         [
           "String",
           "Number|Number[]"
+        ]
+      ]
+    },
+    "getWorldInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "combineColors": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getPixelInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getFinalColor": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getColor": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getObjectInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getCameraInputs": {
+      "overloads": [
+        [
+          "Function"
         ]
       ]
     },
@@ -2939,6 +3025,13 @@
         ]
       ]
     },
+    "roll": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
     "camera": {
       "overloads": [
         [
@@ -3023,6 +3116,30 @@
         ]
       ]
     },
+    "fromAxisAngle": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "mult": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
+    "rotateBy": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
     "setAttributes": {
       "overloads": [
         [
@@ -3031,90 +3148,6 @@
         ],
         [
           "Object"
-        ]
-      ]
-    },
-    "remove": {
-      "overloads": [
-        []
-      ]
-    },
-    "createVideo": {
-      "overloads": [
-        [
-          "String|String[]",
-          "Function?"
-        ]
-      ]
-    },
-    "createAudio": {
-      "overloads": [
-        [
-          "String|String[]?",
-          "Function?"
-        ]
-      ]
-    },
-    "createCapture": {
-      "overloads": [
-        [
-          "AUDIO|VIDEO|Object?",
-          "Object?",
-          "Function?"
-        ]
-      ]
-    }
-  },
-  "p5.Geometry": {
-    "flipV": {
-      "overloads": [
-        []
-      ]
-    },
-    "calculateBoundingBox": {
-      "overloads": [
-        []
-      ]
-    },
-    "clearColors": {
-      "overloads": [
-        []
-      ]
-    },
-    "flipU": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeNormals": {
-      "overloads": [
-        [
-          "FLAT|SMOOTH?",
-          "Object?"
-        ]
-      ]
-    },
-    "makeEdgesFromFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "normalize": {
-      "overloads": [
-        []
-      ]
-    },
-    "vertexProperty": {
-      "overloads": [
-        [
-          "String",
-          "Number|Number[]",
-          "Number?"
         ]
       ]
     }
@@ -4649,6 +4682,60 @@
       ]
     }
   },
+  "p5.Geometry": {
+    "calculateBoundingBox": {
+      "overloads": [
+        []
+      ]
+    },
+    "clearColors": {
+      "overloads": [
+        []
+      ]
+    },
+    "flipU": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeNormals": {
+      "overloads": [
+        [
+          "FLAT|SMOOTH?",
+          "Object?"
+        ]
+      ]
+    },
+    "makeEdgesFromFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "normalize": {
+      "overloads": [
+        []
+      ]
+    },
+    "vertexProperty": {
+      "overloads": [
+        [
+          "String",
+          "Number|Number[]",
+          "Number?"
+        ]
+      ]
+    },
+    "flipV": {
+      "overloads": [
+        []
+      ]
+    }
+  },
   "p5.Shader": {
     "version": {
       "overloads": [
@@ -4662,6 +4749,10 @@
     },
     "modify": {
       "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
         [
           "Object?"
         ]
