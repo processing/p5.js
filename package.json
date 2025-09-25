@@ -14,16 +14,11 @@
     "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
   },
   "lint-staged": {
-    "Gruntfile.js": "eslint",
-    "docs/preprocessor.js": "eslint",
-    "utils/**/*.js": "eslint",
-    "tasks/**/*.js": "eslint",
-    "src/**/*.js": [
-      "eslint",
-      "node ./utils/sample-linter.mjs"
-    ]
+    "src/**/*.js": "eslint",
+    "test/**/*.js": "eslint",
+    "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.0.3",
+  "version": "2.0.5",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
@@ -39,21 +34,27 @@
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
     "pixelmatch": "^7.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.25.51"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.9",
+    "@eslint/js": "^9.28.0",
+    "@eslint/markdown": "^6.5.0",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
+    "@stylistic/eslint-plugin": "^4.4.1",
     "@vitest/browser": "^2.1.5",
     "all-contributors-cli": "^6.19.0",
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
-    "eslint": "^8.54.0",
+    "eslint": "^9.28.0",
+    "eslint-plugin-jsdoc": "^50.8.0",
     "glob": "^11.0.1",
+    "globals": "^16.2.0",
     "husky": "^4.2.3",
     "lint-staged": "^15.1.0",
     "msw": "^2.6.3",
@@ -95,6 +96,7 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/p5.esm.js",
+    "lib/p5.esm.min.js",
     "translations/**",
     "types/**"
   ],

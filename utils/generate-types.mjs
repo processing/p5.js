@@ -20,7 +20,7 @@ function findDtsFiles(dir, files = []) {
   }
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
@@ -37,7 +37,11 @@ function findDtsFiles(dir, files = []) {
 }
 
 export function generateAllDeclarationFiles() {
-  const { p5Types: rawP5Types, globalTypes, fileTypes } = generateTypeDefinitions(data);
+  const {
+    p5Types: rawP5Types,
+    globalTypes,
+    fileTypes
+  } = generateTypeDefinitions(data);
   const typesDir = path.join(process.cwd(), 'types');
   fs.mkdirSync(typesDir, { recursive: true });
 
@@ -45,7 +49,7 @@ export function generateAllDeclarationFiles() {
   fileTypes.forEach((content, filePath) => {
     const parsedPath = path.parse(filePath);
     const relativePath = path.relative(
-      path.join(__dirname, "../src"),
+      path.join(__dirname, '../src'),
       filePath
     );
     const dtsPath = path.join(

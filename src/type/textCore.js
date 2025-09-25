@@ -14,8 +14,8 @@ export const textCoreConstants = {
   _FONT_BOUNDS: '_fontBoundsSingle',
   HANGING: 'hanging',
   START: 'start',
-  END: 'end',
-}
+  END: 'end'
+};
 
 function textCore(p5, fn) {
   const LeadingScale = 1.275;
@@ -486,43 +486,43 @@ function textCore(p5, fn) {
    * </div>
    */
 
-/**
- * Sets the spacing between lines of text when
- * <a href="#/p5/text">text()</a> is called.
- *
- * Note: Spacing is measured in pixels.
- *
- * Calling `textLeading()` without an argument returns the current spacing.
- *
- * @method textLeading
- * @for p5
- * @param {Number} leading The new text leading to apply, in pixels
- * @returns {Number} If no arguments are provided, the current text leading
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // "\n" starts a new line of text.
- *   let lines = 'one\ntwo';
- *
- *   // Left.
- *   text(lines, 10, 25);
- *
- *   // Right.
- *   textLeading(30);
- *   text(lines, 70, 25);
- *
- *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
- * }
- * </code>
- * </div>
- */
- /*
+  /**
+   * Sets the spacing between lines of text when
+   * <a href="#/p5/text">text()</a> is called.
+   *
+   * Note: Spacing is measured in pixels.
+   *
+   * Calling `textLeading()` without an argument returns the current spacing.
+   *
+   * @method textLeading
+   * @for p5
+   * @param {Number} leading The new text leading to apply, in pixels
+   * @returns {Number} If no arguments are provided, the current text leading
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // "\n" starts a new line of text.
+   *   let lines = 'one\ntwo';
+   *
+   *   // Left.
+   *   text(lines, 10, 25);
+   *
+   *   // Right.
+   *   textLeading(30);
+   *   text(lines, 70, 25);
+   *
+   *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
+   * }
+   * </code>
+   * </div>
+   */
+  /*
   * @method textLeading
   * @for p5
   */
@@ -683,11 +683,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textSize
-    * @for p5
-    * @returns {Number} The current text size in pixels.
-    */
+  /**
+   * @method textSize
+   * @for p5
+   * @returns {Number} The current text size in pixels.
+   */
 
   /**
    * Sets the style for system fonts when
@@ -755,6 +755,9 @@ function textCore(p5, fn) {
    *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
+   * 
+   * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
+   * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *
    * @method textWidth
    * @for p5
@@ -813,6 +816,48 @@ function textCore(p5, fn) {
    *   line(22, 55, 22 + w, 55);
    *
    *   describe('The word "yoyo" underlined.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 160);
+   *   background(235);
+   *   noLoop();
+   *
+   *   textSize(18);
+   *   textAlign(LEFT, TOP);
+   *
+   *   const x = 12, h = 24;
+   *   const s1 = 'Hello';
+   *   const s2 = 'Hello  ';      // 2 trailing spaces
+   *   const s3 = 'Hello     ';   // many trailing spaces
+   *
+   *   // draw text
+   *   fill(0);
+   *   text(s1, x, 12);
+   *   text(s2, x, 56);
+   *   text(s3, x, 100);
+   *
+   *   // measure and draw tight boxes (all same width)
+   *   noFill(); stroke(255, 0, 0);
+   *   const w1 = textWidth(s1);
+   *   const w2 = textWidth(s2);
+   *   const w3 = textWidth(s3);
+   *   rect(x, 10,  w1, h);
+   *   rect(x, 54, w2, h);
+   *   rect(x, 98, w3, h);
+   *
+   *   // small captions show the actual strings (spaces as ·)
+   *   textSize(10); noStroke(); fill(30);
+   *   text('"' + s1.replace(/ /g, '·') + '"  w=' + w1.toFixed(1), x, 10 + h + 2);
+   *   text('"' + s2.replace(/ /g, '·') + '"  w=' + w2.toFixed(1), x, 54 + h + 2);
+   *   text('"' + s3.replace(/ /g, '·') + '"  w=' + w3.toFixed(1), x, 98 + h + 2);
+   *
+   *   describe('Three lines: Hello with 0, 2, and many trailing spaces. Red boxes use textWidth and are identical. Captions show spaces as dots.');
    * }
    * </code>
    * </div>
@@ -930,11 +975,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textWrap
-    * @for p5
-    * @returns {CHAR|WORD} The current wrapping style
-    */
+  /**
+   * @method textWrap
+   * @for p5
+   * @returns {CHAR|WORD} The current wrapping style
+   */
 
 
   /**
@@ -1034,11 +1079,11 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textDirection
-    * @for p5
-    * @returns {String} The current text direction, either "ltr", "rtl", or "inherit"
-    */
+  /**
+   * @method textDirection
+   * @for p5
+   * @returns {String} The current text direction, either "ltr", "rtl", or "inherit"
+   */
 
   /**
    * Sets or gets a single text property for the renderer.
@@ -1090,12 +1135,12 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-   /**
-    * @method textProperty
-    * @for p5
-    * @param {String} prop - The name of the text property to set or get.
-    * @returns The current value of the specified text property
-    */
+  /**
+   * @method textProperty
+   * @for p5
+   * @param {String} prop - The name of the text property to set or get.
+   * @returns The current value of the specified text property
+   */
 
   /**
    * Gets or sets text properties in batch, similar to calling `textProperty()`
@@ -1423,17 +1468,18 @@ function textCore(p5, fn) {
     lineHeight: { default: fn.NORMAL, isShorthand: true },   // line-height: { default:  normal | number | length | percentage }
     fontVariant: { default: fn.NORMAL, isShorthand: true },  // font-variant: { default:  normal | small-caps }
     fontStyle: { default: fn.NORMAL, isShorthand: true },    // font-style: { default:  normal | italic | oblique } [was 'textStyle' in v1]
-    direction: { default: 'inherit' }, // direction: { default: inherit | ltr | rtl }
+    direction: { default: 'inherit' } // direction: { default: inherit | ltr | rtl }
   };
 
   // note: font must be first here otherwise it may reset other properties
   const ContextTextProps = ['font', 'direction', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'letterSpacing', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
 
   // shorthand font properties that can be set with context2d.font
-  const ShorthandFontProps = Object.keys(RendererTextProps).filter(p => RendererTextProps[p].isShorthand);
+  const ShorthandFontProps = Object.keys(RendererTextProps)
+    .filter(p => RendererTextProps[p].isShorthand);
 
   // allowable values for font-stretch property for context2d.font
-  const FontStretchKeys = ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"];
+  const FontStretchKeys = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
 
   let contextQueue, cachedDiv; // lazy
 
@@ -1470,7 +1516,12 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.textBounds = function (str, x, y, width, height) {
     // delegate to _textBoundsSingle for measuring
-    return this._computeBounds(textCoreConstants._TEXT_BOUNDS, str, x, y, width, height).bounds;
+    return this._computeBounds(
+      textCoreConstants._TEXT_BOUNDS,
+      str,
+      x, y,
+      width, height
+    ).bounds;
   };
 
   /**
@@ -1485,7 +1536,12 @@ function textCore(p5, fn) {
    */
   Renderer.prototype.fontBounds = function (str, x, y, width, height) {
     // delegate to _fontBoundsSingle for measuring
-    return this._computeBounds(textCoreConstants._FONT_BOUNDS, str, x, y, width, height).bounds;
+    return this._computeBounds(
+      textCoreConstants._FONT_BOUNDS,
+      str,
+      x, y,
+      width, height
+    ).bounds;
   };
 
   /**
@@ -1571,7 +1627,7 @@ function textCore(p5, fn) {
 
   Renderer.prototype._currentTextFont = function () {
     return this.states.textFont.font || this.states.textFont.family;
-  }
+  };
 
   /**
    * Set the font and [size] and [options] for rendering text
@@ -1628,7 +1684,7 @@ function textCore(p5, fn) {
     }
 
     return this._applyTextProperties();
-  }
+  };
 
   Renderer.prototype._directSetFontString = function (font, debug = 0) {
     if (debug) console.log('_directSetFontString"' + font + '"');
@@ -1647,7 +1703,7 @@ function textCore(p5, fn) {
     });
 
     return { family: style.fontFamily, size: style.fontSize };
-  }
+  };
 
   Renderer.prototype.textLeading = function (leading) {
     // the setter
@@ -1658,7 +1714,7 @@ function textCore(p5, fn) {
     }
     // the getter
     return this.states.textLeading;
-  }
+  };
 
   Renderer.prototype.textWeight = function (weight) {
     // the setter
@@ -1676,7 +1732,7 @@ function textCore(p5, fn) {
     }
     // the getter
     return this.states.fontWeight;
-  }
+  };
 
   /**
    * @param {*} size - the size of the text, can be a number or a css-style string
@@ -1691,7 +1747,7 @@ function textCore(p5, fn) {
     }
     // the getter
     return this.states.textSize;
-  }
+  };
 
   Renderer.prototype.textStyle = function (style) {
 
@@ -1702,7 +1758,7 @@ function textCore(p5, fn) {
     }
     // the getter
     return this.states.fontStyle;
-  }
+  };
 
   Renderer.prototype.textWrap = function (wrapStyle) {
 
@@ -1818,14 +1874,20 @@ function textCore(p5, fn) {
 
   Renderer.prototype._currentTextFont = function () {
     return this.states.textFont.font || this.states.textFont.family;
-  }
+  };
 
   /*
     Compute the bounds for a block of text based on the specified
     measure function, either _textBoundsSingle or _fontBoundsSingle
    * @private
   */
-  Renderer.prototype._computeBounds = function (type, str, x, y, width, height, opts) {
+  Renderer.prototype._computeBounds = function (
+    type,
+    str,
+    x, y,
+    width, height,
+    opts
+  ) {
 
     let context = this.textDrawingContext();
     let setBaseline = context.textBaseline;
@@ -1839,13 +1901,17 @@ function textCore(p5, fn) {
 
     // get the adjusted positions [x,y] for each line
     let boxes = lines.map((line, i) => this[type].bind(this)
-      (line, x, y + i * textLeading));
+    (line, x, y + i * textLeading));
 
     // adjust the bounding boxes based on horiz. text alignment
     if (lines.length > 1) {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
-      boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
+      // When width is not provided (e.g., fontBounds path), fall back to the widest line.
+      const maxWidth = boxes.reduce((m, b) => Math.max(m, b.w || 0), 0);
+
+      boxes.forEach((bb) => {
+          const w = (width ?? maxWidth);
+          bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, w);
+        });
     }
 
     // adjust the bounding boxes based on vert. text alignment
@@ -1901,7 +1967,7 @@ function textCore(p5, fn) {
       }
     }
     return { x, y, width, height };
-  }
+  };
 
   /*
     Attempts to set a property directly on the canvas.style object
@@ -1937,7 +2003,9 @@ function textCore(p5, fn) {
     working consistently across browsers at present
    * @private
   */
-  Renderer.prototype._handleFontVariationSettings = function (value, debug = false) {
+  Renderer.prototype._handleFontVariationSettings = function (
+    value, debug = false
+  ) {
     // check if the value is a string or an object
     if (typeof value === 'object') {
       value = Object.keys(value).map(k => k + ' ' + value[k]).join(', ');
@@ -1960,19 +2028,20 @@ function textCore(p5, fn) {
           case 'wdth':
             if (0) { // attempt to map font-stretch to allowed keywords
               const FontStretchMap = {
-                "ultra-condensed": 50,
-                "extra-condensed": 62.5,
-                "condensed": 75,
-                "semi-condensed": 87.5,
-                "normal": 100,
-                "semi-expanded": 112.5,
-                "expanded": 125,
-                "extra-expanded": 150,
-                "ultra-expanded": 200,
+                'ultra-condensed': 50,
+                'extra-condensed': 62.5,
+                'condensed': 75,
+                'semi-condensed': 87.5,
+                'normal': 100,
+                'semi-expanded': 112.5,
+                'expanded': 125,
+                'extra-expanded': 150,
+                'ultra-expanded': 200
               };
               let values = Object.values(FontStretchMap);
-              const indexArr = values.map(function (k) { return Math.abs(k - val) })
-              const min = Math.min.apply(Math, indexArr)
+              const indexArr = values
+                .map(function (k) { return Math.abs(k - val); });
+              const min = Math.min.apply(Math, indexArr);
               let idx = indexArr.indexOf(min);
               let stretch = Object.keys(FontStretchMap)[idx];
               this.states.setValue('fontStretch', stretch);
@@ -2054,9 +2123,11 @@ function textCore(p5, fn) {
     @returns {number} - the computed font-size in pixels
    * @private
    */
-  Renderer.prototype._fontSizePx = function (theSize, { family } = this.states.textFont) {
-
-    const isNumString = (num) => !isNaN(num) && num.trim() !== '';
+  Renderer.prototype._fontSizePx = function (
+    theSize,
+    { family } = this.states.textFont
+  ) {
+    const isNumString = num => !isNaN(num) && num.trim() !== '';
 
     // check for a number in a string, eg '12'
     if (isNumString(theSize)) {
@@ -2085,7 +2156,7 @@ function textCore(p5, fn) {
       cachedDiv = ele;
     }
     return cachedDiv;
-  }
+  };
 
 
   /*
@@ -2133,7 +2204,8 @@ function textCore(p5, fn) {
     let lines = this._splitOnBreaks(str.toString());
     let hasLineBreaks = lines.length > 1;
     let hasWidth = typeof width !== 'undefined';
-    let exceedsWidth = hasWidth && lines.some(l => this._textWidthSingle(l) > width);
+    let exceedsWidth = hasWidth &&
+      lines.some(l => this._textWidthSingle(l) > width);
     let { textLeading: leading, textWrap } = this.states;
 
     //if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
@@ -2180,7 +2252,7 @@ function textCore(p5, fn) {
       default:
         return 0;
     }
-  }
+  };
 
   /*
     Align the bounding box based on the current rectMode setting
@@ -2206,7 +2278,7 @@ function textCore(p5, fn) {
       }
       return bb;
     }
-  }
+  };
 
   Renderer.prototype._rectModeAlignRevert = function (bb, width, height) {
     if (typeof width !== 'undefined') {
@@ -2229,7 +2301,7 @@ function textCore(p5, fn) {
       }
       return bb;
     }
-  }
+  };
 
   /*
     Get the (tight) width of a single line of text
@@ -2314,7 +2386,12 @@ function textCore(p5, fn) {
     @returns {array} - the split lines of text
    * @private
   */
-  Renderer.prototype._lineate = function (textWrap, lines, maxWidth = Infinity, opts = {}) {
+  Renderer.prototype._lineate = function (
+    textWrap,
+    lines,
+    maxWidth = Infinity,
+    opts = {}
+  ) {
 
     let splitter = opts.splitChar ?? (textWrap === fn.WORD ? ' ' : '');
     let line, testLine, testWidth, words, newLines = [];
@@ -2376,7 +2453,14 @@ function textCore(p5, fn) {
       - line-height must immediately follow font-size, preceded by "/", eg 16px/3.
       - font-family must be the last value specified.
     */
-    let { textFont, textSize, lineHeight, fontStyle, fontWeight, fontVariant } = this.states;
+    let {
+      textFont,
+      textSize,
+      lineHeight,
+      fontStyle,
+      fontWeight,
+      fontVariant
+    } = this.states;
     let drawingContext = this.textDrawingContext();
 
     let family = this._parseFontFamily(textFont.family);
@@ -2401,7 +2485,7 @@ function textCore(p5, fn) {
       }
     }
     return true;
-  }
+  };
 
   /*
     Apply the text properties in `this.states` to the `this.textDrawingContext()`
@@ -2478,7 +2562,11 @@ function textCore(p5, fn) {
     /*
       Position the lines of text based on their textAlign/textBaseline properties
     */
-    p5.Renderer2D.prototype._positionLines = function (x, y, width, height, lines) {
+    p5.Renderer2D.prototype._positionLines = function (
+      x, y,
+      width, height,
+      lines
+    ) {
 
       let { textLeading, textAlign } = this.states;
       let adjustedX, lineData = new Array(lines.length);
@@ -2539,7 +2627,7 @@ function textCore(p5, fn) {
       }
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
-    }
+    };
   }
 
   if (p5.RendererGL) {
@@ -2569,10 +2657,14 @@ function textCore(p5, fn) {
       oldRemove.call(this);
     };
 
-    p5.RendererGL.prototype._positionLines = function (x, y, width, height, lines) {
+    p5.RendererGL.prototype._positionLines = function (
+      x, y,
+      width, height,
+      lines
+    ) {
 
       let { textLeading, textAlign } = this.states;
-      const widths = lines.map((line) => this._fontWidthSingle(line));
+      const widths = lines.map(line => this._fontWidthSingle(line));
       let adjustedX, lineData = new Array(lines.length);
       let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
       let adjustedH = typeof height === 'undefined' ? 0 : height;
@@ -2585,7 +2677,10 @@ function textCore(p5, fn) {
             adjustedX = x;
             break;
           case fn.CENTER:
-            adjustedX = x + (adjustedW - widths[i]) / 2 - adjustedW / 2 + (width || 0) / 2;
+            adjustedX = x +
+              (adjustedW - widths[i]) / 2 -
+              adjustedW / 2 +
+              (width || 0) / 2;
             break;
           case fn.RIGHT:
             adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
@@ -2607,7 +2702,8 @@ function textCore(p5, fn) {
 
       let { textLeading, textBaseline, textSize, textFont } = this.states;
       let yOff = 0, numLines = dataArr.length;
-      let totalHeight = textSize * numLines + ((textLeading - textSize) * (numLines - 1));
+      let totalHeight = textSize * numLines +
+        ((textLeading - textSize) * (numLines - 1));
       switch (textBaseline) { // drawingContext ?
         case fn.TOP:
           yOff = textSize;
@@ -2627,7 +2723,7 @@ function textCore(p5, fn) {
       yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
-    }
+    };
   }
 }
 

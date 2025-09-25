@@ -5,18 +5,14 @@
 
 import { Element } from './p5.Element';
 
-/**
- * @typedef {'video'} VIDEO
- * @property {VIDEO} VIDEO
- * @final
- */
-export const VIDEO = 'video';
-/**
- * @typedef {'audio'} AUDIO
- * @property {AUDIO} AUDIO
- * @final
- */
-export const AUDIO = 'audio';
+class Cue {
+  constructor(callback, time, id, val) {
+    this.callback = callback;
+    this.time = time;
+    this.id = id;
+    this.val = val;
+  }
+}
 
 class MediaElement extends Element {
   constructor(elt, pInst) {
@@ -829,7 +825,7 @@ class MediaElement extends Element {
   }
   copy(...args) {
     this._ensureCanvas();
-    fn.copy.apply(this, args);
+    p5.prototype.copy.apply(this, args);
   }
   mask(...args) {
     this.loadPixels();
@@ -1307,15 +1303,6 @@ class MediaElement extends Element {
 
 // Cue inspired by JavaScript setTimeout, and the
 // Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
-// eslint-disable-next-line no-unused-vars
-class Cue {
-  constructor(callback, time, id, val) {
-    this.callback = callback;
-    this.time = time;
-    this.id = id;
-    this.val = val;
-  }
-}
 
 function media(p5, fn){
   /**
@@ -1331,7 +1318,7 @@ function media(p5, fn){
     return c;
   }
 
-  /*** VIDEO STUFF ***/
+  /* VIDEO STUFF */
 
   // Helps perform similar tasks for media element methods.
   function createMedia(pInst, type, src, callback) {
@@ -1346,15 +1333,6 @@ function media(p5, fn){
       const sourceEl = document.createElement('source');
       sourceEl.setAttribute('src', mediaSource);
       elt.appendChild(sourceEl);
-    }
-
-    // If callback is provided, attach to element
-    if (typeof callback === 'function') {
-      const callbackHandler = () => {
-        callback();
-        elt.removeEventListener('canplaythrough', callbackHandler);
-      };
-      elt.addEventListener('canplaythrough', callbackHandler);
     }
 
     const mediaEl = addElement(elt, pInst, true);
@@ -1374,6 +1352,15 @@ function media(p5, fn){
       }
       mediaEl.loadedmetadata = true;
     });
+
+    // If callback is provided, attach to element
+    if (typeof callback === 'function') {
+      const callbackHandler = () => {
+        callback(mediaEl);
+        elt.removeEventListener('canplaythrough', callbackHandler);
+      };
+      elt.addEventListener('canplaythrough', callbackHandler);
+    }
 
     return mediaEl;
   }
@@ -1473,7 +1460,7 @@ function media(p5, fn){
     return createMedia(this, VIDEO, src, callback);
   };
 
-  /*** AUDIO STUFF ***/
+  /* AUDIO STUFF */
 
   /**
    * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
@@ -1520,7 +1507,7 @@ function media(p5, fn){
     return createMedia(this, AUDIO, src, callback);
   };
 
-  /*** CAMERA STUFF ***/
+  /* CAMERA STUFF */
 
   fn.VIDEO = VIDEO;
 

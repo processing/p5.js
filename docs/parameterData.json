@@ -325,7 +325,7 @@
     "windowResized": {
       "overloads": [
         [
-          "UIEvent?"
+          "Event?"
         ]
       ]
     },

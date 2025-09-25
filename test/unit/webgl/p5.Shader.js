@@ -122,7 +122,7 @@ suite('p5.Shader', function() {
 
       var expectedUniforms = [
         'uModelViewMatrix',
-        'uProjectionMatrix',
+        'uProjectionMatrix'
       ];
 
       testShader(
@@ -324,6 +324,11 @@ suite('p5.Shader', function() {
         expect(modified.fragSrc()).not.to.match(/#define AUGMENTED_HOOK_getVertexColor/);
       });
 
+      test('anonymous function shaderModifier does not throw when parsed', function() {
+        const callModify = () => myShader.modify(function() {});
+        expect(callModify).not.toThrowError();
+      });
+
       test('filled hooks do have an AUGMENTED_HOOK define', function() {
         const modified = myShader.modify({
           'vec4 getVertexColor': `(vec4 c) {
@@ -337,7 +342,7 @@ suite('p5.Shader', function() {
     test('framebuffer textures are unbound when you draw to the framebuffer', function() {
       const sh = myp5.baseMaterialShader().modify({
         uniforms: {
-          'sampler2D myTex': null,
+          'sampler2D myTex': null
         },
         'vec4 getFinalColor': `(vec4 c) {
           return getTexture(myTex, vec2(0.,0.));
@@ -365,7 +370,7 @@ suite('p5.Shader', function() {
         returnType: {
           typeName: 'vec4',
           qualifiers: [],
-          properties: undefined,
+          properties: undefined
         },
         parameters: [
           {
@@ -379,7 +384,7 @@ suite('p5.Shader', function() {
                   type: {
                     typeName: 'vec2',
                     qualifiers: [],
-                    properties: undefined,
+                    properties: undefined
                   }
                 },
                 {
@@ -387,7 +392,7 @@ suite('p5.Shader', function() {
                   type: {
                     typeName: 'vec2',
                     qualifiers: [],
-                    properties: undefined,
+                    properties: undefined
                   }
                 },
                 {
@@ -395,10 +400,10 @@ suite('p5.Shader', function() {
                   type: {
                     typeName: 'vec2',
                     qualifiers: [],
-                    properties: undefined,
+                    properties: undefined
                   }
-                },
-              ],
+                }
+              ]
             }
           },
           {
@@ -406,11 +411,32 @@ suite('p5.Shader', function() {
             type: {
               typeName: 'sampler2D',
               qualifiers: ['in'],
-              properties: undefined,
+              properties: undefined
             }
           }
         ]
       });
+    });
+  });
+
+  suite('p5.strands', () => {
+    it('does not break when arrays are in uniform callbacks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      const myShader = myp5.baseMaterialShader().modify(() => {
+        const size = myp5.uniformVector2(() => [myp5.width, myp5.height]);
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [
+            size / 1000,
+            0,
+            1
+          ];
+          return inputs;
+        });
+      }, { myp5 });
+      expect(() => {
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
     });
   });
 });
