@@ -109,9 +109,11 @@ export function processData(rawData, strategy) {
   }
 
   // Process constants, typedefs, and properties
+  const processedNames = new Set();
   for (const entry of allData) {
     if (entry.kind === 'constant' || entry.kind === 'typedef' || entry.kind === 'property' ||
-        (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property')) {
+        (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property') ||
+        entry.tags?.some(tag => tag.title === 'property')) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
       
       // Apply strategy filter
@@ -120,6 +122,14 @@ export function processData(rawData, strategy) {
       }
 
       const name = entry.name || (entry.properties || [])[0]?.name;
+      
+      // Skip duplicates based on name + class combination
+      const key = `${name}:${forEntry || 'p5'}`;
+      if (processedNames.has(key)) {
+        continue;
+      }
+      processedNames.add(key);
+      
 
       // For properties, get type from the property definition
       const propertyType = entry.properties?.[0]?.type || entry.type;

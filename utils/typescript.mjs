@@ -326,6 +326,27 @@ function generateClassDeclaration(classData) {
   
   // Class methods
   const classMethodsList = Object.values(processed.classMethods[originalClassName] || {});
+  const methodNames = new Set(classMethodsList.map(method => method.name));
+
+  // Class properties
+  const classProperties = processed.classitems.filter(item => 
+    item.class === originalClassName && item.itemtype === 'property'
+  );
+  
+  classProperties.forEach(prop => {
+    // Skip properties that conflict with method names
+    if (methodNames.has(prop.name)) {
+      return;
+    }
+    
+    if (prop.description) {
+      output += '    /**\n';
+      output += formatJSDocComment(prop.description, 4) + '\n';
+      output += '     */\n';
+    }
+    const type = convertTypeToTypeScript(prop.type, options);
+    output += `    ${prop.name}: ${type};\n\n`;
+  });
   const staticMethods = classMethodsList.filter(method => method.static);
   const instanceMethods = classMethodsList.filter(method => !method.static);
   
@@ -485,17 +506,25 @@ p5: P5;
   
   globalDefinitions += '\n';
   
-  // Add all real classes
+  // Add all real classes as both types and constructors
   Object.values(processed.classes).forEach(classData => {
     if (classData.name !== 'p5') {
       const className = classData.name.startsWith('p5.') ? classData.name.substring(3) : classData.name;
-      globalDefinitions += `  type ${className} = P5.${className};\n`;
+      // For Graphics, use __Graphics for constructor
+      if (className === 'Graphics') {
+        globalDefinitions += `  type ${className} = P5.${className};\n`;
+        globalDefinitions += `  const ${className}: typeof P5.__${className};\n`;
+      } else {
+        globalDefinitions += `  type ${className} = P5.${className};\n`;
+        globalDefinitions += `  const ${className}: typeof P5.${className};\n`;
+      }
     }
   });
   
   // Add private classes
   for (const className of privateClasses) {
     globalDefinitions += `  type ${className} = P5.${className};\n`;
+    globalDefinitions += `  const ${className}: typeof P5.${className};\n`;
   }
 
   globalDefinitions += '}\n\n';

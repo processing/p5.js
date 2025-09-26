@@ -26,15 +26,15 @@ export function applyPatches() {
     }
   };
 
-  // Commented out - trying to handle this better in the docs
-  // replace(
-  //   "p5.d.ts",
-  //   "constructor(detailX?: number, detailY?: number, callback?: Function);",
-  //   `constructor(
-  //     detailX?: number,
-  //     detailY?: number,
-  //     callback?: (this: Geometry) => void);`
-  // );
+  // TODO: Handle this better in the docs instead of patching
+  replace(
+    "p5.d.ts",
+    "constructor(detailX?: number, detailY?: number, callback?: Function);",
+    `constructor(
+      detailX?: number,
+      detailY?: number,
+      callback?: (this: Geometry) => void);`
+  );
 
   // https://github.com/p5-types/p5.ts/issues/31
   // #todo: add readonly to appropriate array params, either here or in doc comments

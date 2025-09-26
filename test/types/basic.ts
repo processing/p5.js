@@ -3,9 +3,17 @@ import '../../types/global'
 p5.disableFriendlyErrors = true
 
 let geom: p5.Geometry
+let geom2: p5.Geometry
 
 function setup() {
 	createCanvas(windowWidth, windowHeight, WEBGL)
+  geom2 = new p5.Geometry(1, 1, function() {
+    this.vertices.push(createVector(0, 0, 0))
+    this.vertices.push(createVector(1, 0, 0))
+    this.vertices.push(createVector(1, 1, 0))
+    this.faces.push([0, 1, 2])
+    this.computeNormals()
+  })
 }
 
 function regenerate() {
