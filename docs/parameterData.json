@@ -3583,10 +3583,10 @@
     "updatePixels": {
       "overloads": [
         [
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
+          "Integer?",
+          "Integer?",
+          "Integer?",
+          "Integer?"
         ]
       ]
     },
