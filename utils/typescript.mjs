@@ -286,8 +286,8 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
       
       let returnType = 'void';
-      if (method.chainable && !globalFunction) {
-        // returnType = currentClass || 'this';
+      if (method.chainable && !globalFunction && options.currentClass !== 'p5') {
+        returnType = options.currentClass || 'this';
         // TODO: Decide what should be chainable. Many of these are accidental / not thought through
       } else if (overload.return && overload.return.type) {
         returnType = convertTypeToTypeScript(overload.return.type, options);

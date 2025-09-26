@@ -224,8 +224,10 @@ export function processData(rawData, strategy) {
       // Skip methods of private classes
       if (!processed.classes[className] && className !== 'p5') continue;
 
-      // Check for existing method (overloads)
-      const prevItem = processed.classMethods[className]?.[entry.name];
+      // Check for existing method (overloads) - distinguish static vs instance
+      const isStatic = entry.scope === 'static';
+      const methodKey = isStatic ? `static_${entry.name}` : entry.name;
+      const prevItem = processed.classMethods[className]?.[methodKey];
 
       const item = {
         name: entry.name,
@@ -266,7 +268,7 @@ export function processData(rawData, strategy) {
       };
 
       processed.classMethods[className] = processed.classMethods[className] || {};
-      processed.classMethods[className][entry.name] = item;
+      processed.classMethods[className][methodKey] = item;
     }
   }
 
