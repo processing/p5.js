@@ -27,6 +27,10 @@ jobs:
         run: npm test
         env:
           CI: true
+      - name: generate TypeScript types
+        run: npm run generate-types
+        env:
+          CI: true
       - name: test TypeScript types
         run: npm run test:types
         env:
