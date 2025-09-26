@@ -9,6 +9,7 @@
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
+    "test:types": "npx tsc --noEmit test/types/*.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "generate-types": "npm run docs && node utils/typescript.mjs"
@@ -61,6 +62,7 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.9.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.1.5",
@@ -73,8 +75,11 @@
       "types": "./types/p5.d.ts",
       "default": "./dist/app.js"
     },
+    "./global": {
+      "types": "./types/global.d.ts",
+      "default": "./dist/app.js"
+    },
     "./core": {
-      "types": "./types/core/main.d.ts",
       "default": "./dist/core/main.js"
     },
     "./shape": "./dist/shape/index.js",
