@@ -1953,7 +1953,7 @@ function geometry(p5, fn){
    * @class p5.Geometry
    * @param  {Integer} [detailX] number of vertices along the x-axis.
    * @param  {Integer} [detailY] number of vertices along the y-axis.
-   * @param {function} [callback] function to call once the geometry is created.
+   * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
    * <div>

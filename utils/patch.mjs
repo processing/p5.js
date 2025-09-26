@@ -1,41 +1,56 @@
 import fs from 'fs';
 
-const replace = (path, src, dest) => {
-  try {
-    const data = fs
-      .readFileSync(path, { encoding: 'utf-8' })
-      .replace(src, dest);
-    fs.writeFileSync(path, data);
-  } catch (err) {
-    console.error(err);
+export function applyPatches() {
+  const cache   = {};
+  const patched = {};
+  
+  const replace = (path, src, dest) => {
+    if (Array.isArray(path)) {
+      path.forEach(path => replace(path, src, dest));
+      return;
+    }
+    try {
+      if (!path.startsWith("types/"))
+        path = "types/" + path;
+
+      const before = patched[path] ??
+        (cache[path] ??= fs.readFileSync("./" + path, { encoding: 'utf-8' }));
+      const after = before.replaceAll(src, dest);
+
+      if (after !== before)
+        patched[path] = after;
+      else
+        console.error(`A patch failed in ${path}:\n  -${src}\n  +${dest}`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // TODO: Handle this better in the docs instead of patching
+  replace(
+    "p5.d.ts",
+    "constructor(detailX?: number, detailY?: number, callback?: Function);",
+    `constructor(
+      detailX?: number,
+      detailY?: number,
+      callback?: (this: Geometry) => void);`
+  );
+
+  // https://github.com/p5-types/p5.ts/issues/31
+  // #todo: add readonly to appropriate array params, either here or in doc comments
+  replace(
+    ["p5.d.ts", "global.d.ts"],
+    "random(choices: any[]): any;",
+    "random<T>(choices: readonly T[]): T;"
+  );
+
+  for (const [path, data] of Object.entries(patched)) {
+    try {
+      console.log(`Patched ${path}`);
+      fs.writeFileSync("./" + path, data);
+    } catch (err) {
+      console.error(err);
+    }
   }
-};
-
-replace(
-  './types/core/structure.d.ts',
-  'function p5(sketch: object, node: string | HTMLElement): void;',
-  'function p5: typeof p5'
-);
-
-replace(
-  './types/webgl/p5.Geometry.d.ts',
-  'constructor(detailX?: number, detailY?: number, callback?: function);',
-  `constructor(
-        detailX?: number,
-        detailY?: number,
-        callback?: (this: {
-            detailY: number,
-            detailX: number,
-            vertices: p5.Vector[],
-            uvs: number[]
-        }) => void);`
-);
-
-// https://github.com/p5-types/p5.ts/issues/31
-replace(
-  './types/math/random.d.ts',
-  'function random(choices: Array): any;',
-  'function random<T>(choices: T[]): T;'
-);
-
+}
 

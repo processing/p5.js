@@ -895,7 +895,7 @@ function light(p5, fn){
    * use as the light source.
    *
    * @method imageLight
-   * @param  {p5.image}    img image to use as the light source.
+   * @param  {p5.Image}    img image to use as the light source.
    *
    * @example
    * <div class="notest">

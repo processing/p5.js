@@ -137,6 +137,7 @@ function validateParams(p5, fn, lifecycles) {
    * parameters, and `?` is a shorthand for `Optional`.
    *
    * @method generateZodSchemasForFunc
+   * @private
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {z.ZodSchema} Zod schema
    */
