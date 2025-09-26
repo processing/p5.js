@@ -299,6 +299,7 @@ function generateMethodDeclaration(method, options = {}) {
 function generateClassDeclaration(classData) {
   let output = '';
   const className = classData.name.startsWith('p5.') ? classData.name.substring(3) : classData.name;
+  const actualClassName = className === 'Graphics' ? '__Graphics' : className;
   
   if (classData.description) {
     output += '  /**\n';
@@ -307,7 +308,7 @@ function generateClassDeclaration(classData) {
   }
   
   const extendsClause = classData.extends ? ` extends ${classData.extends}` : '';
-  output += `  class ${className}${extendsClause} {\n`;
+  output += `  class ${actualClassName}${extendsClause} {\n`;
   
   // Constructor
   if (classData.params?.length > 0) {
@@ -335,6 +336,12 @@ function generateClassDeclaration(classData) {
   });
   
   output += '  }\n\n';
+  
+  // Add type alias for Graphics
+  if (className === 'Graphics') {
+    output += '  type Graphics = __Graphics & p5;\n\n';
+  }
+  
   return output;
 }
 
