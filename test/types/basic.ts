@@ -1,4 +1,6 @@
-import '../../types/global.d.ts'
+import '../../types/global'
+
+p5.disableFriendlyErrors = true
 
 let geom: p5.Geometry
 

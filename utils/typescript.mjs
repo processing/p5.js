@@ -21,6 +21,7 @@ import { getAllEntries } from './shared-helpers.mjs';
 const allRawData = getAllEntries(rawData);
 const constantsLookup = new Set();
 const typedefs = {};
+const mutableProperties = new Set(['disableFriendlyErrors']); // Properties that should be mutable, not constants
 allRawData.forEach(entry => {
   if (entry.kind === 'constant' || entry.kind === 'typedef') {
     constantsLookup.add(entry.name);
@@ -373,9 +374,11 @@ function generateTypeDefinitions() {
       output += ' */\n';
     }
     const type = convertTypeToTypeScript(constant.type, { isInsideNamespace: false });
-    output += `declare const ${constant.name}: ${type};\n\n`;
+    const isMutable = mutableProperties.has(constant.name);
+    const declaration = isMutable ? 'declare let' : 'declare const';
+    output += `${declaration} ${constant.name}: ${type};\n\n`;
     // Duplicate with a private identifier so we can re-export in the namespace later
-    output += `declare const __${constant.name}: typeof ${constant.name};\n\n`;
+    output += `${declaration} __${constant.name}: typeof ${constant.name};\n\n`;
   });
   
   // Generate main p5 class
@@ -398,8 +401,9 @@ function generateTypeDefinitions() {
   
   // Add constants as both instance and static properties (referencing the top-level constants)
   p5Constants.forEach(constant => {
-    output += `  readonly ${constant.name}: typeof ${constant.name};\n`;
-    // output += `  static readonly ${constant.name}: typeof __${constant.name};\n\n`;
+    const isMutable = mutableProperties.has(constant.name);
+    const readonly = isMutable ? '' : 'readonly ';
+    output += `  ${readonly}${constant.name}: typeof ${constant.name};\n`;
   });
   
   output += '}\n\n';
@@ -414,7 +418,7 @@ function generateTypeDefinitions() {
 
 
   p5Constants.forEach(constant => {
-    output += `const ${constant.name}: typeof __${constant.name};\n`;
+    output += `${mutableProperties.has(constant.name) ? 'let' : 'const'} ${constant.name}: typeof __${constant.name};\n`;
   });
 
   output += '\n';
@@ -452,7 +456,6 @@ p5: P5;
 `;
 
   p5Constants.forEach(constant => {
-    if (constant.name === 'undefined') return;
     if (constant.description) {
       globalDefinitions += '/**\n';
       globalDefinitions += formatJSDocComment(constant.description, 0) + '\n';
@@ -466,6 +469,33 @@ p5: P5;
   globalP5Methods.forEach(method => {
     globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true });
   });
+  
+  globalDefinitions += '}\n';
+
+  // Add global p5 namespace with all class types and constants
+  globalDefinitions += '\nnamespace p5 {\n';
+  
+  // Add all constants
+  p5Constants.forEach(constant => {
+    const isMutable = mutableProperties.has(constant.name);
+    const declaration = isMutable ? 'let' : 'const';
+    globalDefinitions += `  ${declaration} ${constant.name}: typeof P5.${constant.name};\n`;
+  });
+  
+  globalDefinitions += '\n';
+  
+  // Add all real classes
+  Object.values(processed.classes).forEach(classData => {
+    if (classData.name !== 'p5') {
+      const className = classData.name.startsWith('p5.') ? classData.name.substring(3) : classData.name;
+      globalDefinitions += `  type ${className} = P5.${className};\n`;
+    }
+  });
+  
+  // Add private classes
+  for (const className of privateClasses) {
+    globalDefinitions += `  type ${className} = P5.${className};\n`;
+  }
 
   globalDefinitions += '}\n\n';
 

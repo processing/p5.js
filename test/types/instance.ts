@@ -1,5 +1,7 @@
 import P5 from '../../types/p5'
 
+P5.disableFriendlyErrors = true
+
 const sketch = new P5((p) => {
   let g: P5.Graphics
   p.setup = function() {
