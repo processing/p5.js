@@ -4099,10 +4099,7 @@
     },
     "copy": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "add": {
@@ -4114,11 +4111,6 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4131,10 +4123,6 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector"
         ]
       ]
     },
@@ -4147,11 +4135,6 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4170,22 +4153,6 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "Number[]",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4204,39 +4171,17 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "Number[]",
-          "p5.Vector?"
         ]
       ]
     },
     "mag": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "magSq": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "dot": {
@@ -4248,22 +4193,12 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
         ]
       ]
     },
     "cross": {
       "overloads": [
         [
-          "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
           "p5.Vector"
         ]
       ]
@@ -4272,33 +4207,18 @@
       "overloads": [
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
         ]
       ]
     },
     "normalize": {
       "overloads": [
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector?"
-        ]
+        []
       ]
     },
     "limit": {
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4306,21 +4226,12 @@
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
     "heading": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "setHeading": {
@@ -4334,23 +4245,12 @@
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
     "angleBetween": {
       "overloads": [
         [
-          "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
           "p5.Vector"
         ]
       ]
@@ -4366,13 +4266,6 @@
         [
           "p5.Vector",
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4381,13 +4274,6 @@
         [
           "p5.Vector",
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4395,21 +4281,12 @@
       "overloads": [
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
     "array": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "equals": {
@@ -4420,11 +4297,6 @@
           "Number?"
         ],
         [
-          "p5.Vector|Array"
-        ],
-        [],
-        [
-          "p5.Vector|Array",
           "p5.Vector|Array"
         ]
       ]

@@ -175,7 +175,7 @@ const typescriptStrategy = {
   
   processDescription: (desc) => descriptionStringForTypeScript(desc),
   
-  processType: (type) => {
+  processType: (type, param) => {
     // Return an object with the original type preserved
     // This matches the expected data structure from the data processor
     const result = {
@@ -191,6 +191,11 @@ const typescriptStrategy = {
     // Extract rest flag from RestType
     if (type?.type === 'RestType') {
       result.rest = true;
+    }
+    
+    // Preserve properties array for nested object parameters
+    if (param && param.properties) {
+      result.properties = param.properties;
     }
     
     return result;
@@ -226,14 +231,63 @@ function formatJSDocComment(text, indentLevel = 0) {
     .join('\n');
 }
 
-function generateParamDeclaration(param, options = {}) {
+function generateObjectInterface(param, allParams, options = {}) {
+  // Check if this is an object parameter (either required or optional)
+  const isObjectParam = param.type && (
+    (param.type.type === 'OptionalType' && param.type.expression?.name === 'Object') ||
+    (param.type.type === 'NameExpression' && param.type.name === 'Object')
+  );
+  
+  if (!isObjectParam || !param.name) {
+    return null;
+  }
+
+  let nestedParams = [];
+
+
+  // First, check if the parameter has a properties array (JSDoc properties field)
+  if (param.properties && Array.isArray(param.properties)) {
+    nestedParams = param.properties.filter(prop => 
+      prop.name && prop.name.startsWith(param.name + '.')
+    );
+  }
+
+  // Fallback: Look for nested parameters with dot notation in allParams
+  if (nestedParams.length === 0) {
+    nestedParams = allParams.filter(p => 
+      p.name && p.name.startsWith(param.name + '.') && p.name !== param.name
+    );
+  }
+
+  if (nestedParams.length === 0) {
+    return null;
+  }
+
+  // Generate interface properties
+  const properties = nestedParams.map(nestedParam => {
+    const propName = nestedParam.name.substring(param.name.length + 1); // Remove 'paramName.' prefix
+    const propType = nestedParam.type ? convertTypeToTypeScript(nestedParam.type, options) : 'any';
+    // Properties are optional if they have a default value or are explicitly marked as optional
+    const isOptional = nestedParam.optional || nestedParam.type?.type === 'OptionalType' || nestedParam.default !== undefined;
+    return `${propName}${isOptional ? '?' : ''}: ${propType}`;
+  });
+
+  return `{ ${properties.join('; ')} }`;
+}
+
+function generateParamDeclaration(param, options = {}, allParams = []) {
   if (!param) return '';
   
   const name = normalizeIdentifier(param.name);
   
+  // Check if this is an object parameter that we can generate a better interface for
+  const objectInterface = generateObjectInterface(param, allParams, options);
+  
   // Convert the type - should always be an object
   let type = 'any';
-  if (param.type) {
+  if (objectInterface) {
+    type = objectInterface;
+  } else if (param.type) {
     type = convertTypeToTypeScript(param.type, options);
   }
   
@@ -282,7 +336,7 @@ function generateMethodDeclaration(method, options = {}) {
   if (method.overloads && method.overloads.length > 0) {
     method.overloads.forEach(overload => {
       const params = (overload.params || [])
-        .map(param => generateParamDeclaration(param, options))
+        .map(param => generateParamDeclaration(param, options, overload.params))
         .join(', ');
       
       let returnType = 'void';
@@ -321,7 +375,7 @@ function generateClassDeclaration(classData) {
   if (classData.params?.length > 0) {
     output += '    constructor(';
     output += classData.params
-      .map(param => generateParamDeclaration(param, { currentClass: className, isInsideNamespace: true }))
+      .map(param => generateParamDeclaration(param, { currentClass: className, isInsideNamespace: true }, classData.params))
       .join(', ');
     output += ');\n\n';
   }

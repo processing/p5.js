@@ -146,7 +146,8 @@ export function getParams(entry) {
         description: param?.description || {
           type: 'html',
           value: node.description
-        }
+        },
+        properties: param?.properties // Preserve properties array for nested object parameters
       };
     });
 }

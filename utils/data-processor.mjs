@@ -139,7 +139,7 @@ export function processData(rawData, strategy) {
         itemtype: 'property',
         name,
         ...locationInfo(entry),
-        ...strategy.processType(propertyType),
+        ...strategy.processType(propertyType, entry),
         ...deprecationInfo(entry),
         description: strategy.processDescription(entry.description),
         example: examples.length > 0 ? examples : undefined,
@@ -175,7 +175,7 @@ export function processData(rawData, strategy) {
         params: getParams(entry).map(p => ({
           name: p.name,
           description: p.description && strategy.processDescription(p.description),
-          ...strategy.processType(p.type)
+          ...strategy.processType(p.type, p)
         })),
         return: entry.returns?.[0] && {
           description: strategy.processDescription(entry.returns[0].description),
@@ -249,7 +249,7 @@ export function processData(rawData, strategy) {
             params: getParams(entry).map(p => ({
               name: p.name,
               description: p.description && strategy.processDescription(p.description),
-              ...strategy.processType(p.type)
+              ...strategy.processType(p.type, p)
             })),
             return: entry.returns?.[0] && {
               description: strategy.processDescription(entry.returns[0].description),

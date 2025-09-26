@@ -49,11 +49,11 @@ export function applyPatches() {
     'textToContours(str: string, x: number, y: number, options?: object): object[][];',
     'textToContours(str: string, x: number, y: number, options?: { sampleFactor?: number; simplifyThreshold?: number }): { x: number; y: number; alpha: number }[][];',
   )
-  replace(
-    'p5.d.ts',
-    'textToModel(str: string, x: number, y: number, width: number, height: number, options?: object)',
-    'textToModel(str: string, x: number, y: number, width: number, height: number, options?: { sampleFactor?: number; simplifyThreshold?: number; extrude?: number })',
-  )
+  // replace(
+  //   'p5.d.ts',
+  //   'textToModel(str: string, x: number, y: number, width: number, height: number, options?: object)',
+  //   'textToModel(str: string, x: number, y: number, width: number, height: number, options?: { sampleFactor?: number; simplifyThreshold?: number; extrude?: number })',
+  // )
 
   for (const [path, data] of Object.entries(patched)) {
     try {
