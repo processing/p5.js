@@ -188,6 +188,11 @@ const typescriptStrategy = {
       result.optional = true;
     }
     
+    // Extract rest flag from RestType
+    if (type?.type === 'RestType') {
+      result.rest = true;
+    }
+    
     return result;
   }
 };
