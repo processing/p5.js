@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { processData } from './data-processor.mjs';
 import { descriptionStringForTypeScript } from './shared-helpers.mjs';
+import { applyPatches } from './patch.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -535,3 +536,7 @@ fs.writeFileSync(path.join(__dirname, '../types/p5.d.ts'), instanceDefinitions);
 fs.writeFileSync(path.join(__dirname, '../types/global.d.ts'), globalDefinitions);
 
 console.log('TypeScript definitions generated successfully!');
+
+// Apply patches
+console.log('Applying TypeScript patches...');
+applyPatches();
