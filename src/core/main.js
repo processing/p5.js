@@ -77,6 +77,25 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
+    // Apply addon defined decorations
+    for(const [patternArray, decoration] of p5.decorations){
+      for(const member in p5.prototype){
+        // Member must be a function
+        if(typeof p5.prototype[member] !== 'function') continue;
+
+        if(!patternArray.some(pattern => {
+          if(typeof pattern === 'string'){
+            return pattern === member;
+          }else if(pattern instanceof RegExp){
+            return pattern.test(member);
+          }
+        })) continue;
+
+        const copy = p5.prototype[member].bind(this);
+        p5.prototype[member] = decoration.call(this, copy, member);
+      }
+    }
+
     const bindGlobal = createBindGlobal(this);
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
@@ -145,22 +164,7 @@ class p5 {
   static registerAddon(addon) {
     const lifecycles = {};
 
-    // Create a proxy for p5.prototype that automatically re-binds globals when properties are added
-    const prototypeProxy = new Proxy(p5.prototype, {
-      set(target, property, value) {
-        const result = Reflect.set(target, property, value);
-
-        // If we have a global instance and this is a new property, bind it globally
-        if (p5.instance && p5.instance._isGlobal && property[0] !== '_') {
-          const bindGlobal = createBindGlobal(p5.instance);
-          bindGlobal(property);
-        }
-
-        return result;
-      }
-    });
-
-    addon(p5, prototypeProxy, lifecycles);
+    addon(p5, p5.prototype, lifecycles);
 
     const validLifecycles = Object.keys(p5.lifecycleHooks);
     for(const name of validLifecycles){
@@ -168,6 +172,13 @@ class p5 {
         p5.lifecycleHooks[name].push(lifecycles[name]);
       }
     }
+  }
+
+  static decorations = new Map();
+  static decorateHelper(pattern, decoration){
+    let patternArray = pattern;
+    if(!Array.isArray(pattern)) patternArray = [pattern];
+    p5.decorations.set(patternArray, decoration);
   }
 
   #customActions = {};
@@ -393,28 +404,9 @@ class p5 {
   }
 
   async _runLifecycleHook(hookName) {
-    // Create a proxy for the instance that automatically re-binds globals when
-    // properties are added over the course of the lifecycle.
-    // Afterward, we skip global binding for efficiency.
-    let inLifecycle = true;
-    const instanceProxy = new Proxy(this, {
-      set(target, property, value) {
-        const result = Reflect.set(target, property, value);
-
-        // If this is a global instance and this is a new property, bind it globally
-        if (inLifecycle && target._isGlobal && property[0] !== '_') {
-          const bindGlobal = createBindGlobal(target);
-          bindGlobal(property);
-        }
-
-        return result;
-      }
-    });
-
     await Promise.all(p5.lifecycleHooks[hookName].map(hook => {
-      return hook.call(instanceProxy);
+      return hook.call(this);
     }));
-    inLifecycle = false;
   }
 
   _initializeInstanceVariables() {
@@ -480,7 +472,7 @@ function createBindGlobal(instance) {
         Object.defineProperty(window, property, {
           configurable: true,
           enumerable: true,
-          value: boundFunction,
+          value: boundFunction
         });
       } else {
         Object.defineProperty(window, property, {
@@ -498,7 +490,7 @@ function createBindGlobal(instance) {
         Object.defineProperty(window, property, {
           configurable: true,
           enumerable: true,
-          value: constantValue,
+          value: constantValue
         });
       } else {
         Object.defineProperty(window, property, {
@@ -785,8 +777,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-p5.disableFriendlyErrors = false;
-
 import transform from './transform';
 import structure from './structure';
 import environment from './environment';
