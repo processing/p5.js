@@ -78,6 +78,7 @@ class p5 {
     this._updateWindowSize();
 
     // Apply addon defined decorations
+    p5.prototype.__originalMethods = p5.prototype.__originalMethods || {};
     for(const [patternArray, decoration] of p5.decorations){
       for(const member in p5.prototype){
         // Member must be a function
@@ -91,7 +92,10 @@ class p5 {
           }
         })) continue;
 
-        const copy = p5.prototype[member].bind(this);
+        // Store a copy of the original, unbound prototype method so that if we make a new p5 instance
+        // later, we don't double-, triple-, etc bind the function
+        p5.prototype.__originalMethods[member] = p5.prototype.__originalMethods[member] || p5.prototype[member];
+        const copy = p5.prototype.__originalMethods[member].bind(this);
         p5.prototype[member] = decoration.call(this, copy, member);
       }
     }
