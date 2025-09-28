@@ -78,25 +78,20 @@ class p5 {
     this._updateWindowSize();
 
     // Apply addon defined decorations
-    p5.prototype.__originalMethods = p5.prototype.__originalMethods || {};
-    for(const [patternArray, decoration] of p5.decorations){
-      for(const member in p5.prototype){
+    for (const [patternArray, decoration] of p5.decorations) {
+      for(const member in p5.prototype) {
         // Member must be a function
-        if(typeof p5.prototype[member] !== 'function') continue;
+        if (typeof p5.prototype[member] !== 'function') continue;
 
-        if(!patternArray.some(pattern => {
-          if(typeof pattern === 'string'){
+        if (!patternArray.some(pattern => {
+          if (typeof pattern === 'string') {
             return pattern === member;
-          }else if(pattern instanceof RegExp){
+          } else if (pattern instanceof RegExp) {
             return pattern.test(member);
           }
         })) continue;
 
-        // Store a copy of the original, unbound prototype method so that if we make a new p5 instance
-        // later, we don't double-, triple-, etc bind the function
-        p5.prototype.__originalMethods[member] = p5.prototype.__originalMethods[member] || p5.prototype[member];
-        const copy = p5.prototype.__originalMethods[member].bind(this);
-        p5.prototype[member] = decoration.call(this, copy, member);
+        DecoratedP5.prototype[member] = decoration.call(this, p5.prototype[member], member);
       }
     }
 
@@ -181,7 +176,7 @@ class p5 {
   static decorations = new Map();
   static decorateHelper(pattern, decoration){
     let patternArray = pattern;
-    if(!Array.isArray(pattern)) patternArray = [pattern];
+    if (!Array.isArray(pattern)) patternArray = [pattern];
     p5.decorations.set(patternArray, decoration);
   }
 
@@ -426,6 +421,18 @@ class p5 {
     this._downKeyCodes = {};
   }
 }
+
+class _DecoratedP5 extends p5 {
+  static registerAddon(addon) {
+    p5.registerAddon(addon);
+  }
+}
+const DecoratedP5 = new Proxy(_DecoratedP5, {
+  set(target, prop, newValue) {
+    p5[prop] = newValue;
+    return true;
+  }
+});
 
 // Global helper function for binding properties to window in global mode
 function createBindGlobal(instance) {
@@ -797,4 +804,4 @@ p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
 
-export default p5;
+export default DecoratedP5;

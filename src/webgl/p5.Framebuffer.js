@@ -1679,6 +1679,7 @@ function framebuffer(p5, fn){
    *                                object.
    * @param {Object} [settings] configuration options.
    */
+    debugger
   p5.Framebuffer = Framebuffer;
 
   /**

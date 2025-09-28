@@ -570,14 +570,16 @@ function validateParams(p5, fn, lifecycles) {
     }
   };
 
+  fn._validate = validate; // For unit tests
+
   p5.decorateHelper(
     /^(?!_).+$/,
     function(target, name){
       return function(...args){
-        if(!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+        if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
           validate(name, args);
         }
-        return target(...args);
+        return p5.prototype[name].apply(this, args);
       };
     }
   );
