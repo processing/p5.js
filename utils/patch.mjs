@@ -66,6 +66,14 @@ export function applyPatches() {
     `
   );
 
+  replace(
+    'p5.d.ts',
+    'class __Graphics extends p5.Element {',
+    `class __Graphics extends p5.Element {
+      elt: HTMLCanvasElement;
+    `,
+  );
+
   for (const [path, data] of Object.entries(patched)) {
     try {
       console.log(`Patched ${path}`);
