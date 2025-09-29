@@ -650,7 +650,7 @@ function rendering(p5, fn){
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>
    * object.
    *
-   * @property drawingContext
+   * @property {CanvasRenderingContext2D|WebGLRenderingContext|WebGL2RenderingContext} drawingContext
    *
    * @example
    * <div>

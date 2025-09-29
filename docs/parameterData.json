@@ -2098,10 +2098,9 @@
     "textAlign": {
       "overloads": [
         [
-          "LEFT|CENTER|RIGHT",
+          "LEFT|CENTER|RIGHT?",
           "TOP|BOTTOM|CENTER|BASELINE?"
-        ],
-        []
+        ]
       ]
     },
     "textAscent": {
@@ -2122,17 +2121,15 @@
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "textFont": {
       "overloads": [
         [
-          "p5.Font|String|Object",
+          "p5.Font|String|Object?",
           "Number?"
-        ],
-        []
+        ]
       ]
     },
     "textSize": {
