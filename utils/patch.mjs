@@ -48,7 +48,23 @@ export function applyPatches() {
     'p5.d.ts',
     'textToContours(str: string, x: number, y: number, options?: { sampleFactor?: number; simplifyThreshold?: number }): object[][];',
     'textToContours(str: string, x: number, y: number, options?: { sampleFactor?: number; simplifyThreshold?: number }): { x: number; y: number; alpha: number }[][];',
-  )
+  );
+
+  replace(
+    'p5.d.ts',
+    'class Renderer extends Element {}',
+    `class Renderer extends Element {
+      elt: HTMLCanvasElement;
+    }`
+  );
+
+  replace(
+    'p5.d.ts',
+    'class MediaElement extends p5.Element {',
+    `class MediaElement extends Element {
+      elt: HTMLAudioElement | HTMLVideoElement;
+    `
+  );
 
   for (const [path, data] of Object.entries(patched)) {
     try {
