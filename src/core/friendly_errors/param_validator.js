@@ -413,6 +413,7 @@ function validateParams(p5, fn, lifecycles) {
     const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
+      let hasConstants = false;
 
       error.errors.forEach(err => {
         const issue = err[0];
@@ -425,12 +426,25 @@ function validateParams(p5, fn, lifecycles) {
             actualType = issue.message.split(', received ')[1];
             expectedTypes.add(issue.expected);
           }
+          // Handle nested union errors (e.g., Number type with number, Infinity, -Infinity)
+          else if (issue.code === 'invalid_union') {
+            issue.errors.forEach(nestedErr => {
+              const nestedIssue = nestedErr[0];
+              if (nestedIssue && nestedIssue.code === 'invalid_type') {
+                expectedTypes.add(nestedIssue.expected);
+              }
+            });
+          }
           // The case for constants. Since we don't want to print out the actual
           // constant values in the error message, the error message will
           // direct users to the documentation.
+          // Note: Distinguish actual constants from special number values like Infinity/-Infinity
           else if (issue.code === 'invalid_value') {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
-            actualType = args[error.path[0]];
+            const isSpecialNumber = issue.values && issue.values.some(val => val === Infinity || val === -Infinity);
+            if (!isSpecialNumber) {
+              hasConstants = true;
+              actualType = args[error.path[0]];
+            }
           } else if (issue.code === 'custom') {
             const match = issue.message.match(/Input not instance of (\w+)/);
             if (match) expectedTypes.add(match[1]);
@@ -438,6 +452,11 @@ function validateParams(p5, fn, lifecycles) {
           }
         }
       });
+
+      // Only add constants to expected types if constant validation actually failed
+      if (hasConstants) {
+        expectedTypes.add('constant (please refer to documentation for allowed values)');
+      }
 
       if (expectedTypes.size > 0) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
