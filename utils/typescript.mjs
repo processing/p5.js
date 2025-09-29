@@ -518,8 +518,15 @@ function generateTypeDefinitions() {
   // Generate placeholder types for private classes that we need to be able to
   // reference, but have no public APIs
   const privateClasses = ['Renderer', 'Renderer2D', 'RendererGL', 'FramebufferTexture', 'Texture', 'Quat'];
+  // Define base classes for private classes, if they should extend something
+  const privateClassBases = { Renderer: 'Element' };
   for (const className of privateClasses) {
-    output += `  class ${className} {}\n`;
+    const baseClass = privateClassBases[className];
+    if (baseClass) {
+      output += `  class ${className} extends ${baseClass} {}\n`;
+    } else {
+      output += `  class ${className} {}\n`;
+    }
   }
   
   output += '}\n\n';

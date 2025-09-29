@@ -1107,7 +1107,7 @@ class Framebuffer {
   /**
    * Ensure all readable textures are up-to-date.
    * @private
-   * @property {'colorTexutre'|'depthTexture'} property The property to update
+   * @param {'colorTexutre'|'depthTexture'} property The property to update
    */
   _update(property) {
     if (this.dirty[property] && this.antialias) {
@@ -1886,6 +1886,20 @@ function framebuffer(p5, fn){
    * }
    * </code>
    * </div>
+   */
+
+  /**
+   * The current width of the framebuffer.
+   *
+   * @property {Number} width
+   * @for p5.Framebuffer
+   */
+
+  /**
+   * The current width of the framebuffer.
+   *
+   * @property {Number} height
+   * @for p5.Framebuffer
    */
 }
 
