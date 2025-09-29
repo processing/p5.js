@@ -583,12 +583,12 @@ export class Font {
     extruded.faces = [];
 
     let vertexIndex = 0;
-
+    const Vector = this._pInst.constructor.Vector;
     // Helper to add a triangle with flat normal
     const addTriangle = (v0, v1, v2) => {
-      const edge1 = p5.Vector.sub(v1, v0);
-      const edge2 = p5.Vector.sub(v2, v0);
-      const normal = p5.Vector.cross(edge1, edge2);
+      const edge1 = Vector.sub(v1, v0);
+      const edge2 = Vector.sub(v2, v0);
+      const normal = Vector.cross(edge1, edge2);
       if (normal.magSq() > 0.0001) {
         normal.normalize();
       } else {
@@ -609,9 +609,9 @@ export class Font {
         const v1 = geom.vertices[face[i]];
         const v2 = geom.vertices[face[i + 1]];
         addTriangle(
-          new p5.Vector(v0.x, v0.y, v0.z + half),
-          new p5.Vector(v1.x, v1.y, v1.z + half),
-          new p5.Vector(v2.x, v2.y, v2.z + half)
+          new Vector(v0.x, v0.y, v0.z + half),
+          new Vector(v1.x, v1.y, v1.z + half),
+          new Vector(v2.x, v2.y, v2.z + half)
         );
       }
     }
@@ -623,9 +623,9 @@ export class Font {
         const v1 = geom.vertices[face[i]];
         const v2 = geom.vertices[face[i + 1]];
         addTriangle(
-          new p5.Vector(v0.x, v0.y, v0.z - half),
-          new p5.Vector(v2.x, v2.y, v2.z - half),
-          new p5.Vector(v1.x, v1.y, v1.z - half)
+          new Vector(v0.x, v0.y, v0.z - half),
+          new Vector(v2.x, v2.y, v2.z - half),
+          new Vector(v1.x, v1.y, v1.z - half)
         );
       }
     }
@@ -655,14 +655,14 @@ export class Font {
       const v0 = geom.vertices[a];
       const v1 = geom.vertices[b];
 
-      const vFront0 = new p5.Vector(v0.x, v0.y, v0.z + half);
-      const vFront1 = new p5.Vector(v1.x, v1.y, v1.z + half);
-      const vBack0 = new p5.Vector(v0.x, v0.y, v0.z - half);
-      const vBack1 = new p5.Vector(v1.x, v1.y, v1.z - half);
+      const vFront0 = new Vector(v0.x, v0.y, v0.z + half);
+      const vFront1 = new Vector(v1.x, v1.y, v1.z + half);
+      const vBack0 = new Vector(v0.x, v0.y, v0.z - half);
+      const vBack1 = new Vector(v1.x, v1.y, v1.z - half);
 
       // Two triangles forming the side quad
-      addTriangle(vFront0, vFront1, vBack1);
-      addTriangle(vFront0, vBack1, vBack0);
+      addTriangle(vFront0, vBack0, vBack1);
+      addTriangle(vFront0, vBack1, vFront1);
     }
     return extruded;
   }
