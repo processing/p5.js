@@ -2100,7 +2100,8 @@
         [
           "LEFT|CENTER|RIGHT",
           "TOP|BOTTOM|CENTER|BASELINE?"
-        ]
+        ],
+        []
       ]
     },
     "textAscent": {
@@ -2121,7 +2122,8 @@
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "textFont": {
@@ -2129,7 +2131,8 @@
         [
           "p5.Font|String|Object",
           "Number?"
-        ]
+        ],
+        []
       ]
     },
     "textSize": {
