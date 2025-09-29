@@ -4537,6 +4537,11 @@
         ]
       ]
     },
+    "loadPixels": {
+      "overloads": [
+        []
+      ]
+    },
     "get": {
       "overloads": [
         [

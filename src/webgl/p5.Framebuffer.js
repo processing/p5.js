@@ -1308,8 +1308,6 @@ class Framebuffer {
    * `myBuffer.loadPixels()` must be called before reading from or writing to
    * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a>.
    *
-   * @method loadPixels
-   *
    * @example
    * <div>
    * <code>
