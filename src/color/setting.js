@@ -31,6 +31,7 @@ function setting(p5, fn){
    *
    * @method beginClip
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>
@@ -241,6 +242,7 @@ function setting(p5, fn){
    * @method clip
    * @param {Function} callback a function that draws the mask shape.
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>

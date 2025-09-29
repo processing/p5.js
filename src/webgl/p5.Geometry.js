@@ -432,8 +432,8 @@ class Geometry {
    * @method saveStl
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
-   * controls whether or not a binary .stl file is saved. It defaults to false.
+   * @param {Object} [options] Optional settings.
+   * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
    * <div>
    * <code>

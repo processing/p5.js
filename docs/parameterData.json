@@ -4342,8 +4342,7 @@
           "Number",
           "Number",
           "Number?",
-          "Number?",
-          "Object?"
+          "Number?"
         ]
       ]
     },

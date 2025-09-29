@@ -41,7 +41,7 @@ function convertTypeToTypeScript(typeNode, options = {}) {
     throw new Error(`convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`);
   }
   
-  const { currentClass = null, isInsideNamespace = false, inGlobalMode = false } = options;
+  const { currentClass = null, isInsideNamespace = false, inGlobalMode = false, isConstantDef = false } = options;
   
   switch (typeNode.type) {
     case 'NameExpression': {
@@ -87,7 +87,11 @@ function convertTypeToTypeScript(typeNode, options = {}) {
         if (inGlobalMode) {
           return `typeof P5.${typeName}`;
         } else if (typedefs[typeName]) {
-          return convertTypeToTypeScript(typedefs[typeName], options);
+          if (isConstantDef) {
+            return convertTypeToTypeScript(typedefs[typeName], options);
+          } else {
+            return `typeof p5.${typeName}`
+          }
         } else {
           return `Symbol`;
         }
@@ -454,7 +458,7 @@ function generateTypeDefinitions() {
       output += formatJSDocComment(constant.description, 0) + '\n';
       output += ' */\n';
     }
-    const type = convertTypeToTypeScript(constant.type, { isInsideNamespace: false });
+    const type = convertTypeToTypeScript(constant.type, { isInsideNamespace: false, isConstantDef: true });
     const isMutable = mutableProperties.has(constant.name);
     const declaration = isMutable ? 'declare let' : 'declare const';
     output += `${declaration} ${constant.name}: ${type};\n\n`;
