@@ -541,63 +541,130 @@ export class Font {
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
-    const contours = this.textToContours(str, x, y, width, height, options);
+    // Step 1: generate glyph contours
+    let contours = this.textToContours(str, x, y, width, height, options);
+    if (!Array.isArray(contours[0][0])) {
+      contours = [contours];
+    }
 
+    // Step 2: build base flat geometry
     const geom = this._pInst.buildGeometry(() => {
-      if (extrude === 0) {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
+      const prevValidateFaces = this._pInst._renderer._validateFaces;
+      this._pInst._renderer._validateFaces = true;
+
+      contours.forEach(glyphContours => {
         this._pInst.beginShape();
-        this._pInst.normal(0, 0, 1);
-        for (const contour of contours) {
+        const outer = glyphContours[0];
+        outer.forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
+
+        for (let i = 1; i < glyphContours.length; i++) {
           this._pInst.beginContour();
-          for (const { x, y } of contour) {
-            this._pInst.vertex(x, y);
-          }
+          glyphContours[i].forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
           this._pInst.endContour(this._pInst.CLOSE);
         }
-        this._pInst.endShape();
-        this._pInst._renderer._validateFaces = prevValidateFaces;
-      } else {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
 
-        // Draw front faces
-        for (const side of [1, -1]) {
-          this._pInst.beginShape();
-          for (const contour of contours) {
-            this._pInst.beginContour();
-            for (const { x, y } of contour) {
-              this._pInst.vertex(x, y, side * extrude * 0.5);
-            }
-            this._pInst.endContour(this._pInst.CLOSE);
-          }
-          this._pInst.endShape();
-        }
-        this._pInst._renderer._validateFaces = prevValidateFaces;
+        this._pInst.endShape(this._pInst.CLOSE);
+      });
 
-        // Draw sides
-        for (const contour of contours) {
-          this._pInst.beginShape(this._pInst.QUAD_STRIP);
-          for (const v of contour) {
-            for (const side of [-1, 1]) {
-              this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
-            }
-          }
-          this._pInst.endShape();
-        }
-      }
+      this._pInst._renderer._validateFaces = prevValidateFaces;
     });
-    if (extrude !== 0) {
-      geom.computeNormals();
+
+    if (extrude === 0) {
+      console.log('No extrusion');
+      return geom;
+    }
+
+    // Step 3: Create extruded geometry with UNSHARED vertices for flat shading
+    const extruded = this._pInst.buildGeometry(() => {});
+    const half = extrude * 0.5;
+
+    extruded.vertices = [];
+    extruded.vertexNormals = [];
+    extruded.faces = [];
+
+    let vertexIndex = 0;
+
+    // Helper to add a triangle with flat normal
+    const addTriangle = (v0, v1, v2) => {
+      const edge1 = p5.Vector.sub(v1, v0);
+      const edge2 = p5.Vector.sub(v2, v0);
+      const normal = p5.Vector.cross(edge1, edge2);
+      if (normal.magSq() > 0.0001) {
+        normal.normalize();
+      } else {
+        normal.set(0, 0, 1);
+      }
+
+      // Add vertices (unshared - each triangle gets its own copies)
+      extruded.vertices.push(v0.copy(), v1.copy(), v2.copy());
+      extruded.vertexNormals.push(normal.copy(), normal.copy(), normal.copy());
+      extruded.faces.push([vertexIndex, vertexIndex + 1, vertexIndex + 2]);
+      vertexIndex += 3;
+    };
+
+    for (const face of geom.faces) {
+      if (face.length < 3) continue;
+      const v0 = geom.vertices[face[0]];
+      for (let i = 1; i < face.length - 1; i++) {
+        const v1 = geom.vertices[face[i]];
+        const v2 = geom.vertices[face[i + 1]];
+        addTriangle(
+          new p5.Vector(v0.x, v0.y, v0.z + half),
+          new p5.Vector(v1.x, v1.y, v1.z + half),
+          new p5.Vector(v2.x, v2.y, v2.z + half)
+        );
+      }
+    }
+
+    for (const face of geom.faces) {
+      if (face.length < 3) continue;
+      const v0 = geom.vertices[face[0]];
+      for (let i = 1; i < face.length - 1; i++) {
+        const v1 = geom.vertices[face[i]];
+        const v2 = geom.vertices[face[i + 1]];
+        addTriangle(
+          new p5.Vector(v0.x, v0.y, v0.z - half),
+          new p5.Vector(v2.x, v2.y, v2.z - half),
+          new p5.Vector(v1.x, v1.y, v1.z - half)
+        );
+      }
+    }
+
+    // Side faces from edges
+    let edges = geom.edges;
+    if (!edges || !Array.isArray(edges)) {
+      edges = [];
+      const edgeSet = new Set();
       for (const face of geom.faces) {
-        if (face.every(idx => geom.vertices[idx].z <= -extrude * 0.5 + 0.1 || geom.vertices[idx].z >= extrude * 0.5 - 0.1)) {
-          for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
-          face.reverse();
+        for (let i = 0; i < face.length; i++) {
+          const a = face[i];
+          const b = face[(i + 1) % face.length];
+          if (a === b) continue;
+          const key = a < b ? `${a},${b}` : `${b},${a}`;
+          if (!edgeSet.has(key)) {
+            edgeSet.add(key);
+            edges.push([a, b]);
+          }
         }
       }
     }
-    return geom;
+
+    const validEdges = edges.filter(([a, b]) => a !== b);
+
+    for (const [a, b] of validEdges) {
+      const v0 = geom.vertices[a];
+      const v1 = geom.vertices[b];
+
+      const vFront0 = new p5.Vector(v0.x, v0.y, v0.z + half);
+      const vFront1 = new p5.Vector(v1.x, v1.y, v1.z + half);
+      const vBack0 = new p5.Vector(v0.x, v0.y, v0.z - half);
+      const vBack1 = new p5.Vector(v1.x, v1.y, v1.z - half);
+
+      // Two triangles forming the side quad
+      addTriangle(vFront0, vFront1, vBack1);
+      addTriangle(vFront0, vBack1, vBack0);
+    }
+    return extruded;
   }
 
   variations() {
