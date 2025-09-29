@@ -61,15 +61,15 @@ export function descriptionStringForTypeScript(node, parent) {
     return node.value;
   } else if (node.type === 'paragraph') {
     const content = node.children.map(n => descriptionStringForTypeScript(n, node)).join('');
-    return content; // Skip HTML tags for TypeScript
+    return content + '\n\n'; // Skip HTML tags for TypeScript
   } else if (node.type === 'code') {
     return `\`${node.value}\``;
   } else if (node.type === 'inlineCode') {
     return `\`${node.value}\``;
   } else if (node.type === 'list') {
-    return node.children.map(n => descriptionStringForTypeScript(n, node)).join('');
+    return node.children.map(n => descriptionStringForTypeScript(n, node)).join('') + '\n';
   } else if (node.type === 'listItem') {
-    return '- ' + node.children.map(n => descriptionStringForTypeScript(n, node)).join('');
+    return '- ' + node.children.map(n => descriptionStringForTypeScript(n, node)).join('') + '\n';
   } else if (node.value) {
     return node.value;
   } else if (node.children) {
