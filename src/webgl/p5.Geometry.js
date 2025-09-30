@@ -2550,6 +2550,13 @@ function geometry(p5, fn){
    * </code>
    * </div>
    */
+
+  /**
+   * A unique identifier for this geometry. The renderer will use this to cache resources.
+   *
+   * @property {String} gid
+   * @for p5.Geometry
+   */
 }
 
 export default geometry;
