@@ -57,7 +57,7 @@ export const P2DHDR = 'p2d-hdr';
  *
  * To learn more about WEBGL mode, check out <a href="https://p5js.org/tutorials/#webgl">all the interactive WEBGL tutorials</a> in the "Tutorials" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
- * @typedef {'webgl2'} WEBGL
+ * @typedef {'webgl'} WEBGL
  * @property {WEBGL} WEBGL
  * @final
  */
