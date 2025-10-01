@@ -93,6 +93,23 @@ export function applyPatches() {
     'createVideo(src?: string | string[], callback?: (video: $1.MediaElement<HTMLVideoElement>) => any): $1.MediaElement<HTMLVideoElement>;',
   );
 
+  // Type returned objects
+  replace(
+    'p5.d.ts',
+    'calculateBoundingBox(): object;',
+    'calculateBoundingBox(): { min: p5.Vector; max: p5.Vector; size: p5.Vector; offset: p5.Vector };'
+  );
+  replace(
+    'p5.d.ts',
+    'fontBounds(str: string, x: number, y: number, width?: number, height?: number): object;',
+    'fontBounds(str: string, x: number, y: number, width?: number, height?: number): { x: number; y: number; w: number; h: number };',
+  );
+  replace(
+    'p5.d.ts',
+    'textBounds(str: string, x: number, y: number, width?: number, height?: number): object;',
+    'textBounds(str: string, x: number, y: number, width?: number, height?: number): { x: number; y: number; w: number; h: number };',
+  );
+
   for (const [path, data] of Object.entries(patched)) {
     try {
       console.log(`Patched ${path}`);

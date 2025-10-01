@@ -3505,9 +3505,8 @@
     },
     "time": {
       "overloads": [
-        [],
         [
-          "Number"
+          "Number?"
         ]
       ]
     },

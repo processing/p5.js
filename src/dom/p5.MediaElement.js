@@ -628,6 +628,7 @@ class MediaElement extends Element {
    *
    * Note: Time resets to 0 when looping media restarts.
    *
+   * @param {Number} [time] time to jump to (in seconds).
    * @return {Number} current time (in seconds).
    *
    * @example
@@ -704,17 +705,11 @@ class MediaElement extends Element {
    * </code>
    * </div>
    */
-  /**
-   * @param {Number} time time to jump to (in seconds).
-   * @chainable
-   */
   time(val) {
-    if (typeof val === 'undefined') {
-      return this.elt.currentTime;
-    } else {
+    if (typeof val !== 'undefined') {
       this.elt.currentTime = val;
-      return this;
     }
+    return this.elt.currentTime;
   }
 
   /**
