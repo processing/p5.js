@@ -135,6 +135,7 @@ class p5 {
         return;
       }
       p5.instance = this;
+      window.p5 = p5;
 
       // Loop through methods on the prototype and attach them to the window
       // All methods and properties with name starting with '_' will be skipped
