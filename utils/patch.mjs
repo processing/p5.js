@@ -93,6 +93,13 @@ export function applyPatches() {
     'createVideo(src?: string | string[], callback?: (video: $1.MediaElement<HTMLVideoElement>) => any): $1.MediaElement<HTMLVideoElement>;',
   );
 
+  // More callback types
+  replace(
+    ['p5.d.ts', 'global.d.ts'],
+    /createFileInput\(callback: Function, multiple\?: boolean\): ([pP]5)\.Element;/g,
+    'createFileInput(callback: (input: $1.File) => any, multiple?: boolean): $1.Element;',
+  );
+
   // Type returned objects
   replace(
     'p5.d.ts',
