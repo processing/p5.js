@@ -99,6 +99,11 @@ export function applyPatches() {
     /createFileInput\(callback: Function, multiple\?: boolean\): ([pP]5)\.Element;/g,
     'createFileInput(callback: (input: $1.File) => any, multiple?: boolean): $1.Element;',
   );
+  replace(
+    ['p5.d.ts', 'global.d.ts'],
+    /loadFont\((.+), successCallback\?: Function, (.+)\): Promise\<([pP]5)\.Font\>;/g,
+    'loadFont($1, successCallback: (font: $3.Font) => any, $2): Promise<$3.Font>;'
+  );
 
   // Type returned objects
   replace(
