@@ -773,7 +773,7 @@
     "createVideo": {
       "overloads": [
         [
-          "String|String[]",
+          "String|String[]?",
           "Function?"
         ]
       ]

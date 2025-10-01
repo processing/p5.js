@@ -1400,7 +1400,7 @@ function media(p5, fn){
    * the video is ready to play.
    *
    * @method createVideo
-   * @param  {String|String[]} src path to a video file, or an array of paths for
+   * @param  {String|String[]} [src] path to a video file, or an array of paths for
    *                               supporting different browsers.
    * @param  {Function} [callback] function to call once the video is ready to play.
    * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
@@ -1483,11 +1483,11 @@ function media(p5, fn){
    * `createAudio()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
    *
-   * The first parameter, `src`, is the path the video. If a single string is
-   * passed, as in `'assets/video.mp4'`, a single video is loaded. An array
-   * of strings can be used to load the same video in different formats. For
-   * example, `['assets/video.mp4', 'assets/video.ogv', 'assets/video.webm']`.
-   * This is useful for ensuring that the video can play across different
+   * The first parameter, `src`, is the path the audio. If a single string is
+   * passed, as in `'assets/audio.mp3'`, a single audio is loaded. An array
+   * of strings can be used to load the same audio in different formats. For
+   * example, `['assets/audio.mp3', 'assets/video.wav']`.
+   * This is useful for ensuring that the audio can play across different
    * browsers with different capabilities. See
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats" target="_blank">MDN</a>
    * for more information about supported formats.

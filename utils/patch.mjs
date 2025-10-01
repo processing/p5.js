@@ -74,6 +74,25 @@ export function applyPatches() {
     `,
   );
 
+  // Type .elt more specifically for audio and video elements
+  replace(
+    'p5.d.ts',
+    `class MediaElement extends Element {
+      elt: HTMLAudioElement | HTMLVideoElement;`,
+    `class MediaElement<T extends HTMLElement = HTMLAudioElement | HTMLVideoElement> extends Element {
+      elt: T;`,
+  );
+  replace(
+    ['p5.d.ts', 'global.d.ts'],
+    /createAudio\(src\?: string \| string\[\], callback\?: Function\): ([pP]5)\.MediaElement;/g,
+    'createAudio(src?: string | string[], callback?: (video: $1.MediaElement<HTMLAudioElement>) => any): $1.MediaElement<HTMLAudioElement>;',
+  );
+  replace(
+    ['p5.d.ts', 'global.d.ts'],
+    /createVideo\(src\?: string \| string\[\], callback\?: Function\): ([pP]5)\.MediaElement;/g,
+    'createVideo(src?: string | string[], callback?: (video: $1.MediaElement<HTMLVideoElement>) => any): $1.MediaElement<HTMLVideoElement>;',
+  );
+
   for (const [path, data] of Object.entries(patched)) {
     try {
       console.log(`Patched ${path}`);
