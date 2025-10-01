@@ -102,7 +102,7 @@ export function applyPatches() {
   replace(
     ['p5.d.ts', 'global.d.ts'],
     /loadFont\((.+), successCallback\?: Function, (.+)\): Promise\<([pP]5)\.Font\>;/g,
-    'loadFont($1, successCallback: (font: $3.Font) => any, $2): Promise<$3.Font>;'
+    'loadFont($1, successCallback?: (font: $3.Font) => any, $2): Promise<$3.Font>;'
   );
 
   // Type returned objects
@@ -120,6 +120,39 @@ export function applyPatches() {
     'p5.d.ts',
     'textBounds(str: string, x: number, y: number, width?: number, height?: number): object;',
     'textBounds(str: string, x: number, y: number, width?: number, height?: number): { x: number; y: number; w: number; h: number };',
+  );
+
+  // Document Typr
+  replace(
+    'p5.d.ts',
+    'class Font {',
+    `class Font {
+      /** The CSS name for the font. */
+      name: string;
+
+      /** The CSS FontFace definition for the font. */
+      face: FontFace;
+
+      /** Typr data for the font. */
+      data?: {
+        _data: Uint8Array;
+        GSUB: Record<string, any>;
+        'OS/2': Record<string, any>;
+        cmap: {
+          ids: Record<string, any>;
+          tables: Array<Record<string, any>>;
+          off: number;
+        };
+        glyf: Array<any>;
+        head: Record<string, any>;
+        hhea: Record<string, any>;
+        htmx: Record<string, any>;
+        loca: Array<number>;
+        maxp: Record<string, any>;
+        name: Record<string, any>;
+        post: Record<string, any>;
+      };
+    `
   );
 
   for (const [path, data] of Object.entries(patched)) {
