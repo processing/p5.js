@@ -1962,6 +1962,43 @@ function transform(p5, fn){
   fn.pop = function() {
     this._renderer.pop();
   };
+  /**
+   * Sets the coordinate system to a new viewport.
+   *
+   * Calling `setViewport(xmin, xmax, ymin, ymax)` remaps the canvas's
+   * coordinate system. The top-left corner of the canvas will be `(xmin, ymin)`
+   * and the bottom-right corner will be `(xmax, ymax)`.
+   *
+   * @method setViewport
+   * @param {Number} xmin The minimum x-value of the viewport.
+   * @param {Number} xmax The maximum x-value of the viewport.
+   * @param {Number} ymin The minimum y-value of the viewport.
+   * @param {Number} ymax The maximum y-value of the viewport.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(400, 400);
+   *   setViewport(-200, 200, -200, 200);
+   *   background(240);
+   *   // Draw a horizontal line through the center
+   *   line(-200, 0, 200, 0);
+   *   // Draw a vertical line through the center
+   *   line(0, -200, 0, 200);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.setViewport = function(xmin, xmax, ymin, ymax) {
+    this.resetMatrix();
+    const scaleX = this.width / (xmax - xmin);
+    const scaleY = this.height / (ymax - ymin);
+    this.scale(scaleX, scaleY);
+    this.translate(-xmin, -ymin);
+    return this;
+  };
 }
 
 export default transform;
