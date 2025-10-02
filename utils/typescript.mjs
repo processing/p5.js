@@ -119,7 +119,36 @@ function processStrandsFunctions() {
     }
   }
 
-  return [...strandsMethods, ...uniformMethods];
+  // Add type casting functions (DataType constructor functions)
+  const typeCastingMethods = [];
+  for (const type in DataType) {
+    if (type === 'defer' || !DataType[type].fnName) {
+      continue;
+    }
+
+    const typeInfo = DataType[type];
+    const castingMethod = {
+      name: typeInfo.fnName,
+      overloads: [{
+        params: [
+          {
+            name: 'value',
+            type: { type: 'NameExpression', name: 'any' },
+            optional: false
+          }
+        ],
+        return: {
+          type: { type: 'NameExpression', name: 'any' }
+        }
+      }],
+      description: `GLSL type constructor for ${typeInfo.fnName}`,
+      static: false
+    };
+
+    typeCastingMethods.push(castingMethod);
+  }
+
+  return [...strandsMethods, ...uniformMethods, ...typeCastingMethods];
 }
 
 // TypeScript-specific type conversion from raw type objects
