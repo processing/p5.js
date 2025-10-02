@@ -1,7 +1,6 @@
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
-
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
@@ -9,7 +8,6 @@ function shouldCreateTemp(dag, nodeID) {
   const uses = dag.usedBy[nodeID] || [];
   return uses.length > 1;
 }
-
 const TypeNames = {
   'float1': 'float',
   'float2': 'vec2',
@@ -27,11 +25,9 @@ const TypeNames = {
   'mat3': 'mat3x3',
   'mat4': 'mat4x4',
 }
-
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
     const { dag, cfg } = strandsContext;
-
     const instructions = cfg.blockInstructions[blockID] || [];
     for (const nodeID of instructions) {
       const nodeType = dag.nodeTypes[nodeID];
@@ -47,135 +43,69 @@ const cfgHandlers = {
       }
     }
   },
-
   [BlockType.BRANCH](blockID, strandsContext, generationContext) {
-    console.log(`Processing BRANCH block ${blockID}`);
     const { dag, cfg } = strandsContext;
-    
     // Find all phi nodes in this branch block and declare them
     const blockInstructions = cfg.blockInstructions[blockID] || [];
-    console.log(`Instructions in branch block ${blockID}:`, blockInstructions);
-
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
-      console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
-
       if (node.nodeType === NodeType.PHI) {
-        // Create a temporary variable for this phi node
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
-
-        console.log(`Declared phi temp variable: ${tmp} for node ${nodeID}`);
-
         const T = extractNodeTypeInfo(dag, nodeID);
         const typeName = glslBackend.getTypeName(T.baseType, T.dimension);
-
-        // Declare the temporary variable
         generationContext.write(`${typeName} ${tmp};`);
       }
     }
-    
-    // Execute the default block handling for any remaining instructions in this block
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
     const condExpr = glslBackend.generateExpression(generationContext, dag, conditionID);
-
     generationContext.write(`if (${condExpr})`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-
   [BlockType.ELSE_COND](blockID, strandsContext, generationContext) {
     generationContext.write(`else`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-
   [BlockType.IF_BODY](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-    // Assign values to phi nodes that this branch feeds into
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
   },
-
-
   [BlockType.ELSE_BODY](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-    // Assign values to phi nodes that this branch feeds into
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
   },
-
   [BlockType.SCOPE_START](blockID, strandsContext, generationContext) {
     generationContext.write(`{`);
     generationContext.indent++;
   },
-
   [BlockType.SCOPE_END](blockID, strandsContext, generationContext) {
     generationContext.indent--;
     generationContext.write(`}`);
   },
-
   [BlockType.MERGE](blockID, strandsContext, generationContext) {
-    return this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-    const { dag, cfg } = strandsContext;
-
-    // Handle phi nodes specially in merge blocks
-    const instructions = cfg.blockInstructions[blockID] || [];
-    for (const nodeID of instructions) {
-      const node = getNodeDataFromID(dag, nodeID);
-
-      if (node.nodeType !== NodeType.PHI) {
-        debugger
-        console.log(`Handling node in merge block`)
-        // Handle non-phi nodes normally
-        const nodeType = dag.nodeTypes[nodeID];
-        if (shouldCreateTemp(dag, nodeID)) {
-          const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
-          generationContext.write(declaration);
-        }
-        if (nodeType === NodeType.STATEMENT) {
-          glslBackend.generateStatement(generationContext, dag, nodeID);
-        }
-      }
-    }
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-
   [BlockType.FUNCTION](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
-
   assignPhiNodeValues(blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
-
-    console.log(`assignPhiNodeValues called for blockID: ${blockID}`);
-
     // Find all phi nodes that this block feeds into
     const successors = cfg.outgoingEdges[blockID] || [];
-    console.log(`Successors for block ${blockID}:`, successors);
-
     for (const successorBlockID of successors) {
       const instructions = cfg.blockInstructions[successorBlockID] || [];
-      console.log(`Instructions in successor block ${successorBlockID}:`, instructions);
-
       for (const nodeID of instructions) {
         const node = getNodeDataFromID(dag, nodeID);
-        console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
-
         if (node.nodeType === NodeType.PHI) {
-          console.log(`Found phi node ${nodeID} with phiBlocks:`, node.phiBlocks, 'dependsOn:', node.dependsOn);
-
           // Find which input of this phi node corresponds to our block
-          // The phiBlocks array maps to the dependsOn array
           const branchIndex = node.phiBlocks?.indexOf(blockID);
-          console.log(`branchIndex for block ${blockID}:`, branchIndex);
-
           if (branchIndex !== -1 && branchIndex < node.dependsOn.length) {
             const sourceNodeID = node.dependsOn[branchIndex];
             const tempName = generationContext.tempNames[nodeID];
-
-            console.log(`Assigning phi node: ${tempName} = source ${sourceNodeID}`);
-
             if (tempName && sourceNodeID !== null) {
               const sourceExpr = glslBackend.generateExpression(generationContext, dag, sourceNodeID);
               generationContext.write(`${tempName} = ${sourceExpr};`);
@@ -185,43 +115,7 @@ const cfgHandlers = {
       }
     }
   },
-
-  declarePhiNodesForConditional(blockID, strandsContext, generationContext) {
-    const { dag, cfg } = strandsContext;
-
-    console.log(`declarePhiNodesForConditional called for blockID: ${blockID}`);
-
-    // Find all phi nodes in the merge blocks that this conditional feeds into
-    const successors = cfg.outgoingEdges[blockID] || [];
-    console.log(`Successors for conditional block ${blockID}:`, successors);
-
-    for (const successorBlockID of successors) {
-      const blockInstructions = cfg.blockInstructions[successorBlockID] || [];
-      console.log(`Instructions in merge block ${successorBlockID}:`, blockInstructions);
-
-      for (const nodeID of blockInstructions) {
-        const node = getNodeDataFromID(dag, nodeID);
-        console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
-
-        if (node.nodeType === NodeType.PHI) {
-          // Create a temporary variable for this phi node
-          const tmp = `T${generationContext.nextTempID++}`;
-          generationContext.tempNames[nodeID] = tmp;
-
-          console.log(`Declared phi temp variable: ${tmp} for node ${nodeID}`);
-
-          const T = extractNodeTypeInfo(dag, nodeID);
-          const typeName = glslBackend.getTypeName(T.baseType, T.dimension);
-
-          // Declare the temporary variable
-          generationContext.write(`${typeName} ${tmp};`);
-        }
-      }
-    }
-  }
 }
-
-
 export const glslBackend = {
   hookEntry(hookType) {
     const firstLine = `(${hookType.parameters.flatMap((param) => {
@@ -229,7 +123,6 @@ export const glslBackend = {
     }).join(', ')}) {`;
     return firstLine;
   },
-
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {
@@ -237,42 +130,34 @@ export const glslBackend = {
     }
     return primitiveTypeName;
   },
-
   generateUniformDeclaration(name, typeInfo) {
     return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
   },
-
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
     if (node.statementType === OpCode.ControlFlow.DISCARD) {
       generationContext.write('discard;');
     }
   },
-
   generateAssignment(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
     // dependsOn[0] = phiNodeID, dependsOn[1] = sourceNodeID
     const phiNodeID = node.dependsOn[0];
     const sourceNodeID = node.dependsOn[1];
-    
     const phiTempName = generationContext.tempNames[phiNodeID];
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
-    
     if (phiTempName && sourceExpr) {
       generationContext.write(`${phiTempName} = ${sourceExpr};`);
     }
   },
-
   generateDeclaration(generationContext, dag, nodeID) {
     const expr = this.generateExpression(generationContext, dag, nodeID);
     const tmp = `T${generationContext.nextTempID++}`;
     generationContext.tempNames[nodeID] = tmp;
-
     const T = extractNodeTypeInfo(dag, nodeID);
     const typeName = this.getTypeName(T.baseType, T.dimension);
     return `${typeName} ${tmp} = ${expr};`;
   },
-
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
@@ -290,7 +175,6 @@ export const glslBackend = {
     }
     generationContext.write(`return ${this.generateExpression(generationContext, dag, rootNodeID)};`);
   },
-
   generateExpression(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
     if (generationContext.tempNames?.[nodeID]) {
@@ -304,10 +188,8 @@ export const glslBackend = {
       else {
         return node.value;
       }
-
       case NodeType.VARIABLE:
       return node.identifier;
-
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
@@ -380,15 +262,12 @@ export const glslBackend = {
           }
         }
       }
-
       case NodeType.ASSIGNMENT:
       FES.internalError(`ASSIGNMENT nodes should not be used as expressions`)
-
       default:
       FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
     }
   },
-
   generateBlock(blockID, strandsContext, generationContext) {
     const type = strandsContext.cfg.blockTypes[blockID];
     const handler = cfgHandlers[type] || cfgHandlers[BlockType.DEFAULT];

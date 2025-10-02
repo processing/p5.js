@@ -11,11 +11,9 @@ export const NodeType = {
   STATEMENT: 'statement',
   ASSIGNMENT: 'assignment',
 };
-
 export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );
-
 export const NodeTypeRequiredFields = {
   [NodeType.OPERATION]: ["opCode", "dependsOn", "dimension", "baseType"],
   [NodeType.LITERAL]: ["value", "dimension", "baseType"],
@@ -26,11 +24,9 @@ export const NodeTypeRequiredFields = {
   [NodeType.STATEMENT]: ["opCode"],
   [NodeType.ASSIGNMENT]: ["dependsOn"]
 };
-
 export const StatementType = {
   DISCARD: 'discard',
 };
-
 export const BaseType = {
   FLOAT: "float",
   INT: "int",
@@ -39,7 +35,6 @@ export const BaseType = {
   DEFER: "defer",
   SAMPLER2D: "sampler2D",
 };
-
 export const BasePriority = {
   [BaseType.FLOAT]: 3,
   [BaseType.INT]: 2,
@@ -48,7 +43,6 @@ export const BasePriority = {
   [BaseType.DEFER]: -1,
   [BaseType.SAMPLER2D]: -10,
 };
-
 export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
   float2: { fnName: "vec2", baseType: BaseType.FLOAT, dimension:2, priority: 3,  },
@@ -84,31 +78,25 @@ export const structType = function (hookType) {
   }
   return structType;
 };
-
 export function isStructType(typeName) {
   return !isNativeType(typeName);
 }
-
 export function isNativeType(typeName) {
   return Object.keys(DataType).includes(typeName);
 }
-
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
   INT: { baseType: BaseType.INT, dimension: null, priority: 2 },
   BOOL: { baseType: BaseType.BOOL, dimension: null, priority: 1 },
 }
-
 export function typeEquals(nodeA, nodeB) {
   return (nodeA.dimension === nodeB.dimension) && (nodeA.baseType === nodeB.baseType);
 }
-
 export const TypeInfoFromGLSLName = Object.fromEntries(
   Object.values(DataType)
     .filter(info => info.fnName !== null)
     .map(info => [info.fnName === 'texture' ? 'sampler2D' : info.fnName, info])
 );
-
 export const OpCode = {
   Binary: {
     ADD: 0,
@@ -143,7 +131,6 @@ export const OpCode = {
     DISCARD: 303,
   }
 };
-
 export const OperatorTable = [
   { arity: "unary", name: "not", symbol: "!", opCode: OpCode.Unary.LOGICAL_NOT },
   { arity: "unary", name: "neg", symbol: "-", opCode: OpCode.Unary.NEGATE },
@@ -162,7 +149,6 @@ export const OperatorTable = [
   { arity: "binary", name: "and", symbol: "&&", opCode: OpCode.Binary.LOGICAL_AND },
   { arity: "binary", name: "or", symbol: "||", opCode: OpCode.Binary.LOGICAL_OR },
 ];
-
 export const ConstantFolding = {
   [OpCode.Binary.ADD]: (a, b) => a + b,
   [OpCode.Binary.SUBTRACT]: (a, b) => a - b,
@@ -178,12 +164,10 @@ export const ConstantFolding = {
   [OpCode.Binary.LOGICAL_AND]: (a, b) => a && b,
   [OpCode.Binary.LOGICAL_OR]: (a, b) => a || b,
 };
-
 // export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
 export const UnarySymbolToName = {};
 export const BinarySymbolToName = {};
-
 for (const { symbol, opCode, name, arity } of OperatorTable) {
   // SymbolToOpCode[symbol] = opCode;
   OpCodeToSymbol[opCode] = symbol;
@@ -194,7 +178,6 @@ for (const { symbol, opCode, name, arity } of OperatorTable) {
     BinarySymbolToName[symbol] = name;
   }
 }
-
 export const BlockType = {
   GLOBAL: 'global',
   FUNCTION: 'function',
@@ -209,7 +192,6 @@ export const BlockType = {
   MERGE: 'merge',
   DEFAULT: 'default',
 }
-
 export const BlockTypeToName = Object.fromEntries(
   Object.entries(BlockType).map(([key, val]) => [val, key])
 );

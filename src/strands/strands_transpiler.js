@@ -2,9 +2,7 @@ import { parse } from 'acorn';
 import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
-
 let blockVarCounter = 0;
-
 function replaceBinaryOperator(codeSource) {
   switch (codeSource) {
     case '+': return 'add';
@@ -21,7 +19,6 @@ function replaceBinaryOperator(codeSource) {
     case '||': return 'or';
   }
 }
-
 function nodeIsUniform(ancestor) {
   return ancestor.type === 'CallExpression'
     && (
@@ -36,12 +33,9 @@ function nodeIsUniform(ancestor) {
       )
     );
 }
-
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
-
-
     const unaryFnName = UnarySymbolToName[node.operator];
     const standardReplacement = (node) => {
       node.type = 'CallExpression'
@@ -51,7 +45,6 @@ const ASTCallbacks = {
       }
       node.arguments = [node.argument]
     }
-
     if (node.type === 'MemberExpression') {
       const property = node.argument.property.name;
       const swizzleSets = [
@@ -59,11 +52,9 @@ const ASTCallbacks = {
         ['r', 'g', 'b', 'a'],
         ['s', 't', 'p', 'q']
       ];
-
       let isSwizzle = swizzleSets.some(set =>
         [...property].every(char => set.includes(char))
       ) && node.argument.type === 'MemberExpression';
-
       if (isSwizzle) {
         node.type = 'MemberExpression';
         node.object = {
@@ -210,11 +201,9 @@ const ASTCallbacks = {
     },
     IfStatement(node, _state, ancestors) {
       if (ancestors.some(nodeIsUniform)) { return; }
-
       // Transform if statement into strandsIf() call
       // The condition is evaluated directly, not wrapped in a function
       const condition = node.test;
-
       // Create the then function
       const thenFunction = {
         type: 'ArrowFunctionExpression',
@@ -224,7 +213,6 @@ const ASTCallbacks = {
           body: [node.consequent]
         }
       };
-
       // Start building the call chain: __p5.strandsIf(condition, then)
       let callExpression = {
         type: 'CallExpression',
@@ -234,7 +222,6 @@ const ASTCallbacks = {
         },
         arguments: [condition, thenFunction]
       };
-
       // Always chain .Else() even if there's no explicit else clause
       // This ensures the conditional completes and returns phi nodes
       let elseFunction;
@@ -258,7 +245,6 @@ const ASTCallbacks = {
           }
         };
       }
-
       callExpression = {
         type: 'CallExpression',
         callee: {
@@ -271,13 +257,10 @@ const ASTCallbacks = {
         },
         arguments: [elseFunction]
       };
-
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
-      
       const analyzeBlock = (body) => {
         if (body.type !== 'BlockStatement') return;
-        
         // First pass: collect variable declarations within this block
         const localVars = new Set();
         for (const stmt of body.body) {
@@ -289,13 +272,11 @@ const ASTCallbacks = {
             }
           }
         }
-        
         // Second pass: find assignments to non-local variables
         for (const stmt of body.body) {
           if (stmt.type === 'ExpressionStatement' && 
               stmt.expression.type === 'AssignmentExpression') {
             const left = stmt.expression.left;
-            
             if (left.type === 'Identifier') {
               // Direct variable assignment: x = value
               if (!localVars.has(left.name)) {
@@ -311,11 +292,9 @@ const ASTCallbacks = {
           }
         }
       };
-      
       // Analyze all branches for assignments to outer scope variables
       analyzeBlock(thenFunction.body);
       analyzeBlock(elseFunction.body);
-      
       if (assignedVars.size > 0) {
         // Add copying, reference replacement, and return statements to branch functions
         const addCopyingAndReturn = (functionBody, varsToReturn) => {
@@ -323,11 +302,9 @@ const ASTCallbacks = {
             // Create temporary variables and copy statements
             const tempVarMap = new Map(); // original name -> temp name
             const copyStatements = [];
-            
             for (const varName of varsToReturn) {
               const tempName = `__copy_${varName}_${blockVarCounter++}`;
               tempVarMap.set(varName, tempName);
-              
               // let tempName = originalVar.copy()
               copyStatements.push({
                 type: 'VariableDeclaration',
@@ -348,11 +325,9 @@ const ASTCallbacks = {
                 kind: 'let'
               });
             }
-            
             // Replace all references to original variables with temp variables
             const replaceReferences = (node) => {
               if (!node || typeof node !== 'object') return;
-              
               if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
                 node.name = tempVarMap.get(node.name);
               } else if (node.type === 'MemberExpression' && 
@@ -360,7 +335,6 @@ const ASTCallbacks = {
                          tempVarMap.has(node.object.name)) {
                 node.object.name = tempVarMap.get(node.object.name);
               }
-              
               // Recursively process all properties
               for (const key in node) {
                 if (node.hasOwnProperty(key) && key !== 'parent') {
@@ -372,13 +346,10 @@ const ASTCallbacks = {
                 }
               }
             };
-            
             // Apply reference replacement to all statements
             functionBody.body.forEach(replaceReferences);
-            
             // Insert copy statements at the beginning
             functionBody.body.unshift(...copyStatements);
-            
             // Add return statement with temp variable names
             const returnObj = {
               type: 'ObjectExpression',
@@ -391,25 +362,20 @@ const ASTCallbacks = {
                 shorthand: false
               }))
             };
-            
             functionBody.body.push({
               type: 'ReturnStatement',
               argument: returnObj
             });
           }
         };
-        
         addCopyingAndReturn(thenFunction.body, assignedVars);
         addCopyingAndReturn(elseFunction.body, assignedVars);
-        
         // Create a block variable to capture the return value
         const blockVar = `__block_${blockVarCounter++}`;
-        
         // Replace with a block statement containing:
         // 1. The conditional call assigned to block variable
         // 2. Assignments from block variable back to original variables
         const statements = [];
-        
         // 1. const blockVar = strandsIf().Else()
         statements.push({
           type: 'VariableDeclaration',
@@ -420,7 +386,6 @@ const ASTCallbacks = {
           }],
           kind: 'const'
         });
-        
         // 2. Assignments for each modified variable
         for (const varName of assignedVars) {
           statements.push({
@@ -438,7 +403,6 @@ const ASTCallbacks = {
             }
           });
         }
-        
         // Replace the if statement with a block statement
         node.type = 'BlockStatement';
         node.body = statements;
@@ -447,24 +411,20 @@ const ASTCallbacks = {
         node.type = 'ExpressionStatement';
         node.expression = callExpression;
       }
-      
       delete node.test;
       delete node.consequent;
       delete node.alternate;
     },
   }
-
   export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
     });
-    
     // First pass: transform everything except if statements using normal ancestor traversal
     const nonIfCallbacks = { ...ASTCallbacks };
     delete nonIfCallbacks.IfStatement;
     ancestor(ast, nonIfCallbacks, undefined, { varyings: {} });
-    
     // Second pass: transform if statements in post-order using recursive traversal
     const postOrderIfTransform = {
       IfStatement(node, state, c) {
@@ -472,14 +432,11 @@ const ASTCallbacks = {
         if (node.test) c(node.test, state);
         if (node.consequent) c(node.consequent, state);
         if (node.alternate) c(node.alternate, state);
-        
         // Then apply the transformation to this node
         ASTCallbacks.IfStatement(node, state, []);
       }
     };
-    
     recursive(ast, { varyings: {} }, postOrderIfTransform);
-    
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
     const internalStrandsCallback = new Function(
@@ -498,4 +455,3 @@ const ASTCallbacks = {
     console.log(internalStrandsCallback.toString())
     return () => internalStrandsCallback(p5, ...scopeKeys.map(key => scope[key]));
   }
-
