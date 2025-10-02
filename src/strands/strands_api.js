@@ -15,25 +15,12 @@ import { StrandsConditional } from './strands_conditionals'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
+import { StrandsNode, createStrandsNode } from './strands_node'
 import noiseGLSL from '../webgl/shaders/functions/noiseGLSL.glsl';
 
 //////////////////////////////////////////////
 // User nodes
 //////////////////////////////////////////////
-export class StrandsNode {
-  constructor(id, dimension, strandsContext) {
-    this.id = id;
-    this.strandsContext = strandsContext;
-    this.dimension = dimension;
-  }
-}
-
-export function createStrandsNode(id, dimension, strandsContext, onRebind) {
-  return new Proxy(
-    new StrandsNode(id, dimension, strandsContext),
-    build.swizzleTrap(id, dimension, strandsContext, onRebind)
-  );
-}
 
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // We augment the strands node with operations programatically
@@ -65,13 +52,18 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return createStrandsNode(node.id, node.dimension, strandsContext);
   }
 
-  fn.strandsIf = function(conditionNode, ifBody) {
+  // Internal methods use p5 static methods; user-facing methods use fn.
+  // Some methods need to be used by both.
+
+  p5.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
+  fn.strandsIf = p5.strandsIf;
 
-  fn.strandsLoop = function(a, b, loopBody) {
+  p5.strandsLoop = function(a, b, loopBody) {
     return null;
   }
+  fn.strandsLoop = p5.strandsLoop;
 
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {

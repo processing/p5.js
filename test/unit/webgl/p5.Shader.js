@@ -438,5 +438,300 @@ suite('p5.Shader', function() {
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
     });
+
+    suite('if statement conditionals', () => {
+      it('should handle simple if statement with true condition', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 1.0); // true condition
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            
+            if (condition > 0.5) {
+              color = myp5.float(1.0); // set to white in if branch
+            }
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is white (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(255, 0); // Red channel should be 255 (white)
+        expect(pixelColor[1]).toBeCloseTo(255, 0); // Green channel should be 255
+        expect(pixelColor[2]).toBeCloseTo(255, 0); // Blue channel should be 255
+      });
+
+      it('should handle simple if statement with false condition', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 0.0); // false condition
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            
+            if (condition > 0.5) {
+              color = myp5.float(1.0); // set to white in if branch
+            }
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is gray (condition was false, original value kept)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(127, 5); // Red channel should be ~127 (gray)
+        expect(pixelColor[1]).toBeCloseTo(127, 5); // Green channel should be ~127
+        expect(pixelColor[2]).toBeCloseTo(127, 5); // Blue channel should be ~127
+      });
+
+      it('should handle if-else statement', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 0.0); // false condition
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            
+            if (condition > 0.5) {
+              color = myp5.float(1.0); // white for true
+            } else {
+              color = myp5.float(0.0); // black for false
+            }
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is black (else branch executed)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(0, 5); // Red channel should be ~0 (black)
+        expect(pixelColor[1]).toBeCloseTo(0, 5); // Green channel should be ~0
+        expect(pixelColor[2]).toBeCloseTo(0, 5); // Blue channel should be ~0
+      });
+
+      it('should handle multiple variable assignments in if statement', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 1.0); // true condition
+          
+          myp5.getPixelInputs(inputs => {
+            let red = myp5.float(0.0);
+            let green = myp5.float(0.0);
+            let blue = myp5.float(0.0);
+            
+            if (condition > 0.5) {
+              red = myp5.float(1.0);
+              green = myp5.float(0.5);
+              blue = myp5.float(0.0);
+            }
+            
+            inputs.color = [red, green, blue, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel has the expected color (red=1.0, green=0.5, blue=0.0)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(255, 0); // Red channel should be 255
+        expect(pixelColor[1]).toBeCloseTo(127, 5); // Green channel should be ~127
+        expect(pixelColor[2]).toBeCloseTo(0, 5);   // Blue channel should be ~0
+      });
+
+      it('should handle modifications after if statement', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 1.0); // true condition
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0); // start with black
+            
+            if (condition > 0.5) {
+              color = myp5.float(1.0); // set to white in if branch
+            } else {
+              color = myp5.float(0.5); // set to gray in else branch
+            }
+            
+            // Modify the color after the if statement
+            color = color * 0.5; // Should result in 0.5 * 1.0 = 0.5 (gray)
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is gray (white * 0.5 = gray)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(127, 5); // Red channel should be ~127 (gray)
+        expect(pixelColor[1]).toBeCloseTo(127, 5); // Green channel should be ~127
+        expect(pixelColor[2]).toBeCloseTo(127, 5); // Blue channel should be ~127
+      });
+
+      it('should handle modifications after if statement in both branches', () => {
+        myp5.createCanvas(100, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const uv = inputs.uv;
+            const condition = uv.x > 0.5; // left half false, right half true
+            let color = myp5.float(0.0);
+            
+            if (condition) {
+              color = myp5.float(1.0); // white on right side
+            } else {
+              color = myp5.float(0.8); // light gray on left side
+            }
+            
+            // Multiply by 0.5 after the if statement
+            color = color * 0.5;
+            // Right side: 1.0 * 0.5 = 0.5 (medium gray)
+            // Left side: 0.8 * 0.5 = 0.4 (darker gray)
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check left side (false condition)
+        const leftPixel = myp5.get(25, 25);
+        expect(leftPixel[0]).toBeCloseTo(102, 10); // 0.4 * 255 ≈ 102
+        
+        // Check right side (true condition)
+        const rightPixel = myp5.get(75, 25);
+        expect(rightPixel[0]).toBeCloseTo(127, 10); // 0.5 * 255 ≈ 127
+      });
+
+      it('should handle if-else-if chains', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const value = myp5.uniformFloat(() => 0.5); // middle value
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0);
+            
+            if (value > 0.8) {
+              color = myp5.float(1.0); // white for high values
+            } else if (value > 0.3) {
+              color = myp5.float(0.5); // gray for medium values
+            } else {
+              color = myp5.float(0.0); // black for low values
+            }
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is gray (medium condition was true)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(127, 5); // Red channel should be ~127 (gray)
+        expect(pixelColor[1]).toBeCloseTo(127, 5); // Green channel should be ~127
+        expect(pixelColor[2]).toBeCloseTo(127, 5); // Blue channel should be ~127
+      });
+
+      it('should handle nested if statements', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const outerCondition = myp5.uniformFloat(() => 1.0); // true
+          const innerCondition = myp5.uniformFloat(() => 1.0); // true
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0);
+            
+            if (outerCondition > 0.5) {
+              if (innerCondition > 0.5) {
+                color = myp5.float(1.0); // white for both conditions true
+              } else {
+                color = myp5.float(0.5); // gray for outer true, inner false
+              }
+            } else {
+              color = myp5.float(0.0); // black for outer false
+            }
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is white (both conditions were true)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(255, 0); // Red channel should be 255 (white)
+        expect(pixelColor[1]).toBeCloseTo(255, 0); // Green channel should be 255
+        expect(pixelColor[2]).toBeCloseTo(255, 0); // Blue channel should be 255
+      });
+
+      // Keep one direct API test for completeness
+      it('should handle direct StrandsIf API usage', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const conditionValue = myp5.uniformFloat(() => 1.0); // true condition
+          
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            
+            const assignments = myp5.strandsIf(
+              conditionValue,
+              () => {
+                let tmp = color.copy();
+                tmp = myp5.float(1.0); // set to white in if branch
+                return { color: tmp };
+              }
+            ).Else(() => {
+              return { color: color }; // keep original in else branch
+            });
+            
+            color = assignments.color;
+            
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        
+        // Check that the center pixel is white (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        expect(pixelColor[0]).toBeCloseTo(255, 0); // Red channel should be 255 (white)
+        expect(pixelColor[1]).toBeCloseTo(255, 0); // Green channel should be 255
+        expect(pixelColor[2]).toBeCloseTo(255, 0); // Blue channel should be 255
+      });
+    });
   });
 });

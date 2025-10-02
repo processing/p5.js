@@ -200,6 +200,23 @@ export const glslBackend = {
         const sym  = OpCodeToSymbol[node.opCode];
         return `${sym}${val}`;
       }
+      case NodeType.PHI:
+      // Phi nodes represent conditional merging of values
+      // For now, just use the first valid input as a simple implementation
+      // TODO: Implement proper phi node control flow
+      const validInputs = node.dependsOn.filter(id => id !== null);
+      if (validInputs.length > 0) {
+        return this.generateExpression(generationContext, dag, validInputs[0]);
+      } else {
+        // Fallback: create a default value
+        const typeName = this.getTypeName(node.baseType, node.dimension);
+        if (node.dimension === 1) {
+          return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+        } else {
+          return `${typeName}(0.0)`;
+        }
+      }
+      
       default:
       FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
     }

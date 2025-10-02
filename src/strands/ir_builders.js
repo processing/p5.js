@@ -2,7 +2,7 @@ import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, } from './ir_types';
-import { createStrandsNode, StrandsNode } from './strands_api';
+import { createStrandsNode, StrandsNode } from './strands_node';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
 //////////////////////////////////////////////
