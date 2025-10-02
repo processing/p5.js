@@ -88,38 +88,30 @@ const cfgHandlers = {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
 
+  [BlockType.ELSE_COND](blockID, strandsContext, generationContext) {
+    generationContext.write(`else`);
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+  },
+
   [BlockType.IF_BODY](blockID, strandsContext, generationContext) {
-    generationContext.write(`{`);
-    generationContext.indent++;
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-
     // Assign values to phi nodes that this branch feeds into
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
-    
-    generationContext.indent--;
-    generationContext.write(`}`);
   },
 
-  [BlockType.ELIF_BODY](blockID, strandsContext, generationContext) {
-    generationContext.write(`{`);
-    generationContext.indent++;
-    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-
-    // Assign values to phi nodes that this branch feeds into
-    this.assignPhiNodeValues(blockID, strandsContext, generationContext);
-    
-    generationContext.indent--;
-    generationContext.write(`}`);
-  },
 
   [BlockType.ELSE_BODY](blockID, strandsContext, generationContext) {
-    generationContext.write(`else {`);
-    generationContext.indent++;
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-
     // Assign values to phi nodes that this branch feeds into
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
+  },
 
+  [BlockType.SCOPE_START](blockID, strandsContext, generationContext) {
+    generationContext.write(`{`);
+    generationContext.indent++;
+  },
+
+  [BlockType.SCOPE_END](blockID, strandsContext, generationContext) {
     generationContext.indent--;
     generationContext.write(`}`);
   },

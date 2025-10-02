@@ -55,7 +55,7 @@ function buildConditional(strandsContext, conditional) {
   const branchBlock = CFG.createBasicBlock(cfg, BlockType.BRANCH);
   CFG.addEdge(cfg, cfg.currentBlock, branchBlock);
   CFG.addEdge(cfg, branchBlock, mergeBlock);
-  
+
   let previousBlock = branchBlock;
 
   for (let i = 0; i < branches.length; i++) {
@@ -68,10 +68,19 @@ function buildConditional(strandsContext, conditional) {
       cfg.blockConditions[conditionBlock] = condition.id;
       previousBlock = conditionBlock;
       CFG.popBlock(cfg);
+    } else {
+      // This is an else branch - create an ELSE_COND block
+      const elseCondBlock = CFG.createBasicBlock(cfg, BlockType.ELSE_COND);
+      CFG.addEdge(cfg, previousBlock, elseCondBlock);
+      previousBlock = elseCondBlock;
     }
 
+    // Create SCOPE_START block to mark beginning of branch scope
+    const scopeStartBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_START);
+    CFG.addEdge(cfg, previousBlock, scopeStartBlock);
+
     const branchBlock = CFG.createBasicBlock(cfg, blockType);
-    CFG.addEdge(cfg, previousBlock, branchBlock);
+    CFG.addEdge(cfg, scopeStartBlock, branchBlock);
     branchBlocks.push(branchBlock);
 
     CFG.pushBlock(cfg, branchBlock);
@@ -84,12 +93,19 @@ function buildConditional(strandsContext, conditional) {
       }
     }
     results.push(branchResults);
+    
+    // Create SCOPE_END block to mark end of branch scope
+    const scopeEndBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_END);
     if (cfg.currentBlock !== branchBlock) {
-      CFG.addEdge(cfg, cfg.currentBlock, mergeBlock);
-      CFG.popBlock();
+      CFG.addEdge(cfg, cfg.currentBlock, scopeEndBlock);
+      CFG.popBlock(cfg);
+    } else {
+      CFG.addEdge(cfg, branchBlock, scopeEndBlock);
+      CFG.popBlock(cfg);
     }
-    CFG.addEdge(cfg, cfg.currentBlock, mergeBlock);
-    CFG.popBlock(cfg);
+    
+    CFG.addEdge(cfg, scopeEndBlock, mergeBlock);
+    previousBlock = scopeStartBlock; // Next condition should branch from the same point
   }
 
   // Push the branch block for modification to attach phi nodes there
@@ -105,15 +121,15 @@ function buildConditional(strandsContext, conditional) {
   for (let i = 0; i < results.length; i++) {
     const branchResult = results[i];
     const branchBlockID = branchBlocks[i];
-    
+
     CFG.pushBlockForModification(cfg, branchBlockID);
-    
+
     for (const key in branchResult) {
       if (mergedAssignments[key]) {
         // Create an assignment statement: phiNode = branchResult[key]
         const phiNodeID = mergedAssignments[key].id;
         const sourceNodeID = branchResult[key].id;
-        
+
         // Create an assignment operation node
         // Use dependsOn[0] for phiNodeID and dependsOn[1] for sourceNodeID
         // This represents: dependsOn[0] = dependsOn[1] (phiNode = sourceNode)
@@ -122,12 +138,12 @@ function buildConditional(strandsContext, conditional) {
           dependsOn: [phiNodeID, sourceNodeID],
           phiBlocks: []
         };
-        
+
         const assignmentID = DAG.getOrCreateNode(strandsContext.dag, assignmentNode);
         CFG.recordInBasicBlock(cfg, branchBlockID, assignmentID);
       }
     }
-    
+
     CFG.popBlock(cfg);
   }
 
@@ -138,7 +154,7 @@ function buildConditional(strandsContext, conditional) {
 
 function createPhiNode(strandsContext, phiInputs, varName) {
   console.log('createPhiNode called with varName:', varName, 'phiInputs:', phiInputs);
-  
+
   // For now, create a simple phi node
   // We'll need to determine the proper dimension and baseType from the inputs
   const validInputs = phiInputs.filter(input => input.value.id !== null);

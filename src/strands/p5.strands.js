@@ -80,6 +80,7 @@ function strands(p5, fn) {
       } else {
         strandsCallback = shaderModifier;
       }
+      console.log(strandsCallback.toString())
 
       // 2. Build the IR from JavaScript API
       const globalScope = createBasicBlock(strandsContext.cfg, BlockType.GLOBAL);
