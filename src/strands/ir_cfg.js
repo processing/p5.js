@@ -31,6 +31,11 @@ export function popBlock(graph) {
   graph.currentBlock = graph.blockStack[len-1];
 }
 
+export function pushBlockForModification(graph, blockID) {
+  graph.blockStack.push(blockID);
+  graph.currentBlock = blockID;
+}
+
 export function createBasicBlock(graph, blockType) {
   const id = graph.nextID++;
   graph.blockTypes[id] = blockType;

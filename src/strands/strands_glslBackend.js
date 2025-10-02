@@ -42,40 +42,191 @@ const cfgHandlers = {
       if (nodeType === NodeType.STATEMENT) {
         glslBackend.generateStatement(generationContext, dag, nodeID);
       }
+      if (nodeType === NodeType.ASSIGNMENT) {
+        glslBackend.generateAssignment(generationContext, dag, nodeID);
+      }
     }
+  },
+
+  [BlockType.BRANCH](blockID, strandsContext, generationContext) {
+    console.log(`Processing BRANCH block ${blockID}`);
+    const { dag, cfg } = strandsContext;
+    
+    // Find all phi nodes in this branch block and declare them
+    const blockInstructions = cfg.blockInstructions[blockID] || [];
+    console.log(`Instructions in branch block ${blockID}:`, blockInstructions);
+
+    for (const nodeID of blockInstructions) {
+      const node = getNodeDataFromID(dag, nodeID);
+      console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
+
+      if (node.nodeType === NodeType.PHI) {
+        // Create a temporary variable for this phi node
+        const tmp = `T${generationContext.nextTempID++}`;
+        generationContext.tempNames[nodeID] = tmp;
+
+        console.log(`Declared phi temp variable: ${tmp} for node ${nodeID}`);
+
+        const T = extractNodeTypeInfo(dag, nodeID);
+        const typeName = glslBackend.getTypeName(T.baseType, T.dimension);
+
+        // Declare the temporary variable
+        generationContext.write(`${typeName} ${tmp};`);
+      }
+    }
+    
+    // Execute the default block handling for any remaining instructions in this block
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
 
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
     const condExpr = glslBackend.generateExpression(generationContext, dag, conditionID);
-    generationContext.write(`if (${condExpr}) {`)
-    generationContext.indent++;
+
+    generationContext.write(`if (${condExpr})`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-    generationContext.indent--;
-    generationContext.write(`}`)
-    return;
   },
 
   [BlockType.IF_BODY](blockID, strandsContext, generationContext) {
+    generationContext.write(`{`);
+    generationContext.indent++;
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
 
+    // Assign values to phi nodes that this branch feeds into
+    this.assignPhiNodeValues(blockID, strandsContext, generationContext);
+    
+    generationContext.indent--;
+    generationContext.write(`}`);
   },
 
   [BlockType.ELIF_BODY](blockID, strandsContext, generationContext) {
+    generationContext.write(`{`);
+    generationContext.indent++;
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
 
+    // Assign values to phi nodes that this branch feeds into
+    this.assignPhiNodeValues(blockID, strandsContext, generationContext);
+    
+    generationContext.indent--;
+    generationContext.write(`}`);
   },
 
   [BlockType.ELSE_BODY](blockID, strandsContext, generationContext) {
+    generationContext.write(`else {`);
+    generationContext.indent++;
+    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
 
+    // Assign values to phi nodes that this branch feeds into
+    this.assignPhiNodeValues(blockID, strandsContext, generationContext);
+
+    generationContext.indent--;
+    generationContext.write(`}`);
   },
 
   [BlockType.MERGE](blockID, strandsContext, generationContext) {
-    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+    return this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+    const { dag, cfg } = strandsContext;
+
+    // Handle phi nodes specially in merge blocks
+    const instructions = cfg.blockInstructions[blockID] || [];
+    for (const nodeID of instructions) {
+      const node = getNodeDataFromID(dag, nodeID);
+
+      if (node.nodeType !== NodeType.PHI) {
+        debugger
+        console.log(`Handling node in merge block`)
+        // Handle non-phi nodes normally
+        const nodeType = dag.nodeTypes[nodeID];
+        if (shouldCreateTemp(dag, nodeID)) {
+          const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+          generationContext.write(declaration);
+        }
+        if (nodeType === NodeType.STATEMENT) {
+          glslBackend.generateStatement(generationContext, dag, nodeID);
+        }
+      }
+    }
   },
 
   [BlockType.FUNCTION](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
+
+  assignPhiNodeValues(blockID, strandsContext, generationContext) {
+    const { dag, cfg } = strandsContext;
+
+    console.log(`assignPhiNodeValues called for blockID: ${blockID}`);
+
+    // Find all phi nodes that this block feeds into
+    const successors = cfg.outgoingEdges[blockID] || [];
+    console.log(`Successors for block ${blockID}:`, successors);
+
+    for (const successorBlockID of successors) {
+      const instructions = cfg.blockInstructions[successorBlockID] || [];
+      console.log(`Instructions in successor block ${successorBlockID}:`, instructions);
+
+      for (const nodeID of instructions) {
+        const node = getNodeDataFromID(dag, nodeID);
+        console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
+
+        if (node.nodeType === NodeType.PHI) {
+          console.log(`Found phi node ${nodeID} with phiBlocks:`, node.phiBlocks, 'dependsOn:', node.dependsOn);
+
+          // Find which input of this phi node corresponds to our block
+          // The phiBlocks array maps to the dependsOn array
+          const branchIndex = node.phiBlocks?.indexOf(blockID);
+          console.log(`branchIndex for block ${blockID}:`, branchIndex);
+
+          if (branchIndex !== -1 && branchIndex < node.dependsOn.length) {
+            const sourceNodeID = node.dependsOn[branchIndex];
+            const tempName = generationContext.tempNames[nodeID];
+
+            console.log(`Assigning phi node: ${tempName} = source ${sourceNodeID}`);
+
+            if (tempName && sourceNodeID !== null) {
+              const sourceExpr = glslBackend.generateExpression(generationContext, dag, sourceNodeID);
+              generationContext.write(`${tempName} = ${sourceExpr};`);
+            }
+          }
+        }
+      }
+    }
+  },
+
+  declarePhiNodesForConditional(blockID, strandsContext, generationContext) {
+    const { dag, cfg } = strandsContext;
+
+    console.log(`declarePhiNodesForConditional called for blockID: ${blockID}`);
+
+    // Find all phi nodes in the merge blocks that this conditional feeds into
+    const successors = cfg.outgoingEdges[blockID] || [];
+    console.log(`Successors for conditional block ${blockID}:`, successors);
+
+    for (const successorBlockID of successors) {
+      const blockInstructions = cfg.blockInstructions[successorBlockID] || [];
+      console.log(`Instructions in merge block ${successorBlockID}:`, blockInstructions);
+
+      for (const nodeID of blockInstructions) {
+        const node = getNodeDataFromID(dag, nodeID);
+        console.log(`Checking node ${nodeID} with nodeType: ${node.nodeType}`);
+
+        if (node.nodeType === NodeType.PHI) {
+          // Create a temporary variable for this phi node
+          const tmp = `T${generationContext.nextTempID++}`;
+          generationContext.tempNames[nodeID] = tmp;
+
+          console.log(`Declared phi temp variable: ${tmp} for node ${nodeID}`);
+
+          const T = extractNodeTypeInfo(dag, nodeID);
+          const typeName = glslBackend.getTypeName(T.baseType, T.dimension);
+
+          // Declare the temporary variable
+          generationContext.write(`${typeName} ${tmp};`);
+        }
+      }
+    }
+  }
 }
 
 
@@ -103,6 +254,20 @@ export const glslBackend = {
     const node = getNodeDataFromID(dag, nodeID);
     if (node.statementType === OpCode.ControlFlow.DISCARD) {
       generationContext.write('discard;');
+    }
+  },
+
+  generateAssignment(generationContext, dag, nodeID) {
+    const node = getNodeDataFromID(dag, nodeID);
+    // dependsOn[0] = phiNodeID, dependsOn[1] = sourceNodeID
+    const phiNodeID = node.dependsOn[0];
+    const sourceNodeID = node.dependsOn[1];
+    
+    const phiTempName = generationContext.tempNames[phiNodeID];
+    const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+    
+    if (phiTempName && sourceExpr) {
+      generationContext.write(`${phiTempName} = ${sourceExpr};`);
     }
   },
 
@@ -202,21 +367,31 @@ export const glslBackend = {
       }
       case NodeType.PHI:
       // Phi nodes represent conditional merging of values
-      // For now, just use the first valid input as a simple implementation
-      // TODO: Implement proper phi node control flow
-      const validInputs = node.dependsOn.filter(id => id !== null);
-      if (validInputs.length > 0) {
-        return this.generateExpression(generationContext, dag, validInputs[0]);
+      // They should already have been declared as temporary variables
+      // and assigned in the appropriate branches
+      if (generationContext.tempNames?.[nodeID]) {
+        return generationContext.tempNames[nodeID];
       } else {
-        // Fallback: create a default value
-        const typeName = this.getTypeName(node.baseType, node.dimension);
-        if (node.dimension === 1) {
-          return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+        // If no temp was created, this phi node only has one input
+        // so we can just use that directly
+        const validInputs = node.dependsOn.filter(id => id !== null);
+        if (validInputs.length > 0) {
+          return this.generateExpression(generationContext, dag, validInputs[0]);
         } else {
-          return `${typeName}(0.0)`;
+          throw new Error(`No valid inputs for node`)
+          // Fallback: create a default value
+          const typeName = this.getTypeName(node.baseType, node.dimension);
+          if (node.dimension === 1) {
+            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+          } else {
+            return `${typeName}(0.0)`;
+          }
         }
       }
-      
+
+      case NodeType.ASSIGNMENT:
+      FES.internalError(`ASSIGNMENT nodes should not be used as expressions`)
+
       default:
       FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
     }

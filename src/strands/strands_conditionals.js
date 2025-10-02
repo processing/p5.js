@@ -1,6 +1,6 @@
 import * as CFG from './ir_cfg';
 import * as DAG from './ir_dag';
-import { BlockType } from './ir_types';
+import { BlockType, NodeType } from './ir_types';
 import { StrandsNode, createStrandsNode } from './strands_node';
 
 export class StrandsConditional {
@@ -30,13 +30,13 @@ export class StrandsConditional {
       blockType: BlockType.ELSE_BODY
     });
     const phiNodes = buildConditional(this.ctx, this);
-    
+
     // Convert phi nodes to StrandsNodes for the user
     const assignments = {};
     for (const [varName, phiNode] of Object.entries(phiNodes)) {
       assignments[varName] = createStrandsNode(phiNode.id, phiNode.dimension, this.ctx);
     }
-    
+
     return assignments;
   }
 }
@@ -48,8 +48,15 @@ function buildConditional(strandsContext, conditional) {
   const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
   const results = [];
   const branchBlocks = [];
+  const mergedAssignments = {};
+  const phiBlockDependencies = {};
 
-  let previousBlock = cfg.currentBlock;
+  // Create a BRANCH block to handle phi node declarations
+  const branchBlock = CFG.createBasicBlock(cfg, BlockType.BRANCH);
+  CFG.addEdge(cfg, cfg.currentBlock, branchBlock);
+  CFG.addEdge(cfg, branchBlock, mergeBlock);
+  
+  let previousBlock = branchBlock;
 
   for (let i = 0; i < branches.length; i++) {
     const { condition, branchCallback, blockType } = branches[i];
@@ -69,6 +76,13 @@ function buildConditional(strandsContext, conditional) {
 
     CFG.pushBlock(cfg, branchBlock);
     const branchResults = branchCallback();
+    for (const key in branchResults) {
+      if (!phiBlockDependencies[key]) {
+        phiBlockDependencies[key] = [{ value: branchResults[key], blockId: branchBlock }];
+      } else {
+        phiBlockDependencies[key].push({ value: branchResults[key], blockId: branchBlock });
+      }
+    }
     results.push(branchResults);
     if (cfg.currentBlock !== branchBlock) {
       CFG.addEdge(cfg, cfg.currentBlock, mergeBlock);
@@ -78,58 +92,62 @@ function buildConditional(strandsContext, conditional) {
     CFG.popBlock(cfg);
   }
 
-  CFG.pushBlock(cfg, mergeBlock);
+  // Push the branch block for modification to attach phi nodes there
+  CFG.pushBlockForModification(cfg, branchBlock);
 
-  // Create phi nodes for variables that were modified in any branch
-  const allVariableNames = new Set();
-  results.forEach(branchResult => {
-    if (branchResult && typeof branchResult === 'object') {
-      Object.keys(branchResult).forEach(varName => allVariableNames.add(varName));
-    }
-  });
+  for (const key in phiBlockDependencies) {
+    mergedAssignments[key] = createPhiNode(strandsContext, phiBlockDependencies[key], key);
+  }
 
-  const mergedAssignments = {};
-  for (const varName of allVariableNames) {
-    // Collect the node IDs for this variable from each branch
-    const phiInputs = [];
-    for (let i = 0; i < results.length; i++) {
-      const branchResult = results[i];
-      const branchBlock = branchBlocks[i];
+  CFG.popBlock(cfg);
 
-      if (branchResult && branchResult[varName]) {
-        phiInputs.push({
-          nodeId: branchResult[varName].id,
-          blockId: branchBlock
-        });
-      } else {
-        // If this branch didn't modify the variable, we need the original value
-        // For now, we'll handle this case later when we have variable tracking
-        // This is a placeholder that will need to be improved
-        phiInputs.push({
-          nodeId: null, // Will need original variable ID
-          blockId: branchBlock
-        });
+  // Now add phi assignments to each branch block
+  for (let i = 0; i < results.length; i++) {
+    const branchResult = results[i];
+    const branchBlockID = branchBlocks[i];
+    
+    CFG.pushBlockForModification(cfg, branchBlockID);
+    
+    for (const key in branchResult) {
+      if (mergedAssignments[key]) {
+        // Create an assignment statement: phiNode = branchResult[key]
+        const phiNodeID = mergedAssignments[key].id;
+        const sourceNodeID = branchResult[key].id;
+        
+        // Create an assignment operation node
+        // Use dependsOn[0] for phiNodeID and dependsOn[1] for sourceNodeID
+        // This represents: dependsOn[0] = dependsOn[1] (phiNode = sourceNode)
+        const assignmentNode = {
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [phiNodeID, sourceNodeID],
+          phiBlocks: []
+        };
+        
+        const assignmentID = DAG.getOrCreateNode(strandsContext.dag, assignmentNode);
+        CFG.recordInBasicBlock(cfg, branchBlockID, assignmentID);
       }
     }
-
-    // Create a phi node for this variable
-    const phiNode = createPhiNode(strandsContext, phiInputs, varName);
-    mergedAssignments[varName] = phiNode;
+    
+    CFG.popBlock(cfg);
   }
+
+  CFG.pushBlock(cfg, mergeBlock);
 
   return mergedAssignments;
 }
 
 function createPhiNode(strandsContext, phiInputs, varName) {
+  console.log('createPhiNode called with varName:', varName, 'phiInputs:', phiInputs);
+  
   // For now, create a simple phi node
   // We'll need to determine the proper dimension and baseType from the inputs
-  const validInputs = phiInputs.filter(input => input.nodeId !== null);
+  const validInputs = phiInputs.filter(input => input.value.id !== null);
   if (validInputs.length === 0) {
     throw new Error(`No valid inputs for phi node for variable ${varName}`);
   }
 
   // Get dimension and baseType from first valid input
-  const firstInput = DAG.getNodeDataFromID(strandsContext.dag, validInputs[0].nodeId);
+  const firstInput = DAG.getNodeDataFromID(strandsContext.dag, validInputs[0].value.id);
   const dimension = firstInput.dimension;
   const baseType = firstInput.baseType;
 
@@ -137,7 +155,7 @@ function createPhiNode(strandsContext, phiInputs, varName) {
     nodeType: 'phi',
     dimension,
     baseType,
-    dependsOn: phiInputs.map(input => input.nodeId).filter(id => id !== null),
+    dependsOn: phiInputs.map(input => input.value.id).filter(id => id !== null),
     phiBlocks: phiInputs.map(input => input.blockId),
     phiInputs // Store the full phi input information
   };

@@ -199,6 +199,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
   const mappedDependencies = [];
   let { dimension, baseType } = typeInfo;
 
+
   const dag = strandsContext.dag;
   let calculatedDimensions = 0;
   let originalNodeID = null;
@@ -206,6 +207,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
     if (dep instanceof StrandsNode) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
       originalNodeID = dep.id;
+      console.log('Setting baseType from StrandsNode:', node.baseType);
       baseType = node.baseType;
 
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
@@ -220,6 +222,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       continue;
     }
     else if (typeof dep === 'number') {
+      console.log('Creating literal node for number:', dep, 'with baseType:', baseType);
       const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
       mappedDependencies.push(id);
       calculatedDimensions += dimension;
@@ -458,7 +461,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
           return Reflect.get(...arguments);
         } else {
           for (const set of swizzleSets) {
-            if ([...property].every(char => set.includes(char))) {
+            if ([...property.toString()].every(char => set.includes(char))) {
               const swizzle = [...property].map(char => {
                 const index = set.indexOf(char);
                 return swizzleSets[0][index];
@@ -481,7 +484,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
 
       const dim = target.dimension;
 
-      // lanes are the underlying values of the target vector 
+      // lanes are the underlying values of the target vector
       //  e.g. lane 0 holds the value aliased by 'x', 'r', and 's'
       // the lanes array is in the 'correct' order
       const lanes = new Array(dim);
@@ -521,7 +524,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       }
 
       // The canonical index refers to the actual value's position in the vector lanes
-      // i.e. we are finding (3,2,1) from .zyx 
+      // i.e. we are finding (3,2,1) from .zyx
       // We set the correct value in the lanes array
       for (let j = 0; j < chars.length; j++) {
         const canonicalIndex = swizzleSet.indexOf(chars[j]);
@@ -538,9 +541,9 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
 
       target.id = newID;
 
-      // If we swizzle assign on a struct component i.e. 
+      // If we swizzle assign on a struct component i.e.
       //   inputs.position.rg = [1, 2]
-      // The onRebind callback will update the structs components so that it refers to the new values, 
+      // The onRebind callback will update the structs components so that it refers to the new values,
       // and make a new ID for the struct with these new values
       if (typeof onRebind === 'function') {
         onRebind(newID);

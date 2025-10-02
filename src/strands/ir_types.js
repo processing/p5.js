@@ -9,6 +9,7 @@ export const NodeType = {
   STRUCT: 'struct',
   PHI: 'phi',
   STATEMENT: 'statement',
+  ASSIGNMENT: 'assignment',
 };
 
 export const NodeTypeToName = Object.fromEntries(
@@ -22,7 +23,8 @@ export const NodeTypeRequiredFields = {
   [NodeType.CONSTANT]: ["value", "dimension", "baseType"],
   [NodeType.STRUCT]: [""],
   [NodeType.PHI]: ["dependsOn", "phiBlocks", "dimension", "baseType"],
-  [NodeType.STATEMENT]: ["opCode"]
+  [NodeType.STATEMENT]: ["opCode"],
+  [NodeType.ASSIGNMENT]: ["dependsOn"]
 };
 
 export const StatementType = {
@@ -196,6 +198,7 @@ for (const { symbol, opCode, name, arity } of OperatorTable) {
 export const BlockType = {
   GLOBAL: 'global',
   FUNCTION: 'function',
+  BRANCH: 'branch',
   IF_COND: 'if_cond',
   IF_BODY: 'if_body',
   ELIF_BODY: 'elif_body',
