@@ -21,11 +21,14 @@ export const NodeTypeRequiredFields = {
   [NodeType.CONSTANT]: ["value", "dimension", "baseType"],
   [NodeType.STRUCT]: [""],
   [NodeType.PHI]: ["dependsOn", "phiBlocks", "dimension", "baseType"],
-  [NodeType.STATEMENT]: ["opCode"],
+  [NodeType.STATEMENT]: ["statementType"],
   [NodeType.ASSIGNMENT]: ["dependsOn"]
 };
 export const StatementType = {
   DISCARD: 'discard',
+  BREAK: 'break',
+  EXPRESSION: 'expression', // Used when we want to output a single expression as a statement, e.g. a for loop condition
+  EMPTY: 'empty', // Used for empty statements like ; in for loops
 };
 export const BaseType = {
   FLOAT: "float",
@@ -129,6 +132,7 @@ export const OpCode = {
     JUMP: 301,
     BRANCH_IF_FALSE: 302,
     DISCARD: 303,
+    BREAK: 304,
   }
 };
 export const OperatorTable = [

@@ -13,8 +13,9 @@ function replaceBinaryOperator(codeSource) {
     case '==':
     case '===': return 'equalTo';
     case '>': return 'greaterThan';
-    case '>=': return 'greaterThanEqualTo';
+    case '>=': return 'greaterEqual';
     case '<': return 'lessThan';
+    case '<=': return 'lessEqual';
     case '&&': return 'and';
     case '||': return 'or';
   }
@@ -77,6 +78,15 @@ const ASTCallbacks = {
     }
     delete node.argument;
     delete node.operator;
+  },
+  BreakStatement(node, _state, ancestors) {
+    if (ancestors.some(nodeIsUniform)) { return; }
+    node.callee = {
+      type: 'Identifier',
+      name: '__p5.break'
+    };
+    node.arguments = [];
+    node.type = 'CallExpression';
   },
   VariableDeclarator(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -274,7 +284,7 @@ const ASTCallbacks = {
         }
         // Second pass: find assignments to non-local variables
         for (const stmt of body.body) {
-          if (stmt.type === 'ExpressionStatement' && 
+          if (stmt.type === 'ExpressionStatement' &&
               stmt.expression.type === 'AssignmentExpression') {
             const left = stmt.expression.left;
             if (left.type === 'Identifier') {
@@ -282,12 +292,15 @@ const ASTCallbacks = {
               if (!localVars.has(left.name)) {
                 assignedVars.add(left.name);
               }
-            } else if (left.type === 'MemberExpression' && 
+            } else if (left.type === 'MemberExpression' &&
                        left.object.type === 'Identifier') {
               // Property assignment: obj.prop = value
               if (!localVars.has(left.object.name)) {
                 assignedVars.add(left.object.name);
               }
+            } else if (stmt.type === 'BlockStatement') {
+              // Recursively analyze nested block statements
+              analyzeBlock(stmt);
             }
           }
         }
@@ -330,8 +343,8 @@ const ASTCallbacks = {
               if (!node || typeof node !== 'object') return;
               if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
                 node.name = tempVarMap.get(node.name);
-              } else if (node.type === 'MemberExpression' && 
-                         node.object.type === 'Identifier' && 
+              } else if (node.type === 'MemberExpression' &&
+                         node.object.type === 'Identifier' &&
                          tempVarMap.has(node.object.name)) {
                 node.object.name = tempVarMap.get(node.object.name);
               }
@@ -372,11 +385,24 @@ const ASTCallbacks = {
         addCopyingAndReturn(elseFunction.body, assignedVars);
         // Create a block variable to capture the return value
         const blockVar = `__block_${blockVarCounter++}`;
-        // Replace with a block statement containing:
-        // 1. The conditional call assigned to block variable
-        // 2. Assignments from block variable back to original variables
+        // Replace with a block statement
         const statements = [];
-        // 1. const blockVar = strandsIf().Else()
+        // Make sure every assigned variable starts as a node
+        for (const varName of assignedVars) {
+          statements.push({
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: { type: 'Identifier', name: varName },
+              right: {
+                type: 'CallExpression',
+                callee: { type: 'Identifier', name: '__p5.strandsNode' },
+                arguments: [{ type: 'Identifier', name: varName }],
+              }
+            }
+          });
+        }
         statements.push({
           type: 'VariableDeclaration',
           declarations: [{
@@ -415,18 +441,397 @@ const ASTCallbacks = {
       delete node.consequent;
       delete node.alternate;
     },
+    UpdateExpression(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
+
+      // Transform ++var, var++, --var, var-- into assignment expressions
+      let operator;
+      if (node.operator === '++') {
+        operator = '+';
+      } else if (node.operator === '--') {
+        operator = '-';
+      } else {
+        return; // Unknown update operator
+      }
+
+      // Convert to: var = var + 1 or var = var - 1
+      const assignmentExpr = {
+        type: 'AssignmentExpression',
+        operator: '=',
+        left: node.argument,
+        right: {
+          type: 'BinaryExpression',
+          operator: operator,
+          left: node.argument,
+          right: {
+            type: 'Literal',
+            value: 1
+          }
+        }
+      };
+
+      // Replace the update expression with the assignment expression
+      Object.assign(node, assignmentExpr);
+      delete node.prefix;
+      this.BinaryExpression(node.right, _state, [...ancestors, node]);
+      this.AssignmentExpression(node, _state, ancestors);
+    },
+    ForStatement(node, _state, ancestors) {
+      if (ancestors.some(nodeIsUniform)) { return; }
+
+      // Transform for statement into strandsFor() call
+      // for (init; test; update) body -> strandsFor(initCb, conditionCb, updateCb, bodyCb, initialVars)
+
+      // Create the initial callback from the for loop's init
+      let initialFunction;
+      if (node.init && node.init.type === 'VariableDeclaration') {
+        // Handle: for (let i = 0; ...)
+        const declaration = node.init.declarations[0];
+        let initValue = declaration.init;
+
+        const initAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: initValue }] };
+        initValue = initAst.body[0].expression;
+
+        initialFunction = {
+          type: 'ArrowFunctionExpression',
+          params: [],
+          body: {
+            type: 'BlockStatement',
+            body: [{
+              type: 'ReturnStatement',
+              argument: initValue
+            }]
+          }
+        };
+      } else {
+        // Handle other cases - return a default value
+        initialFunction = {
+          type: 'ArrowFunctionExpression',
+          params: [],
+          body: {
+            type: 'BlockStatement',
+            body: [{
+              type: 'ReturnStatement',
+              argument: {
+                type: 'Literal',
+                value: 0
+              }
+            }]
+          }
+        };
+      }
+
+      // Create the condition callback
+      let conditionBody = node.test || { type: 'Literal', value: true };
+      // Replace loop variable references with the parameter
+      if (node.init?.type === 'VariableDeclaration') {
+        const loopVarName = node.init.declarations[0].id.name;
+        conditionBody = this.replaceIdentifierReferences(conditionBody, loopVarName, 'loopVar');
+      }
+      const conditionAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: conditionBody }] };
+      conditionBody = conditionAst.body[0].expression;
+
+      const conditionFunction = {
+        type: 'ArrowFunctionExpression',
+        params: [{ type: 'Identifier', name: 'loopVar' }],
+        body: conditionBody
+      };
+
+      // Create the update callback
+      let updateFunction;
+      if (node.update) {
+        let updateExpr = node.update;
+        // Replace loop variable references with the parameter
+        if (node.init?.type === 'VariableDeclaration') {
+          const loopVarName = node.init.declarations[0].id.name;
+          updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, 'loopVar');
+        }
+        const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
+        // const nonControlFlowCallbacks = { ...ASTCallbacks };
+        // delete nonControlFlowCallbacks.IfStatement;
+        // delete nonControlFlowCallbacks.ForStatement;
+        // ancestor(updateAst, nonControlFlowCallbacks, undefined, _state);
+        updateExpr = updateAst.body[0].expression;
+
+        updateFunction = {
+          type: 'ArrowFunctionExpression',
+          params: [{ type: 'Identifier', name: 'loopVar' }],
+          body: {
+            type: 'BlockStatement',
+            body: [{
+              type: 'ReturnStatement',
+              argument: updateExpr
+            }]
+          }
+        };
+      } else {
+        updateFunction = {
+          type: 'ArrowFunctionExpression',
+          params: [{ type: 'Identifier', name: 'loopVar' }],
+          body: {
+            type: 'BlockStatement',
+            body: [{
+              type: 'ReturnStatement',
+              argument: { type: 'Identifier', name: 'loopVar' }
+            }]
+          }
+        };
+      }
+
+      // Create the body callback
+      let bodyBlock = node.body.type === 'BlockStatement' ? node.body : {
+        type: 'BlockStatement',
+        body: [node.body]
+      };
+
+      // Replace loop variable references in the body
+      if (node.init?.type === 'VariableDeclaration') {
+        const loopVarName = node.init.declarations[0].id.name;
+        bodyBlock = this.replaceIdentifierReferences(bodyBlock, loopVarName, 'loopVar');
+      }
+
+      const bodyFunction = {
+        type: 'ArrowFunctionExpression',
+        params: [
+          { type: 'Identifier', name: 'loopVar' },
+          { type: 'Identifier', name: 'vars' }
+        ],
+        body: bodyBlock
+      };
+
+      // Analyze which outer scope variables are assigned in the loop body
+      const assignedVars = new Set();
+      const analyzeBlock = (body) => {
+        if (body.type !== 'BlockStatement') return;
+
+        for (const stmt of body.body) {
+          if (stmt.type === 'ExpressionStatement' &&
+              stmt.expression.type === 'AssignmentExpression') {
+            const left = stmt.expression.left;
+            if (left.type === 'Identifier') {
+              assignedVars.add(left.name);
+            }
+          } else if (stmt.type === 'BlockStatement') {
+            // Recursively analyze nested block statements
+            analyzeBlock(stmt);
+          }
+        }
+      };
+
+      analyzeBlock(bodyFunction.body);
+
+      if (assignedVars.size > 0) {
+        // Add copying, reference replacement, and return statements similar to if statements
+        const addCopyingAndReturn = (functionBody, varsToReturn) => {
+          if (functionBody.type === 'BlockStatement') {
+            const tempVarMap = new Map();
+            const copyStatements = [];
+
+            for (const varName of varsToReturn) {
+              const tempName = `__copy_${varName}_${blockVarCounter++}`;
+              tempVarMap.set(varName, tempName);
+
+              copyStatements.push({
+                type: 'VariableDeclaration',
+                declarations: [{
+                  type: 'VariableDeclarator',
+                  id: { type: 'Identifier', name: tempName },
+                  init: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'MemberExpression',
+                      object: {
+                        type: 'MemberExpression',
+                        object: { type: 'Identifier', name: 'vars' },
+                        property: { type: 'Identifier', name: varName },
+                        computed: false
+                      },
+                      property: { type: 'Identifier', name: 'copy' },
+                      computed: false
+                    },
+                    arguments: []
+                  }
+                }],
+                kind: 'let'
+              });
+            }
+
+            // Replace references to original variables with temp variables
+            const replaceReferences = (node) => {
+              if (!node || typeof node !== 'object') return;
+              if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
+                node.name = tempVarMap.get(node.name);
+              }
+
+              for (const key in node) {
+                if (node.hasOwnProperty(key) && key !== 'parent') {
+                  if (Array.isArray(node[key])) {
+                    node[key].forEach(replaceReferences);
+                  } else if (typeof node[key] === 'object') {
+                    replaceReferences(node[key]);
+                  }
+                }
+              }
+            };
+
+            functionBody.body.forEach(replaceReferences);
+            functionBody.body.unshift(...copyStatements);
+
+            // Add return statement
+            const returnObj = {
+              type: 'ObjectExpression',
+              properties: Array.from(varsToReturn).map(varName => ({
+                type: 'Property',
+                key: { type: 'Identifier', name: varName },
+                value: { type: 'Identifier', name: tempVarMap.get(varName) },
+                kind: 'init',
+                computed: false,
+                shorthand: false
+              }))
+            };
+
+            functionBody.body.push({
+              type: 'ReturnStatement',
+              argument: returnObj
+            });
+          }
+        };
+
+        addCopyingAndReturn(bodyFunction.body, assignedVars);
+
+        // Create block variable and assignments similar to if statements
+        const blockVar = `__block_${blockVarCounter++}`;
+        const statements = [];
+
+        // Create initial vars object from assigned variables
+        const initialVarsProperties = [];
+        for (const varName of assignedVars) {
+          initialVarsProperties.push({
+            type: 'Property',
+            key: { type: 'Identifier', name: varName },
+            value: {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: '__p5.strandsNode',
+              },
+              arguments: [
+                { type: 'Identifier', name: varName },
+              ],
+            },
+            kind: 'init',
+            method: false,
+            shorthand: false,
+            computed: false
+          });
+        }
+
+        const initialVarsObject = {
+          type: 'ObjectExpression',
+          properties: initialVarsProperties
+        };
+
+        // Create the strandsFor call
+        const callExpression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsFor'
+          },
+          arguments: [initialFunction, conditionFunction, updateFunction, bodyFunction, initialVarsObject]
+        };
+
+        statements.push({
+          type: 'VariableDeclaration',
+          declarations: [{
+            type: 'VariableDeclarator',
+            id: { type: 'Identifier', name: blockVar },
+            init: callExpression
+          }],
+          kind: 'const'
+        });
+
+        // Add assignments back to original variables
+        for (const varName of assignedVars) {
+          statements.push({
+            type: 'ExpressionStatement',
+            expression: {
+              type: 'AssignmentExpression',
+              operator: '=',
+              left: { type: 'Identifier', name: varName },
+              right: {
+                type: 'MemberExpression',
+                object: { type: 'Identifier', name: blockVar },
+                property: { type: 'Identifier', name: varName },
+                computed: false
+              }
+            }
+          });
+        }
+
+        node.type = 'BlockStatement';
+        node.body = statements;
+      } else {
+        // No assignments, just replace with call expression
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsFor'
+          },
+          arguments: [initialFunction, conditionFunction, updateFunction, bodyFunction, {
+            type: 'ObjectExpression',
+            properties: []
+          }]
+        };
+      }
+
+      delete node.init;
+      delete node.test;
+      delete node.update;
+    },
+
+    // Helper method to replace identifier references in AST nodes
+    replaceIdentifierReferences(node, oldName, newName) {
+      if (!node || typeof node !== 'object') return node;
+
+      const replaceInNode = (n) => {
+        if (!n || typeof n !== 'object') return n;
+
+        if (n.type === 'Identifier' && n.name === oldName) {
+          return { ...n, name: newName };
+        }
+
+        // Create a copy and recursively process properties
+        const newNode = { ...n };
+        for (const key in n) {
+          if (n.hasOwnProperty(key) && key !== 'parent') {
+            if (Array.isArray(n[key])) {
+              newNode[key] = n[key].map(replaceInNode);
+            } else if (typeof n[key] === 'object') {
+              newNode[key] = replaceInNode(n[key]);
+            }
+          }
+        }
+        return newNode;
+      };
+
+      return replaceInNode(node);
+    }
   }
   export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
     });
-    // First pass: transform everything except if statements using normal ancestor traversal
-    const nonIfCallbacks = { ...ASTCallbacks };
-    delete nonIfCallbacks.IfStatement;
-    ancestor(ast, nonIfCallbacks, undefined, { varyings: {} });
-    // Second pass: transform if statements in post-order using recursive traversal
-    const postOrderIfTransform = {
+    // First pass: transform everything except if/for statements using normal ancestor traversal
+    const nonControlFlowCallbacks = { ...ASTCallbacks };
+    delete nonControlFlowCallbacks.IfStatement;
+    delete nonControlFlowCallbacks.ForStatement;
+    ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {} });
+    // Second pass: transform if/for statements in post-order using recursive traversal
+    const postOrderControlFlowTransform = {
       IfStatement(node, state, c) {
         // First recursively process children
         if (node.test) c(node.test, state);
@@ -434,9 +839,18 @@ const ASTCallbacks = {
         if (node.alternate) c(node.alternate, state);
         // Then apply the transformation to this node
         ASTCallbacks.IfStatement(node, state, []);
+      },
+      ForStatement(node, state, c) {
+        // First recursively process children
+        if (node.init) c(node.init, state);
+        if (node.test) c(node.test, state);
+        if (node.update) c(node.update, state);
+        if (node.body) c(node.body, state);
+        // Then apply the transformation to this node
+        ASTCallbacks.ForStatement(node, state, []);
       }
     };
-    recursive(ast, { varyings: {} }, postOrderIfTransform);
+    recursive(ast, { varyings: {} }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
     const internalStrandsCallback = new Function(
@@ -452,6 +866,5 @@ const ASTCallbacks = {
         transpiledSource.lastIndexOf('}')
       ).replaceAll(';', '')
     );
-    console.log(internalStrandsCallback.toString())
     return () => internalStrandsCallback(p5, ...scopeKeys.map(key => scope[key]));
   }

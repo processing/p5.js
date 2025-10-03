@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType } from "./ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "./ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
 import * as FES from './strands_FES'
 function shouldCreateTemp(dag, nodeID) {
@@ -92,6 +92,40 @@ const cfgHandlers = {
   [BlockType.FUNCTION](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
+  [BlockType.FOR](blockID, strandsContext, generationContext) {
+    const { dag, cfg } = strandsContext;
+    const instructions = cfg.blockInstructions[blockID] || [];
+
+    generationContext.write(`for (`);
+
+    // Set flag to suppress semicolon on the last statement
+    const originalSuppressSemicolon = generationContext.suppressSemicolon;
+
+    for (let i = 0; i < instructions.length; i++) {
+      const nodeID = instructions[i];
+      const node = getNodeDataFromID(dag, nodeID);
+      const isLast = i === instructions.length - 1;
+
+      // Suppress semicolon on the last statement
+      generationContext.suppressSemicolon = isLast;
+
+      if (shouldCreateTemp(dag, nodeID)) {
+        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        generationContext.write(declaration);
+      }
+      if (node.nodeType === NodeType.STATEMENT) {
+        glslBackend.generateStatement(generationContext, dag, nodeID);
+      }
+      if (node.nodeType === NodeType.ASSIGNMENT) {
+        glslBackend.generateAssignment(generationContext, dag, nodeID);
+      }
+    }
+
+    // Restore original flag
+    generationContext.suppressSemicolon = originalSuppressSemicolon;
+
+    generationContext.write(`)`);
+  },
   assignPhiNodeValues(blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     // Find all phi nodes that this block feeds into
@@ -135,8 +169,19 @@ export const glslBackend = {
   },
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
-    if (node.statementType === OpCode.ControlFlow.DISCARD) {
-      generationContext.write('discard;');
+    const semicolon = generationContext.suppressSemicolon ? '' : ';';
+    if (node.statementType === StatementType.DISCARD) {
+      generationContext.write(`discard${semicolon}`);
+    } else if (node.statementType === StatementType.BREAK) {
+      generationContext.write(`break${semicolon}`);
+    } else if (node.statementType === StatementType.EXPRESSION) {
+      // Generate the expression followed by semicolon (unless suppressed)
+      const exprNodeID = node.dependsOn[0];
+      const expr = this.generateExpression(generationContext, dag, exprNodeID);
+      generationContext.write(`${expr}${semicolon}`);
+    } else if (node.statementType === StatementType.EMPTY) {
+      // Generate just a semicolon (unless suppressed)
+      generationContext.write(semicolon);
     }
   },
   generateAssignment(generationContext, dag, nodeID) {
@@ -146,8 +191,9 @@ export const glslBackend = {
     const sourceNodeID = node.dependsOn[1];
     const phiTempName = generationContext.tempNames[phiNodeID];
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+    const semicolon = generationContext.suppressSemicolon ? '' : ';';
     if (phiTempName && sourceExpr) {
-      generationContext.write(`${phiTempName} = ${sourceExpr};`);
+      generationContext.write(`${phiTempName} = ${sourceExpr}${semicolon}`);
     }
   },
   generateDeclaration(generationContext, dag, nodeID) {
@@ -223,6 +269,19 @@ export const glslBackend = {
         const [lID, rID] = node.dependsOn;
         const left  = this.generateExpression(generationContext, dag, lID);
         const right = this.generateExpression(generationContext, dag, rID);
+
+        // Special case for modulo: use mod() function for floats in GLSL
+        if (node.opCode === OpCode.Binary.MODULO) {
+          const leftNode = getNodeDataFromID(dag, lID);
+          const rightNode = getNodeDataFromID(dag, rID);
+          // If either operand is float, use mod() function
+          if (leftNode.baseType === BaseType.FLOAT || rightNode.baseType === BaseType.FLOAT) {
+            return `mod(${left}, ${right})`;
+          }
+          // For integers, use % operator
+          return `(${left} % ${right})`;
+        }
+
         const opSym = OpCodeToSymbol[node.opCode];
         if (useParantheses) {
           return `(${left} ${opSym} ${right})`;

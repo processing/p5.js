@@ -8,10 +8,12 @@ import {
   TypeInfoFromGLSLName,
   isStructType,
   OpCode,
+  StatementType,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
+import { StrandsFor } from './strands_for'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
@@ -41,8 +43,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // Unique Functions
   //////////////////////////////////////////////
   fn.discard = function() {
-    build.statementNode(strandsContext, OpCode.ControlFlow.DISCARD);
+    build.statementNode(strandsContext, StatementType.DISCARD);
   }
+  fn.break = function() {
+    build.statementNode(strandsContext, StatementType.BREAK);
+  };
+  p5.break = fn.break;
   fn.instanceID = function() {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
     return createStrandsNode(node.id, node.dimension, strandsContext);
@@ -53,10 +59,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
   fn.strandsIf = p5.strandsIf;
-  p5.strandsLoop = function(a, b, loopBody) {
-    return null;
-  }
-  fn.strandsLoop = p5.strandsLoop;
+  p5.strandsFor = function(initialCb, conditionCb, updateCb, bodyCb, initialVars) {
+    return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
+  };
+  fn.strandsFor = p5.strandsFor;
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];

@@ -377,11 +377,11 @@ export function functionCallNode(
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
   return { id, dimension: inferredReturnType.dimension  };
 }
-export function statementNode(strandsContext, opCode) {
+export function statementNode(strandsContext, statementType) {
   const { dag, cfg } = strandsContext;
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.STATEMENT,
-    opCode
+    statementType
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
