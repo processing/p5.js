@@ -87,10 +87,6 @@ const cfgHandlers = {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
   },
-  [BlockType.ELSE_BODY](blockID, strandsContext, generationContext) {
-    this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
-    this.assignPhiNodeValues(blockID, strandsContext, generationContext);
-  },
   [BlockType.SCOPE_START](blockID, strandsContext, generationContext) {
     generationContext.write(`{`);
     generationContext.indent++;
