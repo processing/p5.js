@@ -610,6 +610,10 @@ const ASTCallbacks = {
             const left = stmt.expression.left;
             if (left.type === 'Identifier') {
               assignedVars.add(left.name);
+            } else if (left.type === 'MemberExpression' &&
+                       left.object.type === 'Identifier') {
+              // Property assignment: obj.prop = value (includes swizzles)
+              assignedVars.add(left.object.name);
             }
           } else if (stmt.type === 'BlockStatement') {
             // Recursively analyze nested block statements
