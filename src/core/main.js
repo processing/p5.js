@@ -77,24 +77,6 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    // Apply addon defined decorations
-    for (const [patternArray, decoration] of p5.decorations) {
-      for(const member in p5.prototype) {
-        // Member must be a function
-        if (typeof p5.prototype[member] !== 'function') continue;
-
-        if (!patternArray.some(pattern => {
-          if (typeof pattern === 'string') {
-            return pattern === member;
-          } else if (pattern instanceof RegExp) {
-            return pattern.test(member);
-          }
-        })) continue;
-
-        DecoratedP5.prototype[member] = decoration.call(this, p5.prototype[member], member);
-      }
-    }
-
     const bindGlobal = createBindGlobal(this);
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
@@ -422,39 +404,20 @@ class p5 {
   }
 }
 
-class _DecoratedP5 extends p5 {
-  static registerAddon(addon) {
-    p5.registerAddon(addon);
-  }
-}
-const DecoratedP5 = new Proxy(_DecoratedP5, {
-  set(target, prop, newValue) {
-    p5[prop] = newValue;
-    return true;
-  }
-});
-
 // Global helper function for binding properties to window in global mode
 function createBindGlobal(instance) {
   return function bindGlobal(property) {
     if (property === 'constructor') return;
 
-    // Common setter for all property types
-    const createSetter = () => newValue => {
-      Object.defineProperty(window, property, {
-        configurable: true,
-        enumerable: true,
-        value: newValue,
-        writable: true
-      });
-      if (!p5.disableFriendlyErrors) {
-        console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-      }
-    };
-
     // Check if this property has a getter on the instance or prototype
-    const instanceDescriptor = Object.getOwnPropertyDescriptor(instance, property);
-    const prototypeDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, property);
+    const instanceDescriptor = Object.getOwnPropertyDescriptor(
+      instance,
+      property
+    );
+    const prototypeDescriptor = Object.getOwnPropertyDescriptor(
+      p5.prototype,
+      property
+    );
     const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
                      (prototypeDescriptor && prototypeDescriptor.get);
 
@@ -479,40 +442,18 @@ function createBindGlobal(instance) {
     if (isPrototypeFunction) {
       // For regular functions, cache the bound function
       const boundFunction = p5.prototype[property].bind(instance);
-      if (p5.disableFriendlyErrors) {
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          value: boundFunction
-        });
-      } else {
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get() {
-            return boundFunction;
-          },
-          set: createSetter()
-        });
-      }
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: boundFunction
+      });
     } else if (isConstant) {
       // For constants, cache the value directly
-      if (p5.disableFriendlyErrors) {
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          value: constantValue
-        });
-      } else {
-        Object.defineProperty(window, property, {
-          configurable: true,
-          enumerable: true,
-          get() {
-            return constantValue;
-          },
-          set: createSetter()
-        });
-      }
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: constantValue
+      });
     } else if (hasGetter || !isPrototypeFunction) {
       // For properties with getters or non-function properties, use lazy optimization
       // On first access, determine the type and optimize subsequent accesses
@@ -547,8 +488,7 @@ function createBindGlobal(instance) {
             // Optimized non-function path
             return currentValue;
           }
-        },
-        set: createSetter()
+        }
       });
     }
   };
@@ -804,4 +744,31 @@ p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
 
-export default DecoratedP5;
+const p5Proxy = new Proxy(p5, {
+  construct(target, args){
+    if(p5.decorations.size > 0){
+      // Apply addon defined decorations
+      for (const [patternArray, decoration] of p5.decorations) {
+        for(const member in p5.prototype) {
+          // Member must be a function
+          if (typeof p5.prototype[member] !== 'function') continue;
+
+          if (!patternArray.some(pattern => {
+            if (typeof pattern === 'string') {
+              return pattern === member;
+            } else if (pattern instanceof RegExp) {
+              return pattern.test(member);
+            }
+          })) continue;
+
+          p5.prototype[member] = decoration(p5.prototype[member], member);
+        }
+      }
+
+      p5.decorations.clear();
+    }
+    return new target(...args);
+  }
+});
+
+export default p5Proxy;
