@@ -782,23 +782,37 @@ p5.prototype._onresize = function(e) {
   }
 };
 
+// function getWindowWidth() {
+//   return (
+//     window.innerWidth ||
+//     (document.documentElement && document.documentElement.clientWidth) ||
+//     (document.body && document.body.clientWidth) ||
+//     0
+//   );
+// }
+
+// function getWindowHeight() {
+//   return (
+//     window.innerHeight ||
+//     (document.documentElement && document.documentElement.clientHeight) ||
+//     (document.body && document.body.clientHeight) ||
+//     0
+//   );
+// }
+
+
 function getWindowWidth() {
   return (
-    window.innerWidth ||
     (document.documentElement && document.documentElement.clientWidth) ||
-    (document.body && document.body.clientWidth) ||
-    0
-  );
+    (document.body && document.body.clientWidth) || window.innerWidth || 0);
 }
 
 function getWindowHeight() {
   return (
-    window.innerHeight ||
     (document.documentElement && document.documentElement.clientHeight) ||
-    (document.body && document.body.clientHeight) ||
-    0
-  );
+    (document.body && document.body.clientHeight) || window.innerHeight || 0 );
 }
+
 
 /**
  * Called upon each p5 instantiation instead of module import due to the
