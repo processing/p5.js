@@ -17,7 +17,7 @@ export class StrandsConditional {
     this.branches.push({
       condition,
       branchCallback,
-      blockType: BlockType.ELIF_BODY
+      blockType: BlockType.IF_BODY
     });
     return this;
   }
@@ -25,7 +25,7 @@ export class StrandsConditional {
     this.branches.push({
       condition: null,
       branchCallback,
-      blockType: BlockType.ELSE_BODY
+      blockType: BlockType.IF_BODY
     });
     const phiNodes = buildConditional(this.ctx, this);
     const assignments = {};

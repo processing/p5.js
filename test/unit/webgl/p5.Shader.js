@@ -634,6 +634,45 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+      test('handle direct StrandsIf ElseIf API usage', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const value = myp5.uniformFloat(() => 0.5); // middle value
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0); // initial black
+            const assignments = myp5.strandsIf(
+              value.greaterThan(0.8),
+              () => {
+                let tmp = color.copy();
+                tmp = myp5.float(1.0); // white for high values
+                return { color: tmp };
+              }
+            ).ElseIf(
+              value.greaterThan(0.3),
+              () => {
+                let tmp = color.copy();
+                tmp = myp5.float(0.5); // gray for medium values
+                return { color: tmp };
+              }
+            ).Else(() => {
+              let tmp = color.copy();
+              tmp = myp5.float(0.0); // black for low values
+              return { color: tmp };
+            });
+            color = assignments.color;
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is gray (medium condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5); // Red channel should be ~127 (gray)
+        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+        assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
+      });
     });
 
     suite('for loop statements', () => {

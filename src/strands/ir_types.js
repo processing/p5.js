@@ -189,7 +189,6 @@ export const BlockType = {
   IF_COND: 'if_cond',
   IF_BODY: 'if_body',
   ELSE_COND: 'else_cond',
-  ELSE_BODY: 'else_body',
   SCOPE_START: 'scope_start',
   SCOPE_END: 'scope_end',
   FOR: 'for',
