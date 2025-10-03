@@ -761,7 +761,14 @@ const p5Proxy = new Proxy(p5, {
             }
           })) continue;
 
-          p5.prototype[member] = decoration(p5.prototype[member], member);
+          p5.prototype[member] = decoration(p5.prototype[member], {
+            kind: 'method',
+            name: member,
+            access: {},
+            static: false,
+            private: false,
+            addInitializer(initializer){}
+          });
         }
       }
 

@@ -570,11 +570,11 @@ function validateParams(p5, fn, lifecycles) {
     }
   };
 
-  fn._validate = validate; // For unit tests
+  fn._validate = validate; // TEMP: For unit tests
 
   p5.decorateHelper(
     /^(?!_).+$/,
-    function(target, name){
+    function(target, { name }){
       return function(...args){
         if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
           validate(name, args);
