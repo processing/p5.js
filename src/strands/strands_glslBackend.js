@@ -50,6 +50,19 @@ const cfgHandlers = {
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType === NodeType.PHI) {
+        // Check if the phi node's first dependency already has a temp name
+        const dependsOn = node.dependsOn || [];
+        if (dependsOn.length > 0) {
+          const firstDependency = dependsOn[0];
+          const existingTempName = generationContext.tempNames[firstDependency];
+          if (existingTempName) {
+            // Reuse the existing temp name instead of creating a new one
+            generationContext.tempNames[nodeID] = existingTempName;
+            continue; // Skip declaration, just alias to existing variable
+          }
+        }
+
+        // Otherwise, create a new temp variable for the phi node
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
@@ -192,7 +205,9 @@ export const glslBackend = {
     const phiTempName = generationContext.tempNames[phiNodeID];
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
-    if (phiTempName && sourceExpr) {
+
+    // Skip assignment if target and source are the same variable
+    if (phiTempName && sourceExpr && phiTempName !== sourceExpr) {
       generationContext.write(`${phiTempName} = ${sourceExpr}${semicolon}`);
     }
   },
