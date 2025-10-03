@@ -26,8 +26,6 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 
 ### Code
 
-<<<<<<< HEAD
-
 - [Documentation Style Guide](#documentation-style-guide)
 
   - [Table of Contents](#table-of-contents)
@@ -56,7 +54,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
   - [Arrow Functions](#arrow-functions)
   - [Chaining](#chaining)
   - [Classes](#classes)
-  - # [Assets](#assets)
+  - [Assets](#assets)
 
 - [Code Samples](#code-samples)
 - [Comments](#comments)
@@ -1286,11 +1284,9 @@ class Mover {
 
 Always load assets from a folder called "assets".
 
-# <<<<<<< HEAD
-
 ## Canvas Accessibility Descriptions: `describe()`
 
-To make p5.js sketches accessible, every example that draws to the canvas should include a call to [`describe()`](https://p5js.org/reference/#/p5/describe). This provides a concise, visual description for screen readers.
+To make p5.js sketches accessible, every example that draws to the canvas should include a call to [`describe()`](https://p5js.org/reference/p5/describe). This provides a concise, visual description for screen readers.
 
 **Best Practices for `describe()`:**
 
@@ -1315,7 +1311,7 @@ To make p5.js sketches accessible, every example that draws to the canvas should
 
 - Always load assets from a folder called "assets".
 
-> > > > > > > Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
+> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
 
 - Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
 - Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)

@@ -272,7 +272,7 @@ When creating screen reader-accessible outputs, naming the colors used in the ca
 
 ### describe()
 
-describe() is one of the ways that p5.js sketches can be made accessible to screen readers. All contributions to the reference should include accessible canvas descriptions (see: Documentation Style Guide: [Canvas Accessibility Descriptions](./documentation_style_guide.md#canvas-accessibility-descriptions-describe))
+`describe()` is one of the ways that p5.js sketches can be made accessible to screen readers. All contributions to the reference should include accessible canvas descriptions (see: [Documentation Style Guide](./documentation_style_guide.md#canvas-accessibility-descriptions-describe))
 
 The `describe()` function creates a sketch author-defined screen reader accessible description for the canvas. The first parameter should be a string with a description of the canvas. The second parameter is optional. If specified, it determines how the description is displayed. If a user passes `LABEL` as a second parameter, an additional `<div>` element is created next to the `<canvas>` element. The new `<div>` element contains a visible version of the same screen reader-accessible description embedded in the `<canvas>` element.
 
