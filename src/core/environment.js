@@ -819,146 +819,12 @@ function environment(p5, fn, lifecycles){
     this.windowHeight = getWindowHeight();
   };
 
-  /**
-   * A `Number` variable that stores the width of the canvas in pixels.
-   *
-   * `width`'s default value is 100. Calling
-   * <a href="#/p5/createCanvas">createCanvas()</a> or
-   * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
-   * `width`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
-   * 0.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   background(200);
-   *
-   *   // Display the canvas' width.
-   *   text(width, 42, 54);
-   *
-   *   describe('The number 100 written in black on a gray square.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(50, 100);
-   *
-   *   background(200);
-   *
-   *   // Display the canvas' width.
-   *   text(width, 21, 54);
-   *
-   *   describe('The number 50 written in black on a gray rectangle.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Display the canvas' width.
-   *   text(width, 42, 54);
-   *
-   *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
-   * }
-   *
-   * // If the mouse is pressed, reisze
-   * // the canvas and display its new
-   * // width.
-   * function mousePressed() {
-   *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-   *     resizeCanvas(50, 100);
-   *     background(200);
-   *     text(width, 21, 54);
-   *   }
-   * }
-   * </code>
-   * </div>
-   *
-   * @property {Number} width
-   * @readOnly
-   */
   Object.defineProperty(fn, 'width', {
     get(){
       return this._renderer.width;
     }
   });
 
-  /**
-   * A `Number` variable that stores the height of the canvas in pixels.
-   *
-   * `height`'s default value is 100. Calling
-   * <a href="#/p5/createCanvas">createCanvas()</a> or
-   * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
-   * `height`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
-   * 0.
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   background(200);
-   *
-   *   // Display the canvas' height.
-   *   text(height, 42, 54);
-   *
-   *   describe('The number 100 written in black on a gray square.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 50);
-   *
-   *   background(200);
-   *
-   *   // Display the canvas' height.
-   *   text(height, 42, 27);
-   *
-   *   describe('The number 50 written in black on a gray rectangle.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Display the canvas' height.
-   *   text(height, 42, 54);
-   *
-   *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
-   * }
-   *
-   * // If the mouse is pressed, reisze
-   * // the canvas and display its new
-   * // height.
-   * function mousePressed() {
-   *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-   *     resizeCanvas(100, 50);
-   *     background(200);
-   *     text(height, 42, 27);
-   *   }
-   * }
-   * </code>
-   * </div>
-   *
-   * @property {Number} height
-   * @readOnly
-   */
   Object.defineProperty(fn, 'height', {
     get(){
       return this._renderer.height;
@@ -1468,6 +1334,142 @@ function environment(p5, fn, lifecycles){
       .multiplyAndNormalizePoint(screenPosition);
     return worldPosition;
   };
+
+  /**
+   * A `Number` variable that stores the width of the canvas in pixels.
+   *
+   * `width`'s default value is 100. Calling
+   * <a href="#/p5/createCanvas">createCanvas()</a> or
+   * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
+   * `width`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
+   * 0.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   background(200);
+   *
+   *   // Display the canvas' width.
+   *   text(width, 42, 54);
+   *
+   *   describe('The number 100 written in black on a gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(50, 100);
+   *
+   *   background(200);
+   *
+   *   // Display the canvas' width.
+   *   text(width, 21, 54);
+   *
+   *   describe('The number 50 written in black on a gray rectangle.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Display the canvas' width.
+   *   text(width, 42, 54);
+   *
+   *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
+   * }
+   *
+   * // If the mouse is pressed, reisze
+   * // the canvas and display its new
+   * // width.
+   * function mousePressed() {
+   *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+   *     resizeCanvas(50, 100);
+   *     background(200);
+   *     text(width, 21, 54);
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * @property {Number} width
+   * @readOnly
+   */
+
+  /**
+   * A `Number` variable that stores the height of the canvas in pixels.
+   *
+   * `height`'s default value is 100. Calling
+   * <a href="#/p5/createCanvas">createCanvas()</a> or
+   * <a href="#/p5/resizeCanvas">resizeCanvas()</a> changes the value of
+   * `height`. Calling <a href="#/p5/noCanvas">noCanvas()</a> sets its value to
+   * 0.
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   background(200);
+   *
+   *   // Display the canvas' height.
+   *   text(height, 42, 54);
+   *
+   *   describe('The number 100 written in black on a gray square.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 50);
+   *
+   *   background(200);
+   *
+   *   // Display the canvas' height.
+   *   text(height, 42, 27);
+   *
+   *   describe('The number 50 written in black on a gray rectangle.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Display the canvas' height.
+   *   text(height, 42, 54);
+   *
+   *   describe('The number 100 written in black on a gray square. When the mouse is pressed, the square becomes a rectangle and the number becomes 50.');
+   * }
+   *
+   * // If the mouse is pressed, reisze
+   * // the canvas and display its new
+   * // height.
+   * function mousePressed() {
+   *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+   *     resizeCanvas(100, 50);
+   *     background(200);
+   *     text(height, 42, 27);
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * @property {Number} height
+   * @readOnly
+   */
 }
 
 export default environment;

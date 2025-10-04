@@ -155,7 +155,7 @@ function file(p5, fn){
    * object. All `File` properties and methods are accessible.
    *
    * @for p5.File
-   * @property file
+   * @property {File} file
    * @example
    * <div>
    * <code>
@@ -200,7 +200,7 @@ function file(p5, fn){
    * For example, `'image'` and `'text'` are both MIME types.
    *
    * @for p5.File
-   * @property type
+   * @property {String} type
    * @example
    * <div>
    * <code>
@@ -237,7 +237,7 @@ function file(p5, fn){
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
    * may have a subtype such as ``png`` or ``jpeg``.
    *
-   * @property subtype
+   * @property {String} subtype
    * @for p5.File
    *
    * @example
@@ -273,7 +273,7 @@ function file(p5, fn){
   /**
    * The file name as a string.
    *
-   * @property name
+   * @property {String} name
    * @for p5.File
    *
    * @example
@@ -309,7 +309,7 @@ function file(p5, fn){
   /**
    * The number of bytes in the file.
    *
-   * @property size
+   * @property {Number} size
    * @for p5.File
    *
    * @example
@@ -347,7 +347,7 @@ function file(p5, fn){
    * Data can be either image data, text contents, or a parsed object in the
    * case of JSON and <a href="#/p5.XML">p5.XML</a> objects.
    *
-   * @property data
+   * @property {any} data
    * @for p5.File
    *
    * @example

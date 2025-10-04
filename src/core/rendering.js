@@ -434,6 +434,16 @@ function rendering(p5, fn){
    *
    * @method createFramebuffer
    * @param {Object} [options] configuration options.
+   * @param {UNSIGNED_BYTE|FLOAT|HALF_FLOAT} [options.format=UNSIGNED_BYTE] The data format of the texture.
+   * @param {RGB|RGBA} [options.channels=RGBA] What color channels to include in the texture.
+   * @param {Boolean} [options.depth=true] Whether to store depth information in the framebuffer.
+   * @param {UNSIGNED_INT|FLOAT} [options.depthFormat=FLOAT] The format to store depth values in.
+   * @param {Boolean} [options.stencil=true] Whether to include a stencil buffer (required for clipping.)
+   * @param {Boolean|Number} [options.antialias] Whether to antialias when drawing to this framebuffer. Either a boolean, or the number of antialias samples to use.
+   * @param {Number} [options.width] The width of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.height] The height of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.density] The pixel density of the framebuffer. By default, it will match the main canvas.
+   * @param {LINEAR|NEAREST} [options.textureFiltering=LINEAR] The strategy used when reading values in the framebuffer in between pixels.
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
@@ -640,7 +650,7 @@ function rendering(p5, fn){
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>
    * object.
    *
-   * @property drawingContext
+   * @property {CanvasRenderingContext2D|WebGLRenderingContext|WebGL2RenderingContext} drawingContext
    *
    * @example
    * <div>

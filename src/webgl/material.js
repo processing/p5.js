@@ -214,8 +214,8 @@ function material(p5, fn){
    * @param {String} fragSrc source code for the fragment shader.
    * @param {Object} [options] An optional object describing how this shader can
    * be augmented with hooks. It can include:
-   *  - `vertex`: An object describing the available vertex shader hooks.
-   *  - `fragment`: An object describing the available frament shader hooks.
+   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
+   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
    * @returns {p5.Shader} new shader object created from the
    * vertex and fragment shaders.
    *

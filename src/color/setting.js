@@ -31,6 +31,7 @@ function setting(p5, fn){
    *
    * @method beginClip
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>
@@ -241,6 +242,7 @@ function setting(p5, fn){
    * @method clip
    * @param {Function} callback a function that draws the mask shape.
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>
@@ -819,7 +821,7 @@ function setting(p5, fn){
    * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB, HSL,
    *          or one of the extended modes described above.
    * @param {Number}  [max]  range for all values.
-   * @chainable
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    *
    * @example
    * <div>
@@ -1159,7 +1161,6 @@ function setting(p5, fn){
    * </code>
    * </div>
    */
-
   /**
    * @method colorMode
    * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode
@@ -1171,7 +1172,11 @@ function setting(p5, fn){
    *                              depending on the current color mode.
    * @param {Number} [maxA]   range for the alpha.
    *
-   * @return {String}      The current color mode.
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
+   */
+  /**
+   * @method colorMode
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     // p5._validateParameters('colorMode', arguments);

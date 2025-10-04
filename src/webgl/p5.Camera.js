@@ -19,1007 +19,6 @@ class Camera {
     this.projMatrix = new Matrix(4);
     this.yScale = 1;
   }
-  /**
-   * The camera’s x-coordinate.
-   *
-   * By default, the camera’s x-coordinate is set to 0 in "world" space.
-   *
-   * @property {Number} eyeX
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "eyeX: 0" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move left and right as the camera moves. The text "eyeX: X" is written in black beneath the cube. X oscillates between -25 and 25.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new x-coordinate.
-   *   let x = 25 * sin(frameCount * 0.01);
-   *
-   *   // Set the camera's position.
-   *   cam.setPosition(x, -400, 800);
-   *
-   *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The camera’s y-coordinate.
-   *
-   * By default, the camera’s y-coordinate is set to 0 in "world" space.
-   *
-   * @property {Number} eyeY
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   // Set the camera.
-   *   setCamera(cam);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "eyeY: -400" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move up and down as the camera moves. The text "eyeY: Y" is written in black beneath the cube. Y oscillates between -374 and -425.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new y-coordinate.
-   *   let y = 25 * sin(frameCount * 0.01) - 400;
-   *
-   *   // Set the camera's position.
-   *   cam.setPosition(0, y, 800);
-   *
-   *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The camera’s z-coordinate.
-   *
-   * By default, the camera’s z-coordinate is set to 800 in "world" space.
-   *
-   * @property {Number} eyeZ
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "eyeZ: 800" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at the origin.
-   *   cam.lookAt(0, 0, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move forward and back as the camera moves. The text "eyeZ: Z" is written in black beneath the cube. Z oscillates between 700 and 900.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new z-coordinate.
-   *   let z = 100 * sin(frameCount * 0.01) + 800;
-   *
-   *   // Set the camera's position.
-   *   cam.setPosition(0, -400, z);
-   *
-   *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The x-coordinate of the place where the camera looks.
-   *
-   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
-   * `myCamera.centerX` is 0.
-   *
-   * @property {Number} centerX
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "centerX: 10" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right.
-   *   cam.setPosition(100, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move left and right as the camera shifts its focus. The text "centerX: X" is written in black beneath the cube. X oscillates between -15 and 35.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new x-coordinate.
-   *   let x = 25 * sin(frameCount * 0.01) + 10;
-   *
-   *   // Point the camera.
-   *   cam.lookAt(x, 20, -30);
-   *
-   *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The y-coordinate of the place where the camera looks.
-   *
-   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
-   * `myCamera.centerY` is 0.
-   *
-   * @property {Number} centerY
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "centerY: 20" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right.
-   *   cam.setPosition(100, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move up and down as the camera shifts its focus. The text "centerY: Y" is written in black beneath the cube. Y oscillates between -5 and 45.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new y-coordinate.
-   *   let y = 25 * sin(frameCount * 0.01) + 20;
-   *
-   *   // Point the camera.
-   *   cam.lookAt(10, y, -30);
-   *
-   *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The y-coordinate of the place where the camera looks.
-   *
-   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
-   * `myCamera.centerZ` is 0.
-   *
-   * @property {Number} centerZ
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-center.
-   *   cam.setPosition(0, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "centerZ: -30" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Place the camera at the top-right.
-   *   cam.setPosition(100, -400, 800);
-   *
-   *   // Point the camera at (10, 20, -30).
-   *   cam.lookAt(10, 20, -30);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to move forward and back as the camera shifts its focus. The text "centerZ: Z" is written in black beneath the cube. Z oscillates between -55 and -25.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the new z-coordinate.
-   *   let z = 25 * sin(frameCount * 0.01) - 30;
-   *
-   *   // Point the camera.
-   *   cam.lookAt(10, 20, z);
-   *
-   *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The x-component of the camera's "up" vector.
-   *
-   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
-   * `(0, 1, 0)`, so its x-component is 0 in "local" space.
-   *
-   * @property {Number} upX
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "upX: 0" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upX: X" is written in black beneath it. X oscillates between -1 and 1.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the x-component.
-   *   let x = sin(frameCount * 0.01);
-   *
-   *   // Update the camera's "up" vector.
-   *   cam.camera(100, -400, 800, 0, 0, 0, x, 1, 0);
-   *
-   *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The y-component of the camera's "up" vector.
-   *
-   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
-   * `(0, 1, 0)`, so its y-component is 1 in "local" space.
-   *
-   * @property {Number} upY
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "upY: 1" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube flips upside-down periodically. The text "upY: Y" is written in black beneath it. Y oscillates between -1 and 1.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the y-component.
-   *   let y = sin(frameCount * 0.01);
-   *
-   *   // Update the camera's "up" vector.
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, y, 0);
-   *
-   *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * The z-component of the camera's "up" vector.
-   *
-   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
-   * `(0, 1, 0)`, so its z-component is 0 in "local" space.
-   *
-   * @property {Number} upZ
-   * @readonly
-   *
-   * @example
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The text "upZ: 0" is written in black beneath it.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * let cam;
-   * let font;
-   *
-   * async function setup() {
-   *   // Load a font and create a p5.Font object.
-   *   font = await loadFont('assets/inconsolata.otf');
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Camera object.
-   *   cam = createCamera();
-   *
-   *   // Set the camera
-   *   setCamera(cam);
-   *
-   *   // Place the camera at the top-right: (100, -400, 800)
-   *   // Point it at the origin: (0, 0, 0)
-   *   // Set its "up" vector: (0, 1, 0).
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
-   *
-   *   describe(
-   *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upZ: Z" is written in black beneath it. Z oscillates between -1 and 1.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the box.
-   *   fill(255);
-   *
-   *   // Draw the box.
-   *   box();
-   *
-   *   // Style the text.
-   *   textAlign(CENTER);
-   *   textSize(16);
-   *   textFont(font);
-   *   fill(0);
-   *
-   *   // Calculate the z-component.
-   *   let z = sin(frameCount * 0.01);
-   *
-   *   // Update the camera's "up" vector.
-   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, z);
-   *
-   *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
-   * }
-   * </code>
-   * </div>
-   */
 
   ////////////////////////////////////////////////////////////////////////////////
   // Camera Projection Methods
@@ -3848,7 +2847,7 @@ function camera(p5, fn){
    *
    * @class p5.Camera
    * @constructor
-   * @param {rendererGL} rendererGL instance of WebGL renderer
+   * @param {RendererGL} rendererGL instance of WebGL renderer
    *
    * @example
    * <div>
@@ -3989,6 +2988,1017 @@ function camera(p5, fn){
     this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
   };
+
+  /**
+   * The camera’s x-coordinate.
+   *
+   * By default, the camera’s x-coordinate is set to 0 in "world" space.
+   *
+   * @property {Number} eyeX
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "eyeX: 0" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of eyeX, rounded to the nearest integer.
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move left and right as the camera moves. The text "eyeX: X" is written in black beneath the cube. X oscillates between -25 and 25.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new x-coordinate.
+   *   let x = 25 * sin(frameCount * 0.01);
+   *
+   *   // Set the camera's position.
+   *   cam.setPosition(x, -400, 800);
+   *
+   *   // Display the value of eyeX, rounded to the nearest integer.
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The camera’s y-coordinate.
+   *
+   * By default, the camera’s y-coordinate is set to 0 in "world" space.
+   *
+   * @property {Number} eyeY
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   // Set the camera.
+   *   setCamera(cam);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "eyeY: -400" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of eyeY, rounded to the nearest integer.
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move up and down as the camera moves. The text "eyeY: Y" is written in black beneath the cube. Y oscillates between -374 and -425.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new y-coordinate.
+   *   let y = 25 * sin(frameCount * 0.01) - 400;
+   *
+   *   // Set the camera's position.
+   *   cam.setPosition(0, y, 800);
+   *
+   *   // Display the value of eyeY, rounded to the nearest integer.
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The camera’s z-coordinate.
+   *
+   * By default, the camera’s z-coordinate is set to 800 in "world" space.
+   *
+   * @property {Number} eyeZ
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "eyeZ: 800" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of eyeZ, rounded to the nearest integer.
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at the origin.
+   *   cam.lookAt(0, 0, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move forward and back as the camera moves. The text "eyeZ: Z" is written in black beneath the cube. Z oscillates between 700 and 900.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new z-coordinate.
+   *   let z = 100 * sin(frameCount * 0.01) + 800;
+   *
+   *   // Set the camera's position.
+   *   cam.setPosition(0, -400, z);
+   *
+   *   // Display the value of eyeZ, rounded to the nearest integer.
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The x-coordinate of the place where the camera looks.
+   *
+   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+   * `myCamera.centerX` is 0.
+   *
+   * @property {Number} centerX
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "centerX: 10" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of centerX, rounded to the nearest integer.
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right.
+   *   cam.setPosition(100, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move left and right as the camera shifts its focus. The text "centerX: X" is written in black beneath the cube. X oscillates between -15 and 35.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new x-coordinate.
+   *   let x = 25 * sin(frameCount * 0.01) + 10;
+   *
+   *   // Point the camera.
+   *   cam.lookAt(x, 20, -30);
+   *
+   *   // Display the value of centerX, rounded to the nearest integer.
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The y-coordinate of the place where the camera looks.
+   *
+   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+   * `myCamera.centerY` is 0.
+   *
+   * @property {Number} centerY
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "centerY: 20" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of centerY, rounded to the nearest integer.
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right.
+   *   cam.setPosition(100, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move up and down as the camera shifts its focus. The text "centerY: Y" is written in black beneath the cube. Y oscillates between -5 and 45.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new y-coordinate.
+   *   let y = 25 * sin(frameCount * 0.01) + 20;
+   *
+   *   // Point the camera.
+   *   cam.lookAt(10, y, -30);
+   *
+   *   // Display the value of centerY, rounded to the nearest integer.
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The y-coordinate of the place where the camera looks.
+   *
+   * By default, the camera looks at the origin `(0, 0, 0)` in "world" space, so
+   * `myCamera.centerZ` is 0.
+   *
+   * @property {Number} centerZ
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-center.
+   *   cam.setPosition(0, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "centerZ: -30" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of centerZ, rounded to the nearest integer.
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Place the camera at the top-right.
+   *   cam.setPosition(100, -400, 800);
+   *
+   *   // Point the camera at (10, 20, -30).
+   *   cam.lookAt(10, 20, -30);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to move forward and back as the camera shifts its focus. The text "centerZ: Z" is written in black beneath the cube. Z oscillates between -55 and -25.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the new z-coordinate.
+   *   let z = 25 * sin(frameCount * 0.01) - 30;
+   *
+   *   // Point the camera.
+   *   cam.lookAt(10, 20, z);
+   *
+   *   // Display the value of centerZ, rounded to the nearest integer.
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The x-component of the camera's "up" vector.
+   *
+   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+   * `(0, 1, 0)`, so its x-component is 0 in "local" space.
+   *
+   * @property {Number} upX
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "upX: 0" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of upX, rounded to the nearest tenth.
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upX: X" is written in black beneath it. X oscillates between -1 and 1.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the x-component.
+   *   let x = sin(frameCount * 0.01);
+   *
+   *   // Update the camera's "up" vector.
+   *   cam.camera(100, -400, 800, 0, 0, 0, x, 1, 0);
+   *
+   *   // Display the value of upX, rounded to the nearest tenth.
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The y-component of the camera's "up" vector.
+   *
+   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+   * `(0, 1, 0)`, so its y-component is 1 in "local" space.
+   *
+   * @property {Number} upY
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "upY: 1" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of upY, rounded to the nearest tenth.
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube flips upside-down periodically. The text "upY: Y" is written in black beneath it. Y oscillates between -1 and 1.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the y-component.
+   *   let y = sin(frameCount * 0.01);
+   *
+   *   // Update the camera's "up" vector.
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, y, 0);
+   *
+   *   // Display the value of upY, rounded to the nearest tenth.
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The z-component of the camera's "up" vector.
+   *
+   * The camera's "up" vector orients its y-axis. By default, the "up" vector is
+   * `(0, 1, 0)`, so its z-component is 0 in "local" space.
+   *
+   * @property {Number} upZ
+   * @for p5.Camera
+   * @readonly
+   *
+   * @example
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The text "upZ: 0" is written in black beneath it.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Display the value of upZ, rounded to the nearest tenth.
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let cam;
+   * let font;
+   *
+   * async function setup() {
+   *   // Load a font and create a p5.Font object.
+   *   font = await loadFont('assets/inconsolata.otf');
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a p5.Camera object.
+   *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
+   *   // Place the camera at the top-right: (100, -400, 800)
+   *   // Point it at the origin: (0, 0, 0)
+   *   // Set its "up" vector: (0, 1, 0).
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, 0);
+   *
+   *   describe(
+   *     'A white cube on a gray background. The cube appears to rock back and forth. The text "upZ: Z" is written in black beneath it. Z oscillates between -1 and 1.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Style the box.
+   *   fill(255);
+   *
+   *   // Draw the box.
+   *   box();
+   *
+   *   // Style the text.
+   *   textAlign(CENTER);
+   *   textSize(16);
+   *   textFont(font);
+   *   fill(0);
+   *
+   *   // Calculate the z-component.
+   *   let z = sin(frameCount * 0.01);
+   *
+   *   // Update the camera's "up" vector.
+   *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, z);
+   *
+   *   // Display the value of upZ, rounded to the nearest tenth.
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
+   * }
+   * </code>
+   * </div>
+   */
 }
 
 export default camera;
