@@ -9,12 +9,14 @@ Hello! Welcome to the guidelines for writing p5.js documentation. This document 
 - Airbnb [JavaScript Style Guide](https://airbnb.io/javascript/) (MIT)
 
 Our community is large and diverse. Many people learn to code using p5.js, and a large subset of those people are students in K–12 classes. After reading this guide, you will know:
+
 - How to write effective, inclusive, and accessible prose for documentation purposes.
 - How to write simple code samples for documentation purposes.
 
 ## Table of Contents
 
 ### Writing
+
 - [YUIDoc](#yuidoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
@@ -23,6 +25,37 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Accessibility and Disability](#accessibility-and-disability)
 
 ### Code
+
+- [Documentation Style Guide](#documentation-style-guide)
+
+  - [Table of Contents](#table-of-contents)
+    - [Writing](#writing)
+    - [Code](#code)
+  - [YUIDoc](#yuidoc)
+  - [English](#english)
+  - [Oxford Comma](#oxford-comma)
+  - [Wording](#wording)
+  - [Unbiased Documentation](#unbiased-documentation)
+  - [Accessibility and Disability](#accessibility-and-disability)
+  - [Code Samples](#code-samples)
+  - [Comments](#comments)
+  - [Accessible Descriptions](#accessible-descriptions)
+  - [Whitespace](#whitespace)
+  - [Semicolons](#semicolons)
+  - [Naming Conventions](#naming-conventions)
+  - [Variables](#variables)
+  - [Strings](#strings)
+  - [Boolean Operators](#boolean-operators)
+  - [Conditionals](#conditionals)
+  - [Iteration](#iteration)
+  - [Objects](#objects)
+  - [Arrays](#arrays)
+  - [Functions](#functions)
+  - [Arrow Functions](#arrow-functions)
+  - [Chaining](#chaining)
+  - [Classes](#classes)
+  - [Assets](#assets)
+
 - [Code Samples](#code-samples)
 - [Comments](#comments)
 - [Whitespace](#whitespace)
@@ -116,13 +149,13 @@ Always use `let` to declare variables.
 
 **Pronouns**
 
-| Recommended |	Not Recommended |
-| -- | -- |
-| they | he or she |
-| them | him or her |
-| their | his or her |
-| theirs | his or hers |
-| themselves | himself or herself |
+| Recommended | Not Recommended    |
+| ----------- | ------------------ |
+| they        | he or she          |
+| them        | him or her         |
+| their       | his or her         |
+| theirs      | his or hers        |
+| themselves  | himself or herself |
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -142,16 +175,16 @@ Always use `let` to declare variables.
 
 The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
-| Recommended |	Not Recommended |
-| -- | -- |
-| person with disability | the disabled, handicapped, differently abled, challenged, abnormal |
-| person without disability | normal person, healthy person, able-bodied |
-| has [disability] | victim of, suffering from, affected by, stricken with |
-| unable to speak, uses synthetic speech | dumb, mute |
-| deaf, low-hearing | hearing-impaired |
-| blind, low-vision | vision-impaired, visually-challenged |
-| cognitive or developmental disabilities | mentally-challenged, slow-learner |
-| person with limited mobility, person with a physical disability | crippled, handicapped |
+| Recommended                                                     | Not Recommended                                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| person with disability                                          | the disabled, handicapped, differently abled, challenged, abnormal |
+| person without disability                                       | normal person, healthy person, able-bodied                         |
+| has [disability]                                                | victim of, suffering from, affected by, stricken with              |
+| unable to speak, uses synthetic speech                          | dumb, mute                                                         |
+| deaf, low-hearing                                               | hearing-impaired                                                   |
+| blind, low-vision                                               | vision-impaired, visually-challenged                               |
+| cognitive or developmental disabilities                         | mentally-challenged, slow-learner                                  |
+| person with limited mobility, person with a physical disability | crippled, handicapped                                              |
 
 ## Code Samples
 
@@ -165,16 +198,16 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 
 ```javascript
 // Bad.
-let magicWord = 'Please';  // Remember this.
+let magicWord = "Please"; //Remember this.
 
 // Good.
 // Remember this.
-let magicWord = 'Please';
+let magicWord = "Please";
 
 // Bad.
 if (keyIsPressed === true) {
   thing1();
-  // This is an important note.
+  //This is an important note.
   thing2();
 }
 
@@ -192,34 +225,24 @@ if (keyIsPressed === true) {
 ```javascript
 // Bad.
 //Remember this.
-let magicWord = 'Please';
+let magicWord = "Please";
 
 // Good.
 // Remember this.
-let magicWord = 'Please';
+let magicWord = "Please";
 ```
 
 - Use `//` for multiline comments.
 
 ```javascript
-
 // Bad.
-/**
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- * I will use // for multiline comments.
- */
-
-//Bad.
 /*
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- I will use // for multiline comments.
- */
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+I will use // for multiline comments.
+*/
 
 // Good.
 // I will use // for multiline comments.
@@ -227,8 +250,32 @@ let magicWord = 'Please';
 // I will use // for multiline comments.
 // I will use // for multiline comments.
 // I will use // for multiline comments.
-
 ```
+
+## Accessible Descriptions
+
+- Use `describe()` to make p5.js sketches accessible to screen readers. All reference contributions should include a concise, visual canvas description for accessibility.
+
+- **Concise:** 1–3 sentences. Briefly describe what is visually present on the canvas.
+
+  - Good: `describe('A blue rectangle in the center of a white canvas.');`
+  - Bad: `describe('This code draws a rectangle.');`
+
+- **Visual-Only:** Focus on what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
+
+  - Good: `describe('A red heart and yellow circle over a pink background.');`
+  - Bad: `describe('Click to draw a heart.');`
+
+- **Non-Redundant:** Avoid repeating information already available in the title or code comments.
+
+  - Good: `describe('A black dot moves from bottom to top on a gray square.');`
+  - Bad: `describe('A shape.');`
+
+- **Clarity:** Use simple, direct language. End with punctuation for screen reader clarity.
+  - Good: `describe('A green triangle on a white background.');`
+  - Bad: `describe('triangle');`
+
+New to writing accessible canvas descriptions? Please check the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) and [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) next.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -257,7 +304,7 @@ function setup() {
 
 ```javascript
 // Bad.
-function setup(){
+function setup() {
   createCanvas(400, 400);
 }
 
@@ -271,8 +318,8 @@ function setup() {
 
 ```javascript
 // Bad.
-if(keyIsPressed === true) {
-  doStuff ();
+if (keyIsPressed === true) {
+  doStuff();
 }
 
 // Good.
@@ -281,8 +328,8 @@ if (keyIsPressed === true) {
 }
 
 // Bad.
-function setup () {
-  createCanvas (400, 400);
+function setup() {
+  createCanvas(400, 400);
 }
 
 // Good.
@@ -295,7 +342,7 @@ function setup() {
 
 ```javascript
 // Bad.
-let y=x+5;
+let y = x + 5;
 
 // Good.
 let y = x + 5;
@@ -309,7 +356,7 @@ let y = x + 5;
 
 ```javascript
 // Bad.
-let x = 0
+let x = 0;
 
 // Good.
 let x = 0;
@@ -408,12 +455,12 @@ let y = 200;
 
 ```javascript
 // Bad.
-flower = '🌸';
-var flower = '🌸';
-const flower = '🌸';
+flower = "🌸";
+var flower = "🌸";
+const flower = "🌸";
 
 // Good.
-let flower = '🌸';
+let flower = "🌸";
 ```
 
 - Use one `let` declaration per variable or assignment.
@@ -424,12 +471,12 @@ let flower = '🌸';
 // Bad.
 let positions = getPositions(),
   startSearch = true,
-  dragonball = 'z';
+  dragonball = "z";
 
 // Good.
 let positions = getPositions();
 let startSearch = true;
-let dragonball = 'z';
+let dragonball = "z";
 ```
 
 - Assign variables where needed and place them in a reasonable place.
@@ -438,23 +485,23 @@ let dragonball = 'z';
 
 ```javascript
 // Bad - unnecessary search.
-function getCharacter(name = 'default') {
+function getCharacter(name = "default") {
   let character = characters.find((c) => c.name === name);
 
-  if (name === 'default') {
+  if (name === "default") {
     return false;
   }
 
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 
 // Good.
-function getCharacter(name = 'default') {
-  if (name === 'default') {
+function getCharacter(name = "default") {
+  if (name === "default") {
     return false;
   }
 
@@ -463,7 +510,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 ```
@@ -498,7 +545,7 @@ let name = "Hilma af Klint";
 let name = `Hilma af Klint`;
 
 // Good.
-let name = 'Hilma af Klint';
+let name = "Hilma af Klint";
 ```
 
 - Don't concatenate strings that cause the line to go over 80 characters.
@@ -507,15 +554,18 @@ let name = 'Hilma af Klint';
 
 ```javascript
 // Bad.
-let essay = 'You see us as you want to see us: \
-in the simplest terms, in the most convenient definitions.';
+let essay =
+  "You see us as you want to see us: \
+in the simplest terms, in the most convenient definitions.";
 
 // Bad.
-let essay = 'You see us as you want to see us: ' +
-  'in the simplest terms, in the most convenient definitions.';
+let essay =
+  "You see us as you want to see us: " +
+  "in the simplest terms, in the most convenient definitions.";
 
 // Good.
-let essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
+let essay =
+  "You see us as you want to see us: in the simplest terms, in the most convenient definitions.";
 ```
 
 - Use template strings instead of concatenation when needed.
@@ -523,10 +573,14 @@ let essay = 'You see us as you want to see us: in the simplest terms, in the mos
 > Why? Template strings have a concise syntax. They also provide proper newlines and string interpolation features.
 
 ```javascript
-let name = 'Dave';
+let name = "Dave";
 
 // Bad.
-text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name, 0, 0);
+text(
+  name + ", this conversation can serve no purpose anymore. Goodbye." + name,
+  0,
+  0
+);
 
 // Good.
 text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
@@ -538,7 +592,7 @@ text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
 
 ```javascript
 // Bad.
-let bad = '\'this\' \i\s \"quoted\"';
+let bad = "'this' is \"quoted\"";
 
 // Good.
 let good = 'Air quotes make you look "cool".';
@@ -571,7 +625,7 @@ if (name) {
 }
 
 // Good.
-if (name !== '') {
+if (name !== "") {
   // ...
 }
 
@@ -594,13 +648,13 @@ if (collection.length > 0) {
 
 ```javascript
 // Bad.
-let huh = a && b < 0 || c > 0 || d + 1 === 0;
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // Good.
-let huh = (a && b < 0) || c > 0 || (d + 1 === 0);
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // Bad.
-if (a || b && c) {
+if (a || (b && c)) {
   return d;
 }
 
@@ -610,7 +664,7 @@ if (a || (b && c)) {
 }
 
 // Bad.
-let what = a + b / c * d;
+let what = a + (b / c) * d;
 
 // Good.
 let what = a + (b / c) * d;
@@ -622,8 +676,7 @@ let what = a + (b / c) * d;
 
 ```javascript
 // Bad.
-if (mouseIsPressed === true)
-  circle(mouseX, mouseY, 50);
+if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
 
 // Better.
 if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
@@ -641,8 +694,7 @@ if (mouseIsPressed === true) {
 if (mouseIsPressed === true) {
   thing1();
   thing2();
-}
-else {
+} else {
   thing3();
 }
 
@@ -683,15 +735,19 @@ function mouseIsOnLeft() {
 
 ```javascript
 // Bad.
-if ((number === 123 || letters === 'abc') && mouseIsPressed === true && keyIsPressed === true) {
+if (
+  (number === 123 || letters === "abc") &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
+) {
   doStuff();
 }
 
 // Good.
 if (
-  (number === 123 || letters === 'abc')
-  && mouseIsPressed === true
-  && keyIsPressed === true
+  (number === 123 || letters === "abc") &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
 ) {
   doStuff();
 }
@@ -777,16 +833,16 @@ let ball = {};
 ```javascript
 // Bad.
 let secretObject = {
-  'x': 100,
-  'y': 200,
-  'top-secret': 'classified',
+  x: 100,
+  y: 200,
+  "top-secret": "classified",
 };
 
 // Good.
 let secretObject = {
   x: 3,
   y: 4,
-  'top-secret': 'classified',
+  "top-secret": "classified",
 };
 ```
 
@@ -794,14 +850,14 @@ let secretObject = {
 
 ```javascript
 let turtle = {
-  name: 'Leonardo',
-  color: 'dodgerblue',
-  weapon: '🗡️',
-  food: '🍕',
+  name: "Leonardo",
+  color: "dodgerblue",
+  weapon: "🗡️",
+  food: "🍕",
 };
 
 // Bad.
-let turtleName = turtle['name'];
+let turtleName = turtle["name"];
 
 // Good.
 let turtleName = turtle.name;
@@ -811,17 +867,17 @@ let turtleName = turtle.name;
 
 ```javascript
 let turtle = {
-  name: 'Leonardo',
-  color: 'dodgerblue',
-  weapon: '🗡️',
-  food: '🍕',
+  name: "Leonardo",
+  color: "dodgerblue",
+  weapon: "🗡️",
+  food: "🍕",
 };
 
 function getProp(prop) {
   return turtle[prop];
 }
 
-let turtleName = getProp('name');
+let turtleName = getProp("name");
 ```
 
 - Don't use leading commas.
@@ -829,14 +885,14 @@ let turtleName = getProp('name');
 ```javascript
 // Bad.
 let mathematician = {
-    firstName: 'Ada'
-  , lastName: 'Lovelace'
+  firstName: "Ada",
+  lastName: "Lovelace",
 };
 
 // Good.
 let mathematician = {
-  firstName: 'Ada',
-  lastName: 'Lovelace',
+  firstName: "Ada",
+  lastName: "Lovelace",
 };
 ```
 
@@ -845,14 +901,14 @@ let mathematician = {
 ```javascript
 // Bad.
 let artist = {
-  firstName: 'Lauren',
-  lastName: 'McCarthy'
+  firstName: "Lauren",
+  lastName: "McCarthy",
 };
 
 // Good.
 let artist = {
-  firstName: 'Lauren',
-  lastName: 'McCarthy',
+  firstName: "Lauren",
+  lastName: "McCarthy",
 };
 ```
 
@@ -876,10 +932,10 @@ let images = [];
 let lyrics = [];
 
 // Bad.
-lyrics[lyrics.length] = 'Little rough around the edges, but I keep it smooth';
+lyrics[lyrics.length] = "Little rough around the edges, but I keep it smooth";
 
 // Good.
-lyrics.push('Little rough around the edges, but I keep it smooth');
+lyrics.push("Little rough around the edges, but I keep it smooth");
 ```
 
 - Use the `slice()` method to copy arrays.
@@ -900,9 +956,11 @@ let numbersCopy = numbers.slice();
 
 ```javascript
 // Bad.
-let matrix = [[1, 0, 0],
-                [0, 1, 0],
-                [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+];
 
 // Good.
 let matrix = [
@@ -912,7 +970,11 @@ let matrix = [
 ];
 
 // Also good.
-let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+];
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -982,29 +1044,28 @@ function drawSpiral(length, angle = 90) {
 ```javascript
 // Bad.
 function setup() {
-  loadImage('assets/moonwalk.jpg', function (img) {
+  loadImage("assets/moonwalk.jpg", function (img) {
     image(img, 0, 0);
   });
 }
 
-
 // Good.
 function setup() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage("assets/moonwalk.jpg", (img) => {
     image(img, 0, 0);
   });
 }
 
 // Bad.
 function preload() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage("assets/moonwalk.jpg", (img) => {
     // Complex preprocessing...
   });
 }
 
 // Good.
 function preload() {
-  loadImage('assets/moonwalk.jpg', processImage);
+  loadImage("assets/moonwalk.jpg", processImage);
 }
 
 function processImage(img) {
@@ -1039,24 +1100,23 @@ function processImage(img) {
 
 ```javascript
 // Bad.
-[1, 2, 3].map(number => number * number);
+[1, 2, 3].map((number) => number * number);
 
 // Good.
 [1, 2, 3].map((number) => number * number);
 ```
+
 **[⬆ back to top](#table-of-contents)**
 
 ## Chaining
 
-* Use individual function calls instead of function chaining.
+- Use individual function calls instead of function chaining.
 
 > Why? To accommodate users who may not be familiar with the concept of function chaining.
 
 ```javascript
 // Bad.
-fill(0)
-  .strokeWeight(6)
-  .textSize(20);
+fill(0).strokeWeight(6).textSize(20);
 
 // Bad.
 fill(0).strokeWeight(6).textSize(20);
@@ -1205,7 +1265,7 @@ class Mover {
 // Good.
 class Mover {
   // ...
-  
+
   update() {
     this.x += this.xspeed;
     this.y += this.yspeed;
@@ -1222,24 +1282,50 @@ class Mover {
 
 ## Assets
 
+Always load assets from a folder called "assets".
+
+## Canvas Accessibility Descriptions: `describe()`
+
+To make p5.js sketches accessible, every example that draws to the canvas should include a call to [`describe()`](https://p5js.org/reference/p5/describe). This provides a concise, visual description for screen readers.
+
+**Best Practices for `describe()`:**
+
+- **Concise:** 1–3 sentences. Briefly describe what is visually present on the canvas.
+- **Visual-Only:** Focus on what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
+- **Non-Redundant:** Avoid repeating information already available in the title or code comments.
+- **Clarity:** Use simple, direct language. End with punctuation for screen reader clarity.
+
+**Do/Don’t Examples:**
+
+| Do                                                                    | Don’t                                       |
+| --------------------------------------------------------------------- | ------------------------------------------- |
+| `describe('A blue rectangle in the center of a white canvas.');`      | `describe('This code draws a rectangle.');` |
+| `describe('A red heart and yellow circle over a pink background.');`  | `describe('Click to draw a heart.');`       |
+| `describe('A black dot moves from bottom to top on a gray square.');` | `describe('A shape.');`                     |
+
+**More Guidance:**
+
+- See the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) for technical details and examples.
+- See the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) for more best practices and rationale.
+- Reference examples must include a `describe()` call. See [Contributing to the p5.js Reference](./contributing_to_the_p5js_reference.md#add-a-canvas-description-using-describe) for details.
+
 - Always load assets from a folder called "assets".
 
 > Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
+
 - Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
 - Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
 - Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
 
 ```javascript
-let img;
-
 // Bad.
 function preload() {
-  img = loadImage('moonwalk.jpg');
+  img = loadImage("moonwalk.jpg");
 }
 
 // Good.
 function preload() {
-  img = loadImage('assets/moonwalk.jpg');
+  img = loadImage("assets/moonwalk.jpg");
 }
 ```
 
