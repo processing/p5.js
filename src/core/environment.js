@@ -782,10 +782,21 @@ p5.prototype._onresize = function(e) {
   }
 };
 
+// Prefer the visual viewport when available (better for mobile: pinch/keyboard/zoom),
+// then the layout viewport, then the window inner size, then the body content size.
+// Order chosen intentionally:
+// 1) window.visualViewport.*         -> visual viewport (mobile-friendly; adapts to on-screen keyboard)
+// 2) document.documentElement.client* -> layout viewport (avoids including scrollbars on some platforms)
+// 3) window.inner*                   -> includes scrollbars on some platforms (Chrome)
+// 4) document.body.client*           -> content-box fallback if the above are unavailable
+// Caveat: different browsers expose subtly different viewport measurements (scrollbars, zoom,
+// and visual viewport). This ordering prefers mobile-friendly measurements while retaining
+// sensible fallbacks for desktop browsers.
 function getWindowWidth() {
   return (
-    window.innerWidth ||
+    (window.visualViewport && window.visualViewport.width) ||
     (document.documentElement && document.documentElement.clientWidth) ||
+    window.innerWidth ||
     (document.body && document.body.clientWidth) ||
     0
   );
@@ -793,8 +804,9 @@ function getWindowWidth() {
 
 function getWindowHeight() {
   return (
-    window.innerHeight ||
+    (window.visualViewport && window.visualViewport.height) ||
     (document.documentElement && document.documentElement.clientHeight) ||
+    window.innerHeight ||
     (document.body && document.body.clientHeight) ||
     0
   );
