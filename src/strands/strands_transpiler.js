@@ -12,12 +12,16 @@ function replaceBinaryOperator(codeSource) {
     case '%': return 'mod';
     case '==':
     case '===': return 'equalTo';
+    case '!=':
+    case '!==': return 'notEqual';
     case '>': return 'greaterThan';
     case '>=': return 'greaterEqual';
     case '<': return 'lessThan';
     case '<=': return 'lessEqual';
     case '&&': return 'and';
     case '||': return 'or';
+    // TODO: handle ** --> pow, but make it stay pow in
+    // GLSL instead of turning it back into **
   }
 }
 function nodeIsUniform(ancestor) {
