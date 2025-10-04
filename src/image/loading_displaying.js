@@ -310,6 +310,7 @@ p5.prototype.saveGif = async function(
   const silent = (options && options.silent) || false;
   const notificationDuration = (options && options.notificationDuration) || 0;
   const notificationID = (options && options.notificationID) || 'progressBar';
+  const preserveTiming = (options && options.preserveTiming) || false; // when true, don't reset frameCount; start from current sketch state
 
   // if arguments in the options object are not correct, cancel operation
   if (typeof delay !== 'number') {
@@ -360,13 +361,25 @@ p5.prototype.saveGif = async function(
   const totalNumberOfFrames = nFrames + nFramesDelay;
 
   // initialize variables for the frames processing
-  let frameIterator = nFramesDelay;
-  this.frameCount = frameIterator;
+  let frameIterator;
+  if (typeof preserveTiming !== 'boolean') {
+    throw TypeError('preserveTiming parameter must be a boolean');
+  }
+
+  if (preserveTiming) {
+    // Start capturing from the current sketch frameCount (plus any requested offset)
+    frameIterator = this.frameCount + nFramesDelay;
+    // Do not overwrite this.frameCount so sketch timing remains intact.
+  } else {
+    // Reset frameCount so recording starts from the beginning (existing behavior)
+    frameIterator = nFramesDelay;
+    this.frameCount = frameIterator;
+  }
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
 
-  // We first take every frame that we are going to use for the animation
+  // We first take every frame that we are going to us~e for the animation
   let frames = [];
 
   if (document.getElementById(notificationID) !== null)
@@ -412,6 +425,13 @@ p5.prototype.saveGif = async function(
       to be drawn and immediately save it to a buffer and continue
     */
     this.redraw();
+
+    // Wait for the browser to complete the redraw. Calling redraw()
+    // schedules a render for the next animation frame; reading pixels
+    // immediately can capture a blank/black buffer on some platforms.
+    // Using requestAnimationFrame ensures the frame has been painted
+    // before we read pixels.
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     // depending on the context we'll extract the pixels one way
     // or another
