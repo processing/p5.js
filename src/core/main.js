@@ -528,6 +528,24 @@ for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
 
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+import graphics from './p5.Graphics';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
+p5.registerAddon(graphics);
+
+export default p5;
+
 //////////////////////////////////////////////
 // PUBLIC p5 PROPERTIES AND METHODS
 //////////////////////////////////////////////
@@ -757,20 +775,3 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-import transform from './transform';
-import structure from './structure';
-import environment from './environment';
-import rendering from './rendering';
-import renderer from './p5.Renderer';
-import renderer2D from './p5.Renderer2D';
-import graphics from './p5.Graphics';
-
-p5.registerAddon(transform);
-p5.registerAddon(structure);
-p5.registerAddon(environment);
-p5.registerAddon(rendering);
-p5.registerAddon(renderer);
-p5.registerAddon(renderer2D);
-p5.registerAddon(graphics);
-
-export default p5;
