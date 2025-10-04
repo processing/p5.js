@@ -221,11 +221,11 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @param  {Number} duration duration in seconds to capture from the sketch.
  * @param  {Object} [options] an object that can contain five more properties:
  *                  `delay`, a Number specifying how much time to wait before recording;
- *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds';
- *                  `silent`, a Boolean that defines presence of progress notifications. By default it's `false`;
+ *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds’;
+ *                  `silent`, a Boolean that defines presence of progress notifications. By default it’s `false`;
  *                  `notificationDuration`, a Number that defines how long in seconds the final notification
  *                  will live. By default it's `0`, meaning the notification will never be removed;
- *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it's `'progressBar'`.
+ *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it’s `'progressBar’`.
  *
  * @example
  * <div>
@@ -310,6 +310,7 @@ p5.prototype.saveGif = async function(
   const silent = (options && options.silent) || false;
   const notificationDuration = (options && options.notificationDuration) || 0;
   const notificationID = (options && options.notificationID) || 'progressBar';
+  const preserveTiming = (options && options.preserveTiming) || false; // when true, don't reset frameCount; start from current sketch state
 
   // if arguments in the options object are not correct, cancel operation
   if (typeof delay !== 'number') {
@@ -360,14 +361,25 @@ p5.prototype.saveGif = async function(
   const totalNumberOfFrames = nFrames + nFramesDelay;
 
   // initialize variables for the frames processing
-  let frameIterator = nFramesDelay;
-  // BUGFIX: Removed line that was resetting frameCount
-  // this.frameCount = frameIterator; // This line was causing black frames
+  let frameIterator;
+  if (typeof preserveTiming !== 'boolean') {
+    throw TypeError('preserveTiming parameter must be a boolean');
+  }
+
+  if (preserveTiming) {
+    // Start capturing from the current sketch frameCount (plus any requested offset)
+    frameIterator = this.frameCount + nFramesDelay;
+    // Do not overwrite this.frameCount so sketch timing remains intact.
+  } else {
+    // Reset frameCount so recording starts from the beginning (existing behavior)
+    frameIterator = nFramesDelay;
+    this.frameCount = frameIterator;
+  }
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
 
-  // We first take every frame that we are going to use for the animation
+  // We first take every frame that we are going to us~e for the animation
   let frames = [];
 
   if (document.getElementById(notificationID) !== null)
@@ -405,10 +417,6 @@ p5.prototype.saveGif = async function(
   // finishes without waiting for another frame.
   await Promise.resolve();
 
-  // ENHANCEMENT: Render one frame before starting capture to ensure canvas is ready
-  this.redraw();
-  await new Promise(resolve => setTimeout(resolve, 16));
-
   while (frameIterator < totalNumberOfFrames) {
     /*
       we draw the next frame. this is important, since
@@ -417,6 +425,13 @@ p5.prototype.saveGif = async function(
       to be drawn and immediately save it to a buffer and continue
     */
     this.redraw();
+
+    // Wait for the browser to complete the redraw. Calling redraw()
+    // schedules a render for the next animation frame; reading pixels
+    // immediately can capture a blank/black buffer on some platforms.
+    // Using requestAnimationFrame ensures the frame has been painted
+    // before we read pixels.
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     // depending on the context we'll extract the pixels one way
     // or another
@@ -1218,6 +1233,107 @@ p5.prototype.image = function(
  * @param  {Number}        v2      green or saturation value.
  * @param  {Number}        v3      blue or brightness.
  * @param  {Number}        [alpha]
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left image.
+ *   image(img, 0, 0);
+ *
+ *   // Right image.
+ *   // Tint with a CSS color string.
+ *   tint('red');
+ *   image(img, 50, 0);
+ *
+ *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left image.
+ *   image(img, 0, 0);
+ *
+ *   // Right image.
+ *   // Tint with RGB values.
+ *   tint(255, 0, 0);
+ *   image(img, 50, 0);
+ *
+ *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
+ *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Tint with RGBA values.
+ *   tint(255, 0, 0, 100);
+ *   image(img, 50, 0);
+ *
+ *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a transparent red tint.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
+ *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Tint with grayscale and alpha values.
+ *   tint(255, 180);
+ *   image(img, 50, 0);
+ *
+ *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right is transparent.');
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method tint
@@ -1252,6 +1368,34 @@ p5.prototype.tint = function(...args) {
  * `noTint()` restores images to their original colors.
  *
  * @method noTint
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   // Left.
+ *   // Tint with a CSS color string.
+ *   tint('red');
+ *   image(img, 0, 0);
+ *
+ *   // Right.
+ *   // Remove the tint.
+ *   noTint();
+ *   image(img, 50, 0);
+ *
+ *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the left has a red tint.');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.noTint = function() {
   this._renderer._tint = null;
@@ -1288,6 +1432,83 @@ p5.prototype._getTintedImageCanvas =
  *
  * @method imageMode
  * @param {Constant} mode either CORNER, CORNERS, or CENTER.
+ *
+ * @example
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use CORNER mode.
+ *   imageMode(CORNER);
+ *
+ *   // Display the image.
+ *   image(img, 10, 10, 50, 50);
+ *
+ *   describe('A square image of a brick wall is drawn at the top left of a gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use CORNERS mode.
+ *   imageMode(CORNERS);
+ *
+ *   // Display the image.
+ *   image(img, 10, 10, 90, 40);
+ *
+ *   describe('An image of a brick wall is drawn on a gray square. The image is squeezed into a small rectangular area.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * // Load the image.
+ * function preload() {
+ *   img = loadImage('assets/bricks.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use CENTER mode.
+ *   imageMode(CENTER);
+ *
+ *   // Display the image.
+ *   image(img, 50, 50, 80, 80);
+ *
+ *   describe('A square image of a brick wall is drawn on a gray square.');
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.imageMode = function(m) {
   p5._validateParameters('imageMode', arguments);
