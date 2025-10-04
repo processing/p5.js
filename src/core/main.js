@@ -48,6 +48,35 @@ class p5 {
   static _friendlyFileLoadError = () => {};
 
   constructor(sketch, node) {
+    // Apply addon defined decorations
+    if(p5.decorations.size > 0){
+      for (const [patternArray, decoration] of p5.decorations) {
+        for(const member in p5.prototype) {
+          // Member must be a function
+          if (typeof p5.prototype[member] !== 'function') continue;
+
+          if (!patternArray.some(pattern => {
+            if (typeof pattern === 'string') {
+              return pattern === member;
+            } else if (pattern instanceof RegExp) {
+              return pattern.test(member);
+            }
+          })) continue;
+
+          p5.prototype[member] = decoration(p5.prototype[member], {
+            kind: 'method',
+            name: member,
+            access: {},
+            static: false,
+            private: false,
+            addInitializer(initializer){}
+          });
+        }
+      }
+
+      p5.decorations.clear();
+    }
+
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -744,38 +773,4 @@ p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
 
-const p5Proxy = new Proxy(p5, {
-  construct(target, args){
-    if(p5.decorations.size > 0){
-      // Apply addon defined decorations
-      for (const [patternArray, decoration] of p5.decorations) {
-        for(const member in p5.prototype) {
-          // Member must be a function
-          if (typeof p5.prototype[member] !== 'function') continue;
-
-          if (!patternArray.some(pattern => {
-            if (typeof pattern === 'string') {
-              return pattern === member;
-            } else if (pattern instanceof RegExp) {
-              return pattern.test(member);
-            }
-          })) continue;
-
-          p5.prototype[member] = decoration(p5.prototype[member], {
-            kind: 'method',
-            name: member,
-            access: {},
-            static: false,
-            private: false,
-            addInitializer(initializer){}
-          });
-        }
-      }
-
-      p5.decorations.clear();
-    }
-    return new target(...args);
-  }
-});
-
-export default p5Proxy;
+export default p5;
