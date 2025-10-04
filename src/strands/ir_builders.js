@@ -2,7 +2,7 @@ import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, } from './ir_types';
-import { createStrandsNode, StrandsNode } from './strands_api';
+import { createStrandsNode, StrandsNode } from './strands_node';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
 //////////////////////////////////////////////
@@ -165,7 +165,6 @@ export function memberAccessNode(strandsContext, parentNode, componentNode, memb
 
 export function structInstanceNode(strandsContext, structTypeInfo, identifier, dependsOn) {
   const { cfg, dag, } = strandsContext;
-
   if (dependsOn.length === 0) {
     for (const prop of structTypeInfo.properties) {
       const typeInfo = prop.dataType;
@@ -266,7 +265,6 @@ export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   };
 
   const id = constructTypeFromIDs(strandsContext, finalType, mappedDependencies);
-
   if (typeInfo.baseType !== BaseType.DEFER) {
     CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
   }
@@ -419,11 +417,11 @@ export function functionCallNode(
   return { id, dimension: inferredReturnType.dimension  };
 }
 
-export function statementNode(strandsContext, opCode) {
+export function statementNode(strandsContext, statementType) {
   const { dag, cfg } = strandsContext;
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.STATEMENT,
-    opCode
+    statementType
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
@@ -458,7 +456,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
           return Reflect.get(...arguments);
         } else {
           for (const set of swizzleSets) {
-            if ([...property].every(char => set.includes(char))) {
+            if ([...property.toString()].every(char => set.includes(char))) {
               const swizzle = [...property].map(char => {
                 const index = set.indexOf(char);
                 return swizzleSets[0][index];
@@ -476,12 +474,11 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
         chars.every(c => swizzleSet.includes(c)) &&
         new Set(chars).size === chars.length &&
         target.dimension >= chars.length;
-
       if (!valid) continue;
 
       const dim = target.dimension;
 
-      // lanes are the underlying values of the target vector 
+      // lanes are the underlying values of the target vector
       //  e.g. lane 0 holds the value aliased by 'x', 'r', and 's'
       // the lanes array is in the 'correct' order
       const lanes = new Array(dim);
@@ -521,7 +518,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       }
 
       // The canonical index refers to the actual value's position in the vector lanes
-      // i.e. we are finding (3,2,1) from .zyx 
+      // i.e. we are finding (3,2,1) from .zyx
       // We set the correct value in the lanes array
       for (let j = 0; j < chars.length; j++) {
         const canonicalIndex = swizzleSet.indexOf(chars[j]);
@@ -538,9 +535,9 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
 
       target.id = newID;
 
-      // If we swizzle assign on a struct component i.e. 
+      // If we swizzle assign on a struct component i.e.
       //   inputs.position.rg = [1, 2]
-      // The onRebind callback will update the structs components so that it refers to the new values, 
+      // The onRebind callback will update the structs components so that it refers to the new values,
       // and make a new ID for the struct with these new values
       if (typeof onRebind === 'function') {
         onRebind(newID);
