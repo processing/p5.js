@@ -807,9 +807,9 @@ function getWindowWidth() {
         }
       }
 
-      if (typeof window.visualViewport.width === 'number' && window.visualViewport.width > 0) {
-        return window.visualViewport.width;
-      }
+      // if (typeof window.visualViewport.width === 'number' && window.visualViewport.width > 0) {
+      //   return window.visualViewport.width;
+      // }
     }
   } catch (e) {
     // experimental access may throw; ignore and continue with fallbacks
@@ -834,9 +834,9 @@ function getWindowHeight() {
         }
       }
 
-      if (typeof window.visualViewport.height === 'number' && window.visualViewport.height > 0) {
-        return window.visualViewport.height;
-      }
+      // if (typeof window.visualViewport.height === 'number' && window.visualViewport.height > 0) {
+      //   return window.visualViewport.height;
+      // }
     }
   } catch (e) {
     // experimental access may throw; ignore and continue with fallbacks
