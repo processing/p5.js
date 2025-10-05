@@ -343,6 +343,7 @@ const ASTCallbacks = {
               });
             }
             // Replace all references to original variables with temp variables
+            // and wrap literal assignments in strandsNode calls
             const replaceReferences = (node) => {
               if (!node || typeof node !== 'object') return;
               if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
@@ -351,6 +352,22 @@ const ASTCallbacks = {
                          node.object.type === 'Identifier' &&
                          tempVarMap.has(node.object.name)) {
                 node.object.name = tempVarMap.get(node.object.name);
+              }
+              // Handle literal assignments to temp variables
+              if (node.type === 'AssignmentExpression' &&
+                  node.left.type === 'Identifier' &&
+                  tempVarMap.has(node.left.name) &&
+                  (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
+                // Wrap the right hand side in a strandsNode call to make sure
+                // it's not just a literal and has a type
+                node.right = {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: '__p5.strandsNode'
+                  },
+                  arguments: [node.right]
+                };
               }
               // Recursively process all properties
               for (const key in node) {
