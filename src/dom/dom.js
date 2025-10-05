@@ -4958,7 +4958,9 @@ class MediaElement extends p5.Element {
   }
   loadPixels(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
+
+    const p5Instance = this._pInst || window.p5 || p5;
+    return p5Instance.Renderer2D.prototype.loadPixels.apply(this, args);
   }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
