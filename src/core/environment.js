@@ -793,20 +793,58 @@ p5.prototype._onresize = function(e) {
 // and visual viewport). This ordering prefers mobile-friendly measurements while retaining
 // sensible fallbacks for desktop browsers.
 function getWindowWidth() {
+  // Prefer including scrollbars when possible per contributor guidance.
+  // Order: experimental visualViewport.segments (may include scrollbars/handle rotation),
+  // visualViewport.width, window.innerWidth (includes scrollbars),
+  // documentElement.clientWidth (excludes scrollbars), document.body.clientWidth.
+  try {
+    if (window.visualViewport) {
+      const segs = window.visualViewport.segments;
+      if (Array.isArray(segs) && segs.length > 0) {
+        const w = segs[0] && typeof segs[0].width === 'number' ? segs[0].width : null;
+        if (w && w > 0) {
+          return w;
+        }
+      }
+
+      if (typeof window.visualViewport.width === 'number' && window.visualViewport.width > 0) {
+        return window.visualViewport.width;
+      }
+    }
+  } catch (e) {
+    // experimental access may throw; ignore and continue with fallbacks
+  }
+
   return (
-    (window.visualViewport && window.visualViewport.width) ||
-    (document.documentElement && document.documentElement.clientWidth) ||
     window.innerWidth ||
+    (document.documentElement && document.documentElement.clientWidth) ||
     (document.body && document.body.clientWidth) ||
     0
   );
 }
 
 function getWindowHeight() {
+  try {
+    if (window.visualViewport) {
+      const segs = window.visualViewport.segments;
+      if (Array.isArray(segs) && segs.length > 0) {
+        const h = segs[0] && typeof segs[0].height === 'number' ? segs[0].height : null;
+        if (h && h > 0) {
+          return h;
+        }
+      }
+
+      if (typeof window.visualViewport.height === 'number' && window.visualViewport.height > 0) {
+        return window.visualViewport.height;
+      }
+    }
+  } catch (e) {
+    // experimental access may throw; ignore and continue with fallbacks
+  }
+
   return (
-    (window.visualViewport && window.visualViewport.height) ||
-    (document.documentElement && document.documentElement.clientHeight) ||
     window.innerHeight ||
+    (document.documentElement && document.documentElement.clientHeight) ||
     (document.body && document.body.clientHeight) ||
     0
   );
