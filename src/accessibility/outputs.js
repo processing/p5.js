@@ -37,19 +37,18 @@ import p5 from '../core/main';
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- * `textOutput()` has several known limitations. Descriptions are only
- * generated in English. Text drawn with <a href="#/p5/text">text()</a> is
- * not described. `textOutput()` does not work with WEBGL mode or 3D shapes.
- * 2D primitives rendered in WEBGL may be described incorrectly because the
- * camera's perspective is not accounted for. Shapes with similar features may
- * be combined in descriptions, resulting in inaccurate counts. Shapes
- * positioned outside the canvas boundaries are described as though they're
- * visible. Custom 2D shapes created with
- * <a href="#/p5/beginShape">beginShape()</a> are not described.
+ *`textOutput()` currently generates descriptions in English only.
+ * Text drawn with <a href="#/p5/text">text()</a> is not included in
+ * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
+ * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
+ * perspective is not accounted for. Shapes with similar features may be
+ * combined, which can affect shape counts. Shapes positioned outside the
+ * canvas boundaries may still be included in descriptions. Custom 2D shapes
+ * created with <a href="#/p5/beginShape">beginShape()</a> are not supported.
  *
+ * For more precise control over canvas descriptions, consider using
  * <a href="#/p5/describe">describe()</a> and
- * <a href="#/p5/describeElement">describeElement()</a> provide more accurate
- * and flexible alternatives for writing canvas descriptions.
+ * <a href="#/p5/describeElement">describeElement()</a>.
  *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
@@ -186,19 +185,18 @@ p5.prototype.textOutput = function(display) {
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- * `gridOutput()` has several known limitations. Descriptions are only
- * generated in English. Text drawn with <a href="#/p5/text">text()</a> is
- * not described. `gridOutput()` does not work with WEBGL mode or 3D shapes.
- * 2D primitives rendered in WEBGL may be described incorrectly because the
- * camera's perspective is not accounted for. Shapes with similar features may
- * be combined in descriptions, resulting in inaccurate counts. Shapes
- * positioned outside the canvas boundaries are described as though they're
- * visible. Custom 2D shapes created with
- * <a href="#/p5/beginShape">beginShape()</a> are not described.
+ *`gridOutput()` currently generates descriptions in English only.
+ * Text drawn with <a href="#/p5/text">text()</a> is not included in
+ * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
+ * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
+ * perspective is not accounted for. Shapes with similar features may be
+ * combined, which can affect shape counts. Shapes positioned outside the
+ * canvas boundaries may still be included in descriptions. Custom 2D shapes
+ * created with <a href="#/p5/beginShape">beginShape()</a> are not supported.
  *
+ * For more precise control over canvas descriptions, consider using
  * <a href="#/p5/describe">describe()</a> and
- * <a href="#/p5/describeElement">describeElement()</a> provide more accurate
- * and flexible alternatives for writing canvas descriptions.
+ * <a href="#/p5/describeElement">describeElement()</a>.
  *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
