@@ -3682,8 +3682,7 @@ function camera(p5, fn){
   };
 
   /**
-   * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and sets it
-   * as the current (active) camera.
+   * Creates a new <a href="#/p5.Camera">p5.Camera</a> object.
    *
    * The new camera is initialized with a default position `(0, 0, 800)` and a
    * default perspective projection. Its properties can be controlled with
