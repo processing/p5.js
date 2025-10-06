@@ -37,7 +37,7 @@ import p5 from '../core/main';
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- *`textOutput()` currently generates descriptions in English only.
+ * `textOutput()` currently generates descriptions in English only.
  * Text drawn with <a href="#/p5/text">text()</a> is not included in
  * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
  * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
@@ -95,10 +95,12 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
- * function draw() {
+ * function setup() {
  *   // Add the text description.
  *   textOutput();
+ * }
  *
+ * function draw() {
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -115,11 +117,13 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
- * function draw() {
+ * function setup() {
  *   // Add the text description and
  *   // display it for debugging.
  *   textOutput(LABEL);
+ * }
  *
+ * function draw() {
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -185,7 +189,7 @@ p5.prototype.textOutput = function(display) {
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- *`gridOutput()` currently generates descriptions in English only.
+ * `gridOutput()` currently generates descriptions in English only.
  * Text drawn with <a href="#/p5/text">text()</a> is not included in
  * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
  * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
@@ -243,10 +247,12 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
- * function draw() {
+ * function setup() {
  *   // Add the grid description.
  *   gridOutput();
+ * }
  *
+ * function draw() {
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -263,11 +269,13 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
- * function draw() {
+ * function setup() {
  *   // Add the grid description and
  *   // display it for debugging.
  *   gridOutput(LABEL);
+ * }
  *
+ * function draw() {
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
