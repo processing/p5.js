@@ -893,6 +893,49 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[2], 77, 5);
       });
 
+      test('handle complex nested for loops with multiple phi assignments', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            let outerSum = myp5.float(0.0);
+            let globalCounter = myp5.float(0.0);
+
+            // Outer for loop modifying multiple variables
+            for (let i = 0; i < 2; i++) {
+              let innerSum = myp5.float(0.0);
+              let localCounter = myp5.float(0.0);
+
+              // Inner for loop also modifying multiple variables
+              for (let j = 0; j < 2; j++) {
+                innerSum = innerSum + 0.1;
+                localCounter = localCounter + 1.0;
+                globalCounter = globalCounter + 0.5; // This modifies outer scope
+              }
+
+              // Complex state modification between loops involving all variables
+              innerSum = innerSum * localCounter; // 0.2 * 2.0 = 0.4
+              outerSum = outerSum + innerSum;     // Add to outer sum
+              globalCounter = globalCounter * 0.5; // Modify global again
+            }
+
+            // Final result should be: 2 iterations * 0.4 = 0.8 for outerSum
+            // globalCounter: ((0 + 2*0.5)*0.5 + 2*0.5)*0.5 = ((1)*0.5 + 1)*0.5 = 1.5*0.5 = 0.75
+            inputs.color = [outerSum, globalCounter, 0.0, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 ≈ 204
+        assert.approximately(pixelColor[1], 191, 5); // 0.75 * 255 ≈ 191
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
       test('handle nested for loops with state modification between loops', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
