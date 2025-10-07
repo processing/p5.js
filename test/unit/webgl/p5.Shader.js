@@ -596,6 +596,32 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+      test('handle if-else-if chains in the else branch', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const value = myp5.uniformFloat(() => 0.2); // middle value
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0);
+            if (value > 0.8) {
+              color = myp5.float(1.0); // white for high values
+            } else if (value > 0.3) {
+              color = myp5.float(0.5); // gray for medium values
+            } else {
+              color = myp5.float(0.0); // black for low values
+            }
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is gray (medium condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 0, 5); // Red channel should be ~127 (gray)
+        assert.approximately(pixelColor[1], 0, 5); // Green channel should be ~127
+        assert.approximately(pixelColor[2], 0, 5); // Blue channel should be ~127
+      });
       test('handle nested if statements', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const testShader = myp5.baseMaterialShader().modify(() => {

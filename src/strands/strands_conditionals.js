@@ -41,6 +41,7 @@ function buildConditional(strandsContext, conditional) {
   const mergeBlock = CFG.createBasicBlock(cfg, BlockType.MERGE);
   const results = [];
   const branchBlocks = [];
+  const branchEndBlocks = [];
   const mergedAssignments = {};
   const phiBlockDependencies = {};
   // Create a BRANCH block to handle phi node declarations
@@ -64,27 +65,28 @@ function buildConditional(strandsContext, conditional) {
     }
     const scopeStartBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_START);
     CFG.addEdge(cfg, previousBlock, scopeStartBlock);
-    const branchBlock = CFG.createBasicBlock(cfg, blockType);
-    CFG.addEdge(cfg, scopeStartBlock, branchBlock);
-    branchBlocks.push(branchBlock);
-    CFG.pushBlock(cfg, branchBlock);
+    const branchContentBlock = CFG.createBasicBlock(cfg, blockType);
+    CFG.addEdge(cfg, scopeStartBlock, branchContentBlock);
+    branchBlocks.push(branchContentBlock);
+    CFG.pushBlock(cfg, branchContentBlock);
     const branchResults = branchCallback();
     for (const key in branchResults) {
       if (!phiBlockDependencies[key]) {
-        phiBlockDependencies[key] = [{ value: branchResults[key], blockId: branchBlock }];
+        phiBlockDependencies[key] = [{ value: branchResults[key], blockId: branchContentBlock }];
       } else {
-        phiBlockDependencies[key].push({ value: branchResults[key], blockId: branchBlock });
+        phiBlockDependencies[key].push({ value: branchResults[key], blockId: branchContentBlock });
       }
     }
     results.push(branchResults);
+
+    // Create BRANCH_END block for phi assignments
+    const branchEndBlock = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
+    CFG.addEdge(cfg, cfg.currentBlock, branchEndBlock);
+    branchEndBlocks.push(branchEndBlock);
+    CFG.popBlock(cfg);
+
     const scopeEndBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_END);
-    if (cfg.currentBlock !== branchBlock) {
-      CFG.addEdge(cfg, cfg.currentBlock, scopeEndBlock);
-      CFG.popBlock(cfg);
-    } else {
-      CFG.addEdge(cfg, branchBlock, scopeEndBlock);
-      CFG.popBlock(cfg);
-    }
+    CFG.addEdge(cfg, branchEndBlock, scopeEndBlock);
     CFG.addEdge(cfg, scopeEndBlock, mergeBlock);
     previousBlock = scopeStartBlock;
   }
@@ -96,8 +98,8 @@ function buildConditional(strandsContext, conditional) {
   CFG.popBlock(cfg);
   for (let i = 0; i < results.length; i++) {
     const branchResult = results[i];
-    const branchBlockID = branchBlocks[i];
-    CFG.pushBlockForModification(cfg, branchBlockID);
+    const branchEndBlockID = branchEndBlocks[i];
+    CFG.pushBlockForModification(cfg, branchEndBlockID);
     for (const key in branchResult) {
       if (mergedAssignments[key]) {
         // Create an assignment statement: phiNode = branchResult[key]
@@ -112,7 +114,7 @@ function buildConditional(strandsContext, conditional) {
           phiBlocks: []
         };
         const assignmentID = DAG.getOrCreateNode(strandsContext.dag, assignmentNode);
-        CFG.recordInBasicBlock(cfg, branchBlockID, assignmentID);
+        CFG.recordInBasicBlock(cfg, branchEndBlockID, assignmentID);
       }
     }
     CFG.popBlock(cfg);
