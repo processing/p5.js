@@ -622,23 +622,41 @@ const ASTCallbacks = {
 
       // Analyze which outer scope variables are assigned in the loop body
       const assignedVars = new Set();
-      const analyzeBlock = (body) => {
+      const analyzeBlock = (body, parentLocalVars = new Set()) => {
         if (body.type !== 'BlockStatement') return;
 
+        // First pass: collect variable declarations within this block
+        const localVars = new Set([...parentLocalVars]);
+        for (const stmt of body.body) {
+          if (stmt.type === 'VariableDeclaration') {
+            for (const decl of stmt.declarations) {
+              if (decl.id.type === 'Identifier') {
+                localVars.add(decl.id.name);
+              }
+            }
+          }
+        }
+
+        // Second pass: find assignments to non-local variables
         for (const stmt of body.body) {
           if (stmt.type === 'ExpressionStatement' &&
               stmt.expression.type === 'AssignmentExpression') {
             const left = stmt.expression.left;
             if (left.type === 'Identifier') {
-              assignedVars.add(left.name);
+              // Direct variable assignment: x = value
+              if (!localVars.has(left.name)) {
+                assignedVars.add(left.name);
+              }
             } else if (left.type === 'MemberExpression' &&
                        left.object.type === 'Identifier') {
               // Property assignment: obj.prop = value (includes swizzles)
-              assignedVars.add(left.object.name);
+              if (!localVars.has(left.object.name)) {
+                assignedVars.add(left.object.name);
+              }
             }
           } else if (stmt.type === 'BlockStatement') {
-            // Recursively analyze nested block statements
-            analyzeBlock(stmt);
+            // Recursively analyze nested block statements, passing down local vars
+            analyzeBlock(stmt, localVars);
           }
         }
       };

@@ -893,6 +893,43 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[2], 77, 5);
       });
 
+      test('handle nested for loops with state modification between loops', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            let total = myp5.float(0.0);
+
+            // Outer for loop
+            for (let i = 0; i < 2; i++) {
+              let innerSum = myp5.float(0.0);
+
+              // Inner for loop
+              for (let j = 0; j < 3; j++) {
+                innerSum = innerSum + 0.1; // 3 * 0.1 = 0.3 per outer iteration
+              }
+
+              // State modification between inner and outer loop
+              innerSum = innerSum * 0.5; // Multiply by 0.5: 0.3 * 0.5 = 0.15
+              total = total + innerSum; // Add to total: 2 * 0.15 = 0.3
+            }
+
+            inputs.color = [total, total, total, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Should be: 2 iterations * (3 * 0.1 * 0.5) = 2 * 0.15 = 0.3
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 77, 5); // 0.3 * 255 ≈ 77
+        assert.approximately(pixelColor[1], 77, 5);
+        assert.approximately(pixelColor[2], 77, 5);
+      });
+
       test('handle for loop using loop variable in calculations', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
