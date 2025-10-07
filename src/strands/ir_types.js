@@ -63,7 +63,7 @@ export const DataType = {
   mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
-  sampler2D: { fnName: "texture", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
+  sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
 }
 export const structType = function (hookType) {
   let T = hookType.type === undefined ? hookType : hookType.type;
@@ -85,7 +85,32 @@ export function isStructType(typeName) {
   return !isNativeType(typeName);
 }
 export function isNativeType(typeName) {
-  return Object.keys(DataType).includes(typeName);
+  // Check if it's in DataType keys (internal names like 'float4')
+  if (Object.keys(DataType).includes(typeName)) {
+    return true;
+  }
+
+  // Check if it's a GLSL type name (like 'vec4', 'float', etc.)
+  const glslNativeTypes = {
+    'float': true,
+    'vec2': true,
+    'vec3': true,
+    'vec4': true,
+    'int': true,
+    'ivec2': true,
+    'ivec3': true,
+    'ivec4': true,
+    'bool': true,
+    'bvec2': true,
+    'bvec3': true,
+    'bvec4': true,
+    'mat2': true,
+    'mat3': true,
+    'mat4': true,
+    'sampler2D': true
+  };
+
+  return !!glslNativeTypes[typeName];
 }
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
@@ -98,7 +123,7 @@ export function typeEquals(nodeA, nodeB) {
 export const TypeInfoFromGLSLName = Object.fromEntries(
   Object.values(DataType)
     .filter(info => info.fnName !== null)
-    .map(info => [info.fnName === 'texture' ? 'sampler2D' : info.fnName, info])
+    .map(info => [info.fnName, info])
 );
 export const OpCode = {
   Binary: {

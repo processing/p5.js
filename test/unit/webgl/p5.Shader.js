@@ -1066,5 +1066,79 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
       });
     });
+
+    suite('filter shader hooks', () => {
+      test('handle getColor hook with non-struct return type', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            // Simple test - just return a constant color
+            return [1.0, 0.5, 0.0, 1.0]; // Orange color
+          });
+        }, { myp5 });
+
+        // Create a simple scene to filter
+        myp5.background(0, 0, 255); // Blue background
+
+        // Apply the filter
+        myp5.filter(testShader);
+
+        // Check that the filter was applied (should be orange)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
+        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+        assert.approximately(pixelColor[2], 0, 5);   // Blue channel should be 0
+      });
+
+      test('simple vector multiplication in filter shader', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            // Test simple scalar * vector operation
+            const scalar = 0.5;
+            const vector = [1, 2];
+            const result = scalar * vector;
+            return [result.x, result.y, 0, 1];
+          });
+        }, { myp5 });
+      });
+
+      test('handle complex filter shader with for loop and vector operations', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          const r = myp5.uniformFloat(() => 3); // Small value for testing
+          myp5.getColor((inputs, canvasContent) => {
+            let sum = [0, 0, 0, 0];
+            let samples = 1;
+
+            for (let i = 0; i < r; i++) {
+              samples++;
+              sum += myp5.texture(canvasContent, inputs.texCoord + (i / r) * [
+                myp5.sin(4 * myp5.PI * i / r),
+                myp5.cos(4 * myp5.PI * i / r)
+              ]);
+            }
+
+            return sum / samples;
+          });
+        }, { myp5 });
+
+        // Create a simple scene to filter
+        myp5.background(255, 0, 0); // Red background
+
+        // Apply the filter
+        myp5.filter(testShader);
+
+        // The result should be some variation of the red background
+        const pixelColor = myp5.get(25, 25);
+        // Just verify it ran without crashing - exact color will depend on sampling
+        assert.isNumber(pixelColor[0]);
+        assert.isNumber(pixelColor[1]);
+        assert.isNumber(pixelColor[2]);
+      });
+    });
   });
 });
