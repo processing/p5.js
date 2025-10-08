@@ -627,9 +627,56 @@ export const DEGREES = 'degrees';
  * </code>
  * </div>
  */
+
+/**
+ * @property {Number} E (Euler's Number)
+ * @final
+ * @default 2.718281828459045
+ * @description Euler’s number, the base of natural logarithms.
+ * It is approximately equal to 2.71828 and is used in many
+ * mathematical and exponential calculations.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Calculate exponential growth using E
+ *   let growthRate = 0.5;
+ *   let result = E ** growthRate;
+ *
+ *   // Display E and the calculation
+ *   fill(0);
+ *   textAlign(CENTER, CENTER);
+ *   textSize(12);
+ *   text('E = ' + E.toFixed(5), 50, 30);
+ *   text('e^0.5 = ' + result.toFixed(5), 50, 50);
+ *
+ *   // Visualize exponential curve
+ *   stroke(0, 100, 255);
+ *   strokeWeight(2);
+ *   noFill();
+ *   beginShape();
+ *   for (let x = 0; x < width; x++) {
+ *     let t = map(x, 0, width, 0, 2);
+ *     let y = map(E ** t, 1, E ** 2, height - 10, 60);
+ *     vertex(x, y);
+ *   }
+ *   endShape();
+ *
+ *   describe('A gray canvas showing the value of E (2.71828) and e^0.5, with a blue exponential growth curve below the text.');
+ * }
+ * </code>
+ * </div>
+ */
+
 export const RADIANS = 'radians';
 export const DEG_TO_RAD = _PI / 180.0;
 export const RAD_TO_DEG = 180.0 / _PI;
+export const E = Math.E;
 
 // SHAPE
 /**
