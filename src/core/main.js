@@ -867,6 +867,23 @@ class p5 {
 
 // This is a pointer to our global mode p5 instance, if we're in
 // global mode.
+/**
+ * A variable that stores a reference to the sketch's p5 instance.
+ *
+ * In global mode, `p5.instance` refers to the sketch's p5 instance. It's
+ * useful when a function or method needs a reference to the sketch. For
+ * example, it can be used with
+ * <a href="#/p5.Shader/copyToContext">copyToContext()</a> to copy a
+ * <a href="#/p5.Shader">p5.Shader</a> object from a
+ * <a href="#/p5.Graphics">p5.Graphics</a> object to the main canvas.
+ *
+ * Note: `p5.instance` is only available in global mode. In instance mode,
+ * use the instance variable instead.
+ *
+ * @property {p5} instance
+ * @for p5
+ * @readOnly
+ */
 p5.instance = null;
 
 /**

@@ -587,7 +587,7 @@ p5.Shader = class {
    * <a href="#/p5.Graphics">p5.Graphics</a>, as in
    * `myShader.copyToContext(pg)`. The shader can also be copied from a
    * <a href="#/p5.Graphics">p5.Graphics</a> object to the main canvas using
-   * the `window` variable, as in `myShader.copyToContext(window)`.
+   * <a href="#/p5/instance">p5.instance</a>, as in `myShader.copyToContext(p5.instance)`.
    *
    * Note: A <a href="#/p5.Shader">p5.Shader</a> object created with
    * <a href="#/p5/createShader">createShader()</a>,
@@ -729,7 +729,7 @@ p5.Shader = class {
    *   pg.shader(original);
    *
    *   // Copy the original shader to the main canvas.
-   *   copied = original.copyToContext(window);
+   *   copied = original.copyToContext(p5.instance);
    *
    *   // Apply the copied shader to the main canvas.
    *   shader(copied);
