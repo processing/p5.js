@@ -4,9 +4,9 @@
 
 # [p5.js](https://p5js.org)
 
-Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
+Welcome! 👋👋🏿👋🏽👋🏻👋🏾
 
-p5.js is a free and open-source JavaScript library for [accessible](https://p5js.org/contribute/access) creative coding. It is a nurturing community, an approachable language, an exploratory tool, an accessible environment, an inclusive platform, welcoming and playful for artists, designers, educators, beginners, and anyone else!
+p5.js is a free and open-source JavaScript library for [accessible](https://p5js.org/contribute/access) creative coding. It is a nurturing community, an approachable language, an exploratory tool, an accessible environment, an inclusive platform, welcoming and playful for artists, designers, educators, beginners and anyone else!
 
 <table>
 <tr>
