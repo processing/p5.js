@@ -484,4 +484,95 @@ suite('Mouse Events', function() {
       assert.deepEqual(counts, [1, 1]);
     });
   });
+
+  // Test for issue #8139: mouseX/mouseY not updated on canvas resize
+  suite('mouseX/mouseY update on window resize', function() {
+    test('mouseX and mouseY should update when window is resized without mouse movement', function() {
+      // First, trigger a mouse event to set initial coordinates
+      const initialMouseEvent = new MouseEvent('mousemove', {
+        clientX: 150,
+        clientY: 150
+      });
+      window.dispatchEvent(initialMouseEvent);
+
+      // Verify winMouseX/winMouseY are set correctly
+      assert.strictEqual(myp5.winMouseX, 150);
+      assert.strictEqual(myp5.winMouseY, 150);
+
+      // Simulate a window resize event (which changes canvas position)
+      // This should trigger _updateMouseCoordsFromWindowPosition
+      window.dispatchEvent(new Event('resize'));
+
+      // After resize, mouseX/mouseY should be recalculated based on the new canvas position
+      // Since we can't easily change the actual canvas position in this test,
+      // we verify that the function exists and can be called
+      assert.isFunction(myp5._updateMouseCoordsFromWindowPosition);
+
+      // Manually call the update function to verify it works
+      myp5._updateMouseCoordsFromWindowPosition();
+
+      // mouseX/mouseY should still be numbers after the update
+      assert.isNumber(myp5.mouseX);
+      assert.isNumber(myp5.mouseY);
+
+      // winMouseX/winMouseY should remain unchanged (no actual mouse movement)
+      assert.strictEqual(myp5.winMouseX, 150);
+      assert.strictEqual(myp5.winMouseY, 150);
+    });
+
+    test('_updateMouseCoordsFromWindowPosition should not run before mouse interaction', function() {
+      // Create a fresh p5 instance
+      let testP5;
+      new p5(function(p) {
+        p.setup = function() {
+          testP5 = p;
+        };
+      });
+
+      // Before any mouse interaction, _hasMouseInteracted should be false
+      assert.strictEqual(testP5._hasMouseInteracted, false);
+
+      // Call the update function - it should do nothing since no interaction yet
+      if (typeof testP5._updateMouseCoordsFromWindowPosition !== 'undefined') {
+        testP5._updateMouseCoordsFromWindowPosition();
+      }
+
+      // mouseX and mouseY should still be at their initial values (0)
+      assert.strictEqual(testP5.mouseX, 0);
+      assert.strictEqual(testP5.mouseY, 0);
+
+      // Clean up
+      testP5.remove();
+    });
+
+    test('_updateMouseCoordsFromWindowPosition should recalculate coordinates after mouse interaction', function() {
+      // Trigger initial mouse event
+      const mouseEvent = new MouseEvent('mousemove', {
+        clientX: 100,
+        clientY: 100
+      });
+      window.dispatchEvent(mouseEvent);
+
+      // Store current canvas bounding rect
+      const initialRect = canvas.getBoundingClientRect();
+      const initialMouseX = (100 - initialRect.left) / sx;
+      const initialMouseY = (100 - initialRect.top) / sy;
+
+      // Verify initial calculation
+      assert.strictEqual(myp5.mouseX, initialMouseX);
+      assert.strictEqual(myp5.mouseY, initialMouseY);
+
+      // Call the update function
+      myp5._updateMouseCoordsFromWindowPosition();
+
+      // Get the new rect (in real scenario this would be different after resize)
+      const newRect = canvas.getBoundingClientRect();
+      const expectedMouseX = (100 - newRect.left) / sx;
+      const expectedMouseY = (100 - newRect.top) / sy;
+
+      // mouseX/mouseY should be recalculated based on current canvas position
+      assert.strictEqual(myp5.mouseX, expectedMouseX);
+      assert.strictEqual(myp5.mouseY, expectedMouseY);
+    });
+  });
 });

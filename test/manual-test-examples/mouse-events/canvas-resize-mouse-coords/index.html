@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Canvas Resize Mouse Coords Test</title>
+  <script src="../../../../lib/p5.js"></script>
+  <script src="sketch.js"></script>
+</head>
+<body>
+  <h3>Test Issue #8139: mouseX/mouseY not updated when canvas changes</h3>
+  <p>Instructions:</p>
+  <ul>
+    <li>Keep your mouse still on the canvas</li>
+    <li>Press F12 to open/close dev tools (or manually resize the browser window)</li>
+    <li>Press F11 to toggle fullscreen</li>
+    <li>Watch the mouseX and mouseY values - they should stay updated even without moving the mouse</li>
+  </ul>
+  <p>Current behavior: mouseX/mouseY freeze until mouse moves</p>
+  <p>Expected behavior: mouseX/mouseY should update to reflect new canvas position</p>
+</body>
+</html>

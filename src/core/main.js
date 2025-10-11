@@ -722,9 +722,21 @@ class p5 {
     };
     window.addEventListener('focus', focusHandler);
     window.addEventListener('blur', blurHandler);
+
+    // Add resize handler to update mouse coordinates when canvas position changes
+    // (e.g., when dev tools open/close, fullscreen toggle, or window resize)
+    // This fixes issue #8139
+    const resizeHandler = () => {
+      if (typeof this._updateMouseCoordsFromWindowPosition !== 'undefined') {
+        this._updateMouseCoordsFromWindowPosition();
+      }
+    };
+    window.addEventListener('resize', resizeHandler);
+
     this.registerMethod('remove', () => {
       window.removeEventListener('focus', focusHandler);
       window.removeEventListener('blur', blurHandler);
+      window.removeEventListener('resize', resizeHandler);
     });
 
     if (document.readyState === 'complete') {

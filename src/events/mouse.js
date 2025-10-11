@@ -862,6 +862,33 @@ p5.prototype._updateMouseCoords = function() {
   this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
 };
 
+/**
+ * Recalculates mouse coordinates relative to the canvas when the canvas
+ * position changes (e.g., due to window resize, fullscreen, dev tools).
+ * This uses the last known window mouse coordinates (winMouseX, winMouseY).
+ * @private
+ */
+p5.prototype._updateMouseCoordsFromWindowPosition = function() {
+  if (this._curElement !== null && this._hasMouseInteracted) {
+    // Create a synthetic event object with the last known window coordinates
+    const syntheticEvent = {
+      clientX: this.winMouseX,
+      clientY: this.winMouseY
+    };
+
+    const mousePos = getMousePos(
+      this._curElement.elt,
+      this.width,
+      this.height,
+      syntheticEvent
+    );
+
+    this._setProperty('mouseX', mousePos.x);
+    this._setProperty('mouseY', mousePos.y);
+    // winMouseX and winMouseY remain unchanged as the mouse hasn't actually moved
+  }
+};
+
 function getMousePos(canvas, w, h, evt) {
   if (evt && !evt.clientX) {
     // use touches if touch and not mouse
