@@ -493,6 +493,7 @@ class RendererGL extends Renderer {
     this.geometryBuilder = new GeometryBuilder(this);
     this.geometryBuilder.prevFillColor = this.states.fillColor;
     this.fill(new Color([-1, -1, -1, -1]));
+    this.stroke(new Color([-1, -1, -1, -1]));
   }
 
   /**
@@ -512,6 +513,7 @@ class RendererGL extends Renderer {
     }
     const geometry = this.geometryBuilder.finish();
     this.fill(this.geometryBuilder.prevFillColor);
+    this.stroke(this.geometryBuilder.prevStrokeColor);
     this.geometryBuilder = undefined;
     return geometry;
   }
