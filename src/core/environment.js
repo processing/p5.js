@@ -717,7 +717,7 @@ p5.prototype.windowHeight = 0;
  * can be used for debugging or other purposes.
  *
  * @method windowResized
- * @param {UIEvent} [event] optional resize Event.
+ * @param {Event} [event] optional resize Event.
  * @example
  * <div class="norender">
  * <code>
