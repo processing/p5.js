@@ -772,6 +772,11 @@ p5.prototype.windowHeight = 0;
 p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
+  // Update mouse coordinates when window resizes
+  // This ensures mouseX/mouseY reflect the mouse position relative to the new canvas size
+  if (this._hasMouseInteracted && this._lastMouseEvent) {
+    this._updateNextMouseCoords(this._lastMouseEvent);
+  }
   const context = this._isGlobal ? window : this;
   let executeDefault;
   if (typeof context.windowResized === 'function') {

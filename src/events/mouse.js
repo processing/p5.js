@@ -820,6 +820,8 @@ p5.prototype._updateNextMouseCoords = function(e) {
       e
     );
 
+    // Store the last mouse event for recalculating coordinates on resize
+    this._setProperty('_lastMouseEvent', e);
 
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
