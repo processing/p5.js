@@ -46,4 +46,4 @@ GSoC'18 was an incredibly enriching experience. I'm happy to know that I was abl
 
 ## Acknowledgements
 
-I'd like to thank my mentor, [Alice Mira Chung](https://github.com/almchung) for her guidance, patience and support. I'd also like to thank Lauren McCarthy and others in the p5.js community who helped me successfuly close issues and guided me when I stumbled. Really grateful for having had this oppurtunity and such an encouraging environment.
+I'd like to thank my mentor, [Alice Mira Chung](https://github.com/almchung) for her guidance, patience and support. I'd also like to thank Lauren McCarthy and others in the p5.js community who helped me successfully close issues and guided me when I stumbled. Really grateful for having had this oppurtunity and such an encouraging environment.
