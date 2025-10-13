@@ -3155,7 +3155,7 @@ class Vector {
     if (typeof length === 'undefined') {
       length = 1;
     }
-    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle));
   }
 
   /**
