@@ -37,19 +37,6 @@ import p5 from '../core/main';
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- * `textOutput()` currently generates descriptions in English only.
- * Text drawn with <a href="#/p5/text">text()</a> is not included in
- * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
- * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
- * perspective is not accounted for. Shapes with similar features may be
- * combined, which can affect shape counts. Shapes positioned outside the
- * canvas boundaries may still be included in descriptions. Custom 2D shapes
- * created with <a href="#/p5/beginShape">beginShape()</a> are not supported.
- *
- * For more precise control over canvas descriptions, consider using
- * <a href="#/p5/describe">describe()</a> and
- * <a href="#/p5/describeElement">describeElement()</a>.
- *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
@@ -96,11 +83,13 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function setup() {
- *   // Add the text description.
- *   textOutput();
+ *   createCanvas(100, 100);
  * }
  *
  * function draw() {
+ *   // Add the text description.
+ *   textOutput();
+ *
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -118,12 +107,14 @@ import p5 from '../core/main';
  * <div>
  * <code>
  * function setup() {
- *   // Add the text description and
- *   // display it for debugging.
- *   textOutput(LABEL);
+ *   createCanvas(100, 100);
  * }
  *
  * function draw() {
+ *   // Add the text description and
+ *   // display it for debugging.
+ *   textOutput(LABEL);
+ *
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -189,19 +180,6 @@ p5.prototype.textOutput = function(display) {
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
- * `gridOutput()` currently generates descriptions in English only.
- * Text drawn with <a href="#/p5/text">text()</a> is not included in
- * descriptions. WEBGL mode and 3D shapes are not supported. When rendering
- * 2D primitives in WEBGL, descriptions may be imprecise as the camera's
- * perspective is not accounted for. Shapes with similar features may be
- * combined, which can affect shape counts. Shapes positioned outside the
- * canvas boundaries may still be included in descriptions. Custom 2D shapes
- * created with <a href="#/p5/beginShape">beginShape()</a> are not supported.
- *
- * For more precise control over canvas descriptions, consider using
- * <a href="#/p5/describe">describe()</a> and
- * <a href="#/p5/describeElement">describeElement()</a>.
- *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
@@ -248,11 +226,13 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function setup() {
- *   // Add the grid description.
- *   gridOutput();
+ *   createCanvas(100, 100);
  * }
  *
  * function draw() {
+ *   // Add the grid description.
+ *   gridOutput();
+ *
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
@@ -270,12 +250,14 @@ p5.prototype.textOutput = function(display) {
  * <div>
  * <code>
  * function setup() {
- *   // Add the grid description and
- *   // display it for debugging.
- *   gridOutput(LABEL);
+ *   createCanvas(100, 100);
  * }
  *
  * function draw() {
+ *   // Add the grid description and
+ *   // display it for debugging.
+ *   gridOutput(LABEL);
+ *
  *   // Draw a moving circle.
  *   background(200);
  *   let x = frameCount * 0.1;
