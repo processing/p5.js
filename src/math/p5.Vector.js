@@ -3241,7 +3241,7 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
    *
-   *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+   *   // Prints "p5.Vector Object : [x, y]" to the console
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
