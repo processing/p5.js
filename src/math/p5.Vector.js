@@ -3155,7 +3155,7 @@ class Vector {
     if (typeof length === 'undefined') {
       length = 1;
     }
-    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle));
   }
 
   /**
@@ -3241,7 +3241,7 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
    *
-   *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+   *   // Prints "p5.Vector Object : [x, y]" to the console
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
