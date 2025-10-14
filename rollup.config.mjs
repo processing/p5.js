@@ -38,7 +38,7 @@ const bundleSize = (name, sourcemap) => {
 
 const modules = ['math'];
 const generateModuleBuild = () => {
-  return modules.map((module) => {
+  return modules.map(module => {
     return {
       input: `src/${module}/index.js`,
       output: [
@@ -83,13 +83,13 @@ const generateModuleBuild = () => {
   });
 };
 
-rmSync("./dist", {
+rmSync('./dist', {
   force: true,
   recursive: true
 });
 
 export default [
-  //// Unminified and ESM library build ////
+  //// Library builds (IIFE and ESM) ////
   {
     input: 'src/app.js',
     output: [
@@ -108,6 +108,25 @@ export default [
         banner,
         plugins: [
           bundleSize('p5.esm.js')
+        ]
+      },
+      {
+        file: './lib/p5.esm.min.js',
+        format: 'esm',
+        banner,
+        sourcemap: 'hidden',
+        plugins: [
+          terser({
+            compress: {
+              global_defs: {
+                IS_MINIFIED: true
+              }
+            },
+            format: {
+              comments: false
+            }
+          }),
+          bundleSize('p5.esm.min.js', true)
         ]
       }
     ],
