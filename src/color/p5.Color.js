@@ -295,33 +295,91 @@ class Color {
     return colorString;
   }
 /**
-   * Checks if two colors contrast ratio is WCAG 2.1 compliant and returns the ratio
+   * Checks the contrast between two colors, to make sure that they
+   * are different enough to be readable. The result of this function is
+   * a number that can be compared to `COLOR_CONTRAST_THRESHOLD_AA`,
+   * or to `COLOR_CONTRAST_THRESHOLD_AAA`. Shapes and UI elements should have color
+   * contrast at least `COLOR_CONTRAST_THRESHOLD_AA`, and text
+   * benefits from higher contrast of at least `COLOR_CONTRAST_THRESHOLD_AAA`.
+   * 
+   * You can also explore this
+   * <a href="https://webaim.org/resources/contrastchecker/">contrast checker tool</a>.
+   * The contrast function in p5.js uses the WCAG 2.1 method the
+   * <a href="https://colorjs.io/docs/contrast.html">color.js contrast</a>
+   * utility.
+   * 
+
    *
    * @param {Color} other
-   * @returns {{ ratio: Number, passes: boolean }}
+   * @returns {{ ratio: Number }}
    * @example
    * <div>
    * <code>
    * 
+   * // The contrast checker can be used both during development
+   * // with `print()`, or to help select readable colors on the fly.
+   * // This example shows both uses.
+   * 
+   * let bgColor;
+   * let fg1Color;
+   * let fg2Color;
+   * 
    * function setup() {
-   *   // Define colors
-   *   let color1 = color(255, 255, 255);
-   *   let color2 = color(0);
-   *  
-   *   // Test for contrast
-   *   let result = color1.contrast(color2)
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fg1Color = color(120);
+   *   fg2Color = color(255);
+   *   
+   *  describe('A small square canvas with acentered text outlined by a thick stroke. The text reads 'click again!'. On every mouse click, the background, square outline, and text colors randomize, with high enough contrast for readability.');
+   * }
    * 
-   *   console.log(result)
+   * function draw() {
+   *   background(bgColor);
+   *   stroke(fg1Color);
+   *   noFill();
+   *   strokeWeight(5);
+   *   rect(10, 10, 80, 80);
    * 
+   *   noStroke();
+   *   fill(fg2Color);
+   *   textAlign(CENTER, CENTER);
+   *   textSize(20);
+   *   text("click\nagain!", 50, 50);
+   * }
+   * 
+   * function mouseClicked(){
+   *   let newBgColor;
+   *   let newFg1Color;
+   *   let newFg2Color;
+   * 
+   *   // The loop may go for a long time, but it will not go on forever
+   *   // It will stop the first time that the random colors contrast enough
+   *   for (let i = 0; i < 10000; i += 1){
+   *     newBgColor = color(random(255), random(255), random(255));
+   *     newFg1Color = color(random(255), random(255), random(255));
+   *     newFg2Color = color(random(255), random(255), random(255));
+   *     if (
+   *       newBgColor.contrast(newFg2Color) > COLOR_CONTRAST_THRESHOLD_AAA &&
+   *       newBgColor.contrast(newFg1Color) > COLOR_CONTRAST_THRESHOLD_AA &&
+   *       newBgColor.contrast(newFg1Color) < COLOR_CONTRAST_THRESHOLD_AAA ){
+   *       
+   *       bgColor = newBgColor;
+   *       fg1Color = newFg1Color;
+   *       fg2Color = newFg2Color;
+   *       
+   *       break;
+   *     }
+   *   }
+   *   
+   *   print("Contrast (rect)", bgColor.contrast(fg1Color));
+   *   print("Contrast (text)", bgColor.contrast(fg2Color));
    * }
    * </code>
    * </div>
    */
-      contrast(new_other) { 
-        const contrast_method = 'WCAG21';                   
-        const ratio = contrast(this._color, new_other._color, contrast_method);            
-        return ratio;    
-      };
+  contrast(other_color) { 
+    return contrastWCAG21(this._color, other_color._color);            
+  };
 
   /**
    * Sets the red component of a color.
