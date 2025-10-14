@@ -4,7 +4,6 @@ import { string } from 'rollup-plugin-string';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import pkg from './package.json' with { type: 'json' };
-import dayjs from 'dayjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
@@ -27,7 +26,7 @@ const plugins = [
     preventAssignment: true
   })
 ];
-const banner = `/*! p5.js v${pkg.version} ${dayjs().format('MMMM D, YYYY')} */`;
+const banner = `/*! p5.js v${pkg.version} ${new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date())} */`;
 const bundleSize = (name, sourcemap) => {
   return visualizer({
     filename: `analyzer/${name}.html`,
@@ -39,7 +38,7 @@ const bundleSize = (name, sourcemap) => {
 
 const modules = ['math'];
 const generateModuleBuild = () => {
-  return modules.map((module) => {
+  return modules.map(module => {
     return {
       input: `src/${module}/index.js`,
       output: [
@@ -80,17 +79,17 @@ const generateModuleBuild = () => {
       plugins: [
         ...plugins
       ]
-    }
+    };
   });
 };
 
-rmSync("./dist", {
+rmSync('./dist', {
   force: true,
   recursive: true
 });
 
 export default [
-  //// Unminified and ESM library build ////
+  //// Library builds (IIFE and ESM) ////
   {
     input: 'src/app.js',
     output: [
@@ -109,6 +108,25 @@ export default [
         banner,
         plugins: [
           bundleSize('p5.esm.js')
+        ]
+      },
+      {
+        file: './lib/p5.esm.min.js',
+        format: 'esm',
+        banner,
+        sourcemap: 'hidden',
+        plugins: [
+          terser({
+            compress: {
+              global_defs: {
+                IS_MINIFIED: true
+              }
+            },
+            format: {
+              comments: false
+            }
+          }),
+          bundleSize('p5.esm.min.js', true)
         ]
       }
     ],

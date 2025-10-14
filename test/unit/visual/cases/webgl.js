@@ -1,3 +1,4 @@
+import { vi, afterEach } from 'vitest';
 import { visualSuite, visualTest } from '../visualTest';
 
 visualSuite('WebGL', function() {
@@ -215,7 +216,7 @@ visualSuite('WebGL', function() {
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.background('white');
         const myShader = p5.createShader(vertSrc, fragSrc);
-        p5.shader(myShader)
+        p5.shader(myShader);
         p5.beginShape(p5.QUADS);
         p5.noStroke();
         p5.translate(-25,-25);
@@ -251,18 +252,18 @@ visualSuite('WebGL', function() {
           p5.sphere(5);
           p5.pop();
           p5.beginShape(p5.TRIANGLES);
-          p5.vertexProperty('aCol', [1,0,0])
+          p5.vertexProperty('aCol', [1,0,0]);
           p5.vertex(-5, 5, 0);
-          p5.vertexProperty('aCol', [0,1,0])
+          p5.vertexProperty('aCol', [0,1,0]);
           p5.vertex(5, 5, 0);
-          p5.vertexProperty('aCol', [0,0,1])
+          p5.vertexProperty('aCol', [0,0,1]);
           p5.vertex(0, -5, 0);
           p5.endShape(p5.CLOSE);
           p5.push();
           p5.translate(-15,10,0);
           p5.box(10);
           p5.pop();
-        })
+        });
         p5.model(shape);
         screenshot();
       }
@@ -368,8 +369,8 @@ visualSuite('WebGL', function() {
       p5.rotateY(p5.PI/4);
       p5.box(30);
       screenshot();
-    })
-  })
+    });
+  });
 
   visualSuite('Opacity', function() {
     visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
@@ -396,7 +397,7 @@ visualSuite('WebGL', function() {
           inputs.color = vec4(1., 0.4, 0.4, 100./255.);
           return inputs;
         }`
-      })
+      });
       p5.background(255);
       p5.shader(myShader);
       p5.circle(0, 0, 50);
@@ -493,26 +494,26 @@ visualSuite('WebGL', function() {
 
         visualTest('Combined vs split matrices', (p5, screenshot) => {
           p5.createCanvas(50, 50, p5.WEBGL);
-            for (const space of ['Object', 'World', 'Camera']) {
-              const myShader = p5[base]().modify({
-                [`Vertex get${space}Inputs`]: `(Vertex inputs) {
+          for (const space of ['Object', 'World', 'Camera']) {
+            const myShader = p5[base]().modify({
+              [`Vertex get${space}Inputs`]: `(Vertex inputs) {
                   // No-op
                   return inputs;
                 }`
-              });
-              p5.background(255);
-              p5.push();
-              p5.lights();
-              p5.fill('red');
-              p5.noStroke();
-              p5.translate(20, -10, 5);
-              p5.rotate(p5.PI * 0.1);
-              p5.camera(-800, 0, 0, 0, 0, 0);
-              p5.shader(myShader);
-              p5.box(30);
-              p5.pop();
-              screenshot();
-            }
+            });
+            p5.background(255);
+            p5.push();
+            p5.lights();
+            p5.fill('red');
+            p5.noStroke();
+            p5.translate(20, -10, 5);
+            p5.rotate(p5.PI * 0.1);
+            p5.camera(-800, 0, 0, 0, 0, 0);
+            p5.shader(myShader);
+            p5.box(30);
+            p5.pop();
+            screenshot();
+          }
         });
       });
     }
@@ -628,6 +629,33 @@ visualSuite('WebGL', function() {
       p5.fill('blue');
       p5.noStroke();
       p5.model(geom);
+      screenshot();
+    });
+  });
+
+  visualSuite('font data', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    visualTest('glyph resource allocation does not corrupt textures', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      vi.spyOn(p5._renderer, 'maxCachedGlyphs').mockReturnValue(6);
+
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+
+      p5.textFont(font);
+      p5.clear();
+      p5.textSize(10);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      for (let i = 0; i < 100; i++) {
+        const x = -p5.width/2 + (i % 10) * 10;
+        const y = -p5.height/2 + p5.floor(i / 10) * 10;
+        p5.text(String.fromCharCode(33 + i), x, y);
+      }
+
       screenshot();
     });
   });

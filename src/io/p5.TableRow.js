@@ -255,8 +255,8 @@ class TableRow {
    * let table;
    *
    * async function setup() {
-   *   // Create a 200x100 canvas and set a white background
-   *   createCanvas(200, 100);
+   *   // Create a 300x100 canvas and set a white background
+   *   createCanvas(300, 100);
    *   background(255);
    *
    *   // Load the CSV file with a header row
@@ -265,13 +265,13 @@ class TableRow {
    *   let rows = table.getRows();
    *   let minId = Infinity;
    *   let maxId = -Infinity;
-   *   
+   *
    *   for (let r = 0; r < rows.length; r++) {
    *     let id = rows[r].getNum('id');
    *     minId = min(minId, id);
    *     maxId = max(maxId, id);
    *    }
-   * 
+   *
    *   let result = 'minimum id = ' + minId + ', maximum id = ' + maxId;
    *
    *   // Set text properties and display the result on the canvas
@@ -304,7 +304,7 @@ class TableRow {
    *  title.
    *
    *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-
+   *
    *  @param  {String|Integer} column columnName (string) or
    *                                   ID (number)
    *  @return {String}  String

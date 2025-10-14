@@ -511,7 +511,13 @@ function files(p5, fn){
    * </code>
    * </div>
    */
-  fn.loadTable = async function (path, separator, header, successCallback, errorCallback) {
+  fn.loadTable = async function (
+    path,
+    separator,
+    header,
+    successCallback,
+    errorCallback
+  ) {
     if(typeof arguments[arguments.length-1] === 'function'){
       if(typeof arguments[arguments.length-2] === 'function'){
         successCallback = arguments[arguments.length-2];
@@ -538,7 +544,7 @@ function files(p5, fn){
         ret.columns = Array(data[0].length).fill(null);
       }
 
-      data.forEach((line) => {
+      data.forEach(line => {
         const row = new p5.TableRow(line);
         ret.addRow(row);
       });
@@ -873,7 +879,7 @@ function files(p5, fn){
    * async function setup() {
    *   // Get the most recent earthquake in the database
    *   let url =
-      'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+   * 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
    *     'format=geojson&limit=1&orderby=time';
    *   earthquakes = await httpGet(url, 'json');
    * }
@@ -950,7 +956,7 @@ function files(p5, fn){
    * }
    *
    * function mousePressed() {
-   *   httpPost(url, 'json', postData, function(result) {
+   *   httpPost(url, postData, 'json', function(result) {
    *     strokeWeight(2);
    *     text(result.body, mouseX, mouseY);
    *   });
@@ -970,8 +976,8 @@ function files(p5, fn){
    * function mousePressed() {
    *   httpPost(
    *     url,
-   *     'json',
    *     postData,
+   *     'json',
    *     function(result) {
    *       // ... won't be called
    *     },
@@ -1089,18 +1095,27 @@ function files(p5, fn){
    * let eqFeatureIndex = 0;
    *
    * function setup() {
+   *  createCanvas(100,100);
+   *
    *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+   *
+   *   const req = new Request(url, {
+   *    method: 'GET',
+   *    headers: {authorization: 'Bearer secretKey'}
+   *  });
+   *  // httpDo(path, method, datatype, success, error)
+   *
    *   httpDo(
-   *     url,
-   *     {
-   *       method: 'GET',
-   *       // Other Request options, like special headers for apis
-   *       headers: { authorization: 'Bearer secretKey' }
+   *     req,
+   *     'GET',
+   *    'json',
+   *     res => {
+   *      earthquakes = res;
    *     },
-   *     function(res) {
-   *       earthquakes = res;
-   *     }
-   *   );
+   *    err => {
+   *      console.error('Error loading data:', err);
+   *    }
+   *  );
    * }
    *
    * function draw() {
@@ -1132,7 +1147,13 @@ function files(p5, fn){
    * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
-  fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
+  fn.httpDo = async function (
+    path,
+    method,
+    datatype,
+    successCallback,
+    errorCallback
+  ) {
     // This behave similarly to httpGet but even more primitive. The user
     // will most likely want to pass in a Request to path, the only convenience
     // is that datatype will be taken into account to parse the response.
@@ -1146,8 +1167,8 @@ function files(p5, fn){
     // Try to infer data type if it is defined
     if(!datatype){
       const extension = typeof path === 'string' ?
-        path.split(".").pop() :
-        path.url.split(".").pop();
+        path.split('.').pop() :
+        path.url.split('.').pop();
       switch(extension) {
         case 'json':
           datatype = 'json';

@@ -64,7 +64,7 @@ class Texture {
     // used to determine if this texture might need constant updating
     // because it is a video or gif.
     this.isSrcMediaElement = false;
-      typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
+    typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
     this._videoPrevUpdateTime = 0;
     this.isSrcHTMLElement =
       typeof Element !== 'undefined' &&
@@ -188,6 +188,7 @@ class Texture {
     // FramebufferTexture instances wrap raw WebGL textures already, which
     // don't need any extra updating, as they already live on the GPU
     if (this.isFramebufferTexture) {
+      this.src.update();
       return false;
     }
 

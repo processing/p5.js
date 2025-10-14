@@ -5,7 +5,6 @@
  */
 
 import * as constants from './constants';
-import { RGB, HSB, HSL } from '../color/creating_reading';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
 import curves from '../shape/curves';
@@ -30,7 +29,7 @@ class Graphics {
     const r = renderer || constants.P2D;
 
     this._pInst = pInst;
-    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
+    this._renderer = new renderers[r](this, w, h, false, canvas);
 
     this._initializeInstanceVariables(this);
 

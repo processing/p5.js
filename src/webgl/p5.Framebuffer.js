@@ -47,6 +47,10 @@ class FramebufferTexture {
     return this.framebuffer.height * this.framebuffer.density;
   }
 
+  update() {
+    this.framebuffer._update(this.property);
+  }
+
   rawTexture() {
     return this.framebuffer[this.property];
   }
@@ -58,6 +62,8 @@ class Framebuffer {
     this.renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
+
+    this.dirty = { colorTexture: false, depthTexture: false };
 
     this.pixels = [];
 
@@ -1099,6 +1105,49 @@ class Framebuffer {
   }
 
   /**
+   * Ensure all readable textures are up-to-date.
+   * @private
+   * @property {'colorTexutre'|'depthTexture'} property The property to update
+   */
+  _update(property) {
+    if (this.dirty[property] && this.antialias) {
+      const gl = this.gl;
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
+      const partsToCopy = {
+        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
+      };
+      if (this.useDepth) {
+        partsToCopy.depthTexture = [
+          gl.DEPTH_BUFFER_BIT,
+          this.depthP5Texture.glMagFilter
+        ];
+      }
+      const [flag, filter] = partsToCopy[property];
+      gl.blitFramebuffer(
+        0,
+        0,
+        this.width * this.density,
+        this.height * this.density,
+        0,
+        0,
+        this.width * this.density,
+        this.height * this.density,
+        flag,
+        filter
+      );
+      this.dirty[property] = false;
+
+      const activeFbo = this.renderer.activeFramebuffer();
+      if (activeFbo) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, activeFbo._framebufferToBind());
+      } else {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
+    }
+  }
+
+  /**
    * Ensures that the framebuffer is ready to be drawn to
    *
    * @private
@@ -1119,27 +1168,7 @@ class Framebuffer {
    */
   _beforeEnd() {
     if (this.antialias) {
-      const gl = this.gl;
-      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
-      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
-      const partsToCopy = [
-        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
-      ];
-      if (this.useDepth) {
-        partsToCopy.push(
-          [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
-        );
-      }
-      for (const [flag, filter] of partsToCopy) {
-        gl.blitFramebuffer(
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          flag,
-          filter
-        );
-      }
+      this.dirty = { colorTexture: true, depthTexture: true };
     }
   }
 
@@ -1319,6 +1348,7 @@ class Framebuffer {
    * </div>
    */
   loadPixels() {
+    this._update('colorTexture');
     const gl = this.gl;
     const prevFramebuffer = this.renderer.activeFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
@@ -1377,6 +1407,7 @@ class Framebuffer {
    * @return {Number[]}  color of the pixel at `(x, y)` as an array of color values `[R, G, B, A]`.
    */
   get(x, y, w, h) {
+    this._update('colorTexture');
     // p5._validateParameters('p5.Framebuffer.get', arguments);
     const colorFormat = this._glColorFormat();
     if (x === undefined && y === undefined) {
@@ -1543,6 +1574,7 @@ class Framebuffer {
       this.pixels
     );
     this.colorP5Texture.unbindTexture();
+    this.dirty.colorTexture = false;
 
     const prevFramebuffer = this.renderer.activeFramebuffer();
     if (this.antialias) {

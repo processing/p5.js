@@ -1,31 +1,14 @@
-import * as constants from "../core/constants";
-import { RendererGL } from "./p5.RendererGL";
-import { Vector } from "../math/p5.Vector";
-import { Geometry } from "./p5.Geometry";
-import { Font, arrayCommandsToObjects } from "../type/p5.Font";
+import * as constants from '../core/constants';
+import { RendererGL } from './p5.RendererGL';
+import { Vector } from '../math/p5.Vector';
+import { Geometry } from './p5.Geometry';
+import { Font, arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn) {
   RendererGL.prototype.maxCachedGlyphs = function() {
     // TODO: use more than vibes to find a good value for this
-    return 200
+    return 200;
   };
-
-  RendererGL.prototype.freeGlyphInfo = function(gi) {
-    const datas = [
-      gi.strokeImageInfo.imageData,
-      gi.rowInfo.cellImageInfo.imageData,
-      gi.rowInfo.dimImageInfo.imageData,
-      gi.colInfo.cellImageInfo.imageData,
-      gi.colInfo.dimImageInfo.imageData,
-    ];
-    for (const data of datas) {
-      const tex = this.textures.get(data);
-      if (tex) {
-        tex.remove();
-        this.textures.delete(data);
-      }
-    }
-  }
 
   Font.prototype._getFontInfo = function(axs) {
     // For WebGL, a cache of font data to use on the GPU.
@@ -40,7 +23,7 @@ function text(p5, fn) {
       this._fontInfos[key] = val;
       return val;
     }
-  }
+  };
 
   // Text/Typography (see src/type/textCore.js)
   /*
@@ -96,7 +79,7 @@ function text(p5, fn) {
     findImage(space) {
       const imageSize = this.width * this.height;
       if (space > imageSize)
-        throw new Error("font is too complex to render in 3D");
+        throw new Error('font is too complex to render in 3D');
 
       // search through the list of images, looking for one with
       // anough unused space.
@@ -118,15 +101,15 @@ function text(p5, fn) {
         } catch (err) {
           // for browsers that don't support ImageData constructors (ie IE11)
           // create an ImageData using the old method
-          let canvas = document.getElementsByTagName("canvas")[0];
+          let canvas = document.getElementsByTagName('canvas')[0];
           const created = !canvas;
           if (!canvas) {
             // create a temporary canvas
-            canvas = document.createElement("canvas");
-            canvas.style.display = "none";
+            canvas = document.createElement('canvas');
+            canvas.style.display = 'none';
             document.body.appendChild(canvas);
           }
-          const ctx = canvas.getContext("2d");
+          const ctx = canvas.getContext('2d');
           if (ctx) {
             imageData = ctx.createImageData(this.width, this.height);
           }
@@ -183,7 +166,7 @@ function text(p5, fn) {
       // the bezier curve coordinates
       this.strokeImageInfos = new ImageInfos(
         strokeImageWidth,
-        strokeImageHeight,
+        strokeImageHeight
       );
       // lists of curve indices for each row/column slice
       this.colDimImageInfos = new ImageInfos(gridImageWidth, gridImageHeight);
@@ -210,8 +193,8 @@ function text(p5, fn) {
       const axs = this.axs;
       const {
         glyph: {
-          path: { commands },
-        },
+          path: { commands }
+        }
       } = this.font._singleShapeToPath(glyph.shape, { axs });
       let xMin = Infinity;
       let xMax = -Infinity;
@@ -286,22 +269,22 @@ function text(p5, fn) {
         const mmX = minMax(xs, 1, 0);
         const ixMin = Math.max(
           Math.floor(mmX.min * charGridWidth - cellOffset),
-          0,
+          0
         );
         const ixMax = Math.min(
           Math.ceil(mmX.max * charGridWidth + cellOffset),
-          charGridWidth,
+          charGridWidth
         );
         for (let iCol = ixMin; iCol < ixMax; ++iCol) cols[iCol].push(index);
 
         const mmY = minMax(ys, 1, 0);
         const iyMin = Math.max(
           Math.floor(mmY.min * charGridHeight - cellOffset),
-          0,
+          0
         );
         const iyMax = Math.min(
           Math.ceil(mmY.max * charGridHeight + cellOffset),
-          charGridHeight,
+          charGridHeight
         );
         for (let iRow = iyMin; iRow < iyMax; ++iRow) rows[iRow].push(index);
       }
@@ -360,7 +343,7 @@ function text(p5, fn) {
             x1: this.p1.x,
             y1: this.p1.y,
             cx: ((this.c0.x + this.c1.x) * 3 - (this.p0.x + this.p1.x)) / 4,
-            cy: ((this.c0.y + this.c1.y) * 3 - (this.p0.y + this.p1.y)) / 4,
+            cy: ((this.c0.y + this.c1.y) * 3 - (this.p0.y + this.p1.y)) / 4
           };
         }
 
@@ -374,7 +357,7 @@ function text(p5, fn) {
           return (
             Vector.sub(
               Vector.sub(this.p1, this.p0),
-              Vector.mult(Vector.sub(this.c1, this.c0), 3),
+              Vector.mult(Vector.sub(this.c1, this.c0), 3)
             ).mag() / 2
           );
         }
@@ -412,7 +395,7 @@ function text(p5, fn) {
           const b = Vector.sub(Vector.sub(this.c1, this.c0), a);
           const c = Vector.sub(
             Vector.sub(Vector.sub(this.p1, this.c1), a),
-            Vector.mult(b, 2),
+            Vector.mult(b, 2)
           );
 
           const cubics = [];
@@ -476,7 +459,7 @@ function text(p5, fn) {
           new Vector(x0, y0),
           new Vector(cx0, cy0),
           new Vector(cx1, cy1),
-          new Vector(x1, y1),
+          new Vector(x1, y1)
         ).splitInflections();
 
         const qs = []; // the final list of quadratics
@@ -563,25 +546,25 @@ function text(p5, fn) {
         if (samePoint(x0, y0, x1, y1)) continue;
 
         switch (cmd.type) {
-          case "M": {
+          case 'M': {
             // move
             xs = x1;
             ys = y1;
             break;
           }
-          case "L": {
+          case 'L': {
             // line
             pushLine(x0, y0, x1, y1);
             break;
           }
-          case "Q": {
+          case 'Q': {
             // quadratic
             const cx = (cmd.x1 - xMin) / gWidth;
             const cy = (cmd.y1 - yMin) / gHeight;
             push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx, cy });
             break;
           }
-          case "Z": {
+          case 'Z': {
             // end
             if (!samePoint(x0, y0, xs, ys)) {
               // add an extra line closing the loop, if necessary
@@ -592,7 +575,7 @@ function text(p5, fn) {
             }
             break;
           }
-          case "C": {
+          case 'C': {
             // cubic
             const cx1 = (cmd.x1 - xMin) / gWidth;
             const cy1 = (cmd.y1 - yMin) / gHeight;
@@ -659,7 +642,7 @@ function text(p5, fn) {
             cellLineIndex >> 7,
             cellLineIndex & 0x7f,
             strokeCount >> 7,
-            strokeCount & 0x7f,
+            strokeCount & 0x7f
           );
 
           // for each stroke index in that slice
@@ -673,7 +656,7 @@ function text(p5, fn) {
         return {
           cellImageInfo,
           dimOffset,
-          dimImageInfo,
+          dimImageInfo
         };
       }
 
@@ -684,7 +667,7 @@ function text(p5, fn) {
         strokeImageInfo,
         strokes,
         colInfo: layout(cols, this.colDimImageInfos, this.colCellImageInfos),
-        rowInfo: layout(rows, this.rowDimImageInfos, this.rowCellImageInfos),
+        rowInfo: layout(rows, this.rowDimImageInfos, this.rowCellImageInfos)
       };
       gi.uGridOffset = [gi.colInfo.dimOffset, gi.rowInfo.dimOffset];
       return gi;
@@ -692,9 +675,9 @@ function text(p5, fn) {
   }
 
   RendererGL.prototype._renderText = function (line, x, y, maxY, minY) {
-    if (!this.states.textFont || typeof this.states.textFont === "string") {
+    if (!this.states.textFont || typeof this.states.textFont === 'string') {
       console.log(
-        "WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.",
+        'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
       );
       return;
     }
@@ -704,7 +687,7 @@ function text(p5, fn) {
 
     if (!p5.Font.hasGlyphData(this.states.textFont)) {
       console.log(
-        "WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported",
+        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported'
       );
       return;
     }
@@ -715,14 +698,14 @@ function text(p5, fn) {
     const doStroke = this.states.strokeColor;
     const drawMode = this.states.drawMode;
 
-    this.states.setValue("strokeColor", null);
-    this.states.setValue("drawMode", constants.TEXTURE);
+    this.states.setValue('strokeColor', null);
+    this.states.setValue('drawMode', constants.TEXTURE);
 
     // get the cached FontInfo object
     const { font } = this.states.textFont;
     if (!font) {
       throw new Error(
-        "In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.",
+        'In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.'
       );
     }
     const axs = font._currentAxes(this);
@@ -745,10 +728,10 @@ function text(p5, fn) {
 
     if (initializeShader) {
       // these are constants, really. just initialize them one-time.
-      sh.setUniform("uGridImageSize", [gridImageWidth, gridImageHeight]);
-      sh.setUniform("uCellsImageSize", [cellImageWidth, cellImageHeight]);
-      sh.setUniform("uStrokeImageSize", [strokeImageWidth, strokeImageHeight]);
-      sh.setUniform("uGridSize", [charGridWidth, charGridHeight]);
+      sh.setUniform('uGridImageSize', [gridImageWidth, gridImageHeight]);
+      sh.setUniform('uCellsImageSize', [cellImageWidth, cellImageHeight]);
+      sh.setUniform('uStrokeImageSize', [strokeImageWidth, strokeImageHeight]);
+      sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
     }
 
     const curFillColor = this.states.fillSet
@@ -758,7 +741,7 @@ function text(p5, fn) {
     this._setGlobalUniforms(sh);
     this._applyColorBlend(curFillColor);
 
-    let g = this.geometryBufferCache.getGeometryByID("glyph");
+    let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
       // create the geometry for rendering a quad
       g = this._textGeom = new Geometry(
@@ -772,9 +755,9 @@ function text(p5, fn) {
             }
           }
         },
-        this,
+        this
       );
-      g.gid = "glyph";
+      g.gid = 'glyph';
       g.computeFaces().computeNormals();
       this.geometryBufferCache.ensureCached(g);
     }
@@ -785,14 +768,14 @@ function text(p5, fn) {
     }
     this._bindBuffer(
       this.geometryBufferCache.cache.glyph.indexBuffer,
-      gl.ELEMENT_ARRAY_BUFFER,
+      gl.ELEMENT_ARRAY_BUFFER
     );
 
     // this will have to do for now...
-    sh.setUniform("uMaterialColor", curFillColor);
+    sh.setUniform('uMaterialColor', curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
-    this.fontCache = this.fontCache || new Map();
+    this.glyphDataCache = this.glyphDataCache || new Set();
 
     try {
       // fetch the glyphs in the line of text
@@ -801,28 +784,43 @@ function text(p5, fn) {
       for (const glyph of glyphs) {
         const gi = fontInfo.getGlyphInfo(glyph);
         if (gi.uGlyphRect) {
-
-          const cacheKey = JSON.stringify({ font: font.id, axs, glyph: glyph.shape.g });
-          // Bump this font to the end of the cache list by deleting and re-adding it
-          this.fontCache.delete(cacheKey);
-          this.fontCache.set(cacheKey, gi);
-          if (this.fontCache.size > this.maxCachedGlyphs()) {
-            const keyToRemove = this.fontCache.keys().next().value;
-            const val = this.fontCache.get(keyToRemove);
-            this.fontCache.delete(keyToRemove);
-            this.freeGlyphInfo(val);
-          }
-
           const rowInfo = gi.rowInfo;
           const colInfo = gi.colInfo;
-          sh.setUniform("uSamplerStrokes", gi.strokeImageInfo.imageData);
-          sh.setUniform("uSamplerRowStrokes", rowInfo.cellImageInfo.imageData);
-          sh.setUniform("uSamplerRows", rowInfo.dimImageInfo.imageData);
-          sh.setUniform("uSamplerColStrokes", colInfo.cellImageInfo.imageData);
-          sh.setUniform("uSamplerCols", colInfo.dimImageInfo.imageData);
-          sh.setUniform("uGridOffset", gi.uGridOffset);
-          sh.setUniform("uGlyphRect", gi.uGlyphRect);
-          sh.setUniform("uGlyphOffset", glyph.x);
+
+          // Bump the resources for this glyph to the end of the cache list by deleting and re-adding
+          const glyphResources = [
+            gi.strokeImageInfo.imageData,
+            rowInfo.cellImageInfo.imageData,
+            rowInfo.dimImageInfo.imageData,
+            colInfo.cellImageInfo.imageData,
+            colInfo.dimImageInfo.imageData
+          ];
+          for (const resource of glyphResources) {
+            this.glyphDataCache.delete(resource);
+            this.glyphDataCache.add(resource);
+          }
+
+          // If we have too many glyph textures, remove the least recently used
+          // ones from GPU memory. The data still exists on the CPU and will be
+          // re-uploaded if it gets actively used again.
+          while (this.glyphDataCache.size > this.maxCachedGlyphs()) {
+            const data = this.glyphDataCache.values().next().value;
+            this.glyphDataCache.delete(data);
+            const tex = this.textures.get(data);
+            if (tex) {
+              tex.remove();
+              this.textures.delete(data);
+            }
+          }
+
+          sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
+          sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
+          sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);
+          sh.setUniform('uSamplerColStrokes', colInfo.cellImageInfo.imageData);
+          sh.setUniform('uSamplerCols', colInfo.dimImageInfo.imageData);
+          sh.setUniform('uGridOffset', gi.uGridOffset);
+          sh.setUniform('uGlyphRect', gi.uGlyphRect);
+          sh.setUniform('uGlyphOffset', glyph.x);
 
           sh.bindTextures(); // afterwards, only textures need updating
 
@@ -834,8 +832,8 @@ function text(p5, fn) {
       // clean up
       sh.unbindShader();
 
-      this.states.setValue("strokeColor", doStroke);
-      this.states.setValue("drawMode", drawMode);
+      this.states.setValue('strokeColor', doStroke);
+      this.states.setValue('drawMode', drawMode);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
       this.pop();

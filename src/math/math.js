@@ -34,7 +34,7 @@ function math(p5, fn) {
    * <a href="#/p5.Vector">p5.Vector</a> class.
    *
    * @method createVector
-   * @param {...Number} components Components of the vector.
+   * @param {...Number} x Zero or more numbers, representing each component of the vector.
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
@@ -137,6 +137,6 @@ function math(p5, fn) {
 
 export default math;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   math(p5, p5.prototype);
 }

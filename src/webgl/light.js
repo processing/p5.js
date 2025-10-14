@@ -473,7 +473,7 @@ function light(p5, fn){
    * three parameters, `v1`, `v2`, and `v3`, set the light’s color using the
    * current <a href="#/p5/colorMode">colorMode()</a>. The last parameter,
    * `direction` sets the light’s direction using a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object. For example,
+   * <a href="#/p5.Vector">p5.Vector</a> object. For example,
    * `directionalLight(255, 0, 0, lightDir)` creates a red `(255, 0, 0)` light
    * that shines in the direction the `lightDir` vector points.
    *
@@ -488,7 +488,7 @@ function light(p5, fn){
    * parameter, `color`, sets the light’s color using a
    * <a href="#/p5.Color">p5.Color</a> object or an array of color values. The
    * second parameter, `direction`, sets the light’s direction using a
-   * <a href="#/p5.Color">p5.Color</a> object. For example,
+   * <a href="#/p5.Vector">p5.Vector</a> object. For example,
    * `directionalLight(myColor, lightDir)` creates a light that shines in the
    * direction the `lightDir` vector points with the color value of `myColor`.
    *
@@ -1461,7 +1461,7 @@ function light(p5, fn){
     );
 
     this.states.setValue('enableLighting', true);
-  }
+  };
 
   RendererGL.prototype.specularColor = function(v1, v2, v3) {
     const color = this._pInst.color(...arguments);
@@ -1471,7 +1471,7 @@ function light(p5, fn){
       color._array[1],
       color._array[2]
     ]);
-  }
+  };
 
   RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
     let color;
@@ -1512,7 +1512,7 @@ function light(p5, fn){
     );
 
     this.states.setValue('enableLighting', true);
-  }
+  };
 
   RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     let color;
@@ -1551,20 +1551,20 @@ function light(p5, fn){
     );
 
     this.states.setValue('enableLighting', true);
-  }
+  };
 
   RendererGL.prototype.imageLight = function(img) {
     // activeImageLight property is checked by _setFillUniforms
     // for sending uniforms to the fillshader
     this.states.setValue('activeImageLight', img);
     this.states.setValue('enableLighting', true);
-  }
+  };
 
   RendererGL.prototype.lights = function() {
     const grayColor = this._pInst.color('rgb(128,128,128)');
     this.ambientLight(grayColor);
     this.directionalLight(grayColor, 0, 0, -1);
-  }
+  };
 
   RendererGL.prototype.lightFalloff = function(
     constantAttenuation,
@@ -1605,7 +1605,7 @@ function light(p5, fn){
     this.states.setValue('constantAttenuation', constantAttenuation);
     this.states.setValue('linearAttenuation', linearAttenuation);
     this.states.setValue('quadraticAttenuation', quadraticAttenuation);
-  }
+  };
 
   RendererGL.prototype.spotLight = function(
     v1,
@@ -1812,7 +1812,7 @@ function light(p5, fn){
     this.states.setValue('spotLightConc', [concentration]);
 
     this.states.setValue('enableLighting', true);
-  }
+  };
 
   RendererGL.prototype.noLights = function() {
     this.states.setValue('activeImageLight', null);
@@ -1841,7 +1841,7 @@ function light(p5, fn){
     this.states.setValue('quadraticAttenuation', 0);
     this.states.setValue('_useShininess', 1);
     this.states.setValue('_useMetalness', 0);
-  }
+  };
 }
 
 export default light;

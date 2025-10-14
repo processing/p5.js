@@ -48,6 +48,35 @@ class p5 {
   static _friendlyFileLoadError = () => {};
 
   constructor(sketch, node) {
+    // Apply addon defined decorations
+    if(p5.decorations.size > 0){
+      for (const [patternArray, decoration] of p5.decorations) {
+        for(const member in p5.prototype) {
+          // Member must be a function
+          if (typeof p5.prototype[member] !== 'function') continue;
+
+          if (!patternArray.some(pattern => {
+            if (typeof pattern === 'string') {
+              return pattern === member;
+            } else if (pattern instanceof RegExp) {
+              return pattern.test(member);
+            }
+          })) continue;
+
+          p5.prototype[member] = decoration(p5.prototype[member], {
+            kind: 'method',
+            name: member,
+            access: {},
+            static: false,
+            private: false,
+            addInitializer(initializer){}
+          });
+        }
+      }
+
+      p5.decorations.clear();
+    }
+
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -64,23 +93,9 @@ class p5 {
     this._startListener = null;
     this._initializeInstanceVariables();
     this._events = {
-      // keep track of user-events for unregistering later
-      pointerdown: null,
-      pointerup: null,
-      pointermove: null,
-      dragend: null,
-      dragover: null,
-      click: null,
-      dblclick: null,
-      mouseover: null,
-      mouseout: null,
-      keydown: null,
-      keyup: null,
-      keypress: null,
-      wheel: null,
-      resize: null,
-      blur: null
     };
+    this._removeAbortController = new AbortController();
+    this._removeSignal = this._removeAbortController.signal;
     this._millisStart = -1;
     this._recording = false;
 
@@ -88,40 +103,10 @@ class p5 {
     this._lcg_random_state = null; // NOTE: move to random.js
     this._gaussian_previous = false; // NOTE: move to random.js
 
-    if (window.DeviceOrientationEvent) {
-      this._events.deviceorientation = null;
-    }
-    if (window.DeviceMotionEvent && !window._isNodeWebkit) {
-      this._events.devicemotion = null;
-    }
-
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    const bindGlobal = (property) => {
-      Object.defineProperty(window, property, {
-        configurable: true,
-        enumerable: true,
-        get: () => {
-          if(typeof this[property] === 'function'){
-            return this[property].bind(this);
-          }else{
-            return this[property];
-          }
-        },
-        set: (newValue) => {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            value: newValue,
-            writable: true
-          });
-          if (!p5.disableFriendlyErrors) {
-            console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-          }
-        }
-      })
-    };
+    const bindGlobal = createBindGlobal(this);
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -156,16 +141,6 @@ class p5 {
       p5._checkForUserDefinedFunctions(this);
     }
 
-    // Bind events to window (not using container div bc key events don't work)
-    for (const e in this._events) {
-      const f = this[`_on${e}`];
-      if (f) {
-        const m = f.bind(this);
-        window.addEventListener(e, m, { passive: false });
-        this._events[e] = m;
-      }
-    }
-
     const focusHandler = () => {
       this.focused = true;
     };
@@ -198,6 +173,7 @@ class p5 {
 
   static registerAddon(addon) {
     const lifecycles = {};
+
     addon(p5, p5.prototype, lifecycles);
 
     const validLifecycles = Object.keys(p5.lifecycleHooks);
@@ -207,6 +183,27 @@ class p5 {
       }
     }
   }
+
+  static decorations = new Map();
+  static decorateHelper(pattern, decoration){
+    let patternArray = pattern;
+    if (!Array.isArray(pattern)) patternArray = [pattern];
+    p5.decorations.set(patternArray, decoration);
+  }
+
+  #customActions = {};
+  _customActions = new Proxy({}, {
+    get: (target, prop) => {
+      if(!this.#customActions[prop]){
+        const context = this._isGlobal ? window : this;
+        if(typeof context[prop] === 'function'){
+          this.#customActions[prop] = context[prop].bind(this);
+        }
+      }
+
+      return this.#customActions[prop];
+    }
+  });
 
   async #_start() {
     if (this.hitCriticalError) return;
@@ -238,7 +235,8 @@ class p5 {
       constants.P2D
     );
 
-    // Record the time when sketch starts
+    // Record the time when setup starts. millis() will start at 0 within
+    // setup, but this isn't documented, locked-in behavior yet.
     this._millisStart = window.performance.now();
 
     const context = this._isGlobal ? window : this;
@@ -247,18 +245,13 @@ class p5 {
     }
     if (this.hitCriticalError) return;
 
-    // unhide any hidden canvases that were created
     const canvases = document.getElementsByTagName('canvas');
-
-    // Apply touchAction = 'none' to canvases if pointer events exist
-    if (Object.keys(this._events).some(event => event.startsWith('pointer'))) {
-      for (const k of canvases) {
-        k.style.touchAction = 'none';
-      }
-    }
-
-
     for (const k of canvases) {
+      // Apply touchAction = 'none' to canvases to prevent scrolling
+      // when dragging on canvas elements
+      k.style.touchAction = 'none';
+
+      // unhide any hidden canvases that were created
       if (k.dataset.hidden === 'true') {
         k.style.visibility = '';
         delete k.dataset.hidden;
@@ -274,6 +267,10 @@ class p5 {
 
     // Run `postsetup` hooks
     await this._runLifecycleHook('postsetup');
+
+    // Record the time when the draw loop starts so that millis() starts at 0
+    // when the draw loop begins.
+    this._millisStart = window.performance.now();
   }
 
   // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
@@ -380,18 +377,13 @@ class p5 {
         window.cancelAnimationFrame(this._requestAnimId);
       }
 
-      // unregister events sketch-wide
-      for (const ev in this._events) {
-        window.removeEventListener(ev, this._events[ev]);
-      }
+      // Send sketch remove signal
+      this._removeAbortController.abort();
 
-      // remove DOM elements created by p5, and listeners
+      // remove DOM elements created by p5
       for (const e of this._elements) {
         if (e.elt && e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
-        }
-        for (const elt_ev in e._events) {
-          e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
         }
       }
 
@@ -422,9 +414,9 @@ class p5 {
   }
 
   async _runLifecycleHook(hookName) {
-    for(const hook of p5.lifecycleHooks[hookName]){
-      await hook.call(this);
-    }
+    await Promise.all(p5.lifecycleHooks[hookName].map(hook => {
+      return hook.call(this);
+    }));
   }
 
   _initializeInstanceVariables() {
@@ -439,6 +431,96 @@ class p5 {
     this._downKeys = {}; //Holds the key codes of currently pressed keys
     this._downKeyCodes = {};
   }
+}
+
+// Global helper function for binding properties to window in global mode
+function createBindGlobal(instance) {
+  return function bindGlobal(property) {
+    if (property === 'constructor') return;
+
+    // Check if this property has a getter on the instance or prototype
+    const instanceDescriptor = Object.getOwnPropertyDescriptor(
+      instance,
+      property
+    );
+    const prototypeDescriptor = Object.getOwnPropertyDescriptor(
+      p5.prototype,
+      property
+    );
+    const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
+                     (prototypeDescriptor && prototypeDescriptor.get);
+
+    // Only check if it's a function if it doesn't have a getter
+    // to avoid actually evaluating getters before things like the
+    // renderer are fully constructed
+    let isPrototypeFunction = false;
+    let isConstant = false;
+    let constantValue;
+
+    if (!hasGetter) {
+      const prototypeValue = p5.prototype[property];
+      isPrototypeFunction = typeof prototypeValue === 'function';
+
+      // Check if this is a true constant from the constants module
+      if (!isPrototypeFunction && constants[property] !== undefined) {
+        isConstant = true;
+        constantValue = prototypeValue;
+      }
+    }
+
+    if (isPrototypeFunction) {
+      // For regular functions, cache the bound function
+      const boundFunction = p5.prototype[property].bind(instance);
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: boundFunction
+      });
+    } else if (isConstant) {
+      // For constants, cache the value directly
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: constantValue
+      });
+    } else if (hasGetter || !isPrototypeFunction) {
+      // For properties with getters or non-function properties, use lazy optimization
+      // On first access, determine the type and optimize subsequent accesses
+      let lastFunction = null;
+      let boundFunction = null;
+      let isFunction = null; // null = unknown, true = function, false = not function
+
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+          const currentValue = instance[property];
+
+          if (isFunction === null) {
+            // First access - determine type and optimize
+            isFunction = typeof currentValue === 'function';
+            if (isFunction) {
+              lastFunction = currentValue;
+              boundFunction = currentValue.bind(instance);
+              return boundFunction;
+            } else {
+              return currentValue;
+            }
+          } else if (isFunction) {
+            // Optimized function path - only rebind if function changed
+            if (currentValue !== lastFunction) {
+              lastFunction = currentValue;
+              boundFunction = currentValue.bind(instance);
+            }
+            return boundFunction;
+          } else {
+            // Optimized non-function path
+            return currentValue;
+          }
+        }
+      });
+    }
+  };
 }
 
 // Attach constants to p5 prototype
@@ -464,11 +546,15 @@ for (const k in constants) {
  * ```
  *
  * Code placed in `setup()` will run once before code placed in
- * <a href="#/p5/draw">draw()</a> begins looping. If the
- * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
- * run immediately after <a href="#/p5/preload">preload()</a> finishes
- * 
- * 
+ * <a href="#/p5/draw">draw()</a> begins looping.
+ * If `setup()` is declared `async` (e.g. `async function setup()`),
+ * execution pauses at each `await` until its promise resolves.
+ * For example, `font = await loadFont(...)` waits for the font asset
+ * to load because `loadFont()` function returns a promise, and the await
+ * keyword means the program will wait for the promise to resolve.
+ * This ensures that all assets are fully loaded before the sketch continues.
+ *
+ *
  * loading assets.
  *
  * Note: `setup()` doesn’t have to be declared, but it’s common practice to do so.
@@ -539,7 +625,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-
 /**
  * A function that's called repeatedly while the sketch runs.
  *
@@ -672,8 +757,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-p5.disableFriendlyErrors = false;
-
 import transform from './transform';
 import structure from './structure';
 import environment from './environment';

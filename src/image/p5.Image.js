@@ -1326,7 +1326,7 @@ class Image {
   /**
    * Copies a region of pixels from another image into this one.
    *
-    * The first parameter, `srcImage`, is the
+   * The first parameter, `srcImage`, is the
    * <a href="#/p5.Image">p5.Image</a> object to blend.
    *
    * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region
@@ -1637,7 +1637,7 @@ class Image {
    *
    * async function setup() {
    *   // Load the image.
-   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
    *   createCanvas(100, 100);
    *
@@ -1677,7 +1677,7 @@ class Image {
    *
    * async function setup() {
    *   // Load the image.
-   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
    *   createCanvas(100, 100);
    *
@@ -1733,7 +1733,7 @@ class Image {
    *
    * async function setup() {
    *   // Load the image.
-   *   gif = await loadImage('assets/arnott-wallace-wink-loop-forever.gif');
+   *   gif = await loadImage('assets/arnott-wallace-eye-loop-forever.gif');
    *
    *   createCanvas(100, 100);
    *
