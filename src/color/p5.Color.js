@@ -26,7 +26,7 @@ import {
 
   OKLab,
   OKLCH as OKLCHSpace,
-  contrast,
+  contrastWCAG21,
   P3
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
@@ -294,15 +294,22 @@ class Color {
     }
     return colorString;
   }
-/**
+
+  /**
    * Checks the contrast between two colors, to make sure that they
    * are different enough to be readable. The result of this function is
-   * a number that can be compared to `COLOR_CONTRAST_THRESHOLD_AA`,
-   * or to `COLOR_CONTRAST_THRESHOLD_AAA`. Shapes and UI elements should have color
-   * contrast at least `COLOR_CONTRAST_THRESHOLD_AA`, and text
-   * benefits from higher contrast of at least `COLOR_CONTRAST_THRESHOLD_AAA`.
+   * a color contrast ratio that can be compared to `COLOR_CONTRAST_MINIMUM_GRAPHICS`,
+   * or to `COLOR_CONTRAST_MINIMUM_TEXT`. The higher the ratio, the more
+   * different colors are, and the more legible to a user.
    * 
-   * You can also explore this
+   * Graphics, interface elements, and large text should have a color
+   * contrast ratio of at least 4.5 (`COLOR_CONTRAST_MINIMUM_GRAPHICS`)
+   * 
+   * Smaller text - less than at least 14 point or 19 pixels -
+   * should have a color contrast ratio of at least 7
+   * (`COLOR_CONTRAST_MINIMUM_TEXT`)
+   * 
+   * The constants are based on WCAG AAA recommendations, which you can also explore in this
    * <a href="https://webaim.org/resources/contrastchecker/">contrast checker tool</a>.
    * The contrast function in p5.js uses the WCAG 2.1 method the
    * <a href="https://colorjs.io/docs/contrast.html">color.js contrast</a>
@@ -359,9 +366,9 @@ class Color {
    *     newFg1Color = color(random(255), random(255), random(255));
    *     newFg2Color = color(random(255), random(255), random(255));
    *     if (
-   *       newBgColor.contrast(newFg2Color) > COLOR_CONTRAST_THRESHOLD_AAA &&
-   *       newBgColor.contrast(newFg1Color) > COLOR_CONTRAST_THRESHOLD_AA &&
-   *       newBgColor.contrast(newFg1Color) < COLOR_CONTRAST_THRESHOLD_AAA ){
+   *       newBgColor.contrast(newFg2Color) >= COLOR_CONTRAST_MINIMUM_TEXT &&
+   *       newBgColor.contrast(newFg1Color) >= COLOR_CONTRAST_MINIMUM_GRAPHICS &&
+   *       newBgColor.contrast(newFg1Color) < COLOR_CONTRAST_MINIMUM_TEXT ){
    *       
    *       bgColor = newBgColor;
    *       fg1Color = newFg1Color;
