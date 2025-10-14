@@ -91,6 +91,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description.
  *   textOutput();
@@ -111,6 +115,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description and
  *   // display it for debugging.
@@ -235,6 +243,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description.
  *   gridOutput();
@@ -255,6 +267,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description and
  *   // display it for debugging.
