@@ -52,7 +52,7 @@ module.exports = function(grunt) {
       // Target file path
       const libFilePath = path.resolve('lib/modules/' + filename);
 
-      // Invoke Browserify programatically to bundle the code
+      // Invoke Browserify programmatically to bundle the code
       let browseified = browserify(tempFilePath, {
         standalone: 'p5'
       });

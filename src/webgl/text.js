@@ -8,6 +8,8 @@ import './p5.RendererGL.Retained';
 p5.RendererGL.prototype._applyTextProperties = function() {
   //@TODO finish implementation
   //console.error('text commands not yet implemented in webgl');
+  this._setProperty('_textAscent', null);
+  this._setProperty('_textDescent', null);
 };
 
 p5.RendererGL.prototype.textWidth = function(s) {

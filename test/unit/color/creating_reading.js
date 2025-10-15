@@ -159,15 +159,15 @@ suite('color/CreatingReading', function() {
       myp5.colorMode(myp5.HSL);
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
-      assert.deepEqual(interA.levels, [66, 190, 44, 255]);
-      assert.deepEqual(interB.levels, [53, 164, 161, 255]);
+      assert.deepEqual(interA.levels, [190, 44, 63, 255]);
+      assert.deepEqual(interB.levels, [164, 53, 162, 255]);
     });
     test('should correctly get lerp colors in HSB', function() {
       myp5.colorMode(myp5.HSB);
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
-      assert.deepEqual(interA.levels, [69, 192, 47, 255]);
-      assert.deepEqual(interB.levels, [56, 166, 163, 255]);
+      assert.deepEqual(interA.levels, [192, 47, 66, 255]);
+      assert.deepEqual(interB.levels, [166, 56, 164, 255]);
     });
     test('should not extrapolate', function() {
       var interA = myp5.lerpColor(fromColor, toColor, -0.5);
@@ -197,15 +197,15 @@ suite('color/CreatingReading', function() {
       myp5.colorMode(myp5.HSL);
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
-      assert.deepEqual(interA.levels, [66, 190, 44, 99]);
-      assert.deepEqual(interB.levels, [53, 164, 161, 149]);
+      assert.deepEqual(interA.levels, [190, 44, 63, 99]);
+      assert.deepEqual(interB.levels, [164, 53, 162, 149]);
     });
     test('should correctly get lerp colors in HSB with alpha', function() {
       myp5.colorMode(myp5.HSB);
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
-      assert.deepEqual(interA.levels, [69, 192, 47, 99]);
-      assert.deepEqual(interB.levels, [56, 166, 163, 149]);
+      assert.deepEqual(interA.levels, [192, 47, 66, 99]);
+      assert.deepEqual(interB.levels, [166, 56, 164, 149]);
     });
     test('should not extrapolate', function() {
       var interA = myp5.lerpColor(fromColor, toColor, -0.5);

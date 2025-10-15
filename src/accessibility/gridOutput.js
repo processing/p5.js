@@ -66,19 +66,26 @@ function _gridMap(idT, ingredients) {
           ingredients[x][y].color
         } ${x} midpoint</a>`;
       }
-      //if empty cell of location of shape is undefined
-      if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
-        //fill it with shape info
-        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
-        //if a shape is already in that location
-      } else {
-        //add it
-        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
-          cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
-          '  ' +
-          fill;
+
+      // Check if shape is in canvas, skip if not
+      if(
+        ingredients[x][y].loc.locY < cells.length &&
+        ingredients[x][y].loc.locX < cells[ingredients[x][y].loc.locY].length
+      ){
+        //if empty cell of location of shape is undefined
+        if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
+          //fill it with shape info
+          cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
+          //if a shape is already in that location
+        } else {
+          //add it
+          cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
+            cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
+            '  ' +
+            fill;
+        }
+        shapeNumber++;
       }
-      shapeNumber++;
     }
   }
   //make table based on array
@@ -114,7 +121,7 @@ function _gridShapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapes = '';
   let totalShapes = 0;
-  //goes trhough every shape type in ingredients
+  //goes through every shape type in ingredients
   for (let x in ingredients) {
     let shapeNum = 0;
     for (let y in ingredients[x]) {

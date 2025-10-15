@@ -1,5 +1,5 @@
 
-## [p5.js community statement](http://p5js.org/community/)
+## [p5.js community statement](https://p5js.org/community/)
 
 p5.js is a community interested in exploring the creation of art and design with technology.
 

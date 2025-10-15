@@ -9,7 +9,7 @@ uniform bool uUseLighting;
 
 uniform int uAmbientLightCount;
 uniform vec3 uAmbientColor[5];
-
+uniform mat3 uCameraRotation;
 uniform int uDirectionalLightCount;
 uniform vec3 uLightingDirection[5];
 uniform vec3 uDirectionalDiffuseColors[5];
@@ -30,6 +30,7 @@ uniform vec3 uSpotLightDirection[5];
 
 uniform bool uSpecular;
 uniform float uShininess;
+uniform float uMetallic;
 
 uniform float uConstantAttenuation;
 uniform float uLinearAttenuation;
@@ -42,8 +43,6 @@ uniform bool uUseImageLight;
 uniform sampler2D environmentMapDiffused;
 // texture for use in calculateImageSpecular
 uniform sampler2D environmentMapSpecular;
-// roughness for use in calculateImageSpecular
-uniform float levelOfDetail;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
@@ -67,15 +66,17 @@ float _lambertDiffuse(vec3 lightDirection, vec3 surfaceNormal) {
   return max(0.0, dot(-lightDirection, surfaceNormal));
 }
 
-LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
+LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector, float shininess, float metallic) {
 
   vec3 lightDir = normalize(lightVector);
 
   //compute our diffuse & specular terms
   LightResult lr;
+  float specularIntensity = mix(1.0, 0.4, metallic);
+  float diffuseIntensity = mix(1.0, 0.1, metallic);
   if (uSpecular)
-    lr.specular = _phongSpecular(lightDir, viewDirection, normal, uShininess);
-  lr.diffuse = _lambertDiffuse(lightDir, normal);
+    lr.specular = (_phongSpecular(lightDir, viewDirection, normal, shininess)) * specularIntensity;
+    lr.diffuse = _lambertDiffuse(lightDir, normal) * diffuseIntensity;
   return lr;
 }
 
@@ -106,36 +107,49 @@ vec2 mapTextureToNormal( vec3 v ){
 }
 
 
-vec3 calculateImageDiffuse( vec3 vNormal, vec3 vViewPosition ){
-  // make 2 seperate builds 
+vec3 calculateImageDiffuse(vec3 vNormal, vec3 vViewPosition, float metallic){
+  // make 2 separate builds 
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);  // hardcoded world camera position
-  vec3 worldNormal = normalize(vNormal);
+  vec3 worldNormal = normalize(vNormal * uCameraRotation);
   vec2 newTexCoor = mapTextureToNormal( worldNormal );
   vec4 texture = TEXTURE( environmentMapDiffused, newTexCoor );
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return smoothstep(vec3(0.0), vec3(0.8), texture.xyz);
+  return mix(smoothstep(vec3(0.0), vec3(1.0), texture.xyz), vec3(0.0), metallic);
 }
 
-vec3 calculateImageSpecular( vec3 vNormal, vec3 vViewPosition ){
+vec3 calculateImageSpecular(vec3 vNormal, vec3 vViewPosition, float shininess, float metallic){
   vec3 worldCameraPosition =  vec3(0.0, 0.0, 0.0);
   vec3 worldNormal = normalize(vNormal);
   vec3 lightDirection = normalize( vViewPosition - worldCameraPosition );
-  vec3 R = reflect(lightDirection, worldNormal);
+  vec3 R = reflect(lightDirection, worldNormal) * uCameraRotation;
   vec2 newTexCoor = mapTextureToNormal( R );
 #ifdef WEBGL2
-  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, levelOfDetail);
+  // In p5js the range of shininess is >= 1,
+  // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
+  // The factor of 8 is because currently the getSpecularTexture
+  // only calculated 8 different levels of roughness
+  // The factor of 20 is just to spread up this range so that,
+  // [1, max] of shininess is converted to [0,160] of roughness
+  float roughness = 20. / shininess;
+  vec4 outColor = textureLod(environmentMapSpecular, newTexCoor, roughness * 8.);
 #else
   vec4 outColor = TEXTURE(environmentMapSpecular, newTexCoor);
 #endif
   // this is to make the darker sections more dark
   // png and jpg usually flatten the brightness so it is to reverse that
-  return pow(outColor.xyz, vec3(10.0));
+  return mix(
+    pow(outColor.xyz, vec3(10)),
+    pow(outColor.xyz, vec3(1.2)),
+    metallic 
+  );
 }
 
 void totalLight(
   vec3 modelPosition,
   vec3 normal,
+  float shininess,
+  float metallic,
   out vec3 totalDiffuse,
   out vec3 totalSpecular
 ) {
@@ -156,7 +170,7 @@ void totalLight(
       vec3 lightVector = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
       vec3 lightColor = uDirectionalDiffuseColors[j];
       vec3 specularColor = uDirectionalSpecularColors[j];
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess, metallic);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor * specularColor;
     }
@@ -164,14 +178,13 @@ void totalLight(
     if (j < uPointLightCount) {
       vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[j], 1.0)).xyz;
       vec3 lightVector = modelPosition - lightPosition;
-    
       //calculate attenuation
       float lightDistance = length(lightVector);
       float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
       vec3 lightColor = lightFalloff * uPointLightDiffuseColors[j];
       vec3 specularColor = lightFalloff * uPointLightSpecularColors[j];
 
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess, metallic);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor * specularColor;
     }
@@ -197,7 +210,7 @@ void totalLight(
       vec3 lightColor = uSpotLightDiffuseColors[j];
       vec3 specularColor = uSpotLightSpecularColors[j];
      
-      LightResult result = _light(viewDirection, normal, lightVector);
+      LightResult result = _light(viewDirection, normal, lightVector, shininess, metallic);
       
       totalDiffuse += result.diffuse * lightColor * lightFalloff;
       totalSpecular += result.specular * lightColor * specularColor * lightFalloff;
@@ -205,8 +218,8 @@ void totalLight(
   }
 
   if( uUseImageLight ){
-    totalDiffuse += calculateImageDiffuse(normal, modelPosition);
-    totalSpecular += calculateImageSpecular(normal, modelPosition);
+    totalDiffuse += calculateImageDiffuse(normal, modelPosition, metallic);
+    totalSpecular += calculateImageSpecular(normal, modelPosition, shininess, metallic);
   }
 
   totalDiffuse *= diffuseFactor;

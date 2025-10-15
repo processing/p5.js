@@ -1,8 +1,10 @@
+<!-- A reference to help give our documentation a consistent voice. -->
+
 # Documentation Style Guide
 
 Hello! Welcome to the guidelines for writing p5.js documentation. This document is a remix of the following resources:
 
-- Ruby on Rails [API Documentation Guidlines](https://guides.rubyonrails.org/api_documentation_guidelines.html) (CC BY-SA 4.0)
+- Ruby on Rails [API Documentation Guidelines](https://guides.rubyonrails.org/api_documentation_guidelines.html) (CC BY-SA 4.0)
 - WordPress documentation guidelines for [accessibility](https://make.wordpress.org/docs/style-guide/general-guidelines/accessibility/) and [inclusivity](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/) (CC0)
 - Airbnb [JavaScript Style Guide](https://airbnb.io/javascript/) (MIT)
 
@@ -35,6 +37,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Arrays](#arrays)
 - [Functions](#functions)
 - [Arrow Functions](#arrow-functions)
+- [Chaining](#chaining)
 - [Classes](#classes)
 - [Assets](#assets)
 
@@ -46,7 +49,7 @@ We use YUIDoc to generate the p5.js API documentation. To generate the docs, nav
 $ npm run grunt yui:dev
 ```
 
-The output will appear in docs/reference. Refer to the [inline documentation guide](./inline_documentation.md) for more information.
+The output will appear in docs/reference. Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -137,7 +140,7 @@ Always use `let` to declare variables.
 
 **Accessibility terminology**
 
-The following terminiology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
+The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
 | Recommended |	Not Recommended |
 | -- | -- |
@@ -710,7 +713,7 @@ if (
 
 ## Iteration
 
-- Don’t use a `while` or `do-while` loops unless it's necessary. Use `for` loops to iterate a fixed number of times.
+- Don’t use `while` or `do-while` loops unless it's necessary. Use `for` loops to iterate a fixed number of times.
 
 ```javascript
 let numPetals = 7;
@@ -893,7 +896,7 @@ for (let i = 0; i < numbers.length; i += 1) {
 let numbersCopy = numbers.slice();
 ```
 
-- Write arrays on multiple lines when it improves readibility. Use line breaks after the opening bracket and before the closing bracket. Add a trailing comma.
+- Write arrays on multiple lines when it improves readability. Use line breaks after the opening bracket and before the closing bracket. Add a trailing comma.
 
 ```javascript
 // Bad.
@@ -1041,6 +1044,30 @@ function processImage(img) {
 // Good.
 [1, 2, 3].map((number) => number * number);
 ```
+**[⬆ back to top](#table-of-contents)**
+
+## Chaining
+
+* Use individual function calls instead of function chaining.
+
+> Why? To accommodate users who may not be familiar with the concept of function chaining.
+
+```javascript
+// Bad.
+fill(0)
+  .strokeWeight(6)
+  .textSize(20);
+
+// Bad.
+fill(0).strokeWeight(6).textSize(20);
+
+// Good.
+fill(0);
+strokeWeight(6);
+textSize(20);
+```
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Classes
 

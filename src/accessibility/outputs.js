@@ -8,12 +8,11 @@
 import p5 from '../core/main';
 
 /**
- * Creates a screen reader-accessible description for shapes on the canvas.
- * `textOutput()` adds a general description, list of shapes, and
- * table of shapes to the web page.
+ * Creates a screen reader-accessible description of shapes on the canvas.
  *
- * The general description includes the canvas size, canvas color, and number
- * of shapes. For example,
+ * `textOutput()` adds a general description, list of shapes, and
+ * table of shapes to the web page. The general description includes the
+ * canvas size, canvas color, and number of shapes. For example,
  * `Your output is a, 100 by 100 pixels, gray canvas containing the following 2 shapes:`.
  *
  * A list of shapes follows the general description. The list describes the
@@ -35,8 +34,17 @@ import p5 from '../core/main';
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
+ *
+ * `textOutput()` generates descriptions in English only. Text drawn with
+ * <a href="#/p5/text">text()</a> is not described. Shapes created with
+ * <a href="#/p5/beginShape">beginShape()</a> are not described. WEBGL mode
+ * and 3D shapes are not supported.
+ *
+ * Use <a href="#/p5/describe">describe()</a> and
+ * <a href="#/p5/describeElement">describeElement()</a> for more control
+ * over canvas descriptions.
  *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
@@ -83,6 +91,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description.
  *   textOutput();
@@ -103,6 +115,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description and
  *   // display it for debugging.
@@ -143,12 +159,11 @@ p5.prototype.textOutput = function(display) {
 };
 
 /**
- * Creates a screen reader-accessible description for shapes on the canvas.
- * `gridOutput()` adds a general description, table of shapes, and list of
- * shapes to the web page.
+ * Creates a screen reader-accessible description of shapes on the canvas.
  *
- * The general description includes the canvas size, canvas color, and number of
- * shapes. For example,
+ * `gridOutput()` adds a general description, table of shapes, and list of
+ * shapes to the web page. The general description includes the canvas size,
+ * canvas color, and number of shapes. For example,
  * `gray canvas, 100 by 100 pixels, contains 2 shapes:  1 circle 1 square`.
  *
  * `gridOutput()` uses its table of shapes as a grid. Each shape in the grid
@@ -171,8 +186,17 @@ p5.prototype.textOutput = function(display) {
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
+ *
+ * `gridOutput()` generates descriptions in English only. Text drawn with
+ * <a href="#/p5/text">text()</a> is not described. Shapes created with
+ * <a href="#/p5/beginShape">beginShape()</a> are not described. WEBGL mode
+ * and 3D shapes are not supported.
+ *
+ * Use <a href="#/p5/describe">describe()</a> and
+ * <a href="#/p5/describeElement">describeElement()</a> for more control
+ * over canvas descriptions.
  *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
@@ -219,6 +243,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description.
  *   gridOutput();
@@ -239,6 +267,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description and
  *   // display it for debugging.
@@ -463,7 +495,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (f === 'line') {
     //make color stroke
     include.color = this.ingredients.colors.stroke;
-    //get lenght
+    //get length
     include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
     //get position of end points
     let p1 = this._getPos(args[0], [1]);
@@ -494,7 +526,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (!this.ingredients.shapes[f]) {
     this.ingredients.shapes[f] = [include];
     //if other shapes of this type have been created
-  } else if (this.ingredients.shapes[f] !== [include]) {
+  } else {
     //for every shape of this type
     for (let y in this.ingredients.shapes[f]) {
       //compare it with current shape and if it already exists make add false
@@ -548,7 +580,8 @@ p5.prototype._getPos = function (x, y) {
     this.drawingContext.getTransform();
   const { x: transformedX, y: transformedY } = untransformedPosition
     .matrixTransform(currentTransform);
-  const { width: canvasWidth, height: canvasHeight } = this;
+  const canvasWidth = this.width * this._pixelDensity;
+  const canvasHeight = this.height * this._pixelDensity;
   if (transformedX < 0.4 * canvasWidth) {
     if (transformedY < 0.4 * canvasHeight) {
       return 'top left';
@@ -580,14 +613,17 @@ p5.prototype._getPos = function (x, y) {
 function _canvasLocator(args, canvasWidth, canvasHeight) {
   const noRows = 10;
   const noCols = 10;
-  let locX = Math.floor(args[0] / canvasWidth * noRows);
-  let locY = Math.floor(args[1] / canvasHeight * noCols);
-  if (locX === noRows) {
-    locX = locX - 1;
-  }
-  if (locY === noCols) {
-    locY = locY - 1;
-  }
+
+  let x = args[0];
+  let y = args[1];
+
+  let locX = Math.floor(x / canvasWidth * noRows);
+  let locY = Math.floor(y / canvasHeight * noCols);
+
+  // clamp out of bounds values
+  locX = Math.min(Math.max(locX, 0), noRows - 1);
+  locY = Math.min(Math.max(locY, 0), noCols - 1);
+
   return {
     locX,
     locY

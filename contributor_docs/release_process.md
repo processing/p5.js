@@ -1,3 +1,5 @@
+<!-- How all the updates on GitHub get turned into a new version of the library. -->
+
 # Release process
 
 ## Approach
@@ -60,7 +62,7 @@ Once triggered, it will run the following steps:
 In principle, we try to concentrate as many steps as possible to be run in one place, ie. in the CI environment. If a new step that is only run on release is required, it should probably be defined in the CI workflow and not as part of the build configuration.
 
 ## Testing
-As the release steps are run in CI, testing them can be difficult. Using [act](https://github.com/nektos/act) to test running of the steps locally is possible (and was how they were tested while being developed) but require some temporary modifications to the workflow definition, we'll roughly document here as the precise steps will likely change over time.
+As the release steps are run in CI, testing them can be difficult. Using [act](https://github.com/nektos/act) to test running of the steps locally is possible (and was how they were tested while being developed) but requires some temporary modifications to the workflow definition, we'll roughly document here as the precise steps will likely change over time.
 
 The test steps will not run because not all system requirements are present to run the mocha Chrome tests. Some system dependencies will likely be needed to be installed with `apt` before setting up the rest of the environment. Keep an eye on the error messages which should give some information on what packages are missing.
 

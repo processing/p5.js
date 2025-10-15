@@ -63,16 +63,16 @@ const Filters = {
   },
 
   /**
- * Returns a 32-bit number containing ARGB data at the ith pixel in the
- * 1D array containing pixels data.
- *
- * @private
- *
- * @param  {Uint8ClampedArray} data array returned by _toPixels()
- * @param  {Integer}           i    index of a 1D Image Array
- * @return {Integer}                32-bit integer value representing
- *                                  ARGB value.
- */
+   * Returns a 32-bit number containing ARGB data at the ith pixel in the
+   * 1D array containing pixels data.
+   *
+   * @private
+   *
+   * @param  {Uint8ClampedArray} data array returned by _toPixels()
+   * @param  {Integer}           i    index of a 1D Image Array
+   * @return {Integer}                32-bit integer value representing
+   *                                  ARGB value.
+   */
   _getARGB(data, i) {
     // Determine the starting position in the 'data' array for the 'i'-th pixel.
     const offset = i * 4;
@@ -86,14 +86,14 @@ const Filters = {
   },
 
   /**
- * Modifies pixels RGBA values to values contained in the data object.
- *
- * @private
- *
- * @param {Uint8ClampedArray} pixels array returned by _toPixels()
- * @param {Int32Array}        data   source 1D array where each value
- *                                   represents ARGB values
- */
+   * Modifies pixels RGBA values to values contained in the data object.
+   *
+   * @private
+   *
+   * @param {Uint8ClampedArray} pixels array returned by _toPixels()
+   * @param {Int32Array}        data   source 1D array where each value
+   *                                   represents ARGB values
+   */
   _setPixels(pixels, data) {
     let offset = 0;
     for (let i = 0, al = pixels.length; i < al; i++) {
@@ -107,15 +107,15 @@ const Filters = {
 
 
   /**
- * Returns the ImageData object for a canvas.
- * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
- *
- * @private
- *
- * @param  {Canvas|ImageData} canvas canvas to get image data from
- * @return {ImageData}               Holder of pixel data (and width and
- *                                   height) for a canvas
- */
+   * Returns the ImageData object for a canvas.
+   * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
+   *
+   * @private
+   *
+   * @param  {Canvas|ImageData} canvas canvas to get image data from
+   * @return {ImageData}               Holder of pixel data (and width and
+   *                                   height) for a canvas
+   */
   _toImageData(canvas) {
     if (canvas instanceof ImageData) {
       return canvas;
@@ -128,14 +128,14 @@ const Filters = {
 
 
   /**
- * Returns a blank ImageData object.
- *
- * @private
- *
- * @param  {Integer} width
- * @param  {Integer} height
- * @return {ImageData}
- */
+   * Returns a blank ImageData object.
+   *
+   * @private
+   *
+   * @param  {Integer} width
+   * @param  {Integer} height
+   * @return {ImageData}
+   */
   _createImageData(width, height) {
     Filters._tmpCanvas = document.createElement('canvas');
     Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
@@ -143,24 +143,24 @@ const Filters = {
   },
 
   /**
- * Applys a filter function to a canvas.
- *
- * The difference between this and the actual filter functions defined below
- * is that the filter functions generally modify the pixel buffer but do
- * not actually put that data back to the canvas (where it would actually
- * update what is visible). By contrast this method does make the changes
- * actually visible in the canvas.
- *
- * The apply method is the method that callers of this module would generally
- * use. It has been separated from the actual filters to support an advanced
- * use case of creating a filter chain that executes without actually updating
- * the canvas in between everystep.
- *
- * @private
- * @param  {HTMLCanvasElement} canvas The input canvas to apply the filter on.
- * @param  {function(ImageData,Object)} func The filter function to apply to the canvas's pixel data.
- * @param  {Object} filterParam An optional parameter to pass to the filter function.
- */
+   * Applys a filter function to a canvas.
+   *
+   * The difference between this and the actual filter functions defined below
+   * is that the filter functions generally modify the pixel buffer but do
+   * not actually put that data back to the canvas (where it would actually
+   * update what is visible). By contrast this method does make the changes
+   * actually visible in the canvas.
+   *
+   * The apply method is the method that callers of this module would generally
+   * use. It has been separated from the actual filters to support an advanced
+   * use case of creating a filter chain that executes without actually updating
+   * the canvas in between everystep.
+   *
+   * @private
+   * @param  {HTMLCanvasElement} canvas The input canvas to apply the filter on.
+   * @param  {function(ImageData,Object)} func The filter function to apply to the canvas's pixel data.
+   * @param  {Object} filterParam An optional parameter to pass to the filter function.
+   */
   apply(canvas, func, filterParam) {
     const pixelsState = canvas.getContext('2d');
     const imageData = pixelsState.getImageData(
@@ -194,26 +194,23 @@ const Filters = {
   },
 
   /*
- * Filters
- */
+   * Filters
+   */
 
   /**
- * Converts the image to black and white pixels depending if they are above or
- * below the threshold defined by the level parameter. The parameter must be
- * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
- *
- * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
- *
- * @private
- * @param  {Canvas} canvas Canvas to apply thershold filter on.
- * @param  {Float} level Threshold level (0-1).
- */
-  threshold(canvas, level) {
+   * Converts the image to black and white pixels depending if they are above or
+   * below the threshold defined by the level parameter. The parameter must be
+   * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+   *
+   * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+   *
+   * @private
+   * @param  {Canvas} canvas Canvas to apply thershold filter on.
+   * @param  {Float} level Threshold level (0-1).
+   */
+  threshold(canvas, level = 0.5) {
     const pixels = Filters._toPixels(canvas);
 
-    if (level === undefined) {
-      level = 0.5;
-    }
     // Calculate threshold value on a (0-255) scale.
     const thresh = Math.floor(level * 255);
 
@@ -234,14 +231,14 @@ const Filters = {
   },
 
   /**
- * Converts any colors in the image to grayscale equivalents.
- * No parameter is used.
- *
- * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
- *
- * @private
- * @param {Canvas} canvas Canvas to apply gray filter on.
- */
+   * Converts any colors in the image to grayscale equivalents.
+   * No parameter is used.
+   *
+   * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+   *
+   * @private
+   * @param {Canvas} canvas Canvas to apply gray filter on.
+   */
   gray(canvas) {
     const pixels = Filters._toPixels(canvas);
 
@@ -257,11 +254,11 @@ const Filters = {
   },
 
   /**
- * Sets the alpha channel to entirely opaque. No parameter is used.
- *
- * @private
- * @param {Canvas} canvas
- */
+   * Sets the alpha channel to entirely opaque. No parameter is used.
+   *
+   * @private
+   * @param {Canvas} canvas
+   */
   opaque(canvas) {
     const pixels = Filters._toPixels(canvas);
 
@@ -273,10 +270,10 @@ const Filters = {
   },
 
   /**
- * Sets each pixel to its inverse value. No parameter is used.
- * @private
- * @param  {Canvas} canvas
- */
+   * Sets each pixel to its inverse value. No parameter is used.
+   * @private
+   * @param  {Canvas} canvas
+   */
   invert(canvas) {
     const pixels = Filters._toPixels(canvas);
 
@@ -288,21 +285,18 @@ const Filters = {
   },
 
   /**
- * Limits each channel of the image to the number of colors specified as
- * the parameter. The parameter can be set to values between 2 and 255, but
- * results are most noticeable in the lower ranges.
- *
- * Adapted from java based processing implementation
- *
- * @private
- * @param  {Canvas} canvas
- * @param  {Integer} level
- */
-  posterize(canvas, level) {
+   * Limits each channel of the image to the number of colors specified as
+   * the parameter. The parameter can be set to values between 2 and 255, but
+   * results are most noticeable in the lower ranges.
+   *
+   * Adapted from java based processing implementation
+   *
+   * @private
+   * @param  {Canvas} canvas
+   * @param  {Integer} level
+   */
+  posterize(canvas, level = 4) {
     const pixels = Filters._toPixels(canvas);
-    if (level === undefined) {
-      level = 4;
-    }
     if (level < 2 || level > 255) {
       throw new Error(
         'Level must be greater than 2 and less than 255 for posterize'
@@ -323,10 +317,10 @@ const Filters = {
   },
 
   /**
- * Increases the bright areas in an image.
- * @private
- * @param  {Canvas} canvas
- */
+   * Increases the bright areas in an image.
+   * @private
+   * @param  {Canvas} canvas
+   */
   dilate(canvas) {
     const pixels = Filters._toPixels(canvas);
     let currIdx = 0;
@@ -415,11 +409,11 @@ const Filters = {
   },
 
   /**
- * Reduces the bright areas in an image.
- * Similar to `dilate()`, but updates the output color based on the lowest luminance value.
- * @private
- * @param  {Canvas} canvas
- */
+   * Reduces the bright areas in an image.
+   * Similar to `dilate()`, but updates the output color based on the lowest luminance value.
+   * @private
+   * @param  {Canvas} canvas
+   */
   erode(canvas) {
     const pixels = Filters._toPixels(canvas);
     let currIdx = 0;

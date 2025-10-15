@@ -24,19 +24,19 @@ export const P2D = 'p2d';
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
- * `WEBGL` differs from the default <a href="/reference/#/p5/P2D">`P2D`</a> renderer in the following ways:
+ * `WEBGL` differs from the default <a href="/reference/p5/P2D">`P2D`</a> renderer in the following ways:
  *
- * - **Coordinate System** - When drawing in `WEBGL` mode, the origin point (0,0,0) is located at the center of the screen, not the top-left corner. See <a href="https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html">the learn page about coordinates and transformations</a>.
- * - **3D Shapes** - `WEBGL` mode can be used to draw 3-dimensional shapes like <a href="/reference/#/p5/box">box()</a>, <a href="/reference/#/p5/sphere">sphere()</a>, <a href="/reference/#/p5/cone">cone()</a>, and <a href="/#Shape3D%20Primitives">more</a>. See <a href="https://p5js.org/learn/getting-started-in-webgl-custom-geometry.html">the learn page about custom geometry</a> to make more complex objects.
+ * - **Coordinate System** - When drawing in `WEBGL` mode, the origin point (0,0,0) is located at the center of the screen, not the top-left corner. See <a href="https://p5js.org/tutorials/coordinates-and-transformations/">the tutorial page about coordinates and transformations</a>.
+ * - **3D Shapes** - `WEBGL` mode can be used to draw 3-dimensional shapes like <a href="#/p5/box">box()</a>, <a href="#/p5/sphere">sphere()</a>, <a href="#/p5/cone">cone()</a>, and <a href="https://p5js.org/reference/#3D%20Primitives">more</a>. See <a href="https://p5js.org/tutorials/custom-geometry/">the tutorial page about custom geometry</a> to make more complex objects.
  * - **Shape Detail** - When drawing in `WEBGL` mode, you can specify how smooth curves should be drawn by using a `detail` parameter. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#3d-primitives-shapes">the wiki section about shapes</a> for a more information and an example.
  * - **Textures** - A texture is like a skin that wraps onto a shape. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#textures">the wiki section about textures</a> for examples of mapping images onto surfaces with textures.
- * - **Materials and Lighting** - `WEBGL` offers different types of lights like <a href="/reference/#/p5/ambientLight">ambientLight()</a> to place around a scene. Materials like <a href="/reference/#/p5/specularMaterial">specularMaterial()</a> reflect the lighting to convey shape and depth. See <a href="https://p5js.org/learn/getting-started-in-webgl-appearance.html">the learn page for styling and appearance</a> to experiment with different combinations.
- * - **Camera** - The viewport of a `WEBGL` sketch can be adjusted by changing camera attributes. See <a href="https://p5js.org/learn/getting-started-in-webgl-appearance.html#camera">the learn page section about cameras</a> for an explanation of camera controls.
- * - **Text** - `WEBGL` requires opentype/truetype font files to be preloaded using <a href="/reference/#/p5/loadFont">loadFont()</a>. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">the wiki section about text</a> for details, along with a workaround.
- * - **Shaders** - Shaders are hardware accelerated programs that can be used for a variety of effects and graphics. See the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">introduction to shaders</a> to get started with shaders in p5.js.
+ * - **Materials and Lighting** - `WEBGL` offers different types of lights like <a href="#/p5/ambientLight">ambientLight()</a> to place around a scene. Materials like <a href="#/p5/specularMaterial">specularMaterial()</a> reflect the lighting to convey shape and depth. See <a href="https://p5js.org/tutorials/lights-camera-materials/">the tutorial page for styling and appearance</a> to experiment with different combinations.
+ * - **Camera** - The viewport of a `WEBGL` sketch can be adjusted by changing camera attributes. See <a href="https://p5js.org/tutorials/lights-camera-materials#camera-and-view">the tutorial page section about cameras</a> for an explanation of camera controls.
+ * - **Text** - `WEBGL` requires opentype/truetype font files to be preloaded using <a href="#/p5/loadFont">loadFont()</a>. See <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">the wiki section about text</a> for details, along with a workaround.
+ * - **Shaders** - Shaders are hardware accelerated programs that can be used for a variety of effects and graphics. See the <a href="https://p5js.org/tutorials/intro-to-shaders/">introduction to shaders</a> to get started with shaders in p5.js.
  * - **Graphics Acceleration** - `WEBGL` mode uses the graphics card instead of the CPU, so it may help boost the performance of your sketch (example: drawing more shapes on the screen at once).
  *
- * To learn more about WEBGL mode, check out <a href="https://p5js.org/learn/#:~:text=Getting%20Started%20in%20WebGL">all the interactive WEBGL tutorials</a> in the "Learn" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
+ * To learn more about WEBGL mode, check out <a href="https://p5js.org/tutorials/#webgl">all the interactive WEBGL tutorials</a> in the "Tutorials" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
  * @property {String} WEBGL
  * @final
@@ -86,121 +86,546 @@ export const WAIT = 'wait';
 // TRIGONOMETRY
 
 /**
- * HALF_PI is a mathematical constant with the value
- * 1.57079632679489661923. It is half the ratio of the
- * circumference of a circle to its diameter. It is useful in
- * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+ * A `Number` constant that's approximately 1.5708.
+ *
+ * `HALF_PI` is half the value of the mathematical constant π. It's useful for
+ * many tasks that involve rotation and oscillation. For example, calling
+ * `rotate(HALF_PI)` rotates the coordinate system `HALF_PI` radians, which is
+ * a quarter turn (90˚).
+ *
+ * Note: `TWO_PI` radians equals 360˚, `PI` radians equals 180˚, `HALF_PI`
+ * radians equals 90˚, and `QUARTER_PI` radians equals 45˚.
  *
  * @property {Number} HALF_PI
  * @final
  *
  * @example
- * <div><code>
- * arc(50, 50, 80, 80, 0, HALF_PI);
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * 80×80 white quarter-circle with curve toward bottom right of canvas.
+ *   background(200);
+ *
+ *   // Draw an arc from 0 to HALF_PI.
+ *   arc(50, 50, 80, 80, 0, HALF_PI);
+ *
+ *   describe('The bottom-right quarter of a circle drawn in white on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a line.
+ *   line(0, 0, 40, 0);
+ *
+ *   // Rotate a quarter turn.
+ *   rotate(HALF_PI);
+ *
+ *   // Draw the same line, rotated.
+ *   line(0, 0, 40, 0);
+ *
+ *   describe('Two black lines on a gray background. One line extends from the center to the right. The other line extends from the center to the bottom.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A red circle and a blue circle oscillate from left to right on a gray background. The red circle appears to chase the blue circle.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Calculate the x-coordinates.
+ *   let x1 = 40 * sin(frameCount * 0.05);
+ *   let x2 = 40 * sin(frameCount * 0.05 + HALF_PI);
+ *
+ *   // Style the oscillators.
+ *   noStroke();
+ *
+ *   // Draw the red oscillator.
+ *   fill(255, 0, 0);
+ *   circle(x1, 0, 20);
+ *
+ *   // Draw the blue oscillator.
+ *   fill(0, 0, 255);
+ *   circle(x2, 0, 20);
+ * }
+ * </code>
+ * </div>
  */
 export const HALF_PI = _PI / 2;
+
 /**
- * PI is a mathematical constant with the value
- * 3.14159265358979323846. It is the ratio of the circumference
- * of a circle to its diameter. It is useful in combination with
- * the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+ * A `Number` constant that's approximately 3.1416.
+ *
+ * `PI` is the mathematical constant π. It's useful for many tasks that
+ * involve rotation and oscillation. For example, calling `rotate(PI)` rotates
+ * the coordinate system `PI` radians, which is a half turn (180˚).
+ *
+ * Note: `TWO_PI` radians equals 360˚, `PI` radians equals 180˚, `HALF_PI`
+ * radians equals 90˚, and `QUARTER_PI` radians equals 45˚.
  *
  * @property {Number} PI
  * @final
  *
  * @example
- * <div><code>
- * arc(50, 50, 80, 80, 0, PI);
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * white half-circle with curve toward bottom of canvas.
+ *   background(200);
+ *
+ *   // Draw an arc from 0 to PI.
+ *   arc(50, 50, 80, 80, 0, PI);
+ *
+ *   describe('The bottom half of a circle drawn in white on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a line.
+ *   line(0, 0, 40, 0);
+ *
+ *   // Rotate a half turn.
+ *   rotate(PI);
+ *
+ *   // Draw the same line, rotated.
+ *   line(0, 0, 40, 0);
+ *
+ *   describe('A horizontal black line on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A red circle and a blue circle oscillate from left to right on a gray background. The circles drift apart, then meet in the middle, over and over again.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Calculate the x-coordinates.
+ *   let x1 = 40 * sin(frameCount * 0.05);
+ *   let x2 = 40 * sin(frameCount * 0.05 + PI);
+ *
+ *   // Style the oscillators.
+ *   noStroke();
+ *
+ *   // Draw the red oscillator.
+ *   fill(255, 0, 0);
+ *   circle(x1, 0, 20);
+ *
+ *   // Draw the blue oscillator.
+ *   fill(0, 0, 255);
+ *   circle(x2, 0, 20);
+ * }
+ * </code>
+ * </div>
  */
 export const PI = _PI;
+
 /**
- * QUARTER_PI is a mathematical constant with the value 0.7853982.
- * It is one quarter the ratio of the circumference of a circle to
- * its diameter. It is useful in combination with the trigonometric
- * functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+ * A `Number` constant that's approximately 0.7854.
+ *
+ * `QUARTER_PI` is one-fourth the value of the mathematical constant π. It's
+ * useful for many tasks that involve rotation and oscillation. For example,
+ * calling `rotate(QUARTER_PI)` rotates the coordinate system `QUARTER_PI`
+ * radians, which is an eighth of a turn (45˚).
+ *
+ * Note: `TWO_PI` radians equals 360˚, `PI` radians equals 180˚, `HALF_PI`
+ * radians equals 90˚, and `QUARTER_PI` radians equals 45˚.
  *
  * @property {Number} QUARTER_PI
  * @final
  *
  * @example
- * <div><code>
- * arc(50, 50, 80, 80, 0, QUARTER_PI);
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * white eighth-circle rotated about 40 degrees with curve bottom right canvas.
+ *   background(200);
+ *
+ *   // Draw an arc from 0 to QUARTER_PI.
+ *   arc(50, 50, 80, 80, 0, QUARTER_PI);
+ *
+ *   describe('A one-eighth slice of a circle drawn in white on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a line.
+ *   line(0, 0, 40, 0);
+ *
+ *   // Rotate an eighth turn.
+ *   rotate(QUARTER_PI);
+ *
+ *   // Draw the same line, rotated.
+ *   line(0, 0, 40, 0);
+ *
+ *   describe('Two black lines that form a "V" opening towards the bottom-right corner of a gray square.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A red circle and a blue circle oscillate from left to right on a gray background. The red circle appears to chase the blue circle.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Calculate the x-coordinates.
+ *   let x1 = 40 * sin(frameCount * 0.05);
+ *   let x2 = 40 * sin(frameCount * 0.05 + QUARTER_PI);
+ *
+ *   // Style the oscillators.
+ *   noStroke();
+ *
+ *   // Draw the red oscillator.
+ *   fill(255, 0, 0);
+ *   circle(x1, 0, 20);
+ *
+ *   // Draw the blue oscillator.
+ *   fill(0, 0, 255);
+ *   circle(x2, 0, 20);
+ * }
+ * </code>
+ * </div>
  */
 export const QUARTER_PI = _PI / 4;
+
 /**
- * TAU is an alias for TWO_PI, a mathematical constant with the
- * value 6.28318530717958647693. It is twice the ratio of the
- * circumference of a circle to its diameter. It is useful in
- * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+ * A `Number` constant that's approximately 6.2382.
+ *
+ * `TAU` is twice the value of the mathematical constant π. It's useful for
+ * many tasks that involve rotation and oscillation. For example, calling
+ * `rotate(TAU)` rotates the coordinate system `TAU` radians, which is one
+ * full turn (360˚). `TAU` and `TWO_PI` are equal.
+ *
+ * Note: `TAU` radians equals 360˚, `PI` radians equals 180˚, `HALF_PI`
+ * radians equals 90˚, and `QUARTER_PI` radians equals 45˚.
  *
  * @property {Number} TAU
  * @final
  *
  * @example
- * <div><code>
- * arc(50, 50, 80, 80, 0, TAU);
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * 80×80 white ellipse shape in center of canvas.
+ *   background(200);
+ *
+ *   // Draw an arc from 0 to TAU.
+ *   arc(50, 50, 80, 80, 0, TAU);
+ *
+ *   describe('A white circle drawn on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a line.
+ *   line(0, 0, 40, 0);
+ *
+ *   // Rotate a full turn.
+ *   rotate(TAU);
+ *
+ *   // Style the second line.
+ *   strokeWeight(5);
+ *
+ *   // Draw the same line, shorter and rotated.
+ *   line(0, 0, 20, 0);
+ *
+ *   describe(
+ *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A red circle with a blue center oscillates from left to right on a gray background.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Calculate the x-coordinates.
+ *   let x1 = 40 * sin(frameCount * 0.05);
+ *   let x2 = 40 * sin(frameCount * 0.05 + TAU);
+ *
+ *   // Style the oscillators.
+ *   noStroke();
+ *
+ *   // Draw the red oscillator.
+ *   fill(255, 0, 0);
+ *   circle(x1, 0, 20);
+ *
+ *   // Draw the blue oscillator, smaller.
+ *   fill(0, 0, 255);
+ *   circle(x2, 0, 10);
+ * }
+ * </code>
+ * </div>
  */
 export const TAU = _PI * 2;
+
 /**
- * TWO_PI is a mathematical constant with the value
- * 6.28318530717958647693. It is twice the ratio of the
- * circumference of a circle to its diameter. It is useful in
- * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
+ * A `Number` constant that's approximately 6.2382.
+ *
+ * `TWO_PI` is twice the value of the mathematical constant π. It's useful for
+ * many tasks that involve rotation and oscillation. For example, calling
+ * `rotate(TWO_PI)` rotates the coordinate system `TWO_PI` radians, which is
+ * one full turn (360˚). `TWO_PI` and `TAU` are equal.
+ *
+ * Note: `TWO_PI` radians equals 360˚, `PI` radians equals 180˚, `HALF_PI`
+ * radians equals 90˚, and `QUARTER_PI` radians equals 45˚.
  *
  * @property {Number} TWO_PI
  * @final
  *
  * @example
- * <div><code>
- * arc(50, 50, 80, 80, 0, TWO_PI);
- * </code></div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
  *
- * @alt
- * 80×80 white ellipse shape in center of canvas.
+ *   background(200);
+ *
+ *   // Draw an arc from 0 to TWO_PI.
+ *   arc(50, 50, 80, 80, 0, TWO_PI);
+ *
+ *   describe('A white circle drawn on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Draw a line.
+ *   line(0, 0, 40, 0);
+ *
+ *   // Rotate a full turn.
+ *   rotate(TWO_PI);
+ *
+ *   // Style the second line.
+ *   strokeWeight(5);
+ *
+ *   // Draw the same line, shorter and rotated.
+ *   line(0, 0, 20, 0);
+ *
+ *   describe(
+ *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
+ *   );
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   describe(
+ *     'A red circle with a blue center oscillates from left to right on a gray background.'
+ *   );
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // Translate the origin to the center.
+ *   translate(50, 50);
+ *
+ *   // Calculate the x-coordinates.
+ *   let x1 = 40 * sin(frameCount * 0.05);
+ *   let x2 = 40 * sin(frameCount * 0.05 + TWO_PI);
+ *
+ *   // Style the oscillators.
+ *   noStroke();
+ *
+ *   // Draw the red oscillator.
+ *   fill(255, 0, 0);
+ *   circle(x1, 0, 20);
+ *
+ *   // Draw the blue oscillator, smaller.
+ *   fill(0, 0, 255);
+ *   circle(x2, 0, 10);
+ * }
+ * </code>
+ * </div>
  */
 export const TWO_PI = _PI * 2;
+
 /**
- * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode in
- * which p5.js interprets and calculates angles (either DEGREES or RADIANS).
+ * A `String` constant that's used to set the
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
+ * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
+ * Calling `angleMode(DEGREES)` ensures that angles are measured in units of
+ * degrees.
+ *
+ * Note: `TWO_PI` radians equals 360˚.
+ *
  * @property {String} DEGREES
  * @final
  *
  * @example
- * <div class='norender'><code>
+ * <div>
+ * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a red arc from 0 to HALF_PI radians.
+ *   fill(255, 0, 0);
+ *   arc(50, 50, 80, 80, 0, HALF_PI);
+ *
+ *   // Use degrees.
  *   angleMode(DEGREES);
+ *
+ *   // Draw a blue arc from 90˚ to 180˚.
+ *   fill(0, 0, 255);
+ *   arc(50, 50, 80, 80, 90, 180);
+ *
+ *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 export const DEGREES = 'degrees';
+
 /**
- * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode
- * in which p5.js interprets and calculates angles (either RADIANS or DEGREES).
+ * A `String` constant that's used to set the
+ * <a href="#/p5/angleMode">angleMode()</a>.
+ *
+ * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
+ * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
+ * Calling `angleMode(RADIANS)` ensures that angles are measured in units of
+ * radians. Doing so can be useful if the
+ * <a href="#/p5/angleMode">angleMode()</a> has been set to
+ * <a href="#/p5/DEGREES">DEGREES</a>.
+ *
+ * Note: `TWO_PI` radians equals 360˚.
+ *
  * @property {String} RADIANS
  * @final
  *
  * @example
- * <div class='norender'><code>
+ * <div>
+ * <code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Use degrees.
+ *   angleMode(DEGREES);
+ *
+ *   // Draw a red arc from 0˚ to 90˚.
+ *   fill(255, 0, 0);
+ *   arc(50, 50, 80, 80, 0, 90);
+ *
+ *   // Use radians.
  *   angleMode(RADIANS);
+ *
+ *   // Draw a blue arc from HALF_PI to PI.
+ *   fill(0, 0, 255);
+ *   arc(50, 50, 80, 80, HALF_PI, PI);
+ *
+ *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 export const RADIANS = 'radians';
 export const DEG_TO_RAD = _PI / 180.0;
@@ -385,7 +810,7 @@ export const HSL = 'hsl';
 /**
  * AUTO allows us to automatically set the width or height of an element (but not both),
  * based on the current height and width of the element. Only one parameter can
- * be passed to the <a href="/reference/#/p5.Element/size">size</a> function as AUTO, at a time.
+ * be passed to the <a href="/reference/p5.Element/size">size</a> function as AUTO, at a time.
  *
  * @property {String} AUTO
  * @final

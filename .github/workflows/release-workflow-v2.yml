@@ -1,0 +1,113 @@
+name: New p5.js 2.x release
+# Requires secrets `NPM_TOKEN` and `ACCESS_TOKEN` to be set
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v2.*.*' # Push events to matching v*.*.*, i.e. v20.15.10
+      - 'v2.*.*-*' # Push events to matching v*.*.*-*, i.e. v20.15.10-0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    env:
+      INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      # 1. Setup
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Get semver info
+        id: semver
+        uses: akshens/semver-tag@v4
+        with:
+          version: ${{ github.ref_name }}
+
+      - name: Get version number
+        id: version-number
+        run: |
+          version=$(echo ${{ github.ref_name }} | cut -c 2-)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +"%B %Oe, %Y")" >> $GITHUB_OUTPUT
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+      - name: Run test
+        run: npm test
+        env:
+          CI: true
+      - name: Run build
+        run: npm run build
+
+      # 2. Prepare release files
+      - run: mkdir release && mkdir p5 && cp -r ./lib/* p5/
+      - name: Create release zip file
+        uses: TheDoctor0/zip-release@0.6.2
+        with:
+          type: zip
+          filename: release/p5.zip
+          path: ./p5/*
+
+      - name: Copy release files
+        run: cp lib/p5.js lib/p5.min.js lib/p5.esm.js release/
+
+      # 3. Release p5.js
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          draft: true
+          prerelease: ${{ steps.semver.outputs.is-prerelease == 'true' }}
+          files: release/*
+          generate_release_notes: true
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Publish to NPM
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{ steps.semver.outputs.is-prerelease != 'true' && 'latest' || 'beta' }}
+          
+      # 4. Update p5.js website
+      - name: Clone p5.js website
+        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
+        uses: actions/checkout@v3
+        with:
+          repository: processing/p5.js-website
+          ref: '2.0'
+          path: website
+          fetch-depth: 0
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Updated website files
+        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
+        run: |
+          cd website
+          npm install
+          npm run build:p5-version
+          npm run build:contributor-docs
+          npm run build:contributors
+          npm run build:reference
+          npm run build:search
+      - name: Commit updated website files
+        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
+        run: |
+          cd website
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Update p5.js to ${{ github.ref_name }}"
+      - name: Push updated website repo
+        if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          branch: '2.0'
+          directory: website/
+          repository: processing/p5.js-website

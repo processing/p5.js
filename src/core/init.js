@@ -25,6 +25,9 @@ const _globalInit = () => {
   }
 
   if (!window.mocha) {
+    const p5ReadyEvent = new Event('p5Ready');
+    window.dispatchEvent(p5ReadyEvent);
+
     // If there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
     if (

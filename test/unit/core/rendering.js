@@ -44,6 +44,15 @@ suite('Rendering', function() {
   });
 
   suite('p5.prototype.resizeCanvas', function() {
+    let glStub;
+
+    afterEach(() => {
+      if (glStub) {
+        glStub.restore();
+        glStub = null;
+      }
+    });
+
     test('should resize canvas', function() {
       myp5.resizeCanvas(10, 20);
       assert.equal(myp5.canvas.width, 10 * myp5.pixelDensity());
@@ -88,6 +97,25 @@ suite('Rendering', function() {
       graphic.resizeCanvas(5, 15);
       assert.equal(fbo.width, 5);
       assert.equal(fbo.height, 15);
+    });
+
+    test('should resize the dimensions of canvas based on max texture size', function() {
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam').restore();
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.resizeCanvas(200, 200);
+      assert.equal(myp5.width, 100);
+      assert.equal(myp5.height, 100);
+    });
+
+    test('should resize the dimensions of canvas based on max texture size', function() {
+      glStub = sinon.stub(p5.RendererGL.prototype, '_getParam');
+      const fakeMaxTextureSize = 100;
+      glStub.returns(fakeMaxTextureSize);
+      myp5.createCanvas(200, 200, myp5.WEBGL);
+      assert.equal(myp5.width, 100);
+      assert.equal(myp5.height, 100);
     });
   });
 
@@ -135,7 +163,7 @@ suite('Rendering', function() {
     'model',
     'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
-    'shininess', 'lightFalloff',
+    'shininess', 'lightFalloff', 'metalness',
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
   ];
 
@@ -146,14 +174,14 @@ suite('Rendering', function() {
         webglMethod + '() should throw a WEBGL assertion Error',
         (function(webglMethod) {
           return function() {
-            var validateParamters = myp5.validateParameters;
+            var validateParameters = myp5.validateParameters;
             myp5.validateParameters = false;
             try {
               expect(function() {
                 myp5[webglMethod].call(myp5);
               }).to.throw(Error, /is only supported in WEBGL mode/);
             } finally {
-              myp5.validateParameters = validateParamters;
+              myp5.validateParameters = validateParameters;
             }
           };
         })(webglMethod)

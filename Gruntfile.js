@@ -294,7 +294,6 @@ module.exports = grunt => {
   grunt.loadTasks('tasks/test');
 
   // Load the external libraries used.
-  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -308,6 +307,7 @@ module.exports = grunt => {
 
   // Create the multitasks.
   grunt.registerTask('build', [
+    'yui',
     'browserify',
     'browserify:min',
     'uglify',

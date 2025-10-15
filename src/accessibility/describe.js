@@ -16,7 +16,7 @@ const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
 
 /**
- * Creates a screen reader-accessible description for the canvas.
+ * Creates a screen reader-accessible description of the canvas.
  *
  * The first parameter, `text`, is the description of the canvas.
  *
@@ -28,8 +28,8 @@ const labelTableElId = '_lte_'; //Label Table Element
  * visible to screen readers. This is the default mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
  *
  * @method describe
  * @param  {String} text        description of the canvas.
@@ -160,8 +160,10 @@ p5.prototype.describe = function(text, display) {
 };
 
 /**
- * Creates a screen reader-accessible description for elements in the canvas.
- * Elements are shapes or groups of shapes that create meaning together.
+ * Creates a screen reader-accessible description of elements in the canvas.
+ *
+ * Elements are shapes or groups of shapes that create meaning together. For
+ * example, a few overlapping circles could make an "eye" element.
  *
  * The first parameter, `name`, is the name of the element.
  *
@@ -177,8 +179,8 @@ p5.prototype.describe = function(text, display) {
  * mode.
  *
  * Read
- * <a href="/learn/labeling-canvases.html">How to label your p5.js code</a> to
- * learn more about making sketches accessible.
+ * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
+ * to learn more about making sketches accessible.
  *
  * @method describeElement
  * @param  {String} name        name of the element.
@@ -455,7 +457,7 @@ p5.prototype._describeElementHTML = function(type, name, text) {
   } else if (type === 'label') {
     //If display is LABEL creates a div adjacent to the canvas element with
     //a table, a row header cell with the name of the elements,
-    //and adds the description of the element in adjecent cell.
+    //and adds the description of the element in adjacent cell.
     //if there is no label description container
     if (!this.dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
       //if there are no accessible outputs (see textOutput() and gridOutput())

@@ -91,7 +91,7 @@ suite('color/Setting', function() {
     test('should cache renderer blend', function() {
       my3D.blendMode(my3D.SCREEN);
       my3D.erase();
-      assert.deepEqual(my3D._renderer._cachedBlendMode, my3D.SCREEN);
+      assert.deepEqual(my3D._renderer.preEraseBlend, my3D.SCREEN);
     });
 
     test('should set fill strength', function() {

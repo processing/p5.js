@@ -18,7 +18,8 @@
 
 #define PROCESSING_LINE_SHADER
 
-precision mediump int;
+precision highp int;
+precision highp float;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -44,6 +45,7 @@ OUT vec2 vPosition;
 OUT float vMaxDist;
 OUT float vCap;
 OUT float vJoin;
+OUT float vStrokeWeight;
 
 vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
   // Rotate and translate so a starts at the origin and goes out to the right
@@ -64,6 +66,7 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 }
 
 void main() {
+  HOOK_beforeVertex();
   // Caps have one of either the in or out tangent set to 0
   vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
     ? 1. : 0.;
@@ -75,9 +78,12 @@ void main() {
     aTangentIn != aTangentOut
   ) ? 1. : 0.;
 
-  vec4 posp = uModelViewMatrix * aPosition;
-  vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
-  vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+  vec4 localPosition = vec4(HOOK_getLocalPosition(aPosition.xyz), 1.);
+  vec4 posp = vec4(HOOK_getWorldPosition((uModelViewMatrix * localPosition).xyz), 1.);
+  vec4 posqIn = posp + uModelViewMatrix * vec4(aTangentIn, 0);
+  vec4 posqOut = posp + uModelViewMatrix * vec4(aTangentOut, 0);
+  float strokeWeight = HOOK_getStrokeWeight(uStrokeWeight);
+  vStrokeWeight = strokeWeight;
 
   float facingCamera = pow(
     // The word space tangent's z value is 0 if it's facing the camera
@@ -88,23 +94,40 @@ void main() {
     0.25
   );
 
-  // using a scale <1 moves the lines towards the camera
-  // in order to prevent popping effects due to half of
-  // the line disappearing behind the geometry faces.
-  float scale = mix(1., 0.995, facingCamera);
-
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
+  // A mix of scaling and offsetting is used based on distance
+  // Discussion here:
+  // https://github.com/processing/p5.js/issues/7200 
+
+  // using a scale <1 moves the lines towards nearby camera
+  // in order to prevent popping effects due to half of
+  // the line disappearing behind the geometry faces.
+  float zDistance = -posp.z; 
+  float distanceFactor = smoothstep(0.0, 800.0, zDistance); 
+  
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  posp.xyz = posp.xyz * scale;
-  posqIn.xyz = posqIn.xyz * scale;
-  posqOut.xyz = posqOut.xyz * scale;
+  float scale = mix(1., 0.995, facingCamera);
+  float dynamicScale = mix(scale, 1.0, distanceFactor); // Closer = more scale, farther = less
 
+  posp.xyz = posp.xyz * dynamicScale;
+  posqIn.xyz = posqIn.xyz * dynamicScale;
+  posqOut.xyz = posqOut.xyz * dynamicScale;
+
+  // Moving vertices slightly toward camera when far away 
+  // https://github.com/processing/p5.js/issues/6956 
+  float zOffset = mix(0., -1., facingCamera);
+  float dynamicZAdjustment = mix(0.0, zOffset, distanceFactor); // Closer = less zAdjustment, farther = more
+
+  posp.z -= dynamicZAdjustment;
+  posqIn.z -= dynamicZAdjustment;
+  posqOut.z -= dynamicZAdjustment;
+  
   vec4 p = uProjectionMatrix * posp;
   vec4 qIn = uProjectionMatrix * posqIn;
   vec4 qOut = uProjectionMatrix * posqOut;
-  vCenter = p.xy;
+  vCenter = HOOK_getLineCenter(p.xy);
 
   // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
   // screen_p = (p.xy/p.w + <1,1>) * 0.5 * uViewport.zw
@@ -169,9 +192,9 @@ void main() {
         // find where the lines intersect to find the elbow of the join
         vec2 c = (posp.xy/posp.w + vec2(1.,1.)) * 0.5 * uViewport.zw;
         vec2 intersection = lineIntersection(
-          c + (side * normalIn * uStrokeWeight / 2.),
+          c + (side * normalIn * strokeWeight / 2.),
           tangentIn,
-          c + (side * normalOut * uStrokeWeight / 2.),
+          c + (side * normalOut * strokeWeight / 2.),
           tangentOut
         );
         offset = (intersection - c);
@@ -181,21 +204,21 @@ void main() {
         // the magnitude to avoid lines going across the whole screen when this
         // happens.
         float mag = length(offset);
-        float maxMag = 3. * uStrokeWeight;
+        float maxMag = 3. * strokeWeight;
         if (mag > maxMag) {
           offset *= maxMag / mag;
         }
       } else if (sideEnum == 1.) {
-        offset = side * normalIn * uStrokeWeight / 2.;
+        offset = side * normalIn * strokeWeight / 2.;
       } else if (sideEnum == 3.) {
-        offset = side * normalOut * uStrokeWeight / 2.;
+        offset = side * normalOut * strokeWeight / 2.;
       }
     }
     if (uStrokeJoin == STROKE_JOIN_BEVEL) {
       vec2 avgNormal = vec2(-vTangent.y, vTangent.x);
-      vMaxDist = abs(dot(avgNormal, normalIn * uStrokeWeight / 2.));
+      vMaxDist = abs(dot(avgNormal, normalIn * strokeWeight / 2.));
     } else {
-      vMaxDist = uStrokeWeight / 2.;
+      vMaxDist = strokeWeight / 2.;
     }
   } else {
     vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
@@ -207,13 +230,14 @@ void main() {
     // extends out from the line
     float tangentOffset = abs(aSide) - 1.;
     offset = (normal * normalOffset + tangent * tangentOffset) *
-      uStrokeWeight * 0.5;
-    vMaxDist = uStrokeWeight / 2.;
+      strokeWeight * 0.5;
+    vMaxDist = strokeWeight / 2.;
   }
-  vPosition = vCenter + offset;
+  vPosition = HOOK_getLinePosition(vCenter + offset);
 
   gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
   
-  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
+  vColor = HOOK_getVertexColor(uUseLineColor ? aVertexColor : uMaterialColor);
+  HOOK_afterVertex();
 }

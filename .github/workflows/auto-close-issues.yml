@@ -1,0 +1,20 @@
+name: Close Linked Issues on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 2.0
+      - dev-2.0
+
+jobs:
+  close_issues:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close linked issues on non-default branches
+        uses: processing/branch-pr-close-issue@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: dev-2.0
+

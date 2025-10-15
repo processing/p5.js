@@ -22,11 +22,16 @@
   - '\[[xX]\]\s*Utilities'
 "Area:WebGL":
   - '\[[xX]\]\s*WebGL'
+"Internationalization":
+  - '\[[xX]\]\s*Internationalization'
+"DevOps":
+  - '\[[xX]\]\s*Build Process'
+  - '\[[xX]\]\s*Unit Testing'
 "Build Process":
   - '\[[xX]\]\s*Build Process'
 "Unit Testing":
   - '\[[xX]\]\s*Unit Testing'
-"Internationalization":
-  - '\[[xX]\]\s*Internationalization'
 "Friendly Errors":
   - '\[[xX]\]\s*Friendly Errors'
+"p5.strands":
+  - '\[[xX]\]\s*p5.strands'

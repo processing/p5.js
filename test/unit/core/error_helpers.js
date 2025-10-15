@@ -237,7 +237,7 @@ suite('Error Helpers', function() {
 
   suite('validateParameters: argument tree', function() {
     // should not throw a validation error for the same kind of wrong args
-    // more than once. This prevents repetetive validation logs for a
+    // more than once. This prevents repetitive validation logs for a
     // function that is called in a loop or draw()
     testUnMinified(
       'no repeated validation error for the same wrong arguments',
@@ -440,7 +440,7 @@ suite('Error Helpers', function() {
       }
     );
 
-    testUnMinified('detects spelling + captialization mistakes', function() {
+    testUnMinified('detects spelling + capitalization mistakes', function() {
       const logMsg = help(new ReferenceError('RandomGossian is not defined'));
       assert.match(
         logMsg,
@@ -522,7 +522,7 @@ suite('Error Helpers', function() {
   });
 });
 
-// seperating in another suite because these don't need to initialize myp5
+// separating in another suite because these don't need to initialize myp5
 // for each test. Instead they initialize p5 in the iframe. These tests are
 // also slower than the above ones.
 suite('Global Error Handling', function() {
@@ -566,7 +566,7 @@ suite('Global Error Handling', function() {
     return iframe;
   };
 
-  testUnMinified('identifies errors happenning internally', function() {
+  testUnMinified('identifies errors happening internally', function() {
     return new Promise(function(resolve) {
       // quite an unusual way to test, but the error listener doesn't work
       // under mocha. Also the stacktrace gets filled with mocha internal
@@ -590,7 +590,7 @@ suite('Global Error Handling', function() {
   });
 
   testUnMinified(
-    'identifies errors happenning internally in ES6 classes',
+    'identifies errors happening internally in ES6 classes',
     function() {
       return new Promise(function(resolve) {
         prepSyntaxTest(

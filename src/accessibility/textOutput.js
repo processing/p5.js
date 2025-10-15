@@ -63,7 +63,7 @@ function _textSummary(numShapes, background, width, height) {
 function _shapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapeNumber = 0;
-  //goes trhough every shape type in ingredients
+  //goes through every shape type in ingredients
   for (let x in ingredients) {
     //and for every shape
     for (let y in ingredients[x]) {
@@ -95,7 +95,7 @@ function _shapeDetails(idT, ingredients) {
 function _shapeList(idT, ingredients) {
   let shapeList = '';
   let shapeNumber = 0;
-  //goes trhough every shape type in ingredients
+  //goes through every shape type in ingredients
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
       //it creates a line in a list
