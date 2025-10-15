@@ -380,7 +380,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-    await Promise.resolve();
+   await new Promise(requestAnimationFrame)
 
     while (frameIterator < totalNumberOfFrames) {
       /*
