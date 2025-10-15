@@ -257,7 +257,7 @@ function loadingDisplaying(p5, fn){
       silent: false,
       notificationDuration: 0,
       notificationID: 'progressBar',
-      reset:true
+      reset: true
     }
   ) {
     // validate parameters
