@@ -390,7 +390,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
- await new Promise(resolve => requestAnimationFrame(resolve));
+ await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
