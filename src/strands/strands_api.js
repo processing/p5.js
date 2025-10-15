@@ -18,7 +18,8 @@ import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
-import noiseGLSL from '../webgl/shaders/functions/noiseGLSL.glsl';
+import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
+
 //////////////////////////////////////////////
 // User nodes
 //////////////////////////////////////////////
@@ -111,14 +112,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsContext.fragmentDeclarations.add(noiseGLSL);
     // Handle noise(x, y) as noise(vec2)
     let nodeArgs;
-    if (args.length === 2) {
-      nodeArgs = [fn.vec2(args[0], args[1])];
+    if (args.length === 3) {
+      nodeArgs = [fn.vec3(args[0], args[1], args[2])];
+    } else if (args.length === 2) {
+      nodeArgs = [fn.vec3(args[0], args[1], 0)];
     } else {
       nodeArgs = args;
     }
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float2],
+        params: [DataType.float3],
         returnType: DataType.float1,
       }]
     });
