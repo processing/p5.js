@@ -11,8 +11,12 @@ import p5 from '../core/main';
 //updates textOutput
 p5.prototype._updateTextOutput = function(idT) {
   // Check if the current rendering mode is WEBGL
-  if (this._renderer.isWEBGL) {
-    throw new Error('textOutput() is not supported in WEBGL mode.');
+  if (this._renderer && this._renderer instanceof p5.RendererGL) {
+    if (!this._didOutputTextWebGLMessage) {
+      this._didOutputTextWebGLMessage = true;
+      console.error('textOutput() does not yet work in WebGL mode.');
+    }
+    return;
   }
   //if html structure is not there yet
   if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
