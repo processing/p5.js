@@ -321,8 +321,8 @@ function setup() {
 
 ```javascript
 // Bad.
-if (keyIsPressed === true) {
-  doStuff();
+if(keyIsPressed === true) {
+  doStuff ();
 }
 
 // Good.
@@ -331,7 +331,7 @@ if (keyIsPressed === true) {
 }
 
 // Bad.
-function setup() {
+function setup(){
   createCanvas(400, 400);
 }
 
@@ -345,7 +345,7 @@ function setup() {
 
 ```javascript
 // Bad.
-let y = x + 5;
+let y=x+5;
 
 // Good.
 let y = x + 5;
@@ -596,7 +596,7 @@ text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
 
 ```javascript
 // Bad.
-let bad = "'this' is \"quoted\"";
+let bad = '\'this\' \i\s \"quoted\"';
 
 // Good.
 let good = 'Air quotes make you look "cool".';
