@@ -1,4 +1,4 @@
-import { defineWorkspace } from 'vitest/config';
+import { defineWorkspace, configDefaults } from 'vitest/config';
 import vitePluginString from 'vite-plugin-string';
 
 const plugins = [
@@ -18,18 +18,18 @@ export default defineWorkspace([
       root: './',
       include: [
         './test/bench/**/*.js'
-      ],
+      ]
     },
     test: {
       name: 'unit',
       root: './',
       include: [
-        './test/unit/**/*.js',
+        './test/unit/**/*.js'
       ],
       exclude: [
         './test/unit/spec.js',
         './test/unit/assets/**/*',
-        './test/unit/visual/visualTest.js',
+        './test/unit/visual/visualTest.js'
       ],
       testTimeout: 1000,
       globals: true,
@@ -38,6 +38,9 @@ export default defineWorkspace([
         name: 'chrome',
         provider: 'webdriverio',
         screenshotFailures: false
+      },
+      fakeTimers: {
+        toFake: [...(configDefaults.fakeTimers.toFake ?? []), 'performance']
       }
     }
   }

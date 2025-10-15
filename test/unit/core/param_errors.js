@@ -29,6 +29,7 @@ suite('Validate Params', function () {
       return 'mock p5.Graphics';
     },
     _error: () => {},
+    decorateHelper: () => {},
   };
   const mockP5Prototype = {};
 
@@ -48,7 +49,7 @@ suite('Validate Params', function () {
       ];
 
       validInputs.forEach(({ input }) => {
-        const result = mockP5Prototype.validate('saturation', input);
+        const result = mockP5Prototype._validate('saturation', input);
         assert.isTrue(result.success);
       });
     });
@@ -62,8 +63,8 @@ suite('Validate Params', function () {
       ];
 
       invalidInputs.forEach(({ input }) => {
-        const result = mockP5Prototype.validate('p5.saturation', input);
-        assert.isTrue(result.error.startsWith("🌸 p5.js says: Expected Color or array or string at the first parameter, but received"));
+        const result = mockP5Prototype._validate('p5.saturation', input);
+        assert.isTrue(result.error.startsWith('🌸 p5.js says: Expected Color or array or string at the first parameter, but received'));
       });
     });
   });
@@ -76,7 +77,7 @@ suite('Validate Params', function () {
 
     validInputs.forEach(({ name, input }) => {
       test(`blendMode(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.blendMode', [input]);
+        const result = mockP5Prototype._validate('p5.blendMode', [input]);
         assert.isTrue(result.success);
       });
     });
@@ -89,8 +90,8 @@ suite('Validate Params', function () {
 
     invalidInputs.forEach(({ name, input }) => {
       test(`blendMode(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.blendMode', [input]);
-        const expectedError = "🌸 p5.js says: Expected constant (please refer to documentation for allowed values) at the first parameter, but received " + input + " in p5.blendMode().";
+        const result = mockP5Prototype._validate('p5.blendMode', [input]);
+        const expectedError = '🌸 p5.js says: Expected constant (please refer to documentation for allowed values) at the first parameter, but received ' + input + ' in p5.blendMode().';
         assert.equal(result.error, expectedError);
       });
     });
@@ -103,7 +104,7 @@ suite('Validate Params', function () {
     ];
     validInputs.forEach(({ name, input }) => {
       test(`arc(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.arc', input);
+        const result = mockP5Prototype._validate('p5.arc', input);
         assert.isTrue(result.success);
       });
     });
@@ -118,7 +119,7 @@ suite('Validate Params', function () {
 
     invalidInputs.forEach(({ name, input, msg }) => {
       test(`arc(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.arc', input);
+        const result = mockP5Prototype._validate('p5.arc', input);
         assert.equal(result.error, msg);
       });
     });
@@ -126,7 +127,7 @@ suite('Validate Params', function () {
 
   suite('validateParams: promise where no promise is expected', function () {
     test('image(): promise for first argument', function () {
-      const result = mockP5Prototype.validate('p5.image', [Promise.resolve(), 0, 0]);
+      const result = mockP5Prototype._validate('p5.image', [Promise.resolve(), 0, 0]);
       console.log(result);
       assert.equal(
         result.error,
@@ -137,10 +138,10 @@ suite('Validate Params', function () {
 
   suite('validateParams: class, multi-types + optional numbers', function () {
     test('ambientLight(): no firendly-err-msg', function () {
-      const result = mockP5Prototype.validate('p5.ambientLight', [new mockP5.Color()]);
+      const result = mockP5Prototype._validate('p5.ambientLight', [new mockP5.Color()]);
       assert.isTrue(result.success);
-    })
-  })
+    });
+  });
 
   suite('validateParams: a few edge cases', function () {
     const invalidInputs = [
@@ -155,7 +156,7 @@ suite('Validate Params', function () {
 
     invalidInputs.forEach(({ name, input, fn, msg }) => {
       test(`${fn}(): ${name}`, () => {
-        const result = mockP5Prototype.validate(`p5.${fn}`, input);
+        const result = mockP5Prototype._validate(`p5.${fn}`, input);
         assert.equal(result.error, msg);
       });
     });
@@ -173,7 +174,7 @@ suite('Validate Params', function () {
 
     invalidInputs.forEach(({ fn, name, input, msg }) => {
       test(`${fn}(): ${name}`, () => {
-        const result = mockP5Prototype.validate(`p5.${fn}`, input);
+        const result = mockP5Prototype._validate(`p5.${fn}`, input);
         assert.equal(result.error, msg);
       });
     });
@@ -187,7 +188,7 @@ suite('Validate Params', function () {
     ];
     validInputs.forEach(({ name, input }) => {
       test(`color(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.color', input);
+        const result = mockP5Prototype._validate('p5.color', input);
         assert.isTrue(result.success);
       });
     });
@@ -201,7 +202,7 @@ suite('Validate Params', function () {
 
     invalidInputs.forEach(({ name, input, msg }) => {
       test(`color(): ${name}`, () => {
-        const result = mockP5Prototype.validate('p5.color', input);
+        const result = mockP5Prototype._validate('p5.color', input);
 
         assert.equal(result.error, msg);
       });
@@ -216,13 +217,13 @@ suite('Validate Params', function () {
     ];
     validInputs.forEach(({ name, input }) => {
       test(`${name}`, function () {
-        const result = mockP5Prototype.validate('p5.set', input);
+        const result = mockP5Prototype._validate('p5.set', input);
         assert.isTrue(result.success);
       });
     });
 
-    test(`set() with Boolean (invalid)`, function () {
-      const result = mockP5Prototype.validate('p5.set', [0, 0, true]);
+    test('set() with Boolean (invalid)', function () {
+      const result = mockP5Prototype._validate('p5.set', [0, 0, true]);
       assert.equal(result.error, '🌸 p5.js says: Expected number or array or object at the third parameter, but received boolean in p5.set().');
     });
   });
@@ -238,7 +239,7 @@ suite('Validate Params', function () {
 
     testCases.forEach(({ fn, name, input }) => {
       test(`${fn}(): ${name}`, function () {
-        const result = mockP5Prototype.validate(fn, input);
+        const result = mockP5Prototype._validate(fn, input);
         assert.isTrue(result.success);
       });
     });
@@ -251,30 +252,30 @@ suite('Validate Params', function () {
         [new mockP5.Color(), 0.8],
         [new mockP5.Color(), 0.5]
       ];
-      const result = mockP5Prototype.validate('p5.paletteLerp', [colorStops, 0.5]);
+      const result = mockP5Prototype._validate('p5.paletteLerp', [colorStops, 0.5]);
       assert.isTrue(result.success);
     });
   });
 
   suite('validateParams: rest arguments', function () {
     test('createVector(): works with no args', function() {
-      const result = mockP5Prototype.validate('p5.createVector', []);
+      const result = mockP5Prototype._validate('p5.createVector', []);
       assert.isTrue(result.success);
     });
     test('createVector(): works with one number', function() {
-      const result = mockP5Prototype.validate('p5.createVector', [1]);
+      const result = mockP5Prototype._validate('p5.createVector', [1]);
       assert.isTrue(result.success);
     });
     test('createVector(): works with many numbers', function() {
-      const result = mockP5Prototype.validate('p5.createVector', [1, 2, 3, 4]);
+      const result = mockP5Prototype._validate('p5.createVector', [1, 2, 3, 4]);
       assert.isTrue(result.success);
     });
     test('createVector(): fails with a non-number', function() {
-      const result = mockP5Prototype.validate('p5.createVector', ['1']);
+      const result = mockP5Prototype._validate('p5.createVector', ['1']);
       assert.isFalse(result.success);
     });
     test('createVector(): fails with any non-number', function() {
-      const result = mockP5Prototype.validate('p5.createVector', [1, 2, '3', 4]);
+      const result = mockP5Prototype._validate('p5.createVector', [1, 2, '3', 4]);
       assert.isFalse(result.success);
     });
   });
