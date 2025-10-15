@@ -10,6 +10,13 @@ function gridOutput(p5, fn){
 
   //updates gridOutput
   fn._updateGridOutput = function(idT) {
+    if (this._renderer && this._renderer instanceof p5.RendererGL) {
+      if (!this._didOutputGridWebGLMessage) {
+        this._didOutputGridWebGLMessage = true;
+        console.error('gridOutput() does not yet work in WebGL mode.');
+      }
+      return;
+    }
     //if html structure is not there yet
     if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
       return;
