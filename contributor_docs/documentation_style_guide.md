@@ -9,14 +9,12 @@ Hello! Welcome to the guidelines for writing p5.js documentation. This document 
 - Airbnb [JavaScript Style Guide](https://airbnb.io/javascript/) (MIT)
 
 Our community is large and diverse. Many people learn to code using p5.js, and a large subset of those people are students in K–12 classes. After reading this guide, you will know:
-
 - How to write effective, inclusive, and accessible prose for documentation purposes.
 - How to write simple code samples for documentation purposes.
 
 ## Table of Contents
 
 ### Writing
-
 - [YUIDoc](#yuidoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
