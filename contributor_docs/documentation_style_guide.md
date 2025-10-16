@@ -1270,5 +1270,5 @@ class Mover {
 
 ## Assets
 
-Always load assets from a folder called "assets".
+- Always load assets from a folder called "assets".
 
