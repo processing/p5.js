@@ -175,9 +175,9 @@ The following terminology is adapted from the WordPress documentation guidelines
 
 | Recommended | Not Recommended |
 | -- | -- |
-| person with disability                                          | the disabled, handicapped, differently abled, challenged, abnormal |
-| person without disability                                       | normal person, healthy person, able-bodied                         |
-| has [disability]                                                | victim of, suffering from, affected by, stricken with              |
+| person with disability | the disabled, handicapped, differently abled, challenged, abnormal |
+| person without disability | normal person, healthy person, able-bodied |
+| has [disability] | victim of, suffering from, affected by, stricken with |
 | unable to speak, uses synthetic speech                          | dumb, mute                                                         |
 | deaf, low-hearing                                               | hearing-impaired                                                   |
 | blind, low-vision                                               | vision-impaired, visually-challenged                               |
@@ -498,7 +498,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-
+  
   return false;
 }
 
