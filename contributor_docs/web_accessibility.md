@@ -262,7 +262,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_gridMap()`: Builds a grid that maps the location of shapes on the canvas.
 - `_gridShapeDetails()`: Builds the list of shapes of the grid output, each line of the list includes details about the shape.
 
-#### color_namer.js
+#### color\_namer.js
 
 When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
 
@@ -285,15 +285,15 @@ With example code:
 
 ```js
 function setup() {
-  background("pink");
+  background('pink');
 
-  fill("red");
+  fill('red');
   noStroke();
   circle(67, 67, 20);
   circle(83, 67, 20);
   triangle(91, 73, 75, 95, 59, 73);
 
-  describe("A pink square with a red heart in the bottom-right corner.", LABEL);
+  describe('A pink square with a red heart in the bottom-right corner.', LABEL);
 }
 ```
 
@@ -315,11 +315,11 @@ With example code:
 
 ```js
 function setup() {
-  background("pink");
+  background('pink');
   noStroke();
 
-  describeElement("Heart", "A red heart in the bottom-right corner.", LABEL);
-  fill("red");
+  describeElement('Heart', 'A red heart in the bottom-right corner.', LABEL);
+  fill('red');
   circle(66.6, 66.6, 20);
   circle(83.2, 66.6, 20);
   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
