@@ -175,7 +175,7 @@ Always use `let` to declare variables.
 
 The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
-| Recommended | Not Recommended |
+| Recommended | Not Recommended|
 | --------------------------------------------------------------- | ------------------------------------------------------------------ |
 | person with disability                                          | the disabled, handicapped, differently abled, challenged, abnormal |
 | person without disability                                       | normal person, healthy person, able-bodied                         |
