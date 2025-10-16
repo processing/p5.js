@@ -202,12 +202,12 @@ let magicWord = 'Please';  // Remember this.
 
 // Good.
 // Remember this.
-let magicWord = "Please";
+let magicWord = 'Please';
 
 // Bad.
 if (keyIsPressed === true) {
   thing1();
-  //This is an important note.
+  // This is an important note.
   thing2();
 }
 
@@ -229,7 +229,7 @@ let magicWord = 'Please';
 
 // Good.
 // Remember this.
-let magicWord = "Please";
+let magicWord = 'Please';
 ```
 
 - Use `//` for multiline comments.
@@ -298,7 +298,7 @@ function setup() {
 }
 
 // Good.
-function setup() {
+function setup(){
 ∙∙createCanvas(400, 400);
 }
 ```
@@ -331,8 +331,8 @@ if (keyIsPressed === true) {
 }
 
 // Bad.
-function setup(){
-  createCanvas(400, 400);
+function setup () {
+  createCanvas (400, 400);
 }
 
 // Good.
@@ -359,7 +359,7 @@ let y = x + 5;
 
 ```javascript
 // Bad.
-let x = 0;
+let x = 0
 
 // Good.
 let x = 0;
@@ -458,12 +458,12 @@ let y = 200;
 
 ```javascript
 // Bad.
-flower = "🌸";
-var flower = "🌸";
-const flower = "🌸";
+flower = '🌸';
+var flower = '🌸';
+const flower = '🌸';
 
 // Good.
-let flower = "🌸";
+let flower = '🌸';
 ```
 
 - Use one `let` declaration per variable or assignment.
@@ -474,12 +474,12 @@ let flower = "🌸";
 // Bad.
 let positions = getPositions(),
   startSearch = true,
-  dragonball = "z";
+  dragonball = 'z';
 
 // Good.
 let positions = getPositions();
 let startSearch = true;
-let dragonball = "z";
+let dragonball = 'z';
 ```
 
 - Assign variables where needed and place them in a reasonable place.
@@ -488,10 +488,10 @@ let dragonball = "z";
 
 ```javascript
 // Bad - unnecessary search.
-function getCharacter(name = "default") {
+function getCharacter(name = 'default') {
   let character = characters.find((c) => c.name === name);
 
-  if (name === "default") {
+  if (name === 'default') {
     return false;
   }
 
@@ -503,8 +503,8 @@ function getCharacter(name = "default") {
 }
 
 // Good.
-function getCharacter(name = "default") {
-  if (name === "default") {
+function getCharacter(name = 'default') {
+  if (name === 'default') {
     return false;
   }
 
@@ -548,7 +548,7 @@ let name = "Hilma af Klint";
 let name = `Hilma af Klint`;
 
 // Good.
-let name = "Hilma af Klint";
+let name = 'Hilma af Klint';
 ```
 
 - Don't concatenate strings that cause the line to go over 80 characters.
@@ -557,19 +557,15 @@ let name = "Hilma af Klint";
 
 ```javascript
 // Bad.
-let essay =
-  "You see us as you want to see us: \
-in the simplest terms, in the most convenient definitions.";
+let essay = 'You see us as you want to see us: \
+in the simplest terms, in the most convenient definitions.';
 
 // Bad.
-let essay =
-  
-"You see us as you want to see us: " +
-  "in the simplest terms, in the most convenient definitions.";
+let essay = 'You see us as you want to see us: ' +
+  'in the simplest terms, in the most convenient definitions.';
 
 // Good.
-let essay =
-  "You see us as you want to see us: in the simplest terms, in the most convenient definitions.";
+let essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
 ```
 
 - Use template strings instead of concatenation when needed.
@@ -577,14 +573,10 @@ let essay =
 > Why? Template strings have a concise syntax. They also provide proper newlines and string interpolation features.
 
 ```javascript
-let name = "Dave";
+let name = 'Dave';
 
 // Bad.
-text(
-  name + ", this conversation can serve no purpose anymore. Goodbye." + name,
-  0,
-  0
-);
+text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name,  0,  0);
 
 // Good.
 text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
@@ -629,7 +621,7 @@ if (name) {
 }
 
 // Good.
-if (name !== "") {
+if (name !== '') {
   // ...
 }
 
@@ -668,7 +660,7 @@ if (a || (b && c)) {
 }
 
 // Bad.
-let what = a + b/c * d;
+let what = a + b / c * d;
 
 // Good.
 let what = a + (b / c) * d;
@@ -680,7 +672,7 @@ let what = a + (b / c) * d;
 
 ```javascript
 // Bad.
-if (mouseIsPressed === true) 
+if (mouseIsPressed === true)
   circle(mouseX, mouseY, 50);
 
 // Better.
@@ -699,7 +691,7 @@ if (mouseIsPressed === true) {
 if (mouseIsPressed === true) {
   thing1();
   thing2();
-} 
+}
 else {
   thing3();
 }
@@ -741,19 +733,15 @@ function mouseIsOnLeft() {
 
 ```javascript
 // Bad.
-if (
-  (number === 123 || letters === "abc") &&
-  mouseIsPressed === true &&
-  keyIsPressed === true
-) {
+if ((number === 123 || letters === 'abc') && mouseIsPressed === true && keyIsPressed === true) {
   doStuff();
 }
 
 // Good.
 if (
-  (number === 123 || letters === "abc") &&
-  mouseIsPressed === true &&
-  keyIsPressed === true
+  (number === 123 || letters === 'abc')
+  && mouseIsPressed === true
+  && keyIsPressed === true
 ) {
   doStuff();
 }
@@ -839,16 +827,16 @@ let ball = {};
 ```javascript
 // Bad.
 let secretObject = {
-  x: 100,
-  y: 200,
-  "top-secret": "classified",
+  'x': 100,
+  'y': 200,
+  'top-secret': 'classified',
 };
 
 // Good.
 let secretObject = {
   x: 3,
   y: 4,
-  "top-secret": "classified",
+  'top-secret': 'classified',
 };
 ```
 
