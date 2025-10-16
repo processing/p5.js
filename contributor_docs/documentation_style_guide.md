@@ -1093,7 +1093,9 @@ function processImage(img) {
 
 ```javascript
 // Bad.
-fill(0).strokeWeight(6).textSize(20);
+fill(0)
+  .strokeWeight(6)
+  .textSize(20);
 
 // Bad.
 fill(0).strokeWeight(6).textSize(20);
@@ -1242,7 +1244,7 @@ class Mover {
 // Good.
 class Mover {
   // ...
-
+  
   update() {
     this.x += this.xspeed;
     this.y += this.yspeed;
