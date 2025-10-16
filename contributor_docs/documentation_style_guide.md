@@ -197,6 +197,7 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 - Use `//` for single line comments. Place single line comments on a newline above the subject of the comment. Put an empty line before the comment unless it’s on the first line of a block.
 
 ```javascript
+
 // Bad.
 let magicWord = 'Please';  // Remember this.
 
@@ -235,6 +236,7 @@ let magicWord = 'Please';
 - Use `//` for multiline comments.
 
 ```javascript
+
 // Bad.
 /**
  * I will use // for multiline comments.
@@ -259,6 +261,7 @@ let magicWord = 'Please';
 // I will use // for multiline comments.
 // I will use // for multiline comments.
 // I will use // for multiline comments.
+
 ```
 
 
@@ -513,7 +516,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 ```
