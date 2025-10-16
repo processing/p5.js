@@ -197,7 +197,6 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 - Use `//` for single line comments. Place single line comments on a newline above the subject of the comment. Put an empty line before the comment unless it’s on the first line of a block.
 
 ```javascript
-
 // Bad.
 let magicWord = 'Please';  // Remember this.
 
@@ -847,14 +846,14 @@ let secretObject = {
 
 ```javascript
 let turtle = {
-  name: "Leonardo",
-  color: "dodgerblue",
-  weapon: "🗡️",
-  food: "🍕",
+  name: 'Leonardo',
+  color: 'dodgerblue',
+  weapon: '🗡️',
+  food: '🍕',
 };
 
 // Bad.
-let turtleName = turtle["name"];
+let turtleName = turtle['name'];
 
 // Good.
 let turtleName = turtle.name;
@@ -864,10 +863,10 @@ let turtleName = turtle.name;
 
 ```javascript
 let turtle = {
-  name: "Leonardo",
-  color: "dodgerblue",
-  weapon: "🗡️",
-  food: "🍕",
+  name: 'Leonardo',
+  color: 'dodgerblue',
+  weapon: '🗡️',
+  food: '🍕',
 };
 
 function getProp(prop) {
