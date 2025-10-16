@@ -950,7 +950,8 @@ let numbersCopy = numbers.slice();
 
 ```javascript
 // Bad.
-let matrix = [[1, 0, 0],
+let matrix = [
+  [1, 0, 0],
                 [0, 1, 0],
                 [0, 0, 1]];
 
