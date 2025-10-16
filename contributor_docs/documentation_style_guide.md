@@ -21,20 +21,9 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Wording](#wording)
 - [Unbiased Documentation](#unbiased-documentation)
 - [Accessibility and Disability](#accessibility-and-disability)
-
-### Code
-
 - [Documentation Style Guide](#documentation-style-guide)
 
-  - [Table of Contents](#table-of-contents)
-    - [Writing](#writing)
-    - [Code](#code)
-  - [YUIDoc](#yuidoc)
-  - [English](#english)
-  - [Oxford Comma](#oxford-comma)
-  - [Wording](#wording)
-  - [Unbiased Documentation](#unbiased-documentation)
-  - [Accessibility and Disability](#accessibility-and-disability)
+### Code
   - [Code Samples](#code-samples)
   - [Comments](#comments)
   - [Accessible Descriptions](#accessible-descriptions)
@@ -1037,6 +1026,7 @@ function setup() {
   });
 }
 
+
 // Good.
 function setup() {
   loadImage('assets/moonwalk.jpg', (img) => {
@@ -1093,12 +1083,11 @@ function processImage(img) {
 // Good.
 [1, 2, 3].map((number) => number * number);
 ```
-
 **[⬆ back to top](#table-of-contents)**
 
 ## Chaining
 
-- Use individual function calls instead of function chaining.
+* Use individual function calls instead of function chaining.
 
 > Why? To accommodate users who may not be familiar with the concept of function chaining.
 
