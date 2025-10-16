@@ -119,18 +119,8 @@ The generated HTML is as follows:
 </summary>
 
 ```html
-<canvas
-  id="defaultCanvas0"
-  class="p5Canvas"
-  style="width: 400px; height: 400px;"
-  width="400"
-  height="400"
->
-  <div
-    id="defaultCanvas0accessibleOutput"
-    role="region"
-    aria-label="Canvas Outputs"
-  >
+<canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
+  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
     <div id="defaultCanvas0gridOutput">
       Grid Output
       <p id="defaultCanvas0gridOutput_summary" aria-label="grid output summary">
@@ -239,7 +229,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 
 #### color\_namer.js
 
-When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
+When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color\_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
 
 `_rgbColorName()` uses `p5.color_conversion._rgbaToHSBA()` to get the HSV values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer), which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing HSV values to those stored in the `colorLookUp` array, returning the closest color name as a string.
 
@@ -299,7 +289,7 @@ function setup() {
   circle(83.2, 66.6, 20);
   triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
 
-  describe("A red heart and yellow circle over a pink background.", LABEL);
+  describe('A red heart and yellow circle over a pink background.', LABEL);
 }
 ```
 
