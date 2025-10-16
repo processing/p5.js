@@ -165,23 +165,14 @@ The generated HTML is as follows:
           <tr></tr>
           <tr></tr>
           <tr>
-            <td>
-              <a href="#defaultCanvas0gridOutputshape1">fuchsia square</a>
-            </td>
+            <td><a href="#defaultCanvas0gridOutputshape1">fuchsia square</a></td>
           </tr>
           <tr></tr>
         </tbody>
       </table>
-      <ul
-        id="defaultCanvas0gridOutput_shapeDetails"
-        aria-label="grid output shape details"
-      >
-        <li id="defaultCanvas0gridOutputshape0">
-          orange circle, location = top left, area = 1 %
-        </li>
-        <li id="defaultCanvas0gridOutputshape1">
-          fuchsia square, location = bottom right, area = 2 %
-        </li>
+      <ul id="defaultCanvas0gridOutput_shapeDetails" aria-label="grid output shape details">
+        <li id="defaultCanvas0gridOutputshape0">orange circle, location = top left, area = 1 %</li>
+        <li id="defaultCanvas0gridOutputshape1">fuchsia square, location = bottom right, area = 2 %</li>
       </ul>
     </div>
   </div>
