@@ -885,8 +885,8 @@ let mathematician = {
 
 // Good.
 let mathematician = {
-  firstName: "Ada",
-  lastName: "Lovelace",
+  firstName: 'Ada',
+  lastName: 'Lovelace',
 };
 ```
 
@@ -895,14 +895,14 @@ let mathematician = {
 ```javascript
 // Bad.
 let artist = {
-  firstName: "Lauren",
-  lastName: "McCarthy",
+  firstName: 'Lauren',
+  lastName: 'McCarthy',
 };
 
 // Good.
 let artist = {
-  firstName: "Lauren",
-  lastName: "McCarthy",
+  firstName: 'Lauren',
+  lastName: 'McCarthy',
 };
 ```
 
