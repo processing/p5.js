@@ -298,7 +298,7 @@ function setup() {
 }
 
 // Good.
-function setup(){
+function setup() {
 ∙∙createCanvas(400, 400);
 }
 ```
@@ -307,7 +307,7 @@ function setup(){
 
 ```javascript
 // Bad.
-function setup() {
+function setup(){
   createCanvas(400, 400);
 }
 
@@ -498,7 +498,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-
+  
   return false;
 }
 
