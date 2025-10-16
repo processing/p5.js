@@ -879,8 +879,8 @@ let turtleName = getProp('name');
 ```javascript
 // Bad.
 let mathematician = {
-  firstName: 'Ada'
-  , lastName: 'Lovelace',
+    firstName: 'Ada'
+  , lastName: 'Lovelace'
 };
 
 // Good.
