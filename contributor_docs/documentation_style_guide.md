@@ -513,7 +513,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-
+  
   return false;
 }
 ```
@@ -896,7 +896,7 @@ let mathematician = {
 // Bad.
 let artist = {
   firstName: 'Lauren',
-  lastName: 'McCarthy',
+  lastName: 'McCarthy'
 };
 
 // Good.
@@ -926,10 +926,10 @@ let images = [];
 let lyrics = [];
 
 // Bad.
-lyrics[lyrics.length] = "Little rough around the edges, but I keep it smooth";
+lyrics[lyrics.length] = 'Little rough around the edges, but I keep it smooth';
 
 // Good.
-lyrics.push("Little rough around the edges, but I keep it smooth");
+lyrics.push('Little rough around the edges, but I keep it smooth');
 ```
 
 - Use the `slice()` method to copy arrays.
@@ -957,18 +957,12 @@ let matrix = [
 ];
 
 // Good.
-let matrix = [
-  [1, 0, 0],
-  [0, 1, 0],
-  [0, 0, 1],
-];
+let matrix = [[1, 0, 0],
+              [0, 1, 0],
+              [0, 0, 1]];
 
 // Also good.
-let matrix = [
-  [1, 0, 0],
-  [0, 1, 0],
-  [0, 0, 1],
-];
+let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 ```
 
 **[⬆ back to top](#table-of-contents)**
