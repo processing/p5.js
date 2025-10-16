@@ -1,6 +1,6 @@
-import { Shader } from "../webgl/p5.Shader";
-import { Texture } from "../webgl/p5.Texture";
-import { Image } from "./p5.Image";
+import { Shader } from '../webgl/p5.Shader';
+import { Texture } from '../webgl/p5.Texture';
+import { Image } from './p5.Image';
 import * as constants from '../core/constants';
 
 import filterGrayFrag from '../webgl/shaders/filters/gray.frag';
@@ -12,12 +12,12 @@ import filterOpaqueFrag from '../webgl/shaders/filters/opaque.frag';
 import filterInvertFrag from '../webgl/shaders/filters/invert.frag';
 import filterThresholdFrag from '../webgl/shaders/filters/threshold.frag';
 import filterShaderVert from '../webgl/shaders/filters/default.vert';
-import { filterParamDefaults } from "./const";
+import { filterParamDefaults } from './const';
 
 
-import filterBaseFrag from "../webgl/shaders/filters/base.frag";
-import filterBaseVert from "../webgl/shaders/filters/base.vert";
-import webgl2CompatibilityShader from "../webgl/shaders/webgl2Compatibility.glsl";
+import filterBaseFrag from '../webgl/shaders/filters/base.frag';
+import filterBaseVert from '../webgl/shaders/filters/base.vert';
+import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
 
 class FilterRenderer2D {
   /**
@@ -39,7 +39,7 @@ class FilterRenderer2D {
       this.gl = this.canvas.getContext('webgl');
     }
     if (!this.gl) {
-      console.error("WebGL not supported, cannot apply filter.");
+      console.error('WebGL not supported, cannot apply filter.');
       return;
     }
     // Minimal renderer object required by p5.Shader and p5.Texture
@@ -51,7 +51,7 @@ class FilterRenderer2D {
       webglVersion,
       states: {
         textureWrapX: this.gl.CLAMP_TO_EDGE,
-        textureWrapY: this.gl.CLAMP_TO_EDGE,
+        textureWrapY: this.gl.CLAMP_TO_EDGE
       },
       _arraysEqual: (a, b) => JSON.stringify(a) === JSON.stringify(b),
       _getEmptyTexture: () => {
@@ -61,7 +61,7 @@ class FilterRenderer2D {
           this._emptyTexture = new Texture(this._renderer, im);
         }
         return this._emptyTexture;
-      },
+      }
     };
 
     this._baseFilterShader = undefined;
@@ -75,7 +75,7 @@ class FilterRenderer2D {
       [constants.GRAY]: filterGrayFrag,
       [constants.DILATE]: filterDilateFrag,
       [constants.POSTERIZE]: filterPosterizeFrag,
-      [constants.OPAQUE]: filterOpaqueFrag,
+      [constants.OPAQUE]: filterOpaqueFrag
     };
 
     // Store initialized shaders for each operation
@@ -96,21 +96,29 @@ class FilterRenderer2D {
     this.texcoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
 
     // Upload vertex data once
-    this._bindBufferData(this.vertexBuffer, this.gl.ARRAY_BUFFER, this.vertices);
+    this._bindBufferData(
+      this.vertexBuffer,
+      this.gl.ARRAY_BUFFER,
+      this.vertices
+    );
 
     // Upload texcoord data once
-    this._bindBufferData(this.texcoordBuffer, this.gl.ARRAY_BUFFER, this.texcoords);
+    this._bindBufferData(
+      this.texcoordBuffer,
+      this.gl.ARRAY_BUFFER,
+      this.texcoords
+    );
   }
 
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
-    let code = "";
+    let code = '';
     if (this._renderer.webglVersion === constants.WEBGL2) {
-      code += "#version 300 es\n#define WEBGL2\n";
+      code += '#version 300 es\n#define WEBGL2\n';
     }
-    if (shaderType === "vert") {
-      code += "#define VERTEX_SHADER\n";
-    } else if (shaderType === "frag") {
-      code += "#define FRAGMENT_SHADER\n";
+    if (shaderType === 'vert') {
+      code += '#define VERTEX_SHADER\n';
+    } else if (shaderType === 'frag') {
+      code += '#define FRAGMENT_SHADER\n';
     }
     if (floatPrecision) {
       code += `precision ${floatPrecision} float;\n`;
@@ -122,20 +130,20 @@ class FilterRenderer2D {
     if (!this._baseFilterShader) {
       this._baseFilterShader = new Shader(
         this._renderer,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           webgl2CompatibilityShader +
           filterBaseVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           webgl2CompatibilityShader +
           filterBaseFrag,
         {
-            vertex: {},
-            fragment: {
-              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
-                return getTexture(canvasContent, inputs.texCoord);
-              }`,
-            },
+          vertex: {},
+          fragment: {
+            'vec4 getColor': `(FilterInputs inputs, in sampler2D canvasContent) {
+              return getTexture(canvasContent, inputs.texCoord);
+            }`
           }
+        }
       );
     }
     return this._baseFilterShader;
@@ -152,7 +160,8 @@ class FilterRenderer2D {
     this.operation = operation;
     this.filterParameter = filterParameter;
 
-    let useDefaultParam = operation in filterParamDefaults && filterParameter === undefined;
+    let useDefaultParam = operation in filterParamDefaults &&
+      filterParameter === undefined;
     if (useDefaultParam) {
       this.filterParameter = filterParamDefaults[operation];
     }
@@ -173,7 +182,7 @@ class FilterRenderer2D {
     }
 
     if (!this.operation) {
-      console.error("No operation set for FilterRenderer2D, cannot initialize shader.");
+      console.error('No operation set for FilterRenderer2D, cannot initialize shader.');
       return;
     }
 
@@ -185,12 +194,16 @@ class FilterRenderer2D {
 
     const fragShaderSrc = this.filterShaderSources[this.operation];
     if (!fragShaderSrc) {
-      console.error("No shader available for this operation:", this.operation);
+      console.error('No shader available for this operation:', this.operation);
       return;
     }
 
     // Create and store the new shader
-    const newShader = new Shader(this._renderer, filterShaderVert, fragShaderSrc);
+    const newShader = new Shader(
+      this._renderer,
+      filterShaderVert,
+      fragShaderSrc
+    );
     this.filterShaders[this.operation] = newShader;
     this._shader = newShader;
   }
@@ -219,7 +232,8 @@ class FilterRenderer2D {
   _renderPass() {
     const gl = this.gl;
     this._shader.bindShader();
-    const pixelDensity = this.pInst.pixelDensity ? this.pInst.pixelDensity() : 1;
+    const pixelDensity = this.pInst.pixelDensity ?
+      this.pInst.pixelDensity() : 1;
 
     const texelSize = [
       1 / (this.pInst.width * pixelDensity),
@@ -234,6 +248,7 @@ class FilterRenderer2D {
     this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
+    this._shader.setDefaultUniforms();
 
     this.pInst.states.setValue('rectMode', constants.CORNER);
     this.pInst.states.setValue('imageMode', constants.CORNER);
@@ -270,7 +285,7 @@ class FilterRenderer2D {
    */
   applyFilter() {
     if (!this._shader) {
-      console.error("Cannot apply filter: shader not initialized.");
+      console.error('Cannot apply filter: shader not initialized.');
       return;
     }
     this.pInst.push();
@@ -283,14 +298,22 @@ class FilterRenderer2D {
 
       // Draw the result onto itself
       this.pInst.clear();
-      this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
+      this.pInst.drawingContext.drawImage(
+        this.canvas,
+        0, 0,
+        this.pInst.width, this.pInst.height
+      );
 
       // Vertical pass
       this._shader.setUniform('direction', [0, 1]);
       this._renderPass();
 
       this.pInst.clear();
-      this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
+      this.pInst.drawingContext.drawImage(
+        this.canvas,
+        0, 0,
+        this.pInst.width, this.pInst.height
+      );
     } else {
       // Single-pass filters
 
@@ -300,7 +323,11 @@ class FilterRenderer2D {
       this.pInst.blendMode(constants.BLEND);
 
 
-      this.pInst.drawingContext.drawImage(this.canvas, 0, 0, this.pInst.width, this.pInst.height);
+      this.pInst.drawingContext.drawImage(
+        this.canvas,
+        0, 0,
+        this.pInst.width, this.pInst.height
+      );
     }
     this.pInst.pop();
   }

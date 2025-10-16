@@ -3,10 +3,8 @@ import { vi } from 'vitest';
 
 suite('Vertex', function() {
   var myp5;
-  let _friendlyErrorSpy;
 
   beforeEach(function() {
-    _friendlyErrorSpy = vi.spyOn(p5, '_friendlyError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
@@ -33,10 +31,10 @@ suite('Vertex', function() {
     });
   });
 
-  suite('p5.prototype.curveVertex', function() {
+  suite('p5.prototype.splineVertex', function() {
     test('should be a function', function() {
-      assert.ok(myp5.curveVertex);
-      assert.typeOf(myp5.curveVertex, 'function');
+      assert.ok(myp5.splineVertex);
+      assert.typeOf(myp5.splineVertex, 'function');
     });
   });
 

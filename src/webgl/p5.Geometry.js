@@ -11,6 +11,7 @@
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
+import { downloadFile } from '../io/utilities';
 
 class Geometry {
   constructor(detailX, detailY, callback, renderer) {
@@ -62,109 +63,111 @@ class Geometry {
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
+    this.gid = `_p5_Geometry_${Geometry.nextId}`;
+    Geometry.nextId++;
     if (callback instanceof Function) {
       callback.call(this);
     }
   }
 
   /**
- * Calculates the position and size of the smallest box that contains the geometry.
- *
- * A bounding box is the smallest rectangular prism that contains the entire
- * geometry. It's defined by the box's minimum and maximum coordinates along
- * each axis, as well as the size (length) and offset (center).
- *
- * Calling `myGeometry.calculateBoundingBox()` returns an object with four
- * properties that describe the bounding box:
- *
- * ```js
- * // Get myGeometry's bounding box.
- * let bbox = myGeometry.calculateBoundingBox();
- *
- * // Print the bounding box to the console.
- * console.log(bbox);
- *
- * // {
- * //  // The minimum coordinate along each axis.
- * //  min: { x: -1, y: -2, z: -3 },
- * //
- * //  // The maximum coordinate along each axis.
- * //  max: { x: 1, y: 2, z: 3},
- * //
- * //  // The size (length) along each axis.
- * //  size: { x: 2, y: 4, z: 6},
- * //
- * //  // The offset (center) along each axis.
- * //  offset: { x: 0, y: 0, z: 0}
- * // }
- * ```
- *
- * @returns {Object} bounding box of the geometry.
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let particles;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a new p5.Geometry object with random spheres.
- *   particles = buildGeometry(createParticles);
- *
- *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the particles.
- *   noStroke();
- *   fill(255);
- *
- *   // Draw the particles.
- *   model(particles);
- *
- *   // Calculate the bounding box.
- *   let bbox = particles.calculateBoundingBox();
- *
- *   // Translate to the bounding box's center.
- *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
- *
- *   // Style the bounding box.
- *   stroke(255);
- *   noFill();
- *
- *   // Draw the bounding box.
- *   box(bbox.size.x, bbox.size.y, bbox.size.z);
- * }
- *
- * function createParticles() {
- *   for (let i = 0; i < 10; i += 1) {
- *     // Calculate random coordinates.
- *     let x = randomGaussian(0, 15);
- *     let y = randomGaussian(0, 15);
- *     let z = randomGaussian(0, 15);
- *
- *     push();
- *     // Translate to the particle's coordinates.
- *     translate(x, y, z);
- *     // Draw the particle.
- *     sphere(3);
- *     pop();
- *   }
- * }
- * </code>
- * </div>
- */
+   * Calculates the position and size of the smallest box that contains the geometry.
+   *
+   * A bounding box is the smallest rectangular prism that contains the entire
+   * geometry. It's defined by the box's minimum and maximum coordinates along
+   * each axis, as well as the size (length) and offset (center).
+   *
+   * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+   * properties that describe the bounding box:
+   *
+   * ```js
+   * // Get myGeometry's bounding box.
+   * let bbox = myGeometry.calculateBoundingBox();
+   *
+   * // Print the bounding box to the console.
+   * console.log(bbox);
+   *
+   * // {
+   * //  // The minimum coordinate along each axis.
+   * //  min: { x: -1, y: -2, z: -3 },
+   * //
+   * //  // The maximum coordinate along each axis.
+   * //  max: { x: 1, y: 2, z: 3},
+   * //
+   * //  // The size (length) along each axis.
+   * //  size: { x: 2, y: 4, z: 6},
+   * //
+   * //  // The offset (center) along each axis.
+   * //  offset: { x: 0, y: 0, z: 0}
+   * // }
+   * ```
+   *
+   * @returns {Object} bounding box of the geometry.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let particles;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a new p5.Geometry object with random spheres.
+   *   particles = buildGeometry(createParticles);
+   *
+   *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the particles.
+   *   noStroke();
+   *   fill(255);
+   *
+   *   // Draw the particles.
+   *   model(particles);
+   *
+   *   // Calculate the bounding box.
+   *   let bbox = particles.calculateBoundingBox();
+   *
+   *   // Translate to the bounding box's center.
+   *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+   *
+   *   // Style the bounding box.
+   *   stroke(255);
+   *   noFill();
+   *
+   *   // Draw the bounding box.
+   *   box(bbox.size.x, bbox.size.y, bbox.size.z);
+   * }
+   *
+   * function createParticles() {
+   *   for (let i = 0; i < 10; i += 1) {
+   *     // Calculate random coordinates.
+   *     let x = randomGaussian(0, 15);
+   *     let y = randomGaussian(0, 15);
+   *     let z = randomGaussian(0, 15);
+   *
+   *     push();
+   *     // Translate to the particle's coordinates.
+   *     translate(x, y, z);
+   *     // Draw the particle.
+   *     sphere(3);
+   *     pop();
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
@@ -271,10 +274,10 @@ class Geometry {
    *
    *   // Create a p5.Geometry object.
    *   // Set its internal color to red.
-   *   beginGeometry();
-   *   fill(255, 0, 0);
-   *   plane(20);
-   *   let myGeometry = endGeometry();
+   *   let myGeometry = buildGeometry(function() {
+   *     fill(255, 0, 0);
+   *     plane(20);
+   *   });
    *
    *   // Style the shape.
    *   noStroke();
@@ -334,7 +337,7 @@ class Geometry {
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(() => {
+   *   myModel = buildGeometry(function()) {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -411,7 +414,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName , 'obj');
+    downloadFile(blob, fileName , 'obj');
 
   }
 
@@ -439,7 +442,7 @@ class Geometry {
    * let saveBtn2;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(() => {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -534,7 +537,7 @@ class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName, 'stl');
+    downloadFile(blob, fileName, 'stl');
   }
 
   /**
@@ -934,9 +937,9 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus();
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus();
+   *   });
    *
    *   // Compute the vertex normals.
    *   myGeometry.computeNormals();
@@ -1346,6 +1349,51 @@ class Geometry {
   }
 
   /**
+   * @example
+   * <div>
+   * <code>
+   * let tetrahedron;
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   describe('A rotating tetrahedron');
+   *
+   *   tetrahedron = new p5.Geometry();
+   *
+   *   // Give each geometry a unique gid
+   *   tetrahedron.gid = 'tetrahedron';
+   *
+   *   // Add four points of the tetrahedron
+   *
+   *   let radius = 50;
+   *   // A 2D triangle:
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0));
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0).rotate(TWO_PI / 3));
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0).rotate(TWO_PI * 2 / 3));
+   *   // Add a tip in the z axis:
+   *   tetrahedron.vertices.push(createVector(0, 0, radius));
+   *
+   *   // Create the four faces by connecting the sets of three points
+   *   tetrahedron.faces.push([0, 1, 2]);
+   *   tetrahedron.faces.push([0, 1, 3]);
+   *   tetrahedron.faces.push([0, 2, 3]);
+   *   tetrahedron.faces.push([1, 2, 3]);
+   *   tetrahedron.makeEdgesFromFaces();
+   * }
+   * function draw() {
+   *   background(200);
+   *   strokeWeight(2);
+   *   orbitControl();
+   *   rotateY(millis() * 0.001);
+   *   model(tetrahedron);
+   * }
+   * </code>
+   * </div>
+   */
+  makeEdgesFromFaces() {
+    this._makeTriangleEdges();
+  }
+
+  /**
    * Converts each line segment into the vertices and vertex attributes needed
    * to turn the line into a polygon on screen. This will include:
    * - Two triangles line segment to create a rectangle
@@ -1632,9 +1680,9 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a very small torus.
-   *   beginGeometry();
-   *   torus(1, 0.25);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {;
+   *     torus(1, 0.25);
+   *   });
    *
    *   // Normalize the torus so its vertices fill
    *   // the range [-100, 100].
@@ -1691,7 +1739,7 @@ class Geometry {
 
   /** Sets the shader's vertex property or attribute variables.
    *
-   * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+   * A vertex property, or vertex attribute, is a variable belonging to a vertex in a shader. p5.js provides some
    * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
    * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
    * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
@@ -1719,7 +1767,7 @@ class Geometry {
    * let geo;
    *
    * function cartesianToSpherical(x, y, z) {
-   *   let r = sqrt(pow(x, x) + pow(y, y) + pow(z, z));
+   *   let r = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
    *   let theta = acos(z / r);
    *   let phi = atan2(y, x);
    *   return { theta, phi };
@@ -1729,7 +1777,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Modify the material shader to display roughness.
-   *   const myShader = materialShader().modify({
+   *   const myShader = baseMaterialShader().modify({
    *     vertexDeclarations:`in float aRoughness;
    *                         out float vRoughness;`,
    *     fragmentDeclarations: 'in float vRoughness;',
@@ -1747,10 +1795,10 @@ class Geometry {
    *   });
    *
    *   // Create the Geometry object.
-   *   beginGeometry();
-   *   fill('hotpink');
-   *   sphere(45, 50, 50);
-   *   geo = endGeometry();
+   *   geo = buildGeometry(function() {
+   *     fill('hotpink');
+   *     sphere(45, 50, 50);
+   *   });
    *
    *   // Set the roughness value for every vertex.
    *   for (let v of geo.vertices){
@@ -1788,7 +1836,6 @@ class Geometry {
    * </code>
    * </div>
    *
-   * @method vertexProperty
    * @param {String} propertyName the name of the vertex property.
    * @param {Number|Number[]} data the data tied to the vertex property.
    * @param {Number} [size] optional size of each unit of data.
@@ -1872,6 +1919,12 @@ class Geometry {
     return this.userVertexProperties[propertyName];
   }
 };
+
+/**
+ * Keeps track of how many custom geometry objects have been made so that each
+ * can be assigned a unique ID.
+ */
+Geometry.nextId = 0;
 
 function geometry(p5, fn){
   /**
@@ -2172,9 +2225,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus(30, 15, 10, 8);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus(30, 15, 10, 8);
+   *   });
    *
    *   describe('A white torus rotates slowly against a dark gray background. Red spheres mark its vertices.');
    * }
@@ -2241,9 +2294,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   torus(30, 15, 10, 8);
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     torus(30, 15, 10, 8);
+   *   });
    *
    *   // Compute the vertex normals.
    *   myGeometry.computeNormals();
@@ -2388,9 +2441,9 @@ function geometry(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   sphere();
-   *   myGeometry = endGeometry();
+   *   myGeometry = buildGeometry(function() {
+   *     sphere();
+   *   });
    *
    *   describe("A sphere drawn on a gray background. The sphere's surface is a grayscale patchwork of triangles.");
    * }

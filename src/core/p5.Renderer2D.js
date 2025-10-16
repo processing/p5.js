@@ -39,7 +39,7 @@ class Renderer2D extends Renderer {
           get() {
             return this.wrappedElt[p];
           }
-        })
+        });
       }
     }
 
@@ -75,7 +75,6 @@ class Renderer2D extends Renderer {
     }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
-
     this.clipPath = null;
   }
 
@@ -178,9 +177,10 @@ class Renderer2D extends Renderer {
       // create background rect
       const color = this._pInst.color(...args);
 
-      //accessible Outputs
-      if (this._pInst._addAccsOutput()) {
-        this._pInst._accsBackground(color._getRGBA([255, 255, 255, 255]));
+      // Add accessible outputs if the method exists; on success,
+      // set the accessible output background to white.
+      if (this._pInst._addAccsOutput?.()) {
+        this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
       }
 
       const newFill = color.toString();
@@ -211,9 +211,10 @@ class Renderer2D extends Renderer {
     const color = this.states.fillColor;
     this._setFill(color.toString());
 
-    //accessible Outputs
-    if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('fill', color._getRGBA([255, 255, 255, 255]));
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -222,9 +223,10 @@ class Renderer2D extends Renderer {
     const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
-    //accessible Outputs
-    if (this._pInst._addAccsOutput()) {
-      this._pInst._accsCanvasColors('stroke', color._getRGBA([255, 255, 255, 255]));
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
     }
   }
 
@@ -260,11 +262,13 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
-      this.clipPath.closePath();      
+      this.clipPath.closePath();
     } else {
       if (this.states.fillColor) {
         this.drawingContext.fill(visitor.path);
@@ -419,7 +423,11 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
-    if (this.states.tint[0] < 255 || this.states.tint[1] < 255 || this.states.tint[2] < 255) {
+    if (
+      this.states.tint[0] < 255 ||
+      this.states.tint[1] < 255 ||
+      this.states.tint[2] < 255
+    ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
       // the image. To accommodate, we first get a version of the image with full
@@ -970,27 +978,6 @@ class Renderer2D extends Renderer {
   }
 
   //////////////////////////////////////////////
-  // SHAPE | Curves
-  //////////////////////////////////////////////
-  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.vertex(x1, y1);
-    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
-    this._pInst.endShape();
-    return this;
-  }
-
-  curve(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._pInst.beginShape();
-    this._pInst.splineVertex(x1, y1);
-    this._pInst.splineVertex(x2, y2);
-    this._pInst.splineVertex(x3, y3);
-    this._pInst.splineVertex(x4, y4);
-    this._pInst.endShape();
-    return this;
-  }
-
-  //////////////////////////////////////////////
   // TRANSFORM
   //////////////////////////////////////////////
 
@@ -1076,9 +1063,9 @@ function renderer2D(p5, fn){
   p5.renderers[constants.P2D] = Renderer2D;
   p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
-      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
+      return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }
-  })
+  });
 }
 
 export default renderer2D;

@@ -1,12 +1,10 @@
 /**
  * @module Shape
- * @submodule Vertex
+ * @submodule Custom Shapes
  * @for p5
  * @requires core
  * @requires constants
  */
-
-import * as constants from '../core/constants';
 
 function vertex(p5, fn){
   /**
@@ -30,7 +28,6 @@ function vertex(p5, fn){
    *
    * After calling `beginShape()`, shapes can be built by calling
    * <a href="#/p5/vertex">vertex()</a>,
-   * <a href="#/p5/bezierVertex">bezierVertex()</a>,
    * <a href="#/p5/bezierVertex">bezierVertex()</a>, and/or
    * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * <a href="#/p5/endShape">endShape()</a> will stop adding vertices to the
@@ -410,31 +407,32 @@ function vertex(p5, fn){
    * <a href="#/p5/bezier">bezier()</a> function. `bezierVertex()` must be
    * called between the
    * <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> functions. The curved segment uses
-   * the previous vertex as the first anchor point, so there must be at least
-   * one call to <a href="#/p5/vertex">vertex()</a> before `bezierVertex()` can
-   * be used.
+   * <a href="#/p5/endShape">endShape()</a> functions.
+   * Bézier need a starting point. Building a shape
+   * only with Bézier curves needs one initial
+   * call to <a href="#/p5/vertex">bezierVertex()</a>, before
+   * a number of `bezierVertex()` calls that is a multiple of the parameter
+   * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
+   * But shapes can mix different types of vertices, so if there
+   * are some previous vertices, then the initial anchor is not needed,
+   * only the multiples of 3 (or the Bézier order) calls to
+   *  `bezierVertex` for each curve.
    *
-   * The first four parameters, `x2`, `y2`, `x3`, and `y3`, set the curve’s two
-   * control points. The control points "pull" the curve towards them.
+   * Each curve of order 3 requires three calls to `bezierVertex`, so
+   * 2 curves would need 7 calls to `bezierVertex()`:
+   * (1 one initial anchor point, two sets of 3 curves describing the curves)
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2.
    *
-   * The fifth and sixth parameters, `x4`, and `y4`, set the last anchor point.
-   * The last anchor point is where the curve ends.
-   *
-   * Bézier curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `bezierVertex()` has eight arguments because each point has x-, y-, and
-   * z-coordinates.
+   * Bézier curves can also be drawn in 3D using WebGL mode.
    *
    * Note: `bezierVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
    * @method bezierVertex
-   * @param  {Number} x2 x-coordinate of the first control point.
-   * @param  {Number} y2 y-coordinate of the first control point.
-   * @param  {Number} x3 x-coordinate of the second control point.
-   * @param  {Number} y3 y-coordinate of the second control point.
-   * @param  {Number} x4 x-coordinate of the anchor point.
-   * @param  {Number} y4 y-coordinate of the anchor point.
+   * @param  {Number} x x-coordinate of the first control point.
+   * @param  {Number} y y-coordinate of the first control point.
+   * @param  {Number} [u]
+   * @param  {Number} [v]
    *
    * @example
    * <div>
@@ -451,10 +449,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -491,10 +491,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -551,10 +553,12 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertex.
-   *   bezierVertex(x2, y2, 80, 75, 30, 75);
+   *   bezierVertex(x2, y2);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -598,11 +602,16 @@ function vertex(p5, fn){
    *   beginShape();
    *
    *   // Add the first anchor point.
-   *   vertex(30, 20);
+   *   bezierVertex(30, 20);
    *
    *   // Add the Bézier vertices.
-   *   bezierVertex(80, 0, 80, 75, 30, 75);
-   *   bezierVertex(50, 80, 60, 25, 30, 20);
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   *
+   *   bezierVertex(50, 80);
+   *   bezierVertex(60, 25);
+   *   bezierVertex(30, 20);
    *
    *   // Stop drawing the shape.
    *   endShape();
@@ -634,16 +643,30 @@ function vertex(p5, fn){
    *
    *   // Draw the first moon.
    *   beginShape();
-   *   vertex(-20, -30, 0);
-   *   bezierVertex(30, -50, 0, 30, 25, 0, -20, 25, 0);
-   *   bezierVertex(0, 30, 0, 10, -25, 0, -20, -30, 0);
+   *   bezierVertex(-20, -30, 0);
+   *
+   *   bezierVertex(30, -50, 0);
+   *   bezierVertex(30, 25, 0);
+   *   bezierVertex(-20, 25, 0);
+   *
+   *   bezierVertex(0, 30, 0);
+   *   bezierVertex(10, -25, 0);
+   *   bezierVertex(-20, -30, 0);
    *   endShape();
    *
    *   // Draw the second moon.
    *   beginShape();
-   *   vertex(-20, -30, -20);
-   *   bezierVertex(30, -50, -20, 30, 25, -20, -20, 25, -20);
-   *   bezierVertex(0, 30, -20, 10, -25, -20, -20, -30, -20);
+   *
+   *   bezierVertex(-20, -30, -20);
+   *
+   *   bezierVertex(30, -50, -20);
+   *   bezierVertex(30, 25, -20);
+   *   bezierVertex(-20, 25, -20);
+   *
+   *   bezierVertex(0, 30, -20);
+   *   bezierVertex(10, -25, -20);
+   *   bezierVertex(-20, -30, -20);
+   *
    *   endShape();
    * }
    * </code>
@@ -652,409 +675,18 @@ function vertex(p5, fn){
 
   /**
    * @method bezierVertex
-   * @param  {Number} x2
-   * @param  {Number} y2
-   * @param  {Number} z2 z-coordinate of the first control point.
-   * @param  {Number} x3
-   * @param  {Number} y3
-   * @param  {Number} z3 z-coordinate of the second control point.
-   * @param  {Number} x4
-   * @param  {Number} y4
-   * @param  {Number} z4 z-coordinate of the anchor point.
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} z
+   * @param  {Number} [u]
+   * @param  {Number} [v]
    */
   fn.bezierVertex = function(...args) {
     this._renderer.bezierVertex(...args);
   };
 
   /**
-   * Adds a spline curve segment to a custom shape.
-   *
-   * `splineVertex()` adds a curved segment to custom shapes. The spline curves
-   * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
-   * between the <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> functions.
-   *
-   * Spline curves can form shapes and curves that slope gently. They’re like
-   * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `splineVertex()` must be called at
-   * least four times between
-   * <a href="#/p5/beginShape">beginShape()</a> and
-   * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
-   *
-   * ```js
-   * beginShape();
-   *
-   * // Add the first control point.
-   * splineVertex(84, 91);
-   *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
-   *
-   * // Add the second control point.
-   * splineVertex(32, 91);
-   *
-   * endShape();
-   * ```
-   *
-   * The code snippet above would only draw the curve between the anchor points,
-   * similar to the <a href="#/p5/curve">curve()</a> function. The segments
-   * between the control and anchor points can be drawn by calling
-   * `splineVertex()` with the coordinates of the control points:
-   *
-   * ```js
-   * beginShape();
-   *
-   * // Add the first control point and draw a segment to it.
-   * splineVertex(84, 91);
-   * splineVertex(84, 91);
-   *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
-   *
-   * // Add the second control point.
-   * splineVertex(32, 91);
-   *
-   * // Uncomment the next line to draw the segment to the second control point.
-   * // splineVertex(32, 91);
-   *
-   * endShape();
-   * ```
-   *
-   * The first two parameters, `x` and `y`, set the vertex’s location. For
-   * example, calling `splineVertex(10, 10)` adds a point to the curve at
-   * `(10, 10)`.
-   *
-   * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
-   * `splineVertex()` has three arguments because each point has x-, y-, and
-   * z-coordinates. By default, the vertex’s z-coordinate is set to 0.
-   *
-   * Note: `splineVertex()` won’t work when an argument is passed to
-   * <a href="#/p5/beginShape">beginShape()</a>.
-   *
-   * @method curveVertex
-   * @param {Number} x x-coordinate of the vertex
-   * @param {Number} y y-coordinate of the vertex
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point.
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
-   *   describe(
-   *     'A black curve drawn on a gray background. The curve has black dots at its ends. Two red dots appear near the bottom of the canvas.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
-   *   describe(
-   *     'A black curve drawn on a gray background. The curve passes through one red dot and two black dots. Another red dot appears near the bottom of the canvas.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
-   *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click the mouse near the red dot in the bottom-left corner
-   * // and drag to change the curve's shape.
-   *
-   * let x1 = 32;
-   * let y1 = 91;
-   * let isChanging = false;
-   *
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
-   *   );
-   * }
-   *
-   * function draw() {
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(x1, y1);
-   *   splineVertex(x1, y1);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(x1, y1);
-   *   point(84, 91);
-   * }
-   *
-   * // Start changing the first control point if the user clicks near it.
-   * function mousePressed() {
-   *   if (dist(mouseX, mouseY, x1, y1) < 20) {
-   *     isChanging = true;
-   *   }
-   * }
-   *
-   * // Stop changing the first control point when the user releases the mouse.
-   * function mouseReleased() {
-   *   isChanging = false;
-   * }
-   *
-   * // Update the first control point while the user drags the mouse.
-   * function mouseDragged() {
-   *   if (isChanging === true) {
-   *     x1 = mouseX;
-   *     y1 = mouseY;
-   *   }
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   describe('A ghost shape drawn in white on a gray background.');
-   * }
-   * </code>
-   * </div>
-   */
-
-  /**
-   * @method curveVertex
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} [z] z-coordinate of the vertex.
-   * @chainable
-   *
-   * @example
-   * <div>
-   * <code>
-   * // Click and drag the mouse to view the scene from different angles.
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   describe('A ghost shape drawn in white on a blue background. When the user drags the mouse, the scene rotates to reveal the outline of a second ghost.');
-   * }
-   *
-   * function draw() {
-   *   background('midnightblue');
-   *
-   *   // Enable orbiting with the mouse.
-   *   orbitControl();
-   *
-   *   // Draw the first ghost.
-   *   noStroke();
-   *   fill('ghostwhite');
-   *
-   *   beginShape();
-   *   splineVertex(-28, 41, 0);
-   *   splineVertex(-28, 41, 0);
-   *   splineVertex(-29, -33, 0);
-   *   splineVertex(18, -31, 0);
-   *   splineVertex(34, 41, 0);
-   *   splineVertex(34, 41, 0);
-   *   endShape();
-   *
-   *   // Draw the second ghost.
-   *   noFill();
-   *   stroke('ghostwhite');
-   *
-   *   beginShape();
-   *   splineVertex(-28, 41, -20);
-   *   splineVertex(-28, 41, -20);
-   *   splineVertex(-29, -33, -20);
-   *   splineVertex(18, -31, -20);
-   *   splineVertex(34, 41, -20);
-   *   splineVertex(34, 41, -20);
-   *   endShape();
-   * }
-   * </code>
-   * </div>
-   */
-  fn.curveVertex = function(...args) {
-    // p5._validateParameters('curveVertex', args);
-    this._renderer.splineVertex(...args);
-    return this;
-  };
-
-  /**
-   * Begins adding vertices to a custom shape.
+   * Concludes the vertices of a custom shape.
    *
    * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
    * allow for creating custom shapes in 2D or 3D.
@@ -1064,6 +696,8 @@ function vertex(p5, fn){
    * The first parameter, `mode`, is optional. By default, the first and last
    * vertices of a shape aren't connected. If the constant `CLOSE` is passed, as
    * in `endShape(CLOSE)`, then the first and last vertices will be connected.
+   * When CLOSE mode is used for splines (with `splineVeertex()`), the shape is ended smoothly.
+   *
    *
    * The second parameter, `count`, is also optional. In WebGL mode, it’s more
    * efficient to draw many copies of the same shape using a technique called
@@ -1075,9 +709,8 @@ function vertex(p5, fn){
    *
    * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
    * built by calling <a href="#/p5/vertex">vertex()</a>,
-   * <a href="#/p5/bezierVertex">bezierVertex()</a>,
-   * <a href="#/p5/quadraticVertex">quadraticVertex()</a>, and/or
-   * <a href="#/p5/curveVertex">splineVertex()</a>. Calling
+   * <a href="#/p5/bezierVertex">bezierVertex()</a> and/or
+   * <a href="#/p5/splineVertex">splineVertex()</a>. Calling
    * `endShape()` will stop adding vertices to the
    * shape. Each shape will be outlined with the current stroke color and filled
    * with the current fill color.
@@ -1126,6 +759,59 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(200, 100);
+   *
+   *   background(240);
+   *
+   *   noFill();
+   *   stroke(0);
+   *
+   *   // Open shape (left)
+   *   beginShape();
+   *   vertex(20, 20);
+   *   vertex(80, 20);
+   *   vertex(80, 80);
+   *   endShape();  // Not closed
+   *
+   *   // Closed shape (right)
+   *   beginShape();
+   *   vertex(120, 20);
+   *   vertex(180, 20);
+   *   vertex(180, 80);
+   *   endShape(CLOSE);  // Closed
+   *
+   *   describe(
+   *     'Two right-angled shapes on a light gray background. The left shape is open with three lines. The right shape is closed, forming a triangle.'
+   *   );
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(200);
+   *
+   *   beginShape();
+   *
+   *   splineVertex(32, 91);
+   *   splineVertex(21, 17);
+   *   splineVertex(68, 19);
+   *   splineVertex(82, 91);
+   *
+   *   endShape(CLOSE);
+   *
+   *   describe(
+   *     'A curvy four-sided slightly lopsided blob.'
+   *   );
+   * }
+   * </div>
+   * </code>
    *
    * <div>
    * <code>
@@ -1416,9 +1102,10 @@ function vertex(p5, fn){
     return this;
   };
 
-  /** Sets the shader's vertex property or attribute variables.
+  /**
+   * Sets the shader's vertex property or attribute variables.
    *
-   * An vertex property or vertex attribute is a variable belonging to a vertex in a shader. p5.js provides some
+   * A vertex property, or vertex attribute, is a variable belonging to a vertex in a shader. p5.js provides some
    * default properties, such as `aPosition`, `aNormal`, `aVertexColor`, etc. These are
    * set using <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/normal">normal()</a>
    * and <a href="#/p5/fill">fill()</a> respectively. Custom properties can also
@@ -1437,6 +1124,11 @@ function vertex(p5, fn){
    *
    * See also the <a href="#/p5/vertexProperty">vertexProperty()</a> method on
    * <a href="#/p5/Geometry">Geometry</a> objects.
+   *
+   * @method vertexProperty
+   * @for p5
+   * @param {String} attributeName the name of the vertex attribute.
+   * @param {Number|Number[]} data the data tied to the vertex attribute.
    *
    * @example
    * <div>
@@ -1577,10 +1269,6 @@ function vertex(p5, fn){
    * }
    * </code>
    * </div>
-   *
-   * @method vertexProperty
-   * @param {String} attributeName the name of the vertex attribute.
-   * @param {Number|Number[]} data the data tied to the vertex attribute.
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');

@@ -117,11 +117,10 @@ function timeDate(p5, fn){
    *
    * If a sketch has a
    * <a href="#/p5/setup">setup()</a> function, then `millis()` begins tracking
-   * time before the code in <a href="#/p5/setup">setup()</a> runs. If a
-   * sketch includes a <a href="#/p5/preload">preload()</a> function, then
-   * `millis()` begins tracking time as soon as the code in
-   * <a href="#/p5/preload">preload()</a> starts running.
-   *
+   * time before the code in <a href="#/p5/setup">setup()</a> runs.  If a
+   * sketch includes asynchronous loading using `async`/`await`, then
+   * `millis()` begins tracking time as soon as the asynchronous code
+   * starts running.
    * @method millis
    * @return {Number} number of milliseconds since starting the sketch.
    *

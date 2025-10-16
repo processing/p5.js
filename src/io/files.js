@@ -5,10 +5,10 @@
  * @requires core
  */
 
-import * as fileSaver from 'file-saver';
 import { Renderer } from '../core/p5.Renderer';
 import { Graphics } from '../core/p5.Graphics';
 import { parse } from './csv';
+import { downloadFile, _checkFileExtension } from './utilities';
 
 class HTTPError extends Error {
   status;
@@ -486,38 +486,38 @@ function files(p5, fn){
    * @example
    * <div class='norender'>
    * <code>
-   * // Given the following CSV file called "mammals.csv"
-   * // located in the project's "assets" folder:
-   * //
-   * // id,species,name
-   * // 0,Capra hircus,Goat
-   * // 1,Panthera pardus,Leopard
-   * // 2,Equus zebra,Zebra
-   *
    * let table;
    *
    * async function setup() {
-   *   table = await loadTable('assets/mammals.csv', 'csv', 'header');
+   *   // Create a 200x200 canvas
+   *   createCanvas(200, 200);
    *
-   *   //count the columns
-   *   print(table.getRowCount() + ' total rows in table');
-   *   print(table.getColumnCount() + ' total columns in table');
+   *   // Load the CSV file with a header row
+   *   table = await loadTable('assets/mammals.csv', ',', 'header');
    *
-   *   print(table.getColumn('name'));
-   *   //["Goat", "Leopard", "Zebra"]
+   *   // Get the second row (index 1)
+   *   let row = table.getRow(1);
    *
-   *   //cycle through the table
-   *   for (let r = 0; r < table.getRowCount(); r++)
-   *     for (let c = 0; c < table.getColumnCount(); c++) {
-   *       print(table.getString(r, c));
-   *     }
-   *   describe(`randomly generated text from a file,
-   *     for example "i smell like butter"`);
+   *   // Set text properties
+   *   fill(0);       // Set text color to black
+   *   textSize(16);  // Adjust text size as needed
+   *
+   *   // Display each column value in the row on the canvas.
+   *   // Using an offset for y-position so each value appears on a new line.
+   *   for (let c = 0; c < table.getColumnCount(); c++) {
+   *     text(row.getString(c), 10, 30 + c * 20);
+   *   }
    * }
    * </code>
    * </div>
    */
-  fn.loadTable = async function (path, separator, header, successCallback, errorCallback) {
+  fn.loadTable = async function (
+    path,
+    separator,
+    header,
+    successCallback,
+    errorCallback
+  ) {
     if(typeof arguments[arguments.length-1] === 'function'){
       if(typeof arguments[arguments.length-2] === 'function'){
         successCallback = arguments[arguments.length-2];
@@ -544,7 +544,7 @@ function files(p5, fn){
         ret.columns = Array(data[0].length).fill(null);
       }
 
-      data.forEach((line) => {
+      data.forEach(line => {
         const row = new p5.TableRow(line);
         ret.addRow(row);
       });
@@ -754,19 +754,30 @@ function files(p5, fn){
    * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
-   * <div class='norender'><code>
+   *
+   * <div>
+   * <code>
    * let data;
    *
    * async function setup() {
-   *   data = await loadBytes('assets/mammals.xml');
+   * createCanvas(100, 100); // Create a canvas
+   * data = await loadBytes('assets/mammals.xml'); // Load the bytes from the XML file
    *
-   *   for (let i = 0; i < 5; i++) {
-   *     console.log(data.bytes[i].toString(16));
-   *   }
-   *   describe('no image displayed');
+   * background(255); // Set a white background
+   * fill(0);       // Set text color to black
+   *
+   * // Display the first 5 byte values on the canvas in hexadecimal format
+   * for (let i = 0; i < 5; i++) {
+   * let byteHex = data[i].toString(16);
+   * text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
    * }
-   * </code></div>
+   *
+   * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
+   * }
+   * </code>
+   * </div>
    */
+
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
       let { data } = await request(path, 'arrayBuffer');
@@ -783,6 +794,49 @@ function files(p5, fn){
     }
   };
 
+  /**
+   * Loads a file at the given path as a Blob, then returns the resulting data or
+   * passes it to a success callback function, if provided. On load, this function
+   * returns a `Promise` that resolves to a Blob containing the file data.
+   *
+   * @method loadBlob
+   * @param {String|Request} path - The path or Request object pointing to the file
+   *                                you want to load.
+   * @param {Function} [successCallback] - Optional. A function to be called if the
+   *                                       file successfully loads, receiving the
+   *                                       resulting Blob as its only argument.
+   * @param {Function} [errorCallback] - Optional. A function to be called if an
+   *                                     error occurs during loading; receives the
+   *                                     error object as its only argument.
+   * @returns {Promise<Blob>} A promise that resolves with the loaded Blob.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myBlob;
+   *
+   * async function setup() {
+   *   createCanvas(200, 200);
+   *   background(220);
+   *   try {
+   *     // 1. Load an image file as a Blob.
+   *     myBlob = await loadBlob('assets/flower-1.png');
+   *
+   *     // 2. Convert the Blob into an object URL.
+   *     const objectUrl = URL.createObjectURL(myBlob);
+   *
+   *     // 3. Load that object URL into a p5.Image.
+   *     loadImage(objectUrl, (img) => {
+   *       // 4. Display the loaded image.
+   *       image(img, 0, 0, width, height);
+   *     });
+   *   } catch (err) {
+   *     console.error('Error loading blob:', err);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   fn.loadBlob = async function(path, successCallback, errorCallback) {
     try{
       const { data } = await request(path, 'blob');
@@ -825,7 +879,7 @@ function files(p5, fn){
    * async function setup() {
    *   // Get the most recent earthquake in the database
    *   let url =
-      'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+   * 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
    *     'format=geojson&limit=1&orderby=time';
    *   earthquakes = await httpGet(url, 'json');
    * }
@@ -902,7 +956,7 @@ function files(p5, fn){
    * }
    *
    * function mousePressed() {
-   *   httpPost(url, 'json', postData, function(result) {
+   *   httpPost(url, postData, 'json', function(result) {
    *     strokeWeight(2);
    *     text(result.body, mouseX, mouseY);
    *   });
@@ -922,8 +976,8 @@ function files(p5, fn){
    * function mousePressed() {
    *   httpPost(
    *     url,
-   *     'json',
    *     postData,
+   *     'json',
    *     function(result) {
    *       // ... won't be called
    *     },
@@ -1041,18 +1095,27 @@ function files(p5, fn){
    * let eqFeatureIndex = 0;
    *
    * function setup() {
+   *  createCanvas(100,100);
+   *
    *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+   *
+   *   const req = new Request(url, {
+   *    method: 'GET',
+   *    headers: {authorization: 'Bearer secretKey'}
+   *  });
+   *  // httpDo(path, method, datatype, success, error)
+   *
    *   httpDo(
-   *     url,
-   *     {
-   *       method: 'GET',
-   *       // Other Request options, like special headers for apis
-   *       headers: { authorization: 'Bearer secretKey' }
+   *     req,
+   *     'GET',
+   *    'json',
+   *     res => {
+   *      earthquakes = res;
    *     },
-   *     function(res) {
-   *       earthquakes = res;
-   *     }
-   *   );
+   *    err => {
+   *      console.error('Error loading data:', err);
+   *    }
+   *  );
    * }
    *
    * function draw() {
@@ -1084,7 +1147,13 @@ function files(p5, fn){
    * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
-  fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
+  fn.httpDo = async function (
+    path,
+    method,
+    datatype,
+    successCallback,
+    errorCallback
+  ) {
     // This behave similarly to httpGet but even more primitive. The user
     // will most likely want to pass in a Request to path, the only convenience
     // is that datatype will be taken into account to parse the response.
@@ -1098,8 +1167,8 @@ function files(p5, fn){
     // Try to infer data type if it is defined
     if(!datatype){
       const extension = typeof path === 'string' ?
-        path.split(".").pop() :
-        path.url.split(".").pop();
+        path.split('.').pop() :
+        path.url.split('.').pop();
       switch(extension) {
         case 'json':
           datatype = 'json';
@@ -2117,17 +2186,7 @@ function files(p5, fn){
    *  @param  {String} [filename]
    *  @param  {String} [extension]
    */
-  fn.downloadFile = function (data, fName, extension) {
-    const fx = _checkFileExtension(fName, extension);
-    const filename = fx[0];
-    let saveData = data;
-
-    if (!(saveData instanceof Blob)) {
-      saveData = new Blob([data]);
-    }
-
-    fileSaver.saveAs(saveData, filename);
-  };
+  fn.downloadFile = downloadFile;
 
   /**
    *  Returns a file extension, or another string
@@ -2139,27 +2198,6 @@ function files(p5, fn){
    *
    *  @private
    */
-  function _checkFileExtension(filename, extension) {
-    if (!extension || extension === true || extension === 'true') {
-      extension = '';
-    }
-    if (!filename) {
-      filename = 'untitled';
-    }
-    let ext = '';
-    // make sure the file will have a name, see if filename needs extension
-    if (filename && filename.includes('.')) {
-      ext = filename.split('.').pop();
-    }
-    // append extension if it doesn't exist
-    if (extension) {
-      if (ext !== extension) {
-        ext = extension;
-        filename = `${filename}.${ext}`;
-      }
-    }
-    return [filename, ext];
-  }
   fn._checkFileExtension = _checkFileExtension;
 
   /**
@@ -2170,7 +2208,8 @@ function files(p5, fn){
    *  @private
    */
   fn._isSafari = function () {
-    return window.HTMLElement.toString().includes('Constructor');
+    // The following line is CC BY SA 3 by user Fregante https://stackoverflow.com/a/23522755
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   };
 
   /**

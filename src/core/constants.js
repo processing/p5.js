@@ -15,12 +15,28 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
 
 // GRAPHICS RENDERER
 /**
- * The default, two-dimensional renderer.
- * @typedef {unique symbol} P2D
+ * The default, two-dimensional renderer in p5.js.
+ *
+ * Use this when calling <a href="#/p5/createCanvas"> (for example,
+ * `createCanvas(400, 400, P2D)`) to specify a 2D context.
+ *
+ * @typedef {'p2d'} P2D
  * @property {P2D} P2D
  * @final
  */
 export const P2D = 'p2d';
+
+/**
+ * A high-dynamic-range (HDR) variant of the default, two-dimensional renderer.
+ *
+ * When available, this mode can allow for extended color ranges and more
+ * dynamic color representation. Use it similarly to `P2D`:
+ * `createCanvas(400, 400, P2DHDR)`.
+ *
+ * @typedef {'p2d-hdr'} P2DHDR
+ * @property {P2DHDR} P2DHDR
+ * @final
+ */
 
 export const P2DHDR = 'p2d-hdr';
 

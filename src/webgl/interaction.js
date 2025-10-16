@@ -691,34 +691,30 @@ function interaction(p5, fn){
     // p5._validateParameters('debugMode', args);
 
     // start by removing existing 'post' registered debug methods
-    for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+    for (let i = p5.lifecycleHooks.postdraw.length - 1; i >= 0; i--) {
       // test for equality...
       if (
-        this._registeredMethods.post[i].toString() === this._grid().toString() ||
-        this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+        p5.lifecycleHooks.postdraw[i].toString() === this._grid().toString() ||
+        p5.lifecycleHooks.postdraw[i].toString() === this._axesIcon().toString()
       ) {
-        this._registeredMethods.post.splice(i, 1);
+        p5.lifecycleHooks.postdraw.splice(i, 1);
       }
     }
 
     // then add new debugMode functions according to the argument list
     if (args[0] === constants.GRID) {
-      this.registerMethod(
-        'post',
+      p5.lifecycleHooks.postdraw.push(
         this._grid(args[1], args[2], args[3], args[4], args[5])
       );
     } else if (args[0] === constants.AXES) {
-      this.registerMethod(
-        'post',
+      p5.lifecycleHooks.postdraw.push(
         this._axesIcon(args[1], args[2], args[3], args[4])
       );
     } else {
-      this.registerMethod(
-        'post',
+      p5.lifecycleHooks.postdraw.push(
         this._grid(args[0], args[1], args[2], args[3], args[4])
       );
-      this.registerMethod(
-        'post',
+      p5.lifecycleHooks.postdraw.push(
         this._axesIcon(args[5], args[6], args[7], args[8])
       );
     }
@@ -766,13 +762,13 @@ function interaction(p5, fn){
     this._assert3d('noDebugMode');
 
     // start by removing existing 'post' registered debug methods
-    for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+    for (let i = p5.lifecycleHooks.postdraw.length - 1; i >= 0; i--) {
       // test for equality...
       if (
-        this._registeredMethods.post[i].toString() === this._grid().toString() ||
-        this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+        p5.lifecycleHooks.postdraw[i].toString() === this._grid().toString() ||
+        p5.lifecycleHooks.postdraw[i].toString() === this._axesIcon().toString()
       ) {
-        this._registeredMethods.post.splice(i, 1);
+        p5.lifecycleHooks.postdraw.splice(i, 1);
       }
     }
   };
@@ -861,9 +857,9 @@ function interaction(p5, fn){
       zOff = xOff;
     }
 
-    return function() {
+    return () => {
       this.push();
-      this._renderer.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
+      this._renderer.states.setValue('uModelMatrix', this._renderer.states.uModelMatrix.clone());
       this._renderer.states.uModelMatrix.reset();
 
       // X axis

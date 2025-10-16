@@ -2,9 +2,29 @@ import * as constants from '../core/constants';
 import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
-import { arrayCommandsToObjects } from '../type/p5.Font';
+import { Font, arrayCommandsToObjects } from '../type/p5.Font';
 
-function text(p5, fn){
+function text(p5, fn) {
+  RendererGL.prototype.maxCachedGlyphs = function() {
+    // TODO: use more than vibes to find a good value for this
+    return 200;
+  };
+
+  Font.prototype._getFontInfo = function(axs) {
+    // For WebGL, a cache of font data to use on the GPU.
+    this._fontInfos = this._fontInfos || {};
+
+    const key = JSON.stringify(axs);
+    if (this._fontInfos[key]) {
+      const val = this._fontInfos[key];
+      return val;
+    } else {
+      const val = new FontInfo(this, { axs });
+      this._fontInfos[key] = val;
+      return val;
+    }
+  };
+
   // Text/Typography (see src/type/textCore.js)
   /*
   RendererGL.prototype.textWidth = function(s) {
@@ -49,14 +69,14 @@ function text(p5, fn){
       this.infos = []; // the list of images
     }
     /**
-       *
-       * @param {Integer} space
-       * @return {Object} contains the ImageData, and pixel index into that
-       *                  ImageData where the free space was allocated.
-       *
-       * finds free space of a given size in the ImageData list
-       */
-    findImage (space) {
+     *
+     * @param {Integer} space
+     * @return {Object} contains the ImageData, and pixel index into that
+     *                  ImageData where the free space was allocated.
+     *
+     * finds free space of a given size in the ImageData list
+     */
+    findImage(space) {
       const imageSize = this.width * this.height;
       if (space > imageSize)
         throw new Error('font is too complex to render in 3D');
@@ -140,10 +160,14 @@ function text(p5, fn){
    * contains cached images and glyph information for an opentype font
    */
   class FontInfo {
-    constructor(font) {
+    constructor(font, { axs } = {}) {
       this.font = font;
+      this.axs = axs;
       // the bezier curve coordinates
-      this.strokeImageInfos = new ImageInfos(strokeImageWidth, strokeImageHeight);
+      this.strokeImageInfos = new ImageInfos(
+        strokeImageWidth,
+        strokeImageHeight
+      );
       // lists of curve indices for each row/column slice
       this.colDimImageInfos = new ImageInfos(gridImageWidth, gridImageHeight);
       this.rowDimImageInfos = new ImageInfos(gridImageWidth, gridImageHeight);
@@ -155,18 +179,23 @@ function text(p5, fn){
       this.glyphInfos = {};
     }
     /**
-       * @param {Glyph} glyph the x positions of points in the curve
-       * @returns {Object} the glyphInfo for that glyph
-       *
-       * calculates rendering info for a glyph, including the curve information,
-       * row & column stripes compiled into textures.
-       */
+     * @param {Glyph} glyph the x positions of points in the curve
+     * @returns {Object} the glyphInfo for that glyph
+     *
+     * calculates rendering info for a glyph, including the curve information,
+     * row & column stripes compiled into textures.
+     */
     getGlyphInfo(glyph) {
       // check the cache
       let gi = this.glyphInfos[glyph.index];
       if (gi) return gi;
 
-      const { glyph: { path: { commands } } } = this.font._singleShapeToPath(glyph.shape);
+      const axs = this.axs;
+      const {
+        glyph: {
+          path: { commands }
+        }
+      } = this.font._singleShapeToPath(glyph.shape, { axs });
       let xMin = Infinity;
       let xMax = -Infinity;
       let yMin = Infinity;
@@ -200,25 +229,25 @@ function text(p5, fn){
       for (i = charGridHeight - 1; i >= 0; --i) rows.push([]);
 
       /**
-         * @function push
-         * @param {Number[]} xs the x positions of points in the curve
-         * @param {Number[]} ys the y positions of points in the curve
-         * @param {Object} v    the curve information
-         *
-         * adds a curve to the rows & columns that it intersects with
-         */
+       * @function push
+       * @param {Number[]} xs the x positions of points in the curve
+       * @param {Number[]} ys the y positions of points in the curve
+       * @param {Object} v    the curve information
+       *
+       * adds a curve to the rows & columns that it intersects with
+       */
       function push(xs, ys, v) {
         const index = strokes.length; // the index of this stroke
         strokes.push(v); // add this stroke to the list
 
         /**
-           * @function minMax
-           * @param {Number[]} rg the list of values to compare
-           * @param {Number} min the initial minimum value
-           * @param {Number} max the initial maximum value
-           *
-           * find the minimum & maximum value in a list of values
-           */
+         * @function minMax
+         * @param {Number[]} rg the list of values to compare
+         * @param {Number} min the initial minimum value
+         * @param {Number} max the initial maximum value
+         *
+         * find the minimum & maximum value in a list of values
+         */
         function minMax(rg, min, max) {
           for (let i = rg.length; i-- > 0; ) {
             const v = rg[i];
@@ -261,13 +290,13 @@ function text(p5, fn){
       }
 
       /**
-         * @function clamp
-         * @param {Number} v the value to clamp
-         * @param {Number} min the minimum value
-         * @param {Number} max the maxmimum value
-         *
-         * clamps a value between a minimum & maximum value
-         */
+       * @function clamp
+       * @param {Number} v the value to clamp
+       * @param {Number} min the minimum value
+       * @param {Number} max the maxmimum value
+       *
+       * clamps a value between a minimum & maximum value
+       */
       function clamp(v, min, max) {
         if (v < min) return min;
         if (v > max) return max;
@@ -275,25 +304,25 @@ function text(p5, fn){
       }
 
       /**
-         * @function byte
-         * @param {Number} v the value to scale
-         *
-         * converts a floating-point number in the range 0-1 to a byte 0-255
-         */
+       * @function byte
+       * @param {Number} v the value to scale
+       *
+       * converts a floating-point number in the range 0-1 to a byte 0-255
+       */
       function byte(v) {
         return clamp(255 * v, 0, 255);
       }
 
       /**
-         * @private
-         * @class Cubic
-         * @param {Number} p0 the start point of the curve
-         * @param {Number} c0 the first control point
-         * @param {Number} c1 the second control point
-         * @param {Number} p1 the end point
-         *
-         * a cubic curve
-         */
+       * @private
+       * @class Cubic
+       * @param {Number} p0 the start point of the curve
+       * @param {Number} c0 the first control point
+       * @param {Number} c1 the second control point
+       * @param {Number} p1 the end point
+       *
+       * a cubic curve
+       */
       class Cubic {
         constructor(p0, c0, c1, p1) {
           this.p0 = p0;
@@ -302,12 +331,12 @@ function text(p5, fn){
           this.p1 = p1;
         }
         /**
-             * @return {Object} the quadratic approximation
-             *
-             * converts the cubic to a quadtratic approximation by
-             * picking an appropriate quadratic control point
-             */
-        toQuadratic () {
+         * @return {Object} the quadratic approximation
+         *
+         * converts the cubic to a quadtratic approximation by
+         * picking an appropriate quadratic control point
+         */
+        toQuadratic() {
           return {
             x: this.p0.x,
             y: this.p0.y,
@@ -319,12 +348,12 @@ function text(p5, fn){
         }
 
         /**
-             * @return {Number} the error
-             *
-             * calculates the magnitude of error of this curve's
-             * quadratic approximation.
-             */
-        quadError () {
+         * @return {Number} the error
+         *
+         * calculates the magnitude of error of this curve's
+         * quadratic approximation.
+         */
+        quadError() {
           return (
             Vector.sub(
               Vector.sub(this.p1, this.p0),
@@ -334,14 +363,14 @@ function text(p5, fn){
         }
 
         /**
-             * @param {Number} t the value (0-1) at which to split
-             * @return {Cubic} the second part of the curve
-             *
-             * splits the cubic into two parts at a point 't' along the curve.
-             * this cubic keeps its start point and its end point becomes the
-             * point at 't'. the 'end half is returned.
-             */
-        split (t) {
+         * @param {Number} t the value (0-1) at which to split
+         * @return {Cubic} the second part of the curve
+         *
+         * splits the cubic into two parts at a point 't' along the curve.
+         * this cubic keeps its start point and its end point becomes the
+         * point at 't'. the 'end half is returned.
+         */
+        split(t) {
           const m1 = Vector.lerp(this.p0, this.c0, t);
           const m2 = Vector.lerp(this.c0, this.c1, t);
           const mm1 = Vector.lerp(m1, m2, t);
@@ -355,13 +384,13 @@ function text(p5, fn){
         }
 
         /**
-             * @return {Cubic[]} the non-inflecting pieces of this cubic
-             *
-             * returns an array containing 0, 1 or 2 cubics split resulting
-             * from splitting this cubic at its inflection points.
-             * this cubic is (potentially) altered and returned in the list.
-             */
-        splitInflections () {
+         * @return {Cubic[]} the non-inflecting pieces of this cubic
+         *
+         * returns an array containing 0, 1 or 2 cubics split resulting
+         * from splitting this cubic at its inflection points.
+         * this cubic is (potentially) altered and returned in the list.
+         */
+        splitInflections() {
           const a = Vector.sub(this.c0, this.p0);
           const b = Vector.sub(Vector.sub(this.c1, this.c0), a);
           const c = Vector.sub(
@@ -410,20 +439,20 @@ function text(p5, fn){
       }
 
       /**
-         * @function cubicToQuadratics
-         * @param {Number} x0
-         * @param {Number} y0
-         * @param {Number} cx0
-         * @param {Number} cy0
-         * @param {Number} cx1
-         * @param {Number} cy1
-         * @param {Number} x1
-         * @param {Number} y1
-         * @returns {Cubic[]} an array of cubics whose quadratic approximations
-         *                    closely match the civen cubic.
-         *
-         * converts a cubic curve to a list of quadratics.
-         */
+       * @function cubicToQuadratics
+       * @param {Number} x0
+       * @param {Number} y0
+       * @param {Number} cx0
+       * @param {Number} cy0
+       * @param {Number} cx1
+       * @param {Number} cy1
+       * @param {Number} x1
+       * @param {Number} y1
+       * @returns {Cubic[]} an array of cubics whose quadratic approximations
+       *                    closely match the civen cubic.
+       *
+       * converts a cubic curve to a list of quadratics.
+       */
       function cubicToQuadratics(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
         // create the Cubic object and split it at its inflections
         const cubics = new Cubic(
@@ -478,14 +507,14 @@ function text(p5, fn){
       }
 
       /**
-         * @function pushLine
-         * @param {Number} x0
-         * @param {Number} y0
-         * @param {Number} x1
-         * @param {Number} y1
-         *
-         * add a straight line to the row/col grid of a glyph
-         */
+       * @function pushLine
+       * @param {Number} x0
+       * @param {Number} y0
+       * @param {Number} x1
+       * @param {Number} y1
+       *
+       * add a straight line to the row/col grid of a glyph
+       */
       function pushLine(x0, y0, x1, y1) {
         const mx = (x0 + x1) / 2;
         const my = (y0 + y1) / 2;
@@ -493,15 +522,15 @@ function text(p5, fn){
       }
 
       /**
-         * @function samePoint
-         * @param {Number} x0
-         * @param {Number} y0
-         * @param {Number} x1
-         * @param {Number} y1
-         * @return {Boolean} true if the two points are sufficiently close
-         *
-         * tests if two points are close enough to be considered the same
-         */
+       * @function samePoint
+       * @param {Number} x0
+       * @param {Number} y0
+       * @param {Number} x1
+       * @param {Number} y1
+       * @return {Boolean} true if the two points are sufficiently close
+       *
+       * tests if two points are close enough to be considered the same
+       */
       function samePoint(x0, y0, x1, y1) {
         return Math.abs(x1 - x0) < 0.00001 && Math.abs(y1 - y0) < 0.00001;
       }
@@ -578,16 +607,16 @@ function text(p5, fn){
       }
 
       /**
-         * @function layout
-         * @param {Number[][]} dim
-         * @param {ImageInfo[]} dimImageInfos
-         * @param {ImageInfo[]} cellImageInfos
-         * @return {Object}
-         *
-         * lays out the curves in a dimension (row or col) into two
-         * images, one for the indices of the curves themselves, and
-         * one containing the offset and length of those index spans.
-         */
+       * @function layout
+       * @param {Number[][]} dim
+       * @param {ImageInfo[]} dimImageInfos
+       * @param {ImageInfo[]} cellImageInfos
+       * @return {Object}
+       *
+       * lays out the curves in a dimension (row or col) into two
+       * images, one for the indices of the curves themselves, and
+       * one containing the offset and length of those index spans.
+       */
       function layout(dim, dimImageInfos, cellImageInfos) {
         const dimLength = dim.length; // the number of slices in this dimension
         const dimImageInfo = dimImageInfos.findImage(dimLength);
@@ -645,7 +674,7 @@ function text(p5, fn){
     }
   }
 
-  RendererGL.prototype._renderText = function(line, x, y, maxY, minY) {
+  RendererGL.prototype._renderText = function (line, x, y, maxY, minY) {
     if (!this.states.textFont || typeof this.states.textFont === 'string') {
       console.log(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
@@ -679,14 +708,12 @@ function text(p5, fn){
         'In WebGL mode, textFont() needs to be given the result of loadFont() instead of a font family name.'
       );
     }
-    let fontInfo = this.states.textFont._fontInfo;
-    if (!fontInfo) {
-      fontInfo = this.states.textFont._fontInfo = new FontInfo(font);
-    }
+    const axs = font._currentAxes(this);
+    let fontInfo = font._getFontInfo(axs);
 
     // calculate the alignment and move/scale the view accordingly
     // TODO: check this
-    const pos = { x, y } // this.states.textFont._handleAlignment(this, line, x, y);
+    const pos = { x, y }; // this.states.textFont._handleAlignment(this, line, x, y);
     const fontSize = this.states.textSize;
     const scale = fontSize / (font.data?.head?.unitsPerEm || 1000);
     this.translate(pos.x, pos.y, 0);
@@ -707,7 +734,9 @@ function text(p5, fn){
       sh.setUniform('uGridSize', [charGridWidth, charGridHeight]);
     }
 
-    const curFillColor = this.states.fillSet ? this.states.curFillColor : [0, 0, 0, 255];
+    const curFillColor = this.states.fillSet
+      ? this.states.curFillColor
+      : [0, 0, 0, 255];
 
     this._setGlobalUniforms(sh);
     this._applyColorBlend(curFillColor);
@@ -715,14 +744,19 @@ function text(p5, fn){
     let g = this.geometryBufferCache.getGeometryByID('glyph');
     if (!g) {
       // create the geometry for rendering a quad
-      g = (this._textGeom = new Geometry(1, 1, function() {
-        for (let i = 0; i <= 1; i++) {
-          for (let j = 0; j <= 1; j++) {
-            this.vertices.push(new Vector(j, i, 0));
-            this.uvs.push(j, i);
+      g = this._textGeom = new Geometry(
+        1,
+        1,
+        function () {
+          for (let i = 0; i <= 1; i++) {
+            for (let j = 0; j <= 1; j++) {
+              this.vertices.push(new Vector(j, i, 0));
+              this.uvs.push(j, i);
+            }
           }
-        }
-      }, this) );
+        },
+        this
+      );
       g.gid = 'glyph';
       g.computeFaces().computeNormals();
       this.geometryBufferCache.ensureCached(g);
@@ -732,11 +766,16 @@ function text(p5, fn){
     for (const buff of this.buffers.text) {
       buff._prepareBuffer(g, sh);
     }
-    this._bindBuffer(this.geometryBufferCache.cache.glyph.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+    this._bindBuffer(
+      this.geometryBufferCache.cache.glyph.indexBuffer,
+      gl.ELEMENT_ARRAY_BUFFER
+    );
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+
+    this.glyphDataCache = this.glyphDataCache || new Set();
 
     try {
       // fetch the glyphs in the line of text
@@ -747,6 +786,33 @@ function text(p5, fn){
         if (gi.uGlyphRect) {
           const rowInfo = gi.rowInfo;
           const colInfo = gi.colInfo;
+
+          // Bump the resources for this glyph to the end of the cache list by deleting and re-adding
+          const glyphResources = [
+            gi.strokeImageInfo.imageData,
+            rowInfo.cellImageInfo.imageData,
+            rowInfo.dimImageInfo.imageData,
+            colInfo.cellImageInfo.imageData,
+            colInfo.dimImageInfo.imageData
+          ];
+          for (const resource of glyphResources) {
+            this.glyphDataCache.delete(resource);
+            this.glyphDataCache.add(resource);
+          }
+
+          // If we have too many glyph textures, remove the least recently used
+          // ones from GPU memory. The data still exists on the CPU and will be
+          // re-uploaded if it gets actively used again.
+          while (this.glyphDataCache.size > this.maxCachedGlyphs()) {
+            const data = this.glyphDataCache.values().next().value;
+            this.glyphDataCache.delete(data);
+            const tex = this.textures.get(data);
+            if (tex) {
+              tex.remove();
+              this.textures.delete(data);
+            }
+          }
+
           sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
           sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
           sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);

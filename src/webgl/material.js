@@ -136,7 +136,7 @@ function material(p5, fn){
       if (successCallback) {
         return successCallback(loadedShader);
       } else {
-        return loadedShader
+        return loadedShader;
       }
     } catch(err) {
       if (failureCallback) {
@@ -550,7 +550,11 @@ function material(p5, fn){
    * @alt
    * A rectangle with a shader applied to it.
    */
-  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+  fn.loadFilterShader = async function (
+    fragFilename,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
@@ -748,8 +752,8 @@ function material(p5, fn){
    * <p>
    *
    * If you want to apply shaders to strokes or images, use the following methods:
-   * - **[strokeShader()](#/p5/strokeShader)**: Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
-   * - **[imageShader()](#/p5/imageShader)**: Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
    *
    * </p>
    * </div>
@@ -794,7 +798,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   noStroke();
    *   describe('A rotating torus with simulated directional lighting.');
@@ -844,7 +848,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   fillShader = createShader(vertSrc, fragSrc);
    *   shader(fillShader);
    *   noStroke();
@@ -869,7 +873,7 @@ function material(p5, fn){
    * let myShader;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *
    *   myShader = baseMaterialShader().modify({
    *     declarations: 'uniform float time;',
@@ -1006,7 +1010,7 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   animatedStrokeShader = createShader(vertSrc, fragSrc);
    *   strokeShader(animatedStrokeShader);
    *   strokeWeight(4);
@@ -1106,7 +1110,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1171,7 +1175,7 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/outdoor_image.jpg');
    *
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
    *   noStroke();
    *
    *   imgShader = createShader(`
@@ -1259,7 +1263,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1373,15 +1377,13 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *   myShader = baseMaterialShader().modify(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
-   *         20.0 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1441,17 +1443,15 @@ function material(p5, fn){
    *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       float factor =
-   *         sin(
-   *           inputs.texCoord.x * ${TWO_PI} +
-   *           inputs.texCoord.y * ${TWO_PI}
-   *         ) * 0.4 + 0.5;
-   *       inputs.shininess = mix(1., 100., factor);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       let factor = sin(
+   *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
+   *       );
+   *       inputs.shininess = mix(1, 100, factor);
    *       inputs.metalness = factor;
    *       return inputs;
-   *     }`
+   *     })
    *   });
    * }
    *
@@ -1476,25 +1476,17 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       vec3 newNormal = inputs.normal;
-   *       // Simple bump mapping: adjust the normal based on position
-   *       newNormal.x += 0.2 * sin(
-   *           sin(
-   *             inputs.texCoord.y * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.x * ${TWO_PI} * 25.0
-   *           )
-   *         );
-   *       newNormal.y += 0.2 * sin(
-   *         sin(
-   *             inputs.texCoord.x * ${TWO_PI} * 10.0 +
-   *             inputs.texCoord.y * ${TWO_PI} * 25.0
-   *           )
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.normal.x += 0.2 * sin(
+   *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
    *       );
-   *       inputs.normal = normalize(newNormal);
+   *       inputs.normal.y += 0.2 * sin(
+   *         sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
+   *       );
+   *       inputs.normal = normalize(inputs.normal);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1568,18 +1560,13 @@ function material(p5, fn){
    * async function setup() {
    *   img = await loadImage('assets/bricks.jpg');
    *   createCanvas(100, 100, WEBGL);
-   *   myShader = baseFilterShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'vec4 getColor': `(
-   *       FilterInputs inputs,
-   *       in sampler2D canvasContent
-   *     ) {
+   *   myShader = baseFilterShader().modify(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getColor((inputs, canvasContent) => {
    *       inputs.texCoord.y +=
-   *         0.01 * sin(time * 0.001 + inputs.position.x * 5.0);
-   *       return getTexture(canvasContent, inputs.texCoord);
-   *     }`
+   *         0.02 * sin(time * 0.001 + inputs.texCoord.x * 5);
+   *       return texture(canvasContent, inputs.texCoord);
+   *     });
    *   });
    * }
    *
@@ -1622,7 +1609,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -1788,7 +1775,7 @@ function material(p5, fn){
    * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
    * - `vec3 position`, the position of the vertex
    * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 uv`, the texture coordinates associeted with the vertex
+   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
    * - `vec4 color`, the per-vertex color
    * The struct can be modified and returned.
    *
@@ -2116,7 +2103,7 @@ function material(p5, fn){
    *
    * function draw() {
    *   background(255);
-   *   shader(myShader);
+   *   strokeShader(myShader);
    *   strokeWeight(10);
    *   beginShape();
    *   for (let i = 0; i <= 50; i++) {
@@ -2427,18 +2414,18 @@ function material(p5, fn){
    * to the pixel at coordinates `(u, v)` within an image. For example, the
    * corners of a rectangular image are mapped to the corners of a rectangle by default:
    *
-   * <code>
+   * ```js
    * // Apply the image as a texture.
    * texture(img);
    *
    * // Draw the rectangle.
    * rect(0, 0, 30, 50);
-   * </code>
+   * ```
    *
    * If the image in the code snippet above has dimensions of 300 x 500 pixels,
    * the same result could be achieved as follows:
    *
-   * <code>
+   * ```js
    * // Apply the image as a texture.
    * texture(img);
    *
@@ -2462,7 +2449,7 @@ function material(p5, fn){
    * vertex(0, 50, 0, 0, 500);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * `textureMode()` changes the coordinate system for uv coordinates.
    *
@@ -2472,7 +2459,7 @@ function material(p5, fn){
    * be helpful for using the same code for multiple images of different sizes.
    * For example, the code snippet above could be rewritten as follows:
    *
-   * <code>
+   * ```js
    * // Set the texture mode to use normalized coordinates.
    * textureMode(NORMAL);
    *
@@ -2499,7 +2486,7 @@ function material(p5, fn){
    * vertex(0, 50, 0, 0, 1);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * By default, `mode` is `IMAGE`, which scales uv coordinates to the
    * dimensions of the image. Calling `textureMode(IMAGE)` applies the default.
@@ -3134,7 +3121,9 @@ function material(p5, fn){
     this._renderer.states.setValue('curAmbientColor', color._array);
     this._renderer.states.setValue('_useNormalMaterial', false);
     this._renderer.states.setValue('enableLighting', true);
-    this._renderer.states.setValue('fillColor', true);
+    if (!this._renderer.states.fillColor) {
+      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
+    }
     return this;
   };
 
@@ -3803,25 +3792,25 @@ function material(p5, fn){
     this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.strokeShader = function(s) {
     this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.imageShader = function(s) {
     this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.resetShader = function() {
     this.states.setValue('userFillShader', null);
     this.states.setValue('userStrokeShader', null);
     this.states.setValue('userImageShader', null);
-  }
+  };
 
   RendererGL.prototype.texture = function(tex) {
     this.states.setValue('drawMode', constants.TEXTURE);
@@ -3838,7 +3827,7 @@ function material(p5, fn){
     this.states.setValue('curFillColor', [1, 1, 1, 1]);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
     this.states.setValue('strokeColor', null);
-  }
+  };
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
   // }
@@ -3854,12 +3843,12 @@ function material(p5, fn){
       shine = 1;
     }
     this.states.setValue('_useShininess', shine);
-  }
+  };
 
   RendererGL.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
     this.states.setValue('_useMetalness', metalMix);
-  }
+  };
 }
 
 export default material;

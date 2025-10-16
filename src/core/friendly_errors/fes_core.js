@@ -309,7 +309,7 @@ function fesCore(p5, fn){
      */
     p5.isPreloadSupported = function() {
       return false;
-    }
+    };
 
     /**
      * Checks capitalization for user defined functions.
@@ -348,7 +348,7 @@ function fesCore(p5, fn){
         // actual name with correct capitalization doesnt exist in context,
         // and if the user-defined symbol is of the type function
         if (
-          fxns[lowercase] &&
+          fxns.hasOwnProperty(lowercase) &&
           !context[fxns[lowercase]] &&
           typeof context[prop] === 'function'
         ) {

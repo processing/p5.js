@@ -64,7 +64,7 @@ class Texture {
     // used to determine if this texture might need constant updating
     // because it is a video or gif.
     this.isSrcMediaElement = false;
-      typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
+    typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
     this._videoPrevUpdateTime = 0;
     this.isSrcHTMLElement =
       typeof Element !== 'undefined' &&
@@ -84,6 +84,14 @@ class Texture {
 
     this.init(textureData);
     return this;
+  }
+
+  remove() {
+    if (this.glTex) {
+      const gl = this._renderer.GL;
+      gl.deleteTexture(this.glTex);
+      this.glTex = undefined;
+    }
   }
 
   _getTextureDataFromSource () {
@@ -114,8 +122,6 @@ class Texture {
    * Initializes common texture parameters, creates a gl texture,
    * tries to upload the texture for the first time if data is
    * already available.
-   * @private
-   * @method init
    */
   init (data) {
     const gl = this._renderer.GL;
@@ -172,7 +178,6 @@ class Texture {
    * easy to do so) and reuploads the texture if necessary. If it's not
    * possible or to expensive to do a calculation to determine wheter or
    * not the data has occurred, this method simply re-uploads the texture.
-   * @method update
    */
   update () {
     const data = this.src;
@@ -183,6 +188,7 @@ class Texture {
     // FramebufferTexture instances wrap raw WebGL textures already, which
     // don't need any extra updating, as they already live on the GPU
     if (this.isFramebufferTexture) {
+      this.src.update();
       return false;
     }
 
@@ -271,7 +277,6 @@ class Texture {
 
   /**
    * Binds the texture to the appropriate GL target.
-   * @method bindTexture
    */
   bindTexture () {
     // bind texture using gl context + glTarget and
@@ -284,7 +289,6 @@ class Texture {
 
   /**
    * Unbinds the texture from the appropriate GL target.
-   * @method unbindTexture
    */
   unbindTexture () {
     // unbind per above, disable texturing on glTarget
@@ -304,7 +308,6 @@ class Texture {
    * Sets how a texture is be interpolated when upscaled or downscaled.
    * Nearest filtering uses nearest neighbor scaling when interpolating
    * Linear filtering uses WebGL's linear scaling when interpolating
-   * @method setInterpolation
    * @param {String} downScale Specifies the texture filtering when
    *                           textures are shrunk. Options are LINEAR or NEAREST
    * @param {String} upScale Specifies the texture filtering when
@@ -337,7 +340,6 @@ class Texture {
    * when their uv's go outside of the 0 - 1 range. There are three options:
    * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
    * is a power of two size (128, 256, 512, 1024, etc.).
-   * @method setWrapMode
    * @param {String} wrapX Controls the horizontal texture wrapping behavior
    * @param {String} wrapY Controls the vertical texture wrapping behavior
    */

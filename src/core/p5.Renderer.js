@@ -4,6 +4,16 @@
  * @for p5
  */
 
+/**
+ * `pInst` may be:
+ *
+ *  The main sketch-wide `p5` instance (global canvas), or
+ *  an off-screen `p5.Graphics` wrapper.
+ *
+ * Therefore a renderer must only call properties / methods that exist
+ * on both objects.
+ */
+
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
@@ -43,7 +53,10 @@ class Renderer {
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
     bezierOrder: 3,
-    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
     textWrap: constants.WORD,
 
     // added v2.0
@@ -53,7 +66,7 @@ class Renderer {
     lineHeight: constants.NORMAL,
     fontVariant: constants.NORMAL,
     direction: 'inherit'
-  }
+  };
 
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
@@ -74,7 +87,7 @@ class Renderer {
     this.states = new States(Renderer.states);
 
     this.states.strokeColor = new Color([0, 0, 0]);
-    this.states.fillColor = new Color([255, 255, 255]);
+    this.states.fillColor = new Color([1, 1, 1]);
 
     this._pushPopStack = [];
     // NOTE: can use the length of the push pop stack instead
@@ -140,7 +153,8 @@ class Renderer {
 
   bezierVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.bezierVertex(position, textureCoordinates);
@@ -168,7 +182,8 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.splineVertex(position, textureCoordinates);
@@ -184,6 +199,7 @@ class Renderer {
 
   beginShape(...args) {
     this.currentShape.reset();
+    this.updateShapeVertexProperties();
     this.currentShape.beginShape(...args);
   }
 
@@ -201,15 +217,49 @@ class Renderer {
   }
 
   drawShape(shape, count) {
-    throw new Error('Unimplemented')
+    throw new Error('Unimplemented');
   }
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.vertex(position, textureCoordinates);
+  }
+
+  bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
+    const oldOrder = this._pInst.bezierOrder();
+    this._pInst.bezierOrder(oldOrder);
+    this._pInst.beginShape();
+    this._pInst.bezierVertex(x1, y1);
+    this._pInst.bezierVertex(x2, y2);
+    this._pInst.bezierVertex(x3, y3);
+    this._pInst.bezierVertex(x4, y4);
+    this._pInst.endShape();
+    return this;
+  }
+
+  spline(...args) {
+    if (args.length === 2 * 4) {
+      const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1);
+      this._pInst.splineVertex(x2, y2);
+      this._pInst.splineVertex(x3, y3);
+      this._pInst.splineVertex(x4, y4);
+      this._pInst.endShape();
+    } else if (args.length === 3 * 4) {
+      const [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4] = args;
+      this._pInst.beginShape();
+      this._pInst.splineVertex(x1, y1, z1);
+      this._pInst.splineVertex(x2, y2, z2);
+      this._pInst.splineVertex(x3, y3, z3);
+      this._pInst.splineVertex(x4, y4, z4);
+      this._pInst.endShape();
+    }
+    return this;
   }
 
   beginClip(options = {}) {
@@ -301,13 +351,13 @@ class Renderer {
   }
 
   getCommonVertexProperties() {
-    return {}
+    return {};
   }
 
   getSupportedIndividualVertexProperties() {
     return {
-      textureCoordinates: false,
-    }
+      textureCoordinates: false
+    };
   }
 
   updateShapeProperties(modified) {
@@ -321,7 +371,7 @@ class Renderer {
 
   updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    if (!modified || Object.keys(modified).some((k) => k in props)) {
+    if (!modified || Object.keys(modified).some(k => k in props)) {
       const shape = this.currentShape;
       for (const key in props) {
         shape[key](props[key]);
@@ -345,6 +395,7 @@ function renderer(p5, fn){
    * @param {HTMLElement} elt DOM node that is wrapped
    * @param {p5} [pInst] pointer to p5 instance
    * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
+   * @private
    */
   p5.Renderer = Renderer;
 }
@@ -352,6 +403,7 @@ function renderer(p5, fn){
 /**
  * Helper fxn to measure ascent and descent.
  * Adapted from http://stackoverflow.com/a/25355178
+ * @private
  */
 function calculateOffset(object) {
   let currentLeft = 0,

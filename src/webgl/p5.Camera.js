@@ -41,6 +41,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -68,7 +71,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -119,7 +122,7 @@ class Camera {
    *   cam.setPosition(x, -400, 800);
    *
    *   // Display the value of eyeX, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 55);
+   *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -153,6 +156,9 @@ class Camera {
    *   // Point the camera at the origin.
    *   cam.lookAt(0, 0, 0);
    *
+   *   // Set the camera.
+   *   setCamera(cam);
+   *
    *   describe(
    *     'A white cube on a gray background. The text "eyeY: -400" is written in black beneath it.'
    *   );
@@ -174,7 +180,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeX: ${round(cam.eyeY)}`, 0, 55);
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -191,6 +197,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -225,7 +234,7 @@ class Camera {
    *   cam.setPosition(0, y, 800);
    *
    *   // Display the value of eyeY, rounded to the nearest integer.
-   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 55);
+   *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -252,6 +261,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -280,7 +292,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -297,6 +309,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -331,7 +346,7 @@ class Camera {
    *   cam.setPosition(0, -400, z);
    *
    *   // Display the value of eyeZ, rounded to the nearest integer.
-   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 55);
+   *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -360,6 +375,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -387,7 +405,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -404,6 +422,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -438,7 +459,7 @@ class Camera {
    *   cam.lookAt(x, 20, -30);
    *
    *   // Display the value of centerX, rounded to the nearest integer.
-   *   text(`centerX: ${round(cam.centerX)}`, 0, 55);
+   *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -467,6 +488,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -494,7 +518,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -511,6 +535,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right.
    *   cam.setPosition(100, -400, 800);
@@ -545,7 +572,7 @@ class Camera {
    *   cam.lookAt(10, y, -30);
    *
    *   // Display the value of centerY, rounded to the nearest integer.
-   *   text(`centerY: ${round(cam.centerY)}`, 0, 55);
+   *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -574,6 +601,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -601,7 +631,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -652,7 +682,7 @@ class Camera {
    *   cam.lookAt(10, 20, z);
    *
    *   // Display the value of centerZ, rounded to the nearest integer.
-   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 55);
+   *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -681,6 +711,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -707,7 +740,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -724,6 +757,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -757,7 +793,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, x, 1, 0);
    *
    *   // Display the value of upX, rounded to the nearest tenth.
-   *   text(`upX: ${round(cam.upX, 1)}`, 0, 55);
+   *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -786,6 +822,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -812,7 +851,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -829,6 +868,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -862,7 +904,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, 0, y, 0);
    *
    *   // Display the value of upY, rounded to the nearest tenth.
-   *   text(`upY: ${round(cam.upY, 1)}`, 0, 55);
+   *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -891,6 +933,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
    *   // Set its "up" vector: (0, 1, 0).
@@ -917,7 +962,7 @@ class Camera {
    *   fill(0);
    *
    *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -934,6 +979,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-right: (100, -400, 800)
    *   // Point it at the origin: (0, 0, 0)
@@ -967,7 +1015,7 @@ class Camera {
    *   cam.camera(100, -400, 800, 0, 0, 0, 0, 1, z);
    *
    *   // Display the value of upZ, rounded to the nearest tenth.
-   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 55);
+   *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
    * </code>
    * </div>
@@ -1187,12 +1235,10 @@ class Camera {
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
-    /* eslint-disable indent */
     this.projMatrix.set(f / aspect, 0, 0, 0,
       0, -f * this.yScale, 0, 0,
       0, 0, (far + near) * nf, -1,
       0, 0, (2 * far * near) * nf, 0);
-    /* eslint-enable indent */
 
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -1376,12 +1422,12 @@ class Camera {
     const ty = -(top + bottom) / h;
     const tz = -(far + near) / d;
     this.projMatrix = new Matrix(4);
-    /* eslint-disable indent */
+
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
       0, 0, z, 0,
       tx, ty, tz, 1);
-    /* eslint-enable indent */
+
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
       this._renderer.states.uPMatrix.set(this.projMatrix);
@@ -1514,12 +1560,12 @@ class Camera {
 
     this.projMatrix = new Matrix(4);
 
-    /* eslint-disable indent */
+
     this.projMatrix.set(x, 0, 0, 0,
       0, -y, 0, 0,
       tx, ty, tz, -1,
       0, 0, z, 0);
-    /* eslint-enable indent */
+
 
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -1551,13 +1597,11 @@ class Camera {
     const rotation = new Matrix(4); // TODO Maybe pass p5
     rotation.rotate4x4(this._renderer._pInst._toRadians(a), x, y, z);
 
-    /* eslint-disable max-len */
     const rotatedCenter = [
       centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
       centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
       centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]
     ];
-    /* eslint-enable max-len */
 
     // add eye position back into center
     rotatedCenter[0] += this.eyeX;
@@ -1605,6 +1649,9 @@ class Camera {
    *   normalMaterial();
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    * }
    *
    * function draw() {
@@ -1684,6 +1731,9 @@ class Camera {
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -1745,6 +1795,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -1808,6 +1861,9 @@ class Camera {
    *
    *   // Create a p5.Camera object.
    *   cam = createCamera();
+   *
+   *   // Set the camera
+   *   setCamera(cam);
    *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
@@ -2083,12 +2139,12 @@ class Camera {
     // the camera affects the model view matrix, insofar as it
     // inverse translates the world to the eye position of the camera
     // and rotates it.
-    /* eslint-disable indent */
+
     this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
       local.x[1], local.y[1], local.z[1], 0,
       local.x[2], local.y[2], local.z[2], 0,
       0, 0, 0, 1);
-    /* eslint-enable indent */
+
 
     const tx = -eyeX;
     const ty = -eyeY;
@@ -2134,6 +2190,9 @@ class Camera {
    *   // Point it at the origin.
    *   cam.lookAt(0, 0, 0);
    *
+   *   // Set the camera.
+   *   setCamera(cam);
+   *
    *   describe(
    *     'A white cube drawn against a gray background. The cube appears to move when the user presses certain keys.'
    *   );
@@ -2144,31 +2203,29 @@ class Camera {
    *
    *   // Move the camera along its "local" axes
    *   // when the user presses certain keys.
-   *   if (keyIsPressed === true) {
    *
-   *     // Move horizontally.
-   *     if (keyCode === LEFT_ARROW) {
-   *       cam.move(-1, 0, 0);
-   *     }
-   *     if (keyCode === RIGHT_ARROW) {
-   *       cam.move(1, 0, 0);
-   *     }
+   *   // Move horizontally.
+   *   if (keyIsDown(LEFT_ARROW)) {
+   *     cam.move(-1, 0, 0);
+   *   }
+   *   if (keyIsDown(RIGHT_ARROW)) {
+   *     cam.move(1, 0, 0);
+   *   }
    *
-   *     // Move vertically.
-   *     if (keyCode === UP_ARROW) {
-   *       cam.move(0, -1, 0);
-   *     }
-   *     if (keyCode === DOWN_ARROW) {
-   *       cam.move(0, 1, 0);
-   *     }
+   *   // Move vertically.
+   *   if (keyIsDown(UP_ARROW)) {
+   *     cam.move(0, -1, 0);
+   *   }
+   *   if (keyIsDown(DOWN_ARROW)) {
+   *     cam.move(0, 1, 0);
+   *   }
    *
-   *     // Move in/out of the screen.
-   *     if (key === 'i') {
-   *       cam.move(0, 0, -1);
-   *     }
-   *     if (key === 'o') {
-   *       cam.move(0, 0, 1);
-   *     }
+   *   // Move in/out of the screen.
+   *   if (keyIsDown('i')) {
+   *     cam.move(0, 0, -1);
+   *   }
+   *   if (keyIsDown('o')) {
+   *     cam.move(0, 0, 1);
    *   }
    *
    *   // Draw the box.
@@ -2387,6 +2444,9 @@ class Camera {
    *   // Copy cam1's configuration.
    *   cam2.set(cam1);
    *
+   *   // Set the camera.
+   *   setCamera(cam2);
+   *
    *   describe(
    *     'A white cube drawn against a gray background. The camera slowly moves forward. The camera resets when the user double-clicks.'
    *   );
@@ -2519,16 +2579,16 @@ class Camera {
     // and interpolate the elements of the projection matrix.
     // Use logarithmic interpolation for interpolation.
     if (this.projMatrix.mat4[15] !== 0) {
-        this.projMatrix.setElement(
-          0,
-          cam0.projMatrix.mat4[0] *
+      this.projMatrix.setElement(
+        0,
+        cam0.projMatrix.mat4[0] *
             Math.pow(cam1.projMatrix.mat4[0] / cam0.projMatrix.mat4[0], amt)
-        );
-        this.projMatrix.setElement(
-          5,
-          cam0.projMatrix.mat4[5] *
+      );
+      this.projMatrix.setElement(
+        5,
+        cam0.projMatrix.mat4[5] *
             Math.pow(cam1.projMatrix.mat4[5] / cam0.projMatrix.mat4[5], amt)
-        );
+      );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
         this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -3395,7 +3455,7 @@ function camera(p5, fn){
     if (!(this._renderer instanceof RendererGL)) {
       throw new Error('linePerspective() must be called in WebGL mode.');
     }
-    this._renderer.linePerspective(enable);
+    return this._renderer.linePerspective(enable);
   };
 
 
@@ -3622,8 +3682,7 @@ function camera(p5, fn){
   };
 
   /**
-   * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and sets it
-   * as the current (active) camera.
+   * Creates a new <a href="#/p5.Camera">p5.Camera</a> object.
    *
    * The new camera is initialized with a default position `(0, 0, 800)` and a
    * default perspective projection. Its properties can be controlled with
@@ -3803,6 +3862,9 @@ function camera(p5, fn){
    *   // Create a p5.Camera object.
    *   cam = createCamera();
    *
+   *   // Set the camera
+   *   setCamera(cam);
+   *
    *   // Place the camera at the top-center.
    *   cam.setPosition(0, -400, 800);
    *
@@ -3885,11 +3947,11 @@ function camera(p5, fn){
 
   RendererGL.prototype.camera = function(...args) {
     this.states.curCamera.camera(...args);
-  }
+  };
 
   RendererGL.prototype.perspective = function(...args) {
     this.states.curCamera.perspective(...args);
-  }
+  };
 
   RendererGL.prototype.linePerspective = function(enable) {
     if (enable !== undefined) {
@@ -3899,15 +3961,15 @@ function camera(p5, fn){
       // If no argument is provided, return the current value
       return this.states.curCamera.useLinePerspective;
     }
-  }
+  };
 
   RendererGL.prototype.ortho = function(...args) {
     this.states.curCamera.ortho(...args);
-  }
+  };
 
   RendererGL.prototype.frustum = function(...args) {
     this.states.curCamera.frustum(...args);
-  }
+  };
 
   RendererGL.prototype.createCamera = function() {
     // compute default camera settings, then set a default camera
@@ -3916,7 +3978,7 @@ function camera(p5, fn){
     _cam._setDefaultCamera();
 
     return _cam;
-  }
+  };
 
   RendererGL.prototype.setCamera = function(cam) {
     this.states.setValue('curCamera', cam);
@@ -3926,7 +3988,7 @@ function camera(p5, fn){
     this.states.uPMatrix.set(cam.projMatrix);
     this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
-  }
+  };
 }
 
 export default camera;

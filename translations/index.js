@@ -1,4 +1,4 @@
-import en from './en/translation';
+import en from './en/translation.json';
 
 // Only one language is imported above. This is intentional as other languages
 // will be hosted online and then downloaded whenever needed

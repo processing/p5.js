@@ -41,6 +41,7 @@ function pixels(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
+   *   background(128);
    *
    *   // Load the pixels array.
    *   loadPixels();
@@ -344,8 +345,6 @@ function pixels(p5, fn){
    * @param  {Integer} dh
    */
   fn.copy = function(...args) {
-    // p5._validateParameters('copy', args);
-
     let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if (args.length === 9) {
       srcImage = args[0];

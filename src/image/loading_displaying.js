@@ -66,9 +66,9 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads.
-   *   loadImage('assets/laDefense.jpg', handleImage);
+   *   await loadImage('assets/laDefense.jpg', handleImage);
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
@@ -82,10 +82,10 @@ function loadingDisplaying(p5, fn){
    *
    * <div>
    * <code>
-   * function setup() {
+   * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
-   *   loadImage('assets/laDefense.jpg', handleImage, handleError);
+   *   await loadImage('assets/laDefense.jpg', handleImage, handleError);
    * }
    *
    * // Display the image.
@@ -300,7 +300,11 @@ function loadingDisplaying(p5, fn){
     // get the project's framerate
     let _frameRate = this._targetFrameRate;
     // if it is undefined or some non useful value, assume it's 60
-    if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    if (
+      _frameRate === Infinity ||
+      _frameRate === undefined ||
+      _frameRate === 0
+    ) {
       _frameRate = 60;
     }
 
@@ -353,7 +357,9 @@ function loadingDisplaying(p5, fn){
       // if we have a WEBGL context, initialize the pixels array
       // and the gl context to use them inside the loop
       gl = this.drawingContext;
-      pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
     }
 
     // stop the loop since we are going to manually redraw
@@ -796,7 +802,12 @@ function loadingDisplaying(p5, fn){
    */
   function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
     if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+      const { x, y, w, h } = _imageCover(
+        xAlign, yAlign,
+        dw, dh,
+        sx, sy,
+        sw, sh
+      );
       sx = x;
       sy = y;
       sw = w;
@@ -903,7 +914,7 @@ function loadingDisplaying(p5, fn){
    * are set to `CENTER`.
    *
    * @method image
-   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img image to display.
+   * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics} img image to display.
    * @param  {Number}   x x-coordinate of the top-left corner of the image.
    * @param  {Number}   y y-coordinate of the top-left corner of the image.
    * @param  {Number}   [width]  width to draw the image.
@@ -995,7 +1006,7 @@ function loadingDisplaying(p5, fn){
    *
    * async function setup() {
    *   // Load the image.
-   *   img = await loadImage('assets/laDefense50.jpg');
+   *   img = await loadImage('assets/laDefense50.png');
    *
    *   createCanvas(100, 100);
    *
@@ -1098,7 +1109,11 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
+    let vals = canvas.modeAdjust(
+      _dx, _dy,
+      _dw, _dh,
+      this._renderer.states.imageMode
+    );
     vals = _imageFit(
       fit,
       xAlign,
@@ -1202,7 +1217,7 @@ function loadingDisplaying(p5, fn){
    * <div>
    * <code>
    * let img;
-   **
+   *
    * async function setup() {
    *   // Load the image.
    *   img = await loadImage('assets/laDefense.jpg');

@@ -408,7 +408,8 @@ function creatingReading(p5, fn){
     return new Color(
       arg,
       this._renderer.states.colorMode,
-      this._renderer.states.colorMaxes[this._renderer.states.colorMode]
+      this._renderer.states.colorMaxes[this._renderer.states.colorMode],
+      { clamp: true }
     );
   };
 
@@ -1042,8 +1043,25 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.hue = function(c) {
-    // p5._validateParameters('hue', arguments);
-    return this.color(c)._getHue();
+    let colorMode = HSL;
+    let i = 0;
+
+    if(
+      this._renderer.states.colorMode === HSB ||
+      this._renderer.states.colorMode === HSL
+    ){
+      colorMode = this._renderer.states.colorMode;
+    }else if(
+      this._renderer.states.colorMode === LCH ||
+      this._renderer.states.colorMode === OKLCH
+    ){
+      colorMode = this._renderer.states.colorMode;
+      i = 2;
+    }
+
+    return this.color(c)._getHue(
+      this._renderer.states.colorMaxes[colorMode][i]
+    );
   };
 
   /**
@@ -1219,8 +1237,10 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.saturation = function(c) {
-    // p5._validateParameters('saturation', arguments);
-    return this.color(c)._getSaturation();
+    const colorMode = (this._renderer.states.colorMode === HSB) ? HSB : HSL;
+    return this.color(c)._getSaturation(
+      this._renderer.states.colorMaxes[colorMode][1]
+    );
   };
 
   /**
@@ -1364,8 +1384,9 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.brightness = function(c) {
-    // p5._validateParameters('brightness', arguments);
-    return this.color(c)._getBrightness();
+    return this.color(c)._getBrightness(
+      this._renderer.states.colorMaxes.hsb[2]
+    );
   };
 
   /**
@@ -1509,8 +1530,9 @@ function creatingReading(p5, fn){
    * </div>
    */
   fn.lightness = function(c) {
-    // p5._validateParameters('lightness', arguments);
-    return this.color(c)._getLightness();
+    return this.color(c)._getLightness(
+      this._renderer.states.colorMaxes.hsl[2]
+    );
   };
 
   /**

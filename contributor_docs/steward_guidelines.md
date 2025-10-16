@@ -2,11 +2,16 @@
 
 # Steward Guidelines
 
-Whether you have just joined us as a steward, are a seasoned maintainer of p5.js, or are somewhere in between, this guide contains information as well as tips and tricks that will help you effectively contribute to p5.js. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, you'll find what you need in this guide to p5.js stewardship. If you are not sure what to expect from stewards, or if you are considering how to volunteer or get started as a steward, read on!
 
 
 ## Table of Contents
 
+- [Stewardship](#stewardship)
+  - [Community Care](#community-care)
+  - [Areas](#areas)
+  - [Becoming a Steward](#becoming-a-steward)
+  - [Getting Started with Stewardship](#getting-started-with-stewardship)
 - [Issues](#issues)
   - [Bug report](#bug-report)
   - [Feature request](#feature-request)
@@ -28,6 +33,63 @@ Whether you have just joined us as a steward, are a seasoned maintainer of p5.js
 
 ---
 
+## Stewardship
+
+### Community Care
+
+An open source ethos includes [accessibility, education, collaboration, transparency, and agency](https://www.opensourceethos.net/). To live and practice these values while we write code together needs a lot of community care. These are the community care practices that are part of our definition of stewardship:
+
+1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
+2. Helping to **facilitate feature discussions** and resolve technical disagreements. For example, this means making connections to other past discussion, or offering input from prior relevant experience. Suggesting features or working on them is contribution, rather than stewardship.
+3. Participating in releases of the p5.js software through **supporting** bug fixing and feature completion. For example, this means guiding other contributors and reviewing their PRs. Fixing bugs is contribution, rather than stewardship.
+
+The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+
+Everyone is invited to help steward the community when they can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
+
+1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
+2. Maintainers are also able to merge PRs and admin other parts of the codebase.
+
+Stewards can also be contributors: they can make Issues and PRs as contributors, while they also take on responsibility, when they are stewarding a particular area, to comment on issues and do code reviews, especially when tagged by other contributors to help with discussion and review.
+
+As a contributor, you can check the current stewards in the p5.js repository's README file and tag relevant stewards - but please be mindful of our contributor guidelines, which emphasize patience and mindfulness that most of the technical work on an open-source project is volunteer.
+
+As a steward, we hope that you regularly chime in on code reviews on Issues or PRs that you did not make, if they are in your area and if you are able to provide helpful guidance!
+
+### Areas
+
+There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
+
+- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader support via API like `describe(..)` as well as accessibility support on the reference website
+- **Core**: Refers to core p5.js API, including rendering and environment
+- **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
+- **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Includes Color, ColorMode, accessibility improvements around color usage
+- **Typography**: Refers to all topics on handling text and font
+- **Math**: Includes both external Math API and internal performance improvements
+- **Shapes**: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
+- **Maintainers**: This group can merge PRs
+- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
+- **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+
+These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
+
+### Becoming a Steward
+
+There are two ways to become a steward:
+
+1. _Nomination_ by maintainers or other stewards, such as in conversation over Discord, Discourse, or GitHub.
+2. _Application_ by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
+
+To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor releases (e.g., 2.1.0 or 1.11.0 - when the middle number changes). These are not as frequent as patches (e.g., 2.0.3 to 2.0.4 - when the rightmost number changes), and in practice this means that stewards are expected to be active every 4-6 months or so, supporting other contributors through discussion or code review - not necessarily writing code. To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
+
+### Getting Started with Stewardship
+
+1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the the p5.js [access statement](access.md) as a steward.
+2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
+3. Join the [p5.js Discord](https://discord.com/invite/SHQ8dH25r9)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
 
 ## Issues
 
@@ -74,12 +136,12 @@ Feature request issues should use the "New Feature Request" issue template. The 
    - Does the feature fit into the project scope and [design principles](./contributor_guidelines.md#software-design-principles) of p5.js?
      - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
      - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
-     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as as an addon library.
+     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as an addon library.
      - If it is unclear whether or not it fits, it can be a good idea to suggest making an addon library as a proof-of-concept. This helps give users a way to use the feature, provides a much more concrete example of its usage and importance, and does not necessarily need to be as complete of a solution as a fully integrated feature. It can be integrated into the core of p5.js later if appropriate.
    - Is the feature likely to cause a breaking change?
      - Will it conflict with existing p5.js functions and variables?
      - Will it conflict with typical sketches already written for p5.js?
-     - Features that are likely to cause conflicts such as  the ones above  are  considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
+     - Features that are likely to cause conflicts such as the ones above are considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
    - Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native JavaScript code, or existing easy-to-use libraries?
      - For example, instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native JavaScript `["Hello", "world!"].join()` should be preferred instead.
 3. If the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin toward a PR. The PR review process for new features is documented below.
@@ -119,7 +181,7 @@ Almost all code contributions to the p5.js repositories happen through pull requ
 
 ### Simple fix
 
-Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure  that the automated CI test passes.
+Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure that the automated CI test passes.
 
 ![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
 
@@ -223,7 +285,7 @@ grunt.registerTask('build', [
 ]);
 ```
 
-Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all  similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
+Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all have similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
 
 - `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
 - `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
