@@ -956,8 +956,9 @@ let matrix = [[1, 0, 0],
 
 // Good.
 let matrix = [[1, 0, 0],
-              [0, 1, 0],
-              [0, 0, 1]];
+  [0, 1, 0],
+  [0, 0, 1],
+];
 
 // Also good.
 let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
@@ -1030,28 +1031,28 @@ function drawSpiral(length, angle = 90) {
 ```javascript
 // Bad.
 function setup() {
-  loadImage("assets/moonwalk.jpg", function (img) {
+  loadImage('assets/moonwalk.jpg', function (img) {
     image(img, 0, 0);
   });
 }
 
 // Good.
 function setup() {
-  loadImage("assets/moonwalk.jpg", (img) => {
+  loadImage('assets/moonwalk.jpg', (img) => {
     image(img, 0, 0);
   });
 }
 
 // Bad.
 function preload() {
-  loadImage("assets/moonwalk.jpg", (img) => {
+  loadImage('assets/moonwalk.jpg', (img) => {
     // Complex preprocessing...
   });
 }
 
 // Good.
 function preload() {
-  loadImage("assets/moonwalk.jpg", processImage);
+  loadImage('assets/moonwalk.jpg', processImage);
 }
 
 function processImage(img) {
@@ -1086,7 +1087,7 @@ function processImage(img) {
 
 ```javascript
 // Bad.
-[1, 2, 3].map((number) => number * number);
+[1, 2, 3].map(number => number * number);
 
 // Good.
 [1, 2, 3].map((number) => number * number);
