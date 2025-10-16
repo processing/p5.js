@@ -10,12 +10,14 @@ If you want to use p5.js with a screen reader, visit the [Using p5.js with a Scr
 
 The canvas HTML element is a grid of pixels. It doesn’t provide any screen reader-accessible information about the shapes drawn on it. p5.js has several functions that make the canvas more accessible to screen readers by providing [fallback text](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_usage#accessible_content) descriptions. I’ll describe some of the details around the implementation of these functions.
 
+
 ## Prerequisites
 
 - p5.js foundation
 - Contributor guidelines with local development setup
 - Looking inside p5.js
 - How to label your p5.js code
+
 
 ## Library-generated accessible outputs for basic shapes
 
@@ -58,27 +60,13 @@ Each element can be selected to get more details. A table of elements is also pr
 <summary>This generates the following HTML:</summary>
 
 ```html
-<canvas
-  id="defaultCanvas0"
-  class="p5Canvas"
-  style="width: 400px; height: 400px;"
-  width="400"
-  height="400"
->
-  <div
-    id="defaultCanvas0accessibleOutput"
-    role="region"
-    aria-label="Canvas Outputs"
-  >
+<canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
+  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
     <div id="defaultCanvas0textOutput">
       Text Output
-      <div
-        id="defaultCanvas0textOutputSummary"
-        aria-label="text output summary"
-      >
+      <div id="defaultCanvas0textOutputSummary" aria-label="text output summary">
         <p id="defaultCanvas0textOutput_summary">
-          Your output is a, 400 by 400 pixels, white canvas containing the
-          following 2 shapes:
+          Your output is a, 400 by 400 pixels, white canvas containing the following 2 shapes:
         </p>
         <ul id="defaultCanvas0textOutput_list">
           <li>
@@ -86,25 +74,21 @@ Each element can be selected to get more details. A table of elements is also pr
             left, covering 1% of the canvas.
           </li>
           <li>
-            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at
-            bottom right, covering 2% of the canvas.
+            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at bottom right, covering 2% of the canvas.
           </li>
         </ul>
       </div>
-      <table
-        id="defaultCanvas0textOutput_shapeDetails"
-        summary="text output shape details"
-      >
+      <table id="defaultCanvas0textOutput_shapeDetails" summary="text output shape details">
         <tbody>
           <tr id="defaultCanvas0textOutputshape0">
             <th>orange circle</th>
             <td>location = top left</td>
-            <td>area = 1%</td>
+            <td> area = 1%</td>
           </tr>
           <tr id="defaultCanvas0textOutputshape1">
             <th>fuchsia square</th>
             <td>location = bottom right</td>
-            <td>area = 2%</td>
+            <td> area = 2%</td>
           </tr>
         </tbody>
       </table>
