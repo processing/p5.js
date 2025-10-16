@@ -513,7 +513,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 ```
@@ -871,7 +871,7 @@ function getProp(prop) {
   return turtle[prop];
 }
 
-let turtleName = getProp("name");
+let turtleName = getProp('name');
 ```
 
 - Don't use leading commas.
@@ -879,8 +879,8 @@ let turtleName = getProp("name");
 ```javascript
 // Bad.
 let mathematician = {
-  firstName: "Ada",
-  lastName: "Lovelace",
+  firstName: 'Ada'
+  , lastName: 'Lovelace',
 };
 
 // Good.
