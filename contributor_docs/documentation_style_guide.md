@@ -513,7 +513,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-
+  
   return false;
 }
 ```
