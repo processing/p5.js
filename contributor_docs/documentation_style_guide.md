@@ -498,7 +498,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 
@@ -576,7 +576,7 @@ let essay = 'You see us as you want to see us: in the simplest terms, in the mos
 let name = 'Dave';
 
 // Bad.
-text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name,  0,  0);
+text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name, 0, 0);
 
 // Good.
 text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
