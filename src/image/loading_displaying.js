@@ -256,7 +256,8 @@ function loadingDisplaying(p5, fn){
       units: 'seconds',
       silent: false,
       notificationDuration: 0,
-      notificationID: 'progressBar'
+      notificationID: 'progressBar',
+      reset: true
     }
   ) {
     // validate parameters
@@ -273,7 +274,7 @@ function loadingDisplaying(p5, fn){
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-
+     const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -324,11 +325,19 @@ function loadingDisplaying(p5, fn){
     // that duration translates to
     const nFrames = units === 'seconds' ? duration * _frameRate : duration;
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
-    const totalNumberOfFrames = nFrames + nFramesDelay;
 
     // initialize variables for the frames processing
-    let frameIterator = nFramesDelay;
-    this.frameCount = frameIterator;
+    let frameIterator;
+    let totalNumberOfFrames;
+    
+    if (resetAnimation) {
+      frameIterator = nFramesDelay;
+      this.frameCount = frameIterator;
+      totalNumberOfFrames = nFrames + nFramesDelay;
+    } else {
+      frameIterator = this.frameCount + nFramesDelay;
+      totalNumberOfFrames = frameIterator + nFrames;
+    }
 
     const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
@@ -371,7 +380,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-    await Promise.resolve();
+   await new Promise(requestAnimationFrame)
 
     while (frameIterator < totalNumberOfFrames) {
       /*
@@ -381,7 +390,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
-
+      await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
