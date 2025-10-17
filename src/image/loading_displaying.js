@@ -327,8 +327,9 @@ function loadingDisplaying(p5, fn){
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
 
     // initialize variables for the frames processing
- let frameIterator;
+    let frameIterator;
     let totalNumberOfFrames;
+    
     if (resetAnimation) {
       frameIterator = nFramesDelay;
       this.frameCount = frameIterator;
@@ -337,7 +338,6 @@ function loadingDisplaying(p5, fn){
       frameIterator = this.frameCount + nFramesDelay;
       totalNumberOfFrames = frameIterator + nFrames;
     }
-
 
     const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
@@ -390,7 +390,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
- await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
