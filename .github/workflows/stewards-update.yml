@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
