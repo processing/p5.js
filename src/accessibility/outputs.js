@@ -37,6 +37,15 @@ import p5 from '../core/main';
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
+ * `textOutput()` generates descriptions in English only. Text drawn with
+ * <a href="#/p5/text">text()</a> is not described. Shapes created with
+ * <a href="#/p5/beginShape">beginShape()</a> are not described. WEBGL mode
+ * and 3D shapes are not supported.
+ *
+ * Use <a href="#/p5/describe">describe()</a> and
+ * <a href="#/p5/describeElement">describeElement()</a> for more control
+ * over canvas descriptions.
+ *
  * @method textOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
@@ -82,6 +91,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description.
  *   textOutput();
@@ -102,6 +115,10 @@ import p5 from '../core/main';
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the text description and
  *   // display it for debugging.
@@ -172,6 +189,15 @@ p5.prototype.textOutput = function(display) {
  * <a href="https://p5js.org/tutorials/writing-accessible-canvas-descriptions/">Writing accessible canvas descriptions</a>
  * to learn more about making sketches accessible.
  *
+ * `gridOutput()` generates descriptions in English only. Text drawn with
+ * <a href="#/p5/text">text()</a> is not described. Shapes created with
+ * <a href="#/p5/beginShape">beginShape()</a> are not described. WEBGL mode
+ * and 3D shapes are not supported.
+ *
+ * Use <a href="#/p5/describe">describe()</a> and
+ * <a href="#/p5/describeElement">describeElement()</a> for more control
+ * over canvas descriptions.
+ *
  * @method gridOutput
  * @param  {Constant} [display] either FALLBACK or LABEL.
  *
@@ -217,6 +243,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description.
  *   gridOutput();
@@ -237,6 +267,10 @@ p5.prototype.textOutput = function(display) {
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
  * function draw() {
  *   // Add the grid description and
  *   // display it for debugging.
