@@ -1819,6 +1819,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.phongFrag,
           {
+            uniforms: {
+              'int uNoiseOctaves': () => this._pInst._getNoiseOctaves(),
+              'float uNoiseAmpFalloff': () => this._pInst._getNoiseAmpFalloff()
+            },
             vertex: {
               'void beforeVertex': '() {}',
               'vec3 getLocalPosition': '(vec3 position) { return position; }',
@@ -1887,6 +1891,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.normalFrag,
         {
+          uniforms: {
+            'int uNoiseOctaves': () => this._pInst._getNoiseOctaves(),
+            'float uNoiseAmpFalloff': () => this._pInst._getNoiseAmpFalloff()
+          },
           vertex: {
             'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
@@ -1922,6 +1930,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.basicFrag,
         {
+          uniforms: {
+            'int uNoiseOctaves': () => this._pInst._getNoiseOctaves(),
+            'float uNoiseAmpFalloff': () => this._pInst._getNoiseAmpFalloff()
+          },
           vertex: {
             'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
@@ -1981,6 +1993,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.pointFrag,
         {
+          uniforms: {
+            'int uNoiseOctaves': () => this._pInst._getNoiseOctaves(),
+            'float uNoiseAmpFalloff': () => this._pInst._getNoiseAmpFalloff()
+          },
           vertex: {
             'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
@@ -2013,6 +2029,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         this._webGL2CompatibilityPrefix('frag', 'mediump') +
         defaultShaders.lineFrag,
         {
+          uniforms: {
+            'int uNoiseOctaves': () => this._pInst._getNoiseOctaves(),
+            'float uNoiseAmpFalloff': () => this._pInst._getNoiseAmpFalloff()
+          },
           vertex: {
             'void beforeVertex': '() {}',
             'vec3 getLocalPosition': '(vec3 position) { return position; }',

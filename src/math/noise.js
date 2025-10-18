@@ -403,6 +403,22 @@ p5.prototype.noiseDetail = function(lod, falloff) {
 };
 
 /**
+ * @private
+ * Returns the current number of octaves used by noise().
+ */
+p5.prototype._getNoiseOctaves = function() {
+  return perlin_octaves;
+};
+
+/**
+ * @private
+ * Returns the current falloff factor used by noise().
+ */
+p5.prototype._getNoiseAmpFalloff = function() {
+  return perlin_amp_falloff;
+};
+
+/**
  * Sets the seed value for the <a href="#/p5/noise">noise()</a> function.
  *
  * By default, <a href="#/p5/noise">noise()</a> produces different results
