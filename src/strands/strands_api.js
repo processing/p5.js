@@ -121,6 +121,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
 
+    const hasNoiseUniforms = strandsContext.uniforms.some(u => u.name === 'uNoiseOctaves');
+    if (!hasNoiseUniforms) {
+      strandsContext.uniforms.push({
+        name: 'uNoiseOctaves',
+        typeInfo: DataType.int1,
+        defaultValue: () => p5._getNoiseOctaves()
+      });
+      strandsContext.uniforms.push({
+        name: 'uNoiseAmpFalloff',
+        typeInfo: DataType.float1,
+        defaultValue: () => p5._getNoiseAmpFalloff()
+      });
+    }
+
     strandsContext.vertexDeclarations.add(noiseGLSL);
     strandsContext.fragmentDeclarations.add(noiseGLSL);
     // Handle noise(x, y) as noise(vec2)
