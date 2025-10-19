@@ -101,6 +101,7 @@ Lead/Mentor Alumni
 | Friendly Errors | [@IIITM-Jay](https://github.com/IIITM-Jay) |
 | Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
 | Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
+| i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
 | i18n (ko) | [@hana-cho](https://github.com/hana-cho) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
@@ -1188,6 +1189,8 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/junseok44"><img src="https://avatars.githubusercontent.com/u/81099627?v=4?s=64" width="64px;" alt="JangJunseok"/><br /><sub><b>JangJunseok</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=junseok44" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://charlotte.fyi"><img src="https://avatars.githubusercontent.com/u/10366310?v=4?s=64" width="64px;" alt="charlotte 🌸"/><br /><sub><b>charlotte 🌸</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tychedelia" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/reshma045"><img src="https://avatars.githubusercontent.com/u/77575603?v=4?s=64" width="64px;" alt="Reshma R"/><br /><sub><b>Reshma R</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reshma045" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Somnath-Mishra"><img src="https://avatars.githubusercontent.com/u/120735604?v=4?s=64" width="64px;" alt="Somnath Mishra"/><br /><sub><b>Somnath Mishra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Somnath-Mishra" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ayushman1210"><img src="https://avatars.githubusercontent.com/u/138183570?v=4?s=64" width="64px;" alt="Ayushman"/><br /><sub><b>Ayushman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ayushman1210" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
