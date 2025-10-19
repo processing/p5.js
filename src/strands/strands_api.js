@@ -116,28 +116,28 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
   const originalNoise = fn.noise;
-  fn.noise = function (...args) {
+  const originalNoiseDetail = fn.noiseDetail;
+
+  strandsContext._noiseOctaves = null;
+  strandsContext._noiseAmpFalloff = null;
+
+  fn.noiseDetail = function (lod, falloff) {
     if (!strandsContext.active) {
-      return originalNoise.apply(this, args); // fallback to regular p5.js noise
+      return originalNoiseDetail.apply(this, arguments);
     }
 
-    const hasNoiseUniforms = strandsContext.uniforms.some(u => u.name === 'uNoiseOctaves');
-    if (!hasNoiseUniforms) {
-      strandsContext.uniforms.push({
-        name: 'uNoiseOctaves',
-        typeInfo: DataType.int1,
-        defaultValue: () => p5._getNoiseOctaves()
-      });
-      strandsContext.uniforms.push({
-        name: 'uNoiseAmpFalloff',
-        typeInfo: DataType.float1,
-        defaultValue: () => p5._getNoiseAmpFalloff()
-      });
+    strandsContext._noiseOctaves = lod;
+    strandsContext._noiseAmpFalloff = falloff;
+  };
+
+  fn.noise = function (...args) {
+    if (!strandsContext.active) {
+      return originalNoise.apply(this, args);
     }
 
     strandsContext.vertexDeclarations.add(noiseGLSL);
     strandsContext.fragmentDeclarations.add(noiseGLSL);
-    // Handle noise(x, y) as noise(vec2)
+
     let nodeArgs;
     if (args.length === 3) {
       nodeArgs = [fn.vec3(args[0], args[1], args[2])];
@@ -147,10 +147,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       nodeArgs = args;
     }
 
+    const octaves = strandsContext._noiseOctaves !== null
+      ? strandsContext._noiseOctaves
+      : p5._getNoiseOctaves();
+    const falloff = strandsContext._noiseAmpFalloff !== null
+      ? strandsContext._noiseAmpFalloff
+      : p5._getNoiseAmpFalloff();
+
+    nodeArgs.push(octaves);
+    nodeArgs.push(falloff);
+
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float3],
-        returnType: DataType.float1,
+        params: [DataType.float3, DataType.int1, DataType.float1],
+        returnType: DataType.float1
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
