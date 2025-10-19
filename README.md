@@ -101,6 +101,7 @@ Lead/Mentor Alumni
 | Friendly Errors | [@IIITM-Jay](https://github.com/IIITM-Jay) |
 | Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
 | Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
+| i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
 | i18n (ko) | [@hana-cho](https://github.com/hana-cho) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
