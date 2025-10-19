@@ -1191,6 +1191,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/reshma045"><img src="https://avatars.githubusercontent.com/u/77575603?v=4?s=64" width="64px;" alt="Reshma R"/><br /><sub><b>Reshma R</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reshma045" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Somnath-Mishra"><img src="https://avatars.githubusercontent.com/u/120735604?v=4?s=64" width="64px;" alt="Somnath Mishra"/><br /><sub><b>Somnath Mishra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Somnath-Mishra" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ayushman1210"><img src="https://avatars.githubusercontent.com/u/138183570?v=4?s=64" width="64px;" alt="Ayushman"/><br /><sub><b>Ayushman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ayushman1210" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://mannu.live"><img src="https://avatars.githubusercontent.com/u/117009138?v=4?s=64" width="64px;" alt="Manpreet Singh"/><br /><sub><b>Manpreet Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=MannuVilasara" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
