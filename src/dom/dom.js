@@ -4956,10 +4956,21 @@ class MediaElement extends p5.Element {
       this._frameOnCanvas = this._pInst.frameCount;
     }
   }
-  loadPixels(...args) {
-    this._ensureCanvas();
+ loadPixels(...args) {
+  this._ensureCanvas();
+
+  // ✅ use the current p5 instance’s renderer instead of global p5
+  if (this._pInst && this._pInst._renderer) {
+    return this._pInst._renderer.loadPixels(...args);
+  }
+
+  // fallback for old global mode (just in case)
+  if (typeof p5 !== 'undefined' && p5.Renderer2D && p5.Renderer2D.prototype) {
     return p5.Renderer2D.prototype.loadPixels.apply(this, args);
   }
+
+  throw new Error('p5 instance or renderer not available in MediaElement.loadPixels()');
+}
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
