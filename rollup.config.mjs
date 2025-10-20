@@ -36,60 +36,13 @@ const bundleSize = (name, sourcemap) => {
   });
 };
 
-const modules = ['math'];
-const generateModuleBuild = () => {
-  return modules.map(module => {
-    return {
-      input: `src/${module}/index.js`,
-      output: [
-        {
-          file: `./lib/p5.${module}.js`,
-          format: 'iife',
-          plugins: [
-            bundleSize(`p5.${module}.js`)
-          ]
-        },
-        {
-          file: `./lib/p5.${module}.min.js`,
-          format: 'iife',
-          sourcemap: 'hidden',
-          plugins: [
-            terser({
-              compress: {
-                global_defs: {
-                  IS_MINIFIED: true
-                }
-              },
-              format: {
-                comments: false
-              }
-            }),
-            bundleSize(`p5.${module}.min.js`)
-          ]
-        },
-        {
-          file: `./lib/p5.${module}.esm.js`,
-          format: 'esm',
-          plugins: [
-            bundleSize(`p5.${module}.esm.js`)
-          ]
-        }
-      ],
-      external: ['../core/main'],
-      plugins: [
-        ...plugins
-      ]
-    };
-  });
-};
-
 rmSync('./dist', {
   force: true,
   recursive: true
 });
 
 export default [
-  //// Library builds (IIFE and ESM) ////
+  // Library builds (IIFE and ESM) ////
   {
     input: 'src/app.js',
     output: [
@@ -137,7 +90,7 @@ export default [
       ...plugins
     ]
   },
-  //// Minified build ////
+  // Minified build ////
   {
     input: 'src/app.js',
     output: [
@@ -168,13 +121,13 @@ export default [
     plugins: [
       alias({
         entries: [
-          { find: './core/friendly_errors', replacement: './core/noop' }
+          { find: './friendly_errors', replacement: './core/noop' }
         ]
       }),
       ...plugins
     ]
   },
-  //// ESM source build ////
+  // ESM source build ////
   {
     input: Object.fromEntries(
       globSync('src/**/*.js').map(file => [
@@ -196,6 +149,4 @@ export default [
     external: /node_modules/,
     plugins
   }
-  // NOTE: comment to NOT build standalone math module
-  // ...generateModuleBuild()
 ];

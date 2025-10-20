@@ -1,4 +1,4 @@
-import validateParams from '../../../src/core/friendly_errors/param_validator.js';
+import validateParams from '../../../src/friendly_errors/param_validator.js';
 import * as constants from '../../../src/core/constants.js';
 
 suite('Validate Params', function () {

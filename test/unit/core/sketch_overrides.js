@@ -1,6 +1,6 @@
 import {
   verifierUtils
-} from '../../../src/core/friendly_errors/sketch_verifier.js';
+} from '../../../src/friendly_errors/sketch_verifier.js';
 
 suite('Sketch Verifier', function () {
   const mockP5 = {
