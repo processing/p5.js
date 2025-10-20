@@ -398,6 +398,13 @@
         []
       ]
     },
+    "registerAddon": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
     "createCanvas": {
       "overloads": [
         [

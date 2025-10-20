@@ -37,6 +37,11 @@ class Graphics {
     return this;
   }
 
+  // This is to correctly extend the p5.Element interface
+  get elt() {
+    return this.canvas;
+  }
+
   get deltaTime(){
     return this._pInst.deltaTime;
   }

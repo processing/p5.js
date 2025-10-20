@@ -751,6 +751,7 @@ export default p5;
  * which takes time to process. Disabling the FES can significantly improve
  * performance by turning off these checks.
  *
+ * @static
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
@@ -771,6 +772,42 @@ export default p5;
  *   circle(50, 50);
  *
  *   describe('A gray square.');
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * Loads a p5.js library.
+ *
+ * A library is a function that adds functionality to p5.js by adding methods
+ * and properties for sketches to use, or for automatically running code at
+ * different stages of the p5.js lifecycle. Take a look at the
+ * <a href="/contribute/creating_libraries/">contributor docs for creating libraries</a>
+ * to learn more about creating libraries.
+ *
+ * @static
+ * @method registerAddon
+ * @param {Function} library The library function to register
+ *
+ * @example
+ * <div>
+ * <code>
+ * function myAddon(p5, fn, lifecycles) {
+ *   fn.sayHello = function() {
+ *     this.textAlign(this.CENTER, this.CENTER);
+ *     this.text('Hello!', this.width / 2, this.height / 2);
+ *   };
+ * }
+ * p5.registerAddon(myAddon);
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *   sayHello(); // The sayHello method is now available!
+ *
+ *   describe('The text "Hello!"');
  * }
  * </code>
  * </div>
