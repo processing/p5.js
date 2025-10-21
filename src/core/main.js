@@ -27,7 +27,7 @@ import * as constants from './constants';
  * @param  {function(p5)}       sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
  *                              <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a> properties on the
  *                              given p5 instance
- * @param  {HTMLElement}        [node] element to attach canvas to
+ * @param  {String|HTMLElement}        [node] element to attach canvas to
  * @return {p5}                 a p5 instance
  */
 class p5 {
@@ -528,6 +528,24 @@ for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
 
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+import graphics from './p5.Graphics';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
+p5.registerAddon(graphics);
+
+export default p5;
+
 //////////////////////////////////////////////
 // PUBLIC p5 PROPERTIES AND METHODS
 //////////////////////////////////////////////
@@ -733,6 +751,7 @@ for (const k in constants) {
  * which takes time to process. Disabling the FES can significantly improve
  * performance by turning off these checks.
  *
+ * @static
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
@@ -757,20 +776,39 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-import transform from './transform';
-import structure from './structure';
-import environment from './environment';
-import rendering from './rendering';
-import renderer from './p5.Renderer';
-import renderer2D from './p5.Renderer2D';
-import graphics from './p5.Graphics';
 
-p5.registerAddon(transform);
-p5.registerAddon(structure);
-p5.registerAddon(environment);
-p5.registerAddon(rendering);
-p5.registerAddon(renderer);
-p5.registerAddon(renderer2D);
-p5.registerAddon(graphics);
-
-export default p5;
+/**
+ * Loads a p5.js library.
+ *
+ * A library is a function that adds functionality to p5.js by adding methods
+ * and properties for sketches to use, or for automatically running code at
+ * different stages of the p5.js lifecycle. Take a look at the
+ * <a href="/contribute/creating_libraries/">contributor docs for creating libraries</a>
+ * to learn more about creating libraries.
+ *
+ * @static
+ * @method registerAddon
+ * @param {Function} library The library function to register
+ *
+ * @example
+ * <div>
+ * <code>
+ * function myAddon(p5, fn, lifecycles) {
+ *   fn.sayHello = function() {
+ *     this.textAlign(this.CENTER, this.CENTER);
+ *     this.text('Hello!', this.width / 2, this.height / 2);
+ *   };
+ * }
+ * p5.registerAddon(myAddon);
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *   sayHello(); // The sayHello method is now available!
+ *
+ *   describe('The text "Hello!"');
+ * }
+ * </code>
+ * </div>
+ */
