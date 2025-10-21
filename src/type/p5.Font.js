@@ -234,7 +234,7 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
@@ -242,7 +242,7 @@ export class Font {
    * @param  {Number} y          y-coordinate of the text.
    * @param  {Object} [options]  Configuration:
    * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
-   * @param  {Number} [options.simplifyThreshold=0] A minmum angle between two segments. Segments with a shallower angle will be merged.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radian sbetween two segments. Segments with a shallower angle will be merged.
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -306,7 +306,7 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
@@ -314,7 +314,7 @@ export class Font {
    * @param  {Number} y          y-coordinate of the text.
    * @param  {Object} [options]  Configuration options:
    * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
-   * @param  {Number} [options.simplifyThreshold=0] A minmum angle between two segments. Segments with a shallower angle will be merged.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radians between two segments. Segments with a shallower angle will be merged.
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
