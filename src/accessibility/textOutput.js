@@ -10,6 +10,13 @@ function textOutput(p5, fn){
 
   //updates textOutput
   fn._updateTextOutput = function(idT) {
+    if (this._renderer && this._renderer.isP3D) {
+      if (!this._didOutputTextWebGLMessage) {
+        this._didOutputTextWebGLMessage = true;
+        console.error('textOutput() does not yet work in WebGL mode.');
+      }
+      return;
+    }
     //if html structure is not there yet
     if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
       return;

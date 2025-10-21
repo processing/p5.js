@@ -7,11 +7,11 @@ suite('Trigonometry', function() {
   let y = 1;
   let ratio = 0.5;
 
-  const mockP5 = {
-    _validateParameters: vi.fn()
-  };
   const mockP5Prototype = {
   };
+  const mockP5 = Object.create(mockP5Prototype, {
+    _validateParameters: vi.fn()
+  });
 
   beforeEach(async function() {
     trigonometry(mockP5, mockP5Prototype);
@@ -47,7 +47,7 @@ suite('Trigonometry', function() {
     });
   };
 
-  suite.todo('p5.prototype.angleMode', function() {
+  suite('p5.prototype.angleMode', function() {
     test('should set constant to DEGREES', function() {
       mockP5Prototype.angleMode(mockP5.DEGREES);
       assert.equal(mockP5Prototype.angleMode(), mockP5.DEGREES);
@@ -102,31 +102,31 @@ suite('Trigonometry', function() {
     });
   });
 
-  suite.todo('p5.prototype.asin', function() {
+  suite('p5.prototype.asin', function() {
     ahandleDegreesAndRadians('asin');
   });
 
-  suite.todo('p5.prototype.atan', function() {
+  suite('p5.prototype.atan', function() {
     ahandleDegreesAndRadians('atan');
   });
 
-  suite.todo('p5.prototype.acos', function() {
+  suite('p5.prototype.acos', function() {
     ahandleDegreesAndRadians('acos');
   });
 
-  suite.todo('p5.prototype.sin', function() {
+  suite('p5.prototype.sin', function() {
     handleDegreesAndRadians('sin');
   });
 
-  suite.todo('p5.prototype.cos', function() {
+  suite('p5.prototype.cos', function() {
     handleDegreesAndRadians('cos');
   });
 
-  suite.todo('p5.prototype.tan', function() {
+  suite('p5.prototype.tan', function() {
     handleDegreesAndRadians('tan');
   });
 
-  suite.todo('p5.prototype.atan2', function() {
+  suite('p5.prototype.atan2', function() {
     test('should handle degrees', function() {
       mockP5Prototype.angleMode(mockP5.DEGREES);
       assert.equal(

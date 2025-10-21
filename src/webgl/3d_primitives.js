@@ -105,7 +105,7 @@ function primitives3D(p5, fn){
     } else {
       throw Error('no such parameter');
     }
-  }
+  };
   /**
    * Creates a custom <a href="#/p5.Geometry">p5.Geometry</a> object from
    * simpler 3D shapes.
@@ -1060,7 +1060,12 @@ function primitives3D(p5, fn){
     this._assert3d('cylinder');
     // p5._validateParameters('cylinder', arguments);
 
-    this._renderer.cylinder(radius, height, detailX, detailY, bottomCap, topCap);
+    this._renderer.cylinder(
+      radius,
+      height,
+      detailX, detailY,
+      bottomCap, topCap
+    );
 
     return this;
   };
@@ -1964,7 +1969,7 @@ function primitives3D(p5, fn){
       const addUVs = (x, y) => [x, y, (x - x1)/width, (y - y1)/height];
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
-        this.bezierVertex(...addUVs(x2, y1))
+        this.bezierVertex(...addUVs(x2, y1));
         this.bezierVertex(...addUVs(x2, y1 + tr));
       } else {
         this.vertex(...addUVs(x2, y1));
@@ -1972,7 +1977,7 @@ function primitives3D(p5, fn){
       if (br !== 0) {
         this.vertex(...addUVs(x2, y2 - br));
         this.bezierVertex(...addUVs(x2, y2));
-        this.bezierVertex(...addUVs(x2 - br, y2))
+        this.bezierVertex(...addUVs(x2 - br, y2));
       } else {
         this.vertex(...addUVs(x2, y2));
       }
@@ -1998,9 +2003,14 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  /* eslint-disable max-len */
-  Renderer3D.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX=2, detailY=2) {
-    /* eslint-enable max-len */
+  Renderer3D.prototype.quad = function(
+    x1, y1, z1,
+    x2, y2, z2,
+    x3, y3, z3,
+    x4, y4, z4,
+    detailX=2,
+    detailY=2
+  ) {
 
     const gid =
       `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
@@ -2389,8 +2399,12 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(planeGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, 1);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      width, height,
+      1
+    );
+  };
 
   Renderer3D.prototype.box = function(
     width = 50,
@@ -2471,8 +2485,12 @@ function primitives3D(p5, fn){
       boxGeom.gid = gid;
       this.geometryBufferCache.ensureCached(boxGeom);
     }
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), width, height, depth);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      width, height,
+      depth
+    );
+  };
 
   Renderer3D.prototype.sphere = function(
     radius = 50,
@@ -2480,7 +2498,7 @@ function primitives3D(p5, fn){
     detailY = 16
   ) {
     this.ellipsoid(radius, radius, radius, detailX, detailY);
-  }
+  };
 
   Renderer3D.prototype.ellipsoid = function(
     radiusX = 50,
@@ -2504,7 +2522,11 @@ function primitives3D(p5, fn){
             const theta = 2 * Math.PI * u;
             const cosTheta = Math.cos(theta);
             const sinTheta = Math.sin(theta);
-            const p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
+            const p = new p5.Vector(
+              cosPhi * sinTheta,
+              sinPhi,
+              cosPhi * cosTheta
+            );
             this.vertices.push(p);
             this.vertexNormals.push(p);
             this.uvs.push(u, v);
@@ -2525,8 +2547,11 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(ellipsoidGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radiusX, radiusY, radiusZ);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      radiusX, radiusY, radiusZ
+    );
+  };
 
   Renderer3D.prototype.cylinder = function(
     radius = 50,
@@ -2563,8 +2588,13 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(cylinderGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      radius,
+      height,
+      radius
+    );
+  };
 
   Renderer3D.prototype.cone = function(
     radius = 50,
@@ -2599,8 +2629,13 @@ function primitives3D(p5, fn){
       this.geometryBufferCache.ensureCached(coneGeom);
     }
 
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, height, radius);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      radius,
+      height,
+      radius
+    );
+  };
 
   Renderer3D.prototype.torus = function(
     radius = 50,
@@ -2661,8 +2696,13 @@ function primitives3D(p5, fn){
       torusGeom.gid = gid;
       this.geometryBufferCache.ensureCached(torusGeom);
     }
-    this._drawGeometryScaled(this.geometryBufferCache.getGeometryByID(gid), radius, radius, radius);
-  }
+    this._drawGeometryScaled(
+      this.geometryBufferCache.getGeometryByID(gid),
+      radius,
+      radius,
+      radius
+    );
+  };
 
   /**
    * Sets the number of segments used to draw spline curves in WebGL mode.

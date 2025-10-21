@@ -44,19 +44,39 @@ jobs:
         env:
           CI: true
 
-          #- name: Build and test (Ubuntu)
-          #  if: matrix.os == 'windows-latest'
-          #  run: npm test -- --project=unit-tests-webgpu
-          #  env:
-          #    CI: true
-
       - name: Build and test (Ubuntu)
+        id: test
         if: matrix.os == 'ubuntu-latest'
         run: npm test -- --project=unit-tests
+        continue-on-error: true
         env:
           CI: true
 
-      - name: Report test coverage
+      - name: Generate Visual Test Report
+        if: always()
+        run: node visual-report.js
+        env:
+          CI: true
+      - name: Upload Visual Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-report
+          path: test/unit/visual/visual-report.html
+          retention-days: 14
+      - name: generate TypeScript types
+        run: npm run generate-types
+        env:
+          CI: true
+      - name: test TypeScript types
+        run: npm run test:types
+        env:
+          CI: true
+      - name: report test coverage
+        if: steps.test.outcome == 'success'
         run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
         env:
           CI: true
+      - name: fail job if tests failed
+        if: steps.test.outcome != 'success'
+        run: exit 1

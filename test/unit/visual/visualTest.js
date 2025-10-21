@@ -1,7 +1,7 @@
 import p5 from '../../../src/app.js';
-import { server } from '@vitest/browser/context'
+import { server } from '@vitest/browser/context';
 import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
-const { readFile, writeFile } = server.commands
+const { readFile, writeFile } = server.commands;
 import pixelmatch from 'pixelmatch';
 
 // By how much can each color channel value (0-255) differ before
@@ -62,7 +62,7 @@ export function visualSuite(
     suiteFn = suiteFn.skip;
   }
   suiteFn(name, () => {
-    let lastShiftThreshold
+    let lastShiftThreshold;
     let lastPrefix;
     let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
@@ -70,14 +70,14 @@ export function visualSuite(
       namePrefix += escapeName(name) + '/';
       lastShiftThreshold = shiftThreshold;
       if (newShiftThreshold !== undefined) {
-        shiftThreshold = newShiftThreshold
+        shiftThreshold = newShiftThreshold;
       }
 
       // Force everything to be 1x
       window.devicePixelRatio = 1;
-    })
+    });
 
-    callback()
+    callback();
 
     afterAll(() => {
       namePrefix = lastPrefix;
@@ -211,7 +211,13 @@ export async function checkMatch(actual, expected, p5) {
         !visited.has(pos)
       ) {
         // Find the connected cluster size using BFS
-        const clusterSize = findClusterSize(diffCanvas.pixels, x, y, width, height, 1, visited);
+        const clusterSize = findClusterSize(
+          diffCanvas.pixels,
+          x, y,
+          width, height,
+          1,
+          visited
+        );
         clusterSizes.push(clusterSize);
       }
     }
@@ -222,10 +228,12 @@ export async function checkMatch(actual, expected, p5) {
   const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
 
   // Determine if the differences are significant
-  const nonLineShiftClusters = clusterSizes.filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
+  const nonLineShiftClusters = clusterSizes
+    .filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
 
   // Calculate significant differences excluding line shifts
-  const significantDiffPixels = nonLineShiftClusters.reduce((sum, c) => sum + c.size, 0);
+  const significantDiffPixels = nonLineShiftClusters
+    .reduce((sum, c) => sum + c.size, 0);
 
   // Update the diff canvas
   diffCanvas.updatePixels();
@@ -260,25 +268,35 @@ export async function checkMatch(actual, expected, p5) {
 /**
  * Find the size of a connected cluster of diff pixels using BFS
  */
-function findClusterSize(pixels, startX, startY, width, height, radius, visited) {
-  const queue = [{x: startX, y: startY}];
+function findClusterSize(
+  pixels,
+  startX, startY,
+  width, height,
+  radius,
+  visited
+) {
+  const queue = [{ x: startX, y: startY }];
   let size = 0;
   const clusterPixels = [];
 
   while (queue.length > 0) {
-    const {x, y} = queue.shift();
+    const { x, y } = queue.shift();
     const pos = (y * width + x) * 4;
 
     // Skip if already visited
     if (visited.has(pos)) continue;
 
     // Skip if not a diff pixel
-    if (pixels[pos] !== 255 || pixels[pos + 1] !== 0 || pixels[pos + 2] !== 0) continue;
+    if (
+      pixels[pos] !== 255 ||
+      pixels[pos + 1] !== 0 ||
+      pixels[pos + 2] !== 0
+    ) continue;
 
     // Mark as visited
     visited.add(pos);
     size++;
-    clusterPixels.push({x, y});
+    clusterPixels.push({ x, y });
 
     // Add neighbors to queue
     for (let dy = -radius; dy <= radius; dy++) {
@@ -292,7 +310,7 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
         // Skip if already visited
         const npos = (ny * width + nx) * 4;
         if (!visited.has(npos)) {
-          queue.push({x: nx, y: ny});
+          queue.push({ x: nx, y: ny });
         }
       }
     }
@@ -303,7 +321,7 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
     // Count pixels with limited neighbors (line-like characteristic)
     let linelikePixels = 0;
 
-    for (const {x, y} of clusterPixels) {
+    for (const { x, y } of clusterPixels) {
       // Count neighbors
       let neighbors = 0;
       for (let dy = -1; dy <= 1; dy++) {
@@ -318,7 +336,11 @@ function findClusterSize(pixels, startX, startY, width, height, radius, visited)
 
           const npos = (ny * width + nx) * 4;
           // Check if neighbor is a diff pixel
-          if (pixels[npos] === 255 && pixels[npos + 1] === 0 && pixels[npos + 2] === 0) {
+          if (
+            pixels[npos] === 255 &&
+            pixels[npos + 1] === 0 &&
+            pixels[npos + 2] === 0
+          ) {
             neighbors++;
           }
         }
@@ -441,17 +463,24 @@ export function visualTest(
         : [];
 
       for (let i = 0; i < actual.length; i++) {
+        const flatName = name.replace(/\//g, '-');
+        const actualFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
         if (expected[i]) {
           const result = await checkMatch(actual[i], expected[i], myp5);
+          // Always save the actual image before potentially throwing an error
+          writeImageFile(actualFilename, toBase64(actual[i]));
           if (!result.ok) {
+            const diffFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
+            writeImageFile(diffFilename, toBase64(result.diff));
             throw new Error(
               `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
               'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
-              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`,
+              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
             );
           }
         } else {
           writeImageFile(expectedFilenames[i], toBase64(actual[i]));
+          writeImageFile(actualFilename, toBase64(actual[i]));
         }
       }
     });

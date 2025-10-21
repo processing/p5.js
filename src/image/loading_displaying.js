@@ -183,12 +183,11 @@ function loadingDisplaying(p5, fn){
    * @param  {String} filename file name of gif.
    * @param  {Number} duration duration in seconds to capture from the sketch.
    * @param  {Object} [options] an object that can contain five more properties:
-   *                  `delay`, a Number specifying how much time to wait before recording;
-   *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds’;
-   *                  `silent`, a Boolean that defines presence of progress notifications. By default it’s `false`;
-   *                  `notificationDuration`, a Number that defines how long in seconds the final notification
-   *                  will live. By default it's `0`, meaning the notification will never be removed;
-   *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it’s `'progressBar’`.
+   * @param {Number} [options.delay=0] How much time to wait before recording.
+   * @param {'seconds'|'frames'} [options.units='seconds'] The units of the duration and delay.
+   * @param {Boolean} [options.silent=false] Whether to show progress notifications.
+   * @param {Number} [options.notificationDuration=0] How long in seconds the final notification will live, or 0 for it to remain permanently.
+   * @param {String} [options.notificationID='progressBar'] The id to give to the notification's DOM element.
    *
    * @example
    * <div>
@@ -256,7 +255,8 @@ function loadingDisplaying(p5, fn){
       units: 'seconds',
       silent: false,
       notificationDuration: 0,
-      notificationID: 'progressBar'
+      notificationID: 'progressBar',
+      reset: true
     }
   ) {
     // validate parameters
@@ -273,7 +273,7 @@ function loadingDisplaying(p5, fn){
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-
+     const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -300,7 +300,11 @@ function loadingDisplaying(p5, fn){
     // get the project's framerate
     let _frameRate = this._targetFrameRate;
     // if it is undefined or some non useful value, assume it's 60
-    if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    if (
+      _frameRate === Infinity ||
+      _frameRate === undefined ||
+      _frameRate === 0
+    ) {
       _frameRate = 60;
     }
 
@@ -320,11 +324,19 @@ function loadingDisplaying(p5, fn){
     // that duration translates to
     const nFrames = units === 'seconds' ? duration * _frameRate : duration;
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
-    const totalNumberOfFrames = nFrames + nFramesDelay;
 
     // initialize variables for the frames processing
-    let frameIterator = nFramesDelay;
-    this.frameCount = frameIterator;
+    let frameIterator;
+    let totalNumberOfFrames;
+    
+    if (resetAnimation) {
+      frameIterator = nFramesDelay;
+      this.frameCount = frameIterator;
+      totalNumberOfFrames = nFrames + nFramesDelay;
+    } else {
+      frameIterator = this.frameCount + nFramesDelay;
+      totalNumberOfFrames = frameIterator + nFrames;
+    }
 
     const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
@@ -353,7 +365,9 @@ function loadingDisplaying(p5, fn){
       // if we have a WEBGL context, initialize the pixels array
       // and the gl context to use them inside the loop
       gl = this.drawingContext;
-      pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
     }
 
     // stop the loop since we are going to manually redraw
@@ -365,7 +379,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-    await Promise.resolve();
+   await new Promise(requestAnimationFrame)
 
     while (frameIterator < totalNumberOfFrames) {
       /*
@@ -375,7 +389,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
-
+      await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
@@ -796,7 +810,12 @@ function loadingDisplaying(p5, fn){
    */
   function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
     if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+      const { x, y, w, h } = _imageCover(
+        xAlign, yAlign,
+        dw, dh,
+        sx, sy,
+        sw, sh
+      );
       sx = x;
       sy = y;
       sw = w;
@@ -1098,7 +1117,11 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
+    let vals = canvas.modeAdjust(
+      _dx, _dy,
+      _dw, _dh,
+      this._renderer.states.imageMode
+    );
     vals = _imageFit(
       fit,
       xAlign,
@@ -1202,7 +1225,7 @@ function loadingDisplaying(p5, fn){
    * <div>
    * <code>
    * let img;
-   **
+   *
    * async function setup() {
    *   // Load the image.
    *   img = await loadImage('assets/laDefense.jpg');

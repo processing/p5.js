@@ -136,7 +136,7 @@ function material(p5, fn){
       if (successCallback) {
         return successCallback(loadedShader);
       } else {
-        return loadedShader
+        return loadedShader;
       }
     } catch(err) {
       if (failureCallback) {
@@ -214,8 +214,8 @@ function material(p5, fn){
    * @param {String} fragSrc source code for the fragment shader.
    * @param {Object} [options] An optional object describing how this shader can
    * be augmented with hooks. It can include:
-   *  - `vertex`: An object describing the available vertex shader hooks.
-   *  - `fragment`: An object describing the available frament shader hooks.
+   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
+   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
    * @returns {p5.Shader} new shader object created from the
    * vertex and fragment shaders.
    *
@@ -550,7 +550,11 @@ function material(p5, fn){
    * @alt
    * A rectangle with a shader applied to it.
    */
-  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+  fn.loadFilterShader = async function (
+    fragFilename,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
@@ -2410,18 +2414,18 @@ function material(p5, fn){
    * to the pixel at coordinates `(u, v)` within an image. For example, the
    * corners of a rectangular image are mapped to the corners of a rectangle by default:
    *
-   * <code>
+   * ```js
    * // Apply the image as a texture.
    * texture(img);
    *
    * // Draw the rectangle.
    * rect(0, 0, 30, 50);
-   * </code>
+   * ```
    *
    * If the image in the code snippet above has dimensions of 300 x 500 pixels,
    * the same result could be achieved as follows:
    *
-   * <code>
+   * ```js
    * // Apply the image as a texture.
    * texture(img);
    *
@@ -2445,7 +2449,7 @@ function material(p5, fn){
    * vertex(0, 50, 0, 0, 500);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * `textureMode()` changes the coordinate system for uv coordinates.
    *
@@ -2455,7 +2459,7 @@ function material(p5, fn){
    * be helpful for using the same code for multiple images of different sizes.
    * For example, the code snippet above could be rewritten as follows:
    *
-   * <code>
+   * ```js
    * // Set the texture mode to use normalized coordinates.
    * textureMode(NORMAL);
    *
@@ -2482,7 +2486,7 @@ function material(p5, fn){
    * vertex(0, 50, 0, 0, 1);
    *
    * endShape();
-   * </code>
+   * ```
    *
    * By default, `mode` is `IMAGE`, which scales uv coordinates to the
    * dimensions of the image. Calling `textureMode(IMAGE)` applies the default.
@@ -3664,25 +3668,25 @@ function material(p5, fn){
     this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   Renderer3D.prototype.strokeShader = function(s) {
     this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   Renderer3D.prototype.imageShader = function(s) {
     this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   Renderer3D.prototype.resetShader = function() {
     this.states.setValue('userFillShader', null);
     this.states.setValue('userStrokeShader', null);
     this.states.setValue('userImageShader', null);
-  }
+  };
 
   Renderer3D.prototype.texture = function(tex) {
     this.states.setValue('drawMode', constants.TEXTURE);
@@ -3699,7 +3703,7 @@ function material(p5, fn){
     this.states.setValue('curFillColor', [1, 1, 1, 1]);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
     this.states.setValue('strokeColor', null);
-  }
+  };
 
   // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
   // }
@@ -3715,12 +3719,12 @@ function material(p5, fn){
       shine = 1;
     }
     this.states.setValue('_useShininess', shine);
-  }
+  };
 
   Renderer3D.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
     this.states.setValue('_useMetalness', metalMix);
-  }
+  };
 }
 
 export default material;

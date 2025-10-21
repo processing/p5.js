@@ -311,7 +311,7 @@ class SplineSegment extends Segment {
         this.vertices[1] :
         this.vertices[0];
     } else {
-      return this.getStartVertex()
+      return this.getStartVertex();
     }
   }
 
@@ -817,7 +817,7 @@ class Shape {
       this.userVertexProperties[key] = dataArray.length;
     }
     this.#vertexProperties[key] = dataArray;
-}
+  }
   vertexPropertyName(key) {
     return key.replace(/Src$/, '');
   }
@@ -1228,7 +1228,9 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
       arrayVertices,
       splineSegment._splineProperties.tightness
     );
-    let startVertex = shape.vertexToArray(splineSegment._firstInterpolatedVertex);
+    let startVertex = shape.vertexToArray(
+      splineSegment._firstInterpolatedVertex
+    );
     for (const array of bezierArrays) {
       const bezierControls = [startVertex, ...array];
       const numPoints = Math.max(
@@ -1287,297 +1289,297 @@ function customShapes(p5, fn) {
   // ---- GENERAL CLASSES ----
 
   /**
-     * @private
-     * A class to describe a custom shape made with `beginShape()`/`endShape()`.
-     *
-     * Every `Shape` has a `kind`. The kind takes any value that
-     * can be passed to <a href="#/p5/beginShape">beginShape()</a>:
-     *
-     * - `PATH`
-     * - `POINTS`
-     * - `LINES`
-     * - `TRIANGLES`
-     * - `QUADS`
-     * - `TRIANGLE_FAN`
-     * - `TRIANGLE_STRIP`
-     * - `QUAD_STRIP`
-     *
-     * A `Shape` of any kind consists of `contours`, which can be thought of as
-     * subshapes (shapes inside another shape). Each `contour` is built from
-     * basic shapes called primitives, and each primitive consists of one or more vertices.
-     *
-     * For example, a square can be made from a single path contour with four line-segment
-     * primitives. Each line segment contains a vertex that indicates its endpoint. A square
-     * with a circular hole in it contains the circle in a separate contour.
-     *
-     * By default, each vertex only has a position, but a shape's vertices may have other
-     * properties such as texture coordinates, a normal vector, a fill color, and a stroke color.
-     * The properties every vertex should have may be customized by passing `vertexProperties` to
-     * `createShape()`.
-     *
-     * Once a shape is created and given a name like `myShape`, it can be built up with
-     * methods such as `myShape.beginShape()`, `myShape.vertex()`, and `myShape.endShape()`.
-     *
-     * Vertex functions such as `vertex()` or `bezierVertex()` are used to set the `position`
-     * property of vertices, as well as the `textureCoordinates` property if applicable. Those
-     * properties only apply to a single vertex.
-     *
-     * If `vertexProperties` includes other properties, they are each set by a method of the
-     * same name. For example, if vertices in `myShape` have a `fill`, then that is set with
-     * `myShape.fill()`. In the same way that a <a href="#/p5/fill">fill()</a> may be applied
-     * to one or more shapes, `myShape.fill()` may be applied to one or more vertices.
-     *
-     * @class p5.Shape
-     * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
-     */
+   * @private
+   * A class to describe a custom shape made with `beginShape()`/`endShape()`.
+   *
+   * Every `Shape` has a `kind`. The kind takes any value that
+   * can be passed to <a href="#/p5/beginShape">beginShape()</a>:
+   *
+   * - `PATH`
+   * - `POINTS`
+   * - `LINES`
+   * - `TRIANGLES`
+   * - `QUADS`
+   * - `TRIANGLE_FAN`
+   * - `TRIANGLE_STRIP`
+   * - `QUAD_STRIP`
+   *
+   * A `Shape` of any kind consists of `contours`, which can be thought of as
+   * subshapes (shapes inside another shape). Each `contour` is built from
+   * basic shapes called primitives, and each primitive consists of one or more vertices.
+   *
+   * For example, a square can be made from a single path contour with four line-segment
+   * primitives. Each line segment contains a vertex that indicates its endpoint. A square
+   * with a circular hole in it contains the circle in a separate contour.
+   *
+   * By default, each vertex only has a position, but a shape's vertices may have other
+   * properties such as texture coordinates, a normal vector, a fill color, and a stroke color.
+   * The properties every vertex should have may be customized by passing `vertexProperties` to
+   * `createShape()`.
+   *
+   * Once a shape is created and given a name like `myShape`, it can be built up with
+   * methods such as `myShape.beginShape()`, `myShape.vertex()`, and `myShape.endShape()`.
+   *
+   * Vertex functions such as `vertex()` or `bezierVertex()` are used to set the `position`
+   * property of vertices, as well as the `textureCoordinates` property if applicable. Those
+   * properties only apply to a single vertex.
+   *
+   * If `vertexProperties` includes other properties, they are each set by a method of the
+   * same name. For example, if vertices in `myShape` have a `fill`, then that is set with
+   * `myShape.fill()`. In the same way that a <a href="#/p5/fill">fill()</a> may be applied
+   * to one or more shapes, `myShape.fill()` may be applied to one or more vertices.
+   *
+   * @class p5.Shape
+   * @param {Object} [vertexProperties={position: createVector(0, 0)}] vertex properties and their initial values.
+   */
 
   p5.Shape = Shape;
 
   /**
-     * @private
-     * A class to describe a contour made with `beginContour()`/`endContour()`.
-     *
-     * Contours may be thought of as shapes inside of other shapes.
-     * For example, a contour may be used to create a hole in a shape that is created
-     * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
-     * Multiple contours may be included inside a single shape.
-     *
-     * Contours can have any `kind` that a shape can have:
-     *
-     * - `PATH`
-     * - `POINTS`
-     * - `LINES`
-     * - `TRIANGLES`
-     * - `QUADS`
-     * - `TRIANGLE_FAN`
-     * - `TRIANGLE_STRIP`
-     * - `QUAD_STRIP`
-     *
-     * By default, a contour has the same kind as the shape that contains it, but this
-     * may be changed by passing a different `kind` to <a href="#/p5/beginContour">beginContour()</a>.
-     *
-     * A `Contour` of any kind consists of `primitives`, which are the most basic
-     * shapes that can be drawn. For example, if a contour is a hexagon, then
-     * it's made from six line-segment primitives.
-     *
-     * @class p5.Contour
-     */
+   * @private
+   * A class to describe a contour made with `beginContour()`/`endContour()`.
+   *
+   * Contours may be thought of as shapes inside of other shapes.
+   * For example, a contour may be used to create a hole in a shape that is created
+   * with <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>.
+   * Multiple contours may be included inside a single shape.
+   *
+   * Contours can have any `kind` that a shape can have:
+   *
+   * - `PATH`
+   * - `POINTS`
+   * - `LINES`
+   * - `TRIANGLES`
+   * - `QUADS`
+   * - `TRIANGLE_FAN`
+   * - `TRIANGLE_STRIP`
+   * - `QUAD_STRIP`
+   *
+   * By default, a contour has the same kind as the shape that contains it, but this
+   * may be changed by passing a different `kind` to <a href="#/p5/beginContour">beginContour()</a>.
+   *
+   * A `Contour` of any kind consists of `primitives`, which are the most basic
+   * shapes that can be drawn. For example, if a contour is a hexagon, then
+   * it's made from six line-segment primitives.
+   *
+   * @class p5.Contour
+   */
 
   p5.Contour = Contour;
 
   /**
-     * @private
-     * A base class to describe a shape primitive (a basic shape drawn with
-     * `beginShape()`/`endShape()`).
-     *
-     * Shape primitives are the most basic shapes that can be drawn with
-     * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>:
-     *
-     * - segment primitives: line segments, bezier segments, spline segments, and arc segments
-     * - isolated primitives: points, lines, triangles, and quads
-     * - tessellation primitives: triangle fans, triangle strips, and quad strips
-     *
-     * More complex shapes may be created by combining many primitives, possibly of different kinds,
-     * into a single shape.
-     *
-     * In a similar way, every shape primitive is built from one or more vertices.
-     * For example, a point consists of a single vertex, while a triangle consists of three vertices.
-     * Each type of shape primitive has a `vertexCapacity`, which may be `Infinity` (for example, a
-     * spline may consist of any number of vertices). A primitive's `vertexCount` is the number of
-     * vertices it currently contains.
-     *
-     * Each primitive can add itself to a shape with an `addToShape()` method.
-     *
-     * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor,
-     * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn
-     * the data into 2D drawing instructions. Another might find a point at a given distance
-     * along the segment.
-     *
-     * @class p5.ShapePrimitive
-     * @abstract
-     */
+   * @private
+   * A base class to describe a shape primitive (a basic shape drawn with
+   * `beginShape()`/`endShape()`).
+   *
+   * Shape primitives are the most basic shapes that can be drawn with
+   * <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a>:
+   *
+   * - segment primitives: line segments, bezier segments, spline segments, and arc segments
+   * - isolated primitives: points, lines, triangles, and quads
+   * - tessellation primitives: triangle fans, triangle strips, and quad strips
+   *
+   * More complex shapes may be created by combining many primitives, possibly of different kinds,
+   * into a single shape.
+   *
+   * In a similar way, every shape primitive is built from one or more vertices.
+   * For example, a point consists of a single vertex, while a triangle consists of three vertices.
+   * Each type of shape primitive has a `vertexCapacity`, which may be `Infinity` (for example, a
+   * spline may consist of any number of vertices). A primitive's `vertexCount` is the number of
+   * vertices it currently contains.
+   *
+   * Each primitive can add itself to a shape with an `addToShape()` method.
+   *
+   * It can also accept visitor objects with an `accept()` method. When a primitive accepts a visitor,
+   * it gives the visitor access to its vertex data. For example, one visitor to a segment might turn
+   * the data into 2D drawing instructions. Another might find a point at a given distance
+   * along the segment.
+   *
+   * @class p5.ShapePrimitive
+   * @abstract
+   */
 
   p5.ShapePrimitive = ShapePrimitive;
 
   /**
-     * @private
-     * A class to describe a vertex (a point on a shape), in 2D or 3D.
-     *
-     * Vertices are the basic building blocks of all `p5.Shape` objects, including
-     * shapes made with <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/arcVertex">arcVertex()</a>,
-     * <a href="#/p5/bezierVertex">bezierVertex()</a>, and <a href="#/p5/splineVertex">splineVertex()</a>.
-     *
-     * Like a point on an object in the real world, a vertex may have different properties.
-     * These may include coordinate properties such as `position`, `textureCoordinates`, and `normal`,
-     * color properties such as `fill` and `stroke`, and more.
-     *
-     * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created
-     * like this:
-     *
-     * ```js
-     * let myVertex = new p5.Vertex({
-     *   position: createVector(2, 3, 5),
-     *   stroke: color('green')
-     * });
-     * ```
-     *
-     * Any property names may be used. The `p5.Shape` class assumes that if a vertex has a
-     * position or texture coordinates, they are stored in `position` and `textureCoordinates`
-     * properties.
-     *
-     * Property values may be any
-     * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any
-     * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>,
-     * or any object with an `array` property.
-     *
-     * For example, if a position is stored as a `p5.Vector` object and a stroke is stored as a `p5.Color` object,
-     * then the `array` properties of those objects will be used by the vertex's own `array` property, which provides
-     * all the vertex data in a single array.
-     *
-     * @class p5.Vertex
-     * @param {Object} [properties={position: createVector(0, 0)}] vertex properties.
-     */
+   * @private
+   * A class to describe a vertex (a point on a shape), in 2D or 3D.
+   *
+   * Vertices are the basic building blocks of all `p5.Shape` objects, including
+   * shapes made with <a href="#/p5/vertex">vertex()</a>, <a href="#/p5/arcVertex">arcVertex()</a>,
+   * <a href="#/p5/bezierVertex">bezierVertex()</a>, and <a href="#/p5/splineVertex">splineVertex()</a>.
+   *
+   * Like a point on an object in the real world, a vertex may have different properties.
+   * These may include coordinate properties such as `position`, `textureCoordinates`, and `normal`,
+   * color properties such as `fill` and `stroke`, and more.
+   *
+   * A vertex called `myVertex` with position coordinates `(2, 3, 5)` and a green stroke may be created
+   * like this:
+   *
+   * ```js
+   * let myVertex = new p5.Vertex({
+   *   position: createVector(2, 3, 5),
+   *   stroke: color('green')
+   * });
+   * ```
+   *
+   * Any property names may be used. The `p5.Shape` class assumes that if a vertex has a
+   * position or texture coordinates, they are stored in `position` and `textureCoordinates`
+   * properties.
+   *
+   * Property values may be any
+   * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">JavaScript primitive</a>, any
+   * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer">object literal</a>,
+   * or any object with an `array` property.
+   *
+   * For example, if a position is stored as a `p5.Vector` object and a stroke is stored as a `p5.Color` object,
+   * then the `array` properties of those objects will be used by the vertex's own `array` property, which provides
+   * all the vertex data in a single array.
+   *
+   * @class p5.Vertex
+   * @param {Object} [properties={position: createVector(0, 0)}] vertex properties.
+   */
 
   p5.Vertex = Vertex;
 
   // ---- PATH PRIMITIVES ----
 
   /**
-     * @private
-     * A class responsible for...
-     *
-     * @class p5.Anchor
-     * @extends p5.ShapePrimitive
-     * @param {p5.Vertex} vertex the vertex to include in the anchor.
-     */
+   * @private
+   * A class responsible for...
+   *
+   * @class p5.Anchor
+   * @extends p5.ShapePrimitive
+   * @param {p5.Vertex} vertex the vertex to include in the anchor.
+   */
 
   p5.Anchor = Anchor;
 
   /**
-     * @private
-     * A class responsible for...
-     *
-     * Note: When a segment is added to a shape, it's attached to an anchor or another segment.
-     * Adding it to another shape may result in unexpected behavior.
-     *
-     * @class p5.Segment
-     * @extends p5.ShapePrimitive
-     * @param {...p5.Vertex} vertices the vertices to include in the segment.
-     */
+   * @private
+   * A class responsible for...
+   *
+   * Note: When a segment is added to a shape, it's attached to an anchor or another segment.
+   * Adding it to another shape may result in unexpected behavior.
+   *
+   * @class p5.Segment
+   * @extends p5.ShapePrimitive
+   * @param {...p5.Vertex} vertices the vertices to include in the segment.
+   */
 
   p5.Segment = Segment;
 
   /**
-     * @private
-     * A class responsible for...
-     *
-     * @class p5.LineSegment
-     * @param {p5.Vertex} vertex the vertex to include in the anchor.
-     */
+   * @private
+   * A class responsible for...
+   *
+   * @class p5.LineSegment
+   * @param {p5.Vertex} vertex the vertex to include in the anchor.
+   */
 
   p5.LineSegment = LineSegment;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.BezierSegment = BezierSegment;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.SplineSegment = SplineSegment;
 
   // ---- ISOLATED PRIMITIVES ----
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.Point = Point;
 
   /**
-     * @private
-     * A class responsible for...
-     *
-     * @class p5.Line
-     * @param {...p5.Vertex} vertices the vertices to include in the line.
-     */
+   * @private
+   * A class responsible for...
+   *
+   * @class p5.Line
+   * @param {...p5.Vertex} vertices the vertices to include in the line.
+   */
 
   p5.Line = Line;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.Triangle = Triangle;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.Quad = Quad;
 
   // ---- TESSELLATION PRIMITIVES ----
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.TriangleFan = TriangleFan;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.TriangleStrip = TriangleStrip;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.QuadStrip = QuadStrip;
 
   // ---- PRIMITIVE VISITORS ----
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.PrimitiveVisitor = PrimitiveVisitor;
 
   /**
-     * @private
-     * A class responsible for...
-     *
-     * Notes:
-     * 1. Assumes vertex positions are stored as p5.Vector instances.
-     * 2. Currently only supports position properties of vectors.
-     */
+   * @private
+   * A class responsible for...
+   *
+   * Notes:
+   * 1. Assumes vertex positions are stored as p5.Vector instances.
+   * 2. Currently only supports position properties of vectors.
+   */
 
   p5.PrimitiveToPath2DConverter = PrimitiveToPath2DConverter;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.PrimitiveToVerticesConverter = PrimitiveToVerticesConverter;
 
   /**
-     * @private
-     * A class responsible for...
-     */
+   * @private
+   * A class responsible for...
+   */
 
   p5.PointAtLengthGetter = PointAtLengthGetter;
 
@@ -1653,66 +1655,72 @@ function customShapes(p5, fn) {
   };
 
 
-/**
-   * Adds a spline curve segment to a custom shape.
+
+  /**
+   * Connects points with a smooth curve (a spline).
    *
-   * `splineVertex()` adds a curved segment to custom shapes. The spline curves
-   * it creates are defined like those made by the
-   * <a href="#/p5/curve">curve()</a> function. `splineVertex()` must be called
-   * between the <a href="#/p5/beginShape">beginShape()</a> and
+   * `splineVertex()` adds a curved segment to custom shapes.
+   * The curve it creates follows the same rules as the ones
+   * made with the <a href="#/p5/spline">spline()</a> function.
+   * `splineVertex()` must be called between the
+   * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> functions.
    *
    * Spline curves can form shapes and curves that slope gently. They’re like
-   * cables that are attached to a set of points. Splines are defined by two
-   * anchor points and two control points. `splineVertex()` must be called at
-   * least four times between
+   * cables that are attached to a set of points. `splineVertex()` draws a smooth
+   * curve through the points you give it.
    * <a href="#/p5/beginShape">beginShape()</a> and
    * <a href="#/p5/endShape">endShape()</a> in order to draw a curve:
    *
-   * ```js
-   * beginShape();
    *
-   * // Add the first control point.
-   * splineVertex(84, 91);
+   * If you provide three points, the spline will pass through them.
+   * It works the same way with any number of points.
    *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
    *
-   * // Add the second control point.
-   * splineVertex(32, 91);
-   *
-   * endShape();
-   * ```
-   *
-   * The code snippet above would only draw the curve between the anchor points,
-   * similar to the <a href="#/p5/curve">curve()</a> function. The segments
-   * between the control and anchor points can be drawn by calling
-   * `splineVertex()` with the coordinates of the control points:
    *
    * ```js
    * beginShape();
    *
-   * // Add the first control point and draw a segment to it.
-   * splineVertex(84, 91);
-   * splineVertex(84, 91);
+   * // Add the first point.
+   * splineVertex(25, 80);
    *
-   * // Add the anchor points to draw between.
-   * splineVertex(68, 19);
-   * splineVertex(21, 17);
+   * // Add the second point.
+   * splineVertex(20, 30);
    *
-   * // Add the second control point.
-   * splineVertex(32, 91);
-   *
-   * // Uncomment the next line to draw the segment to the second control point.
-   * // splineVertex(32, 91);
+   * // Add the last point.
+   * splineVertex(85, 60);
    *
    * endShape();
    * ```
    *
-   * The first two parameters, `x` and `y`, set the vertex’s location. For
-   * example, calling `splineVertex(10, 10)` adds a point to the curve at
-   * `(10, 10)`.
+   * <img src="assets/openCurveSpline.png"></img>
+   *
+   *
+   * Passing in `CLOSE` to `endShape()` closes the spline smoothly.
+   * ```js
+   * beginShape();
+   *
+   * // Add the first point.
+   * splineVertex(25, 80);
+   *
+   * // Add the second point.
+   * splineVertex(20, 30);
+   *
+   * // Add the second point.
+   * splineVertex(85, 60);
+   *
+   * endShape(CLOSE);
+   * ```
+   *
+   * <img src="assets/closeCurveSpline.png"></img>
+   *
+   *
+   * By default (`ends: INCLUDE`), the curve passes through
+   * all the points you add with `splineVertex()`, similar to
+   * the <a href="#/p5/spline">spline()</a> function. To draw only
+   * the middle span p1->p2 (skipping p0->p1 and p2->p3), set
+   * `splineProperty('ends', EXCLUDE)`. You don’t need to duplicate
+   * vertices to draw those spans.
    *
    * Spline curves can also be drawn in 3D using WebGL mode. The 3D version of
    * `splineVertex()` has three arguments because each point has x-, y-, and
@@ -1732,45 +1740,28 @@ function customShapes(p5, fn) {
    * function setup() {
    *   createCanvas(100, 100);
    *
-   *   background(200);
-   *
-   *   // Style the shape.
+   *   background(220);
    *   noFill();
    *   strokeWeight(1);
    *
-   *   // Start drawing the shape.
    *   beginShape();
-   *
-   *   // Add the first control point.
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
+   *   splineVertex(25, 80);
+   *   splineVertex(20, 30);
+   *   splineVertex(85, 60);
    *   endShape();
    *
-   *   // Style the anchor and control points.
    *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
    *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
    *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
+   *   point(25, 80);
+   *   point(20, 30);
+   *   point(85, 60);
    *
    *   describe(
-   *     'A black curve drawn on a gray background. The curve has black dots at its ends. Two red dots appear near the bottom of the canvas.'
+   *     'On a gray background, a black spline passes through three marked points.'
    *   );
    * }
+   *
    * </code>
    * </div>
    *
@@ -1778,204 +1769,150 @@ function customShapes(p5, fn) {
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
+   *   background(220);
    *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
    *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
+   *   splineVertex(25, 80);
+   *   splineVertex(20, 30);
+   *   splineVertex(85, 60);
+   *   endShape(CLOSE);
    *
    *   describe(
-   *     'A black curve drawn on a gray background. The curve passes through one red dot and two black dots. Another red dot appears near the bottom of the canvas.'
+   *     'On a gray background, a closed black spline with a white interior forms a triangular shape with smooth corners.'
    *   );
    * }
+   *
    * </code>
    * </div>
    *
    * <div>
    * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   background(200);
-   *
-   *   // Style the shape.
-   *   noFill();
-   *   strokeWeight(1);
-   *
-   *   // Start drawing the shape.
-   *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(32, 91);
-   *   point(84, 91);
-   *
-   *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
-   *   );
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Click the mouse near the red dot in the bottom-left corner
-   * // and drag to change the curve's shape.
-   *
-   * let x1 = 32;
-   * let y1 = 91;
-   * let isChanging = false;
+   * let ringInnerRadius, ringWidth;
+   * let radius, dRadius;
+   * let theta, dTheta;
+   * let time, dTime;
+   * let vertexCount, unit, offset;
    *
    * function setup() {
-   *   createCanvas(100, 100);
+   *   createCanvas(400, 400);
+   *
+   *   vertexCount = 15;
+   *   unit = createVector(1, 0);
+   *   dTheta = TAU / vertexCount;
+   *   dTime = 0.004;
+   *
+   *   ringInnerRadius = 25;
+   *   ringWidth = 5 * ringInnerRadius;
+   *
+   *   offset = width;
    *
    *   describe(
-   *     'A black U curve drawn upside down on a gray background. The curve passes from one red dot through two black dots and ends at another red dot.'
+   *     'A white blob with a black outline changes its shape over time.'
    *   );
    * }
    *
    * function draw() {
-   *   background(200);
+   *   background(220);
+   *   strokeWeight(2);
+   *   translate(width / 2, height / 2);
    *
-   *   // Style the shape.
-   *   noFill();
-   *   stroke(0);
-   *   strokeWeight(1);
+   *   time = dTime * frameCount;
    *
-   *   // Start drawing the shape.
    *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(x1, y1);
-   *   splineVertex(x1, y1);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point and draw a segment to it.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
-   *   endShape();
-   *
-   *   // Style the anchor and control points.
-   *   strokeWeight(5);
-   *
-   *   // Draw the anchor points in black.
-   *   stroke(0);
-   *   point(21, 17);
-   *   point(68, 19);
-   *
-   *   // Draw the control points in red.
-   *   stroke(255, 0, 0);
-   *   point(x1, y1);
-   *   point(84, 91);
-   * }
-   *
-   * // Start changing the first control point if the user clicks near it.
-   * function mousePressed() {
-   *   if (dist(mouseX, mouseY, x1, y1) < 20) {
-   *     isChanging = true;
+   *   for (let i = 0; i < vertexCount; i++) {
+   *     unit.rotate(dTheta);
+   *     dRadius = noise(offset + unit.x, offset + unit.y, time) * ringWidth;
+   *     radius = ringInnerRadius + dRadius;
+   *     splineVertex(radius * unit.x, radius * unit.y);
    *   }
-   * }
-   *
-   * // Stop changing the first control point when the user releases the mouse.
-   * function mouseReleased() {
-   *   isChanging = false;
-   * }
-   *
-   * // Update the first control point while the user drags the mouse.
-   * function mouseDragged() {
-   *   if (isChanging === true) {
-   *     x1 = mouseX;
-   *     y1 = mouseY;
-   *   }
+   *   endShape(CLOSE);
    * }
    * </code>
    * </div>
    *
+   * @example
    * <div>
    * <code>
+   * let vertexA;
+   * let vertexB;
+   * let vertexC;
+   * let vertexD;
+   * let vertexE;
+   * let vertexF;
+   *
+   * let markerRadius;
+   *
+   * let vectorAB;
+   * let vectorFE;
+   *
+   * let endOfTangentB;
+   * let endOfTangentE;
+   *
    * function setup() {
    *   createCanvas(100, 100);
    *
-   *   background(200);
+   *   // Initialize variables
+   *   // Adjusting vertices A and F affects the slopes at B and E
    *
-   *   // Start drawing the shape.
+   *   vertexA = createVector(35, 85);
+   *   vertexB = createVector(25, 70);
+   *   vertexC = createVector(30, 30);
+   *   vertexD = createVector(70, 30);
+   *   vertexE = createVector(75, 70);
+   *   vertexF = createVector(65, 85);
+   *
+   *   markerRadius = 4;
+   *
+   *   vectorAB = p5.Vector.sub(vertexB, vertexA);
+   *   vectorFE = p5.Vector.sub(vertexE, vertexF);
+   *
+   *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
+   *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
+   *
+   *   splineProperty(`ends`, EXCLUDE);
+   *
+   *   // Draw figure
+   *
+   *   background(220);
+   *
+   *   noFill();
+   *
    *   beginShape();
-   *
-   *   // Add the first control point and draw a segment to it.
-   *   splineVertex(32, 91);
-   *   splineVertex(32, 91);
-   *
-   *   // Add the anchor points.
-   *   splineVertex(21, 17);
-   *   splineVertex(68, 19);
-   *
-   *   // Add the second control point.
-   *   splineVertex(84, 91);
-   *   splineVertex(84, 91);
-   *
-   *   // Stop drawing the shape.
+   *   splineVertex(vertexA.x, vertexA.y);
+   *   splineVertex(vertexB.x, vertexB.y);
+   *   splineVertex(vertexC.x, vertexC.y);
+   *   splineVertex(vertexD.x, vertexD.y);
+   *   splineVertex(vertexE.x, vertexE.y);
+   *   splineVertex(vertexF.x, vertexF.y);
    *   endShape();
    *
-   *   describe('A ghost shape drawn in white on a gray background.');
+   *   stroke('red');
+   *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
+   *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
+   *
+   *   stroke('blue');
+   *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
+   *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
+   *
+   *   fill('white');
+   *   stroke('black');
+   *   circle(vertexA.x, vertexA.y, markerRadius);
+   *   circle(vertexB.x, vertexB.y, markerRadius);
+   *   circle(vertexC.x, vertexC.y, markerRadius);
+   *   circle(vertexD.x, vertexD.y, markerRadius);
+   *   circle(vertexE.x, vertexE.y, markerRadius);
+   *   circle(vertexF.x, vertexF.y, markerRadius);
+   *
+   *   fill('black');
+   *   noStroke();
+   *   text('A', vertexA.x - 15, vertexA.y + 5);
+   *   text('B', vertexB.x - 15, vertexB.y + 5);
+   *   text('C', vertexC.x - 5, vertexC.y - 5);
+   *   text('D', vertexD.x - 5, vertexD.y - 5);
+   *   text('E', vertexE.x + 5, vertexE.y + 5);
+   *   text('F', vertexF.x + 5, vertexF.y + 5);
+   *
+   *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
    * </code>
    * </div>
@@ -2064,25 +2001,84 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Sets the property of a curve.
+   * Gets or sets a given spline property.
    *
-   * For example, set tightness,
-   * use `splineProperty('tightness', t)`, with `t` between 0 and 1,
-   * at 0 as default.
+   * Use `splineProperty()` to adjust the behavior of splines
+   * created with `splineVertex()` or `spline()`. You can control
+   * two key aspects of a spline: its end behavior (`ends`) and
+   * its curvature (`tightness`).
    *
-   * Spline curves are like cables that are attached to a set of points.
-   * Adjusting tightness adjusts how tightly the cable is
-   * attached to the points. The parameter, tightness, determines
-   * how the curve fits to the vertex points. By default,
-   * tightness is set to 0. Setting tightness to 1, as in
-   * `splineProperty('tightness', 1)`, connects the curve's points
-   * using straight lines. Values in the range from –5 to 5
-   * deform curves while leaving them recognizable.
+   * By default, the ends property is set to `INCLUDE`, which means
+   * the spline passes through every point, including the endpoints.
+   * You can also set it to `EXCLUDE` i.e. `splineProperty('ends', EXCLUDE)`,
+   * which makes the spline pass through all points except the endpoints.
    *
-   * This function can also be used to set 'ends' property
-   * (see also: the <a href="#/p5/curveDetail">curveDetail()</a> example),
-   * such as: `splineProperty('ends', EXCLUDE)` to exclude
-   * vertices, or `splineProperty('ends', INCLUDE)` to include them.
+   * `INCLUDE` case will have the spline passing through
+   * all points, like this:
+   *
+   * ```js
+   * splineProperty('ends', INCLUDE); // no need to set this, as it is the default
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * ```
+   *
+   * <img src="assets/includeSpline.png"></img>
+   *
+   *
+   * EXCLUDE case will have the spline passing through
+   * the middle points, like this:
+   *
+   *
+   * ```js
+   * splineProperty('ends', EXCLUDE);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * ```
+   *
+   * <img src="assets/excludeSpline.png"></img>
+   *
+   * By default, the tightness property is set to `0`,
+   * producing a smooth curve that passes evenly through
+   * the vertices. Negative values make the curve looser,
+   * while positive values make it tighter. Common values
+   * range between -1 and 1, though values outside this
+   * range can also be used for different effects.
+   *
+   * For example, To set tightness, use `splineProperty('tightness', t)`,
+   * (default: t = 0).
+   *
+   * Here's the example showing negetive value of tightness,
+   * which creates a rounder bulge:
+   *
+   * ```js
+   * splineProperty('tightness', -5)
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * ```
+   * <img src="assets/roundBulge.png"></img>
+   * Here's the example showing positive value of tightness,
+   * which makes the curve tighter and more angular:
+   *
+   * ```js
+   * splineProperty('tightness', 5)
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   * ```
+   * <img src="assets/anglurBulge.png"></img>
+   *
+   * In all cases, the splines in p5.js are <a href = "https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline">cardinal splines</a>.
+   * When tightness is 0, these splines are often known as
+   * <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline">Catmull-Rom splines</a>
    *
    * @method splineProperty
    * @param {String} property
@@ -2093,32 +2089,198 @@ function customShapes(p5, fn) {
    * <code>
    * // Move the mouse left and right to see the curve change.
    *
+   * let t;
+   *
    * function setup() {
    *   createCanvas(100, 100);
-   *   describe('A black curve forms a sideways U shape. The curve deforms as the user moves the mouse from left to right');
    * }
    *
    * function draw() {
-   *   background(200);
+   *   background(240);
    *
-   *   // Set the curve's tightness using the mouse.
-   *   let t = map(mouseX, 0, 100, -5, 5, true);
+   *   t = map(mouseX, 0, width, -5, 5, true);
    *   splineProperty('tightness', t);
    *
-   *   // Draw the curve.
    *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *
    *   beginShape();
    *   splineVertex(10, 26);
-   *   splineVertex(10, 26);
    *   splineVertex(83, 24);
+   *
    *   splineVertex(83, 61);
    *   splineVertex(25, 65);
-   *   splineVertex(25, 65);
    *   endShape();
+   *
+   *   push();
+   *   strokeWeight(5);
+   *   point(10, 26);
+   *   point(83, 24);
+   *   point(83, 61);
+   *   point(25, 65);
+   *   pop();
+   *
+   *   fill(0);
+   *   noStroke();
+   *   textSize(10);
+   *   text(`tightness: ${round(t, 1)}`, 15, 90);
+   *   describe('A black spline forms a sideways U shape through four points. The spline passes through the points more loosely as the mouse moves left of center (negative tightness), and more tightly as it moves right of center (positive tightness). The tightness is displayed at the bottom.');
    * }
    * </code>
    * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   * createCanvas(360, 140);
+   * background(240);
+   * noFill();
+   *
+   * // Right panel: ends = INCLUDE (all spans).
+   * push();
+   * translate(10, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * fill(30);
+   * textSize(11);
+   * text('ends: INCLUDE (all spans)', 8, 16);
+   * noFill();
+   *
+   * splineProperty('ends', INCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   * pop();
+   *
+   * // Right panel: ends = EXCLUDE (middle only).
+   * push();
+   * translate(190, 10);
+   * stroke(220);
+   * rect(0, 0, 160, 120);
+   * noStroke();
+   * fill(30);
+   * text('ends: EXCLUDE ', 18, 16);
+   * noFill();
+   *
+   * splineProperty('ends', EXCLUDE);
+   * stroke(0);
+   * strokeWeight(2);
+   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *
+   * // vertices
+   * strokeWeight(5);
+   * stroke(0);
+   * point(25, 46);
+   * point(93, 44);
+   * point(93, 81);
+   * point(35, 85);
+   *  pop();
+   *
+   * describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   *
+   * <div>
+   * <code>
+   * let vertexA;
+   * let vertexB;
+   * let vertexC;
+   * let vertexD;
+   * let vertexE;
+   * let vertexF;
+   *
+   * let markerRadius;
+   *
+   * let vectorAB;
+   * let vectorFE;
+   *
+   * let endOfTangentB;
+   * let endOfTangentE;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Initialize variables
+   *   // Adjusting vertices A and F affects the slopes at B and E
+   *
+   *   vertexA = createVector(35, 85);
+   *   vertexB = createVector(25, 70);
+   *   vertexC = createVector(30, 30);
+   *   vertexD = createVector(70, 30);
+   *   vertexE = createVector(75, 70);
+   *   vertexF = createVector(65, 85);
+   *
+   *   markerRadius = 4;
+   *
+   *   vectorAB = p5.Vector.sub(vertexB, vertexA);
+   *   vectorFE = p5.Vector.sub(vertexE, vertexF);
+   *
+   *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
+   *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
+   *
+   *   splineProperty(`ends`, EXCLUDE);
+   *
+   *   // Draw figure
+   *
+   *   background(220);
+   *
+   *   noFill();
+   *
+   *   beginShape();
+   *   splineVertex(vertexA.x, vertexA.y);
+   *   splineVertex(vertexB.x, vertexB.y);
+   *   splineVertex(vertexC.x, vertexC.y);
+   *   splineVertex(vertexD.x, vertexD.y);
+   *   splineVertex(vertexE.x, vertexE.y);
+   *   splineVertex(vertexF.x, vertexF.y);
+   *   endShape();
+   *
+   *   stroke('red');
+   *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
+   *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
+   *
+   *   stroke('blue');
+   *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
+   *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
+   *
+   *   fill('white');
+   *   stroke('black');
+   *   circle(vertexA.x, vertexA.y, markerRadius);
+   *   circle(vertexB.x, vertexB.y, markerRadius);
+   *   circle(vertexC.x, vertexC.y, markerRadius);
+   *   circle(vertexD.x, vertexD.y, markerRadius);
+   *   circle(vertexE.x, vertexE.y, markerRadius);
+   *   circle(vertexF.x, vertexF.y, markerRadius);
+   *
+   *   fill('black');
+   *   noStroke();
+   *   text('A', vertexA.x - 15, vertexA.y + 5);
+   *   text('B', vertexB.x - 15, vertexB.y + 5);
+   *   text('C', vertexC.x - 5, vertexC.y - 5);
+   *   text('D', vertexD.x - 5, vertexD.y - 5);
+   *   text('E', vertexE.x + 5, vertexE.y + 5);
+   *   text('F', vertexF.x + 5, vertexF.y + 5);
+   *
+   *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
+   * }
+   * </code>
+   * </div>
+   *
    */
+
   /**
    * @method splineProperty
    * @param {String} property

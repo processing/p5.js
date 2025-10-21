@@ -6,8 +6,6 @@
  * @requires core
  */
 
-import { Texture } from './p5.Texture';
-
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     this._renderer = renderer;
@@ -86,8 +84,8 @@ class Shader {
             type: {
               typeName,
               qualifiers: [],
-              properties: typeProperties,
-            },
+              properties: typeProperties
+            }
           });
         }
       }
@@ -106,9 +104,9 @@ class Shader {
         type: {
           typeName,
           qualifiers,
-          properties,
+          properties
         }
-      }
+      };
     });
 
     return {

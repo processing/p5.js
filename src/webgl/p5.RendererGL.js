@@ -1,4 +1,4 @@
-import * as constants from "../core/constants";
+import * as constants from '../core/constants';
 import {
   getWebGLShaderAttributes,
   getWebGLUniformMetadata,
@@ -9,12 +9,11 @@ import {
   setWebGLUniformValue,
   checkWebGLCapabilities
 } from './utils';
-import { Renderer3D, getStrokeDefs } from "../core/p5.Renderer3D";
-import { Shader } from "./p5.Shader";
-import { Texture, MipmapTexture } from "./p5.Texture";
-import { Framebuffer } from "./p5.Framebuffer";
+import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
+import { Shader } from './p5.Shader';
+import { MipmapTexture } from './p5.Texture';
+import { Framebuffer } from './p5.Framebuffer';
 import { RGB, RGBA } from '../color/creating_reading';
-import { Element } from "../dom/p5.Element";
 import { Image } from '../image/p5.Image';
 
 import filterBaseVert from "./shaders/filters/base.vert";

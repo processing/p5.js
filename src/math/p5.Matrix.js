@@ -7,7 +7,7 @@
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
  *   Reference/Global_Objects/SIMD
  */
-import { Matrix } from "./Matrices/Matrix";
+import { Matrix } from './Matrices/Matrix';
 // import { MatrixNumjs as Matrix } from './Matrices/MatrixNumjs'
 
 function matrix(p5, fn) {
@@ -111,6 +111,6 @@ function matrix(p5, fn) {
 export default matrix;
 export { Matrix };
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   matrix(p5, p5.prototype);
 }
