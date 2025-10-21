@@ -132,6 +132,7 @@ function text(p5, fn) {
 
   /**
    * @function setPixel
+   * @private
    * @param {Object} imageInfo
    * @param {Number} r
    * @param {Number} g
@@ -230,6 +231,7 @@ function text(p5, fn) {
 
       /**
        * @function push
+       * @private
        * @param {Number[]} xs the x positions of points in the curve
        * @param {Number[]} ys the y positions of points in the curve
        * @param {Object} v    the curve information
@@ -242,6 +244,7 @@ function text(p5, fn) {
 
         /**
          * @function minMax
+         * @private
          * @param {Number[]} rg the list of values to compare
          * @param {Number} min the initial minimum value
          * @param {Number} max the initial maximum value
@@ -291,6 +294,7 @@ function text(p5, fn) {
 
       /**
        * @function clamp
+       * @private
        * @param {Number} v the value to clamp
        * @param {Number} min the minimum value
        * @param {Number} max the maxmimum value
@@ -305,6 +309,7 @@ function text(p5, fn) {
 
       /**
        * @function byte
+       * @private
        * @param {Number} v the value to scale
        *
        * converts a floating-point number in the range 0-1 to a byte 0-255
@@ -440,6 +445,7 @@ function text(p5, fn) {
 
       /**
        * @function cubicToQuadratics
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} cx0
@@ -508,6 +514,7 @@ function text(p5, fn) {
 
       /**
        * @function pushLine
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} x1
@@ -523,6 +530,7 @@ function text(p5, fn) {
 
       /**
        * @function samePoint
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} x1
@@ -608,9 +616,10 @@ function text(p5, fn) {
 
       /**
        * @function layout
+       * @private
        * @param {Number[][]} dim
-       * @param {ImageInfo[]} dimImageInfos
-       * @param {ImageInfo[]} cellImageInfos
+       * @param {ImageInfos} dimImageInfos
+       * @param {ImageInfos} cellImageInfos
        * @return {Object}
        *
        * lays out the curves in a dimension (row or col) into two
