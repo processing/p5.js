@@ -1871,7 +1871,7 @@ function dom(p5, fn){
    * @method createFileInput
    * @param  {Function} callback function to call once the file loads.
    * @param  {Boolean} [multiple] allow multiple files to be selected.
-   * @return {p5.File} new <a href="#/p5.File">p5.File</a> object.
+   * @return {p5.Element} The new input element.
    *
    * @example
    * <div>
