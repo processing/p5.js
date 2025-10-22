@@ -2303,7 +2303,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *
  * The first parameter, `type`, is optional. It sets the type of capture to
  * use. By default, `createCapture()` captures both audio and video. If `VIDEO`
- * is passed, as in `createCapture(VIDEO)`, only video will be captured.
+ * is passed, as in `createCapture(VIDEO)`, only video will be cshould work with tintaptured.
  * If `AUDIO` is passed, as in `createCapture(AUDIO)`, only audio will be
  * captured. A constraints object can also be passed to customize the stream.
  * See the <a href="http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints" target="_blank">
@@ -4955,22 +4955,23 @@ class MediaElement extends p5.Element {
       this.setModified(true);
       this._frameOnCanvas = this._pInst.frameCount;
     }
+  } loadPixels(...args) {
+    this._ensureCanvas();
+    let renderer = null;
+    // Use the current p5 instance’s renderer if available
+    if (this._pInst && this._pInst._renderer) {
+      renderer = this._pInst._renderer;
+    } else if (typeof p5 !== 'undefined' && p5.instance && p5.instance._renderer) {
+      // Fallback for global mode
+      renderer = p5.instance._renderer;
+    } if (!renderer || typeof renderer.loadPixels !== 'function') {
+      throw new Error(
+        'p5 renderer not available in MediaElement.loadPixels()'
+      );
+    }
+    // Call renderer.loadPixels() but do NOT return anything
+    renderer.loadPixels(...args);
   }
- loadPixels(...args) {
-  this._ensureCanvas();
-
-  // ✅ use the current p5 instance’s renderer instead of global p5
-  if (this._pInst && this._pInst._renderer) {
-    return this._pInst._renderer.loadPixels(...args);
-  }
-
-  // fallback for old global mode (just in case)
-  if (typeof p5 !== 'undefined' && p5.Renderer2D && p5.Renderer2D.prototype) {
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
-  }
-
-  throw new Error('p5 instance or renderer not available in MediaElement.loadPixels()');
-}
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
