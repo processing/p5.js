@@ -82,6 +82,7 @@
     "./core": {
       "default": "./dist/core/main.js"
     },
+    "./color": "./dist/color/index.js",
     "./shape": "./dist/shape/index.js",
     "./accessibility": "./dist/accessibility/index.js",
     "./friendlyErrors": "./dist/core/friendlyErrors/index.js",
