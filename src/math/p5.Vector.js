@@ -2939,6 +2939,7 @@ class Vector {
   /**
    * Returns the vector's components as an array of numbers.
    *
+   * @deprecated
    * @return {Number[]} array with the vector's components.
    * @example
    * <div class = "norender">
@@ -2954,6 +2955,10 @@ class Vector {
    * </div>
    */
   array() {
+    p5._friendlyError(
+      'array() is deprecated and will be removed in a future version of p5.js.',
+      'p5.Vector.array'
+    );
     return [this.x || 0, this.y || 0, this.z || 0];
   }
 
@@ -3784,11 +3789,16 @@ class Vector {
    * method to copy into your own vector.
    */
   /**
+   * @deprecated
    * @static
    * @param  {p5.Vector} v the vector to convert to an array
    * @return {Number[]} an Array with the 3 values
    */
   static array(v) {
+    p5._friendlyError(
+      'array() is deprecated and will be removed in a future version of p5.js.',
+      'p5.Vector.array'
+    );
     return v.array();
   }
 
