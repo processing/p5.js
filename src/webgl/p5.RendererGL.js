@@ -511,7 +511,11 @@ class RendererGL extends Renderer {
       );
     }
     const geometry = this.geometryBuilder.finish();
-    this.fill(this.geometryBuilder.prevFillColor);
+    if (this.geometryBuilder.prevFillColor) {
+      this.fill(this.geometryBuilder.prevFillColor);
+    } else {
+      this.noFill();
+    }
     this.geometryBuilder = undefined;
     return geometry;
   }
