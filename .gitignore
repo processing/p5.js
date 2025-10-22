@@ -24,8 +24,17 @@ __screenshots__/
 *.d.ts
 p5.zip
 yarn.lock
+
+docs/data.json
+analyzer/
+preview/
+__screenshots__/
+actual-screenshots/
+visual-report.html
+
 todo.md
 
 *.DS_Store
 .idea
 .project
+

@@ -864,7 +864,6 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -1591,7 +1590,6 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
-   * @method dist
    * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
@@ -3065,7 +3063,6 @@ class Vector {
    *
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
    *
-   * @method clampToZero
    * @return {p5.Vector} with components very close to zero replaced with zero.
    * @chainable
    */
