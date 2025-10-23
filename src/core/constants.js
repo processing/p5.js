@@ -1294,22 +1294,3 @@ export const EXCLUDE = Symbol('exclude');
  * @private
  */
 export const JOIN = Symbol('join');
-
-/**
- * Can be used with `Color.contrast` to check if graphics, UI elements, and large text
- * have enough contrast.
- * @typedef {'color-contrast-minimum-graphics'} COLOR_CONTRAST_MINIMUM_GRAPHICS
- * @property {COLOR_CONTRAST_MINIMUM_GRAPHICS} COLOR_CONTRAST_MINIMUM_GRAPHICS
- * @final
- */
-export const COLOR_CONTRAST_MINIMUM_GRAPHICS = 4.5;
-
-
-/**
- * Can be used with `Color.contrast` to check if text smaller than 14pt (~19px)
- * has enough contrast.
- * @typedef {'color-contrast-minimum-text'} COLOR_CONTRAST_MINIMUM_TEXT
- * @property {COLOR_CONTRAST_MINIMUM_TEXT} COLOR_CONTRAST_MINIMUMD_TEXT
- * @final
- */
-export const COLOR_CONTRAST_MINIMUM_TEXT = 7.0;
