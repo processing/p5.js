@@ -855,11 +855,15 @@ function color(p5, fn, lifecycles){
    * instance of this class.
    *
    * @class p5.Color
-   * @param {p5} [pInst]                      pointer to p5 instance.
+   * @param {p5} pInst                      pointer to p5 instance.
    *
    * @param {Number[]|String} vals            an array containing the color values
    *                                          for red, green, blue and alpha channel
    *                                          or CSS color.
+   */
+  /**
+   * @class p5.Color
+   * @param {Number[]|String} vals
    */
   p5.Color = Color;
 
