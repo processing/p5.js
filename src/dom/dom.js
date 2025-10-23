@@ -2303,7 +2303,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *
  * The first parameter, `type`, is optional. It sets the type of capture to
  * use. By default, `createCapture()` captures both audio and video. If `VIDEO`
- * is passed, as in `createCapture(VIDEO)`, only video will be captured.
+ * is passed, as in `createCapture(VIDEO)`, only video will be cshould work with tintaptured.
  * If `AUDIO` is passed, as in `createCapture(AUDIO)`, only audio will be
  * captured. A constraints object can also be passed to customize the stream.
  * See the <a href="http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints" target="_blank">
@@ -4955,12 +4955,7 @@ class MediaElement extends p5.Element {
       this.setModified(true);
       this._frameOnCanvas = this._pInst.frameCount;
     }
-  }
-  loadPixels(...args) {
-    this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
-  }
-  updatePixels(x, y, w, h) {
+  }updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
@@ -5478,6 +5473,28 @@ class MediaElement extends p5.Element {
 }
 
 p5.MediaElement = MediaElement;
+// Fix for MediaElement.loadPixels renderer reference per instance
+function attachMediaElementPixelMethods(p5Inst) {
+  p5Inst.MediaElement.prototype.loadPixels = function (...args) {
+    this._ensureCanvas();
+    // Use the 2D renderer prototype method directly on the MediaElement
+    // MediaElement acts as its own 2D renderer context
+    return p5Inst.Renderer2D.prototype.loadPixels.apply(this, args);
+  };
+
+  p5Inst.MediaElement.prototype.updatePixels = function (x, y, w, h) {
+    this._ensureCanvas();
+    // Use the 2D renderer prototype method directly on the MediaElement
+    return p5Inst.Renderer2D.prototype.updatePixels.apply(this, x, y, w, h);
+  };
+}
+
+// Attach to current instance if available
+if (typeof p5 !== 'undefined') {
+  attachMediaElementPixelMethods(p5);
+}
+
+
 
 /**
  * A class to describe a file.
@@ -5840,6 +5857,9 @@ class File {
     }
   }
 }
+
+
+
 
 
 p5.File = File;
