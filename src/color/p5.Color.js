@@ -27,6 +27,7 @@ import {
   OKLab,
   OKLCH as OKLCHSpace,
   contrastWCAG21,
+  contrastAPCA,
   P3
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
@@ -331,96 +332,122 @@ class Color {
   }
 
   /**
-   * Checks the contrast between two colors, to make sure that they
-   * are different enough to be readable. The result of this function is
-   * a color contrast ratio that can be compared to `COLOR_CONTRAST_MINIMUM_GRAPHICS`,
-   * or to `COLOR_CONTRAST_MINIMUM_TEXT`. The higher the ratio, the more
-   * different colors are, and the more legible to a user.
-   * 
-   * Graphics, interface elements, and large text should have a color
-   * contrast ratio of at least 4.5 (`COLOR_CONTRAST_MINIMUM_GRAPHICS`)
-   * 
-   * Smaller text - less than at least 14 point or 19 pixels -
-   * should have a color contrast ratio of at least 7
-   * (`COLOR_CONTRAST_MINIMUM_TEXT`)
-   * 
-   * The constants are based on WCAG AAA recommendations, which you can also explore in this
-   * <a href="https://webaim.org/resources/contrastchecker/">contrast checker tool</a>.
-   * The contrast function in p5.js uses the WCAG 2.1 method the
-   * <a href="https://colorjs.io/docs/contrast.html">color.js contrast</a>
-   * utility.
-   * 
-
+   * Checks the contrast between two colors. This method returns a boolean
+   * value to indicate if the two color has enough contrast. `true` means that
+   * the colors has enough contrast to be used as background color and body
+   * text color. `false` means there is not enough contrast.
+   *
+   * A second argument can be passed to the method, `options` , which defines
+   * the algorithm to be used. The algorithms currently supported are
+   * WCAG 2.1 (`'WCAG21'`) or APCA (`'APCA'`). The default is WCAG 2.1. If a
+   * value of `'all'` is passed to the `options` argument, an object containing
+   * more details is returned. The details object will include the calculated
+   * contrast value of the colors and different passing criteria.
+   *
+   * For more details about color contrast, you can checkout this page from
+   * color.js. The WebAIM color contrast checker is a good tool to check out as
+   * well.
    *
    * @param {Color} other
-   * @returns {{ ratio: Number }}
+   * @returns {boolean|object}
    * @example
    * <div>
    * <code>
-   * 
-   * // The contrast checker can be used both during development
-   * // with `print()`, or to help select readable colors on the fly.
-   * // This example shows both uses.
-   * 
-   * let bgColor;
-   * let fg1Color;
-   * let fg2Color;
-   * 
+   * let bgColor, fg1Color, fg2Color, msg1, msg2;
    * function setup() {
    *   createCanvas(100, 100);
    *   bgColor = color(0);
-   *   fg1Color = color(120);
-   *   fg2Color = color(255);
-   *   
-   *  describe('A small square canvas with acentered text outlined by a thick stroke. The text reads 'click again!'. On every mouse click, the background, square outline, and text colors randomize, with high enough contrast for readability.');
-   * }
-   * 
-   * function draw() {
-   *   background(bgColor);
-   *   stroke(fg1Color);
-   *   noFill();
-   *   strokeWeight(5);
-   *   rect(10, 10, 80, 80);
-   * 
-   *   noStroke();
-   *   fill(fg2Color);
-   *   textAlign(CENTER, CENTER);
-   *   textSize(20);
-   *   text("click\nagain!", 50, 50);
-   * }
-   * 
-   * function mouseClicked(){
-   *   let newBgColor;
-   *   let newFg1Color;
-   *   let newFg2Color;
-   * 
-   *   // The loop may go for a long time, but it will not go on forever
-   *   // It will stop the first time that the random colors contrast enough
-   *   for (let i = 0; i < 10000; i += 1){
-   *     newBgColor = color(random(255), random(255), random(255));
-   *     newFg1Color = color(random(255), random(255), random(255));
-   *     newFg2Color = color(random(255), random(255), random(255));
-   *     if (
-   *       newBgColor.contrast(newFg2Color) >= COLOR_CONTRAST_MINIMUM_TEXT &&
-   *       newBgColor.contrast(newFg1Color) >= COLOR_CONTRAST_MINIMUM_GRAPHICS &&
-   *       newBgColor.contrast(newFg1Color) < COLOR_CONTRAST_MINIMUM_TEXT ){
-   *       
-   *       bgColor = newBgColor;
-   *       fg1Color = newFg1Color;
-   *       fg2Color = newFg2Color;
-   *       
-   *       break;
-   *     }
+   *   fg1Color = color(100);
+   *   fg2Color = color(220);
+   *
+   *   if(bgColor.contrast(fg1Color)){
+   *     msg1 = 'good';
+   *   }else{
+   *     msg1 = 'bad';
    *   }
-   *   
-   *   print("Contrast (rect)", bgColor.contrast(fg1Color));
-   *   print("Contrast (text)", bgColor.contrast(fg2Color));
+   *
+   *   if(bgColor.contrast(fg2Color)){
+   *     msg2 = 'good';
+   *   }else{
+   *     msg2 = 'bad';
+   *   }
+   *
+   *   describe('A black canvas with a faint grey word saying "bad" at the top left and a brighter light grey word saying "good" in the middle of the canvas.');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(18);
+   *
+   *   fill(fg1Color);
+   *   text(msg1, 10, 30);
+   *
+   *   fill(fg2Color);
+   *   text(msg2, 10, 60);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let bgColor, fgColor, contrast;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fgColor = color(200);
+   *   contrast = bgColor.contrast(fgColor, 'all');
+   *
+   *   describe('A black canvas with four short lines of grey text that respectively says: "WCAG 2.1", "12.55", "APCA", and "-73.30".');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(14);
+   *
+   *   fill(fgColor);
+   *   text('WCAG 2.1', 10, 25);
+   *   text(nf(contrast.WCAG21.value, 0, 2), 10, 40);
+   *
+   *   text('APCA', 10, 70);
+   *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
    * }
    * </code>
    * </div>
    */
-  contrast(other_color) { 
-    return contrastWCAG21(this._color, other_color._color);            
+  contrast(other_color, options='WCAG21') {
+    if(options !== 'all'){
+      let contrastVal, minimum;
+      switch(options){
+        case 'WCAG21':
+          contrastVal = contrastWCAG21(this._color, other_color._color);
+          minimum = 4.5;
+          break;
+        case 'APCA':
+          contrastVal = Math.abs(contrastAPCA(this._color, other_color._color));
+          minimum = 75;
+          break;
+        default:
+          return null;
+      }
+
+      return contrastVal >= minimum;
+    }else{
+      const wcag21Value = contrastWCAG21(this._color, other_color._color);
+      const apcaValue = contrastAPCA(this._color, other_color._color);
+      return {
+        WCAG21: {
+          value: wcag21Value,
+          passedMinimum: wcag21Value >= 4.5,
+          passedAAA: wcag21Value >= 7
+        },
+        APCA: {
+          value: apcaValue,
+          passedMinimum: Math.abs(apcaValue) >= 75
+        }
+      };
+    }
   };
 
   /**
