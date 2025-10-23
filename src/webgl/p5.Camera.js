@@ -7,7 +7,7 @@
 import { Matrix } from '../math/p5.Matrix';
 import { Vector } from '../math/p5.Vector';
 import { Quat } from './p5.Quat';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 
 class Camera {
   constructor(renderer) {
@@ -190,6 +190,7 @@ class Camera {
    * </div>
    */
   perspective(fovy, aspect, near, far) {
+    const range = this._renderer.zClipRange();
     this.cameraType = arguments.length > 0 ? 'custom' : 'default';
     if (typeof fovy === 'undefined') {
       fovy = this.defaultCameraFOV;
@@ -234,10 +235,21 @@ class Camera {
     const f = 1.0 / Math.tan(this.cameraFOV / 2);
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
+    let A, B;
+    if (range[0] === 0) {
+      // WebGPU clip space, z in [0, 1]
+      A = far * nf;
+      B = far * near * nf;
+    } else {
+      // WebGL clip space, z in [-1, 1]
+      A = (far + near) * nf;
+      B = (2 * far * near) * nf;
+    }
+
     this.projMatrix.set(f / aspect, 0, 0, 0,
       0, -f * this.yScale, 0, 0,
-      0, 0, (far + near) * nf, -1,
-      0, 0, (2 * far * near) * nf, 0);
+      0, 0, A, -1,
+      0, 0, B, 0);
 
     if (this._isActive()) {
       this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
@@ -2451,7 +2463,7 @@ function camera(p5, fn){
    */
   fn.linePerspective = function (enable) {
     // p5._validateParameters('linePerspective', arguments);
-    if (!(this._renderer instanceof RendererGL)) {
+    if (!(this._renderer instanceof Renderer3D)) {
       throw new Error('linePerspective() must be called in WebGL mode.');
     }
     return this._renderer.linePerspective(enable);
@@ -2944,15 +2956,15 @@ function camera(p5, fn){
    */
   p5.Camera = Camera;
 
-  RendererGL.prototype.camera = function(...args) {
+  Renderer3D.prototype.camera = function(...args) {
     this.states.curCamera.camera(...args);
   };
 
-  RendererGL.prototype.perspective = function(...args) {
+  Renderer3D.prototype.perspective = function(...args) {
     this.states.curCamera.perspective(...args);
   };
 
-  RendererGL.prototype.linePerspective = function(enable) {
+  Renderer3D.prototype.linePerspective = function(enable) {
     if (enable !== undefined) {
       // Set the line perspective if enable is provided
       this.states.curCamera.useLinePerspective = enable;
@@ -2962,15 +2974,15 @@ function camera(p5, fn){
     }
   };
 
-  RendererGL.prototype.ortho = function(...args) {
+  Renderer3D.prototype.ortho = function(...args) {
     this.states.curCamera.ortho(...args);
   };
 
-  RendererGL.prototype.frustum = function(...args) {
+  Renderer3D.prototype.frustum = function(...args) {
     this.states.curCamera.frustum(...args);
   };
 
-  RendererGL.prototype.createCamera = function() {
+  Renderer3D.prototype.createCamera = function() {
     // compute default camera settings, then set a default camera
     const _cam = new Camera(this);
     _cam._computeCameraDefaultSettings();
@@ -2979,7 +2991,7 @@ function camera(p5, fn){
     return _cam;
   };
 
-  RendererGL.prototype.setCamera = function(cam) {
+  Renderer3D.prototype.setCamera = function(cam) {
     this.states.setValue('curCamera', cam);
 
     // set the projection matrix (which is not normally updated each frame)

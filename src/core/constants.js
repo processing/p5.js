@@ -72,6 +72,13 @@ export const WEBGL = 'webgl';
  */
 export const WEBGL2 = 'webgl2';
 
+/**
+ * A constant used for creating a WebGPU rendering context
+ * @property {'webgpu'} WEBGPU
+ * @final
+ */
+export const WEBGPU = 'webgpu';
+
 // ENVIRONMENT
 /**
  * @typedef {'default'} ARROW

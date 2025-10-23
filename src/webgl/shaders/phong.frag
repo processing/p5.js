@@ -2,6 +2,7 @@
 precision highp int;
 
 uniform bool uHasSetAmbient;
+uniform vec3 uAmbientColor;
 uniform vec4 uSpecularMatColor;
 uniform vec4 uAmbientMatColor;
 uniform vec4 uEmissiveMatColor;
@@ -13,7 +14,6 @@ uniform bool isTexture;
 IN vec3 vNormal;
 IN vec2 vTexCoord;
 IN vec3 vViewPosition;
-IN vec3 vAmbientColor;
 IN vec4 vColor;
 
 struct ColorComponents {
@@ -45,7 +45,7 @@ void main(void) {
   Inputs inputs;
   inputs.normal = normalize(vNormal);
   inputs.texCoord = vTexCoord;
-  inputs.ambientLight = vAmbientColor;
+  inputs.ambientLight = uAmbientColor;
   inputs.color = isTexture
       ? TEXTURE(uSampler, vTexCoord) * (vec4(uTint.rgb/255., 1.) * uTint.a/255.)
       : vColor;
@@ -67,7 +67,6 @@ void main(void) {
 
   // Calculating final color as result of all lights (plus emissive term).
 
-  vec2 texCoord = inputs.texCoord;
   vec4 baseColor = inputs.color;
   ColorComponents c;
   c.opacity = baseColor.a;

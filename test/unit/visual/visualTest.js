@@ -429,8 +429,8 @@ export function visualTest(
       const actual = [];
 
       // Generate screenshots
-      await callback(myp5, () => {
-        const img = myp5.get();
+      await callback(myp5, async () => {
+        const img = await myp5.get();
         img.pixelDensity(1);
         actual.push(img);
       });
