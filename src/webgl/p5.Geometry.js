@@ -432,8 +432,8 @@ class Geometry {
    * @method saveStl
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
-   * controls whether or not a binary .stl file is saved. It defaults to false.
+   * @param {Object} [options] Optional settings.
+   * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
    * <div>
    * <code>
@@ -1953,7 +1953,7 @@ function geometry(p5, fn){
    * @class p5.Geometry
    * @param  {Integer} [detailX] number of vertices along the x-axis.
    * @param  {Integer} [detailY] number of vertices along the y-axis.
-   * @param {function} [callback] function to call once the geometry is created.
+   * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
    * <div>
@@ -2549,6 +2549,13 @@ function geometry(p5, fn){
    * }
    * </code>
    * </div>
+   */
+
+  /**
+   * A unique identifier for this geometry. The renderer will use this to cache resources.
+   *
+   * @property {String} gid
+   * @for p5.Geometry
    */
 }
 

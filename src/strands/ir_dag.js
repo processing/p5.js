@@ -6,8 +6,8 @@ import * as FES from './strands_FES';
 /////////////////////////////////
 
 export function createDirectedAcyclicGraph() {
-  const graph = { 
-    nextID: 0, 
+  const graph = {
+    nextID: 0,
     cache: new Map(),
     nodeTypes: [],
     baseTypes: [],
@@ -21,16 +21,16 @@ export function createDirectedAcyclicGraph() {
     statementTypes: [],
     swizzles: [],
   };
-  
+
   return graph;
 }
 
 export function getOrCreateNode(graph, node) {
   // const key = getNodeKey(node);
   // const existing = graph.cache.get(key);
-  
+
   // if (existing !== undefined) {
-    // return existing; 
+    // return existing;
   // } else {
     const id = createNode(graph, node);
     // graph.cache.set(key, id);
@@ -66,7 +66,7 @@ export function getNodeDataFromID(graph, id) {
     dependsOn: graph.dependsOn[id],
     usedBy: graph.usedBy[id],
     phiBlocks: graph.phiBlocks[id],
-    dimension: graph.dimensions[id],  
+    dimension: graph.dimensions[id],
     baseType: graph.baseTypes[id],
     statementType: graph.statementTypes[id],
     swizzle: graph.swizzles[id],
@@ -115,7 +115,7 @@ function getNodeKey(node) {
 function validateNode(node){
   const nodeType = node.nodeType;
   const requiredFields = NodeTypeRequiredFields[nodeType];
-  if (requiredFields.length === 2) { 
+  if (requiredFields.length === 2) {
     FES.internalError(`Required fields for node type '${NodeTypeToName[nodeType]}' not defined. Please add them to the utils.js file in p5.strands!`)
   }
   const missingFields = [];
@@ -123,6 +123,9 @@ function validateNode(node){
     if (node[field] === null) {
       missingFields.push(field);
     }
+  }
+  if (node.dependsOn?.some(v => v === undefined)) {
+    throw new Error('Undefined dependency!');
   }
   if (missingFields.length > 0) {
     FES.internalError(`Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`);

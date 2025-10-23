@@ -5,13 +5,13 @@ function setup() {
   radio.id('test');
   //radio = createSelect(); // for comparison
 
-  // just mucking around
+  // The first is the value; the second is the optional label
   radio.option('apple', '1');
   radio.option('orange', '2');
   radio.option('pear');
 
   // Set what it starts as
-  radio.selected('2');
+  radio.selected('orange');
 
   radio.changed(mySelectEvent);
 }
@@ -24,7 +24,7 @@ function draw() {
 }
 
 function mySelectEvent() {
-  var selected = this.selected();
+  var selected = this.selected().value;
   console.log(this.value());
   if (selected === 'pear') {
     console.log("it's a pear!");

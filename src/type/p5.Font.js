@@ -109,7 +109,6 @@ export class Font {
    * @param  {Number} y              y‐coordinate of the text baseline.
    * @param  {Number} [width]        Optional width for text wrapping.
    * @param  {Number} [height]       Optional height for text wrapping.
-   * @param  {Object} [options]      Configuration object for rendering text.
    * @return {Array<Array>}          A flat array of path commands.
    *
    * @example
@@ -241,8 +240,9 @@ export class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle between two segments. Segments with a shallower angle will be merged.
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -312,8 +312,9 @@ export class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration options:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle between two segments. Segments with a shallower angle will be merged.
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example

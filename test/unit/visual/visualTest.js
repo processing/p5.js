@@ -463,9 +463,15 @@ export function visualTest(
         : [];
 
       for (let i = 0; i < actual.length; i++) {
+        const flatName = name.replace(/\//g, '-');
+        const actualFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
         if (expected[i]) {
           const result = await checkMatch(actual[i], expected[i], myp5);
+          // Always save the actual image before potentially throwing an error
+          writeImageFile(actualFilename, toBase64(actual[i]));
           if (!result.ok) {
+            const diffFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
+            writeImageFile(diffFilename, toBase64(result.diff));
             throw new Error(
               `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
               'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
@@ -474,6 +480,7 @@ export function visualTest(
           }
         } else {
           writeImageFile(expectedFilenames[i], toBase64(actual[i]));
+          writeImageFile(actualFilename, toBase64(actual[i]));
         }
       }
     });

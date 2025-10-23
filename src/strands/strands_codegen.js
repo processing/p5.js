@@ -41,7 +41,6 @@ export function generateShaderCode(strandsContext) {
       : TypeInfoFromGLSLName[hookType.returnType.typeName];
     backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
-    console.log(hooksObj[`${hookType.returnType.typeName} ${hookType.name}`]);
   }
 
   hooksObj.vertexDeclarations = [...vertexDeclarations].join('\n');

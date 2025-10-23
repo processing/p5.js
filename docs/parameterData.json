@@ -31,6 +31,11 @@
         ]
       ]
     },
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
     "p5": {
       "overloads": [
         [
@@ -206,7 +211,8 @@
           "Number",
           "Number",
           "Number?"
-        ]
+        ],
+        []
       ]
     },
     "fill": {
@@ -392,6 +398,13 @@
         []
       ]
     },
+    "registerAddon": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
     "createCanvas": {
       "overloads": [
         [
@@ -475,7 +488,7 @@
     "applyMatrix": {
       "overloads": [
         [
-          "Array"
+          "Number[]"
         ],
         [
           "Number",
@@ -762,6 +775,31 @@
         [
           "Function",
           "Boolean?"
+        ]
+      ]
+    },
+    "createVideo": {
+      "overloads": [
+        [
+          "String|String[]?",
+          "Function?"
+        ]
+      ]
+    },
+    "createAudio": {
+      "overloads": [
+        [
+          "String|String[]?",
+          "Function?"
+        ]
+      ]
+    },
+    "createCapture": {
+      "overloads": [
+        [
+          "AUDIO|VIDEO|Object?",
+          "Object?",
+          "Function?"
         ]
       ]
     },
@@ -1262,6 +1300,13 @@
         ]
       ]
     },
+    "setContent": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
     "abs": {
       "overloads": [
         [
@@ -1300,9 +1345,6 @@
           "Number",
           "Number",
           "Number"
-        ],
-        [
-          "p5.Vector"
         ]
       ]
     },
@@ -1985,6 +2027,55 @@
         ]
       ]
     },
+    "getWorldInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "combineColors": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getPixelInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getFinalColor": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getColor": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getObjectInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "getCameraInputs": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
     "loadFont": {
       "overloads": [
         [
@@ -2015,10 +2106,9 @@
     "textAlign": {
       "overloads": [
         [
-          "LEFT|CENTER|RIGHT",
+          "LEFT|CENTER|RIGHT?",
           "TOP|BOTTOM|CENTER|BASELINE?"
-        ],
-        []
+        ]
       ]
     },
     "textAscent": {
@@ -2038,18 +2128,16 @@
     "textLeading": {
       "overloads": [
         [
-          "Number"
-        ],
-        []
+          "Number?"
+        ]
       ]
     },
     "textFont": {
       "overloads": [
         [
-          "p5.Font|String|Object",
+          "p5.Font|String|Object?",
           "Number?"
-        ],
-        []
+        ]
       ]
     },
     "textSize": {
@@ -2605,7 +2693,7 @@
     "imageLight": {
       "overloads": [
         [
-          "p5.image"
+          "p5.Image"
         ]
       ]
     },
@@ -2724,7 +2812,7 @@
         [
           "String|Request",
           "String?",
-          "Boolean",
+          "Boolean?",
           "function(p5.Geometry)?",
           "function(Event)?"
         ],
@@ -2753,7 +2841,7 @@
         [
           "String",
           "String?",
-          "Boolean",
+          "Boolean?",
           "function(p5.Geometry)?",
           "function(Event)?"
         ],
@@ -2945,6 +3033,13 @@
         ]
       ]
     },
+    "roll": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
     "camera": {
       "overloads": [
         [
@@ -3029,6 +3124,30 @@
         ]
       ]
     },
+    "fromAxisAngle": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "mult": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
+    "rotateBy": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
     "setAttributes": {
       "overloads": [
         [
@@ -3037,91 +3156,6 @@
         ],
         [
           "Object"
-        ]
-      ]
-    },
-    "remove": {
-      "overloads": [
-        []
-      ]
-    },
-    "createVideo": {
-      "overloads": [
-        [
-          "String|String[]",
-          "Function?"
-        ]
-      ]
-    },
-    "createAudio": {
-      "overloads": [
-        [],
-        [
-          "String|String[]?",
-          "Function?"
-        ]
-      ]
-    },
-    "createCapture": {
-      "overloads": [
-        [
-          "AUDIO|VIDEO|Object?",
-          "Object?",
-          "Function?"
-        ]
-      ]
-    }
-  },
-  "p5.Geometry": {
-    "flipV": {
-      "overloads": [
-        []
-      ]
-    },
-    "calculateBoundingBox": {
-      "overloads": [
-        []
-      ]
-    },
-    "clearColors": {
-      "overloads": [
-        []
-      ]
-    },
-    "flipU": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeNormals": {
-      "overloads": [
-        [
-          "FLAT|SMOOTH?",
-          "Object?"
-        ]
-      ]
-    },
-    "makeEdgesFromFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "normalize": {
-      "overloads": [
-        []
-      ]
-    },
-    "vertexProperty": {
-      "overloads": [
-        [
-          "String",
-          "Number|Number[]",
-          "Number?"
         ]
       ]
     }
@@ -3479,9 +3513,8 @@
     },
     "time": {
       "overloads": [
-        [],
         [
-          "Number"
+          "Number?"
         ]
       ]
     },
@@ -3557,10 +3590,10 @@
     "updatePixels": {
       "overloads": [
         [
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
+          "Integer?",
+          "Integer?",
+          "Integer?",
+          "Integer?"
         ]
       ]
     },
@@ -4073,10 +4106,7 @@
     },
     "copy": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "add": {
@@ -4088,11 +4118,6 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4105,10 +4130,6 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector"
         ]
       ]
     },
@@ -4121,16 +4142,14 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
     "mult": {
       "overloads": [
+        [
+          "Number"
+        ],
         [
           "Number",
           "Number",
@@ -4141,22 +4160,6 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "Number[]",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4175,39 +4178,17 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
-        ],
-        [
-          "p5.Vector",
-          "Number[]",
-          "p5.Vector?"
         ]
       ]
     },
     "mag": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "magSq": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "dot": {
@@ -4219,11 +4200,6 @@
         ],
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
         ]
       ]
     },
@@ -4231,33 +4207,25 @@
       "overloads": [
         [
           "p5.Vector"
-        ],
-        [],
+        ]
+      ]
+    },
+    "dist": {
+      "overloads": [
         [
-          "p5.Vector",
           "p5.Vector"
         ]
       ]
     },
     "normalize": {
       "overloads": [
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector?"
-        ]
+        []
       ]
     },
     "limit": {
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4265,21 +4233,12 @@
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
     "heading": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "setHeading": {
@@ -4293,23 +4252,12 @@
       "overloads": [
         [
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
     "angleBetween": {
       "overloads": [
         [
-          "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
           "p5.Vector"
         ]
       ]
@@ -4325,13 +4273,6 @@
         [
           "p5.Vector",
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4340,13 +4281,6 @@
         [
           "p5.Vector",
           "Number"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "Number",
-          "p5.Vector?"
         ]
       ]
     },
@@ -4354,21 +4288,12 @@
       "overloads": [
         [
           "p5.Vector"
-        ],
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector",
-          "p5.Vector?"
         ]
       ]
     },
     "array": {
       "overloads": [
-        [],
-        [
-          "p5.Vector"
-        ]
+        []
       ]
     },
     "equals": {
@@ -4380,12 +4305,12 @@
         ],
         [
           "p5.Vector|Array"
-        ],
-        [],
-        [
-          "p5.Vector|Array",
-          "p5.Vector|Array"
         ]
+      ]
+    },
+    "clampToZero": {
+      "overloads": [
+        []
       ]
     },
     "fromAngle": {
@@ -4414,15 +4339,6 @@
       "overloads": [
         []
       ]
-    },
-    "dist": {
-      "overloads": [
-        [],
-        [
-          "p5.Vector",
-          "p5.Vector"
-        ]
-      ]
     }
   },
   "p5.Font": {
@@ -4433,8 +4349,7 @@
           "Number",
           "Number",
           "Number?",
-          "Number?",
-          "Object?"
+          "Number?"
         ]
       ]
     },
@@ -4629,6 +4544,11 @@
         ]
       ]
     },
+    "loadPixels": {
+      "overloads": [
+        []
+      ]
+    },
     "get": {
       "overloads": [
         [
@@ -4645,6 +4565,60 @@
       ]
     }
   },
+  "p5.Geometry": {
+    "calculateBoundingBox": {
+      "overloads": [
+        []
+      ]
+    },
+    "clearColors": {
+      "overloads": [
+        []
+      ]
+    },
+    "flipU": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeNormals": {
+      "overloads": [
+        [
+          "FLAT|SMOOTH?",
+          "Object?"
+        ]
+      ]
+    },
+    "makeEdgesFromFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "normalize": {
+      "overloads": [
+        []
+      ]
+    },
+    "vertexProperty": {
+      "overloads": [
+        [
+          "String",
+          "Number|Number[]",
+          "Number?"
+        ]
+      ]
+    },
+    "flipV": {
+      "overloads": [
+        []
+      ]
+    }
+  },
   "p5.Shader": {
     "version": {
       "overloads": [
@@ -4658,6 +4632,10 @@
     },
     "modify": {
       "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
         [
           "Object?"
         ]

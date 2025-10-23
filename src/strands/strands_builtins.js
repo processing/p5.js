@@ -1,4 +1,6 @@
-import { GenType, DataType } from "./ir_types"
+// Need the .js extension because we also import this from a Node script.
+// Try to keep this file minimal because of that.
+import { GenType, DataType } from "./ir_types.js"
 
 // GLSL Built in functions
 // https://docs.gl/el3/abs
@@ -83,7 +85,7 @@ const builtInGLSLFunctions = {
   sqrt: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: true}],
   step: [{ params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
   trunc: [{ params: [GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
-  
+
   ////////// Vector //////////
   cross: [{ params: [DataType.float3, DataType.float3], returnType: DataType.float3, isp5Function: true}],
   distance: [{ params: [GenType.FLOAT, GenType.FLOAT], returnType:DataType.float1, isp5Function: true}],
@@ -103,7 +105,7 @@ const builtInGLSLFunctions = {
   ],
   reflect: [{ params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
   refract: [{ params: [GenType.FLOAT, GenType.FLOAT,DataType.float1], returnType: GenType.FLOAT, isp5Function: false}],
-  
+
   ////////// Texture sampling //////////
   texture: [{params: [DataType.sampler2D, DataType.float2], returnType: DataType.float4, isp5Function: true}],
   getTexture: [{params: [DataType.sampler2D, DataType.float2], returnType: DataType.float4, isp5Function: true}]
@@ -111,4 +113,4 @@ const builtInGLSLFunctions = {
 
 export const strandsBuiltinFunctions = {
   ...builtInGLSLFunctions,
-} 
+}

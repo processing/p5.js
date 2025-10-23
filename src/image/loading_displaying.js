@@ -183,12 +183,11 @@ function loadingDisplaying(p5, fn){
    * @param  {String} filename file name of gif.
    * @param  {Number} duration duration in seconds to capture from the sketch.
    * @param  {Object} [options] an object that can contain five more properties:
-   *                  `delay`, a Number specifying how much time to wait before recording;
-   *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds’;
-   *                  `silent`, a Boolean that defines presence of progress notifications. By default it’s `false`;
-   *                  `notificationDuration`, a Number that defines how long in seconds the final notification
-   *                  will live. By default it's `0`, meaning the notification will never be removed;
-   *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it’s `'progressBar’`.
+   * @param {Number} [options.delay=0] How much time to wait before recording.
+   * @param {'seconds'|'frames'} [options.units='seconds'] The units of the duration and delay.
+   * @param {Boolean} [options.silent=false] Whether to show progress notifications.
+   * @param {Number} [options.notificationDuration=0] How long in seconds the final notification will live, or 0 for it to remain permanently.
+   * @param {String} [options.notificationID='progressBar'] The id to give to the notification's DOM element.
    *
    * @example
    * <div>

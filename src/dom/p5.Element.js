@@ -2534,6 +2534,7 @@ function element(p5, fn){
    * </code>
    * </div>
    *
+   * @type {HTMLElement}
    * @property elt
    * @for p5.Element
    * @name elt
