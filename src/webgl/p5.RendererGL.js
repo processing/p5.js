@@ -934,12 +934,24 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * [background description]
  */
   background(...args) {
-    const _col = this._pInst.color(...args);
-    const _r = _col.levels[0] / 255;
-    const _g = _col.levels[1] / 255;
-    const _b = _col.levels[2] / 255;
-    const _a = _col.levels[3] / 255;
-    this.clear(_r, _g, _b, _a);
+  // If the first argument is an image, draw it as background
+    if (args.length === 1 && args[0] instanceof p5.Image) {
+      const img = args[0];
+      this.clear(); // clear previous drawing
+      this.push();
+      this._renderer._setDefaultCamera();  // reset camera to default so image fits canvas
+      imageMode(CENTER);
+      image(img, this.width / 2, this.height / 2, this.width, this.height);
+      this.pop();
+    } else {
+    // Else treat it as color input (default behavior)
+      const _col = this._pInst.color(...args);
+      const _r = _col.levels[0] / 255;
+      const _g = _col.levels[1] / 255;
+      const _b = _col.levels[2] / 255;
+      const _a = _col.levels[3] / 255;
+      this.clear(_r, _g, _b, _a);
+    }
   }
 
   //////////////////////////////////////////////
@@ -2544,5 +2556,25 @@ p5.prototype._assert3d = function (name) {
 // function to initialize GLU Tesselator
 
 p5.RendererGL.prototype.tessyVertexSize = 12;
+
+p5.RendererGL.prototype.background = function (...args) {
+  if (args.length === 1 && args[0] instanceof p5.Image) {
+    const img = args[0];
+    this.clear(); // clear previous frame
+    this._pInst.push();
+    this._renderer._setDefaultCamera(); // reset camera
+    this._pInst.imageMode(this._pInst.CENTER);
+    this._pInst.image(img, 0, 0, this.width, this.height); // centered on WEBGL canvas
+    this._pInst.pop();
+  } else {
+    const _col = this._pInst.color(...args);
+    const _r = _col.levels[0] / 255;
+    const _g = _col.levels[1] / 255;
+    const _b = _col.levels[2] / 255;
+    const _a = _col.levels[3] / 255;
+    this.clear(_r, _g, _b, _a);
+  }
+};
+
 
 export default p5.RendererGL;
