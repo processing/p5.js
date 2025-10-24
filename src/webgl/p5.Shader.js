@@ -562,7 +562,7 @@ p5.Shader = class {
       if (initializer instanceof Function) {
         // Check for common outside variable references
         const funcString = initializer.toString();
-        if (funcString.includes('mouseX') || funcString.includes('windowWidth') || 
+        if (funcString.includes('mouseX') || funcString.includes('windowWidth') ||
             funcString.includes('state_') || funcString.includes('pixelate')) {
           p5._friendlyError(
             `p5.strands: Variable referenced in uniform "${name}" is not accessible in shader context.`
