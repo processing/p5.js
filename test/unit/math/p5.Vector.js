@@ -2035,7 +2035,7 @@ suite('p5.Vector', function () {
   describe('vector to string', () => {
     it('should return the string version of a vector', () => {
       v = new mockP5.Vector(1, 2, 3, 4);
-      expect(v.toString()).toBe('[1, 2, 3, 4]');
+      expect(v.toString()).toBe('vector[1, 2, 3, 4]');
     });
   });
 
