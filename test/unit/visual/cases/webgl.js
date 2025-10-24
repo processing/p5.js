@@ -673,4 +673,24 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('texture()', () => {
+    visualTest('on a rect', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40);
+      screenshot();
+    });
+
+    visualTest('on a rect with rounded corners', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40, 10);
+      screenshot();
+    });
+  });
 });

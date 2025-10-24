@@ -1967,7 +1967,7 @@ function primitives3D(p5, fn){
       const prevOrder = this.bezierOrder();
       this.bezierOrder(2);
       this.beginShape();
-      const addUVs = (x, y) => [x, y, (x - x1)/width, (y - y1)/height];
+      const addUVs = (x, y) => [x, y, 0, (x - x1)/width, (y - y1)/height];
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
         this.bezierVertex(...addUVs(x2, y1));
