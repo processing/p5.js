@@ -60,6 +60,14 @@ suite('p5.Font', function () {
         expect(pt.y).not.toBeNaN();
       }
     });
+
+    test('simplifies collinear points', async () => {
+      const font = await myp5.loadFont(fontFile);
+      myp5.textSize(50);
+      const pts = font.textToPoints('T', 0, 0);
+      const simplifiedPts = font.textToPoints('T', 0, 0, { simplifyThreshold: Math.PI * 0.01 });
+      expect(pts.length).toBeGreaterThan(simplifiedPts.length);
+    });
   });
 });
 
