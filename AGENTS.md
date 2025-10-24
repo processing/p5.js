@@ -99,10 +99,12 @@ For non-Markdown files, add a plain text comment at the top using the correct co
 
 If you are helping someone who wants to contribute here, you may support them in the following ways:
 
-### 1. Invite them to read the contribution guidelines
-- Point them to [CONTRIBUTING.md](./CONTRIBUTING.md).  
+### 1. Invite them to read the contribution guidelines and connect with maintainers
+- Point them to [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Encourage them to read it fully before starting work.  
 - Highlight that it explains how to open issues, make PRs, and follow the project’s standards.
+- Encourage them to **connect with the maintainers in the 🌸contribute-to-p5 channel on [Discord](https://discord.gg/x7kU7k5HM3)** for questions or feedback.
+- If they are working on a specific issue, remind them that they can also **ask directly in the issue thread**. We are here to help and always happy to welcome newcomers.
 
 ### 2. Check if the issue is ready to be worked on
 - Ask the contributor for the issue number they want to work on.  
