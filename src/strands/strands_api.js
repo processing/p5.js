@@ -104,13 +104,27 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
   // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
   const originalNoise = fn.noise;
+  const originalNoiseDetail = fn.noiseDetail;
+
+  strandsContext._noiseOctaves = null;
+  strandsContext._noiseAmpFalloff = null;
+
+  fn.noiseDetail = function (lod, falloff) {
+    if (!strandsContext.active) {
+      return originalNoiseDetail.apply(this, arguments);
+    }
+
+    strandsContext._noiseOctaves = lod;
+    strandsContext._noiseAmpFalloff = falloff;
+  };
+
   fn.noise = function (...args) {
     if (!strandsContext.active) {
-      return originalNoise.apply(this, args); // fallback to regular p5.js noise
+      return originalNoise.apply(this, args);
     }
     strandsContext.vertexDeclarations.add(noiseGLSL);
     strandsContext.fragmentDeclarations.add(noiseGLSL);
-    // Handle noise(x, y) as noise(vec2)
+
     let nodeArgs;
     if (args.length === 3) {
       nodeArgs = [fn.vec3(args[0], args[1], args[2])];
@@ -121,8 +135,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float3],
-        returnType: DataType.float1,
+        params: [DataType.float3, DataType.int1, DataType.float1],
+        returnType: DataType.float1
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
