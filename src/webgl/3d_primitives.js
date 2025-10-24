@@ -1726,7 +1726,7 @@ function primitives3D(p5, fn){
 
       this.states.setValue('uModelMatrix', mult);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1858,7 +1858,7 @@ function primitives3D(p5, fn){
       this.states.uModelMatrix.translate([x, y, 0]);
       this.states.uModelMatrix.scale(width, height, 1);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1919,7 +1919,7 @@ function primitives3D(p5, fn){
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
-        this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+        this.model(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
         this.states.setValue('uModelMatrix', uModelMatrix);
       }
@@ -2069,7 +2069,7 @@ function primitives3D(p5, fn){
       quadGeom.gid = gid;
       this.geometryBufferCache.ensureCached(quadGeom);
     }
-    this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+    this.model(this.geometryBufferCache.getGeometryByID(gid));
     return this;
   };
 
