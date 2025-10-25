@@ -21,8 +21,28 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Wording](#wording)
 - [Unbiased Documentation](#unbiased-documentation)
 - [Accessibility and Disability](#accessibility-and-disability)
+- [Documentation Style Guide](#documentation-style-guide)
 
 ### Code
+  - [Code Samples](#code-samples)
+  - [Comments](#comments)
+  - [Accessible Descriptions](#accessible-descriptions)
+  - [Whitespace](#whitespace)
+  - [Semicolons](#semicolons)
+  - [Naming Conventions](#naming-conventions)
+  - [Variables](#variables)
+  - [Strings](#strings)
+  - [Boolean Operators](#boolean-operators)
+  - [Conditionals](#conditionals)
+  - [Iteration](#iteration)
+  - [Objects](#objects)
+  - [Arrays](#arrays)
+  - [Functions](#functions)
+  - [Arrow Functions](#arrow-functions)
+  - [Chaining](#chaining)
+  - [Classes](#classes)
+  - [Assets](#assets)
+
 - [Code Samples](#code-samples)
 - [Comments](#comments)
 - [Whitespace](#whitespace)
@@ -116,7 +136,7 @@ Always use `let` to declare variables.
 
 **Pronouns**
 
-| Recommended |	Not Recommended |
+| Recommended | Not Recommended |
 | -- | -- |
 | they | he or she |
 | them | him or her |
@@ -142,7 +162,7 @@ Always use `let` to declare variables.
 
 The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
-| Recommended |	Not Recommended |
+| Recommended | Not Recommended |
 | -- | -- |
 | person with disability | the disabled, handicapped, differently abled, challenged, abnormal |
 | person without disability | normal person, healthy person, able-bodied |
@@ -229,6 +249,25 @@ let magicWord = 'Please';
 // I will use // for multiline comments.
 
 ```
+
+
+## Accessible Descriptions
+
+- Use `describe()` to make p5.js sketches accessible to screen readers. All reference contributions should include a concise, visual canvas description for accessibility. When writing a `describe()` call:
+  - Be **concise**: 1–3 sentences briefly describing what is visually present on the canvas.
+    - Good: `describe('A blue rectangle in the center of a white canvas.');`
+    - Bad: `describe('This code draws a rectangle.');`
+  - Focus on **visuals only**: Describe what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
+    - Good: `describe('A red heart and yellow circle over a pink background.');`
+    - Bad: `describe('Click to draw a heart.');`
+  - Be **non-redundant**: Avoid repeating information already in the title or code comments.
+    - Good: `describe('A black dot moves from bottom to top on a gray square.');`
+    - Bad: `describe('A shape.');`
+  - Use **clear, direct language**: End with punctuation for screen reader clarity.
+    - Good: `describe('A green triangle on a white background.');`
+    - Bad: `describe('triangle');`
+
+For more guidance, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) and the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/).
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1224,23 +1263,3 @@ class Mover {
 
 - Always load assets from a folder called "assets".
 
-> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
-- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
-- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
-- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
-
-```javascript
-let img;
-
-// Bad.
-function preload() {
-  img = loadImage('moonwalk.jpg');
-}
-
-// Good.
-function preload() {
-  img = loadImage('assets/moonwalk.jpg');
-}
-```
-
-**[⬆ back to top](#table-of-contents)**
