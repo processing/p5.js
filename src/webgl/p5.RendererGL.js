@@ -2237,7 +2237,26 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     fillShader.setUniform('uMaterialColor', this.curFillColor);
     fillShader.setUniform('isTexture', !!this._tex);
     if (this._tex) {
-      fillShader.setUniform('uSampler', this._tex);
+    // Only set uSampler automatically when the shader doesn't already
+    // have a user-provided texture. This avoids overwriting a texture
+    // that a user assigned via myShader.setUniform('uSampler', ...).
+    //
+    // Logic: if the shader does not declare a uSampler uniform, or the
+    // declared uSampler's cached data is undefined or equals the
+    // renderer's empty texture, then it's safe for p5 to set it. If the
+    // cached data is something else (likely set by the user), leave it.
+      const uSampler = fillShader.uniforms && fillShader.uniforms.uSampler;
+      const emptyTex = this._getEmptyTexture();
+      const hasTextureProp = uSampler &&
+        uSampler.texture !== undefined && uSampler.texture !== emptyTex;
+      const hasCachedData = uSampler &&
+        uSampler._cachedData !== undefined && uSampler._cachedData !== emptyTex;
+      const samplerHasUserTexture = !!uSampler &&
+        (hasTextureProp || hasCachedData);
+
+      if (!samplerHasUserTexture) {
+        fillShader.setUniform('uSampler', this._tex);
+      }
     }
     fillShader.setUniform('uTint', this._tint);
 
