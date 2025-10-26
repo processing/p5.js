@@ -111,8 +111,8 @@ function math(p5, fn) {
     }
 
     const safeArgs =
-    arguments.length === 1 ? [x, 0, 0]
-  : arguments.length === 2 ? [x, y, 0]
+    arguments.length === 1 ? [x ?? 0, 0, 0]
+  : arguments.length === 2 ? [x ?? 0, y ?? 0, 0]
                            : [...arguments];
 
     if (this instanceof p5) {
