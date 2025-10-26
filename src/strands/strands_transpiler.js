@@ -921,35 +921,34 @@ export function detectOutsideVariableReferences(sourceString) {
           // Extract variables referenced in the uniform initializer function
           const referencedVars = new Set();
           
-          function collectReferences(n) {
-            if (n.type === 'Identifier') {
-              // Skip function parameters and built-in properties
-              const ignoreNames = ['__p5', 'p5', 'window', 'global', 'undefined', 'null'];
-              if (!ignoreNames.includes(n.name) && 
-                  n.name[0] !== '_' || n.name.startsWith('__p5')) {
-                // Check if this identifier is used as a property
-                const isProperty = ancestors.some(anc => 
-                  anc.type === 'MemberExpression' && anc.property === n
-                );
-                
-                if (!isProperty) {
-                  referencedVars.add(n.name);
-                }
-              }
-            }
-          }
-          
           // Walk the uniform function body to find all variable references
-          if (node.init.arguments && node.init.arguments.length > 0) {
-            // The function is a call to uniform(), so the first arg is the name
-            // The actual function is the second arg
+          // Uniform functions have signature: uniformXXX(name, defaultValue?)
+          // The defaultValue (second arg) is optional - it's what we need to check
+          if (node.init.arguments && node.init.arguments.length >= 2) {
             const funcArg = node.init.arguments[1];
             if (funcArg && (funcArg.type === 'FunctionExpression' || funcArg.type === 'ArrowFunctionExpression')) {
               const uniformBody = funcArg.body;
-              const walkReferences = {
-                Identifier: collectReferences
+              
+              // Walk the body to collect all identifier references
+              const walkReferences = (n, ancestors) => {
+                if (n.type === 'Identifier') {
+                  // Skip function parameters and built-in properties
+                  const ignoreNames = ['__p5', 'p5', 'window', 'global', 'undefined', 'null'];
+                  if (!ignoreNames.includes(n.name) && 
+                      (n.name[0] !== '_' || n.name.startsWith('__p5'))) {
+                    // Check if this identifier is used as a property
+                    const isProperty = ancestors && ancestors.some(anc => 
+                      anc.type === 'MemberExpression' && anc.property === n
+                    );
+                    
+                    if (!isProperty) {
+                      referencedVars.add(n.name);
+                    }
+                  }
+                }
               };
-              ancestor(uniformBody, walkReferences);
+              
+              ancestor(uniformBody, { Identifier: walkReferences });
             }
           }
           
