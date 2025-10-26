@@ -23,6 +23,13 @@ function math(p5, fn) {
    * This allows for flexibility in representing vectors in higher-dimensional
    * spaces.
    *
+   * - Calling `createVector()` **with no arguments** is **deprecated** and will emit
+   *   a friendly warning. Use `createVector(0)`, `createVector(0, 0)`, or
+   *   `createVector(0, 0, 0)` instead.
+   * - To prevent `NaN` appearing in subsequent operations, missing components are
+   *   padded with zeros: `createVector(x)` -> `[x, 0, 0]`, `createVector(x, y)` -> `[x, y, 0]`.
+   *   This is for backwards compatibility only; explicitly pass all intended components.
+   *
    * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
    * motion because they simplify the math. For example, a moving ball has a
    * position and a velocity. Position describes where the ball is in space. The
@@ -96,14 +103,26 @@ function math(p5, fn) {
    * </div>
    */
   fn.createVector = function (x, y, z) {
+  
+    if (arguments.length === 0 && typeof p5 !== 'undefined' && p5._friendlyError) {
+      p5._friendlyError(
+        'Calling createVector() with no arguments is deprecated and will be removed in a future release. Pass zeros for the desired dimensionality.'
+      );
+    }
+
+    const safeArgs =
+    arguments.length === 1 ? [x, 0, 0]
+  : arguments.length === 2 ? [x, y, 0]
+                           : [...arguments];
+
     if (this instanceof p5) {
       return new p5.Vector(
         this._fromRadians.bind(this),
         this._toRadians.bind(this),
-        ...arguments
+        ...safeArgs
       );
     } else {
-      return new p5.Vector(x, y, z);
+      return new p5.Vector(...safeArgs);
     }
   };
 

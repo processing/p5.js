@@ -296,6 +296,30 @@ suite('p5.Matrix', function () {
     });
   });
 
+  suite('createVector NaN (BC patch)', function () {
+    test('div with 3D divisor: no NaN', function () {
+      const v = myp5.createVector(8, 9);
+      const w = myp5.createVector(1, 2, 3);
+      v.div(w);
+      const arr = v.array();
+      expect(arr.some(Number.isNaN)).toBe(false);
+      expect(arr).toEqual([8, 4.5, 0]);
+    });
+  
+    test('div by vector missing z: no NaN (unchanged/div-by-zero safe)', function () {
+      const v1 = myp5.createVector(8, 9);
+      const w1 = myp5.createVector(1, 2, 3);
+      w1.div(v1);
+      expect(w1.array().some(Number.isNaN)).toBe(false);
+    });
+  
+    test('0-arg vector ops: no NaN', function () {
+      const z = myp5.createVector(); 
+      z.add(1);
+      expect(z.array().some(Number.isNaN)).toBe(false);
+    });
+  });
+
   suite('p5.Matrix3x3', function () {
     test('apply copy() to 3x3Matrix', function () {
       const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
