@@ -104,11 +104,19 @@ p5.Vector = class {
       x = args[2] || 0;
       y = args[3] || 0;
       z = args[4] || 0;
+
+      for (let i = 5; i < args.length; i++) {
+        this[i - 2] = args[i] || 0;
+      }
       // This is what we'll get with new p5.Vector()
     } else {
       x = args[0] || 0;
       y = args[1] || 0;
       z = args[2] || 0;
+
+      for (let i = 3; i < args.length; i++) {
+        this[i] = args[i] || 0;
+      }
     }
     /**
      * The x component of the vector
@@ -465,7 +473,7 @@ p5.Vector = class {
 
   /**
    * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
-   * components.
+   * and additional components.
    *
    * `rem()` can use separate numbers, as in `v.rem(1, 2, 3)`,
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.rem(v2)`, or
@@ -586,50 +594,56 @@ p5.Vector = class {
    * @chainable
    */
   rem (...args) {
-    let [x, y, z] = args;
+    let x = args[0];
     if (x instanceof p5.Vector) {
-      if ([x.x,x.y,x.z].every(Number.isFinite)) {
-        const xComponent = parseFloat(x.x);
-        const yComponent = parseFloat(x.y);
-        const zComponent = parseFloat(x.z);
-        return this.calculateRemainder3D(
-          xComponent,
-          yComponent,
-          zComponent
-        );
+      if (Object.keys(x).every(key =>
+        typeof x[key] !== 'number' || Number.isFinite(x[key])
+      )) {
+        for (const key in this) {
+          if (this.hasOwnProperty(key) &&
+              typeof this[key] === 'number' &&
+              x.hasOwnProperty(key) &&
+              typeof x[key] === 'number' &&
+              Number.isFinite(x[key]) &&
+              x[key] !== 0) {
+            this[key] = this[key] % x[key];
+          }
+        }
       }
+      return this;
     } else if (Array.isArray(x)) {
       if (x.every(Number.isFinite)) {
-        if (x.length === 2) {
-          return this.calculateRemainder2D(x[0], x[1]);
-        }
-        if (x.length === 3) {
-          return this.calculateRemainder3D(x[0], x[1], x[2]);
+        const props = ['x', 'y', 'z'];
+        for (let i = 0; i < x.length; i++) {
+          const prop = i < 3 ? props[i] : i;
+          if (this.hasOwnProperty(prop) && x[i] !== 0) {
+            this[prop] = this[prop] % x[i];
+          }
         }
       }
+      return this;
     } else if (args.length === 1) {
       if (Number.isFinite(x) && x !== 0) {
-        this.x = this.x % x;
-        this.y = this.y % x;
-        this.z = this.z % x;
-        return this;
+        for (const key in this) {
+          if (this.hasOwnProperty(key) && typeof this[key] === 'number') {
+            this[key] = this[key] % x;
+          }
+        }
       }
-    } else if (args.length === 2) {
+      return this;
+    } else if (args.length >= 2) {
       if (args.every(Number.isFinite)) {
-        return this.calculateRemainder2D(
-          x,
-          y
-        );
+        const props = ['x', 'y', 'z'];
+        for (let i = 0; i < args.length; i++) {
+          const prop = i < 3 ? props[i] : i;
+          if (this.hasOwnProperty(prop) && args[i] !== 0) {
+            this[prop] = this[prop] % args[i];
+          }
+        }
       }
-    } else if (args.length === 3) {
-      if (args.every(Number.isFinite)) {
-        return this.calculateRemainder3D(
-          x,
-          y,
-          z
-        );
-      }
+      return this;
     }
+    return this;
   }
 
   /**
