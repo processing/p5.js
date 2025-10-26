@@ -109,10 +109,10 @@ function math(p5, fn) {
         'Calling createVector() with no arguments is deprecated and will be removed in a future release. Pass zeros for the desired dimensionality.'
       );
     }
-
+    this.dimension = arguments.length;
     const safeArgs =
-    arguments.length === 1 ? [x ?? 0, 0, 0]
-  : arguments.length === 2 ? [x ?? 0, y ?? 0, 0]
+    arguments.length === 1 ? [x, 0, 0]
+  : arguments.length === 2 ? [x, y, 0]
                            : [...arguments];
 
     if (this instanceof p5) {
