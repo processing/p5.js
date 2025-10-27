@@ -5,12 +5,10 @@ suite('Strands Transpiler - Outside Variable Detection', function() {
   test('should allow outer scope variables in uniform callbacks', function() {
     // OK: mouseX in uniform callback is allowed
     const code = `
-      baseMaterialShader.modify(() => {
-        const myUniform = uniformFloat(() => mouseX);
-        getWorldPosition((inputs) => {
-          inputs.position.x += myUniform;
-          return inputs;
-        });
+      const myUniform = uniformFloat(() => mouseX);
+      getWorldPosition((inputs) => {
+        inputs.position.x += myUniform;
+        return inputs;
       });
     `;
     
@@ -21,11 +19,9 @@ suite('Strands Transpiler - Outside Variable Detection', function() {
   test('should detect undeclared variable in strand code', function() {
     // ERROR: mouseX in strand code is not declared
     const code = `
-      baseMaterialShader.modify(() => {
-        getWorldPosition((inputs) => {
-          inputs.position.x += mouseX; // mouseX not declared in strand!
-          return inputs;
-        });
+      getWorldPosition((inputs) => {
+        inputs.position.x += mouseX; // mouseX not declared in strand!
+        return inputs;
       });
     `;
     
@@ -36,12 +32,10 @@ suite('Strands Transpiler - Outside Variable Detection', function() {
 
   test('should not error when variable is declared', function() {
     const code = `
-      baseMaterialShader.modify(() => {
-        let myVar = 5;
-        getWorldPosition((inputs) => {
-          inputs.position.x += myVar; // myVar is declared
-          return inputs;
-        });
+      let myVar = 5;
+      getWorldPosition((inputs) => {
+        inputs.position.x += myVar; // myVar is declared
+        return inputs;
       });
     `;
     
