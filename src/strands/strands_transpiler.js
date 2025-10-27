@@ -874,23 +874,9 @@ export function detectOutsideVariableReferences(sourceString) {
   try {
     const ast = parse(sourceString, { ecmaVersion: 2021 });
     
-    // Collect all variable declarations in the strand
-    const declaredVars = new Set();
-    
-    // First pass: collect declared variables
-    ancestor(ast, {
-      VariableDeclaration(node, state, ancestors) {
-        for (const decl of node.declarations) {
-          if (decl.id.type === 'Identifier') {
-            declaredVars.add(decl.id.name);
-          }
-        }
-      }
-    });
-    
     const errors = [];
     
-    // Second pass: check identifier references
+    // Check identifier references, tracing back through scope chain
     ancestor(ast, {
       Identifier(node, state, ancestors) {
         const varName = node.name;
@@ -905,14 +891,15 @@ export function detectOutsideVariableReferences(sourceString) {
         );
         if (isProperty) return;
         
-        // Skip if it's a function parameter
-        const isParam = ancestors.some(anc => 
-          (anc.type === 'FunctionDeclaration' || 
-           anc.type === 'FunctionExpression' || 
-           anc.type === 'ArrowFunctionExpression') &&
-          anc.params && anc.params.includes(node)
+        // Skip if it's a function parameter in its own function
+        const parentFunc = ancestors.find(anc => 
+          anc.type === 'FunctionDeclaration' || 
+          anc.type === 'FunctionExpression' || 
+          anc.type === 'ArrowFunctionExpression'
         );
-        if (isParam) return;
+        if (parentFunc && parentFunc.params && parentFunc.params.includes(node)) {
+          return; // It's a function parameter
+        }
         
         // Skip if it's its own declaration
         const isDeclaration = ancestors.some(anc => 
@@ -928,8 +915,25 @@ export function detectOutsideVariableReferences(sourceString) {
         );
         if (inUniformCallback) return; // Allow outer scope access in uniform callbacks
         
-        // Check if this variable is declared anywhere in the strand
-        if (!declaredVars.has(varName)) {
+        // Check if variable is declared in accessible scopes
+        // Trace through ancestor chain and look for variable declarations
+        let isInScope = false;
+        for (let i = 0; i < ancestors.length; i++) {
+          const anc = ancestors[i];
+          
+          // Look for variable declarations
+          if (anc.type === 'VariableDeclaration') {
+            const varsInThisDecl = anc.declarations.map(d => 
+              d.id.type === 'Identifier' ? d.id.name : null
+            ).filter(Boolean);
+            if (varsInThisDecl.includes(varName)) {
+              isInScope = true;
+              break;
+            }
+          }
+        }
+        
+        if (!isInScope) {
           errors.push({
             variable: varName,
             message: `Variable "${varName}" is not declared in the strand context.`
