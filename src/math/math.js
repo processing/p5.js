@@ -103,28 +103,36 @@ function math(p5, fn) {
    * </div>
    */
   fn.createVector = function (x, y, z) {
+    const argc = arguments.length;
   
-    if (arguments.length === 0 && typeof p5 !== 'undefined' && p5._friendlyError) {
+    if (argc === 0 && typeof p5 !== 'undefined' && p5._friendlyError) {
       p5._friendlyError(
         'Calling createVector() with no arguments is deprecated and will be removed in a future release. Pass zeros for the desired dimensionality.'
       );
     }
-    this.dimension = arguments.length;
     const safeArgs =
-    arguments.length === 1 ? [x, 0, 0]
-  : arguments.length === 2 ? [x, y, 0]
-                           : [...arguments];
-
+    argc === 1 ? [x, 0, 0]
+    : argc === 2 ? [x, y, 0]
+    : [...arguments];
+    
+    let v;
     if (this instanceof p5) {
-      return new p5.Vector(
+      v = new p5.Vector(
         this._fromRadians.bind(this),
         this._toRadians.bind(this),
         ...safeArgs
       );
     } else {
-      return new p5.Vector(...safeArgs);
+      v = new p5.Vector(...safeArgs);
     }
+    
+    Object.defineProperty(v, '_origDimension', {
+      get() { return argc; },
+    });
+    
+    return v;
   };
+  
 
   /**
    * Creates a new <a href="#/p5.Matrix">p5.Matrix</a> object.
