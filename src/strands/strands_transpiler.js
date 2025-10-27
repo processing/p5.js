@@ -915,13 +915,12 @@ export function detectOutsideVariableReferences(sourceString) {
         );
         if (inUniformCallback) return; // Allow outer scope access in uniform callbacks
         
-        // Check if variable is declared in accessible scopes
-        // Trace through ancestor chain and look for variable declarations
+        // Check if variable is declared in ancestor scopes
         let isInScope = false;
         for (let i = 0; i < ancestors.length; i++) {
           const anc = ancestors[i];
           
-          // Look for variable declarations
+          // Look for variable declarations in accessible ancestor scopes
           if (anc.type === 'VariableDeclaration') {
             const varsInThisDecl = anc.declarations.map(d => 
               d.id.type === 'Identifier' ? d.id.name : null
