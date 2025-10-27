@@ -2,41 +2,51 @@ import { detectOutsideVariableReferences } from '../../../src/strands/strands_tr
 import { suite, test } from '../../../test/js/spec.js';
 
 suite('Strands Transpiler - Outside Variable Detection', function() {
-  test('should detect undeclared variable in uniform', function() {
-    // Simulate code that references mouseX (not declared in strand context)
+  test('should allow outer scope variables in uniform callbacks', function() {
+    // OK: mouseX in uniform callback is allowed
     const code = `
-      const myUniform = uniform('color', () => {
-        return mouseX; // mouseX is not declared
+      baseMaterialShader.modify(() => {
+        const myUniform = uniformFloat(() => mouseX);
+        getWorldPosition((inputs) => {
+          inputs.position.x += myUniform;
+          return inputs;
+        });
       });
     `;
     
     const errors = detectOutsideVariableReferences(code);
-    assert.ok(errors.length > 0, 'Should detect at least one error');
+    assert.equal(errors.length, 0, 'Should not error - mouseX is OK in uniform callback');
+  });
+
+  test('should detect undeclared variable in strand code', function() {
+    // ERROR: mouseX in strand code is not declared
+    const code = `
+      baseMaterialShader.modify(() => {
+        getWorldPosition((inputs) => {
+          inputs.position.x += mouseX; // mouseX not declared in strand!
+          return inputs;
+        });
+      });
+    `;
+    
+    const errors = detectOutsideVariableReferences(code);
+    assert.ok(errors.length > 0, 'Should detect error');
     assert.ok(errors.some(e => e.variable === 'mouseX'), 'Should detect mouseX');
   });
 
   test('should not error when variable is declared', function() {
-    // Variable is declared before use
     const code = `
-      let myVar = 5;
-      const myUniform = uniform('color', () => {
-        return myVar; // myVar is declared
+      baseMaterialShader.modify(() => {
+        let myVar = 5;
+        getWorldPosition((inputs) => {
+          inputs.position.x += myVar; // myVar is declared
+          return inputs;
+        });
       });
     `;
     
     const errors = detectOutsideVariableReferences(code);
     assert.equal(errors.length, 0, 'Should not detect errors');
-  });
-
-  test('should detect multiple undeclared variables', function() {
-    const code = `
-      const myUniform = uniform('color', () => {
-        return mouseX + windowWidth; // Both not declared
-      });
-    `;
-    
-    const errors = detectOutsideVariableReferences(code);
-    assert.equal(errors.length, 2, 'Should detect both mouseX and windowWidth');
   });
 
   test('should handle empty code', function() {

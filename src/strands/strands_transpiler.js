@@ -864,110 +864,79 @@ const ASTCallbacks = {
     }
   }
   /**
- * Analyzes strand code to detect outside variable references in uniform initializers
+ * Analyzes strand code to detect outside variable references
  * This runs before transpilation to provide helpful errors to users
  * 
  * @param {string} sourceString - The strand code to analyze
- * @returns {Array<{variable: string, uniform: string, message: string}>} - Array of errors if any
+ * @returns {Array<{variable: string, message: string}>} - Array of errors if any
  */
 export function detectOutsideVariableReferences(sourceString) {
   try {
     const ast = parse(sourceString, { ecmaVersion: 2021 });
     
-    // Step 1: Collect all variable declarations in the strand code
+    // Collect all variable declarations in the strand
     const declaredVars = new Set();
-    const scopeChain = [new Set()]; // Track nested scopes
     
-    function collectDeclarations(node, ancestors) {
-      // Add current block's local vars to scope chain
-      if (node.type === 'BlockStatement') {
-        scopeChain.push(new Set());
-      }
-      
-      // Collect variable declarations
-      if (node.type === 'VariableDeclaration') {
+    // First pass: collect declared variables
+    ancestor(ast, {
+      VariableDeclaration(node, state, ancestors) {
         for (const decl of node.declarations) {
           if (decl.id.type === 'Identifier') {
             declaredVars.add(decl.id.name);
-            if (scopeChain.length > 0) {
-              scopeChain[scopeChain.length - 1].add(decl.id.name);
-            }
           }
         }
       }
-      
-      // Close block scope when exiting
-      if (node.type === 'BlockStatement' && scopeChain.length > 1) {
-        scopeChain.pop();
-      }
-    }
+    });
     
-    // Walk the AST to collect declared variables
-    const collectCallbacks = {
-      VariableDeclaration: collectDeclarations,
-      BlockStatement: collectDeclarations
-    };
-    
-    ancestor(ast, collectCallbacks);
-    
-    // Step 2: Find uniform initializers and extract their variable references
     const errors = [];
-    const uniformCallbacks = {
-      VariableDeclarator(node, _state, ancestors) {
-        if (nodeIsUniform(node.init)) {
-          // Found a uniform initializer
-          const uniformName = node.id.name;
-          
-          // Extract variables referenced in the uniform initializer function
-          const referencedVars = new Set();
-          
-          // Walk the uniform function body to find all variable references
-          // Uniform functions have signature: uniformXXX(name, defaultValue?)
-          // The defaultValue (second arg) is optional - it's what we need to check
-          if (node.init.arguments && node.init.arguments.length >= 2) {
-            const funcArg = node.init.arguments[1];
-            if (funcArg && (funcArg.type === 'FunctionExpression' || funcArg.type === 'ArrowFunctionExpression')) {
-              const uniformBody = funcArg.body;
-              
-              // Walk the body to collect all identifier references
-              const walkReferences = (n, ancestors) => {
-                if (n.type === 'Identifier') {
-                  // Skip function parameters and built-in properties
-                  const ignoreNames = ['__p5', 'p5', 'window', 'global', 'undefined', 'null'];
-                  if (!ignoreNames.includes(n.name) && 
-                      (n.name[0] !== '_' || n.name.startsWith('__p5'))) {
-                    // Check if this identifier is used as a property
-                    const isProperty = ancestors && ancestors.some(anc => 
-                      anc.type === 'MemberExpression' && anc.property === n
-                    );
-                    
-                    if (!isProperty) {
-                      referencedVars.add(n.name);
-                    }
-                  }
-                }
-              };
-              
-              ancestor(uniformBody, { Identifier: walkReferences });
-            }
-          }
-          
-          // Step 3: Check if any referenced variables aren't declared
-          for (const varName of referencedVars) {
-            if (!declaredVars.has(varName)) {
-              errors.push({
-                variable: varName,
-                uniform: uniformName,
-                message: `Variable "${varName}" referenced in uniform "${uniformName}" is not declared in the strand context.`
-              });
-            }
-          }
+    
+    // Second pass: check identifier references
+    ancestor(ast, {
+      Identifier(node, state, ancestors) {
+        const varName = node.name;
+        
+        // Skip built-ins
+        const ignoreNames = ['__p5', 'p5', 'window', 'global', 'undefined', 'null', 'this', 'arguments'];
+        if (ignoreNames.includes(varName)) return;
+        
+        // Skip if it's a property access (obj.prop)
+        const isProperty = ancestors.some(anc => 
+          anc.type === 'MemberExpression' && anc.property === node
+        );
+        if (isProperty) return;
+        
+        // Skip if it's a function parameter
+        const isParam = ancestors.some(anc => 
+          (anc.type === 'FunctionDeclaration' || 
+           anc.type === 'FunctionExpression' || 
+           anc.type === 'ArrowFunctionExpression') &&
+          anc.params && anc.params.includes(node)
+        );
+        if (isParam) return;
+        
+        // Skip if it's its own declaration
+        const isDeclaration = ancestors.some(anc => 
+          anc.type === 'VariableDeclarator' && anc.id === node
+        );
+        if (isDeclaration) return;
+        
+        // Check if we're inside a uniform callback (OK to access outer scope)
+        const inUniformCallback = ancestors.some(anc => 
+          anc.type === 'CallExpression' &&
+          anc.callee.type === 'Identifier' &&
+          anc.callee.name.startsWith('uniform')
+        );
+        if (inUniformCallback) return; // Allow outer scope access in uniform callbacks
+        
+        // Check if this variable is declared anywhere in the strand
+        if (!declaredVars.has(varName)) {
+          errors.push({
+            variable: varName,
+            message: `Variable "${varName}" is not declared in the strand context.`
+          });
         }
       }
-    };
-    
-    // Walk again to find uniforms and analyze their references
-    ancestor(ast, uniformCallbacks);
+    });
     
     return errors;
   } catch (error) {
