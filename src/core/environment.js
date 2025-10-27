@@ -1314,8 +1314,8 @@ function environment(p5, fn, lifecycles){
    *
    */
   fn.screenToWorld = function(screenPosition) {
-    // remember how many components the caller actually provided to createVector
-    const origDimension = this.dimension;
+    let origDimension = screenPosition._origDimension;
+
     const screenToWorldArgs = arguments.length;
     if (typeof screenPosition === 'number') {
       // We got passed numbers, convert to vector
@@ -1333,6 +1333,7 @@ function environment(p5, fn, lifecycles){
     const matrixInverse = matrix.invert(matrix);
     return matrixInverse.multiplyAndNormalizePoint(screenPosition);
   };
+
 
   /**
    * A `Number` variable that stores the width of the canvas in pixels.
