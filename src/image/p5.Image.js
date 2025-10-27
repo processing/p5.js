@@ -209,12 +209,12 @@ class Image {
    * If the image was loaded from a GIF, then calling `img.updatePixels()`
    * will update the pixels in current frame.
    *
-   * @param {Integer} x x-coordinate of the upper-left corner
-   *                    of the subsection to update.
-   * @param {Integer} y y-coordinate of the upper-left corner
-   *                    of the subsection to update.
-   * @param {Integer} w width of the subsection to update.
-   * @param {Integer} h height of the subsection to update.
+   * @param {Integer} [x] x-coordinate of the upper-left corner
+   *                      of the subsection to update.
+   * @param {Integer} [y] y-coordinate of the upper-left corner
+   *                      of the subsection to update.
+   * @param {Integer} [w] width of the subsection to update.
+   * @param {Integer} [h] height of the subsection to update.
    *
    * @example
    * <div>

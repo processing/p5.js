@@ -70,12 +70,16 @@ class Renderer2D extends Renderer {
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
-    if(!this.filterRenderer){
-      this.filterRenderer = new FilterRenderer2D(this);
-    }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
     this.clipPath = null;
+  }
+
+  get filterRenderer() {
+    if (!this._filterRenderer) {
+      this._filterRenderer = new FilterRenderer2D(this);
+    }
+    return this._filterRenderer;
   }
 
   remove(){
