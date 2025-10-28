@@ -301,6 +301,31 @@ class p5 {
       this.deltaTime = now - this._lastRealFrameTime;
       this._frameRate = 1000.0 / this.deltaTime;
       await this.redraw();
+      // Check for unmatched push/pop calls (only warn once)
+      const PUSH_POP_WARNING_THRESHOLD = 100;
+
+      if (this._renderer && this._renderer._pushPopDepth > PUSH_POP_WARNING_THRESHOLD) {
+      if (!this._pushPopWarningShown) {
+      this._pushPopWarningShown = true;
+      p5._friendlyError(
+      `I detected ${this._renderer._pushPopDepth} unmatched push() calls. ` +
+      'Each push() should have a matching pop() call. ' +
+      'Unmatched push() calls can cause memory issues and performance problems.',
+      'push'
+    );
+  }
+}
+
+      if (this._renderer && this._renderer._pushPopDepth < 0) {
+      if (!this._popWarningShown) {
+      this._popWarningShown = true;
+      p5._friendlyError(
+      'pop() was called more times than push(). ' +
+      'Each pop() should match a previous push() call.',
+      'pop'
+    );
+  }
+}
       this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
         + targetTimeBetweenFrames, now);
       this._lastRealFrameTime = now;
