@@ -1193,6 +1193,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ayushman1210"><img src="https://avatars.githubusercontent.com/u/138183570?v=4?s=64" width="64px;" alt="Ayushman"/><br /><sub><b>Ayushman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ayushman1210" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://mannu.live"><img src="https://avatars.githubusercontent.com/u/117009138?v=4?s=64" width="64px;" alt="Manpreet Singh"/><br /><sub><b>Manpreet Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=MannuVilasara" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/nivanovvv"><img src="https://avatars.githubusercontent.com/u/232286320?v=4?s=64" width="64px;" alt="Nikolai Ivanov"/><br /><sub><b>Nikolai Ivanov</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nivanovvv" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
