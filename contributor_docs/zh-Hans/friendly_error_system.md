@@ -129,13 +129,13 @@ p5.js从多个位置调用FES，以处理不同的情况，包括：
 这些函数主要负责捕获错误并生成FES消息：
 * [`_friendlyFileLoadError()`] 捕获文件加载错误。
 * [`_validateParameters()`] 根据内联文档检查p5.js函数的输入参数。
-* [`_fesErrorMontitor()`] 处理全局错误。
+* [`_fesErrorMonitor()`] 处理全局错误。
 
 如需完整参考，请查阅我们的[开发笔记]。
 
 [`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#_friendlyfileloaderror
 [`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#validateparameters
-[`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
+[`_fesErrorMonitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
 [开发笔记]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
 
 

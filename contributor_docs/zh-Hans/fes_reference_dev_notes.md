@@ -6,7 +6,7 @@
 * `_friendlyFileLoadError()`
 * `_friendlyError()`
 * `helpForMisusedAtTopLevelCode()`
-* `_fesErrorMontitor()`
+* `_fesErrorMonitor()`
 
 这些函数位于 `core/friendly_errors/` 文件夹中。
 * `fes_core.js` 包含 FES 的核心功能和其他杂项功能。

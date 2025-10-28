@@ -36,12 +36,12 @@
   * `_canvasLocator()`: 返回映射到画布的 10*10 网格上的形状的位置。
   * `_getArea()`: 返回形状的面积占画布总面积的百分比。
 
-当 `this._accessibleOutputs.text` 或 `this._accessibleOutputs.text` 为 `true` 时，p5.js 库中的多个函数会调用 output.js 中的函数：
+当 `this._accessibleOutputs.text` 或 `this._accessibleOutputs.grid` 为 `true` 时，p5.js 库中的多个函数会调用 output.js 中的函数：
 * `_accsOutput()` 在以下函数中被调用：
   * `p5.prototype.triangle()`
   * `p5.prototype._renderRect()`
   * `p5.prototype.quad()`
-  * `pp5.prototype.point()`
+  * `p5.prototype.point()`
   * `p5.prototype.line()`
   * `p5.prototype._renderEllipse()`
   * `p5.prototype.arc()`
