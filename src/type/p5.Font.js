@@ -6,6 +6,7 @@ import { textCoreConstants } from './textCore';
 import * as constants from '../core/constants';
 import { UnicodeRange } from '@japont/unicode-range';
 import { unicodeRanges } from './unicodeRanges';
+import { Vector } from '../math/p5.Vector';
 
 /*
   API:
@@ -541,129 +542,145 @@ export class Font {
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
-    // Step 1: generate glyph contours
+
     let contours = this.textToContours(str, x, y, width, height, options);
     if (!Array.isArray(contours[0][0])) {
       contours = [contours];
     }
 
-    // Step 2: build base flat geometry
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;
       this._pInst._renderer._validateFaces = true;
+      this._pInst.push();
+      this._pInst.stroke(0);
 
       contours.forEach(glyphContours => {
         this._pInst.beginShape();
-        const outer = glyphContours[0];
-        outer.forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
-
-        for (let i = 1; i < glyphContours.length; i++) {
+        for (const contour of glyphContours) {
           this._pInst.beginContour();
-          glyphContours[i].forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
+          contour.forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
           this._pInst.endContour(this._pInst.CLOSE);
         }
-
         this._pInst.endShape(this._pInst.CLOSE);
       });
-
+      this._pInst.pop();
       this._pInst._renderer._validateFaces = prevValidateFaces;
     });
 
     if (extrude === 0) {
-      console.log('No extrusion');
       return geom;
     }
 
-    // Step 3: Create extruded geometry with UNSHARED vertices for flat shading
+    const vertexIndices = {};
+    const vertexId = v => `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
+    const newVertices = [];
+    const newVertexIndex = [];
+
+    for (const v of geom.vertices) {
+      const id = vertexId(v);
+      if (!(id in vertexIndices)) {
+        const index = newVertices.length;
+        vertexIndices[id] = index;
+        newVertices.push(v.copy());
+      }
+      newVertexIndex.push(vertexIndices[id]);
+    }
+
+    // Remap faces to use deduplicated vertices
+    const newFaces = geom.faces.map(f => f.map(i => newVertexIndex[i]));
+
+    //Find outer edges (edges that appear in only one face)
+    const seen = {};
+    for (const face of newFaces) {
+      for (let off = 0; off < face.length; off++) {
+        const a = face[off];
+        const b = face[(off + 1) % face.length];
+        const id = `${Math.min(a, b)}-${Math.max(a, b)}`;
+        if (!seen[id]) seen[id] = [];
+        seen[id].push([a, b]);
+      }
+    }
+    const validEdges = [];
+    for (const key in seen) {
+      if (seen[key].length === 1) {
+        validEdges.push(seen[key][0]);
+      }
+    }
+
+    console.log(`Found ${validEdges.length} outer edges from ${Object.keys(seen).length} total edges`);
+
+    // Step 5: Create extruded geometry
     const extruded = this._pInst.buildGeometry(() => {});
     const half = extrude * 0.5;
-
     extruded.vertices = [];
-    extruded.vertexNormals = [];
     extruded.faces = [];
+    extruded.edges = []; // INITIALIZE EDGES ARRAY
 
-    let vertexIndex = 0;
-    const Vector = this._pInst.constructor.Vector;
-    // Helper to add a triangle with flat normal
-    const addTriangle = (v0, v1, v2) => {
-      const edge1 = Vector.sub(v1, v0);
-      const edge2 = Vector.sub(v2, v0);
-      const normal = Vector.cross(edge1, edge2);
-      if (normal.magSq() > 0.0001) {
-        normal.normalize();
-      } else {
-        normal.set(0, 0, 1);
-      }
-
-      // Add vertices (unshared - each triangle gets its own copies)
-      extruded.vertices.push(v0.copy(), v1.copy(), v2.copy());
-      extruded.vertexNormals.push(normal.copy(), normal.copy(), normal.copy());
-      extruded.faces.push([vertexIndex, vertexIndex + 1, vertexIndex + 2]);
-      vertexIndex += 3;
-    };
-
-    for (const face of geom.faces) {
-      if (face.length < 3) continue;
-      const v0 = geom.vertices[face[0]];
-      for (let i = 1; i < face.length - 1; i++) {
-        const v1 = geom.vertices[face[i]];
-        const v2 = geom.vertices[face[i + 1]];
-        addTriangle(
-          new Vector(v0.x, v0.y, v0.z + half),
-          new Vector(v1.x, v1.y, v1.z + half),
-          new Vector(v2.x, v2.y, v2.z + half)
-        );
-      }
-    }
-
-    for (const face of geom.faces) {
-      if (face.length < 3) continue;
-      const v0 = geom.vertices[face[0]];
-      for (let i = 1; i < face.length - 1; i++) {
-        const v1 = geom.vertices[face[i]];
-        const v2 = geom.vertices[face[i + 1]];
-        addTriangle(
-          new Vector(v0.x, v0.y, v0.z - half),
-          new Vector(v2.x, v2.y, v2.z - half),
-          new Vector(v1.x, v1.y, v1.z - half)
-        );
-      }
-    }
-
-    // Side faces from edges
-    let edges = geom.edges;
-    if (!edges || !Array.isArray(edges)) {
-      edges = [];
-      const edgeSet = new Set();
-      for (const face of geom.faces) {
-        for (let i = 0; i < face.length; i++) {
-          const a = face[i];
-          const b = face[(i + 1) % face.length];
-          if (a === b) continue;
-          const key = a < b ? `${a},${b}` : `${b},${a}`;
-          if (!edgeSet.has(key)) {
-            edgeSet.add(key);
-            edges.push([a, b]);
-          }
-        }
-      }
-    }
-
-    const validEdges = edges.filter(([a, b]) => a !== b);
-
+    // Add side face vertices (separate for each edge for flat shading)
     for (const [a, b] of validEdges) {
-      const v0 = geom.vertices[a];
-      const v1 = geom.vertices[b];
+      const vA = newVertices[a];
+      const vB = newVertices[b];
+      // Skip if vertices are too close (degenerate edge)
+      const dist = Math.sqrt(
+        Math.pow(vB.x - vA.x, 2) +
+        Math.pow(vB.y - vA.y, 2) +
+        Math.pow(vB.z - vA.z, 2)
+      );
+      if (dist < 0.0001) continue;
+      // Front face vertices
+      const frontA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z + half));
+      const frontB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z + half));
+      const backA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z - half));
+      const backB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z - half));
 
-      const vFront0 = new Vector(v0.x, v0.y, v0.z + half);
-      const vFront1 = new Vector(v1.x, v1.y, v1.z + half);
-      const vBack0 = new Vector(v0.x, v0.y, v0.z - half);
-      const vBack1 = new Vector(v1.x, v1.y, v1.z - half);
-
-      // Two triangles forming the side quad
-      addTriangle(vFront0, vBack0, vBack1);
-      addTriangle(vFront0, vBack1, vFront1);
+      extruded.faces.push([frontA, backA, backB]);
+      extruded.faces.push([frontA, backB, frontB]);
+      extruded.edges.push([frontA, frontB]);
+      extruded.edges.push([backA, backB]);
+      extruded.edges.push([frontA, backA]);
+      extruded.edges.push([frontB, backB]);
     }
+
+    // Add front face (with unshared vertices for flat shading)
+    const frontVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z + half));
+    }
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = face.map(i => i + frontVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR FRONT FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    // Add back face (reversed winding order)
+    const backVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z - half));
+    }
+
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = [...face].reverse().map(i => i + backVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR BACK FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    extruded.computeNormals();
     return extruded;
   }
 
