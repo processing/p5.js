@@ -317,8 +317,8 @@ p5.Shader = class {
     for (const key in this.hooks.vertex) {
       console.log(
         (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.vertex[key]
+        key +
+        this.hooks.vertex[key]
       );
     }
     console.log('');
@@ -326,8 +326,8 @@ p5.Shader = class {
     for (const key in this.hooks.fragment) {
       console.log(
         (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.fragment[key]
+        key +
+        this.hooks.fragment[key]
       );
     }
     console.log('');
@@ -431,6 +431,39 @@ p5.Shader = class {
    */
   modify(hooks) {
     p5._validateParameters('p5.Shader.modify', arguments);
+
+    // Internal helper to normalize shader hooks
+    // Automatically appends a return statement when:
+    //   - The hook's return type matches its first parameter type (e.g. Inputs getX(Inputs x))
+    //   - No explicit 'return' is present in the user-provided code
+    const normalizeReturnIfMissing = (hookDef, impl) => {
+      // Example: hookDef = "Inputs getPixelInputs"
+      // Example: impl = "(Inputs inputs) { ... }"
+      const defMatch = /^(\w+)\s+(\w+)$/.exec(hookDef.trim());
+      if (!defMatch) return impl;
+      const [, returnType] = defMatch;
+
+      // Skip void-return hooks
+      if (returnType === 'void') return impl;
+
+      // Strip // and /* */ comments before searching for 'return'
+      const withoutComments = impl
+        .replace(/\/\/.*$/gm, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+      if (/\breturn\b/.test(withoutComments)) return impl;
+
+      // Extract the first parameter type and name
+      const sigMatch = /^\s*\(\s*([\w\s[\]]+)\s+(\w+)\s*\)/.exec(impl);
+      if (!sigMatch) return impl;
+      const [, paramType, paramName] = sigMatch;
+
+      // Only normalize when return type matches first param type
+      if (paramType.trim() !== returnType.trim()) return impl;
+
+      // Append 'return <paramName>;' before the last closing brace
+      return impl.replace(/\}\s*$/, `  return ${paramName};\n}`);
+    };
+
     const newHooks = {
       vertex: {},
       fragment: {},
@@ -446,9 +479,9 @@ p5.Shader = class {
         newHooks.fragment.declarations =
           (newHooks.fragment.declarations || '') + '\n' + hooks[key];
       } else if (this.hooks.vertex[key]) {
-        newHooks.vertex[key] = hooks[key];
+        newHooks.vertex[key] = normalizeReturnIfMissing(key, hooks[key]);
       } else if (this.hooks.fragment[key]) {
-        newHooks.fragment[key] = hooks[key];
+        newHooks.fragment[key] = normalizeReturnIfMissing(key, hooks[key]);
       } else {
         newHooks.helpers[key] = hooks[key];
       }
@@ -1331,8 +1364,8 @@ p5.Shader = class {
           ) {
             console.log(
               '🌸 p5.js says: ' +
-                "You're trying to use a number as the data for a texture." +
-                'Please use a texture.'
+              "You're trying to use a number as the data for a texture." +
+              'Please use a texture.'
             );
             return this;
           }
@@ -1372,8 +1405,8 @@ p5.Shader = class {
         ) {
           console.log(
             '🌸 p5.js says: ' +
-              "You're trying to use a number as the data for a texture." +
-              'Please use a texture.'
+            "You're trying to use a number as the data for a texture." +
+            'Please use a texture.'
           );
           break;
         }
