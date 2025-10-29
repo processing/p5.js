@@ -1,5 +1,4 @@
 import { detectOutsideVariableReferences } from '../../../src/strands/strands_transpiler.js';
-import { suite, test } from '../../../test/js/spec.js';
 
 suite('Strands Transpiler - Outside Variable Detection', function() {
   test('should allow outer scope variables in uniform callbacks', function() {

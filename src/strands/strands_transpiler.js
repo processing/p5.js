@@ -875,14 +875,34 @@ export function detectOutsideVariableReferences(sourceString) {
     const ast = parse(sourceString, { ecmaVersion: 2021 });
     
     const errors = [];
+    const declaredVars = new Set();
     
-    // Check identifier references, tracing back through scope chain
+    // First pass: collect all declared variables
+    ancestor(ast, {
+      VariableDeclaration(node) {
+        for (const declarator of node.declarations) {
+          if (declarator.id.type === 'Identifier') {
+            declaredVars.add(declarator.id.name);
+          }
+        }
+      }
+    });
+    
+    // Second pass: check identifier references
     ancestor(ast, {
       Identifier(node, state, ancestors) {
         const varName = node.name;
         
-        // Skip built-ins
-        const ignoreNames = ['__p5', 'p5', 'window', 'global', 'undefined', 'null', 'this', 'arguments'];
+        // Skip built-ins and p5.strands functions
+        const ignoreNames = [
+          '__p5', 'p5', 'window', 'global', 'undefined', 'null', 'this', 'arguments',
+          // p5.strands built-in functions
+          'getWorldPosition', 'getWorldNormal', 'getWorldTangent', 'getWorldBinormal',
+          'getLocalPosition', 'getLocalNormal', 'getLocalTangent', 'getLocalBinormal',
+          'getUV', 'getColor', 'getTime', 'getDeltaTime', 'getFrameCount',
+          'uniformFloat', 'uniformVec2', 'uniformVec3', 'uniformVec4',
+          'uniformInt', 'uniformBool', 'uniformMat2', 'uniformMat3', 'uniformMat4'
+        ];
         if (ignoreNames.includes(varName)) return;
         
         // Skip if it's a property access (obj.prop)
@@ -891,14 +911,18 @@ export function detectOutsideVariableReferences(sourceString) {
         );
         if (isProperty) return;
         
-        // Skip if it's a function parameter in its own function
-        const parentFunc = ancestors.find(anc => 
-          anc.type === 'FunctionDeclaration' || 
-          anc.type === 'FunctionExpression' || 
-          anc.type === 'ArrowFunctionExpression'
-        );
-        if (parentFunc && parentFunc.params && parentFunc.params.includes(node)) {
-          return; // It's a function parameter
+        // Skip if it's a function parameter
+        // Find the immediate function scope and check if this identifier is a parameter
+        for (let i = ancestors.length - 1; i >= 0; i--) {
+          const anc = ancestors[i];
+          if (anc.type === 'FunctionDeclaration' || 
+              anc.type === 'FunctionExpression' || 
+              anc.type === 'ArrowFunctionExpression') {
+            if (anc.params && anc.params.some(param => param.name === varName)) {
+              return; // It's a function parameter
+            }
+            break; // Only check the immediate function scope
+          }
         }
         
         // Skip if it's its own declaration
@@ -915,24 +939,8 @@ export function detectOutsideVariableReferences(sourceString) {
         );
         if (inUniformCallback) return; // Allow outer scope access in uniform callbacks
         
-        // Check if variable is declared in ancestor scopes
-        let isInScope = false;
-        for (let i = 0; i < ancestors.length; i++) {
-          const anc = ancestors[i];
-          
-          // Look for variable declarations in accessible ancestor scopes
-          if (anc.type === 'VariableDeclaration') {
-            const varsInThisDecl = anc.declarations.map(d => 
-              d.id.type === 'Identifier' ? d.id.name : null
-            ).filter(Boolean);
-            if (varsInThisDecl.includes(varName)) {
-              isInScope = true;
-              break;
-            }
-          }
-        }
-        
-        if (!isInScope) {
+        // Check if variable is declared
+        if (!declaredVars.has(varName)) {
           errors.push({
             variable: varName,
             message: `Variable "${varName}" is not declared in the strand context.`
