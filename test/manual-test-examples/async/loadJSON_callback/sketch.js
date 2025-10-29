@@ -36,9 +36,8 @@ function getWeather() {
 
   var cityName = userInput.value();
   var URL =
-    'http://api.openweathermap.org/data/2.5/weather?q=' +
-    cityName +
-    '&units=metric';
+    'https://wttr.in/' + encodeURIComponent(cityName) + '?format=j1';
+
   result = loadJSON(URL, displayWeather); // displayWeather is the callback
 }
 
@@ -47,9 +46,9 @@ function displayWeather() {
   print(result); // result is ready!
 
   var location = result.name;
-  var currentTemp = result.main.temp;
+  var avgTemp = result.weather[0].avgtempC;
   text(
-    'Current temperature in ' + location + ' is ' + currentTemp + ' celsius',
+    'Today\'s average temperature in ' + location + ' is ' + avgTemp + ' celsius',
     width / 2,
     height / 2
   );

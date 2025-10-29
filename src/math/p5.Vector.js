@@ -265,14 +265,14 @@ class Vector {
    * function setup() {
    *   let v = createVector(20, 30);
    *
-   *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+   *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
    * </code>
    * </div>
    */
   toString() {
-    return `[${this._values.join(', ')}]`;
+    return `vector[${this._values.join(', ')}]`;
   }
 
   /**
@@ -864,7 +864,6 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -1591,7 +1590,6 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
-   * @method dist
    * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
@@ -3060,7 +3058,6 @@ class Vector {
    *
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
    *
-   * @method clampToZero
    * @return {p5.Vector} with components very close to zero replaced with zero.
    * @chainable
    */
@@ -3155,7 +3152,7 @@ class Vector {
     if (typeof length === 'undefined') {
       length = 1;
     }
-    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle));
   }
 
   /**
@@ -3241,7 +3238,7 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
    *
-   *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+   *   // Prints "p5.Vector Object : [x, y]" to the console
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
