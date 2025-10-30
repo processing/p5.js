@@ -631,8 +631,8 @@ export class Font {
       const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
       const extrudeVector = new Vector(0, 0, extrude);
       const crossProduct = Vector.cross(edgeVector, extrudeVector);
-      if (crossProduct.mag() < 0.0001) continue;
-      if (dist < 0.0001) continue;
+      const dist = edgeVector.mag();
+      if (crossProduct.mag() < 0.0001 || dist < 0.0001) continue;
       // Front face vertices
       const frontA = extruded.vertices.length;
       extruded.vertices.push(new Vector(vA.x, vA.y, vA.z + half));
