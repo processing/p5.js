@@ -630,7 +630,7 @@ export class Font {
       // Check if the cross product of edge vectors has sufficient magnitude
       const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
       const extrudeVector = new Vector(0, 0, extrude);
-      const crossProduct = p5.Vector.cross(edgeVector, extrudeVector);
+      const crossProduct = Vector.cross(edgeVector, extrudeVector);
       if (crossProduct.mag() < 0.0001) continue;
       if (dist < 0.0001) continue;
       // Front face vertices
