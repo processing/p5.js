@@ -549,28 +549,35 @@ export class Font {
       contours = [contours];
     }
 
+    // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;
       this._pInst._renderer._validateFaces = true;
-      this._pInst.push();
-      this._pInst.stroke(0);
 
-      contours.forEach(glyphContours => {
-        this._pInst.beginShape();
+      this._pInst.beginShape();
+      for (const glyphContours of contours) {
         for (const contour of glyphContours) {
           this._pInst.beginContour();
-          contour.forEach(({ x, y }) => this._pInst.vertex(x, y, 0));
+          for (const pt of contour) {
+            this._pInst.vertex(pt.x, pt.y, 0);
+          }
           this._pInst.endContour(this._pInst.CLOSE);
         }
-        this._pInst.endShape(this._pInst.CLOSE);
-      });
-      this._pInst.pop();
+      }
+
+      this._pInst.endShape(this._pInst.CLOSE);
+
       this._pInst._renderer._validateFaces = prevValidateFaces;
     });
 
     if (extrude === 0) {
       return geom;
     }
+
+    // The tessellation process creates separate vertices for each triangle,
+    // even when they share the same position. We need to deduplicate them
+    // to find which faces are actually connected, so we can identify the
+    // outer edges for extrusion.
 
     const vertexIndices = {};
     const vertexId = v => `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
@@ -608,8 +615,6 @@ export class Font {
       }
     }
 
-    console.log(`Found ${validEdges.length} outer edges from ${Object.keys(seen).length} total edges`);
-
     // Step 5: Create extruded geometry
     const extruded = this._pInst.buildGeometry(() => {});
     const half = extrude * 0.5;
@@ -622,11 +627,11 @@ export class Font {
       const vA = newVertices[a];
       const vB = newVertices[b];
       // Skip if vertices are too close (degenerate edge)
-      const dist = Math.sqrt(
-        Math.pow(vB.x - vA.x, 2) +
-        Math.pow(vB.y - vA.y, 2) +
-        Math.pow(vB.z - vA.z, 2)
-      );
+      // Check if the cross product of edge vectors has sufficient magnitude
+      const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
+      const extrudeVector = new Vector(0, 0, extrude);
+      const crossProduct = p5.Vector.cross(edgeVector, extrudeVector);
+      if (crossProduct.mag() < 0.0001) continue;
       if (dist < 0.0001) continue;
       // Front face vertices
       const frontA = extruded.vertices.length;
