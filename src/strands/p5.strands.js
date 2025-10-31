@@ -6,7 +6,7 @@
 */
 import { glslBackend } from './strands_glslBackend';
 
-import { transpileStrandsToJS } from './strands_transpiler';
+import { transpileStrandsToJS, detectOutsideVariableReferences } from './strands_transpiler';
 import { BlockType } from './ir_types';
 
 import { createDirectedAcyclicGraph } from './ir_dag'
@@ -69,6 +69,20 @@ function strands(p5, fn) {
       createShaderHooksFunctions(strandsContext, fn, this);
       // TODO: expose this, is internal for debugging for now.
       const options = { parser: true, srcLocations: false };
+
+      // 0. Detect outside variable references in uniforms (before transpilation)
+      if (options.parser) {
+        const sourceString = `(${shaderModifier.toString()})`;
+        const errors = detectOutsideVariableReferences(sourceString);
+        if (errors.length > 0) {
+          // Show errors to the user
+          for (const error of errors) {
+            p5._friendlyError(
+              `p5.strands: ${error.message}`
+            );
+          }
+        }
+      }
 
       // 1. Transpile from strands DSL to JS
       let strandsCallback;
