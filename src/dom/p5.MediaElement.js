@@ -935,6 +935,13 @@ class MediaElement extends Element {
 
   /*** CONNECT TO WEB AUDIO API / p5.sound.js ***/
 
+  _getAudioContext() {
+    return undefined;
+  }
+  _getSoundOut() {
+    return undefined;
+  }
+
   /**
    * Sends the element's audio to an output.
    *
@@ -954,9 +961,9 @@ class MediaElement extends Element {
     let audioContext, mainOutput;
 
     // if p5.sound exists, same audio context
-    if (typeof fn.getAudioContext === 'function') {
-      audioContext = fn.getAudioContext();
-      mainOutput = p5.soundOut.input;
+    if (this._getAudioContext() && this._getSoundOut()) {
+      audioContext = this._getAudioContext();
+      mainOutput = this._getSoundOut().input;
     } else {
       try {
         audioContext = obj.context;
@@ -1791,6 +1798,19 @@ function media(p5, fn){
    * </div>
    */
   p5.MediaElement = MediaElement;
+
+  // Patch MediaElement to give it access to fn, which p5.sound may attach things to
+  // if present in a sketch
+  MediaElement.prototype._getSoundOut = function() {
+    return p5.soundOut;
+  }
+  MediaElement.prototype._getAudioContext = function() {
+    if (typeof fn.getAudioContext === 'function') {
+      return fn.getAudioContext();
+    } else {
+      return undefined;
+    }
+  }
 
   /**
    * Path to the media element's source as a string.

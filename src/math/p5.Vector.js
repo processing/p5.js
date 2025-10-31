@@ -265,14 +265,14 @@ class Vector {
    * function setup() {
    *   let v = createVector(20, 30);
    *
-   *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+   *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
    * </code>
    * </div>
    */
   toString() {
-    return `[${this._values.join(', ')}]`;
+    return `vector[${this._values.join(', ')}]`;
   }
 
   /**
