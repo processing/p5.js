@@ -385,6 +385,95 @@ suite('p5.Shader', function() {
         });
         expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
       });
+
+      test('auto-returns when param/return types match (no explicit return)', function() {
+        const modified = myShader.modify({
+          'vec4 getVertexColor': `(vec4 c) {
+            c.rgb = vec3(1.0, 0.0, 0.0);
+          }`
+        });
+        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+        expect(modified.fragSrc()).to.match(/getVertexColor[\s\S]*?\{[\s\S]*?return\s+c\s*;[\s\S]*?\}/);
+      });
+
+      test('explicit return is preserved and not duplicated', function() {
+        const modified = myShader.modify({
+          'vec4 getVertexColor': `(vec4 c) {
+            c.rgb *= 0.5;
+            return c;
+          }`
+        });
+        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+
+        const body = modified.fragSrc().match(/getVertexColor[\s\S]*?\{([\s\S]*?)\}/)[1];
+        const matches = (body.match(/return\s+c\s*;/g) || []).length;
+        expect(matches).to.equal(1);
+      });
+
+      test('commented return does not block normalization', function() {
+        const modified = myShader.modify({
+          'vec4 getVertexColor': `(vec4 c) {
+            /* return c; */
+            // return c;
+            c.a = 1.0;
+          }`
+        });
+        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
+        expect(modified.fragSrc()).to.match(/getVertexColor[\s\S]*?return\s+c\s*;/);
+      });
+
+      test('void hooks are not normalized', function() {
+        const modified = myShader.modify({
+          'void beforeFragment': `() {
+            // no-op
+          }`,
+          'vec4 getVertexColor': `(vec4 c) { 
+            return c; 
+          }`
+        });
+
+        const src = modified.fragSrc();
+        const bfBody = src.match(/HOOK_beforeFragment[\s\S]*?\{([\s\S]*?)\}/);
+        if (bfBody) {
+          expect(bfBody[1]).not.to.match(/\breturn\b/);
+        }
+      });
+
+      test('mismatched types are not auto-returned and cause compiler error', function() {
+        const bad = myp5.createShader(
+          `
+            precision highp float;
+            attribute vec3 aPosition;
+            uniform mat4 uModelViewMatrix, uProjectionMatrix;
+            void main() {
+              gl_Position = uProjectMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+            }
+          `,
+          `
+            precision highp float;
+            void main() {
+              gl_FragColor = HOOK_getVertexColor(vec4(0.0, 1.0, 0.0, 1.0));
+            }
+          `,
+          {
+            fragment: {
+              'vec4 getVertexColor': '(vec2 uv) { }'
+            }
+          }
+        );
+
+        let threw = false;
+        try {
+          bad.bindShader();
+        } catch (e) {
+          threw = true;
+        } finally {
+          try {
+            bad.unbindShader();
+          } catch (_) {}
+        }
+        expect(threw).to.equal(true);
+      });
     });
   });
 });
