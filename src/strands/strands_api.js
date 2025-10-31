@@ -168,6 +168,73 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
+  //////////////////////////////////////////////
+  // Global p5 properties
+  //////////////////////////////////////////////
+  const globalProperties = [
+    { name: 'width', type: DataType.float1 },
+    { name: 'height', type: DataType.float1 },
+    { name: 'mouseX', type: DataType.float1 },
+    { name: 'mouseY', type: DataType.float1 },
+    { name: 'pmouseX', type: DataType.float1 },
+    { name: 'pmouseY', type: DataType.float1 },
+    { name: 'winMouseX', type: DataType.float1 },
+    { name: 'winMouseY', type: DataType.float1 },
+    { name: 'frameCount', type: DataType.int1 },
+    { name: 'focused', type: DataType.bool1 },
+    { name: 'displayWidth', type: DataType.float1 },
+    { name: 'displayHeight', type: DataType.float1 },
+    { name: 'windowWidth', type: DataType.float1 },
+    { name: 'windowHeight', type: DataType.float1 },
+    { name: 'mouseButton', type: DataType.int1 },
+    { name: 'mouseIsPressed', type: DataType.bool1 }
+  ];
+
+  const originalDescriptors = {};
+  for (const { name } of globalProperties) {
+    originalDescriptors[name] = Object.getOwnPropertyDescriptor(fn, name) || {
+      get: function() { return p5.prototype[name]; },
+      configurable: true
+    };
+  }
+
+  for (const { name, type } of globalProperties) {
+    strandsContext.fnOverrides[name] = originalDescriptors[name];
+
+    (function(propName, propType, origDescriptor) {
+      Object.defineProperty(fn, propName, {
+        get: function() {
+          if (strandsContext.active) {
+            const uniformName = `_p5_${propName}`;
+            const existingUniform = strandsContext.uniforms.find(u => u.name === uniformName);
+            
+            if (!existingUniform) {
+              const { id, dimension } = build.variableNode(strandsContext, propType, uniformName);
+              strandsContext.uniforms.push({ 
+                name: uniformName, 
+                typeInfo: propType, 
+                defaultValue: origDescriptor.get ? 
+                  () => origDescriptor.get.call(fn) :
+                  () => origDescriptor.value
+              });
+              return createStrandsNode(id, dimension, strandsContext);
+            } else {
+              const { id, dimension } = build.variableNode(strandsContext, propType, uniformName);
+              return createStrandsNode(id, dimension, strandsContext);
+            }
+          } else {
+            if (origDescriptor.get) {
+              return origDescriptor.get.call(this);
+            } else {
+              return origDescriptor.value;
+            }
+          }
+        },
+        configurable: true,
+        enumerable: true
+      });
+    })(name, type, originalDescriptors[name]);
+  }
 }
 //////////////////////////////////////////////
 // Per-Hook functions
