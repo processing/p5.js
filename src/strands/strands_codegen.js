@@ -1,4 +1,4 @@
-import { sortCFG } from "./ir_cfg";
+import { sortCFG } from './ir_cfg';
 import { structType, TypeInfoFromGLSLName } from './ir_types';
 
 export function generateShaderCode(strandsContext) {
@@ -10,10 +10,10 @@ export function generateShaderCode(strandsContext) {
   } = strandsContext;
 
   const hooksObj = {
-    uniforms: {},
+    uniforms: {}
   };
 
-  for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
+  for (const { name, typeInfo, defaultValue } of strandsContext.uniforms) {
     const declaration = backend.generateUniformDeclaration(name, typeInfo);
     hooksObj.uniforms[declaration] = defaultValue;
   }
@@ -27,7 +27,7 @@ export function generateShaderCode(strandsContext) {
       },
       tempNames: {},
       declarations: [],
-      nextTempID: 0,
+      nextTempID: 0
     };
 
     const blocks = sortCFG(cfg.outgoingEdges, entryBlockID);

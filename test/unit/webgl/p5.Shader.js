@@ -543,7 +543,7 @@ suite('p5.Shader', function() {
         myp5.createCanvas(100, 50, myp5.WEBGL);
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
-            debugger
+            debugger;
             const uv = inputs.texCoord;
             const condition = uv.x > 0.5; // left half false, right half true
             let color = myp5.float(0.0);
@@ -1010,14 +1010,14 @@ suite('p5.Shader', function() {
 
             const loopResult = myp5.strandsFor(
               () => 0,
-              (loopVar) => loopVar < 4,
-              (loopVar) => loopVar + 1,
+              loopVar => loopVar < 4,
+              loopVar => loopVar + 1,
               (loopVar, vars) => {
                 let newValue = vars.accumulator.copy();
                 newValue = newValue + 0.125;
                 return { accumulator: newValue };
               },
-              { accumulator: accumulator.copy() },
+              { accumulator: accumulator.copy() }
             );
 
             accumulator = loopResult.accumulator;

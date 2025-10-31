@@ -1,5 +1,5 @@
-import { BlockTypeToName } from "./ir_types";
-import * as FES from './strands_FES'
+import { BlockTypeToName } from './ir_types';
+import * as FES from './strands_FES';
 
 // Todo: remove edges to simplify. Block order is always ordered already.
 
@@ -15,7 +15,7 @@ export function createControlFlowGraph() {
     blockStack: [],
     blockOrder: [],
     blockConditions: {},
-    currentBlock: -1,
+    currentBlock: -1
   };
 }
 
@@ -67,8 +67,8 @@ export function getBlockDataFromID(graph, id) {
     blockType: graph.blockTypes[id],
     incomingEdges: graph.incomingEdges[id],
     outgoingEdges: graph.outgoingEdges[id],
-    blockInstructions: graph.blockInstructions[id],
-  }
+    blockInstructions: graph.blockInstructions[id]
+  };
 }
 
 export function printBlockData(graph, id) {

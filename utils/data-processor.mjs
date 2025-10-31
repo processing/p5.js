@@ -8,7 +8,7 @@ import { getParams } from './shared-helpers.mjs';
 
 export function processData(rawData, strategy) {
   const allData = getAllEntries(rawData);
-  
+
   const processed = {
     modules: {},
     classes: {},
@@ -21,7 +21,7 @@ export function processData(rawData, strategy) {
   const fileModuleInfo = {};
   const modules = {};
   const submodules = {};
-  
+
   for (const entry of allData) {
     if (entry.tags?.some(tag => tag.title === 'module')) {
       const module = entry.tags.find(tag => tag.title === 'module').name;
@@ -115,21 +115,21 @@ export function processData(rawData, strategy) {
         (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property') ||
         entry.tags?.some(tag => tag.title === 'property')) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
       if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule, forEntry })) {
         continue;
       }
 
       const name = entry.name || (entry.properties || [])[0]?.name;
-      
+
       // Skip duplicates based on name + class combination
       const key = `${name}:${forEntry || 'p5'}`;
       if (processedNames.has(key)) {
         continue;
       }
       processedNames.add(key);
-      
+
 
       // For properties, get type from the property definition
       const propertyType = entry.properties?.[0]?.type || entry.type;
@@ -158,7 +158,7 @@ export function processData(rawData, strategy) {
   for (const entry of allData) {
     if (entry.kind === 'class') {
       const { module, submodule } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
       if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule })) {
         continue;
@@ -201,7 +201,7 @@ export function processData(rawData, strategy) {
   for (const entry of allData) {
     if (entry.kind === 'function' && entry.properties?.length === 0) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
       if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule, forEntry })) {
         continue;
@@ -217,7 +217,7 @@ export function processData(rawData, strategy) {
       }
 
       const className = memberof || forEntry || 'p5';
-      
+
       // Skip private methods
       if (entry.name.startsWith('_')) continue;
 

@@ -1,5 +1,5 @@
 import p5 from '../../../src/app.js';
-import {_sanitizeFontName} from '../../../src/type/p5.Font.js';
+import { _sanitizeFontName } from '../../../src/type/p5.Font.js';
 
 suite('p5.Font', function () {
   var myp5;
@@ -41,14 +41,14 @@ suite('p5.Font', function () {
     assert.property(bbox, 'h');
   });
 
-   test('fontBounds no NaN (multiline + CENTER)', async () => {
-     const pFont = await myp5.loadFont(fontFile);
-     myp5.textAlign(myp5.CENTER, myp5.CENTER);
-     const b = pFont.fontBounds('Hello,\nWorld!', 50, 50, 24);
-     expect(b.x).not.toBeNaN();
-     expect(b.y).not.toBeNaN();
-     expect(b.w).not.toBeNaN();
-     expect(b.h).not.toBeNaN();
+  test('fontBounds no NaN (multiline + CENTER)', async () => {
+    const pFont = await myp5.loadFont(fontFile);
+    myp5.textAlign(myp5.CENTER, myp5.CENTER);
+    const b = pFont.fontBounds('Hello,\nWorld!', 50, 50, 24);
+    expect(b.x).not.toBeNaN();
+    expect(b.y).not.toBeNaN();
+    expect(b.w).not.toBeNaN();
+    expect(b.h).not.toBeNaN();
   });
 
   suite('textToPoints', () => {

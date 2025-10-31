@@ -1,15 +1,15 @@
 /**
-* @module 3D
-* @submodule strands
-* @for p5
-* @requires core
-*/
+ * @module 3D
+ * @submodule strands
+ * @for p5
+ * @requires core
+ */
 import { glslBackend } from './strands_glslBackend';
 
 import { transpileStrandsToJS } from './strands_transpiler';
 import { BlockType } from './ir_types';
 
-import { createDirectedAcyclicGraph } from './ir_dag'
+import { createDirectedAcyclicGraph } from './ir_dag';
 import { createControlFlowGraph, createBasicBlock, pushBlock, popBlock } from './ir_cfg';
 import { generateShaderCode } from './strands_codegen';
 import { initGlobalStrandsAPI, createShaderHooksFunctions } from './strands_api';
@@ -54,7 +54,7 @@ function strands(p5, fn) {
 
   const strandsContext = {};
   initStrandsContext(strandsContext);
-  initGlobalStrandsAPI(p5, fn, strandsContext)
+  initGlobalStrandsAPI(p5, fn, strandsContext);
 
   //////////////////////////////////////////////
   // Entry Point
@@ -98,15 +98,15 @@ function strands(p5, fn) {
       return oldModify.call(this, hooksObject);
     }
     else {
-      return oldModify.call(this, shaderModifier)
+      return oldModify.call(this, shaderModifier);
     }
-  }
+  };
 }
 
 export default strands;
 
 if (typeof p5 !== 'undefined') {
-  p5.registerAddon(strands)
+  p5.registerAddon(strands);
 }
 
 /* ------------------------------------------------------------- */
@@ -141,7 +141,7 @@ if (typeof p5 !== 'undefined') {
  *     getWorldInputs(inputs => {
  *       // Move the vertex up and down in a wave in world space
  *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
-*       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
+ *       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
  *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
  *       return inputs;
  *     });

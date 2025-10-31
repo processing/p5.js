@@ -12,10 +12,10 @@ const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json'
 // Strategy for HTML documentation output (maintains exact convert.mjs behavior)
 const htmlStrategy = {
   shouldSkipEntry: () => false, // Don't skip anything (including Foundation)
-  
-  processDescription: (desc) => descriptionString(desc),
-  
-  processType: (type) => typeObject(type)
+
+  processDescription: desc => descriptionString(desc),
+
+  processType: type => typeObject(type)
 };
 
 const processed = processData(data, htmlStrategy);

@@ -6,13 +6,13 @@ async function generateVisualReport() {
   const expectedDir = path.join(process.cwd(), 'test/unit/visual/screenshots');
   const actualDir = path.join(process.cwd(), 'test/unit/visual/actual-screenshots');
   const outputFile = path.join(process.cwd(), 'test/unit/visual/visual-report.html');
-  
+
   // Make sure the output directory exists
   const outputDir = path.dirname(outputFile);
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
+
   // Function to read image file and convert to data URL
   function imageToDataURL(filePath) {
     try {
@@ -24,7 +24,7 @@ async function generateVisualReport() {
       return null;
     }
   }
-  
+
   // Create a lookup map for actual screenshots
   function createActualScreenshotMap() {
     const actualMap = new Map();
@@ -32,33 +32,33 @@ async function generateVisualReport() {
       console.warn(`Actual screenshots directory does not exist: ${actualDir}`);
       return actualMap;
     }
-    
+
     const files = fs.readdirSync(actualDir);
     for (const file of files) {
       if (file.endsWith('.png') && !file.endsWith('-diff.png')) {
         actualMap.set(file, path.join(actualDir, file));
       }
     }
-    
+
     return actualMap;
   }
-  
+
   const actualScreenshotMap = createActualScreenshotMap();
-  
+
   // Recursively find all test cases
   function findTestCases(dir, prefix = '') {
     const testCases = [];
-    
+
     if (!fs.existsSync(path.join(dir, prefix))) {
       console.warn(`Directory does not exist: ${path.join(dir, prefix)}`);
       return testCases;
     }
-    
+
     const entries = fs.readdirSync(path.join(dir, prefix), { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(prefix, entry.name);
-      
+
       if (entry.isDirectory()) {
         // Recursively search subdirectories
         testCases.push(...findTestCases(dir, fullPath));
@@ -66,42 +66,42 @@ async function generateVisualReport() {
         // Found a test case
         const metadataPath = path.join(dir, fullPath);
         let metadata;
-        
+
         try {
           metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
         } catch (error) {
           console.error(`Failed to read metadata: ${metadataPath}`, error);
           continue;
         }
-        
+
         const testDir = path.dirname(fullPath);
-        
+
         const test = {
           name: testDir,
           numScreenshots: metadata.numScreenshots || 0,
           screenshots: []
         };
-        
+
         // Create flattened name for lookup
         const flattenedName = testDir.replace(SLASH_REGEX, '-');
-        
+
         // Collect all screenshots for this test
         for (let i = 0; i < test.numScreenshots; i++) {
           const screenshotName = i.toString().padStart(3, '0') + '.png';
           const expectedPath = path.join(dir, testDir, screenshotName);
-          
+
           // Use flattened name for actual screenshots
           const actualScreenshotName = `${flattenedName}-${i.toString().padStart(3, '0')}.png`;
           const actualPath = actualScreenshotMap.get(actualScreenshotName) || null;
-          
+
           // Use flattened name for diff image
           const diffScreenshotName = `${flattenedName}-${i.toString().padStart(3, '0')}-diff.png`;
           const diffPath = path.join(actualDir, diffScreenshotName);
-          
+
           const hasExpected = fs.existsSync(expectedPath);
           const hasActual = actualPath && fs.existsSync(actualPath);
           const hasDiff = fs.existsSync(diffPath);
-          
+
           const screenshot = {
             index: i,
             expectedImage: hasExpected ? imageToDataURL(expectedPath) : null,
@@ -109,41 +109,41 @@ async function generateVisualReport() {
             diffImage: hasDiff ? imageToDataURL(diffPath) : null,
             passed: hasExpected && hasActual && !hasDiff
           };
-          
+
           test.screenshots.push(screenshot);
         }
-        
+
         // Don't add tests with no screenshots
         if (test.screenshots.length > 0) {
           testCases.push(test);
         }
       }
     }
-    
+
     return testCases;
   }
-  
+
   // Find all test cases from the expected directory
   const testCases = findTestCases(expectedDir);
-  
+
   if (testCases.length === 0) {
     console.warn('No test cases found. Check if the expected directory is correct.');
   }
-  
+
   // Count passed/failed tests and screenshots
   const totalTests = testCases.length;
   let passedTests = 0;
   let totalScreenshots = 0;
   let passedScreenshots = 0;
-  
+
   for (const test of testCases) {
     const testPassed = test.screenshots.every(screenshot => screenshot.passed);
     if (testPassed) passedTests++;
-    
+
     totalScreenshots += test.screenshots.length;
     passedScreenshots += test.screenshots.filter(s => s.passed).length;
   }
-  
+
   // Generate HTML
   const html = `
 <!DOCTYPE html>
@@ -340,15 +340,15 @@ async function generateVisualReport() {
                 <div class="screenshot-images">
                   <div class="image-container">
                     <div class="image-header">Expected</div>
-                    ${screenshot.expectedImage ? 
-                      `<img src="${screenshot.expectedImage}" alt="Expected Result">` : 
-                      `<div class="missing-notice">No expected image found</div>`}
+                    ${screenshot.expectedImage ?
+                      `<img src="${screenshot.expectedImage}" alt="Expected Result">` :
+                      '<div class="missing-notice">No expected image found</div>'}
                   </div>
                   <div class="image-container">
                     <div class="image-header">Actual</div>
-                    ${screenshot.actualImage ? 
-                      `<img src="${screenshot.actualImage}" alt="Actual Result">` : 
-                      `<div class="missing-notice">No actual image found</div>`}
+                    ${screenshot.actualImage ?
+                      `<img src="${screenshot.actualImage}" alt="Actual Result">` :
+                      '<div class="missing-notice">No actual image found</div>'}
                   </div>
                   ${screenshot.diffImage ? `
                     <div class="image-container">
@@ -401,11 +401,11 @@ async function generateVisualReport() {
 </body>
 </html>
   `;
-  
+
   // Write HTML to file
   fs.writeFileSync(outputFile, html);
   console.log(`Visual test report generated: ${outputFile}`);
-  
+
   return {
     totalTests,
     passedTests,

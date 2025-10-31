@@ -148,7 +148,7 @@ export const initialize = () => {
       },
       backend: {
         fallback: 'en',
-        
+
         // ensure that the FES internationalization strings are loaded
         // from the latest patch of the current minor version of p5.js
         loadPath: `https://cdn.jsdelivr.net/npm/p5@${
