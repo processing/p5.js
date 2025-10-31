@@ -436,6 +436,37 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].z
     );
   }
+
+  // Normalize nearly identical consecutive vertices to avoid numerical issues in libtess.
+  // This workaround addresses tessellation artifacts when consecutive vertices have
+  // coordinates that are almost (but not exactly) equal, which can occur when drawing
+  // contours automatically sampled from fonts with font.textToContours().
+  const epsilon = 1e-6;
+  for (const contour of contours) {
+    for (
+      let i = p5.RendererGL.prototype.tessyVertexSize;
+      i < contour.length;
+      i += p5.RendererGL.prototype.tessyVertexSize
+    ) {
+      const prevX = contour[i - p5.RendererGL.prototype.tessyVertexSize];
+      const prevY = contour[i - p5.RendererGL.prototype.tessyVertexSize + 1];
+      const prevZ = contour[i - p5.RendererGL.prototype.tessyVertexSize + 2];
+      const currX = contour[i];
+      const currY = contour[i + 1];
+      const currZ = contour[i + 2];
+
+      if (Math.abs(prevX - currX) < epsilon) {
+        contour[i] = prevX;
+      }
+      if (Math.abs(prevY - currY) < epsilon) {
+        contour[i + 1] = prevY;
+      }
+      if (Math.abs(prevZ - currZ) < epsilon) {
+        contour[i + 2] = prevZ;
+      }
+    }
+  }
+
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];
