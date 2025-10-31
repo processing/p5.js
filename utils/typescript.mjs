@@ -74,8 +74,8 @@ function processStrandsFunctions() {
       pascalTypeName = typeInfo.fnName
         .slice(0, 2).toUpperCase()
         + typeInfo.fnName
-        .slice(2)
-        .toLowerCase();
+          .slice(2)
+          .toLowerCase();
     } else {
       pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
         + typeInfo.fnName.slice(1).toLowerCase();
@@ -169,7 +169,7 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       // Handle primitive types
       const primitiveTypes = {
         'String': 'string',
-        'Number': 'number', 
+        'Number': 'number',
         'Integer': 'number',
         'Boolean': 'boolean',
         'Void': 'void',
@@ -209,10 +209,10 @@ function convertTypeToTypeScript(typeNode, options = {}) {
           if (isConstantDef) {
             return convertTypeToTypeScript(typedefs[typeName], options);
           } else {
-            return `typeof p5.${typeName}`
+            return `typeof p5.${typeName}`;
           }
         } else {
-          return `Symbol`;
+          return 'Symbol';
         }
       }
 
@@ -296,7 +296,7 @@ const typescriptStrategy = {
     return context.module === 'Foundation';
   },
 
-  processDescription: (desc) => descriptionStringForTypeScript(desc),
+  processDescription: desc => descriptionStringForTypeScript(desc),
 
   processType: (type, param) => {
     // Return an object with the original type preserved
@@ -370,14 +370,14 @@ function generateObjectInterface(param, allParams, options = {}) {
 
   // First, check if the parameter has a properties array (JSDoc properties field)
   if (param.properties && Array.isArray(param.properties)) {
-    nestedParams = param.properties.filter(prop => 
+    nestedParams = param.properties.filter(prop =>
       prop.name && prop.name.startsWith(param.name + '.')
     );
   }
 
   // Fallback: Look for nested parameters with dot notation in allParams
   if (nestedParams.length === 0) {
-    nestedParams = allParams.filter(p => 
+    nestedParams = allParams.filter(p =>
       p.name && p.name.startsWith(param.name + '.') && p.name !== param.name
     );
   }
@@ -511,7 +511,7 @@ function generateClassDeclaration(classData) {
   const methodNames = new Set(classMethodsList.map(method => method.name));
 
   // Class properties
-  const classProperties = processed.classitems.filter(item => 
+  const classProperties = processed.classitems.filter(item =>
     item.class === originalClassName && item.itemtype === 'property'
   );
 

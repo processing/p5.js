@@ -1,6 +1,6 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "./ir_types";
-import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
-import * as FES from './strands_FES'
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from './ir_types';
+import { getNodeDataFromID, extractNodeTypeInfo } from './ir_dag';
+import * as FES from './strands_FES';
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
@@ -23,8 +23,8 @@ const TypeNames = {
   'bool4': 'bvec4',
   'mat2': 'mat2x2',
   'mat3': 'mat3x3',
-  'mat4': 'mat4x4',
-}
+  'mat4': 'mat4x4'
+};
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
     const { dag, cfg } = strandsContext;
@@ -80,7 +80,7 @@ const cfgHandlers = {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
   [BlockType.ELSE_COND](blockID, strandsContext, generationContext) {
-    generationContext.write(`else`);
+    generationContext.write('else');
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
   [BlockType.IF_BODY](blockID, strandsContext, generationContext) {
@@ -88,12 +88,12 @@ const cfgHandlers = {
     this.assignPhiNodeValues(blockID, strandsContext, generationContext);
   },
   [BlockType.SCOPE_START](blockID, strandsContext, generationContext) {
-    generationContext.write(`{`);
+    generationContext.write('{');
     generationContext.indent++;
   },
   [BlockType.SCOPE_END](blockID, strandsContext, generationContext) {
     generationContext.indent--;
-    generationContext.write(`}`);
+    generationContext.write('}');
   },
   [BlockType.MERGE](blockID, strandsContext, generationContext) {
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
@@ -105,7 +105,7 @@ const cfgHandlers = {
     const { dag, cfg } = strandsContext;
     const instructions = cfg.blockInstructions[blockID] || [];
 
-    generationContext.write(`for (`);
+    generationContext.write('for (');
 
     // Set flag to suppress semicolon on the last statement
     const originalSuppressSemicolon = generationContext.suppressSemicolon;
@@ -133,7 +133,7 @@ const cfgHandlers = {
     // Restore original flag
     generationContext.suppressSemicolon = originalSuppressSemicolon;
 
-    generationContext.write(`)`);
+    generationContext.write(')');
   },
   assignPhiNodeValues(blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
@@ -157,17 +157,17 @@ const cfgHandlers = {
         }
       }
     }
-  },
-}
+  }
+};
 export const glslBackend = {
   hookEntry(hookType) {
-    const firstLine = `(${hookType.parameters.flatMap((param) => {
+    const firstLine = `(${hookType.parameters.flatMap(param => {
       return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${param.name}`;
     }).join(', ')}) {`;
     return firstLine;
   },
   getTypeName(baseType, dimension) {
-    const primitiveTypeName = TypeNames[baseType + dimension]
+    const primitiveTypeName = TypeNames[baseType + dimension];
     if (!primitiveTypeName) {
       return baseType;
     }
@@ -226,7 +226,7 @@ export const glslBackend = {
         if (prop.name !== val) {
           generationContext.write(
             `${rootNode.identifier}.${prop.name} = ${val};`
-          )
+          );
         }
       }
     }
@@ -239,103 +239,103 @@ export const glslBackend = {
     }
     switch (node.nodeType) {
       case NodeType.LITERAL:
-      if (node.baseType === BaseType.FLOAT) {
-        return node.value.toFixed(4);
-      }
-      else {
-        return node.value;
-      }
+        if (node.baseType === BaseType.FLOAT) {
+          return node.value.toFixed(4);
+        }
+        else {
+          return node.value;
+        }
       case NodeType.VARIABLE:
-      return node.identifier;
+        return node.identifier;
       case NodeType.OPERATION:
-      const useParantheses = node.usedBy.length > 0;
-      if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
+        const useParantheses = node.usedBy.length > 0;
+        if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
         // TODO: differentiate casts and constructors for more efficient codegen.
         // if (node.dependsOn.length === 1 && node.dimension === 1) {
         //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
         // }
-        if (node.baseType === BaseType.SAMPLER2D) {
-          return this.generateExpression(generationContext, dag, node.dependsOn[0]);
-        }
-        const T = this.getTypeName(node.baseType, node.dimension);
-        const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
-        return `${T}(${deps.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
-        const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
-        return `${node.identifier}(${functionArgs.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
-        const [lID, rID] = node.dependsOn;
-        const lName = this.generateExpression(generationContext, dag, lID);
-        const rName = this.generateExpression(generationContext, dag, rID);
-        return `${lName}.${rName}`;
-      }
-      if (node.opCode === OpCode.Unary.SWIZZLE) {
-        const parentID = node.dependsOn[0];
-        const parentExpr = this.generateExpression(generationContext, dag, parentID);
-        return `${parentExpr}.${node.swizzle}`;
-      }
-      if (node.dependsOn.length === 2) {
-        const [lID, rID] = node.dependsOn;
-        const left  = this.generateExpression(generationContext, dag, lID);
-        const right = this.generateExpression(generationContext, dag, rID);
-
-        // Special case for modulo: use mod() function for floats in GLSL
-        if (node.opCode === OpCode.Binary.MODULO) {
-          const leftNode = getNodeDataFromID(dag, lID);
-          const rightNode = getNodeDataFromID(dag, rID);
-          // If either operand is float, use mod() function
-          if (leftNode.baseType === BaseType.FLOAT || rightNode.baseType === BaseType.FLOAT) {
-            return `mod(${left}, ${right})`;
+          if (node.baseType === BaseType.SAMPLER2D) {
+            return this.generateExpression(generationContext, dag, node.dependsOn[0]);
           }
-          // For integers, use % operator
-          return `(${left} % ${right})`;
+          const T = this.getTypeName(node.baseType, node.dimension);
+          const deps = node.dependsOn.map(dep => this.generateExpression(generationContext, dag, dep));
+          return `${T}(${deps.join(', ')})`;
         }
+        if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+          const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
+          return `${node.identifier}(${functionArgs.join(', ')})`;
+        }
+        if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
+          const [lID, rID] = node.dependsOn;
+          const lName = this.generateExpression(generationContext, dag, lID);
+          const rName = this.generateExpression(generationContext, dag, rID);
+          return `${lName}.${rName}`;
+        }
+        if (node.opCode === OpCode.Unary.SWIZZLE) {
+          const parentID = node.dependsOn[0];
+          const parentExpr = this.generateExpression(generationContext, dag, parentID);
+          return `${parentExpr}.${node.swizzle}`;
+        }
+        if (node.dependsOn.length === 2) {
+          const [lID, rID] = node.dependsOn;
+          const left  = this.generateExpression(generationContext, dag, lID);
+          const right = this.generateExpression(generationContext, dag, rID);
 
-        const opSym = OpCodeToSymbol[node.opCode];
-        if (useParantheses) {
-          return `(${left} ${opSym} ${right})`;
-        } else {
-          return `${left} ${opSym} ${right}`;
+          // Special case for modulo: use mod() function for floats in GLSL
+          if (node.opCode === OpCode.Binary.MODULO) {
+            const leftNode = getNodeDataFromID(dag, lID);
+            const rightNode = getNodeDataFromID(dag, rID);
+            // If either operand is float, use mod() function
+            if (leftNode.baseType === BaseType.FLOAT || rightNode.baseType === BaseType.FLOAT) {
+              return `mod(${left}, ${right})`;
+            }
+            // For integers, use % operator
+            return `(${left} % ${right})`;
+          }
+
+          const opSym = OpCodeToSymbol[node.opCode];
+          if (useParantheses) {
+            return `(${left} ${opSym} ${right})`;
+          } else {
+            return `${left} ${opSym} ${right}`;
+          }
         }
-      }
-      if (node.opCode === OpCode.Unary.LOGICAL_NOT
+        if (node.opCode === OpCode.Unary.LOGICAL_NOT
         || node.opCode === OpCode.Unary.NEGATE
         || node.opCode === OpCode.Unary.PLUS
         ) {
-        const [i] = node.dependsOn;
-        const val  = this.generateExpression(generationContext, dag, i);
-        const sym  = OpCodeToSymbol[node.opCode];
-        return `${sym}${val}`;
-      }
+          const [i] = node.dependsOn;
+          const val  = this.generateExpression(generationContext, dag, i);
+          const sym  = OpCodeToSymbol[node.opCode];
+          return `${sym}${val}`;
+        }
       case NodeType.PHI:
       // Phi nodes represent conditional merging of values
       // They should already have been declared as temporary variables
       // and assigned in the appropriate branches
-      if (generationContext.tempNames?.[nodeID]) {
-        return generationContext.tempNames[nodeID];
-      } else {
+        if (generationContext.tempNames?.[nodeID]) {
+          return generationContext.tempNames[nodeID];
+        } else {
         // If no temp was created, this phi node only has one input
         // so we can just use that directly
-        const validInputs = node.dependsOn.filter(id => id !== null);
-        if (validInputs.length > 0) {
-          return this.generateExpression(generationContext, dag, validInputs[0]);
-        } else {
-          throw new Error(`No valid inputs for node`)
-          // Fallback: create a default value
-          const typeName = this.getTypeName(node.baseType, node.dimension);
-          if (node.dimension === 1) {
-            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+          const validInputs = node.dependsOn.filter(id => id !== null);
+          if (validInputs.length > 0) {
+            return this.generateExpression(generationContext, dag, validInputs[0]);
           } else {
-            return `${typeName}(0.0)`;
+            throw new Error('No valid inputs for node');
+            // Fallback: create a default value
+            const typeName = this.getTypeName(node.baseType, node.dimension);
+            if (node.dimension === 1) {
+              return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+            } else {
+              return `${typeName}(0.0)`;
+            }
           }
         }
-      }
       case NodeType.ASSIGNMENT:
-      FES.internalError(`ASSIGNMENT nodes should not be used as expressions`)
+        FES.internalError('ASSIGNMENT nodes should not be used as expressions');
       default:
-      FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
+        FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`);
     }
   },
   generateBlock(blockID, strandsContext, generationContext) {
@@ -343,4 +343,4 @@ export const glslBackend = {
     const handler = cfgHandlers[type] || cfgHandlers[BlockType.DEFAULT];
     handler.call(cfgHandlers, blockID, strandsContext, generationContext);
   }
-}
+};

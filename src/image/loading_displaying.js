@@ -273,7 +273,7 @@ function loadingDisplaying(p5, fn){
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-     const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
+    const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -328,7 +328,7 @@ function loadingDisplaying(p5, fn){
     // initialize variables for the frames processing
     let frameIterator;
     let totalNumberOfFrames;
-    
+
     if (resetAnimation) {
       frameIterator = nFramesDelay;
       this.frameCount = frameIterator;
@@ -379,7 +379,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-   await new Promise(requestAnimationFrame)
+    await new Promise(requestAnimationFrame);
 
     while (frameIterator < totalNumberOfFrames) {
       /*

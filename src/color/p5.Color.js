@@ -39,7 +39,7 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
     result = Math.min(result, Math.max(start2, stop2));
   }
   return result;
-}
+};
 
 const serializationMap = {};
 
@@ -671,11 +671,11 @@ class Color {
     let coords = structuredClone(to(this._color, 'srgb').coords);
     coords.push(this._color.alpha);
 
-    const rangeMaxes = maxes.map((v) => {
+    const rangeMaxes = maxes.map(v => {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
-        return v
+        return v;
       }
     });
 

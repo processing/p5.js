@@ -26,7 +26,7 @@ function draw() {
 </td>
 <td>
 
-<img src="./contributor_docs/images/p5-readme-sketch.png" width="200" height="200" />
+<img src="./contributor_docs/images/p5-readme-sketch.png" width="200" height="200" alt="p5.js sketch of overlapping circles forming tube-like shapes in black outlines on a white background." />
 
 </td>
 </tr>

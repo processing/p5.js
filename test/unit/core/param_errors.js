@@ -29,7 +29,7 @@ suite('Validate Params', function () {
       return 'mock p5.Graphics';
     },
     _error: () => {},
-    decorateHelper: () => {},
+    decorateHelper: () => {}
   };
   const mockP5Prototype = {};
 

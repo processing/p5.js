@@ -1,4 +1,4 @@
-import * as build from './ir_builders'
+import * as build from './ir_builders';
 import {
   OperatorTable,
   BlockType,
@@ -8,16 +8,16 @@ import {
   TypeInfoFromGLSLName,
   isStructType,
   OpCode,
-  StatementType,
+  StatementType
   // isNativeType
-} from './ir_types'
-import { strandsBuiltinFunctions } from './strands_builtins'
-import { StrandsConditional } from './strands_conditionals'
-import { StrandsFor } from './strands_for'
-import * as CFG from './ir_cfg'
-import * as FES from './strands_FES'
-import { getNodeDataFromID } from './ir_dag'
-import { StrandsNode, createStrandsNode } from './strands_node'
+} from './ir_types';
+import { strandsBuiltinFunctions } from './strands_builtins';
+import { StrandsConditional } from './strands_conditionals';
+import { StrandsFor } from './strands_for';
+import * as CFG from './ir_cfg';
+import * as FES from './strands_FES';
+import { getNodeDataFromID } from './ir_dag';
+import { StrandsNode, createStrandsNode } from './strands_node';
 import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
 
 //////////////////////////////////////////////
@@ -37,7 +37,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       p5[name] = function (nodeOrValue) {
         const { id, dimension } = build.unaryOpNode(strandsContext, nodeOrValue, opCode);
         return createStrandsNode(id, dimension, strandsContext);
-      }
+      };
     }
   }
   //////////////////////////////////////////////
@@ -45,7 +45,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   //////////////////////////////////////////////
   fn.discard = function() {
     build.statementNode(strandsContext, StatementType.DISCARD);
-  }
+  };
   fn.break = function() {
     build.statementNode(strandsContext, StatementType.BREAK);
   };
@@ -53,12 +53,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   fn.instanceID = function() {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
     return createStrandsNode(node.id, node.dimension, strandsContext);
-  }
+  };
   // Internal methods use p5 static methods; user-facing methods use fn.
   // Some methods need to be used by both.
   p5.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
-  }
+  };
   fn.strandsIf = p5.strandsIf;
   p5.strandsFor = function(initialCb, conditionCb, updateCb, bodyCb, initialVars) {
     return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
@@ -69,11 +69,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return args[0];
     }
     if (args.length > 4) {
-      FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
+      FES.userError('type error', "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.");
     }
     const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
     return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
-  }
+  };
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
@@ -88,7 +88,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         } else {
           return originalFn.apply(this, args);
         }
-      }
+      };
     } else {
       fn[functionName] = function (...args) {
         if (strandsContext.active) {
@@ -97,9 +97,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         } else {
           p5._friendlyError(
             `It looks like you've called ${functionName} outside of a shader's modify() function.`
-          )
+          );
         }
-      }
+      };
     }
   }
   // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
@@ -122,7 +122,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
         params: [DataType.float3],
-        returnType: DataType.float1,
+        returnType: DataType.float1
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
@@ -136,10 +136,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     let pascalTypeName;
     if (/^[ib]vec/.test(typeInfo.fnName)) {
       pascalTypeName = typeInfo.fnName
-      .slice(0, 2).toUpperCase()
+        .slice(0, 2).toUpperCase()
       + typeInfo.fnName
-      .slice(2)
-      .toLowerCase();
+        .slice(2)
+        .toLowerCase();
     } else {
       pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
       + typeInfo.fnName.slice(1).toLowerCase();
@@ -166,7 +166,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
         );
       }
-    }
+    };
   }
 }
 //////////////////////////////////////////////
@@ -184,8 +184,8 @@ function createHookArguments(strandsContext, parameters){
         const propertyType = structTypeInfo.properties[i];
         Object.defineProperty(structNode, propertyType.name, {
           get() {
-            const propNode = getNodeDataFromID(dag, dag.dependsOn[structNode.id][i])
-            const onRebind = (newFieldID) => {
+            const propNode = getNodeDataFromID(dag, dag.dependsOn[structNode.id][i]);
+            const onRebind = newFieldID => {
               const oldDeps = dag.dependsOn[structNode.id];
               const newDeps = oldDeps.slice();
               newDeps[i] = newFieldID;
@@ -213,7 +213,7 @@ function createHookArguments(strandsContext, parameters){
             const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDependsOn);
             structNode.id = newStructInfo.id;
           }
-        })
+        });
       }
       args.push(structNode);
     }
@@ -229,24 +229,24 @@ function createHookArguments(strandsContext, parameters){
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
   if (!(returned instanceof StrandsNode)) {
     // try {
-      const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
-      return result.id;
+    const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
+    return result.id;
     // } catch (e) {
-      // FES.userError('type error',
-        // `There was a type mismatch for a value returned from ${hookName}.\n` +
-        // `The value in question was supposed to be:\n` +
-        // `${expectedType.baseType + expectedType.dimension}\n` +
-        // `But you returned:\n` +
-        // `${returned}`
-      // );
+    // FES.userError('type error',
+    // `There was a type mismatch for a value returned from ${hookName}.\n` +
+    // `The value in question was supposed to be:\n` +
+    // `${expectedType.baseType + expectedType.dimension}\n` +
+    // `But you returned:\n` +
+    // `${returned}`
+    // );
     // }
   }
   const dag = strandsContext.dag;
   let returnedNodeID = returned.id;
   const receivedType = {
     baseType: dag.baseTypes[returnedNodeID],
-    dimension: dag.dimensions[returnedNodeID],
-  }
+    dimension: dag.dimensions[returnedNodeID]
+  };
   if (receivedType.dimension !== expectedType.dimension) {
     if (receivedType.dimension !== 1) {
       FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookName} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
@@ -265,8 +265,8 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const availableHooks = {
     ...shader.hooks.vertex,
-    ...shader.hooks.fragment,
-  }
+    ...shader.hooks.fragment
+  };
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
@@ -283,7 +283,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
           if (returnedNode.baseType !== expectedStructType.typeName) {
-            FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
+            FES.userError('type error', `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
           }
           const newDeps = returnedNode.dependsOn.slice();
           for (let i = 0; i < expectedStructType.properties.length; i++) {
@@ -305,7 +305,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
               FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` +
                 `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
                 `Received: { ${Object.keys(userReturned).join(', ')} }\n` +
-                `All of the properties are required!`);
+                'All of the properties are required!');
             }
             const expectedTypeInfo = expectedProp.dataType;
             const returnedPropID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, receivedValue, hookType.name);
@@ -322,10 +322,10 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       strandsContext.hooks.push({
         hookType,
         entryBlockID,
-        rootNodeID,
+        rootNodeID
       });
       CFG.popBlock(cfg);
-    }
+    };
     strandsContext.windowOverrides[hookType.name] = window[hookType.name];
     strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
     window[hookType.name] = hookImplementation;
