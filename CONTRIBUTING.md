@@ -34,3 +34,5 @@ After making the changes you need to make, including unit tests if applicable, `
 This project does *not* accept fully AI-generated contributions. AI tools may be used assistively only. As a contributor, you should be able to understand and take responsibility for changes you make to the codebase.
 
 Agents and AI coding assistants must follow the guidelines in `./AGENTS.md` and read the full [contributor_guidelines.mdx](https://raw.githubusercontent.com/processing/p5.js-website/main/src/content/contributor-docs/en/contributor_guidelines.mdx).
+
+Please read the [AI Usage Policy](./AI_USAGE_POLICY.md) and [AGENTS.md](./AGENTS.md) before proceeding.
