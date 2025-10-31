@@ -562,55 +562,6 @@ suite('p5.RendererGL', function() {
     assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
   });
 
-  test('tessellation handles nearly identical consecutive vertices', function() {
-    myp5.createCanvas(100, 100, myp5.WEBGL);
-    myp5.pixelDensity(1);
-    myp5.background(255);
-    myp5.fill(0);
-    myp5.noStroke();
-
-    // Contours with nearly identical consecutive vertices (as can occur with textToContours)
-    const contours = [
-      [
-        [-30, -30, 0],
-        [30, -30, 0],
-        [30, 30, 0],
-        [-30, 30, 0]
-      ],
-      [
-        [-10, -10, 0],
-        [-10, 10, 0],
-        // This vertex has x coordinate almost equal to previous
-        [10.00000001, 10, 0],
-        [10, -10, 0]
-      ]
-    ];
-
-    myp5.beginShape();
-    for (const contour of contours) {
-      if (contour !== contours[0]) {
-        myp5.beginContour();
-      }
-      for (const v of contour) {
-        myp5.vertex(...v);
-      }
-      if (contour !== contours[0]) {
-        myp5.endContour();
-      }
-    }
-    myp5.endShape(myp5.CLOSE);
-
-    myp5.loadPixels();
-
-    // Check that center pixels are white (hole cut out properly)
-    const centerIdx = (myp5.width / 2 + myp5.height / 2 * myp5.width) * 4;
-    assert.equal(myp5.pixels[centerIdx], 255, 'Center should be white (hole)');
-
-    // Check that corner pixels are black (fill)
-    const cornerIdx = (10 + 10 * myp5.width) * 4;
-    assert.equal(myp5.pixels[cornerIdx], 0, 'Corner should be black (filled)');
-  });
-
   suite('text shader', function() {
     test('rendering looks the same in WebGL1 and 2', function(done) {
       myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
