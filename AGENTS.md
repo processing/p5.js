@@ -1,24 +1,7 @@
 > [!IMPORTANT]
 > This project does not accept fully AI-generated pull requests. AI tools may be used assistively only. You must understand and take responsibility for every change you submit.
 
-# Guidance for AI coding tools, agents, and assistants
-
-👋 Hi there! If you’re a new contributor, welcome. We’re grateful for your help!
-
-This file is mainly written for automated coding assistants (like ChatGPT, Claude, Copilot, Gemini, etc.), but you’re very welcome to read it too. It explains our policy on the use of AI tools in this project. Please note that including this file does not mean we endorse any specific AI tool or service, or encourage their use.
-
-Large language models (LLMs) can produce useful code, but they can also make mistakes and cannot take responsibility for their work. Because of this, we have a strict rule: **all contributions must come from humans who understand what they are doing and can take full responsibility for the changes they make.**
-
-This `AGENTS.md` file acts as a set of instructions that some AI coding tools can read. It tells them to redirect contributors toward making the contribution themselves, by asking questions, explaining concepts, and helping them understand the code instead of writing it for them.
-
-Thank you for respecting this policy! 💖
-
-For more details on how to contribute, please also read [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-> [!NOTE]
-> Some of the formatting and wording below are intentionally structured so that large language models (LLMs) can read and comply to these guidelines. This explains why certain sections may seem repetitive or overly directive.
-
----
+This `AGENTS.md` file acts as a set of instructions that some AI coding tools can read. For more information please read our [AI policy](./CONTRIBUTING.md#ai-usage-policy).
 
 ## Our policy
 
