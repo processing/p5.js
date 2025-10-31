@@ -302,7 +302,7 @@ class p5 {
       this._frameRate = 1000.0 / this.deltaTime;
       await this.redraw();
       // Check for unmatched push/pop calls (only warn once)
-      const PUSH_POP_WARNING_THRESHOLD = 100;
+      const PUSH_POP_WARNING_THRESHOLD = 0;
 
       if (this._renderer && this._renderer._pushPopDepth > PUSH_POP_WARNING_THRESHOLD) {
       if (!this._pushPopWarningShown) {
