@@ -344,9 +344,9 @@ class Color {
    * more details is returned. The details object will include the calculated
    * contrast value of the colors and different passing criteria.
    *
-   * For more details about color contrast, you can checkout this page from
-   * color.js. The WebAIM color contrast checker is a good tool to check out as
-   * well.
+   * For more details about color contrast, you can check out
+   * <a href="https://colorjs.io/docs/contrast">this page from color.js</a>, and the
+   * <a href="https://webaim.org/resources/contrastchecker/">WebAIM color contrast checker.</a>
    *
    * @param {Color} other
    * @returns {boolean|object}
