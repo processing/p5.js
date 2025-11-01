@@ -250,6 +250,15 @@ export const glslBackend = {
         return node.value;
       }
       case NodeType.VARIABLE:
+      // Track shared variable usage context
+      if (generationContext.shaderContext && generationContext.strandsContext?.sharedVariables?.has(node.identifier)) {
+        const sharedVar = generationContext.strandsContext.sharedVariables.get(node.identifier);
+        if (generationContext.shaderContext === 'vertex') {
+          sharedVar.usedInVertex = true;
+        } else if (generationContext.shaderContext === 'fragment') {
+          sharedVar.usedInFragment = true;
+        }
+      }
       return node.identifier;
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;

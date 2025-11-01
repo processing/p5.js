@@ -1070,6 +1070,7 @@ suite('p5.Shader', function() {
     suite('passing data between shaders', () => {
       test('handle passing a value from a vertex hook to a fragment hook', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           let worldPos = myp5.varyingVec3();
@@ -1100,8 +1101,9 @@ suite('p5.Shader', function() {
         assert.approximately(cornerColor[2], 0, 5);
       });
 
-      test('handle passing a value from a vertex hook to a fragment hook', () => {
+      test('handle passing a value from a vertex hook to a fragment hook with swizzle assignment', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           let worldPos = myp5.varyingVec3();
@@ -1134,6 +1136,7 @@ suite('p5.Shader', function() {
 
       test('handle passing a value from a vertex hook to a fragment hook as part of hook output', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           let worldPos = myp5.varyingVec3();
@@ -1163,6 +1166,34 @@ suite('p5.Shader', function() {
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
+      });
+
+      test('handle passing a value between fragment hooks only', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let processedNormal = myp5.sharedVec3();
+          myp5.getPixelInputs((inputs) => {
+            processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
+            return [myp5.abs(processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background to distinguish from result
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Normal of plane facing camera should be [0, 0, 1], so color should be [0, 0, 255]
+        const centerColor = myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);   // Red component
+        assert.approximately(centerColor[1], 0, 5);   // Green component  
+        assert.approximately(centerColor[2], 255, 5); // Blue component
       });
     });
 

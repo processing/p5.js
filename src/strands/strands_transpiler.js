@@ -45,11 +45,11 @@ function nodeIsVarying(node) {
       (
         // Global mode
         node.callee?.type === 'Identifier' &&
-        node.callee?.name.startsWith('varying')
+        (node.callee?.name.startsWith('varying') || node.callee?.name.startsWith('shared'))
       ) || (
         // Instance mode
         node.callee?.type === 'MemberExpression' &&
-        node.callee?.property.name.startsWith('varying')
+        (node.callee?.property.name.startsWith('varying') || node.callee?.property.name.startsWith('shared'))
       )
     );
 }
