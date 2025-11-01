@@ -31,6 +31,11 @@ export function popBlock(graph) {
   graph.currentBlock = graph.blockStack[len-1];
 }
 
+export function pushBlockForModification(graph, blockID) {
+  graph.blockStack.push(blockID);
+  graph.currentBlock = blockID;
+}
+
 export function createBasicBlock(graph, blockType) {
   const id = graph.nextID++;
   graph.blockTypes[id] = blockType;
@@ -75,7 +80,6 @@ export function printBlockData(graph, id) {
 export function sortCFG(adjacencyList, start) {
   const visited = new Set();
   const postOrder = [];
-
   function dfs(v) {
     if (visited.has(v)) {
       return;
@@ -86,7 +90,7 @@ export function sortCFG(adjacencyList, start) {
     }
     postOrder.push(v);
   }
-  
+
   dfs(start);
   return postOrder.reverse();
 }

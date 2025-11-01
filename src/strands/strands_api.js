@@ -8,33 +8,21 @@ import {
   TypeInfoFromGLSLName,
   isStructType,
   OpCode,
+  StatementType,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
+import { StrandsFor } from './strands_for'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
-import noiseGLSL from '../webgl/shaders/functions/noiseGLSL.glsl';
+import { StrandsNode, createStrandsNode } from './strands_node'
+import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
 
 //////////////////////////////////////////////
 // User nodes
 //////////////////////////////////////////////
-export class StrandsNode {
-  constructor(id, dimension, strandsContext) {
-    this.id = id;
-    this.strandsContext = strandsContext;
-    this.dimension = dimension;
-  }
-}
-
-export function createStrandsNode(id, dimension, strandsContext, onRebind) {
-  return new Proxy(
-    new StrandsNode(id, dimension, strandsContext),
-    build.swizzleTrap(id, dimension, strandsContext, onRebind)
-  );
-}
-
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // We augment the strands node with operations programatically
   // this means methods like .add, .sub, etc can be chained
@@ -52,27 +40,30 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
-
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
   fn.discard = function() {
-    build.statementNode(strandsContext, OpCode.ControlFlow.DISCARD);
+    build.statementNode(strandsContext, StatementType.DISCARD);
   }
-
+  fn.break = function() {
+    build.statementNode(strandsContext, StatementType.BREAK);
+  };
+  p5.break = fn.break;
   fn.instanceID = function() {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
     return createStrandsNode(node.id, node.dimension, strandsContext);
   }
-
-  fn.strandsIf = function(conditionNode, ifBody) {
+  // Internal methods use p5 static methods; user-facing methods use fn.
+  // Some methods need to be used by both.
+  p5.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
-
-  fn.strandsLoop = function(a, b, loopBody) {
-    return null;
-  }
-
+  fn.strandsIf = p5.strandsIf;
+  p5.strandsFor = function(initialCb, conditionCb, updateCb, bodyCb, initialVars) {
+    return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
+  };
+  fn.strandsFor = p5.strandsFor;
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];
@@ -83,13 +74,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
     return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
   }
-
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
   for (const [functionName, overrides] of Object.entries(strandsBuiltinFunctions)) {
     const isp5Function = overrides[0].isp5Function;
-
     if (isp5Function) {
       const originalFn = fn[functionName];
       fn[functionName] = function(...args) {
@@ -113,40 +102,37 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
-
   // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
   const originalNoise = fn.noise;
   fn.noise = function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
-
     strandsContext.vertexDeclarations.add(noiseGLSL);
     strandsContext.fragmentDeclarations.add(noiseGLSL);
     // Handle noise(x, y) as noise(vec2)
     let nodeArgs;
-    if (args.length === 2) {
-      nodeArgs = [fn.vec2(args[0], args[1])];
+    if (args.length === 3) {
+      nodeArgs = [fn.vec3(args[0], args[1], args[2])];
+    } else if (args.length === 2) {
+      nodeArgs = [fn.vec3(args[0], args[1], 0)];
     } else {
       nodeArgs = args;
     }
-
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float2],
+        params: [DataType.float3],
         returnType: DataType.float1,
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
   };
-
   // Next is type constructors and uniform functions
   for (const type in DataType) {
     if (type === BaseType.DEFER) {
       continue;
     }
     const typeInfo = DataType[type];
-
     let pascalTypeName;
     if (/^[ib]vec/.test(typeInfo.fnName)) {
       pascalTypeName = typeInfo.fnName
@@ -168,7 +154,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       // documented these as
       fn[`uniform${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`uniform${pascalTypeName}`];
     }
-
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
@@ -184,14 +169,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   }
 }
-
 //////////////////////////////////////////////
 // Per-Hook functions
 //////////////////////////////////////////////
 function createHookArguments(strandsContext, parameters){
   const args = [];
   const dag = strandsContext.dag;
-
   for (const param of parameters) {
     if(isStructType(param.type.typeName)) {
       const structTypeInfo = structType(param);
@@ -218,7 +201,6 @@ function createHookArguments(strandsContext, parameters){
           set(val) {
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
-
             let newValueID;
             if (val instanceof StrandsNode) {
               newValueID = val.id;
@@ -227,14 +209,12 @@ function createHookArguments(strandsContext, parameters){
               let newVal = build.primitiveConstructorNode(strandsContext, propertyType.dataType, val);
               newValueID = newVal.id;
             }
-
             newDependsOn[i] = newValueID;
             const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDependsOn);
             structNode.id = newStructInfo.id;
           }
         })
       }
-
       args.push(structNode);
     }
     else /*if(isNativeType(paramType.typeName))*/ {
@@ -246,7 +226,6 @@ function createHookArguments(strandsContext, parameters){
   }
   return args;
 }
-
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
   if (!(returned instanceof StrandsNode)) {
     // try {
@@ -262,7 +241,6 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
       // );
     // }
   }
-
   const dag = strandsContext.dag;
   let returnedNodeID = returned.id;
   const receivedType = {
@@ -282,10 +260,8 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
     const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
     returnedNodeID = result.id;
   }
-
   return returnedNodeID;
 }
-
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const availableHooks = {
     ...shader.hooks.vertex,
@@ -293,36 +269,28 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
   const { cfg, dag } = strandsContext;
-
   for (const hookType of hookTypes) {
     const hookImplementation = function(hookUserCallback) {
       const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
-
       const args = createHookArguments(strandsContext, hookType.parameters);
       const userReturned = hookUserCallback(...args);
       const expectedReturnType = hookType.returnType;
-
       let rootNodeID = null;
-
       if(isStructType(expectedReturnType.typeName)) {
         const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
-
           if (returnedNode.baseType !== expectedStructType.typeName) {
             FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
           }
-
           const newDeps = returnedNode.dependsOn.slice();
-
           for (let i = 0; i < expectedStructType.properties.length; i++) {
             const expectedType = expectedStructType.properties[i].dataType;
             const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[userReturned.id], strandsContext);
             newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
           }
-
           dag.dependsOn[userReturned.id] = newDeps;
           rootNodeID = userReturned.id;
         }
@@ -346,13 +314,11 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           const newStruct = build.structConstructorNode(strandsContext, expectedStructType, newStructDependencies);
           rootNodeID = newStruct.id;
         }
-
       }
       else /*if(isNativeType(expectedReturnType.typeName))*/ {
         const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
         rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
       }
-
       strandsContext.hooks.push({
         hookType,
         entryBlockID,
@@ -362,7 +328,6 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     }
     strandsContext.windowOverrides[hookType.name] = window[hookType.name];
     strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
-
     window[hookType.name] = hookImplementation;
     fn[hookType.name] = hookImplementation;
   }

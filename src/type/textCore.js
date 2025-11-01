@@ -499,7 +499,7 @@ function textCore(p5, fn) {
    *
    * @method textLeading
    * @for p5
-   * @param {Number} leading The new text leading to apply, in pixels
+   * @param {Number} [leading] The new text leading to apply, in pixels
    * @returns {Number} If no arguments are provided, the current text leading
    *
    * @example
@@ -525,10 +525,6 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-  /*
-  * @method textLeading
-  * @for p5
-  */
 
   /**
    * Sets the font used by the <a href="#/p5/text">text()</a> function.
@@ -761,7 +757,7 @@ function textCore(p5, fn) {
    *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
-   * 
+   *
    * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
    * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *

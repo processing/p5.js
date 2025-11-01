@@ -137,7 +137,7 @@ class GeometryBuilder {
         for (let i = 2; i < geometry.vertices.length; i++) {
           faces.push([0, i - 1, i]);
         }
-      } else {
+      } else if (shapeMode === constants.TRIANGLES) {
         for (let i = 0; i < geometry.vertices.length; i += 3) {
           if (
             !validateFaces ||

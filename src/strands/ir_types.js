@@ -9,12 +9,11 @@ export const NodeType = {
   STRUCT: 'struct',
   PHI: 'phi',
   STATEMENT: 'statement',
+  ASSIGNMENT: 'assignment',
 };
-
 export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );
-
 export const NodeTypeRequiredFields = {
   [NodeType.OPERATION]: ["opCode", "dependsOn", "dimension", "baseType"],
   [NodeType.LITERAL]: ["value", "dimension", "baseType"],
@@ -22,13 +21,15 @@ export const NodeTypeRequiredFields = {
   [NodeType.CONSTANT]: ["value", "dimension", "baseType"],
   [NodeType.STRUCT]: [""],
   [NodeType.PHI]: ["dependsOn", "phiBlocks", "dimension", "baseType"],
-  [NodeType.STATEMENT]: ["opCode"]
+  [NodeType.STATEMENT]: ["statementType"],
+  [NodeType.ASSIGNMENT]: ["dependsOn"]
 };
-
 export const StatementType = {
   DISCARD: 'discard',
+  BREAK: 'break',
+  EXPRESSION: 'expression', // Used when we want to output a single expression as a statement, e.g. a for loop condition
+  EMPTY: 'empty', // Used for empty statements like ; in for loops
 };
-
 export const BaseType = {
   FLOAT: "float",
   INT: "int",
@@ -37,7 +38,6 @@ export const BaseType = {
   DEFER: "defer",
   SAMPLER2D: "sampler2D",
 };
-
 export const BasePriority = {
   [BaseType.FLOAT]: 3,
   [BaseType.INT]: 2,
@@ -46,7 +46,6 @@ export const BasePriority = {
   [BaseType.DEFER]: -1,
   [BaseType.SAMPLER2D]: -10,
 };
-
 export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
   float2: { fnName: "vec2", baseType: BaseType.FLOAT, dimension:2, priority: 3,  },
@@ -64,7 +63,7 @@ export const DataType = {
   mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
-  sampler2D: { fnName: "texture", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
+  sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
 }
 export const structType = function (hookType) {
   let T = hookType.type === undefined ? hookType : hookType.type;
@@ -82,31 +81,50 @@ export const structType = function (hookType) {
   }
   return structType;
 };
-
 export function isStructType(typeName) {
   return !isNativeType(typeName);
 }
-
 export function isNativeType(typeName) {
-  return Object.keys(DataType).includes(typeName);
-}
+  // Check if it's in DataType keys (internal names like 'float4')
+  if (Object.keys(DataType).includes(typeName)) {
+    return true;
+  }
 
+  // Check if it's a GLSL type name (like 'vec4', 'float', etc.)
+  const glslNativeTypes = {
+    'float': true,
+    'vec2': true,
+    'vec3': true,
+    'vec4': true,
+    'int': true,
+    'ivec2': true,
+    'ivec3': true,
+    'ivec4': true,
+    'bool': true,
+    'bvec2': true,
+    'bvec3': true,
+    'bvec4': true,
+    'mat2': true,
+    'mat3': true,
+    'mat4': true,
+    'sampler2D': true
+  };
+
+  return !!glslNativeTypes[typeName];
+}
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
   INT: { baseType: BaseType.INT, dimension: null, priority: 2 },
   BOOL: { baseType: BaseType.BOOL, dimension: null, priority: 1 },
 }
-
 export function typeEquals(nodeA, nodeB) {
   return (nodeA.dimension === nodeB.dimension) && (nodeA.baseType === nodeB.baseType);
 }
-
 export const TypeInfoFromGLSLName = Object.fromEntries(
   Object.values(DataType)
     .filter(info => info.fnName !== null)
-    .map(info => [info.fnName === 'texture' ? 'sampler2D' : info.fnName, info])
+    .map(info => [info.fnName, info])
 );
-
 export const OpCode = {
   Binary: {
     ADD: 0,
@@ -139,9 +157,9 @@ export const OpCode = {
     JUMP: 301,
     BRANCH_IF_FALSE: 302,
     DISCARD: 303,
+    BREAK: 304,
   }
 };
-
 export const OperatorTable = [
   { arity: "unary", name: "not", symbol: "!", opCode: OpCode.Unary.LOGICAL_NOT },
   { arity: "unary", name: "neg", symbol: "-", opCode: OpCode.Unary.NEGATE },
@@ -160,7 +178,6 @@ export const OperatorTable = [
   { arity: "binary", name: "and", symbol: "&&", opCode: OpCode.Binary.LOGICAL_AND },
   { arity: "binary", name: "or", symbol: "||", opCode: OpCode.Binary.LOGICAL_OR },
 ];
-
 export const ConstantFolding = {
   [OpCode.Binary.ADD]: (a, b) => a + b,
   [OpCode.Binary.SUBTRACT]: (a, b) => a - b,
@@ -176,12 +193,10 @@ export const ConstantFolding = {
   [OpCode.Binary.LOGICAL_AND]: (a, b) => a && b,
   [OpCode.Binary.LOGICAL_OR]: (a, b) => a || b,
 };
-
 // export const SymbolToOpCode = {};
 export const OpCodeToSymbol = {};
 export const UnarySymbolToName = {};
 export const BinarySymbolToName = {};
-
 for (const { symbol, opCode, name, arity } of OperatorTable) {
   // SymbolToOpCode[symbol] = opCode;
   OpCodeToSymbol[opCode] = symbol;
@@ -192,20 +207,19 @@ for (const { symbol, opCode, name, arity } of OperatorTable) {
     BinarySymbolToName[symbol] = name;
   }
 }
-
 export const BlockType = {
   GLOBAL: 'global',
   FUNCTION: 'function',
+  BRANCH: 'branch',
   IF_COND: 'if_cond',
   IF_BODY: 'if_body',
-  ELIF_BODY: 'elif_body',
-  ELIF_COND: 'elif_cond',
-  ELSE_BODY: 'else_body',
+  ELSE_COND: 'else_cond',
+  SCOPE_START: 'scope_start',
+  SCOPE_END: 'scope_end',
   FOR: 'for',
   MERGE: 'merge',
   DEFAULT: 'default',
 }
-
 export const BlockTypeToName = Object.fromEntries(
   Object.entries(BlockType).map(([key, val]) => [val, key])
 );

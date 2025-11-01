@@ -5,6 +5,20 @@
 
 import { Element } from './p5.Element';
 
+/**
+ * @typedef {'video'} VIDEO
+ * @property {VIDEO} VIDEO
+ * @final
+ */
+const VIDEO = 'video';
+
+/**
+ * @typedef {'audio'} AUDIO
+ * @property {AUDIO} AUDIO
+ * @final
+ */
+const AUDIO = 'audio';
+
 class Cue {
   constructor(callback, time, id, val) {
     this.callback = callback;
@@ -614,6 +628,7 @@ class MediaElement extends Element {
    *
    * Note: Time resets to 0 when looping media restarts.
    *
+   * @param {Number} [time] time to jump to (in seconds).
    * @return {Number} current time (in seconds).
    *
    * @example
@@ -690,17 +705,11 @@ class MediaElement extends Element {
    * </code>
    * </div>
    */
-  /**
-   * @param {Number} time time to jump to (in seconds).
-   * @chainable
-   */
   time(val) {
-    if (typeof val === 'undefined') {
-      return this.elt.currentTime;
-    } else {
+    if (typeof val !== 'undefined') {
       this.elt.currentTime = val;
-      return this;
     }
+    return this.elt.currentTime;
   }
 
   /**
@@ -926,6 +935,13 @@ class MediaElement extends Element {
 
   /*** CONNECT TO WEB AUDIO API / p5.sound.js ***/
 
+  _getAudioContext() {
+    return undefined;
+  }
+  _getSoundOut() {
+    return undefined;
+  }
+
   /**
    * Sends the element's audio to an output.
    *
@@ -945,9 +961,9 @@ class MediaElement extends Element {
     let audioContext, mainOutput;
 
     // if p5.sound exists, same audio context
-    if (typeof fn.getAudioContext === 'function') {
-      audioContext = fn.getAudioContext();
-      mainOutput = p5.soundOut.input;
+    if (this._getAudioContext() && this._getSoundOut()) {
+      audioContext = this._getAudioContext();
+      mainOutput = this._getSoundOut().input;
     } else {
       try {
         audioContext = obj.context;
@@ -1385,7 +1401,8 @@ function media(p5, fn){
    * The second parameter, `callback`, is optional. It's a function to call once
    * the video is ready to play.
    *
-   * @param  {String|String[]} src path to a video file, or an array of paths for
+   * @method createVideo
+   * @param  {String|String[]} [src] path to a video file, or an array of paths for
    *                               supporting different browsers.
    * @param  {Function} [callback] function to call once the video is ready to play.
    * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
@@ -1457,7 +1474,7 @@ function media(p5, fn){
    */
   fn.createVideo = function (src, callback) {
     // p5._validateParameters('createVideo', arguments);
-    return createMedia(this, 'video', src, callback);
+    return createMedia(this, VIDEO, src, callback);
   };
 
   /* AUDIO STUFF */
@@ -1468,11 +1485,11 @@ function media(p5, fn){
    * `createAudio()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
    *
-   * The first parameter, `src`, is the path the video. If a single string is
-   * passed, as in `'assets/video.mp4'`, a single video is loaded. An array
-   * of strings can be used to load the same video in different formats. For
-   * example, `['assets/video.mp4', 'assets/video.ogv', 'assets/video.webm']`.
-   * This is useful for ensuring that the video can play across different
+   * The first parameter, `src`, is the path the audio. If a single string is
+   * passed, as in `'assets/audio.mp3'`, a single audio is loaded. An array
+   * of strings can be used to load the same audio in different formats. For
+   * example, `['assets/audio.mp3', 'assets/video.wav']`.
+   * This is useful for ensuring that the audio can play across different
    * browsers with different capabilities. See
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats" target="_blank">MDN</a>
    * for more information about supported formats.
@@ -1480,6 +1497,7 @@ function media(p5, fn){
    * The second parameter, `callback`, is optional. It's a function to call once
    * the audio is ready to play.
    *
+   * @method createAudio
    * @param  {String|String[]} [src] path to an audio file, or an array of paths
    *                                 for supporting different browsers.
    * @param  {Function} [callback]   function to call once the audio is ready to play.
@@ -1504,14 +1522,13 @@ function media(p5, fn){
    */
   fn.createAudio = function (src, callback) {
     // p5._validateParameters('createAudio', arguments);
-    return createMedia(this, 'audio', src, callback);
+    return createMedia(this, AUDIO, src, callback);
   };
 
   /* CAMERA STUFF */
 
-  fn.VIDEO = 'video';
-
-  fn.AUDIO = 'audio';
+  fn.VIDEO = VIDEO;
+  fn.AUDIO = AUDIO;
 
   // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   // Older browsers might not implement mediaDevices at all, so we set an empty object first
@@ -1574,6 +1591,7 @@ function media(p5, fn){
    * <a href="http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https" target="_blank">here</a>
    * and <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" target="_blank">here</a>.
    *
+   * @method createCapture
    * @param  {(AUDIO|VIDEO|Object)}  [type] type of capture, either AUDIO or VIDEO,
    *                                   or a constraints object. Both video and audio
    *                                   audio streams are captured by default.
@@ -1693,7 +1711,7 @@ function media(p5, fn){
 
     const videoConstraints = { video: useVideo, audio: useAudio };
     constraints = Object.assign({}, videoConstraints, constraints);
-    const domElement = document.createElement('video');
+    const domElement = document.createElement(VIDEO);
     // required to work in iOS 11 & up:
     domElement.setAttribute('playsinline', '');
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
@@ -1780,6 +1798,19 @@ function media(p5, fn){
    * </div>
    */
   p5.MediaElement = MediaElement;
+
+  // Patch MediaElement to give it access to fn, which p5.sound may attach things to
+  // if present in a sketch
+  MediaElement.prototype._getSoundOut = function() {
+    return p5.soundOut;
+  }
+  MediaElement.prototype._getAudioContext = function() {
+    if (typeof fn.getAudioContext === 'function') {
+      return fn.getAudioContext();
+    } else {
+      return undefined;
+    }
+  }
 
   /**
    * Path to the media element's source as a string.
