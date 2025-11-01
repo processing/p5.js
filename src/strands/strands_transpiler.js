@@ -38,6 +38,21 @@ function nodeIsUniform(ancestor) {
       )
     );
 }
+
+function nodeIsVarying(node) {
+  return node?.type === 'CallExpression'
+    && (
+      (
+        // Global mode
+        node.callee?.type === 'Identifier' &&
+        node.callee?.name.startsWith('varying')
+      ) || (
+        // Instance mode
+        node.callee?.type === 'MemberExpression' &&
+        node.callee?.property.name.startsWith('varying')
+      )
+    );
+}
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -101,7 +116,7 @@ const ASTCallbacks = {
       }
       node.init.arguments.unshift(uniformNameLiteral);
     }
-    if (node.init.callee && node.init.callee.name?.startsWith('varying')) {
+    if (nodeIsVarying(node.init)) {
       const varyingNameLiteral = {
         type: 'Literal',
         value: node.id.name

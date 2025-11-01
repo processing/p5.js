@@ -149,10 +149,17 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
     };
+    fn[`varying${pascalTypeName}`] = function(name) {
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
+      strandsContext.vertexDeclarations.add(`out ${typeInfo.fnName} ${name};`);
+      strandsContext.fragmentDeclarations.add(`in ${typeInfo.fnName} ${name};`);
+      return createStrandsNode(id, dimension, strandsContext);
+    };
     if (pascalTypeName.startsWith('Vec')) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
       fn[`uniform${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`uniform${pascalTypeName}`];
+      fn[`varying${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`varying${pascalTypeName}`];
     }
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {

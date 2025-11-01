@@ -40,6 +40,7 @@ const cfgHandlers = {
       }
       if (nodeType === NodeType.ASSIGNMENT) {
         glslBackend.generateAssignment(generationContext, dag, nodeID);
+        generationContext.visitedNodes.add(nodeID);
       }
     }
   },
@@ -127,6 +128,7 @@ const cfgHandlers = {
       }
       if (node.nodeType === NodeType.ASSIGNMENT) {
         glslBackend.generateAssignment(generationContext, dag, nodeID);
+        generationContext.visitedNodes.add(nodeID);
       }
     }
 
@@ -195,16 +197,25 @@ export const glslBackend = {
   },
   generateAssignment(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
-    // dependsOn[0] = phiNodeID, dependsOn[1] = sourceNodeID
-    const phiNodeID = node.dependsOn[0];
+    // dependsOn[0] = targetNodeID, dependsOn[1] = sourceNodeID
+    const targetNodeID = node.dependsOn[0];
     const sourceNodeID = node.dependsOn[1];
-    const phiTempName = generationContext.tempNames[phiNodeID];
+    const targetNode = getNodeDataFromID(dag, targetNodeID);
+    
+    // Check if this is a varying variable assignment (target has identifier)
+    let targetName;
+    if (targetNode && targetNode.identifier) {
+      targetName = targetNode.identifier; // Use variable identifier directly
+    } else {
+      targetName = generationContext.tempNames[targetNodeID]; // Use temp name for phi nodes
+    }
+    
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
-
-    // Skip assignment if target and source are the same variable
-    if (phiTempName && sourceExpr && phiTempName !== sourceExpr) {
-      generationContext.write(`${phiTempName} = ${sourceExpr}${semicolon}`);
+    
+    // Generate assignment if we have both target and source
+    if (targetName && sourceExpr && targetName !== sourceExpr) {
+      generationContext.write(`${targetName} = ${sourceExpr}${semicolon}`);
     }
   },
   generateDeclaration(generationContext, dag, nodeID) {
@@ -311,7 +322,11 @@ export const glslBackend = {
       }
       case NodeType.PHI:
       // Phi nodes represent conditional merging of values
-      // They should already have been declared as temporary variables
+      // If this phi node has an identifier (like varying variables), use that
+      if (node.identifier) {
+        return node.identifier;
+      }
+      // Otherwise, they should have been declared as temporary variables
       // and assigned in the appropriate branches
       if (generationContext.tempNames?.[nodeID]) {
         return generationContext.tempNames[nodeID];

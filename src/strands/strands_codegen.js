@@ -28,12 +28,25 @@ export function generateShaderCode(strandsContext) {
       tempNames: {},
       declarations: [],
       nextTempID: 0,
+      visitedNodes: new Set(),
     };
 
     const blocks = sortCFG(cfg.outgoingEdges, entryBlockID);
     for (const blockID of blocks) {
       backend.generateBlock(blockID, strandsContext, generationContext);
     }
+
+    // Process any unvisited global assignments to ensure side effects are generated
+    for (const assignmentNodeID of strandsContext.globalAssignments) {
+      if (!generationContext.visitedNodes.has(assignmentNodeID)) {
+        // This assignment hasn't been visited yet, so we need to generate it
+        backend.generateAssignment(generationContext, strandsContext.dag, assignmentNodeID);
+        generationContext.visitedNodes.add(assignmentNodeID);
+      }
+    }
+    
+    // Reset global assignments for next hook
+    strandsContext.globalAssignments = [];
 
     const firstLine = backend.hookEntry(hookType);
     let returnType = hookType.returnType.properties
