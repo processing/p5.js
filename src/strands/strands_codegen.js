@@ -46,7 +46,7 @@ export function generateShaderCode(strandsContext) {
         generationContext.visitedNodes.add(assignmentNodeID);
       }
     }
-    
+
     // Reset global assignments for next hook
     strandsContext.globalAssignments = [];
 

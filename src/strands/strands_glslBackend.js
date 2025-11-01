@@ -200,12 +200,12 @@ export const glslBackend = {
     // dependsOn[0] = targetNodeID, dependsOn[1] = sourceNodeID
     const targetNodeID = node.dependsOn[0];
     const sourceNodeID = node.dependsOn[1];
-    
+
     // Generate the target expression (could be variable or swizzle)
     const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
-    
+
     // Generate assignment if we have both target and source
     if (targetExpr && sourceExpr && targetExpr !== sourceExpr) {
       generationContext.write(`${targetExpr} = ${sourceExpr}${semicolon}`);

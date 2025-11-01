@@ -201,7 +201,7 @@ const ASTCallbacks = {
       // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
       else if (node.left.type === 'MemberExpression') {
         let varyingName = null;
-        
+
         // Check if it's a direct identifier: myVarying.xyz
         if (node.left.object.type === 'Identifier' && _state.varyings[node.left.object.name]) {
           varyingName = node.left.object.name;
@@ -215,7 +215,7 @@ const ASTCallbacks = {
                  _state.varyings[node.left.object.expression.callee.object.name]) {
           varyingName = node.left.object.expression.callee.object.name;
         }
-        
+
         if (varyingName) {
           const swizzlePattern = node.left.property.name;
           node.type = 'ExpressionStatement';

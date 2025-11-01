@@ -7,7 +7,7 @@ export class StrandsNode {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension;
-    
+
     // Store original identifier for varying variables
     const dag = this.strandsContext.dag;
     const nodeData = getNodeDataFromID(dag, this.id);
@@ -24,7 +24,7 @@ export class StrandsNode {
     const { dag, cfg } = this.strandsContext;
     const orig = getNodeDataFromID(dag, this.id);
     const baseType = orig?.baseType ?? BaseType.FLOAT;
-    
+
     let newValueID;
     if (value instanceof StrandsNode) {
       newValueID = value.id;
@@ -36,7 +36,7 @@ export class StrandsNode {
       );
       newValueID = newVal.id;
     }
-    
+
     // For varying variables, we need both assignment generation AND a way to reference by identifier
     if (this._originalIdentifier) {
       // Create a variable node for the target (the varying variable)
@@ -45,7 +45,7 @@ export class StrandsNode {
         { baseType: this._originalBaseType, dimension: this._originalDimension },
         this._originalIdentifier
       );
-      
+
       // Create assignment node for GLSL generation
       const assignmentNode = createNodeData({
         nodeType: NodeType.ASSIGNMENT,
@@ -54,10 +54,10 @@ export class StrandsNode {
       });
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
-      
+
       // Track for global assignments processing
       this.strandsContext.globalAssignments.push(assignmentID);
-      
+
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions
       const variableNodeData = createNodeData({
@@ -67,19 +67,19 @@ export class StrandsNode {
         identifier: this._originalIdentifier
       });
       const variableID = getOrCreateNode(dag, variableNodeData);
-      
+
       this.id = variableID; // Point to the variable node for expression generation
     } else {
       this.id = newValueID; // For non-varying variables, just update to new value
     }
-    
+
     return this;
   }
   bridgeSwizzle(swizzlePattern, value) {
     const { dag, cfg } = this.strandsContext;
     const orig = getNodeDataFromID(dag, this.id);
     const baseType = orig?.baseType ?? BaseType.FLOAT;
-    
+
     let newValueID;
     if (value instanceof StrandsNode) {
       newValueID = value.id;
@@ -91,7 +91,7 @@ export class StrandsNode {
       );
       newValueID = newVal.id;
     }
-    
+
     // For varying variables, create swizzle assignment
     if (this._originalIdentifier) {
       // Create a variable node for the target with swizzle
@@ -100,7 +100,7 @@ export class StrandsNode {
         { baseType: this._originalBaseType, dimension: this._originalDimension },
         this._originalIdentifier
       );
-      
+
       // Create a swizzle node for the target (myVarying.xyz)
       const swizzleNode = createNodeData({
         nodeType: NodeType.OPERATION,
@@ -111,7 +111,7 @@ export class StrandsNode {
         dependsOn: [targetVarID]
       });
       const swizzleID = getOrCreateNode(dag, swizzleNode);
-      
+
       // Create assignment node: myVarying.xyz = value
       const assignmentNode = createNodeData({
         nodeType: NodeType.ASSIGNMENT,
@@ -120,10 +120,10 @@ export class StrandsNode {
       });
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
-      
+
       // Track for global assignments processing in the current hook context
       this.strandsContext.globalAssignments.push(assignmentID);
-      
+
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions
       const variableNodeData = createNodeData({
@@ -133,12 +133,12 @@ export class StrandsNode {
         identifier: this._originalIdentifier
       });
       const variableID = getOrCreateNode(dag, variableNodeData);
-      
+
       this.id = variableID; // Point to the variable node, not the assignment node
     } else {
       this.id = newValueID; // For non-varying variables, just update to new value
     }
-    
+
     return this;
   }
   getValue() {
@@ -150,7 +150,7 @@ export class StrandsNode {
       );
       return createStrandsNode(id, dimension, this.strandsContext);
     }
-    
+
     return this;
   }
 }

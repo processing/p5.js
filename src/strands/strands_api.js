@@ -152,12 +152,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     // Shared variables with smart context detection
     fn[`shared${pascalTypeName}`] = function(name) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
-      
+
       // Initialize shared variables tracking if not present
       if (!strandsContext.sharedVariables) {
         strandsContext.sharedVariables = new Map();
       }
-      
+
       // Track this shared variable for smart declaration generation
       strandsContext.sharedVariables.set(name, {
         typeInfo,
@@ -165,10 +165,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         usedInFragment: false,
         declared: false
       });
-      
+
       return createStrandsNode(id, dimension, strandsContext);
     };
-    
+
     // Alias varying* as shared* for backward compatibility
     fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
     if (pascalTypeName.startsWith('Vec')) {
@@ -293,13 +293,13 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const fragmentHooksWithContext = Object.fromEntries(
     Object.entries(shader.hooks.fragment).map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
   );
-  
+
   const availableHooks = {
     ...vertexHooksWithContext,
     ...fragmentHooksWithContext,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
-  
+
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
     const hookImplementation = function(hookUserCallback) {
