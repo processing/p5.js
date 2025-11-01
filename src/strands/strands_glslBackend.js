@@ -200,22 +200,15 @@ export const glslBackend = {
     // dependsOn[0] = targetNodeID, dependsOn[1] = sourceNodeID
     const targetNodeID = node.dependsOn[0];
     const sourceNodeID = node.dependsOn[1];
-    const targetNode = getNodeDataFromID(dag, targetNodeID);
     
-    // Check if this is a varying variable assignment (target has identifier)
-    let targetName;
-    if (targetNode && targetNode.identifier) {
-      targetName = targetNode.identifier; // Use variable identifier directly
-    } else {
-      targetName = generationContext.tempNames[targetNodeID]; // Use temp name for phi nodes
-    }
-    
+    // Generate the target expression (could be variable or swizzle)
+    const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
     const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
     
     // Generate assignment if we have both target and source
-    if (targetName && sourceExpr && targetName !== sourceExpr) {
-      generationContext.write(`${targetName} = ${sourceExpr}${semicolon}`);
+    if (targetExpr && sourceExpr && targetExpr !== sourceExpr) {
+      generationContext.write(`${targetExpr} = ${sourceExpr}${semicolon}`);
     }
   },
   generateDeclaration(generationContext, dag, nodeID) {

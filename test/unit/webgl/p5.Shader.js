@@ -1100,7 +1100,7 @@ suite('p5.Shader', function() {
         assert.approximately(cornerColor[2], 0, 5);
       });
 
-      test.only('handle passing a value from a vertex hook to a fragment hook', () => {
+      test('handle passing a value from a vertex hook to a fragment hook', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1113,9 +1113,6 @@ suite('p5.Shader', function() {
             return [myp5.abs(worldPos / 25), 1];
           });
         }, { myp5 });
-
-        console.log('VERTEX SHADER OUTPUT:');
-        console.log(testShader.vertSrc());
 
         myp5.background(0, 0, 255); // Make the background blue to tell it apart
         myp5.noStroke();
