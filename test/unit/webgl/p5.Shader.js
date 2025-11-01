@@ -1195,6 +1195,39 @@ suite('p5.Shader', function() {
         assert.approximately(centerColor[1], 0, 5);   // Green component  
         assert.approximately(centerColor[2], 255, 5); // Blue component
       });
+
+      test('handle passing a value from a vertex hook to a fragment hook using shared*', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let worldPos = myp5.sharedVec3();
+          myp5.getWorldInputs((inputs) => {
+            worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255); // Make the background blue to tell it apart
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // The middle should have position 0,0 which translates to black
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5);
+        assert.approximately(midColor[1], 0, 5);
+        assert.approximately(midColor[2], 0, 5);
+
+        // The corner should have position 1,1 which translates to yellow
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5);
+        assert.approximately(cornerColor[1], 255, 5);
+        assert.approximately(cornerColor[2], 0, 5);
+      });
     });
 
     suite('filter shader hooks', () => {
