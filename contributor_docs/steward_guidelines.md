@@ -20,11 +20,10 @@ Whether you are new to p5.js contribution, are already active on the p5.js GitHu
 - [Pull Requests](#pull-requests)
   - [Simple fix](#simple-fix)
   - [Bug fix](#bug-fix)
-  - [New feature/feature enhancement](#new-feature-feature-enhancement)
+  - [New feature/feature enhancement](#new-featurefeature-enhancement)
   - [Dependabot](#dependabot)
 - [Build Process](#build-process)
   - [Main build task](#main-build-task)
-  - [Miscellaneous tasks](#miscellaneous-tasks)
 - [Release Process](#release-process)
 - [Tips & Tricks](#tips--tricks)
   - [Reply templates](#reply-templates)
@@ -87,7 +86,7 @@ To remain a steward, you must contribute as a steward to at least 1 of the 2 mos
 
 ### Getting Started with Stewardship
 
-1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the the p5.js [access statement](access.md) as a steward.
+1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the p5.js [access statement](access.md) as a steward.
 2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
 3. Join the [p5.js Discord](https://discord.com/invite/SHQ8dH25r9)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
 
@@ -248,7 +247,7 @@ To run lint checks and unit tests, simply run:
 npm test
 ```
 
-This command will run ESLint to check code style and then execute unit and visual tests using Vitest.
+This command runs ESLint to check code style and then execute unit and visual tests using Vitest.
 
 #### `lint` Task
 
@@ -269,7 +268,7 @@ npx eslint src/
 npx eslint test/
 ```
 
-There is no separate sample linter or YUIDoc-based pipeline anymore, as documentation is now managed through simpler, modern tooling.
+There is no separate sample linter or YUIDoc-based pipeline anymore.
 
 #### `test` Task
 
@@ -300,78 +299,7 @@ Code coverage is also supported using Vitest's built-in tools. Run:
 npx vitest run --coverage
 ```
 
-- `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
-- `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
-- `browserify:test` is building a version identical to the full p5.js except for added code that is used for test code coverage reporting (using [Istanbul](https://istanbul.js.org/)).
-
-First, use of the `fs.readFileSync()` node.js specific code is replaced with the file's actual content using `brfs-babel`. This is used mainly by WebGL code to inline shader code from source code written as separate files.
-
-Next, the source code, including all dependencies from node\_modules, is transpiled using Babel to match the [Browserslist](https://browsersl.ist/) requirement defined in package.json as well as to make the ES6 import statements into CommonJS `require()` that browserify understands. This also enables us to use newer syntax available in ES6 and beyond without worrying about browser compatibility.
-
-After bundling but before the bundled code is written to file, the code is passed through `pretty-fast`, if it is not meant to be minified, it should be cleaned up so the final formatting is a bit more consistent (we anticipate the p5.js source code can be read and inspected if desired).
-
-A few small detailed steps are left out here; you can check out the browserify build definition file linked above to have a closer look at everything.
-
-```
-connect:server
-```
-
-This step spins up a local server hosting the test files and built source code files so that automated tests can be run in Chrome.
-
-```
-mochaChrome
-```
-
-This step is defined in [../tasks/test/mocha-chrome.js](../tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
-
-```
-mochaTest
-```
-
-This step differs from `mochaChrome` in that it is run in node.js instead of in Chrome and only tests a small subset of features in the library. Most features in p5.js will require a browser environment, so this set of tests should only be expanded if the new tests really don't need a browser environment.
-
-```
-nyc:report
-```
-
-Finally, after all builds and tests are complete, this step will gather the test coverage report while `mochaChrome` was testing the full version of the library and print the test coverage data to the console. Test coverage for p5.js is mainly for monitoring and having some additional data points; having 100% test coverage is not a goal.
-
-And that covers the default task in the Gruntfile.js configuration!
-
-
-### Miscellaneous tasks
-
-All of the steps can now be run using npm scripts or directly with Vitest. The Grunt build system and tasks have been removed in the dev-2.0 branch.
-
-You can use the equivalent npm script or local development commands (please refer to the package.json scripts section).
-
-For testing, run:
-
-```
-npm test
-```
-
-For running watchers, use:
-
-```
-npm run watch
-```
-
-Note: The previous `grunt yui:dev` task that served the documentation locally and watched for changes is replaced by modern tooling; please check the updated documentation or package.json for exact commands to serve and watch.
-
-
-The watch tasks will watch a series of files for changes and run associated tasks to build the reference or the library according to what files have changed. These tasks all do the same thing, with the only difference being the scope.
-
-The `watch` task will run all builds and tests similar to running the full default task on detecting changes in the source code.
-
-The `watch:main` task will run the library build and tests but not rebuild the reference on detecting changes in the source code.
-
-The `watch:quick` task will run the library build only on detecting changes in the source code.
-
-Depending on what you are working on, choosing the most minimal watch task here can save you from having to manually run a rebuild whenever you want to make some changes.
-
----
-
+**Note:** The Browserify/Grunt build pipeline (e.g., `browserify`, `uglify`, `brfs-babel`) was removed in v2.  
 
 ## Release process
 
@@ -459,4 +387,3 @@ By watching a repo, events such as new issues, new pull requests, mentions of yo
 In some cases, you may receive emails from GitHub about events in the repo you are watching as well, and you can customize these (including unsubscribing from them completely) from your [notifications settings page](https://github.com/settings/notifications).
 
 Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set it to only receive emails on "Participating, @mentions and custom."
-
