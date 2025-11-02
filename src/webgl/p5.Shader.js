@@ -317,8 +317,8 @@ p5.Shader = class {
     for (const key in this.hooks.vertex) {
       console.log(
         (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
-        key +
-        this.hooks.vertex[key]
+          key +
+          this.hooks.vertex[key]
       );
     }
     console.log('');
@@ -326,8 +326,8 @@ p5.Shader = class {
     for (const key in this.hooks.fragment) {
       console.log(
         (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
-        key +
-        this.hooks.fragment[key]
+          key +
+          this.hooks.fragment[key]
       );
     }
     console.log('');
@@ -1364,8 +1364,8 @@ p5.Shader = class {
           ) {
             console.log(
               '🌸 p5.js says: ' +
-              "You're trying to use a number as the data for a texture." +
-              'Please use a texture.'
+                "You're trying to use a number as the data for a texture." +
+                'Please use a texture.'
             );
             return this;
           }
@@ -1405,8 +1405,8 @@ p5.Shader = class {
         ) {
           console.log(
             '🌸 p5.js says: ' +
-            "You're trying to use a number as the data for a texture." +
-            'Please use a texture.'
+              "You're trying to use a number as the data for a texture." +
+              'Please use a texture.'
           );
           break;
         }
