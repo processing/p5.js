@@ -180,7 +180,7 @@ El archivo Gruntfile.js contiene las definiciones principales de construcción p
 ### Tarea Principal de Construcción
 
 ```
-npm test
+grunt.registerTask('default', ['lint', 'test']);
 ```
 
 Cuando ejecutamos `grunt` o el script npm `npm test`, ejecutamos la tarea predeterminada que consiste en `lint` y luego `test`.
@@ -189,7 +189,7 @@ Cuando ejecutamos `grunt` o el script npm `npm test`, ejecutamos la tarea predet
 #### Tarea `lint`
 
 ```
-npm run lint
+grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 ```
 
 La tarea `lint` consiste en dos sub tareas: `lint:source` y `lint:samples`. `lint:source` está subdividida aún más en tres sub tareas adicionales: `eslint:build`, `eslint:source` y `eslint:test`, que utilizan ESLint para verificar los scripts de construcción, el código fuente y los scripts de prueba.
@@ -201,20 +201,26 @@ A continuación en `lint:samples` está `eslint-samples:source`, que es una tare
 
 #### Tarea `test`
 
-En la rama `dev-2.0`, la tarea `test` de Grunt ha sido reemplazada por un comando moderno de `npm`:
-
-```
-npm test
-```
-
-Este comando ejecuta la suite de pruebas completa usando [Vitest](https://vitest.dev/), e incluye cobertura y pruebas en múltiples entornos según sea necesario.
-
-
-```
-npm run build
+```js
+grunt.registerTask('test', [
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
+]);
 ```
 
-Este comando construye la biblioteca `p5.js` utilizando herramientas modernas como [Vite](https://vitejs.dev/) o configuraciones personalizadas según `package.json`. Sustituye completamente los pasos anteriores que usaban `browserify` y `uglify`.
+Primero, veamos la tarea `build` dentro de `test`.
+
+```js
+grunt.registerTask('build', [
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
+]);
+```
 
 Las tareas que comienzan con `browserify` están definidas en [./tasks/build/browserify.js](tasks/build/browserify.js). Todas siguen pasos similares con diferencias menores. Estos son los pasos principales para construir la biblioteca completa de p5.js a partir de sus numerosos archivos fuente en uno solo:
 
@@ -264,7 +270,7 @@ Finalmente, después de que todas las construcciones y pruebas estén completas,
 Todos los pasos pueden ejecutarse directamente con `npx grunt [step]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
 
 ```
-npm test
+grunt yui:dev
 ```
 
 Esta tarea ejecutará las construcciones de documentación y biblioteca descritas arriba, seguidas de la puesta en marcha de un servidor web que sirve una versión funcionalmente similar de la página de referencia que encontrarás en el sitio web en [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). Luego, supervisará el código fuente en busca de cambios y reconstruirá la documentación y la biblioteca.
@@ -272,7 +278,9 @@ Esta tarea ejecutará las construcciones de documentación y biblioteca descrita
 `grunt` `yui:dev` es útil cuando estás trabajando en la referencia en la documentación en línea porque no necesitas mover archivos construidos del repositorio de p5.js a un repositorio local de un sitio de p5.js y reconstruir el sitio web cada vez que hagas un cambio, y puedes previsualizar tus cambios con esta versión ligeramente simplificada de la referencia en tu navegador. De esta manera, también puedes tener más confianza en que los cambios que hiciste probablemente se mostrarán correctamente en el sitio web. Ten en cuenta que esto solo está destinado a modificaciones en la documentación en línea; los cambios en la página de referencia en sí, incluido el estilo y el diseño, deben hacerse y probarse en el repositorio del sitio web.
 
 ```
-npm run watch
+grunt watch
+grunt watch:main
+grunt watch:quick
 ```
 
 Las tareas de observación vigilarán una serie de archivos en busca de cambios y ejecutarán tareas asociadas para construir la referencia o la biblioteca según los archivos que hayan cambiado. Estas tareas hacen lo mismo, la única diferencia es el alcance.
@@ -374,4 +382,3 @@ Al observar un repositorio, eventos como nuevos <em>issues</em>, nuevos <em>pull
 En algunos casos, también puedes recibir correos electrónicos de GitHub sobre eventos en el repositorio que estás observando, y puedes personalizarlos (incluida la desuscripción completa de ellos) desde tu [página de configuración de notificaciones](https://github.com/settings/notifications).
 
 Configurar estas opciones para que se adapten a la forma en que trabajas puede ser la diferencia entre tener que buscar <em>issues</em>/PRs relevantes para revisar manualmente y sentirse abrumado por notificaciones interminables de GitHub. Se requiere un buen equilibrio aquí. Como sugerencia inicial, los supervisores deberían observar este repositorio para <em>Issues</em> y <em>Pull Requests</em> y configurarlo para recibir correos electrónicos solo sobre "Participando, @menciones y personalizadas".
-
