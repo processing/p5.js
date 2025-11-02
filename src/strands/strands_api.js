@@ -110,14 +110,26 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
     strandsContext.vertexDeclarations.add(noiseGLSL);
     strandsContext.fragmentDeclarations.add(noiseGLSL);
-    // Handle noise(x, y) as noise(vec2)
+
+    // Make each input into a strands node so that we can check their dimensions
+    const strandsArgs = args.map(arg => p5.strandsNode(arg));
     let nodeArgs;
-    if (args.length === 3) {
-      nodeArgs = [fn.vec3(args[0], args[1], args[2])];
-    } else if (args.length === 2) {
-      nodeArgs = [fn.vec3(args[0], args[1], 0)];
+    if (strandsArgs.length === 3) {
+      nodeArgs = [fn.vec3(strandsArgs[0], strandsArgs[1], strandsArgs[2])];
+    } else if (strandsArgs.length === 2) {
+      nodeArgs = [fn.vec3(strandsArgs[0], strandsArgs[1], 0)];
+    } else if (strandsArgs.length === 1 && strandsArgs[0].dimension <= 3) {
+      if (strandsArgs[0].dimension === 3) {
+        nodeArgs = strandsArgs;
+      } else if (strandsArgs[0].dimension === 2) {
+        nodeArgs = [fn.vec3(strandsArgs[0], 0)];
+      } else {
+        nodeArgs = [fn.vec3(strandsArgs[0], 0, 0)];
+      }
     } else {
-      nodeArgs = args;
+      p5._friendlyError(
+        `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
+      );
     }
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{

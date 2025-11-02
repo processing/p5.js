@@ -1337,5 +1337,67 @@ suite('p5.Shader', function() {
         assert.isNumber(pixelColor[2]);
       });
     });
+
+    suite('noise()', () => {
+      for (let i = 1; i <= 3; i++) {
+        test(`works with ${i}D vectors`, () => {
+          expect(() => {
+            myp5.createCanvas(50, 50, myp5.WEBGL);
+            const input = new Array(i).fill(10);
+            const testShader = myp5.baseFilterShader().modify(() => {
+              myp5.getColor(() => {
+                return [myp5.noise(input), 0, 0, 1];
+              });
+            }, { myp5, input });
+            myp5.shader(testShader);
+            myp5.plane(10, 10);
+          }).not.toThrowError();
+        });
+
+        test(`works with ${i}D positional arguments`, () => {
+          expect(() => {
+            myp5.createCanvas(50, 50, myp5.WEBGL);
+            const input = new Array(i).fill(10);
+            const testShader = myp5.baseFilterShader().modify(() => {
+              myp5.getColor(() => {
+                return [myp5.noise(...input), 0, 0, 1];
+              });
+            }, { myp5, input });
+            myp5.shader(testShader);
+            myp5.plane(10, 10);
+          }).not.toThrowError();
+        });
+      }
+
+      for (const i of [0, 4]) {
+        test(`Does not work in ${i}D`, () => {
+          expect(() => {
+            myp5.createCanvas(50, 50, myp5.WEBGL);
+            const input = new Array(i).fill(10);
+            const testShader = myp5.baseFilterShader().modify(() => {
+              myp5.getColor(() => {
+                return [myp5.noise(input), 0, 0, 1];
+              });
+            }, { myp5, input });
+            myp5.shader(testShader);
+            myp5.plane(10, 10);
+          }).toThrowError();
+        });
+
+        test(`Does not work in ${i}D with positional arguments`, () => {
+          expect(() => {
+            myp5.createCanvas(50, 50, myp5.WEBGL);
+            const input = new Array(i).fill(10);
+            const testShader = myp5.baseFilterShader().modify(() => {
+              myp5.getColor(() => {
+                return [myp5.noise(...input), 0, 0, 1];
+              });
+            }, { myp5, input });
+            myp5.shader(testShader);
+            myp5.plane(10, 10);
+          }).toThrowError();
+        });
+      }
+    });
   });
 });
