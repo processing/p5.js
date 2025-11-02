@@ -149,10 +149,33 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
     };
+    // Shared variables with smart context detection
+    fn[`shared${pascalTypeName}`] = function(name) {
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
+
+      // Initialize shared variables tracking if not present
+      if (!strandsContext.sharedVariables) {
+        strandsContext.sharedVariables = new Map();
+      }
+
+      // Track this shared variable for smart declaration generation
+      strandsContext.sharedVariables.set(name, {
+        typeInfo,
+        usedInVertex: false,
+        usedInFragment: false,
+        declared: false
+      });
+
+      return createStrandsNode(id, dimension, strandsContext);
+    };
+
+    // Alias varying* as shared* for backward compatibility
+    fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
     if (pascalTypeName.startsWith('Vec')) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
       fn[`uniform${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`uniform${pascalTypeName}`];
+      fn[`varying${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`varying${pascalTypeName}`];
     }
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
@@ -263,11 +286,20 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
+  // Add shader context to hooks before spreading
+  const vertexHooksWithContext = Object.fromEntries(
+    Object.entries(shader.hooks.vertex).map(([name, hook]) => [name, { ...hook, shaderContext: 'vertex' }])
+  );
+  const fragmentHooksWithContext = Object.fromEntries(
+    Object.entries(shader.hooks.fragment).map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
+  );
+
   const availableHooks = {
-    ...shader.hooks.vertex,
-    ...shader.hooks.fragment,
+    ...vertexHooksWithContext,
+    ...fragmentHooksWithContext,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
+
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
     const hookImplementation = function(hookUserCallback) {
@@ -319,10 +351,13 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
         rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
       }
+      const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
+      const hookInfo = availableHooks[fullHookName];
       strandsContext.hooks.push({
         hookType,
         entryBlockID,
         rootNodeID,
+        shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
       });
       CFG.popBlock(cfg);
     }

@@ -616,11 +616,45 @@ suite('p5.Shader', function() {
         myp5.noStroke();
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
-        // Check that the center pixel is gray (medium condition was true)
+        // Check that the center pixel is black (else condition was true)
         const pixelColor = myp5.get(25, 25);
-        assert.approximately(pixelColor[0], 0, 5); // Red channel should be ~127 (gray)
-        assert.approximately(pixelColor[1], 0, 5); // Green channel should be ~127
-        assert.approximately(pixelColor[2], 0, 5); // Blue channel should be ~127
+        assert.approximately(pixelColor[0], 0, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+      test('handle conditional assignment in if-else-if chains', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const val = myp5.uniformFloat(() => Math.PI * 8);
+          myp5.getPixelInputs(inputs => {
+            let shininess = 0
+            let color = 0
+            if (val > 5) {
+              const elevation = myp5.sin(val)
+              if (elevation > 0.4) {
+                shininess = 0;
+              } else if (elevation > 0.25) {
+                shininess = 30;
+              } else {
+                color = 1;
+                shininess = 100;
+              }
+            } else {
+              shininess += 25;
+            }
+            inputs.shininess = shininess;
+            inputs.color = [color, color, color, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is 255 (hit nested else statement)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 255, 5);
+        assert.approximately(pixelColor[2], 255, 5);
       });
       test('handle nested if statements', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -1064,6 +1098,169 @@ suite('p5.Shader', function() {
         // Should break after 5 iterations: 5 * 0.1 = 0.5
         const pixelColor = myp5.get(25, 25);
         assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
+      });
+    });
+
+    suite('passing data between shaders', () => {
+      test('handle passing a value from a vertex hook to a fragment hook', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let worldPos = myp5.varyingVec3();
+          myp5.getWorldInputs((inputs) => {
+            worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255); // Make the background blue to tell it apart
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // The middle should have position 0,0 which translates to black
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5);
+        assert.approximately(midColor[1], 0, 5);
+        assert.approximately(midColor[2], 0, 5);
+
+        // The corner should have position 1,1 which translates to yellow
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5);
+        assert.approximately(cornerColor[1], 255, 5);
+        assert.approximately(cornerColor[2], 0, 5);
+      });
+
+      test('handle passing a value from a vertex hook to a fragment hook with swizzle assignment', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let worldPos = myp5.varyingVec3();
+          myp5.getWorldInputs((inputs) => {
+            worldPos.xyz = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255); // Make the background blue to tell it apart
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // The middle should have position 0,0 which translates to black
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5);
+        assert.approximately(midColor[1], 0, 5);
+        assert.approximately(midColor[2], 0, 5);
+
+        // The corner should have position 1,1 which translates to yellow
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5);
+        assert.approximately(cornerColor[1], 255, 5);
+        assert.approximately(cornerColor[2], 0, 5);
+      });
+
+      test('handle passing a value from a vertex hook to a fragment hook as part of hook output', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let worldPos = myp5.varyingVec3();
+          myp5.getWorldInputs((inputs) => {
+            worldPos = inputs.position.xyz;
+            inputs.position.xyz = worldPos + [25, 25, 0];
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255); // Make the background blue to tell it apart
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // The middle (shifted +25,25) should have position 0,0 which translates to black
+        const midColor = myp5.get(49, 49);
+        assert.approximately(midColor[0], 0, 5);
+        assert.approximately(midColor[1], 0, 5);
+        assert.approximately(midColor[2], 0, 5);
+
+        // The corner (shifted +25,25) should have position 1,1 which translates to yellow
+        const cornerColor = myp5.get(25, 25);
+        assert.approximately(cornerColor[0], 255, 5);
+        assert.approximately(cornerColor[1], 255, 5);
+        assert.approximately(cornerColor[2], 0, 5);
+      });
+
+      test('handle passing a value between fragment hooks only', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let processedNormal = myp5.sharedVec3();
+          myp5.getPixelInputs((inputs) => {
+            processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
+            return [myp5.abs(processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background to distinguish from result
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Normal of plane facing camera should be [0, 0, 1], so color should be [0, 0, 255]
+        const centerColor = myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);   // Red component
+        assert.approximately(centerColor[1], 0, 5);   // Green component
+        assert.approximately(centerColor[2], 255, 5); // Blue component
+      });
+
+      test('handle passing a value from a vertex hook to a fragment hook using shared*', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let worldPos = myp5.sharedVec3();
+          myp5.getWorldInputs((inputs) => {
+            worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor((c) => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255); // Make the background blue to tell it apart
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // The middle should have position 0,0 which translates to black
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5);
+        assert.approximately(midColor[1], 0, 5);
+        assert.approximately(midColor[2], 0, 5);
+
+        // The corner should have position 1,1 which translates to yellow
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5);
+        assert.approximately(cornerColor[1], 255, 5);
+        assert.approximately(cornerColor[2], 0, 5);
       });
     });
 
