@@ -363,10 +363,10 @@ const ASTCallbacks = {
               if (!localVars.has(left.object.name)) {
                 assignedVars.add(left.object.name);
               }
-            } else if (stmt.type === 'BlockStatement') {
-              // Recursively analyze nested block statements
-              analyzeBlock(stmt);
             }
+          } else if (stmt.type === 'BlockStatement') {
+            // Recursively analyze nested block statements
+            analyzeBlock(stmt);
           }
         }
       };
@@ -629,10 +629,6 @@ const ASTCallbacks = {
           updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, 'loopVar');
         }
         const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
-        // const nonControlFlowCallbacks = { ...ASTCallbacks };
-        // delete nonControlFlowCallbacks.IfStatement;
-        // delete nonControlFlowCallbacks.ForStatement;
-        // ancestor(updateAst, nonControlFlowCallbacks, undefined, _state);
         updateExpr = updateAst.body[0].expression;
 
         updateFunction = {

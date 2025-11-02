@@ -616,11 +616,45 @@ suite('p5.Shader', function() {
         myp5.noStroke();
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
-        // Check that the center pixel is gray (medium condition was true)
+        // Check that the center pixel is black (else condition was true)
         const pixelColor = myp5.get(25, 25);
-        assert.approximately(pixelColor[0], 0, 5); // Red channel should be ~127 (gray)
-        assert.approximately(pixelColor[1], 0, 5); // Green channel should be ~127
-        assert.approximately(pixelColor[2], 0, 5); // Blue channel should be ~127
+        assert.approximately(pixelColor[0], 0, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+      test('handle conditional assignment in if-else-if chains', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const val = myp5.uniformFloat(() => Math.PI * 8);
+          myp5.getPixelInputs(inputs => {
+            let shininess = 0
+            let color = 0
+            if (val > 5) {
+              const elevation = myp5.sin(val)
+              if (elevation > 0.4) {
+                shininess = 0;
+              } else if (elevation > 0.25) {
+                shininess = 30;
+              } else {
+                color = 1;
+                shininess = 100;
+              }
+            } else {
+              shininess += 25;
+            }
+            inputs.shininess = shininess;
+            inputs.color = [color, color, color, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is 255 (hit nested else statement)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 255, 5);
+        assert.approximately(pixelColor[2], 255, 5);
       });
       test('handle nested if statements', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -1192,7 +1226,7 @@ suite('p5.Shader', function() {
         // Normal of plane facing camera should be [0, 0, 1], so color should be [0, 0, 255]
         const centerColor = myp5.get(25, 25);
         assert.approximately(centerColor[0], 0, 5);   // Red component
-        assert.approximately(centerColor[1], 0, 5);   // Green component  
+        assert.approximately(centerColor[1], 0, 5);   // Green component
         assert.approximately(centerColor[2], 255, 5); // Blue component
       });
 
