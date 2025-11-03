@@ -25,6 +25,7 @@ function strands(p5, fn) {
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
+    ctx.globalAssignments = [];
     ctx.backend = backend;
     ctx.active = active;
     ctx.previousFES = p5.disableFriendlyErrors;
@@ -42,6 +43,7 @@ function strands(p5, fn) {
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
+    ctx.globalAssignments = [];
     ctx.active = false;
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
