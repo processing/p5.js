@@ -38,6 +38,21 @@ function nodeIsUniform(ancestor) {
       )
     );
 }
+
+function nodeIsVarying(node) {
+  return node?.type === 'CallExpression'
+    && (
+      (
+        // Global mode
+        node.callee?.type === 'Identifier' &&
+        (node.callee?.name.startsWith('varying') || node.callee?.name.startsWith('shared'))
+      ) || (
+        // Instance mode
+        node.callee?.type === 'MemberExpression' &&
+        (node.callee?.property.name.startsWith('varying') || node.callee?.property.name.startsWith('shared'))
+      )
+    );
+}
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -101,7 +116,7 @@ const ASTCallbacks = {
       }
       node.init.arguments.unshift(uniformNameLiteral);
     }
-    if (node.init.callee && node.init.callee.name?.startsWith('varying')) {
+    if (nodeIsVarying(node.init)) {
       const varyingNameLiteral = {
         type: 'Literal',
         value: node.id.name
@@ -163,6 +178,7 @@ const ASTCallbacks = {
         node.operator = '=';
         node.right = rightReplacementNode;
       }
+      // Handle direct varying variable assignment: myVarying = value
       if (_state.varyings[node.left.name]) {
         node.type = 'ExpressionStatement';
         node.expression = {
@@ -179,6 +195,51 @@ const ASTCallbacks = {
             }
           },
           arguments: [node.right],
+        }
+      }
+      // Handle swizzle assignment to varying variable: myVarying.xyz = value
+      // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
+      else if (node.left.type === 'MemberExpression') {
+        let varyingName = null;
+
+        // Check if it's a direct identifier: myVarying.xyz
+        if (node.left.object.type === 'Identifier' && _state.varyings[node.left.object.name]) {
+          varyingName = node.left.object.name;
+        }
+        // Check if it's a getValue() call: myVarying.getValue().xyz
+        else if (node.left.object.type === 'ExpressionStatement' &&
+                 node.left.object.expression?.type === 'CallExpression' &&
+                 node.left.object.expression.callee?.type === 'MemberExpression' &&
+                 node.left.object.expression.callee.property?.name === 'getValue' &&
+                 node.left.object.expression.callee.object?.type === 'Identifier' &&
+                 _state.varyings[node.left.object.expression.callee.object.name]) {
+          varyingName = node.left.object.expression.callee.object.name;
+        }
+
+        if (varyingName) {
+          const swizzlePattern = node.left.property.name;
+          node.type = 'ExpressionStatement';
+          node.expression = {
+            type: 'CallExpression',
+            callee: {
+              type: 'MemberExpression',
+              object: {
+                type: 'Identifier',
+                name: varyingName
+              },
+              property: {
+                type: 'Identifier',
+                name: 'bridgeSwizzle',
+              }
+            },
+            arguments: [
+              {
+                type: 'Literal',
+                value: swizzlePattern
+              },
+              node.right
+            ],
+          }
         }
       }
     },
@@ -302,10 +363,10 @@ const ASTCallbacks = {
               if (!localVars.has(left.object.name)) {
                 assignedVars.add(left.object.name);
               }
-            } else if (stmt.type === 'BlockStatement') {
-              // Recursively analyze nested block statements
-              analyzeBlock(stmt);
             }
+          } else if (stmt.type === 'BlockStatement') {
+            // Recursively analyze nested block statements
+            analyzeBlock(stmt);
           }
         }
       };
@@ -568,10 +629,6 @@ const ASTCallbacks = {
           updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, 'loopVar');
         }
         const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
-        // const nonControlFlowCallbacks = { ...ASTCallbacks };
-        // delete nonControlFlowCallbacks.IfStatement;
-        // delete nonControlFlowCallbacks.ForStatement;
-        // ancestor(updateAst, nonControlFlowCallbacks, undefined, _state);
         updateExpr = updateAst.body[0].expression;
 
         updateFunction = {
