@@ -2233,6 +2233,7 @@ p5.Vector = class {
         'The vector must have x and y components to set heading, vector should be in 2D',
         'p5.Vector.setHeading'
       );
+      return this;
     }
     if (this.isPInst) a = this._toRadians(a);
     let m = this.mag();
