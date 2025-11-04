@@ -2228,6 +2228,12 @@ p5.Vector = class {
  */
 
   setHeading(a) {
+    if(!this.x || !this.y) {
+      p5._friendlyError(
+        'The vector must have x and y components to set heading, vector should be in 2D',
+        'p5.Vector.setHeading'
+      );
+    }
     if (this.isPInst) a = this._toRadians(a);
     let m = this.mag();
     this.x = m * Math.cos(a);
@@ -3916,4 +3922,5 @@ p5.Vector = class {
   _clampToZero(val) {
     return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
   }
-};export default p5.Vector;
+};
+export default p5.Vector;
