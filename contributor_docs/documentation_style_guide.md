@@ -43,24 +43,6 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
   - [Classes](#classes)
   - [Assets](#assets)
 
-- [Code Samples](#code-samples)
-- [Comments](#comments)
-- [Whitespace](#whitespace)
-- [Semicolons](#semicolons)
-- [Naming Conventions](#naming-conventions)
-- [Variables](#variables)
-- [Strings](#strings)
-- [Boolean Operators](#boolean-operators)
-- [Conditionals](#conditionals)
-- [Iteration](#iteration)
-- [Objects](#objects)
-- [Arrays](#arrays)
-- [Functions](#functions)
-- [Arrow Functions](#arrow-functions)
-- [Chaining](#chaining)
-- [Classes](#classes)
-- [Assets](#assets)
-
 ## YUIDoc
 
 We use YUIDoc to generate the p5.js API documentation. To generate the docs, navigate to the p5.js root directory, run `npm install`, and execute:
