@@ -414,31 +414,47 @@ function validateParams(p5, fn, lifecycles) {
     const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
+      let isActualTypeSet = false;
 
-      error.errors.forEach(err => {
-        const issue = err[0];
-        if (issue) {
-          if (!actualType) {
-            actualType = issue.message;
-          }
-
-          if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1];
-            expectedTypes.add(issue.expected);
-          }
-          // The case for constants. Since we don't want to print out the actual
-          // constant values in the error message, the error message will
-          // direct users to the documentation.
-          else if (issue.code === 'invalid_value') {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
-            actualType = args[error.path[0]];
-          } else if (issue.code === 'custom') {
-            const match = issue.message.match(/Input not instance of (\w+)/);
-            if (match) expectedTypes.add(match[1]);
-            actualType = undefined;
-          }
+      const setActualType = (val) => {
+        if (!isActualTypeSet) {
+          actualType = val;
+          isActualTypeSet = true;
         }
-      });
+      };
+
+      const processIssues = (issues, path) => {
+        if (!issues) return;
+        issues.forEach(err => {
+          const issue = err[0];
+          if (issue) {
+            if (issue.code === 'invalid_union') {
+              processIssues(issue.errors, issue.path);
+            } else {
+              if (issue.code === 'invalid_type') {
+                setActualType(issue.message.split(', received ')[1]);
+                expectedTypes.add(issue.expected);
+              } else if (issue.code === 'invalid_value') {
+                expectedTypes.add('constant (please refer to documentation for allowed values)');
+                setActualType(args[path[0]]);
+              } else if (issue.code === 'custom') {
+                const match = issue.message.match(/Input not instance of (\w+)/);
+                if (match) expectedTypes.add(match[1]);
+                setActualType(undefined);
+              }
+            }
+          }
+        });
+      };
+
+      processIssues(error.errors, error.path);
+
+      if (
+        expectedTypes.has('number') &&
+        expectedTypes.has('constant (please refer to documentation for allowed values)')
+      ) {
+        expectedTypes.delete('constant (please refer to documentation for allowed values)');
+      }
 
       if (expectedTypes.size > 0) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
