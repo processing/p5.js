@@ -2,7 +2,7 @@
   "projectName": "p5.js",
   "projectOwner": "processing",
   "files": [
-    "README.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 64,
   "contributorsPerLine": 6,
