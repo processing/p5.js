@@ -545,24 +545,18 @@ export class Font {
     const extrude = options?.extrude || 0;
 
     let contours = this.textToContours(str, x, y, width, height, options);
-    if (!Array.isArray(contours[0][0])) {
-      contours = [contours];
-    }
-
     // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;
       this._pInst._renderer._validateFaces = true;
 
       this._pInst.beginShape();
-      for (const glyphContours of contours) {
-        for (const contour of glyphContours) {
-          this._pInst.beginContour();
-          for (const pt of contour) {
-            this._pInst.vertex(pt.x, pt.y, 0);
-          }
-          this._pInst.endContour(this._pInst.CLOSE);
+      for (const contour of contours) {
+        this._pInst.beginContour();
+        for (const pt of contour) {
+          this._pInst.vertex(pt.x, pt.y, 0);
         }
+        this._pInst.endContour(this._pInst.CLOSE);
       }
 
       this._pInst.endShape(this._pInst.CLOSE);
@@ -626,8 +620,11 @@ export class Font {
     for (const [a, b] of validEdges) {
       const vA = newVertices[a];
       const vB = newVertices[b];
+
       // Skip if vertices are too close (degenerate edge)
-      // Check if the cross product of edge vectors has sufficient magnitude
+      // We only need to check the perimeter edge length since the other edge
+      // is the extrude direction, which is always > 0 for extruded geometry
+
       const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
       const extrudeVector = new Vector(0, 0, extrude);
       const crossProduct = Vector.cross(edgeVector, extrudeVector);
