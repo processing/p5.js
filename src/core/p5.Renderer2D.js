@@ -70,12 +70,16 @@ class Renderer2D extends Renderer {
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
-    if(!this.filterRenderer){
-      this.filterRenderer = new FilterRenderer2D(this);
-    }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
     this.clipPath = null;
+  }
+
+  get filterRenderer() {
+    if (!this._filterRenderer) {
+      this._filterRenderer = new FilterRenderer2D(this);
+    }
+    return this._filterRenderer;
   }
 
   remove(){
@@ -301,6 +305,7 @@ class Renderer2D extends Renderer {
     // Start a new path. Everything from here on out should become part of this
     // one path so that we can clip to the whole thing.
     this.clipPath = new Path2D();
+    this.initialClipTransform = this.drawingContext.getTransform().inverse();
 
     if (this._clipInvert) {
       // Slight hack: draw a big rectangle over everything with reverse winding
@@ -701,7 +706,7 @@ class Renderer2D extends Renderer {
   }
 
   ellipse(args) {
-    const ctx = this.clipPath || this.drawingContext;
+    const ctx = this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
@@ -721,17 +726,28 @@ class Renderer2D extends Renderer {
       centerY = y + h / 2,
       radiusX = w / 2,
       radiusY = h / 2;
-    if (!this._clipping) ctx.beginPath();
+    if (this._clipping) {
+      const tempPath = new Path2D();
+      tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
 
-    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-    ctx.closePath();
+      const currentTransform = this.drawingContext.getTransform();
+      const initialClip = this.initialClipTransform;
+      const relativeTransform = initialClip.multiply(currentTransform);
+      this.clipPath.addPath(tempPath, relativeTransform);
+    } else {
+      // Normal drawing (existing code)
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+      ctx.closePath();
+      if (doFill) {
+        ctx.fill();
+      }
+      if (doStroke) {
+        ctx.stroke();
+      }
+    }
 
-    if (!this._clipping && doFill) {
-      ctx.fill();
-    }
-    if (!this._clipping && doStroke) {
-      ctx.stroke();
-    }
+    return this;
   }
 
   line(x1, y1, x2, y2) {
