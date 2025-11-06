@@ -23,12 +23,9 @@ function math(p5, fn) {
    * This allows for flexibility in representing vectors in higher-dimensional
    * spaces.
    *
-   * - Calling `createVector()` **with no arguments** is **deprecated** and will emit
-   *   a friendly warning. Use `createVector(0)`, `createVector(0, 0)`, or
-   *   `createVector(0, 0, 0)` instead.
-   * - To prevent `NaN` appearing in subsequent operations, missing components are
-   *   padded with zeros: `createVector(x)` -> `[x, 0, 0]`, `createVector(x, y)` -> `[x, y, 0]`.
-   *   This is for backwards compatibility only; explicitly pass all intended components.
+   * Calling `createVector()` **with no arguments** is **deprecated** and will emit
+   * a friendly warning. Use `createVector(0)`, `createVector(0, 0)`, or
+   * `createVector(0, 0, 0)` instead.
    *
    * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
    * motion because they simplify the math. For example, a moving ball has a
@@ -103,36 +100,21 @@ function math(p5, fn) {
    * </div>
    */
   fn.createVector = function (x, y, z) {
-    const argc = arguments.length;
-  
-    if (argc === 0 && typeof p5 !== 'undefined' && p5._friendlyError) {
+    if (arguments.length === 0) {
       p5._friendlyError(
         'Calling createVector() with no arguments is deprecated and will be removed in a future release. Pass zeros for the desired dimensionality.'
       );
     }
-    const safeArgs =
-    argc === 1 ? [x, 0, 0]
-    : argc === 2 ? [x, y, 0]
-    : [...arguments];
-    
-    let v;
     if (this instanceof p5) {
-      v = new p5.Vector(
+      return new p5.Vector(
         this._fromRadians.bind(this),
         this._toRadians.bind(this),
-        ...safeArgs
+        ...arguments
       );
     } else {
-      v = new p5.Vector(...safeArgs);
+      return new p5.Vector(x, y, z);
     }
-    
-    Object.defineProperty(v, '_origDimension', {
-      get() { return argc; },
-    });
-    
-    return v;
   };
-  
 
   /**
    * Creates a new <a href="#/p5.Matrix">p5.Matrix</a> object.
