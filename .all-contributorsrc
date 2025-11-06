@@ -7209,6 +7209,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "nbogie",
+      "name": "nbogie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69844?v=4",
+      "profile": "https://github.com/nbogie",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
