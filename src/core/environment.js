@@ -1314,18 +1314,14 @@ function environment(p5, fn, lifecycles){
    *
    */
   fn.screenToWorld = function(screenPosition) {
-
-    let origDimension = (typeof screenPosition === 'number')
-    ? arguments.length
-    : screenPosition._origDimension; 
-
     if (typeof screenPosition === 'number') {
       // We got passed numbers, convert to vector
       screenPosition = this.createVector(...arguments);
     }
 
     const matrix = this._renderer.getWorldToScreenMatrix();
-    if (origDimension === 2) {
+
+    if (screenPosition.dimensions === 2) {
       // Calculate a sensible Z value for the current camera projection that
       // will result in 0 once converted to world coordinates
       let z = matrix.mat4[14] / matrix.mat4[15];
@@ -1333,9 +1329,11 @@ function environment(p5, fn, lifecycles){
     }
 
     const matrixInverse = matrix.invert(matrix);
-    return matrixInverse.multiplyAndNormalizePoint(screenPosition);
-  };
 
+    const worldPosition = matrixInverse
+      .multiplyAndNormalizePoint(screenPosition);
+    return worldPosition;
+  };
 
   /**
    * A `Number` variable that stores the width of the canvas in pixels.
