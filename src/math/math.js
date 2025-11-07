@@ -102,7 +102,7 @@ function math(p5, fn) {
   fn.createVector = function (x, y, z) {
     if (arguments.length === 0) {
       p5._friendlyError(
-        'Calling createVector() with no arguments is deprecated and will be removed in a future release. Pass zeros for the desired dimensionality.'
+        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
       );
     }
     if (this instanceof p5) {
