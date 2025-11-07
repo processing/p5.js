@@ -3,7 +3,7 @@ function setup() {
   background(0);
   fill(255);
   textSize(20);
-  text("Press any arrow key and check console for warning", 40, height / 2);
+  text('Press any arrow key and check console for warning', 40, height / 2);
 }
 
 function draw() {
@@ -19,4 +19,3 @@ function draw() {
     background(255, 255, 0);
   }
 }
-
