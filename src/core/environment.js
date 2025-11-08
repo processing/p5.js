@@ -15,9 +15,6 @@ p5.prototype._frameRate = 0;
 p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
-const _windowPrint = window.print;
-let windowPrintDisabled = false;
-
 /**
  * Displays text in the web browser's console.
  *
@@ -51,16 +48,8 @@ let windowPrintDisabled = false;
  */
 p5.prototype.print = function(...args) {
   if (!args.length) {
-    if (!windowPrintDisabled) {
-      _windowPrint();
-      if (
-        window.confirm(
-          'You just tried to print the webpage. Do you want to prevent this from running again?'
-        )
-      ) {
-        windowPrintDisabled = true;
-      }
-    }
+    console.warn('p5.js: print() called with no arguments. Nothing to print.');
+    return;
   } else {
     console.log(...args);
   }
