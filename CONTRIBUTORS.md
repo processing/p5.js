@@ -1080,6 +1080,7 @@
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nivanovvv"><img src="https://avatars.githubusercontent.com/u/232286320?v=4?s=64" width="64px;" alt="Nikolai Ivanov"/><br /><sub><b>Nikolai Ivanov</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nivanovvv" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nbogie"><img src="https://avatars.githubusercontent.com/u/69844?v=4?s=64" width="64px;" alt="nbogie"/><br /><sub><b>nbogie</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Anbogie" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=nbogie" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/SoundOfScooting"><img src="https://avatars.githubusercontent.com/u/53986193?v=4?s=64" width="64px;" alt="SoundOfScooting"/><br /><sub><b>SoundOfScooting</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SoundOfScooting" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=SoundOfScooting" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
