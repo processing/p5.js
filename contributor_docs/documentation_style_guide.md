@@ -24,24 +24,24 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Documentation Style Guide](#documentation-style-guide)
 
 ### Code
-  - [Code Samples](#code-samples)
-  - [Comments](#comments)
-  - [Accessible Descriptions](#accessible-descriptions)
-  - [Whitespace](#whitespace)
-  - [Semicolons](#semicolons)
-  - [Naming Conventions](#naming-conventions)
-  - [Variables](#variables)
-  - [Strings](#strings)
-  - [Boolean Operators](#boolean-operators)
-  - [Conditionals](#conditionals)
-  - [Iteration](#iteration)
-  - [Objects](#objects)
-  - [Arrays](#arrays)
-  - [Functions](#functions)
-  - [Arrow Functions](#arrow-functions)
-  - [Chaining](#chaining)
-  - [Classes](#classes)
-  - [Assets](#assets)
+- [Code Samples](#code-samples)
+- [Comments](#comments)
+- [Accessible Canvas Labels](#accessible-canvas-labels)
+- [Whitespace](#whitespace)
+- [Semicolons](#semicolons)
+- [Naming Conventions](#naming-conventions)
+- [Variables](#variables)
+- [Strings](#strings)
+- [Boolean Operators](#boolean-operators)
+- [Conditionals](#conditionals)
+- [Iteration](#iteration)
+- [Objects](#objects)
+- [Arrays](#arrays)
+- [Functions](#functions)
+- [Arrow Functions](#arrow-functions)
+- [Chaining](#chaining)
+- [Classes](#classes)
+- [Assets](#assets)
 
 ## YUIDoc
 
@@ -233,23 +233,48 @@ let magicWord = 'Please';
 ```
 
 
-## Accessible Descriptions
+**[⬆ back to top](#table-of-contents)**
 
-- Use `describe()` to make p5.js sketches accessible to screen readers. All reference contributions should include a concise, visual canvas description for accessibility. When writing a `describe()` call:
-  - Be **concise**: 1–3 sentences briefly describing what is visually present on the canvas.
-    - Good: `describe('A blue rectangle in the center of a white canvas.');`
-    - Bad: `describe('This code draws a rectangle.');`
-  - Focus on **visuals only**: Describe what a sighted user would see. Do not describe code, instructions, or interactions unless they are visually represented.
-    - Good: `describe('A red heart and yellow circle over a pink background.');`
-    - Bad: `describe('Click to draw a heart.');`
-  - Be **non-redundant**: Avoid repeating information already in the title or code comments.
-    - Good: `describe('A black dot moves from bottom to top on a gray square.');`
-    - Bad: `describe('A shape.');`
-  - Use **clear, direct language**: End with punctuation for screen reader clarity.
-    - Good: `describe('A green triangle on a white background.');`
-    - Bad: `describe('triangle');`
+## Accessible Canvas Labels
 
-For more guidance, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) and the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/).
+- Use `describe()` to in p5.js example code, to add labels to your canvas so that it’s readable for screen readers.
+
+> Why? It makes examples accessible to screen readers, and models how to write good canvas labels. 
+
+
+```javascript
+// Good.
+function setup() {
+  createCanvas(100, 100);
+  describe('A red heart in the bottom right corner of a pink background.');
+}
+
+// Bad.
+function setup() {
+  createCanvas(100, 100);
+  describe('heart shape');
+}
+
+// Good.
+function draw() {
+  background(220);
+  fill(0, 255, 0);
+  ellipse(mouseX, 50, 40, 40);
+  // Label updates with shape's translation.
+  describe(`A green circle at x pos ${round(mouseX)} moving with the mouse pointer.`, LABEL);
+}
+```
+
+- Don’t use screen reader labels as a way of commenting your code. Labels should only summarize the resulting visual elements within a canvas. 
+
+- Don’t overuse screen reader labels, as you may end up complicating the screen reader’s interpretation of the canvas rather than helping it.
+
+- Do make your label descriptions short and accurate. The recommended length for label descriptions is one to two sentences. Use full sentences for your labels, and write in the present tense when describing elements.
+
+The above examples and suggestions are based on the Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
+
+To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
+
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -1245,3 +1270,23 @@ class Mover {
 
 - Always load assets from a folder called "assets".
 
+> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
+- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
+- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
+- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
+
+```javascript
+let img;
+
+// Bad.
+function preload() {
+  img = loadImage('moonwalk.jpg');
+}
+
+// Good.
+function preload() {
+  img = loadImage('assets/moonwalk.jpg');
+}
+```
+
+**[⬆ back to top](#table-of-contents)**
