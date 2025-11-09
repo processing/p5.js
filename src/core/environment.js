@@ -48,7 +48,7 @@ p5.prototype._targetFrameRate = 60;
  */
 p5.prototype.print = function(...args) {
   if (!args.length) {
-    console.warn('p5.js: print() called with no arguments. Nothing to print.');
+    console.log('');
     return;
   } else {
     console.log(...args);
