@@ -308,7 +308,7 @@ Finally, for every example you add, you are required to use the p5.js function `
 * </div>
 ```
 
-For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe).
+For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
