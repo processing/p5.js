@@ -270,7 +270,7 @@ function draw() {
 
 - Do make your label descriptions short and accurate. The recommended length for label descriptions is one to two sentences. Use full sentences for your labels, and write in the present tense when describing elements.
 
-The above examples and suggestions are based on the Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
+The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
 
 To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
 
