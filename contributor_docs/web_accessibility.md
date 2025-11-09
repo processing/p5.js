@@ -54,7 +54,7 @@ This description is followed by a list of shapes where the color, position, and 
 Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s shape, color, location, coordinates, and area are described:
 
 > orange circle location=top left area=1%\
-> fuchsia square location = bottom right area = 2%
+> fuchsia square   location = bottom right area = 2%
 
 <details>
 <summary>This generates the following HTML:</summary>
@@ -70,8 +70,7 @@ Each element can be selected to get more details. A table of elements is also pr
         </p>
         <ul id="defaultCanvas0textOutput_list">
           <li>
-            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top
-            left, covering 1% of the canvas.
+            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top left, covering 1% of the canvas.
           </li>
           <li>
             <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at bottom right, covering 2% of the canvas.
@@ -110,8 +109,8 @@ Each shape’s description is placed in a cell of the table depending on its loc
 
 These descriptions can be selected individually to get more details. A list of elements where shape, color, location, and area are described is also available:
 
-- _orange circle, location = top left, area = 1 %_
-- _fuchsia square, location = bottom right, area = 2 %_
+- *orange circle, location = top left, area = 1 %*
+- *fuchsia square, location = bottom right, area = 2 %*
 
 <details>
 <summary>
@@ -159,9 +158,11 @@ If a user passes `LABEL` as an argument to either of these functions, an additio
 
 ![A p5.js canvas, with the text descriptions described earlier present below it](images/sketch-text-output.png)
 
+
 ### Outputs structure
 
 Although `textOutput()` and `gridOutput()` are located in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js), the outputs are created and updated using functions distributed across the library. This section details the different functions that support the accessible outputs.
+
 
 #### outputs.js
 
@@ -207,6 +208,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_accsBackground()` is called in:
   - `p5.Renderer2D.prototype.background()`
 
+
 #### textOutput.js
 
 [src/accessibility/textOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/textOutput.js) contains all the methods that update the text output. The main method in this file is `_updateTextOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.text` or `this._accessibleOutputs.textLabel` are `true.`
@@ -216,6 +218,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_textSummary()`: Builds the content of the text output summary.
 - `_shapeDetails()`: Builds the text output table that contains shape details.
 - `_shapeList()`: Builds the list of shapes of the text output.
+
 
 #### gridOutput.js
 
@@ -227,17 +230,17 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_gridMap()`: Builds a grid that maps the location of shapes on the canvas.
 - `_gridShapeDetails()`: Builds the list of shapes of the grid output, each line of the list includes details about the shape.
 
+
 #### color\_namer.js
 
-When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color\_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
+When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color\_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
 
 `_rgbColorName()` uses `p5.color_conversion._rgbaToHSBA()` to get the HSV values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer), which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing HSV values to those stored in the `colorLookUp` array, returning the closest color name as a string.
+
 
 ## User-generated accessible canvas descriptions
 
 ### describe()
-
-`describe()` is one of the ways that p5.js sketches can be made accessible to screen readers. All contributions to the reference should include accessible canvas descriptions (see: [Documentation Style Guide](./documentation_style_guide.md#canvas-accessibility-descriptions-describe))
 
 The `describe()` function creates a sketch author-defined screen reader accessible description for the canvas. The first parameter should be a string with a description of the canvas. The second parameter is optional. If specified, it determines how the description is displayed. If a user passes `LABEL` as a second parameter, an additional `<div>` element is created next to the `<canvas>` element. The new `<div>` element contains a visible version of the same screen reader-accessible description embedded in the `<canvas>` element.
 
@@ -265,6 +268,7 @@ function setup() {
 The page will output:
 
 ![A p5.js canvas, with a description below reading, "A pink square with a red heart in the bottom-right corner."](images/sketch-text-output2.png)
+
 
 ### describeElement()
 
