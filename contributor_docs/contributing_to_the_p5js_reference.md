@@ -310,9 +310,8 @@ Finally, for every example you add, you are required to use the p5.js function `
 
 
 For more on writing effective `describe()` calls:
-- See the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions) for technical details and examples.
-- See the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) for best practices and rationale.
-- See the [Documentation Style Guide: Accessible Descriptions](./documentation_style_guide.md#accessible-descriptions) for Do/Don’t examples and summary guidance.
+- See the [Web Accessibility Contributor Document](./web_accessibility.md#user-generated-accessible-canvas-descriptions) for the structure of p5.js’ web accessibility features for contributors.
+- If you want to make your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader)-accessible, visit the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
 With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
 
