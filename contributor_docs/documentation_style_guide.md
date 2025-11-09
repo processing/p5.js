@@ -21,7 +21,6 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Wording](#wording)
 - [Unbiased Documentation](#unbiased-documentation)
 - [Accessibility and Disability](#accessibility-and-disability)
-- [Documentation Style Guide](#documentation-style-guide)
 
 ### Code
 - [Code Samples](#code-samples)
