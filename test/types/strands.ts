@@ -29,6 +29,11 @@ function fresnelShaderCallback() {
 function starShaderCallback() {
   const time = uniformFloat(() => millis());
   const skyRadius = uniformFloat(250);
+  const testVec = uniformVector2(() => 123);
+  const testSharedVec = sharedVec2();
+  const testSharedVector = sharedVector2();
+  const testVaryingVec = varyingVec2();
+  const testVaryingVector = varyingVector2();
   
   function rand2(st) {
     return fract(sin(dot(st, [12.9898, 78.233])) * 43758.5453123);

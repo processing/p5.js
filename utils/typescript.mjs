@@ -103,6 +103,8 @@ function processStrandsFunctions() {
         + typeInfo.fnName.slice(1);
       if (pascalTypeName === 'Sampler2D') {
         typeAliases.push('Texture')
+      } else if (/^vec/.test(typeInfo.fnName)) {
+        typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
       }
     }
 

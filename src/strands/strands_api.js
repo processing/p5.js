@@ -163,6 +163,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         + typeInfo.fnName.slice(1);
       if (pascalTypeName === 'Sampler2D') {
         typeAliases.push('Texture')
+      } else if (/^vec/.test(typeInfo.fnName)) {
+        typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
       }
     }
     fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
@@ -192,7 +194,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     // Alias varying* as shared* for backward compatibility
     fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
+
     for (const typeAlias of typeAliases) {
+      console.log(`Aliasing ${typeAlias} to ${pascalTypeName}`)
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
       fn[`uniform${typeAlias}`] = fn[`uniform${pascalTypeName}`];
