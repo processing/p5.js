@@ -196,7 +196,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
 
     for (const typeAlias of typeAliases) {
-      console.log(`Aliasing ${typeAlias} to ${pascalTypeName}`)
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
       fn[`uniform${typeAlias}`] = fn[`uniform${pascalTypeName}`];
