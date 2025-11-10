@@ -693,4 +693,35 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('Tessellation', function() {
+    visualTest('Handles nearly identical consecutive vertices', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.pixelDensity(1);
+      p5.background(255);
+      p5.fill(0);
+      p5.noStroke();
+
+      // Contours with nearly identical consecutive vertices (as can occur with textToContours)
+      // Outer contour
+      p5.beginShape();
+      p5.vertex(-30, -30, 0);
+      p5.vertex(30, -30, 0);
+      p5.vertex(30, 30, 0);
+      p5.vertex(-30, 30, 0);
+
+      // Inner contour (hole) with nearly identical vertices
+      p5.beginContour();
+      p5.vertex(-10, -10, 0);
+      p5.vertex(-10, 10, 0);
+      // This vertex has x coordinate almost equal to previous (10.00000001 vs 10)
+      p5.vertex(10.00000001, 10, 0);
+      p5.vertex(10, -10, 0);
+      p5.endContour();
+
+      p5.endShape(p5.CLOSE);
+
+      screenshot();
+    });
+  });
 });
