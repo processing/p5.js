@@ -139,22 +139,31 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
     return createStrandsNode(id, dimension, strandsContext);
   };
-  // Next is type constructors and uniform functions
+
+  // Next is type constructors and uniform functions.
+  // For some of them, we have aliases so that you can write either a more human-readable
+  // variant or also one more directly translated from GLSL, or to be more compatible with
+  // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
     if (type === BaseType.DEFER) {
       continue;
     }
     const typeInfo = DataType[type];
+    const typeAliases = [];
     let pascalTypeName;
     if (/^[ib]vec/.test(typeInfo.fnName)) {
       pascalTypeName = typeInfo.fnName
-      .slice(0, 2).toUpperCase()
-      + typeInfo.fnName
-      .slice(2)
-      .toLowerCase();
+        .slice(0, 2).toUpperCase()
+        + typeInfo.fnName
+          .slice(2)
+          .toLowerCase();
+      typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
     } else {
       pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
-      + typeInfo.fnName.slice(1).toLowerCase();
+        + typeInfo.fnName.slice(1);
+      if (pascalTypeName === 'Sampler2D') {
+        typeAliases.push('Texture')
+      }
     }
     fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
@@ -183,11 +192,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     // Alias varying* as shared* for backward compatibility
     fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
-    if (pascalTypeName.startsWith('Vec')) {
+    for (const typeAlias of typeAliases) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
-      fn[`uniform${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`uniform${pascalTypeName}`];
-      fn[`varying${pascalTypeName.replace('Vec', 'Vector')}`] = fn[`varying${pascalTypeName}`];
+      fn[`uniform${typeAlias}`] = fn[`uniform${pascalTypeName}`];
+      fn[`varying${typeAlias}`] = fn[`varying${pascalTypeName}`];
+      fn[`shared${typeAlias}`] = fn[`shared${pascalTypeName}`];
     }
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
