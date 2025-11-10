@@ -1,4 +1,5 @@
-// Based on https://beta.p5js.org/tutorials/intro-to-p5-strands/
+// Based on p5.strands: Introduction to Shaders By Luke Plowden
+// https://beta.p5js.org/tutorials/intro-to-p5-strands/
 
 import '../../types/global'
 
