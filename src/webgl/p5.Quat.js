@@ -55,6 +55,7 @@ class Quat {
    * the multiplication can be simplified to the below formula.
    * This was taken from the below stackexchange link
    * https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion/50545#50545
+   * @private
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
    */
   rotateVector(p) {

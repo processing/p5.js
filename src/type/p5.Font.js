@@ -109,7 +109,6 @@ export class Font {
    * @param  {Number} y              y‐coordinate of the text baseline.
    * @param  {Number} [width]        Optional width for text wrapping.
    * @param  {Number} [height]       Optional height for text wrapping.
-   * @param  {Object} [options]      Configuration object for rendering text.
    * @return {Array<Array>}          A flat array of path commands.
    *
    * @example
@@ -235,14 +234,15 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radian sbetween two segments. Segments with a shallower angle will be merged.
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -306,14 +306,15 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration options:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radians between two segments. Segments with a shallower angle will be merged.
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -981,10 +982,17 @@ async function create(pInst, name, path, descriptors, rawFont) {
   return new Font(pInst, face, name, path, rawFont);
 }
 
+
+function sanitizeFontName(name) {
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(name)) {
+    name = "'" + String(name).replace(/'/g, "\\'") + "'";
+  }
+  return name;
+}
+
 function createFontFace(name, path, descriptors, rawFont) {
 
-  if (name.includes(' ')) name = "'" + name + "'"; // NOTE: must be single-quotes
-
+  name = sanitizeFontName(name);
   let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
     if (!validFontTypesRe.test(path)) {
@@ -1082,6 +1090,35 @@ function pathToPoints(cmds, options, font) {
       }
     }
     return num;
+  };
+
+  const collinear = (a, b, c, thresholdAngle) => {
+    if (!thresholdAngle) {
+      return areaTriangle(a, b, c) === 0;
+    }
+
+    if (typeof collinear.tmpPoint1 === 'undefined') {
+      collinear.tmpPoint1 = [];
+      collinear.tmpPoint2 = [];
+    }
+
+    const ab = collinear.tmpPoint1,
+      bc = collinear.tmpPoint2;
+    ab.x = b.x - a.x;
+    ab.y = b.y - a.y;
+    bc.x = c.x - b.x;
+    bc.y = c.y - b.y;
+
+    const dot = ab.x * bc.x + ab.y * bc.y,
+      magA = Math.sqrt(ab.x * ab.x + ab.y * ab.y),
+      magB = Math.sqrt(bc.x * bc.x + bc.y * bc.y),
+      angle = Math.acos(dot / (magA * magB));
+
+    return angle < thresholdAngle;
+  };
+
+  const areaTriangle = (a, b, c) => {
+    return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
   };
 
   const path = createFromCommands(arrayCommandsToObjects(cmds));
@@ -1530,6 +1567,7 @@ export const arrayCommandsToObjects = commands => commands.map(command => {
   }
 });
 
+export { sanitizeFontName as _sanitizeFontName };
 export default font;
 
 if (typeof p5 !== 'undefined') {

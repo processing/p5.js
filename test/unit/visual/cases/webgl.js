@@ -51,6 +51,20 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('On a framebuffer of a different size from the canvas', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const fbo = p5.createFramebuffer({ antialias: true, width: 25, height: 100 });
+      fbo.begin();
+      p5.background('blue');
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      p5.filter(p5.BLUR, 3);
+      fbo.end();
+      p5.imageMode(p5.CENTER);
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
+
     visualTest(
       'On a framebuffer sized differently from the main canvas',
       function(p5, screenshot) {
@@ -656,6 +670,41 @@ visualSuite('WebGL', function() {
         p5.text(String.fromCharCode(33 + i), x, y);
       }
 
+      screenshot();
+    });
+  });
+
+  visualSuite('texture()', () => {
+    visualTest('on a rect', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40);
+      screenshot();
+    });
+
+    visualTest('on a rect with rounded corners', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40, 10);
+      screenshot();
+    });
+  });
+
+  visualSuite('textures in p5.strands', async () => {
+    visualTest('uniformTexture() works', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const shader = p5.baseMaterialShader().modify(() => {
+        const texUniform = p5.uniformTexture(() => tex)
+        p5.getPixelInputs((inputs) => {
+          inputs.color = p5.getTexture(texUniform, inputs.texCoord);
+          return inputs;
+        });
+      }, { p5, tex });
+      p5.shader(shader);
+      p5.rect(-20, -20, 40, 40);
       screenshot();
     });
   });

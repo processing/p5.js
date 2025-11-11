@@ -27,7 +27,7 @@ import * as constants from './constants';
  * @param  {function(p5)}       sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
  *                              <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a> properties on the
  *                              given p5 instance
- * @param  {HTMLElement}        [node] element to attach canvas to
+ * @param  {String|HTMLElement}        [node] element to attach canvas to
  * @return {p5}                 a p5 instance
  */
 class p5 {
@@ -48,6 +48,35 @@ class p5 {
   static _friendlyFileLoadError = () => {};
 
   constructor(sketch, node) {
+    // Apply addon defined decorations
+    if(p5.decorations.size > 0){
+      for (const [patternArray, decoration] of p5.decorations) {
+        for(const member in p5.prototype) {
+          // Member must be a function
+          if (typeof p5.prototype[member] !== 'function') continue;
+
+          if (!patternArray.some(pattern => {
+            if (typeof pattern === 'string') {
+              return pattern === member;
+            } else if (pattern instanceof RegExp) {
+              return pattern.test(member);
+            }
+          })) continue;
+
+          p5.prototype[member] = decoration(p5.prototype[member], {
+            kind: 'method',
+            name: member,
+            access: {},
+            static: false,
+            private: false,
+            addInitializer(initializer){}
+          });
+        }
+      }
+
+      p5.decorations.clear();
+    }
+
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -77,30 +106,7 @@ class p5 {
     // ensure correct reporting of window dimensions
     this._updateWindowSize();
 
-    const bindGlobal = property => {
-      Object.defineProperty(window, property, {
-        configurable: true,
-        enumerable: true,
-        get: () => {
-          if(typeof this[property] === 'function'){
-            return this[property].bind(this);
-          }else{
-            return this[property];
-          }
-        },
-        set: newValue => {
-          Object.defineProperty(window, property, {
-            configurable: true,
-            enumerable: true,
-            value: newValue,
-            writable: true
-          });
-          if (!p5.disableFriendlyErrors) {
-            console.log(`You just changed the value of "${property}", which was a p5 global value. This could cause problems later if you're not careful.`);
-          }
-        }
-      });
-    };
+    const bindGlobal = createBindGlobal(this);
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -167,6 +173,7 @@ class p5 {
 
   static registerAddon(addon) {
     const lifecycles = {};
+
     addon(p5, p5.prototype, lifecycles);
 
     const validLifecycles = Object.keys(p5.lifecycleHooks);
@@ -175,6 +182,13 @@ class p5 {
         p5.lifecycleHooks[name].push(lifecycles[name]);
       }
     }
+  }
+
+  static decorations = new Map();
+  static decorateHelper(pattern, decoration){
+    let patternArray = pattern;
+    if (!Array.isArray(pattern)) patternArray = [pattern];
+    p5.decorations.set(patternArray, decoration);
   }
 
   #customActions = {};
@@ -419,10 +433,118 @@ class p5 {
   }
 }
 
+// Global helper function for binding properties to window in global mode
+function createBindGlobal(instance) {
+  return function bindGlobal(property) {
+    if (property === 'constructor') return;
+
+    // Check if this property has a getter on the instance or prototype
+    const instanceDescriptor = Object.getOwnPropertyDescriptor(
+      instance,
+      property
+    );
+    const prototypeDescriptor = Object.getOwnPropertyDescriptor(
+      p5.prototype,
+      property
+    );
+    const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
+                     (prototypeDescriptor && prototypeDescriptor.get);
+
+    // Only check if it's a function if it doesn't have a getter
+    // to avoid actually evaluating getters before things like the
+    // renderer are fully constructed
+    let isPrototypeFunction = false;
+    let isConstant = false;
+    let constantValue;
+
+    if (!hasGetter) {
+      const prototypeValue = p5.prototype[property];
+      isPrototypeFunction = typeof prototypeValue === 'function';
+
+      // Check if this is a true constant from the constants module
+      if (!isPrototypeFunction && constants[property] !== undefined) {
+        isConstant = true;
+        constantValue = prototypeValue;
+      }
+    }
+
+    if (isPrototypeFunction) {
+      // For regular functions, cache the bound function
+      const boundFunction = p5.prototype[property].bind(instance);
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: boundFunction
+      });
+    } else if (isConstant) {
+      // For constants, cache the value directly
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        value: constantValue
+      });
+    } else if (hasGetter || !isPrototypeFunction) {
+      // For properties with getters or non-function properties, use lazy optimization
+      // On first access, determine the type and optimize subsequent accesses
+      let lastFunction = null;
+      let boundFunction = null;
+      let isFunction = null; // null = unknown, true = function, false = not function
+
+      Object.defineProperty(window, property, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+          const currentValue = instance[property];
+
+          if (isFunction === null) {
+            // First access - determine type and optimize
+            isFunction = typeof currentValue === 'function';
+            if (isFunction) {
+              lastFunction = currentValue;
+              boundFunction = currentValue.bind(instance);
+              return boundFunction;
+            } else {
+              return currentValue;
+            }
+          } else if (isFunction) {
+            // Optimized function path - only rebind if function changed
+            if (currentValue !== lastFunction) {
+              lastFunction = currentValue;
+              boundFunction = currentValue.bind(instance);
+            }
+            return boundFunction;
+          } else {
+            // Optimized non-function path
+            return currentValue;
+          }
+        }
+      });
+    }
+  };
+}
+
 // Attach constants to p5 prototype
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
+
+import transform from './transform';
+import structure from './structure';
+import environment from './environment';
+import rendering from './rendering';
+import renderer from './p5.Renderer';
+import renderer2D from './p5.Renderer2D';
+import graphics from './p5.Graphics';
+
+p5.registerAddon(transform);
+p5.registerAddon(structure);
+p5.registerAddon(environment);
+p5.registerAddon(rendering);
+p5.registerAddon(renderer);
+p5.registerAddon(renderer2D);
+p5.registerAddon(graphics);
+
+export default p5;
 
 //////////////////////////////////////////////
 // PUBLIC p5 PROPERTIES AND METHODS
@@ -629,6 +751,7 @@ for (const k in constants) {
  * which takes time to process. Disabling the FES can significantly improve
  * performance by turning off these checks.
  *
+ * @static
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
@@ -653,22 +776,39 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-p5.disableFriendlyErrors = false;
 
-import transform from './transform';
-import structure from './structure';
-import environment from './environment';
-import rendering from './rendering';
-import renderer from './p5.Renderer';
-import renderer2D from './p5.Renderer2D';
-import graphics from './p5.Graphics';
-
-p5.registerAddon(transform);
-p5.registerAddon(structure);
-p5.registerAddon(environment);
-p5.registerAddon(rendering);
-p5.registerAddon(renderer);
-p5.registerAddon(renderer2D);
-p5.registerAddon(graphics);
-
-export default p5;
+/**
+ * Loads a p5.js library.
+ *
+ * A library is a function that adds functionality to p5.js by adding methods
+ * and properties for sketches to use, or for automatically running code at
+ * different stages of the p5.js lifecycle. Take a look at the
+ * <a href="/contribute/creating_libraries/">contributor docs for creating libraries</a>
+ * to learn more about creating libraries.
+ *
+ * @static
+ * @method registerAddon
+ * @param {Function} library The library function to register
+ *
+ * @example
+ * <div>
+ * <code>
+ * function myAddon(p5, fn, lifecycles) {
+ *   fn.sayHello = function() {
+ *     this.textAlign(this.CENTER, this.CENTER);
+ *     this.text('Hello!', this.width / 2, this.height / 2);
+ *   };
+ * }
+ * p5.registerAddon(myAddon);
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *   sayHello(); // The sayHello method is now available!
+ *
+ *   describe('The text "Hello!"');
+ * }
+ * </code>
+ * </div>
+ */

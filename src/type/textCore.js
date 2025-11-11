@@ -224,10 +224,13 @@ function textCore(p5, fn) {
    * accepts the following values for `vertAlign`: `TOP`, `BOTTOM`, `CENTER`,
    * or `BASELINE`.
    *
+   * Calling `textAlign()` without arguments returns the current alignment settings.
+   *
    * @method textAlign
    * @for p5
-   * @param {LEFT|CENTER|RIGHT} horizAlign horizontal alignment
+   * @param {LEFT|CENTER|RIGHT} [horizAlign] horizontal alignment
    * @param {TOP|BOTTOM|CENTER|BASELINE} [vertAlign] vertical alignment
+   * @returns {Object} If no arguments are provided, returns an object with current horizontal and vertical alignment
    * @example
    * <div>
    * <code>
@@ -496,7 +499,7 @@ function textCore(p5, fn) {
    *
    * @method textLeading
    * @for p5
-   * @param {Number} leading The new text leading to apply, in pixels
+   * @param {Number} [leading] The new text leading to apply, in pixels
    * @returns {Number} If no arguments are provided, the current text leading
    *
    * @example
@@ -522,10 +525,6 @@ function textCore(p5, fn) {
    * </code>
    * </div>
    */
-  /*
-  * @method textLeading
-  * @for p5
-  */
 
   /**
    * Sets the font used by the <a href="#/p5/text">text()</a> function.
@@ -537,12 +536,15 @@ function textCore(p5, fn) {
    * The second parameter, `size`, is optional. It sets the font size in pixels.
    * This has the same effect as calling <a href="#/p5/textSize">textSize()</a>.
    *
+   * Calling `textFont()` without arguments returns the current font.
+   *
    * Note: `WEBGL` mode only supports fonts loaded with
    * <a href="#/p5/loadFont">loadFont()</a>.
    *
    * @method textFont
-   * @param {p5.Font|String|Object} font The font to apply
+   * @param {p5.Font|String|Object} [font] The font to apply
    * @param {Number} [size] An optional text size to apply.
+   * @returns {String|p5.Font} If no arguments are provided, returns the current font
    * @for p5
    *
    * @example
@@ -755,7 +757,7 @@ function textCore(p5, fn) {
    *
    * For example, if the text contains multiple lines due to wrapping or explicit line breaks, textWidth()
    * will return the width of the longest line.
-   * 
+   *
    * **Note:** In p5.js 2.0+, leading and trailing spaces are ignored.
    * `textWidth("  Hello  ")` returns the same width as `textWidth("Hello")`.
    *
