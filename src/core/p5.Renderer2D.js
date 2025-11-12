@@ -732,8 +732,19 @@ class Renderer2D extends Renderer {
 
       const currentTransform = this.drawingContext.getTransform();
       const initialClip = this.initialClipTransform;
-      const relativeTransform = initialClip.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
+      if (currentTransform.a < 0 || currentTransform.d < 0) {
+        const fixedTransform = new DOMMatrix([
+          Math.abs(currentTransform.a), currentTransform.b,
+          currentTransform.c, Math.abs(currentTransform.d),
+          currentTransform.e, currentTransform.f
+        ]);
+        const relativeTransform = initialClip.multiply(fixedTransform);
+        this.clipPath.addPath(tempPath, relativeTransform);
+      } else {
+        // Normal case
+        const relativeTransform = initialClip.multiply(currentTransform);
+        this.clipPath.addPath(tempPath, relativeTransform);
+      }
     } else {
       // Normal drawing (existing code)
       ctx.beginPath();
