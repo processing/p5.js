@@ -431,6 +431,39 @@ p5.Shader = class {
    */
   modify(hooks) {
     p5._validateParameters('p5.Shader.modify', arguments);
+
+    // Internal helper to normalize shader hooks
+    // Automatically appends a return statement when:
+    //   - The hook's return type matches its first parameter type (e.g. Inputs getX(Inputs x))
+    //   - No explicit 'return' is present in the user-provided code
+    const normalizeReturnIfMissing = (hookDef, impl) => {
+      // Example: hookDef = "Inputs getPixelInputs"
+      // Example: impl = "(Inputs inputs) { ... }"
+      const defMatch = /^(\w+)\s+(\w+)$/.exec(hookDef.trim());
+      if (!defMatch) return impl;
+      const [, returnType] = defMatch;
+
+      // Skip void-return hooks
+      if (returnType === 'void') return impl;
+
+      // Strip // and /* */ comments before searching for 'return'
+      const withoutComments = impl
+        .replace(/\/\/.*$/gm, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+      if (/\breturn\b/.test(withoutComments)) return impl;
+
+      // Extract the first parameter type and name
+      const sigMatch = /^\s*\(\s*([\w\s[\]]+)\s+(\w+)\s*\)/.exec(impl);
+      if (!sigMatch) return impl;
+      const [, paramType, paramName] = sigMatch;
+
+      // Only normalize when return type matches first param type
+      if (paramType.trim() !== returnType.trim()) return impl;
+
+      // Append 'return <paramName>;' before the last closing brace
+      return impl.replace(/\}\s*$/, `  return ${paramName};\n}`);
+    };
+
     const newHooks = {
       vertex: {},
       fragment: {},
@@ -446,9 +479,9 @@ p5.Shader = class {
         newHooks.fragment.declarations =
           (newHooks.fragment.declarations || '') + '\n' + hooks[key];
       } else if (this.hooks.vertex[key]) {
-        newHooks.vertex[key] = hooks[key];
+        newHooks.vertex[key] = normalizeReturnIfMissing(key, hooks[key]);
       } else if (this.hooks.fragment[key]) {
-        newHooks.fragment[key] = hooks[key];
+        newHooks.fragment[key] = normalizeReturnIfMissing(key, hooks[key]);
       } else {
         newHooks.helpers[key] = hooks[key];
       }
