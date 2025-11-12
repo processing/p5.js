@@ -920,7 +920,100 @@ const ASTCallbacks = {
       return replaceInNode(node);
     }
   }
-  export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+  /**
+ * Analyzes strand code to detect outside variable references
+ * This runs before transpilation to provide helpful errors to users
+ * 
+ * @param {string} sourceString - The strand code to analyze
+ * @returns {Array<{variable: string, message: string}>} - Array of errors if any
+ */
+export function detectOutsideVariableReferences(sourceString) {
+  try {
+    const ast = parse(sourceString, { ecmaVersion: 2021 });
+    
+    const errors = [];
+    const declaredVars = new Set();
+    
+    // First pass: collect all declared variables
+    ancestor(ast, {
+      VariableDeclaration(node) {
+        for (const declarator of node.declarations) {
+          if (declarator.id.type === 'Identifier') {
+            declaredVars.add(declarator.id.name);
+          }
+        }
+      }
+    });
+    
+    // Second pass: check identifier references
+    ancestor(ast, {
+      Identifier(node, state, ancestors) {
+        const varName = node.name;
+        
+        // Skip built-ins and p5.strands functions
+        const ignoreNames = [
+          '__p5', 'p5', 'window', 'global', 'undefined', 'null', 'this', 'arguments',
+          // p5.strands built-in functions
+          'getWorldPosition', 'getWorldNormal', 'getWorldTangent', 'getWorldBinormal',
+          'getLocalPosition', 'getLocalNormal', 'getLocalTangent', 'getLocalBinormal',
+          'getUV', 'getColor', 'getTime', 'getDeltaTime', 'getFrameCount',
+          'uniformFloat', 'uniformVec2', 'uniformVec3', 'uniformVec4',
+          'uniformInt', 'uniformBool', 'uniformMat2', 'uniformMat3', 'uniformMat4'
+        ];
+        if (ignoreNames.includes(varName)) return;
+        
+        // Skip if it's a property access (obj.prop)
+        const isProperty = ancestors.some(anc => 
+          anc.type === 'MemberExpression' && anc.property === node
+        );
+        if (isProperty) return;
+        
+        // Skip if it's a function parameter
+        // Find the immediate function scope and check if this identifier is a parameter
+        for (let i = ancestors.length - 1; i >= 0; i--) {
+          const anc = ancestors[i];
+          if (anc.type === 'FunctionDeclaration' || 
+              anc.type === 'FunctionExpression' || 
+              anc.type === 'ArrowFunctionExpression') {
+            if (anc.params && anc.params.some(param => param.name === varName)) {
+              return; // It's a function parameter
+            }
+            break; // Only check the immediate function scope
+          }
+        }
+        
+        // Skip if it's its own declaration
+        const isDeclaration = ancestors.some(anc => 
+          anc.type === 'VariableDeclarator' && anc.id === node
+        );
+        if (isDeclaration) return;
+        
+        // Check if we're inside a uniform callback (OK to access outer scope)
+        const inUniformCallback = ancestors.some(anc => 
+          anc.type === 'CallExpression' &&
+          anc.callee.type === 'Identifier' &&
+          anc.callee.name.startsWith('uniform')
+        );
+        if (inUniformCallback) return; // Allow outer scope access in uniform callbacks
+        
+        // Check if variable is declared
+        if (!declaredVars.has(varName)) {
+          errors.push({
+            variable: varName,
+            message: `Variable "${varName}" is not declared in the strand context.`
+          });
+        }
+      }
+    });
+    
+    return errors;
+  } catch (error) {
+    // If parsing fails, return empty array - transpilation will catch it
+    return [];
+  }
+}
+
+export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
