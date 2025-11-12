@@ -6,6 +6,7 @@ import { textCoreConstants } from './textCore';
 import * as constants from '../core/constants';
 import { UnicodeRange } from '@japont/unicode-range';
 import { unicodeRanges } from './unicodeRanges';
+import { Vector } from '../math/p5.Vector';
 
 /*
   API:
@@ -542,63 +543,148 @@ export class Font {
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
-    const contours = this.textToContours(str, x, y, width, height, options);
 
+    let contours = this.textToContours(str, x, y, width, height, options);
+    // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
-      if (extrude === 0) {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
-        this._pInst.beginShape();
-        this._pInst.normal(0, 0, 1);
-        for (const contour of contours) {
-          this._pInst.beginContour();
-          for (const { x, y } of contour) {
-            this._pInst.vertex(x, y);
-          }
-          this._pInst.endContour(this._pInst.CLOSE);
-        }
-        this._pInst.endShape();
-        this._pInst._renderer._validateFaces = prevValidateFaces;
-      } else {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
+      const prevValidateFaces = this._pInst._renderer._validateFaces;
+      this._pInst._renderer._validateFaces = true;
 
-        // Draw front faces
-        for (const side of [1, -1]) {
-          this._pInst.beginShape();
-          for (const contour of contours) {
-            this._pInst.beginContour();
-            for (const { x, y } of contour) {
-              this._pInst.vertex(x, y, side * extrude * 0.5);
-            }
-            this._pInst.endContour(this._pInst.CLOSE);
-          }
-          this._pInst.endShape();
+      this._pInst.beginShape();
+      for (const contour of contours) {
+        this._pInst.beginContour();
+        for (const pt of contour) {
+          this._pInst.vertex(pt.x, pt.y, 0);
         }
-        this._pInst._renderer._validateFaces = prevValidateFaces;
-
-        // Draw sides
-        for (const contour of contours) {
-          this._pInst.beginShape(this._pInst.QUAD_STRIP);
-          for (const v of contour) {
-            for (const side of [-1, 1]) {
-              this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
-            }
-          }
-          this._pInst.endShape();
-        }
+        this._pInst.endContour(this._pInst.CLOSE);
       }
+
+      this._pInst.endShape(this._pInst.CLOSE);
+
+      this._pInst._renderer._validateFaces = prevValidateFaces;
     });
-    if (extrude !== 0) {
-      geom.computeNormals();
-      for (const face of geom.faces) {
-        if (face.every(idx => geom.vertices[idx].z <= -extrude * 0.5 + 0.1)) {
-          for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
-          face.reverse();
-        }
+
+    if (extrude === 0) {
+      return geom;
+    }
+
+    // The tessellation process creates separate vertices for each triangle,
+    // even when they share the same position. We need to deduplicate them
+    // to find which faces are actually connected, so we can identify the
+    // outer edges for extrusion.
+
+    const vertexIndices = {};
+    const vertexId = v => `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
+    const newVertices = [];
+    const newVertexIndex = [];
+
+    for (const v of geom.vertices) {
+      const id = vertexId(v);
+      if (!(id in vertexIndices)) {
+        const index = newVertices.length;
+        vertexIndices[id] = index;
+        newVertices.push(v.copy());
+      }
+      newVertexIndex.push(vertexIndices[id]);
+    }
+
+    // Remap faces to use deduplicated vertices
+    const newFaces = geom.faces.map(f => f.map(i => newVertexIndex[i]));
+
+    //Find outer edges (edges that appear in only one face)
+    const seen = {};
+    for (const face of newFaces) {
+      for (let off = 0; off < face.length; off++) {
+        const a = face[off];
+        const b = face[(off + 1) % face.length];
+        const id = `${Math.min(a, b)}-${Math.max(a, b)}`;
+        if (!seen[id]) seen[id] = [];
+        seen[id].push([a, b]);
       }
     }
-    return geom;
+    const validEdges = [];
+    for (const key in seen) {
+      if (seen[key].length === 1) {
+        validEdges.push(seen[key][0]);
+      }
+    }
+
+    // Step 5: Create extruded geometry
+    const extruded = this._pInst.buildGeometry(() => {});
+    const half = extrude * 0.5;
+    extruded.vertices = [];
+    extruded.faces = [];
+    extruded.edges = []; // INITIALIZE EDGES ARRAY
+
+    // Add side face vertices (separate for each edge for flat shading)
+    for (const [a, b] of validEdges) {
+      const vA = newVertices[a];
+      const vB = newVertices[b];
+
+      // Skip if vertices are too close (degenerate edge)
+      // We only need to check the perimeter edge length since the other edge
+      // is the extrude direction, which is always > 0 for extruded geometry
+
+      const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
+      const extrudeVector = new Vector(0, 0, extrude);
+      const crossProduct = Vector.cross(edgeVector, extrudeVector);
+      const dist = edgeVector.mag();
+      if (crossProduct.mag() < 0.0001 || dist < 0.0001) continue;
+      // Front face vertices
+      const frontA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z + half));
+      const frontB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z + half));
+      const backA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z - half));
+      const backB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z - half));
+
+      extruded.faces.push([frontA, backA, backB]);
+      extruded.faces.push([frontA, backB, frontB]);
+      extruded.edges.push([frontA, frontB]);
+      extruded.edges.push([backA, backB]);
+      extruded.edges.push([frontA, backA]);
+      extruded.edges.push([frontB, backB]);
+    }
+
+    // Add front face (with unshared vertices for flat shading)
+    const frontVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z + half));
+    }
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = face.map(i => i + frontVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR FRONT FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    // Add back face (reversed winding order)
+    const backVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z - half));
+    }
+
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = [...face].reverse().map(i => i + backVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR BACK FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    extruded.computeNormals();
+    return extruded;
   }
 
   variations() {
