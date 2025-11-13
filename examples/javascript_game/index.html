@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survive the Horde</title>
+    <link rel="stylesheet" href="game.css">
+    <style>
+        #instructions {
+            width: 300px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 10px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="score">Score: 0</div>
+    </div>
+    <div id="instructions">
+        <h2>How to Play</h2>
+        <ul>
+            <li>Use <strong>Arrow Keys</strong> to move the player.</li>
+            <li>Press <strong>Space</strong> to shoot in four directions.</li>
+            <li>Survive as long as possible against incoming zombies.</li>
+            <li>Shooting zombies increases your score.</li>
+            <li>Getting touched by a zombie ends the game.</li>
+        </ul>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
+
+
+
