@@ -13,12 +13,20 @@ export class StrandsNode {
     const nodeData = getNodeDataFromID(dag, this.id);
     if (nodeData && nodeData.identifier) {
       this._originalIdentifier = nodeData.identifier;
+    }
+    if (nodeData) {
       this._originalBaseType = nodeData.baseType;
       this._originalDimension = nodeData.dimension;
     }
   }
   copy() {
     return createStrandsNode(this.id, this.dimension, this.strandsContext);
+  }
+  typeInfo() {
+    return {
+      baseType: this._originalBaseType || BaseType.FLOAT,
+      dimension: this.dimension
+    };
   }
   bridge(value) {
     const { dag, cfg } = this.strandsContext;
@@ -30,8 +38,8 @@ export class StrandsNode {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;
@@ -85,8 +93,8 @@ export class StrandsNode {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;

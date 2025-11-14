@@ -205,8 +205,18 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
-        const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
-        return createStrandsNode(id, dimension, strandsContext);
+        if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
+          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
+            overloads: [{
+              params: [args[0].typeInfo()],
+              returnType: typeInfo,
+            }]
+          });
+          return createStrandsNode(id, dimension, strandsContext);
+        } else {
+          const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
+          return createStrandsNode(id, dimension, strandsContext);
+        }
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {

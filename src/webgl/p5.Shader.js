@@ -533,7 +533,7 @@ class Shader {
       // if our vertex shader failed compilation?
       if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
         const glError = gl.getShaderInfoLog(this._vertShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
+        if (typeof IS_MINIFIED !== 'undefined' || typeof p5 === 'undefined') {
           console.error(glError);
         } else {
           p5._friendlyError(
@@ -551,7 +551,7 @@ class Shader {
       // if our frag shader failed compilation?
       if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
         const glError = gl.getShaderInfoLog(this._fragShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
+        if (typeof IS_MINIFIED !== 'undefined' || typeof p5 === 'undefined') {
           console.error(glError);
         } else {
           p5._friendlyError(
