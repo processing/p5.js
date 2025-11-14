@@ -4956,10 +4956,6 @@ class MediaElement extends p5.Element {
       this._frameOnCanvas = this._pInst.frameCount;
     }
   }
-  loadPixels(...args) {
-    this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
-  }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
@@ -5478,6 +5474,21 @@ class MediaElement extends p5.Element {
 }
 
 p5.MediaElement = MediaElement;
+// Fix for MediaElement.loadPixels renderer reference per instance
+p5.MediaElement.prototype.loadPixels = function (...args) {
+  this._ensureCanvas();
+  // Use the 2D renderer prototype method directly on the MediaElement
+  // MediaElement acts as its own 2D renderer context
+  return p5.Renderer2D.prototype.loadPixels.apply(this, args);
+};
+
+p5.MediaElement.prototype.updatePixels = function (x, y, w, h) {
+  this._ensureCanvas();
+  // Use the 2D renderer prototype method directly on the MediaElement
+  return p5.Renderer2D.prototype.updatePixels.apply(this, x, y, w, h);
+};
+
+
 
 /**
  * A class to describe a file.
@@ -5840,6 +5851,9 @@ class File {
     }
   }
 }
+
+
+
 
 
 p5.File = File;
