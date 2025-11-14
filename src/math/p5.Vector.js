@@ -30,6 +30,8 @@ const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
 };
 
 class Vector {
+  _values = [];
+
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
@@ -521,6 +523,7 @@ class Vector {
       args = args[0];
     }
     args.forEach((value, index) => {
+      if(!this._values[index]) this._values[index] = 0;
       this._values[index] = (this._values[index] || 0) + (value || 0);
     });
     return this;
@@ -833,6 +836,7 @@ class Vector {
   sub(...args) {
     if (args[0] instanceof Vector) {
       args[0].values.forEach((value, index) => {
+        if(!this._values[index]) this._values[index] = 0;
         this._values[index] -= value || 0;
       });
     } else if (Array.isArray(args[0])) {
@@ -1046,6 +1050,7 @@ class Vector {
       const maxLen = Math.min(this._values.length, v.values.length);
       for (let i = 0; i < maxLen; i++) {
         if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
+          if(!this._values[i]) this._values[i] = 0;
           this._values[i] *= v.values[i];
         } else {
           console.warn(
@@ -1277,18 +1282,23 @@ class Vector {
    */
   div(...args) {
     if (args.length === 0) return this;
+    // If passed a vector
     if (args.length === 1 && args[0] instanceof Vector) {
       const v = args[0];
       if (
-        v._values.every(
+        v.values.every(
           val => Number.isFinite(val) && typeof val === 'number'
         )
       ) {
-        if (v._values.some(val => val === 0)) {
+        if (v.values.some(val => val === 0)) {
           console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
-        this._values = this._values.map((val, i) => val / v._values[i]);
+        // this._values = this._values.map((val, i) => val / v.values[i]);
+        for (let i = 0; i < v.values.length; i++) {
+          if(!this._values[i]) this._values[i] = 0;
+          this._values[i] /= v.values[i];
+        }
       } else {
         console.warn(
           'p5.Vector.prototype.div:',
@@ -1298,6 +1308,7 @@ class Vector {
       return this;
     }
 
+    // If passed an array
     if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
       if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
@@ -1315,6 +1326,7 @@ class Vector {
       return this;
     }
 
+    // If passed individual arguments
     if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
       if (args.some(val => val === 0)) {
         console.warn('p5.Vector.prototype.div:', 'divide by 0');
@@ -1514,7 +1526,7 @@ class Vector {
    */
   dot(...args) {
     if (args[0] instanceof Vector) {
-      return this.dot(...args[0]._values);
+      return this.dot(...args[0].values);
     }
     return this._values.reduce((sum, component, index) => {
       return sum + component * (args[index] || 0);
@@ -3034,7 +3046,7 @@ class Vector {
   equals(...args) {
     let values;
     if (args[0] instanceof Vector) {
-      values = args[0]._values;
+      values = args[0].values;
     } else if (Array.isArray(args[0])) {
       values = args[0];
     } else {
