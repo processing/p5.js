@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Real Asset Loading Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        margin: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .info {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #ED225D;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <h1>🎨 Real Asset Loading Test</h1>
+      <p><strong>This test loads actual files:</strong></p>
+      <ul>
+        <li>Image file (banana.png)</li>
+        <li>JSON file (test.json)</li>
+        <li>Text file (test.txt)</li>
+        <li>CSV file (mammals.csv)</li>
+      </ul>
+      <p>You should see the pink loading spinner while these files load.</p>
+      <p><strong>Tip:</strong> To see the spinner longer, throttle your network in DevTools (Network → Slow 3G)</p>
+    </div>
+    
+    <script src="../../../lib/p5.js"></script>
+    <script>
+      let img;
+      let data;
+      let strings;
+      let table;
+      
+      function preload() {
+        console.log('⏳ Starting to load assets...');
+        
+        // Load multiple real assets
+        img = loadImage('banana.png');
+        data = loadJSON('test.json');
+        strings = loadStrings('test.txt');
+        table = loadTable('mammals.csv', 'csv', 'header');
+        
+        console.log('✅ All assets queued for loading');
+      }
+
+      function setup() {
+        console.log('🎨 Setup starting - all assets loaded!');
+        createCanvas(800, 600);
+        background(255);
+        
+        // Title
+        fill(237, 34, 93);
+        textSize(36);
+        textAlign(CENTER);
+        text('✓ All Assets Loaded Successfully!', width/2, 50);
+        
+        // Show loaded image
+        if (img) {
+          image(img, 50, 100, 100, 100);
+          fill(100);
+          textSize(16);
+          textAlign(LEFT);
+          text('✓ Image loaded (banana.png)', 170, 150);
+        }
+        
+        // Show JSON data
+        if (data) {
+          text('✓ JSON loaded: ' + JSON.stringify(data).substring(0, 50) + '...', 170, 180);
+        }
+        
+        // Show text strings
+        if (strings) {
+          text('✓ Text file loaded: ' + strings.length + ' lines', 170, 210);
+        }
+        
+        // Show table data
+        if (table) {
+          text('✓ CSV table loaded: ' + table.getRowCount() + ' rows', 170, 240);
+        }
+        
+        // Performance info
+        fill(237, 34, 93);
+        textSize(14);
+        textAlign(CENTER);
+        text('Loading spinner was visible during asset loading phase', width/2, height - 50);
+        
+        // Draw decorative elements
+        noFill();
+        stroke(237, 34, 93);
+        strokeWeight(2);
+        rect(40, 90, 740, 180, 10);
+        
+        console.log('✅ Setup complete');
+      }
+
+      function draw() {
+        // Static display
+      }
+    </script>
+  </body>
+</html>

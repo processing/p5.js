@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>No Preload Test - Should NOT Show Spinner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        margin: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .info {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #856404;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <h1>⚠️ No Preload Test</h1>
+      <p><strong>Expected behavior:</strong></p>
+      <ul>
+        <li>❌ NO spinner should appear</li>
+        <li>✓ Canvas should appear immediately</li>
+        <li>✓ Sketch should run normally</li>
+      </ul>
+      <p>This tests that the spinner only appears when preload() is defined.</p>
+    </div>
+    
+    <script src="../../../lib/p5.js"></script>
+    <script>
+      // NO preload() function defined!
+      
+      function setup() {
+        console.log('🎨 Setup starting (no preload)');
+        createCanvas(600, 400);
+        background(255);
+        
+        // Draw success indicator
+        fill(133, 100, 4);
+        textSize(36);
+        textAlign(CENTER, CENTER);
+        text('✓ No Spinner Test Passed!', width/2, height/2 - 40);
+        
+        fill(100);
+        textSize(18);
+        text('You should NOT have seen a loading spinner', width/2, height/2 + 20);
+        text('The canvas appeared immediately', width/2, height/2 + 50);
+        
+        // Draw border
+        noFill();
+        stroke(133, 100, 4);
+        strokeWeight(3);
+        rect(10, 10, width - 20, height - 20);
+        
+        console.log('✅ Test passed - no spinner appeared');
+      }
+
+      function draw() {
+        // Static display
+      }
+    </script>
+  </body>
+</html>
