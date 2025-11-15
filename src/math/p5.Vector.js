@@ -104,11 +104,15 @@ p5.Vector = class {
       x = args[2] || 0;
       y = args[3] || 0;
       z = args[4] || 0;
+      // Store the actual number of vector components provided
+      this._vectorArgs = args.length - 2; // Subtract the two function args
       // This is what we'll get with new p5.Vector()
     } else {
       x = args[0] || 0;
       y = args[1] || 0;
       z = args[2] || 0;
+      // Store the actual number of vector components provided
+      this._vectorArgs = args.length;
     }
     /**
      * The x component of the vector
@@ -131,6 +135,69 @@ p5.Vector = class {
      * @name z
      */
     this.z = z;
+  }
+
+  /**
+   * Returns the shape of the vector as an array.
+   *
+   * The shape represents the dimensionality of the vector as an array.
+   * For a 3D vector like [x, y, z], this returns [3].
+   * This is a read-only property that aligns with TensorFlow.js conventions.
+   *
+   * @property shape
+   * @type {Number[]}
+   * @readonly
+   *
+   * @example
+   * <div class="norender">
+   * <code>
+   * function setup() {
+   *   // Create a 2D vector
+   *   let v2d = createVector(1, 2);
+   *   print(v2d.shape); // Prints [2]
+   *
+   *   // Create a 3D vector
+   *   let v3d = createVector(1, 2, 3);
+   *   print(v3d.shape); // Prints [3]
+   * }
+   * </code>
+   * </div>
+   */
+  get shape() {
+    // Return the number of dimensions based on how many args were provided
+    // Default to 3 for vectors created without tracking (for backwards compatibility)
+    const dims = this._vectorArgs !== undefined ? this._vectorArgs : 3;
+    return [dims];
+  }
+
+  /**
+   * Returns the rank of the vector.
+   *
+   * The rank represents the number of dimensions in the data structure.
+   * For any vector, this is always 1 (vectors are 1-dimensional arrays).
+   * This is a read-only property that aligns with TensorFlow.js conventions.
+   *
+   * @property rank
+   * @type {Number}
+   * @readonly
+   *
+   * @example
+   * <div class="norender">
+   * <code>
+   * function setup() {
+   *   // Create vectors
+   *   let v2d = createVector(1, 2);
+   *   let v3d = createVector(1, 2, 3);
+   *
+   *   // All vectors have rank 1
+   *   print(v2d.rank); // Prints 1
+   *   print(v3d.rank); // Prints 1
+   * }
+   * </code>
+   * </div>
+   */
+  get rank() {
+    return 1;
   }
 
   /**
@@ -217,7 +284,7 @@ p5.Vector = class {
  * @param {p5.Vector|Number[]} value vector to set.
  * @chainable
  */
-  set (x, y, z) {
+  set(x, y, z) {
     if (x instanceof p5.Vector) {
       this.x = x.x || 0;
       this.y = x.y || 0;
@@ -265,7 +332,7 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-  copy () {
+  copy() {
     if (this.isPInst) {
       return new p5.Vector(
         this._fromRadians,
@@ -413,7 +480,7 @@ p5.Vector = class {
  * @param  {p5.Vector|Number[]} value The vector to add
  * @chainable
  */
-  add (x, y, z) {
+  add(x, y, z) {
     if (x instanceof p5.Vector) {
       this.x += x.x || 0;
       this.y += x.y || 0;
@@ -436,7 +503,7 @@ p5.Vector = class {
    * @private
    * @chainable
    */
-  calculateRemainder2D (xComponent, yComponent) {
+  calculateRemainder2D(xComponent, yComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -450,7 +517,7 @@ p5.Vector = class {
    * @private
    * @chainable
    */
-  calculateRemainder3D (xComponent, yComponent, zComponent) {
+  calculateRemainder3D(xComponent, yComponent, zComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -585,10 +652,10 @@ p5.Vector = class {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem (...args) {
+  rem(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-      if ([x.x,x.y,x.z].every(Number.isFinite)) {
+      if ([x.x, x.y, x.z].every(Number.isFinite)) {
         const xComponent = parseFloat(x.x);
         const yComponent = parseFloat(x.y);
         const zComponent = parseFloat(x.z);
@@ -985,16 +1052,16 @@ p5.Vector = class {
   mult(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-    // new p5.Vector will check that values are valid upon construction but it's possible
-    // that someone could change the value of a component after creation, which is why we still
-    // perform this check
+      // new p5.Vector will check that values are valid upon construction but it's possible
+      // that someone could change the value of a component after creation, which is why we still
+      // perform this check
       if (
         Number.isFinite(x.x) &&
-      Number.isFinite(x.y) &&
-      Number.isFinite(x.z) &&
-      typeof x.x === 'number' &&
-      typeof x.y === 'number' &&
-      typeof x.z === 'number'
+        Number.isFinite(x.y) &&
+        Number.isFinite(x.z) &&
+        typeof x.x === 'number' &&
+        typeof x.y === 'number' &&
+        typeof x.z === 'number'
       ) {
         this.x *= x.x;
         this.y *= x.y;
@@ -1010,7 +1077,7 @@ p5.Vector = class {
     if (Array.isArray(x)) {
       if (
         x.every(element => Number.isFinite(element)) &&
-      x.every(element => typeof element === 'number')
+        x.every(element => typeof element === 'number')
       ) {
         if (x.length === 1) {
           this.x *= x[0];
@@ -1036,7 +1103,7 @@ p5.Vector = class {
     const vectorComponents = args;
     if (
       vectorComponents.every(element => Number.isFinite(element)) &&
-    vectorComponents.every(element => typeof element === 'number')
+      vectorComponents.every(element => typeof element === 'number')
     ) {
       if (args.length === 1) {
         this.x *= x;
@@ -1266,16 +1333,16 @@ p5.Vector = class {
   div(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-    // new p5.Vector will check that values are valid upon construction but it's possible
-    // that someone could change the value of a component after creation, which is why we still
-    // perform this check
+      // new p5.Vector will check that values are valid upon construction but it's possible
+      // that someone could change the value of a component after creation, which is why we still
+      // perform this check
       if (
         Number.isFinite(x.x) &&
-      Number.isFinite(x.y) &&
-      Number.isFinite(x.z) &&
-      typeof x.x === 'number' &&
-      typeof x.y === 'number' &&
-      typeof x.z === 'number'
+        Number.isFinite(x.y) &&
+        Number.isFinite(x.z) &&
+        typeof x.x === 'number' &&
+        typeof x.y === 'number' &&
+        typeof x.z === 'number'
       ) {
         const isLikely2D = x.z === 0 && this.z === 0;
         if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
@@ -1298,7 +1365,7 @@ p5.Vector = class {
     if (Array.isArray(x)) {
       if (
         x.every(Number.isFinite) &&
-      x.every(element => typeof element === 'number')
+        x.every(element => typeof element === 'number')
       ) {
         if (x.some(element => element === 0)) {
           console.warn('p5.Vector.prototype.div:', 'divide by 0');
@@ -1329,7 +1396,7 @@ p5.Vector = class {
 
     if (
       args.every(Number.isFinite) &&
-    args.every(element => typeof element === 'number')
+      args.every(element => typeof element === 'number')
     ) {
       if (args.some(element => element === 0)) {
         console.warn('p5.Vector.prototype.div:', 'divide by 0');
@@ -3914,6 +3981,6 @@ p5.Vector = class {
    * @private
    */
   _clampToZero(val) {
-    return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
+    return Math.abs((val || 0) - 0) <= Number.EPSILON ? 0 : val;
   }
-};export default p5.Vector;
+}; export default p5.Vector;
