@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>P5.js - Visual Loading Spinner (Slow Load Test)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        body {
+            position: relative;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            z-index: 10000;
+            max-width: 400px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <strong>Visual Loading Spinner - Slow Load Test</strong><br>
+      This test simulates slow loading with multiple files.<br>
+      Watch for the pink animated spinner with p5.js branding!
+    </div>
+    
+    <script language="javascript" type="text/javascript" src="../../../lib/p5.js"></script>
+    <script language="javascript" type="text/javascript">
+      let img1, img2, data, strings, table;
+      
+      function preload() {
+        // Load multiple files to see the spinner for longer
+        img1 = loadImage('banana.png');
+        img2 = loadImage('banana.png');
+        data = loadJSON('test.json');
+        strings = loadStrings('test.txt');
+        table = loadTable('mammals.csv', 'csv', 'header');
+        
+        console.log('Preloading multiple assets...');
+      }
+
+      function setup() {
+        createCanvas(600, 400);
+        background(255);
+        
+        // Display success message with p5.js branding
+        fill(237, 34, 93); // p5.js pink
+        textSize(48);
+        textAlign(CENTER, CENTER);
+        text('✓ Loaded!', width/2, height/2 - 40);
+        
+        fill(50);
+        textSize(16);
+        text('All assets loaded successfully', width/2, height/2 + 20);
+        text(`Images: 2 | JSON: 1 | Strings: ${strings.length} | Table rows: ${table.getRowCount()}`, width/2, height/2 + 50);
+        
+        // Display loaded image
+        image(img1, 20, 20, 60, 60);
+        
+        console.log('All assets loaded successfully!');
+      }
+
+      function draw() {
+        // Static display
+      }
+    </script>
+  </body>
+</html>

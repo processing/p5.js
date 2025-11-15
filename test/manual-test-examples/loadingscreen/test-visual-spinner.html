@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>P5.js - Visual Loading Spinner Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        body {
+            position: relative;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            z-index: 10000;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <strong>Visual Loading Spinner Test</strong><br>
+      This test loads a remote file to demonstrate the new loading spinner.<br>
+      You should see a pink animated spinner while loading.
+    </div>
+    
+    <script language="javascript" type="text/javascript" src="../../../lib/p5.js"></script>
+    <script language="javascript" type="text/javascript">
+      let data;
+      
+      function preload() {
+        // Load a file that takes some time to demonstrate the spinner
+        // Using a delay to make the spinner visible
+        data = loadJSON('test.json');
+      }
+
+      function setup() {
+        createCanvas(400, 400);
+        background(220);
+        
+        fill(237, 34, 93); // p5.js pink
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text('Loaded!', width/2, height/2);
+        
+        console.log('Data loaded:', data);
+      }
+
+      function draw() {
+        // Static display
+      }
+    </script>
+  </body>
+</html>

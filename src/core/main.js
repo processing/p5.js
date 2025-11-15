@@ -60,6 +60,12 @@ class p5 {
      * Doing so ensures that assets are available when the sketch begins
      * running.
      *
+     * While assets are loading in `preload()`, p5.js displays an animated
+     * loading spinner. This provides a visual, language-independent indicator
+     * that content is being loaded. The loading indicator can be customized
+     * by creating an HTML element with the id `p5_loading` before the sketch
+     * loads, or hidden entirely with CSS.
+     *
      * @method preload
      *
      * @example
@@ -374,9 +380,46 @@ class p5 {
         let loadingScreen = document.getElementById(this._loadingScreenId);
         if (!loadingScreen) {
           loadingScreen = document.createElement('div');
-          loadingScreen.innerHTML = 'Loading...';
-          loadingScreen.style.position = 'absolute';
           loadingScreen.id = this._loadingScreenId;
+
+          // Create visual loading spinner with p5.js branding
+          const spinner = document.createElement('div');
+          spinner.className = 'p5-loading-spinner';
+          loadingScreen.appendChild(spinner);
+
+          // Apply styles for loading screen container
+          loadingScreen.style.position = 'absolute';
+          loadingScreen.style.top = '0';
+          loadingScreen.style.left = '0';
+          loadingScreen.style.width = '100%';
+          loadingScreen.style.height = '100%';
+          loadingScreen.style.display = 'flex';
+          loadingScreen.style.justifyContent = 'center';
+          loadingScreen.style.alignItems = 'center';
+          loadingScreen.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+          loadingScreen.style.zIndex = '9999';
+
+          // Apply styles for spinner
+          spinner.style.width = '40px';
+          spinner.style.height = '40px';
+          spinner.style.border = '4px solid rgba(237, 34, 93, 0.2)';
+          spinner.style.borderTop = '4px solid #ED225D';
+          spinner.style.borderRadius = '50%';
+          spinner.style.animation = 'p5-spin 1s linear infinite';
+
+          // Add keyframe animation if not already present
+          if (!document.getElementById('p5-loading-spinner-style')) {
+            const style = document.createElement('style');
+            style.id = 'p5-loading-spinner-style';
+            style.textContent = `
+              @keyframes p5-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `;
+            document.head.appendChild(style);
+          }
+
           const node = this._userNode || document.body;
           node.appendChild(loadingScreen);
         }
