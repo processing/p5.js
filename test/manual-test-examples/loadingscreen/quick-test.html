@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Quick Test - Visual Loading Spinner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        margin: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .info {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #ED225D;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <h1>🎨 Visual Loading Spinner Test</h1>
+      <p><strong>What to expect:</strong></p>
+      <ul>
+        <li>You should see a pink animated spinner while assets are loading</li>
+        <li>The spinner uses p5.js brand color (#ED225D)</li>
+        <li>After loading completes, the canvas with "Loaded!" text should appear</li>
+      </ul>
+      <p><strong>Testing with slow loading:</strong> Open browser DevTools → Network tab → Throttle to "Slow 3G" to see the spinner for longer</p>
+    </div>
+    
+    <script src="../../../lib/p5.js"></script>
+    <script>
+      let data;
+      let img;
+      
+      function preload() {
+        // Simulate multiple asset loading to show spinner
+        console.log('⏳ Starting preload...');
+        
+        // Load JSON
+        data = loadJSON('test.json');
+        
+        // Add artificial delay to make spinner visible
+        // (In real use, this would be actual file loading time)
+        let startTime = Date.now();
+        while (Date.now() - startTime < 2000) {
+          // 2 second delay to see the spinner
+        }
+        
+        console.log('✅ Preload complete');
+      }
+
+      function setup() {
+        console.log('🎨 Setup starting...');
+        createCanvas(600, 400);
+        background(255);
+        
+        // Draw success indicator
+        fill(237, 34, 93); // p5.js pink
+        textSize(48);
+        textAlign(CENTER, CENTER);
+        text('✓ Loaded!', width/2, height/2 - 40);
+        
+        fill(100);
+        textSize(20);
+        text('The spinner worked!', width/2, height/2 + 20);
+        text('Check console for timing logs', width/2, height/2 + 50);
+        
+        // Draw a decorative circle
+        noFill();
+        stroke(237, 34, 93);
+        strokeWeight(3);
+        circle(width/2, height/2 - 40, 100);
+        
+        console.log('✅ Setup complete - canvas drawn');
+      }
+
+      function draw() {
+        // Static display
+      }
+    </script>
+  </body>
+</html>
