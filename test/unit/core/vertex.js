@@ -3,10 +3,8 @@ import { vi } from 'vitest';
 
 suite('Vertex', function() {
   var myp5;
-  let _friendlyErrorSpy;
 
   beforeEach(function() {
-    _friendlyErrorSpy = vi.spyOn(p5, '_friendlyError');
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;

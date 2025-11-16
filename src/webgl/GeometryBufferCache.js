@@ -60,7 +60,12 @@ export class GeometryBufferCache {
       // Uint16Array
       const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
       let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
-      this.renderer._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
+      this.renderer._bindBuffer(
+        indexBuffer,
+        gl.ELEMENT_ARRAY_BUFFER,
+        vals,
+        type
+      );
 
       // If we're using a Uint32Array for our indexBuffer we will need to pass a
       // different enum value to WebGL draw triangles. This happens in

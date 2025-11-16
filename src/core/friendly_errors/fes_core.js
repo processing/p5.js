@@ -227,6 +227,7 @@ function fesCore(p5, fn){
      * @param  {Number|String}  [color]   CSS color code
      */
     p5._friendlyError = function(message, func, color) {
+      if (p5.disableFriendlyErrors) return;
       p5._report(message, func, color);
     };
 
@@ -309,7 +310,7 @@ function fesCore(p5, fn){
      */
     p5.isPreloadSupported = function() {
       return false;
-    }
+    };
 
     /**
      * Checks capitalization for user defined functions.
@@ -593,7 +594,7 @@ function fesCore(p5, fn){
 
         // get the function just above the topmost frame in the friendlyStack.
         // i.e the name of the library function called from user's code
-        const func = stacktrace[friendlyStack[0].frameIndex - 2].functionName
+        const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
           .split('.')
           .slice(-1)[0];
 

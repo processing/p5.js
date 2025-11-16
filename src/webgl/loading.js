@@ -99,7 +99,7 @@ function loading(p5, fn){
    * @method loadModel
    * @param  {String|Request} path      path of the model to be loaded.
    * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
-   * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
+   * @param  {Boolean} [normalize]        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
@@ -338,7 +338,13 @@ function loading(p5, fn){
    * @param  {Boolean} [options.flipV]
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
-  fn.loadModel = async function (path, fileType, normalize, successCallback, failureCallback) {
+  fn.loadModel = async function (
+    path,
+    fileType,
+    normalize,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadModel', arguments);
 
     let flipU = false;
@@ -494,7 +500,7 @@ function loading(p5, fn){
     let currentMaterial = null;
     let materials = {};
 
-    const { data } = await request(mtlPath, "text");
+    const { data } = await request(mtlPath, 'text');
     const lines = data.split('\n');
 
     for (let line = 0; line < lines.length; ++line) {
@@ -847,7 +853,11 @@ function loading(p5, fn){
       const line = lines[iterator].trim();
       const parts = line.split(' ');
 
-      for (let partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+      for (
+        let partsiterator = 0;
+        partsiterator < parts.length;
+        ++partsiterator
+      ) {
         if (parts[partsiterator] === '') {
           // Ignoring multiple whitespaces
           parts.splice(partsiterator, 1);
@@ -1127,7 +1137,7 @@ function loading(p5, fn){
    * @param  {String} modelString         String of the object to be loaded
    * @param  {String} [fileType]          The file extension of the model
    *                                      (<code>.stl</code>, <code>.obj</code>).
-   * @param  {Boolean} normalize        If true, scale the model to a
+   * @param  {Boolean} [normalize]        If true, scale the model to a
    *                                      standardized size when loading
    * @param  {function(p5.Geometry)} [successCallback] Function to be called
    *                                     once the model is loaded. Will be passed

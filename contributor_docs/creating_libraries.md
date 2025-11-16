@@ -282,6 +282,33 @@ if (typeof p5 !== undefined) {
 
 In the above snippet, an additional `if` condition is added around the call to `p5.registerAddon()`. This is done to support both direct usage in ESM modules (where users can directly import your addon function then call `p5.registerAddon()` themselves) and after bundling support regular `<script>` tag usage without your users needing to call `p5.registerAddon()` directly as long as they have included the addon `<script>` tag after the `<script>` tag including p5.js itself.
 
+## Accessing custom actions
+In certain circumstances, such as when you have a library that listens to a certain browser event, you may wish to run a function that your user defined on the global scope, much like how a `click` event triggers a user defined `mouseClicked()` function. We call these functions "custom actions" and your addon can access any of them through `this._customActions` object.
+
+The following addon snippet listens to the `click` event on a custom button element.
+```js
+function myAddon(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    let customButton = this.createButton('click me');
+    customButton.elt.addEventListener('click', this._customActions.myAddonButtonClicked);
+  };
+}
+```
+
+In a sketch that uses the above addon, a user can define the following:
+```js
+function setup(){
+  createCanvas(400, 400);
+}
+
+function myAddonButtonClicked(){
+  // This function will be run each time the button created by the addon is clicked
+}
+```
+
+Please note that in the above example, if the user does not define `function myAddonButtonClicked()` in their code, `this._customActions.myAddonButtonClicked` will return `undefined`. This means that if you are planning to call the custom action function directly in your code, you should include an `if` statement check to make sure that `this._customActions.myAddonButtonClicked` is defined.
+
+Overall, this custom actions approach supports accessing the custom action functions in both global mode and instance mode with the same code, simplifying your code from what it otherwise may need to be.
 
 ## Next steps
 
@@ -314,6 +341,19 @@ fn.myMethod = function(){
 ```
 
 **p5.js library filenames are also prefixed with p5, but the next word is lowercase** to distinguish them from classes. For example, p5.sound.js. You are encouraged to follow this format for naming your file.
+
+**In some cases, you will need to make sure your addon cleans up after itself after a p5.js sketch is removed** by the user calling `remove()`. This means adding relevant clean up code in the `lifecycles.remove` hook. In most circumstances, you don't need to do this with the main exception being cleaning up event handlers: if you are using event handlers (ie. calling `addEventListeners`), you will need to make sure those event handlers are also removed when a sketch is removed. p5.js provides a handy method to automatically remove any registered event handlers with and internal property `this._removeSignal`. When registering an event handler, include `this._removeSignal` as follow:
+```js
+function myAddon(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    // ... Define `target` ...
+    target.addEventListener('click', function() { }, {
+      signal: this._removeSignal
+    });
+  };
+}
+```
+With this you will not need to manually define a clean up actions for event handlers in `lifecycles.remove` and all event handlers associated with the `this._removeSignal` property as above will be automtically cleaned up on sketch removal.
 
 **Packaging**
 
