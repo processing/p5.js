@@ -306,4 +306,304 @@ visualSuite("WebGPU", function () {
       },
     );
   });
+
+  visualSuite('Typography', function () {
+    visualSuite('textFont', function () {
+      visualTest('with a font file in WebGPU', async function (p5, screenshot) {
+        await p5.createCanvas(100, 100, p5.WEBGPU);
+        const font = await p5.loadFont(
+          '/unit/assets/Inconsolata-Bold.ttf'
+        );
+        p5.textFont(font);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textSize(35);
+        p5.text('p5*js', -p5.width / 2, -p5.height / 2 + 10, p5.width);
+        await screenshot();
+      });
+    });
+
+    visualSuite('textWeight', function () {
+      visualTest('can control variable fonts from files in WebGPU', async function (p5, screenshot) {
+        await p5.createCanvas(100, 100, p5.WEBGPU);
+        const font = await p5.loadFont(
+          '/unit/assets/BricolageGrotesque-Variable.ttf'
+        );
+        for (let weight = 400; weight <= 800; weight += 100) {
+          p5.push();
+          p5.background(255);
+          p5.translate(-p5.width/2, -p5.height/2);
+          p5.textFont(font);
+          p5.textAlign(p5.LEFT, p5.TOP);
+          p5.textSize(35);
+          p5.textWeight(weight);
+          p5.text('p5*js', 0, 10, p5.width);
+          p5.pop();
+          await screenshot();
+        }
+      });
+    });
+
+    visualSuite('textAlign', function () {
+      visualSuite('webgpu mode', () => {
+        visualTest('all alignments with single word', async function (p5, screenshot) {
+          const alignments = [
+            { alignX: p5.LEFT, alignY: p5.TOP },
+            { alignX: p5.CENTER, alignY: p5.TOP },
+            { alignX: p5.RIGHT, alignY: p5.TOP },
+            { alignX: p5.LEFT, alignY: p5.CENTER },
+            { alignX: p5.CENTER, alignY: p5.CENTER },
+            { alignX: p5.RIGHT, alignY: p5.CENTER },
+            { alignX: p5.LEFT, alignY: p5.BOTTOM },
+            { alignX: p5.CENTER, alignY: p5.BOTTOM },
+            { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+          ];
+
+          await p5.createCanvas(300, 300, p5.WEBGPU);
+          p5.translate(-p5.width/2, -p5.height/2);
+          p5.textSize(60);
+          const font = await p5.loadFont(
+            '/unit/assets/Inconsolata-Bold.ttf'
+          );
+          p5.textFont(font);
+          for (const alignment of alignments) {
+            p5.background(255);
+            p5.textAlign(alignment.alignX, alignment.alignY);
+            const bb = p5.textBounds('Single Line', p5.width / 2, p5.height / 2);
+            p5.push();
+            p5.push()
+            p5.noFill();
+            p5.stroke('red');
+            p5.rect(bb.x, bb.y, bb.w, bb.h);
+            p5.pop()
+            p5.fill(0)
+            p5.text('Single Line', p5.width / 2, p5.height / 2);
+            p5.pop();
+            await screenshot();
+          }
+        });
+
+        visualTest('all alignments with single line', async function (p5, screenshot) {
+          const alignments = [
+            { alignX: p5.LEFT, alignY: p5.TOP },
+            { alignX: p5.CENTER, alignY: p5.TOP },
+            { alignX: p5.RIGHT, alignY: p5.TOP },
+            { alignX: p5.LEFT, alignY: p5.CENTER },
+            { alignX: p5.CENTER, alignY: p5.CENTER },
+            { alignX: p5.RIGHT, alignY: p5.CENTER },
+            { alignX: p5.LEFT, alignY: p5.BOTTOM },
+            { alignX: p5.CENTER, alignY: p5.BOTTOM },
+            { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+          ];
+
+          await p5.createCanvas(300, 300, p5.WEBGPU);
+          p5.translate(-p5.width/2, -p5.height/2);
+          p5.textSize(45);
+          const font = await p5.loadFont(
+            '/unit/assets/Inconsolata-Bold.ttf'
+          );
+          p5.textFont(font);
+          for (const alignment of alignments) {
+            p5.background(255);
+            p5.textAlign(alignment.alignX, alignment.alignY);
+            p5.text('Single Line', p5.width / 2, p5.height / 2);
+            const bb = p5.textBounds('Single Line', p5.width / 2, p5.height / 2);
+            p5.push();
+            p5.noFill();
+            p5.stroke('red');
+            p5.rect(bb.x, bb.y, bb.w, bb.h);
+            p5.pop();
+            await screenshot();
+          }
+        });
+
+        visualTest('all alignments with multi-lines and wrap word',
+          async function (p5, screenshot) {
+            const alignments = [
+              { alignX: p5.LEFT, alignY: p5.TOP },
+              { alignX: p5.CENTER, alignY: p5.TOP },
+              { alignX: p5.RIGHT, alignY: p5.TOP },
+              { alignX: p5.LEFT, alignY: p5.CENTER },
+              { alignX: p5.CENTER, alignY: p5.CENTER },
+              { alignX: p5.RIGHT, alignY: p5.CENTER },
+              { alignX: p5.LEFT, alignY: p5.BOTTOM },
+              { alignX: p5.CENTER, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+            ];
+
+            await p5.createCanvas(150, 100, p5.WEBGPU);
+            p5.translate(-p5.width/2, -p5.height/2);
+            p5.textSize(20);
+            p5.textWrap(p5.WORD);
+            const font = await p5.loadFont(
+              '/unit/assets/Inconsolata-Bold.ttf'
+            );
+            p5.textFont(font);
+
+            let xPos = 20;
+            let yPos = 20;
+            const boxWidth = 100;
+            const boxHeight = 60;
+
+            for (const alignment of alignments) {
+              p5.background(255);
+              p5.push();
+              p5.textAlign(alignment.alignX, alignment.alignY);
+
+              p5.noFill();
+              p5.strokeWeight(2);
+              p5.stroke(200);
+              p5.rect(xPos, yPos, boxWidth, boxHeight);
+
+              p5.fill(0);
+              p5.noStroke();
+              p5.text(
+                'A really long text that should wrap automatically as it reaches the end of the box',
+                xPos,
+                yPos,
+                boxWidth,
+                boxHeight
+              );
+              const bb = p5.textBounds(
+                'A really long text that should wrap automatically as it reaches the end of the box',
+                xPos,
+                yPos,
+                boxWidth,
+                boxHeight
+              );
+              p5.noFill();
+              p5.stroke('red');
+              p5.rect(bb.x, bb.y, bb.w, bb.h);
+              p5.pop();
+
+              await screenshot();
+            }
+          }
+        );
+
+        visualTest(
+          'all alignments with multi-lines and wrap char',
+          async function (p5, screenshot) {
+            const alignments = [
+              { alignX: p5.LEFT, alignY: p5.TOP },
+              { alignX: p5.CENTER, alignY: p5.TOP },
+              { alignX: p5.RIGHT, alignY: p5.TOP },
+              { alignX: p5.LEFT, alignY: p5.CENTER },
+              { alignX: p5.CENTER, alignY: p5.CENTER },
+              { alignX: p5.RIGHT, alignY: p5.CENTER },
+              { alignX: p5.LEFT, alignY: p5.BOTTOM },
+              { alignX: p5.CENTER, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+            ];
+
+            await p5.createCanvas(150, 100, p5.WEBGPU);
+            p5.translate(-p5.width/2, -p5.height/2);
+            p5.textSize(19);
+            p5.textWrap(p5.CHAR);
+            const font = await p5.loadFont(
+              '/unit/assets/Inconsolata-Bold.ttf'
+            );
+            p5.textFont(font);
+
+            let xPos = 20;
+            let yPos = 20;
+            const boxWidth = 100;
+            const boxHeight = 60;
+
+            for (const alignment of alignments) {
+              p5.background(255);
+              p5.push();
+              p5.textAlign(alignment.alignX, alignment.alignY);
+
+              p5.noFill();
+              p5.strokeWeight(2);
+              p5.stroke(200);
+              p5.rect(xPos, yPos, boxWidth, boxHeight);
+
+              p5.fill(0);
+              p5.noStroke();
+              p5.text(
+                'A really long text that should wrap automatically as it reaches the end of the box',
+                xPos,
+                yPos,
+                boxWidth,
+                boxHeight
+              );
+              const bb = p5.textBounds(
+                'A really long text that should wrap automatically as it reaches the end of the box',
+                xPos,
+                yPos,
+                boxWidth,
+                boxHeight
+              );
+              p5.noFill();
+              p5.stroke('red');
+              p5.rect(bb.x, bb.y, bb.w, bb.h);
+              p5.pop();
+
+              await screenshot();
+            }
+          }
+        );
+
+        visualTest(
+          'all alignments with multi-line manual text',
+          async function (p5, screenshot) {
+            const alignments = [
+              { alignX: p5.LEFT, alignY: p5.TOP },
+              { alignX: p5.CENTER, alignY: p5.TOP },
+              { alignX: p5.RIGHT, alignY: p5.TOP },
+              { alignX: p5.LEFT, alignY: p5.CENTER },
+              { alignX: p5.CENTER, alignY: p5.CENTER },
+              { alignX: p5.RIGHT, alignY: p5.CENTER },
+              { alignX: p5.LEFT, alignY: p5.BOTTOM },
+              { alignX: p5.CENTER, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+            ];
+
+            await p5.createCanvas(150, 100, p5.WEBGPU);
+            p5.translate(-p5.width/2, -p5.height/2);
+            p5.textSize(20);
+
+            const font = await p5.loadFont(
+              '/unit/assets/Inconsolata-Bold.ttf'
+            );
+            p5.textFont(font);
+
+            let xPos = 20;
+            let yPos = 20;
+            const boxWidth = 100;
+            const boxHeight = 60;
+
+            for (const alignment of alignments) {
+              p5.background(255);
+              p5.push();
+              p5.textAlign(alignment.alignX, alignment.alignY);
+
+              p5.noFill();
+              p5.stroke(200);
+              p5.strokeWeight(2);
+              p5.rect(xPos, yPos, boxWidth, boxHeight);
+
+              p5.fill(0);
+              p5.noStroke();
+              p5.text('Line 1\nLine 2\nLine 3', xPos, yPos, boxWidth, boxHeight);
+              const bb = p5.textBounds(
+                'Line 1\nLine 2\nLine 3',
+                xPos,
+                yPos,
+                boxWidth,
+                boxHeight
+              );
+              p5.noFill();
+              p5.stroke('red');
+              p5.rect(bb.x, bb.y, bb.w, bb.h);
+              p5.pop();
+
+              await screenshot();
+            }
+          }
+        );
+      });
+    });
+  });
 });

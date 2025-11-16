@@ -25,17 +25,6 @@ function text(p5, fn) {
     }
   };
 
-  // Text/Typography (see src/type/textCore.js)
-  /*
-  Renderer3D.prototype.textWidth = function(s) {
-    if (this._isOpenType()) {
-      return this.states.textFont.font._textWidth(s, this.states.textSize);
-    }
-
-    return 0; // TODO: error
-  };
-  */
-
   // rendering constants
 
   // the number of rows/columns dividing each glyph
@@ -729,7 +718,6 @@ function text(p5, fn) {
     this.scale(scale, scale, 1);
 
     // initialize the font shader
-    const gl = this.GL;
     const initializeShader = !this._defaultFontShader;
     const sh = this._getFontShader();
     sh.init();
@@ -745,7 +733,7 @@ function text(p5, fn) {
 
     const curFillColor = this.states.fillSet
       ? this.states.curFillColor
-      : [0, 0, 0, 255];
+      : [0, 0, 0, 1];
 
     this._setGlobalUniforms(sh);
     this._applyColorBlend(curFillColor);
@@ -775,14 +763,9 @@ function text(p5, fn) {
     for (const buff of this.buffers.text) {
       buff._prepareBuffer(g, sh);
     }
-    this._bindBuffer(
-      this.geometryBufferCache.cache.glyph.indexBuffer,
-      gl.ELEMENT_ARRAY_BUFFER
-    );
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
     this.glyphDataCache = this.glyphDataCache || new Set();
 
@@ -834,7 +817,7 @@ function text(p5, fn) {
           sh.bindTextures(); // afterwards, only textures need updating
 
           // draw it
-          gl.drawElements(gl.TRIANGLES, 6, this.GL.UNSIGNED_SHORT, 0);
+          this._drawBuffers(g, { mode: constants.TRIANGLES, count: 1 });
         }
       }
     } finally {
@@ -843,7 +826,6 @@ function text(p5, fn) {
 
       this.states.setValue('strokeColor', doStroke);
       this.states.setValue('drawMode', drawMode);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
       this.pop();
     }

@@ -9,6 +9,7 @@ import * as constants from '../core/constants';
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
+import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import {Graphics} from "../core/p5.Graphics";
 import {Element} from "../dom/p5.Element";
 
@@ -50,17 +51,10 @@ class RendererWebGPU extends Renderer3D {
 
   async _initContext() {
     this.adapter = await navigator.gpu?.requestAdapter(this._webgpuAttributes);
-    // console.log('Adapter:');
-    // console.log(this.adapter);
-    if (this.adapter) {
-      console.log([...this.adapter.features]);
-    }
     this.device = await this.adapter?.requestDevice({
       // Todo: check support
       requiredFeatures: ['depth32float-stencil8']
     });
-    // console.log('Device:');
-    // console.log(this.device);
     if (!this.device) {
       throw new Error('Your browser does not support WebGPU.');
     }
@@ -71,6 +65,7 @@ class RendererWebGPU extends Renderer3D {
       device: this.device,
       format: this.presentationFormat,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+      alphaMode: 'premultiplied',
     });
 
     // TODO disablable stencil
@@ -203,6 +198,47 @@ class RendererWebGPU extends Renderer3D {
     this.queue.submit([commandEncoder.finish()]);
   }
 
+  /**
+   * Resets all depth information so that nothing previously drawn will
+   * occlude anything subsequently drawn.
+   */
+  clearDepth(depth = 1) {
+    const commandEncoder = this.device.createCommandEncoder();
+
+    // Use framebuffer texture if active, otherwise use canvas texture
+    const activeFramebuffer = this.activeFramebuffer();
+
+    // Use framebuffer depth texture if active, otherwise use canvas depth texture
+    const depthTexture = activeFramebuffer ?
+      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
+      this.depthTexture;
+    const depthTextureView = depthTexture?.createView();
+
+    if (!depthTextureView) {
+      // No depth buffer to clear
+      return;
+    }
+
+    const depthAttachment = {
+      view: depthTextureView,
+      depthClearValue: depth,
+      depthLoadOp: 'clear',
+      depthStoreOp: 'store',
+      stencilLoadOp: 'load',
+      stencilStoreOp: 'store',
+    };
+
+    const renderPassDescriptor = {
+      colorAttachments: [], // No color attachments, we're only clearing depth
+      depthStencilAttachment: depthAttachment,
+    };
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.end();
+
+    this.queue.submit([commandEncoder.finish()]);
+  }
+
   _prepareBuffer(renderBuffer, geometry, shader) {
     const attr = shader.attributes[renderBuffer.attr];
     if (!attr) return;
@@ -319,12 +355,18 @@ class RendererWebGPU extends Renderer3D {
       this._getWebGPUDepthFormat(activeFramebuffer) :
       this.depthFormat;
 
+    const drawTarget = this.drawTarget();
+    const clipping = this._clipping;
+    const clipApplied = drawTarget._isClipApplied;
+
     return {
       topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
       blendMode: this.states.curBlendMode,
       sampleCount,
       format,
       depthFormat,
+      clipping,
+      clipApplied,
     }
   }
 
@@ -335,8 +377,8 @@ class RendererWebGPU extends Renderer3D {
     shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
 
     shader._pipelineCache = new Map();
-    shader.getPipeline = ({ topology, blendMode, sampleCount, format, depthFormat }) => {
-      const key = `${topology}_${blendMode}_${sampleCount}_${format}_${depthFormat}`;
+    shader.getPipeline = ({ topology, blendMode, sampleCount, format, depthFormat, clipping, clipApplied }) => {
+      const key = `${topology}_${blendMode}_${sampleCount}_${format}_${depthFormat}_${clipping}_${clipApplied}`;
       if (!shader._pipelineCache.has(key)) {
         const pipeline = device.createRenderPipeline({
           layout: shader._pipelineLayout,
@@ -358,21 +400,21 @@ class RendererWebGPU extends Renderer3D {
           depthStencil: {
             format: depthFormat,
             depthWriteEnabled: true,
-            depthCompare: 'less',
+            depthCompare: 'less-equal',
             stencilFront: {
-              compare: 'always',
+              compare: clipping ? 'always' : (clipApplied ? 'equal' : 'always'),
               failOp: 'keep',
               depthFailOp: 'keep',
-              passOp: 'keep',
+              passOp: clipping ? 'replace' : 'keep',
             },
             stencilBack: {
-              compare: 'always',
+              compare: clipping ? 'always' : (clipApplied ? 'equal' : 'always'),
               failOp: 'keep',
               depthFailOp: 'keep',
-              passOp: 'keep',
+              passOp: clipping ? 'replace' : 'keep',
             },
-            stencilReadMask: 0xFFFFFFFF, // TODO
-            stencilWriteMask: 0xFFFFFFFF,
+            stencilReadMask: clipApplied ? 0xFFFFFFFF : 0x00000000,
+            stencilWriteMask: clipping ? 0xFFFFFFFF : 0x00000000,
             stencilLoadOp: "load",
             stencilStoreOp: "store",
           },
@@ -675,6 +717,12 @@ class RendererWebGPU extends Renderer3D {
   zClipRange() {
     return [0, 1];
   }
+  defaultNearScale() {
+    return 0.01;
+  }
+  defaultFarScale() {
+    return 100;
+  }
 
   _resetBuffersBeforeDraw() {
     const commandEncoder = this.device.createCommandEncoder();
@@ -753,11 +801,9 @@ class RendererWebGPU extends Renderer3D {
     passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
     // Bind vertex buffers
     for (const buffer of this._getVertexBuffers(currentShader)) {
-      passEncoder.setVertexBuffer(
-        currentShader.attributes[buffer.attr].location,
-        buffers[buffer.dst],
-        0
-      );
+      const location = currentShader.attributes[buffer.attr].location;
+      const gpuBuffer = buffers[buffer.dst];
+      passEncoder.setVertexBuffer(location, gpuBuffer, 0);
     }
     // Bind uniforms
     this._packUniforms(this._curShader);
@@ -810,6 +856,13 @@ class RendererWebGPU extends Renderer3D {
       } else {
         passEncoder.draw(geometry.vertices.length, count, 0, 0);
       }
+    } else if (currentShader.shaderType === "text") {
+      if (!buffers.indexBuffer) {
+        throw new Error("Text geometry must have an index buffer");
+      }
+      const indexFormat = buffers.indexFormat || "uint16";
+      passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
+      passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
     }
 
     if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
@@ -837,11 +890,34 @@ class RendererWebGPU extends Renderer3D {
     for (const name in shader.uniforms) {
       const uniform = shader.uniforms[name];
       if (uniform.isSampler) continue;
-      if (uniform.type === 'u32') {
-        shader._uniformDataView.setUint32(uniform.offset, uniform._cachedData, true);
+
+      if (uniform.baseType === 'u32') {
+        if (uniform.size === 4) {
+          // Single u32
+          shader._uniformDataView.setUint32(uniform.offset, uniform._cachedData, true);
+        } else {
+          // Vector of u32s
+          const data = uniform._cachedData;
+          for (let i = 0; i < data.length; i++) {
+            shader._uniformDataView.setUint32(uniform.offset + i * 4, data[i], true);
+          }
+        }
+      } else if (uniform.baseType === 'i32') {
+        if (uniform.size === 4) {
+          // Single i32
+          shader._uniformDataView.setInt32(uniform.offset, uniform._cachedData, true);
+        } else {
+          // Vector of i32s
+          const data = uniform._cachedData;
+          for (let i = 0; i < data.length; i++) {
+            shader._uniformDataView.setInt32(uniform.offset + i * 4, data[i], true);
+          }
+        }
       } else if (uniform.size === 4) {
+        // Single float value
         shader._uniformData.set([uniform._cachedData], uniform.offset / 4);
       } else {
+        // Float array (including vec2<f32>, vec3<f32>, vec4<f32>, mat4x4<f32>)
         shader._uniformData.set(uniform._cachedData, uniform.offset / 4);
       }
     }
@@ -866,13 +942,21 @@ class RendererWebGPU extends Renderer3D {
 
     const baseAlignAndSize = (type) => {
       if (['f32', 'i32', 'u32', 'bool'].includes(type)) {
-        return { align: 4, size: 4, items: 1 };
+        return { align: 4, size: 4, items: 1, baseType: type };
       }
       if (/^vec[2-4](<f32>|f)$/.test(type)) {
         const n = parseInt(type.match(/^vec([2-4])/)[1]);
         const size = 4 * n;
         const align = n === 2 ? 8 : 16;
-        return { align, size, items: n };
+        return { align, size, items: n, baseType: 'f32' };
+      }
+      if (/^vec[2-4]<(i32|u32)>$/.test(type)) {
+        const n = parseInt(type.match(/^vec([2-4])/)[1]);
+        const match = type.match(/^vec[2-4]<(i32|u32)>$/);
+        const baseType = match[1]; // 'i32' or 'u32'
+        const size = 4 * n;
+        const align = n === 2 ? 8 : 16;
+        return { align, size, items: n, baseType };
       }
       if (/^mat[2-4](?:x[2-4])?(<f32>|f)$/.test(type)) {
         if (type[4] === 'x' && type[3] !== type[5]) {
@@ -892,7 +976,7 @@ class RendererWebGPU extends Renderer3D {
             0
           ]
           : undefined;
-        return { align, size, pack, items: dim * dim };
+        return { align, size, pack, items: dim * dim, baseType: 'f32' };
       }
       if (/^array<.+>$/.test(type)) {
         const [, subtype, rawLength] = type.match(/^array<(.+),\s*(\d+)>/);
@@ -901,7 +985,8 @@ class RendererWebGPU extends Renderer3D {
           align: elemAlign,
           size: elemSize,
           items: elemItems,
-          pack: elemPack = (data) => [...data]
+          pack: elemPack = (data) => [...data],
+          baseType: elemBaseType
         } = baseAlignAndSize(subtype);
         const stride = Math.ceil(elemSize / elemAlign) * elemAlign;
         const pack = (data) => {
@@ -920,6 +1005,7 @@ class RendererWebGPU extends Renderer3D {
           size: stride * length,
           items: elemItems * length,
           pack,
+          baseType: elemBaseType
         };
       }
       throw new Error(`Unknown type in WGSL struct: ${type}`);
@@ -927,7 +1013,7 @@ class RendererWebGPU extends Renderer3D {
 
     while ((match = elementRegex.exec(structBody)) !== null) {
       const [_, location, name, type] = match;
-      const { size, align, pack } = baseAlignAndSize(type);
+      const { size, align, pack, baseType } = baseAlignAndSize(type);
       offset = Math.ceil(offset / align) * align;
       const offsetEnd = offset + size;
       elements[name] = {
@@ -938,7 +1024,8 @@ class RendererWebGPU extends Renderer3D {
         size,
         offset,
         offsetEnd,
-        pack
+        pack,
+        baseType
       };
       index++;
       offset = offsetEnd;
@@ -1182,6 +1269,17 @@ class RendererWebGPU extends Renderer3D {
       );
     }
     return this._defaultLineShader;
+  }
+
+  _getFontShader() {
+    if (!this._defaultFontShader) {
+      this._defaultFontShader = new Shader(
+        this,
+        fontVertexShader,
+        fontFragmentShader
+      );
+    }
+    return this._defaultFontShader;
   }
 
   //////////////////////////////////////////////

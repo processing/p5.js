@@ -31,8 +31,6 @@ import fontVert from "./shaders/font.vert";
 import fontFrag from "./shaders/font.frag";
 import lineVert from "./shaders/line.vert";
 import lineFrag from "./shaders/line.frag";
-import pointVert from "./shaders/point.vert";
-import pointFrag from "./shaders/point.frag";
 import imageLightVert from "./shaders/imageLight.vert";
 import imageLightDiffusedFrag from "./shaders/imageLightDiffused.frag";
 import imageLightSpecularFrag from "./shaders/imageLightSpecular.frag";
@@ -63,8 +61,6 @@ const defaultShaders = {
   fontFrag,
   lineVert: lineDefs + lineVert,
   lineFrag: lineDefs + lineFrag,
-  pointVert,
-  pointFrag,
   imageLightVert,
   imageLightDiffusedFrag,
   imageLightSpecularFrag,
@@ -142,31 +138,6 @@ class RendererGL extends Renderer3D {
   //////////////////////////////////////////////
   // Rendering
   //////////////////////////////////////////////
-
-  /*_drawPoints(vertices, vertexBuffer) {
-    const gl = this.GL;
-    const pointShader = this._getPointShader();
-    pointShader.bindShader();
-    this._setGlobalUniforms(pointShader);
-    this._setPointUniforms(pointShader);
-    pointShader.bindTextures();
-
-    this._bindBuffer(
-      vertexBuffer,
-      gl.ARRAY_BUFFER,
-      this._vToNArray(vertices),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
-
-    this._applyColorBlend(this.states.curStrokeColor);
-
-    gl.drawArrays(gl.Points, 0, vertices.length);
-
-    pointShader.unbindShader();
-  }*/
 
   /**
    * @private sets blending in gl context to curBlendMode
@@ -302,6 +273,9 @@ class RendererGL extends Renderer3D {
           );
         }
        }
+    } else if (this._curShader.shaderType === 'text') {
+      // Text rendering uses a fixed quad geometry with 6 indices
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     } else if (glBuffers.indexBuffer) {
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
@@ -457,10 +431,9 @@ class RendererGL extends Renderer3D {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      // Make sure all images are loaded into the canvas premultiplied so that
-      // they match the way we render colors. This will make framebuffer textures
-      // be encoded the same way as textures from everything else.
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      // Make sure all images are loaded into the canvas non-premultiplied so that
+      // they can be handled consistently in shaders.
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       this._viewport = this.drawingContext.getParameter(
         this.drawingContext.VIEWPORT
       );
@@ -617,6 +590,12 @@ class RendererGL extends Renderer3D {
 
   zClipRange() {
     return [-1, 1];
+  }
+  defaultNearScale() {
+    return 0.1;
+  }
+  defaultFarScale() {
+    return 10;
   }
 
   viewport(w, h) {
@@ -833,34 +812,6 @@ class RendererGL extends Renderer3D {
     }
 
     return this._defaultColorShader;
-  }
-
-  _getPointShader() {
-    if (!this._defaultPointShader) {
-      this._defaultPointShader = new Shader(
-        this,
-        this._webGL2CompatibilityPrefix("vert", "mediump") +
-          defaultShaders.pointVert,
-        this._webGL2CompatibilityPrefix("frag", "mediump") +
-          defaultShaders.pointFrag,
-        {
-          vertex: {
-            "void beforeVertex": "() {}",
-            "vec3 getLocalPosition": "(vec3 position) { return position; }",
-            "vec3 getWorldPosition": "(vec3 position) { return position; }",
-            "float getPointSize": "(float size) { return size; }",
-            "void afterVertex": "() {}",
-          },
-          fragment: {
-            "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
-            "bool shouldDiscard": "(bool outside) { return outside; }",
-            "void afterFragment": "() {}",
-          },
-        }
-      );
-    }
-    return this._defaultPointShader;
   }
 
   _getLineShader() {
@@ -1341,7 +1292,6 @@ class RendererGL extends Renderer3D {
       hasTransparency ||
       this.states.userFillShader ||
       this.states.userStrokeShader ||
-      this.states.userPointShader ||
       isTexture ||
       this.states.curBlendMode !== constants.BLEND ||
       colors[colors.length - 1] < 1.0 ||

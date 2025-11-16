@@ -13,6 +13,7 @@ import { Color } from "../color/p5.Color";
 import { Element } from "../dom/p5.Element";
 import { Framebuffer } from "../webgl/p5.Framebuffer";
 import { DataArray } from "../webgl/p5.DataArray";
+import { textCoreConstants } from "../type/textCore";
 import { RenderBuffer } from "../webgl/p5.RenderBuffer";
 import { Image } from "../image/p5.Image";
 import { Texture } from "../webgl/p5.Texture";
@@ -1643,17 +1644,6 @@ export class Renderer3D extends Renderer {
     }
   }
 
-  _setPointUniforms(pointShader) {
-    // set the uniform values
-    pointShader.setUniform("uMaterialColor", this.states.curStrokeColor);
-    // @todo is there an instance where this isn't stroke weight?
-    // should be they be same var?
-    pointShader.setUniform(
-      "uPointSize",
-      this.states.strokeWeight * this._pixelDensity
-    );
-  }
-
   /**
    * @private
    * Note: DO NOT CALL THIS while in the middle of binding another texture,
@@ -1730,5 +1720,101 @@ export class Renderer3D extends Renderer {
    */
   _vToNArray(arr) {
     return arr.flatMap((item) => [item.x, item.y, item.z]);
+  }
+
+  ///////////////////////////////
+  //// TEXT SUPPORT METHODS
+  //////////////////////////////
+
+  textCanvas() {
+    if (!this._textCanvas) {
+      this._textCanvas = document.createElement('canvas');
+      this._textCanvas.width = 1;
+      this._textCanvas.height = 1;
+      this._textCanvas.style.display = 'none';
+      // Has to be added to the DOM for measureText to work properly!
+      this.canvas.parentElement.insertBefore(this._textCanvas, this.canvas);
+    }
+    return this._textCanvas;
+  }
+
+  textDrawingContext() {
+    if (!this._textDrawingContext) {
+      const textCanvas = this.textCanvas();
+      this._textDrawingContext = textCanvas.getContext('2d');
+    }
+    return this._textDrawingContext;
+  }
+
+  _positionLines(x, y, width, height, lines) {
+    let { textLeading, textAlign } = this.states;
+    const widths = lines.map(line => this._fontWidthSingle(line));
+    let adjustedX, lineData = new Array(lines.length);
+    let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
+    let adjustedH = typeof height === 'undefined' ? 0 : height;
+
+    for (let i = 0; i < lines.length; i++) {
+      switch (textAlign) {
+        case textCoreConstants.START:
+          throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
+        case constants.LEFT:
+          adjustedX = x;
+          break;
+        case constants.CENTER:
+          adjustedX = x +
+            (adjustedW - widths[i]) / 2 -
+            adjustedW / 2 +
+            (width || 0) / 2;
+          break;
+        case constants.RIGHT:
+          adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
+          break;
+        case textCoreConstants.END:
+          throw new Error('textBounds: END not yet supported for textAlign');
+        default:
+          adjustedX = x;
+          break;
+      }
+      lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
+    }
+
+    return this._yAlignOffset(lineData, adjustedH);
+  }
+
+  _yAlignOffset(dataArr, height) {
+    if (typeof height === 'undefined') {
+      throw Error('_yAlignOffset: height is required');
+    }
+
+    let { textLeading, textBaseline, textSize, textFont } = this.states;
+    let yOff = 0, numLines = dataArr.length;
+    let totalHeight = textSize * numLines +
+      ((textLeading - textSize) * (numLines - 1));
+    switch (textBaseline) { // drawingContext ?
+      case constants.TOP:
+        yOff = textSize;
+        break;
+      case constants.BASELINE:
+        break;
+      case textCoreConstants._CTX_MIDDLE:
+        yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
+        break;
+      case constants.BOTTOM:
+        yOff = -(totalHeight - textSize) + (height || 0);
+        break;
+      default:
+        console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
+        break;
+    }
+    yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
+    dataArr.forEach(ele => ele.y += yOff);
+    return dataArr;
+  }
+
+  remove() {
+    if (this._textCanvas) {
+      this._textCanvas.parentElement.removeChild(this._textCanvas);
+    }
+    super.remove();
   }
 }

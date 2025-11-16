@@ -1064,6 +1064,9 @@ async function create(pInst, name, path, descriptors, rawFont) {
   // ensure the font is ready to be rendered
   await document.fonts.ready;
 
+  // Await loading of the font via CSS in case it also loads other resources
+  await document.fonts.load(`1em "${name}"`);
+
   // return a new p5.Font
   return new Font(pInst, face, name, path, rawFont);
 }

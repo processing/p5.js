@@ -238,8 +238,8 @@ class Camera {
     let A, B;
     if (range[0] === 0) {
       // WebGPU clip space, z in [0, 1]
-      A = far * nf;
-      B = far * near * nf;
+      A = far / (near - far);
+      B = (far * near) / (near - far);
     } else {
       // WebGL clip space, z in [-1, 1]
       A = (far + near) * nf;
@@ -1792,8 +1792,8 @@ class Camera {
     this.defaultCenterX = 0;
     this.defaultCenterY = 0;
     this.defaultCenterZ = 0;
-    this.defaultCameraNear = this.defaultEyeZ * 0.1;
-    this.defaultCameraFar = this.defaultEyeZ * 10;
+    this.defaultCameraNear = this.defaultEyeZ * this._renderer.defaultNearScale();
+    this.defaultCameraFar = this.defaultEyeZ * this._renderer.defaultFarScale();
   }
 
   //detect if user didn't set the camera

@@ -27,9 +27,13 @@
       let sh;
       let ssh;
       let tex;
+      let font;
 
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
+        font = await p.loadFont(
+          'font/PlayfairDisplay.ttf'
+        );
         fbo = p.createFramebuffer();
 
         tex = p.createImage(100, 100);
@@ -72,6 +76,22 @@
       };
 
       p.draw = function () {
+        p.clear();
+        p.orbitControl();
+        p.push();
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textFont(font);
+        p.textSize(85)
+        p.fill('red')
+        p.noStroke()
+        p.rect(0, 0, 100, 100);
+        p.fill(0);
+        p.push()
+        p.rotate(p.millis() * 0.001)
+        p.text('Hello!', 0, 0);
+        p.pop()
+        p.pop();
+        return;
         p.orbitControl();
         const t = p.millis() * 0.002;
         p.background(200);

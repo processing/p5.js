@@ -5,6 +5,8 @@
 
 import { Renderer } from '../core/p5.Renderer';
 
+export const DefaultFill = '#000000';
+
 export const textCoreConstants = {
   IDEOGRAPHIC: 'ideographic',
   RIGHT_TO_LEFT: 'rtl',
@@ -19,7 +21,6 @@ export const textCoreConstants = {
 
 function textCore(p5, fn) {
   const LeadingScale = 1.275;
-  const DefaultFill = '#000000';
   const LinebreakRe = /\r?\n/g;
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
@@ -2525,208 +2526,6 @@ function textCore(p5, fn) {
 
     return this._pInst;
   };
-
-  if (p5.Renderer2D) {
-    p5.Renderer2D.prototype.textCanvas = function () {
-      return this.canvas;
-    };
-    p5.Renderer2D.prototype.textDrawingContext = function () {
-      return this.drawingContext;
-    };
-
-    p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY) {
-      let states = this.states;
-      let context = this.textDrawingContext();
-
-      if (y < minY || y >= maxY) {
-        return; // don't render lines beyond minY/maxY
-      }
-
-      this.push();
-
-      // no stroke unless specified by user
-      if (states.strokeColor && states.strokeSet) {
-        context.strokeText(text, x, y);
-      }
-
-      if (!this._clipping && states.fillColor) {
-
-        // if fill hasn't been set by user, use default text fill
-        if (!states.fillSet) {
-          this._setFill(DefaultFill);
-        }
-        context.fillText(text, x, y);
-      }
-
-      this.pop();
-    };
-
-    /*
-      Position the lines of text based on their textAlign/textBaseline properties
-    */
-    p5.Renderer2D.prototype._positionLines = function (
-      x, y,
-      width, height,
-      lines
-    ) {
-
-      let { textLeading, textAlign } = this.states;
-      let adjustedX, lineData = new Array(lines.length);
-      let adjustedW = typeof width === 'undefined' ? 0 : width;
-      let adjustedH = typeof height === 'undefined' ? 0 : height;
-
-      for (let i = 0; i < lines.length; i++) {
-        switch (textAlign) {
-          case textCoreConstants.START:
-            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
-          case fn.LEFT:
-            adjustedX = x;
-            break;
-          case fn.CENTER:
-            adjustedX = x + adjustedW / 2;
-            break;
-          case fn.RIGHT:
-            adjustedX = x + adjustedW;
-            break;
-          case textCoreConstants.END:
-            throw new Error('textBounds: END not yet supported for textAlign');
-        }
-        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
-      }
-
-      return this._yAlignOffset(lineData, adjustedH);
-    };
-
-    /*
-      Get the y-offset for text given the height, leading, line-count and textBaseline property
-    */
-    p5.Renderer2D.prototype._yAlignOffset = function (dataArr, height) {
-
-      if (typeof height === 'undefined') {
-        throw Error('_yAlignOffset: height is required');
-      }
-
-      let { textLeading, textBaseline } = this.states;
-      let yOff = 0, numLines = dataArr.length;
-      let ydiff = height - (textLeading * (numLines - 1));
-      switch (textBaseline) { // drawingContext ?
-        case fn.TOP:
-          break; // ??
-        case fn.BASELINE:
-          break;
-        case textCoreConstants._CTX_MIDDLE:
-          yOff = ydiff / 2;
-          break;
-        case fn.BOTTOM:
-          yOff = ydiff;
-          break;
-        case textCoreConstants.IDEOGRAPHIC:
-          console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
-          break;
-        case textCoreConstants.HANGING:
-          console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
-          break;
-      }
-      dataArr.forEach(ele => ele.y += yOff);
-      return dataArr;
-    };
-  }
-
-  if (p5.RendererGL) {
-    p5.RendererGL.prototype.textCanvas = function() {
-      if (!this._textCanvas) {
-        this._textCanvas = document.createElement('canvas');
-        this._textCanvas.width = 1;
-        this._textCanvas.height = 1;
-        this._textCanvas.style.display = 'none';
-        // Has to be added to the DOM for measureText to work properly!
-        this.canvas.parentElement.insertBefore(this._textCanvas, this.canvas);
-      }
-      return this._textCanvas;
-    };
-    p5.RendererGL.prototype.textDrawingContext = function() {
-      if (!this._textDrawingContext) {
-        const textCanvas = this.textCanvas();
-        this._textDrawingContext = textCanvas.getContext('2d');
-      }
-      return this._textDrawingContext;
-    };
-    const oldRemove = p5.RendererGL.prototype.remove;
-    p5.RendererGL.prototype.remove = function() {
-      if (this._textCanvas) {
-        this._textCanvas.parentElement.removeChild(this._textCanvas);
-      }
-      oldRemove.call(this);
-    };
-
-    p5.RendererGL.prototype._positionLines = function (
-      x, y,
-      width, height,
-      lines
-    ) {
-
-      let { textLeading, textAlign } = this.states;
-      const widths = lines.map(line => this._fontWidthSingle(line));
-      let adjustedX, lineData = new Array(lines.length);
-      let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
-      let adjustedH = typeof height === 'undefined' ? 0 : height;
-
-      for (let i = 0; i < lines.length; i++) {
-        switch (textAlign) {
-          case textCoreConstants.START:
-            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
-          case fn.LEFT:
-            adjustedX = x;
-            break;
-          case fn.CENTER:
-            adjustedX = x +
-              (adjustedW - widths[i]) / 2 -
-              adjustedW / 2 +
-              (width || 0) / 2;
-            break;
-          case fn.RIGHT:
-            adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
-            break;
-          case textCoreConstants.END:
-            throw new Error('textBounds: END not yet supported for textAlign');
-        }
-        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
-      }
-
-      return this._yAlignOffset(lineData, adjustedH);
-    };
-
-    p5.RendererGL.prototype._yAlignOffset = function (dataArr, height) {
-
-      if (typeof height === 'undefined') {
-        throw Error('_yAlignOffset: height is required');
-      }
-
-      let { textLeading, textBaseline, textSize, textFont } = this.states;
-      let yOff = 0, numLines = dataArr.length;
-      let totalHeight = textSize * numLines +
-        ((textLeading - textSize) * (numLines - 1));
-      switch (textBaseline) { // drawingContext ?
-        case fn.TOP:
-          yOff = textSize;
-          break;
-        case fn.BASELINE:
-          break;
-        case textCoreConstants._CTX_MIDDLE:
-          yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
-          break;
-        case fn.BOTTOM:
-          yOff = -(totalHeight - textSize) + (height || 0);
-          break;
-        default:
-          console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
-          break;
-      }
-      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
-      dataArr.forEach(ele => ele.y += yOff);
-      return dataArr;
-    };
-  }
 }
 
 export default textCore;
