@@ -1725,7 +1725,7 @@ function primitives3D(p5, fn){
 
       this.states.setValue('uModelMatrix', mult);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1857,7 +1857,7 @@ function primitives3D(p5, fn){
       this.states.uModelMatrix.translate([x, y, 0]);
       this.states.uModelMatrix.scale(width, height, 1);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1918,7 +1918,7 @@ function primitives3D(p5, fn){
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
-        this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+        this.model(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
         this.states.setValue('uModelMatrix', uModelMatrix);
       }
@@ -1966,7 +1966,7 @@ function primitives3D(p5, fn){
       const prevOrder = this.bezierOrder();
       this.bezierOrder(2);
       this.beginShape();
-      const addUVs = (x, y) => [x, y, (x - x1)/width, (y - y1)/height];
+      const addUVs = (x, y) => [x, y, 0, (x - x1)/width, (y - y1)/height];
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
         this.bezierVertex(...addUVs(x2, y1));
@@ -2066,7 +2066,7 @@ function primitives3D(p5, fn){
       quadGeom.gid = gid;
       this.geometryBufferCache.ensureCached(quadGeom);
     }
-    this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+    this.model(this.geometryBufferCache.getGeometryByID(gid));
     return this;
   };
 

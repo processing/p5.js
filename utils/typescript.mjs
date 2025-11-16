@@ -36,7 +36,27 @@ allRawData.forEach(entry => {
 
 // Process strands functions to extract p5 methods
 function processStrandsFunctions() {
-  const strandsMethods = [];
+  const strandsMethods = [
+    {
+      name: 'instanceID',
+      overloads: [{
+        params: [],
+        return: {
+          type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+        }
+      }],
+      description: `Returns the ID when drawing many instances`,
+      static: false
+    },
+    {
+      name: 'discard',
+      overloads: [{
+        params: [],
+      }],
+      description: `Discards the current pixel`,
+      static: false
+    },
+  ];
 
   // Add ALL GLSL builtin functions (both isp5Function: true and false)
   for (const [functionName, overloads] of Object.entries(builtInGLSLFunctions)) {
@@ -61,7 +81,7 @@ function processStrandsFunctions() {
   }
 
   // Add uniform functions: uniformFloat, uniformVec2, etc.
-  const uniformMethods = [];
+  const typeMethods = [];
   for (const type in DataType) {
     if (type === 'defer') {
       continue;
@@ -69,6 +89,7 @@ function processStrandsFunctions() {
 
     const typeInfo = DataType[type];
     let pascalTypeName;
+    const typeAliases = [];
 
     if (/^[ib]vec/.test(typeInfo.fnName)) {
       pascalTypeName = typeInfo.fnName
@@ -76,47 +97,47 @@ function processStrandsFunctions() {
         + typeInfo.fnName
         .slice(2)
         .toLowerCase();
+      typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
     } else {
       pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
-        + typeInfo.fnName.slice(1).toLowerCase();
+        + typeInfo.fnName.slice(1);
+      if (pascalTypeName === 'Sampler2D') {
+        typeAliases.push('Texture')
+      } else if (/^vec/.test(typeInfo.fnName)) {
+        typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
+      }
     }
 
-    const uniformMethodName = `uniform${pascalTypeName}`;
-    const uniformMethod = {
-      name: uniformMethodName,
-      overloads: [{
-        params: [
-          {
-            name: 'name',
-            type: { type: 'NameExpression', name: 'String' },
-            optional: false
-          },
-          {
-            name: 'defaultValue',
-            type: { type: 'NameExpression', name: 'any' },
-            optional: true
+    typeMethods.push(...[pascalTypeName, ...typeAliases].flatMap((typeName) => [
+      {
+        name: `uniform${typeName}`,
+        overloads: [{
+          params: [
+            {
+              name: 'defaultValue',
+              type: { type: 'NameExpression', name: 'any' },
+              optional: true
+            }
+          ],
+          return: {
+            type: { type: 'NameExpression', name: 'any' }
           }
-        ],
-        return: {
-          type: { type: 'NameExpression', name: 'any' }
-        }
-      }],
-      description: `Create a ${pascalTypeName} uniform variable`,
-      static: false
-    };
-
-    uniformMethods.push(uniformMethod);
-
-    // Add Vector aliases for Vec types
-    if (pascalTypeName.startsWith('Vec')) {
-      const vectorMethodName = `uniform${pascalTypeName.replace('Vec', 'Vector')}`;
-      const vectorMethod = {
-        ...uniformMethod,
-        name: vectorMethodName,
-        description: `Create a ${pascalTypeName.replace('Vec', 'Vector')} uniform variable`
-      };
-      uniformMethods.push(vectorMethod);
-    }
+        }],
+        description: `Create a ${pascalTypeName} uniform variable`,
+        static: false
+      },
+      ...['varying', 'shared'].map((prefix) => ({
+        name: `${prefix}${typeName}`,
+        overloads: [{
+          params: [],
+          return: {
+            type: { type: 'NameExpression', name: 'any' }
+          }
+        }],
+        description: `Create a shared ${pascalTypeName} to pass data between hooks`,
+        static: false
+      }))
+    ]));
   }
 
   // Add type casting functions (DataType constructor functions)
@@ -148,7 +169,7 @@ function processStrandsFunctions() {
     typeCastingMethods.push(castingMethod);
   }
 
-  return [...strandsMethods, ...uniformMethods, ...typeCastingMethods];
+  return [...strandsMethods, ...typeMethods, ...typeCastingMethods];
 }
 
 // TypeScript-specific type conversion from raw type objects

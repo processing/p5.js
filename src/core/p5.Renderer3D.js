@@ -475,7 +475,11 @@ export class Renderer3D extends Renderer {
       );
     }
     const geometry = this.geometryBuilder.finish();
-    this.fill(this.geometryBuilder.prevFillColor);
+    if (this.geometryBuilder.prevFillColor) {
+      this.fill(this.geometryBuilder.prevFillColor);
+    } else {
+      this.noFill();
+    }
     this.geometryBuilder = undefined;
     return geometry;
   }
@@ -534,10 +538,9 @@ export class Renderer3D extends Renderer {
         { validateFaces: this._validateFaces }
       );
     } else if (this.states.fillColor || this.states.strokeColor) {
-      // TODO: handle POINTS mode
       this._drawGeometry(this.shapeBuilder.geometry, {
         mode: this.shapeBuilder.shapeMode,
-        count: this.drawShapeCount,
+        count: this.drawShapeCount
       });
     }
     this.drawShapeCount = 1;
@@ -786,7 +789,8 @@ export class Renderer3D extends Renderer {
 
     const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
     const modelViewProjectionMatrix = modelViewMatrix.mult(projectionMatrix);
-    const worldToScreenMatrix = modelViewProjectionMatrix.mult(projectedToScreenMatrix);
+    const worldToScreenMatrix = modelViewProjectionMatrix
+      .mult(projectedToScreenMatrix);
     return worldToScreenMatrix;
   }
 
@@ -828,10 +832,10 @@ export class Renderer3D extends Renderer {
     //see material.js for more info on color blending in webgl
     // const color = fn.color.apply(this._pInst, arguments);
     const color = this.states.fillColor;
-    this.states.setValue("curFillColor", color._array);
-    this.states.setValue("drawMode", constants.FILL);
-    this.states.setValue("_useNormalMaterial", false);
-    this.states.setValue("_tex", null);
+    this.states.setValue('curFillColor', color._array);
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', null);
   }
 
   /**
@@ -866,7 +870,7 @@ export class Renderer3D extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     // const color = fn.color.apply(this._pInst, arguments);
-    this.states.setValue("curStrokeColor", this.states.strokeColor._array);
+    this.states.setValue('curStrokeColor', this.states.strokeColor._array);
   }
 
   getCommonVertexProperties() {
@@ -921,7 +925,7 @@ export class Renderer3D extends Renderer {
     // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
     let operation = undefined;
-    if (typeof args[0] === "string") {
+    if (typeof args[0] === 'string') {
       operation = args[0];
       let useDefaultParam =
         operation in filterParamDefaults && args[1] === undefined;
@@ -936,13 +940,13 @@ export class Renderer3D extends Renderer {
         this.defaultFilterShaders[operation] = this._makeFilterShader(fbo.renderer, operation);
       }
       this.states.setValue(
-        "filterShader",
+        'filterShader',
         this.defaultFilterShaders[operation]
       );
     }
     // use custom user-supplied shader
     else {
-      this.states.setValue("filterShader", args[0]);
+      this.states.setValue('filterShader', args[0]);
     }
 
     // Setting the target to the framebuffer when applying a filter to a framebuffer.
@@ -967,25 +971,25 @@ export class Renderer3D extends Renderer {
       this.matchSize(tmp, target);
       // setup
       this.push();
-      this.states.setValue("strokeColor", null);
+      this.states.setValue('strokeColor', null);
       this.blendMode(constants.BLEND);
 
       // draw main to temp buffer
       this.shader(this.states.filterShader);
-      this.states.filterShader.setUniform("texelSize", texelSize);
-      this.states.filterShader.setUniform("canvasSize", [
+      this.states.filterShader.setUniform('texelSize', texelSize);
+      this.states.filterShader.setUniform('canvasSize', [
         target.width,
         target.height,
       ]);
       this.states.filterShader.setUniform(
-        "radius",
+        'radius',
         Math.max(1, filterParameter)
       );
 
       // Horiz pass: draw `target` to `tmp`
       tmp.draw(() => {
-        this.states.filterShader.setUniform("direction", [1, 0]);
-        this.states.filterShader.setUniform("tex0", target);
+        this.states.filterShader.setUniform('direction', [1, 0]);
+        this.states.filterShader.setUniform('tex0', target);
         this.clear();
         this.shader(this.states.filterShader);
         this.noLights();
@@ -994,8 +998,8 @@ export class Renderer3D extends Renderer {
 
       // Vert pass: draw `tmp` to `fbo`
       fbo.draw(() => {
-        this.states.filterShader.setUniform("direction", [0, 1]);
-        this.states.filterShader.setUniform("tex0", tmp);
+        this.states.filterShader.setUniform('direction', [0, 1]);
+        this.states.filterShader.setUniform('tex0', tmp);
         this.clear();
         this.shader(this.states.filterShader);
         this.noLights();
@@ -1007,28 +1011,28 @@ export class Renderer3D extends Renderer {
     // every other non-blur shader uses single pass
     else {
       fbo.draw(() => {
-        this.states.setValue("strokeColor", null);
+        this.states.setValue('strokeColor', null);
         this.blendMode(constants.BLEND);
         this.shader(this.states.filterShader);
-        this.states.filterShader.setUniform("tex0", target);
-        this.states.filterShader.setUniform("texelSize", texelSize);
-        this.states.filterShader.setUniform("canvasSize", [
+        this.states.filterShader.setUniform('tex0', target);
+        this.states.filterShader.setUniform('texelSize', texelSize);
+        this.states.filterShader.setUniform('canvasSize', [
           target.width,
           target.height,
         ]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
-        this.states.filterShader.setUniform("filterParameter", filterParameter);
+        this.states.filterShader.setUniform('filterParameter', filterParameter);
         this.noLights();
         this.plane(target.width, target.height);
       });
     }
     // draw fbo contents onto main renderer.
     this.push();
-    this.states.setValue("strokeColor", null);
+    this.states.setValue('strokeColor', null);
     this.clear();
     this.push();
-    this.states.setValue("imageMode", constants.CORNER);
+    this.states.setValue('imageMode', constants.CORNER);
     this.blendMode(constants.BLEND);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
@@ -1038,8 +1042,8 @@ export class Renderer3D extends Renderer {
       fbo,
       0,
       0,
-      this.width,
-      this.height,
+      fbo.width,
+      fbo.height,
       -target.width / 2,
       -target.height / 2,
       target.width,
@@ -1074,7 +1078,7 @@ export class Renderer3D extends Renderer {
       mode === constants.MULTIPLY ||
       mode === constants.REMOVE
     )
-      this.states.setValue("curBlendMode", mode);
+      this.states.setValue('curBlendMode', mode);
     else if (
       mode === constants.BURN ||
       mode === constants.OVERLAY ||
@@ -1083,7 +1087,7 @@ export class Renderer3D extends Renderer {
       mode === constants.DODGE
     ) {
       console.warn(
-        "BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode."
+        'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
       );
     }
   }
@@ -1094,19 +1098,19 @@ export class Renderer3D extends Renderer {
       this._isErasing = true;
       this.blendMode(constants.REMOVE);
       this._cachedFillStyle = this.states.curFillColor.slice();
-      this.states.setValue("curFillColor", [1, 1, 1, opacityFill / 255]);
+      this.states.setValue('curFillColor', [1, 1, 1, opacityFill / 255]);
       this._cachedStrokeStyle = this.states.curStrokeColor.slice();
-      this.states.setValue("curStrokeColor", [1, 1, 1, opacityStroke / 255]);
+      this.states.setValue('curStrokeColor', [1, 1, 1, opacityStroke / 255]);
     }
   }
 
   noErase() {
     if (this._isErasing) {
       // Restore colors
-      this.states.setValue("curFillColor", this._cachedFillStyle.slice());
-      this.states.setValue("curStrokeColor", this._cachedStrokeStyle.slice());
+      this.states.setValue('curFillColor', this._cachedFillStyle.slice());
+      this.states.setValue('curStrokeColor', this._cachedStrokeStyle.slice());
       // Restore blend mode
-      this.states.setValue("curBlendMode", this.preEraseBlend);
+      this.states.setValue('curBlendMode', this.preEraseBlend);
       this.blendMode(this.preEraseBlend);
       // Ensure that _applyBlendMode() sets preEraseBlend back to the original blend mode
       this._isErasing = false;
