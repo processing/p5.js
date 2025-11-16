@@ -17,21 +17,21 @@ import rendererGL from './p5.RendererGL';
 import strands from '../strands/p5.strands';
 
 export default function(p5){
-  rendererGL(p5, p5.prototype);
-  primitives3D(p5, p5.prototype);
-  interaction(p5, p5.prototype);
-  light(p5, p5.prototype);
-  loading(p5, p5.prototype);
-  material(p5, p5.prototype);
-  text(p5, p5.prototype);
-  renderBuffer(p5, p5.prototype);
-  quat(p5, p5.prototype);
-  matrix(p5, p5.prototype);
-  geometry(p5, p5.prototype);
-  camera(p5, p5.prototype);
-  framebuffer(p5, p5.prototype);
-  dataArray(p5, p5.prototype);
-  shader(p5, p5.prototype);
-  texture(p5, p5.prototype);
-  strands(p5, p5.prototype);
+  p5.registerAddon(rendererGL);
+  p5.registerAddon(primitives3D);
+  p5.registerAddon(interaction);
+  p5.registerAddon(light);
+  p5.registerAddon(loading);
+  p5.registerAddon(material);
+  p5.registerAddon(text);
+  p5.registerAddon(renderBuffer);
+  p5.registerAddon(quat);
+  p5.registerAddon(matrix);
+  p5.registerAddon(geometry);
+  p5.registerAddon(camera);
+  p5.registerAddon(framebuffer);
+  p5.registerAddon(dataArray);
+  p5.registerAddon(shader);
+  p5.registerAddon(texture);
+  p5.registerAddon(strands);
 }

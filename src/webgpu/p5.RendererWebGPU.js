@@ -1939,3 +1939,7 @@ function rendererWebGPU(p5, fn) {
 
 export default rendererWebGPU;
 export { RendererWebGPU };
+
+if (typeof p5 !== "undefined") {
+  rendererWebGPU(p5, p5.prototype);
+}

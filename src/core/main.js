@@ -172,8 +172,15 @@ class p5 {
     return this._renderer.drawingContext;
   }
 
+  static _registeredAddons = new Set();
   static registerAddon(addon) {
     const lifecycles = {};
+
+    // Don't re-register an addon. This allows addons
+    // to register dependency addons without worrying about
+    // them getting double-added.
+    if (p5._registeredAddons.has(addon)) return;
+    p5._registeredAddons.add(addon);
 
     addon(p5, p5.prototype, lifecycles);
 
