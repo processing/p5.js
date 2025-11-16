@@ -293,6 +293,18 @@ suite('Calculation', function() {
       result = myp5.max([10, 10]);
       assert.equal(result, 10);
     });
+    test('should handle Infinity', function() {
+      result = myp5.max(3, Infinity);
+      assert.equal(result, Infinity);
+    });
+    test('should handle -Infinity', function() {
+      result = myp5.max(3, -Infinity);
+      assert.equal(result, 3);
+    });
+    test('should handle Infinity in array', function() {
+      result = myp5.max([3, Infinity, 5]);
+      assert.equal(result, Infinity);
+    });
   });
 
   suite('p5.prototype.min', function() {
@@ -324,6 +336,18 @@ suite('Calculation', function() {
     test('should return single value from array', function() {
       result = myp5.min([10, 10]);
       assert.equal(result, 10);
+    });
+    test('should handle Infinity', function() {
+      result = myp5.min(Infinity, 3);
+      assert.equal(result, 3);
+    });
+    test('should handle -Infinity', function() {
+      result = myp5.min(3, -Infinity);
+      assert.equal(result, -Infinity);
+    });
+    test('should handle -Infinity in array', function() {
+      result = myp5.min([3, -Infinity, 5]);
+      assert.equal(result, -Infinity);
     });
   });
 

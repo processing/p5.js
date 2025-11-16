@@ -342,15 +342,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @returns {Boolean} a boolean indicating whether input type is Number
    */
   const isNumber = param => {
-    if (isNaN(parseFloat(param))) return false;
-    switch (typeof param) {
-      case 'number':
-        return true;
-      case 'string':
-        return !isNaN(param);
-      default:
-        return false;
+    // Treat numeric Infinity values as numbers
+    if (param === Infinity || param === -Infinity) return true;
+    // Real numbers (exclude NaN)
+    if (typeof param === 'number') return !isNaN(param);
+    // Accept numeric strings (including "Infinity"/"-Infinity")
+    if (typeof param === 'string') {
+      return param.trim() !== '' && !isNaN(Number(param));
     }
+    return false;
   };
 
   /**
