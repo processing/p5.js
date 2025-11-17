@@ -403,6 +403,56 @@ visualSuite('Typography', function () {
             });
           }
         );
+
+        visualTest(
+          'all alignments with multi-line manual text, no box dimensions',
+          async function (p5, screenshot) {
+            const alignments = [
+              { alignX: p5.LEFT, alignY: p5.TOP },
+              { alignX: p5.CENTER, alignY: p5.TOP },
+              { alignX: p5.RIGHT, alignY: p5.TOP },
+              { alignX: p5.LEFT, alignY: p5.CENTER },
+              { alignX: p5.CENTER, alignY: p5.CENTER },
+              { alignX: p5.RIGHT, alignY: p5.CENTER },
+              { alignX: p5.LEFT, alignY: p5.BOTTOM },
+              { alignX: p5.CENTER, alignY: p5.BOTTOM },
+              { alignX: p5.RIGHT, alignY: p5.BOTTOM }
+            ];
+
+            p5.createCanvas(150, 100, mode === 'webgl' ? p5.WEBGL : undefined);
+            if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+            p5.textSize(20);
+
+            const font = await p5.loadFont(
+              '/unit/assets/Inconsolata-Bold.ttf'
+            );
+            p5.textFont(font);
+
+            let xPos = 20;
+            let yPos = 20;
+
+            alignments.forEach((alignment, i) => {
+              p5.background(255);
+              p5.push();
+              p5.textAlign(alignment.alignX, alignment.alignY);
+
+              p5.fill(0);
+              p5.noStroke();
+              p5.text('Line 1\nLine 2\nLine 3', xPos, yPos);
+              const bb = p5.textBounds(
+                'Line 1\nLine 2\nLine 3',
+                xPos,
+                yPos
+              );
+              p5.noFill();
+              p5.stroke('red');
+              p5.rect(bb.x, bb.y, bb.w, bb.h);
+              p5.pop();
+
+              screenshot();
+            });
+          }
+        );
       });
     }
   });
