@@ -9,16 +9,17 @@
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
+    "test:types": "npx tsc --noEmit test/types/*.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "generate-types": "npm run docs && node utils/generate-types.mjs && node utils/patch.mjs"
+    "generate-types": "npm run docs && node utils/typescript.mjs"
   },
   "lint-staged": {
     "src/**/*.js": "eslint",
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.0.5-rc.0",
+  "version": "2.1.1",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
@@ -61,6 +62,7 @@
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.9.2",
     "vite": "^5.0.2",
     "vite-plugin-string": "^1.2.2",
     "vitest": "^2.1.5",
@@ -69,8 +71,18 @@
   "license": "LGPL-2.1",
   "browser": "./lib/p5.min.js",
   "exports": {
-    ".": "./dist/app.js",
-    "./core": "./dist/core/main.js",
+    ".": {
+      "types": "./types/p5.d.ts",
+      "default": "./dist/app.js"
+    },
+    "./global": {
+      "types": "./types/global.d.ts",
+      "default": "./dist/app.js"
+    },
+    "./core": {
+      "default": "./dist/core/main.js"
+    },
+    "./color": "./dist/color/index.js",
     "./shape": "./dist/shape/index.js",
     "./accessibility": "./dist/accessibility/index.js",
     "./friendlyErrors": "./dist/core/friendlyErrors/index.js",

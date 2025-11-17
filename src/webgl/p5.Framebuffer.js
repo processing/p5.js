@@ -1107,7 +1107,7 @@ class Framebuffer {
   /**
    * Ensure all readable textures are up-to-date.
    * @private
-   * @property {'colorTexutre'|'depthTexture'} property The property to update
+   * @param {'colorTexutre'|'depthTexture'} property The property to update
    */
   _update(property) {
     if (this.dirty[property] && this.antialias) {
@@ -1115,7 +1115,7 @@ class Framebuffer {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
       const partsToCopy = {
-        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
+        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
       };
       if (this.useDepth) {
         partsToCopy.depthTexture = [
@@ -1307,8 +1307,6 @@ class Framebuffer {
    *
    * `myBuffer.loadPixels()` must be called before reading from or writing to
    * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a>.
-   *
-   * @method loadPixels
    *
    * @example
    * <div>
@@ -1886,6 +1884,20 @@ function framebuffer(p5, fn){
    * }
    * </code>
    * </div>
+   */
+
+  /**
+   * The current width of the framebuffer.
+   *
+   * @property {Number} width
+   * @for p5.Framebuffer
+   */
+
+  /**
+   * The current width of the framebuffer.
+   *
+   * @property {Number} height
+   * @for p5.Framebuffer
    */
 }
 

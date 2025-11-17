@@ -124,7 +124,7 @@ suite('Graphics', function() {
       assert.typeOf(g.splineVertex, 'function');
     });
   });
-  
+
   suite('p5.Graphics.resizeCanvas', function() {
     let glStub;
 

@@ -136,7 +136,7 @@ function material(p5, fn){
       if (successCallback) {
         return successCallback(loadedShader);
       } else {
-        return loadedShader
+        return loadedShader;
       }
     } catch(err) {
       if (failureCallback) {
@@ -214,8 +214,8 @@ function material(p5, fn){
    * @param {String} fragSrc source code for the fragment shader.
    * @param {Object} [options] An optional object describing how this shader can
    * be augmented with hooks. It can include:
-   *  - `vertex`: An object describing the available vertex shader hooks.
-   *  - `fragment`: An object describing the available frament shader hooks.
+   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
+   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
    * @returns {p5.Shader} new shader object created from the
    * vertex and fragment shaders.
    *
@@ -550,7 +550,11 @@ function material(p5, fn){
    * @alt
    * A rectangle with a shader applied to it.
    */
-  fn.loadFilterShader = async function (fragFilename, successCallback, failureCallback) {
+  fn.loadFilterShader = async function (
+    fragFilename,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
@@ -3788,25 +3792,25 @@ function material(p5, fn){
     this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.strokeShader = function(s) {
     this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.imageShader = function(s) {
     this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
-  }
+  };
 
   RendererGL.prototype.resetShader = function() {
     this.states.setValue('userFillShader', null);
     this.states.setValue('userStrokeShader', null);
     this.states.setValue('userImageShader', null);
-  }
+  };
 
   RendererGL.prototype.texture = function(tex) {
     this.states.setValue('drawMode', constants.TEXTURE);
@@ -3823,7 +3827,7 @@ function material(p5, fn){
     this.states.setValue('curFillColor', [1, 1, 1, 1]);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
     this.states.setValue('strokeColor', null);
-  }
+  };
 
   // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
   // }
@@ -3839,12 +3843,12 @@ function material(p5, fn){
       shine = 1;
     }
     this.states.setValue('_useShininess', shine);
-  }
+  };
 
   RendererGL.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
     this.states.setValue('_useMetalness', metalMix);
-  }
+  };
 }
 
 export default material;

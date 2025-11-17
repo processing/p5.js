@@ -66,7 +66,7 @@ function validateParams(p5, fn, lifecycles) {
     'Integer': z.number().int(),
     'Number': z.number(),
     'Object': z.object({}),
-    'String': z.string(),
+    'String': z.string()
   };
 
   const webAPIObjects = [
@@ -96,7 +96,7 @@ function validateParams(p5, fn, lifecycles) {
 
   // For mapping 0-indexed parameters to their ordinal representation, e.g.
   // "first" for 0, "second" for 1, "third" for 2, etc.
-  const ordinals = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+  const ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
 
   function extractFuncNameAndClass(func) {
     const ichDot = func.lastIndexOf('.');
@@ -124,23 +124,24 @@ function validateParams(p5, fn, lifecycles) {
    *
    * Example parameter data for function `background`:
    * "background": {
-        "overloads": [
-          ["p5.Color"],
-          ["String", "Number?"],
-          ["Number", "Number?"],
-          ["Number", "Number", "Number", "Number?"],
-          ["Number[]"],
-          ["p5.Image", "Number?"]
-        ]
-      }
+   *    "overloads": [
+   *      ["p5.Color"],
+   *      ["String", "Number?"],
+   *      ["Number", "Number?"],
+   *      ["Number", "Number", "Number", "Number?"],
+   *      ["Number[]"],
+   *      ["p5.Image", "Number?"]
+   *    ]
+   *  }
    * Where each array in `overloads` represents a set of valid overloaded
    * parameters, and `?` is a shorthand for `Optional`.
    *
    * @method generateZodSchemasForFunc
+   * @private
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {z.ZodSchema} Zod schema
    */
-  fn.generateZodSchemasForFunc = function (func) {
+  const generateZodSchemasForFunc = function (func) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = dataDoc[funcClass][funcName];
 
@@ -230,10 +231,10 @@ function validateParams(p5, fn, lifecycles) {
       param = param?.replace(/^\.\.\.(.+)\[\]$/, '$1');
 
       let schema = generateTypeSchema(param);
-      // Fallback to z.custom() because function types are no longer 
+      // Fallback to z.custom() because function types are no longer
       // returns a Zod schema.
       if (schema.def.type === 'function') {
-        schema = z.custom(val => val instanceof Function)
+        schema = z.custom(val => val instanceof Function);
       }
 
       if (isOptional) {
@@ -294,7 +295,7 @@ function validateParams(p5, fn, lifecycles) {
     return overloadSchemas.length === 1
       ? overloadSchemas[0]
       : z.union(overloadSchemas);
-  }
+  };
 
   /**
    * Finds the closest schema to the input arguments.
@@ -308,7 +309,7 @@ function validateParams(p5, fn, lifecycles) {
    * @param {Array} args - User input arguments.
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
    */
-  fn.findClosestSchema = function (schema, args) {
+  const findClosestSchema = function (schema, args) {
     if (!(schema instanceof z.ZodUnion)) {
       return schema;
     }
@@ -326,7 +327,9 @@ function validateParams(p5, fn, lifecycles) {
       const numArgs = args.length;
       const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
-      const numRequiredSchemaItems = schemaItems.filter(item => !item.isOptional()).length;
+      const numRequiredSchemaItems = schemaItems
+        .filter(item => !item.isOptional())
+        .length;
 
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
         score = 0;
@@ -344,7 +347,9 @@ function validateParams(p5, fn, lifecycles) {
       // are received.
       else {
         score = Math.abs(
-          numArgs < numRequiredSchemaItems ? numRequiredSchemaItems - numArgs : numArgs - numSchemaItems
+          numArgs < numRequiredSchemaItems ?
+            numRequiredSchemaItems - numArgs :
+            numArgs - numSchemaItems
         ) * 4;
       }
 
@@ -373,7 +378,7 @@ function validateParams(p5, fn, lifecycles) {
     });
 
     return closestSchema;
-  }
+  };
 
   /**
    * Prints a friendly error message after parameter validation, if validation
@@ -385,7 +390,7 @@ function validateParams(p5, fn, lifecycles) {
    * @param {String} func - Name of the function. Expect global functions like `sin` and class methods like `p5.Vector.add`
    * @returns {String} The friendly error message.
    */
-  fn.friendlyParamError = function (zodErrorObj, func, args) {
+  const friendlyParamError = function (zodErrorObj, func, args) {
     let message = '🌸 p5.js says: ';
     let isVersionError = false;
     // The `zodErrorObj` might contain multiple errors of equal importance
@@ -395,17 +400,18 @@ function validateParams(p5, fn, lifecycles) {
     let currentError = zodErrorObj.issues[0];
 
     // Helper function to build a type mismatch message.
-    const buildTypeMismatchMessage = (actualType, expectedTypeStr, position) => {
-      const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
-      const actualTypeStr = actualType ? `, but received ${actualType}` : '';
-      return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
-    }
+    const buildTypeMismatchMessage =
+      (actualType, expectedTypeStr, position) => {
+        const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
+        const actualTypeStr = actualType ? `, but received ${actualType}` : '';
+        return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
+      };
 
     // Union errors occur when a parameter can be of multiple types but is not
     // of any of them. In this case, aggregate all possible types and print
     // a friendly error message that indicates what the expected types are at
     // which position (position is not 0-indexed, for accessibility reasons).
-    const processUnionError = (error) => {
+    const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
 
@@ -417,19 +423,19 @@ function validateParams(p5, fn, lifecycles) {
           }
 
           if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1]
+            actualType = issue.message.split(', received ')[1];
             expectedTypes.add(issue.expected);
           }
           // The case for constants. Since we don't want to print out the actual
           // constant values in the error message, the error message will
           // direct users to the documentation.
           else if (issue.code === 'invalid_value') {
-            expectedTypes.add("constant (please refer to documentation for allowed values)");
-              actualType = args[error.path[0]];
+            expectedTypes.add('constant (please refer to documentation for allowed values)');
+            actualType = args[error.path[0]];
           } else if (issue.code === 'custom') {
             const match = issue.message.match(/Input not instance of (\w+)/);
             if (match) expectedTypes.add(match[1]);
-            actualType = undefined
+            actualType = undefined;
           }
         }
       });
@@ -444,11 +450,13 @@ function validateParams(p5, fn, lifecycles) {
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
         const position = error.path.join('.');
 
-        message += buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+        message += buildTypeMismatchMessage(
+          actualType, expectedTypesStr, position
+        );
       }
 
       return message;
-    }
+    };
 
     switch (currentError.code) {
       case 'invalid_union': {
@@ -480,13 +488,13 @@ function validateParams(p5, fn, lifecycles) {
     // Generates a link to the documentation based on the given function name.
     // TODO: Check if the link is reachable before appending it to the error
     // message.
-    const generateDocumentationLink = (func) => {
+    const generateDocumentationLink = func => {
       const { funcName, funcClass } = extractFuncNameAndClass(func);
       const p5BaseUrl = 'https://p5js.org/reference';
       const url = `${p5BaseUrl}/${funcClass}/${funcName}`;
 
       return url;
-    }
+    };
 
     if (currentError.code === 'too_big' || currentError.code === 'too_small') {
       const documentationLink = generateDocumentationLink(func);
@@ -499,7 +507,7 @@ function validateParams(p5, fn, lifecycles) {
       console.log(message);
     }
     return message;
-  }
+  };
 
   /**
    * Runs parameter validation by matching the input parameters to Zod schemas
@@ -513,7 +521,7 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {any} [result.data] - The parsed data if validation was successful.
    * @returns {String} [result.error] - The validation error message if validation has failed.
    */
-  fn.validate = function (func, args) {
+  const validate = function (func, args) {
     if (p5.disableFriendlyErrors) {
       return; // skip FES
     }
@@ -526,7 +534,11 @@ function validateParams(p5, fn, lifecycles) {
     // theoretically allowed to stay undefined and valid, it is likely that the
     // user intended to call the function with non-undefined arguments. Skip
     // regular workflow and return a friendly error message right away.
-    if (Array.isArray(args) && args.length > 0 && args.every(arg => arg === undefined)) {
+    if (
+      Array.isArray(args) &&
+      args.length > 0 &&
+      args.every(arg => arg === undefined)
+    ) {
       const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
@@ -537,7 +549,7 @@ function validateParams(p5, fn, lifecycles) {
 
     let funcSchemas = schemaRegistry.get(func);
     if (!funcSchemas) {
-      funcSchemas = fn.generateZodSchemasForFunc(func);
+      funcSchemas = generateZodSchemasForFunc(func);
       if (!funcSchemas) return;
       schemaRegistry.set(func, funcSchemas);
     }
@@ -548,9 +560,9 @@ function validateParams(p5, fn, lifecycles) {
         data: funcSchemas.parse(args)
       };
     } catch (error) {
-      const closestSchema = fn.findClosestSchema(funcSchemas, args);
+      const closestSchema = findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
-      const errorMessage = fn.friendlyParamError(zodError, func, args);
+      const errorMessage = friendlyParamError(zodError, func, args);
 
       return {
         success: false,
@@ -559,22 +571,22 @@ function validateParams(p5, fn, lifecycles) {
     }
   };
 
+  fn._validate = validate; // TEMP: For unit tests
+
+  p5.decorateHelper(
+    /^(?!_).+$/,
+    function(target, { name }){
+      return function(...args){
+        if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+          validate(name, args);
+        }
+        return target.call(this, ...args);
+      };
+    }
+  );
+
   lifecycles.presetup = function(){
     loadP5Constructors();
-
-    if(p5.disableParameterValidator !== true){
-      const excludes = ['validate'];
-      for(const f in this){
-        if(!excludes.includes(f) && !f.startsWith('_') && typeof this[f] === 'function'){
-          const copy = this[f];
-
-          this[f] = function(...args) {
-            this.validate(f, args);
-            return copy.call(this, ...args);
-          };
-        }
-      }
-    }
   };
 }
 

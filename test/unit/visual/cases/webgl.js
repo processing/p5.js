@@ -1,6 +1,5 @@
-import { vi, beforeEach, afterEach } from 'vitest';
+import { vi, afterEach } from 'vitest';
 import { visualSuite, visualTest } from '../visualTest';
-import { RendererGL } from '../../../../src/webgl/p5.RendererGL';
 
 visualSuite('WebGL', function() {
   visualSuite('Camera', function() {
@@ -46,6 +45,20 @@ visualSuite('WebGL', function() {
       p5.fill('red');
       p5.circle(0, 0, 20);
       p5.filter(p5.GRAY);
+      fbo.end();
+      p5.imageMode(p5.CENTER);
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
+
+    visualTest('On a framebuffer of a different size from the canvas', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const fbo = p5.createFramebuffer({ antialias: true, width: 25, height: 100 });
+      fbo.begin();
+      p5.background('blue');
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      p5.filter(p5.BLUR, 3);
       fbo.end();
       p5.imageMode(p5.CENTER);
       p5.image(fbo, 0, 0);
@@ -217,7 +230,7 @@ visualSuite('WebGL', function() {
         p5.createCanvas(50, 50, p5.WEBGL);
         p5.background('white');
         const myShader = p5.createShader(vertSrc, fragSrc);
-        p5.shader(myShader)
+        p5.shader(myShader);
         p5.beginShape(p5.QUADS);
         p5.noStroke();
         p5.translate(-25,-25);
@@ -253,18 +266,18 @@ visualSuite('WebGL', function() {
           p5.sphere(5);
           p5.pop();
           p5.beginShape(p5.TRIANGLES);
-          p5.vertexProperty('aCol', [1,0,0])
+          p5.vertexProperty('aCol', [1,0,0]);
           p5.vertex(-5, 5, 0);
-          p5.vertexProperty('aCol', [0,1,0])
+          p5.vertexProperty('aCol', [0,1,0]);
           p5.vertex(5, 5, 0);
-          p5.vertexProperty('aCol', [0,0,1])
+          p5.vertexProperty('aCol', [0,0,1]);
           p5.vertex(0, -5, 0);
           p5.endShape(p5.CLOSE);
           p5.push();
           p5.translate(-15,10,0);
           p5.box(10);
           p5.pop();
-        })
+        });
         p5.model(shape);
         screenshot();
       }
@@ -370,8 +383,8 @@ visualSuite('WebGL', function() {
       p5.rotateY(p5.PI/4);
       p5.box(30);
       screenshot();
-    })
-  })
+    });
+  });
 
   visualSuite('Opacity', function() {
     visualTest('Basic colors have opacity applied correctly', (p5, screenshot) => {
@@ -398,7 +411,7 @@ visualSuite('WebGL', function() {
           inputs.color = vec4(1., 0.4, 0.4, 100./255.);
           return inputs;
         }`
-      })
+      });
       p5.background(255);
       p5.shader(myShader);
       p5.circle(0, 0, 50);
@@ -495,26 +508,26 @@ visualSuite('WebGL', function() {
 
         visualTest('Combined vs split matrices', (p5, screenshot) => {
           p5.createCanvas(50, 50, p5.WEBGL);
-            for (const space of ['Object', 'World', 'Camera']) {
-              const myShader = p5[base]().modify({
-                [`Vertex get${space}Inputs`]: `(Vertex inputs) {
+          for (const space of ['Object', 'World', 'Camera']) {
+            const myShader = p5[base]().modify({
+              [`Vertex get${space}Inputs`]: `(Vertex inputs) {
                   // No-op
                   return inputs;
                 }`
-              });
-              p5.background(255);
-              p5.push();
-              p5.lights();
-              p5.fill('red');
-              p5.noStroke();
-              p5.translate(20, -10, 5);
-              p5.rotate(p5.PI * 0.1);
-              p5.camera(-800, 0, 0, 0, 0, 0);
-              p5.shader(myShader);
-              p5.box(30);
-              p5.pop();
-              screenshot();
-            }
+            });
+            p5.background(255);
+            p5.push();
+            p5.lights();
+            p5.fill('red');
+            p5.noStroke();
+            p5.translate(20, -10, 5);
+            p5.rotate(p5.PI * 0.1);
+            p5.camera(-800, 0, 0, 0, 0, 0);
+            p5.shader(myShader);
+            p5.box(30);
+            p5.pop();
+            screenshot();
+          }
         });
       });
     }
@@ -657,6 +670,41 @@ visualSuite('WebGL', function() {
         p5.text(String.fromCharCode(33 + i), x, y);
       }
 
+      screenshot();
+    });
+  });
+
+  visualSuite('texture()', () => {
+    visualTest('on a rect', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40);
+      screenshot();
+    });
+
+    visualTest('on a rect with rounded corners', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      p5.texture(tex);
+      p5.rect(-20, -20, 40, 40, 10);
+      screenshot();
+    });
+  });
+
+  visualSuite('textures in p5.strands', async () => {
+    visualTest('uniformTexture() works', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const shader = p5.baseMaterialShader().modify(() => {
+        const texUniform = p5.uniformTexture(() => tex)
+        p5.getPixelInputs((inputs) => {
+          inputs.color = p5.getTexture(texUniform, inputs.texCoord);
+          return inputs;
+        });
+      }, { p5, tex });
+      p5.shader(shader);
+      p5.rect(-20, -20, 40, 40);
       screenshot();
     });
   });

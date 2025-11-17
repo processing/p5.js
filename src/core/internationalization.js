@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { default as fallbackResources, languages } from '../../translations';
+import { VERSION } from './constants';
 
 if (typeof IS_MINIFIED === 'undefined') {
   // internationalization is only for the unminified build
@@ -147,8 +148,12 @@ export const initialize = () => {
       },
       backend: {
         fallback: 'en',
-        loadPath:
-          'https://cdn.jsdelivr.net/npm/p5/translations/{{lng}}/{{ns}}.json'
+        
+        // ensure that the FES internationalization strings are loaded
+        // from the latest patch of the current minor version of p5.js
+        loadPath: `https://cdn.jsdelivr.net/npm/p5@${
+          VERSION.replace(/^(\d+\.\d+)\.\d+.*$/, '$1')
+        }/translations/{{lng}}/{{ns}}.json`
       },
       partialBundledLanguages: true,
       resources: fallbackResources
