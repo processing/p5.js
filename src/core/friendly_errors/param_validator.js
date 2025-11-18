@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number().or(z.literal(Infinity)).or(z.literal(-Infinity)),
+    'Number': z.number(),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -152,6 +152,18 @@ function validateParams(p5, fn, lifecycles) {
       overloads = funcInfo.overloads;
     }
 
+    // For min/max functions, the Number type should accept Infinity/-Infinity
+    const isMinMaxFunc = funcName === 'min' || funcName === 'max';
+    const numberSchema = isMinMaxFunc
+      ? z.number().or(z.literal(Infinity)).or(z.literal(-Infinity))
+      : z.number();
+
+    // Create a local schemaMap that overrides Number for this function if needed
+    const localSchemaMap = {
+      ...schemaMap,
+      'Number': numberSchema
+    };
+
     // Returns a schema for a single type, i.e. z.boolean() for `boolean`.
     const generateTypeSchema = baseType => {
       if (!baseType) return z.any();
@@ -178,8 +190,8 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = z.instanceof(p5Constructors[className]);
       }
       // For primitive types and web API objects.
-      else if (schemaMap[baseType]) {
-        typeSchema = schemaMap[baseType];
+      else if (localSchemaMap[baseType]) {
+        typeSchema = localSchemaMap[baseType];
       }
       // Tuple types
       else if (
@@ -414,6 +426,8 @@ function validateParams(p5, fn, lifecycles) {
     const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
+      let hasNumberType = false;
+      let infinityLiteralErrors = 0;
 
       error.errors.forEach(err => {
         const issue = err[0];
@@ -425,12 +439,22 @@ function validateParams(p5, fn, lifecycles) {
           if (issue.code === 'invalid_type') {
             actualType = issue.message.split(', received ')[1];
             expectedTypes.add(issue.expected);
+            if (issue.expected === 'number') {
+              hasNumberType = true;
+            }
           }
           // The case for constants. Since we don't want to print out the actual
           // constant values in the error message, the error message will
           // direct users to the documentation.
           else if (issue.code === 'invalid_value') {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
+            // Check if this is the Infinity or -Infinity literal by checking the message
+            // Zod messages for literal mismatches contain "Input not equal to " and the expected value
+            if (issue.message && (issue.message.includes('Infinity'))) {
+              infinityLiteralErrors++;
+            } else {
+              // Only add "constant" message if it's not an Infinity/−Infinity literal
+              expectedTypes.add('constant (please refer to documentation for allowed values)');
+            }
             actualType = args[error.path[0]];
           } else if (issue.code === 'custom') {
             const match = issue.message.match(/Input not instance of (\w+)/);
@@ -439,6 +463,12 @@ function validateParams(p5, fn, lifecycles) {
           }
         }
       });
+
+      // If we have both number type and Infinity literal errors, remove the "constant" message
+      // because "number" already covers Infinity/-Infinity
+      if (hasNumberType && infinityLiteralErrors > 0) {
+        expectedTypes.delete('constant (please refer to documentation for allowed values)');
+      }
 
       if (expectedTypes.size > 0) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
@@ -456,9 +486,7 @@ function validateParams(p5, fn, lifecycles) {
       }
 
       return message;
-    };
-
-    switch (currentError.code) {
+    };    switch (currentError.code) {
       case 'invalid_union': {
         processUnionError(currentError);
         break;
@@ -560,6 +588,7 @@ function validateParams(p5, fn, lifecycles) {
         data: funcSchemas.parse(args)
       };
     } catch (error) {
+      void error; // error caught for exception handling; Zod error retrieved separately
       const closestSchema = findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
       const errorMessage = friendlyParamError(zodError, func, args);
