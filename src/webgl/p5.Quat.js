@@ -64,7 +64,7 @@ p5.Quat = class {
 
   /**
    * This is similar to quaternion multiplication
-   * but when multipying vector with quaternion
+   * but when multiplying vector with quaternion
    * the multiplication can be simplified to the below formula.
    * This was taken from the below stackexchange link
    * https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion/50545#50545
@@ -79,7 +79,7 @@ p5.Quat = class {
 
   /**
      * Rotates the Quaternion by the quaternion passed
-     * which contains the axis of roation and angle of rotation
+     * which contains the axis of rotation and angle of rotation
      *
      * @method rotateBy
      * @param {p5.Quat} [axesQuat] axis quaternion which contains
