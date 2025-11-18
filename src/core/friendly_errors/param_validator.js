@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.number().or(z.literal(Infinity)).or(z.literal(-Infinity)),
     'Object': z.object({}),
     'String': z.string()
   };
