@@ -473,7 +473,7 @@ export function visualTest(
             const diffFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
             writeImageFile(diffFilename, toBase64(result.diff));
             throw new Error(
-              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
+              `Screens npx vitest test/unit/visual/visualTest.js --run npx vitest test/unit/visual/visualTest.js --runhots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
               'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
               `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
             );

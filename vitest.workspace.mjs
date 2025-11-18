@@ -29,7 +29,6 @@ export default defineWorkspace([
       exclude: [
         './test/unit/spec.js',
         './test/unit/assets/**/*',
-        './test/unit/visual/visualTest.js',
         './test/types/**/*'
       ],
       testTimeout: 1000,

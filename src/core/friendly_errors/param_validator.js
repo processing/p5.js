@@ -464,10 +464,16 @@ function validateParams(p5, fn, lifecycles) {
         }
       });
 
-      // If we have both number type and Infinity literal errors, remove the "constant" message
-      // because "number" already covers Infinity/-Infinity
-      if (hasNumberType && infinityLiteralErrors > 0) {
-        expectedTypes.delete('constant (please refer to documentation for allowed values)');
+      // If the union contains only number and Infinity/-Infinity literals, treat as 'number'
+      if (hasNumberType) {
+        const typesArr = Array.from(expectedTypes);
+        const onlyNumberAndInfinity = typesArr.every(t => {
+          return t === 'number' || t === 'constant (please refer to documentation for allowed values)';
+        }) && infinityLiteralErrors > 0;
+        if (onlyNumberAndInfinity) {
+          expectedTypes.clear();
+          expectedTypes.add('number');
+        }
       }
 
       if (expectedTypes.size > 0) {
