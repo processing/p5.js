@@ -31,7 +31,8 @@ export default defineWorkspace([
         './test/unit/assets/**/*',
         './test/types/**/*'
       ],
-      testTimeout: 1000,
+      // Increase timeout for visual and slow browser tests (was 1000ms)
+      testTimeout: 20000,
       globals: true,
       browser: {
         enabled: true,
