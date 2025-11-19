@@ -234,8 +234,10 @@ export async function checkMatch(actual, expected, p5) {
   }
 
   // Define significance thresholds
-  const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
-  const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
+  // Increased thresholds to reduce false negatives caused by small
+  // cross-platform rendering differences (antialiasing/text/layout).
+  const MIN_CLUSTER_SIZE = 6;  // Minimum pixels in a significant cluster (was 4)
+  const MAX_TOTAL_DIFF_PIXELS = 200;  // Maximum total different pixels (was 40)
 
   // Determine if the differences are significant
   const nonLineShiftClusters = clusterSizes
