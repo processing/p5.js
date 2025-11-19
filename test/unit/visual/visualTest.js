@@ -35,10 +35,20 @@ function escapeName(name) {
 
 let namePrefix = '';
 
+
 // By how many pixels can the snapshot shift? This is
 // often useful to accommodate different text rendering
 // across environments.
 let shiftThreshold = 2;
+
+// Minimal test suite to prevent Vitest empty file error
+describe('visualTest.js file sanity', () => {
+  it('should load visual test helpers', () => {
+    expect(typeof visualSuite).toBe('function');
+    expect(typeof visualTest).toBe('function');
+    expect(typeof checkMatch).toBe('function');
+  });
+});
 
 /**
  * A helper to define a category of visual tests.

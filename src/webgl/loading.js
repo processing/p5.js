@@ -359,6 +359,12 @@ function loading(p5, fn){
       flipU = fileType.flipU || false;
       flipV = fileType.flipV || false;
 
+    } else if (typeof fileType === 'function') {
+      // If second argument is a function, treat as callback
+      successCallback = fileType;
+      failureCallback = normalize;
+      fileType = path.slice(-4);
+      normalize = false;
     } else {
       // Passing in individual parameters
       if(typeof arguments[arguments.length-1] === 'function'){
