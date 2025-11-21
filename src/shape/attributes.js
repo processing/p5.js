@@ -168,12 +168,13 @@ function attributes(p5, fn){
    * </div>
    */
   fn.noSmooth = function() {
-    if (!this._renderer.isP3D) {
-      if ('imageSmoothingEnabled' in this.drawingContext) {
-        this.drawingContext.imageSmoothingEnabled = false;
-      }
+    if (this._renderer && typeof this._renderer.setSmoothing === 'function') {
+      this._renderer.setSmoothing(false);
     } else {
-      this.setAttributes('antialias', false);
+      // Safe fallback: disable canvas imageSmoothing manually
+      if (this._renderer && this._renderer.drawingContext) {
+        this._renderer.drawingContext.imageSmoothingEnabled = false;
+      }
     }
     return this;
   };

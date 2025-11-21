@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Test noSmooth on p5.Graphics WebGL</title>
+  <script src="../../../lib/p5.js"></script>
+  <script>
+    function setup() {
+      createCanvas(100, 100, WEBGL);
+
+      const g = createGraphics(100, 100, WEBGL);
+
+      try {
+        g.noSmooth();
+        console.log("✔ WebGL p5.Graphics: noSmooth OK");
+      } catch (e) {
+        console.error("❌ WebGL p5.Graphics: noSmooth ERROR", e);
+      }
+    }
+  </script>
+</head>
+<body></body>
+</html>
