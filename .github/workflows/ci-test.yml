@@ -19,10 +19,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20.x
-      - name: Install fonts required for visual tests
+      - name: Install full font packages for weight rendering
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-liberation fonts-dejavu-core
+            sudo apt-get update
+            sudo apt-get install -y fontconfig
+            sudo apt-get install -y fonts-dejavu fonts-dejavu-extra fonts-liberation
       - name: Get node modules
         run: npm ci
         env:
