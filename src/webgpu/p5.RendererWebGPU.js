@@ -12,6 +12,7 @@ import { materialVertexShader, materialFragmentShader } from './shaders/material
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import {Graphics} from "../core/p5.Graphics";
 import {Element} from "../dom/p5.Element";
+import { wgslBackend } from './strands_wgslBackend';
 
 const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
@@ -29,6 +30,7 @@ class RendererWebGPU extends Renderer3D {
 
     // Lazy readback texture for main canvas pixel reading
     this.canvasReadbackTexture = null;
+    this.strandsBackend = wgslBackend;
   }
 
   async setupContext() {
@@ -1338,6 +1340,37 @@ class RendererWebGPU extends Renderer3D {
     }
     preMain = preMain.replace(/struct\s+Uniforms\s+\{/, `$&\n${uniforms}`);
 
+    // Handle varying variables by injecting them into VertexOutput and FragmentInput structs
+    if (shader.hooks.varyingVariables && shader.hooks.varyingVariables.length > 0) {
+      // Generate struct members for varying variables
+      let nextLocationIndex = this._getNextAvailableLocation(preMain, shaderType);
+      let varyingMembers = '';
+      
+      for (const varyingVar of shader.hooks.varyingVariables) {
+        const member = this.strandsBackend.generateVaryingDeclaration(
+          varyingVar.name, 
+          varyingVar.typeInfo, 
+          shaderType, 
+          nextLocationIndex++
+        );
+        varyingMembers += member + '\n';
+      }
+
+      if (shaderType === 'vertex') {
+        // Inject into VertexOutput struct
+        preMain = preMain.replace(
+          /struct\s+VertexOutput\s+\{([^}]*)\}/,
+          (match, body) => `struct VertexOutput {${body}\n${varyingMembers}}`
+        );
+      } else if (shaderType === 'fragment') {
+        // Inject into FragmentInput struct
+        preMain = preMain.replace(
+          /struct\s+FragmentInput\s+\{([^}]*)\}/,
+          (match, body) => `struct FragmentInput {${body}\n${varyingMembers}}`
+        );
+      }
+    }
+
     let hooks = '';
     let defines = '';
     if (shader.hooks.declarations) {
@@ -1374,6 +1407,29 @@ class RendererWebGPU extends Renderer3D {
     }
 
     return preMain + '\n' + defines + hooks + main + postMain;
+  }
+
+  _getNextAvailableLocation(shaderSource, shaderType) {
+    // Parse existing struct to find the highest @location number
+    let maxLocation = -1;
+    const structName = shaderType === 'vertex' ? 'VertexOutput' : 'FragmentInput';
+    
+    // Find the struct definition
+    const structMatch = shaderSource.match(new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's'));
+    if (structMatch) {
+      const structBody = structMatch[1];
+      
+      // Find all @location(N) declarations
+      const locationMatches = structBody.matchAll(/@location\((\d+)\)/g);
+      for (const match of locationMatches) {
+        const locationNum = parseInt(match[1]);
+        if (locationNum > maxLocation) {
+          maxLocation = locationNum;
+        }
+      }
+    }
+    
+    return maxLocation + 1;
   }
 
   //////////////////////////////////////////////

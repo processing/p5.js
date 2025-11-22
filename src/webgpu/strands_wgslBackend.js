@@ -9,21 +9,21 @@ function shouldCreateTemp(dag, nodeID) {
   return uses.length > 1;
 }
 const TypeNames = {
-  'float1': 'float',
-  'float2': 'vec2',
-  'float3': 'vec3',
-  'float4': 'vec4',
-  'int1': 'int',
-  'int2': 'ivec2',
-  'int3': 'ivec3',
-  'int4': 'ivec4',
+  'float1': 'f32',
+  'float2': 'vec2<f32>',
+  'float3': 'vec3<f32>',
+  'float4': 'vec4<f32>',
+  'int1': 'i32',
+  'int2': 'vec2<i32>',
+  'int3': 'vec3<i32>',
+  'int4': 'vec4<i32>',
   'bool1': 'bool',
-  'bool2': 'bvec2',
-  'bool3': 'bvec3',
-  'bool4': 'bvec4',
-  'mat2': 'mat2x2',
-  'mat3': 'mat3x3',
-  'mat4': 'mat4x4',
+  'bool2': 'vec2<bool>',
+  'bool3': 'vec3<bool>',
+  'bool4': 'vec4<bool>',
+  'mat2': 'mat2x2<f32>',
+  'mat3': 'mat3x3<f32>',
+  'mat4': 'mat4x4<f32>',
 }
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
@@ -32,14 +32,14 @@ const cfgHandlers = {
     for (const nodeID of instructions) {
       const nodeType = dag.nodeTypes[nodeID];
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = wgslBackend.generateDeclaration(generationContext, dag, nodeID);
         generationContext.write(declaration);
       }
       if (nodeType === NodeType.STATEMENT) {
-        glslBackend.generateStatement(generationContext, dag, nodeID);
+        wgslBackend.generateStatement(generationContext, dag, nodeID);
       }
       if (nodeType === NodeType.ASSIGNMENT) {
-        glslBackend.generateAssignment(generationContext, dag, nodeID);
+        wgslBackend.generateAssignment(generationContext, dag, nodeID);
         generationContext.visitedNodes.add(nodeID);
       }
     }
@@ -67,7 +67,7 @@ const cfgHandlers = {
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
-        const typeName = glslBackend.getTypeName(T.baseType, T.dimension);
+        const typeName = wgslBackend.getTypeName(T.baseType, T.dimension);
         generationContext.write(`${typeName} ${tmp};`);
       }
     }
@@ -76,7 +76,7 @@ const cfgHandlers = {
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
-    const condExpr = glslBackend.generateExpression(generationContext, dag, conditionID);
+    const condExpr = wgslBackend.generateExpression(generationContext, dag, conditionID);
     generationContext.write(`if (${condExpr})`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
@@ -120,14 +120,14 @@ const cfgHandlers = {
       generationContext.suppressSemicolon = isLast;
 
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = wgslBackend.generateDeclaration(generationContext, dag, nodeID);
         generationContext.write(declaration);
       }
       if (node.nodeType === NodeType.STATEMENT) {
-        glslBackend.generateStatement(generationContext, dag, nodeID);
+        wgslBackend.generateStatement(generationContext, dag, nodeID);
       }
       if (node.nodeType === NodeType.ASSIGNMENT) {
-        glslBackend.generateAssignment(generationContext, dag, nodeID);
+        wgslBackend.generateAssignment(generationContext, dag, nodeID);
         generationContext.visitedNodes.add(nodeID);
       }
     }
@@ -152,7 +152,7 @@ const cfgHandlers = {
             const sourceNodeID = node.dependsOn[branchIndex];
             const tempName = generationContext.tempNames[nodeID];
             if (tempName && sourceNodeID !== null) {
-              const sourceExpr = glslBackend.generateExpression(generationContext, dag, sourceNodeID);
+              const sourceExpr = wgslBackend.generateExpression(generationContext, dag, sourceNodeID);
               generationContext.write(`${tempName} = ${sourceExpr};`);
             }
           }
@@ -161,7 +161,7 @@ const cfgHandlers = {
     }
   },
 }
-export const glslBackend = {
+export const wgslBackend = {
   hookEntry(hookType) {
     const firstLine = `(${hookType.parameters.flatMap((param) => {
       return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${param.name}`;
@@ -179,11 +179,12 @@ export const glslBackend = {
     return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
   },
   generateVaryingVariable(varName, typeInfo) {
-    return `${typeInfo.fnName} ${varName}`;
+    const typeName = this.getTypeName(typeInfo.baseType, typeInfo.dimension);
+    return `${varName}: ${typeName}`;
   },
   generateLocalDeclaration(varName, typeInfo) {
-    const typeName = typeInfo.fnName;
-    return `${typeName} ${varName};`;
+    const typeName = this.getTypeName(typeInfo.baseType, typeInfo.dimension);
+    return `var ${varName}: ${typeName};`;
   },
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
@@ -301,15 +302,8 @@ export const glslBackend = {
         const left  = this.generateExpression(generationContext, dag, lID);
         const right = this.generateExpression(generationContext, dag, rID);
 
-        // Special case for modulo: use mod() function for floats in GLSL
+        // In WGSL, % operator works for both floats and integers
         if (node.opCode === OpCode.Binary.MODULO) {
-          const leftNode = getNodeDataFromID(dag, lID);
-          const rightNode = getNodeDataFromID(dag, rID);
-          // If either operand is float, use mod() function
-          if (leftNode.baseType === BaseType.FLOAT || rightNode.baseType === BaseType.FLOAT) {
-            return `mod(${left}, ${right})`;
-          }
-          // For integers, use % operator
           return `(${left} % ${right})`;
         }
 

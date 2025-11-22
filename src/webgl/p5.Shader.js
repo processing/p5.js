@@ -30,6 +30,9 @@ class Shader {
       // Stores custom uniform + helper declarations as a string.
       declarations: options.declarations,
 
+      // Stores an array of variable names + types passed between the vertex and fragment shader
+      varyingVariables: options.varyingVariables || [],
+
       // Stores helper functions to prepend to shaders.
       helpers: options.helpers || {},
 
@@ -423,6 +426,7 @@ class Shader {
     for (const key in hooks) {
       if (key === 'declarations') continue;
       if (key === 'uniforms') continue;
+      if (key === 'varyingVariables') continue;
       if (key === 'vertexDeclarations') {
         newHooks.vertex.declarations =
           (newHooks.vertex.declarations || '') + '\n' + hooks[key];
@@ -452,6 +456,7 @@ class Shader {
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
+      varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),

@@ -11,6 +11,7 @@ export function generateShaderCode(strandsContext) {
 
   const hooksObj = {
     uniforms: {},
+    varyingVariables: [],
   };
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
@@ -62,15 +63,14 @@ export function generateShaderCode(strandsContext) {
   if (strandsContext.sharedVariables) {
     for (const [varName, varInfo] of strandsContext.sharedVariables) {
       if (varInfo.usedInVertex && varInfo.usedInFragment) {
-        // Used in both shaders - declare as varying
-        vertexDeclarations.add(`OUT ${varInfo.typeInfo.fnName} ${varName};`);
-        fragmentDeclarations.add(`IN ${varInfo.typeInfo.fnName} ${varName};`);
+        // Used in both shaders - this is a true varying variable
+        hooksObj.varyingVariables.push(backend.generateVaryingVariable(varName, varInfo.typeInfo));
       } else if (varInfo.usedInVertex) {
         // Only used in vertex shader - declare as local variable
-        vertexDeclarations.add(`${varInfo.typeInfo.fnName} ${varName};`);
+        vertexDeclarations.add(backend.generateLocalDeclaration(varName, varInfo.typeInfo));
       } else if (varInfo.usedInFragment) {
         // Only used in fragment shader - declare as local variable
-        fragmentDeclarations.add(`${varInfo.typeInfo.fnName} ${varName};`);
+        fragmentDeclarations.add(backend.generateLocalDeclaration(varName, varInfo.typeInfo));
       }
       // If not used anywhere, don't declare it
     }
