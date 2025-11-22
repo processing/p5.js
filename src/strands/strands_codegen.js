@@ -15,8 +15,8 @@ export function generateShaderCode(strandsContext) {
   };
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
-    const declaration = backend.generateUniformDeclaration(name, typeInfo);
-    hooksObj.uniforms[declaration] = defaultValue;
+    const key = backend.generateHookUniformKey(name, typeInfo);
+    hooksObj.uniforms[key] = defaultValue;
   }
 
   for (const { hookType, rootNodeID, entryBlockID, shaderContext } of strandsContext.hooks) {

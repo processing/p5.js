@@ -224,7 +224,7 @@ function createHookArguments(strandsContext, parameters){
   const args = [];
   const dag = strandsContext.dag;
   for (const param of parameters) {
-    if(isStructType(param.type.typeName)) {
+    if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
       const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
       const structNode = createStrandsNode(id, dimension, strandsContext);
@@ -338,7 +338,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       const userReturned = hookUserCallback(...args);
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
-      if(isStructType(expectedReturnType.typeName)) {
+      if(isStructType(expectedReturnType)) {
         const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);

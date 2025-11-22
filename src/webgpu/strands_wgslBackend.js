@@ -68,7 +68,9 @@ const cfgHandlers = {
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
         const typeName = wgslBackend.getTypeName(T.baseType, T.dimension);
-        generationContext.write(`${typeName} ${tmp};`);
+        // Initialize with default value - WGSL requires initialization
+        const defaultValue = T.baseType === 'float' ? '0.0' : '0';
+        generationContext.write(`var ${tmp}: ${typeName} = ${defaultValue};`);
       }
     }
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
@@ -163,10 +165,21 @@ const cfgHandlers = {
 }
 export const wgslBackend = {
   hookEntry(hookType) {
-    const firstLine = `(${hookType.parameters.flatMap((param) => {
-      return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${param.name}`;
-    }).join(', ')}) {`;
-    return firstLine;
+    const params = hookType.parameters.map((param) => {
+      // For struct types, use a raw prefix since we'll create a mutable copy
+      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : param.name;
+      return `${paramName}: ${param.type.typeName}`;
+    }).join(', ');
+
+    const firstLine = `(${params}) {`;
+
+    // Generate mutable copies for struct parameters with original names
+    const mutableCopies = hookType.parameters
+      .filter(param => param.type.properties) // Only struct types
+      .map(param => `  var ${param.name} = _p5_strands_raw_${param.name};`)
+      .join('\n');
+
+    return mutableCopies ? firstLine + '\n' + mutableCopies : firstLine;
   },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
@@ -175,8 +188,8 @@ export const wgslBackend = {
     }
     return primitiveTypeName;
   },
-  generateUniformDeclaration(name, typeInfo) {
-    return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
+  generateHookUniformKey(name, typeInfo) {
+    return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
   },
   generateVaryingVariable(varName, typeInfo) {
     const typeName = this.getTypeName(typeInfo.baseType, typeInfo.dimension);
@@ -225,12 +238,12 @@ export const wgslBackend = {
     generationContext.tempNames[nodeID] = tmp;
     const T = extractNodeTypeInfo(dag, nodeID);
     const typeName = this.getTypeName(T.baseType, T.dimension);
-    return `${typeName} ${tmp} = ${expr};`;
+    return `var ${tmp}: ${typeName} = ${expr};`;
   },
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
-    if (isStructType(rootNode.baseType)) {
+    if (isStructType(returnType)) {
       const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];
@@ -267,6 +280,13 @@ export const wgslBackend = {
           sharedVar.usedInFragment = true;
         }
       }
+
+      // Check if this is a uniform variable
+      const isUniform = generationContext.strandsContext?.uniforms?.some(uniform => uniform.name === node.identifier);
+      if (isUniform) {
+        return `uniforms.${node.identifier}`;
+      }
+
       return node.identifier;
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;

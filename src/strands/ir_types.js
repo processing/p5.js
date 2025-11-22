@@ -74,43 +74,16 @@ export const structType = function (hookType) {
   };
   // TODO: handle struct properties that are themselves structs
   for (const prop of T.properties) {
-    const propType = TypeInfoFromGLSLName[prop.type.typeName];
+    const propType = prop.type.dataType;
     structType.properties.push(
       {name: prop.name, dataType: propType }
     );
   }
   return structType;
 };
-export function isStructType(typeName) {
-  return !isNativeType(typeName);
-}
-export function isNativeType(typeName) {
-  // Check if it's in DataType keys (internal names like 'float4')
-  if (Object.keys(DataType).includes(typeName)) {
-    return true;
-  }
-
-  // Check if it's a GLSL type name (like 'vec4', 'float', etc.)
-  const glslNativeTypes = {
-    'float': true,
-    'vec2': true,
-    'vec3': true,
-    'vec4': true,
-    'int': true,
-    'ivec2': true,
-    'ivec3': true,
-    'ivec4': true,
-    'bool': true,
-    'bvec2': true,
-    'bvec3': true,
-    'bvec4': true,
-    'mat2': true,
-    'mat3': true,
-    'mat4': true,
-    'sampler2D': true
-  };
-
-  return !!glslNativeTypes[typeName];
+export function isStructType(typeInfo) {
+  if (typeInfo.baseType === 'Inputs') debugger
+  return !!(typeInfo && typeInfo.properties);
 }
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },

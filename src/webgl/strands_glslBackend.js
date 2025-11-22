@@ -175,7 +175,7 @@ export const glslBackend = {
     }
     return primitiveTypeName;
   },
-  generateUniformDeclaration(name, typeInfo) {
+  generateHookUniformKey(name, typeInfo) {
     return `${this.getTypeName(typeInfo.baseType, typeInfo.dimension)} ${name}`;
   },
   generateVaryingVariable(varName, typeInfo) {
@@ -229,7 +229,7 @@ export const glslBackend = {
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
-    if (isStructType(rootNode.baseType)) {
+    if (isStructType(returnType)) {
       const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];

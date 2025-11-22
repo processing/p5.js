@@ -1336,8 +1336,8 @@ class RendererWebGPU extends Renderer3D {
 
     let uniforms = '';
     for (const key in shader.hooks.uniforms) {
-      const [type, name] = key.split(/\s+/);
-      uniforms += `${name}: ${type},\n`;
+      // WGSL format: "name: type"
+      uniforms += `${key},\n`;
     }
     preMain = preMain.replace(/struct\s+Uniforms\s+\{/, `$&\n${uniforms}`);
 
@@ -1346,14 +1346,10 @@ class RendererWebGPU extends Renderer3D {
       // Generate struct members for varying variables
       let nextLocationIndex = this._getNextAvailableLocation(preMain, shaderType);
       let varyingMembers = '';
-      
+
       for (const varyingVar of shader.hooks.varyingVariables) {
-        const member = this.strandsBackend.generateVaryingDeclaration(
-          varyingVar.name, 
-          varyingVar.typeInfo, 
-          shaderType, 
-          nextLocationIndex++
-        );
+        // varyingVar is a string like "varName: vec3<f32>"
+        const member = `@location(${nextLocationIndex++}) ${varyingVar},`;
         varyingMembers += member + '\n';
       }
 
@@ -1414,12 +1410,12 @@ class RendererWebGPU extends Renderer3D {
     // Parse existing struct to find the highest @location number
     let maxLocation = -1;
     const structName = shaderType === 'vertex' ? 'VertexOutput' : 'FragmentInput';
-    
+
     // Find the struct definition
     const structMatch = shaderSource.match(new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's'));
     if (structMatch) {
       const structBody = structMatch[1];
-      
+
       // Find all @location(N) declarations
       const locationMatches = structBody.matchAll(/@location\((\d+)\)/g);
       for (const match of locationMatches) {
@@ -1429,7 +1425,7 @@ class RendererWebGPU extends Renderer3D {
         }
       }
     }
-    
+
     return maxLocation + 1;
   }
 
@@ -1437,12 +1433,15 @@ class RendererWebGPU extends Renderer3D {
     // Create mapping from WGSL types to DataType entries
     const wgslToDataType = {
       'f32': DataType.float1,
-      'vec2<f32>': DataType.float2, 
+      'vec2<f32>': DataType.float2,
       'vec3<f32>': DataType.float3,
       'vec4<f32>': DataType.float4,
+      'vec2f': DataType.float2,
+      'vec3f': DataType.float3,
+      'vec4f': DataType.float4,
       'i32': DataType.int1,
       'vec2<i32>': DataType.int2,
-      'vec3<i32>': DataType.int3, 
+      'vec3<i32>': DataType.int3,
       'vec4<i32>': DataType.int4,
       'bool': DataType.bool1,
       'vec2<bool>': DataType.bool2,
@@ -1453,7 +1452,7 @@ class RendererWebGPU extends Renderer3D {
       'mat4x4<f32>': DataType.mat4,
       'texture_2d<f32>': DataType.sampler2D
     };
-    
+
     let fullSrc = shader._vertSrc;
     let body = shader.hooks.vertex[hookName];
     if (!body) {
@@ -1471,28 +1470,28 @@ class RendererWebGPU extends Renderer3D {
     if (!parameterMatch) {
       throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
     }
-    
+
     const structProperties = structName => {
       // WGSL struct parsing: struct StructName { field1: Type, field2: Type }
       const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
       if (!structDefMatch) return undefined;
       const properties = [];
-      
+
       // Parse WGSL struct fields (e.g., "texCoord: vec2<f32>,")
       for (const fieldSrc of structDefMatch[1].split(',')) {
         const trimmed = fieldSrc.trim();
         if (!trimmed) continue;
-        
+
         // Remove location decorations and parse field
         // Format: [@location(N)] fieldName: Type
         const fieldMatch = /(?:@location\([^)]*\)\s*)?(\w+)\s*:\s*([^,\s]+)/.exec(trimmed);
         if (!fieldMatch) continue;
-        
+
         const name = fieldMatch[1];
         let typeName = fieldMatch[2];
-        
+
         const dataType = wgslToDataType[typeName] || null;
-        
+
         const typeProperties = structProperties(typeName);
         properties.push({
           name,
@@ -1506,25 +1505,25 @@ class RendererWebGPU extends Renderer3D {
       }
       return properties;
     };
-    
+
     const parameters = parameterMatch[1].split(',').map(paramString => {
       // WGSL function parameters: name: type or name: binding<type>
       const trimmed = paramString.trim();
       if (!trimmed) return null;
-      
+
       const parts = trimmed.split(':').map(s => s.trim());
       if (parts.length !== 2) return null;
-      
+
       const name = parts[0];
       let typeName = parts[1];
-      
+
       // Handle texture bindings like "texture_2d<f32>" -> sampler2D DataType
       if (typeName.includes('texture_2d')) {
         typeName = 'texture_2d<f32>';
       }
-      
+
       const dataType = wgslToDataType[typeName] || null;
-      
+
       const properties = structProperties(typeName);
       return {
         name,
@@ -1536,10 +1535,10 @@ class RendererWebGPU extends Renderer3D {
         }
       };
     }).filter(Boolean);
-    
+
     // Convert WGSL return type to DataType
     const returnDataType = wgslToDataType[returnType] || null;
-    
+
     return {
       name: functionName,
       returnType: {
