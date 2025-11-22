@@ -82,7 +82,6 @@ export const structType = function (hookType) {
   return structType;
 };
 export function isStructType(typeInfo) {
-  if (typeInfo.baseType === 'Inputs') debugger
   return !!(typeInfo && typeInfo.properties);
 }
 export const GenType = {

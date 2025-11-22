@@ -192,6 +192,7 @@ suite('WebGPU p5.Shader', function() {
 
       test('handle modifications after if statement in both branches', async () => {
         await myp5.createCanvas(100, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
             const uv = inputs.texCoord;
@@ -214,11 +215,12 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
         // Check left side (false condition)
-        const leftPixel = await myp5.get(25, 25);
-        assert.approximately(leftPixel[0], 102, 5); // 0.4 * 255 ≈ 102
+        await myp5.loadPixels();
+        const leftPixel = myp5.pixels[(25 * myp5.width + 25) * 4]
+        const rightPixel = myp5.pixels[(25 * myp5.width + 75) * 4]
+        assert.approximately(leftPixel, 102, 5); // 0.4 * 255 ≈ 102
         // Check right side (true condition)
-        const rightPixel = await myp5.get(75, 25);
-        assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
+        assert.approximately(rightPixel, 127, 5); // 0.5 * 255 ≈ 127
       });
 
       test('handle if-else-if chains', async () => {
@@ -779,13 +781,14 @@ suite('WebGPU p5.Shader', function() {
         myp5.plane(myp5.width, myp5.height);
 
         // The middle should have position 0,0 which translates to black
-        const midColor = await myp5.get(25, 25);
+        await myp5.loadPixels();
+        const midColor = myp5.pixels.slice((25 * myp5.width + 25) * 4, (25 * myp5.width + 25) * 4 + 4);
         assert.approximately(midColor[0], 0, 5);
         assert.approximately(midColor[1], 0, 5);
         assert.approximately(midColor[2], 0, 5);
 
         // The corner should have position 1,1 which translates to yellow
-        const cornerColor = await myp5.get(0, 0);
+        const cornerColor = myp5.pixels.slice((0 * myp5.width + 0) * 4, (0 * myp5.width + 0) * 4 + 4);
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
@@ -811,14 +814,15 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
 
+        await myp5.loadPixels();
         // The middle should have position 0,0 which translates to black
-        const midColor = await myp5.get(25, 25);
+        const midColor = await myp5.pixels.slice((25 * myp5.width + 25) * 4, (25 * myp5.width + 25) * 4 + 4);
         assert.approximately(midColor[0], 0, 5);
         assert.approximately(midColor[1], 0, 5);
         assert.approximately(midColor[2], 0, 5);
 
         // The corner should have position 1,1 which translates to yellow
-        const cornerColor = await myp5.get(0, 0);
+        const cornerColor = await myp5.pixels.slice((0 * myp5.width + 0) * 4, (0 * myp5.width + 0) * 4 + 4);
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
@@ -845,14 +849,15 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
 
+        await myp5.loadPixels();
         // The middle (shifted +25,25) should have position 0,0 which translates to black
-        const midColor = await myp5.get(49, 49);
+        const midColor = myp5.pixels.slice((49 * myp5.width + 49) * 4, (49 * myp5.width + 49) * 4 + 4);
         assert.approximately(midColor[0], 0, 5);
         assert.approximately(midColor[1], 0, 5);
         assert.approximately(midColor[2], 0, 5);
 
         // The corner (shifted +25,25) should have position 1,1 which translates to yellow
-        const cornerColor = await myp5.get(25, 25);
+        const cornerColor = myp5.pixels.slice((25 * myp5.width + 25) * 4, (25 * myp5.width + 25) * 4 + 4);
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
@@ -906,14 +911,15 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
 
+        await myp5.loadPixels();
         // The middle should have position 0,0 which translates to black
-        const midColor = await myp5.get(25, 25);
+        const midColor = myp5.pixels.slice((25 * myp5.width + 25) * 4, (25 * myp5.width + 25) * 4 + 4);
         assert.approximately(midColor[0], 0, 5);
         assert.approximately(midColor[1], 0, 5);
         assert.approximately(midColor[2], 0, 5);
 
         // The corner should have position 1,1 which translates to yellow
-        const cornerColor = await myp5.get(0, 0);
+        const cornerColor = myp5.pixels.slice((0 * myp5.width + 0) * 4, (0 * myp5.width + 0) * 4 + 4);
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
