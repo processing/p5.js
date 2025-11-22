@@ -52,9 +52,15 @@ export function generateShaderCode(strandsContext) {
     strandsContext.globalAssignments = [];
 
     const firstLine = backend.hookEntry(hookType);
-    let returnType = hookType.returnType.properties
-      ? structType(hookType.returnType)
-      : TypeInfoFromGLSLName[hookType.returnType.typeName];
+    let returnType;
+    if (hookType.returnType.properties) {
+      returnType = structType(hookType.returnType);
+    } else {
+      if (!hookType.returnType.dataType) {
+        throw new Error(`Missing dataType for return type ${hookType.returnType.typeName}`);
+      }
+      returnType = hookType.returnType.dataType;
+    }
     backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
   }

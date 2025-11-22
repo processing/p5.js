@@ -1,415 +1,29 @@
 import p5 from '../../../src/app.js';
-suite('p5.Shader', function() {
+import rendererWebGPU from "../../../src/webgpu/p5.RendererWebGPU";
+
+p5.registerAddon(rendererWebGPU);
+
+suite('WebGPU p5.Shader', function() {
   var myp5;
+
   beforeAll(function() {
     window.IS_MINIFIED = true;
     myp5 = new p5(function(p) {
       p.setup = function() {
-        p.createCanvas(100, 100, p.WEBGL);
+        p.createCanvas(100, 100, 'webgpu');
         p.pointLight(250, 250, 250, 100, 100, 0);
         p.ambientMaterial(250);
       };
     });
   });
-  var testUniforms = function(shaderName, uniforms, expectedUniforms) {
-    // assert(expectedUniforms.length === Object.keys(uniforms).length,
-    //   shaderName + ' expected ' + expectedUniforms.length + ' uniforms but has ' +
-    //   Object.keys(uniforms).length);
-    // test each one
-    for (var i = 0; i < expectedUniforms.length; i++) {
-      var uniform = uniforms[expectedUniforms[i]];
-      assert(
-        uniform !== undefined,
-        shaderName + ' missing expectedUniform: ' + expectedUniforms[i]
-      );
-    }
-  };
-  var testAttributes = function(shaderName, attributes, expectedAttributes) {
-    // assert(expectedAttributes.length === Object.keys(attributes).length,
-    //   shaderName + ' expected ' + expectedAttributes.length +
-    //   ' attributes but has ' + Object.keys(attributes).length);
-    // test each one
-    for (var i = 0; i < expectedAttributes.length; i++) {
-      var attribute = attributes[expectedAttributes[i]];
-      assert(
-        attribute !== undefined,
-        shaderName + ' missing expected attribute: ' + expectedAttributes[i]
-      );
-    }
-  };
-  var testShader = function(
-    shaderName,
-    shaderObj,
-    expectedAttributes,
-    expectedUniforms
-  ) {
-    shaderObj.bindShader();
-    testAttributes(shaderName, shaderObj.attributes, expectedAttributes);
-    testUniforms(shaderName, shaderObj.uniforms, expectedUniforms);
-    shaderObj.unbindShader();
-  };
+
   afterAll(function() {
     myp5.remove();
   });
-  suite('Shader', function() {
-    test('Light Shader', function() {
-      var expectedAttributes = ['aPosition', 'aNormal', 'aTexCoord'];
-      var expectedUniforms = [
-        'uModelViewMatrix',
-        'uProjectionMatrix',
-        'uNormalMatrix',
-        'uDirectionalLightCount',
-        'uPointLightCount',
-        'uAmbientColor',
-        'uLightingDirection',
-        'uDirectionalDiffuseColors',
-        'uDirectionalSpecularColors',
-        'uPointLightLocation',
-        'uPointLightDiffuseColors',
-        'uPointLightSpecularColors',
-        'uSpotLightCount',
-        'uSpotLightAngle',
-        'uSpotLightConc',
-        'uSpotLightDiffuseColors',
-        'uSpotLightSpecularColors',
-        'uSpotLightLocation',
-        'uSpotLightDirection',
-        'uSpecular',
-        'uShininess',
-        'uMaterialColor',
-        'uSampler',
-        'isTexture',
-        'uConstantAttenuation',
-        'uLinearAttenuation',
-        'uQuadraticAttenuation'
-      ];
-      testShader(
-        'Light Shader',
-        myp5._renderer._getLightShader(),
-        expectedAttributes,
-        expectedUniforms
-      );
-    });
-    test('Color Shader definition', function() {
-      var expectedAttributes = ['aPosition'];
-      var expectedUniforms = [
-        'uModelViewMatrix',
-        'uProjectionMatrix',
-        'uMaterialColor'
-      ];
-      testShader(
-        'Color Shader',
-        myp5._renderer._getColorShader(),
-        expectedAttributes,
-        expectedUniforms
-      );
-    });
-    test('Immediate Mode Shader definition', function() {
-      var expectedAttributes = ['aPosition', 'aVertexColor'];
-      var expectedUniforms = [
-        'uModelViewMatrix',
-        'uProjectionMatrix'
-      ];
-      testShader(
-        'Immediate Mode Shader',
-        myp5._renderer._getColorShader(),
-        expectedAttributes,
-        expectedUniforms
-      );
-    });
-    test('Normal Shader definition', function() {
-      var expectedAttributes = ['aPosition', 'aNormal'];
-      var expectedUniforms = [
-        'uModelViewMatrix',
-        'uProjectionMatrix',
-        'uNormalMatrix'
-      ];
-      testShader(
-        'Normal Shader',
-        myp5._renderer._getNormalShader(),
-        expectedAttributes,
-        expectedUniforms
-      );
-    });
-    test('Color Shader is set after fill()', function() {
-      myp5.fill(0);
-      var retainedColorShader = myp5._renderer._getColorShader();
-      var texLightShader = myp5._renderer._getLightShader();
-      var immediateColorShader = myp5._renderer._getColorShader();
-      var selectedRetainedShader = myp5._renderer._getFillShader();
-      var selectedImmediateShader = myp5._renderer._getFillShader();
-      // both color and light shader are valid, depending on
-      // conditions set earlier.
-      assert(
-        retainedColorShader === selectedRetainedShader ||
-          texLightShader === selectedRetainedShader,
-        "_renderer's retain mode shader was not color shader after fill"
-      );
-      assert(
-        immediateColorShader === selectedImmediateShader ||
-          texLightShader === selectedImmediateShader,
-        "_renderer's immediate mode shader was not color shader after fill"
-      );
-    });
-    test('Normal Shader is set after normalMaterial()', function() {
-      myp5.normalMaterial();
-      var normalShader = myp5._renderer._getNormalShader();
-      var selectedRetainedShader = myp5._renderer._getFillShader();
-      var selectedImmediateShader = myp5._renderer._getFillShader();
-      assert(
-        normalShader === selectedRetainedShader,
-        "_renderer's retain mode shader was not normal shader"
-      );
-      assert(
-        normalShader === selectedImmediateShader,
-        "_renderer's retain mode shader was not normal shader"
-      );
-    });
-    test('Light shader set after ambientMaterial()', function() {
-      var lightShader = myp5._renderer._getLightShader();
-      myp5.ambientMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getFillShader();
-      var selectedImmediateShader = myp5._renderer._getFillShader();
-      assert(
-        lightShader === selectedRetainedShader,
-        "_renderer's retain mode shader was not light shader " +
-          'after call to ambientMaterial()'
-      );
-      assert(
-        lightShader === selectedImmediateShader,
-        "_renderer's immediate mode shader was not light shader" +
-          'after call to ambientMaterial()'
-      );
-    });
-    test('Light shader set after specularMaterial()', function() {
-      var lightShader = myp5._renderer._getLightShader();
-      myp5.specularMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getFillShader();
-      var selectedImmediateShader = myp5._renderer._getFillShader();
-      assert(
-        lightShader === selectedRetainedShader,
-        "_renderer's retain mode shader was not light shader " +
-          'after call to specularMaterial()'
-      );
-      assert(
-        lightShader === selectedImmediateShader,
-        "_renderer's immediate mode shader was not light shader " +
-          'after call to specularMaterial()'
-      );
-    });
-    test('Light shader set after emissiveMaterial()', function() {
-      var lightShader = myp5._renderer._getLightShader();
-      myp5.emissiveMaterial(128);
-      var selectedRetainedShader = myp5._renderer._getFillShader();
-      var selectedImmediateShader = myp5._renderer._getFillShader();
-      assert(
-        lightShader === selectedRetainedShader,
-        "_renderer's retain mode shader was not light shader " +
-          'after call to emissiveMaterial()'
-      );
-      assert(
-        lightShader === selectedImmediateShader,
-        "_renderer's immediate mode shader was not light shader " +
-          'after call to emissiveMaterial()'
-      );
-    });
-    test('Able to setUniform empty arrays', function() {
-      myp5.shader(myp5._renderer._getLightShader());
-      var s = myp5._renderer.states.userFillShader;
-      s.setUniform('uMaterialColor', []);
-      s.setUniform('uLightingDirection', []);
-    });
-    test('Able to set shininess', function() {
-      assert.deepEqual(myp5._renderer.states._useShininess, 1);
-      myp5.shininess(50);
-      assert.deepEqual(myp5._renderer.states._useShininess, 50);
-    });
-    test('Shader is reset after resetShader is called', function() {
-      myp5.shader(myp5._renderer._getColorShader());
-      var prevShader = myp5._renderer.states.userFillShader;
-      assert.isTrue(prevShader !== null);
-      myp5.resetShader();
-      var curShader = myp5._renderer.states.userFillShader;
-      assert.isTrue(curShader === null);
-    });
-    suite('Hooks', function() {
-      let myShader;
-      beforeEach(function() {
-        myShader = myp5.createShader(
-          `
-            precision highp float;
-            attribute vec3 aPosition;
-            attribute vec2 aTexCoord;
-            attribute vec4 aVertexColor;
-            uniform mat4 uModelViewMatrix;
-            uniform mat4 uProjectionMatrix;
-            varying vec2 vTexCoord;
-            varying vec4 vVertexColor;
-            void main() {
-                // Apply the camera transform
-                vec4 viewModelPosition =
-                  uModelViewMatrix *
-                  vec4(aPosition, 1.0);
-                // Tell WebGL where the vertex goes
-                gl_Position =
-                  uProjectionMatrix *
-                  viewModelPosition;
-                // Pass along data to the fragment shader
-                vTexCoord = aTexCoord;
-                vVertexColor = aVertexColor;
-            }
-          `,
-          `
-            precision highp float;
-            varying vec2 vTexCoord;
-            varying vec4 vVertexColor;
-            void main() {
-              // Tell WebGL what color to make the pixel
-              gl_FragColor = HOOK_getVertexColor(vVertexColor);
-            }
-          `,
-          {
-            fragment: {
-              'vec4 getVertexColor': '(vec4 color) { return color; }'
-            }
-          }
-        );
-      });
-      test('available hooks show up in inspectHooks()', function() {
-        const logs = [];
-        const myLog = (...data) => logs.push(data.join(', '));
-        const oldLog = console.log;
-        console.log = myLog;
-        myShader.inspectHooks();
-        console.log = oldLog;
-        expect(logs.join('\n')).to.match(/vec4 getVertexColor/);
-      });
-      test('unfilled hooks do not have an AUGMENTED_HOOK define', function() {
-        const modified = myShader.modify({});
-        expect(modified.fragSrc()).not.to.match(/#define AUGMENTED_HOOK_getVertexColor/);
-      });
-      test('anonymous function shaderModifier does not throw when parsed', function() {
-        const callModify = () => myShader.modify(function() {});
-        expect(callModify).not.toThrowError();
-      });
-      test('filled hooks do have an AUGMENTED_HOOK define', function() {
-        const modified = myShader.modify({
-          'vec4 getVertexColor': `(vec4 c) {
-            return vec4(1., 0., 0., 1.);
-          }`
-        });
-        expect(modified.fragSrc()).to.match(/#define AUGMENTED_HOOK_getVertexColor/);
-      });
-    });
-    test('framebuffer textures are unbound when you draw to the framebuffer', function() {
-      const sh = myp5.baseMaterialShader().modify({
-        uniforms: {
-          'sampler2D myTex': null
-        },
-        'vec4 getFinalColor': `(vec4 c) {
-          return getTexture(myTex, vec2(0.,0.));
-        }`
-      });
-      const fbo = myp5.createFramebuffer();
-      myp5.shader(sh);
-      sh.setUniform('myTex', fbo);
-      fbo.draw(() => myp5.background('red'));
-      sh.setUniform('myTex', fbo);
-      myp5.noStroke();
-      myp5.plane(myp5.width, myp5.height);
-      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
-    });
-  });
-  suite('hookTypes', function() {
-    test('Produces expected types on baseFilterShader()', function() {
-      const types = myp5.baseFilterShader().hookTypes('vec4 getColor');
-      assert.deepEqual(types, {
-        name: 'getColor',
-        returnType: {
-          typeName: 'vec4',
-          qualifiers: [],
-          properties: undefined,
-          dataType: {
-            baseType: 'float',
-            dimension: 4,
-            fnName: 'vec4',
-            priority: 3
-          }
-        },
-        parameters: [
-          {
-            name: 'inputs',
-            type: {
-              typeName: 'FilterInputs',
-              qualifiers: [],
-              dataType: null,
-              properties: [
-                {
-                  name: 'texCoord',
-                  type: {
-                    typeName: 'vec2',
-                    qualifiers: [],
-                    properties: undefined,
-                    dataType: {
-                      baseType: 'float',
-                      dimension: 2,
-                      fnName: 'vec2',
-                      priority: 3
-                    }
-                  }
-                },
-                {
-                  name: 'canvasSize',
-                  type: {
-                    typeName: 'vec2',
-                    qualifiers: [],
-                    properties: undefined,
-                    dataType: {
-                      baseType: 'float',
-                      dimension: 2,
-                      fnName: 'vec2',
-                      priority: 3
-                    }
-                  }
-                },
-                {
-                  name: 'texelSize',
-                  type: {
-                    typeName: 'vec2',
-                    qualifiers: [],
-                    properties: undefined,
-                    dataType: {
-                      baseType: 'float',
-                      dimension: 2,
-                      fnName: 'vec2',
-                      priority: 3
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          {
-            name: 'canvasContent',
-            type: {
-              typeName: 'sampler2D',
-              qualifiers: ['in'],
-              properties: undefined,
-              dataType: {
-                baseType: 'sampler2D',
-                dimension: 1,
-                fnName: 'sampler2D',
-                priority: -10
-              }
-            }
-          }
-        ]
-      });
-    });
-  });
+
   suite('p5.strands', () => {
     test('does not break when arrays are in uniform callbacks', () => {
-      myp5.createCanvas(5, 5, myp5.WEBGL);
+      myp5.createCanvas(5, 5, 'webgpu');
       const myShader = myp5.baseMaterialShader().modify(() => {
         const size = myp5.uniformVector2(() => [myp5.width, myp5.height]);
         myp5.getPixelInputs(inputs => {
@@ -426,9 +40,10 @@ suite('p5.Shader', function() {
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
     });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 1.0); // true condition
           myp5.getPixelInputs(inputs => {
@@ -449,8 +64,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+
       test('handle simple if statement with simpler assignment', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 1.0); // true condition
           myp5.getPixelInputs(inputs => {
@@ -471,8 +87,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+
       test('handle simple if statement with false condition', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 0.0); // false condition
           myp5.getPixelInputs(inputs => {
@@ -493,8 +110,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+
       test('handle if-else statement', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 0.0); // false condition
           myp5.getPixelInputs(inputs => {
@@ -517,8 +135,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 0, 5); // Green channel should be ~0
         assert.approximately(pixelColor[2], 0, 5); // Blue channel should be ~0
       });
+
       test('handle multiple variable assignments in if statement', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 1.0); // true condition
           myp5.getPixelInputs(inputs => {
@@ -543,8 +162,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 0, 5);   // Blue channel should be ~0
       });
+
       test('handle modifications after if statement', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const condition = myp5.uniformFloat(() => 1.0); // true condition
           myp5.getPixelInputs(inputs => {
@@ -569,8 +189,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+
       test('handle modifications after if statement in both branches', () => {
-        myp5.createCanvas(100, 50, myp5.WEBGL);
+        myp5.createCanvas(100, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
             const uv = inputs.texCoord;
@@ -599,8 +220,9 @@ suite('p5.Shader', function() {
         const rightPixel = myp5.get(75, 25);
         assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
       });
+
       test('handle if-else-if chains', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const value = myp5.uniformFloat(() => 0.5); // middle value
           myp5.getPixelInputs(inputs => {
@@ -625,8 +247,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+
       test('handle if-else-if chains in the else branch', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const value = myp5.uniformFloat(() => 0.2); // middle value
           myp5.getPixelInputs(inputs => {
@@ -651,8 +274,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 0, 5);
         assert.approximately(pixelColor[2], 0, 5);
       });
+
       test('handle conditional assignment in if-else-if chains', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const val = myp5.uniformFloat(() => Math.PI * 8);
           myp5.getPixelInputs(inputs => {
@@ -685,8 +309,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5);
         assert.approximately(pixelColor[2], 255, 5);
       });
+
       test('handle nested if statements', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const outerCondition = myp5.uniformFloat(() => 1.0); // true
           const innerCondition = myp5.uniformFloat(() => 1.0); // true
@@ -714,9 +339,10 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+
       // Keep one direct API test for completeness
       test('handle direct StrandsIf API usage', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const conditionValue = myp5.uniformFloat(() => 1.0); // true condition
           myp5.getPixelInputs(inputs => {
@@ -745,8 +371,9 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+
       test('handle direct StrandsIf ElseIf API usage', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         const testShader = myp5.baseMaterialShader().modify(() => {
           const value = myp5.uniformFloat(() => 0.5); // middle value
           myp5.getPixelInputs(inputs => {
@@ -788,7 +415,7 @@ suite('p5.Shader', function() {
 
     suite('for loop statements', () => {
       test('handle simple for loop with known iteration count', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -815,7 +442,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle swizzle assignments in loops', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -842,7 +469,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle for loop with variable as loop bound', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           const maxIterations = myp5.uniformInt(() => 2);
@@ -871,7 +498,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle for loop modifying multiple variables', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -899,7 +526,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle for loop with conditional inside', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -928,7 +555,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle nested for loops', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -957,7 +584,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle complex nested for loops with multiple phi assignments', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -1000,7 +627,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle nested for loops with state modification between loops', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -1037,7 +664,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle for loop using loop variable in calculations', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -1065,7 +692,7 @@ suite('p5.Shader', function() {
 
       // Keep one direct API test for completeness
       test('handle direct StrandsFor API usage', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -1101,7 +728,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle for loop with break statement', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
@@ -1132,7 +759,7 @@ suite('p5.Shader', function() {
 
     suite('passing data between shaders', () => {
       test('handle passing a value from a vertex hook to a fragment hook', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1165,7 +792,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle passing a value from a vertex hook to a fragment hook with swizzle assignment', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1198,7 +825,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle passing a value from a vertex hook to a fragment hook as part of hook output', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1232,7 +859,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle passing a value between fragment hooks only', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1260,7 +887,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle passing a value from a vertex hook to a fragment hook using shared*', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
         myp5.pixelDensity(1);
 
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1295,7 +922,7 @@ suite('p5.Shader', function() {
 
     suite('filter shader hooks', () => {
       test('handle getColor hook with non-struct return type', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseFilterShader().modify(() => {
           myp5.getColor((inputs, canvasContent) => {
@@ -1318,7 +945,7 @@ suite('p5.Shader', function() {
       });
 
       test('simple vector multiplication in filter shader', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseFilterShader().modify(() => {
           myp5.getColor((inputs, canvasContent) => {
@@ -1332,7 +959,7 @@ suite('p5.Shader', function() {
       });
 
       test('handle complex filter shader with for loop and vector operations', () => {
-        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.createCanvas(50, 50, 'webgpu');
 
         const testShader = myp5.baseFilterShader().modify(() => {
           const r = myp5.uniformFloat(() => 3); // Small value for testing
@@ -1371,7 +998,7 @@ suite('p5.Shader', function() {
       for (let i = 1; i <= 3; i++) {
         test(`works with ${i}D vectors`, () => {
           expect(() => {
-            myp5.createCanvas(50, 50, myp5.WEBGL);
+            myp5.createCanvas(50, 50, 'webgpu');
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
               myp5.getColor(() => {
@@ -1385,7 +1012,7 @@ suite('p5.Shader', function() {
 
         test(`works with ${i}D positional arguments`, () => {
           expect(() => {
-            myp5.createCanvas(50, 50, myp5.WEBGL);
+            myp5.createCanvas(50, 50, 'webgpu');
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
               myp5.getColor(() => {
@@ -1401,7 +1028,7 @@ suite('p5.Shader', function() {
       for (const i of [0, 4]) {
         test(`Does not work in ${i}D`, () => {
           expect(() => {
-            myp5.createCanvas(50, 50, myp5.WEBGL);
+            myp5.createCanvas(50, 50, 'webgpu');
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
               myp5.getColor(() => {
@@ -1415,7 +1042,7 @@ suite('p5.Shader', function() {
 
         test(`Does not work in ${i}D with positional arguments`, () => {
           expect(() => {
-            myp5.createCanvas(50, 50, myp5.WEBGL);
+            myp5.createCanvas(50, 50, 'webgpu');
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
               myp5.getColor(() => {

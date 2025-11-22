@@ -4,6 +4,7 @@ import { Texture } from '../webgl/p5.Texture';
 import { Image } from '../image/p5.Image';
 import { RGB, RGBA } from '../color/creating_reading';
 import * as constants from '../core/constants';
+import { DataType } from '../strands/ir_types.js';
 
 
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
@@ -1430,6 +1431,125 @@ class RendererWebGPU extends Renderer3D {
     }
     
     return maxLocation + 1;
+  }
+
+  getShaderHookTypes(shader, hookName) {
+    // Create mapping from WGSL types to DataType entries
+    const wgslToDataType = {
+      'f32': DataType.float1,
+      'vec2<f32>': DataType.float2, 
+      'vec3<f32>': DataType.float3,
+      'vec4<f32>': DataType.float4,
+      'i32': DataType.int1,
+      'vec2<i32>': DataType.int2,
+      'vec3<i32>': DataType.int3, 
+      'vec4<i32>': DataType.int4,
+      'bool': DataType.bool1,
+      'vec2<bool>': DataType.bool2,
+      'vec3<bool>': DataType.bool3,
+      'vec4<bool>': DataType.bool4,
+      'mat2x2<f32>': DataType.mat2,
+      'mat3x3<f32>': DataType.mat3,
+      'mat4x4<f32>': DataType.mat4,
+      'texture_2d<f32>': DataType.sampler2D
+    };
+    
+    let fullSrc = shader._vertSrc;
+    let body = shader.hooks.vertex[hookName];
+    if (!body) {
+      body = shader.hooks.fragment[hookName];
+      fullSrc = shader._fragSrc;
+    }
+    if (!body) {
+      throw new Error(`Can't find hook ${hookName}!`);
+    }
+    const nameParts = hookName.split(/\s+/g);
+    const functionName = nameParts.pop();
+    const returnType = nameParts.pop();
+    const returnQualifiers = [...nameParts];
+    const parameterMatch = /\(([^\)]*)\)/.exec(body);
+    if (!parameterMatch) {
+      throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
+    }
+    
+    const structProperties = structName => {
+      // WGSL struct parsing: struct StructName { field1: Type, field2: Type }
+      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
+      if (!structDefMatch) return undefined;
+      const properties = [];
+      
+      // Parse WGSL struct fields (e.g., "texCoord: vec2<f32>,")
+      for (const fieldSrc of structDefMatch[1].split(',')) {
+        const trimmed = fieldSrc.trim();
+        if (!trimmed) continue;
+        
+        // Remove location decorations and parse field
+        // Format: [@location(N)] fieldName: Type
+        const fieldMatch = /(?:@location\([^)]*\)\s*)?(\w+)\s*:\s*([^,\s]+)/.exec(trimmed);
+        if (!fieldMatch) continue;
+        
+        const name = fieldMatch[1];
+        let typeName = fieldMatch[2];
+        
+        const dataType = wgslToDataType[typeName] || null;
+        
+        const typeProperties = structProperties(typeName);
+        properties.push({
+          name,
+          type: {
+            typeName: typeName, // Keep native WGSL type name
+            qualifiers: [],
+            properties: typeProperties,
+            dataType: dataType
+          }
+        });
+      }
+      return properties;
+    };
+    
+    const parameters = parameterMatch[1].split(',').map(paramString => {
+      // WGSL function parameters: name: type or name: binding<type>
+      const trimmed = paramString.trim();
+      if (!trimmed) return null;
+      
+      const parts = trimmed.split(':').map(s => s.trim());
+      if (parts.length !== 2) return null;
+      
+      const name = parts[0];
+      let typeName = parts[1];
+      
+      // Handle texture bindings like "texture_2d<f32>" -> sampler2D DataType
+      if (typeName.includes('texture_2d')) {
+        typeName = 'texture_2d<f32>';
+      }
+      
+      const dataType = wgslToDataType[typeName] || null;
+      
+      const properties = structProperties(typeName);
+      return {
+        name,
+        type: {
+          typeName: typeName, // Keep native WGSL type name
+          qualifiers: [],
+          properties,
+          dataType: dataType
+        }
+      };
+    }).filter(Boolean);
+    
+    // Convert WGSL return type to DataType
+    const returnDataType = wgslToDataType[returnType] || null;
+    
+    return {
+      name: functionName,
+      returnType: {
+        typeName: returnType, // Keep native WGSL type name
+        qualifiers: returnQualifiers,
+        properties: structProperties(returnType),
+        dataType: returnDataType
+      },
+      parameters
+    };
   }
 
   //////////////////////////////////////////////

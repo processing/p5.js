@@ -266,7 +266,10 @@ function createHookArguments(strandsContext, parameters){
       args.push(structNode);
     }
     else /*if(isNativeType(paramType.typeName))*/ {
-      const typeInfo = TypeInfoFromGLSLName[param.type.typeName];
+      if (!param.type.dataType) {
+        throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
+      }
+      const typeInfo = param.type.dataType;
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
@@ -373,7 +376,10 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         }
       }
       else /*if(isNativeType(expectedReturnType.typeName))*/ {
-        const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
+        if (!expectedReturnType.dataType) {
+          throw new Error(`Missing dataType for return type ${expectedReturnType.typeName}`);
+        }
+        const expectedTypeInfo = expectedReturnType.dataType;
         rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
       }
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
