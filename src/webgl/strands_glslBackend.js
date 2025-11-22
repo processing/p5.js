@@ -1,6 +1,6 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "./ir_types";
-import { getNodeDataFromID, extractNodeTypeInfo } from "./ir_dag";
-import * as FES from './strands_FES'
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "../strands/ir_types";
+import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
+import * as FES from '../strands/strands_FES'
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;

@@ -15,6 +15,7 @@ import { MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';
 import { RGB, RGBA } from '../color/creating_reading';
 import { Image } from '../image/p5.Image';
+import { glslBackend } from './strands_glslBackend';
 
 import filterBaseVert from "./shaders/filters/base.vert";
 import lightingShader from "./shaders/lighting.glsl";
@@ -125,6 +126,7 @@ class RendererGL extends Renderer3D {
     };
 
     this._cachedBlendMode = undefined;
+    this.strandsBackend = glslBackend;
   }
 
   setupContext() {
