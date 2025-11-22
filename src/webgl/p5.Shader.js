@@ -432,7 +432,7 @@ class Shader {
    */
   setDefaultUniforms() {
     for (const key in this.hooks.uniforms) {
-      const [, name] = key.split(' ');
+      const name = this._renderer.uniformNameFromHookKey(key);
       const initializer = this.hooks.uniforms[key];
       let value;
       if (initializer instanceof Function) {

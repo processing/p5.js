@@ -1320,6 +1320,9 @@ class RendererGL extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
+  uniformNameFromHookKey(key) {
+    return key.slice(key.indexOf(' ') + 1);
+  }
   populateHooks(shader, src, shaderType) {
     return populateGLSLHooks(shader, src, shaderType);
   }

@@ -1300,6 +1300,9 @@ class RendererWebGPU extends Renderer3D {
   //////////////////////////////////////////////
   // Shader hooks
   //////////////////////////////////////////////
+  uniformNameFromHookKey(key) {
+    return key.slice(0, key.indexOf(':'));
+  }
   populateHooks(shader, src, shaderType) {
     if (!src.includes('fn main')) return src;
 
@@ -1365,6 +1368,53 @@ class RendererWebGPU extends Renderer3D {
           /struct\s+FragmentInput\s+\{([^}]*)\}/,
           (match, body) => `struct FragmentInput {${body}\n${varyingMembers}}`
         );
+      }
+    }
+
+    // Add file-global varying variable declarations
+    if (shader.hooks.varyingVariables && shader.hooks.varyingVariables.length > 0) {
+      let varyingDeclarations = '';
+      for (const varyingVar of shader.hooks.varyingVariables) {
+        // varyingVar is a string like "varName: vec3<f32>"
+        const [varName, varType] = varyingVar.split(':').map(s => s.trim());
+        varyingDeclarations += `var<private> ${varName}: ${varType};\n`;
+      }
+
+      // Add declarations before the main function
+      preMain += varyingDeclarations;
+
+      if (shaderType === 'vertex') {
+        // In vertex shader, copy varying variables to output struct before return
+        let copyStatements = '';
+        for (const varyingVar of shader.hooks.varyingVariables) {
+          const [varName] = varyingVar.split(':').map(s => s.trim());
+          copyStatements += `  OUTPUT_VAR.${varName} = ${varName};\n`;
+        }
+
+        // Find the output variable name from the return statement and replace OUTPUT_VAR
+        const returnMatch = postMain.match(/return\s+(\w+)\s*;/);
+        if (returnMatch) {
+          const outputVarName = returnMatch[1];
+          copyStatements = copyStatements.replace(/OUTPUT_VAR/g, outputVarName);
+          // Insert before the return statement
+          postMain = postMain.replace(/(return\s+\w+\s*;)/g, `${copyStatements}  $1`);
+        }
+      } else if (shaderType === 'fragment') {
+        // In fragment shader, initialize varying variables from input struct at start of main
+        let initStatements = '';
+        for (const varyingVar of shader.hooks.varyingVariables) {
+          const [varName] = varyingVar.split(':').map(s => s.trim());
+          initStatements += `  ${varName} = INPUT_VAR.${varName};\n`;
+        }
+
+        // Find the input parameter name from the main function signature (anchored to start)
+        const inputMatch = postMain.match(/^\s*\((\w+):\s*\w+\)/);
+        if (inputMatch) {
+          const inputVarName = inputMatch[1];
+          initStatements = initStatements.replace(/INPUT_VAR/g, inputVarName);
+          // Insert after the main function parameter but before any other code (anchored to start)
+          postMain = postMain.replace(/^(\s*\(\w+:\s*\w+\)\s*[^{]*\{)/, `$1\n${initStatements}`);
+        }
       }
     }
 

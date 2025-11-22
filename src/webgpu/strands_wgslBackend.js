@@ -197,7 +197,7 @@ export const wgslBackend = {
   },
   generateLocalDeclaration(varName, typeInfo) {
     const typeName = this.getTypeName(typeInfo.baseType, typeInfo.dimension);
-    return `var ${varName}: ${typeName};`;
+    return `var<private> ${varName}: ${typeName};`;
   },
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
@@ -222,14 +222,55 @@ export const wgslBackend = {
     const targetNodeID = node.dependsOn[0];
     const sourceNodeID = node.dependsOn[1];
 
-    // Generate the target expression (could be variable or swizzle)
-    const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
-    const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+    const targetNode = getNodeDataFromID(dag, targetNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
 
-    // Generate assignment if we have both target and source
-    if (targetExpr && sourceExpr && targetExpr !== sourceExpr) {
-      generationContext.write(`${targetExpr} = ${sourceExpr}${semicolon}`);
+    // Check if target is a swizzle assignment
+    if (targetNode.opCode === OpCode.Unary.SWIZZLE) {
+      const parentID = targetNode.dependsOn[0];
+      const parentNode = getNodeDataFromID(dag, parentID);
+      const parentExpr = this.generateExpression(generationContext, dag, parentID);
+      const swizzle = targetNode.swizzle;
+      const parentDimension = parentNode.dimension;
+      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+
+      // Create an array for each element of the target variable
+      const componentMap = [];
+      for (let i = 0; i < parentDimension; i++) {
+        componentMap[i] = { target: 'self', index: i };
+      }
+
+      // Map swizzle characters to component indices
+      const getComponentIndex = (char) => {
+        if ('xyzw'.includes(char)) return 'xyzw'.indexOf(char);
+        if ('rgba'.includes(char)) return 'rgba'.indexOf(char);
+        return -1;
+      };
+
+      // Update the component map based on the swizzle assignment
+      for (let i = 0; i < swizzle.length; i++) {
+        const targetComponentIndex = getComponentIndex(swizzle[i]);
+        if (targetComponentIndex >= 0 && targetComponentIndex < parentDimension) {
+          componentMap[targetComponentIndex] = { target: 'rhs', index: i };
+        }
+      }
+
+      // Generate the reconstruction expression
+      const vectorTypeName = this.getTypeName(parentNode.baseType, parentDimension);
+      const components = componentMap.map(({ target, index }) => {
+        return `${target === 'self' ? parentExpr : sourceExpr}.${'xyzw'[index]}`
+      });
+
+      generationContext.write(`${parentExpr} = ${vectorTypeName}(${components.join(', ')})${semicolon}`);
+    } else {
+      // Regular assignment
+      const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
+      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+
+      // Generate assignment if we have both target and source
+      if (targetExpr && sourceExpr && targetExpr !== sourceExpr) {
+        generationContext.write(`${targetExpr} = ${sourceExpr}${semicolon}`);
+      }
     }
   },
   generateDeclaration(generationContext, dag, nodeID) {
