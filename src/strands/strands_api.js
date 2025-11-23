@@ -18,7 +18,6 @@ import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
-import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
 
 //////////////////////////////////////////////
 // User nodes
@@ -102,14 +101,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
-  // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
+  // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   fn.noise = function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
-    strandsContext.vertexDeclarations.add(noiseGLSL);
-    strandsContext.fragmentDeclarations.add(noiseGLSL);
+    // Get noise shader snippet from the current renderer
+    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    strandsContext.vertexDeclarations.add(noiseSnippet);
+    strandsContext.fragmentDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
     const strandsArgs = args.map(arg => p5.strandsNode(arg));
@@ -145,7 +146,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // variant or also one more directly translated from GLSL, or to be more compatible with
   // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
-    if (type === BaseType.DEFER) {
+    if (type === BaseType.DEFER || type === 'sampler') {
       continue;
     }
     const typeInfo = DataType[type];
@@ -266,6 +267,10 @@ function createHookArguments(strandsContext, parameters){
       args.push(structNode);
     }
     else /*if(isNativeType(paramType.typeName))*/ {
+      // Skip sampler parameters - they don't need strands nodes
+      if (param.type.typeName === 'sampler') {
+        continue;
+      }
       if (!param.type.dataType) {
         throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
       }

@@ -14,6 +14,8 @@ import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import {Graphics} from "../core/p5.Graphics";
 import {Element} from "../dom/p5.Element";
 import { wgslBackend } from './strands_wgslBackend';
+import noiseWGSL from './shaders/functions/noise3DWGSL';
+import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 
 const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
@@ -2243,6 +2245,29 @@ class RendererWebGPU extends Renderer3D {
 
     stagingBuffer.unmap();
     return region;
+  }
+
+  getNoiseShaderSnippet() {
+    return noiseWGSL;
+  }
+
+  baseFilterShader() {
+    if (!this._baseFilterShader) {
+      this._baseFilterShader = new Shader(
+        this,
+        baseFilterVertexShader,
+        baseFilterFragmentShader,
+        {
+          vertex: {},
+          fragment: {
+            "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, texSampler: sampler) -> vec4<f32> {
+              return textureSample(tex, texSampler, inputs.texCoord);
+            }`,
+          },
+        }
+      );
+    }
+    return this._baseFilterShader;
   }
 }
 

@@ -1000,7 +1000,7 @@ suite('WebGPU p5.Shader', function() {
       });
     });
 
-    suite.todo('noise()', () => {
+    suite('noise()', () => {
       for (let i = 1; i <= 3; i++) {
         test(`works with ${i}D vectors`, async () => {
           expect(async () => {
@@ -1043,7 +1043,7 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).toThrowError();
+          }).rejects.toThrowError();
         });
 
         test(`Does not work in ${i}D with positional arguments`, async () => {
@@ -1057,7 +1057,7 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).toThrowError();
+          }).rejects.toThrowError();
         });
       }
     });

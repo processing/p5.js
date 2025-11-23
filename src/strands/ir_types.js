@@ -37,6 +37,7 @@ export const BaseType = {
   MAT: "mat",
   DEFER: "defer",
   SAMPLER2D: "sampler2D",
+  SAMPLER: "sampler",
 };
 export const BasePriority = {
   [BaseType.FLOAT]: 3,
@@ -45,6 +46,7 @@ export const BasePriority = {
   [BaseType.MAT]: 0,
   [BaseType.DEFER]: -1,
   [BaseType.SAMPLER2D]: -10,
+  [BaseType.SAMPLER]: -11,
 };
 export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
@@ -64,6 +66,7 @@ export const DataType = {
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
   sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
+  sampler: { fnName: "sampler", baseType: BaseType.SAMPLER, dimension: 1, priority: -11 },
 }
 export const structType = function (hookType) {
   let T = hookType.type === undefined ? hookType : hookType.type;
