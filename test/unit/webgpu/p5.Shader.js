@@ -192,7 +192,6 @@ suite('WebGPU p5.Shader', function() {
 
       test('handle modifications after if statement in both branches', async () => {
         await myp5.createCanvas(100, 50, myp5.WEBGPU);
-        myp5.pixelDensity(1);
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
             const uv = inputs.texCoord;
@@ -215,12 +214,11 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(testShader);
         myp5.plane(myp5.width, myp5.height);
         // Check left side (false condition)
-        await myp5.loadPixels();
-        const leftPixel = myp5.pixels[(25 * myp5.width + 25) * 4]
-        const rightPixel = myp5.pixels[(25 * myp5.width + 75) * 4]
-        assert.approximately(leftPixel, 102, 5); // 0.4 * 255 ≈ 102
+        const leftPixel = await myp5.get(25, 25)
+        const rightPixel = await myp5.get(75, 25)
+        assert.approximately(leftPixel[0], 102, 5); // 0.4 * 255 ≈ 102
         // Check right side (true condition)
-        assert.approximately(rightPixel, 127, 5); // 0.5 * 255 ≈ 127
+        assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
       });
 
       test('handle if-else-if chains', async () => {
@@ -1003,7 +1001,7 @@ suite('WebGPU p5.Shader', function() {
     suite('noise()', () => {
       for (let i = 1; i <= 3; i++) {
         test(`works with ${i}D vectors`, async () => {
-          expect(async () => {
+          await expect((async () => {
             await myp5.createCanvas(50, 50, myp5.WEBGPU);
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
@@ -1013,11 +1011,11 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).not.toThrowError();
+          })()).resolves.not.toThrowError();
         });
 
         test(`works with ${i}D positional arguments`, async () => {
-          expect(async () => {
+          await expect((async () => {
             await myp5.createCanvas(50, 50, myp5.WEBGPU);
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
@@ -1027,13 +1025,13 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).not.toThrowError();
+          })()).resolves.not.toThrowError();
         });
       }
 
       for (const i of [0, 4]) {
         test(`Does not work in ${i}D`, async () => {
-          expect(async () => {
+          await expect((async () => {
             await myp5.createCanvas(50, 50, myp5.WEBGPU);
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
@@ -1043,11 +1041,11 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).rejects.toThrowError();
+          })()).rejects.toThrowError();
         });
 
         test(`Does not work in ${i}D with positional arguments`, async () => {
-          expect(async () => {
+          await expect((async () => {
             await myp5.createCanvas(50, 50, myp5.WEBGPU);
             const input = new Array(i).fill(10);
             const testShader = myp5.baseFilterShader().modify(() => {
@@ -1057,7 +1055,7 @@ suite('WebGPU p5.Shader', function() {
             }, { myp5, input });
             myp5.shader(testShader);
             myp5.plane(10, 10);
-          }).rejects.toThrowError();
+          })()).rejects.toThrowError();
         });
       }
     });

@@ -113,7 +113,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsContext.fragmentDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
-    const strandsArgs = args.map(arg => p5.strandsNode(arg));
+    const strandsArgs = args.flat().map(arg => p5.strandsNode(arg));
     let nodeArgs;
     if (strandsArgs.length === 3) {
       nodeArgs = [fn.vec3(strandsArgs[0], strandsArgs[1], strandsArgs[2])];

@@ -31,8 +31,6 @@ class RendererWebGPU extends Renderer3D {
     this.pixelReadBuffer = null;
     this.pixelReadBufferSize = 0;
 
-    // Lazy readback texture for main canvas pixel reading
-    this.canvasReadbackTexture = null;
     this.strandsBackend = wgslBackend;
 
     // Registry to track all shaders for uniform data pooling
@@ -50,6 +48,10 @@ class RendererWebGPU extends Renderer3D {
 
     // Promise chain for GPU work completion
     this._gpuWorkPromise = null;
+
+    // 2D canvas for pixel reading fallback
+    this._pixelReadCanvas = null;
+    this._pixelReadCtx = null;
   }
 
   async setupContext() {
@@ -160,12 +162,7 @@ class RendererWebGPU extends Renderer3D {
 
     // Clear the main canvas after resize
     this.clear();
-
-    // Destroy existing readback texture when size changes
-    if (this.canvasReadbackTexture && this.canvasReadbackTexture.destroy) {
-      this.canvasReadbackTexture.destroy();
-      this.canvasReadbackTexture = null;
-    }
+    // this._gpuWorkPromise = this.queue.onSubmittedWorkDone();
   }
 
   clear(...args) {
@@ -964,12 +961,36 @@ class RendererWebGPU extends Renderer3D {
         // Return promise that resolves when GPU work is done
         return this.queue.onSubmittedWorkDone();
       };
-      if (this._gpuWorkPromise) {
-        this._gpuWorkPromise = this._gpuWorkPromise.then(submit);
-      } else {
-        this._gpuWorkPromise = submit();
-      }
+      submit();
+      // this._gpuWorkPromise = submit()
+      // if (this._gpuWorkPromise) {
+        // this._gpuWorkPromise = this._gpuWorkPromise.then(submit);
+      // } else {
+        // this._gpuWorkPromise = submit();
+      // }
     }
+  }
+
+  _ensurePixelReadCanvas(width, height) {
+    // Create canvas if it doesn't exist
+    if (!this._pixelReadCanvas) {
+      this._pixelReadCanvas = document.createElement('canvas');
+      this._pixelReadCtx = this._pixelReadCanvas.getContext('2d');
+    }
+
+    // Resize canvas if dimensions changed
+    if (this._pixelReadCanvas.width !== width || this._pixelReadCanvas.height !== height) {
+      this._pixelReadCanvas.width = width;
+      this._pixelReadCanvas.height = height;
+    }
+
+    return { canvas: this._pixelReadCanvas, ctx: this._pixelReadCtx };
+  }
+
+  resize(w, h) {
+    super.resize(w, h);
+    this._hasPendingDraws = true;
+    this.flushDraw();
   }
 
   async finishDraw() {
@@ -1163,7 +1184,7 @@ class RendererWebGPU extends Renderer3D {
       } else if (uniform.size === 4) {
         // Single float value
         data.set([uniform._cachedData], uniform.offset / 4);
-      } else {
+      } else if (uniform._cachedData !== undefined) {
         // Float array (including vec2<f32>, vec3<f32>, vec4<f32>, mat4x4<f32>)
         data.set(uniform._cachedData, uniform.offset / 4);
       }
@@ -2282,43 +2303,6 @@ class RendererWebGPU extends Renderer3D {
   // Main canvas pixel methods
   //////////////////////////////////////////////
 
-  _ensureCanvasReadbackTexture() {
-    if (!this.canvasReadbackTexture) {
-      const width = Math.ceil(this.width * this._pixelDensity);
-      const height = Math.ceil(this.height * this._pixelDensity);
-
-      this.canvasReadbackTexture = this.device.createTexture({
-        size: { width, height, depthOrArrayLayers: 1 },
-        format: this.presentationFormat,
-        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
-      });
-    }
-    return this.canvasReadbackTexture;
-  }
-
-  _copyCanvasToReadbackTexture() {
-    // Get the current canvas texture BEFORE any awaiting
-    const canvasTexture = this.drawingContext.getCurrentTexture();
-
-    // Ensure readback texture exists
-    const readbackTexture = this._ensureCanvasReadbackTexture();
-
-    // Copy canvas texture to readback texture immediately
-    const copyEncoder = this.device.createCommandEncoder();
-    copyEncoder.copyTextureToTexture(
-      { texture: canvasTexture },
-      { texture: readbackTexture },
-      {
-        width: Math.ceil(this.width * this._pixelDensity),
-        height: Math.ceil(this.height * this._pixelDensity),
-        depthOrArrayLayers: 1
-      }
-    );
-    this.device.queue.submit([copyEncoder.finish()]);
-
-    return readbackTexture;
-  }
-
   _convertBGRtoRGB(pixelData) {
     // Convert BGR to RGB by swapping red and blue channels
     for (let i = 0; i < pixelData.length; i += 4) {
@@ -2331,91 +2315,44 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async loadPixels() {
-    const width = this.width * this._pixelDensity;
-    const height = this.height * this._pixelDensity;
+    // Wait for all GPU work to complete first
+    await this.finishDraw();
 
-    // Copy canvas to readback texture
-    const readbackTexture = this._copyCanvasToReadbackTexture();
+    // Get canvas dimensions accounting for pixel density
+    const width = Math.ceil(this.width * this._pixelDensity);
+    const height = Math.ceil(this.height * this._pixelDensity);
 
-    // Now we can safely await
-    await this.queue.onSubmittedWorkDone();
+    // Get 2D canvas for pixel reading
+    const { ctx } = this._ensurePixelReadCanvas(width, height);
 
-    const bytesPerPixel = 4;
-    const unalignedBytesPerRow = width * bytesPerPixel;
-    const alignedBytesPerRow = this._alignBytesPerRow(unalignedBytesPerRow);
-    const bufferSize = alignedBytesPerRow * height;
+    // Draw the WebGPU canvas onto the 2D canvas
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(this.canvas, 0, 0, width, height);
 
-    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
+    // Get pixel data from 2D canvas
+    const imageData = ctx.getImageData(0, 0, width, height);
+    this.pixels = imageData.data;
 
-    const commandEncoder = this.device.createCommandEncoder();
-    commandEncoder.copyTextureToBuffer(
-      { texture: readbackTexture },
-      { buffer: stagingBuffer, bytesPerRow: alignedBytesPerRow },
-      { width, height, depthOrArrayLayers: 1 }
-    );
-
-    this.device.queue.submit([commandEncoder.finish()]);
-
-    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
-    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
-
-    if (alignedBytesPerRow === unalignedBytesPerRow) {
-      this.pixels = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
-    } else {
-      // Need to extract pixel data from aligned buffer
-      this.pixels = new Uint8Array(width * height * bytesPerPixel);
-      const mappedData = new Uint8Array(mappedRange);
-      for (let y = 0; y < height; y++) {
-        const srcOffset = y * alignedBytesPerRow;
-        const dstOffset = y * unalignedBytesPerRow;
-        this.pixels.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
-      }
-    }
-
-    // Convert BGR to RGB for main canvas
-    this._convertBGRtoRGB(this.pixels);
-
-    stagingBuffer.unmap();
     return this.pixels;
   }
 
   async _getPixel(x, y) {
-    // Copy canvas to readback texture
-    const readbackTexture = this._copyCanvasToReadbackTexture();
+    // Get 2D canvas sized to match main canvas for single pixel read
+    const canvasWidth = Math.ceil(this.width * this._pixelDensity);
+    const canvasHeight = Math.ceil(this.height * this._pixelDensity);
+    const { ctx, canvas } = this._ensurePixelReadCanvas(canvasWidth, canvasHeight);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(this.canvas, 0, 0, canvasWidth, canvasHeight);
+    console.log(canvas.toDataURL())
 
-    // Now we can safely await
-    await this.queue.onSubmittedWorkDone();
-
-    const bytesPerPixel = 4;
-    const alignedBytesPerRow = this._alignBytesPerRow(bytesPerPixel);
-    const bufferSize = alignedBytesPerRow;
-
-    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
-
-    const commandEncoder = this.device.createCommandEncoder();
-    commandEncoder.copyTextureToBuffer(
-      {
-        texture: readbackTexture,
-        origin: { x, y, z: 0 }
-      },
-      { buffer: stagingBuffer, bytesPerRow: alignedBytesPerRow },
-      { width: 1, height: 1, depthOrArrayLayers: 1 }
-    );
-
-    this.device.queue.submit([commandEncoder.finish()]);
-
-    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
-    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
-    const pixelData = new Uint8Array(mappedRange);
-
-    // Convert BGR to RGB for main canvas - swap red and blue
-    const result = [pixelData[2], pixelData[1], pixelData[0], pixelData[3]];
-
-    stagingBuffer.unmap();
-    return result;
+    const imageData = ctx.getImageData(x, y, 1, 1);
+    return Array.from(imageData.data);
   }
 
   async get(x, y, w, h) {
+    // Wait for all GPU work to complete first
+    await this.finishDraw();
+
     const pd = this._pixelDensity;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
@@ -2436,65 +2373,26 @@ class RendererWebGPU extends Renderer3D {
         return this._getPixel(x, y);
       }
       // get(x,y,w,h) - region
+      w *= pd;
+      h *= pd;
     }
 
-    // Copy canvas to readback texture
-    const readbackTexture = this._copyCanvasToReadbackTexture();
+    // Get 2D canvas sized to match main canvas for region reading
+    const canvasWidth = Math.ceil(this.width * this._pixelDensity);
+    const canvasHeight = Math.ceil(this.height * this._pixelDensity);
+    const { ctx } = this._ensurePixelReadCanvas(canvasWidth, canvasHeight);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(this.canvas, 0, 0, canvasWidth, canvasHeight);
 
-    // Now we can safely await
-    await this.queue.onSubmittedWorkDone();
+    // Get the region
+    const regionImageData = ctx.getImageData(x, y, w, h);
 
-    // Read region and create p5.Image
-    const width = w * pd;
-    const height = h * pd;
-    const bytesPerPixel = 4;
-    const unalignedBytesPerRow = width * bytesPerPixel;
-    const alignedBytesPerRow = this._alignBytesPerRow(unalignedBytesPerRow);
-    const bufferSize = alignedBytesPerRow * height;
-
-    const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
-
-    const commandEncoder = this.device.createCommandEncoder();
-    commandEncoder.copyTextureToBuffer(
-      {
-        texture: readbackTexture,
-        origin: { x, y, z: 0 }
-      },
-      { buffer: stagingBuffer, bytesPerRow: alignedBytesPerRow },
-      { width, height, depthOrArrayLayers: 1 }
-    );
-
-    this.device.queue.submit([commandEncoder.finish()]);
-    await this.queue.onSubmittedWorkDone();
-
-    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize);
-    const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
-
-    let pixelData;
-    if (alignedBytesPerRow === unalignedBytesPerRow) {
-      pixelData = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
-    } else {
-      // Need to extract pixel data from aligned buffer
-      pixelData = new Uint8Array(width * height * bytesPerPixel);
-      const mappedData = new Uint8Array(mappedRange);
-      for (let y = 0; y < height; y++) {
-        const srcOffset = y * alignedBytesPerRow;
-        const dstOffset = y * unalignedBytesPerRow;
-        pixelData.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
-      }
-    }
-
-    // Convert BGR to RGB for main canvas
-    this._convertBGRtoRGB(pixelData);
-
-    const region = new Image(width, height);
+    // Create p5.Image for the region
+    const region = new Image(w, h);
     region.pixelDensity(pd);
-    const ctx = region.canvas.getContext('2d');
-    const imageData = ctx.createImageData(width, height);
-    imageData.data.set(pixelData);
-    ctx.putImageData(imageData, 0, 0);
+    const regionCtx = region.canvas.getContext('2d');
+    regionCtx.putImageData(regionImageData, 0, 0);
 
-    stagingBuffer.unmap();
     return region;
   }
 
