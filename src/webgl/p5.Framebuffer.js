@@ -121,10 +121,8 @@ class Framebuffer {
 
     this._recreateTextures();
 
-    const prevCam = this.renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.renderer.states.setValue('curCamera', prevCam);
 
     this.draw(() => this.renderer.clear());
   }
@@ -849,6 +847,9 @@ class Framebuffer {
       this.width * this.density,
       this.height * this.density
     );
+    if (this.renderer.flushDraw) {
+      this.renderer.flushDraw();
+    }
   }
 
   /**
@@ -859,6 +860,12 @@ class Framebuffer {
   _beforeEnd() {
     if (this.antialias) {
       this.dirty = { colorTexture: true, depthTexture: true };
+    }
+    // TODO
+    // This should work but flushes more often than we need to. Ideally we only do this
+    // right before the fbo is read as a texture.
+    if (this.renderer.flushDraw) {
+      this.renderer.flushDraw();
     }
   }
 
@@ -910,8 +917,8 @@ class Framebuffer {
    * </div>
    */
   end() {
-    const gl = this.gl;
     this.renderer.pop();
+
     const fbo = this.renderer.activeFramebuffers.pop();
     if (fbo !== this) {
       throw new Error("It looks like you've called end() while another Framebuffer is active.");

@@ -49,6 +49,8 @@
         }
         tex.updatePixels();
         fbo.draw(() => {
+          //p.clear();
+          //p.background('orange');
           p.imageMode(p.CENTER);
           p.image(tex, 0, 0, p.width, p.height);
         });

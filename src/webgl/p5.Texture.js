@@ -149,10 +149,11 @@ class Texture {
         1
       );
     } else if (!this.isFramebufferTexture) {
-      this._renderer.uploadTextureFromSource(
-        this.textureHandle,
-        textureData
-      );
+      this.update()
+      // this._renderer.uploadTextureFromSource(
+        // this.textureHandle,
+        // textureData
+      // );
     }
 
     this.unbindTexture();

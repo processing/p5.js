@@ -47,6 +47,9 @@ class RendererWebGPU extends Renderer3D {
 
     // Retired buffers to destroy at end of frame
     this._retiredBuffers = [];
+
+    // Promise chain for GPU work completion
+    this._gpuWorkPromise = null;
   }
 
   async setupContext() {
@@ -946,17 +949,37 @@ class RendererWebGPU extends Renderer3D {
     }
   }
 
-  finishDraw() {
+  flushDraw() {
     // Only submit if we actually had any draws
     if (this._hasPendingDraws) {
-      // Submit all pending command encoders
-      if (this._pendingCommandEncoders.length > 0) {
-        this.queue.submit(this._pendingCommandEncoders);
-        this._pendingCommandEncoders = [];
-      }
-
-      // Reset the flag
+      // Create a copy of pending command encoders
+      const commandsToSubmit = this._pendingCommandEncoders.slice();
+      this._pendingCommandEncoders = [];
       this._hasPendingDraws = false;
+
+      // Chain the submission through the existing promise
+      const submit = () => {
+        // Submit the commands
+        this.queue.submit(commandsToSubmit);
+        // Return promise that resolves when GPU work is done
+        return this.queue.onSubmittedWorkDone();
+      };
+      if (this._gpuWorkPromise) {
+        this._gpuWorkPromise = this._gpuWorkPromise.then(submit);
+      } else {
+        this._gpuWorkPromise = submit();
+      }
+    }
+  }
+
+  async finishDraw() {
+    // First flush any pending draws
+    this.flushDraw();
+
+    // Wait for all GPU work to complete
+    if (this._gpuWorkPromise) {
+      await this._gpuWorkPromise;
+      this._gpuWorkPromise = null;
     }
 
     // Return all uniform buffers to their pools
@@ -1368,6 +1391,10 @@ class RendererWebGPU extends Renderer3D {
       { texture: gpuTexture },
       [source.width, source.height]
     );
+
+    // Force submission to ensure texture upload completes before usage
+    this._hasPendingDraws = true;
+    this.flushDraw();
   }
 
   uploadTextureFromData({ gpuTexture }, data, width, height) {
@@ -1377,6 +1404,10 @@ class RendererWebGPU extends Renderer3D {
       { bytesPerRow: width * 4, rowsPerImage: height },
       { width, height, depthOrArrayLayers: 1 }
     );
+
+    // Force submission to ensure texture upload completes before usage
+    this._hasPendingDraws = true;
+    this.flushDraw();
   }
 
   setTextureParams(_texture) {}
@@ -2006,7 +2037,8 @@ class RendererWebGPU extends Renderer3D {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.end();
 
-    this.queue.submit([commandEncoder.finish()]);
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
   }
 
   _getFramebufferColorTextureView(framebuffer) {
