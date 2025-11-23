@@ -36,7 +36,7 @@
         );
         fbo = p.createFramebuffer();
 
-        /*tex = p.createImage(100, 100);
+        tex = p.createImage(100, 100);
         tex.loadPixels();
         for (let x = 0; x < tex.width; x++) {
           for (let y = 0; y < tex.height; y++) {
@@ -51,7 +51,7 @@
         fbo.draw(() => {
           p.imageMode(p.CENTER);
           p.image(tex, 0, 0, p.width, p.height);
-        });*/
+        });
 
         /*sh = p.baseMaterialShader().modify({
           uniforms: {
@@ -119,14 +119,46 @@
             0, //p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
             p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
           )
-          // p.texture(fbo)
           if (i % 2 === 0) {
+            if (i === 0) {
+              p.texture(fbo)
+            }
             p.box(30);
           } else {
             p.sphere(30);
           }
           p.pop();
         }
+
+        // Test beginShape/endShape with immediate mode shapes
+        p.push();
+        p.translate(0, 100, 0);
+        p.fill('yellow');
+        p.noStroke();
+
+        // Draw a circle using beginShape/endShape
+        p.beginShape();
+        const numPoints = 16;
+        for (let i = 0; i < numPoints; i++) {
+          const angle = (i / numPoints) * Math.PI * 2;
+          const x = Math.cos(angle) * 50;
+          const y = Math.sin(angle) * 50;
+          p.vertex(x, y);
+        }
+        p.endShape(p.CLOSE);
+
+        p.translate(100, 0, 0);
+        p.fill('purple');
+
+        // Draw a square using beginShape/endShape
+        p.beginShape();
+        p.vertex(-30, -30);
+        p.vertex(30, -30);
+        p.vertex(30, 30);
+        p.vertex(-30, 30);
+        p.endShape(p.CLOSE);
+
+        p.pop();
       };
     };
 

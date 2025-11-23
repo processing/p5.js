@@ -206,6 +206,9 @@ class Geometry {
   }
 
   reset() {
+    // Notify renderer that geometry is being reset (for buffer cleanup)
+    this.renderer?.onReset?.(this);
+
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 

@@ -38,9 +38,15 @@ class RendererWebGPU extends Renderer3D {
     // Registry to track all shaders for uniform data pooling
     this._shadersWithPools = [];
 
+    // Registry to track geometries with buffer pools
+    this._geometriesWithPools = [];
+
     // Flag to track if any draws have happened that need queue submission
     this._hasPendingDraws = false;
     this._pendingCommandEncoders = [];
+
+    // Retired buffers to destroy at end of frame
+    this._retiredBuffers = [];
   }
 
   async setupContext() {
@@ -274,22 +280,19 @@ class RendererWebGPU extends Renderer3D {
     const raw = map ? map(srcData) : srcData;
     const typed = this._normalizeBufferData(raw, Float32Array);
 
-    let buffer = buffers[dst];
-    let recreated = false;
-    if (!buffer || buffer.size < typed.byteLength) {
-      recreated = true;
-      if (buffer) buffer.destroy();
-      buffer = device.createBuffer({
-        size: typed.byteLength,
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-      });
-      buffers[dst] = buffer;
-    }
+    // Always use pooled buffers - let the pool system handle sizing and reuse
+    const pooledBufferInfo = this._getVertexBufferFromPool(geometry, dst, typed.byteLength);
 
-    if (recreated || geometry.dirtyFlags[src] !== false) {
-      device.queue.writeBuffer(buffer, 0, typed);
-      geometry.dirtyFlags[src] = false;
-    }
+    // Create a copy of the data to avoid conflicts when geometry arrays are reset
+    const dataCopy = new typed.constructor(typed);
+    pooledBufferInfo.dataCopy = dataCopy;
+
+    // Write the data to the pooled buffer
+    device.queue.writeBuffer(pooledBufferInfo.buffer, 0, dataCopy);
+
+    // Update the buffers cache to use the pooled buffer
+    buffers[dst] = pooledBufferInfo.buffer;
+    geometry.dirtyFlags[src] = false;
 
     shader.enableAttrib(attr, size);
   }
@@ -790,6 +793,113 @@ class RendererWebGPU extends Renderer3D {
   }
 
   //////////////////////////////////////////////
+  // Geometry buffer pool management
+  //////////////////////////////////////////////
+
+  _initializeGeometryBufferPools(geometry) {
+    if (geometry._vertexBufferPools) {
+      return; // Already initialized
+    }
+
+    geometry._vertexBufferPools = {}; // Keyed by buffer type (dst)
+    geometry._vertexBuffersInUse = {}; // Keyed by buffer type (dst)
+    geometry._vertexBuffersToReturn = {}; // Keyed by buffer type (dst)
+
+    // Register this geometry for pool cleanup
+    this._geometriesWithPools.push(geometry);
+  }
+
+  _getVertexBufferFromPool(geometry, dst, size) {
+    // Initialize pools if needed
+    this._initializeGeometryBufferPools(geometry);
+
+    // Get or create pool for this buffer type
+    if (!geometry._vertexBufferPools[dst]) {
+      geometry._vertexBufferPools[dst] = [];
+    }
+    if (!geometry._vertexBuffersInUse[dst]) {
+      geometry._vertexBuffersInUse[dst] = [];
+    }
+    if (!geometry._vertexBuffersToReturn[dst]) {
+      geometry._vertexBuffersToReturn[dst] = [];
+    }
+
+    // Try to get a buffer from the pool
+    const pool = geometry._vertexBufferPools[dst];
+    if (pool.length > 0) {
+      const bufferInfo = pool.pop();
+      // Check if buffer is large enough
+      if (bufferInfo.buffer.size >= size) {
+        geometry._vertexBuffersInUse[dst].push(bufferInfo);
+        return bufferInfo;
+      } else {
+        // Buffer too small, don't destroy immediately as it may still be in use
+        // Add to retirement array
+        this._retiredBuffers.push(bufferInfo.buffer);
+      }
+    }
+
+    // No suitable buffer available, create a new one
+    const newBuffer = this.device.createBuffer({
+      size,
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+    });
+
+    const bufferInfo = {
+      buffer: newBuffer,
+      size,
+      // Create a copy of the data array to avoid conflicts when geometry is reset
+      dataCopy: null
+    };
+
+    geometry._vertexBuffersInUse[dst].push(bufferInfo);
+    return bufferInfo;
+  }
+
+  _returnVertexBuffersToPool() {
+    // Return buffers marked for return back to their pools for all registered geometries
+    for (const geometry of this._geometriesWithPools) {
+      if (geometry._vertexBuffersToReturn) {
+        for (const [dst, buffersToReturn] of Object.entries(geometry._vertexBuffersToReturn)) {
+          if (buffersToReturn.length > 0) {
+            // Move all buffers from ToReturn back to pool
+            const pool = geometry._vertexBufferPools[dst] || [];
+            while (buffersToReturn.length > 0) {
+              const bufferInfo = buffersToReturn.pop();
+              // Clear the data copy reference to prevent memory leaks
+              bufferInfo.dataCopy = null;
+              pool.push(bufferInfo);
+            }
+            geometry._vertexBufferPools[dst] = pool;
+          }
+        }
+      }
+    }
+  }
+
+  // Called when geometry is reset - mark its buffers for return
+  onReset(geometry) {
+    this._markGeometryBuffersForReturn(geometry);
+  }
+
+  // Mark geometry buffers for return when geometry is reset/freed
+  _markGeometryBuffersForReturn(geometry) {
+    if (geometry._vertexBuffersInUse && geometry._vertexBuffersToReturn) {
+      for (const [dst, buffersInUse] of Object.entries(geometry._vertexBuffersInUse)) {
+        if (buffersInUse.length > 0) {
+          // Move all buffers from InUse to ToReturn
+          const buffersToReturn = geometry._vertexBuffersToReturn[dst] || [];
+          while (buffersInUse.length > 0) {
+            const bufferInfo = buffersInUse.pop();
+            buffersToReturn.push(bufferInfo);
+          }
+          geometry._vertexBuffersToReturn[dst] = buffersToReturn;
+        }
+      }
+    }
+  }
+
+  //////////////////////////////////////////////
   // Uniform buffer pool management
   //////////////////////////////////////////////
 
@@ -851,6 +961,17 @@ class RendererWebGPU extends Renderer3D {
 
     // Return all uniform buffers to their pools
     this._returnUniformBuffersToPool();
+
+    // Return all vertex buffers to their pools
+    this._returnVertexBuffersToPool();
+
+    // Destroy all retired buffers
+    for (const buffer of this._retiredBuffers) {
+      if (buffer && buffer.destroy) {
+        buffer.destroy();
+      }
+    }
+    this._retiredBuffers = [];
   }
 
   //////////////////////////////////////////////
