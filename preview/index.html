@@ -53,7 +53,7 @@
           p.image(tex, 0, 0, p.width, p.height);
         });
 
-        sh = p.baseMaterialShader().modify({
+        /*sh = p.baseMaterialShader().modify({
           uniforms: {
             'f32 time': () => p.millis(),
           },
@@ -62,7 +62,14 @@
             result.position.y += 40.0 * sin(uniforms.time * 0.005);
             return result;
           }`,
-        })
+        })*/
+        sh = p.baseMaterialShader().modify(() => {
+          const time = p.uniformFloat(() => p.millis());
+          p.getWorldInputs((inputs) => {
+            inputs.position.y += 40 * p.sin(time * 0.005);
+            return inputs;
+          });
+        }, { p })
 	/*ssh = p.baseStrokeShader().modify({
           uniforms: {
             'f32 time': () => p.millis(),
@@ -77,7 +84,7 @@
 
       p.draw = function () {
         p.clear();
-        p.orbitControl();
+        /*p.orbitControl();
         p.push();
         p.textAlign(p.CENTER, p.CENTER);
         p.textFont(font);
@@ -91,7 +98,7 @@
         p.text('Hello!', 0, 0);
         p.pop()
         p.pop();
-        return;
+        return;*/
         p.orbitControl();
         const t = p.millis() * 0.002;
         p.background(200);
