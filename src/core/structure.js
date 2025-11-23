@@ -385,6 +385,10 @@ function structure(p5, fn){
         }
         await this._runLifecycleHook('postdraw');
       }
+      // Finish drawing - submit any pending GPU work (WebGPU specific)
+      if (this._renderer && typeof this._renderer.finishDraw === 'function') {
+        this._renderer.finishDraw();
+      }
     }
   };
 

@@ -383,6 +383,11 @@ class Renderer {
     return this;
   }
 
+  finishDraw() {
+    // Default no-op implementation
+    // Override in specific renderers as needed
+  }
+
 };
 
 function renderer(p5, fn){

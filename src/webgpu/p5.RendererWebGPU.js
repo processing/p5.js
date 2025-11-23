@@ -34,6 +34,13 @@ class RendererWebGPU extends Renderer3D {
     // Lazy readback texture for main canvas pixel reading
     this.canvasReadbackTexture = null;
     this.strandsBackend = wgslBackend;
+
+    // Registry to track all shaders for uniform data pooling
+    this._shadersWithPools = [];
+
+    // Flag to track if any draws have happened that need queue submission
+    this._hasPendingDraws = false;
+    this._pendingCommandEncoders = [];
   }
 
   async setupContext() {
@@ -200,7 +207,8 @@ class RendererWebGPU extends Renderer3D {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.end();
 
-    this.queue.submit([commandEncoder.finish()]);
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
   }
 
   /**
@@ -241,7 +249,8 @@ class RendererWebGPU extends Renderer3D {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.end();
 
-    this.queue.submit([commandEncoder.finish()]);
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
   }
 
   _prepareBuffer(renderBuffer, geometry, shader) {
@@ -439,10 +448,34 @@ class RendererWebGPU extends Renderer3D {
     shader._uniformData = new Float32Array(alignedSize / 4);
     shader._uniformDataView = new DataView(shader._uniformData.buffer);
 
-    shader._uniformBuffer = this.device.createBuffer({
+    // Create pools for uniform buffers (both GPU buffers and data arrays.) This
+    // is so that we can queue up multiple things to be able to be drawn and have
+    // the GPU go through them as fast as possible. If we're overwriting the same
+    // data again and again, we would have to wait for the GPU after each primitive
+    // that we draw.
+    shader._uniformBufferPool = [];
+    shader._uniformBuffersInUse = [];
+    shader._uniformBufferSize = alignedSize;
+
+    // Create the first buffer for the pool
+    const firstGPUBuffer = this.device.createBuffer({
       size: alignedSize,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
+    const firstData = new Float32Array(alignedSize / 4);
+    const firstDataView = new DataView(firstData.buffer);
+
+    shader._uniformBufferPool.push({
+      buffer: firstGPUBuffer,
+      data: firstData,
+      dataView: firstDataView
+    });
+
+    // Keep backward compatibility reference
+    shader._uniformBuffer = firstGPUBuffer;
+
+    // Register this shader in our registry for pool cleanup
+    this._shadersWithPools.push(shader);
 
     const bindGroupLayouts = new Map(); // group index -> bindGroupLayout
     const groupEntries = new Map(); // group index -> array of entries
@@ -752,7 +785,72 @@ class RendererWebGPU extends Renderer3D {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.end();
 
-    this.queue.submit([commandEncoder.finish()]);
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
+  }
+
+  //////////////////////////////////////////////
+  // Uniform buffer pool management
+  //////////////////////////////////////////////
+
+  _getUniformBufferFromPool(shader) {
+    // Try to get a buffer from the pool
+    if (shader._uniformBufferPool.length > 0) {
+      const bufferInfo = shader._uniformBufferPool.pop();
+      shader._uniformBuffersInUse.push(bufferInfo);
+      return bufferInfo;
+    }
+
+    // No buffers available, create a new one
+    const newBuffer = this.device.createBuffer({
+      size: shader._uniformBufferSize,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+    const newData = new Float32Array(shader._uniformBufferSize / 4);
+    const newDataView = new DataView(newData.buffer);
+
+    const bufferInfo = {
+      buffer: newBuffer,
+      data: newData,
+      dataView: newDataView
+    };
+
+    shader._uniformBuffersInUse.push(bufferInfo);
+    return bufferInfo;
+  }
+
+  _returnUniformBuffersToPool() {
+    // Return all used buffers back to their pools for all registered shaders
+    for (const shader of this._shadersWithPools) {
+      if (shader._uniformBuffersInUse && shader._uniformBuffersInUse.length > 0) {
+        this._returnShaderBuffersToPool(shader);
+      }
+    }
+  }
+
+  _returnShaderBuffersToPool(shader) {
+    // Move all buffers from inUse back to pool
+    while (shader._uniformBuffersInUse.length > 0) {
+      const bufferInfo = shader._uniformBuffersInUse.pop();
+      shader._uniformBufferPool.push(bufferInfo);
+    }
+  }
+
+  finishDraw() {
+    // Only submit if we actually had any draws
+    if (this._hasPendingDraws) {
+      // Submit all pending command encoders
+      if (this._pendingCommandEncoders.length > 0) {
+        this.queue.submit(this._pendingCommandEncoders);
+        this._pendingCommandEncoders = [];
+      }
+
+      // Reset the flag
+      this._hasPendingDraws = false;
+    }
+
+    // Return all uniform buffers to their pools
+    this._returnUniformBuffersToPool();
   }
 
   //////////////////////////////////////////////
@@ -810,14 +908,15 @@ class RendererWebGPU extends Renderer3D {
       const gpuBuffer = buffers[buffer.dst];
       passEncoder.setVertexBuffer(location, gpuBuffer, 0);
     }
-    // Bind uniforms
-    this._packUniforms(this._curShader);
+    // Bind uniforms - get a buffer from the pool
+    const uniformBufferInfo = this._getUniformBufferFromPool(currentShader);
+    this._packUniforms(currentShader, uniformBufferInfo);
     this.device.queue.writeBuffer(
-      currentShader._uniformBuffer,
+      uniformBufferInfo.buffer,
       0,
-      currentShader._uniformData.buffer,
-      currentShader._uniformData.byteOffset,
-      currentShader._uniformData.byteLength
+      uniformBufferInfo.data.buffer,
+      uniformBufferInfo.data.byteOffset,
+      uniformBufferInfo.data.byteLength
     );
 
     // Bind sampler/texture uniforms
@@ -826,7 +925,7 @@ class RendererWebGPU extends Renderer3D {
         if (group === 0 && entry.binding === 0) {
           return {
             binding: 0,
-            resource: { buffer: currentShader._uniformBuffer },
+            resource: { buffer: uniformBufferInfo.buffer },
           };
         }
 
@@ -875,23 +974,22 @@ class RendererWebGPU extends Renderer3D {
     }
 
     passEncoder.end();
-    this.queue.submit([commandEncoder.finish()]);
-  }
 
-  async ensureTexture(source) {
-    await this.queue.onSubmittedWorkDone();
-    await new Promise((res) => requestAnimationFrame(res));
-    const tex = this.getTexture(source);
-    tex.update();
-    await this.queue.onSubmittedWorkDone();
-    await new Promise((res) => requestAnimationFrame(res));
+    // Store the command encoder for later submission
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+
+    // Mark that we have pending draws that need submission
+    this._hasPendingDraws = true;
   }
 
   //////////////////////////////////////////////
   // SHADER
   //////////////////////////////////////////////
 
-  _packUniforms(shader) {
+  _packUniforms(shader, bufferInfo) {
+    const data = bufferInfo.data;
+    const dataView = bufferInfo.dataView;
+
     for (const name in shader.uniforms) {
       const uniform = shader.uniforms[name];
       if (uniform.isSampler) continue;
@@ -899,31 +997,31 @@ class RendererWebGPU extends Renderer3D {
       if (uniform.baseType === 'u32') {
         if (uniform.size === 4) {
           // Single u32
-          shader._uniformDataView.setUint32(uniform.offset, uniform._cachedData, true);
+          dataView.setUint32(uniform.offset, uniform._cachedData, true);
         } else {
           // Vector of u32s
-          const data = uniform._cachedData;
-          for (let i = 0; i < data.length; i++) {
-            shader._uniformDataView.setUint32(uniform.offset + i * 4, data[i], true);
+          const uniformData = uniform._cachedData;
+          for (let i = 0; i < uniformData.length; i++) {
+            dataView.setUint32(uniform.offset + i * 4, uniformData[i], true);
           }
         }
       } else if (uniform.baseType === 'i32') {
         if (uniform.size === 4) {
           // Single i32
-          shader._uniformDataView.setInt32(uniform.offset, uniform._cachedData, true);
+          dataView.setInt32(uniform.offset, uniform._cachedData, true);
         } else {
           // Vector of i32s
-          const data = uniform._cachedData;
-          for (let i = 0; i < data.length; i++) {
-            shader._uniformDataView.setInt32(uniform.offset + i * 4, data[i], true);
+          const uniformData = uniform._cachedData;
+          for (let i = 0; i < uniformData.length; i++) {
+            dataView.setInt32(uniform.offset + i * 4, uniformData[i], true);
           }
         }
       } else if (uniform.size === 4) {
         // Single float value
-        shader._uniformData.set([uniform._cachedData], uniform.offset / 4);
+        data.set([uniform._cachedData], uniform.offset / 4);
       } else {
         // Float array (including vec2<f32>, vec3<f32>, vec4<f32>, mat4x4<f32>)
-        shader._uniformData.set(uniform._cachedData, uniform.offset / 4);
+        data.set(uniform._cachedData, uniform.offset / 4);
       }
     }
   }
@@ -2275,9 +2373,6 @@ function rendererWebGPU(p5, fn) {
   p5.RendererWebGPU = RendererWebGPU;
 
   p5.renderers[constants.WEBGPU] = p5.RendererWebGPU;
-  fn.ensureTexture = function(source) {
-    return this._renderer.ensureTexture(source);
-  }
 
   // TODO: move this and the duplicate in the WebGL renderer to another file
   fn.setAttributes = async function (key, value) {
