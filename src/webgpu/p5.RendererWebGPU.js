@@ -52,6 +52,7 @@ class RendererWebGPU extends Renderer3D {
     // 2D canvas for pixel reading fallback
     this._pixelReadCanvas = null;
     this._pixelReadCtx = null;
+    this.mainFramebuffer = null;
   }
 
   async setupContext() {
@@ -93,6 +94,7 @@ class RendererWebGPU extends Renderer3D {
 
     // TODO disablable stencil
     this.depthFormat = 'depth24plus-stencil8';
+    this.mainFramebuffer = this.createFramebuffer();
     this._updateSize();
     this._update();
   }
@@ -766,6 +768,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   _resetBuffersBeforeDraw() {
+    if (!this.activeFramebuffer()) {
+      this.mainFramebuffer.begin();
+    }
     const commandEncoder = this.device.createCommandEncoder();
 
     const depthTextureView = this.depthTexture?.createView();
@@ -994,7 +999,19 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async finishDraw() {
-    // First flush any pending draws
+    this.flushDraw();
+    const states = [];
+    while (this.activeFramebuffers.length > 0) {
+      const fbo = this.activeFramebuffers.pop();
+      states.unshift({ fbo, diff: { ...this.states } });
+    }
+    this.flushDraw();
+
+    // this._pInst.background('red');
+    this._pInst.push();
+    this._pInst.imageMode(this._pInst.CENTER);
+    this._pInst.image(this.mainFramebuffer, 0, 0);
+    this._pInst.pop();
     this.flushDraw();
 
     // Wait for all GPU work to complete
@@ -1016,6 +1033,13 @@ class RendererWebGPU extends Renderer3D {
       }
     }
     this._retiredBuffers = [];
+
+    for (const { fbo, diff } of states) {
+      fbo.begin();
+      for (const key in diff) {
+        this.states.setValue(key, diff[key]);
+      }
+    }
   }
 
   //////////////////////////////////////////////
@@ -2134,7 +2158,15 @@ class RendererWebGPU extends Renderer3D {
 
   bindFramebuffer(framebuffer) {}
 
+  framebufferYScale() {
+    return 1;
+  }
+
   async readFramebufferPixels(framebuffer) {
+    await this.finishDraw();
+    // Ensure all pending GPU work is complete before reading pixels
+    // await this.queue.onSubmittedWorkDone();
+
     const width = framebuffer.width * framebuffer.density;
     const height = framebuffer.height * framebuffer.density;
     const bytesPerPixel = 4;
@@ -2188,8 +2220,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async readFramebufferPixel(framebuffer, x, y) {
+    await this.finishDraw();
     // Ensure all pending GPU work is complete before reading pixels
-    await this.queue.onSubmittedWorkDone();
+    // await this.queue.onSubmittedWorkDone();
 
     const bytesPerPixel = 4;
     const alignedBytesPerRow = this._alignBytesPerRow(bytesPerPixel);
@@ -2219,8 +2252,14 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async readFramebufferRegion(framebuffer, x, y, w, h) {
+    await this.finishDraw();
+    // const wasActive = this.activeFramebuffer() === framebuffer;
+    // if (wasActive) {
+      // framebuffer.end();
+      // this.flushDraw()
+    // }
     // Ensure all pending GPU work is complete before reading pixels
-    await this.queue.onSubmittedWorkDone();
+    // await this.queue.onSubmittedWorkDone();
 
     const width = w * framebuffer.density;
     const height = h * framebuffer.density;
@@ -2273,6 +2312,7 @@ class RendererWebGPU extends Renderer3D {
     }
 
     stagingBuffer.unmap();
+    // if (wasActive) framebuffer.begin();
     return region;
   }
 
@@ -2315,6 +2355,9 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async loadPixels() {
+    await this.mainFramebuffer.loadPixels();
+    this.pixels = this.mainFramebuffer.pixels.slice();
+    return
     // Wait for all GPU work to complete first
     await this.finishDraw();
 
@@ -2350,6 +2393,7 @@ class RendererWebGPU extends Renderer3D {
   }
 
   async get(x, y, w, h) {
+    return this.mainFramebuffer.get(x, y, w, h);
     // Wait for all GPU work to complete first
     await this.finishDraw();
 

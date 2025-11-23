@@ -16,11 +16,7 @@ class FramebufferCamera extends Camera {
     super(framebuffer.renderer);
     this.fbo = framebuffer;
 
-    // WebGL textures are upside-down compared to textures that come from
-    // images and graphics. Framebuffer cameras need to invert their y
-    // axes when being rendered to so that the texture comes out rightway up
-    // when read in shaders or image().
-    this.yScale = -1;
+    this.yScale = framebuffer.renderer.framebufferYScale();
   }
 
   _computeCameraDefaultSettings() {

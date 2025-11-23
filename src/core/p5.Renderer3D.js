@@ -116,7 +116,10 @@ export class Renderer3D extends Renderer {
     this.states.uViewMatrix = new Matrix(4);
     this.states.uPMatrix = new Matrix(4);
 
-    this.states.curCamera = new Camera(this);
+    this.mainCamera = new Camera(this);
+    if (!this.states.curCamera) {
+      this.states.curCamera = this.mainCamera;
+    }
     this.states.uPMatrix.set(this.states.curCamera.projMatrix);
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
@@ -197,8 +200,8 @@ export class Renderer3D extends Renderer {
     this.registerEnabled = new Set();
 
     // Camera
-    this.states.curCamera._computeCameraDefaultSettings();
-    this.states.curCamera._setDefaultCamera();
+    this.mainCamera._computeCameraDefaultSettings();
+    this.mainCamera._setDefaultCamera();
 
     // FilterCamera
     this.filterCamera = new Camera(this);
@@ -1218,7 +1221,10 @@ export class Renderer3D extends Renderer {
     this._updateViewport();
     this._updateSize();
 
-    this.states.curCamera._resize();
+    this.mainCamera._resize();
+    if (this.states.curCamera !== this.mainCamera) {
+      this.states.curCamera._resize();
+    }
 
     //resize pixels buffer
     if (typeof this.pixels !== "undefined") {
@@ -1228,8 +1234,10 @@ export class Renderer3D extends Renderer {
     for (const framebuffer of this.framebuffers) {
       // Notify framebuffers of the resize so that any auto-sized framebuffers
       // can also update their size
+      this.flushDraw?.();
       framebuffer._canvasSizeChanged();
     }
+    this.flushDraw?.();
 
     // reset canvas properties
     for (const savedKey in props) {

@@ -1844,6 +1844,14 @@ class RendererGL extends Renderer3D {
     );
   }
 
+  framebufferYScale() {
+    // WebGL textures are upside-down compared to textures that come from
+    // images and graphics. Framebuffer cameras need to invert their y
+    // axes when being rendered to so that the texture comes out rightway up
+    // when read in shaders or image().
+    return -1;
+  }
+
   readFramebufferPixels(framebuffer) {
     const gl = this.GL;
     const prevFramebuffer = this.activeFramebuffer();
