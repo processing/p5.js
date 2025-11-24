@@ -180,13 +180,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     { name: 'pmouseY', type: DataType.float1 },
     { name: 'winMouseX', type: DataType.float1 },
     { name: 'winMouseY', type: DataType.float1 },
-    { name: 'frameCount', type: DataType.int1 },
+    { name: 'frameCount', type: DataType.float1 },
     { name: 'focused', type: DataType.bool1 },
     { name: 'displayWidth', type: DataType.float1 },
     { name: 'displayHeight', type: DataType.float1 },
     { name: 'windowWidth', type: DataType.float1 },
     { name: 'windowHeight', type: DataType.float1 },
-    { name: 'mouseButton', type: DataType.int1 },
     { name: 'mouseIsPressed', type: DataType.bool1 }
   ];
 
