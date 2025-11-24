@@ -450,19 +450,14 @@ p5.RendererGL.prototype._tesselateShape = function() {
     ) {
       const prevX = contour[i - p5.RendererGL.prototype.tessyVertexSize];
       const prevY = contour[i - p5.RendererGL.prototype.tessyVertexSize + 1];
-      const prevZ = contour[i - p5.RendererGL.prototype.tessyVertexSize + 2];
       const currX = contour[i];
       const currY = contour[i + 1];
-      const currZ = contour[i + 2];
 
       if (Math.abs(prevX - currX) < epsilon) {
         contour[i] = prevX;
       }
       if (Math.abs(prevY - currY) < epsilon) {
         contour[i + 1] = prevY;
-      }
-      if (Math.abs(prevZ - currZ) < epsilon) {
-        contour[i + 2] = prevZ;
       }
     }
   }
