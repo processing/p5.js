@@ -2,7 +2,7 @@
   "projectName": "p5.js",
   "projectOwner": "processing",
   "files": [
-    "README.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 64,
   "contributorsPerLine": 6,
@@ -6994,10 +6994,28 @@
       ]
     },
     {
+      "login": "eslteacher902010",
+      "name": "eslteacher902010",
+      "avatar_url": "https://avatars.githubusercontent.com/u/210183195?v=4",
+      "profile": "https://github.com/eslteacher902010",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
       "login": "nking07049925",
       "name": "Nikita Korol",
       "avatar_url": "https://avatars.githubusercontent.com/u/11886663?v=4",
       "profile": "https://github.com/nking07049925",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "skools-here",
+      "name": "skools-here",
+      "avatar_url": "https://avatars.githubusercontent.com/u/174816600?v=4",
+      "profile": "https://github.com/skools-here",
       "contributions": [
         "code"
       ]
@@ -7026,6 +7044,189 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/157414?v=4",
       "profile": "https://darrenshaw.org",
       "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ericrav",
+      "name": "Eric Rabinowitz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3066943?v=4",
+      "profile": "http://ericrabinowitz.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "abuharish02",
+      "name": "Abu Harish Faridi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111338069?v=4",
+      "profile": "https://github.com/abuharish02",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "vivekbopaliya",
+      "name": "Vivek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/122638553?v=4",
+      "profile": "https://github.com/vivekbopaliya",
+      "contributions": [
+        "code",
+        "design",
+        "userTesting",
+        "blog"
+      ]
+    },
+    {
+      "login": "Iron-56",
+      "name": "Nandu Krishna",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79905912?v=4",
+      "profile": "https://github.com/Iron-56",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "MissTipo",
+      "name": "Dorine Tipo ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105214329?v=4",
+      "profile": "https://dorinetipo.vercel.app/",
+      "contributions": [
+        "blog",
+        "code",
+        "eventOrganizing",
+        "research",
+        "promotion",
+        "tutorial"
+      ]
+    },
+    {
+      "login": "hana-cho",
+      "name": "Hana Cho",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51312538?v=4",
+      "profile": "https://github.com/hana-cho",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "kangjung",
+      "name": "JUNGMIN KANG",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28768760?v=4",
+      "profile": "https://kangjung.github.io/game/index.html",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "AlzaAlzaki76",
+      "name": "Alza Alzaki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202525131?v=4",
+      "profile": "https://github.com/AlzaAlzaki76",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Abhayaj247",
+      "name": "Abhay M Joshi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/139991819?v=4",
+      "profile": "https://github.com/Abhayaj247",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Homaid",
+      "name": "Homaid",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69979731?v=4",
+      "profile": "https://github.com/Homaid",
+      "contributions": [
+        "a11y",
+        "code"
+      ]
+    },
+    {
+      "login": "junseok44",
+      "name": "JangJunseok",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81099627?v=4",
+      "profile": "https://github.com/junseok44",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tychedelia",
+      "name": "charlotte 🌸",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10366310?v=4",
+      "profile": "http://charlotte.fyi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "reshma045",
+      "name": "Reshma R",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77575603?v=4",
+      "profile": "https://github.com/reshma045",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Somnath-Mishra",
+      "name": "Somnath Mishra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/120735604?v=4",
+      "profile": "https://github.com/Somnath-Mishra",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ayushman1210",
+      "name": "Ayushman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/138183570?v=4",
+      "profile": "https://github.com/ayushman1210",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "MannuVilasara",
+      "name": "Manpreet Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/117009138?v=4",
+      "profile": "https://mannu.live",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nivanovvv",
+      "name": "Nikolai Ivanov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/232286320?v=4",
+      "profile": "https://github.com/nivanovvv",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "nbogie",
+      "name": "nbogie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69844?v=4",
+      "profile": "https://github.com/nbogie",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "SoundOfScooting",
+      "name": "SoundOfScooting",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53986193?v=4",
+      "profile": "https://github.com/SoundOfScooting",
+      "contributions": [
+        "code",
         "doc"
       ]
     }

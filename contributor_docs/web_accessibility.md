@@ -51,10 +51,10 @@ This description is followed by a list of shapes where the color, position, and 
 > orange circle at top left covering 1% of the canvas.\
 > fuchsia square, at bottom right, covering 2% of the canvas.
 
-Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s  shape, color, location, coordinates, and area are described:
+Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s shape, color, location, coordinates, and area are described:
 
 > orange circle location=top left area=1%\
-> fuchsia square    location = bottom right    area = 2%
+> fuchsia square   location = bottom right area = 2%
 
 <details>
 <summary>This generates the following HTML:</summary>
@@ -100,7 +100,7 @@ Each element can be selected to get more details. A table of elements is also pr
 
 `gridOutput()` lays out the content of the canvas in the form of a grid using an HTML table element. Each shape’s location in the grid is based on its spatial location on the canvas. A brief description of the canvas is available before the table output. This description includes the color of the background, size of the canvas, number of objects, and object types:
 
-> lavender blue canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
+> lavender blue canvas, 400 by 400 pixels, contains 2 shapes: 1 circle 1 square
 
 Each shape’s description is placed in a cell of the table depending on its location on the canvas. Each description includes the color and type of shape:
 
@@ -123,8 +123,8 @@ The generated HTML is as follows:
     <div id="defaultCanvas0gridOutput">
       Grid Output
       <p id="defaultCanvas0gridOutput_summary" aria-label="grid output summary">
-     white canvas, 400 by 400 pixels, contains 2 shapes:  1 circle 1 square
-   </p>
+        white canvas, 400 by 400 pixels, contains 2 shapes: 1 circle 1 square
+      </p>
       <table id="defaultCanvas0gridOutput_map" summary="grid output content">
         <tbody>
           <tr></tr>
@@ -272,7 +272,7 @@ The page will output:
 
 ### describeElement()
 
-The `describeElement()` function creates a screen reader-accessible description for groups of shapes that create meaning together. For example, a custom-drawn “heart” shape made out of multiple lines of code. The first parameter should be a string with the name of the element, for example, “Heart”. The second parameter should be a string with the description of the element, for example, “A red heart in the bottom-right corner.” The third parameter is optional. If a user passes `LABEL` as a third parameter, an additional `<div>` element is inserted next to the `<canvas>` element. The new \<div> will contain a visible version of the same  description embedded in the `<canvas>` element.
+The `describeElement()` function creates a screen reader-accessible description for groups of shapes that create meaning together. For example, a custom-drawn “heart” shape made out of multiple lines of code. The first parameter should be a string with the name of the element, for example, “Heart”. The second parameter should be a string with the description of the element, for example, “A red heart in the bottom-right corner.” The third parameter is optional. If a user passes `LABEL` as a third parameter, an additional `<div>` element is inserted next to the `<canvas>` element. The new \<div> will contain a visible version of the same description embedded in the `<canvas>` element.
 
 `describeElement()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 
@@ -300,4 +300,3 @@ function setup() {
 The page will output:
 
 ![A p5.js canvas, followed by two lines of description: "A red heart and yellow circle over a pink background," and "Heart: A red heart in the bottom-right corner."](images/sketch-text-output3.png)
-

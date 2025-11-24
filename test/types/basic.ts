@@ -71,3 +71,8 @@ function draw() {
 	rotateY(millis() * 0.0001)
 	model(geom)
 }
+
+function mousePressed(){
+	//only type-checking the relevant properties exist on the mouseButton object type.
+	const whatever = mouseButton.left || mouseButton.center || mouseButton.right;
+}

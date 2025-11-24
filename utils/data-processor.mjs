@@ -121,7 +121,9 @@ export function processData(rawData, strategy) {
         continue;
       }
 
-      const name = entry.name || (entry.properties || [])[0]?.name;
+      const name = entry.name ||
+        (entry.properties || [])[0]?.name ||
+        entry.tags?.find(t => t.title === 'property')?.name;
       
       // Skip duplicates based on name + class combination
       const key = `${name}:${forEntry || 'p5'}`;
