@@ -46,9 +46,6 @@ class RendererWebGPU extends Renderer3D {
     // Retired buffers to destroy at end of frame
     this._retiredBuffers = [];
 
-    // Promise chain for GPU work completion
-    this._gpuWorkPromise = null;
-
     // 2D canvas for pixel reading fallback
     this._pixelReadCanvas = null;
     this._pixelReadCtx = null;
@@ -164,7 +161,6 @@ class RendererWebGPU extends Renderer3D {
 
     // Clear the main canvas after resize
     this.clear();
-    // this._gpuWorkPromise = this.queue.onSubmittedWorkDone();
   }
 
   clear(...args) {
@@ -959,20 +955,8 @@ class RendererWebGPU extends Renderer3D {
       this._pendingCommandEncoders = [];
       this._hasPendingDraws = false;
 
-      // Chain the submission through the existing promise
-      const submit = () => {
-        // Submit the commands
-        this.queue.submit(commandsToSubmit);
-        // Return promise that resolves when GPU work is done
-        return this.queue.onSubmittedWorkDone();
-      };
-      submit();
-      // this._gpuWorkPromise = submit()
-      // if (this._gpuWorkPromise) {
-        // this._gpuWorkPromise = this._gpuWorkPromise.then(submit);
-      // } else {
-        // this._gpuWorkPromise = submit();
-      // }
+      // Submit the commands
+      this.queue.submit(commandsToSubmit);
     }
   }
 
@@ -1013,12 +997,6 @@ class RendererWebGPU extends Renderer3D {
     this._pInst.image(this.mainFramebuffer, 0, 0);
     this._pInst.pop();
     this.flushDraw();
-
-    // Wait for all GPU work to complete
-    if (this._gpuWorkPromise) {
-      await this._gpuWorkPromise;
-      this._gpuWorkPromise = null;
-    }
 
     // Return all uniform buffers to their pools
     this._returnUniformBuffersToPool();
@@ -2357,87 +2335,10 @@ class RendererWebGPU extends Renderer3D {
   async loadPixels() {
     await this.mainFramebuffer.loadPixels();
     this.pixels = this.mainFramebuffer.pixels.slice();
-    return
-    // Wait for all GPU work to complete first
-    await this.finishDraw();
-
-    // Get canvas dimensions accounting for pixel density
-    const width = Math.ceil(this.width * this._pixelDensity);
-    const height = Math.ceil(this.height * this._pixelDensity);
-
-    // Get 2D canvas for pixel reading
-    const { ctx } = this._ensurePixelReadCanvas(width, height);
-
-    // Draw the WebGPU canvas onto the 2D canvas
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(this.canvas, 0, 0, width, height);
-
-    // Get pixel data from 2D canvas
-    const imageData = ctx.getImageData(0, 0, width, height);
-    this.pixels = imageData.data;
-
-    return this.pixels;
-  }
-
-  async _getPixel(x, y) {
-    // Get 2D canvas sized to match main canvas for single pixel read
-    const canvasWidth = Math.ceil(this.width * this._pixelDensity);
-    const canvasHeight = Math.ceil(this.height * this._pixelDensity);
-    const { ctx, canvas } = this._ensurePixelReadCanvas(canvasWidth, canvasHeight);
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(this.canvas, 0, 0, canvasWidth, canvasHeight);
-    console.log(canvas.toDataURL())
-
-    const imageData = ctx.getImageData(x, y, 1, 1);
-    return Array.from(imageData.data);
   }
 
   async get(x, y, w, h) {
     return this.mainFramebuffer.get(x, y, w, h);
-    // Wait for all GPU work to complete first
-    await this.finishDraw();
-
-    const pd = this._pixelDensity;
-
-    if (typeof x === 'undefined' && typeof y === 'undefined') {
-      // get() - return entire canvas
-      x = y = 0;
-      w = this.width;
-      h = this.height;
-    } else {
-      x *= pd;
-      y *= pd;
-
-      if (typeof w === 'undefined' && typeof h === 'undefined') {
-        // get(x,y) - single pixel
-        if (x < 0 || y < 0 || x >= this.width * pd || y >= this.height * pd) {
-          return [0, 0, 0, 0];
-        }
-
-        return this._getPixel(x, y);
-      }
-      // get(x,y,w,h) - region
-      w *= pd;
-      h *= pd;
-    }
-
-    // Get 2D canvas sized to match main canvas for region reading
-    const canvasWidth = Math.ceil(this.width * this._pixelDensity);
-    const canvasHeight = Math.ceil(this.height * this._pixelDensity);
-    const { ctx } = this._ensurePixelReadCanvas(canvasWidth, canvasHeight);
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(this.canvas, 0, 0, canvasWidth, canvasHeight);
-
-    // Get the region
-    const regionImageData = ctx.getImageData(x, y, w, h);
-
-    // Create p5.Image for the region
-    const region = new Image(w, h);
-    region.pixelDensity(pd);
-    const regionCtx = region.canvas.getContext('2d');
-    regionCtx.putImageData(regionImageData, 0, 0);
-
-    return region;
   }
 
   getNoiseShaderSnippet() {
