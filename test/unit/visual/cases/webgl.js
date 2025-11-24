@@ -719,6 +719,9 @@ visualSuite('WebGL', function() {
         }
         p5.endShape(p5.CLOSE);
       }
+      screenshot();
+    });
+  });      
 
   visualSuite('textures in p5.strands', async () => {
     visualTest('uniformTexture() works', async (p5, screenshot) => {
