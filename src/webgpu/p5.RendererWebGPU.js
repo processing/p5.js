@@ -1798,7 +1798,7 @@ class RendererWebGPU extends Renderer3D {
 
     const structProperties = structName => {
       // WGSL struct parsing: struct StructName { field1: Type, field2: Type }
-      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
+      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\\{([^\\}]*)\}`).exec(fullSrc);
       if (!structDefMatch) return undefined;
       const properties = [];
 
