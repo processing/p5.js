@@ -322,19 +322,14 @@ export class ShapeBuilder {
       for (let i = stride; i < contour.length; i += stride) {
         const prevX = contour[i - stride];
         const prevY = contour[i - stride + 1];
-        const prevZ = contour[i - stride + 2];
         const currX = contour[i];
         const currY = contour[i + 1];
-        const currZ = contour[i + 2];
 
         if (Math.abs(currX - prevX) < epsilon) {
           contour[i] = prevX;
         }
         if (Math.abs(currY - prevY) < epsilon) {
           contour[i + 1] = prevY;
-        }
-        if (Math.abs(currZ - prevZ) < epsilon) {
-          contour[i + 2] = prevZ;
         }
       }
     }
