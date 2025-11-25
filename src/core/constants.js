@@ -1058,6 +1058,7 @@ export const WORD = 'WORD';
 export const _DEFAULT_TEXT_FILL = '#000000';
 export const _DEFAULT_LEADMULT = 1.25;
 export const _CTX_MIDDLE = 'middle';
+export const JUSTIFIED = 'justified';
 
 // VERTICES
 /**

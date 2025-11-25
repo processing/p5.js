@@ -49,6 +49,9 @@ class Renderer extends p5.Element {
     this._textAlign = constants.LEFT;
     this._textBaseline = constants.BASELINE;
     this._textWrap = constants.WORD;
+    this._justifyActive = false;
+    this._justifyWidth = 0;
+    this._justifyIsLastLine = false;
 
     this._rectMode = constants.CORNER;
     this._ellipseMode = constants.CENTER;
@@ -351,6 +354,9 @@ class Renderer extends p5.Element {
             testLine = `${line + words[wordIndex]}` + ' ';
             testWidth = this.textWidth(testLine);
             if (testWidth > maxWidth && line.length > 0) {
+              this._justifyActive = this._textAlign === constants.JUSTIFIED;
+              this._justifyWidth = maxWidth;
+              this._justifyIsLastLine = false;
               this._renderText(
                 p,
                 line.trim(),
@@ -359,12 +365,16 @@ class Renderer extends p5.Element {
                 finalMaxHeight,
                 finalMinHeight
               );
+              this._justifyActive = false;
               line = `${words[wordIndex]}` + ' ';
               y += p.textLeading();
             } else {
               line = testLine;
             }
           }
+          this._justifyActive = this._textAlign === constants.JUSTIFIED;
+          this._justifyWidth = maxWidth;
+          this._justifyIsLastLine = true;
           this._renderText(
             p,
             line.trim(),
@@ -373,6 +383,7 @@ class Renderer extends p5.Element {
             finalMaxHeight,
             finalMinHeight
           );
+          this._justifyActive = false;
           y += p.textLeading();
         }
       } else {
@@ -446,6 +457,7 @@ class Renderer extends p5.Element {
 
       // Renders lines of text at any line breaks present in the original string
       for (let i = 0; i < lines.length; i++) {
+        this._justifyActive = false;
         this._renderText(
           p,
           lines[i],
