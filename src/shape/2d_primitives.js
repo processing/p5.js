@@ -761,7 +761,7 @@ function primitives(p5, fn){
    *
    *   background(200);
    *   
-   *   // Making point to 5 pixels.
+   *   // Making point to 5 pixels
    *   strokeWeight(5);
    * 
    *   // Top-left.
