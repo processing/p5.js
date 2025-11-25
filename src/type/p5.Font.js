@@ -1481,7 +1481,15 @@ function font(p5, fn) {
     let isCSS = path.includes('@font-face');
 
     if (!isCSS) {
-      const info = await fetch(path, { method: 'HEAD' });
+      let info;
+      try {
+        info = await fetch(path, { method: 'HEAD' });
+      } catch (e) {
+        // Sometimes files fail when requested with HEAD. Fallback to a
+        // regular GET. It loads more data, but at least then it's cached
+        // for the likely case when we have to fetch the whole thing.
+        info = await fetch(path);
+      }
       const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
       if (isCSSFile) {
         isCSS = true;
