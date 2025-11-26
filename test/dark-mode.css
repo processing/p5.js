@@ -1,0 +1,214 @@
+/**
+ * Dark/Light Mode Styles for p5.js Test Interfaces
+ * 
+ * Provides comprehensive theming for:
+ * - Background colors
+ * - Sidebar/navigation
+ * - Code panels
+ * - Text colors
+ * - Borders and accents
+ */
+
+/* Light mode (default) */
+:root.light-mode,
+.light-mode {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #eeeeee;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #dddddd;
+  --accent-color: #ed225d;
+  --code-bg: #ffffff;
+  --code-border: #eee;
+  --link-color: #2d7bb6;
+  --link-hover: #ed225d;
+}
+
+/* Dark mode */
+:root.dark-mode,
+.dark-mode {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252525;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --border-color: #404040;
+  --accent-color: #ed225d;
+  --code-bg: #1e1e1e;
+  --code-border: #404040;
+  --link-color: #5da8d8;
+  --link-hover: #ed225d;
+}
+
+/* Theme toggle button */
+.theme-toggle-button {
+  position: fixed;
+  top: 15px;
+  right: 60px;
+  z-index: 1000;
+  background: var(--bg-secondary, #f5f5f5);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-button:hover {
+  background: var(--accent-color, #ed225d);
+  border-color: var(--accent-color, #ed225d);
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-button:active {
+  transform: scale(0.95);
+}
+
+.dark-mode .theme-toggle-button {
+  background: var(--bg-secondary, #252525);
+  border-color: var(--border-color, #404040);
+  color: var(--text-primary, #e0e0e0);
+}
+
+.dark-mode .theme-toggle-button:hover {
+  background: var(--accent-color, #ed225d);
+  border-color: var(--accent-color, #ed225d);
+}
+
+/* Body and background */
+body.dark-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Mocha test interface */
+#mocha.dark-mode {
+  color: var(--text-primary);
+}
+
+#mocha.dark-mode h1,
+#mocha.dark-mode h2 {
+  color: var(--text-primary);
+}
+
+#mocha.dark-mode .test {
+  color: var(--text-primary);
+}
+
+#mocha.dark-mode .test.pass::before {
+  color: #00d6b2;
+}
+
+#mocha.dark-mode .test.fail {
+  color: #ff6b6b;
+}
+
+#mocha.dark-mode .test.fail::before {
+  color: #ff6b6b;
+}
+
+#mocha.dark-mode .test.fail pre {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+#mocha.dark-mode .test pre {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+#mocha.dark-mode .test pre.error {
+  background-color: rgba(255, 107, 107, 0.1);
+  border-color: #ff6b6b;
+}
+
+/* Mocha stats */
+#mocha-stats.dark-mode {
+  color: var(--text-secondary);
+}
+
+#mocha-stats.dark-mode em {
+  color: var(--text-primary);
+}
+
+#mocha-stats.dark-mode a {
+  color: var(--text-secondary);
+}
+
+#mocha-stats.dark-mode a:hover {
+  border-bottom-color: var(--border-color);
+}
+
+/* Code syntax highlighting adjustments for dark mode */
+.dark-mode code .comment {
+  color: #6a9955;
+}
+
+.dark-mode code .init {
+  color: #569cd6;
+}
+
+.dark-mode code .string {
+  color: #ce9178;
+}
+
+.dark-mode code .keyword {
+  color: #c586c0;
+}
+
+.dark-mode code .number {
+  color: #b5cea8;
+}
+
+/* Links */
+.dark-mode a {
+  color: var(--link-color);
+}
+
+.dark-mode a:hover,
+.dark-mode a:active {
+  color: var(--link-hover);
+}
+
+/* Smooth transitions */
+body,
+#mocha,
+.theme-toggle-button {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure proper contrast in dark mode */
+.dark-mode * {
+  scrollbar-color: var(--border-color) var(--bg-secondary);
+}
+
+.dark-mode *::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.dark-mode *::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.dark-mode *::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 6px;
+}
+
+.dark-mode *::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
