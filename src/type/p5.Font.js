@@ -1451,7 +1451,8 @@ function font(p5, fn) {
    * <code>
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
+   *
+   * loadFont('@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }');
    * </code>
    * </div>
    */
@@ -1480,7 +1481,15 @@ function font(p5, fn) {
     let isCSS = path.includes('@font-face');
 
     if (!isCSS) {
-      const info = await fetch(path, { method: 'HEAD' });
+      let info;
+      try {
+        info = await fetch(path, { method: 'HEAD' });
+      } catch (e) {
+        // Sometimes files fail when requested with HEAD. Fallback to a
+        // regular GET. It loads more data, but at least then it's cached
+        // for the likely case when we have to fetch the whole thing.
+        info = await fetch(path);
+      }
       const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
       if (isCSSFile) {
         isCSS = true;
