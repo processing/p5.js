@@ -1053,6 +1053,8 @@ export const CHAR = 'CHAR';
  * @final
  */
 export const WORD = 'WORD';
+export const PRETTY = 'PRETTY';
+export const BALANCE = 'BALANCE';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';
