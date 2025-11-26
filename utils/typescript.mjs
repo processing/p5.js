@@ -785,6 +785,7 @@ p5: P5;
   });
 
   globalDefinitions += '}\n\n';
+  globalDefinitions += 'export default p5;\n\n';
 
   return { instanceDefinitions, globalDefinitions };
 }
