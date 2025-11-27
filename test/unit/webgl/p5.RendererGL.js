@@ -1,41 +1,41 @@
-suite('p5.RendererGL', function() {
+suite('p5.RendererGL', function () {
   var myp5;
 
   if (!window.Modernizr.webgl) {
     return;
   }
 
-  setup(function() {
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
-      p.draw = function() {};
+  setup(function () {
+    myp5 = new p5(function (p) {
+      p.setup = function () { };
+      p.draw = function () { };
     });
   });
 
-  teardown(function() {
+  teardown(function () {
     myp5.remove();
   });
 
-  suite('createCanvas(w, h, WEBGL)', function() {
-    test('creates a p5.RendererGL renderer', function() {
+  suite('createCanvas(w, h, WEBGL)', function () {
+    test('creates a p5.RendererGL renderer', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       assert.instanceOf(myp5._renderer, p5.RendererGL);
     });
   });
 
-  suite('webglVersion', function() {
-    test('should return WEBGL2 by default', function() {
+  suite('webglVersion', function () {
+    test('should return WEBGL2 by default', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       assert.equal(myp5.webglVersion, myp5.WEBGL2);
     });
 
-    test('should return WEBGL1 after setAttributes', function() {
+    test('should return WEBGL1 after setAttributes', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.setAttributes({ version: 1 });
       assert.equal(myp5.webglVersion, myp5.WEBGL);
     });
 
-    test('works on p5.Graphics', function() {
+    test('works on p5.Graphics', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.setAttributes({ version: 1 });
       const g = myp5.createGraphics(10, 10, myp5.WEBGL);
@@ -43,12 +43,12 @@ suite('p5.RendererGL', function() {
       assert.equal(g.webglVersion, myp5.WEBGL2);
     });
 
-    suite('when WebGL2 is unavailable', function() {
+    suite('when WebGL2 is unavailable', function () {
       let prevGetContext;
-      setup(function() {
+      setup(function () {
         prevGetContext = HTMLCanvasElement.prototype.getContext;
         // Mock WebGL2 being unavailable
-        HTMLCanvasElement.prototype.getContext = function(type, attrs) {
+        HTMLCanvasElement.prototype.getContext = function (type, attrs) {
           if (type === 'webgl2') {
             return undefined;
           } else {
@@ -57,20 +57,20 @@ suite('p5.RendererGL', function() {
         };
       });
 
-      teardown(function() {
+      teardown(function () {
         // Put back the actual implementation
         HTMLCanvasElement.prototype.getContext = prevGetContext;
       });
 
-      test('should return WEBGL1', function() {
+      test('should return WEBGL1', function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         assert.equal(myp5.webglVersion, myp5.WEBGL);
       });
     });
   });
 
-  suite('default stroke shader', function() {
-    test('check activate and deactivating fill and stroke', function(done) {
+  suite('default stroke shader', function () {
+    test('check activate and deactivating fill and stroke', function (done) {
       myp5.noStroke();
       assert(
         !myp5._renderer._doStroke,
@@ -93,15 +93,15 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('coplanar strokes match 2D', function(done) {
-      const getColors = function(mode) {
+    test('coplanar strokes match 2D', function (done) {
+      const getColors = function (mode) {
         myp5.createCanvas(20, 20, mode);
         myp5.pixelDensity(1);
         myp5.background(255);
         myp5.strokeCap(myp5.SQUARE);
         myp5.strokeJoin(myp5.MITER);
         if (mode === myp5.WEBGL) {
-          myp5.translate(-myp5.width/2, -myp5.height/2);
+          myp5.translate(-myp5.width / 2, -myp5.height / 2);
         }
         myp5.stroke('black');
         myp5.strokeWeight(4);
@@ -118,8 +118,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('filter shader', function() {
-    setup(function() {
+  suite('filter shader', function () {
+    setup(function () {
       frag = `precision highp float;
       varying vec2 vTexCoord;
 
@@ -141,9 +141,9 @@ suite('p5.RendererGL', function() {
         // black/white canvas could be an indicator of failed shader logic
         let val = invert ? 255 : 0;
         for (let i = 0; i < pixels.length; i++) {
-          if (pixels[i]   !== val ||
-              pixels[i+1] !== val ||
-              pixels[i+2] !== val) {
+          if (pixels[i] !== val ||
+            pixels[i + 1] !== val ||
+            pixels[i + 2] !== val) {
             return true;
           }
         }
@@ -151,7 +151,7 @@ suite('p5.RendererGL', function() {
       };
     });
 
-    suite('custom shaders', function() {
+    suite('custom shaders', function () {
       function testFilterShader(target) {
         const fragSrc = `precision highp float;
         void main() {
@@ -161,49 +161,49 @@ suite('p5.RendererGL', function() {
         target.filter(s);
         target.loadPixels();
         assert.deepEqual(
-          target.get(target.width/2, target.height/2),
+          target.get(target.width / 2, target.height / 2),
           [255, 255, 0, 255]
         );
       }
 
-      test('work with a 2D main canvas', function() {
+      test('work with a 2D main canvas', function () {
         myp5.createCanvas(10, 10);
         testFilterShader(myp5);
       });
 
-      test('work with a WebGL main canvas', function() {
+      test('work with a WebGL main canvas', function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         testFilterShader(myp5);
       });
 
-      test('work with a 2D graphic', function() {
+      test('work with a 2D graphic', function () {
         myp5.createCanvas(10, 10);
         const graphic = myp5.createGraphics(10, 10);
         testFilterShader(graphic);
       });
 
-      test('work with a WebGL graphic', function() {
+      test('work with a WebGL graphic', function () {
         myp5.createCanvas(10, 10);
         const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
         testFilterShader(graphic);
       });
     });
 
-    test('filter accepts correct params', function() {
+    test('filter accepts correct params', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       myp5.filter(myp5.POSTERIZE, 64);
     });
 
-    test('secondary graphics layer is instantiated', function() {
+    test('secondary graphics layer is instantiated', function () {
       let renderer = myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       assert.notStrictEqual(renderer.filterLayer, undefined);
     });
 
-    test('custom shader makes changes to main canvas', function() {
+    test('custom shader makes changes to main canvas', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(frag);
       myp5.background('RED');
@@ -215,7 +215,7 @@ suite('p5.RendererGL', function() {
       assert.notDeepEqual(p1, p2);
     });
 
-    test('secondary graphics layer matches main canvas size', function() {
+    test('secondary graphics layer matches main canvas size', function () {
       let g1 = myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(frag);
       myp5.filter(s);
@@ -235,7 +235,7 @@ suite('p5.RendererGL', function() {
       assert.equal(g1.height, 15);
     });
 
-    test('create graphics is unaffected after filter', function() {
+    test('create graphics is unaffected after filter', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let pg = myp5.createGraphics(5, 5, myp5.WEBGL);
       pg.circle(1, 1, 1);
@@ -272,7 +272,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(p1, p2);
     });
 
-    test('stroke and other settings are unaffected after filter', function() {
+    test('stroke and other settings are unaffected after filter', function () {
       let c = myp5.createCanvas(5, 5, myp5.WEBGL);
       let getShapeAttributes = () => [
         c._ellipseMode,
@@ -291,18 +291,18 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(a1, a2);
     });
 
-    test('geometries added after filter do not have shader applied', function() {
+    test('geometries added after filter do not have shader applied', function () {
       myp5.createCanvas(4, 4, myp5.WEBGL);
       let s = myp5.createFilterShader(frag);
       myp5.filter(s);
       myp5.fill('RED');
       myp5.noStroke();
-      myp5.rect(-2,-2,2,2);
+      myp5.rect(-2, -2, 2, 2);
       myp5.loadPixels();
       assert.equal(myp5.pixels[0], 255);
     });
 
-    test('createFilterShader takes a custom frag shader src', function() {
+    test('createFilterShader takes a custom frag shader src', function () {
       let testCreateFilterShader = () => {
         myp5.createCanvas(4, 4, myp5.WEBGL);
         let s = myp5.createFilterShader(frag);
@@ -311,9 +311,9 @@ suite('p5.RendererGL', function() {
       assert.doesNotThrow(testCreateFilterShader, 'this should not throw');
     });
 
-    test('filter shader works on a p5.Graphics', function() {
-      myp5.createCanvas(3,3, myp5.WEBGL);
-      let pg = myp5.createGraphics(3,3, myp5.WEBGL);
+    test('filter shader works on a p5.Graphics', function () {
+      myp5.createCanvas(3, 3, myp5.WEBGL);
+      let pg = myp5.createGraphics(3, 3, myp5.WEBGL);
       let s = pg.createFilterShader(frag);
       pg.background('RED');
       pg.loadPixels();
@@ -324,9 +324,9 @@ suite('p5.RendererGL', function() {
       assert.notDeepEqual(p1, p2);
     });
 
-    test('POSTERIZE, BLUR, THRESHOLD work without supplied param', function() {
+    test('POSTERIZE, BLUR, THRESHOLD work without supplied param', function () {
       let testDefaultParams = () => {
-        myp5.createCanvas(3,3, myp5.WEBGL);
+        myp5.createCanvas(3, 3, myp5.WEBGL);
         myp5.filter(myp5.POSTERIZE);
         myp5.filter(myp5.BLUR);
         myp5.filter(myp5.THRESHOLD);
@@ -334,21 +334,21 @@ suite('p5.RendererGL', function() {
       assert.doesNotThrow(testDefaultParams, 'this should not throw');
     });
 
-    test('filter() uses WEBGL implementation behind main P2D canvas', function() {
-      let renderer = myp5.createCanvas(3,3);
+    test('filter() uses WEBGL implementation behind main P2D canvas', function () {
+      let renderer = myp5.createCanvas(3, 3);
       myp5.filter(myp5.BLUR);
       assert.isDefined(renderer.filterGraphicsLayer);
     });
 
-    test('filter() can opt out of WEBGL implementation', function() {
-      let renderer = myp5.createCanvas(3,3);
-      myp5.filter(myp5.BLUR, useWebGL=false);
+    test('filter() can opt out of WEBGL implementation', function () {
+      let renderer = myp5.createCanvas(3, 3);
+      myp5.filter(myp5.BLUR, useWebGL = false);
       assert.isUndefined(renderer.filterGraphicsLayer);
     });
 
-    test('filters make changes to canvas', function() {
-      myp5.createCanvas(20,20);
-      myp5.circle(10,10,12);
+    test('filters make changes to canvas', function () {
+      myp5.createCanvas(20, 20);
+      myp5.circle(10, 10, 12);
       let operations = [
         myp5.BLUR,
         myp5.THRESHOLD,
@@ -363,14 +363,14 @@ suite('p5.RendererGL', function() {
         myp5.filter(operation);
         myp5.loadPixels();
         assert(notAllBlack(myp5.pixels));
-        assert(notAllBlack(myp5.pixels, invert=true));
+        assert(notAllBlack(myp5.pixels, invert = true));
       }
     });
 
-    test('feedback effects can be prevented (ie. clear() works)', function() {
-      myp5.createCanvas(20,20);
+    test('feedback effects can be prevented (ie. clear() works)', function () {
+      myp5.createCanvas(20, 20);
       let drawAndFilter = () => {
-        myp5.circle(5,5,8);
+        myp5.circle(5, 5, 8);
         myp5.filter(myp5.BLUR);
       };
       let getPixels = () => {
@@ -390,7 +390,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(p1, p2);
     });
 
-    test('createFilterShader() accepts shader fragments in webgl version 2', function() {
+    test('createFilterShader() accepts shader fragments in webgl version 2', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       let s = myp5.createFilterShader(`#version 300 es
         precision highp float;
@@ -408,12 +408,12 @@ suite('p5.RendererGL', function() {
       myp5.filter(s);
     });
 
-    test('BLUR parameters make different output', function() {
+    test('BLUR parameters make different output', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       let startDraw = () => {
         myp5.clear();
         myp5.fill('RED');
-        myp5.circle(0,0,8);
+        myp5.circle(0, 0, 8);
       };
       let getPixels = () => {
         myp5.loadPixels();
@@ -428,18 +428,18 @@ suite('p5.RendererGL', function() {
       startDraw();
       myp5.filter(myp5.BLUR, 50);
       let p3 = getPixels();
-      assert.notDeepEqual(p1,p2);
-      assert.notDeepEqual(p2,p3);
+      assert.notDeepEqual(p1, p2);
+      assert.notDeepEqual(p2, p3);
     });
 
-    test('POSTERIZE parameters make different output', function() {
+    test('POSTERIZE parameters make different output', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       let startDraw = () => {
         myp5.clear();
         myp5.fill('CORAL');
-        myp5.circle(0,0,8);
+        myp5.circle(0, 0, 8);
         myp5.fill('CORNFLOWERBLUE');
-        myp5.circle(2,2,8);
+        myp5.circle(2, 2, 8);
       };
       let getPixels = () => {
         myp5.loadPixels();
@@ -451,15 +451,15 @@ suite('p5.RendererGL', function() {
       startDraw();
       myp5.filter(myp5.POSTERIZE, 4);
       let p2 = getPixels();
-      assert.notDeepEqual(p1,p2);
+      assert.notDeepEqual(p1, p2);
     });
 
-    test('THRESHOLD parameters make different output', function() {
+    test('THRESHOLD parameters make different output', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       let startDraw = () => {
         myp5.clear();
         myp5.fill('RED');
-        myp5.circle(0,0,8);
+        myp5.circle(0, 0, 8);
       };
       let getPixels = () => {
         myp5.loadPixels();
@@ -471,10 +471,10 @@ suite('p5.RendererGL', function() {
       startDraw();
       myp5.filter(myp5.THRESHOLD, 0.9);
       let p2 = getPixels();
-      assert.notDeepEqual(p1,p2);
+      assert.notDeepEqual(p1, p2);
     });
 
-    suite('external context', function() {
+    suite('external context', function () {
       const cases = [
         ['corner rectMode', () => myp5.rectMode(myp5.CORNER)],
         ['corners rectMode', () => myp5.rectMode(myp5.CORNERS)],
@@ -506,16 +506,16 @@ suite('p5.RendererGL', function() {
       };
 
       for (const filterType of ['blur', 'invert']) {
-        suite(`${filterType} filter`, function() {
+        suite(`${filterType} filter`, function () {
           for (const mode of ['p2d', 'webgl']) {
-            suite(`${mode} mode`, function() {
+            suite(`${mode} mode`, function () {
               let defaultPixels;
               setup(() => {
-                defaultPixels = getFilteredPixels('p2d', () => {}, filterType);
+                defaultPixels = getFilteredPixels('p2d', () => { }, filterType);
               });
 
               for (const [name, initialize] of cases) {
-                test(name, function() {
+                test(name, function () {
                   const pixels =
                     getFilteredPixels(mode, initialize, filterType);
                   assert.deepEqual(pixels, defaultPixels);
@@ -528,15 +528,15 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  test('contours match 2D', function() {
-    const getColors = function(mode) {
+  test('contours match 2D', function () {
+    const getColors = function (mode) {
       myp5.createCanvas(50, 50, mode);
       myp5.pixelDensity(1);
       myp5.background(200);
       myp5.strokeCap(myp5.SQUARE);
       myp5.strokeJoin(myp5.MITER);
       if (mode === myp5.WEBGL) {
-        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
       }
       myp5.stroke('black');
       myp5.strokeWeight(2);
@@ -562,9 +562,9 @@ suite('p5.RendererGL', function() {
     assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
   });
 
-  suite('text shader', function() {
-    test('rendering looks the same in WebGL1 and 2', function(done) {
-      myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
+  suite('text shader', function () {
+    test('rendering looks the same in WebGL1 and 2', function (done) {
+      myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function (font) {
         const webgl2 = myp5.createGraphics(100, 20, myp5.WEBGL);
         const webgl1 = myp5.createGraphics(100, 20, myp5.WEBGL);
         webgl1.setAttributes({ version: 1 });
@@ -590,8 +590,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('push() and pop() work in WEBGL Mode', function() {
-    test('push/pop and translation works as expected in WEBGL Mode', function(done) {
+  suite('push() and pop() work in WEBGL Mode', function () {
+    test('push/pop and translation works as expected in WEBGL Mode', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var modelMatrixBefore = myp5._renderer.uModelMatrix.copy();
       var viewMatrixBefore = myp5._renderer.uViewMatrix.copy();
@@ -616,7 +616,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and directionalLight() works', function(done) {
+    test('push/pop and directionalLight() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
       var dirDiffuseColors =
@@ -655,7 +655,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and ambientLight() works', function(done) {
+    test('push/pop and ambientLight() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.ambientLight(100, 0, 100);
       myp5.ambientLight(0, 0, 200);
@@ -668,7 +668,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and pointLight() works', function(done) {
+    test('push/pop and pointLight() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.pointLight(255, 0, 0, 0, 0, 0);
       var pointDiffuseColors = myp5._renderer.pointLightDiffuseColors.slice();
@@ -698,7 +698,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and specularColor() works', function(done) {
+    test('push/pop and specularColor() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.specularColor(255, 0, 0);
       var specularColors = myp5._renderer.specularColors.slice();
@@ -710,7 +710,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and spotLight() works', function(done) {
+    test('push/pop and spotLight() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
       let spotLightDiffuseColors =
@@ -751,7 +751,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and noLights() works', function(done) {
+    test('push/pop and noLights() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.ambientLight(0, 0, 200);
       var ambColors = myp5._renderer.ambientLightColors.slice();
@@ -766,7 +766,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and texture() works', function(done) {
+    test('push/pop and texture() works', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var tex1 = myp5.createGraphics(1, 1);
       myp5.texture(tex1);
@@ -805,7 +805,7 @@ suite('p5.RendererGL', function() {
         done();
       });
 
-    test('push/pop and shader() works with fill', function(done) {
+    test('push/pop and shader() works with fill', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var fillShader1 = myp5._renderer._getLightShader();
       var fillShader2 = myp5._renderer._getColorShader();
@@ -820,7 +820,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop builds/unbuilds stack properly', function(done) {
+    test('push/pop builds/unbuilds stack properly', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var col1 = myp5.color(255, 0, 0);
       var col2 = myp5.color(0, 255, 0);
@@ -845,8 +845,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('applying cameras', function() {
-    test('changing cameras keeps transforms', function() {
+  suite('applying cameras', function () {
+    test('changing cameras keeps transforms', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
       const origModelMatrix = myp5._renderer.uModelMatrix.copy();
@@ -876,8 +876,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('materials', function() {
-    test('ambient color defaults to the fill color', function() {
+  suite('materials', function () {
+    test('ambient color defaults to the fill color', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.noStroke();
       myp5.lights();
@@ -889,7 +889,7 @@ suite('p5.RendererGL', function() {
       expect(pixel[2]).to.equal(0);
     });
 
-    test('ambient color can be set manually', function() {
+    test('ambient color can be set manually', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.noStroke();
       myp5.lights();
@@ -902,7 +902,7 @@ suite('p5.RendererGL', function() {
       expect(pixel[2]).to.equal(128);
     });
 
-    test('specular is not lost by texture()', function() {
+    test('specular is not lost by texture()', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const tex = myp5.createGraphics(100, 100);
       tex.background(64);
@@ -917,7 +917,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixel, [184, 184, 184, 255]);
     });
 
-    test('specularMaterial() does not kill texture', function() {
+    test('specularMaterial() does not kill texture', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const tex = myp5.createGraphics(100, 100);
       tex.background(64);
@@ -932,7 +932,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixel, [184, 184, 184, 255]);
     });
 
-    test('ambientMaterial() does not kill texture', function() {
+    test('ambientMaterial() does not kill texture', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const tex = myp5.createGraphics(100, 100);
       tex.background(64);
@@ -947,7 +947,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixel, [88, 88, 88, 255]);
     });
 
-    test('emissiveMaterial() does not kill texture', function() {
+    test('emissiveMaterial() does not kill texture', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const tex = myp5.createGraphics(100, 100);
       tex.background(64);
@@ -963,8 +963,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('loadpixels()', function() {
-    test('loadPixels color check', function(done) {
+  suite('loadpixels()', function () {
+    test('loadPixels color check', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(0, 100, 0);
       myp5.loadPixels();
@@ -974,7 +974,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('get() singlePixel color and size, with loadPixels', function(done) {
+    test('get() singlePixel color and size, with loadPixels', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(100, 115, 100);
       myp5.loadPixels();
@@ -984,10 +984,10 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('updatePixels() matches 2D mode', function() {
+    test('updatePixels() matches 2D mode', function () {
       myp5.createCanvas(20, 20);
       myp5.pixelDensity(1);
-      const getColors = function(mode) {
+      const getColors = function (mode) {
         const g = myp5.createGraphics(20, 20, mode);
         g.pixelDensity(1);
         g.background(255);
@@ -1021,22 +1021,22 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('get()', function() {
+  suite('get()', function () {
     var img;
-    test('get() size check', function(done) {
+    test('get() size check', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       img = myp5.get();
       assert.deepEqual(img.width, myp5.width);
       done();
     });
 
-    test('get() can create p5.Image', function(done) {
+    test('get() can create p5.Image', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       assert.isTrue(img instanceof p5.Image);
       done();
     });
 
-    test('get() singlePixel color and size', function(done) {
+    test('get() singlePixel color and size', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(100, 115, 100);
       img = myp5.get(0, 0);
@@ -1050,10 +1050,10 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('GL Renderer clear()', function() {
+  suite('GL Renderer clear()', function () {
     var pg;
     var pixel;
-    test('webgl graphics background draws into webgl canvas', function(done) {
+    test('webgl graphics background draws into webgl canvas', function (done) {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.background(0, 255, 255, 255);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
@@ -1064,7 +1064,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('transparent GL graphics with GL canvas', function(done) {
+    test('transparent GL graphics with GL canvas', function (done) {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
       myp5.background(0, 255, 255);
@@ -1075,7 +1075,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('clear color with rgba arguments', function(done) {
+    test('clear color with rgba arguments', function (done) {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.clear(1, 0, 0, 1);
       pixel = myp5.get(0, 0);
@@ -1087,7 +1087,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('semi-transparent GL graphics with GL canvas', function(done) {
+    test('semi-transparent GL graphics with GL canvas', function (done) {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
       myp5.background(0, 255, 255);
@@ -1098,7 +1098,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('webgl graphics background draws into 2D canvas', function(done) {
+    test('webgl graphics background draws into 2D canvas', function (done) {
       myp5.createCanvas(50, 50);
       myp5.background(0, 255, 255, 255);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
@@ -1109,7 +1109,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('transparent GL graphics with 2D canvas', function(done) {
+    test('transparent GL graphics with 2D canvas', function (done) {
       myp5.createCanvas(50, 50);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
       myp5.background(0, 255, 255);
@@ -1120,7 +1120,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('semi-transparent GL graphics with 2D canvas', function(done) {
+    test('semi-transparent GL graphics with 2D canvas', function (done) {
       myp5.createCanvas(50, 50);
       pg = myp5.createGraphics(25, 50, myp5.WEBGL);
       myp5.background(0, 255, 255);
@@ -1132,14 +1132,14 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('background()', function() {
+  suite('background()', function () {
     function assertAllPixelsAreColor(target, r, g, b, a) {
       target.loadPixels();
       const expectedPixels = [];
       for (let i = 0; i < target.width * target.height; i++) {
         expectedPixels.push(r, g, b, a);
       }
-      assert.deepEqual([ ...target.pixels ], expectedPixels);
+      assert.deepEqual([...target.pixels], expectedPixels);
     }
 
     function testDepthGetsCleared(target) {
@@ -1161,24 +1161,24 @@ suite('p5.RendererGL', function() {
       assertAllPixelsAreColor(target, 0, 0, 255, 255);
     }
 
-    test('background() resets the depth buffer of the main canvas', function() {
+    test('background() resets the depth buffer of the main canvas', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       testDepthGetsCleared(myp5);
     });
 
-    test('background() resets the depth buffer of p5.Graphics', function() {
+    test('background() resets the depth buffer of p5.Graphics', function () {
       const graphics = myp5.createGraphics(10, 10, myp5.WEBGL);
       testDepthGetsCleared(graphics);
     });
   });
 
-  suite('blendMode()', function() {
-    var testBlend = function(mode, intended) {
+  suite('blendMode()', function () {
+    var testBlend = function (mode, intended) {
       myp5.blendMode(mode);
       assert.deepEqual(intended, myp5._renderer.curBlendMode);
     };
 
-    test('blendMode sets _curBlendMode correctly', function(done) {
+    test('blendMode sets _curBlendMode correctly', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       testBlend(myp5.ADD, myp5.ADD);
       testBlend(myp5.REPLACE, myp5.REPLACE);
@@ -1191,7 +1191,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('blendMode doesnt change when mode unavailable in 3D', function(done) {
+    test('blendMode doesnt change when mode unavailable in 3D', function (done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.blendMode(myp5.DARKEST);
       testBlend(myp5.BURN, myp5.DARKEST);
@@ -1202,7 +1202,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    var mixAndReturn = function(mode, bgCol) {
+    var mixAndReturn = function (mode, bgCol) {
       myp5.background(bgCol);
       myp5.blendMode(mode);
       myp5.fill(255, 0, 0, 122);
@@ -1212,7 +1212,7 @@ suite('p5.RendererGL', function() {
       return myp5.get(5, 5);
     };
 
-    test('blendModes change pixel colors as expected', function(done) {
+    test('blendModes change pixel colors as expected', function (done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
       assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.ADD, 0));
@@ -1228,13 +1228,13 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('blendModes match 2D mode', function(done) {
+    test('blendModes match 2D mode', function (done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.setAttributes({ alpha: true });
       const ref = myp5.createGraphics(myp5.width, myp5.height);
       ref.translate(ref.width / 2, ref.height / 2); // Match WebGL mode
 
-      const testBlend = function(target, colorA, colorB, mode) {
+      const testBlend = function (target, colorA, colorB, mode) {
         target.clear();
         target.push();
         target.background(colorA);
@@ -1247,7 +1247,7 @@ suite('p5.RendererGL', function() {
         return target.get(0, 0);
       };
 
-      const assertSameIn2D = function(colorA, colorB, mode) {
+      const assertSameIn2D = function (colorA, colorB, mode) {
         const refColor = testBlend(myp5, colorA, colorB, mode);
         const webglColor = testBlend(ref, colorA, colorB, mode);
         assert.deepEqual(
@@ -1275,7 +1275,7 @@ suite('p5.RendererGL', function() {
       }
     });
 
-    test('blendModes are included in push/pop', function(done) {
+    test('blendModes are included in push/pop', function (done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.blendMode(myp5.MULTIPLY);
       myp5.push();
@@ -1290,7 +1290,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('blendModes are applied to point drawing', function(done) {
+    test('blendModes are applied to point drawing', function (done) {
       myp5.createCanvas(32, 32, myp5.WEBGL);
       myp5.background(0);
       myp5.blendMode(myp5.ADD);
@@ -1303,7 +1303,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('transparency works the same with per-vertex colors', function() {
+    test('transparency works the same with per-vertex colors', function () {
       myp5.createCanvas(20, 20, myp5.WEBGL);
       myp5.noStroke();
 
@@ -1328,8 +1328,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('BufferDef', function() {
-    test('render buffer properties are correctly set', function(done) {
+  suite('BufferDef', function () {
+    test('render buffer properties are correctly set', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.fill(255);
@@ -1360,13 +1360,13 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('tint() in WEBGL mode', function() {
-    test('default tint value is set and not null', function() {
+  suite('tint() in WEBGL mode', function () {
+    test('default tint value is set and not null', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
     });
 
-    test('tint value is modified correctly when tint() is called', function() {
+    test('tint value is modified correctly when tint() is called', function () {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.tint(0, 153, 204, 126);
       assert.deepEqual(myp5._renderer._tint, [0, 153, 204, 126]);
@@ -1390,27 +1390,27 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5._renderer._tint, [255, 204, 0, 255]);
     });
 
-    test('tint should be reset after draw loop', function() {
-      return new Promise(function(resolve, reject) {
-        new p5(function(p) {
-          p.setup = function() {
+    test('tint should be reset after draw loop', function () {
+      return new Promise(function (resolve, reject) {
+        new p5(function (p) {
+          p.setup = function () {
             p.createCanvas(100, 100, myp5.WEBGL);
           };
-          p.draw = function() {
+          p.draw = function () {
             if (p.frameCount === 2) {
               resolve(p._renderer._tint);
             }
             p.tint(0, 153, 204, 126);
           };
         });
-      }).then(function(_tint) {
+      }).then(function (_tint) {
         assert.deepEqual(_tint, [255, 255, 255, 255]);
       });
     });
   });
 
-  suite('beginShape() in WEBGL mode', function() {
-    test('QUADS mode converts into triangles', function(done) {
+  suite('beginShape() in WEBGL mode', function () {
+    test('QUADS mode converts into triangles', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.textureMode(myp5.NORMAL);
       renderer.beginShape(myp5.QUADS);
@@ -1462,7 +1462,7 @@ suite('p5.RendererGL', function() {
         renderer.immediateMode.geometry.vertices.length,
         expectedVerts.length
       );
-      expectedVerts.forEach(function([x, y, z], i) {
+      expectedVerts.forEach(function ([x, y, z], i) {
         assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
         assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
         assert.equal(renderer.immediateMode.geometry.vertices[i].z, z);
@@ -1530,7 +1530,7 @@ suite('p5.RendererGL', function() {
         renderer.immediateMode.geometry.vertexNormals.length,
         expectedNormals.length
       );
-      expectedNormals.forEach(function([x, y, z], i) {
+      expectedNormals.forEach(function ([x, y, z], i) {
         assert.equal(renderer.immediateMode.geometry.vertexNormals[i].x, x);
         assert.equal(renderer.immediateMode.geometry.vertexNormals[i].y, y);
         assert.equal(renderer.immediateMode.geometry.vertexNormals[i].z, z);
@@ -1539,7 +1539,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('QUADS mode makes edges for quad outlines', function(done) {
+    test('QUADS mode makes edges for quad outlines', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       renderer.beginShape(myp5.QUADS);
       renderer.vertex(0, 0);
@@ -1557,7 +1557,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('QUAD_STRIP mode makes edges for strip outlines', function(done) {
+    test('QUAD_STRIP mode makes edges for strip outlines', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       renderer.beginShape(myp5.QUAD_STRIP);
       renderer.vertex(0, 0);
@@ -1575,7 +1575,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TRIANGLE_FAN mode makes edges for each triangle', function(done) {
+    test('TRIANGLE_FAN mode makes edges for each triangle', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       //    x
       //    | \
@@ -1594,7 +1594,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS preserves vertex data', function(done) {
+    test('TESS preserves vertex data', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
@@ -1686,7 +1686,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS does not affect stroke colors', function(done) {
+    test('TESS does not affect stroke colors', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
@@ -1713,7 +1713,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS does not affect texture coordinates', function(done) {
+    test('TESS does not affect texture coordinates', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       const texture = new p5.Image(25, 25);
 
@@ -1738,7 +1738,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS interpolates vertex data at intersections', function(done) {
+    test('TESS interpolates vertex data at intersections', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       // Hourglass shape:
@@ -1840,7 +1840,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS handles vertex data perpendicular to the camera', function(done) {
+    test('TESS handles vertex data perpendicular to the camera', function (done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
@@ -1881,8 +1881,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('color interpolation', function() {
-    test('strokes should interpolate colors between vertices', function(done) {
+  suite('color interpolation', function () {
+    test('strokes should interpolate colors between vertices', function (done) {
       const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
 
       // far left color: (242, 236, 40)
@@ -1904,7 +1904,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('bezierVertex() should interpolate curFillColor', function(done) {
+    test('bezierVertex() should interpolate curFillColor', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // start color: (255, 255, 255)
@@ -1923,7 +1923,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('bezierVertex() should interpolate curStrokeColor', function(done) {
+    test('bezierVertex() should interpolate curStrokeColor', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // start color: (255, 255, 255)
@@ -1944,7 +1944,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('quadraticVertex() should interpolate curFillColor', function(done) {
+    test('quadraticVertex() should interpolate curFillColor', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // start color: (255, 255, 255)
@@ -1963,7 +1963,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('quadraticVertex() should interpolate curStrokeColor', function(done) {
+    test('quadraticVertex() should interpolate curStrokeColor', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // start color: (255, 255, 255)
@@ -1984,7 +1984,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geometry without stroke colors use curStrokeColor', function(done) {
+    test('geometry without stroke colors use curStrokeColor', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
       myp5.background(255);
       myp5.fill(255);
@@ -1998,9 +1998,9 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geometry with stroke colors use their colors', function(done) {
+    test('geometry with stroke colors use their colors', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
-      const myGeom = new p5.Geometry(1, 1, function() {
+      const myGeom = new p5.Geometry(1, 1, function () {
         this.gid = 'strokeColorTest';
         this.vertices.push(myp5.createVector(-128, -128));
         this.vertices.push(myp5.createVector(-128, 128));
@@ -2031,7 +2031,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('immediate mode uses stroke colors', function(done) {
+    test('immediate mode uses stroke colors', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
       myp5.background(255);
       myp5.fill(255);
@@ -2053,8 +2053,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('interpolation of vertex colors', function(){
-    test('immediate mode uses vertex colors (noLight)', function(done) {
+  suite('interpolation of vertex colors', function () {
+    test('immediate mode uses vertex colors (noLight)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // upper color: (200, 0, 0, 255);
@@ -2077,7 +2077,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('immediate mode uses vertex colors (light)', function(done) {
+    test('immediate mode uses vertex colors (light)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       myp5.directionalLight(255, 255, 255, 0, 0, -1);
@@ -2100,7 +2100,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geom without vertex colors use curFillCol (noLight)', function(done) {
+    test('geom without vertex colors use curFillCol (noLight)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // expected center color is curFillColor.
@@ -2114,7 +2114,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geom without vertex colors use curFillCol (light)', function(done) {
+    test('geom without vertex colors use curFillCol (light)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       myp5.directionalLight(255, 255, 255, 0, 0, -1);
@@ -2130,14 +2130,14 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geom with vertex colors use their color (noLight)', function(done) {
+    test('geom with vertex colors use their color (noLight)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // upper color: (200, 0, 0, 255);
       // lower color: (0, 0, 200, 255);
       // expected center color: (100, 0, 100, 255);
 
-      const myGeom = new p5.Geometry(1, 1, function() {
+      const myGeom = new p5.Geometry(1, 1, function () {
         this.gid = 'vertexColorTestWithNoLights';
         this.vertices.push(myp5.createVector(-128, -128));
         this.vertices.push(myp5.createVector(128, -128));
@@ -2146,10 +2146,10 @@ suite('p5.RendererGL', function() {
         this.faces.push([0, 1, 2]);
         this.faces.push([0, 2, 3]);
         this.vertexColors.push(
-          200/255, 0, 0, 1,
-          200/255, 0, 0, 1,
-          0, 0, 200/255, 1,
-          0, 0, 200/255, 1
+          200 / 255, 0, 0, 1,
+          200 / 255, 0, 0, 1,
+          0, 0, 200 / 255, 1,
+          0, 0, 200 / 255, 1
         );
         this.computeNormals();
       });
@@ -2162,10 +2162,10 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('geom with vertex colors use their color (light)', function(done) {
+    test('geom with vertex colors use their color (light)', function (done) {
       const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
-      const myGeom = new p5.Geometry(1, 1, function() {
+      const myGeom = new p5.Geometry(1, 1, function () {
         this.gid = 'vertexColorTestWithLighs';
         this.vertices.push(myp5.createVector(-128, -128));
         this.vertices.push(myp5.createVector(128, -128));
@@ -2174,10 +2174,10 @@ suite('p5.RendererGL', function() {
         this.faces.push([0, 1, 2]);
         this.faces.push([0, 2, 3]);
         this.vertexColors.push(
-          200/255, 0, 0, 1,
-          200/255, 0, 0, 1,
-          0, 0, 200/255, 1,
-          0, 0, 200/255, 1
+          200 / 255, 0, 0, 1,
+          200 / 255, 0, 0, 1,
+          0, 0, 200 / 255, 1,
+          0, 0, 200 / 255, 1
         );
         this.computeNormals();
       });
@@ -2194,12 +2194,12 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('Test for register availability', function() {
-    test('register enable/disable flag test', function(done) {
+  suite('Test for register availability', function () {
+    test('register enable/disable flag test', function (done) {
       const renderer = myp5.createCanvas(16, 16, myp5.WEBGL);
 
       // geometry without aTexCoord.
-      const myGeom = new p5.Geometry(1, 1, function() {
+      const myGeom = new p5.Geometry(1, 1, function () {
         this.gid = 'registerEnabledTest';
         this.vertices.push(myp5.createVector(-8, -8));
         this.vertices.push(myp5.createVector(8, -8));
@@ -2233,8 +2233,8 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('setAttributes', function() {
-    test('It leaves a reference to the correct canvas', function(done) {
+  suite('setAttributes', function () {
+    test('It leaves a reference to the correct canvas', function (done) {
       const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
       assert.equal(myp5.canvas, renderer.canvas);
 
@@ -2242,10 +2242,30 @@ suite('p5.RendererGL', function() {
       assert.equal(myp5.canvas, renderer.canvas);
       done();
     });
+
+    test('noSmooth() preserves canvas position', function (done) {
+      const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.position(150, 50);
+
+      // Get the position before calling noSmooth
+      const posBefore = {
+        left: myp5.canvas.style.left,
+        top: myp5.canvas.style.top
+      };
+
+      // Call noSmooth() which internally calls setAttributes('antialias', false)
+      myp5.noSmooth();
+
+      // If antialias was already false, canvas should not be recreated
+      // Position should be preserved
+      assert.equal(myp5.canvas.style.left, posBefore.left);
+      assert.equal(myp5.canvas.style.top, posBefore.top);
+      done();
+    });
   });
 
-  suite('instancing', function() {
-    test('instanced', function() {
+  suite('instancing', function () {
+    test('instanced', function () {
       let defShader;
 
       const vertShader = `#version 300 es
@@ -2324,15 +2344,15 @@ suite('p5.RendererGL', function() {
     });
   });
 
-  suite('clip()', function() {
+  suite('clip()', function () {
     //let myp5;
     function getClippedPixels(mode, mask) {
       // Clean up the last myp5 instance, since this may be called more than
       // once per test
       myp5.remove();
-      myp5 = new p5(function(p) {
-        p.setup = function() {};
-        p.draw = function() {};
+      myp5 = new p5(function (p) {
+        p.setup = function () { };
+        p.draw = function () { };
       });
 
       myp5.createCanvas(50, 50, mode);
@@ -2350,7 +2370,7 @@ suite('p5.RendererGL', function() {
       return pixels.slice(start, start + 4);
     }
 
-    test('It can mask in a shape', function() {
+    test('It can mask in a shape', function () {
       const mask = () => {
         myp5.background(255);
         myp5.noStroke();
@@ -2373,7 +2393,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
     });
 
-    test('It can mask out a shape', function() {
+    test('It can mask out a shape', function () {
       const mask = () => {
         myp5.background(255);
         myp5.noStroke();
@@ -2396,7 +2416,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
     });
 
-    test('It can mask multiple shapes', function() {
+    test('It can mask multiple shapes', function () {
       const mask = () => {
         myp5.background(255);
         myp5.noStroke();
@@ -2428,7 +2448,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixels, getClippedPixels(myp5.P2D, mask));
     });
 
-    test('It can mask in a shape in a framebuffer', function() {
+    test('It can mask in a shape in a framebuffer', function () {
       const mask = () => {
         const fbo = myp5.createFramebuffer({ antialias: false });
         myp5.background(255);
@@ -2457,7 +2477,7 @@ suite('p5.RendererGL', function() {
 
     test(
       'It can mask a separate shape in a framebuffer from the main canvas',
-      function() {
+      function () {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const fbo = myp5.createFramebuffer({ antialias: false });
         myp5.rectMode(myp5.CENTER);
@@ -2509,7 +2529,7 @@ suite('p5.RendererGL', function() {
 
     test(
       'Main canvas masks do not apply to framebuffers',
-      function() {
+      function () {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const fbo = myp5.createFramebuffer({ antialias: false });
         myp5.rectMode(myp5.CENTER);
