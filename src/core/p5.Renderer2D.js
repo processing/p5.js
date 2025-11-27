@@ -305,7 +305,7 @@ class Renderer2D extends Renderer {
     // Start a new path. Everything from here on out should become part of this
     // one path so that we can clip to the whole thing.
     this.clipPath = new Path2D();
-    this.initialTransform = this.drawingContext.getTransform();
+    this._clipBaseTransform = this.drawingContext.getTransform();
 
     if (this._clipInvert) {
       // Slight hack: draw a big rectangle over everything with reverse winding
@@ -331,10 +331,11 @@ class Renderer2D extends Renderer {
   }
 
   endClip() {
-    const currentTransform = this.drawingContext.getTransform();
-    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    const savedTransform = this.drawingContext.getTransform();
+    this.drawingContext.setTransform(this._clipBaseTransform);
     this.drawingContext.clip(this.clipPath);
-    this.drawingContext.setTransform(currentTransform);
+    this.drawingContext.setTransform(savedTransform);
+
     this.clipPath = null;
 
     super.endClip();
@@ -731,33 +732,11 @@ class Renderer2D extends Renderer {
       radiusY = h / 2;
     if (this._clipping) {
       const tempPath = new Path2D();
-      const current = this.drawingContext.getTransform();
-      // Transform coordinates manually but preserve scale signs
-      const transformPoint = (x, y) => {
-        return {
-          x: current.a * x + current.c * y + current.e,
-          y: current.b * x + current.d * y + current.f
-        };
-      };
-      const transformedCenter = transformPoint(centerX, centerY);
-      // Calculate transformed radii WITHOUT Math.abs() to preserve negative scaling
-      const scaleX = Math.sqrt(current.a * current.a + current.c * current.c);
-      const scaleY = Math.sqrt(current.b * current.b + current.d * current.d);
-
-      // Preserve the sign of the scaling for mirroring effects
-      const signX = current.a < 0 ? -1 : 1;
-      const signY = current.d < 0 ? -1 : 1;
-
-      const transformedRadiusX = scaleX * radiusX * signX;
-      const transformedRadiusY = scaleY * radiusY * signY;
-      tempPath.ellipse(
-        transformedCenter.x,
-        transformedCenter.y,
-        Math.abs(transformedRadiusX),
-        Math.abs(transformedRadiusY),
-        0, 0, 2 * Math.PI
-      );
-      this.clipPath.addPath(tempPath);
+      tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+      const currentTransform = this.drawingContext.getTransform();
+      const ClipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      this.clipPath.addPath(tempPath, relativeTransform);
     } else {
       ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
