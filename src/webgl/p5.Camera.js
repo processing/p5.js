@@ -3823,6 +3823,116 @@ function camera(p5, fn){
   };
 
   /**
+   * Returns or sets the current (active) camera of a 3D sketch.
+   *
+   * `activeCamera()` provides a standard way to access and modify the active
+   * camera. When called with no arguments, it returns the current active camera.
+   * When called with a camera argument, it sets that camera as the active camera.
+   *
+   * This function works alongside <a href="#/p5/setCamera">setCamera()</a> and
+   * provides a joint getter/setter pattern that's consistent with other p5.js
+   * functions.
+   *
+   * Note: `activeCamera()` can only be used in WebGL mode.
+   *
+   * @method activeCamera
+   * @param  {p5.Camera} [cam] camera that should be made active. If omitted, returns the current active camera.
+   * @return {p5.Camera|p5} the current active camera (when called with no arguments) or the p5 instance (for chaining when setting).
+   * @for p5
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Get the current active camera.
+   *
+   * let cam1;
+   * let cam2;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create two cameras.
+   *   cam1 = createCamera();
+   *   cam2 = createCamera();
+   *   cam2.setPosition(400, -400, 800);
+   *   cam2.lookAt(0, 0, 0);
+   *
+   *   // Set cam1 as active.
+   *   activeCamera(cam1);
+   *
+   *   describe('A white cube on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Get the current active camera.
+   *   let currentCam = activeCamera();
+   *
+   *   // Draw the box.
+   *   box();
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Double-click to toggle between cameras.
+   *
+   * let cam1;
+   * let cam2;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create the first camera.
+   *   cam1 = createCamera();
+   *
+   *   // Create the second camera.
+   *   cam2 = createCamera();
+   *   cam2.setPosition(400, -400, 800);
+   *   cam2.lookAt(0, 0, 0);
+   *
+   *   // Set the current camera to cam1.
+   *   activeCamera(cam1);
+   *
+   *   describe('A white cube on a gray background. The camera toggles between frontal and aerial views when the user double-clicks.');
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw the box.
+   *   box();
+   * }
+   *
+   * // Toggle the current camera when the user double-clicks.
+   * function doubleClicked() {
+   *   // Get the current camera.
+   *   let currentCam = activeCamera();
+   *
+   *   // Switch to the other camera.
+   *   if (currentCam === cam1) {
+   *     activeCamera(cam2);
+   *   } else {
+   *     activeCamera(cam1);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  fn.activeCamera = function (cam) {
+    this._assert3d('activeCamera');
+    if (cam !== undefined) {
+      this._renderer.setCamera(cam);
+      return this;
+    } else {
+      return this._renderer.states.curCamera;
+    }
+  };
+
+  /**
    * A class to describe a camera for viewing a 3D sketch.
    *
    * Each `p5.Camera` object represents a camera that views a section of 3D
@@ -3988,6 +4098,15 @@ function camera(p5, fn){
     this.states.uPMatrix.set(cam.projMatrix);
     this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(cam.cameraMatrix);
+  };
+
+  RendererGL.prototype.activeCamera = function(cam) {
+    if (cam !== undefined) {
+      this.setCamera(cam);
+      return this;
+    } else {
+      return this.states.curCamera;
+    }
   };
 }
 

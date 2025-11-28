@@ -1134,6 +1134,52 @@ suite('p5.Camera', function() {
     });
   });
 
+  suite('activeCamera() getter/setter', function() {
+    test('activeCamera() returns current camera when called with no arguments', function() {
+      var currentCam = myp5.activeCamera();
+      assert.deepCloseTo(currentCam, myp5._renderer.states.curCamera);
+      assert.deepCloseTo(currentCam, myCam);
+    });
+
+    test('activeCamera() sets camera when called with camera argument', function() {
+      var myCam2 = myp5.createCamera();
+      myp5.activeCamera(myCam2);
+      assert.deepCloseTo(myCam2, myp5._renderer.states.curCamera);
+      var retrievedCam = myp5.activeCamera();
+      assert.deepCloseTo(retrievedCam, myCam2);
+    });
+
+    test('activeCamera() works correctly with multiple cameras', function() {
+      var myCam2 = myp5.createCamera();
+      var myCam3 = myp5.createCamera();
+      
+      // Set cam2
+      myp5.activeCamera(myCam2);
+      assert.deepCloseTo(myCam2, myp5.activeCamera());
+      
+      // Set cam3
+      myp5.activeCamera(myCam3);
+      assert.deepCloseTo(myCam3, myp5.activeCamera());
+      
+      // Set back to original
+      myp5.activeCamera(myCam);
+      assert.deepCloseTo(myCam, myp5.activeCamera());
+    });
+
+    test('activeCamera() returns p5 instance for chaining when setting', function() {
+      var myCam2 = myp5.createCamera();
+      var result = myp5.activeCamera(myCam2);
+      assert.strictEqual(result, myp5);
+    });
+
+    test('activeCamera() returns the same camera object that was set', function() {
+      var myCam2 = myp5.createCamera();
+      myp5.activeCamera(myCam2);
+      var retrievedCam = myp5.activeCamera();
+      assert.strictEqual(retrievedCam, myCam2);
+    });
+  });
+
   suite('Camera attributes after resizing', function() {
     test('Camera position is the same', function() {
       myp5.createCanvas(1, 1, myp5.WEBGL);
