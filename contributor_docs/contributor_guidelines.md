@@ -303,7 +303,6 @@ Some of the key files and folders you will be in the p5.js folder are as follows
 - `src` - Where all the code that eventually gets combined into the final p5.js and p5.min.js files lives
 - [`test`](./unit_testing.md) - Where unit tests and code for testing all documentation examples lives
 - `tasks` - Where detailed and custom build code lives
-- `Gruntfile.js` - This is the main build configuration file
 - `contributor_docs` - Where the documentation and all other contributor documentation lives
 
 The other files and folders are either configurations or other kinds of support files; in most cases, you shouldn't need to make any modifications.

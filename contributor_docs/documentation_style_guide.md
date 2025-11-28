@@ -25,6 +25,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 ### Code
 - [Code Samples](#code-samples)
 - [Comments](#comments)
+- [Accessible Canvas Labels](#accessible-canvas-labels)
 - [Whitespace](#whitespace)
 - [Semicolons](#semicolons)
 - [Naming Conventions](#naming-conventions)
@@ -116,7 +117,7 @@ Always use `let` to declare variables.
 
 **Pronouns**
 
-| Recommended |	Not Recommended |
+| Recommended | Not Recommended |
 | -- | -- |
 | they | he or she |
 | them | him or her |
@@ -142,7 +143,7 @@ Always use `let` to declare variables.
 
 The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
 
-| Recommended |	Not Recommended |
+| Recommended | Not Recommended |
 | -- | -- |
 | person with disability | the disabled, handicapped, differently abled, challenged, abnormal |
 | person without disability | normal person, healthy person, able-bodied |
@@ -229,6 +230,50 @@ let magicWord = 'Please';
 // I will use // for multiline comments.
 
 ```
+
+
+**[⬆ back to top](#table-of-contents)**
+
+## Accessible Canvas Labels
+
+- Use `describe()` to in p5.js example code, to add labels to your canvas so that it’s readable for screen readers.
+
+> Why? It makes examples accessible to screen readers, and models how to write good canvas labels. 
+
+
+```javascript
+// Good.
+function setup() {
+  createCanvas(100, 100);
+  describe('A red heart in the bottom right corner of a pink background.');
+}
+
+// Bad.
+function setup() {
+  createCanvas(100, 100);
+  describe('heart shape');
+}
+
+// Good.
+function draw() {
+  background(220);
+  fill(0, 255, 0);
+  ellipse(mouseX, 50, 40, 40);
+  // Label updates with shape's translation.
+  describe(`A green circle at x pos ${round(mouseX)} moving with the mouse pointer.`, LABEL);
+}
+```
+
+- Don’t use screen reader labels as a way of commenting your code. Labels should only summarize the resulting visual elements within a canvas. 
+
+- Don’t overuse screen reader labels, as you may end up complicating the screen reader’s interpretation of the canvas rather than helping it.
+
+- Do make your label descriptions short and accurate. The recommended length for label descriptions is one to two sentences. Use full sentences for your labels, and write in the present tense when describing elements.
+
+The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
+
+To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
+
 
 **[⬆ back to top](#table-of-contents)**
 

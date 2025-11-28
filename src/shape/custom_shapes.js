@@ -2286,18 +2286,114 @@ function customShapes(p5, fn) {
   };
 
   /**
-   * Get or set multiple spline properties at once.
+   * Sets multiple properties for spline curves at once.
    *
-   * Similar to <a href="#/p5/splineProperty">splineProperty()</a>:
-   * `splineProperty('tightness', t)` is the same as
-   * `splineProperties({'tightness': t})`
+   * `splineProperties()` accepts an object with key-value pairs to configure
+   * how spline curves are drawn. This is a convenient way to set multiple
+   * spline properties with a single function call, rather than calling
+   * <a href="#/p5/splineProperty">splineProperty()</a> multiple times.
+   *
+   * The properties object can include:
+   * - `tightness`: A number that controls how tightly the curve fits to the
+   *   vertex points. The default value is 0. Positive values make the curve
+   *   tighter (straighter), while negative values make it looser. Values
+   *   between -5 and 5 work best.
+   * - `ends`: Controls whether to draw the end segments of the spline. Set to
+   *   `EXCLUDE` to skip drawing the segments between the first and second
+   *   points and between the second-to-last and last points. This is useful
+   *   when you want to use the first and last points as control points only.
+   *
+   * `splineProperties()` affects curves drawn with
+   * <a href="#/p5/splineVertex">splineVertex()</a> within
+   * <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a>, as well as curves drawn with
+   * <a href="#/p5/spline">spline()</a>. The properties remain active until
+   * changed by another call to `splineProperties()` or
+   * <a href="#/p5/splineProperty">splineProperty()</a>.
    *
    * @method splineProperties
-   * @param {Object} properties An object containing key-value pairs to set.
-   */
-  /**
+   * @param  {Object} values an object containing spline property key-value pairs
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(220);
+   *
+   *   // Set spline tightness using splineProperties
+   *   splineProperties({
+   *     tightness: 0.5
+   *   });
+   *
+   *   // Draw a spline curve
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   
+   *   beginShape();
+   *   splineVertex(20, 80);
+   *   splineVertex(30, 30);
+   *   splineVertex(70, 30);
+   *   splineVertex(80, 80);
+   *   endShape();
+   *
+   *   // Show vertex points
+   *   fill(255, 0, 0);
+   *   noStroke();
+   *   circle(20, 80, 6);
+   *   circle(30, 30, 6);
+   *   circle(70, 30, 6);
+   *   circle(80, 80, 6);
+   *
+   *   describe('A smooth curved line with tightness 0.5 connecting four red points.');
+   * }
+   * </code>
+   * </div>
+   *
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(220);
+   *
+   *   // Exclude end segments - first and last points become control points
+   *   splineProperties({
+   *     tightness: 0,
+   *     ends: EXCLUDE
+   *   });
+   *
+   *   // Draw curve only between middle points
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   
+   *   beginShape();
+   *   splineVertex(10, 50);  // Control point (affects curve but not drawn to)
+   *   splineVertex(30, 20);  // Start of visible curve
+   *   splineVertex(70, 80);  // End of visible curve
+   *   splineVertex(90, 50);  // Control point (affects curve but not drawn to)
+   *   endShape();
+   *
+   *   // Show all points
+   *   fill(200, 0, 0);
+   *   noStroke();
+   *   circle(10, 50, 6);  // Control point
+   *   circle(90, 50, 6);  // Control point
+   *   
+   *   fill(0, 0, 255);
+   *   circle(30, 20, 6);  // Visible curve point
+   *   circle(70, 80, 6);  // Visible curve point
+   *
+   *   describe('A curved line between two blue points, with red control points at the ends.');
+   * }
+   * </code>
+   * </div>
+   *
    * @method splineProperties
-   * @returns {Object} The current spline properties.
+   * @return {Object}
    */
   fn.splineProperties = function(values) {
     return this._renderer.splineProperties(values);

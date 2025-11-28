@@ -543,7 +543,6 @@ suite('p5.Shader', function() {
         myp5.createCanvas(100, 50, myp5.WEBGL);
         const testShader = myp5.baseMaterialShader().modify(() => {
           myp5.getPixelInputs(inputs => {
-            debugger
             const uv = inputs.texCoord;
             const condition = uv.x > 0.5; // left half false, right half true
             let color = myp5.float(0.0);
