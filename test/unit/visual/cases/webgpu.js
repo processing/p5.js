@@ -377,6 +377,45 @@ visualSuite("WebGPU", function () {
     );
   });
 
+  visualSuite("Clipping", function () {
+    visualTest(
+      "Basic clipping with circles",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        p5.background("white");
+
+        // Draw some circles that extend beyond the clipping area
+        p5.fill("red");
+        p5.noStroke();
+        p5.circle(-15, -15, 25);
+        p5.fill("green");
+        p5.circle(15, -15, 25);
+        p5.fill("blue");
+        p5.circle(-15, 15, 25);
+        p5.fill("yellow");
+        p5.circle(15, 15, 25);
+
+        // Apply clipping to a smaller rectangle in the center
+        p5.push();
+        p5.clip(() => {
+          p5.rect(-12.5, -12.5, 25, 25);
+        });
+
+        // Draw more circles that should be clipped to the rectangle
+        p5.fill("purple");
+        p5.circle(-8, -8, 16);
+        p5.fill("orange");
+        p5.circle(8, 8, 16);
+        p5.fill("cyan");
+        p5.circle(0, 0, 12);
+
+        p5.pop();
+
+        await screenshot();
+      },
+    );
+  });
+
   visualSuite('Typography', function () {
     visualSuite('textFont', function () {
       visualTest('with a font file in WebGPU', async function (p5, screenshot) {

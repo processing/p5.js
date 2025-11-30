@@ -1341,12 +1341,6 @@ export class Renderer3D extends Renderer {
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
-      if (!this._userEnabledStencil) {
-        this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
-      }
-
-    // Reset saved state
-    // this._userEnabledStencil = this._savedStencilTestState;
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();

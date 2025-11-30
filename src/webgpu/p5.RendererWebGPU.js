@@ -414,24 +414,22 @@ class RendererWebGPU extends Renderer3D {
           multisample: { count: sampleCount },
           depthStencil: {
             format: depthFormat,
-            depthWriteEnabled: true,
+            depthWriteEnabled: !clipping,
             depthCompare: 'less-equal',
             stencilFront: {
-              compare: clipping ? 'always' : (clipApplied ? 'equal' : 'always'),
+              compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
               failOp: 'keep',
               depthFailOp: 'keep',
               passOp: clipping ? 'replace' : 'keep',
             },
             stencilBack: {
-              compare: clipping ? 'always' : (clipApplied ? 'equal' : 'always'),
+              compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
               failOp: 'keep',
               depthFailOp: 'keep',
               passOp: clipping ? 'replace' : 'keep',
             },
-            stencilReadMask: clipApplied ? 0xFFFFFFFF : 0x00000000,
-            stencilWriteMask: clipping ? 0xFFFFFFFF : 0x00000000,
-            stencilLoadOp: "load",
-            stencilStoreOp: "store",
+            stencilReadMask: 0xFF,
+            stencilWriteMask: clipping ? 0xFF : 0x00,
           },
         });
         shader._pipelineCache.set(key, pipeline);
@@ -1070,6 +1068,18 @@ class RendererWebGPU extends Renderer3D {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     const currentShader = this._curShader;
     passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
+
+    // Set stencil reference value for clipping
+    const drawTarget = this.drawTarget();
+    if (drawTarget._isClipApplied && !this._clipping) {
+      // When using the clip mask, test against reference value 0 (background)
+      // WebGL uses NOTEQUAL with ref 0, so fragments pass where stencil != 0
+      // In WebGPU with 'not-equal', we need ref 0 to pass where stencil != 0
+      passEncoder.setStencilReference(0);
+    } else if (this._clipping) {
+      // When writing to the clip mask, write reference value 1
+      passEncoder.setStencilReference(1);
+    }
     // Bind vertex buffers
     for (const buffer of this._getVertexBuffers(currentShader)) {
       const location = currentShader.attributes[buffer.attr].location;
@@ -1567,6 +1577,78 @@ class RendererWebGPU extends Renderer3D {
   _adjustDimensions(width, height) {
     // TODO: find max texture size
     return { adjustedWidth: width, adjustedHeight: height };
+  }
+
+  _applyClip() {
+    const commandEncoder = this.device.createCommandEncoder();
+
+    const activeFramebuffer = this.activeFramebuffer();
+    const depthTexture = activeFramebuffer ?
+      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
+      this.depthTexture;
+
+    if (!depthTexture) {
+      return;
+    }
+
+    const depthStencilAttachment = {
+      view: depthTexture.createView(),
+      stencilLoadOp: 'clear',
+      stencilStoreOp: 'store',
+      stencilClearValue: 0,
+      depthReadOnly: true,
+      stencilReadOnly: false,
+    };
+
+    const renderPassDescriptor = {
+      colorAttachments: [],
+      depthStencilAttachment: depthStencilAttachment,
+    };
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.end();
+
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
+  }
+
+  _unapplyClip() {
+    // In WebGPU, clip unapplication is handled through pipeline state rather than direct commands
+    // The stencil test configuration is set in the render pipeline based on _clipping and _clipInvert flags
+    // This is already handled in the _shaderOptions() method and pipeline creation
+  }
+
+  _clearClipBuffer() {
+    const commandEncoder = this.device.createCommandEncoder();
+
+    const activeFramebuffer = this.activeFramebuffer();
+    const depthTexture = activeFramebuffer ?
+      (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
+      this.depthTexture;
+
+    if (!depthTexture) {
+      return;
+    }
+
+    const depthStencilAttachment = {
+      view: depthTexture.createView(),
+      stencilLoadOp: 'clear',
+      stencilStoreOp: 'store',
+      stencilClearValue: 1,
+      depthReadOnly: true,
+      stencilReadOnly: false,
+    };
+
+    const renderPassDescriptor = {
+      colorAttachments: [],
+      depthStencilAttachment: depthStencilAttachment,
+    };
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.end();
+
+    this._pendingCommandEncoders.push(commandEncoder.finish());
+    this._hasPendingDraws = true;
   }
 
   _applyStencilTestIfClipping() {

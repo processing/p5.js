@@ -96,6 +96,8 @@
 
       p.draw = function () {
         p.clear();
+        p.push();
+        p.clip(() => p.rect(-50, -50, 200, 200));
         /*p.orbitControl();
         p.push();
         p.textAlign(p.CENTER, p.CENTER);
@@ -173,6 +175,7 @@
         p.pop();
 
         p.filter(p.BLUR, 10)
+        p.pop();
       };
     };
 

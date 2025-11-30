@@ -498,6 +498,9 @@ class RendererGL extends Renderer3D {
   _clearClipBuffer() {
     this.GL.clearStencil(1);
     this.GL.clear(this.GL.STENCIL_BUFFER_BIT);
+    if (!this._userEnabledStencil) {
+      this._internalDisable.call(this.GL, this.GL.STENCIL_TEST);
+    }
   }
 
   // x,y are canvas-relative (pre-scaled by _pixelDensity)
