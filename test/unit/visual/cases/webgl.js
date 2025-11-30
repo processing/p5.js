@@ -92,6 +92,7 @@ visualSuite('WebGL', function() {
           p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
           if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
           p5.clear();
+          p5.noStroke();
           p5.fill('red');
           p5.circle(20, 20, 15);
           if (mode === 'webgl') {
