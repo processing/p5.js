@@ -10,33 +10,27 @@ import {
 } from "../webgl/utils";
 import * as constants from '../core/constants';
 
-import filterGrayFrag from '../webgl/shaders/filters/gray.frag';
-import filterErodeFrag from '../webgl/shaders/filters/erode.frag';
-import filterDilateFrag from '../webgl/shaders/filters/dilate.frag';
-import filterBlurFrag from '../webgl/shaders/filters/blur.frag';
-import filterPosterizeFrag from '../webgl/shaders/filters/posterize.frag';
-import filterOpaqueFrag from '../webgl/shaders/filters/opaque.frag';
-import filterInvertFrag from '../webgl/shaders/filters/invert.frag';
-import filterThresholdFrag from '../webgl/shaders/filters/threshold.frag';
-import filterShaderVert from '../webgl/shaders/filters/default.vert';
 import { filterParamDefaults } from './const';
-
 
 import filterBaseFrag from '../webgl/shaders/filters/base.frag';
 import filterBaseVert from '../webgl/shaders/filters/base.vert';
 import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
+import { glslBackend } from '../webgl/strands_glslBackend';
+import { getShaderHookTypes } from '../webgl/shaderHookUtils';
+import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
+import { makeFilterShader } from '../core/filterShaders';
 
 class FilterRenderer2D {
   /**
    * Creates a new FilterRenderer2D instance.
-   * @param {p5} pInst - The p5.js instance.
+   * @param {p5} parentRenderer - The p5.js instance.
    */
-  constructor(pInst) {
-    this.pInst = pInst;
+  constructor(parentRenderer) {
+    this.parentRenderer = parentRenderer;
     // Create a canvas for applying WebGL-based filters
     this.canvas = document.createElement('canvas');
-    this.canvas.width = pInst.width;
-    this.canvas.height = pInst.height;
+    this.canvas.width = parentRenderer.width;
+    this.canvas.height = parentRenderer.height;
 
     // Initialize the WebGL context
     let webglVersion = constants.WEBGL2;
@@ -232,22 +226,14 @@ class FilterRenderer2D {
         tex.bindTexture();
         tex.update();
         gl.uniform1i(uniform.location, uniform.samplerIndex);
-      }
+      },
+      baseFilterShader: () => this.baseFilterShader(),
+      strandsBackend: glslBackend,
+      getShaderHookTypes: (shader, hookName) => getShaderHookTypes(shader, hookName),
+      uniformNameFromHookKey: (key) => key.slice(key.indexOf(' ') + 1),
     };
 
     this._baseFilterShader = undefined;
-
-    // Store the fragment shader sources
-    this.filterShaderSources = {
-      [constants.BLUR]: filterBlurFrag,
-      [constants.INVERT]: filterInvertFrag,
-      [constants.THRESHOLD]: filterThresholdFrag,
-      [constants.ERODE]: filterErodeFrag,
-      [constants.GRAY]: filterGrayFrag,
-      [constants.DILATE]: filterDilateFrag,
-      [constants.POSTERIZE]: filterPosterizeFrag,
-      [constants.OPAQUE]: filterOpaqueFrag
-    };
 
     // Store initialized shaders for each operation
     this.filterShaders = {};
@@ -320,6 +306,10 @@ class FilterRenderer2D {
     return this._baseFilterShader;
   }
 
+  getNoiseShaderSnippet() {
+    return noiseGLSL;
+  }
+
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
    * that overrides the operation-based shader.
@@ -363,18 +353,8 @@ class FilterRenderer2D {
       return;
     }
 
-    const fragShaderSrc = this.filterShaderSources[this.operation];
-    if (!fragShaderSrc) {
-      console.error('No shader available for this operation:', this.operation);
-      return;
-    }
-
-    // Create and store the new shader
-    const newShader = new Shader(
-      this._renderer,
-      filterShaderVert,
-      fragShaderSrc
-    );
+    // Use the shared makeFilterShader function from filterShaders.js
+    const newShader = makeFilterShader(this._renderer, this.operation, this.parentRenderer._pInst);
     this.filterShaders[this.operation] = newShader;
     this._shader = newShader;
   }
@@ -392,7 +372,7 @@ class FilterRenderer2D {
 
   get canvasTexture() {
     if (!this._canvasTexture) {
-      this._canvasTexture = new Texture(this._renderer, this.pInst.wrappedElt);
+      this._canvasTexture = new Texture(this._renderer, this.parentRenderer.wrappedElt);
     }
     return this._canvasTexture;
   }
@@ -403,12 +383,12 @@ class FilterRenderer2D {
   _renderPass() {
     const gl = this.gl;
     this._shader.bindShader('fill');
-    const pixelDensity = this.pInst.pixelDensity ?
-      this.pInst.pixelDensity() : 1;
+    const pixelDensity = this.parentRenderer.pixelDensity ?
+      this.parentRenderer.pixelDensity() : 1;
 
     const texelSize = [
-      1 / (this.pInst.width * pixelDensity),
-      1 / (this.pInst.height * pixelDensity)
+      1 / (this.parentRenderer.width * pixelDensity),
+      1 / (this.parentRenderer.height * pixelDensity)
     ];
 
     const canvasTexture = this.canvasTexture;
@@ -416,15 +396,15 @@ class FilterRenderer2D {
     // Set uniforms for the shader
     this._shader.setUniform('tex0', canvasTexture);
     this._shader.setUniform('texelSize', texelSize);
-    this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
+    this._shader.setUniform('canvasSize', [this.parentRenderer.width, this.parentRenderer.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
     this._shader.setDefaultUniforms();
 
-    this.pInst.states.setValue('rectMode', constants.CORNER);
-    this.pInst.states.setValue('imageMode', constants.CORNER);
-    this.pInst.blendMode(constants.BLEND);
-    this.pInst.resetMatrix();
+    this.parentRenderer.states.setValue('rectMode', constants.CORNER);
+    this.parentRenderer.states.setValue('imageMode', constants.CORNER);
+    this.parentRenderer.blendMode(constants.BLEND);
+    this.parentRenderer.resetMatrix();
 
 
     const identityMatrix = [1, 0, 0, 0,
@@ -459,8 +439,8 @@ class FilterRenderer2D {
       console.error('Cannot apply filter: shader not initialized.');
       return;
     }
-    this.pInst.push();
-    this.pInst.resetMatrix();
+    this.parentRenderer.push();
+    this.parentRenderer.resetMatrix();
     // For blur, we typically do two passes: one horizontal, one vertical.
     if (this.operation === constants.BLUR && !this.customShader) {
       // Horizontal pass
@@ -468,39 +448,39 @@ class FilterRenderer2D {
       this._renderPass();
 
       // Draw the result onto itself
-      this.pInst.clear();
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.clear();
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
 
       // Vertical pass
       this._shader.setUniform('direction', [0, 1]);
       this._renderPass();
 
-      this.pInst.clear();
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.clear();
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
     } else {
       // Single-pass filters
 
       this._renderPass();
-      this.pInst.clear();
+      this.parentRenderer.clear();
       // con
-      this.pInst.blendMode(constants.BLEND);
+      this.parentRenderer.blendMode(constants.BLEND);
 
 
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
     }
-    this.pInst.pop();
+    this.parentRenderer.pop();
   }
 }
 

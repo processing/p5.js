@@ -17,6 +17,7 @@ import { textCoreConstants } from "../type/textCore";
 import { RenderBuffer } from "../webgl/p5.RenderBuffer";
 import { Image } from "../image/p5.Image";
 import { Texture } from "../webgl/p5.Texture";
+import { makeFilterShader } from "../core/filterShaders";
 
 export function getStrokeDefs(shaderConstant) {
   const STROKE_CAP_ENUM = {};
@@ -1817,6 +1818,12 @@ export class Renderer3D extends Renderer {
     yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
     dataArr.forEach(ele => ele.y += yOff);
     return dataArr;
+  }
+
+  _makeFilterShader(renderer, operation) {
+    const p5 = this._pInst;
+
+    return makeFilterShader(this, operation, p5);
   }
 
   remove() {

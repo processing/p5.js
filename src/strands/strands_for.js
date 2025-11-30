@@ -360,6 +360,9 @@ export class StrandsFor {
 
     const loopVarNode = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
     this.bodyResults = this.bodyCb(loopVarNode, phiVars);
+    for (const key in this.bodyResults) {
+      this.bodyResults[key] = this.strandsContext.p5.strandsNode(this.bodyResults[key]);
+    }
     this.phiNodesForBody = phiNodesForBody;
     // Capture the final block after body execution before popping
     this.finalBodyBlock = cfg.currentBlock;

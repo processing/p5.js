@@ -71,7 +71,15 @@ const cfgHandlers = {
         const T = extractNodeTypeInfo(dag, nodeID);
         const typeName = wgslBackend.getTypeName(T.baseType, T.dimension);
         // Initialize with default value - WGSL requires initialization
-        const defaultValue = T.baseType === 'float' ? '0.0' : '0';
+        let defaultValue;
+        if (T.dimension === 1) {
+          defaultValue = T.baseType === 'float' ? '0.0' : '0';
+        } else {
+          // For vector types, use constructor with repeated scalar values
+          const scalarDefault = T.baseType === 'float' ? '0.0' : '0';
+          const components = Array(T.dimension).fill(scalarDefault).join(', ');
+          defaultValue = `${typeName}(${components})`;
+        }
         generationContext.write(`var ${tmp}: ${typeName} = ${defaultValue};`);
       }
     }
@@ -346,6 +354,19 @@ export const wgslBackend = {
         return `${T}(${deps.join(', ')})`;
       }
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+        // Convert mod() function calls to % operator in WGSL
+        if (node.identifier === 'mod' && node.dependsOn.length === 2) {
+          const [leftID, rightID] = node.dependsOn;
+          const left = this.generateExpression(generationContext, dag, leftID);
+          const right = this.generateExpression(generationContext, dag, rightID);
+          const useParantheses = node.usedBy.length > 0;
+          if (useParantheses) {
+            return `(${left} % ${right})`;
+          } else {
+            return `${left} % ${right}`;
+          }
+        }
+        
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }

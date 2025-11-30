@@ -41,6 +41,7 @@ function strands(p5, fn) {
     if (active) {
       p5.disableFriendlyErrors = true;
     }
+    ctx.p5 = p5;
   }
 
   function deinitStrandsContext(ctx) {

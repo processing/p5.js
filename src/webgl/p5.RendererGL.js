@@ -17,6 +17,7 @@ import { RGB, RGBA } from '../color/creating_reading';
 import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { TypeInfoFromGLSLName } from '../strands/ir_types.js';
+import { getShaderHookTypes } from './shaderHookUtils';
 import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 
 import filterBaseVert from "./shaders/filters/base.vert";
@@ -37,17 +38,7 @@ import lineFrag from "./shaders/line.frag";
 import imageLightVert from "./shaders/imageLight.vert";
 import imageLightDiffusedFrag from "./shaders/imageLightDiffused.frag";
 import imageLightSpecularFrag from "./shaders/imageLightSpecular.frag";
-
 import filterBaseFrag from "./shaders/filters/base.frag";
-import filterGrayFrag from "./shaders/filters/gray.frag";
-import filterErodeFrag from "./shaders/filters/erode.frag";
-import filterDilateFrag from "./shaders/filters/dilate.frag";
-import filterBlurFrag from "./shaders/filters/blur.frag";
-import filterPosterizeFrag from "./shaders/filters/posterize.frag";
-import filterOpaqueFrag from "./shaders/filters/opaque.frag";
-import filterInvertFrag from "./shaders/filters/invert.frag";
-import filterThresholdFrag from "./shaders/filters/threshold.frag";
-import filterShaderVert from "./shaders/filters/default.vert";
 
 const { lineDefs } = getStrokeDefs((n, v) => `#define ${n} ${v}\n`);
 
@@ -74,17 +65,6 @@ let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
-
-const filterShaderFrags = {
-  [constants.GRAY]: filterGrayFrag,
-  [constants.ERODE]: filterErodeFrag,
-  [constants.DILATE]: filterDilateFrag,
-  [constants.BLUR]: filterBlurFrag,
-  [constants.POSTERIZE]: filterPosterizeFrag,
-  [constants.OPAQUE]: filterOpaqueFrag,
-  [constants.INVERT]: filterInvertFrag,
-  [constants.THRESHOLD]: filterThresholdFrag,
-};
 
 /**
  * 3D graphics class
@@ -1021,14 +1001,6 @@ class RendererGL extends Renderer3D {
     }
   }
 
-  _makeFilterShader(renderer, operation) {
-    return new Shader(
-      renderer,
-      filterShaderVert,
-      filterShaderFrags[operation]
-    );
-  }
-
   _prepareBuffer(renderBuffer, geometry, shader) {
     const attributes = shader.attributes;
     const gl = this.GL;
@@ -1329,77 +1301,7 @@ class RendererGL extends Renderer3D {
   }
 
   getShaderHookTypes(shader, hookName) {
-    let fullSrc = shader._vertSrc;
-    let body = shader.hooks.vertex[hookName];
-    if (!body) {
-      body = shader.hooks.fragment[hookName];
-      fullSrc = shader._fragSrc;
-    }
-    if (!body) {
-      throw new Error(`Can't find hook ${hookName}!`);
-    }
-    const nameParts = hookName.split(/\s+/g);
-    const functionName = nameParts.pop();
-    const returnType = nameParts.pop();
-    const returnQualifiers = [...nameParts];
-    const parameterMatch = /\(([^\)]*)\)/.exec(body);
-    if (!parameterMatch) {
-      throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
-    }
-    const structProperties = structName => {
-      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
-      if (!structDefMatch) return undefined;
-      const properties = [];
-      for (const defSrc of structDefMatch[1].split(';')) {
-        // E.g. `int var1, var2;` or `MyStruct prop;`
-        const parts = defSrc.trim().split(/\s+|,/g);
-        const typeName = parts.shift();
-        const names = [...parts];
-        const typeProperties = structProperties(typeName);
-        for (const name of names) {
-          const dataType = TypeInfoFromGLSLName[typeName] || null;
-          properties.push({
-            name,
-            type: {
-              typeName,
-              qualifiers: [],
-              properties: typeProperties,
-              dataType,
-            }
-          });
-        }
-      }
-      return properties;
-    };
-    const parameters = parameterMatch[1].split(',').map(paramString => {
-      // e.g. `int prop` or `in sampler2D prop` or `const float prop`
-      const parts = paramString.trim().split(/\s+/g);
-      const name = parts.pop();
-      const typeName = parts.pop();
-      const qualifiers = [...parts];
-      const properties = structProperties(typeName);
-      const dataType = TypeInfoFromGLSLName[typeName] || null;
-      return {
-        name,
-        type: {
-          typeName,
-          qualifiers,
-          properties,
-          dataType,
-        }
-      };
-    });
-    const dataType = TypeInfoFromGLSLName[returnType] || null;
-    return {
-      name: functionName,
-      returnType: {
-        typeName: returnType,
-        qualifiers: returnQualifiers,
-        properties: structProperties(returnType),
-        dataType,
-      },
-      parameters
-    };
+    return getShaderHookTypes(shader, hookName);
   }
 
   //////////////////////////////////////////////

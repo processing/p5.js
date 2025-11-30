@@ -10,11 +10,9 @@ import matrix from '../math/p5.Matrix';
 import geometry from './p5.Geometry';
 import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
-import shader from './p5.Shader';
 import camera from './p5.Camera';
 import texture from './p5.Texture';
 import rendererGL from './p5.RendererGL';
-import strands from '../strands/p5.strands';
 
 export default function(p5){
   p5.registerAddon(rendererGL);
@@ -31,7 +29,5 @@ export default function(p5){
   p5.registerAddon(camera);
   p5.registerAddon(framebuffer);
   p5.registerAddon(dataArray);
-  p5.registerAddon(shader);
   p5.registerAddon(texture);
-  p5.registerAddon(strands);
 }

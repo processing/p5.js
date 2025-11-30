@@ -1,12 +1,12 @@
 const filterUniforms = `
-struct FilterUniforms {
+struct Uniforms {
   uModelViewMatrix: mat4x4<f32>,
   uProjectionMatrix: mat4x4<f32>,
   canvasSize: vec2<f32>,
   texelSize: vec2<f32>,
 }
 
-@group(0) @binding(0) var<uniform> uniforms: FilterUniforms;
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
 @group(0) @binding(1) var tex0: texture_2d<f32>;
 @group(0) @binding(2) var tex0_sampler: sampler;
 `;
@@ -25,7 +25,7 @@ struct VertexOutput {
 @vertex
 fn main(input: VertexInput) -> VertexOutput {
   var output: VertexOutput;
-  
+
   // transferring texcoords for the frag shader
   output.vTexCoord = input.aTexCoord;
 
@@ -34,7 +34,7 @@ fn main(input: VertexInput) -> VertexOutput {
 
   // project to 3D space
   output.position = uniforms.uProjectionMatrix * uniforms.uModelViewMatrix * positionVec4;
-  
+
   return output;
 }
 `;
@@ -61,11 +61,11 @@ fn main(input: FragmentInput) -> FragmentOutput {
   inputs.texCoord = input.vTexCoord;
   inputs.canvasSize = uniforms.canvasSize;
   inputs.texelSize = uniforms.texelSize;
-  
+
   var outColor = HOOK_getColor(inputs, tex0, tex0_sampler);
   outColor = vec4<f32>(outColor.rgb * outColor.a, outColor.a);
   output.color = outColor;
-  
+
   return output;
 }
 `;
