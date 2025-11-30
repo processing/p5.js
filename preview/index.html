@@ -28,6 +28,7 @@
       let ssh;
       let tex;
       let font;
+      let redFilter;
 
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
@@ -35,6 +36,15 @@
           'font/PlayfairDisplay.ttf'
         );
         fbo = p.createFramebuffer();
+
+        redFilter = p.baseFilterShader().modify(() => {
+          p.getColor((inputs, canvasContent) => {
+            let col = p.getTexture(canvasContent, inputs.texCoord);
+            col.g = col.r;
+            col.b = col.r;
+            return col;
+          })
+        }, { p })
 
         tex = p.createImage(100, 100);
         tex.loadPixels();
@@ -161,6 +171,8 @@
         p.endShape(p.CLOSE);
 
         p.pop();
+
+        p.filter(redFilter);
       };
     };
 

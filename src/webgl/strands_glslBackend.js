@@ -1,6 +1,7 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
-import * as FES from '../strands/strands_FES'
+import * as FES from '../strands/strands_FES';
+import * as build from '../strands/ir_builders';
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
@@ -366,5 +367,17 @@ export const glslBackend = {
     const type = strandsContext.cfg.blockTypes[blockID];
     const handler = cfgHandlers[type] || cfgHandlers[BlockType.DEFAULT];
     handler.call(cfgHandlers, blockID, strandsContext, generationContext);
+  },
+
+  createGetTextureCall(strandsContext, args) {
+    // In GLSL, getTexture is straightforward - just pass through the args
+    // First argument should be a texture (sampler2D), second should be coordinates
+    const { id, dimension } = build.functionCallNode(strandsContext, 'getTexture', args, {
+      overloads: [{
+        params: [DataType.sampler2D, DataType.float2],
+        returnType: DataType.float4
+      }]
+    });
+    return { id, dimension };
   }
 }

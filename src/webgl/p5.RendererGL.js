@@ -2016,6 +2016,7 @@ class RendererGL extends Renderer3D {
   getNoiseShaderSnippet() {
     return noiseGLSL;
   }
+
 }
 
 function rendererGL(p5, fn) {

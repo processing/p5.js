@@ -1,6 +1,8 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
-import * as FES from '../strands/strands_FES'
+import * as FES from '../strands/strands_FES';
+import * as build from '../strands/ir_builders';
+import { createStrandsNode } from '../strands/strands_node';
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
@@ -421,5 +423,32 @@ export const wgslBackend = {
     const type = strandsContext.cfg.blockTypes[blockID];
     const handler = cfgHandlers[type] || cfgHandlers[BlockType.DEFAULT];
     handler.call(cfgHandlers, blockID, strandsContext, generationContext);
+  },
+
+  createGetTextureCall(strandsContext, args) {
+    // In WebGPU, we need to add a sampler argument for the texture call
+    // First argument should be a texture, second should be coordinates
+    // We need to augment with a sampler argument based on the texture name
+    const textureArg = args[0];
+    const coordsArg = args[1];
+
+    // Create a sampler variable node - add "_sampler" suffix to the texture identifier
+    const { dag } = strandsContext;
+    const textureNode = getNodeDataFromID(dag, textureArg.id);
+    const samplerIdentifier = textureNode.identifier + '_sampler';
+
+    const samplerVariable = build.variableNode(strandsContext, { baseType: BaseType.SAMPLER, dimension: 1 }, samplerIdentifier);
+    const samplerNode = createStrandsNode(samplerVariable.id, samplerVariable.dimension, strandsContext);
+
+    // Create the augmented args: [texture, sampler, coords]
+    const augmentedArgs = [textureArg, samplerNode, coordsArg];
+
+    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSample', augmentedArgs, {
+      overloads: [{
+        params: [DataType.sampler2D, DataType.sampler, DataType.float2],
+        returnType: DataType.float4
+      }]
+    });
+    return { id, dimension };
   }
 }

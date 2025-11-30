@@ -1,5 +1,3 @@
-import { getTexture } from './utils'
-
 const uniforms = `
 struct Uniforms {
 // @p5 ifdef StrokeVertex getWorldInputs
@@ -296,7 +294,6 @@ struct StrokeFragmentInput {
 ${uniforms}
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
-${getTexture}
 
 fn distSquared(a: vec2<f32>, b: vec2<f32>) -> f32 {
   return dot(b - a, b - a);

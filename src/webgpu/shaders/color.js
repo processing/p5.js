@@ -1,5 +1,3 @@
-import { getTexture } from './utils';
-
 const uniforms = `
 struct Uniforms {
 // @p5 ifdef Vertex getWorldInputs
@@ -102,7 +100,6 @@ struct FragmentInput {
 ${uniforms}
 @group(0) @binding(0) var<uniform> uniforms: Uniforms;
 
-${getTexture}
 
 @fragment
 fn main(input: FragmentInput) -> @location(0) vec4<f32> {

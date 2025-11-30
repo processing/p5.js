@@ -101,6 +101,28 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
+
+  fn.getTexture = function (...rawArgs) {
+    if (strandsContext.active) {
+      const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
+      return createStrandsNode(id, dimension, strandsContext);
+    } else {
+      p5._friendlyError(
+        `It looks like you've called getTexture outside of a shader's modify() function.`
+      )
+    }
+  }
+
+  // Add texture function as alias for getTexture with p5 fallback
+  const originalTexture = fn.texture;
+  fn.texture = function (...args) {
+    if (strandsContext.active) {
+      return this.getTexture(...args);
+    } else {
+      return originalTexture.apply(this, args);
+    }
+  }
+
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   fn.noise = function (...args) {

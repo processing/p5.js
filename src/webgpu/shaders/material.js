@@ -1,5 +1,3 @@
-import { getTexture } from './utils';
-
 const uniforms = `
 struct Uniforms {
 // @p5 ifdef Vertex getWorldInputs
@@ -171,7 +169,6 @@ struct Inputs {
   metalness: f32,
 }
 
-${getTexture}
 
 struct LightResult {
   diffuse: vec3<f32>,
@@ -310,7 +307,7 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
 
   let color = select(
     input.vColor,
-    getTexture(uSampler, uSampler_sampler, input.vTexCoord) * (uniforms.uTint/255.0),
+    textureSample(uSampler, uSampler_sampler, input.vTexCoord) * (uniforms.uTint/255.0),
     uniforms.isTexture == 1
   ); // TODO: check isTexture and apply tint
   var inputs = Inputs(

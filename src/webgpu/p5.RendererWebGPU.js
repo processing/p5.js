@@ -993,6 +993,7 @@ class RendererWebGPU extends Renderer3D {
 
     // this._pInst.background('red');
     this._pInst.push();
+    this._pInst.resetShader();
     this._pInst.imageMode(this._pInst.CENTER);
     this._pInst.image(this.mainFramebuffer, 0, 0);
     this._pInst.pop();
@@ -1322,7 +1323,7 @@ class RendererWebGPU extends Renderer3D {
   getUniformMetadata(shader) {
     // Currently, for ease of parsing, we enforce that the first bind group is a
     // struct, which contains all non-sampler uniforms. Then, any subsequent
-    // groups are individual samplers.
+    // groups contain samplers.
 
     // Extract the struct name from the uniform variable declaration
     const uniformVarRegex = /@group\(0\)\s+@binding\(0\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/;
@@ -2345,6 +2346,7 @@ class RendererWebGPU extends Renderer3D {
     return noiseWGSL;
   }
 
+
   baseFilterShader() {
     if (!this._baseFilterShader) {
       this._baseFilterShader = new Shader(
@@ -2354,8 +2356,8 @@ class RendererWebGPU extends Renderer3D {
         {
           vertex: {},
           fragment: {
-            "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, texSampler: sampler) -> vec4<f32> {
-              return textureSample(tex, texSampler, inputs.texCoord);
+            "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, tex_sampler: sampler) -> vec4<f32> {
+              return textureSample(tex, tex_sampler, inputs.texCoord);
             }`,
           },
         }
