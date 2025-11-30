@@ -69,6 +69,12 @@ export function makeFilterShader(renderer, operation, p5) {
           return p5.pow(e - p5.abs(x), 2.0);
         };
 
+        const random = (p) => {
+          let p3 = p5.fract(p.xyx * .1031);
+          p3 += p5.dot(p3, p3.yzx + 33.33);
+          return p5.fract((p3.x + p3.y) * p3.z);
+        };
+
         p5.getColor((inputs, canvasContent) => {
           const uv = inputs.texCoord;
 
@@ -90,8 +96,9 @@ export function makeFilterShader(renderer, operation, p5) {
             numSamples = maxSamples;
           }
 
+          const randomOffset = (spacing - 1.0) * p5.mix(-0.5, 0.5, random(uv * inputs.canvasSize));
           for (let i = 0; i < numSamples; i++) {
-            const sample = i * spacing - (numSamples - 1.0) * 0.5 * spacing;
+            const sample = i * spacing - (numSamples - 1.0) * 0.5 * spacing + randomOffset;
             const sampleCoord = uv + p5.vec2(sample, sample) / inputs.canvasSize * direction;
             const weight = quadWeight(sample, (numSamples - 1.0) * 0.5 * spacing);
 
