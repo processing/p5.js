@@ -1,6 +1,6 @@
 import { TypeInfoFromGLSLName } from '../strands/ir_types';
 
-/**
+/*
  * Shared utility function for parsing shader hook types from GLSL shader source
  */
 export function getShaderHookTypes(shader, hookName) {
