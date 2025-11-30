@@ -116,6 +116,75 @@ visualSuite("WebGPU", function () {
     );
   });
 
+  visualSuite('filters', function() {
+    const setupSketch = async (p5) => {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.translate(-p5.width/2, -p5.height/2);
+      p5.clear();
+      p5.fill('red');
+      p5.circle(20, 20, 15);
+      p5.beginShape(p5.QUAD_STRIP);
+      p5.fill('cyan');
+      p5.vertex(35, 35);
+      p5.vertex(45, 35);
+      p5.fill('blue');
+      p5.vertex(35, 45);
+      p5.vertex(45, 45);
+      p5.endShape();
+    };
+
+    visualTest('It can apply GRAY', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.GRAY);
+      await screenshot();
+    });
+    visualTest('It can apply INVERT', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.INVERT);
+      await screenshot();
+    });
+    visualTest('It can apply THRESHOLD', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.THRESHOLD);
+      await screenshot();
+    });
+    visualTest('It can apply THRESHOLD with a value', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.THRESHOLD, 0.8);
+      await screenshot();
+    });
+    visualTest('It can apply POSTERIZE', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.THRESHOLD);
+      await screenshot();
+    });
+    visualTest('It can apply POSTERIZE with a value', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.THRESHOLD, 2);
+      await screenshot();
+    });
+    visualTest('It can apply BLUR', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.BLUR, 5);
+      await screenshot();
+    });
+    visualTest('It can apply BLUR with a value', async function(p5, screenshot) {
+      await setupSketch(p5);
+      p5.filter(p5.BLUR, 10);
+      await screenshot();
+    });
+    visualTest('It can apply ERODE (4x)', async function(p5, screenshot) {
+      await setupSketch(p5);
+      for (let i = 0; i < 4; i++) p5.filter(p5.ERODE);
+      await screenshot();
+    });
+    visualTest('It can apply DILATE (4x)', async function(p5, screenshot) {
+      await setupSketch(p5);
+      for (let i = 0; i < 4; i++) p5.filter(p5.DILATE);
+      await screenshot();
+    });
+  });
+
   visualSuite("Canvas Resizing", function () {
     visualTest(
       "Main canvas drawing after resize",

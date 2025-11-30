@@ -116,7 +116,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
           for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
-              if (x != 0 && y != 0) {
+              if (x != 0 || y != 0) {
                 const offset = p5.vec2(x, y) * inputs.texelSize;
                 const neighborColor = p5.getTexture(canvasContent, uv + offset);
                 const neighborLuma = luma(neighborColor);
@@ -146,7 +146,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
           for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
-              if (x != 0 && y != 0) {
+              if (x != 0 || y != 0) {
                 const offset = p5.vec2(x, y) * inputs.texelSize;
                 const neighborColor = p5.getTexture(canvasContent, uv + offset);
                 const neighborLuma = luma(neighborColor);

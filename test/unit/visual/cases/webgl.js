@@ -88,6 +88,87 @@ visualSuite('WebGL', function() {
 
     for (const mode of ['webgl', '2d']) {
       visualSuite(`In ${mode} mode`, function() {
+        const setupSketch = (p5) => {
+          p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+          if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
+          p5.clear();
+          p5.fill('red');
+          p5.circle(20, 20, 15);
+          if (mode === 'webgl') {
+            p5.beginShape(p5.QUAD_STRIP);
+            p5.fill('cyan');
+            p5.vertex(35, 35);
+            p5.vertex(45, 35);
+            p5.fill('blue');
+            p5.vertex(35, 45);
+            p5.vertex(45, 45);
+            p5.endShape();
+          } else {
+            p5.push();
+            const grad = p5.drawingContext.createLinearGradient(35, 35, 35, 45);
+            grad.addColorStop(0, 'cyan');
+            grad.addColorStop(1, 'blue');
+            p5.drawingContext.fillStyle = grad;
+            p5.rect(35, 35, 10, 10);
+            p5.pop();
+          }
+        };
+
+        visualTest('It can apply GRAY', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.GRAY);
+          screenshot();
+        });
+        visualTest('It can apply INVERT', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.INVERT);
+          screenshot();
+        });
+        visualTest('It can apply THRESHOLD', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.THRESHOLD);
+          screenshot();
+        });
+        visualTest('It can apply THRESHOLD with a value', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.THRESHOLD, 0.8);
+          screenshot();
+        });
+        visualTest('It can apply POSTERIZE', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.THRESHOLD);
+          screenshot();
+        });
+        visualTest('It can apply POSTERIZE with a value', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.THRESHOLD, 2);
+          screenshot();
+        });
+        visualTest('It can apply BLUR', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.BLUR, 5);
+          screenshot();
+        });
+        visualTest('It can apply BLUR with a value', function(p5, screenshot) {
+          setupSketch(p5);
+          p5.filter(p5.BLUR, 10);
+          screenshot();
+        });
+        visualTest('It can apply ERODE (4x)', function(p5, screenshot) {
+          setupSketch(p5);
+          for (let i = 0; i < 4; i++) p5.filter(p5.ERODE);
+          screenshot();
+        });
+        visualTest('It can apply DILATE (4x)', function(p5, screenshot) {
+          setupSketch(p5);
+          for (let i = 0; i < 4; i++) p5.filter(p5.DILATE);
+          screenshot();
+        });
+      });
+    }
+
+    for (const mode of ['webgl', '2d']) {
+      visualSuite(`In ${mode} mode`, function() {
         visualTest('It can use filter shader hooks', function(p5, screenshot) {
           p5.createCanvas(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
 
