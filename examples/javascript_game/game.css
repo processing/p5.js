@@ -1,11 +1,9 @@
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background: black;
+    background-color: #222;
+    color: white;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,20 +13,34 @@ body {
 
 #gameContainer {
     position: relative;
+    border: 2px solid #555;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 canvas {
-    background: #222;
     display: block;
-    border: 2px solid white;
 }
 
 #score {
     position: absolute;
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
     color: white;
+    text-shadow: 2px 2px 4px black;
+    pointer-events: none;
 }
 
+#instructions {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 300px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    pointer-events: none;
+}

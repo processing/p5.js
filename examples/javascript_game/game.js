@@ -1,229 +1,268 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-canvas.width = 800;
-canvas.height = 600;
-
-class Player {
-    constructor() {
-        this.reset();
-    }
-
-    reset() {
-        this.x = canvas.width / 2;
-        this.y = canvas.height / 2;
-        this.size = 30;
-        this.color = "cyan";
-        this.speed = 5;
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-    }
-
-    move(dirX, dirY) {
-        if (this.x + dirX >= 0 && this.x + this.size + dirX <= canvas.width) {
-            this.x += dirX;
-        }
-        if (this.y + dirY >= 0 && this.y + this.size + dirY <= canvas.height) {
-            this.y += dirY;
-        }
-    }
-}
-
-class Bullet {
-    constructor(x, y, dirX, dirY) {
-        this.x = x;
-        this.y = y;
-        this.size = 8;
-        this.color = "yellow";
-        this.speed = 15; // ✅ Increased bullet speed
-        this.dirX = dirX;
-        this.dirY = dirY;
-    }
-
-    update() {
-        this.x += this.dirX * this.speed;
-        this.y += this.dirY * this.speed;
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-    }
-}
-
-class Zombie {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = 35;
-        this.color = "green";
-        this.speed = 1.5;
-    }
-
-    update(targetX, targetY) {
-        let dx = targetX - this.x;
-        let dy = targetY - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance > 0) {
-            this.x += (dx / distance) * this.speed;
-            this.y += (dy / distance) * this.speed;
-        }
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-    }
-}
-
-let player = new Player();
+let player;
 let bullets = [];
 let zombies = [];
 let score = 0;
-let keys = {};
 let gameRunning = true;
-let zombieSpawnInterval;
+let zombieSpawnInterval = 60; // Frames between spawns
+let lastSpawnFrame = 0;
+
+// Sound effects (oscillators)
+let shootOsc;
+let hitOsc;
+let gameOverOsc;
+
+function setup() {
+  let canvas = createCanvas(800, 600);
+  canvas.parent('gameContainer');
+  
+  player = new Player();
+  
+  // Initialize sound oscillators
+  shootOsc = new p5.Oscillator('square');
+  hitOsc = new p5.Oscillator('sawtooth');
+  gameOverOsc = new p5.Oscillator('sine');
+}
+
+function draw() {
+  background(30);
+  
+  if (gameRunning) {
+    // Player Logic
+    player.update();
+    player.display();
+    
+    // Bullet Logic
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      bullets[i].update();
+      bullets[i].display();
+      if (bullets[i].offscreen()) {
+        bullets.splice(i, 1);
+      }
+    }
+    
+    // Zombie Logic
+    if (frameCount - lastSpawnFrame > zombieSpawnInterval) {
+      spawnZombie();
+      lastSpawnFrame = frameCount;
+      // Increase difficulty over time
+      if (zombieSpawnInterval > 20) {
+        zombieSpawnInterval -= 0.5;
+      }
+    }
+    
+    for (let i = zombies.length - 1; i >= 0; i--) {
+      zombies[i].update(player.x, player.y);
+      zombies[i].display();
+      
+      // Collision: Zombie hits Player
+      if (player.hits(zombies[i])) {
+        gameOver();
+      }
+      
+      // Collision: Bullet hits Zombie
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        if (bullets[j].hits(zombies[i])) {
+          zombies.splice(i, 1);
+          bullets.splice(j, 1);
+          score += 10;
+          updateScoreboard();
+          playHitSound();
+          break; // Break bullet loop since zombie is gone
+        }
+      }
+    }
+  } else {
+    // Game Over Screen
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    text("GAME OVER", width / 2, height / 2 - 20);
+    textSize(20);
+    text("Final Score: " + score, width / 2, height / 2 + 40);
+    text("Press 'R' to Restart", width / 2, height / 2 + 80);
+  }
+}
+
+function keyPressed() {
+  if (key === ' ') {
+    if (gameRunning) {
+      player.shoot();
+      playShootSound();
+    }
+  }
+  
+  if (!gameRunning && (key === 'r' || key === 'R')) {
+    restartGame();
+  }
+}
 
 function spawnZombie() {
-    let side = Math.floor(Math.random() * 4);
-    let x, y;
-
-    if (side === 0) {
-        x = Math.random() * canvas.width;
-        y = 0;
-    } else if (side === 1) {
-        x = Math.random() * canvas.width;
-        y = canvas.height;
-    } else if (side === 2) {
-        x = 0;
-        y = Math.random() * canvas.height;
-    } else {
-        x = canvas.width;
-        y = Math.random() * canvas.height;
-    }
-
-    zombies.push(new Zombie(x, y));
-}
-
-function startZombieSpawn() {
-    clearInterval(zombieSpawnInterval);
-    zombieSpawnInterval = setInterval(spawnZombie, 1000);
-}
-
-function update() {
-    if (!gameRunning) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (keys["ArrowLeft"]) player.move(-player.speed, 0);
-    if (keys["ArrowRight"]) player.move(player.speed, 0);
-    if (keys["ArrowUp"]) player.move(0, -player.speed);
-    if (keys["ArrowDown"]) player.move(0, player.speed);
-
-    player.draw();
-
-    bullets.forEach((bullet, bulletIndex) => {
-        bullet.update();
-        bullet.draw();
-
-        if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
-            bullets.splice(bulletIndex, 1);
-        }
-    });
-
-    zombies.forEach((zombie, zombieIndex) => {
-        zombie.update(player.x, player.y);
-        zombie.draw();
-
-        if (
-            player.x < zombie.x + zombie.size &&
-            player.x + player.size > zombie.x &&
-            player.y < zombie.y + zombie.size &&
-            player.y + player.size > zombie.y
-        ) {
-            gameOver();
-        }
-
-        bullets.forEach((bullet, bulletIndex) => {
-            if (
-                bullet.x < zombie.x + zombie.size &&
-                bullet.x + bullet.size > zombie.x &&
-                bullet.y < zombie.y + zombie.size &&
-                bullet.y + bullet.size > zombie.y
-            ) {
-                zombies.splice(zombieIndex, 1);
-                bullets.splice(bulletIndex, 1);
-                score += 10;
-                updateScoreboard();
-            }
-        });
-    });
-
-    requestAnimationFrame(update);
-}
-
-function gameOver() {
-    gameRunning = false;
-    clearInterval(zombieSpawnInterval);
-    setTimeout(() => {
-        alert("Game Over! Your Final Score: " + score);
-        restartGame();
-    }, 100);
-}
-
-function restartGame() {
-    player = new Player();
-    bullets = [];
-    zombies = [];
-    score = 0;
-    updateScoreboard();
-    keys = {};
-    gameRunning = true;
-    startZombieSpawn();
-    update();
+  let side = floor(random(4));
+  let x, y;
+  
+  if (side === 0) { // Top
+    x = random(width);
+    y = -50;
+  } else if (side === 1) { // Bottom
+    x = random(width);
+    y = height + 50;
+  } else if (side === 2) { // Left
+    x = -50;
+    y = random(height);
+  } else { // Right
+    x = width + 50;
+    y = random(height);
+  }
+  
+  zombies.push(new Zombie(x, y));
 }
 
 function updateScoreboard() {
-    document.getElementById("score").innerText = "Score: " + score;
+  let scoreElement = select('#score');
+  if (scoreElement) {
+    scoreElement.html('Score: ' + score);
+  }
 }
 
-// Remove old event listeners before adding new ones
-document.removeEventListener("keydown", handleKeyDown);
-document.removeEventListener("keyup", handleKeyUp);
-
-function handleKeyDown(e) {
-    keys[e.key] = true;
-
-    if (e.key === " ") {
-        fireBullets(); // ✅ Fires multiple bullets
-    }
+function gameOver() {
+  gameRunning = false;
+  playGameOverSound();
 }
 
-function handleKeyUp(e) {
-    keys[e.key] = false;
+function restartGame() {
+  player = new Player();
+  bullets = [];
+  zombies = [];
+  score = 0;
+  updateScoreboard();
+  gameRunning = true;
+  zombieSpawnInterval = 60;
+  lastSpawnFrame = frameCount;
 }
 
-// ✅ Shoots 3 bullets in different directions
-function fireBullets() {
-    let directions = [
-        { dx: 1, dy: 0 },  // Right
-        { dx: 0, dy: -1 }, // Up
-        { dx: -1, dy: 0 }, // Left
-        { dx: 0, dy: 1 }   // Down
-    ];
+// --- Classes ---
 
-    directions.forEach(dir => {
-        bullets.push(new Bullet(player.x + player.size / 2, player.y + player.size / 2, dir.dx, dir.dy));
-    });
+class Player {
+  constructor() {
+    this.x = width / 2;
+    this.y = height / 2;
+    this.size = 30;
+    this.speed = 5;
+    this.color = color(0, 255, 255); // Cyan
+  }
+  
+  update() {
+    if (keyIsDown(LEFT_ARROW)) this.x -= this.speed;
+    if (keyIsDown(RIGHT_ARROW)) this.x += this.speed;
+    if (keyIsDown(UP_ARROW)) this.y -= this.speed;
+    if (keyIsDown(DOWN_ARROW)) this.y += this.speed;
+    
+    // Constrain to canvas
+    this.x = constrain(this.x, this.size/2, width - this.size/2);
+    this.y = constrain(this.y, this.size/2, height - this.size/2);
+  }
+  
+  display() {
+    fill(this.color);
+    noStroke();
+    rectMode(CENTER);
+    rect(this.x, this.y, this.size, this.size);
+  }
+  
+  shoot() {
+    // Shoot in 4 directions
+    bullets.push(new Bullet(this.x, this.y, 0, -1)); // Up
+    bullets.push(new Bullet(this.x, this.y, 0, 1));  // Down
+    bullets.push(new Bullet(this.x, this.y, -1, 0)); // Left
+    bullets.push(new Bullet(this.x, this.y, 1, 0));  // Right
+  }
+  
+  hits(zombie) {
+    let d = dist(this.x, this.y, zombie.x, zombie.y);
+    return d < (this.size / 2 + zombie.size / 2);
+  }
 }
 
+class Bullet {
+  constructor(x, y, dx, dy) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.speed = 10;
+    this.size = 8;
+    this.color = color(255, 255, 0); // Yellow
+  }
+  
+  update() {
+    this.x += this.dx * this.speed;
+    this.y += this.dy * this.speed;
+  }
+  
+  display() {
+    fill(this.color);
+    noStroke();
+    ellipse(this.x, this.y, this.size);
+  }
+  
+  offscreen() {
+    return (this.x < 0 || this.x > width || this.y < 0 || this.y > height);
+  }
+  
+  hits(zombie) {
+    let d = dist(this.x, this.y, zombie.x, zombie.y);
+    return d < (this.size / 2 + zombie.size / 2);
+  }
+}
 
-document.addEventListener("keydown", handleKeyDown);
-document.addEventListener("keyup", handleKeyUp);
+class Zombie {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = 30;
+    this.speed = 1.5;
+    this.color = color(0, 255, 0); // Green
+  }
+  
+  update(targetX, targetY) {
+    let angle = atan2(targetY - this.y, targetX - this.x);
+    this.x += cos(angle) * this.speed;
+    this.y += sin(angle) * this.speed;
+  }
+  
+  display() {
+    fill(this.color);
+    noStroke();
+    rectMode(CENTER);
+    rect(this.x, this.y, this.size, this.size);
+  }
+}
 
-startZombieSpawn();
-update();
+// --- Sound Functions ---
+
+function playShootSound() {
+  shootOsc.start();
+  shootOsc.freq(880);
+  shootOsc.amp(0.1);
+  shootOsc.freq(440, 0.1);
+  shootOsc.amp(0, 0.1);
+  setTimeout(() => shootOsc.stop(), 100);
+}
+
+function playHitSound() {
+  hitOsc.start();
+  hitOsc.freq(200);
+  hitOsc.amp(0.1);
+  hitOsc.freq(100, 0.1);
+  hitOsc.amp(0, 0.1);
+  setTimeout(() => hitOsc.stop(), 100);
+}
+
+function playGameOverSound() {
+  gameOverOsc.start();
+  gameOverOsc.freq(300);
+  gameOverOsc.amp(0.2);
+  gameOverOsc.freq(50, 1.0);
+  gameOverOsc.amp(0, 1.0);
+  setTimeout(() => gameOverOsc.stop(), 1000);
+}
