@@ -30,62 +30,58 @@ const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
 };
 
 class Vector {
-  _values = [];
+  values = [];
 
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let values = args; // .map(arg => arg || 0);
     if (typeof args[0] === 'function') {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      values = args.slice(2); // .map(arg => arg || 0);
+      args = args.slice(2);
     }
-    let dimensions = values.length; // TODO: make default 3 if no arguments
-    if (dimensions === 0) {
-      this.dimensions = 2;
-      this._values = [0, 0, 0];
-    } else {
-      this.dimensions = dimensions;
-      this._values = values;
-    }
+    this.values = args;
   }
 
-  /**
-   * Gets the values of the N-dimensional vector.
-   *
-   * This method returns an array of numbers that represent the vector.
-   * Each number in the array corresponds to a different component of the vector,
-   * like its position in different directions (e.g., x, y, z).
-   *
-   * @returns {Array<number>} The array of values representing the vector.
-   */
-  get values() {
-    return this._values;
-  }
+  // /**
+  //  * Gets the values of the N-dimensional vector.
+  //  *
+  //  * This method returns an array of numbers that represent the vector.
+  //  * Each number in the array corresponds to a different component of the vector,
+  //  * like its position in different directions (e.g., x, y, z).
+  //  *
+  //  * @returns {Array<number>} The array of values representing the vector.
+  //  */
+  // get values() {
+  //   return this._values;
+  // }
 
-  /**
-   * Sets the values of the vector.
-   *
-   * This method allows you to update the entire vector with a new set of values.
-   * You need to provide an array of numbers, where each number represents a component
-   * of the vector (e.g., x, y, z). The length of the array should match the number of
-   * dimensions of the vector. If the array is shorter, the missing components will be
-   * set to 0. If the array is longer, the extra values will be ignored.
-   *
-   * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
-   *
-   */
-  set values(newValues) {
-    let dimensions = newValues.length;
-    if (dimensions === 0) {
-      this.dimensions = 2;
-      this._values = [0, 0, 0];
-    } else {
-      this.dimensions = dimensions;
-      this._values = newValues.slice();
-    }
+  // /**
+  //  * Sets the values of the vector.
+  //  *
+  //  * This method allows you to update the entire vector with a new set of values.
+  //  * You need to provide an array of numbers, where each number represents a component
+  //  * of the vector (e.g., x, y, z). The length of the array should match the number of
+  //  * dimensions of the vector. If the array is shorter, the missing components will be
+  //  * set to 0. If the array is longer, the extra values will be ignored.
+  //  *
+  //  * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
+  //  *
+  //  */
+  // set values(newValues) {
+  //   let dimensions = newValues.length;
+  //   if (dimensions === 0) {
+  //     this.dimensions = 2;
+  //     this._values = [0, 0, 0];
+  //   } else {
+  //     this.dimensions = dimensions;
+  //     this._values = newValues.slice();
+  //   }
+  // }
+
+  get dimensions(){
+    return this.values.length;
   }
 
   /**
@@ -98,7 +94,7 @@ class Vector {
    * @returns {Number} The x component of the vector. Returns 0 if the value is not defined.
    */
   get x() {
-    return this._values[0] || 0;
+    return this.values[0] || 0;
   }
 
   /**
@@ -119,8 +115,8 @@ class Vector {
    *          get a value from a position that doesn't exist in the vector.
    */
   getValue(index) {
-    if (index < this._values.length) {
-      return this._values[index];
+    if (index < this.values.length) {
+      return this.values[index];
     } else {
       p5._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
@@ -144,8 +140,8 @@ class Vector {
    * @throws Will throw an error if the index is outside the bounds of the vector, meaning if you try to set a value at a position that doesn't exist in the vector.
    */
   setValue(index, value) {
-    if (index < this._values.length) {
-      this._values[index] = value;
+    if (index < this.values.length) {
+      this.values[index] = value;
     } else {
       p5._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
@@ -164,7 +160,7 @@ class Vector {
    * @returns {Number} The y component of the vector. Returns 0 if the value is not defined.
    */
   get y() {
-    return this._values[1] || 0;
+    return this.values[1] || 0;
   }
 
   /**
@@ -177,7 +173,7 @@ class Vector {
    * @returns {Number} The z component of the vector. Returns 0 if the value is not defined.
    */
   get z() {
-    return this._values[2] || 0;
+    return this.values[2] || 0;
   }
 
   /**
@@ -190,7 +186,7 @@ class Vector {
    * @returns {Number} The w component of the vector. Returns 0 if the value is not defined.
    */
   get w() {
-    return this._values[3] || 0;
+    return this.values[3] || 0;
   }
 
   /**
@@ -203,8 +199,8 @@ class Vector {
    * @param {Number} xVal - The new value for the x component.
    */
   set x(xVal) {
-    if (this._values.length > 1) {
-      this._values[0] = xVal;
+    if (this.values.length > 1) {
+      this.values[0] = xVal;
     }
   }
 
@@ -218,8 +214,8 @@ class Vector {
    * @param {Number} yVal - The new value for the y component.
    */
   set y(yVal) {
-    if (this._values.length > 1) {
-      this._values[1] = yVal;
+    if (this.values.length > 1) {
+      this.values[1] = yVal;
     }
   }
 
@@ -233,8 +229,8 @@ class Vector {
    * @param {Number} zVal - The new value for the z component.
    */
   set z(zVal) {
-    if (this._values.length > 2) {
-      this._values[2] = zVal;
+    if (this.values.length > 2) {
+      this.values[2] = zVal;
     }
   }
 
@@ -248,8 +244,8 @@ class Vector {
    * @param {Number} wVal - The new value for the w component.
    */
   set w(wVal) {
-    if (this._values.length > 3) {
-      this._values[3] = wVal;
+    if (this.values.length > 3) {
+      this.values[3] = wVal;
     }
   }
 
@@ -274,7 +270,7 @@ class Vector {
    * </div>
    */
   toString() {
-    return `vector[${this._values.join(', ')}]`;
+    return `vector[${this.values.join(', ')}]`;
   }
 
   /**
@@ -336,13 +332,12 @@ class Vector {
    */
   set(...args) {
     if (args[0] instanceof Vector) {
-      this._values = args[0].values.slice();
+      this.values = args[0].values.slice();
     } else if (Array.isArray(args[0])) {
-      this._values = args[0].map(arg => arg || 0);
+      this.values = args[0].map(arg => arg || 0);
     } else {
-      this._values = args.map(arg => arg || 0);
+      this.values = args.map(arg => arg || 0);
     }
-    this.dimensions = this._values.length;
     return this;
   }
 
@@ -376,9 +371,9 @@ class Vector {
    */
   copy() {
     if (this.isPInst) {
-      return new Vector(this._fromRadians, this._toRadians, ...this._values);
+      return new Vector(this._fromRadians, this._toRadians, ...this.values);
     } else {
-      return new Vector(...this._values);
+      return new Vector(...this.values);
     }
   }
 
@@ -523,8 +518,8 @@ class Vector {
       args = args[0];
     }
     args.forEach((value, index) => {
-      if(!this._values[index]) this._values[index] = 0;
-      this._values[index] = (this._values[index] || 0) + (value || 0);
+      if(!this.values[index]) this.values[index] = 0;
+      this.values[index] = (this.values[index] || 0) + (value || 0);
     });
     return this;
   }
@@ -836,16 +831,16 @@ class Vector {
   sub(...args) {
     if (args[0] instanceof Vector) {
       args[0].values.forEach((value, index) => {
-        if(!this._values[index]) this._values[index] = 0;
-        this._values[index] -= value || 0;
+        if(!this.values[index]) this.values[index] = 0;
+        this.values[index] -= value || 0;
       });
     } else if (Array.isArray(args[0])) {
       args[0].forEach((value, index) => {
-        this._values[index] -= value || 0;
+        this.values[index] -= value || 0;
       });
     } else {
       args.forEach((value, index) => {
-        this._values[index] -= value || 0;
+        this.values[index] -= value || 0;
       });
     }
     return this;
@@ -1047,11 +1042,11 @@ class Vector {
   mult(...args) {
     if (args.length === 1 && args[0] instanceof Vector) {
       const v = args[0];
-      const maxLen = Math.min(this._values.length, v.values.length);
+      const maxLen = Math.min(this.values.length, v.values.length);
       for (let i = 0; i < maxLen; i++) {
         if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
-          if(!this._values[i]) this._values[i] = 0;
-          this._values[i] *= v.values[i];
+          if(!this.values[i]) this.values[i] = 0;
+          this.values[i] *= v.values[i];
         } else {
           console.warn(
             'p5.Vector.prototype.mult:',
@@ -1062,10 +1057,10 @@ class Vector {
       }
     } else if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
-      const maxLen = Math.min(this._values.length, arr.length);
+      const maxLen = Math.min(this.values.length, arr.length);
       for (let i = 0; i < maxLen; i++) {
         if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
-          this._values[i] *= arr[i];
+          this.values[i] *= arr[i];
         } else {
           console.warn(
             'p5.Vector.prototype.mult:',
@@ -1079,8 +1074,8 @@ class Vector {
       typeof args[0] === 'number' &&
       Number.isFinite(args[0])
     ) {
-      for (let i = 0; i < this._values.length; i++) {
-        this._values[i] *= args[0];
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] *= args[0];
       }
     }
     return this;
@@ -1296,8 +1291,8 @@ class Vector {
         }
         // this._values = this._values.map((val, i) => val / v.values[i]);
         for (let i = 0; i < v.values.length; i++) {
-          if(!this._values[i]) this._values[i] = 0;
-          this._values[i] /= v.values[i];
+          if(!this.values[i]) this.values[i] = 0;
+          this.values[i] /= v.values[i];
         }
       } else {
         console.warn(
@@ -1316,7 +1311,7 @@ class Vector {
           console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
-        this._values = this._values.map((val, i) => val / arr[i]);
+        this.values = this.values.map((val, i) => val / arr[i]);
       } else {
         console.warn(
           'p5.Vector.prototype.div:',
@@ -1332,7 +1327,7 @@ class Vector {
         console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
-      this._values = this._values.map((val, i) => val / args[0]);
+      this.values = this.values.map((val, i) => val / args[0]);
     } else {
       console.warn(
         'p5.Vector.prototype.div:',
@@ -1414,7 +1409,7 @@ class Vector {
    * </div>
    */
   magSq() {
-    return this._values.reduce(
+    return this.values.reduce(
       (sum, component) => sum + component * component,
       0
     );
@@ -1528,7 +1523,7 @@ class Vector {
     if (args[0] instanceof Vector) {
       return this.dot(...args[0].values);
     }
-    return this._values.reduce((sum, component, index) => {
+    return this.values.reduce((sum, component, index) => {
       return sum + component * (args[index] || 0);
     }, 0);
   }
@@ -3053,8 +3048,8 @@ class Vector {
       values = args;
     }
 
-    for (let i = 0; i < this._values.length; i++) {
-      if (this._values[i] !== (values[i] || 0)) {
+    for (let i = 0; i < this.values.length; i++) {
+      if (this.values[i] !== (values[i] || 0)) {
         return false;
       }
     }
@@ -3074,8 +3069,8 @@ class Vector {
    * @chainable
    */
   clampToZero() {
-    for (let i = 0; i < this._values.length; i++) {
-      this._values[i] = this._clampToZero(this._values[i]);
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] = this._clampToZero(this.values[i]);
     }
     return this;
   }
