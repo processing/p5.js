@@ -1072,6 +1072,12 @@ export const CHAR = 'CHAR';
  * @final
  */
 export const WORD = 'WORD';
+/**
+ * @typedef {'JUSTIFIED'} JUSTIFIED
+ * @property {JUSTIFIED} JUSTIFIED
+ * @final
+ */
+export const JUSTIFIED = 'JUSTIFIED';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';

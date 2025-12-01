@@ -1501,7 +1501,10 @@ function textCore(p5, fn) {
     lines = this._positionLines(x, y, width, height, lines);
 
     // render each line at the adjusted position
-    lines.forEach(line => this._renderText(line.text, line.x, line.y));
+    lines.forEach((line, index) => {
+      const isLastLine = index === lines.length - 1;
+      this._renderText(line.text, line.x, line.y, Infinity, -Infinity, width, isLastLine);
+    });
 
     this.textDrawingContext().textBaseline = setBaseline; // restore baseline
   };
@@ -2526,7 +2529,7 @@ function textCore(p5, fn) {
       return this.drawingContext;
     };
 
-    p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY) {
+    p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY, width, isLastLine) {
       let states = this.states;
       let context = this.textDrawingContext();
 
@@ -2536,6 +2539,46 @@ function textCore(p5, fn) {
 
       this.push();
 
+      // Handle JUSTIFIED alignment
+      if (states.textAlign === fn.JUSTIFIED && typeof width !== 'undefined' && !isLastLine) {
+        const words = text.split(' ');
+        if (words.length > 1) {
+          const textWidth = this._textWidthSingle(text);
+          const spaceWidth = this._textWidthSingle(' ');
+          const totalGaps = words.length - 1;
+          const extraSpace = width - textWidth;
+          const spacePerGap = spaceWidth + (extraSpace / totalGaps);
+
+          // Render each word with adjusted spacing
+          let currentX = x;
+          for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+
+            // no stroke unless specified by user
+            if (states.strokeColor && states.strokeSet) {
+              context.strokeText(word, currentX, y);
+            }
+
+            if (!this._clipping && states.fillColor) {
+              // if fill hasn't been set by user, use default text fill
+              if (!states.fillSet) {
+                this._setFill(DefaultFill);
+              }
+              context.fillText(word, currentX, y);
+            }
+
+            currentX += this._textWidthSingle(word);
+            if (i < words.length - 1) {
+              currentX += spacePerGap;
+            }
+          }
+
+          this.pop();
+          return;
+        }
+      }
+
+      // Default rendering for non-JUSTIFIED or last line
       // no stroke unless specified by user
       if (states.strokeColor && states.strokeSet) {
         context.strokeText(text, x, y);
@@ -2579,6 +2622,9 @@ function textCore(p5, fn) {
             break;
           case fn.RIGHT:
             adjustedX = x + adjustedW;
+            break;
+          case fn.JUSTIFIED:
+            adjustedX = x; // JUSTIFIED starts from left
             break;
           case textCoreConstants.END:
             throw new Error('textBounds: END not yet supported for textAlign');
