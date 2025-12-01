@@ -517,10 +517,13 @@ class Vector {
     } else if (Array.isArray(args[0])) {
       args = args[0];
     }
-    args.forEach((value, index) => {
-      if(!this.values[index]) this.values[index] = 0;
-      this.values[index] = (this.values[index] || 0) + (value || 0);
-    });
+
+    const resultDimension = Math.min(args.length, this.dimensions);
+    this.values = this.values.reduce((acc, v, i) => {
+      if(i < resultDimension) acc[i] = this.values[i] + args[i];
+      return acc;
+    }, new Array(resultDimension));
+
     return this;
   }
 
@@ -644,59 +647,74 @@ class Vector {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem(x, y, z) {
-    if (x instanceof Vector) {
-      if ([x.x, x.y, x.z].every(Number.isFinite)) {
-        const xComponent = parseFloat(x.x);
-        const yComponent = parseFloat(x.y);
-        const zComponent = parseFloat(x.z);
-        return calculateRemainder3D.call(
-          this,
-          xComponent,
-          yComponent,
-          zComponent
-        );
-      }
-    } else if (Array.isArray(x)) {
-      if (x.every(element => Number.isFinite(element))) {
-        if (x.length === 2) {
-          return calculateRemainder2D.call(this, x[0], x[1]);
-        }
-        if (x.length === 3) {
-          return calculateRemainder3D.call(this, x[0], x[1], x[2]);
-        }
-      }
-    } else if (arguments.length === 1) {
-      if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
-        this.x = this.x % arguments[0];
-        this.y = this.y % arguments[0];
-        this.z = this.z % arguments[0];
-        return this;
-      }
-    } else if (arguments.length === 2) {
-      const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 2) {
-          return calculateRemainder2D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1]
-          );
-        }
-      }
-    } else if (arguments.length === 3) {
-      const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 3) {
-          return calculateRemainder3D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1],
-            vectorComponents[2]
-          );
-        }
-      }
+  rem(...args) {
+    if (args[0] instanceof Vector) {
+      args = args[0].values;
+    } else if (Array.isArray(args[0])) {
+      args = args[0];
     }
+
+    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
+
+    const resultDimension = Math.min(args.length, this.dimensions);
+    this.values = this.values.reduce((acc, v, i) => {
+      if(i < resultDimension) acc[i] = this.values[i] % args[i];
+      return acc;
+    }, new Array(resultDimension));
+
+    return this;
+    // if (x instanceof Vector) {
+    //   if ([x.x, x.y, x.z].every(Number.isFinite)) {
+    //     const xComponent = parseFloat(x.x);
+    //     const yComponent = parseFloat(x.y);
+    //     const zComponent = parseFloat(x.z);
+    //     return calculateRemainder3D.call(
+    //       this,
+    //       xComponent,
+    //       yComponent,
+    //       zComponent
+    //     );
+    //   }
+    // } else if (Array.isArray(x)) {
+    //   if (x.every(element => Number.isFinite(element))) {
+    //     if (x.length === 2) {
+    //       return calculateRemainder2D.call(this, x[0], x[1]);
+    //     }
+    //     if (x.length === 3) {
+    //       return calculateRemainder3D.call(this, x[0], x[1], x[2]);
+    //     }
+    //   }
+    // } else if (arguments.length === 1) {
+    //   if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
+    //     this.x = this.x % arguments[0];
+    //     this.y = this.y % arguments[0];
+    //     this.z = this.z % arguments[0];
+    //     return this;
+    //   }
+    // } else if (arguments.length === 2) {
+    //   const vectorComponents = [...arguments];
+    //   if (vectorComponents.every(element => Number.isFinite(element))) {
+    //     if (vectorComponents.length === 2) {
+    //       return calculateRemainder2D.call(
+    //         this,
+    //         vectorComponents[0],
+    //         vectorComponents[1]
+    //       );
+    //     }
+    //   }
+    // } else if (arguments.length === 3) {
+    //   const vectorComponents = [...arguments];
+    //   if (vectorComponents.every(element => Number.isFinite(element))) {
+    //     if (vectorComponents.length === 3) {
+    //       return calculateRemainder3D.call(
+    //         this,
+    //         vectorComponents[0],
+    //         vectorComponents[1],
+    //         vectorComponents[2]
+    //       );
+    //     }
+    //   }
+    // }
   }
 
   /**
@@ -830,19 +848,17 @@ class Vector {
    */
   sub(...args) {
     if (args[0] instanceof Vector) {
-      args[0].values.forEach((value, index) => {
-        if(!this.values[index]) this.values[index] = 0;
-        this.values[index] -= value || 0;
-      });
+      args = args[0].values;
     } else if (Array.isArray(args[0])) {
-      args[0].forEach((value, index) => {
-        this.values[index] -= value || 0;
-      });
-    } else {
-      args.forEach((value, index) => {
-        this.values[index] -= value || 0;
-      });
+      args = args[0];
     }
+
+    const resultDimension = Math.min(args.length, this.dimensions);
+    this.values = this.values.reduce((acc, v, i) => {
+      if(i < resultDimension) acc[i] = this.values[i] - args[i];
+      return acc;
+    }, new Array(resultDimension));
+
     return this;
   }
 
@@ -1040,44 +1056,58 @@ class Vector {
    * @chainable
    */
   mult(...args) {
-    if (args.length === 1 && args[0] instanceof Vector) {
-      const v = args[0];
-      const maxLen = Math.min(this.values.length, v.values.length);
-      for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
-          if(!this.values[i]) this.values[i] = 0;
-          this.values[i] *= v.values[i];
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'v contains components that are either undefined or not finite numbers'
-          );
-          return this;
-        }
-      }
-    } else if (args.length === 1 && Array.isArray(args[0])) {
-      const arr = args[0];
-      const maxLen = Math.min(this.values.length, arr.length);
-      for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
-          this.values[i] *= arr[i];
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'arr contains elements that are either undefined or not finite numbers'
-          );
-          return this;
-        }
-      }
-    } else if (
-      args.length === 1 &&
-      typeof args[0] === 'number' &&
-      Number.isFinite(args[0])
-    ) {
-      for (let i = 0; i < this.values.length; i++) {
-        this.values[i] *= args[0];
-      }
+    if (args[0] instanceof Vector) {
+      args = args[0].values;
+    } else if (Array.isArray(args[0])) {
+      args = args[0];
     }
+
+    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
+
+    const resultDimension = Math.min(args.length, this.dimensions);
+    this.values = this.values.reduce((acc, v, i) => {
+      if(i < resultDimension) acc[i] = this.values[i] * args[i];
+      return acc;
+    }, new Array(resultDimension));
+
+    // if (args.length === 1 && args[0] instanceof Vector) {
+    //   const v = args[0];
+    //   const maxLen = Math.min(this.values.length, v.values.length);
+    //   for (let i = 0; i < maxLen; i++) {
+    //     if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
+    //       if(!this.values[i]) this.values[i] = 0;
+    //       this.values[i] *= v.values[i];
+    //     } else {
+    //       console.warn(
+    //         'p5.Vector.prototype.mult:',
+    //         'v contains components that are either undefined or not finite numbers'
+    //       );
+    //       return this;
+    //     }
+    //   }
+    // } else if (args.length === 1 && Array.isArray(args[0])) {
+    //   const arr = args[0];
+    //   const maxLen = Math.min(this.values.length, arr.length);
+    //   for (let i = 0; i < maxLen; i++) {
+    //     if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
+    //       this.values[i] *= arr[i];
+    //     } else {
+    //       console.warn(
+    //         'p5.Vector.prototype.mult:',
+    //         'arr contains elements that are either undefined or not finite numbers'
+    //       );
+    //       return this;
+    //     }
+    //   }
+    // } else if (
+    //   args.length === 1 &&
+    //   typeof args[0] === 'number' &&
+    //   Number.isFinite(args[0])
+    // ) {
+    //   for (let i = 0; i < this.values.length; i++) {
+    //     this.values[i] *= args[0];
+    //   }
+    // }
     return this;
   }
 
@@ -1276,64 +1306,78 @@ class Vector {
    * @chainable
    */
   div(...args) {
-    if (args.length === 0) return this;
-    // If passed a vector
-    if (args.length === 1 && args[0] instanceof Vector) {
-      const v = args[0];
-      if (
-        v.values.every(
-          val => Number.isFinite(val) && typeof val === 'number'
-        )
-      ) {
-        if (v.values.some(val => val === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
-          return this;
-        }
-        // this._values = this._values.map((val, i) => val / v.values[i]);
-        for (let i = 0; i < v.values.length; i++) {
-          if(!this.values[i]) this.values[i] = 0;
-          this.values[i] /= v.values[i];
-        }
-      } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'vector contains components that are either undefined or not finite numbers'
-        );
-      }
-      return this;
+    if (args[0] instanceof Vector) {
+      args = args[0].values;
+    } else if (Array.isArray(args[0])) {
+      args = args[0];
     }
 
-    // If passed an array
-    if (args.length === 1 && Array.isArray(args[0])) {
-      const arr = args[0];
-      if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
-        if (arr.some(val => val === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
-          return this;
-        }
-        this.values = this.values.map((val, i) => val / arr[i]);
-      } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'array contains components that are either undefined or not finite numbers'
-        );
-      }
-      return this;
-    }
+    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
 
-    // If passed individual arguments
-    if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
-      if (args.some(val => val === 0)) {
-        console.warn('p5.Vector.prototype.div:', 'divide by 0');
-        return this;
-      }
-      this.values = this.values.map((val, i) => val / args[0]);
-    } else {
-      console.warn(
-        'p5.Vector.prototype.div:',
-        'arguments contain components that are either undefined or not finite numbers'
-      );
-    }
+    const resultDimension = Math.min(args.length, this.dimensions);
+    this.values = this.values.reduce((acc, v, i) => {
+      if(i < resultDimension) acc[i] = this.values[i] / args[i];
+      return acc;
+    }, new Array(resultDimension));
+
+    // if (args.length === 0) return this;
+    // // If passed a vector
+    // if (args.length === 1 && args[0] instanceof Vector) {
+    //   const v = args[0];
+    //   if (
+    //     v.values.every(
+    //       val => Number.isFinite(val) && typeof val === 'number'
+    //     )
+    //   ) {
+    //     if (v.values.some(val => val === 0)) {
+    //       console.warn('p5.Vector.prototype.div:', 'divide by 0');
+    //       return this;
+    //     }
+    //     // this._values = this._values.map((val, i) => val / v.values[i]);
+    //     for (let i = 0; i < v.values.length; i++) {
+    //       if(!this.values[i]) this.values[i] = 0;
+    //       this.values[i] /= v.values[i];
+    //     }
+    //   } else {
+    //     console.warn(
+    //       'p5.Vector.prototype.div:',
+    //       'vector contains components that are either undefined or not finite numbers'
+    //     );
+    //   }
+    //   return this;
+    // }
+
+    // // If passed an array
+    // if (args.length === 1 && Array.isArray(args[0])) {
+    //   const arr = args[0];
+    //   if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
+    //     if (arr.some(val => val === 0)) {
+    //       console.warn('p5.Vector.prototype.div:', 'divide by 0');
+    //       return this;
+    //     }
+    //     this.values = this.values.map((val, i) => val / arr[i]);
+    //   } else {
+    //     console.warn(
+    //       'p5.Vector.prototype.div:',
+    //       'array contains components that are either undefined or not finite numbers'
+    //     );
+    //   }
+    //   return this;
+    // }
+
+    // // If passed individual arguments
+    // if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
+    //   if (args.some(val => val === 0)) {
+    //     console.warn('p5.Vector.prototype.div:', 'divide by 0');
+    //     return this;
+    //   }
+    //   this.values = this.values.map((val, i) => val / args[0]);
+    // } else {
+    //   console.warn(
+    //     'p5.Vector.prototype.div:',
+    //     'arguments contain components that are either undefined or not finite numbers'
+    //   );
+    // }
 
     return this;
   }
