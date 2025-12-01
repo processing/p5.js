@@ -8,7 +8,7 @@ function setup() {
   let alignments = [LEFT, CENTER, RIGHT];
   let vertAlignments = [BASELINE, BOTTOM, CENTER, TOP];
   // Using string literals as constants might not be exposed in this build environment yet
-  let wrapModes = ['pretty', 'balance'];
+  let wrapModes = ['PRETTY', 'BALANCE'];
   console.log('window.PRETTY:', window.PRETTY);
   let sampleText = 'text gonna wrap when it gets too long and is then breaking.';
 
