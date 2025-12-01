@@ -1072,6 +1072,18 @@ export const CHAR = 'CHAR';
  * @final
  */
 export const WORD = 'WORD';
+/**
+ * @typedef {'PRETTY'} PRETTY
+ * @property {PRETTY} PRETTY
+ * @final
+ */
+export const PRETTY = 'PRETTY';
+/**
+ * @typedef {'BALANCE'} BALANCE
+ * @property {BALANCE} BALANCE
+ * @final
+ */
+export const BALANCE = 'BALANCE';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';

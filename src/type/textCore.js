@@ -2387,6 +2387,48 @@ function textCore(p5, fn) {
     opts = {}
   ) {
 
+    // Handle PRETTY/BALANCE with DP algorithm
+    if (textWrap === fn.PRETTY || textWrap === fn.BALANCE) {
+      let newLines = [];
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        const wordsArr = lines[lineIndex].split(' ').filter(s => s.length > 0);
+        const spaceW = this._textWidthSingle(' ');
+        const N = wordsArr.length;
+        const widths = wordsArr.map(s => this._textWidthSingle(s));
+
+        // DP arrays
+        const dp = new Array(N + 1).fill(Infinity);
+        const next = new Array(N + 1).fill(-1);
+        dp[N] = 0;
+
+        // DP algorithm to minimize raggedness
+        for (let i = N - 1; i >= 0; i--) {
+          let sum = 0;
+          for (let j = i; j < N; j++) {
+            sum += widths[j];
+            const gaps = j - i;
+            const total = sum + gaps * spaceW;
+            if (total > maxWidth) break;
+            const slack = maxWidth - total;
+            const cost = (j === N - 1 ? 0 : slack * slack) + dp[j + 1];
+            if (cost < dp[i]) {
+              dp[i] = cost;
+              next[i] = j + 1;
+            }
+          }
+        }
+
+        // Reconstruct lines
+        let i = 0;
+        while (i < N) {
+          const j = next[i] > 0 ? next[i] : i + 1;
+          newLines.push(wordsArr.slice(i, j).join(' '));
+          i = j;
+        }
+      }
+      return newLines;
+    }
+
     let splitter = opts.splitChar ?? (textWrap === fn.WORD ? ' ' : '');
     let line, testLine, testWidth, words, newLines = [];
 
