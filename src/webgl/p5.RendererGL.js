@@ -562,7 +562,9 @@ class RendererGL extends Renderer {
 
   drawShape(shape) {
     const visitor = new PrimitiveToVerticesConverter({
-      curveDetail: this.states.curveDetail
+      curveDetail: this.states.curveDetail,
+      fillColor: this.states.fillColor,
+      strokeColor: this.states.strokeColor
     });
     shape.accept(visitor);
     this.shapeBuilder.constructFromContours(shape, visitor.contours);

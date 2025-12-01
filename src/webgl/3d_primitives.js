@@ -11,6 +11,7 @@ import { RendererGL } from './p5.RendererGL';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { Matrix } from '../math/p5.Matrix';
+import { Vertex, Ellipse, Arc } from '../shape/custom_shapes';
 
 function primitives3D(p5, fn){
 /**
@@ -1735,134 +1736,39 @@ function primitives3D(p5, fn){
   };
 
   RendererGL.prototype.ellipse = function(args) {
-    this.arc(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      0,
-      constants.TWO_PI,
-      constants.OPEN,
-      args[4]
-    );
+    const x = args[0];
+    const y = args[1];
+    const w = args[2];
+    const h = args[3];
+    const detail = args[4] || 25; // detail is not used in ShapeEllipse directly but could be passed via curveDetail if needed, or handled in visitor
+
+    // Create Ellipse primitive
+    const centerX = x + w / 2;
+    const centerY = y + h / 2;
+    const vertex = new Vertex({ position: new Vector(centerX, centerY) });
+    const ellipsePrimitive = new Ellipse(x, y, w, h, vertex);
+
+    this.drawShape(ellipsePrimitive);
+    return this;
   };
 
   RendererGL.prototype.arc = function(...args) {
     const x = args[0];
     const y = args[1];
-    const width = args[2];
-    const height = args[3];
+    const w = args[2];
+    const h = args[3];
     const start = args[4];
     const stop = args[5];
     const mode = args[6];
     const detail = args[7] || 25;
 
-    let shape;
-    let gid;
+    // Create Arc primitive
+    const centerX = x + w / 2;
+    const centerY = y + h / 2;
+    const vertex = new Vertex({ position: new Vector(centerX, centerY) });
+    const arcPrimitive = new Arc(x, y, w, h, start, stop, mode, vertex);
 
-    // check if it is an ellipse or an arc
-    if (Math.abs(stop - start) >= constants.TWO_PI) {
-      shape = 'ellipse';
-      gid = `${shape}|${detail}|`;
-    } else {
-      shape = 'arc';
-      gid = `${shape}|${start}|${stop}|${mode}|${detail}|`;
-    }
-
-    if (!this.geometryInHash(gid)) {
-      const _arc = function() {
-
-        // if the start and stop angles are not the same, push vertices to the array
-        if (start.toFixed(10) !== stop.toFixed(10)) {
-          // if the mode specified is PIE or null, push the mid point of the arc in vertices
-          if (mode === constants.PIE || typeof mode === 'undefined') {
-            this.vertices.push(new Vector(0.5, 0.5, 0));
-            this.uvs.push([0.5, 0.5]);
-          }
-
-          // vertices for the perimeter of the circle
-          for (let i = 0; i <= detail; i++) {
-            const u = i / detail;
-            const theta = (stop - start) * u + start;
-
-            const _x = 0.5 + Math.cos(theta) / 2;
-            const _y = 0.5 + Math.sin(theta) / 2;
-
-            this.vertices.push(new Vector(_x, _y, 0));
-            this.uvs.push([_x, _y]);
-
-            if (i < detail - 1) {
-              this.faces.push([0, i + 1, i + 2]);
-              this.edges.push([i + 1, i + 2]);
-            }
-          }
-
-          // check the mode specified in order to push vertices and faces, different for each mode
-          switch (mode) {
-            case constants.PIE:
-              this.faces.push([
-                0,
-                this.vertices.length - 2,
-                this.vertices.length - 1
-              ]);
-              this.edges.push([0, 1]);
-              this.edges.push([
-                this.vertices.length - 2,
-                this.vertices.length - 1
-              ]);
-              this.edges.push([0, this.vertices.length - 1]);
-              break;
-
-            case constants.CHORD:
-              this.edges.push([0, 1]);
-              this.edges.push([0, this.vertices.length - 1]);
-              break;
-
-            case constants.OPEN:
-              this.edges.push([0, 1]);
-              break;
-
-            default:
-              this.faces.push([
-                0,
-                this.vertices.length - 2,
-                this.vertices.length - 1
-              ]);
-              this.edges.push([
-                this.vertices.length - 2,
-                this.vertices.length - 1
-              ]);
-          }
-        }
-      };
-
-      const arcGeom = new Geometry(detail, 1, _arc, this);
-      arcGeom.computeNormals();
-
-      if (detail <= 50) {
-        arcGeom._edgesToVertices(arcGeom);
-      } else if (this.states.strokeColor) {
-        console.log(
-          `Cannot apply a stroke to an ${shape} with more than 50 detail`
-        );
-      }
-
-      arcGeom.gid = gid;
-      this.geometryBufferCache.ensureCached(arcGeom);
-    }
-
-    const uModelMatrix = this.states.uModelMatrix;
-    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
-
-    try {
-      this.states.uModelMatrix.translate([x, y, 0]);
-      this.states.uModelMatrix.scale(width, height, 1);
-
-      this.model(this.geometryBufferCache.getGeometryByID(gid));
-    } finally {
-      this.states.setValue('uModelMatrix', uModelMatrix);
-    }
-
+    this.drawShape(arcPrimitive);
     return this;
   };
 

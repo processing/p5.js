@@ -466,6 +466,74 @@ class Quad extends ShapePrimitive {
   }
 }
 
+class Ellipse extends ShapePrimitive {
+  #vertexCapacity = 1;
+  #x;
+  #y;
+  #w;
+  #h;
+
+  constructor(x, y, w, h, ...vertices) {
+    super(...vertices);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+  }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+
+  accept(visitor) {
+    visitor.visitEllipse(this);
+  }
+}
+
+class Arc extends ShapePrimitive {
+  #vertexCapacity = 1;
+  #x;
+  #y;
+  #w;
+  #h;
+  #start;
+  #stop;
+  #mode;
+
+  constructor(x, y, w, h, start, stop, mode, ...vertices) {
+    super(...vertices);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+    this.#start = start;
+    this.#stop = stop;
+    this.#mode = mode;
+  }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+  get start() { return this.#start; }
+  get stop() { return this.#stop; }
+  get mode() { return this.#mode; }
+
+  accept(visitor) {
+    visitor.visitArc(this);
+  }
+}
+
+
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
@@ -1017,6 +1085,12 @@ class PrimitiveVisitor {
   visitQuad(quad) {
     throw new Error('Method visitQuad() has not been implemented.');
   }
+  visitEllipse(ellipse) {
+    throw new Error('Method visitEllipse() has not been implemented.');
+  }
+  visitArc(arc) {
+    throw new Error('Method visitArc() has not been implemented.');
+  }
 
   // tessellation primitives
   visitTriangleFan(triangleFan) {
@@ -1129,6 +1203,27 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.lineTo(v3.position.x, v3.position.y);
     this.path.closePath();
   }
+  visitEllipse(ellipse) {
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+    this.path.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+  }
+  visitArc(arc) {
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+    this.path.ellipse(centerX, centerY, radiusX, radiusY, 0, arc.start, arc.stop);
+    // Handle PIE and CHORD modes
+    if (arc.mode === constants.PIE || (arc.stop - arc.start) % constants.TWO_PI !== 0) {
+      if (!arc.mode || arc.mode === constants.PIE) {
+        this.path.lineTo(centerX, centerY);
+      }
+      this.path.closePath();
+    }
+  }
   visitTriangleFan(triangleFan) {
     const [v0, ...rest] = triangleFan.vertices;
     for (let i = 0; i < rest.length - 1; i++) {
@@ -1171,9 +1266,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   contours = [];
   curveDetail;
 
-  constructor({ curveDetail = 1 } = {}) {
+  constructor({ curveDetail = 1, fillColor, strokeColor } = {}) {
     super();
     this.curveDetail = curveDetail;
+    this.fillColor = fillColor || new Color([0, 0, 0, 0]);
+    this.strokeColor = strokeColor || new Color([0, 0, 0, 0]);
   }
 
   lastContour() {
@@ -1270,6 +1367,106 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   visitQuadStrip(quadStrip) {
     // WebGL itself interprets the vertices as a strip, no reformatting needed
     this.contours.push(quadStrip.vertices.slice());
+  }
+  visitEllipse(ellipse) {
+    const contour = [];
+    this.contours.push(contour);
+    const detail = Math.max(
+      6,
+      Math.ceil(Math.max(ellipse.w, ellipse.h) * 2 * this.curveDetail)
+    );
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+
+    for (let i = 0; i < detail; i++) {
+      const t = (i / detail) * 2 * Math.PI;
+      const x = centerX + radiusX * Math.cos(t);
+      const y = centerY + radiusY * Math.sin(t);
+      const u = (x - ellipse.x) / ellipse.w;
+      const v = (y - ellipse.y) / ellipse.h;
+      const vertex = new Vertex({
+        position: new Vector(x, y, 0),
+        textureCoordinates: new Vector(u, v),
+        fill: this.fillColor,
+        stroke: this.strokeColor
+      });
+      contour.push(vertex);
+    }
+    // Close the loop
+    contour.push(contour[0]);
+  }
+  visitArc(arc) {
+    const contour = [];
+    this.contours.push(contour);
+    // Calculate detail based on arc length and size
+    const arcLength = Math.abs(arc.stop - arc.start) * Math.max(arc.w, arc.h) / 2;
+    const detail = Math.max(
+      4,
+      Math.ceil(arcLength * this.curveDetail)
+    );
+    
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+
+    // Add center point for PIE mode
+    if (arc.mode === constants.PIE) {
+       const u = (centerX - arc.x) / arc.w;
+       const v = (centerY - arc.y) / arc.h;
+       const centerVertex = new Vertex({
+         position: new Vector(centerX, centerY, 0),
+         fill: this.fillColor,
+         stroke: this.strokeColor,
+         textureCoordinates: new Vector(u, v)
+       });
+       contour.push(centerVertex);
+    }
+    
+    for (let i = 0; i <= detail; i++) {
+      const t = arc.start + (i / detail) * (arc.stop - arc.start);
+      const x = centerX + radiusX * Math.cos(t);
+      const y = centerY + radiusY * Math.sin(t);
+      const u = (x - arc.x) / arc.w;
+      const v = (y - arc.y) / arc.h;
+      const vertex = new Vertex({
+        position: new Vector(x, y, 0),
+        textureCoordinates: new Vector(u, v),
+        fill: this.fillColor,
+        stroke: this.strokeColor
+      });
+      contour.push(vertex);
+    }
+
+    // Close the loop for PIE and CHORD
+    if (arc.mode === constants.PIE || arc.mode === constants.CHORD) {
+       if (arc.mode === constants.PIE) {
+         const u = (centerX - arc.x) / arc.w;
+         const v = (centerY - arc.y) / arc.h;
+          const centerVertex = new Vertex({
+            position: new Vector(centerX, centerY, 0),
+            textureCoordinates: new Vector(u, v),
+            fill: this.fillColor,
+            stroke: this.strokeColor
+          });
+         contour.push(centerVertex);
+       } else if (arc.mode === constants.CHORD) {
+         const t = arc.start;
+         const x = centerX + radiusX * Math.cos(t);
+         const y = centerY + radiusY * Math.sin(t);
+         const u = (x - arc.x) / arc.w;
+         const v = (y - arc.y) / arc.h;
+            const vertex = new Vertex({
+              position: new Vector(x, y, 0),
+              textureCoordinates: new Vector(u, v),
+              fill: this.fillColor,
+              stroke: this.strokeColor
+            });
+         contour.push(vertex);
+       }
+    }
   }
 }
 
@@ -2856,10 +3053,9 @@ function customShapes(p5, fn) {
 
 export default customShapes;
 export {
-  Shape,
-  Contour,
-  ShapePrimitive,
   Vertex,
+  ShapePrimitive,
+  Contour,
   Anchor,
   Segment,
   LineSegment,
@@ -2869,9 +3065,13 @@ export {
   Line,
   Triangle,
   Quad,
+  Ellipse,
+  Arc,
   TriangleFan,
   TriangleStrip,
   QuadStrip,
+  PrimitiveShapeCreators,
+  Shape,
   PrimitiveVisitor,
   PrimitiveToPath2DConverter,
   PrimitiveToVerticesConverter,

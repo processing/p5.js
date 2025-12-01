@@ -52,7 +52,11 @@ export class ShapeBuilder {
     this.geometry.reset();
     this.contourIndices = [];
     // TODO: handle just some contours having non-PATH mode
-    this.shapeMode = shape.contours[0].kind;
+    if (shape.contours && shape.contours.length > 0) {
+      this.shapeMode = shape.contours[0].kind;
+    } else {
+      this.shapeMode = constants.PATH;
+    }
     const shouldProcessEdges = !!this.renderer.states.strokeColor;
 
     const userVertexPropertyHelpers = {};

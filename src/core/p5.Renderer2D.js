@@ -8,7 +8,8 @@ import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
-import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
+import { PrimitiveToPath2DConverter, Vertex, Ellipse, Arc } from '../shape/custom_shapes';
+import { Vector } from '../math/p5.Vector';
 
 
 const styleEmpty = 'rgba(0,0,0,0)';
@@ -651,7 +652,7 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-    const ctx = this.clipPa || this.drawingContext;
+    const ctx = this.clipPath || this.drawingContext;
     const rx = w / 2.0;
     const ry = h / 2.0;
     const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
@@ -666,38 +667,33 @@ class Renderer2D extends Renderer {
     // Determines whether to add a line to the center, which should be done
     // when the mode is PIE or default; as well as when the start and end
     // angles do not form a full circle.
-    const createPieSlice = ! (
+    const createPieSlice = !(
       mode === constants.CHORD ||
       mode === constants.OPEN ||
       (stop - start) % constants.TWO_PI === 0
     );
 
-    // Fill curves
-    if (this.states.fillColor) {
-      if (!this._clipping) ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-      if (createPieSlice) ctx.lineTo(centerX, centerY);
-      ctx.closePath();
-      if (!this._clipping) ctx.fill();
-    }
-
-    // Stroke curves
-    if (this.states.strokeColor) {
-      if (!this._clipping) ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-
-      if (mode === constants.PIE && createPieSlice) {
-        // In PIE mode, stroke is added to the center and back to path,
-        // unless the pie forms a complete ellipse (see: createPieSlice)
-        ctx.lineTo(centerX, centerY);
+    // Create Arc primitive and use visitor pattern
+    const vertex = new Vertex({ position: new Vector(centerX, centerY) });
+    const arcPrimitive = new Arc(x, y, w, h, start, stop, mode, vertex);
+    
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
+    arcPrimitive.accept(visitor);
+    
+    if (this._clipping) {
+      this.clipPath.addPath(visitor.path);
+    } else {
+      // Fill curves
+      if (this.states.fillColor) {
+        if (!this._clipping) ctx.fill(visitor.path);
       }
 
-      if (mode === constants.PIE || mode === constants.CHORD) {
-        // Stroke connects back to path begin for both PIE and CHORD
-        ctx.closePath();
+      // Stroke curves
+      if (this.states.strokeColor) {
+        if (!this._clipping) ctx.stroke(visitor.path);
       }
-
-      if (!this._clipping) ctx.stroke();
     }
 
     return this;
@@ -725,16 +721,25 @@ class Renderer2D extends Renderer {
       centerY = y + h / 2,
       radiusX = w / 2,
       radiusY = h / 2;
-    if (!this._clipping) ctx.beginPath();
 
-    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-    ctx.closePath();
-
-    if (!this._clipping && doFill) {
-      ctx.fill();
-    }
-    if (!this._clipping && doStroke) {
-      ctx.stroke();
+    // Create Ellipse primitive and use visitor pattern
+    const vertex = new Vertex({ position: new Vector(centerX, centerY) });
+    const ellipsePrimitive = new Ellipse(x, y, w, h, vertex);
+    
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
+    ellipsePrimitive.accept(visitor);
+    
+    if (this._clipping) {
+      this.clipPath.addPath(visitor.path);
+    } else {
+      if (doFill) {
+        ctx.fill(visitor.path);
+      }
+      if (doStroke) {
+        ctx.stroke(visitor.path);
+      }
     }
   }
 
