@@ -1905,23 +1905,15 @@ function textCore(p5, fn) {
     let boxes = lines.map((line, i) => this[type].bind(this)
     (line, x, y + i * textLeading));
 
-    // adjust the bounding boxes based on horiz. text alignment
-    if (lines.length > 1) {
-      // When width is not provided (e.g., fontBounds path), fall back to the widest line.
-      const maxWidth = boxes.reduce((m, b) => Math.max(m, b.w || 0), 0);
-
-      boxes.forEach((bb) => {
-          const w = (width ?? maxWidth);
-          bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, w);
-        });
+    if (lines.length > 1 && typeof width !== 'undefined') { // fix for #7984
+      // adjust the bounding boxes for horizontal text alignment in 2d
+      // the WebGL mode version does additional alignment adjustments
+      boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
     }
 
-    // adjust the bounding boxes based on vert. text alignment
-    if (typeof height !== 'undefined') {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
-      p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height);
-    }
+    // adjust the bounding boxes for vertical text alignment in 2d
+    // the WebGL mode version does additional alignment adjustments
+    p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height || 0); // fix for #7984
 
     // get the bounds for the text block
     let bounds = boxes[0];
@@ -1936,12 +1928,12 @@ function textCore(p5, fn) {
       }
     }
 
-    if (0 && opts?.ignoreRectMode) boxes.forEach((b, i) => { // draw bounds for debugging
+    if (0 && opts?.ignoreRectMode) { // draw bounds for debugging
       let ss = context.strokeStyle;
       context.strokeStyle = 'green';
       context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
       context.strokeStyle = ss;
-    });
+    }
 
     context.textBaseline = setBaseline; // restore baseline
 
@@ -2633,7 +2625,7 @@ function textCore(p5, fn) {
   }
 
   if (p5.RendererGL) {
-    p5.RendererGL.prototype.textCanvas = function() {
+    p5.RendererGL.prototype.textCanvas = function () {
       if (!this._textCanvas) {
         this._textCanvas = document.createElement('canvas');
         this._textCanvas.width = 1;
@@ -2644,7 +2636,7 @@ function textCore(p5, fn) {
       }
       return this._textCanvas;
     };
-    p5.RendererGL.prototype.textDrawingContext = function() {
+    p5.RendererGL.prototype.textDrawingContext = function () {
       if (!this._textDrawingContext) {
         const textCanvas = this.textCanvas();
         this._textDrawingContext = textCanvas.getContext('2d');
@@ -2652,7 +2644,7 @@ function textCore(p5, fn) {
       return this._textDrawingContext;
     };
     const oldRemove = p5.RendererGL.prototype.remove;
-    p5.RendererGL.prototype.remove = function() {
+    p5.RendererGL.prototype.remove = function () {
       if (this._textCanvas) {
         this._textCanvas.parentElement.removeChild(this._textCanvas);
       }
