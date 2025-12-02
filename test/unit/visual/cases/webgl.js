@@ -692,7 +692,7 @@ visualSuite('WebGL', function() {
     });
   });
 
-  visualSuite('textures in p5.strands', async () => {
+  visualSuite('textures in p5.strands', () => {
     visualTest('uniformTexture() works', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = await p5.loadImage('/unit/assets/cat.jpg');
@@ -755,6 +755,20 @@ visualSuite('WebGL', function() {
       p5.fill(0);
       p5.shader(shader);
       p5.model(obj, 25);
+      screenshot();
+    });
+  });
+  
+  visualSuite('p5.strands', () => {
+    visualTest('it recovers from p5.strands errors', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      try {
+        p5.baseMaterialShader().modify(() => {
+          undefined.someMethod(); // This will throw an error
+        });
+      } catch (e) {}
+      p5.background('red');
+      p5.circle(p5.noise(0), p5.noise(0), 20);
       screenshot();
     });
   });
