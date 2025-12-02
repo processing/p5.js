@@ -1,38 +1,99 @@
 <!-- Learn about how to manage and review contributions to p5.js. -->
 
-# Directrices para Supervisores  
+# Directrices para Supervisores
 
-
-Ya sea que recién te hayas unido a nosotros como supervisor, seas un responsable de mantenimiento experimentado de p5.js, o estés en algún punto intermedio, esta guía contiene información, así como consejos y trucos que te ayudarán a contribuir de manera efectiva a p5.js. La mayor parte de lo que se escribe aquí son pautas a menos que se indique lo contrario, lo que significa que puedes adaptar las prácticas mostradas aquí para que se ajusten a tu flujo de trabajo.
+Ya sea que seas nuevo en la contribución a p5.js, ya seas activo en los repositorios de GitHub de p5.js, o estés en algún punto intermedio, encontrarás lo que necesitas en esta guía para la supervisión de p5.js. Si no estás seguro de qué esperar de los supervisores, o si estás considerando cómo ser voluntario o comenzar como supervisor, ¡sigue leyendo!
 
 
 ## Tabla de Contenidos
 
-- [Issues](steward_guidelines.md#issues) 
-  - [Informe de Errores](steward_guidelines.md#informe-de-errores) 
-  - [Solicitud de Funcionalidades](steward_guidelines.md#solicitud-de-funcionalidades)
-  - [Mejora de Funcionalidades](steward_guidelines.md#mejora-de-funcionalidades)
-  - [Discusión](steward_guidelines.md#discusión) 
-- [Pull Requests](steward_guidelines.md#pull-requests)
-  - [Corrección Sencilla](steward_guidelines.md#correción-sencilla)
-  - [Corrección de Error](steward_guidelines.md#corrección-de-error) 
-  - [Nuevas Funcionalidades/Mejora de Funcionalidades](steward_guidelines.md#nuevas-funcionalidades/Mejora-de-funcionalidades)
-  - [Dependabot](steward_guidelines.md#dependabot) 
-- [Proceso de Construcción](steward_guidelines.md#proceso-de-construcción)
-  - [Tarea Principal de Construcción](steward_guidelines.md#tarea-principal-de-construcción)
-  - [Tarea Variada](steward_guidelines.md#tarea-variada)
-- [Proceso de Lanzamiento](steward_guidelines.md#proceso-de-lanzamiento)
-- [Consejos y Trucos](steward_guidelines.md#consejos-y-trucos)
-  - [Plantillas de Respuesta](steward_guidelines.md#plantillas-de-respuesta)
-  - [GitHub CLI](steward_guidelines.md#github-cli)
-  - [Gestión de Notificaciones](steward_guidelines.md#gestión-de-notificaciones)
+- [Supervisión](#supervisión)
+  - [Cuidado de la Comunidad](#cuidado-de-la-comunidad)
+  - [Áreas](#áreas)
+  - [Convertirse en Supervisor](#convertirse-en-supervisor)
+  - [Comenzar con la Supervisión](#comenzar-con-la-supervisión)
+- [Issues](#issues)
+  - [Informe de Errores](#informe-de-errores) 
+  - [Solicitud de Funcionalidades](#solicitud-de-funcionalidades)
+  - [Mejora de Funcionalidades](#mejora-de-funcionalidades)
+  - [Discusión](#discusión) 
+- [Pull Requests](#pull-requests)
+  - [Corrección Sencilla](#corrección-sencilla)
+  - [Corrección de Error](#corrección-de-error) 
+  - [Nuevas Funcionalidades/Mejora de Funcionalidades](#nuevas-funcionalidadesmejora-de-funcionalidades)
+  - [Dependabot](#dependabot) 
+- [Proceso de Construcción](#proceso-de-construcción)
+  - [Tarea Principal de Construcción](#tarea-principal-de-construcción)
+  - [Tareas Variadas](#tareas-variadas)
+- [Proceso de Lanzamiento](#proceso-de-lanzamiento)
+- [Consejos y Trucos](#consejos-y-trucos)
+  - [Plantillas de Respuesta](#plantillas-de-respuesta)
+  - [GitHub CLI](#github-cli)
+  - [Gestión de Notificaciones](#gestión-de-notificaciones)
 
 ---
 
+## Supervisión
 
-## _Issues_
+### Cuidado de la Comunidad
 
-Alentamos a la mayoría de las contribuciones de código fuente a comenzar con un _issue_, y como tal, los _issues_ son el lugar donde la mayoría de las discusiones tendrán lugar. Los pasos a seguir al revisar un _issue_ dependerán del tipo de _issue_ que sea. El repositorio utiliza [Plantillas de _issues_ de GitHub](https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE), para organizar mejor los diferentes tipos de _issues_ y alentar a los autores de _issues_ a proporcionar toda la información relevante sobre sus _issues_. El primer paso al revisar el _issue_ a menudo será revisar la plantilla completada y determinar si necesita información adicional por ejemplo, porque algunos campos no se completaron o se utilizó la plantilla incorrecta.
+Un ethos de código abierto incluye [accesibilidad, educación, colaboración, transparencia y agencia](https://www.opensourceethos.net/). Para vivir y practicar estos valores mientras escribimos código juntos se necesita mucho cuidado de la comunidad. Estas son las prácticas de cuidado de la comunidad que forman parte de nuestra definición de supervisión:
+
+1. Dar la bienvenida a nuevos contribuyentes a GitHub a través de **comentarios amigables** y **revisiones de código** útiles
+2. Ayudar a **facilitar discusiones sobre funcionalidades** y resolver desacuerdos técnicos. Por ejemplo, esto significa hacer conexiones con otras discusiones pasadas, u ofrecer aportes de experiencia previa relevante. Sugerir funcionalidades o trabajar en ellas es contribución, más que supervisión.
+3. Participar en los lanzamientos del software p5.js a través del **apoyo** a la corrección de errores y la finalización de funcionalidades. Por ejemplo, esto significa guiar a otros contribuyentes y revisar sus PRs. Corregir errores es contribución, más que supervisión.
+
+El resto de estas directrices proporcionan algunos consejos y trucos que te ayudarán a contribuir efectivamente a p5.js, y a guiar útilmente las contribuciones de otros. La mayor parte de lo que se escribe aquí son pautas a menos que se indique lo contrario, lo que significa que puedes adaptar las prácticas mostradas aquí para que se ajusten a tu flujo de trabajo.
+
+¡Todos están invitados a ayudar a supervisar la comunidad cuando puedan! Estamos felices de ver a los contribuyentes dar la bienvenida a nuevos contribuyentes, revisar el código de otros y proporcionar retroalimentación sobre el diseño de la API. También hay algunos roles concretos:
+
+1. Los contribuyentes pueden crear Issues, PRs, Comentarios y Revisiones de Código.
+2. Los responsables de mantenimiento también pueden fusionar PRs y administrar otras partes del código base.
+
+Los supervisores también pueden ser contribuyentes: pueden crear Issues y PRs como contribuyentes, mientras que también asumen la responsabilidad, cuando están supervisando un área particular, de comentar en issues y hacer revisiones de código, especialmente cuando son etiquetados por otros contribuyentes para ayudar con la discusión y la revisión.
+
+Como contribuyente, puedes verificar los supervisores actuales en el archivo README del repositorio de p5.js y etiquetar a los supervisores relevantes - pero por favor ten en cuenta nuestras directrices para contribuyentes, que enfatizan la paciencia y la atención plena de que la mayor parte del trabajo técnico en un proyecto de código abierto es voluntario.
+
+Como supervisor, ¡esperamos que regularmente participes en revisiones de código en Issues o PRs que no hayas hecho, si están en tu área y si puedes proporcionar orientación útil!
+
+### Áreas
+
+Hay diferentes áreas de trabajo de las que los supervisores pueden ser responsables. Estas áreas coinciden con las Etiquetas de GitHub en la mayoría de los casos, con un par de excepciones. A continuación se encuentra la lista de áreas.
+
+- **Accesibilidad**: Esta área se refiere específicamente a la accesibilidad digital y web, incluyendo, por ejemplo, el soporte de lectores de pantalla a través de API como `describe(..)` así como el soporte de accesibilidad en el sitio web de referencia
+- **Core**: Se refiere a la API principal de p5.js, incluyendo renderizado y entorno
+- **DevOps**: Se refiere al proceso de construcción, pruebas unitarias y otros aspectos de la experiencia de desarrollo
+- **Documentación**: Incluye tanto la referencia en el código base principal que se expone en el sitio web, los documentos para contribuyentes y otro contenido del sitio web
+- i18n (Internacionalización / **Traducción**): Incluye revisar traducciones, particularmente para `es`, `hi`, `ko`, `zh`
+- **Graphics**: Contiene subáreas de WebGL y [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Incluye Color, ColorMode, mejoras de accesibilidad alrededor del uso del color
+- **Typography**: Se refiere a todos los temas sobre el manejo de texto y fuente
+- **Math**: Incluye tanto la API Math externa como las mejoras de rendimiento internas
+- **Shapes**: Incluye trabajar con formas personalizadas en las versiones 1.11.x y 2.x de p5.js
+- **Maintainers**: Este grupo puede fusionar PRs
+- **p5.sound.js**: La biblioteca complementaria [nueva p5.sound.js](https://github.com/processing/p5.sound.js)
+- **p5.js-website**: Aspectos no relacionados con contenido del [sitio web de referencia](https://p5js.org/) - por ejemplo, su estructura, automatizaciones, mejoras técnicas y así sucesivamente.
+
+Estas áreas de enfoque pueden cambiar con el tiempo dependiendo de las necesidades del proyecto - ¡así que si estás pasando por el proceso de solicitar ser supervisor, eres bienvenido a proponer nuevas áreas!
+
+### Convertirse en Supervisor
+
+Hay dos formas de convertirse en supervisor:
+
+1. _Nominación_ por responsables de mantenimiento u otros supervisores, como en conversaciones en Discord, Discourse o GitHub.
+2. _Solicitud_ creando un PR para actualizar `stewards.yml` con tu @ de GitHub y las áreas propuestas. Por favor ten en cuenta que cada área debe tener 1-3 supervisores. ¡Siempre estamos buscando **supervisores de traducción**! Una vez que hagas tu PR de solicitud, otros responsables de mantenimiento o supervisores pueden pedir material de apoyo adicional, como hacer un PR relacionado con las áreas que te interesan, o participar en alguna discusión relacionada.
+
+Para seguir siendo supervisor, debes contribuir como supervisor en al menos 1 de las 2 versiones menores más recientes (por ejemplo, 2.1.0 o 1.11.0 - cuando cambia el número del medio). Estas no son tan frecuentes como los parches (por ejemplo, 2.0.3 a 2.0.4 - cuando cambia el número más a la derecha), y en la práctica esto significa que se espera que los supervisores estén activos cada 4-6 meses más o menos, apoyando a otros contribuyentes a través de discusión o revisión de código - no necesariamente escribiendo código. Para renunciar a la supervisión, puedes hacer un PR para eliminarte de `stewards.yml`. ¡Siempre eres bienvenido a tomar una pausa y volver a solicitar en el futuro!
+
+### Comenzar con la Supervisión
+
+1. Mantén esta directriz a mano como referencia - cómo ayudar con nuevos issues, errores y funcionalidades. Por ejemplo, la sección "Solicitud de funcionalidades" incluye consejos sobre cómo usar la [declaración de acceso](access.md) de p5.js como supervisor.
+2. Al ayudar a responder preguntas técnicas o revisar, intenta aplicar la [directriz de la Processing Foundation sobre cómo responder preguntas](https://discourse.processing.org/t/guidelines-answering-questions/2145) - estos pueden ser especialmente útiles para dar retroalimentación técnica constructiva.
+3. Únete al [Discord de p5.js](https://discord.com/invite/SHQ8dH25r9) - en el canal `#contribute-to-p5` eres bienvenido a hacer cualquier pregunta que tengas sobre este proceso - ¡o sugerir cómo se puede mejorar!
+
+## Issues
+
+Alentamos a la mayoría de las contribuciones de código fuente a comenzar con un issue, y como tal, los issues son el lugar donde la mayoría de las discusiones tendrán lugar. Los pasos a seguir al revisar un issue dependerán del tipo de issue que sea. El repositorio utiliza [Plantillas de issues de GitHub](https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE) para organizar mejor los diferentes tipos de issues y alentar a los autores de issues a proporcionar toda la información relevante sobre sus problemas. El primer paso al revisar el issue a menudo será revisar la plantilla completada y determinar si necesitas información adicional (por ejemplo, porque algunos campos no se completaron o se utilizó la plantilla incorrecta).
 
 
 ### Informe de Errores
@@ -265,7 +326,7 @@ Finalmente, después de que todas las construcciones y pruebas estén completas,
 ¡Y eso cubre la tarea predeterminada en la configuración de Gruntfile.js!
 
 
-### Tarea Variada
+### Tareas Variadas
 
 Todos los pasos pueden ejecutarse directamente con `npx grunt [step]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
 
