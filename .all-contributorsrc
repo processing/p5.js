@@ -2,7 +2,7 @@
   "projectName": "p5.js",
   "projectOwner": "processing",
   "files": [
-    "README.md"
+    "CONTRIBUTORS.md"
   ],
   "imageSize": 64,
   "contributorsPerLine": 6,
@@ -7144,7 +7144,8 @@
       "profile": "https://github.com/Homaid",
       "contributions": [
         "a11y",
-        "code"
+        "code",
+        "doc"
       ]
     },
     {
@@ -7208,6 +7209,53 @@
       "profile": "https://github.com/nivanovvv",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "nbogie",
+      "name": "nbogie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69844?v=4",
+      "profile": "https://github.com/nbogie",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "SoundOfScooting",
+      "name": "SoundOfScooting",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53986193?v=4",
+      "profile": "https://github.com/SoundOfScooting",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "VANSH3104",
+      "name": "vansh kabra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/134841334?v=4",
+      "profile": "https://vansh-dev.netlify.app/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "menacingly-coded",
+      "name": "Shreya Sharma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121508087?v=4",
+      "profile": "https://github.com/menacingly-coded",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Itsrajsk",
+      "name": "Raj Kashid",
+      "avatar_url": "https://avatars.githubusercontent.com/u/117977675?v=4",
+      "profile": "https://github.com/Itsrajsk",
+      "contributions": [
+        "code"
       ]
     }
   ],
