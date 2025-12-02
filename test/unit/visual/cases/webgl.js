@@ -709,6 +709,56 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('instanced randering', async () => {
+    visualTest('can draw in a grid with floor()', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const gridSize = 5;
+          const row = p5.floor(id / gridSize);
+          const col = id - row * gridSize;
+          const blockInnerSize = 10;
+          const x = (col - gridSize / 2.0) * blockInnerSize + blockInnerSize/2;
+          const y = (gridSize / 2.0 - row) *  blockInnerSize - blockInnerSize/2;
+          inputs.position += [x, y, 0];
+          return inputs;
+        });
+      }, { p5 });
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 6))
+      p5.noStroke();
+      p5.fill(0);
+      p5.shader(shader);
+      p5.model(obj, 25);
+      screenshot();
+    });
+
+    visualTest('can draw in a grid with int()', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const gridSize = 5;
+          const row = p5.int(id / gridSize);
+          const col = id - row * gridSize;
+          const blockInnerSize = 10;
+          const x = (col - gridSize / 2.0) * blockInnerSize + blockInnerSize/2;
+          const y = (gridSize / 2.0 - row) *  blockInnerSize - blockInnerSize/2;
+          inputs.position += [x, y, 0];
+          return inputs;
+        });
+      }, { p5 });
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 6))
+      p5.noStroke();
+      p5.fill(0);
+      p5.shader(shader);
+      p5.model(obj, 25);
+      screenshot();
+    });
+  });
+  
   visualSuite('p5.strands', () => {
     visualTest('it recovers from p5.strands errors', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
