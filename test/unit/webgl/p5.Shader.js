@@ -1421,7 +1421,7 @@ suite('p5.Shader', function() {
       assert.approximately(pixelColor[2], 0, 5);   // Blue channel should be 0
     });
 
-    test.only('Can use begin/end API for hooks modifying inputs', () => {
+    test('Can use begin/end API for hooks modifying inputs', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
       const testShader = myp5.baseMaterialShader().modify(() => {
@@ -1439,7 +1439,6 @@ suite('p5.Shader', function() {
       myp5.fill('red')
       myp5.shader(testShader);
       myp5.plane(myp5.width, myp5.height);
-      console.log(myp5._renderer.canvas.toDataURL())
 
       // Check that the filter was applied (should be orange)
       const pixelColor = myp5.get(25, 25);
