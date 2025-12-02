@@ -1398,5 +1398,54 @@ suite('p5.Shader', function() {
         });
       }
     });
+
+    test('Can use begin/end API for hooks with result', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.getColor.begin();
+        myp5.getColor.result = [1.0, 0.5, 0.0, 1.0];
+        myp5.getColor.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Apply the filter
+      myp5.filter(testShader);
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
+      assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+      assert.approximately(pixelColor[2], 0, 5);   // Blue channel should be 0
+    });
+
+    test.only('Can use begin/end API for hooks modifying inputs', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs.begin();
+        debugger
+        myp5.getPixelInputs.color = [1.0, 0.5, 0.0, 1.0];
+        myp5.getPixelInputs.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Draw a fullscreen rectangle
+      myp5.noStroke();
+      myp5.fill('red')
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+      console.log(myp5._renderer.canvas.toDataURL())
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
+      assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+      assert.approximately(pixelColor[2], 0, 5);   // Blue channel should be 0
+    });
   });
 });

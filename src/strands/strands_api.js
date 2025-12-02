@@ -227,7 +227,9 @@ function createHookArguments(strandsContext, parameters){
     if(isStructType(param.type.typeName)) {
       const structTypeInfo = structType(param);
       const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
-      const structNode = createStrandsNode(id, dimension, strandsContext);
+      const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
+        structTypeInfo.properties.map(prop => prop.name)
+      );
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const propertyType = structTypeInfo.properties[i];
         Object.defineProperty(structNode, propertyType.name, {
@@ -327,12 +329,43 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
-    const hookImplementation = function(hookUserCallback) {
-      const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
+    const hook = function(hookUserCallback) {
+      const args = setupHook();
+      hook.result = hookUserCallback(...args);
+      finishHook();
+    }
+
+    let entryBlockID;
+    function setupHook() {
+      entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const userReturned = hookUserCallback(...args);
+      if (args.length === 1 && hookType.parameters[0].type.properties) {
+        for (const key of args[0].structProperties || []) {
+          Object.defineProperty(hook, key, {
+            get() {
+              return args[0][key];
+            },
+            set(val) {
+              args[0][key] = val;
+            },
+            enumerable: true,
+          });
+        }
+        if (hookType.returnType?.typeName === hookType.parameters[0].type.typeName) {
+          hook.result = args[0];
+        }
+      } else {
+        for (let i = 0; i < args.length; i++) {
+          hook[hookType.parameters[i].name] = args[i];
+        }
+      }
+      return args;
+    };
+
+    function finishHook() {
+      const userReturned = hook.result;
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
       if(isStructType(expectedReturnType.typeName)) {
@@ -385,10 +418,12 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
       });
       CFG.popBlock(cfg);
-    }
+    };
+    hook.begin = setupHook;
+    hook.end = finishHook;
     strandsContext.windowOverrides[hookType.name] = window[hookType.name];
     strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
-    window[hookType.name] = hookImplementation;
-    fn[hookType.name] = hookImplementation;
+    window[hookType.name] = hook;
+    fn[hookType.name] = hook;
   }
 }

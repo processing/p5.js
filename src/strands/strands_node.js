@@ -7,6 +7,7 @@ export class StrandsNode {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension;
+    this.structProperties = null;
 
     // Store original identifier for varying variables
     const dag = this.strandsContext.dag;
@@ -16,6 +17,10 @@ export class StrandsNode {
       this._originalBaseType = nodeData.baseType;
       this._originalDimension = nodeData.dimension;
     }
+  }
+  withStructProperties(properties) {
+    this.structProperties = properties;
+    return this;
   }
   copy() {
     return createStrandsNode(this.id, this.dimension, this.strandsContext);
@@ -30,8 +35,8 @@ export class StrandsNode {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;
@@ -85,8 +90,8 @@ export class StrandsNode {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;
