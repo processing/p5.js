@@ -2518,6 +2518,17 @@ function textCore(p5, fn) {
     return this._pInst;
   };
 
+  Renderer.prototype._middleAlignOffset = function() {
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    return (
+      (metrics.fontBoundingBoxDescent +
+        (metrics.alphabeticBaseline || -metrics.fontBoundingBoxAscent / 2)) /
+        2 -
+      (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent) / 2
+    );
+  };
+
   if (p5.Renderer2D) {
     p5.Renderer2D.prototype.textCanvas = function () {
       return this.canvas;
@@ -2607,7 +2618,7 @@ function textCore(p5, fn) {
         case fn.BASELINE:
           break;
         case textCoreConstants._CTX_MIDDLE:
-          yOff = ydiff / 2;
+          yOff = ydiff / 2 + this._middleAlignOffset();
           break;
         case fn.BOTTOM:
           yOff = ydiff;
@@ -2712,7 +2723,7 @@ function textCore(p5, fn) {
         case fn.BASELINE:
           break;
         case textCoreConstants._CTX_MIDDLE:
-          yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont();
+          yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont() + this._middleAlignOffset();
           break;
         case fn.BOTTOM:
           yOff = -(totalHeight - textSize) + (height || 0);
