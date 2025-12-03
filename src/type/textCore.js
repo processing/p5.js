@@ -2688,6 +2688,13 @@ function textCore(p5, fn) {
       return this._yAlignOffset(lineData, adjustedH);
     };
 
+    p5.RendererGL.prototype._verticalAlignFont = function() {
+      const ctx = this.textDrawingContext();
+      const metrics = ctx.measureText('X');
+      return -metrics.alphabeticBaseline ||
+        (-metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent);
+    }
+
     p5.RendererGL.prototype._yAlignOffset = function (dataArr, height) {
 
       if (typeof height === 'undefined') {
@@ -2700,12 +2707,12 @@ function textCore(p5, fn) {
         ((textLeading - textSize) * (numLines - 1));
       switch (textBaseline) { // drawingContext ?
         case fn.TOP:
-          yOff = textSize;
+          yOff = this._verticalAlignFont();
           break;
         case fn.BASELINE:
           break;
         case textCoreConstants._CTX_MIDDLE:
-          yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
+          yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont();
           break;
         case fn.BOTTOM:
           yOff = -(totalHeight - textSize) + (height || 0);
@@ -2714,7 +2721,6 @@ function textCore(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     };
