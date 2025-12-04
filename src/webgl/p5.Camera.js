@@ -2945,15 +2945,18 @@ function camera(p5, fn){
   p5.Camera = Camera;
 
   RendererGL.prototype.camera = function(...args) {
+    this.states.setValue('curCamera', this.states.curCamera.clone());
     this.states.curCamera.camera(...args);
   };
 
   RendererGL.prototype.perspective = function(...args) {
+    this.states.setValue('curCamera', this.states.curCamera.clone());
     this.states.curCamera.perspective(...args);
   };
 
   RendererGL.prototype.linePerspective = function(enable) {
     if (enable !== undefined) {
+      this.states.setValue('curCamera', this.states.curCamera.clone());
       // Set the line perspective if enable is provided
       this.states.curCamera.useLinePerspective = enable;
     } else {
@@ -2963,10 +2966,12 @@ function camera(p5, fn){
   };
 
   RendererGL.prototype.ortho = function(...args) {
+    this.states.setValue('curCamera', this.states.curCamera.clone());
     this.states.curCamera.ortho(...args);
   };
 
   RendererGL.prototype.frustum = function(...args) {
+    this.states.setValue('curCamera', this.states.curCamera.clone());
     this.states.curCamera.frustum(...args);
   };
 
