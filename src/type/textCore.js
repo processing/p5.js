@@ -2519,14 +2519,18 @@ function textCore(p5, fn) {
   };
 
   Renderer.prototype._middleAlignOffset = function() {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
     const ctx = this.textDrawingContext();
     const metrics = ctx.measureText('X');
-    return (
-      (metrics.fontBoundingBoxDescent +
-        (metrics.alphabeticBaseline || -metrics.fontBoundingBoxAscent / 2)) /
-        2 -
-      (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent) / 2
-    );
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
   };
 
   if (p5.Renderer2D) {
