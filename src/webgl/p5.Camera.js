@@ -1844,6 +1844,8 @@ class Camera {
     _cam.projMatrix = this.projMatrix.copy();
     _cam.yScale = this.yScale;
 
+    _cam.cameraType = this.cameraType;
+
     return _cam;
   }
 
