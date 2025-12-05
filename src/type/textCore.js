@@ -1905,23 +1905,15 @@ function textCore(p5, fn) {
     let boxes = lines.map((line, i) => this[type].bind(this)
     (line, x, y + i * textLeading));
 
-    // adjust the bounding boxes based on horiz. text alignment
-    if (lines.length > 1) {
-      // When width is not provided (e.g., fontBounds path), fall back to the widest line.
-      const maxWidth = boxes.reduce((m, b) => Math.max(m, b.w || 0), 0);
-
-      boxes.forEach((bb) => {
-          const w = (width ?? maxWidth);
-          bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, w);
-        });
+    if (lines.length > 1 && typeof width !== 'undefined') { // fix for #7984
+      // adjust the bounding boxes for horizontal text alignment in 2d
+      // the WebGL mode version does additional alignment adjustments
+      boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
     }
 
-    // adjust the bounding boxes based on vert. text alignment
-    if (typeof height !== 'undefined') {
-      // Call the 2D mode version: the WebGL mode version does additional
-      // alignment adjustments to account for how WebGL renders text.
-      p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height);
-    }
+    // adjust the bounding boxes for vertical text alignment in 2d
+    // the WebGL mode version does additional alignment adjustments
+    p5.Renderer2D.prototype._yAlignOffset.call(this, boxes, height || 0); // fix for #7984
 
     // get the bounds for the text block
     let bounds = boxes[0];
@@ -1936,12 +1928,12 @@ function textCore(p5, fn) {
       }
     }
 
-    if (0 && opts?.ignoreRectMode) boxes.forEach((b, i) => { // draw bounds for debugging
+    if (0 && opts?.ignoreRectMode) { // draw bounds for debugging
       let ss = context.strokeStyle;
       context.strokeStyle = 'green';
       context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
       context.strokeStyle = ss;
-    });
+    }
 
     context.textBaseline = setBaseline; // restore baseline
 
@@ -2526,6 +2518,21 @@ function textCore(p5, fn) {
     return this._pInst;
   };
 
+  Renderer.prototype._middleAlignOffset = function() {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
+  };
+
   if (p5.Renderer2D) {
     p5.Renderer2D.prototype.textCanvas = function () {
       return this.canvas;
@@ -2615,7 +2622,7 @@ function textCore(p5, fn) {
         case fn.BASELINE:
           break;
         case textCoreConstants._CTX_MIDDLE:
-          yOff = ydiff / 2;
+          yOff = ydiff / 2 + this._middleAlignOffset();
           break;
         case fn.BOTTOM:
           yOff = ydiff;
@@ -2633,7 +2640,7 @@ function textCore(p5, fn) {
   }
 
   if (p5.RendererGL) {
-    p5.RendererGL.prototype.textCanvas = function() {
+    p5.RendererGL.prototype.textCanvas = function () {
       if (!this._textCanvas) {
         this._textCanvas = document.createElement('canvas');
         this._textCanvas.width = 1;
@@ -2644,7 +2651,7 @@ function textCore(p5, fn) {
       }
       return this._textCanvas;
     };
-    p5.RendererGL.prototype.textDrawingContext = function() {
+    p5.RendererGL.prototype.textDrawingContext = function () {
       if (!this._textDrawingContext) {
         const textCanvas = this.textCanvas();
         this._textDrawingContext = textCanvas.getContext('2d');
@@ -2652,7 +2659,7 @@ function textCore(p5, fn) {
       return this._textDrawingContext;
     };
     const oldRemove = p5.RendererGL.prototype.remove;
-    p5.RendererGL.prototype.remove = function() {
+    p5.RendererGL.prototype.remove = function () {
       if (this._textCanvas) {
         this._textCanvas.parentElement.removeChild(this._textCanvas);
       }
@@ -2696,6 +2703,13 @@ function textCore(p5, fn) {
       return this._yAlignOffset(lineData, adjustedH);
     };
 
+    p5.RendererGL.prototype._verticalAlignFont = function() {
+      const ctx = this.textDrawingContext();
+      const metrics = ctx.measureText('X');
+      return -metrics.alphabeticBaseline ||
+        (-metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent);
+    }
+
     p5.RendererGL.prototype._yAlignOffset = function (dataArr, height) {
 
       if (typeof height === 'undefined') {
@@ -2708,12 +2722,12 @@ function textCore(p5, fn) {
         ((textLeading - textSize) * (numLines - 1));
       switch (textBaseline) { // drawingContext ?
         case fn.TOP:
-          yOff = textSize;
+          yOff = this._verticalAlignFont();
           break;
         case fn.BASELINE:
           break;
         case textCoreConstants._CTX_MIDDLE:
-          yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
+          yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont() + this._middleAlignOffset();
           break;
         case fn.BOTTOM:
           yOff = -(totalHeight - textSize) + (height || 0);
@@ -2722,7 +2736,6 @@ function textCore(p5, fn) {
           console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
           break;
       }
-      yOff += this.states.textFont.font?._verticalAlign(textSize) || 0; // Does this function exist?
       dataArr.forEach(ele => ele.y += yOff);
       return dataArr;
     };
