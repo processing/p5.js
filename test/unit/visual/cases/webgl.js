@@ -25,6 +25,42 @@ visualSuite('WebGL', function() {
       p5.box(20);
       screenshot();
     });
+
+    visualTest('Camera settings on framebuffers reset after push/pop', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.setAttributes({ antialias: true });
+      const fbo = p5.createFramebuffer();
+
+      p5.background(220);
+      p5.imageMode(p5.CENTER);
+
+      fbo.begin();
+      p5.push();
+      p5.ortho();
+      p5.translate(0, -25);
+      for (let i = -1; i <= 1; i++) {
+        p5.push();
+        p5.translate(i * 35, 0);
+        p5.box(25, 25, 150);
+        p5.pop();
+      }
+      p5.pop();
+
+
+      p5.push();
+      p5.translate(0, 25);
+      for (let i = -1; i <= 1; i++) {
+        p5.push();
+        p5.translate(i * 35, 0);
+        p5.box(25, 25, 150);
+        p5.pop();
+      }
+      p5.pop();
+
+      fbo.end();
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
   });
 
   visualSuite('filter', function() {
@@ -758,7 +794,7 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
-  
+
   visualSuite('p5.strands', () => {
     visualTest('it recovers from p5.strands errors', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
