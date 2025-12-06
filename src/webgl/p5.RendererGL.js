@@ -634,8 +634,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
     };
 
-    this.pointSize = 5.0; //default point size
-    this.curStrokeWeight = 1;
+    this.pointSize = this.curStrokeWeight;
     this.curStrokeCap = constants.ROUND;
     this.curStrokeJoin = constants.ROUND;
 
