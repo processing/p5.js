@@ -1,8 +1,9 @@
 import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
 import { Shader } from '../webgl/p5.Shader';
-import { Texture } from '../webgl/p5.Texture';
+import { Texture, MipmapTexture } from '../webgl/p5.Texture';
 import { Image } from '../image/p5.Image';
-import { RGB, RGBA } from '../color/creating_reading';
+import { RGBA } from '../color/creating_reading';
+import { Camera } from '../webgl/p5.Camera';
 import * as constants from '../core/constants';
 import { DataType } from '../strands/ir_types.js';
 
@@ -16,6 +17,7 @@ import {Element} from "../dom/p5.Element";
 import { wgslBackend } from './strands_wgslBackend';
 import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
+import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 
 const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
@@ -50,6 +52,10 @@ class RendererWebGPU extends Renderer3D {
     this._pixelReadCanvas = null;
     this._pixelReadCtx = null;
     this.mainFramebuffer = null;
+
+    this.finalCamera = new Camera(this);
+    this.finalCamera._computeCameraDefaultSettings();
+    this.finalCamera._setDefaultCamera();
   }
 
   async setupContext() {
@@ -991,6 +997,7 @@ class RendererWebGPU extends Renderer3D {
 
     // this._pInst.background('red');
     this._pInst.push();
+    this._pInst.setCamera(this.finalCamera);
     this._pInst.resetShader();
     this._pInst.imageMode(this._pInst.CENTER);
     this._pInst.image(this.mainFramebuffer, 0, 0);
@@ -2446,6 +2453,105 @@ class RendererWebGPU extends Renderer3D {
       );
     }
     return this._baseFilterShader;
+  }
+
+  /*
+   * WebGPU-specific implementation of imageLight shader creation
+   */
+  _createImageLightShader(type) {
+    if (type === 'diffused') {
+      return this._pInst.createShader(
+        imageLightVertexShader,
+        imageLightDiffusedFragmentShader
+      );
+    } else if (type === 'specular') {
+      return this._pInst.createShader(
+        imageLightVertexShader,
+        imageLightSpecularFragmentShader
+      );
+    }
+    throw new Error(`Unknown imageLight shader type: ${type}`);
+  }
+
+  /*
+   * WebGPU-specific implementation of mipmap texture creation
+   */
+  _createMipmapTexture(levels) {
+    return new MipmapTexture(this, levels, {});
+  }
+
+  /*
+   * Prepare WebGPU texture to accumulate mip levels directly
+   */
+  _prepareMipmapData(size, mipLevels) {
+    // Create WebGPU texture with mipmaps upfront
+    const textureDescriptor = {
+      size: {
+        width: size,
+        height: size,
+        depthOrArrayLayers: 1,
+      },
+      mipLevelCount: mipLevels,
+      format: 'rgba8unorm',
+      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+    };
+
+    const gpuTexture = this.device.createTexture(textureDescriptor);
+
+    return {
+      gpuTexture,
+      size,
+      mipLevels,
+      format: 'rgba8unorm'
+    };
+  }
+
+  /*
+   * Copy framebuffer content directly to WebGPU texture mip level
+   */
+  _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
+    // Copy from framebuffer texture to the mip level
+    const commandEncoder = this.device.createCommandEncoder();
+
+    // Get the underlying WebGPU texture from the framebuffer
+    const sourceTexture = framebuffer.color.rawTexture().texture;
+
+    commandEncoder.copyTextureToTexture(
+      {
+        texture: sourceTexture,
+        origin: { x: 0, y: 0, z: 0 },
+      },
+      {
+        texture: mipmapData.gpuTexture,
+        mipLevel: mipLevel,
+        origin: { x: 0, y: 0, z: 0 },
+      },
+      {
+        width: width,
+        height: height,
+        depthOrArrayLayers: 1,
+      }
+    );
+
+    this.device.queue.submit([commandEncoder.finish()]);
+  }
+
+  /*
+   * Create final MipmapTexture from WebGPU texture
+   */
+  _finalizeMipmapTexture(mipmapData) {
+    // Create a MipmapTexture that wraps the pre-built WebGPU texture
+    return new MipmapTexture(this, mipmapData, {});
+  }
+
+  createMipmapTextureHandle({ gpuTexture, format, dataType, width, height }) {
+    // WebGPU always uses pre-built GPU textures for mipmaps
+    return {
+      texture: gpuTexture,
+      view: gpuTexture.createView(),
+      glFormat: format || 'rgba8unorm',
+      glDataType: dataType || 'uint8'
+    };
   }
 }
 

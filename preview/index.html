@@ -29,9 +29,11 @@
       let tex;
       let font;
       let redFilter;
+      let env;
 
       p.setup = async function () {
-        await p.createCanvas(400, 400, p.WEBGPU);
+        await p.createCanvas(400, 400, p.WEBGL);
+        env = await p.loadImage('img/spheremap.jpg');
         font = await p.loadFont(
           'font/PlayfairDisplay.ttf'
         );
@@ -97,7 +99,7 @@
       p.draw = function () {
         p.clear();
         p.push();
-        p.clip(() => p.rect(-50, -50, 200, 200));
+        //p.clip(() => p.rect(-50, -50, 200, 200));
         /*p.orbitControl();
         p.push();
         p.textAlign(p.CENTER, p.CENTER);
@@ -116,16 +118,19 @@
         p.orbitControl();
         const t = p.millis() * 0.002;
         p.background(200);
+        p.push();
+        p.imageLight(env);
         p.shader(sh);
         // p.strokeShader(ssh)
-        p.ambientLight(150);
-        p.directionalLight(100, 100, 100, 0, 1, -1);
-        p.pointLight(155, 155, 155, 0, -200, 500);
+        p.ambientLight(10);
+        //p.directionalLight(100, 100, 100, 0, 1, -1);
+        //p.pointLight(155, 155, 155, 0, -200, 500);
         p.specularMaterial(255);
-        p.shininess(300);
+        p.shininess(50);
+        p.metalness(100);
         //p.stroke('white');
         p.noStroke();
-        for (const [i, c] of ['red', 'lime', 'blue'].entries()) {
+        for (const [i, c] of ['red', 'gray', 'blue'].entries()) {
           p.push();
           p.fill(c);
           p.translate(
@@ -143,6 +148,7 @@
           }
           p.pop();
         }
+        p.pop();
 
         // Test beginShape/endShape with immediate mode shapes
         p.push();
@@ -174,7 +180,7 @@
 
         p.pop();
 
-        p.filter(p.BLUR, 10)
+        // p.filter(p.BLUR, 10)
         p.pop();
       };
     };

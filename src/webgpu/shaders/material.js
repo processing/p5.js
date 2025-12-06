@@ -146,6 +146,11 @@ ${uniforms}
 @group(0) @binding(1) var uSampler: texture_2d<f32>;
 @group(0) @binding(2) var uSampler_sampler: sampler;
 
+@group(0) @binding(3) var environmentMapDiffused: texture_2d<f32>;
+@group(0) @binding(4) var environmentMapDiffused_sampler: sampler;
+@group(0) @binding(5) var environmentMapSpecular: texture_2d<f32>;
+@group(0) @binding(6) var environmentMapSpecular_sampler: sampler;
+
 struct ColorComponents {
   baseColor: vec3<f32>,
   opacity: f32,
@@ -181,6 +186,64 @@ struct LightIntensityResult {
 
 const specularFactor = 2.0;
 const diffuseFactor = 0.73;
+const PI = 3.14159265359;
+
+fn mapTextureToNormal(v: vec3<f32>) -> vec2<f32> {
+  // x = r sin(phi) cos(theta)
+  // y = r cos(phi)
+  // z = r sin(phi) sin(theta)
+  let phi = acos(v.y);
+  // if phi is 0, then there are no x, z components
+  var theta = 0.0;
+  // else
+  theta = acos(v.x / sin(phi));
+  let sinTheta = v.z / sin(phi);
+  if (sinTheta < 0.0) {
+    // Turn it into -theta, but in the 0-2PI range
+    theta = 2.0 * PI - theta;
+  }
+  theta = theta / (2.0 * PI);
+  let phiNorm = phi / PI;
+
+  let angles = vec2<f32>(fract(theta + 0.25), 1.0 - phiNorm);
+  return angles;
+}
+
+fn calculateImageDiffuse(vNormal: vec3<f32>, vViewPosition: vec3<f32>, metallic: f32) -> vec3<f32> {
+  // make 2 seperate builds
+  let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);  // hardcoded world camera position
+  let worldNormal = normalize(vNormal * uniforms.uCameraRotation);
+  let newTexCoord = mapTextureToNormal(worldNormal);
+  let texture = textureSample(environmentMapDiffused, environmentMapDiffused_sampler, newTexCoord);
+  // this is to make the darker sections more dark
+  // png and jpg usually flatten the brightness so it is to reverse that
+  return mix(smoothstep(vec3<f32>(0.0), vec3<f32>(1.0), texture.xyz), vec3<f32>(0.0), metallic);
+}
+
+fn calculateImageSpecular(vNormal: vec3<f32>, vViewPosition: vec3<f32>, shininess: f32, metallic: f32) -> vec3<f32> {
+  let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);
+  let worldNormal = normalize(vNormal);
+  let lightDirection = normalize(vViewPosition - worldCameraPosition);
+  let R = reflect(lightDirection, worldNormal) * uniforms.uCameraRotation;
+  let newTexCoord = mapTextureToNormal(R);
+
+  // In p5js the range of shininess is >= 1,
+  // Therefore roughness range will be ([0,1]*8)*20 or [0, 160]
+  // The factor of 8 is because currently the getSpecularTexture
+  // only calculated 8 different levels of roughness
+  // The factor of 20 is just to spread up this range so that,
+  // [1, max] of shininess is converted to [0,160] of roughness
+  let roughness = 20.0 / shininess;
+  let outColor = textureSampleLevel(environmentMapSpecular, environmentMapSpecular_sampler, newTexCoord, roughness * 8.0 - 1.);
+
+  // this is to make the darker sections more dark
+  // png and jpg usually flatten the brightness so it is to reverse that
+  return mix(
+    pow(outColor.xyz, vec3<f32>(10.0)),
+    pow(outColor.xyz, vec3<f32>(1.2)),
+    metallic
+  );
+}
 
 fn phongSpecular(
   lightDirection: vec3<f32>,
@@ -293,7 +356,11 @@ fn totalLight(
     }
   }
 
-  // TODO: image light
+  // Image light contribution
+  if (uniforms.uUseImageLight != 0) {
+    totalDiffuse += calculateImageDiffuse(normal, modelPosition, metallic);
+    totalSpecular += calculateImageSpecular(normal, modelPosition, shininess, metallic);
+  }
 
   return LightResult(
     totalDiffuse * diffuseFactor,

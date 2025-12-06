@@ -887,106 +887,82 @@ class RendererGL extends Renderer3D {
     return code;
   }
 
-  // TODO move to super class
   /*
-   *  used in imageLight,
-   *  To create a blurry image from the input non blurry img, if it doesn't already exist
-   *  Add it to the diffusedTexture map,
-   *  Returns the blurry image
-   *  maps a Image used by imageLight() to a p5.Framebuffer
+   * WebGL-specific implementation of imageLight shader creation
    */
-  getDiffusedTexture(input) {
-    // if one already exists for a given input image
-    if (this.diffusedTextures.get(input) != null) {
-      return this.diffusedTextures.get(input);
-    }
-    // if not, only then create one
-    let newFramebuffer;
-    // hardcoded to 200px, because it's going to be blurry and smooth
-    let smallWidth = 200;
-    let width = smallWidth;
-    let height = Math.floor(smallWidth * (input.height / input.width));
-    newFramebuffer = new Framebuffer(this, {
-      width,
-      height,
-      density: 1,
-    });
-    // create framebuffer is like making a new sketch, all functions on main
-    // sketch it would be available on framebuffer
-    if (!this.diffusedShader) {
-      this.diffusedShader = this._pInst.createShader(
+  _createImageLightShader(type) {
+    if (type === 'diffused') {
+      return this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightDiffusedFrag
       );
-    }
-    newFramebuffer.draw(() => {
-      this.shader(this.diffusedShader);
-      this.diffusedShader.setUniform("environmentMap", input);
-      this.states.setValue("strokeColor", null);
-      this.noLights();
-      this.plane(width, height);
-    });
-    this.diffusedTextures.set(input, newFramebuffer);
-    return newFramebuffer;
-  }
-
-  // TODO move to super class
-  /*
-   *  used in imageLight,
-   *  To create a texture from the input non blurry image, if it doesn't already exist
-   *  Creating 8 different levels of textures according to different
-   *  sizes and atoring them in `levels` array
-   *  Creating a new Mipmap texture with that `levels` array
-   *  Storing the texture for input image in map called `specularTextures`
-   *  maps the input Image to a p5.MipmapTexture
-   */
-  getSpecularTexture(input) {
-    // check if already exits (there are tex of diff resolution so which one to check)
-    // currently doing the whole array
-    if (this.specularTextures.get(input) != null) {
-      return this.specularTextures.get(input);
-    }
-    // Hardcoded size
-    const size = 512;
-    let tex;
-    const levels = [];
-    const framebuffer = new Framebuffer(this, {
-      width: size,
-      height: size,
-      density: 1,
-    });
-    let count = Math.log(size) / Math.log(2);
-    if (!this.specularShader) {
-      this.specularShader = this._pInst.createShader(
+    } else if (type === 'specular') {
+      return this._pInst.createShader(
         defaultShaders.imageLightVert,
         defaultShaders.imageLightSpecularFrag
       );
     }
-    // currently only 8 levels
-    // This loop calculates 8 framebuffers of varying size of canvas
-    // and corresponding different roughness levels.
-    // Roughness increases with the decrease in canvas size,
-    // because rougher surfaces have less detailed/more blurry reflections.
-    for (let w = size; w >= 1; w /= 2) {
-      framebuffer.resize(w, w);
-      let currCount = Math.log(w) / Math.log(2);
-      let roughness = 1 - currCount / count;
-      framebuffer.draw(() => {
-        this.shader(this.specularShader);
-        this.clear();
-        this.specularShader.setUniform("environmentMap", input);
-        this.specularShader.setUniform("roughness", roughness);
-        this.states.setValue("strokeColor", null);
-        this.noLights();
-        this.plane(w, w);
-      });
-      levels.push(framebuffer.get().drawingContext.getImageData(0, 0, w, w));
+    throw new Error(`Unknown imageLight shader type: ${type}`);
+  }
+
+
+  /*
+   * WebGL-specific implementation of mipmap texture creation
+   */
+  _createMipmapTexture(levels) {
+    return new MipmapTexture(this, levels, {});
+  }
+
+  /*
+   * Prepare array to collect ImageData levels for WebGL
+   */
+  _prepareMipmapData(size, mipLevels) {
+    return { levels: [], size, mipLevels };
+  }
+
+  /*
+   * Accumulate ImageData from framebuffer for WebGL
+   */
+  _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
+    const imageData = framebuffer.get().drawingContext.getImageData(0, 0, width, height);
+    mipmapData.levels.push(imageData);
+  }
+
+  /*
+   * Create final MipmapTexture from collected ImageData for WebGL
+   */
+  _finalizeMipmapTexture(mipmapData) {
+    return new MipmapTexture(this, mipmapData.levels, {});
+  }
+
+  createMipmapTextureHandle({ levels, format, dataType, width, height }) {
+    const gl = this.GL;
+    const texture = gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    
+    // Determine GL format and data type
+    const glFormat = gl.RGBA;
+    const glDataType = gl.UNSIGNED_BYTE;
+    
+    for (let level = 0; level < levels.length; level++) {
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        level,
+        glFormat,
+        glFormat,
+        glDataType,
+        levels[level]
+      );
     }
-    // Free the Framebuffer
-    framebuffer.remove();
-    tex = new MipmapTexture(this, levels, {});
-    this.specularTextures.set(input, tex);
-    return tex;
+
+    // Set mipmap-appropriate filtering
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    
+    return { texture, glFormat, glDataType };
   }
 
   /* Binds a buffer to the drawing context

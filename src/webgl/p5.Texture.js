@@ -304,18 +304,16 @@ class Texture {
 }
 
 class MipmapTexture extends Texture {
-  constructor(renderer, levels, settings) {
-    super(renderer, levels, settings);
-    const gl = this._renderer.GL;
-    if (this.glMinFilter === gl.LINEAR) {
-      this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-    }
-  }
+  constructor(renderer, levels, settings = {}) {
+    // Set default mipmap filtering
+    const mipmapSettings = {
+      minFilter: constants.LINEAR,
+      magFilter: constants.LINEAR,
+      ...settings
+    };
 
-  glFilter(_filter) {
-    const gl = this._renderer.GL;
-    // TODO: support others
-    return gl.LINEAR_MIPMAP_LINEAR;
+    super(renderer, levels, mipmapSettings);
+    this.levels = levels;
   }
 
   _getTextureDataFromSource() {
@@ -323,26 +321,42 @@ class MipmapTexture extends Texture {
   }
 
   init(levels) {
-    const gl = this._renderer.GL;
-    this.glTex = gl.createTexture();
+    // Handle both ImageData array (WebGL) and WebGPU texture object
+    if (Array.isArray(levels)) {
+      // WebGL path: levels is array of ImageData
+      const firstLevel = levels[0];
+      this.width = firstLevel.width;
+      this.height = firstLevel.height;
 
-    this.bindTexture();
-    for (let level = 0; level < levels.length; level++) {
-      gl.texImage2D(
-        this.glTarget,
-        level,
-        this.glFormat,
-        this.glFormat,
-        this.glDataType,
-        levels[level]
-      );
+      // Let renderer create the mipmap texture handle
+      this.textureHandle = this._renderer.createMipmapTextureHandle({
+        levels: levels,
+        format: this.format,
+        dataType: this.dataType,
+        width: this.width,
+        height: this.height,
+      });
+    } else {
+      // WebGPU path: levels is a mipmapData object with pre-built GPU texture
+      this.width = levels.size;
+      this.height = levels.size;
+
+      // Let renderer create the texture handle from the GPU texture
+      this.textureHandle = this._renderer.createMipmapTextureHandle({
+        gpuTexture: levels.gpuTexture,
+        format: levels.format,
+        dataType: 'uint8',
+        width: this.width,
+        height: this.height,
+      });
     }
 
-    this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-
-    this.unbindTexture();
+    this._renderer.setTextureParams(this, {
+      minFilter: this.minFilter,
+      magFilter: this.magFilter,
+      wrapS: this.wrapS,
+      wrapT: this.wrapT
+    });
   }
 
   update() {}

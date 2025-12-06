@@ -1820,6 +1820,152 @@ export class Renderer3D extends Renderer {
     return makeFilterShader(this, operation, p5);
   }
 
+  /*
+   * As part of imageLight(): we need to create a texture representing
+   * the diffused light hitting an object from each angle. This will
+   * accumulate light from angles in a hemisphere, weighted according to
+   * how head-on the light angle is.
+   *
+   * This method returns a p5.Framebuffer that stores these values, mapping
+   * an angle to each pixel. This creates and caches textures for reuse, since
+   * creating this texture is somewhat expensive.
+   */
+  getDiffusedTexture(input) {
+    // if one already exists for a given input image
+    if (this.diffusedTextures.get(input) != null) {
+      return this.diffusedTextures.get(input);
+    }
+    // if not, only then create one
+    let newFramebuffer;
+    // hardcoded to 200px, because it's going to be blurry and smooth
+    let smallWidth = 200;
+    let width = smallWidth;
+    let height = Math.floor(smallWidth * (input.height / input.width));
+    newFramebuffer = new Framebuffer(this, {
+      width,
+      height,
+      density: 1,
+    });
+    // create framebuffer is like making a new sketch, all functions on main
+    // sketch it would be available on framebuffer
+    if (!this.diffusedShader) {
+      this.diffusedShader = this._createImageLightShader("diffused");
+    }
+    newFramebuffer.draw(() => {
+      this.shader(this.diffusedShader);
+      this._setImageLightShaderUniforms(this.diffusedShader, input);
+      this.states.setValue("strokeColor", null);
+      this.noLights();
+      this.plane(width, height);
+    });
+    this.diffusedTextures.set(input, newFramebuffer);
+    return newFramebuffer;
+  }
+
+  /*
+   * used in imageLight,
+   * To create a texture from the input non blurry image, if it doesn't already exist
+   * Creating 8 different levels of textures according to different
+   * sizes and storing them in `levels` array
+   * Creating a new Mipmap texture with that `levels` array
+   * Storing the texture for input image in map called `specularTextures`
+   * maps the input Image to a p5.MipmapTexture
+   */
+  getSpecularTexture(input) {
+    // check if already exits (there are tex of diff resolution so which one to check)
+    // currently doing the whole array
+    if (this.specularTextures.get(input) != null) {
+      return this.specularTextures.get(input);
+    }
+    // Hardcoded size
+    const size = 512;
+    let tex;
+    let count = Math.floor(Math.log2(size)) + 1; // Actual number of mip levels from size down to 1x1
+
+    if (!this.specularShader) {
+      this.specularShader = this._createImageLightShader("specular");
+    }
+
+    // Prepare mipmap level accumulator
+    const mipmapData = this._prepareMipmapData(size, count);
+
+    const framebuffer = new Framebuffer(this, {
+      width: size,
+      height: size,
+      density: 1,
+    });
+
+    // currently only 8 levels
+    // This loop calculates 8 framebuffers of varying size of canvas
+    // and corresponding different roughness levels.
+    // Roughness increases with the decrease in canvas size,
+    // because rougher surfaces have less detailed/more blurry reflections.
+    let mipLevel = 0;
+    for (let w = size; w >= 1; w /= 2) {
+      framebuffer.resize(w, w);
+      let currCount = Math.log(w) / Math.log(2);
+      let roughness = 1 - currCount / count;
+      framebuffer.draw(() => {
+        this.shader(this.specularShader);
+        this.clear();
+        this._setImageLightShaderUniforms(
+          this.specularShader,
+          input,
+          roughness,
+        );
+        this.states.setValue("strokeColor", null);
+        this.noLights();
+        this.plane(w, w);
+      });
+
+      // Accumulate framebuffer content for this mip level
+      this._accumulateMipLevel(framebuffer, mipmapData, mipLevel, w, w);
+      mipLevel++;
+    }
+
+    // Free the Framebuffer
+    framebuffer.remove();
+
+    // Create the final MipmapTexture from accumulated data
+    tex = this._finalizeMipmapTexture(mipmapData);
+    this.specularTextures.set(input, tex);
+    return tex;
+  }
+
+  /*
+   * Abstract methods to be implemented by specific renderers
+   */
+  _createImageLightShader(type) {
+    throw new Error(
+      "_createImageLightShader must be implemented by the renderer",
+    );
+  }
+
+  _setImageLightShaderUniforms(shader, input, roughness) {
+    shader.setUniform("environmentMap", input);
+    if (roughness !== undefined) {
+      shader.setUniform("roughness", roughness);
+    }
+  }
+
+  _createMipmapTexture(levels) {
+    throw new Error("_createMipmapTexture must be implemented by the renderer");
+  }
+
+  _prepareMipmapData(size, mipLevels) {
+    throw new Error("_prepareMipmapData must be implemented by the renderer");
+  }
+
+  _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
+    throw new Error("_accumulateMipLevel must be implemented by the renderer");
+  }
+
+  _finalizeMipmapTexture(mipmapData) {
+    throw new Error(
+      "_finalizeMipmapTexture must be implemented by the renderer",
+    );
+  }
+
   remove() {
     if (this._textCanvas) {
       this._textCanvas.parentElement.removeChild(this._textCanvas);
