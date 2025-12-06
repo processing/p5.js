@@ -25,7 +25,7 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
-  function initStrandsContext(ctx, backend, { active = false } = {}) {
+  function initStrandsContext(ctx, backend, { active = false, renderer = null, baseShader = null } = {}) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
@@ -35,6 +35,8 @@ function strands(p5, fn) {
     ctx.globalAssignments = [];
     ctx.backend = backend;
     ctx.active = active;
+    ctx.renderer = renderer;
+    ctx.baseShader = baseShader;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
@@ -77,6 +79,8 @@ function strands(p5, fn) {
       // const backend = glslBackend;
       initStrandsContext(strandsContext, this._renderer.strandsBackend, {
         active: true,
+        renderer: this._renderer,
+        baseShader: this,
       });
       createShaderHooksFunctions(strandsContext, fn, this);
       // TODO: expose this, is internal for debugging for now.

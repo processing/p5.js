@@ -16,7 +16,14 @@ export function generateShaderCode(strandsContext) {
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
     const key = backend.generateHookUniformKey(name, typeInfo);
-    hooksObj.uniforms[key] = defaultValue;
+    if (key !== null) {
+      hooksObj.uniforms[key] = defaultValue;
+    }
+  }
+
+  // Add texture bindings to declarations for WebGPU backend
+  if (backend.addTextureBindingsToDeclarations) {
+    backend.addTextureBindingsToDeclarations(strandsContext);
   }
 
   for (const { hookType, rootNodeID, entryBlockID, shaderContext } of strandsContext.hooks) {

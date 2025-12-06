@@ -1644,6 +1644,9 @@ export class Renderer3D extends Renderer {
       let specularLight = this.getSpecularTexture(this.states.activeImageLight);
 
       shader.setUniform("environmentMapSpecular", specularLight);
+    } else {
+      shader.setUniform("environmentMapDiffused", this._getEmptyTexture());
+      shader.setUniform("environmentMapSpecular", this._getEmptyTexture());
     }
   }
 
@@ -1830,7 +1833,7 @@ export class Renderer3D extends Renderer {
    * an angle to each pixel. This creates and caches textures for reuse, since
    * creating this texture is somewhat expensive.
    */
-  getDiffusedTexture(input) {
+  makeDiffusedTexture(input) {
     // if one already exists for a given input image
     if (this.diffusedTextures.get(input) != null) {
       return this.diffusedTextures.get(input);
@@ -1861,6 +1864,9 @@ export class Renderer3D extends Renderer {
     this.diffusedTextures.set(input, newFramebuffer);
     return newFramebuffer;
   }
+  getDiffusedTexture(input) {
+    return this.diffusedTextures.get(input);
+  }
 
   /*
    * used in imageLight,
@@ -1871,7 +1877,7 @@ export class Renderer3D extends Renderer {
    * Storing the texture for input image in map called `specularTextures`
    * maps the input Image to a p5.MipmapTexture
    */
-  getSpecularTexture(input) {
+  makeSpecularTexture(input) {
     // check if already exits (there are tex of diff resolution so which one to check)
     // currently doing the whole array
     if (this.specularTextures.get(input) != null) {
@@ -1931,6 +1937,9 @@ export class Renderer3D extends Renderer {
     this.specularTextures.set(input, tex);
     return tex;
   }
+  getSpecularTexture(input) {
+    return this.specularTextures.get(input);
+  }
 
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
@@ -1949,6 +1958,7 @@ export class Renderer3D extends Renderer {
           const angleX = p5.mix(uFovX/2.0, -uFovX/2.0, inputs.texCoord.x);
           let rotatedNormal = p5.normalize([angleX, angleY, 1]);
           rotatedNormal = [
+            // Don't mind me, just doing matrix vector multiplication...
             p5.dot(rotatedNormal, uN1),
             p5.dot(rotatedNormal, uN2),
             p5.dot(rotatedNormal, uN3),
@@ -1957,8 +1967,8 @@ export class Renderer3D extends Renderer {
           rotatedNormal.z = rotatedNormal.x;
           rotatedNormal.x = -temp;
           const suv = [
-            0.5 + 0.5 * (-rotatedNormal.y),
-            p5.atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * p5.PI) + 0.5
+            p5.atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * p5.PI) + 0.5,
+            0.5 + 0.5 * (-rotatedNormal.y)
           ];
           return p5.getTexture(uEnvMap, suv);
         })
@@ -1968,10 +1978,12 @@ export class Renderer3D extends Renderer {
     this.scratchMat3.invert(this.scratchMat3); // uNMMatrix is 3x3
     this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
     this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
-    // this.sphereMapping.setUniform("uNewNormalMatrix", this.scratchMat3.mat3);
-    this.sphereMapping.setUniform("uN1", this.scratchMat3.mat3.slice(0, 3));
-    this.sphereMapping.setUniform("uN2", this.scratchMat3.mat3.slice(3, 6));
-    this.sphereMapping.setUniform("uN3", this.scratchMat3.mat3.slice(6));
+    // Pass in the normal matrix as three vectors. TODO replace this with
+    // an actual matrix uniform once we have those again.
+    const m = this.scratchMat3.mat3;
+    this.sphereMapping.setUniform("uN1", [m[0], m[3], m[6]]);
+    this.sphereMapping.setUniform("uN2", [m[1], m[4], m[7]]);
+    this.sphereMapping.setUniform("uN3", [m[2], m[5], m[8]]);
     this.sphereMapping.setUniform("uEnvMap", img);
     return this.sphereMapping;
   }

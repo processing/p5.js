@@ -191,6 +191,27 @@ export const wgslBackend = {
 
     return mutableCopies ? firstLine + '\n' + mutableCopies : firstLine;
   },
+  addTextureBindingsToDeclarations(strandsContext) {
+    // Add texture and sampler bindings for sampler2D uniforms to both vertex and fragment declarations
+    if (!strandsContext.renderer || !strandsContext.baseShader) return;
+
+    // Get the next available binding index from the renderer
+    let bindingIndex = strandsContext.renderer.getNextBindingIndex(strandsContext.baseShader);
+
+    for (const {name, typeInfo} of strandsContext.uniforms) {
+      if (typeInfo.baseType === 'sampler2D') {
+        const textureBinding = `@group(0) @binding(${bindingIndex}) var ${name}: texture_2d<f32>;`;
+        const samplerBinding = `@group(0) @binding(${bindingIndex + 1}) var ${name}_sampler: sampler;`;
+
+        strandsContext.vertexDeclarations.add(textureBinding);
+        strandsContext.vertexDeclarations.add(samplerBinding);
+        strandsContext.fragmentDeclarations.add(textureBinding);
+        strandsContext.fragmentDeclarations.add(samplerBinding);
+
+        bindingIndex += 2;
+      }
+    }
+  },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {
@@ -199,6 +220,11 @@ export const wgslBackend = {
     return primitiveTypeName;
   },
   generateHookUniformKey(name, typeInfo) {
+    // For sampler2D types, we don't add them to the uniform struct
+    // Instead, they become separate texture and sampler bindings
+    if (typeInfo.baseType === 'sampler2D') {
+      return null; // Signal that this should not be added to uniform struct
+    }
     return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
   },
   generateVaryingVariable(varName, typeInfo) {
@@ -332,9 +358,9 @@ export const wgslBackend = {
         }
       }
 
-      // Check if this is a uniform variable
-      const isUniform = generationContext.strandsContext?.uniforms?.some(uniform => uniform.name === node.identifier);
-      if (isUniform) {
+      // Check if this is a uniform variable (but not a texture)
+      const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
+      if (uniform && uniform.typeInfo.baseType !== 'sampler2D') {
         return `uniforms.${node.identifier}`;
       }
 
@@ -366,7 +392,13 @@ export const wgslBackend = {
             return `${left} % ${right}`;
           }
         }
-        
+
+        // Convert atan(y, x) to atan2(y, x) in WGSL
+        if (node.identifier === 'atan' && node.dependsOn.length === 2) {
+          const functionArgs = node.dependsOn.map(arg => this.generateExpression(generationContext, dag, arg));
+          return `atan2(${functionArgs.join(', ')})`;
+        }
+
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }

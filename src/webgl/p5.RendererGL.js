@@ -26,7 +26,6 @@ import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
 import normalVert from "./shaders/normal.vert";
 import normalFrag from "./shaders/normal.frag";
 import basicFrag from "./shaders/basic.frag";
-import sphereMappingFrag from "./shaders/sphereMapping.frag";
 import lightVert from "./shaders/light.vert";
 import lightTextureFrag from "./shaders/light_texture.frag";
 import phongVert from "./shaders/phong.vert";
@@ -46,7 +45,6 @@ const defaultShaders = {
   normalVert,
   normalFrag,
   basicFrag,
-  sphereMappingFrag,
   lightVert: lightingShader + lightVert,
   lightTextureFrag,
   phongVert,
@@ -61,7 +59,6 @@ const defaultShaders = {
   filterBaseVert,
   filterBaseFrag,
 };
-let sphereMapping = defaultShaders.sphereMappingFrag;
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }

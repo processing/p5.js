@@ -997,6 +997,8 @@ class RendererWebGPU extends Renderer3D {
 
     // this._pInst.background('red');
     this._pInst.push();
+    this.states.setValue('enableLighting', false);
+    this.states.setValue('activeImageLight', null);
     this._pInst.setCamera(this.finalCamera);
     this._pInst.resetShader();
     this._pInst.imageMode(this._pInst.CENTER);
@@ -1344,7 +1346,7 @@ class RendererWebGPU extends Renderer3D {
 
     // Extract the struct name from the uniform variable declaration
     const uniformVarRegex = /@group\(0\)\s+@binding\(0\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/;
-    const uniformVarMatch = uniformVarRegex.exec(shader._vertSrc);
+    const uniformVarMatch = uniformVarRegex.exec(shader.vertSrc());
     if (!uniformVarMatch) {
       throw new Error('Expected a uniform struct bound to @group(0) @binding(0)');
     }
@@ -1355,8 +1357,8 @@ class RendererWebGPU extends Renderer3D {
     // TODO: support other texture types
     const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
     for (const [src, visibility] of [
-      [shader._vertSrc, GPUShaderStage.VERTEX],
-      [shader._fragSrc, GPUShaderStage.FRAGMENT]
+      [shader.vertSrc(), GPUShaderStage.VERTEX],
+      [shader.fragSrc(), GPUShaderStage.FRAGMENT]
     ]) {
       let match;
       while ((match = samplerRegex.exec(src)) !== null) {
@@ -1396,6 +1398,27 @@ class RendererWebGPU extends Renderer3D {
       }
     }
     return [...Object.values(uniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers)];
+  }
+
+  getNextBindingIndex(shader, group = 0) {
+    // Get the highest binding index in the specified group and return the next available
+    const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler|uniform)/g;
+    let maxBindingIndex = -1;
+
+    for (const [src, visibility] of [
+      [shader.vertSrc(), GPUShaderStage.VERTEX],
+      [shader.fragSrc(), GPUShaderStage.FRAGMENT]
+    ]) {
+      let match;
+      while ((match = samplerRegex.exec(src)) !== null) {
+        const [_, groupIndex, bindingIndex] = match;
+        if (parseInt(groupIndex) === group) {
+          maxBindingIndex = Math.max(maxBindingIndex, parseInt(bindingIndex));
+        }
+      }
+    }
+
+    return maxBindingIndex + 1;
   }
 
   updateUniformValue(_shader, uniform, data) {

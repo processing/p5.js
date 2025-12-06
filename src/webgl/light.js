@@ -1558,6 +1558,9 @@ function light(p5, fn){
     // for sending uniforms to the fillshader
     this.states.setValue('activeImageLight', img);
     this.states.setValue('enableLighting', true);
+    // Make sure textures are cached
+    this.makeDiffusedTexture(img);
+    this.makeSpecularTexture(img);
   };
 
   Renderer3D.prototype.lights = function() {
