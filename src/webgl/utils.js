@@ -104,7 +104,8 @@ export function readPixelWebGL(gl, framebuffer, x, y, format, type, flipY) {
 export function setWebGLTextureParams(texture, gl, webglVersion) {
   texture.bindTexture();
   const glMinFilter =
-    texture.minFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
+    texture.minFilter === constants.NEAREST ? gl.NEAREST :
+      texture.minFilter === constants.LINEAR_MIPMAP ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
   const glMagFilter =
     texture.magFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
 

@@ -1932,6 +1932,50 @@ export class Renderer3D extends Renderer {
     return tex;
   }
 
+  _getSphereMapping(img) {
+    if (!this.sphereMapping) {
+      const p5 = this._pInst;
+      this.sphereMapping = this.baseFilterShader().modify(() => {
+        const uEnvMap = p5.uniformTexture();
+        const uFovY = p5.uniformFloat();
+        const uAspect = p5.uniformFloat();
+        // Hack: we don't have matrix uniforms yet; use three vectors
+        const uN1 = p5.uniformVec3();
+        const uN2 = p5.uniformVec3();
+        const uN3 = p5.uniformVec3();
+        p5.getColor((inputs) => {
+          const uFovX = uFovY * uAspect;
+          const angleY = p5.mix(uFovY/2.0,  -uFovY/2.0, inputs.texCoord.y);
+          const angleX = p5.mix(uFovX/2.0, -uFovX/2.0, inputs.texCoord.x);
+          let rotatedNormal = p5.normalize([angleX, angleY, 1]);
+          rotatedNormal = [
+            p5.dot(rotatedNormal, uN1),
+            p5.dot(rotatedNormal, uN2),
+            p5.dot(rotatedNormal, uN3),
+          ];
+          const temp = rotatedNormal.z;
+          rotatedNormal.z = rotatedNormal.x;
+          rotatedNormal.x = -temp;
+          const suv = [
+            0.5 + 0.5 * (-rotatedNormal.y),
+            p5.atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * p5.PI) + 0.5
+          ];
+          return p5.getTexture(uEnvMap, suv);
+        })
+      }, { p5 });
+    }
+    this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
+    this.scratchMat3.invert(this.scratchMat3); // uNMMatrix is 3x3
+    this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
+    this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
+    // this.sphereMapping.setUniform("uNewNormalMatrix", this.scratchMat3.mat3);
+    this.sphereMapping.setUniform("uN1", this.scratchMat3.mat3.slice(0, 3));
+    this.sphereMapping.setUniform("uN2", this.scratchMat3.mat3.slice(3, 6));
+    this.sphereMapping.setUniform("uN3", this.scratchMat3.mat3.slice(6));
+    this.sphereMapping.setUniform("uEnvMap", img);
+    return this.sphereMapping;
+  }
+
   /*
    * Abstract methods to be implemented by specific renderers
    */

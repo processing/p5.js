@@ -674,20 +674,6 @@ class RendererGL extends Renderer3D {
    * and the shader must be valid in that context.
    */
 
-  // TODO move to super class
-  _getSphereMapping(img) {
-    if (!this.sphereMapping) {
-      this.sphereMapping = this._pInst.createFilterShader(sphereMapping);
-    }
-    this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
-    this.scratchMat3.invert(this.scratchMat3); // uNMMatrix is 3x3
-    this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
-    this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
-    this.sphereMapping.setUniform("uNewNormalMatrix", this.scratchMat3.mat3);
-    this.sphereMapping.setUniform("uEnvMap", img);
-    return this.sphereMapping;
-  }
-
   baseMaterialShader() {
     if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
@@ -932,7 +918,10 @@ class RendererGL extends Renderer3D {
    * Create final MipmapTexture from collected ImageData for WebGL
    */
   _finalizeMipmapTexture(mipmapData) {
-    return new MipmapTexture(this, mipmapData.levels, {});
+    return new MipmapTexture(this, mipmapData.levels, {
+      minFilter: constants.LINEAR_MIPMAP,
+      magFilter: constants.LINEAR,
+    });
   }
 
   createMipmapTextureHandle({ levels, format, dataType, width, height }) {
@@ -940,11 +929,12 @@ class RendererGL extends Renderer3D {
     const texture = gl.createTexture();
 
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    
+
     // Determine GL format and data type
     const glFormat = gl.RGBA;
     const glDataType = gl.UNSIGNED_BYTE;
-    
+
+    console.log(levels)
     for (let level = 0; level < levels.length; level++) {
       gl.texImage2D(
         gl.TEXTURE_2D,
@@ -961,7 +951,7 @@ class RendererGL extends Renderer3D {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
     gl.bindTexture(gl.TEXTURE_2D, null);
-    
+
     return { texture, glFormat, glDataType };
   }
 

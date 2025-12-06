@@ -32,7 +32,7 @@
       let env;
 
       p.setup = async function () {
-        await p.createCanvas(400, 400, p.WEBGL);
+        await p.createCanvas(400, 400, p.WEBGPU);
         env = await p.loadImage('img/spheremap.jpg');
         font = await p.loadFont(
           'font/PlayfairDisplay.ttf'
@@ -118,6 +118,7 @@
         p.orbitControl();
         const t = p.millis() * 0.002;
         p.background(200);
+        p.panorama(env);
         p.push();
         p.imageLight(env);
         p.shader(sh);
