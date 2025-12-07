@@ -228,14 +228,24 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
-        // For vector types with a single argument, repeat it for each component
-        if (typeInfo.dimension > 1 && args.length === 1 && !Array.isArray(args[0]) &&
-            !(args[0] instanceof StrandsNode && args[0].dimension > 1) &&
-            (typeInfo.baseType === BaseType.FLOAT || typeInfo.baseType === BaseType.INT || typeInfo.baseType === BaseType.BOOL)) {
-          args = Array(typeInfo.dimension).fill(args[0]);
+        if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
+          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
+            overloads: [{
+              params: [args[0].typeInfo()],
+              returnType: typeInfo,
+            }]
+          });
+          return createStrandsNode(id, dimension, strandsContext);
+        } else {
+          // For vector types with a single argument, repeat it for each component
+          if (typeInfo.dimension > 1 && args.length === 1 && !Array.isArray(args[0]) &&
+              !(args[0] instanceof StrandsNode && args[0].dimension > 1) &&
+              (typeInfo.baseType === BaseType.FLOAT || typeInfo.baseType === BaseType.INT || typeInfo.baseType === BaseType.BOOL)) {
+            args = Array(typeInfo.dimension).fill(args[0]);
+          }
+          const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
+          return createStrandsNode(id, dimension, strandsContext);
         }
-        const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
-        return createStrandsNode(id, dimension, strandsContext);
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {

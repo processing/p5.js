@@ -25,6 +25,12 @@ class FramebufferCamera extends Camera {
     this.defaultCameraFOV =
       2 * Math.atan(this.fbo.height / 2 / this.defaultEyeZ);
   }
+
+  copy() {
+    const _cam = super.copy();
+    _cam.fbo = this.fbo;
+    return _cam;
+  }
 }
 
 class FramebufferTexture {

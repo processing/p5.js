@@ -74,54 +74,56 @@ function strands(p5, fn) {
   const oldModify = p5.Shader.prototype.modify;
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
-    if (shaderModifier instanceof Function) {
-      // Reset the context object every time modify is called;
-      // const backend = glslBackend;
-      initStrandsContext(strandsContext, this._renderer.strandsBackend, {
-        active: true,
-        renderer: this._renderer,
-        baseShader: this,
-      });
-      createShaderHooksFunctions(strandsContext, fn, this);
-      // TODO: expose this, is internal for debugging for now.
-      const options = { parser: true, srcLocations: false };
+    try {
+      if (shaderModifier instanceof Function) {
+        // Reset the context object every time modify is called;
+        // const backend = glslBackend;
+        initStrandsContext(strandsContext, this._renderer.strandsBackend, {
+          active: true,
+          renderer: this._renderer,
+          baseShader: this,
+        });
+        createShaderHooksFunctions(strandsContext, fn, this);
+        // TODO: expose this, is internal for debugging for now.
+        const options = { parser: true, srcLocations: false };
 
-      // 1. Transpile from strands DSL to JS
-      let strandsCallback;
-      if (options.parser) {
-        // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
-        // https://github.com/acornjs/acorn/issues/1385
-        const sourceString = `(${shaderModifier.toString()})`;
-        strandsCallback = transpileStrandsToJS(
-          p5,
-          sourceString,
-          options.srcLocations,
-          scope,
+        // 1. Transpile from strands DSL to JS
+        let strandsCallback;
+        if (options.parser) {
+          // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
+          // https://github.com/acornjs/acorn/issues/1385
+          const sourceString = `(${shaderModifier.toString()})`;
+          strandsCallback = transpileStrandsToJS(
+            p5,
+            sourceString,
+            options.srcLocations,
+            scope,
+          );
+        } else {
+          strandsCallback = shaderModifier;
+        }
+
+        // 2. Build the IR from JavaScript API
+        const globalScope = createBasicBlock(
+          strandsContext.cfg,
+          BlockType.GLOBAL,
         );
+        pushBlock(strandsContext.cfg, globalScope);
+        strandsCallback();
+        popBlock(strandsContext.cfg);
+
+        // 3. Generate shader code hooks object from the IR
+        // .......
+        const hooksObject = generateShaderCode(strandsContext);
+
+        // Call modify with the generated hooks object
+        return oldModify.call(this, hooksObject);
       } else {
-        strandsCallback = shaderModifier;
+        return oldModify.call(this, shaderModifier);
       }
-
-      // 2. Build the IR from JavaScript API
-      const globalScope = createBasicBlock(
-        strandsContext.cfg,
-        BlockType.GLOBAL,
-      );
-      pushBlock(strandsContext.cfg, globalScope);
-      strandsCallback();
-      popBlock(strandsContext.cfg);
-
-      // 3. Generate shader code hooks object from the IR
-      // .......
-      const hooksObject = generateShaderCode(strandsContext);
-
+    } finally {
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
-
-      // Call modify with the generated hooks object
-      return oldModify.call(this, hooksObject);
-    } else {
-      return oldModify.call(this, shaderModifier);
     }
   };
 }

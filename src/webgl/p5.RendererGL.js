@@ -931,7 +931,6 @@ class RendererGL extends Renderer3D {
     const glFormat = gl.RGBA;
     const glDataType = gl.UNSIGNED_BYTE;
 
-    console.log(levels)
     for (let level = 0; level < levels.length; level++) {
       gl.texImage2D(
         gl.TEXTURE_2D,

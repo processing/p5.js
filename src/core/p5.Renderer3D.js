@@ -1787,6 +1787,13 @@ export class Renderer3D extends Renderer {
     return this._yAlignOffset(lineData, adjustedH);
   }
 
+  _verticalAlignFont = function() {
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    return -metrics.alphabeticBaseline ||
+      (-metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent);
+  }
+
   _yAlignOffset(dataArr, height) {
     if (typeof height === 'undefined') {
       throw Error('_yAlignOffset: height is required');
@@ -1798,12 +1805,12 @@ export class Renderer3D extends Renderer {
       ((textLeading - textSize) * (numLines - 1));
     switch (textBaseline) { // drawingContext ?
       case constants.TOP:
-        yOff = textSize;
+        yOff = this._verticalAlignFont();
         break;
       case constants.BASELINE:
         break;
       case textCoreConstants._CTX_MIDDLE:
-        yOff = -totalHeight / 2 + textSize + (height || 0) / 2;
+        yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont() + this._middleAlignOffset();
         break;
       case constants.BOTTOM:
         yOff = -(totalHeight - textSize) + (height || 0);
@@ -1812,7 +1819,6 @@ export class Renderer3D extends Renderer {
         console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
         break;
     }
-    yOff += this.states.textFont.font?._verticalAlign(textSize) || 0;
     dataArr.forEach(ele => ele.y += yOff);
     return dataArr;
   }

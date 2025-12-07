@@ -1141,7 +1141,7 @@ class Renderer2D extends Renderer {
       case constants.BASELINE:
         break;
       case textCoreConstants._CTX_MIDDLE:
-        yOff = ydiff / 2;
+        yOff = ydiff / 2 + this._middleAlignOffset();
         break;
       case constants.BOTTOM:
         yOff = ydiff;
