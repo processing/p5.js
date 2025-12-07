@@ -12,9 +12,11 @@ import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
 import camera from './p5.Camera';
 import texture from './p5.Texture';
+import renderer3D from '../core/p5.Renderer3D';
 import rendererGL from './p5.RendererGL';
 
 export default function(p5){
+  p5.registerAddon(renderer3D);
   p5.registerAddon(rendererGL);
   p5.registerAddon(primitives3D);
   p5.registerAddon(interaction);

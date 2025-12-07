@@ -18,31 +18,7 @@ import { RenderBuffer } from "../webgl/p5.RenderBuffer";
 import { Image } from "../image/p5.Image";
 import { Texture } from "../webgl/p5.Texture";
 import { makeFilterShader } from "../core/filterShaders";
-
-export function getStrokeDefs(shaderConstant) {
-  const STROKE_CAP_ENUM = {};
-  const STROKE_JOIN_ENUM = {};
-  let lineDefs = "";
-  const defineStrokeCapEnum = function (key, val) {
-    lineDefs += shaderConstant(`STROKE_CAP_${key}`, `${val}`, 'u32');
-    STROKE_CAP_ENUM[constants[key]] = val;
-  };
-  const defineStrokeJoinEnum = function (key, val) {
-    lineDefs += shaderConstant(`STROKE_JOIN_${key}`, `${val}`, 'u32');
-    STROKE_JOIN_ENUM[constants[key]] = val;
-  };
-
-  // Define constants in line shaders for each type of cap/join, and also record
-  // the values in JS objects
-  defineStrokeCapEnum("ROUND", 0);
-  defineStrokeCapEnum("PROJECT", 1);
-  defineStrokeCapEnum("SQUARE", 2);
-  defineStrokeJoinEnum("ROUND", 0);
-  defineStrokeJoinEnum("MITER", 1);
-  defineStrokeJoinEnum("BEVEL", 2);
-
-  return { STROKE_CAP_ENUM, STROKE_JOIN_ENUM, lineDefs };
-}
+import { getStrokeDefs } from "../webgl/enums";
 
 const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(()=>"");
 
@@ -2034,4 +2010,14 @@ export class Renderer3D extends Renderer {
     }
     super.remove();
   }
+}
+
+function renderer3D(p5, fn) {
+  p5.Renderer3D = Renderer3D;
+}
+
+export default renderer3D;
+
+if (typeof p5 !== "undefined") {
+  renderer3D(p5, p5.prototype);
 }

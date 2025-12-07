@@ -9,7 +9,8 @@ import {
   setWebGLUniformValue,
   checkWebGLCapabilities
 } from './utils';
-import { Renderer3D, getStrokeDefs } from '../core/p5.Renderer3D';
+import { Renderer3D } from '../core/p5.Renderer3D';
+import { getStrokeDefs } from './enums';
 import { Shader } from './p5.Shader';
 import { MipmapTexture } from './p5.Texture';
 import { Framebuffer } from './p5.Framebuffer';

@@ -10,7 +10,10 @@ import { Framebuffer } from '../webgl/p5.Framebuffer';
 let renderers;
 function rendering(p5, fn){
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
-  renderers = p5.renderers = {};
+  if (!p5.renderers) {
+    p5.renderers = {};
+  }
+  renderers = p5.renderers;
 
   /**
    * Creates a canvas element on the web page.
