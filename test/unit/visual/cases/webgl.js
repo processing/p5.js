@@ -836,7 +836,9 @@ visualSuite('WebGL', function() {
           p5.createCanvas(100, 100, p5.WEBGL);
 
           // Load the environment map
+          console.log('Loading sphere map');
           const env = await p5.loadImage('/unit/assets/spheremap.jpg');
+          console.log('Done loading sphere map');
           p5.clear();
 
           // Set up panorama background
