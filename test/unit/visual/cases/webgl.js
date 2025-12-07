@@ -843,6 +843,7 @@ visualSuite('WebGL', function() {
 
           // Set up panorama background
           p5.panorama(env);
+          console.log('Made panorama');
 
           // Set up image-based lighting
           p5.push();
@@ -858,10 +859,12 @@ visualSuite('WebGL', function() {
           // Draw a sphere in the center
           p5.fill('white');
           p5.sphere(25);
+          console.log('Drew sphere');
 
           p5.pop();
 
           screenshot();
+          console.log('Screenshotted');
         },
       );
     }
