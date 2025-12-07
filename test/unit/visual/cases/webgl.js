@@ -831,7 +831,7 @@ visualSuite('WebGL', function() {
     const shinesses = [50, 150];
     for (const shininess of shinesses) {
       visualTest(
-        `imageLight with panorama and shininess ${shininess}`,
+        `shininess ${shininess}`,
         async function (p5, screenshot) {
           p5.createCanvas(100, 100, p5.WEBGL);
 
