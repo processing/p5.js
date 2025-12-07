@@ -861,6 +861,7 @@ visualSuite('WebGL', function() {
 
           screenshot();
         },
+        { timeout: 2000 }
       );
     }
   });

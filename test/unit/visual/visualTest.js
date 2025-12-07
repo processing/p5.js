@@ -385,7 +385,7 @@ function findClusterSize(
 export function visualTest(
   testName,
   callback,
-  { focus = false, skip = false } = {}
+  { focus = false, skip = false, timeout } = {}
 ) {
   let suiteFn = describe;
   if (focus) {
@@ -483,6 +483,6 @@ export function visualTest(
           writeImageFile(actualFilename, toBase64(actual[i]));
         }
       }
-    });
+    }, timeout);
   });
 }

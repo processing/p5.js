@@ -750,6 +750,7 @@ visualSuite("WebGPU", function () {
 
           await screenshot();
         },
+        { timeout: 2000 }
       );
     }
   });
