@@ -720,7 +720,7 @@ visualSuite("WebGPU", function () {
     const shinesses = [50, 150];
     for (const shininess of shinesses) {
       visualTest(
-        `shininess ${shininess}`,
+        `${shininess < 100 ? 'low' : 'high'} shininess`,
         async function (p5, screenshot) {
           await p5.createCanvas(100, 100, p5.WEBGPU);
 

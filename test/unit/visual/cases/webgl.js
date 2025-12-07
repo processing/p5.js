@@ -831,19 +831,16 @@ visualSuite('WebGL', function() {
     const shinesses = [50, 150];
     for (const shininess of shinesses) {
       visualTest(
-        `shininess ${shininess}`,
+        `${shininess < 100 ? 'low' : 'high'} shininess`,
         async function (p5, screenshot) {
           p5.createCanvas(100, 100, p5.WEBGL);
 
           // Load the environment map
-          console.log('Loading sphere map');
           const env = await p5.loadImage('/unit/assets/spheremap.jpg');
-          console.log('Done loading sphere map');
           p5.clear();
 
           // Set up panorama background
           p5.panorama(env);
-          console.log('Made panorama');
 
           // Set up image-based lighting
           p5.push();
@@ -859,12 +856,10 @@ visualSuite('WebGL', function() {
           // Draw a sphere in the center
           p5.fill('white');
           p5.sphere(25);
-          console.log('Drew sphere');
 
           p5.pop();
 
           screenshot();
-          console.log('Screenshotted');
         },
       );
     }

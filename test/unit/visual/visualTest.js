@@ -445,7 +445,6 @@ export function visualTest(
         );
       }
       if (!expectedScreenshots) {
-        console.log('No screenshots found, writing files');
         await writeFile(
           `../screenshots/${name}/metadata.json`,
           JSON.stringify({ numScreenshots: actual.length }, null, 2)
