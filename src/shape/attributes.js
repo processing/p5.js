@@ -86,6 +86,9 @@ function attributes(p5, fn){
    */
   fn.ellipseMode = function(m) {
     // p5._validateParameters('ellipseMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer?.states.ellipseMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -286,6 +289,9 @@ function attributes(p5, fn){
    */
   fn.rectMode = function(m) {
     // p5._validateParameters('rectMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer?.states.ellipseMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -424,6 +430,9 @@ function attributes(p5, fn){
    */
   fn.strokeCap = function(cap) {
     // p5._validateParameters('strokeCap', arguments);
+    if (typeof cap === 'undefined') { // getter
+      return this._renderer.strokeCap();
+    }
     if (
       cap === constants.ROUND ||
       cap === constants.SQUARE ||
@@ -523,6 +532,9 @@ function attributes(p5, fn){
    */
   fn.strokeJoin = function(join) {
     // p5._validateParameters('strokeJoin', arguments);
+    if (typeof join === 'undefined') { // getter
+      return this._renderer.strokeJoin();
+    }
     if (
       join === constants.ROUND ||
       join === constants.BEVEL ||
@@ -590,8 +602,7 @@ function attributes(p5, fn){
    */
   fn.strokeWeight = function(w) {
     // p5._validateParameters('strokeWeight', arguments);
-    this._renderer.strokeWeight(w);
-    return this;
+    return this._renderer.strokeWeight(w);
   };
 }
 

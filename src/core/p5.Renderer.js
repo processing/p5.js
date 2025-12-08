@@ -323,9 +323,12 @@ class Renderer {
   }
 
   fill(...args) {
-    this.states.setValue('fillSet', true);
-    this.states.setValue('fillColor', this._pInst.color(...args));
-    this.updateShapeVertexProperties();
+    if (args.length > 0) {
+      this.states.setValue('fillSet', true);
+      this.states.setValue('fillColor', this._pInst.color(...args));
+      this.updateShapeVertexProperties();
+    }
+    return this.states.fillColor;
   }
 
   noFill() {
@@ -333,14 +336,16 @@ class Renderer {
   }
 
   strokeWeight(w) {
-    if (w === undefined) {
+    if (typeof w === 'undefined') {
       return this.states.strokeWeight;
-    } else {
-      this.states.setValue('strokeWeight', w);
     }
+    this.states.setValue('strokeWeight', w);
   }
 
   stroke(...args) {
+    if (args.length === 0) {
+      return this.states.strokeColor;
+    }
     this.states.setValue('strokeSet', true);
     this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
