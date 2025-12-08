@@ -56,6 +56,29 @@ export class Matrix extends MatrixInterface {
   }
 
   /**
+   * Sets the values of this 3×3 matrix.
+   *
+   * This copies the 9 provided numeric components into the internal
+   * `Float32Array` without replacing the underlying buffer.
+   *
+   * @param {ArrayLike<number>} values -
+   *        Array-like object with 9 numeric components, in column-major order.
+   * @throws {Error} If the matrix is not 3×3.
+   * @throws {Error} If `values` is not array-like or does not contain 9 items.
+   */
+  set mat3(values) {
+    if (this.#sqDimention !== 3) {
+      throw new Error('mat3 setter is only valid for 3×3 matrices.');
+    }
+    if (!values || typeof values.length !== 'number' || values.length !== 9) {
+      throw new Error('mat3 setter expects an array-like of length 9.');
+    }
+    for (let i = 0; i < 9; i++) {
+      this.matrix[i] = values[i];
+    }
+  }
+
+  /**
    * Returns the 4x4 matrix if the dimensions are 4x4, otherwise returns `undefined`.
    *
    * This method returns the matrix if its dimensions are 4x4.
@@ -68,6 +91,37 @@ export class Matrix extends MatrixInterface {
       return this.matrix;
     } else {
       return undefined;
+    }
+  }
+
+  /**
+   * Sets the values of this 4×4 matrix.
+   *
+   * This setter accepts an array-like object of length 16 and copies its
+   * contents into the internal `Float32Array` used to represent the matrix.
+   *
+   * Note that this does **not** replace the underlying buffer; it only
+   * overwrites the existing values.
+   *
+   * ```js
+   * // Copy another matrix's data
+   * M.mat4 = other.mat4.slice();
+   * ```
+   *
+   * @param {ArrayLike<number>} values -
+   *        Array-like object with 16 numeric components, in column-major order.
+   * @throws {Error} If the matrix is not 4×4.
+   * @throws {Error} If `values` is not array-like or does not contain 16 items.
+   */
+  set mat4(values) {
+    if (this.#sqDimention !== 4) {
+      throw new Error('mat4 setter is only valid for 4x4 matrices.');
+    }
+    if (!values || typeof values.length !== 'number' || values.length !== 16) {
+      throw new Error('mat4 setter expects an array-like of length 16.');
+    }
+    for (let i = 0; i < 16; i++) {
+      this.matrix[i] = values[i];
     }
   }
 
