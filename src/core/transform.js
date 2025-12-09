@@ -462,8 +462,7 @@ function transform(p5, fn){
    */
   fn.rotate = function(angle, axis) {
     // p5._validateParameters('rotate', arguments);
-    this._renderer.rotate(this._toRadians(angle), axis);
-    return this;
+    return this._renderer.rotate(this._toRadians(angle), axis);
   };
 
   /**
@@ -598,8 +597,7 @@ function transform(p5, fn){
   fn.rotateX = function(angle) {
     this._assert3d('rotateX');
     // p5._validateParameters('rotateX', arguments);
-    this._renderer.rotateX(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateX(this._toRadians(angle));
   };
 
   /**
@@ -734,8 +732,7 @@ function transform(p5, fn){
   fn.rotateY = function(angle) {
     this._assert3d('rotateY');
     // p5._validateParameters('rotateY', arguments);
-    this._renderer.rotateY(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateY(this._toRadians(angle));
   };
 
   /**
@@ -870,8 +867,7 @@ function transform(p5, fn){
   fn.rotateZ = function(angle) {
     this._assert3d('rotateZ');
     // p5._validateParameters('rotateZ', arguments);
-    this._renderer.rotateZ(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateZ(this._toRadians(angle));
   };
 
   /**
@@ -1060,9 +1056,7 @@ function transform(p5, fn){
       z = 1;
     }
 
-    this._renderer.scale(x, y, z);
-
-    return this;
+    return this._renderer.scale(x, y, z);
   };
 
   /**
@@ -1137,6 +1131,17 @@ function transform(p5, fn){
    */
   fn.shearX = function(angle) {
     // p5._validateParameters('shearX', arguments);
+    if (typeof angle === 'undefined') {
+      let matrix = this._renderer.drawingContext.getTransform();
+      let rad = this.decomposeMatrix(matrix).skew.x;
+      if (rad < 0) {
+        rad += Math.PI * 2; // ensure a positive angle
+      }
+      if (fn._angleMode === fn.DEGREES) {
+        rad *= fn.RAD_TO_DEG; // to degrees
+      }
+      return rad;
+    }
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
     return this;
@@ -1214,6 +1219,17 @@ function transform(p5, fn){
    */
   fn.shearY = function(angle) {
     // p5._validateParameters('shearY', arguments);
+    if (typeof angle === 'undefined') {
+      let matrix = this._renderer.drawingContext.getTransform();
+      let rad = this.decomposeMatrix(matrix).skew.y;
+      if (rad < 0) {
+        rad += Math.PI * 2; // ensure a positive angle
+      }
+      if (fn._angleMode === fn.DEGREES) {
+        rad *= fn.RAD_TO_DEG; // to degrees
+      }
+      return rad;
+    }
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
     return this;
@@ -1398,11 +1414,10 @@ function transform(p5, fn){
   fn.translate = function(x, y, z) {
     // p5._validateParameters('translate', arguments);
     if (this._renderer.isP3D) {
-      this._renderer.translate(x, y, z);
+      return this._renderer.translate(x, y, z);
     } else {
-      this._renderer.translate(x, y);
+      return this._renderer.translate(x, y);
     }
-    return this;
   };
 
   /**

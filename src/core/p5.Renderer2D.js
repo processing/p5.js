@@ -1025,27 +1025,41 @@ class Renderer2D extends Renderer {
 
   rotate(rad) {
     if (typeof rad === 'undefined') {
-      const matrix = ctx.getTransform();
-      console.log(matrix);
-      const rad = Math.atan2(/*-*/matrix.b, matrix.a);
-      return rad >= 0 ? rad : rad + Math.PI * 2;  // angle > Math.PI    }
+      const matrix = this.drawingContext.getTransform();
+      let angle = this._pInst.decomposeMatrix(matrix).rotation;
+      if (angle < 0) {
+        angle += Math.PI * 2; // ensure a positive angle
+      }
+      if (this._pInst._angleMode === this._pInst.DEGREES) {
+        angle *= constants.RAD_TO_DEG; // to degrees
+      }
+      return Math.abs(angle);
     }
     this.drawingContext.rotate(rad);
     return this;
   }
 
   scale(x, y) {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      const matrix = this.drawingContext.getTransform();
+      return this._pInst.decomposeMatrix(matrix).scale;
+    }
     this.drawingContext.scale(x, y);
     return this;
   }
 
   translate(x, y) {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      const matrix = this.drawingContext.getTransform();
+      return this._pInst.decomposeMatrix(matrix).translation;
+    }
     // support passing a vector as the 1st parameter
     if (x instanceof p5.Vector) {
       y = x.y;
       x = x.x;
     }
     this.drawingContext.translate(x, y);
+    console.log('MAT:',this.drawingContext.getTransform());
     return this;
   }
 

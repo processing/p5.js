@@ -226,6 +226,33 @@ function trigonometry(p5, fn){
     return this._fromRadians(Math.asin(ratio));
   };
 
+  fn.decomposeMatrix = function(mat) {
+    // adapted from https://frederic-wang.fr/2013/12/01/decomposition-of-2d-transform-matrices/
+    let { a, b, c, d, e, f } = mat;
+    let delta = a * d - b * c;
+    let result = {
+      translation: { x: e, y: f },
+      scale: { x: 0, y: 0 },
+      skew: { x: 0, y: 0 },
+      rotation: 0
+    };
+    if (a !== 0 || b !== 0) {
+      let r = Math.sqrt(a * a + b * b);
+      result.rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
+      result.scale = { x: r, y: delta / r };
+      result.skew = { x: Math.atan((a * c + b * d) / (r * r)), y: 0 };
+    } else if (c !== 0 || d !== 0) {
+      let s = Math.sqrt(c * c + d * d);
+      result.rotation = Math.PI / 2 -
+        (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
+      result.scale = { x: delta / s, y: s };
+      result.skew = { x: 0, y: Math.atan((a * c + b * d) / (s * s)) };
+    } else {
+      // a = b = c = d = 0
+    }
+    return result;
+  };
+
   /**
    * Calculates the arc tangent of a number.
    *
@@ -864,7 +891,8 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._toRadians = function(angle) {
-    if (this._angleMode === DEGREES) {
+    // returns undefined if no argument
+    if (typeof angle !== 'undefined' && this._angleMode === DEGREES) {
       return angle * constants.DEG_TO_RAD;
     }
     return angle;

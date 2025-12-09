@@ -668,8 +668,7 @@ function setting(p5, fn){
    * @chainable
    */
   fn.background = function(...args) {
-    this._renderer.background(...args);
-    return this;
+    return this._renderer.background(...args);
   };
 
   /**
