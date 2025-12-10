@@ -35,6 +35,7 @@ class ClonableObject {
 
 class Renderer {
   static states = {
+    background: null,
     strokeColor: null,
     strokeSet: false,
     fillColor: null,
@@ -45,6 +46,11 @@ class Renderer {
     rectMode: constants.CORNER,
     ellipseMode: constants.CENTER,
     strokeWeight: 1,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
 
     textFont: { family: 'sans-serif' },
     textLeading: 15,
@@ -52,15 +58,8 @@ class Renderer {
     textSize: 12,
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
-    bezierOrder: 3,
-    splineProperties: new ClonableObject({
-      ends: constants.INCLUDE,
-      tightness: 0
-    }),
     textWrap: constants.WORD,
-
-    // added v2.0
-    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStyle: constants.NORMAL, // v1: was textStyle
     fontStretch: constants.NORMAL,
     fontWeight: constants.NORMAL,
     lineHeight: constants.NORMAL,

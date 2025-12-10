@@ -167,16 +167,18 @@ class Renderer2D extends Renderer {
   background(...args) {
     this.push();
     this.resetMatrix();
-
+    if (args.length === 0) {
+      // getter (#8278)
+      return this.states.background;
+    }
     if (args[0] instanceof Image) {
+      const img = args[0];
       if (args[1] >= 0) {
         // set transparency of background
-        const img = args[0];
         this.drawingContext.globalAlpha = args[1] / 255;
-        this._pInst.image(img, 0, 0, this.width, this.height);
-      } else {
-        this._pInst.image(args[0], 0, 0, this.width, this.height);
       }
+      this._pInst.image(img, 0, 0, this.width, this.height);
+      this.states.background = img; // save for getter (#8278)
     } else {
       // create background rect
       const color = this._pInst.color(...args);
@@ -199,6 +201,7 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this._pInst.erase();
       }
+      this.states.background = color; // save for getter (#8278)
     }
     this.pop();
   }
@@ -1044,6 +1047,11 @@ class Renderer2D extends Renderer {
       const matrix = this.drawingContext.getTransform();
       return this._pInst.decomposeMatrix(matrix).scale;
     }
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
+      y = x.y;
+      x = x.x;
+    }
     this.drawingContext.scale(x, y);
     return this;
   }
@@ -1053,13 +1061,12 @@ class Renderer2D extends Renderer {
       const matrix = this.drawingContext.getTransform();
       return this._pInst.decomposeMatrix(matrix).translation;
     }
-    // support passing a vector as the 1st parameter
-    if (x instanceof p5.Vector) {
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
       y = x.y;
       x = x.x;
     }
     this.drawingContext.translate(x, y);
-    console.log('MAT:',this.drawingContext.getTransform());
     return this;
   }
 

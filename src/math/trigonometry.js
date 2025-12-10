@@ -233,20 +233,20 @@ function trigonometry(p5, fn){
     let result = {
       translation: { x: e, y: f },
       scale: { x: 0, y: 0 },
-      skew: { x: 0, y: 0 },
+      shear: { x: 0, y: 0 },
       rotation: 0
     };
     if (a !== 0 || b !== 0) {
       let r = Math.sqrt(a * a + b * b);
       result.rotation = b > 0 ? Math.acos(a / r) : -Math.acos(a / r);
       result.scale = { x: r, y: delta / r };
-      result.skew = { x: Math.atan((a * c + b * d) / (r * r)), y: 0 };
+      result.shear = { x: Math.atan((a * c + b * d) / (r * r)), y: 0 };
     } else if (c !== 0 || d !== 0) {
       let s = Math.sqrt(c * c + d * d);
       result.rotation = Math.PI / 2 -
         (d > 0 ? Math.acos(-c / s) : -Math.acos(c / s));
       result.scale = { x: delta / s, y: s };
-      result.skew = { x: 0, y: Math.atan((a * c + b * d) / (s * s)) };
+      result.shear = { x: 0, y: Math.atan((a * c + b * d) / (s * s)) };
     } else {
       // a = b = c = d = 0
     }

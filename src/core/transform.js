@@ -1133,10 +1133,7 @@ function transform(p5, fn){
     // p5._validateParameters('shearX', arguments);
     if (typeof angle === 'undefined') {
       let matrix = this._renderer.drawingContext.getTransform();
-      let rad = this.decomposeMatrix(matrix).skew.x;
-      if (rad < 0) {
-        rad += Math.PI * 2; // ensure a positive angle
-      }
+      let rad = this.decomposeMatrix(matrix).shear.x;
       if (fn._angleMode === fn.DEGREES) {
         rad *= fn.RAD_TO_DEG; // to degrees
       }
@@ -1221,10 +1218,7 @@ function transform(p5, fn){
     // p5._validateParameters('shearY', arguments);
     if (typeof angle === 'undefined') {
       let matrix = this._renderer.drawingContext.getTransform();
-      let rad = this.decomposeMatrix(matrix).skew.y;
-      if (rad < 0) {
-        rad += Math.PI * 2; // ensure a positive angle
-      }
+      let rad = this.decomposeMatrix(matrix).shear.y;
       if (fn._angleMode === fn.DEGREES) {
         rad *= fn.RAD_TO_DEG; // to degrees
       }
