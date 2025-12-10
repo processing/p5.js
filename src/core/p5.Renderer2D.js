@@ -165,12 +165,12 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   background(...args) {
+    if (args.length === 0) {
+      return this.states.background; // getter (#8278)
+    }
+    let bgForState = null;
     this.push();
     this.resetMatrix();
-    if (args.length === 0) {
-      // getter (#8278)
-      return this.states.background;
-    }
     if (args[0] instanceof Image) {
       const img = args[0];
       if (args[1] >= 0) {
@@ -178,7 +178,7 @@ class Renderer2D extends Renderer {
         this.drawingContext.globalAlpha = args[1] / 255;
       }
       this._pInst.image(img, 0, 0, this.width, this.height);
-      this.states.background = img; // save for getter (#8278)
+      bgForState = img; // save for getter (#8278)
     } else {
       // create background rect
       const color = this._pInst.color(...args);
@@ -201,9 +201,11 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this._pInst.erase();
       }
-      this.states.background = color; // save for getter (#8278)
+      bgForState = color; // save for getter (#8278)
     }
     this.pop();
+
+    this.states.setValue('background', bgForState); // set state (#8278)
   }
 
   clear() {

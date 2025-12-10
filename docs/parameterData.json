@@ -162,6 +162,7 @@
     },
     "background": {
       "overloads": [
+        [],
         [
           "p5.Color"
         ],
@@ -201,6 +202,7 @@
     },
     "colorMode": {
       "overloads": [
+        [],
         [
           "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
           "Number?"
@@ -217,6 +219,7 @@
     },
     "fill": {
       "overloads": [
+        [],
         [
           "Number",
           "Number",
@@ -250,6 +253,7 @@
     },
     "stroke": {
       "overloads": [
+        [],
         [
           "Number",
           "Number",
@@ -286,6 +290,7 @@
     },
     "blendMode": {
       "overloads": [
+        [],
         [
           "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
         ]
@@ -303,6 +308,7 @@
     },
     "cursor": {
       "overloads": [
+        [],
         [
           "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
           "Number?",
@@ -528,28 +534,32 @@
         [
           "Number",
           "p5.Vector|Number[]?"
-        ]
+        ],
+        []
       ]
     },
     "rotateX": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "rotateY": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "rotateZ": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "scale": {
@@ -561,21 +571,24 @@
         ],
         [
           "p5.Vector|Number[]"
-        ]
+        ],
+        []
       ]
     },
     "shearX": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "shearY": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "translate": {
@@ -587,7 +600,8 @@
         ],
         [
           "p5.Vector"
-        ]
+        ],
+        []
       ]
     },
     "push": {
@@ -1014,7 +1028,8 @@
         ],
         [
           "p5.Color"
-        ]
+        ],
+        []
       ]
     },
     "noTint": {
@@ -1026,7 +1041,8 @@
       "overloads": [
         [
           "CORNER|CORNERS|CENTER"
-        ]
+        ],
+        []
       ]
     },
     "blend": {
@@ -1748,7 +1764,8 @@
       "overloads": [
         [
           "CENTER|RADIUS|CORNER|CORNERS"
-        ]
+        ],
+        []
       ]
     },
     "noSmooth": {
@@ -1758,6 +1775,7 @@
     },
     "rectMode": {
       "overloads": [
+        [],
         [
           "CENTER|RADIUS|CORNER|CORNERS"
         ]
@@ -1772,21 +1790,24 @@
       "overloads": [
         [
           "ROUND|SQUARE|PROJECT"
-        ]
+        ],
+        []
       ]
     },
     "strokeJoin": {
       "overloads": [
         [
           "MITER|BEVEL|ROUND"
-        ]
+        ],
+        []
       ]
     },
     "strokeWeight": {
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "bezier": {
@@ -2108,7 +2129,8 @@
         [
           "LEFT|CENTER|RIGHT?",
           "TOP|BOTTOM|CENTER|BASELINE?"
-        ]
+        ],
+        []
       ]
     },
     "textAscent": {

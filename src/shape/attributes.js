@@ -290,7 +290,7 @@ function attributes(p5, fn){
   fn.rectMode = function(m) {
     // p5._validateParameters('rectMode', arguments);
     if (typeof m === 'undefined') { // getter
-      return this._renderer?.states.ellipseMode;
+      return this._renderer?.states.rectMode;
     }
     if (
       m === constants.CORNER ||
