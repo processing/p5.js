@@ -27,5 +27,6 @@ export const languages = [
   'ko',
   'zh',
   'hi',
-  'ja'
+  'ja',
+  'fa'
 ];
