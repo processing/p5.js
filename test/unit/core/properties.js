@@ -38,7 +38,8 @@ suite('Set/get properties', function() {
     rotate: p.PI,
     translate: { x: 1, y: 2 },
     scale: { x: 1, y: 2 },
-
+    bezierOrder: 2,
+    splineProperties: { ends: p.EXCLUDE, tightness: -5 },
     textAlign: { horizontal: p.CENTER, vertical: p.CENTER },
     textLeading: 18,
     textFont: 'arial',
@@ -52,6 +53,7 @@ suite('Set/get properties', function() {
   Object.keys(getters).forEach(prop => {
     let arg = getters[prop];
     test(`${prop}()`, function() {
+
       // setter
       if (typeof arg === 'object' && !(arg instanceof p5.Color)) {
         p[prop](...Object.values(arg)); // set with object
