@@ -323,7 +323,7 @@ function environment(p5, fn, lifecycles){
         y = typeof y === 'number' ? y : 0;
         // Note that x and y values must be unit-less positive integers < 32
         // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-        coords = `${Math.max(x,0)} ${Math.max(y,0)}`;
+        coords = `${Math.max(x, 0)} ${Math.max(y, 0)}`;
       }
       if (
         type.substring(0, 7) === 'http://' ||
