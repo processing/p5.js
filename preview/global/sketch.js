@@ -38,7 +38,7 @@ function starShaderCallback() {
   function semiSphere() {
     let id = instanceID();
     let theta = rand2([id, 0.1234]) * TWO_PI;
-    let phi = rand2([id, 3.321]) * PI+time/10000;
+    let phi = rand2([id, 3.321]) * PI + time / 10000;
     let r = skyRadius;
     r *= 1.5 * sin(phi);
     let x = r * sin(phi) * cos(theta);
@@ -60,7 +60,7 @@ function starShaderCallback() {
 }
 
 function pixellizeShaderCallback() {
-  const pixelSize = uniformFloat(()=> width*.75);
+  const pixelSize = uniformFloat(()=> width * 0.75);
   getColor((input, canvasContent) => {
     let coord = input.texCoord;
     coord = floor(coord * pixelSize) / pixelSize;
@@ -94,7 +94,6 @@ function pixellizeShaderCallback() {
  *
  * @memberof p5.strands
  */
-
 function bloomShaderCallback() {
   const preBlur = uniformTexture(() => originalFrameBuffer);
   const mouse = uniformVec2(() => [mouseX, mouseY]);
@@ -107,24 +106,37 @@ function bloomShaderCallback() {
     const uv = input.texCoord;
     const blurredCol = texture(canvasContent, uv);
     const originalCol = texture(preBlur, uv);
+ 
+    const canvasW = resolution && resolution[0] ? resolution[0] : 1.0;
+    const mouseNormX = (mouse && mouse[0]) ? (mouse[0] / canvasW) : 0.5;
 
-    // Simple animated bloom effect
+    const mouseInfluence = clamp(1.0 - abs(mouseNormX - uv.x) * 2.0, 0.0, 1.0);
+
+    const t = (millisUniform * 0.001) + (frameCountUniform * 0.001);
+    const timePulse = 0.5 + 0.5 * sin(t * 2.0);
+
+    const motion = 1.0 + (deltaTimeUniform * 0.001);
+
     const brightness = dot(originalCol.rgb, vec3(0.2126, 0.7152, 0.0722));
-    const pulse = sin(millisUniform * 0.001 + uv.x * 10.0);
-    const bloomGlow = originalCol.rgb * smoothstep(0.8, 1.0, brightness * pulse);
 
-    return vec4(originalCol.rgb + bloomGlow, originalCol.a);
+    const pulse = timePulse * motion;
+    const bloomStrength = smoothstep(0.8, 1.0, brightness * pulse) * mouseInfluence;
+
+    const bloomGlow = originalCol.rgb * bloomStrength * 0.9;
+
+    const combined = mix(originalCol.rgb + bloomGlow, blurredCol.rgb, 0.25);
+
+    return vec4(combined, originalCol.a);
   });
 }
 
-
 async function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-  stars = buildGeometry(() => sphere(30, 4, 2))
+  stars = buildGeometry(() => sphere(30, 4, 2));
   originalFrameBuffer = createFramebuffer();
 
   starShader = baseMaterialShader().modify(starShaderCallback); 
-  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
+  starStrokeShader = baseStrokeShader().modify(starShaderCallback);
   fresnelShader = baseColorShader().modify(fresnelShaderCallback);
   bloomShader = baseFilterShader().modify(bloomShaderCallback);
   pixellizeShader = baseFilterShader().modify(pixellizeShaderCallback);
@@ -135,28 +147,28 @@ function draw(){
   background(0);
   orbitControl();
 
-  push()
-  strokeWeight(4)
-  stroke(255,0,0)
+  push();
+  strokeWeight(4);
+  stroke(255,0,0);
   rotateX(PI/2 + millis() * 0.0005);
-  fill(255,100, 150)
-  strokeShader(starStrokeShader)
+  fill(255,100,150);
+  strokeShader(starStrokeShader);
   shader(starShader);
   model(stars, 2000);
-  pop()
+  pop();
 
-  push()
-  shader(fresnelShader)
-  noStroke()
+  push();
+  shader(fresnelShader);
+  noStroke();
   sphere(500);
-  pop()
+  pop();
   filter(pixellizeShader);
 
   originalFrameBuffer.end();
   
-  imageMode(CENTER)
-  image(originalFrameBuffer, 0, 0)
+  imageMode(CENTER);
+  image(originalFrameBuffer, 0, 0);
   
-  filter(BLUR, 20)
+  filter(BLUR, 20);
   filter(bloomShader);
 }
