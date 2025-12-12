@@ -206,11 +206,9 @@ export class Renderer3D extends Renderer {
     this._defaultImmediateModeShader = undefined;
     this._defaultNormalShader = undefined;
     this._defaultColorShader = undefined;
-    this._defaultPointShader = undefined;
 
     this.states.userFillShader = undefined;
     this.states.userStrokeShader = undefined;
-    this.states.userPointShader = undefined;
     this.states.userImageShader = undefined;
 
     this.states.curveDetail = 1 / 4;
@@ -1374,15 +1372,6 @@ export class Renderer3D extends Renderer {
     return this._getColorShader();
   }
 
-  _getPointShader() {
-    // select the point shader to use
-    const point = this.states.userPointShader;
-    if (!point || !point.isPointShader()) {
-      return this._getPointShader();
-    }
-    return point;
-  }
-
   baseMaterialShader() {
     return this._getLightShader();
   }
@@ -1393,34 +1382,6 @@ export class Renderer3D extends Renderer {
 
   baseColorShader() {
     return this._getColorShader();
-  }
-
-  /**
-   * TODO(dave): un-private this when there is a way to actually override the
-   * shader used for points
-   *
-   * Get the shader used when drawing points with <a href="#/p5/point">`point()`</a>.
-   *
-   * You can call <a href="#/p5.Shader/modify">`pointShader().modify()`</a>
-   * and change any of the following hooks:
-   * - `void beforeVertex`: Called at the start of the vertex shader.
-   * - `vec3 getLocalPosition`: Update the position of vertices before transforms are applied. It takes in `vec3 position` and must return a modified version.
-   * - `vec3 getWorldPosition`: Update the position of vertices after transforms are applied. It takes in `vec3 position` and pust return a modified version.
-   * - `float getPointSize`: Update the size of the point. It takes in `float size` and must return a modified version.
-   * - `void afterVertex`: Called at the end of the vertex shader.
-   * - `void beforeFragment`: Called at the start of the fragment shader.
-   * - `bool shouldDiscard`: Points are drawn inside a square, with the corners discarded in the fragment shader to create a circle. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
-   * - `vec4 getFinalColor`: Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   * - `void afterFragment`: Called at the end of the fragment shader.
-   *
-   * Call `pointShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @returns {p5.Shader} The `point()` shader
-   * @private()
-   */
-  pointShader() {
-    return this._getPointShader();
   }
 
   baseStrokeShader() {
