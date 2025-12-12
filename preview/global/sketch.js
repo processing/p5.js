@@ -69,6 +69,32 @@ function pixellizeShaderCallback() {
   });
 }
 
+/**
+ * bloomShaderCallback
+ *
+ * Example: using common p5 values as uniforms for a p5.strands shader.
+ *
+ * This example shows how to bridge p5.js runtime values into the p5.strands
+ * shader callback using uniform setters so the shader can respond to input
+ * (mouse), canvas resolution, and time/frame data.
+ *
+ * Example GLSL declarations (for your bloom.frag):
+ *   uniform vec2 mouse;
+ *   uniform vec2 resolution;
+ *   uniform float millis;
+ *   uniform float frameCount;
+ *   uniform float deltaTime;
+ *
+ * Example fragment usage (informational):
+ *   vec2 uv = gl_FragCoord.xy / resolution;
+ *   float t = millis * 0.001;
+ *   float mouseInfluence = smoothstep(0.0, 1.0, abs((mouse.x / resolution.x) - uv.x));
+ *   float timePulse = 0.5 + 0.5 * sin(t * 2.0 + frameCount * 0.01);
+ *   float glow = mouseInfluence * timePulse;
+ *
+ * @memberof p5.strands
+ */
+
 function bloomShaderCallback() {
   const preBlur = uniformTexture(() => originalFrameBuffer);
   const mouse = uniformVec2(() => [mouseX, mouseY]);
