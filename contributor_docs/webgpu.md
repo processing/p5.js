@@ -58,3 +58,38 @@ WebGPU mode will not try expose everything WebGPU has to offer to programmers. I
 At the time of writing (December 2025), WebGPU is not yet turned on by default in all major browsers on all platforms, but all major browsers are actively developing WebGPU support. There is a lot of energy behind WebGPU development and features while browser WebGL APIs, while not going away, seem largely to be in legacy mode, no longer adding new features. Since p5.js aims to be an accessible way to create programmatic art for the web, and new tools for the web are likely to be created in WebGPU but not WebGL, p5's WebGPU mode will take on a greater importance over time.
 
 Currently, though, WebGL is stable, reliable, and widely available. For that reason, p5.js WebGPU mode will be opt-in and experimental for some time.
+
+## Design decisions
+
+### Class structure
+
+With the addition of WebGPU mode, the built-in p5 renderers have the following structure:
+
+```mermaid
+---
+title: p5.js Renderers
+---
+classDiagram
+    class Base["p5.Renderer"] {
+    }
+    class P2D["p5.Renderer2D"] {
+    }
+    class P3D["p5.Renderer3D"] {
+    }
+    class WebGL["p5.RendererGL"] {
+    }
+    class WebGPU["p5.RendererWebGPU"] {
+    }
+    Base <|-- P2D
+    Base <|-- P3D
+    P3D <|-- WebGL
+    P3D <|-- WebGPU
+```
+
+Entities that are shared by all 3D renderers such as `p5.Geometry`, `p5.Framebuffer`, `p5.Texture`, `p5.Camera`, and `p5.Shader`, rather than including code in each entity to handle both WebGL and WebGPU cases, instead call methods on their 3D renderers. These methods are unimplemented on the base `Renderer3D` class, but are implemented in `RendererGL` and `RendererWebGPU` with platform-specific logic. All new platform-specific logic should be added to renderer classes now rather than being on the entities.
+
+### Rendering
+
+While WebGL mode submits all draw commands immediately, WebGPU mode defers submitting until the last possible moment so that it can submit draw commands in batches. Rather than drawing, commands are built up in an array and `_hasPendingDraws` is set to `true`. In `finishDraw`, called at the end of each frame, these are all finally submitted to the GPU as one render pass. There are a few other times where they get submitted early in other render passes. When switching draw targets, such as when drawing to a framebuffer, pending draws are submitted in a render pass too. This makes sure that you can then read from the framebuffer safely in the next render pass. We also submit a render pass when you call `loadPixels` or another function that involves reading back data from the GPU.
+
+Since draws get batched up, this means that buffers used to send shader uniform values to the GPU cannot be shared. If they were shared, they would get rewritten by the next thing getting drawn before the previous one gets to the GPU! Instead, we build up a pool of buffers that we can pull from for shader uniforms and vertex information.
