@@ -1687,7 +1687,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _applyStencilTestIfClipping() {
-      // TODO
+      // This is done via pipeline state in WebGL so this is a no-op
     }
 
     //////////////////////////////////////////////
