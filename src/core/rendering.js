@@ -33,7 +33,7 @@ function rendering(p5, fn){
    * the sketch's rendering mode. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
    * is passed, as in `createCanvas(900, 500, myCanvas)`, then it will be used
-   * by the sketch.
+   * by the sketch. To use `WEBGPU` mode, make sure you have the WebGPU mode addon included.
    *
    * The fourth parameter is also optional. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
@@ -48,7 +48,7 @@ function rendering(p5, fn){
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
    * @param  {Number} [height] height of the canvas. Defaults to 100.
-   * @param  {(P2D|WEBGL|P2DHDR)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+   * @param  {(P2D|WEBGL|P2DHDR|WEBGPU)} [renderer] either P2D, WEBGL, or WEBGPU. Defaults to `P2D`.
    * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
    * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
    *
