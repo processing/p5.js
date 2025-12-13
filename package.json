@@ -94,6 +94,7 @@
     "./math": "./dist/math/index.js",
     "./utilities": "./dist/utilities/index.js",
     "./webgl": "./dist/webgl/index.js",
+    "./webgpu": "./dist/webgpu/index.js",
     "./type": "./dist/type/index.js"
   },
   "files": [
