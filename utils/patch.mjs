@@ -104,6 +104,30 @@ export function applyPatches() {
     /loadFont\((.+), successCallback\?: Function, (.+)\): Promise\<([pP]5)\.Font\>;/g,
     'loadFont($1, successCallback?: (font: $3.Font) => any, $2): Promise<$3.Font>;'
   );
+  replace(
+    'p5.d.ts',
+    'static registerAddon(library: Function): void;',
+    'static registerAddon(library: (p5: p5, fn: typeof this.prototype, lifecycles: AddonLifecycles) => void): void;'
+  );
+
+  // Add lifecycle interface
+  replace(
+    'p5.d.ts',
+    /$/g,
+    `/* Functions that will be run at certain points in the p5 object’s lifetime, used when registering addons. */
+    export interface AddonLifecycles {
+      /** Called before the \`setup()\` function is executed. */
+      presetup?(this: p5): void;
+      /** Called after the \`setup()\` function is executed. */
+      postsetup?(this: p5): void;
+      /** Called at the beginning of \`draw()\`. Called repeatedly the same as \`draw()\`. */
+      predraw?(this: p5): void;
+      /** Called at the end of \`draw()\`. Called repeatedly the same as \`draw()\`. */
+      postdraw?(this: p5): void;
+      /** Called when \`remove()\` is called. */
+      remove?(this: p5): void;
+    }`
+  );
 
   // Type returned objects
   replace(
