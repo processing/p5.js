@@ -100,6 +100,7 @@ class Renderer extends p5.Element {
     // copy the style properties back into the renderer
       Object.assign(this, style.properties);
     }
+    return style;
   }
 
   beginClip(options = {}) {
