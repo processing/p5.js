@@ -1,3 +1,14 @@
+suite('p5.Vector.prototype.setHeading (invalid dimensions)', function () {
+  test('throws an error for vectors with non-zero z component', function () {
+    let v3 = new p5.Vector(1, 2, 3);
+
+    assert.throws(() => {
+      v3.setHeading(Math.PI / 2);
+    }, Error);
+  });
+});
+
+
 suite('p5.Vector', function() {
   var RADIANS = 'radians';
   var DEGREES = 'degrees';

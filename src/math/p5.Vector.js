@@ -2228,12 +2228,18 @@ p5.Vector = class {
  */
 
   setHeading(a) {
+    if (this.z !== undefined && this.z !== 0) {
+      throw new Error('setHeading() is only supported for 2D vectors.');
+    }
+
     if (this.isPInst) a = this._toRadians(a);
     let m = this.mag();
     this.x = m * Math.cos(a);
     this.y = m * Math.sin(a);
     return this;
   }
+
+
 
   /**
  * Rotates a 2D vector by an angle without changing its magnitude.
