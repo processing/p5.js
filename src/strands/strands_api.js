@@ -125,6 +125,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
+  const originalNoiseDetail = fn.noiseDetail;
+
+  strandsContext._noiseOctaves = null;
+  strandsContext._noiseAmpFalloff = null;
+
+  fn.noiseDetail = function (lod, falloff) {
+    if (!strandsContext.active) {
+      return originalNoiseDetail.apply(this, arguments);
+    }
+
+    strandsContext._noiseOctaves = lod;
+    strandsContext._noiseAmpFalloff = falloff;
+  };
+
   fn.noise = function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
@@ -154,9 +168,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
       );
     }
+
+    const octaves = strandsContext._noiseOctaves !== null
+      ? strandsContext._noiseOctaves
+      : fn._getNoiseOctaves();
+    const falloff = strandsContext._noiseAmpFalloff !== null
+      ? strandsContext._noiseAmpFalloff
+      : fn._getNoiseAmpFalloff();
+
+    nodeArgs.push(octaves);
+    nodeArgs.push(falloff);
+
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float3],
+        params: [DataType.float3, DataType.int1, DataType.float1],
         returnType: DataType.float1,
       }]
     });
