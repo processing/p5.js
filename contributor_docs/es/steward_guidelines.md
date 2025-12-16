@@ -1,13 +1,16 @@
 <!-- Learn about how to manage and review contributions to p5.js. -->
 
-# Directrices para Supervisores  
+# Directrices para Stewards (Guías de Área)
 
-
-Ya sea que recién te hayas unido a nosotros como supervisor, seas un responsable de mantenimiento experimentado de p5.js, o estés en algún punto intermedio, esta guía contiene información, así como consejos y trucos que te ayudarán a contribuir de manera efectiva a p5.js. La mayor parte de lo que se escribe aquí son pautas a menos que se indique lo contrario, lo que significa que puedes adaptar las prácticas mostradas aquí para que se ajusten a tu flujo de trabajo.
-
+Ya sea que seas nuevo contribuyendo para p5.js, que seas activo en los repositorios de GitHub de p5.js, o que te encuentres en algún punto intermedio, encontrarás lo que necesitas en estas directrices sobre el rol de steward (guía de área) en p5.js. Si no estás seguro de qué esperar de los stewards, o si estás considerando ofrecerte como voluntario o comenzar como steward, ¡sigue leyendo!
 
 ## Tabla de Contenidos
 
+- [Stewardship (Guía de Área)](#stewardship)
+  - [Cuidado de la Comunidad](#community-care)
+  - [Áreas](#areas)
+  - [Convertirse en Steward](#becoming-a-steward)
+  - [Comenzando como Steward](#getting-started-with-stewardship)
 - [Issues](steward_guidelines.md#issues) 
   - [Informe de Errores](steward_guidelines.md#informe-de-errores) 
   - [Solicitud de Funcionalidades](steward_guidelines.md#solicitud-de-funcionalidades)
@@ -28,7 +31,63 @@ Ya sea que recién te hayas unido a nosotros como supervisor, seas un responsabl
   - [Gestión de Notificaciones](steward_guidelines.md#gestión-de-notificaciones)
 
 ---
+## Stewardship (Rol de Guía de Área)
 
+### Cuidado de la Comunidad 
+
+Un ethos de código abierto incluye [accesibilidad, educación, colaboración, transparencia y agencia](https://www.opensourceethos.net/). Vivir y practicar estos valores mientras escribimos código juntos requiere un atento cuidado de la comunidad. Estas son las prácticas de cuidado comunitario que forman parte de nuestra definición de stewardship:
+
+1. Dar la bienvenida a nuevos contribuidores en GitHub mediante **comentarios amigables** y **revisiones útiles de código**.
+2. Ayudar a **facilitar discusiones sobre funcionalidades** y resolver desacuerdos técnicos. Por ejemplo, hacer conexiones con otras discusiones u ofrecer aportes desde experiencia previa relevante. Sugerir funcionalidades o trabajar en ellas es contribución, no stewardship.
+3. Participar en los lanzamientos (releases) del software p5.js **apoyando** la corrección de bugs y la finalización de funcionalidades. Por ejemplo, esto significa guiar a otros contribuidores y revisar sus PRs. Corregir bugs es contribución, no stewardship.
+
+El resto de estas directrices proporcionan algunos consejos y trucos que te ayudarán a contribuir efectivamente a p5.js y a guiar las contribuciones de otros. La mayoría de lo escrito aquí existe como pauta a menos que se indique lo contrario. Puedes adaptar estas prácticas para que se ajusten a tu proceso de trabajo.
+
+¡Todos están invitados a ayudar a cuidar la comunidad cuando puedan! Nos alegra ver contribuidores que dan la bienvenida a nuevos contribuidores, revisan el código de otros y proporcionan retroalimentación sobre el diseño de la API. También existen algunos roles concretos:
+
+- Los **contribuidores (contributors)** pueden crear issues, PRs, comentarios y revisiones de código.
+- Los **mantenedores (maintainers)** también pueden mergear PRs y administrar otras partes del código del proyecto (codebase).
+
+Los stewards también pueden ser contribuidores: pueden crear issues y PRs como contribuidores, mientras también asumen la responsabilidad, cuando están cuidando un área en particular, de comentar en issues y hacer revisiones de código, especialmente cuando otros contribuidores los etiquetan para ayudar con la discusión y revisión.
+
+Como contribuidor, puedes consultar los stewards actuales en el archivo README del repositorio de p5.js y etiquetar a los stewards relevantes, pero ten en cuenta nuestras directrices para contribuidores, que enfatizan la paciencia y la consideración de que la mayor parte del trabajo técnico en un proyecto de código abierto es voluntario.
+
+Como steward, esperamos que participes regularmente en revisiones de código en issues o PRs que tú no creaste, si están en tu área y si puedes proporcionar orientación útil.
+
+### Áreas
+
+Existen diferentes áreas de trabajo de las cuales los stewards pueden ser responsables. Estas áreas coinciden con las etiquetas (labels) de GitHub en la mayoría de los casos, con un par de excepciones. A continuación se presenta la lista de áreas:
+
+- **Accesibilidad**: Esta área se refiere específicamente a la accesibilidad digital y web, incluyendo, por ejemplo, el soporte para lectores de pantalla mediante API como `describe(..)`, así como el soporte de accesibilidad en el sitio web de referencia
+- **Núcleo (Core)**: Se refiere a la API central de p5.js, incluyendo renderizado y entorno
+- **DevOps**: Se refiere al proceso de compilación (build process), pruebas unitarias (unit testing) y otros aspectos de la experiencia de desarrollo
+- **Documentación**: Incluye tanto la referencia en el código base central que se expone en el sitio web, los documentos para contribuidores y otro contenido del sitio web
+- **i18n (Internacionalización / Traducción)**: Incluye la revisión de traducciones, particularmente para `es`, `hi`, `ko`, `zh`
+- **Gráficos**: Contiene subáreas de WebGL y [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Incluye Color, ColorMode, mejoras de accesibilidad relacionadas con el uso del color
+- **Tipografía**: Se refiere a todos los temas sobre el manejo de texto y fuentes
+- **Matemáticas**: Incluye tanto la Math API externa como mejoras internas de rendimiento
+- **Formas (Shapes)**: Incluye el trabajo con formas personalizadas en las versiones 1.11.x y 2.x de p5.js
+- **Mantenedores**: Este grupo puede mergear PRs
+- **p5.sound.js**: La [nueva biblioteca p5.sound.js](https://github.com/processing/p5.sound.js)
+- **p5.js-website**: Aspectos no relacionados con el contenido del [sitio web de referencia](https://p5js.org/), por ejemplo, su estructura, automatizaciones, mejoras técnicas, etc.
+
+Estas áreas de enfoque pueden cambiar con el tiempo dependiendo de las necesidades del proyecto, así que si estás pasando por el proceso de solicitar ser steward, ¡eres bienvenido a proponer nuevas áreas!
+
+### Convertirse en Steward 
+
+Hay dos formas de convertirse en steward:
+
+1. **Nominación** por parte de mantenedores u otros stewards, como en conversaciones en Discord, Discourse o GitHub.
+2. **Solicitud** creando un PR para actualizar `stewards.yml` con tu usuario de GitHub @ y las áreas propuestas. Ten en cuenta que cada área debe tener de 1 a 3 stewards. ¡Siempre estamos buscando **stewards de traducción**! Una vez que hagas tu PR de solicitud, otros mantenedores o stewards pueden pedir material de apoyo adicional, como hacer un PR relacionado con las áreas en las que estás interesado o participar en alguna discusión relacionada.
+
+Para permanecer como steward, debes contribuir como steward en al menos 1 de los 2 lanzamientos menores más recientes (por ejemplo, 2.1.0 o 1.11.0, cuando cambia el número del medio). Estos no son tan frecuentes como los parches (patches) (por ejemplo, 2.0.3 a 2.0.4, cuando cambia el número más a la derecha), y en la práctica esto significa que se espera que los stewards estén activos cada 4-6 meses aproximadamente, apoyando a otros contribuidores mediante discusión o revisión de código, no necesariamente escribiendo código. Para renunciar al rol de steward, puedes hacer un PR para eliminarte de `stewards.yml`. ¡Siempre eres bienvenido a tomar una pausa y volver a solicitar en el futuro!
+
+### Comenzando como Steward
+
+1. Mantén estas directrices a mano como referencia: cómo ayudar con nuevos issues, bugs y funcionalidades. Por ejemplo, la sección "Solicitud de Funcionalidades" incluye consejos sobre cómo usar la [declaración de acceso]([access.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/es/access.md)) de p5.js como steward.
+2. Al ayudar a responder preguntas técnicas o revisar, intenta aplicar la [directriz de la Processing Foundation sobre cómo responder preguntas](https://discourse.processing.org/t/guidelines-answering-questions/2145). Estas pueden ser especialmente útiles para dar retroalimentación técnica constructiva.
+3. Únete al [Discord de p5.js](https://discord.com/invite/SHQ8dH25r9). ¡En el canal `#contribute-to-p5` cualquier pregunta o propuesta de mejora sobre este proceso es bienvenida!
 
 ## _Issues_
 
@@ -169,131 +228,73 @@ Las _pull requests_ de Dependabot generalmente solo son visibles para los admini
 
 ---
 
+## Proceso de Compilación
 
-## Proceso de Construcción
+Esta sección no cubrirá la configuración general de compilación (build) ni los comandos, sino más bien detalles sobre lo que sucede detrás de escena. Consulta las [directrices para administradores](contributor_guidelines.md#working-on-p5js-codebase) para obtener información más detallada sobre la construcción.
 
-Esta sección no cubrirá la configuración general de construcción ni los comandos, sino más bien detalles sobre lo que sucede detrás de escena. Consulta las [directrices para administradores](contributor_guidelines.md#working-on-p5js-codebase) para obtener información más detallada sobre la construcción.
-
-El archivo Gruntfile.js contiene las definiciones principales de construcción para p5.js. Entre las diferentes herramientas utilizadas para construir la biblioteca y la documentación se incluyen, pero no se limitan a: Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify y Mocha. Puede ser útil comenzar con la tarea `default` y retroceder desde allí. También puede ser útil abrir el documento Gruntfile.js mientras se sigue la explicación a continuación.
-
+A partir de la versión 2.0 de p5.js, el proyecto ya no usa Grunt para la automatización de tareas. En su lugar, los procesos de compilación y pruebas (test) se manejan usando herramientas modernas como scripts de npm, ESLint y [Vitest](https://vitest.dev/).
 
 ### Tarea Principal de Construcción
 
+Para ejecutar las verificaciones de estilo del código (lint) y las pruebas unitarias (unit tests), simplemente ejecuta:
+
 ```
-grunt.registerTask('default', ['lint', 'test']);
+npm test
 ```
 
-Cuando ejecutamos `grunt` o el script npm `npm test`, ejecutamos la tarea predeterminada que consiste en `lint` y luego `test`.
-
+Este comando ejecuta ESLint para verificar el estilo del código y luego ejecuta las pruebas unitarias y las pruebas visuales usando Vitest.
 
 #### Tarea `lint`
 
+En p5.js 2.0, ESLint se usa directamente mediante scripts de npm para todas las tareas de verificación de estilo (linting).
+
+Para ejecutar las verificaciones de estilo (lint) en el código del proyecto.
+
 ```
-grunt.registerTask('lint', ['lint:source', 'lint:samples']);
+npm run lint
 ```
 
-La tarea `lint` consiste en dos sub tareas: `lint:source` y `lint:samples`. `lint:source` está subdividida aún más en tres sub tareas adicionales: `eslint:build`, `eslint:source` y `eslint:test`, que utilizan ESLint para verificar los scripts de construcción, el código fuente y los scripts de prueba.
+Este comando verifica los archivos fuente, los scripts de compilación (build scripts), los archivos de prueba y los ejemplos de documentación usando ESLint.
 
-La tarea `lint:samples` primero ejecutará la tarea `yui`, que a su vez consiste en `yuidoc:prod`, `clean:reference` y `minjson`, que extraen la documentación del código fuente en un documento JSON, eliminan archivos no utilizados del paso anterior y minifican el archivo JSON generado en `data.min.json, respectivamente.
+Si solo quieres ejecutar la verificación de estilo (linting) para archivos o directorios específicos, puedes usar ESLint directamente:
 
-A continuación en `lint:samples` está `eslint-samples:source`, que es una tarea escrita personalizada cuya definición está en [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js); ejecutará ESLint para verificar el código de ejemplo de la documentación y asegurarse de que siga la misma convención de codificación que el resto de p5.js (`yui` se ejecuta primero aquí porque necesitamos que el archivo JSON se construya primero antes de que podamos aplicar lint a los ejemplos).
+```
+npx eslint src/
+npx eslint test/
+```
 
+Ya no existe un linter separado para ejemplos ni un pipeline basado en YUIDoc.
 
 #### Tarea `test`
 
-```js
-grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
-]);
-```
+En p5.js 2.0, el sistema de pruebas ya no usa Mocha mediante Grunt. En su lugar, las pruebas se ejecutan usando [Vitest](https://vitest.dev/) a través de scripts de npm.
 
-Primero, veamos la tarea `build` dentro de `test`.
-
-```js
-grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
-]);
-```
-
-Las tareas que comienzan con `browserify` están definidas en [./tasks/build/browserify.js](tasks/build/browserify.js). Todas siguen pasos similares con diferencias menores. Estos son los pasos principales para construir la biblioteca completa de p5.js a partir de sus numerosos archivos fuente en uno solo:
-
-- `browserify` construye p5.js, mientras que `browserify:min` construye un archivo intermedio para ser minificado en el siguiente paso. La diferencia entre `browserify` y `browserify:min` es que `browserify:min` no contiene datos necesarios para que funcione FES.
-- `uglify` toma el archivo de salida de `browserify:min` y lo minifica en el p5.min.js final (la configuración de este paso está en el archivo Gruntfile.js principal).
-- `browserify:test` está construyendo una versión idéntica y completa a la de p5.js, salvo por el código adicional que se utiliza para informar sobre la cobertura de código de prueba (usando [Istanbul](https://istanbul.js.org/)).
-
-Primero, el uso del código específico de node.js `fs.readFileSync()` es reemplazado por el contenido real del archivo utilizando `brfs-babel`. Esto se utiliza principalmente en el código WebGL para insertar código de <em>shader</em> desde archivos fuente escritos como archivos separados.
-
-A continuación, el código fuente, incluidas todas las dependencias de node\_modules, se transpila usando Babel para cumplir con el requisito de [Browserslist](https://browsersl.ist/) definido en package.json, así como para convertir las declaraciones de importación ES6 en `require()` de CommonJS que browserify comprende. Esto también nos permite utilizar una sintaxis más nueva disponible en ES6 y más allá sin la preocupación por la compatibilidad del navegador.
-
-Después de empaquetar pero antes de que el código empaquetado se escriba en el archivo, el código se pasa por `pretty-fast`. Si no está destinado a ser minificado, debería ser limpiado para que el formato final sea un poco más consistente (anticipamos que el código fuente de p5.js se pueda leer e inspeccionar si se desea).
-
-Aquí se omiten algunos pasos detallados pequeños; puedes revisar el archivo de definición de construcción de browserify vinculado arriba para ver todo más de cerca. 
+Para ejecutar el conjunto completo de pruebas (unit y visual tests), usa:
 
 ```
-connect:server
+npm test
 ```
 
-Este paso inicia un servidor local que aloja los archivos de prueba y los archivos de código fuente construidos para que las pruebas automatizadas puedan ejecutarse en Chrome.
+Este comando realiza:
+
+- Verificación de estilo (linting) mediante ESLint
+- Pruebas unitarias (unit tests) usando Vitest
+- Pruebas visuales (capturas de renderizado)
+
+Las pruebas se encuentran en la carpeta `test/unit`, organizadas de manera que reflejen la estructura del directorio `src`. Por ejemplo, las pruebas para `src/color/p5.Color.js` están en `test/unit/color/p5.Color.js`.
+
+Para ejecutar las pruebas interactivamente en un entorno similar al navegador (útil para identificar errores o debuggear), ejecuta:
 
 ```
-mochaChrome
+npx vitest --ui
 ```
-
-Este paso está definido en [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js). Utiliza Puppeteer para iniciar una versión sin interfaz de usuario de Chrome que puede ser controlada de forma remota y ejecuta las pruebas asociadas con los archivos HTML en la carpeta `./test`, que incluye la prueba de la versión sin minificar y minificada de la biblioteca contra los conjuntos de pruebas unitarias, así como la prueba de todos los ejemplos de referencia.
-
+También se puede generar la cobertura de código usando las herramientas integradas de Vitest. Ejecuta:
 
 ```
-mochaTest
+npx vitest run --coverage
 ```
 
-Este paso difiere de `mochaChrome` en que se ejecuta en node.js en lugar de en Chrome y solo prueba un pequeño subconjunto de características en la biblioteca. La mayoría de las características en p5.js requerirán un entorno de navegador, por lo que este conjunto de pruebas solo debe ampliarse si las nuevas pruebas realmente no necesitan un entorno de navegador.
-
-
-```
-nyc:report
-```
-
-Finalmente, después de que todas las construcciones y pruebas estén completas, este paso recopilará el informe de cobertura de pruebas mientras `mochaChrome` estaba probando la versión completa de la biblioteca y mostrará los datos de cobertura de pruebas en la consola. La cobertura de pruebas para p5.js es principalmente para monitorear y tener algunos puntos de datos adicionales; tener una cobertura de pruebas del 100% no es un objetivo.
-
-¡Y eso cubre la tarea predeterminada en la configuración de Gruntfile.js!
-
-
-### Tarea Variada
-
-Todos los pasos pueden ejecutarse directamente con `npx grunt [step]`. También hay algunas tareas que no se mencionan arriba pero podrían ser útiles en ciertos casos.
-
-```
-grunt yui:dev
-```
-
-Esta tarea ejecutará las construcciones de documentación y biblioteca descritas arriba, seguidas de la puesta en marcha de un servidor web que sirve una versión funcionalmente similar de la página de referencia que encontrarás en el sitio web en [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). Luego, supervisará el código fuente en busca de cambios y reconstruirá la documentación y la biblioteca.
-
-`grunt` `yui:dev` es útil cuando estás trabajando en la referencia en la documentación en línea porque no necesitas mover archivos construidos del repositorio de p5.js a un repositorio local de un sitio de p5.js y reconstruir el sitio web cada vez que hagas un cambio, y puedes previsualizar tus cambios con esta versión ligeramente simplificada de la referencia en tu navegador. De esta manera, también puedes tener más confianza en que los cambios que hiciste probablemente se mostrarán correctamente en el sitio web. Ten en cuenta que esto solo está destinado a modificaciones en la documentación en línea; los cambios en la página de referencia en sí, incluido el estilo y el diseño, deben hacerse y probarse en el repositorio del sitio web.
-
-```
-grunt watch
-grunt watch:main
-grunt watch:quick
-```
-
-Las tareas de observación vigilarán una serie de archivos en busca de cambios y ejecutarán tareas asociadas para construir la referencia o la biblioteca según los archivos que hayan cambiado. Estas tareas hacen lo mismo, la única diferencia es el alcance.
-
-La tarea `watch` ejecutará todas las construcciones y pruebas de manera similar a ejecutar la tarea predeterminada completa al detectar cambios en el código fuente.
-
-La tarea `watch:main` ejecutará la construcción y las pruebas de la biblioteca, pero no reconstruirá la referencia al detectar cambios en el código fuente.
-
-La tarea `watch:quick` ejecutará solo la construcción de la biblioteca al detectar cambios en el código fuente.
-
-Dependiendo de en qué estés trabajando, elegir la tarea de observación más mínima aquí puede ahorrarte tener que ejecutar manualmente una reconstrucción cada vez que desees hacer algunos cambios.
-
----
+Nota: El proceso de compilación de Browserify/Grunt (por ejemplo, `browserify`, `uglify`, `brfs-babel`) fue eliminado en la versión 2.
 
 
 ## Proceso de Lanzamiento

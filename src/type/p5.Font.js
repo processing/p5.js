@@ -737,25 +737,14 @@ export class Font {
 
   /////////////////////////////// HELPERS ////////////////////////////////
 
-  _verticalAlign(size) {
-    const { sCapHeight } = this.data?.['OS/2'] || {};
-    const { unitsPerEm = 1000 } = this.data?.head || {};
-    const { ascender = 0, descender = 0 } = this.data?.hhea || {};
-    const current = ascender / 2;
-    const target = (sCapHeight || (ascender + descender)) / 2;
-    const offset = target - current;
-    return offset * size / unitsPerEm;
-  }
-
   /*
     Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
   */
   _lineateAndPathify(str, x, y, width, height, options = {}) {
 
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
-
-    // save the baseline
-    let setBaseline = renderer.drawingContext.textBaseline;
+    renderer.push();
+    renderer.textFont(this);
 
     // lineate and compute bounds for the text
     let { lines, bounds } = renderer._computeBounds
@@ -772,8 +761,7 @@ export class Font {
     const axs = this._currentAxes(renderer);
     let pathsForLine = lines.map(l => this._lineToGlyphs(l, { scale, axs }));
 
-    // restore the baseline
-    renderer.drawingContext.textBaseline = setBaseline;
+    renderer.pop();
 
     return pathsForLine;
   }
@@ -857,7 +845,7 @@ export class Font {
 
   _position(renderer, lines, bounds, width, height) {
 
-    let { textAlign, textLeading } = renderer.states;
+    let { textAlign, textLeading, textSize } = renderer.states;
     let metrics = this._measureTextDefault(renderer, 'X');
     let ascent = metrics.fontBoundingBoxAscent;
 
@@ -1451,7 +1439,8 @@ function font(p5, fn) {
    * <code>
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
+   *
+   * loadFont('@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }');
    * </code>
    * </div>
    */
@@ -1480,7 +1469,15 @@ function font(p5, fn) {
     let isCSS = path.includes('@font-face');
 
     if (!isCSS) {
-      const info = await fetch(path, { method: 'HEAD' });
+      let info;
+      try {
+        info = await fetch(path, { method: 'HEAD' });
+      } catch (e) {
+        // Sometimes files fail when requested with HEAD. Fallback to a
+        // regular GET. It loads more data, but at least then it's cached
+        // for the likely case when we have to fetch the whole thing.
+        info = await fetch(path);
+      }
       const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
       if (isCSSFile) {
         isCSS = true;
