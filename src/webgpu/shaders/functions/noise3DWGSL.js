@@ -91,15 +91,16 @@ fn baseNoise(v: vec3<f32>) -> f32 {
         dot(p2_norm,x2), dot(p3_norm,x3) ) );
 }
 
-fn noise(st: vec3<f32>) -> f32 {
+fn noise(st: vec3<f32>, octaves: i32, ampFalloff: f32) -> f32 {
   var result = 0.0;
   var amplitude = 1.0;
   var frequency = 1.0;
 
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 8; i++) {
+    if (i >= octaves) { break; }
     result += amplitude * baseNoise(st * frequency);
     frequency *= 2.0;
-    amplitude *= 0.5;
+    amplitude *= ampFalloff;
   }
 
   return result;
