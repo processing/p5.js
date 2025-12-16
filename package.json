@@ -19,7 +19,7 @@
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.1.1",
+  "version": "2.1.2",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
