@@ -227,6 +227,7 @@ function fesCore(p5, fn){
      * @param  {Number|String}  [color]   CSS color code
      */
     p5._friendlyError = function(message, func, color) {
+      if (p5.disableFriendlyErrors) return;
       p5._report(message, func, color);
     };
 

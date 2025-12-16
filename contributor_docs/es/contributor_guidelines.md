@@ -294,7 +294,7 @@ Algunos de los archivos y carpetas clave que encontrarás en la carpeta de p5.js
 
 - `src` - Aquí es donde reside todo el código que eventualmente se combina en los archivos finales p5.js y p5.min.js.
 - [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - En esta carpeta se encuentran las pruebas unitarias y el código para probar todos los ejemplos de documentación.
-- `tasks` - Donde se encuentra el código de compilación detallado y personalizado. `Gruntfile.js` - Este es el archivo de configuración de compilación principal.
+- `tasks` - Donde se encuentra el código de compilación detallado y personalizado.
 - `contributor_docs` - Aquí es donde reside la documentación y toda la demás documentación para las, los y les colaboradores.
 
 Los demás archivos y carpetas son principalmente configuraciones u otros tipos de archivos de soporte; en la mayoría de los casos, no debería ser necesario realizar ninguna modificación.

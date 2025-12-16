@@ -25,6 +25,42 @@ visualSuite('WebGL', function() {
       p5.box(20);
       screenshot();
     });
+
+    visualTest('Camera settings on framebuffers reset after push/pop', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.setAttributes({ antialias: true });
+      const fbo = p5.createFramebuffer();
+
+      p5.background(220);
+      p5.imageMode(p5.CENTER);
+
+      fbo.begin();
+      p5.push();
+      p5.ortho();
+      p5.translate(0, -25);
+      for (let i = -1; i <= 1; i++) {
+        p5.push();
+        p5.translate(i * 35, 0);
+        p5.box(25, 25, 150);
+        p5.pop();
+      }
+      p5.pop();
+
+
+      p5.push();
+      p5.translate(0, 25);
+      for (let i = -1; i <= 1; i++) {
+        p5.push();
+        p5.translate(i * 35, 0);
+        p5.box(25, 25, 150);
+        p5.pop();
+      }
+      p5.pop();
+
+      fbo.end();
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
   });
 
   visualSuite('filter', function() {
@@ -679,7 +715,6 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = await p5.loadImage('/unit/assets/cat.jpg');
       p5.texture(tex);
-      p5.texture(tex);
       p5.rect(-20, -20, 40, 40);
       screenshot();
     });
@@ -688,8 +723,88 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const tex = await p5.loadImage('/unit/assets/cat.jpg');
       p5.texture(tex);
-      p5.texture(tex);
       p5.rect(-20, -20, 40, 40, 10);
+      screenshot();
+    });
+  });
+
+  visualSuite('textures in p5.strands', () => {
+    visualTest('uniformTexture() works', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const shader = p5.baseMaterialShader().modify(() => {
+        const texUniform = p5.uniformTexture(() => tex)
+        p5.getPixelInputs((inputs) => {
+          inputs.color = p5.getTexture(texUniform, inputs.texCoord);
+          return inputs;
+        });
+      }, { p5, tex });
+      p5.shader(shader);
+      p5.rect(-20, -20, 40, 40);
+      screenshot();
+    });
+  });
+
+  visualSuite('instanced randering', async () => {
+    visualTest('can draw in a grid with floor()', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const gridSize = 5;
+          const row = p5.floor(id / gridSize);
+          const col = id - row * gridSize;
+          const blockInnerSize = 10;
+          const x = (col - gridSize / 2.0) * blockInnerSize + blockInnerSize/2;
+          const y = (gridSize / 2.0 - row) *  blockInnerSize - blockInnerSize/2;
+          inputs.position += [x, y, 0];
+          return inputs;
+        });
+      }, { p5 });
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 6))
+      p5.noStroke();
+      p5.fill(0);
+      p5.shader(shader);
+      p5.model(obj, 25);
+      screenshot();
+    });
+
+    visualTest('can draw in a grid with int()', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const gridSize = 5;
+          const row = p5.int(id / gridSize);
+          const col = id - row * gridSize;
+          const blockInnerSize = 10;
+          const x = (col - gridSize / 2.0) * blockInnerSize + blockInnerSize/2;
+          const y = (gridSize / 2.0 - row) *  blockInnerSize - blockInnerSize/2;
+          inputs.position += [x, y, 0];
+          return inputs;
+        });
+      }, { p5 });
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 6))
+      p5.noStroke();
+      p5.fill(0);
+      p5.shader(shader);
+      p5.model(obj, 25);
+      screenshot();
+    });
+  });
+
+  visualSuite('p5.strands', () => {
+    visualTest('it recovers from p5.strands errors', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      try {
+        p5.baseMaterialShader().modify(() => {
+          undefined.someMethod(); // This will throw an error
+        });
+      } catch (e) {}
+      p5.background('red');
+      p5.circle(p5.noise(0), p5.noise(0), 20);
       screenshot();
     });
   });
