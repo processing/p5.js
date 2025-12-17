@@ -18,28 +18,170 @@
 <body>
   <script type="module">
     import p5 from '../src/app.js';
+    import rendererWebGPU from '../src/webgpu/p5.RendererWebGPU.js';
+
+    p5.registerAddon(rendererWebGPU);
 
     const sketch = function (p) {
       let fbo;
+      let sh;
+      let ssh;
+      let tex;
+      let font;
+      let redFilter;
+      let env;
+
       p.setup = async function () {
-        p.createCanvas(400, 400, p.WEBGL);
-        fbo = p.createFramebuffer()
+        await p.createCanvas(400, 400, p.WEBGPU);
+        env = await p.loadImage('img/spheremap.jpg');
+        font = await p.loadFont(
+          'font/PlayfairDisplay.ttf'
+        );
+        fbo = p.createFramebuffer();
+
+        redFilter = p.baseFilterShader().modify(() => {
+          p.getColor((inputs, canvasContent) => {
+            let col = p.getTexture(canvasContent, inputs.texCoord);
+            col.g = col.r;
+            col.b = col.r;
+            return col;
+          })
+        }, { p })
+
+        tex = p.createImage(100, 100);
+        tex.loadPixels();
+        for (let x = 0; x < tex.width; x++) {
+          for (let y = 0; y < tex.height; y++) {
+            const off = (x + y * tex.width) * 4;
+            tex.pixels[off] = p.round((x / tex.width) * 255);
+            tex.pixels[off + 1] = p.round((y / tex.height) * 255);
+            tex.pixels[off + 2] = 0;
+            tex.pixels[off + 3] = 255;
+          }
+        }
+        tex.updatePixels();
+        fbo.draw(() => {
+          //p.clear();
+          //p.background('orange');
+          p.imageMode(p.CENTER);
+          p.image(tex, 0, 0, p.width, p.height);
+        });
+
+        /*sh = p.baseMaterialShader().modify({
+          uniforms: {
+            'f32 time': () => p.millis(),
+          },
+          'Vertex getWorldInputs': `(inputs: Vertex) {
+            var result = inputs;
+            result.position.y += 40.0 * sin(uniforms.time * 0.005);
+            return result;
+          }`,
+        })*/
+        sh = p.baseMaterialShader().modify(() => {
+          const time = p.uniformFloat(() => p.millis());
+          p.getWorldInputs((inputs) => {
+            inputs.position.y += 40 * p.sin(time * 0.005);
+            return inputs;
+          });
+        }, { p })
+	/*ssh = p.baseStrokeShader().modify({
+          uniforms: {
+            'f32 time': () => p.millis(),
+          },
+          'StrokeVertex getWorldInputs': `(inputs: StrokeVertex) {
+            var result = inputs;
+            result.position.y += 40.0 * sin(uniforms.time * 0.005);
+            return result;
+          }`,
+	})*/
       };
 
       p.draw = function () {
+        p.clear();
         p.push();
-        p.background(200);
-        fbo.begin()
-        p.background('blue')
-        p.strokeWeight(10);
+        //p.clip(() => p.rect(-50, -50, 200, 200));
+        /*p.orbitControl();
+        p.push();
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textFont(font);
+        p.textSize(85)
+        p.fill('red')
+        p.noStroke()
+        p.rect(0, 0, 100, 100);
+        p.fill(0);
         p.push()
-        p.stroke('red')
-        p.line(-100, -100, 100, 100);
+        p.rotate(p.millis() * 0.001)
+        p.text('Hello!', 0, 0);
         p.pop()
-        p.translate(200, 200)
-        p.line(-100, -100, 100, 100);
-        fbo.end()
-        p.image(fbo, 0, 0)
+        p.pop();
+        return;*/
+        p.orbitControl();
+        const t = p.millis() * 0.002;
+        p.background(200);
+        p.panorama(env);
+        p.push();
+        p.imageLight(env);
+        p.shader(sh);
+        // p.strokeShader(ssh)
+        p.ambientLight(10);
+        //p.directionalLight(100, 100, 100, 0, 1, -1);
+        //p.pointLight(155, 155, 155, 0, -200, 500);
+        p.specularMaterial(255);
+        p.shininess(50);
+        p.metalness(100);
+        //p.stroke('white');
+        p.noStroke();
+        for (const [i, c] of ['red', 'gray', 'blue'].entries()) {
+          p.push();
+          p.fill(c);
+          p.translate(
+            p.width/3 * p.sin(t + i * Math.E),
+            0, //p.width/3 * p.sin(t * 0.9 + i * Math.E + 0.2),
+            p.width/3 * p.sin(t * 1.2 + i * Math.E + 0.3),
+          )
+          if (i % 2 === 0) {
+            if (i === 0) {
+              p.texture(fbo)
+            }
+            p.box(30);
+          } else {
+            p.sphere(30);
+          }
+          p.pop();
+        }
+        p.pop();
+
+        // Test beginShape/endShape with immediate mode shapes
+        p.push();
+        p.translate(0, 100, 0);
+        p.fill('yellow');
+        p.noStroke();
+
+        // Draw a circle using beginShape/endShape
+        p.beginShape();
+        const numPoints = 16;
+        for (let i = 0; i < numPoints; i++) {
+          const angle = (i / numPoints) * Math.PI * 2;
+          const x = Math.cos(angle) * 50;
+          const y = Math.sin(angle) * 50;
+          p.vertex(x, y);
+        }
+        p.endShape(p.CLOSE);
+
+        p.translate(100, 0, 0);
+        p.fill('purple');
+
+        // Draw a square using beginShape/endShape
+        p.beginShape();
+        p.vertex(-30, -30);
+        p.vertex(30, -30);
+        p.vertex(30, 30);
+        p.vertex(-30, 30);
+        p.endShape(p.CLOSE);
+
+        p.pop();
+
+        // p.filter(p.BLUR, 10)
         p.pop();
       };
     };

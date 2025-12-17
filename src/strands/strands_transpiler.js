@@ -3,6 +3,7 @@ import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
 let blockVarCounter = 0;
+let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
   switch (codeSource) {
     case '+': return 'add';
@@ -563,6 +564,9 @@ const ASTCallbacks = {
 
       // Transform for statement into strandsFor() call
       // for (init; test; update) body -> strandsFor(initCb, conditionCb, updateCb, bodyCb, initialVars)
+      
+      // Generate unique loop variable name
+      const uniqueLoopVar = `loopVar${loopVarCounter++}`;
 
       // Create the initial callback from the for loop's init
       let initialFunction;
@@ -608,14 +612,14 @@ const ASTCallbacks = {
       // Replace loop variable references with the parameter
       if (node.init?.type === 'VariableDeclaration') {
         const loopVarName = node.init.declarations[0].id.name;
-        conditionBody = this.replaceIdentifierReferences(conditionBody, loopVarName, 'loopVar');
+        conditionBody = this.replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
       }
       const conditionAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: conditionBody }] };
       conditionBody = conditionAst.body[0].expression;
 
       const conditionFunction = {
         type: 'ArrowFunctionExpression',
-        params: [{ type: 'Identifier', name: 'loopVar' }],
+        params: [{ type: 'Identifier', name: uniqueLoopVar }],
         body: conditionBody
       };
 
@@ -626,14 +630,14 @@ const ASTCallbacks = {
         // Replace loop variable references with the parameter
         if (node.init?.type === 'VariableDeclaration') {
           const loopVarName = node.init.declarations[0].id.name;
-          updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, 'loopVar');
+          updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
         }
         const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
         updateExpr = updateAst.body[0].expression;
 
         updateFunction = {
           type: 'ArrowFunctionExpression',
-          params: [{ type: 'Identifier', name: 'loopVar' }],
+          params: [{ type: 'Identifier', name: uniqueLoopVar }],
           body: {
             type: 'BlockStatement',
             body: [{
@@ -645,12 +649,12 @@ const ASTCallbacks = {
       } else {
         updateFunction = {
           type: 'ArrowFunctionExpression',
-          params: [{ type: 'Identifier', name: 'loopVar' }],
+          params: [{ type: 'Identifier', name: uniqueLoopVar }],
           body: {
             type: 'BlockStatement',
             body: [{
               type: 'ReturnStatement',
-              argument: { type: 'Identifier', name: 'loopVar' }
+              argument: { type: 'Identifier', name: uniqueLoopVar }
             }]
           }
         };
@@ -665,13 +669,13 @@ const ASTCallbacks = {
       // Replace loop variable references in the body
       if (node.init?.type === 'VariableDeclaration') {
         const loopVarName = node.init.declarations[0].id.name;
-        bodyBlock = this.replaceIdentifierReferences(bodyBlock, loopVarName, 'loopVar');
+        bodyBlock = this.replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
       }
 
       const bodyFunction = {
         type: 'ArrowFunctionExpression',
         params: [
-          { type: 'Identifier', name: 'loopVar' },
+          { type: 'Identifier', name: uniqueLoopVar },
           { type: 'Identifier', name: 'vars' }
         ],
         body: bodyBlock
@@ -921,6 +925,10 @@ const ASTCallbacks = {
     }
   }
   export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+    // Reset counters at the start of each transpilation
+    blockVarCounter = 0;
+    loopVarCounter = 0;
+    
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
