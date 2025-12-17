@@ -104,6 +104,9 @@
     "lib/p5.js",
     "lib/p5.esm.js",
     "lib/p5.esm.min.js",
+    "lib/p5.webgpu.js",
+    "lib/p5.webgpu.min.js",
+    "lib/p5.webgpu.esm.js",
     "translations/**",
     "types/**"
   ],
