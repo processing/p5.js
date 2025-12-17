@@ -368,23 +368,38 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
       const userReturned = hookUserCallback(...args);
+
+      // Auto-return input if types match and user didn't return anything
+      let effectiveReturn = userReturned;
+      if (userReturned === undefined) {
+        const expected = hookType.returnType;
+        if (isStructType(expected.typeName)) {
+          if (hookType.parameters.length === 1) {
+            const paramType = hookType.parameters[0].type.typeName;
+            if (paramType === expected.typeName) {
+              effectiveReturn = args[0];
+            }
+          }
+        }
+      }
+
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
       if(isStructType(expectedReturnType.typeName)) {
         const expectedStructType = structType(expectedReturnType);
-        if (userReturned instanceof StrandsNode) {
-          const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
+        if (effectiveReturn instanceof StrandsNode) {
+          const returnedNode = getNodeDataFromID(strandsContext.dag, effectiveReturn.id);
           if (returnedNode.baseType !== expectedStructType.typeName) {
-            FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
+            FES.userError("type error", `You have returned a ${effectiveReturn.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
           }
           const newDeps = returnedNode.dependsOn.slice();
           for (let i = 0; i < expectedStructType.properties.length; i++) {
             const expectedType = expectedStructType.properties[i].dataType;
-            const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[userReturned.id], strandsContext);
+            const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[effectiveReturn.id], strandsContext);
             newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
           }
-          dag.dependsOn[userReturned.id] = newDeps;
-          rootNodeID = userReturned.id;
+          dag.dependsOn[effectiveReturn.id] = newDeps;
+          rootNodeID = effectiveReturn.id;
         }
         else {
           const expectedProperties = expectedStructType.properties;
@@ -392,11 +407,11 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           for (let i = 0; i < expectedProperties.length; i++) {
             const expectedProp = expectedProperties[i];
             const propName = expectedProp.name;
-            const receivedValue = userReturned[propName];
+            const receivedValue = effectiveReturn[propName];
             if (receivedValue === undefined) {
               FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` +
                 `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
-                `Received: { ${Object.keys(userReturned).join(', ')} }\n` +
+                `Received: { ${Object.keys(effectiveReturn).join(', ')} }\n` +
                 `All of the properties are required!`);
             }
             const expectedTypeInfo = expectedProp.dataType;
@@ -409,7 +424,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       }
       else /*if(isNativeType(expectedReturnType.typeName))*/ {
         const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
-        rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
+        rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, effectiveReturn, hookType.name);
       }
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
       const hookInfo = availableHooks[fullHookName];
