@@ -10,7 +10,7 @@ function gridOutput(p5, fn){
 
   //updates gridOutput
   fn._updateGridOutput = function(idT) {
-    if (this._renderer && this._renderer instanceof p5.RendererGL) {
+    if (this._renderer && this._renderer.isP3D) {
       if (!this._didOutputGridWebGLMessage) {
         this._didOutputGridWebGLMessage = true;
         console.error('gridOutput() does not yet work in WebGL mode.');

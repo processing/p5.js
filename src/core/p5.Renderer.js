@@ -383,6 +383,29 @@ class Renderer {
     return this;
   }
 
+  finishDraw() {
+    // Default no-op implementation
+    // Override in specific renderers as needed
+  }
+
+  ///////////////////////////////
+  //// TEXT SUPPORT METHODS
+  //////////////////////////////
+
+  _middleAlignOffset = function() {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
+  };
 };
 
 function renderer(p5, fn){
