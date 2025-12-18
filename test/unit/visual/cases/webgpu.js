@@ -752,6 +752,44 @@ visualSuite("WebGPU", function () {
     );
   });
 
+  visualSuite("Immediate Mode Buffer Reuse", function () {
+    visualTest(
+      "beginShape/endShape reuses buffers across frames",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Draw the same triangle in different positions across 3 frames
+        // Each frame draws the same number of vertices (3) so that it
+        // isn't FORCED to allocate new buffers, and should be trying
+        // to reuse them.
+        const positions = [
+          { x: -15, y: -10 },  // Frame 1: left
+          { x: 0, y: -10 },    // Frame 2: center
+          { x: 15, y: -10 }    // Frame 3: right
+        ];
+
+        for (let frame = 0; frame < 3; frame++) {
+          const pos = positions[frame];
+
+          p5.background(200);
+          p5.fill('red');
+          p5.noStroke();
+
+          // Draw triangle using immediate mode. This means it's using the
+          // same geometry every frame. We expect to see different results
+          // if it's correctly updating the buffers.
+          p5.beginShape();
+          p5.vertex(pos.x - 5, pos.y + 10);  // bottom-left
+          p5.vertex(pos.x + 5, pos.y + 10);  // bottom-right
+          p5.vertex(pos.x, pos.y);           // top
+          p5.endShape(p5.CLOSE);
+
+          await screenshot();
+        }
+      }
+    );
+  });
+
   visualSuite("Image Based Lighting", function () {
     const shinesses = [50, 150];
     for (const shininess of shinesses) {
