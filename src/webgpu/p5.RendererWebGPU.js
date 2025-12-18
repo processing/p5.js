@@ -324,7 +324,7 @@ function rendererWebGPU(p5, fn) {
       const device = this.device;
 
       const buffer = device.createBuffer({
-        size: indices.length * indexType.BYTES_PER_ELEMENT,
+        size: Math.ceil((indices.length * indexType.BYTES_PER_ELEMENT) / 4) * 4,
         usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
         mappedAtCreation: true,
       });
