@@ -716,6 +716,42 @@ visualSuite("WebGPU", function () {
     });
   });
 
+  visualSuite("Buffer Alignment", function () {
+    visualTest(
+      "buildGeometry with non-4-byte-aligned index buffer size",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        p5.randomSeed(1);
+        p5.colorMode(p5.HSB, 360, 100, 100);
+
+        // Create a geometry that will result in a non-4-byte-aligned buffer size
+        // We want to create an odd number of triangles that results in
+        // indices.length * indexType.BYTES_PER_ELEMENT not being divisible by 4
+        const geom = p5.buildGeometry(() => {
+          p5.noStroke();
+          // Create 1323 triangles (3969 indices total)
+          // With Uint16 indices (2 bytes each): 3969 * 2 = 7938 bytes
+          // 7938 is not divisible by 4, we want to ensure the renderer
+          // pads this to keep bytes aligned
+          for (let i = 0; i < 1323; i++) {
+            p5.fill(p5.random(360), 80, 90);
+            p5.triangle(
+              p5.random(-25, 25), p5.random(-25, 25),
+              p5.random(-25, 25), p5.random(-25, 25),
+              p5.random(-25, 25), p5.random(-25, 25)
+            );
+          }
+        });
+
+        p5.background(20);
+        p5.model(geom);
+
+        await screenshot();
+      }
+    );
+  });
+
   visualSuite("Image Based Lighting", function () {
     const shinesses = [50, 150];
     for (const shininess of shinesses) {
