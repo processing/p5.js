@@ -666,34 +666,6 @@ p5.prototype.clip = function(callback, options) {
  * @chainable
  */
 p5.prototype.background = function(...args) {
-
-  // WEBGL: support background(image)
-  if (this._renderer && this._renderer.isP3D && args.length > 0) {
-    const img = args[0];
-
-    const isImageLike =
-      img instanceof p5.Image ||
-      img instanceof p5.Graphics ||
-      (typeof HTMLImageElement !== 'undefined' && img instanceof HTMLImageElement) ||
-      (typeof HTMLVideoElement !== 'undefined' && img instanceof HTMLVideoElement) ||
-      (typeof p5.MediaElement !== 'undefined' && img instanceof p5.MediaElement);
-
-    if (isImageLike) {
-      // Clear WebGL buffers
-      this.clear();
-
-      // Draw image in screen space
-      this.push();
-      this.resetMatrix();
-      this.imageMode(this.CENTER);
-      this.image(img, 0, 0, this.width, this.height);
-      this.pop();
-
-      return this;
-    }
-  }
-
-  // Default behavior (2D + color backgrounds)
   this._renderer.background(...args);
   return this;
 };
