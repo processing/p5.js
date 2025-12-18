@@ -1104,25 +1104,18 @@ p5.prototype.createButton = function (label, value) {
 p5.prototype.createCheckbox = function(...args) {
   p5._validateParameters('createCheckbox', args);
 
-  // Create a container element
-  const elt = document.createElement('div');
-
   // Create checkbox type input element
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-
   // Create label element and wrap it around checkbox
   const label = document.createElement('label');
+  //checkbox must be wrapped in label
+  const self = addElement(label, this);
+  // Append the checkbox to the label
   label.appendChild(checkbox);
 
-  // Append label element inside the container
-  elt.appendChild(label);
-
-  //checkbox must be wrapped in p5.Element before label so that label appears after
-  const self = addElement(elt, this);
-
   self.checked = function(...args) {
-    const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
+    const cb = self.elt.getElementsByTagName('input')[0];
     if (cb) {
       if (args.length === 0) {
         return cb.checked;
@@ -1132,7 +1125,6 @@ p5.prototype.createCheckbox = function(...args) {
         cb.checked = false;
       }
     }
-    return self;
   };
 
   this.value = function (val) {
