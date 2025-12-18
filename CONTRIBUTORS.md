@@ -1085,6 +1085,9 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/menacingly-coded"><img src="https://avatars.githubusercontent.com/u/121508087?v=4?s=64" width="64px;" alt="Shreya Sharma"/><br /><sub><b>Shreya Sharma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=menacingly-coded" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Itsrajsk"><img src="https://avatars.githubusercontent.com/u/117977675?v=4?s=64" width="64px;" alt="Raj Kashid"/><br /><sub><b>Raj Kashid</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Itsrajsk" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Geethegreat"><img src="https://avatars.githubusercontent.com/u/86944224?v=4?s=64" width="64px;" alt="krishnageeth"/><br /><sub><b>krishnageeth</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Geethegreat" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
