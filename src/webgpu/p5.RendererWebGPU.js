@@ -286,22 +286,29 @@ function rendererWebGPU(p5, fn) {
         }
       }
 
-      const raw = map ? map(srcData) : srcData;
-      const typed = this._normalizeBufferData(raw, Float32Array);
+      // Check if we already have a buffer for this data
+      let existingBuffer = buffers[dst];
+      const needsNewBuffer = !existingBuffer;
+      
+      // Only create new buffer and write data if buffer doesn't exist or data is dirty
+      if (needsNewBuffer || geometry.dirtyFlags[src] !== false) {
+        const raw = map ? map(srcData) : srcData;
+        const typed = this._normalizeBufferData(raw, Float32Array);
 
-      // Always use pooled buffers - let the pool system handle sizing and reuse
-      const pooledBufferInfo = this._getVertexBufferFromPool(geometry, dst, typed.byteLength);
+        // Get pooled buffer (may reuse existing or create new)
+        const pooledBufferInfo = this._getVertexBufferFromPool(geometry, dst, typed.byteLength);
 
-      // Create a copy of the data to avoid conflicts when geometry arrays are reset
-      const dataCopy = new typed.constructor(typed);
-      pooledBufferInfo.dataCopy = dataCopy;
+        // Create a copy of the data to avoid conflicts when geometry arrays are reset
+        const dataCopy = new typed.constructor(typed);
+        pooledBufferInfo.dataCopy = dataCopy;
 
-      // Write the data to the pooled buffer
-      device.queue.writeBuffer(pooledBufferInfo.buffer, 0, dataCopy);
+        // Write the data to the pooled buffer
+        device.queue.writeBuffer(pooledBufferInfo.buffer, 0, dataCopy);
 
-      // Update the buffers cache to use the pooled buffer
-      buffers[dst] = pooledBufferInfo.buffer;
-      geometry.dirtyFlags[src] = false;
+        // Update the buffers cache to use the pooled buffer
+        buffers[dst] = pooledBufferInfo.buffer;
+        geometry.dirtyFlags[src] = false;
+      }
 
       shader.enableAttrib(attr, size);
     }
@@ -354,9 +361,9 @@ function rendererWebGPU(p5, fn) {
         }
       };
 
-      freeDefs(this.renderer.buffers.stroke);
-      freeDefs(this.renderer.buffers.fill);
-      freeDefs(this.renderer.buffers.user);
+      freeDefs(this.buffers.stroke);
+      freeDefs(this.buffers.fill);
+      freeDefs(this.buffers.user);
     }
 
     _getValidSampleCount(requestedCount) {
@@ -1013,6 +1020,11 @@ function rendererWebGPU(p5, fn) {
 
       // Return all uniform buffers to their pools
       this._returnUniformBuffersToPool();
+
+      // Mark all geometry buffers for return after frame is complete
+      for (const geometry of this._geometriesWithPools) {
+        this._markGeometryBuffersForReturn(geometry);
+      }
 
       // Return all vertex buffers to their pools
       this._returnVertexBuffersToPool();
