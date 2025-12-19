@@ -1087,6 +1087,7 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Geethegreat"><img src="https://avatars.githubusercontent.com/u/86944224?v=4?s=64" width="64px;" alt="krishnageeth"/><br /><sub><b>krishnageeth</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Geethegreat" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://piyushh.me"><img src="https://avatars.githubusercontent.com/u/163632958?v=4?s=64" width="64px;" alt="PIYUSH RATHORE"/><br /><sub><b>PIYUSH RATHORE</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Piyushrathoree" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
