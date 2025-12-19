@@ -379,5 +379,9 @@ export const glslBackend = {
       }]
     });
     return { id, dimension };
-  }
+  },
+
+  instanceIdReference() {
+    return 'gl_InstanceID';
+  },
 }

@@ -503,5 +503,9 @@ export const wgslBackend = {
       }]
     });
     return { id, dimension };
-  }
+  },
+
+  instanceIdReference() {
+    return 'instanceID';
+  },
 }

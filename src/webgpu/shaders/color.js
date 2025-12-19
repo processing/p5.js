@@ -46,7 +46,7 @@ fn main(input: VertexInput) -> VertexOutput {
   HOOK_beforeVertex();
   var output: VertexOutput;
 
-  let useVertexColor = (uniforms.uUseVertexColor != 0);
+  let useVertexColor = (uniforms.uUseVertexColor != 0 && input.aVertexColor.x >= 0.0);
   var inputs = Vertex(
     input.aPosition,
     input.aNormal,

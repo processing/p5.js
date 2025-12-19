@@ -24,12 +24,13 @@
 
     const sketch = function (p) {
       let fbo;
-      let sh;
+      let sh, sh2;
       let ssh;
       let tex;
       let font;
       let redFilter;
       let env;
+      let instance;
 
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
@@ -38,6 +39,8 @@
           'font/PlayfairDisplay.ttf'
         );
         fbo = p.createFramebuffer();
+
+        instance = p.buildGeometry(() => p.sphere(5));
 
         redFilter = p.baseFilterShader().modify(() => {
           p.getColor((inputs, canvasContent) => {
@@ -81,6 +84,12 @@
           const time = p.uniformFloat(() => p.millis());
           p.getWorldInputs((inputs) => {
             inputs.position.y += 40 * p.sin(time * 0.005);
+            return inputs;
+          });
+        }, { p })
+        sh2 = p.baseMaterialShader().modify(() => {
+          p.getWorldInputs((inputs) => {
+            inputs.position.x += 20 * p.instanceID();
             return inputs;
           });
         }, { p })
@@ -149,6 +158,13 @@
           }
           p.pop();
         }
+        p.pop();
+
+        p.push();
+        p.shader(sh2);
+        p.noStroke();
+        p.fill('red');
+        p.model(instance, 10);
         p.pop();
 
         // Test beginShape/endShape with immediate mode shapes

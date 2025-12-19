@@ -114,6 +114,22 @@ visualSuite("WebGPU", function () {
         await screenshot();
       },
     );
+
+    visualTest('Instanced rendering', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const model = p5.buildGeometry(() => p5.sphere(5));
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          inputs.position += (p5.instanceID() - 1) * 15
+          return inputs;
+        });
+      }, { p5 });
+      p5.noStroke();
+      p5.fill(0);
+      p5.shader(shader);
+      p5.model(model, 3);
+      await screenshot();
+    });
   });
 
   visualSuite('filters', function() {
