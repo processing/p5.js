@@ -50,7 +50,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   };
   p5.break = fn.break;
   fn.instanceID = function() {
-    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
+    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
     return createStrandsNode(node.id, node.dimension, strandsContext);
   }
   // Internal methods use p5 static methods; user-facing methods use fn.

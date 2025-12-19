@@ -289,7 +289,7 @@ function rendererWebGPU(p5, fn) {
       // Check if we already have a buffer for this data
       let existingBuffer = buffers[dst];
       const needsNewBuffer = !existingBuffer;
-      
+
       // Only create new buffer and write data if buffer doesn't exist or data is dirty
       if (needsNewBuffer || geometry.dirtyFlags[src] !== false) {
         const raw = map ? map(srcData) : srcData;
@@ -1349,7 +1349,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _getShaderAttributes(shader) {
-      const mainMatch = /fn main\(.+:\s*(\S+)\s*\)/.exec(shader._vertSrc);
+      const mainMatch = /fn main\(.+:\s*([^\s\)]+)/.exec(shader._vertSrc);
       if (!mainMatch) throw new Error("Can't find `fn main` in vertex shader source");
       const inputType = mainMatch[1];
 
@@ -1740,7 +1740,12 @@ function rendererWebGPU(p5, fn) {
         }
       );
 
-      let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment)\s*)?fn main)/);
+      let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment)\s*)?fn main[^{]+\{)/);
+      if (shaderType !== 'fragment') {
+        if (!main.match(/\@builtin\s*\(\s*instance_index\s*\)/)) {
+          main = main.replace(/\)\s*(->|\{)/, ', @builtin(instance_index) instanceID: u32) $1');
+        }
+      }
 
       let uniforms = '';
       for (const key in shader.hooks.uniforms) {
@@ -1850,12 +1855,55 @@ function rendererWebGPU(p5, fn) {
           shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
         };\n`;
 
-        const [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
+        let [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
+
+        if (shaderType !== 'fragment') {
+          // Splice the instance ID in as a final parameter to every WGSL hook function
+          let hasParams = !!params.match(/^\(\s*\S+.*\)$/);
+          params = params.slice(0, -1) + (hasParams ? ', ' : '') + 'instanceID: u32)';
+        }
+
         if (hookType === 'void') {
           hooks += `fn HOOK_${hookName}${params}${body}\n`;
         } else {
           hooks += `fn HOOK_${hookName}${params} -> ${hookType}${body}\n`;
         }
+      }
+
+      // Add the instance ID as a final parameter to each hook call
+      if (shaderType !== 'fragment') {
+        const addInstanceIDParam = (src) => {
+          let result = src;
+          let idx = 0;
+          let match;
+          do {
+            match = /HOOK_\w+\(/.exec(result.slice(idx));
+            if (match) {
+              idx += match.index + match[0].length - 1;
+              let nesting = 0;
+              let hasParams = false;
+              while (idx < result.length) {
+                if (result[idx] === '(') {
+                  nesting++;
+                } else if (result[idx] === ')') {
+                  nesting--;
+                } else if (result[idx].match(/\S/)) {
+                  hasParams = true;
+                }
+                idx++;
+                if (nesting === 0) {
+                  break;
+                }
+              }
+              const insertion = (hasParams ? ', ' : '') + 'instanceID';
+              result = result.slice(0, idx-1) + insertion + result.slice(idx-1);
+              idx += insertion.length;
+            }
+          } while (match);
+          return result;
+        };
+        preMain = addInstanceIDParam(preMain);
+        postMain = addInstanceIDParam(postMain);
       }
 
       return preMain + '\n' + defines + hooks + main + postMain;
