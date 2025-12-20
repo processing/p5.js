@@ -50,30 +50,7 @@ class p5 {
   constructor(sketch, node) {
     // Apply addon defined decorations
     if(p5.decorations.size > 0){
-      for (const [patternArray, decoration] of p5.decorations) {
-        for(const member in p5.prototype) {
-          // Member must be a function
-          if (typeof p5.prototype[member] !== 'function') continue;
-
-          if (!patternArray.some(pattern => {
-            if (typeof pattern === 'string') {
-              return pattern === member;
-            } else if (pattern instanceof RegExp) {
-              return pattern.test(member);
-            }
-          })) continue;
-
-          p5.prototype[member] = decoration(p5.prototype[member], {
-            kind: 'method',
-            name: member,
-            access: {},
-            static: false,
-            private: false,
-            addInitializer(initializer){}
-          });
-        }
-      }
-
+      decorateClass(p5, p5.decorations);
       p5.decorations.clear();
     }
 
@@ -164,11 +141,11 @@ class p5 {
   }
 
   get pixels(){
-    return this._renderer.pixels;
+    return this._renderer?.pixels;
   }
 
   get drawingContext(){
-    return this._renderer.drawingContext;
+    return this._renderer?.drawingContext;
   }
 
   static registerAddon(addon) {
@@ -186,9 +163,19 @@ class p5 {
 
   static decorations = new Map();
   static decorateHelper(pattern, decoration){
-    let patternArray = pattern;
-    if (!Array.isArray(pattern)) patternArray = [pattern];
-    p5.decorations.set(patternArray, decoration);
+    if(typeof pattern === 'string'){
+      const patternStr = pattern;
+      pattern = ({ path }) => patternStr === path;
+    }else if(
+      Array.isArray(pattern) &&
+      pattern.every(value => typeof value === 'string')
+    ){
+      const patternArray = pattern;
+      pattern = ({ path }) => patternArray.includes(path);
+    }else if(typeof pattern !== 'function'){
+      throw new Error('Decorator matching pattern must be a function, a string, or an array of strings');
+    }
+    p5.decorations.set(pattern, decoration);
   }
 
   #customActions = {};
@@ -433,6 +420,11 @@ class p5 {
   }
 }
 
+// Attach constants to p5 prototype
+for (const k in constants) {
+  p5.prototype[k] = constants[k];
+}
+
 // Global helper function for binding properties to window in global mode
 function createBindGlobal(instance) {
   return function bindGlobal(property) {
@@ -523,9 +515,107 @@ function createBindGlobal(instance) {
   };
 }
 
-// Attach constants to p5 prototype
-for (const k in constants) {
-  p5.prototype[k] = constants[k];
+// Generic function to decorate classes
+function decorateClass(Target, decorations, path){
+  path ??= Target.name;
+  // Static properties
+  for(const key in Target){
+    if(!key.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.${key}` })){
+          // Check if method or accessor
+          if(typeof Target[key] === 'function'){
+            const result = decorator(Target[key], {
+              kind: 'method',
+              name: key,
+              static: true
+            });
+            if(result){
+              Object.defineProperty(Target, key, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const result = decorator(undefined, {
+              kind: 'field',
+              name: key,
+              static: true
+            });
+            if(result && typeof result === 'function'){
+              Target[key] = result(Target[key]);
+            }
+          }
+        }
+      }
+
+      if(typeof Target[key] === 'function' && Target[key].prototype){
+        decorateClass(Target[key], decorations, `${path}.${key}`);
+      }
+    }
+  }
+
+  // Member properties
+  for(const member of Object.getOwnPropertyNames(Target.prototype)){
+    if(member !== 'constructor' && !member.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.prototype.${member}` })){
+          // Check if method or accessor
+          if(typeof Target.prototype[member] === 'function'){
+            const result = decorator(Target.prototype[member], {
+              kind: 'method',
+              name: member,
+              static: false
+            });
+            if(result) {
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const descriptor = Object.getOwnPropertyDescriptor(
+              Target.prototype,
+              member
+            );
+            if(descriptor.hasOwnProperty('value')){
+              const result = decorator(undefined, {
+                kind: 'field',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result && typeof result === 'function' ?
+                  result(Target.prototype[member]) :
+                  Target.prototype[member]
+              });
+            }else{
+              const { get, set } = descriptor;
+              const getterResult = decorator(get, {
+                kind: 'getter',
+                name: member,
+                static: false
+              });
+              const setterResult = decorator(set, {
+                kind: 'setter',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                get: getterResult ?? get,
+                set: setterResult ?? set
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 import transform from './transform';
