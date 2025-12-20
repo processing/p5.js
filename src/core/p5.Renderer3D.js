@@ -728,6 +728,35 @@ export class Renderer3D extends Renderer {
   }
 
   background(...args) {
+    const a0 = args[0];
+
+    const isImageLike =
+      a0 instanceof p5.Image ||
+      a0 instanceof p5.Graphics ||
+      a0 instanceof p5.MediaElement ||
+      (typeof HTMLImageElement !== 'undefined' && a0 instanceof HTMLImageElement) ||
+      (typeof HTMLVideoElement !== 'undefined' && a0 instanceof HTMLVideoElement) ||
+      (typeof HTMLCanvasElement !== 'undefined' && a0 instanceof HTMLCanvasElement);
+
+    // WEBGL / 3D: support background(image)
+    if (args.length > 0 && isImageLike) {
+      this._pInst.clear();
+      this._pInst.push();
+      this._pInst.resetMatrix();
+      this._pInst.imageMode(constants.CORNER);
+      this._pInst.image(
+        a0,
+        -this._pInst.width / 2,
+        -this._pInst.height / 2,
+        this._pInst.width,
+        this._pInst.height
+      );
+
+      this._pInst.pop();
+      return;
+    }
+
+    // Default: background(color)
     const _col = this._pInst.color(...args);
     this.clear(..._col._getRGBA());
   }
