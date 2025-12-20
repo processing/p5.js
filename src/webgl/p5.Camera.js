@@ -1602,8 +1602,7 @@ class Camera {
       );
       // If the camera is active, make uPMatrix reflect changes in projMatrix.
       if (this._isActive()) {
-        this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
-        this._renderer.states.uPMatrix.mat4 = this.projMatrix.mat4.slice();
+        this._renderer.states.setValue('uPMatrix', this.projMatrix.clone());
       }
     }
 
