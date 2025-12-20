@@ -7,6 +7,7 @@ export class StrandsNode {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension;
+    this.isStrandsNode = true;
 
     // Store original identifier for varying variables
     const dag = this.strandsContext.dag;

@@ -206,6 +206,9 @@ class Geometry {
   }
 
   reset() {
+    // Notify renderer that geometry is being reset (for buffer cleanup)
+    this.renderer?.onReset?.(this);
+
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
@@ -1420,6 +1423,7 @@ class Geometry {
     for (let i = 0; i < this.edges.length; i++) {
       const prevEdge = this.edges[i - 1];
       const currEdge = this.edges[i];
+      const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
       const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
@@ -1440,10 +1444,12 @@ class Geometry {
           (currEdge[1] + 1) * 4
         )
         : [0, 0, 0, 0];
-      const dir = end
-        .copy()
-        .sub(begin)
-        .normalize();
+      const dir = isPoint
+        ? new Vector(0, 1, 0)
+        : end
+          .copy()
+          .sub(begin)
+          .normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1463,6 +1469,9 @@ class Geometry {
               this._addJoin(begin, lastValidDir, dir, fromColor);
             }
           }
+        } else if (isPoint) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          this._addCap(begin, dir, fromColor);
         } else {
           // Start a new line
           if (dirOK && !connected.has(currEdge[0])) {
@@ -1484,7 +1493,7 @@ class Geometry {
               });
             }
           }
-          if (lastValidDir && !connected.has(prevEdge[1])) {
+          if (!isPoint && lastValidDir && !connected.has(prevEdge[1])) {
             const existingCap = potentialCaps.get(prevEdge[1]);
             if (existingCap) {
               this._addJoin(

@@ -54,6 +54,12 @@ webgl(p5);
 import type from './type';
 type(p5);
 
+// Shaders + filters
+import shader from './webgl/p5.Shader';
+p5.registerAddon(shader);
+import strands from './strands/p5.strands';
+p5.registerAddon(strands);
+
 import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
 Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
 

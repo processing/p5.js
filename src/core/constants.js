@@ -72,6 +72,13 @@ export const WEBGL = 'webgl';
  */
 export const WEBGL2 = 'webgl2';
 
+/**
+ * A constant used for creating a WebGPU rendering context
+ * @property {'webgpu'} WEBGPU
+ * @final
+ */
+export const WEBGPU = 'webgpu';
+
 // ENVIRONMENT
 /**
  * @typedef {'default'} ARROW
@@ -1141,6 +1148,13 @@ export const IMAGE = 'image';
 
 // WEBGL TEXTURE WRAP AND FILTERING
 // LINEAR already exists above
+/**
+ * @typedef {'linear_mipmap'} LINEAR_MIPMAP
+ * @property {LINEAR_MIPMAP} LINEAR_MIPMAP
+ * @final
+ * @private
+ */
+export const LINEAR_MIPMAP = 'linear_mipmap';
 /**
  * @typedef {'nearest'} NEAREST
  * @property {NEAREST} NEAREST

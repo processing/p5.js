@@ -7,8 +7,6 @@ uniform mat4 uViewMatrix;
 
 uniform bool uUseLighting;
 
-uniform int uAmbientLightCount;
-uniform vec3 uAmbientColor[5];
 uniform mat3 uCameraRotation;
 uniform int uDirectionalLightCount;
 uniform vec3 uLightingDirection[5];
