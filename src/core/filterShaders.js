@@ -102,15 +102,14 @@ export function makeFilterShader(renderer, operation, p5) {
             const sampleCoord = uv + p5.vec2(sample, sample) / inputs.canvasSize * direction;
             const weight = quadWeight(sample, (numSamples - 1.0) * 0.5 * spacing);
 
-            const texSample = p5.getTexture(canvasContent , sampleCoord);
-            avg += weight * (texSample * p5.vec4(
+            const texSample = p5.getTexture(canvasContent, sampleCoord);
+            avg += weight * texSample * p5.vec4(
               texSample.a, texSample.a, texSample.a, 1
-            ));
+            );
             total += weight;
           }
 
           const blended = avg / total;
-
           return p5.vec4(
             blended.r / blended.a,
             blended.g / blended.a,
