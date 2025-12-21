@@ -297,8 +297,8 @@ export class StrandsFor {
     const scopeEndBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_END);
     CFG.addEdge(cfg, updateBlock, scopeEndBlock);
 
-    // Loop back to break check
-    CFG.addEdge(cfg, scopeEndBlock, breakCheckBlock);
+    // Connect end of for loop to the merge agter the loop
+    CFG.addEdge(cfg, scopeEndBlock, mergeBlock);
 
     // Break condition exits to merge
     CFG.addEdge(cfg, breakCheckBlock, mergeBlock);

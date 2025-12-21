@@ -313,6 +313,17 @@ class RendererGL extends Renderer3D {
   }
 
   //////////////////////////////////////////////
+  // Text
+  //////////////////////////////////////////////
+
+  _beforeDrawText() {
+    this.GL.pixelStorei(this.GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  }
+  _afterDrawText() {
+    this.GL.pixelStorei(this.GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  }
+
+  //////////////////////////////////////////////
   // Setting
   //////////////////////////////////////////////
 
@@ -413,9 +424,10 @@ class RendererGL extends Renderer3D {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      // Make sure all images are loaded into the canvas non-premultiplied so that
-      // they can be handled consistently in shaders.
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      // Make sure all images are loaded into the canvas premultiplied so that
+      // they match the way we render colors. This will make framebuffer textures
+      // be encoded the same way as textures from everything else.
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
       this._viewport = this.drawingContext.getParameter(
         this.drawingContext.VIEWPORT
       );

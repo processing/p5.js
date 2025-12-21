@@ -1669,6 +1669,9 @@ export class Renderer3D extends Renderer {
   //// TEXT SUPPORT METHODS
   //////////////////////////////
 
+  _beforeDrawText() {}
+  _afterDrawText() {}
+
   textCanvas() {
     if (!this._textCanvas) {
       this._textCanvas = document.createElement('canvas');
