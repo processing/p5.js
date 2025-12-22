@@ -47,12 +47,6 @@ const serializationMap = new Map();
 
 
 class Color {
-  // Reference to underlying color object depending on implementation
-  // Not meant to be used publicly unless the implementation is known for sure
-  _color;
-  // Color mode of the Color object, uses p5 color modes
-  mode;
-
   static colorMap = {};
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
@@ -77,41 +71,47 @@ class Color {
 
   constructor(vals, colorMode, colorMaxes, { clamp = false } = {}) {
     // This changes with the color object
-    this.mode = colorMode || RGB;
+    this._cachedMode = colorMode || RGB;
 
     if(vals instanceof Color){
       // Received Color object to be used for color mode conversion
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         Color.colorMap[vals.mode];
-      this._color = to(vals._color, mode);
-      this.mode = mode;
+      this._initialize = () => {
+        this._cachedColor = to(vals._color, mode);
+        this._cachedMode = mode;
+      };
 
     }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
       // Received color.js object to be used internally
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         vals.spaceId;
-      this._color = to(vals, mode);
-      this.mode = colorMode || Object.entries(Color.colorMap)
-        .find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
+      this._initialize = () => {
+        this._cachedColor = to(vals, mode);
+        this._cachedMode = colorMode || Object.entries(Color.colorMap)
+          .find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+      };
 
     } else if(typeof vals[0] === 'string') {
       // Received string
-      try{
-        this._color = parse(vals[0]);
-        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
-        this.mode = mode;
-        this._color = to(this._color, this._color.spaceId);
-        this._defaultStringValue = vals[0];
-      }catch(err){
-        // TODO: Invalid color string
-        throw new Error('Invalid color string');
-      }
+      this._defaultStringValue = vals[0];
+      this._initialize = () => {
+        try{
+          this._cachedColor = parse(vals[0]);
+          const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+          this._cachedMode = mode;
+          this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
+        }catch(err){
+          // TODO: Invalid color string
+          throw new Error('Invalid color string');
+        }
+      };
 
     }else{
       // Received individual channel values
@@ -120,19 +120,19 @@ class Color {
       if(colorMaxes){
         // NOTE: need to consider different number of arguments (eg. CMYK)
         if(vals.length === 4){
-          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes, clamp);
+          mappedVals = Color.mapColorRange(vals, this._cachedMode, colorMaxes, clamp);
         }else if(vals.length === 3){
           mappedVals = Color.mapColorRange(
             [vals[0], vals[1], vals[2]],
-            this.mode,
+            this._cachedMode,
             colorMaxes,
             clamp
           );
           mappedVals.push(1);
         }else if(vals.length === 2){
           // Grayscale with alpha
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
@@ -140,7 +140,7 @@ class Color {
           }else{
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
-              this.mode,
+              this._cachedMode,
               colorMaxes,
               clamp
             );
@@ -160,8 +160,8 @@ class Color {
           );
         }else if(vals.length === 1){
           // Grayscale only
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
@@ -169,7 +169,7 @@ class Color {
           }else{
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
-              this.mode,
+              this._cachedMode,
               colorMaxes,
               clamp
             );
@@ -181,20 +181,68 @@ class Color {
       }else{
         mappedVals = vals;
       }
-      if (this.mode === RGB) {
-        this._defaultStringValue = `rgba(${mappedVals[0]*255}, ${mappedVals[1]*255}, ${mappedVals[2]*255}, ${mappedVals[3]})`;
+      if (this._cachedMode === RGB) {
+        if (mappedVals[3] === 1) {
+          const toHexComponent = (v) => {
+            const vInt = Math.floor(v * 255);
+            const hex = Math.max(0, Math.min(255, vInt)).toString(16)
+            if (hex.length < 2) {
+              return '0' + hex
+            } else {
+              return hex
+            }
+          }
+          // Slightly faster for the browser to parse than rgba
+          this._defaultStringValue = '#' + mappedVals.slice(0, 3).map((v) => toHexComponent(v)).join('');
+        } else {
+          this._defaultStringValue = `rgba(${mappedVals[0]*255}, ${mappedVals[1]*255}, ${mappedVals[2]*255}, ${mappedVals[3]})`;
+        }
       }
 
-      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
-      const coords = mappedVals.slice(0, 3);
+      this._initialize = () => {
+        const space = Color.colorMap[this._cachedMode] || console.error('Invalid color mode');
+        const coords = mappedVals.slice(0, 3);
 
-      const color = {
-        space,
-        coords,
-        alpha: mappedVals[3]
+        const color = {
+          space,
+          coords,
+          alpha: mappedVals[3]
+        };
+        this._cachedColor = to(color, space);
       };
-      this._color = to(color, space);
     }
+  }
+
+  // Color mode of the Color object, uses p5 color modes
+  get mode() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedMode;
+  }
+  set mode(newMode) {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    this._cachedMode = newMode;
+  }
+  // Reference to underlying color object depending on implementation
+  // Not meant to be used publicly unless the implementation is known for sure
+  get _color() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedColor;
+  }
+  set _color(newColor) {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    this._cachedColor = newColor;
   }
 
   // Convert from p5 color range to color.js color range
@@ -498,6 +546,7 @@ class Color {
    * </div>
    */
   setRed(new_red, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -553,6 +602,7 @@ class Color {
    * </div>
    */
   setGreen(new_green, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -608,6 +658,7 @@ class Color {
    * </div>
    */
   setBlue(new_blue, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -664,6 +715,7 @@ class Color {
    * </div>
    */
   setAlpha(new_alpha, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }

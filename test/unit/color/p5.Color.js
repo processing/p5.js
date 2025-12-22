@@ -308,7 +308,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
     });
 
     test('should correctly get RGBA property after overwrite', function() {
@@ -471,7 +471,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
     });
   });
 
@@ -498,7 +498,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
+      assert.equal(c.toString(), 'hsla(336, 100%, 50%, 0.8)');
     });
   });
 
@@ -525,7 +525,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'hsba(336, 100%, 100%, 0.8)');
     });
   });
 
@@ -641,7 +641,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
     });
   });
 
@@ -666,7 +666,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'hsba(336, 100%, 100%, 0.8)');
     });
   });
 
@@ -691,7 +691,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
+      assert.equal(c.toString(), 'hsla(336, 100%, 50%, 0.8)');
     });
   });
 
