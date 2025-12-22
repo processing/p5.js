@@ -41,7 +41,7 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
   return result;
 }
 
-const serializationMap = {};
+const serializationMap = new Map();
 
 
 
@@ -107,6 +107,7 @@ class Color {
         });
         this.mode = mode;
         this._color = to(this._color, this._color.spaceId);
+        this._defaultStringValue = vals[0];
       }catch(err){
         // TODO: Invalid color string
         throw new Error('Invalid color string');
@@ -179,6 +180,9 @@ class Color {
         }
       }else{
         mappedVals = vals;
+      }
+      if (this.mode === RGB) {
+        this._defaultStringValue = `rgba(${mappedVals[0]*255}, ${mappedVals[1]*255}, ${mappedVals[2]*255}, ${mappedVals[3]})`;
       }
 
       const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
@@ -319,14 +323,21 @@ class Color {
    * </div>
    */
   toString(format) {
+    if (format === undefined && this._defaultStringValue !== undefined) {
+      return this._defaultStringValue;
+    }
+
     const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
-    let colorString = serializationMap[key];
+    let colorString = serializationMap.get(key);
 
     if(!colorString){
       colorString = serialize(this._color, {
         format
       });
-      serializationMap[key] = colorString;
+      if (serializationMap.size > 1000) {
+        serializationMap.delete(serializationMap.keys().next().value)
+      }
+      serializationMap.set(key, colorString);
     }
     return colorString;
   }
