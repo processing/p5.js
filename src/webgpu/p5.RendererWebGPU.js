@@ -1818,12 +1818,12 @@ function rendererWebGPU(p5, fn) {
           }
 
           // Find the input parameter name from the main function signature (anchored to start)
-          const inputMatch = postMain.match(/^\s*\((\w+):\s*\w+\)/);
+          const inputMatch = main.match(/fn main\s*\((\w+):\s*\w+\)/);
           if (inputMatch) {
             const inputVarName = inputMatch[1];
             initStatements = initStatements.replace(/INPUT_VAR/g, inputVarName);
             // Insert after the main function parameter but before any other code (anchored to start)
-            postMain = postMain.replace(/^(\s*\(\w+:\s*\w+\)\s*[^{]*\{)/, `$1\n${initStatements}`);
+            postMain = initStatements + postMain;
           }
         }
       }

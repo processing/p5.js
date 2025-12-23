@@ -766,7 +766,7 @@ function text(p5, fn) {
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
-
+    this._beforeDrawText();
     this.glyphDataCache = this.glyphDataCache || new Set();
 
     try {
@@ -827,6 +827,7 @@ function text(p5, fn) {
       this.states.setValue('strokeColor', doStroke);
       this.states.setValue('drawMode', drawMode);
 
+      this._afterDrawText();
       this.pop();
     }
   };
