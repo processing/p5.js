@@ -1397,9 +1397,6 @@ suite('p5.RendererGL', function() {
         const blue = myp5.color('#13F');
         red.setAlpha(alpha);
         blue.setAlpha(alpha);
-        console.log(alpha)
-        console.log(red.toString())
-        console.log(blue.toString())
         assertSameIn2D(red, blue, myp5.BLEND);
         assertSameIn2D(red, blue, myp5.ADD);
         assertSameIn2D(red, blue, myp5.EXCLUSION);

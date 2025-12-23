@@ -308,7 +308,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
+      assert.equal(c.toString(), '#ff0066cc');
     });
 
     test('should correctly get RGBA property after overwrite', function() {

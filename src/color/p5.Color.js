@@ -41,6 +41,16 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
   return result;
 }
 
+const toHexComponent = (v) => {
+  const vInt = ~~(v * 255);
+  const hex = vInt.toString(16)
+  if (hex.length < 2) {
+    return '0' + hex
+  } else {
+    return hex
+  }
+}
+
 const serializationMap = new Map();
 
 
@@ -183,19 +193,10 @@ class Color {
       }
       if (this._cachedMode === RGB) {
         if (mappedVals[3] === 1) {
-          const toHexComponent = (v) => {
-            const vInt = Math.floor(v * 255);
-            const hex = Math.max(0, Math.min(255, vInt)).toString(16)
-            if (hex.length < 2) {
-              return '0' + hex
-            } else {
-              return hex
-            }
-          }
-          // Slightly faster for the browser to parse than rgba
-          this._defaultStringValue = '#' + mappedVals.slice(0, 3).map((v) => toHexComponent(v)).join('');
+          // Faster for the browser to parse than rgba
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]);
         } else {
-          this._defaultStringValue = `rgba(${mappedVals[0]*255}, ${mappedVals[1]*255}, ${mappedVals[2]*255}, ${mappedVals[3]})`;
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]) + toHexComponent(mappedVals[3]);;
         }
       }
 
