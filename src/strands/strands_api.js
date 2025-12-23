@@ -18,7 +18,6 @@ import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
-import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
 
 //////////////////////////////////////////////
 // User nodes
@@ -51,7 +50,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   };
   p5.break = fn.break;
   fn.instanceID = function() {
-    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
+    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
     return createStrandsNode(node.id, node.dimension, strandsContext);
   }
   // Internal methods use p5 static methods; user-facing methods use fn.
@@ -102,17 +101,55 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
-  // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
+
+  fn.getTexture = function (...rawArgs) {
+    if (strandsContext.active) {
+      const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
+      return createStrandsNode(id, dimension, strandsContext);
+    } else {
+      p5._friendlyError(
+        `It looks like you've called getTexture outside of a shader's modify() function.`
+      )
+    }
+  }
+
+  // Add texture function as alias for getTexture with p5 fallback
+  const originalTexture = fn.texture;
+  fn.texture = function (...args) {
+    if (strandsContext.active) {
+      return this.getTexture(...args);
+    } else {
+      return originalTexture.apply(this, args);
+    }
+  }
+
+  // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
+  const originalNoiseDetail = fn.noiseDetail;
+
+  strandsContext._noiseOctaves = null;
+  strandsContext._noiseAmpFalloff = null;
+
+  fn.noiseDetail = function (lod, falloff) {
+    if (!strandsContext.active) {
+      return originalNoiseDetail.apply(this, arguments);
+    }
+
+    strandsContext._noiseOctaves = lod;
+    strandsContext._noiseAmpFalloff = falloff;
+  };
+
   fn.noise = function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
-    strandsContext.vertexDeclarations.add(noiseGLSL);
-    strandsContext.fragmentDeclarations.add(noiseGLSL);
+    // Get noise shader snippet from the current renderer
+    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    strandsContext.vertexDeclarations.add(noiseSnippet);
+    strandsContext.fragmentDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
-    const strandsArgs = args.map(arg => p5.strandsNode(arg));
+    const strandsArgs = args.flat().map(arg => p5.strandsNode(arg));
     let nodeArgs;
     if (strandsArgs.length === 3) {
       nodeArgs = [fn.vec3(strandsArgs[0], strandsArgs[1], strandsArgs[2])];
@@ -131,9 +168,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
       );
     }
+
+    const octaves = strandsContext._noiseOctaves !== null
+      ? strandsContext._noiseOctaves
+      : fn._getNoiseOctaves();
+    const falloff = strandsContext._noiseAmpFalloff !== null
+      ? strandsContext._noiseAmpFalloff
+      : fn._getNoiseAmpFalloff();
+
+    nodeArgs.push(octaves);
+    nodeArgs.push(falloff);
+
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float3],
+        params: [DataType.float3, DataType.int1, DataType.float1],
         returnType: DataType.float1,
       }]
     });
@@ -145,7 +193,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // variant or also one more directly translated from GLSL, or to be more compatible with
   // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
-    if (type === BaseType.DEFER) {
+    if (type === BaseType.DEFER || type === 'sampler') {
       continue;
     }
     const typeInfo = DataType[type];
@@ -205,8 +253,24 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const originalp5Fn = fn[typeInfo.fnName];
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
-        const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
-        return createStrandsNode(id, dimension, strandsContext);
+        if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
+          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
+            overloads: [{
+              params: [args[0].typeInfo()],
+              returnType: typeInfo,
+            }]
+          });
+          return createStrandsNode(id, dimension, strandsContext);
+        } else {
+          // For vector types with a single argument, repeat it for each component
+          if (typeInfo.dimension > 1 && args.length === 1 && !Array.isArray(args[0]) &&
+              !(args[0] instanceof StrandsNode && args[0].dimension > 1) &&
+              (typeInfo.baseType === BaseType.FLOAT || typeInfo.baseType === BaseType.INT || typeInfo.baseType === BaseType.BOOL)) {
+            args = Array(typeInfo.dimension).fill(args[0]);
+          }
+          const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
+          return createStrandsNode(id, dimension, strandsContext);
+        }
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
@@ -224,7 +288,7 @@ function createHookArguments(strandsContext, parameters){
   const args = [];
   const dag = strandsContext.dag;
   for (const param of parameters) {
-    if(isStructType(param.type.typeName)) {
+    if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
       const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
       const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
@@ -268,7 +332,14 @@ function createHookArguments(strandsContext, parameters){
       args.push(structNode);
     }
     else /*if(isNativeType(paramType.typeName))*/ {
-      const typeInfo = TypeInfoFromGLSLName[param.type.typeName];
+      // Skip sampler parameters - they don't need strands nodes
+      if (param.type.typeName === 'sampler') {
+        continue;
+      }
+      if (!param.type.dataType) {
+        throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
+      }
+      const typeInfo = param.type.dataType;
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
@@ -368,7 +439,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       const userReturned = hook.result;
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
-      if(isStructType(expectedReturnType.typeName)) {
+      if(isStructType(expectedReturnType)) {
         const expectedStructType = structType(expectedReturnType);
         if (userReturned instanceof StrandsNode) {
           const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
@@ -406,7 +477,10 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         }
       }
       else /*if(isNativeType(expectedReturnType.typeName))*/ {
-        const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
+        if (!expectedReturnType.dataType) {
+          throw new Error(`Missing dataType for return type ${expectedReturnType.typeName}`);
+        }
+        const expectedTypeInfo = expectedReturnType.dataType;
         rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
       }
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;

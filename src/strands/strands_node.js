@@ -8,12 +8,15 @@ export class StrandsNode {
     this.strandsContext = strandsContext;
     this.dimension = dimension;
     this.structProperties = null;
+    this.isStrandsNode = true;
 
     // Store original identifier for varying variables
     const dag = this.strandsContext.dag;
     const nodeData = getNodeDataFromID(dag, this.id);
     if (nodeData && nodeData.identifier) {
       this._originalIdentifier = nodeData.identifier;
+    }
+    if (nodeData) {
       this._originalBaseType = nodeData.baseType;
       this._originalDimension = nodeData.dimension;
     }
@@ -24,6 +27,12 @@ export class StrandsNode {
   }
   copy() {
     return createStrandsNode(this.id, this.dimension, this.strandsContext);
+  }
+  typeInfo() {
+    return {
+      baseType: this._originalBaseType || BaseType.FLOAT,
+      dimension: this.dimension
+    };
   }
   bridge(value) {
     const { dag, cfg } = this.strandsContext;

@@ -19,7 +19,7 @@
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.1.1",
+  "version": "2.2.0-rc.3",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
@@ -94,6 +94,7 @@
     "./math": "./dist/math/index.js",
     "./utilities": "./dist/utilities/index.js",
     "./webgl": "./dist/webgl/index.js",
+    "./webgpu": "./dist/webgpu/index.js",
     "./type": "./dist/type/index.js"
   },
   "files": [
@@ -103,6 +104,9 @@
     "lib/p5.js",
     "lib/p5.esm.js",
     "lib/p5.esm.min.js",
+    "lib/p5.webgpu.js",
+    "lib/p5.webgpu.min.js",
+    "lib/p5.webgpu.esm.js",
     "translations/**",
     "types/**"
   ],

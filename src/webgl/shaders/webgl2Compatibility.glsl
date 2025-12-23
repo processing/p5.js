@@ -28,7 +28,7 @@ out vec4 outColor;
 #ifdef FRAGMENT_SHADER
 vec4 getTexture(in sampler2D content, vec2 coord) {
   vec4 color = TEXTURE(content, coord);
-  color.rgb /= color.a;
+  if (color.a > 0.) color.rgb /= color.a;
   return color;
 }
 #endif

@@ -87,6 +87,7 @@ class p5 {
     this._curElement = null;
     this._elements = [];
     this._glAttributes = null;
+    this._webgpuAttributes = null;
     this._requestAnimId = 0;
     this._isGlobal = false;
     this._loop = true;
@@ -171,8 +172,15 @@ class p5 {
     return this._renderer.drawingContext;
   }
 
+  static _registeredAddons = new Set();
   static registerAddon(addon) {
     const lifecycles = {};
+
+    // Don't re-register an addon. This allows addons
+    // to register dependency addons without worrying about
+    // them getting double-added.
+    if (p5._registeredAddons.has(addon)) return;
+    p5._registeredAddons.add(addon);
 
     addon(p5, p5.prototype, lifecycles);
 
