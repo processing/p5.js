@@ -731,27 +731,19 @@ export class Renderer3D extends Renderer {
     const a0 = args[0];
 
     const isImageLike =
-      a0 instanceof p5.Image ||
-      a0 instanceof p5.Graphics ||
-      a0 instanceof p5.MediaElement ||
-      (typeof HTMLImageElement !== 'undefined' && a0 instanceof HTMLImageElement) ||
-      (typeof HTMLVideoElement !== 'undefined' && a0 instanceof HTMLVideoElement) ||
-      (typeof HTMLCanvasElement !== 'undefined' && a0 instanceof HTMLCanvasElement);
+      a0 != null &&
+      typeof a0 === 'object' &&
+      typeof a0.width === 'number' &&
+      typeof a0.height === 'number' &&
+      (a0.canvas != null || a0.elt != null);
 
-    // WEBGL / 3D: support background(image)
-    if (args.length > 0 && isImageLike) {
+    // WEBGL / 3D: support background(image-like)
+    if (isImageLike) {
       this._pInst.clear();
       this._pInst.push();
       this._pInst.resetMatrix();
-      this._pInst.imageMode(constants.CORNER);
-      this._pInst.image(
-        a0,
-        -this._pInst.width / 2,
-        -this._pInst.height / 2,
-        this._pInst.width,
-        this._pInst.height
-      );
-
+      this._pInst.imageMode(constants.CENTER);
+      this._pInst.image(a0, 0, 0, this._pInst.width, this._pInst.height);
       this._pInst.pop();
       return;
     }
