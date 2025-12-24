@@ -245,7 +245,7 @@ class p5 {
 
     // Record the time when setup starts. millis() will start at 0 within
     // setup, but this isn't documented, locked-in behavior yet.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
@@ -266,8 +266,8 @@ class p5 {
       }
     }
 
-    this._lastTargetFrameTime = window.performance.now();
-    this._lastRealFrameTime = window.performance.now();
+    this._lastTargetFrameTime = globalThis.performance.now();
+    this._lastRealFrameTime = globalThis.performance.now();
     this._setupDone = true;
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._updateAccsOutput();
@@ -278,7 +278,7 @@ class p5 {
 
     // Record the time when the draw loop starts so that millis() starts at 0
     // when the draw loop begins.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
   }
 
   // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
@@ -288,7 +288,7 @@ class p5 {
   // and 'postdraw'.
   async _draw(requestAnimationFrameTimestamp) {
     if (this.hitCriticalError) return;
-    const now = requestAnimationFrameTimestamp || window.performance.now();
+    const now = requestAnimationFrameTimestamp || globalThis.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
 

@@ -13,7 +13,7 @@ function environment(p5, fn, lifecycles){
   const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
   fn._frameRate = 0;
-  fn._lastFrameTime = window.performance.now();
+  fn._lastFrameTime = globalThis.performance.now();
   fn._targetFrameRate = 60;
 
   const _windowPrint = window.print;
@@ -868,7 +868,6 @@ function environment(p5, fn, lifecycles){
    * </div>
    */
   fn.fullscreen = function(val) {
-    // p5._validateParameters('fullscreen', arguments);
     // no arguments, return fullscreen or not
     if (typeof val === 'undefined') {
       return (
@@ -946,7 +945,6 @@ function environment(p5, fn, lifecycles){
    * @returns {Number} current pixel density of the sketch.
    */
   fn.pixelDensity = function(val) {
-    // p5._validateParameters('pixelDensity', arguments);
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._renderer._pixelDensity) {
@@ -1271,6 +1269,7 @@ function environment(p5, fn, lifecycles){
     const screenPosition = matrix.multiplyAndNormalizePoint(worldPosition);
     return screenPosition;
   };
+
   /**
    * Converts 2D screen coordinates to 3D world coordinates.
    *

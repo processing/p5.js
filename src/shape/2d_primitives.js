@@ -1214,7 +1214,6 @@ function primitives(p5, fn){
    * </code>
    * </div>
    */
-
   /**
    * @method rect
    * @param  {Number} x
