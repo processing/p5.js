@@ -11,6 +11,11 @@ import { Shader } from './p5.Shader';
 import { request } from '../io/files';
 import { Color } from '../color/p5.Color';
 
+async function urlToStrandsCallback(url) {
+  const src = await fetch(url).then(res => res.text());
+  return new Function(src);
+}
+
 function material(p5, fn){
   /**
    * Loads vertex and fragment shaders to create a
@@ -562,7 +567,12 @@ function material(p5, fn){
       const fragString = await fragSrc.join('\n');
 
       // Create the shader using createFilterShader
-      const loadedShader = this.createFilterShader(fragString, true);
+      let loadedShader;
+      if (fragString.test(/void\s+main/)) {
+        loadedShader = this.createFilterShader(new Function(fragString));
+      } else {
+        loadedShader = this.createFilterShader(fragString, true);
+      }
 
       if (successCallback) {
         successCallback(loadedShader);
@@ -668,6 +678,9 @@ function material(p5, fn){
    * </div>
    */
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
+    if (fragSrc instanceof Function) {
+      return this.baseFilterShader().modify(fragSrc);
+    }
     // p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
@@ -1507,6 +1520,23 @@ function material(p5, fn){
    * </code>
    * </div>
    */
+  fn.createMaterialShader = function(cb) {
+    return this.baseMaterialShader().modify(cb);
+  };
+  fn.loadMaterialShader = async function (url, onSuccess, onFail) {
+    try {
+      const shader = this.createMaterialShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        onSuccess(shader);
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
   fn.baseMaterialShader = function() {
     this._assert3d('baseMaterialShader');
     return this._renderer.baseMaterialShader();
@@ -1744,6 +1774,23 @@ function material(p5, fn){
    * </code>
    * </div>
    */
+  fn.createNormalShader = function(cb) {
+    return this.baseNormalShader().modify(cb);
+  };
+  fn.loadNormalShader = async function (url, onSuccess, onFail) {
+    try {
+      const shader = this.createNormalShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        onSuccess(shader);
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
   fn.baseNormalShader = function() {
     this._assert3d('baseNormalShader');
     return this._renderer.baseNormalShader();
@@ -1875,6 +1922,23 @@ function material(p5, fn){
    * </code>
    * </div>
    */
+  fn.createColorShader = function(cb) {
+    return this.baseColorShader().modify(cb);
+  };
+  fn.loadColorShader = async function (url, onSuccess, onFail) {
+    try {
+      const shader = this.createColorShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        onSuccess(shader);
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
   fn.baseColorShader = function() {
     this._assert3d('baseColorShader');
     return this._renderer.baseColorShader();
@@ -2123,6 +2187,23 @@ function material(p5, fn){
    * </code>
    * </div>
    */
+  fn.createStrokeShader = function(cb) {
+    return this.baseStrokeShader().modify(cb);
+  };
+  fn.loadStrokeShader = async function (url, onSuccess, onFail) {
+    try {
+      const shader = this.createStrokeShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        onSuccess(shader);
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
   fn.baseStrokeShader = function() {
     this._assert3d('baseStrokeShader');
     return this._renderer.baseStrokeShader();
