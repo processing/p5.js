@@ -222,13 +222,6 @@ class Color {
     }
     return this._cachedMode;
   }
-  set mode(newMode) {
-    if (this._initialize) {
-      this._initialize();
-      this._initialize = undefined;
-    }
-    this._cachedMode = newMode;
-  }
   // Reference to underlying color object depending on implementation
   // Not meant to be used publicly unless the implementation is known for sure
   get _color() {
