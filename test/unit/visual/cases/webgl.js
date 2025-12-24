@@ -936,6 +936,9 @@ visualSuite('WebGL', function() {
 
       const g = p5.createGraphics(50, 50);
       g.background(255, 0, 0);
+      g.fill(0);
+      g.noStroke();
+      g.circle(25, 25, 20);
 
       p5.background(0, 0, 255);
       p5.background(g);
