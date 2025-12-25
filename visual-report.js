@@ -418,7 +418,7 @@ async function generateVisualReport() {
 }
 
 // Run the function if this script is executed directly
-if (require.main === module) {
+if (import.meta.main === true) {
   generateVisualReport().catch(error => {
     console.error('Failed to generate report:', error);
     process.exit(1);
