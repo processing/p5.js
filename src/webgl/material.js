@@ -523,7 +523,7 @@ function material(p5, fn){
    * Creates and loads a filter shader from an external file.
    *
    * @method loadFilterShader
-   * @param {String} fragFilename path to the fragment shader file
+   * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is
    *                                     loaded. Will be passed the
    *                                     <a href="#/p5.Shader">p5.Shader</a> object.
@@ -592,90 +592,143 @@ function material(p5, fn){
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
    * <a href="#/p5/filter">filter()</a> function.
    *
-   * `createFilterShader()` works like
-   * <a href="#/p5/createShader">createShader()</a> but has a default vertex
-   * shader included. `createFilterShader()` is intended to be used along with
-   * <a href="#/p5/filter">filter()</a> for filtering the contents of a canvas.
-   * A filter shader will be applied to the whole canvas instead of just
-   * <a href="#/p5.Geometry">p5.Geometry</a> objects.
+   * The main way to use `createFilterShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * The parameter, `fragSrc`, sets the fragment shader. It’s a string that
-   * contains the fragment shader program written in
-   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+   * In your function, you can call <a href="#/p5/getColor">`getColor`</a> with a function
+   * that will be called for each pixel on the image to determine its final color. You can
+   * read the color of the current pixel with `getTexture(canvasContent, coord)`.
    *
-   * The <a href="#/p5.Shader">p5.Shader</a> object that's created has some
-   * uniforms that can be set:
-   * - `sampler2D tex0`, which contains the canvas contents as a texture.
-   * - `vec2 canvasSize`, which is the width and height of the canvas, not including pixel density.
-   * - `vec2 texelSize`, which is the size of a physical pixel including pixel density. This is calculated as `1.0 / (width * density)` for the pixel width and `1.0 / (height * density)` for the pixel height.
+   * ```js example
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs, canvasContent) => {
+   *       let result = getTexture(canvasContent, inputs.texCoord);
+   *       // Zero out the green and blue channels, leaving red
+   *       result.g = 0;
+   *       result.b = 0;
+   *       return result;
+   *     });
+   *   });
    *
-   * The <a href="#/p5.Shader">p5.Shader</a> that's created also provides
-   * `varying vec2 vTexCoord`, a coordinate with values between 0 and 1.
-   * `vTexCoord` describes where on the canvas the pixel will be drawn.
+   *   image(img, -50, -50);
+   *   filter(myFilter);
+   *   describe('Bricks tinted red');
+   * }
+   * ```
+   *
+   * You can create *uniforms* if you want to pass data into your filter from the rest of your sketch.
+   * For example, you could pass in the mouse cursor position and use that to control how much
+   * you warp the content. If you create a uniform inside the shader using a function like `uniformFloat()`, with
+   * `uniform` + the type of the data, you can set its value using `setUniform` right before applying the filter.
+   *
+   * ```js example
+   * let img;
+   * let myFilter;
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   myFilter = createFilterShader(() => {
+   *     let warpAmount = uniformFloat();
+   *     getColor((inputs, canvasContent) => {
+   *       let coord = inputs.texCoord;
+   *       coord.y += sin(coord.x * 10) * warpAmount;
+   *       return getTexture(canvasContent, coord);
+   *     });
+   *   });
+   *   describe('Warped bricks');
+   * }
+   *
+   * function draw() {
+   *   image(img, -50, -50);
+   *   myFilter.setUniform(
+   *     'warpAmount',
+   *     map(mouseX, 0, width, 0, 1, true)
+   *   );
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * You can also make filters that do not need any content to be drawn first!
+   * There is a lot you can draw just using, for example, the position of the pixel.
+   * `inputs.texCoord` has an `x` and a `y` property, each with a number between 0 and 1.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs) => {
+   *       return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
+   *     });
+   *   });
+   *   describe('A gradient with red, green, yellow, and black');
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs) => {
+   *       return mix(
+   *         [1, 0, 0, 1], // Red
+   *         [0, 0, 1, 1], // Blue
+   *         inputs.texCoord.x // x coordinate, from 0 to 1
+   *       );
+   *     });
+   *   });
+   *   describe('A gradient from red to blue');
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * You can also animate your filters over time by passing the time into the shader with `uniformFloat`.
+   *
+   * ```js example
+   * let myFilter;
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   myFilter = createFilterShader(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getColor((inputs) => {
+   *       return mix(
+   *         [1, 0, 0, 1], // Red
+   *         [0, 0, 1, 1], // Blue
+   *         sin(inputs.texCoord.x*15 + time*0.004)/2+0.5
+   *       );
+   *     });
+   *   });
+   *   describe('A moving, repeating gradient from red to blue');
+   * }
+   *
+   * function draw() {
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in `getColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info. Alternatively, `createFilterShader()` can also be used like
+   * <a href="#/p5/createShader">createShader()</a>, but where you only specify a fragment shader.
    *
    * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
    * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
    *
    * @method createFilterShader
-   * @param {String} fragSrc source code for the fragment shader.
-   * @returns {p5.Shader} new shader object created from the fragment shader.
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * function setup() {
-   *   let fragSrc = `precision highp float;
-   *   void main() {
-   *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-   *   }`;
-   *
-   *   createCanvas(100, 100, WEBGL);
-   *   let s = createFilterShader(fragSrc);
-   *   filter(s);
-   *   describe('a yellow canvas');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div modernizr='webgl'>
-   * <code>
-   * let img, s;
-   * async function setup() {
-   *   img = await loadImage('assets/bricks.jpg');
-   *   let fragSrc = `precision highp float;
-   *
-   *   // x,y coordinates, given from the vertex shader
-   *   varying vec2 vTexCoord;
-   *
-   *   // the canvas contents, given from filter()
-   *   uniform sampler2D tex0;
-   *   // other useful information from the canvas
-   *   uniform vec2 texelSize;
-   *   uniform vec2 canvasSize;
-   *   // a custom variable from this sketch
-   *   uniform float darkness;
-   *
-   *   void main() {
-   *     // get the color at current pixel
-   *     vec4 color = texture2D(tex0, vTexCoord);
-   *     // set the output color
-   *     color.b = 1.0;
-   *     color *= darkness;
-   *     gl_FragColor = vec4(color.rgb, 1.0);
-   *   }`;
-   *
-   *   createCanvas(100, 100, WEBGL);
-   *   s = createFilterShader(fragSrc);
-   * }
-   *
-   * function draw() {
-   *   image(img, -50, -50);
-   *   s.setUniform('darkness', 0.5);
-   *   filter(s);
-   *   describe('a image of bricks tinted dark blue');
-   * }
-   * </code>
-   * </div>
+   * @param {Function} callback A function building a p5.strands shader.
+   */
+  /**
+   * @method createFilterShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   */
+  /**
+   * @method createFilterShader
+   * @param {String} fragSrc Full GLSL source code for the fragment shader.
    */
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     if (fragSrc instanceof Function) {
