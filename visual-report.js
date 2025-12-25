@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 const SLASH_REGEX = /\//g;
 
 async function generateVisualReport() {
@@ -425,4 +425,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { generateVisualReport };
+export { generateVisualReport };
