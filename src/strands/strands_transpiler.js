@@ -275,6 +275,37 @@ const ASTCallbacks = {
       };
       node.arguments = [node.right];
     },
+    LogicalExpression(node, _state, ancestors) {
+      // Don't convert uniform default values to node methods, as
+      // they should be evaluated at runtime, not compiled.
+      if (ancestors.some(nodeIsUniform)) { return; }
+      // If the left hand side of an expression is one of these types,
+      // we should construct a node from it.
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
+      if (unsafeTypes.includes(node.left.type)) {
+        const leftReplacementNode = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsNode',
+          },
+          arguments: [node.left]
+        }
+        node.left = leftReplacementNode;
+      }
+      // Replace the logical operator with a call expression
+      // in other words a call to BaseNode.or(), .and() etc.
+      node.type = 'CallExpression';
+      node.callee = {
+        type: 'MemberExpression',
+        object: node.left,
+        property: {
+          type: 'Identifier',
+          name: replaceBinaryOperator(node.operator),
+        },
+      };
+      node.arguments = [node.right];
+    },
     IfStatement(node, _state, ancestors) {
       if (ancestors.some(nodeIsUniform)) { return; }
       // Transform if statement into strandsIf() call
