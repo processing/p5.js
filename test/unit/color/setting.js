@@ -163,6 +163,17 @@ suite('color/Setting', function() {
     });
   });
 
+  suite('p5.prototype.background (WEBGL)', function() {
+    test('does not throw when given an image-like argument', function() {
+      const g = my3D.createGraphics(32, 32);
+      g.background(255, 0, 0);
+
+      assert.doesNotThrow(function() {
+        my3D.background(g);
+      });
+    });
+  });
+
   suite('p5.prototype.colorMode', function() {
     test('should be a function', function() {
       assert.ok(myp5.colorMode);

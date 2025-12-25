@@ -634,8 +634,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
     };
 
-    this.pointSize = 5.0; //default point size
     this.curStrokeWeight = 1;
+    this.pointSize = this.curStrokeWeight;
     this.curStrokeCap = constants.ROUND;
     this.curStrokeJoin = constants.ROUND;
 
@@ -934,6 +934,30 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
  * [background description]
  */
   background(...args) {
+    const a0 = args[0];
+
+    const isImageLike =
+      a0 instanceof p5.Image ||
+      a0 instanceof p5.Graphics ||
+      (typeof HTMLImageElement !== 'undefined' && a0 instanceof HTMLImageElement) ||
+      (typeof HTMLVideoElement !== 'undefined' && a0 instanceof HTMLVideoElement) ||
+      (typeof p5.MediaElement !== 'undefined' && a0 instanceof p5.MediaElement);
+
+    // WEBGL: support background(image)
+    if (args.length > 0 && isImageLike) {
+      // Clear WebGL buffers (color + depth)
+      this._pInst.clear();
+
+      // Draw background image in screen space (ignore camera)
+      this._pInst.push();
+      this._pInst.resetMatrix();
+      this._pInst.imageMode(this._pInst.CENTER);
+      this._pInst.image(a0, 0, 0, this._pInst.width, this._pInst.height);
+      this._pInst.pop();
+      return;
+    }
+
+    // Default WEBGL background(color)
     const _col = this._pInst.color(...args);
     const _r = _col.levels[0] / 255;
     const _g = _col.levels[1] / 255;

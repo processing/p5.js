@@ -387,7 +387,7 @@ git commit -m "Add documentation example to circle() function"
 
 ### 内联文档
 
-如果你要处理内联文档，请参阅[这里](./inline_documentation.md)。
+如果你要处理内联文档，请参阅[这里](./contributing_to_the_p5js_reference.md)。
 
 ### 无障碍
 
