@@ -1,6 +1,7 @@
 {
   "name": "p5",
   "repository": "processing/p5.js",
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "vite preview/",
