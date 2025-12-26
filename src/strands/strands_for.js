@@ -246,8 +246,12 @@ export class StrandsFor {
     CFG.addEdge(cfg, breakCheckBlock, breakConditionBlock);
     cfg.blockConditions[breakConditionBlock] = negatedCondition.id;
 
+    // Add scope start block for break statement
+    const breakScopeStartBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_START);
+    CFG.addEdge(cfg, breakConditionBlock, breakScopeStartBlock);
+
     const breakStatementBlock = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
-    CFG.addEdge(cfg, breakConditionBlock, breakStatementBlock);
+    CFG.addEdge(cfg, breakScopeStartBlock, breakStatementBlock);
 
     // Create the break statement in the break statement block
     CFG.pushBlock(cfg, breakStatementBlock);
@@ -261,8 +265,12 @@ export class StrandsFor {
     CFG.recordInBasicBlock(cfg, breakStatementBlock, breakStatementID);
     CFG.popBlock(cfg);
 
-    // The break statement block leads to the merge block (exits the loop)
-    CFG.addEdge(cfg, breakStatementBlock, mergeBlock);
+    // Add scope end block for break statement
+    const breakScopeEndBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_END);
+    CFG.addEdge(cfg, breakStatementBlock, breakScopeEndBlock);
+
+    // The break scope end block leads to the merge block (exits the loop)
+    CFG.addEdge(cfg, breakScopeEndBlock, mergeBlock);
 
     CFG.popBlock(cfg);
 
@@ -289,8 +297,8 @@ export class StrandsFor {
     const scopeEndBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_END);
     CFG.addEdge(cfg, updateBlock, scopeEndBlock);
 
-    // Loop back to break check
-    CFG.addEdge(cfg, scopeEndBlock, breakCheckBlock);
+    // Connect end of for loop to the merge agter the loop
+    CFG.addEdge(cfg, scopeEndBlock, mergeBlock);
 
     // Break condition exits to merge
     CFG.addEdge(cfg, breakCheckBlock, mergeBlock);
@@ -352,6 +360,9 @@ export class StrandsFor {
 
     const loopVarNode = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
     this.bodyResults = this.bodyCb(loopVarNode, phiVars);
+    for (const key in this.bodyResults) {
+      this.bodyResults[key] = this.strandsContext.p5.strandsNode(this.bodyResults[key]);
+    }
     this.phiNodesForBody = phiNodesForBody;
     // Capture the final block after body execution before popping
     this.finalBodyBlock = cfg.currentBlock;

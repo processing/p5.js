@@ -9,7 +9,10 @@ export function createPhiNode(strandsContext, phiInputs, varName) {
     throw new Error(`No valid inputs for phi node for variable ${varName}`);
   }
   // Get dimension and baseType from first valid input
-  const firstInput = DAG.getNodeDataFromID(strandsContext.dag, validInputs[0].value.id);
+  let firstInput = validInputs
+    .map((input) => DAG.getNodeDataFromID(strandsContext.dag, input.value.id))
+    .find((input) => input.dimension) ??
+      DAG.getNodeDataFromID(strandsContext.dag, validInputs[0].value.id);
   const dimension = firstInput.dimension;
   const baseType = firstInput.baseType;
   const nodeData = {

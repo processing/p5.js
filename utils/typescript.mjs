@@ -56,6 +56,26 @@ function processStrandsFunctions() {
       description: `Discards the current pixel`,
       static: false
     },
+    {
+      name: 'getTexture',
+      overloads: [{
+        params: [
+          {
+            name: 'tex',
+            type: { type: 'NameExpression', name: 'any' },
+            optional: false,
+          },
+          {
+            name: 'coord',
+            type: { type: 'NameExpression', name: 'any' },
+            optional: false,
+          },
+        ],
+        return: {
+          type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+        }
+      }],
+    }
   ];
 
   // Add ALL GLSL builtin functions (both isp5Function: true and false)

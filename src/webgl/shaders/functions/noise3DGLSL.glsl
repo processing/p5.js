@@ -93,15 +93,16 @@ float baseNoise(vec3 v)
         dot(p2,x2), dot(p3,x3) ) );
 }
 
-float noise(vec3 st) {
+float noise(vec3 st, int octaves, float ampFalloff) {
   float result = 0.0;
   float amplitude = 1.0;
   float frequency = 1.0;
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 8; i++) {
+    if (i >= octaves) break;
     result += amplitude * baseNoise(st * frequency);
     frequency *= 2.0;
-    amplitude *= 0.5;
+    amplitude *= ampFalloff;
   }
 
   return result;

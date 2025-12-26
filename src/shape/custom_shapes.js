@@ -1170,10 +1170,12 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
 class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   contours = [];
   curveDetail;
+  pointsToLines;
 
-  constructor({ curveDetail = 1 } = {}) {
+  constructor({ curveDetail = 1, pointsToLines = true } = {}) {
     super();
     this.curveDetail = curveDetail;
+    this.pointsToLines = pointsToLines;
   }
 
   lastContour() {
@@ -1248,7 +1250,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     }
   }
   visitPoint(point) {
-    this.contours.push(point.vertices.slice());
+    if (this.pointsToLines) {
+      this.contours.push(...point.vertices.map(v => [v, v]));
+    } else {
+      this.contours.push(point.vertices.slice());
+    }
   }
   visitLine(line) {
     this.contours.push(line.vertices.slice());
@@ -1823,7 +1829,7 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1833,44 +1839,44 @@ function customShapes(p5, fn) {
    * let vertexD;
    * let vertexE;
    * let vertexF;
-   * 
+   *
    * let markerRadius;
-   * 
+   *
    * let vectorAB;
    * let vectorFE;
-   * 
+   *
    * let endOfTangentB;
    * let endOfTangentE;
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Initialize variables
    *   // Adjusting vertices A and F affects the slopes at B and E
-   *   
+   *
    *   vertexA = createVector(35, 85);
    *   vertexB = createVector(25, 70);
    *   vertexC = createVector(30, 30);
    *   vertexD = createVector(70, 30);
    *   vertexE = createVector(75, 70);
    *   vertexF = createVector(65, 85);
-   *   
+   *
    *   markerRadius = 4;
-   *   
+   *
    *   vectorAB = p5.Vector.sub(vertexB, vertexA);
    *   vectorFE = p5.Vector.sub(vertexE, vertexF);
-   *   
+   *
    *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
    *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
-   *   
+   *
    *   splineProperty(`ends`, EXCLUDE);
-   *   
+   *
    *   // Draw figure
-   *   
+   *
    *   background(220);
-   *   
+   *
    *   noFill();
-   *   
+   *
    *   beginShape();
    *   splineVertex(vertexA.x, vertexA.y);
    *   splineVertex(vertexB.x, vertexB.y);
@@ -1879,15 +1885,15 @@ function customShapes(p5, fn) {
    *   splineVertex(vertexE.x, vertexE.y);
    *   splineVertex(vertexF.x, vertexF.y);
    *   endShape();
-   *   
+   *
    *   stroke('red');
    *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
    *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
-   *   
+   *
    *   stroke('blue');
    *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
    *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
-   *     
+   *
    *   fill('white');
    *   stroke('black');
    *   circle(vertexA.x, vertexA.y, markerRadius);
@@ -1896,7 +1902,7 @@ function customShapes(p5, fn) {
    *   circle(vertexD.x, vertexD.y, markerRadius);
    *   circle(vertexE.x, vertexE.y, markerRadius);
    *   circle(vertexF.x, vertexF.y, markerRadius);
-   *   
+   *
    *   fill('black');
    *   noStroke();
    *   text('A', vertexA.x - 15, vertexA.y + 5);
@@ -1905,7 +1911,7 @@ function customShapes(p5, fn) {
    *   text('D', vertexD.x - 5, vertexD.y - 5);
    *   text('E', vertexE.x + 5, vertexE.y + 5);
    *   text('F', vertexF.x + 5, vertexF.y + 5);
-   *   
+   *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
    * </code>
@@ -2069,7 +2075,7 @@ function customShapes(p5, fn) {
    * spline(25, 46, 93, 44, 93, 81, 35, 85);
    * ```
    * <img src="assets/anglurBulge.png"></img>
-   * 
+   *
    * In all cases, the splines in p5.js are <a href = "https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline">cardinal splines</a>.
    * When tightness is 0, these splines are often known as
    * <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline">Catmull-Rom splines</a>
@@ -2087,7 +2093,6 @@ function customShapes(p5, fn) {
    *
    * function setup() {
    *   createCanvas(100, 100);
-   *
    * }
    *
    * function draw() {
@@ -2185,9 +2190,9 @@ function customShapes(p5, fn) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
-   * 
+   *
    * <div>
    * <code>
    * let vertexA;
@@ -2196,44 +2201,44 @@ function customShapes(p5, fn) {
    * let vertexD;
    * let vertexE;
    * let vertexF;
-   * 
+   *
    * let markerRadius;
-   * 
+   *
    * let vectorAB;
    * let vectorFE;
-   * 
+   *
    * let endOfTangentB;
    * let endOfTangentE;
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Initialize variables
    *   // Adjusting vertices A and F affects the slopes at B and E
-   *   
+   *
    *   vertexA = createVector(35, 85);
    *   vertexB = createVector(25, 70);
    *   vertexC = createVector(30, 30);
    *   vertexD = createVector(70, 30);
    *   vertexE = createVector(75, 70);
    *   vertexF = createVector(65, 85);
-   *   
+   *
    *   markerRadius = 4;
-   *   
+   *
    *   vectorAB = p5.Vector.sub(vertexB, vertexA);
    *   vectorFE = p5.Vector.sub(vertexE, vertexF);
-   *   
+   *
    *   endOfTangentB = p5.Vector.add(vertexC, vectorAB);
    *   endOfTangentE = p5.Vector.add(vertexD, vectorFE);
-   *   
+   *
    *   splineProperty(`ends`, EXCLUDE);
-   *   
+   *
    *   // Draw figure
-   *   
+   *
    *   background(220);
-   *   
+   *
    *   noFill();
-   *   
+   *
    *   beginShape();
    *   splineVertex(vertexA.x, vertexA.y);
    *   splineVertex(vertexB.x, vertexB.y);
@@ -2242,15 +2247,15 @@ function customShapes(p5, fn) {
    *   splineVertex(vertexE.x, vertexE.y);
    *   splineVertex(vertexF.x, vertexF.y);
    *   endShape();
-   *   
+   *
    *   stroke('red');
    *   line(vertexA.x, vertexA.y, vertexC.x, vertexC.y);
    *   line(vertexB.x, vertexB.y, endOfTangentB.x, endOfTangentB.y);
-   *   
+   *
    *   stroke('blue');
    *   line(vertexD.x, vertexD.y, vertexF.x, vertexF.y);
    *   line(vertexE.x, vertexE.y, endOfTangentE.x, endOfTangentE.y);
-   *     
+   *
    *   fill('white');
    *   stroke('black');
    *   circle(vertexA.x, vertexA.y, markerRadius);
@@ -2259,7 +2264,7 @@ function customShapes(p5, fn) {
    *   circle(vertexD.x, vertexD.y, markerRadius);
    *   circle(vertexE.x, vertexE.y, markerRadius);
    *   circle(vertexF.x, vertexF.y, markerRadius);
-   *   
+   *
    *   fill('black');
    *   noStroke();
    *   text('A', vertexA.x - 15, vertexA.y + 5);
@@ -2268,12 +2273,12 @@ function customShapes(p5, fn) {
    *   text('D', vertexD.x - 5, vertexD.y - 5);
    *   text('E', vertexE.x + 5, vertexE.y + 5);
    *   text('F', vertexF.x + 5, vertexF.y + 5);
-   *   
+   *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
    * </code>
    * </div>
-   * 
+   *
    */
 
   /**
