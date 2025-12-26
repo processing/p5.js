@@ -20,7 +20,7 @@ suite('loadJSON', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadJSON(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -33,7 +33,7 @@ suite('loadJSON', function() {
       mockP5Prototype.loadJSON(jsonObjectFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -46,7 +46,7 @@ suite('loadJSON', function() {
   });
 
   test('passes an object to success callback for object JSON.', async () => {
-    await mockP5Prototype.loadJSON(jsonObjectFile, (data) => {
+    await mockP5Prototype.loadJSON(jsonObjectFile, data => {
       assert.isObject(data);
     });
   });
@@ -58,7 +58,7 @@ suite('loadJSON', function() {
   });
 
   test('passes an array to success callback for array JSON.', async function() {
-    await mockP5Prototype.loadJSON(jsonArrayFile, (data) => {
+    await mockP5Prototype.loadJSON(jsonArrayFile, data => {
       assert.isArray(data);
       assert.lengthOf(data, 3);
     });

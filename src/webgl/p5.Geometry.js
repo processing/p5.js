@@ -11,6 +11,7 @@
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
+import { downloadFile } from '../io/utilities';
 
 class Geometry {
   constructor(detailX, detailY, callback, renderer) {
@@ -70,103 +71,103 @@ class Geometry {
   }
 
   /**
- * Calculates the position and size of the smallest box that contains the geometry.
- *
- * A bounding box is the smallest rectangular prism that contains the entire
- * geometry. It's defined by the box's minimum and maximum coordinates along
- * each axis, as well as the size (length) and offset (center).
- *
- * Calling `myGeometry.calculateBoundingBox()` returns an object with four
- * properties that describe the bounding box:
- *
- * ```js
- * // Get myGeometry's bounding box.
- * let bbox = myGeometry.calculateBoundingBox();
- *
- * // Print the bounding box to the console.
- * console.log(bbox);
- *
- * // {
- * //  // The minimum coordinate along each axis.
- * //  min: { x: -1, y: -2, z: -3 },
- * //
- * //  // The maximum coordinate along each axis.
- * //  max: { x: 1, y: 2, z: 3},
- * //
- * //  // The size (length) along each axis.
- * //  size: { x: 2, y: 4, z: 6},
- * //
- * //  // The offset (center) along each axis.
- * //  offset: { x: 0, y: 0, z: 0}
- * // }
- * ```
- *
- * @returns {Object} bounding box of the geometry.
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let particles;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a new p5.Geometry object with random spheres.
- *   particles = buildGeometry(createParticles);
- *
- *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the particles.
- *   noStroke();
- *   fill(255);
- *
- *   // Draw the particles.
- *   model(particles);
- *
- *   // Calculate the bounding box.
- *   let bbox = particles.calculateBoundingBox();
- *
- *   // Translate to the bounding box's center.
- *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
- *
- *   // Style the bounding box.
- *   stroke(255);
- *   noFill();
- *
- *   // Draw the bounding box.
- *   box(bbox.size.x, bbox.size.y, bbox.size.z);
- * }
- *
- * function createParticles() {
- *   for (let i = 0; i < 10; i += 1) {
- *     // Calculate random coordinates.
- *     let x = randomGaussian(0, 15);
- *     let y = randomGaussian(0, 15);
- *     let z = randomGaussian(0, 15);
- *
- *     push();
- *     // Translate to the particle's coordinates.
- *     translate(x, y, z);
- *     // Draw the particle.
- *     sphere(3);
- *     pop();
- *   }
- * }
- * </code>
- * </div>
- */
+   * Calculates the position and size of the smallest box that contains the geometry.
+   *
+   * A bounding box is the smallest rectangular prism that contains the entire
+   * geometry. It's defined by the box's minimum and maximum coordinates along
+   * each axis, as well as the size (length) and offset (center).
+   *
+   * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+   * properties that describe the bounding box:
+   *
+   * ```js
+   * // Get myGeometry's bounding box.
+   * let bbox = myGeometry.calculateBoundingBox();
+   *
+   * // Print the bounding box to the console.
+   * console.log(bbox);
+   *
+   * // {
+   * //  // The minimum coordinate along each axis.
+   * //  min: { x: -1, y: -2, z: -3 },
+   * //
+   * //  // The maximum coordinate along each axis.
+   * //  max: { x: 1, y: 2, z: 3},
+   * //
+   * //  // The size (length) along each axis.
+   * //  size: { x: 2, y: 4, z: 6},
+   * //
+   * //  // The offset (center) along each axis.
+   * //  offset: { x: 0, y: 0, z: 0}
+   * // }
+   * ```
+   *
+   * @returns {Object} bounding box of the geometry.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let particles;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a new p5.Geometry object with random spheres.
+   *   particles = buildGeometry(createParticles);
+   *
+   *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the particles.
+   *   noStroke();
+   *   fill(255);
+   *
+   *   // Draw the particles.
+   *   model(particles);
+   *
+   *   // Calculate the bounding box.
+   *   let bbox = particles.calculateBoundingBox();
+   *
+   *   // Translate to the bounding box's center.
+   *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+   *
+   *   // Style the bounding box.
+   *   stroke(255);
+   *   noFill();
+   *
+   *   // Draw the bounding box.
+   *   box(bbox.size.x, bbox.size.y, bbox.size.z);
+   * }
+   *
+   * function createParticles() {
+   *   for (let i = 0; i < 10; i += 1) {
+   *     // Calculate random coordinates.
+   *     let x = randomGaussian(0, 15);
+   *     let y = randomGaussian(0, 15);
+   *     let z = randomGaussian(0, 15);
+   *
+   *     push();
+   *     // Translate to the particle's coordinates.
+   *     translate(x, y, z);
+   *     // Draw the particle.
+   *     sphere(3);
+   *     pop();
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
@@ -205,6 +206,9 @@ class Geometry {
   }
 
   reset() {
+    // Notify renderer that geometry is being reset (for buffer cleanup)
+    this.renderer?.onReset?.(this);
+
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
@@ -413,7 +417,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName , 'obj');
+    downloadFile(blob, fileName , 'obj');
 
   }
 
@@ -431,8 +435,8 @@ class Geometry {
    * @method saveStl
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
-   * controls whether or not a binary .stl file is saved. It defaults to false.
+   * @param {Object} [options] Optional settings.
+   * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
    * <div>
    * <code>
@@ -536,7 +540,7 @@ class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName, 'stl');
+    downloadFile(blob, fileName, 'stl');
   }
 
   /**
@@ -1419,6 +1423,7 @@ class Geometry {
     for (let i = 0; i < this.edges.length; i++) {
       const prevEdge = this.edges[i - 1];
       const currEdge = this.edges[i];
+      const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
       const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
@@ -1439,10 +1444,12 @@ class Geometry {
           (currEdge[1] + 1) * 4
         )
         : [0, 0, 0, 0];
-      const dir = end
-        .copy()
-        .sub(begin)
-        .normalize();
+      const dir = isPoint
+        ? new Vector(0, 1, 0)
+        : end
+          .copy()
+          .sub(begin)
+          .normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1462,6 +1469,9 @@ class Geometry {
               this._addJoin(begin, lastValidDir, dir, fromColor);
             }
           }
+        } else if (isPoint) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          this._addCap(begin, dir, fromColor);
         } else {
           // Start a new line
           if (dirOK && !connected.has(currEdge[0])) {
@@ -1483,7 +1493,7 @@ class Geometry {
               });
             }
           }
-          if (lastValidDir && !connected.has(prevEdge[1])) {
+          if (!isPoint && lastValidDir && !connected.has(prevEdge[1])) {
             const existingCap = potentialCaps.get(prevEdge[1]);
             if (existingCap) {
               this._addJoin(
@@ -1952,7 +1962,7 @@ function geometry(p5, fn){
    * @class p5.Geometry
    * @param  {Integer} [detailX] number of vertices along the x-axis.
    * @param  {Integer} [detailY] number of vertices along the y-axis.
-   * @param {function} [callback] function to call once the geometry is created.
+   * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
    * <div>
@@ -2548,6 +2558,13 @@ function geometry(p5, fn){
    * }
    * </code>
    * </div>
+   */
+
+  /**
+   * A unique identifier for this geometry. The renderer will use this to cache resources.
+   *
+   * @property {String} gid
+   * @for p5.Geometry
    */
 }
 

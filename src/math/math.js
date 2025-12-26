@@ -23,6 +23,10 @@ function math(p5, fn) {
    * This allows for flexibility in representing vectors in higher-dimensional
    * spaces.
    *
+   * Calling `createVector()` **with no arguments** is **deprecated** and will emit
+   * a friendly warning. Use `createVector(0)`, `createVector(0, 0)`, or
+   * `createVector(0, 0, 0)` instead.
+   *
    * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
    * motion because they simplify the math. For example, a moving ball has a
    * position and a velocity. Position describes where the ball is in space. The
@@ -96,6 +100,11 @@ function math(p5, fn) {
    * </div>
    */
   fn.createVector = function (x, y, z) {
+    if (arguments.length === 0) {
+      p5._friendlyError(
+        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
+      );
+    }
     if (this instanceof p5) {
       return new p5.Vector(
         this._fromRadians.bind(this),
@@ -137,6 +146,6 @@ function math(p5, fn) {
 
 export default math;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   math(p5, p5.prototype);
 }

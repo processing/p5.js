@@ -10,6 +10,13 @@ function gridOutput(p5, fn){
 
   //updates gridOutput
   fn._updateGridOutput = function(idT) {
+    if (this._renderer && this._renderer.isP3D) {
+      if (!this._didOutputGridWebGLMessage) {
+        this._didOutputGridWebGLMessage = true;
+        console.error('gridOutput() does not yet work in WebGL mode.');
+      }
+      return;
+    }
     //if html structure is not there yet
     if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
       return;
@@ -71,7 +78,8 @@ function gridOutput(p5, fn){
           //if empty cell of location of shape is undefined
           if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
             //fill it with shape info
-            cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
+            cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
+              fill;
             //if a shape is already in that location
           } else {
             //add it

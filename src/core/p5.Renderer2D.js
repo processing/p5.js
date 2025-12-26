@@ -9,6 +9,7 @@ import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
+import { DefaultFill, textCoreConstants } from '../type/textCore';
 
 
 const styleEmpty = 'rgba(0,0,0,0)';
@@ -39,7 +40,7 @@ class Renderer2D extends Renderer {
           get() {
             return this.wrappedElt[p];
           }
-        })
+        });
       }
     }
 
@@ -70,12 +71,16 @@ class Renderer2D extends Renderer {
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
-    if(!this.filterRenderer){
-      this.filterRenderer = new FilterRenderer2D(this);
-    }
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
     this.clipPath = null;
+  }
+
+  get filterRenderer() {
+    if (!this._filterRenderer) {
+      this._filterRenderer = new FilterRenderer2D(this);
+    }
+    return this._filterRenderer;
   }
 
   remove(){
@@ -177,7 +182,7 @@ class Renderer2D extends Renderer {
       // create background rect
       const color = this._pInst.color(...args);
 
-      // Add accessible outputs if the method exists; on success, 
+      // Add accessible outputs if the method exists; on success,
       // set the accessible output background to white.
       if (this._pInst._addAccsOutput?.()) {
         this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
@@ -211,8 +216,8 @@ class Renderer2D extends Renderer {
     const color = this.states.fillColor;
     this._setFill(color.toString());
 
-      // Add accessible outputs if the method exists; on success, 
-      // set the accessible output background to white.
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
     }
@@ -223,8 +228,8 @@ class Renderer2D extends Renderer {
     const color = this.states.strokeColor;
     this._setStroke(color.toString());
 
-      // Add accessible outputs if the method exists; on success, 
-      // set the accessible output background to white.
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
       this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
     }
@@ -262,7 +267,9 @@ class Renderer2D extends Renderer {
   }
 
   drawShape(shape) {
-    const visitor = new PrimitiveToPath2DConverter({ strokeWeight: this.states.strokeWeight });
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
     shape.accept(visitor);
     if (this._clipping) {
       this.clipPath.addPath(visitor.path);
@@ -421,7 +428,11 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
-    if (this.states.tint[0] < 255 || this.states.tint[1] < 255 || this.states.tint[2] < 255) {
+    if (
+      this.states.tint[0] < 255 ||
+      this.states.tint[1] < 255 ||
+      this.states.tint[2] < 255
+    ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
       // the image. To accommodate, we first get a version of the image with full
@@ -1044,6 +1055,108 @@ class Renderer2D extends Renderer {
 
     super.pop(style);
   }
+
+  // Text support methods
+  textCanvas() {
+    return this.canvas;
+  }
+
+  textDrawingContext() {
+    return this.drawingContext;
+  }
+
+  _renderText(text, x, y, maxY, minY) {
+    let states = this.states;
+    let context = this.textDrawingContext();
+
+    if (y < minY || y >= maxY) {
+      return; // don't render lines beyond minY/maxY
+    }
+
+    this.push();
+
+    // no stroke unless specified by user
+    if (states.strokeColor && states.strokeSet) {
+      context.strokeText(text, x, y);
+    }
+
+    if (!this._clipping && states.fillColor) {
+
+      // if fill hasn't been set by user, use default text fill
+      if (!states.fillSet) {
+        this._setFill(DefaultFill);
+      }
+      context.fillText(text, x, y);
+    }
+
+    this.pop();
+  }
+
+  /*
+    Position the lines of text based on their textAlign/textBaseline properties
+  */
+  _positionLines(x, y, width, height, lines) {
+    let { textLeading, textAlign } = this.states;
+    let adjustedX, lineData = new Array(lines.length);
+    let adjustedW = typeof width === 'undefined' ? 0 : width;
+    let adjustedH = typeof height === 'undefined' ? 0 : height;
+
+    for (let i = 0; i < lines.length; i++) {
+      switch (textAlign) {
+        case textCoreConstants.START:
+          throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
+        case constants.LEFT:
+          adjustedX = x;
+          break;
+        case constants.CENTER:
+          adjustedX = x + adjustedW / 2;
+          break;
+        case constants.RIGHT:
+          adjustedX = x + adjustedW;
+          break;
+        case textCoreConstants.END:
+          throw new Error('textBounds: END not yet supported for textAlign');
+      }
+      lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
+    }
+
+    return this._yAlignOffset(lineData, adjustedH);
+  }
+
+  /*
+    Get the y-offset for text given the height, leading, line-count and textBaseline property
+  */
+  _yAlignOffset(dataArr, height) {
+    if (typeof height === 'undefined') {
+      throw Error('_yAlignOffset: height is required');
+    }
+
+    let { textLeading, textBaseline } = this.states;
+    let yOff = 0, numLines = dataArr.length;
+    let ydiff = height - (textLeading * (numLines - 1));
+
+    switch (textBaseline) { // drawingContext ?
+      case constants.TOP:
+        break; // ??
+      case constants.BASELINE:
+        break;
+      case textCoreConstants._CTX_MIDDLE:
+        yOff = ydiff / 2 + this._middleAlignOffset();
+        break;
+      case constants.BOTTOM:
+        yOff = ydiff;
+        break;
+      case textCoreConstants.IDEOGRAPHIC:
+        console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
+        break;
+      case textCoreConstants.HANGING:
+        console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
+        break;
+    }
+
+    dataArr.forEach(ele => ele.y += yOff);
+    return dataArr;
+  }
 }
 
 function renderer2D(p5, fn){
@@ -1057,9 +1170,9 @@ function renderer2D(p5, fn){
   p5.renderers[constants.P2D] = Renderer2D;
   p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
-      return new target(pInst, w, h, isMainCanvas, elt, {colorSpace: "display-p3"})
+      return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }
-  })
+  });
 }
 
 export default renderer2D;

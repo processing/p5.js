@@ -2,11 +2,16 @@
 
 # Steward Guidelines
 
-Whether you have just joined us as a steward, are a seasoned maintainer of p5.js, or are somewhere in between, this guide contains information as well as tips and tricks that will help you effectively contribute to p5.js. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, you'll find what you need in this guide to p5.js stewardship. If you are not sure what to expect from stewards, or if you are considering how to volunteer or get started as a steward, read on!
 
 
 ## Table of Contents
 
+- [Stewardship](#stewardship)
+  - [Community Care](#community-care)
+  - [Areas](#areas)
+  - [Becoming a Steward](#becoming-a-steward)
+  - [Getting Started with Stewardship](#getting-started-with-stewardship)
 - [Issues](#issues)
   - [Bug report](#bug-report)
   - [Feature request](#feature-request)
@@ -15,11 +20,10 @@ Whether you have just joined us as a steward, are a seasoned maintainer of p5.js
 - [Pull Requests](#pull-requests)
   - [Simple fix](#simple-fix)
   - [Bug fix](#bug-fix)
-  - [New feature/feature enhancement](#new-feature-feature-enhancement)
+  - [New feature/feature enhancement](#new-featurefeature-enhancement)
   - [Dependabot](#dependabot)
 - [Build Process](#build-process)
   - [Main build task](#main-build-task)
-  - [Miscellaneous tasks](#miscellaneous-tasks)
 - [Release Process](#release-process)
 - [Tips & Tricks](#tips--tricks)
   - [Reply templates](#reply-templates)
@@ -28,6 +32,63 @@ Whether you have just joined us as a steward, are a seasoned maintainer of p5.js
 
 ---
 
+## Stewardship
+
+### Community Care
+
+An open source ethos includes [accessibility, education, collaboration, transparency, and agency](https://www.opensourceethos.net/). To live and practice these values while we write code together needs a lot of community care. These are the community care practices that are part of our definition of stewardship:
+
+1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
+2. Helping to **facilitate feature discussions** and resolve technical disagreements. For example, this means making connections to other past discussion, or offering input from prior relevant experience. Suggesting features or working on them is contribution, rather than stewardship.
+3. Participating in releases of the p5.js software through **supporting** bug fixing and feature completion. For example, this means guiding other contributors and reviewing their PRs. Fixing bugs is contribution, rather than stewardship.
+
+The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+
+Everyone is invited to help steward the community when they can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
+
+1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
+2. Maintainers are also able to merge PRs and admin other parts of the codebase.
+
+Stewards can also be contributors: they can make Issues and PRs as contributors, while they also take on responsibility, when they are stewarding a particular area, to comment on issues and do code reviews, especially when tagged by other contributors to help with discussion and review.
+
+As a contributor, you can check the current stewards in the p5.js repository's README file and tag relevant stewards - but please be mindful of our contributor guidelines, which emphasize patience and mindfulness that most of the technical work on an open-source project is volunteer.
+
+As a steward, we hope that you regularly chime in on code reviews on Issues or PRs that you did not make, if they are in your area and if you are able to provide helpful guidance!
+
+### Areas
+
+There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
+
+- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader support via API like `describe(..)` as well as accessibility support on the reference website
+- **Core**: Refers to core p5.js API, including rendering and environment
+- **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
+- **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Includes Color, ColorMode, accessibility improvements around color usage
+- **Typography**: Refers to all topics on handling text and font
+- **Math**: Includes both external Math API and internal performance improvements
+- **Shapes**: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
+- **Maintainers**: This group can merge PRs
+- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
+- **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+
+These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
+
+### Becoming a Steward
+
+There are two ways to become a steward:
+
+1. _Nomination_ by maintainers or other stewards, such as in conversation over Discord, Discourse, or GitHub.
+2. _Application_ by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
+
+To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor releases (e.g., 2.1.0 or 1.11.0 - when the middle number changes). These are not as frequent as patches (e.g., 2.0.3 to 2.0.4 - when the rightmost number changes), and in practice this means that stewards are expected to be active every 4-6 months or so, supporting other contributors through discussion or code review - not necessarily writing code. To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
+
+### Getting Started with Stewardship
+
+1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the p5.js [access statement](access.md) as a steward.
+2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
+3. Join the [p5.js Discord](https://discord.com/invite/SHQ8dH25r9)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
 
 ## Issues
 
@@ -175,125 +236,70 @@ Dependabot PRs are usually only visible to repo admins so if this does not apply
 
 This section will not cover the general build setup nor commands but rather details about what's happening behind the scenes. Please see the [contributor’s guidelines](contributor_guidelines.md#working-on-p5js-codebase) for more detailed build info.
 
-The Gruntfile.js file contains the main build definitions for p5.js. Among the different tools used to build the library and documentation includes but not limited to Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify, and Mocha. It may be helpful for us to start with the `default` task and work backward from there. It may be helpful at this point to open up the Gruntfile.js document while going through the explainer below.
+Starting with p5.js version 2.0, the project no longer uses Grunt for task automation. Instead, the build and test processes are handled using modern tools like npm scripts, ESLint, and [Vitest](https://vitest.dev/).
 
 
 ### Main build task
 
+To run lint checks and unit tests, simply run:
+
 ```
-grunt.registerTask('default', ['lint', 'test']);
+npm test
 ```
 
-When we run `grunt` or the npm script `npm test`, we run the default task consisting of `lint` then `test`.
-
+This command runs ESLint to check code style and then execute unit and visual tests using Vitest.
 
 #### `lint` Task
 
+In p5.js 2.0, ESLint is used directly via npm scripts for all linting tasks.
+
+To run lint checks on the codebase:
+
 ```
-grunt.registerTask('lint', ['lint:source', 'lint:samples']);
+npm run lint
 ```
 
-The `lint` task consists of two sub tasks: `lint:source` and `lint:samples`. `lint:source` is further subdivided into three more sub tasks `eslint:build`, `eslint:source`, and `eslint:test`, which uses ESLint to check the build scripts, the source code, and the test scripts.
+This checks the source files, build scripts, test files, and documentation examples using ESLint.
 
-The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively.
+If you only want to run linting for specific files or directories, you can use ESLint directly:
 
-Next in `lint:samples` is `eslint-samples:source`, which is a custom written task whose definition is in [../tasks/build/eslint-samples.js](../tasks/build/eslint-samples.js); it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+```
+npx eslint src/
+npx eslint test/
+```
 
+There is no separate sample linter or YUIDoc-based pipeline anymore.
 
 #### `test` Task
 
-```js
-grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
-]);
-```
+In p5.js 2.0, the testing system no longer uses Mocha via Grunt. Instead, tests are run using [Vitest](https://vitest.dev/) through npm scripts.
 
-First let's look at the `build` task under `test`.
-
-```js
-grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
-]);
-```
-
-Tasks that start with `browserify` are defined in [../tasks/build/browserify.js](../tasks/build/browserify.js). They all have similar steps with minor differences. These are the main steps to build the full p5.js library from its many source code files into one:
-
-- `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function.
-- `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js).
-- `browserify:test` is building a version identical to the full p5.js except for added code that is used for test code coverage reporting (using [Istanbul](https://istanbul.js.org/)).
-
-First, use of the `fs.readFileSync()` node.js specific code is replaced with the file's actual content using `brfs-babel`. This is used mainly by WebGL code to inline shader code from source code written as separate files.
-
-Next, the source code, including all dependencies from node\_modules, is transpiled using Babel to match the [Browserslist](https://browsersl.ist/) requirement defined in package.json as well as to make the ES6 import statements into CommonJS `require()` that browserify understands. This also enables us to use newer syntax available in ES6 and beyond without worrying about browser compatibility.
-
-After bundling but before the bundled code is written to file, the code is passed through `pretty-fast`, if it is not meant to be minified, it should be cleaned up so the final formatting is a bit more consistent (we anticipate the p5.js source code can be read and inspected if desired).
-
-A few small detailed steps are left out here; you can check out the browserify build definition file linked above to have a closer look at everything.
+To run the full test suite (unit and visual tests), use:
 
 ```
-connect:server
+npm test
 ```
 
-This step spins up a local server hosting the test files and built source code files so that automated tests can be run in Chrome.
+This command performs:
+- Linting via ESLint
+- Unit tests using Vitest
+- Visual tests (render-based snapshots)
+
+Tests are located in the `test/unit` folder, organized to mirror the `src` directory structure. For example, tests for `src/color/p5.Color.js` live in `test/unit/color/p5.Color.js`.
+
+To run tests interactively in a browser-like environment (useful for debugging), run:
 
 ```
-mochaChrome
+npx vitest --ui
 ```
 
-This step is defined in [../tasks/test/mocha-chrome.js](../tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
+Code coverage is also supported using Vitest's built-in tools. Run:
 
 ```
-mochaTest
+npx vitest run --coverage
 ```
 
-This step differs from `mochaChrome` in that it is run in node.js instead of in Chrome and only tests a small subset of features in the library. Most features in p5.js will require a browser environment, so this set of tests should only be expanded if the new tests really don't need a browser environment.
-
-```
-nyc:report
-```
-
-Finally, after all builds and tests are complete, this step will gather the test coverage report while `mochaChrome` was testing the full version of the library and print the test coverage data to the console. Test coverage for p5.js is mainly for monitoring and having some additional data points; having 100% test coverage is not a goal.
-
-And that covers the default task in the Gruntfile.js configuration!
-
-
-### Miscellaneous tasks
-
-All of the steps can be run directly with `npx grunt [step]`. There are also a few tasks that are not covered above but could be useful in certain cases.
-
-```
-grunt yui:dev
-```
-
-This task will run the documentation and library builds described above, followed by spinning up a web server that serves a functionally similar version of the reference page you will find on the website on [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). It will then monitor the source code for changes and rebuild the documentation and library.
-
-`grunt` `yui:dev` is useful when you are working on the reference in the inline documentation because you don't have to move built files from the p5.js repository to a local p5.js-website repository and rebuild the website each time you make a change, and you can just preview your changes with this slightly simplified version of the reference in your browser. This way, you can also be more confident that the changes you made are likely to show up correctly on the website. Note that this is only meant for modifications to the inline documentation; changes to the reference page itself, including styling and layout, should be made and tested on the website repository.
-
-```
-grunt watch
-grunt watch:main
-grunt watch:quick
-```
-
-The watch tasks will watch a series of files for changes and run associated tasks to build the reference or the library according to what files have changed. These tasks all do the same thing, with the only difference being the scope.
-
-The `watch` task will run all builds and tests similar to running the full default task on detecting changes in the source code.
-
-The `watch:main` task will run the library build and tests but not rebuild the reference on detecting changes in the source code.
-
-The `watch:quick` task will run the library build only on detecting changes in the source code.
-
-Depending on what you are working on, choosing the most minimal watch task here can save you from having to manually run a rebuild whenever you want to make some changes.
-
----
-
+**Note:** The Browserify/Grunt build pipeline (e.g., `browserify`, `uglify`, `brfs-babel`) was removed in v2.  
 
 ## Release process
 
@@ -381,4 +387,3 @@ By watching a repo, events such as new issues, new pull requests, mentions of yo
 In some cases, you may receive emails from GitHub about events in the repo you are watching as well, and you can customize these (including unsubscribing from them completely) from your [notifications settings page](https://github.com/settings/notifications).
 
 Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set it to only receive emails on "Participating, @mentions and custom."
-

@@ -69,9 +69,9 @@ function interaction(p5, fn){
    * @param  {Number} [sensitivityX] sensitivity to movement along the x-axis. Defaults to 1.
    * @param  {Number} [sensitivityY] sensitivity to movement along the y-axis. Defaults to 1.
    * @param  {Number} [sensitivityZ] sensitivity to movement along the z-axis. Defaults to 1.
-   * @param  {Object} [options] object with two optional properties, `disableTouchActions`
-   *                            and `freeRotation`. Both are `Boolean`s. `disableTouchActions`
-   *                            defaults to `true` and `freeRotation` defaults to `false`.
+   * @param  {Object} [options] Settings for orbitControl:
+   * @param {Boolean} [options.disableTouchActions=true] Prevent accidental interactions with the page while orbiting.
+   * @param {Boolean} [options.freeRotation=false] Rotate in the drag direction instead of on principal axes.
    * @chainable
    *
    * @example

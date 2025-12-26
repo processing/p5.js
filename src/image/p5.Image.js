@@ -209,12 +209,12 @@ class Image {
    * If the image was loaded from a GIF, then calling `img.updatePixels()`
    * will update the pixels in current frame.
    *
-   * @param {Integer} x x-coordinate of the upper-left corner
-   *                    of the subsection to update.
-   * @param {Integer} y y-coordinate of the upper-left corner
-   *                    of the subsection to update.
-   * @param {Integer} w width of the subsection to update.
-   * @param {Integer} h height of the subsection to update.
+   * @param {Integer} [x] x-coordinate of the upper-left corner
+   *                      of the subsection to update.
+   * @param {Integer} [y] y-coordinate of the upper-left corner
+   *                      of the subsection to update.
+   * @param {Integer} [w] width of the subsection to update.
+   * @param {Integer} [h] height of the subsection to update.
    *
    * @example
    * <div>
@@ -1326,7 +1326,7 @@ class Image {
   /**
    * Copies a region of pixels from another image into this one.
    *
-    * The first parameter, `srcImage`, is the
+   * The first parameter, `srcImage`, is the
    * <a href="#/p5.Image">p5.Image</a> object to blend.
    *
    * The next four parameters, `sx`, `sy`, `sw`, and `sh` determine the region

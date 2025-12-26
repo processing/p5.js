@@ -314,7 +314,10 @@ function primitives(p5, fn){
 
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+    if (
+      !this._renderer.states.strokeColor &&
+      !this._renderer.states.fillColor
+    ) {
       return this;
     }
 
@@ -325,7 +328,11 @@ function primitives(p5, fn){
     start = this._toRadians(start);
     stop = this._toRadians(stop);
 
-    const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
+    const vals = canvas.modeAdjust(
+      x, y,
+      w, h,
+      this._renderer.states.ellipseMode
+    );
     const angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
 
     if (angles.correspondToSamePoint) {
@@ -537,7 +544,10 @@ function primitives(p5, fn){
   fn._renderEllipse = function(x, y, w, h, detailX) {
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
-    if (!this._renderer.states.strokeColor && !this._renderer.states.fillColor) {
+    if (
+      !this._renderer.states.strokeColor &&
+      !this._renderer.states.fillColor
+    ) {
       return this;
     }
 
@@ -546,7 +556,11 @@ function primitives(p5, fn){
       h = w;
     }
 
-    const vals = canvas.modeAdjust(x, y, w, h, this._renderer.states.ellipseMode);
+    const vals = canvas.modeAdjust(
+      x, y,
+      w, h,
+      this._renderer.states.ellipseMode
+    );
     this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
     //accessible Outputs
@@ -746,7 +760,10 @@ function primitives(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
-   *
+   *   
+   *   // Making point to 5 pixels
+   *   strokeWeight(5);
+   * 
    *   // Top-left.
    *   point(30, 20);
    *
@@ -772,6 +789,9 @@ function primitives(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
+   * 
+   *   // Making point to 5 pixels.
+   *   strokeWeight(5);
    *
    *   // Top-left.
    *   point(30, 20);
@@ -802,6 +822,9 @@ function primitives(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
+   * 
+   *   // Making point to 5 pixels.
+   *   strokeWeight(5);
    *
    *   // Top-left.
    *   let a = createVector(30, 20);

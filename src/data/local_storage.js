@@ -147,7 +147,7 @@ function storage(p5, fn){
           value = value.toString();
         } else if (value instanceof p5.Vector) {
           type = 'p5.Vector';
-          const coord = [value.x, value.y, value.z];
+          const coord = value.values;
           value = coord;
         }
         value = JSON.stringify(value);

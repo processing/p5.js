@@ -31,6 +31,7 @@ function setting(p5, fn){
    *
    * @method beginClip
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>
@@ -241,6 +242,7 @@ function setting(p5, fn){
    * @method clip
    * @param {Function} callback a function that draws the mask shape.
    * @param {Object} [options] an object containing clip settings.
+   * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
    * <div>
@@ -439,6 +441,11 @@ function setting(p5, fn){
    * in RGB values. Calling `background(255, 204, 0)` sets the background a bright
    * yellow color.
    *
+   * The version of `background()` with four parameters interprets them as RGBA,
+   * HSBA, or HSLA colors, depending on the current
+   * <a href="#/p5/colorMode">colorMode()</a>. The last parameter sets the alpha
+   * (transparency) value.
+   *
    * @method background
    * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
    * @chainable
@@ -478,6 +485,19 @@ function setting(p5, fn){
    *   background(255, 204, 0);
    *
    *   describe('A canvas with a yellow background.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   * // R, G, B, and Alpha values.
+   *   background(255, 0, 0, 128);
+   *
+   *   describe('A canvas with a semi-transparent red background.');
    * }
    * </code>
    * </div>
@@ -757,7 +777,7 @@ function setting(p5, fn){
    *          Instead of saturation and lightness, HWB defines colors based on the percentage
    *          of whiteness and blackness. This is the color model used by Chrome's GUI color picker.
    *          Pure red in HWB is represented as `color(0, 0, 0)` (i.e., hue 0 with 0% whiteness and 0% blackness).
-   *    
+   *
    *          <img src="assets/hwb.png"></img>
    *
    * `LAB`    - Also known as CIE Lab, this color mode defines colors with Lightness, Alpha, and Beta.
@@ -777,14 +797,14 @@ function setting(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> objects remember the mode that they were
    * created in. Changing modes doesn't affect their appearance.
    *
-   *  `Single-value (Grayscale) Colors`:    
+   *  `Single-value (Grayscale) Colors`:
    *  When a color is specified with only one parameter (e.g., `color(g)`), p5.js will interpret it
    *  as a grayscale color. However, how that single parameter translates into a grayscale value
    *  depends on the color mode:
    *
-   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum 
-   *   (i.e., the single parameter is mapped to the blue channel's max). 
-   *   In HSB and HSL, the single value is mapped to Brightness and Lightness max respectively with hue=0 . 
+   * - `RGB, HSB, and HSL`: In RGB, the single value is interpreted using the “blue” maximum
+   *   (i.e., the single parameter is mapped to the blue channel's max).
+   *   In HSB and HSL, the single value is mapped to Brightness and Lightness max respectively with hue=0 .
    *   and saturation=0.
    *
    * - `LAB, LCH, OKLAB, and OKLCH`: The single value is taken to be the `lightness (L)` component,
@@ -801,7 +821,7 @@ function setting(p5, fn){
    * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB, HSL,
    *          or one of the extended modes described above.
    * @param {Number}  [max]  range for all values.
-   * @chainable
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    *
    * @example
    * <div>
@@ -889,78 +909,78 @@ function setting(p5, fn){
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background using the default color mode.
-   *   background(200); 
-   *   
+   *   background(200);
+   *
    *   // Switch to HWB color mode.
    *   // (Assuming p5.js supports HWB with a range of:
    *   // hue: 0–360, whiteness: 0–100, blackness: 0–100.)
    *   colorMode(HWB);
-   *   
+   *
    *   // Set fill to pure red in HWB.
    *   // Pure red in HWB is: hue = 0°, whiteness = 0%, blackness = 0%.
    *   fill(0, 0, 0);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using HWB color mode.');
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background using the default color mode.
    *   background(200);
-   *   
+   *
    *   // Switch to LAB color mode.
    *   // In this mode, L typically ranges from 0 to 100 while a and b span roughly -128 to 127.
    *   colorMode(LAB);
-   *   
+   *
    *   // Set fill to pure red in LAB.
    *   // The sRGB red (255, 0, 0) converts approximately to LAB as:
    *   // L = 53, a = 80, b = 67.
    *   fill(53, 80, 67);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using LAB color mode.');
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
    * function setup() {
    *   createCanvas(100, 100);
-   *   
+   *
    *   // Draw a neutral gray background.
    *   background(200);
-   *   
+   *
    *   // Switch to LCH color mode.
    *   // In LCH, colors are defined by Lightness, Chroma, and Hue (in degrees).
    *   colorMode(LCH);
-   *   
+   *
    *   // Set fill to an approximation of pure red in LCH:
    *   // Lightness ≈ 53, Chroma ≈ 104, Hue ≈ 40°.
    *   fill(53, 104, 40);
-   *   
+   *
    *   // Draw a circle at the center.
    *   circle(50, 50, 25);
-   *   
+   *
    *   describe('A gray square with a red circle at its center, drawn using LCH color mode.');
    * }
-   * </code>  
+   * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1056,7 +1076,7 @@ function setting(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1111,7 +1131,7 @@ function setting(p5, fn){
    * }
    * </code>
    * </div>
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -1128,7 +1148,7 @@ function setting(p5, fn){
    * function draw() {
    *   // Set color mode to RGB with range 0-255
    *   colorMode(RGB, 255);
-   *   
+   *
    *   // Fill with single grayscale value
    *   fill(128);
    *   rect(0, 0, 100, 100);
@@ -1141,7 +1161,6 @@ function setting(p5, fn){
    * </code>
    * </div>
    */
-
   /**
    * @method colorMode
    * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode
@@ -1153,7 +1172,11 @@ function setting(p5, fn){
    *                              depending on the current color mode.
    * @param {Number} [maxA]   range for the alpha.
    *
-   * @return {String}      The current color mode.
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
+   */
+  /**
+   * @method colorMode
+   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     // p5._validateParameters('colorMode', arguments);
@@ -1213,6 +1236,10 @@ function setting(p5, fn){
    * <a href="#/p5/colorMode">colorMode()</a>. The default color space is RGB,
    * with each value in the range from 0 to 255.
    *
+   * The version of `fill()` with four parameters interprets them as `RGBA`, `HSBA`,
+   * or `HSLA` colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>. The last parameter
+   * sets the alpha (transparency) value.
+   *
    * @method fill
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
@@ -1248,6 +1275,22 @@ function setting(p5, fn){
    *   square(20, 20, 60);
    *
    *   describe('A yellow square with a black outline.');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // R, G, B, and Alpha values.
+   *   fill(255, 0, 0, 128);
+   *   square(20, 20, 60);
+   *
+   *   describe('A semi-transparent red square with a black outline.');
    * }
    * </code>
    * </div>
@@ -1551,7 +1594,7 @@ function setting(p5, fn){
    * Sets the color used to draw points, lines, and the outlines of shapes.
    *
    * Calling `stroke(255, 165, 0)` or `stroke('orange')` means all shapes drawn
-   * after calling `stroke()` will be filled with the color orange. The way
+   * after calling `stroke()` will be outlined with the color orange. The way
    * these parameters are interpreted may be changed with the
    * <a href="#/p5/colorMode">colorMode()</a> function.
    *

@@ -173,7 +173,7 @@ suite('Keyboard Events', function() {
       assert.isFalse(isCode({}));
       assert.isFalse(isCode([]));
     });
-  
+
     test('returns false for single non-digit and digit characters', function() {
       assert.isFalse(isCode('a'));
       assert.isFalse(isCode('Z'));
@@ -181,7 +181,7 @@ suite('Keyboard Events', function() {
       assert.isFalse(isCode('2'));
       assert.isFalse(isCode(' '));
     });
-  
+
     test('returns true for multi-character strings', function() {
       assert.isTrue(isCode('ShiftLeft'));
       assert.isTrue(isCode('ArrowUp'));
@@ -194,7 +194,7 @@ suite('Keyboard Events', function() {
       assert.isTrue(isCode('AltLeft'));
       assert.isTrue(isCode('ShiftLeft'));
     });
-  
+
     test('handles edge cases correctly', function() {
       assert.isFalse(isCode(''));  // empty string
       assert.isTrue(isCode('11')); // multi-digit number
@@ -212,21 +212,21 @@ suite('Keyboard Events', function() {
       // Test single character keys
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
       assert.strictEqual(myp5.keyIsDown('a'), true);
-  
+
       // Test digit keys
       window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', code: 'Digit1' }));
       assert.strictEqual(myp5.keyIsDown('1'), true);
-  
+
       // Test special keys
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter' }));
       assert.strictEqual(myp5.keyIsDown('Enter'), true);
     });
-  
+
     test('keyIsDown should return false if key is not down', function() {
       // Ensure key is not down
       window.dispatchEvent(new KeyboardEvent('keyup'));
       assert.strictEqual(myp5.keyIsDown('z'), false);
-      
+
     });
   });
 });

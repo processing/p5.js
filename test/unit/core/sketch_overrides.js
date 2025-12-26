@@ -9,12 +9,12 @@ suite('Sketch Verifier', function () {
     Vector: function () { },
     prototype: {
       rect: function () { },
-      ellipse: function () { },
+      ellipse: function () { }
     }
   };
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 
@@ -46,7 +46,7 @@ suite('Sketch Verifier', function () {
   });
 
   suite('getUserCode()', function () {
-    const userCode = "let c = p5.Color(20, 20, 20);";
+    const userCode = 'let c = p5.Color(20, 20, 20);';
 
     test('fetches the last script element', async function () {
       const fakeDocument = document.createElement('div');
@@ -56,7 +56,9 @@ suite('Sketch Verifier', function () {
         <script>let c = p5.Color(20, 20, 20);</script>
       `;
       vi.spyOn(document, 'querySelectorAll')
-        .mockImplementation((...args) => fakeDocument.querySelectorAll(...args));
+        .mockImplementation((...args) =>
+          fakeDocument.querySelectorAll(...args)
+        );
 
       vi.spyOn(verifierUtils, 'fetchScript')
         .mockImplementation(() => Promise.resolve(userCode));
@@ -82,46 +84,46 @@ suite('Sketch Verifier', function () {
 
       const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
       const expectedResult = {
-        "functions": [
+        'functions': [
           {
-            "line": 5,
-            "name": "foo",
+            'line': 5,
+            'name': 'foo'
           },
           {
-            "line": 6,
-            "name": "bar",
+            'line': 6,
+            'name': 'bar'
           },
           {
-            "line": 7,
-            "name": "baz",
-          },
+            'line': 7,
+            'name': 'baz'
+          }
         ],
-        "variables": [
+        'variables': [
           {
-            "line": 1,
-            "name": "x",
+            'line': 1,
+            'name': 'x'
           },
           {
-            "line": 2,
-            "name": "y",
+            'line': 2,
+            'name': 'y'
           },
           {
-            "line": 3,
-            "name": "z",
+            'line': 3,
+            'name': 'z'
           },
           {
-            "line": 4,
-            "name": "v1",
+            'line': 4,
+            'name': 'v1'
           },
           {
-            "line": 4,
-            "name": "v2",
+            'line': 4,
+            'name': 'v2'
           },
           {
-            "line": 4,
-            "name": "v3",
-          },
-        ],
+            'line': 4,
+            'name': 'v3'
+          }
+        ]
       };
       expect(result).toEqual(expectedResult);
     });
@@ -149,25 +151,25 @@ suite('Sketch Verifier', function () {
 
       const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
       const expectedResult = {
-        "functions": [],
-        "variables": [
+        'functions': [],
+        'variables': [
           {
-            "line": 2,
-            "name": "x",
+            'line': 2,
+            'name': 'x'
           },
           {
-            "line": 6,
-            "name": "y",
+            'line': 6,
+            'name': 'y'
           },
           {
-            "line": 11,
-            "name": "z",
+            'line': 11,
+            'name': 'z'
           },
           {
-            "line": 13,
-            "name": "i",
-          },
-        ],
+            'line': 13,
+            'name': 'i'
+          }
+        ]
       };
 
       expect(result).toEqual(expectedResult);
@@ -177,7 +179,9 @@ suite('Sketch Verifier', function () {
       const invalidCode = 'let x = ;';
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
-      const result = verifierUtils.extractUserDefinedVariablesAndFuncs(invalidCode);
+      const result = verifierUtils.extractUserDefinedVariablesAndFuncs(
+        invalidCode
+      );
 
       expect(consoleSpy).toHaveBeenCalled();
       expect(result).toEqual({ variables: [], functions: [] });
@@ -208,7 +212,10 @@ suite('Sketch Verifier', function () {
         variables: [{ name: 'PI', line: 1 }],
         functions: []
       };
-      const result = verifierUtils.checkForConstsAndFuncs(userDefinitions, MockP5);
+      const result = verifierUtils.checkForConstsAndFuncs(
+        userDefinitions,
+        MockP5
+      );
 
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -223,7 +230,10 @@ suite('Sketch Verifier', function () {
         variables: [],
         functions: [{ name: 'rect', line: 2 }]
       };
-      const result = verifierUtils.checkForConstsAndFuncs(userDefinitions, MockP5);
+      const result = verifierUtils.checkForConstsAndFuncs(
+        userDefinitions,
+        MockP5
+      );
 
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -243,7 +253,10 @@ suite('Sketch Verifier', function () {
         ]
       };
 
-      const result = verifierUtils.checkForConstsAndFuncs(userDefinitions, MockP5);
+      const result = verifierUtils.checkForConstsAndFuncs(
+        userDefinitions,
+        MockP5
+      );
 
       expect(result).toBe(false);
       expect(consoleSpy).not.toHaveBeenCalled();
@@ -255,7 +268,10 @@ suite('Sketch Verifier', function () {
         functions: [{ name: 'cut', line: 2 }]
       };
 
-      const result = verifierUtils.checkForConstsAndFuncs(userDefinitions, MockP5);
+      const result = verifierUtils.checkForConstsAndFuncs(
+        userDefinitions,
+        MockP5
+      );
 
       expect(result).toBe(false);
     });

@@ -21,7 +21,12 @@ export class ShapeBuilder {
   constructor(renderer) {
     this.renderer = renderer;
     this.shapeMode = constants.PATH;
-    this.geometry = new Geometry(undefined, undefined, undefined, this.renderer);
+    this.geometry = new Geometry(
+      undefined,
+      undefined,
+      undefined,
+      this.renderer
+    );
     this.geometry.gid = '__IMMEDIATE_MODE_GEOMETRY__';
 
     this.contourIndices = [];
@@ -55,12 +60,22 @@ export class ShapeBuilder {
       this._useUserVertexProperties = true;
       for (const key in shape.userVertexProperties) {
         const name = shape.vertexPropertyName(key);
-        const prop = this.geometry._userVertexPropertyHelper(name, [], shape.userVertexProperties[key]);
+        const prop = this.geometry._userVertexPropertyHelper(
+          name,
+          [],
+          shape.userVertexProperties[key]
+        );
         userVertexPropertyHelpers[key] = prop;
         this.tessyVertexSize += prop.getDataSize();
         this.bufferStrides[prop.getSrcName()] = prop.getDataSize();
         this.renderer.buffers.user.push(
-          new RenderBuffer(prop.getDataSize(), prop.getSrcName(), prop.getDstName(), name, this.renderer)
+          new RenderBuffer(
+            prop.getDataSize(),
+            prop.getSrcName(),
+            prop.getDstName(),
+            name,
+            this.renderer
+          )
         );
       }
     } else {
@@ -90,7 +105,7 @@ export class ShapeBuilder {
                   buffer.length - 3 * stride,
                   buffer.length - 2 * stride
                 ),
-                ...buffer.slice(buffer.length - stride, buffer.length),
+                ...buffer.slice(buffer.length - stride, buffer.length)
               );
             }
           }
@@ -98,7 +113,10 @@ export class ShapeBuilder {
 
         this.geometry.vertices.push(vertex.position);
         this.geometry.vertexNormals.push(vertex.normal || new Vector(0, 0, 0));
-        this.geometry.uvs.push(vertex.textureCoordinates.x, vertex.textureCoordinates.y);
+        this.geometry.uvs.push(
+          vertex.textureCoordinates.x,
+          vertex.textureCoordinates.y
+        );
         if (this.renderer.states.fillColor) {
           this.geometry.vertexColors.push(...vertex.fill.array());
         } else {
@@ -120,7 +138,10 @@ export class ShapeBuilder {
     }
 
     if (shouldProcessEdges) {
-      this.geometry.edges = this._calculateEdges(this.shapeMode, this.geometry.vertices);
+      this.geometry.edges = this._calculateEdges(
+        this.shapeMode,
+        this.geometry.vertices
+      );
     }
     if (shouldProcessEdges && !this.renderer.geometryBuilder) {
       this.geometry._edgesToVertices();
@@ -155,7 +176,7 @@ export class ShapeBuilder {
         } else {
           return val / this.renderer.states._tex.height;
         }
-      })
+      });
     }
   }
 
@@ -179,7 +200,7 @@ export class ShapeBuilder {
    */
   _calculateEdges(
     shapeMode,
-    verts,
+    verts
   ) {
     const res = [];
     let i = 0;
@@ -259,8 +280,6 @@ export class ShapeBuilder {
    * @private
    */
   _tesselateShape() {
-    // TODO: handle non-PATH shape modes that have contours
-    this.shapeMode = constants.TRIANGLES;
     // const contours = [[]];
     const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
@@ -295,6 +314,15 @@ export class ShapeBuilder {
     }
 
     const polyTriangles = this._triangulate(contours);
+
+    // If there were no valid faces, we still want to use the original vertices
+    // for strokes, so we'll stop here.
+    if (polyTriangles.length === 0) {
+      return;
+    }
+
+    // TODO: handle non-PATH shape modes that have contours
+    this.shapeMode = constants.TRIANGLES;
     const originalVertices = this.geometry.vertices;
     this.geometry.vertices = [];
     this.geometry.vertexNormals = [];
@@ -310,7 +338,9 @@ export class ShapeBuilder {
       j = j + this.tessyVertexSize
     ) {
       colors.push(...polyTriangles.slice(j + 5, j + 9));
-      this.geometry.vertexNormals.push(new Vector(...polyTriangles.slice(j + 9, j + 12)));
+      this.geometry.vertexNormals.push(
+        new Vector(...polyTriangles.slice(j + 9, j + 12))
+      );
       {
         let offset = 12;
         for (const propName in this.geometry.userVertexProperties){

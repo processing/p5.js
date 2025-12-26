@@ -56,7 +56,7 @@ function transform(p5, fn){
    * cause shapes to transform continuously.
    *
    * @method applyMatrix
-   * @param  {Array} arr an array containing the elements of the transformation matrix. Its length should be either 6 (2D) or 16 (3D).
+   * @param  {Array<Number>} arr an array containing the elements of the transformation matrix. Its length should be either 6 (2D) or 16 (3D).
    * @chainable
    *
    * @example
@@ -1180,7 +1180,7 @@ function transform(p5, fn){
    * function draw() {
    *   background(200);
    *
-   *   // Shear the coordinate system along the x-axis.
+   *   // Shear the coordinate system along the y-axis.
    *   shearY(QUARTER_PI);
    *
    *   // Draw the square.
@@ -1203,7 +1203,7 @@ function transform(p5, fn){
    * function draw() {
    *   background(200);
    *
-   *   // Shear the coordinate system along the x-axis.
+   *   // Shear the coordinate system along the y-axis.
    *   shearY(45);
    *
    *   // Draw the square.

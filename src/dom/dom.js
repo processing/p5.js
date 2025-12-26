@@ -1518,7 +1518,10 @@ function dom(p5, fn){
     const arg0 = args[0];
     if (
       arg0 instanceof Element &&
-      (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
+      (
+        arg0.elt instanceof HTMLDivElement ||
+        arg0.elt instanceof HTMLSpanElement
+      )
     ) {
       // If given argument is p5.Element of div/span type
       self = arg0;
@@ -1755,7 +1758,10 @@ function dom(p5, fn){
       inst.push();
       if (value) {
         if (value.mode) {
-          inst.colorMode(value.mode, ...(value?.maxes ? value.maxes[value.mode] || [] : []));
+          inst.colorMode(
+            value.mode,
+            ...(value?.maxes ? value.maxes[value.mode] || [] : [])
+          );
         }
       }
       const c = inst.color(this.elt.value);
@@ -1865,7 +1871,7 @@ function dom(p5, fn){
    * @method createFileInput
    * @param  {Function} callback function to call once the file loads.
    * @param  {Boolean} [multiple] allow multiple files to be selected.
-   * @return {p5.File} new <a href="#/p5.File">p5.File</a> object.
+   * @return {p5.Element} The new input element.
    *
    * @example
    * <div>
