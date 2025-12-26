@@ -49,7 +49,6 @@
     "@stylistic/eslint-plugin": "^4.4.1",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-webdriverio": "^4.0.16",
-    "all-contributors-cli": "^6.19.0",
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
     "eslint": "^9.28.0",
