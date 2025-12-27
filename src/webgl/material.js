@@ -1419,7 +1419,7 @@ function material(p5, fn){
    * rather than using many tightly packed vertices. Sometimes this can come from
    * bump images, but it can also be done generatively with math.
    *
-   * ```js
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -1460,12 +1460,12 @@ function material(p5, fn){
    * subject are lit up. This can be simulated by adding white to the final
    * color on parts of the shape that are facing away from the camera.
    *
-   * ```js
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify(() => {
+   *   myShader = createMaterialShader(() => {
    *     let myNormal = sharedVec3();
    *     getPixelInputs((inputs) => {
    *       myNormal = inputs.normal;
@@ -2025,7 +2025,7 @@ function material(p5, fn){
    * texture. This involves using only fully opaque or transparent pixels. Here, we
    * randomly choose which pixels to be transparent:
    *
-   * ```js
+   * ```js example
    * let myShader;
    *
    * function setup() {
