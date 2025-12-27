@@ -139,7 +139,7 @@ function material(p5, fn){
       loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
-        return successCallback(loadedShader);
+        return successCallback(loadedShader) || loadedShader;
       } else {
         return loadedShader;
       }
@@ -564,6 +564,12 @@ function material(p5, fn){
    * the version of `loadFilterShader` that takes in a function instead of a separate file,
    * for more examples.
    *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadFilterShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadFilterShader('myShader.js', onLoaded)`.
+   *
    * @method loadFilterShader
    * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is
@@ -594,7 +600,7 @@ function material(p5, fn){
       }
 
       if (successCallback) {
-        successCallback(loadedShader);
+        loadedShader = successCallback(loadedShader) || loadedShader;
       }
 
       return loadedShader;
@@ -1549,6 +1555,12 @@ function material(p5, fn){
    * the version of `loadMaterialShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadMaterialShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadMaterialShader('myShader.js', onLoaded)`.
+   *
    * @method loadMaterialShader
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
@@ -1558,9 +1570,9 @@ function material(p5, fn){
    */
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
-      const shader = this.createMaterialShader(await urlToStrandsCallback(url));
+      let shader = this.createMaterialShader(await urlToStrandsCallback(url));
       if (onSuccess) {
-        onSuccess(shader);
+        shader = onSuccess(shader) || shader;
       }
       return shader;
     } catch (e) {
@@ -1752,6 +1764,12 @@ function material(p5, fn){
    * the version of `loadNormalShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadNormalShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadNormalShader('myShader.js', onLoaded)`.
+   *
    * @method loadNormalShader
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
@@ -1761,9 +1779,9 @@ function material(p5, fn){
    */
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
-      const shader = this.createNormalShader(await urlToStrandsCallback(url));
+      let shader = this.createNormalShader(await urlToStrandsCallback(url));
       if (onSuccess) {
-        onSuccess(shader);
+        shader = onSuccess(shader) || shader;
       }
       return shader;
     } catch (e) {
@@ -1902,6 +1920,12 @@ function material(p5, fn){
    * the version of `loadColorShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadColorShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadColorShader('myShader.js', onLoaded)`.
+   *
    * @method loadColorShader
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
@@ -1911,9 +1935,9 @@ function material(p5, fn){
    */
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
-      const shader = this.createColorShader(await urlToStrandsCallback(url));
+      let shader = this.createColorShader(await urlToStrandsCallback(url));
       if (onSuccess) {
-        onSuccess(shader);
+        shader = onSuccess(shader) || shader;
       }
       return shader;
     } catch (e) {
@@ -2150,6 +2174,12 @@ function material(p5, fn){
    * the version of `loadStrokeShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadStrokeShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadStrokeShader('myShader.js', onLoaded)`.
+   *
    * @method loadStrokeShader
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
@@ -2159,9 +2189,9 @@ function material(p5, fn){
    */
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
-      const shader = this.createStrokeShader(await urlToStrandsCallback(url));
+      let shader = this.createStrokeShader(await urlToStrandsCallback(url));
       if (onSuccess) {
-        onSuccess(shader);
+        shader = onSuccess(shader) || shader;
       }
       return shader;
     } catch (e) {
