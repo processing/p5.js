@@ -6,7 +6,7 @@ import * as constants from './constants';
 export function makeFilterShader(renderer, operation, p5) {
   switch (operation) {
     case constants.GRAY:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const tex = p5.getTexture(canvasContent, inputs.texCoord);
           // weighted grayscale with luminance values
@@ -16,7 +16,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.INVERT:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           const invertedColor = p5.vec3(1.0) - color.rgb;
@@ -25,7 +25,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.THRESHOLD:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const filterParameter = p5.uniformFloat();
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
@@ -38,7 +38,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.POSTERIZE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const filterParameter = p5.uniformFloat();
         const quantize = (color, n) => {
           // restrict values to N options/bins
@@ -60,7 +60,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.BLUR:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const radius = p5.uniformFloat();
         const direction = p5.uniformVec2();
 
@@ -120,7 +120,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.ERODE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const luma = (color) => {
           return p5.dot(color.rgb, p5.vec3(0.2126, 0.7152, 0.0722));
         };
@@ -150,7 +150,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.DILATE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const luma = (color) => {
           return p5.dot(color.rgb, p5.vec3(0.2126, 0.7152, 0.0722));
         };
@@ -180,7 +180,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.OPAQUE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           return p5.vec4(color.rgb, 1.0);

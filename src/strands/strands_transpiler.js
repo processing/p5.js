@@ -130,22 +130,19 @@ const ASTCallbacks = {
     if (ancestors.some(nodeIsUniform)) { return; }
     if (_state.varyings[node.name]
       && !ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)) {
-        node.type = 'ExpressionStatement';
-        node.expression = {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: {
-              type: 'Identifier',
-              name: node.name
-            },
-            property: {
-              type: 'Identifier',
-              name: 'getValue'
-            },
+        node.type = 'CallExpression';
+        node.callee = {
+          type: 'MemberExpression',
+          object: {
+            type: 'Identifier',
+            name: node.name
           },
-          arguments: [],
-        }
+          property: {
+            type: 'Identifier',
+            name: 'getValue'
+          },
+        };
+        node.arguments = [];
       }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
@@ -208,13 +205,12 @@ const ASTCallbacks = {
           varyingName = node.left.object.name;
         }
         // Check if it's a getValue() call: myVarying.getValue().xyz
-        else if (node.left.object.type === 'ExpressionStatement' &&
-                 node.left.object.expression?.type === 'CallExpression' &&
-                 node.left.object.expression.callee?.type === 'MemberExpression' &&
-                 node.left.object.expression.callee.property?.name === 'getValue' &&
-                 node.left.object.expression.callee.object?.type === 'Identifier' &&
-                 _state.varyings[node.left.object.expression.callee.object.name]) {
-          varyingName = node.left.object.expression.callee.object.name;
+        else if (node.left.object.type === 'CallExpression' &&
+                 node.left.object.callee?.type === 'MemberExpression' &&
+                 node.left.object.callee.property?.name === 'getValue' &&
+                 node.left.object.callee.object?.type === 'Identifier' &&
+                 _state.varyings[node.left.object.callee.object.name]) {
+          varyingName = node.left.object.callee.object.name;
         }
 
         if (varyingName) {
@@ -564,7 +560,7 @@ const ASTCallbacks = {
 
       // Transform for statement into strandsFor() call
       // for (init; test; update) body -> strandsFor(initCb, conditionCb, updateCb, bodyCb, initialVars)
-      
+
       // Generate unique loop variable name
       const uniqueLoopVar = `loopVar${loopVarCounter++}`;
 
@@ -928,7 +924,7 @@ const ASTCallbacks = {
     // Reset counters at the start of each transpilation
     blockVarCounter = 0;
     loopVarCounter = 0;
-    
+
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
@@ -961,18 +957,37 @@ const ASTCallbacks = {
     recursive(ast, { varyings: {} }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
-    const internalStrandsCallback = new Function(
-        // Create a parameter called __p5, not just p5, because users of instance mode
-        // may pass in a variable called p5 as a scope variable. If we rely on a variable called
-        // p5, then the scope variable called p5 might accidentally override internal function
-        // calls to p5 static methods.
-      '__p5',
-      ...scopeKeys,
-      transpiledSource
-      .slice(
-        transpiledSource.indexOf('{') + 1,
-        transpiledSource.lastIndexOf('}')
-      ).replaceAll(';', '')
-    );
-    return () => internalStrandsCallback(p5, ...scopeKeys.map(key => scope[key]));
+    const match = /\(?\s*(?:function)?\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
+      .exec(transpiledSource);
+    if (!match) {
+      console.log(transpiledSource);
+      throw new Error('Could not parse p5.strands function!');
+    }
+    const params = match[1].split(/,\s*/).filter(param => !!param.trim());
+    let paramVals, paramNames;
+    if (params.length > 0) {
+      paramNames = params;
+      paramVals = [scope];
+    } else {
+      paramNames = scopeKeys;
+      paramVals = scopeKeys.map(key => scope[key]);
+    }
+    const body = match[2];
+    try {
+      const internalStrandsCallback = new Function(
+          // Create a parameter called __p5, not just p5, because users of instance mode
+          // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+          // p5, then the scope variable called p5 might accidentally override internal function
+          // calls to p5 static methods.
+        '__p5',
+        ...paramNames,
+        body,
+      );
+      return () => internalStrandsCallback(p5, ...paramVals);
+    } catch (e) {
+      console.error(e);
+      console.log(paramNames);
+      console.log(body);
+      throw new Error('Error transpiling p5.strands callback!');
+    }
   }
