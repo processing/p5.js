@@ -714,6 +714,66 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+      test('handle if statement with || (OR) operator', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            let c = [1, 1, 1, 1];
+            if (myp5.abs(inputs.texCoord.x - 0.5) > 0.2 || myp5.abs(inputs.texCoord.y - 0.5) > 0.2) {
+              c = [1, 0, 0, 1];
+            }
+            inputs.color = c;
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const centerPixel = myp5.get(25, 25);
+        assert.approximately(centerPixel[0], 255, 5);
+        assert.approximately(centerPixel[1], 255, 5);
+        assert.approximately(centerPixel[2], 255, 5);
+        const leftEdgePixel = myp5.get(5, 25);
+        assert.approximately(leftEdgePixel[0], 255, 5);
+        assert.approximately(leftEdgePixel[1], 0, 5);
+        assert.approximately(leftEdgePixel[2], 0, 5);
+        const topEdgePixel = myp5.get(25, 5);
+        assert.approximately(topEdgePixel[0], 255, 5);
+        assert.approximately(topEdgePixel[1], 0, 5);
+        assert.approximately(topEdgePixel[2], 0, 5);
+      });
+      test('handle if statement with && (AND) operator', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.0);
+            if (inputs.texCoord.x > 0.5 && inputs.texCoord.y > 0.5) {
+              color = myp5.float(1.0);
+            }
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const bottomRightPixel = myp5.get(45, 45);
+        assert.approximately(bottomRightPixel[0], 255, 5);
+        assert.approximately(bottomRightPixel[1], 255, 5);
+        assert.approximately(bottomRightPixel[2], 255, 5);
+        const topLeftPixel = myp5.get(5, 5);
+        assert.approximately(topLeftPixel[0], 0, 5);
+        assert.approximately(topLeftPixel[1], 0, 5);
+        assert.approximately(topLeftPixel[2], 0, 5);
+        const topRightPixel = myp5.get(45, 5);
+        assert.approximately(topRightPixel[0], 0, 5);
+        assert.approximately(topRightPixel[1], 0, 5);
+        assert.approximately(topRightPixel[2], 0, 5);
+        const bottomLeftPixel = myp5.get(5, 45);
+        assert.approximately(bottomLeftPixel[0], 0, 5);
+        assert.approximately(bottomLeftPixel[1], 0, 5);
+        assert.approximately(bottomLeftPixel[2], 0, 5);
+      });
       // Keep one direct API test for completeness
       test('handle direct StrandsIf API usage', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
