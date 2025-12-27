@@ -6,6 +6,66 @@
 Ya sea que recién te hayas unido a nosotros como supervisor, seas un responsable de mantenimiento experimentado de p5.js, o estés en algún punto intermedio, esta guía contiene información, así como consejos y trucos que te ayudarán a contribuir de manera efectiva a p5.js. La mayor parte de lo que se escribe aquí son pautas a menos que se indique lo contrario, lo que significa que puedes adaptar las prácticas mostradas aquí para que se ajusten a tu flujo de trabajo.
 
 
+## Supervisión
+
+La supervisión (_stewardship_) en la comunidad de p5.js se refiere al cuidado y la responsabilidad compartida de mantener el proyecto saludable, inclusivo y sostenible. Ser supervisor no significa tener poder sobre otros, sino asumir el compromiso de apoyar a la comunidad, facilitar la colaboración y ayudar a que el proyecto avance de manera respetuosa y transparente.
+
+Las personas supervisoras ayudan a crear un entorno donde colaboradores y colaboradoras —nuevas y con experiencia— se sientan bienvenidas, escuchadas y valoradas. Esto incluye fomentar conversaciones constructivas, orientar a quienes participan por primera vez y tomar decisiones pensando en el bienestar a largo plazo del proyecto y su comunidad.
+
+La supervisión es una práctica continua que evoluciona con el tiempo. No existe una única forma correcta de ser supervisor o supervisora; cada persona aporta sus propias habilidades, experiencias y perspectivas para fortalecer p5.js.
+
+## Cuidado de la Comunidad
+
+El cuidado de la comunidad es una parte fundamental de la supervisión en p5.js. Implica actuar con empatía, respeto y responsabilidad en todas las interacciones, ya sea en _issues_, _pull requests_, discusiones o espacios comunitarios.
+
+Las personas supervisoras ayudan a mantener un ambiente seguro y acogedor al:
+- Escuchar activamente a otras personas y reconocer diferentes perspectivas.
+- Intervenir de manera respetuosa cuando surgen conflictos o comportamientos que no se alinean con el Código de Conducta.
+- Apoyar a quienes puedan sentirse excluidos, confundidos o desalentados.
+- Fomentar prácticas de comunicación claras, amables y constructivas.
+
+Cuidar de la comunidad también significa reconocer que las personas tienen distintos niveles de tiempo, energía y experiencia. La paciencia, la claridad y la amabilidad son claves para construir una comunidad sostenible y solidaria.
+
+
+## Areas
+
+Las áreas representan los distintos ámbitos del proyecto p5.js en los que una persona supervisora puede enfocarse. Estas áreas ayudan a distribuir responsabilidades y a que el trabajo de mantenimiento del proyecto sea más claro y sostenible.
+
+Algunos ejemplos de áreas incluyen, entre otras:
+- Revisión de _issues_ y _pull requests_
+- Documentación
+- Accesibilidad
+- Internacionalización
+- Comunicación con la comunidad
+- Infraestructura y procesos de desarrollo
+
+Una persona puede participar como supervisora en una o varias áreas, según sus intereses, habilidades y disponibilidad. Las áreas no son rígidas y pueden cambiar con el tiempo a medida que evoluciona el proyecto y la comunidad.
+
+
+## Cómo Convertirse en Supervisor o Supervisora
+
+Convertirse en supervisor o supervisora de p5.js es un proceso basado en la confianza, la participación continua y el compromiso con los valores de la comunidad. No se trata de un rol jerárquico, sino de una forma de servicio al proyecto y a las personas que lo conforman.
+
+Existen diferentes caminos para convertirse en supervisor o supervisora:
+- **Nominación**: otras personas de la comunidad pueden nominar a alguien que haya demostrado cuidado, responsabilidad y participación constante.
+- **Postulación**: una persona también puede expresar su interés en asumir el rol y conversar con supervisores existentes sobre cómo involucrarse.
+
+Independientemente del camino, lo más importante es haber demostrado un interés genuino por el bienestar del proyecto, el respeto por el Código de Conducta y una disposición a colaborar de manera abierta y constructiva.
+
+
+## Cómo Empezar en la Supervisión
+
+Comenzar en el rol de supervisor o supervisora puede parecer desafiante al principio, pero no es necesario saberlo todo desde el primer día. La supervisión es un proceso de aprendizaje continuo que se fortalece con la práctica y el apoyo de la comunidad.
+
+Algunos pasos útiles para empezar incluyen:
+- Observar cómo otras personas supervisoras interactúan en _issues_ y _pull requests_.
+- Participar gradualmente en revisiones, discusiones y apoyo a nuevas personas colaboradoras.
+- Hacer preguntas cuando algo no esté claro y pedir orientación cuando sea necesario.
+- Mantener una comunicación abierta, honesta y respetuosa.
+
+Con el tiempo, la experiencia y la colaboración con otras personas supervisoras ayudarán a desarrollar confianza y claridad en el rol, siempre manteniendo como prioridad el bienestar de la comunidad de p5.js.
+
+
 ## Tabla de Contenidos
 
 - [Issues](steward_guidelines.md#issues) 
