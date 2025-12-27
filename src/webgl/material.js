@@ -528,7 +528,41 @@ function material(p5, fn){
   };
 
   /**
-   * Creates and loads a filter shader from an external file.
+   * Loads a new shader from a file that can be applied to the contents of the canvas with
+   * <a href="#/p5/filter">`filter()`</a>. Pass the resulting shader into `filter()` to apply it.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   let myFilter = loadFilterShader('myFilter.js');
+   *
+   *   image(img, -50, -50);
+   *   filter(myFilter);
+   *   describe('Bricks tinted red');
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * a filter shader, call `getColor()` with a callback to change each pixel on the canvas.
+   *
+   * ```js
+   * // myFilter.js
+   * getColor((inputs, canvasContent) => {
+   *   let result = getTexture(canvasContent, inputs.texCoord);
+   *   // Zero out the green and blue channels, leaving red
+   *   result.g = 0;
+   *   result.b = 0;
+   *   return result;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createFilterShader">`createFilterShader`</a>,
+   * the version of `loadFilterShader` that takes in a function instead of a separate file,
+   * for more examples.
    *
    * @method loadFilterShader
    * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
@@ -539,29 +573,6 @@ function material(p5, fn){
    *                                     loading the shader. Will be passed the
    *                                     error event.
    * @return {Promise<p5.Shader>} a promise that resolves with a shader object
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let myShader;
-   *
-   * async function setup() {
-   *   myShader = await loadFilterShader('assets/basic.frag');
-   *   createCanvas(100, 100, WEBGL);
-   *   noStroke();
-   * }
-   *
-   * function draw() {
-   *   // shader() sets the active shader with our shader
-   *   shader(myShader);
-   *
-   *   // rect gives us some geometry on the screen
-   *   rect(-50, -50, width, height);
-   * }
-   * </code>
-   * </div>
-   * @alt
-   * A rectangle with a shader applied to it.
    */
   fn.loadFilterShader = async function (
     fragFilename,
@@ -1496,7 +1507,7 @@ function material(p5, fn){
   };
 
   /**
-   * Loads a new shader that can change how fills are drawn. Pass the resulting
+   * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
    * to any fills you draw.
    *
@@ -1698,7 +1709,7 @@ function material(p5, fn){
   };
 
   /**
-   * Loads a new shader that can change how fills are drawn, based on the material used
+   * Loads a new shader from a file that can change how fills are drawn, based on the material used
    * when <a href="#/p5/normalMaterial">`normalMaterial()`</a> is active. Pass the resulting
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
    * to any fills you draw.
@@ -1848,7 +1859,7 @@ function material(p5, fn){
   };
 
   /**
-   * Loads a new shader that can change how fills are drawn, based on the material used
+   * Loads a new shader from a file that can change how fills are drawn, based on the material used
    * when no lights or textures are active. Pass the resulting
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
    * to any fills you draw.
@@ -2091,7 +2102,7 @@ function material(p5, fn){
   };
 
   /**
-   * Loads a new shader that can change how strokes are drawn. Pass the resulting
+   * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
    * shader into the <a href="#/p5/strokeShader">`strokeShader()`</a> function to apply it
    * to any strokes you draw.
    *
