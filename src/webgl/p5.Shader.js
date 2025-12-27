@@ -239,7 +239,8 @@ class Shader {
    * p5.strands functions are special, since they get turned into a shader instead of being
    * run like the rest of your code. They only have access to p5.js functions, and variables
    * you declare inside the `modify` callback. If you need access to local variables, you
-   * can pass them into `modify` with an optional second parameter, `variables`. If you are
+   * can pass them into `modify` with an optional second parameter, `variables`. These will
+   * then be passed into your function as an argument. If you are
    * using instance mode, you will need to pass your sketch object in this way.
    *
    * ```js example
@@ -248,7 +249,7 @@ class Shader {
    *
    *   sketch.setup = function() {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
-   *     myShader = sketch.baseMaterialShader().modify(() => {
+   *     myShader = sketch.baseMaterialShader().modify(({ sketch }) => {
    *       sketch.getPixelInputs((inputs) => {
    *         inputs.color = [inputs.texCoord, 0, 1];
    *         return inputs;

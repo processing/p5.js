@@ -958,6 +958,35 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[2], 0, 5);   // 0.0 * 255 = 0
       });
 
+      test('handle for loop modifying multiple variables after minification', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            let red = myp5.float(0.0);
+            let green = myp5.float(0.0);
+
+            for (let i = 0; i < 4; i++) {
+              // Note the comma!
+              red = red + 0.125,    // 4 * 0.125 = 0.5
+                green = green + 0.25; // 4 * 0.25 = 1.0
+            }
+
+            inputs.color = [red, green, 0.0, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
+        assert.approximately(pixelColor[1], 255, 5); // 1.0 * 255 = 255
+        assert.approximately(pixelColor[2], 0, 5);   // 0.0 * 255 = 0
+      });
+
       test('handle for loop with conditional inside', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 

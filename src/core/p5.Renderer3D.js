@@ -1911,7 +1911,7 @@ export class Renderer3D extends Renderer {
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
       const p5 = this._pInst;
-      this.sphereMapping = this.baseFilterShader().modify(() => {
+      this.sphereMapping = this.baseFilterShader().modify(({ p5 }) => {
         const uEnvMap = p5.uniformTexture();
         const uFovY = p5.uniformFloat();
         const uAspect = p5.uniformFloat();
