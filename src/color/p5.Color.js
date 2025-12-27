@@ -318,14 +318,38 @@ class Color {
    * </code>
    * </div>
    */
-  toString(format) {
+ toString(format) {
+    let outputFormat = format;
+    if (format === '#rrggbb') {
+      outputFormat = 'hex';
+    }
+
     const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
     let colorString = serializationMap[key];
 
-    if(!colorString){
+    if (!colorString) {
       colorString = serialize(this._color, {
-        format
+        format: outputFormat
       });
+    // // DEBUG LOG
+    //   if (format === '#rrggbb') {
+    //      console.log('DEBUG:', format, 'Input:', this._color, 'Got:', colorString);
+    //   }
+      if (format === '#rrggbb') {
+        colorString = String(colorString);
+        
+        if (colorString.length <= 5) { 
+          const match = colorString.match(/^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/);
+          if (match) {
+            colorString = `#${match[1]}${match[1]}${match[2]}${match[2]}${match[3]}${match[3]}`;
+          }
+        }
+        if (colorString.length > 7) {
+           colorString = colorString.substring(0, 7);
+        }
+        colorString = colorString.toLowerCase();
+      }
+
       serializationMap[key] = colorString;
     }
     return colorString;
