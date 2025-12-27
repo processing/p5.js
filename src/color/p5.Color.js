@@ -331,10 +331,7 @@ class Color {
       colorString = serialize(this._color, {
         format: outputFormat
       });
-    // // DEBUG LOG
-    //   if (format === '#rrggbb') {
-    //      console.log('DEBUG:', format, 'Input:', this._color, 'Got:', colorString);
-    //   }
+      
       if (format === '#rrggbb') {
         colorString = String(colorString);
         
