@@ -11,6 +11,11 @@ import { Shader } from './p5.Shader';
 import { request } from '../io/files';
 import { Color } from '../color/p5.Color';
 
+async function urlToStrandsCallback(url) {
+  const src = await fetch(url).then(res => res.text());
+  return new Function(src);
+}
+
 function material(p5, fn){
   /**
    * Loads vertex and fragment shaders to create a
@@ -134,7 +139,7 @@ function material(p5, fn){
       loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
-        return successCallback(loadedShader);
+        return successCallback(loadedShader) || loadedShader;
       } else {
         return loadedShader;
       }
@@ -148,7 +153,15 @@ function material(p5, fn){
   };
 
   /**
-   * Creates a new <a href="#/p5.Shader">p5.Shader</a> object.
+   * Creates a new <a href="#/p5.Shader">p5.Shader</a> object using GLSL.
+   *
+   * If you are interested in writing shaders, consider using p5.strands shaders using
+   * <a href="#/p5/createMaterialShader">`createMaterialShader`<a>,
+   * <a href="#/p5/createStrokeShader">`createStrokeShader`</a>, or
+   * <a href="#/p5/createFilterShader">`createFiltershader`</a>.
+   * With p5.strands, you can modify existing shaders using JavaScript. With
+   * `createShader`, shaders are made from scratch, and are written in GLSL. This
+   * will be most useful for advanced cases, and for authors of add-on libraries.
    *
    * Shaders are programs that run on the graphics processing unit (GPU). They
    * can process many pixels at the same time, making them fast for many
@@ -515,10 +528,50 @@ function material(p5, fn){
   };
 
   /**
-   * Creates and loads a filter shader from an external file.
+   * Loads a new shader from a file that can be applied to the contents of the canvas with
+   * <a href="#/p5/filter">`filter()`</a>. Pass the resulting shader into `filter()` to apply it.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   let myFilter = loadFilterShader('myFilter.js');
+   *
+   *   image(img, -50, -50);
+   *   filter(myFilter);
+   *   describe('Bricks tinted red');
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * a filter shader, call `getColor()` with a callback to change each pixel on the canvas.
+   *
+   * ```js
+   * // myFilter.js
+   * getColor((inputs, canvasContent) => {
+   *   let result = getTexture(canvasContent, inputs.texCoord);
+   *   // Zero out the green and blue channels, leaving red
+   *   result.g = 0;
+   *   result.b = 0;
+   *   return result;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createFilterShader">`createFilterShader`</a>,
+   * the version of `loadFilterShader` that takes in a function instead of a separate file,
+   * for more examples.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadFilterShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadFilterShader('myShader.js', onLoaded)`.
    *
    * @method loadFilterShader
-   * @param {String} fragFilename path to the fragment shader file
+   * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is
    *                                     loaded. Will be passed the
    *                                     <a href="#/p5.Shader">p5.Shader</a> object.
@@ -526,29 +579,6 @@ function material(p5, fn){
    *                                     loading the shader. Will be passed the
    *                                     error event.
    * @return {Promise<p5.Shader>} a promise that resolves with a shader object
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let myShader;
-   *
-   * async function setup() {
-   *   myShader = await loadFilterShader('assets/basic.frag');
-   *   createCanvas(100, 100, WEBGL);
-   *   noStroke();
-   * }
-   *
-   * function draw() {
-   *   // shader() sets the active shader with our shader
-   *   shader(myShader);
-   *
-   *   // rect gives us some geometry on the screen
-   *   rect(-50, -50, width, height);
-   * }
-   * </code>
-   * </div>
-   * @alt
-   * A rectangle with a shader applied to it.
    */
   fn.loadFilterShader = async function (
     fragFilename,
@@ -562,10 +592,15 @@ function material(p5, fn){
       const fragString = await fragSrc.join('\n');
 
       // Create the shader using createFilterShader
-      const loadedShader = this.createFilterShader(fragString, true);
+      let loadedShader;
+      if (fragString.test(/void\s+main/)) {
+        loadedShader = this.createFilterShader(new Function(fragString));
+      } else {
+        loadedShader = this.createFilterShader(fragString, true);
+      }
 
       if (successCallback) {
-        successCallback(loadedShader);
+        loadedShader = successCallback(loadedShader) || loadedShader;
       }
 
       return loadedShader;
@@ -582,92 +617,151 @@ function material(p5, fn){
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
    * <a href="#/p5/filter">filter()</a> function.
    *
-   * `createFilterShader()` works like
-   * <a href="#/p5/createShader">createShader()</a> but has a default vertex
-   * shader included. `createFilterShader()` is intended to be used along with
-   * <a href="#/p5/filter">filter()</a> for filtering the contents of a canvas.
-   * A filter shader will be applied to the whole canvas instead of just
-   * <a href="#/p5.Geometry">p5.Geometry</a> objects.
+   * The main way to use `createFilterShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * The parameter, `fragSrc`, sets the fragment shader. It’s a string that
-   * contains the fragment shader program written in
-   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+   * In your function, you can call <a href="#/p5/getColor">`getColor`</a> with a function
+   * that will be called for each pixel on the image to determine its final color. You can
+   * read the color of the current pixel with `getTexture(canvasContent, coord)`.
    *
-   * The <a href="#/p5.Shader">p5.Shader</a> object that's created has some
-   * uniforms that can be set:
-   * - `sampler2D tex0`, which contains the canvas contents as a texture.
-   * - `vec2 canvasSize`, which is the width and height of the canvas, not including pixel density.
-   * - `vec2 texelSize`, which is the size of a physical pixel including pixel density. This is calculated as `1.0 / (width * density)` for the pixel width and `1.0 / (height * density)` for the pixel height.
+   * ```js example
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs, canvasContent) => {
+   *       let result = getTexture(canvasContent, inputs.texCoord);
+   *       // Zero out the green and blue channels, leaving red
+   *       result.g = 0;
+   *       result.b = 0;
+   *       return result;
+   *     });
+   *   });
    *
-   * The <a href="#/p5.Shader">p5.Shader</a> that's created also provides
-   * `varying vec2 vTexCoord`, a coordinate with values between 0 and 1.
-   * `vTexCoord` describes where on the canvas the pixel will be drawn.
+   *   image(img, -50, -50);
+   *   filter(myFilter);
+   *   describe('Bricks tinted red');
+   * }
+   * ```
+   *
+   * You can create *uniforms* if you want to pass data into your filter from the rest of your sketch.
+   * For example, you could pass in the mouse cursor position and use that to control how much
+   * you warp the content. If you create a uniform inside the shader using a function like `uniformFloat()`, with
+   * `uniform` + the type of the data, you can set its value using `setUniform` right before applying the filter.
+   *
+   * ```js example
+   * let img;
+   * let myFilter;
+   * async function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let img = await loadImage('assets/bricks.jpg');
+   *   myFilter = createFilterShader(() => {
+   *     let warpAmount = uniformFloat();
+   *     getColor((inputs, canvasContent) => {
+   *       let coord = inputs.texCoord;
+   *       coord.y += sin(coord.x * 10) * warpAmount;
+   *       return getTexture(canvasContent, coord);
+   *     });
+   *   });
+   *   describe('Warped bricks');
+   * }
+   *
+   * function draw() {
+   *   image(img, -50, -50);
+   *   myFilter.setUniform(
+   *     'warpAmount',
+   *     map(mouseX, 0, width, 0, 1, true)
+   *   );
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * You can also make filters that do not need any content to be drawn first!
+   * There is a lot you can draw just using, for example, the position of the pixel.
+   * `inputs.texCoord` has an `x` and a `y` property, each with a number between 0 and 1.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs) => {
+   *       return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
+   *     });
+   *   });
+   *   describe('A gradient with red, green, yellow, and black');
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   let myFilter = createFilterShader(() => {
+   *     getColor((inputs) => {
+   *       return mix(
+   *         [1, 0, 0, 1], // Red
+   *         [0, 0, 1, 1], // Blue
+   *         inputs.texCoord.x // x coordinate, from 0 to 1
+   *       );
+   *     });
+   *   });
+   *   describe('A gradient from red to blue');
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * You can also animate your filters over time by passing the time into the shader with `uniformFloat`.
+   *
+   * ```js example
+   * let myFilter;
+   * function setup() {
+   *   createCanvas(50, 50, WEBGL);
+   *   myFilter = createFilterShader(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getColor((inputs) => {
+   *       return mix(
+   *         [1, 0, 0, 1], // Red
+   *         [0, 0, 1, 1], // Blue
+   *         sin(inputs.texCoord.x*15 + time*0.004)/2+0.5
+   *       );
+   *     });
+   *   });
+   *   describe('A moving, repeating gradient from red to blue');
+   * }
+   *
+   * function draw() {
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in `getColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info. Alternatively, `createFilterShader()` can also be used like
+   * <a href="#/p5/createShader">createShader()</a>, but where you only specify a fragment shader.
    *
    * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
    * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
    *
    * @method createFilterShader
-   * @param {String} fragSrc source code for the fragment shader.
-   * @returns {p5.Shader} new shader object created from the fragment shader.
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * function setup() {
-   *   let fragSrc = `precision highp float;
-   *   void main() {
-   *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-   *   }`;
-   *
-   *   createCanvas(100, 100, WEBGL);
-   *   let s = createFilterShader(fragSrc);
-   *   filter(s);
-   *   describe('a yellow canvas');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div modernizr='webgl'>
-   * <code>
-   * let img, s;
-   * async function setup() {
-   *   img = await loadImage('assets/bricks.jpg');
-   *   let fragSrc = `precision highp float;
-   *
-   *   // x,y coordinates, given from the vertex shader
-   *   varying vec2 vTexCoord;
-   *
-   *   // the canvas contents, given from filter()
-   *   uniform sampler2D tex0;
-   *   // other useful information from the canvas
-   *   uniform vec2 texelSize;
-   *   uniform vec2 canvasSize;
-   *   // a custom variable from this sketch
-   *   uniform float darkness;
-   *
-   *   void main() {
-   *     // get the color at current pixel
-   *     vec4 color = texture2D(tex0, vTexCoord);
-   *     // set the output color
-   *     color.b = 1.0;
-   *     color *= darkness;
-   *     gl_FragColor = vec4(color.rgb, 1.0);
-   *   }`;
-   *
-   *   createCanvas(100, 100, WEBGL);
-   *   s = createFilterShader(fragSrc);
-   * }
-   *
-   * function draw() {
-   *   image(img, -50, -50);
-   *   s.setUniform('darkness', 0.5);
-   *   filter(s);
-   *   describe('a image of bricks tinted dark blue');
-   * }
-   * </code>
-   * </div>
+   * @param {Function} callback A function building a p5.strands shader.
+   * @returns {p5.Shader} The material shader
+   */
+  /**
+   * @method createFilterShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @returns {p5.Shader} The material shader
+   */
+  /**
+   * @method createFilterShader
+   * @param {String} fragSrc Full GLSL source code for the fragment shader.
+   * @returns {p5.Shader} The material shader
    */
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
+    if (fragSrc instanceof Function) {
+      return this.baseFilterShader().modify(fragSrc);
+    }
     // p5._validateParameters('createFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
@@ -1237,147 +1331,33 @@ function material(p5, fn){
   };
 
   /**
-   * Get the default shader used with lights, materials,
-   * and textures.
+   * Create a new shader that can change how fills are drawn. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
+   * to any fills you draw.
    *
-   * You can call <a href="#/p5.Shader/modify">`baseMaterialShader().modify()`</a>
-   * and change any of the following hooks:
+   * The main way to use `createMaterialShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * <table>
-   * <tr><th>Hook</th><th>Description</th></tr>
-   * <tr><td>
+   * In your function, you can call *hooks* to change part of the shader. In a material
+   * shader, these are the hooks available:
+   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/getPixelInputs">`getPixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/combineColors">`combineColors`</a>: Control how the ambient, diffuse, and specular components of lighting are combined into a single color on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
-   * `void beforeVertex`
+   * Read the linked reference page for each hook for more information about how to use them.
    *
-   * </td><td>
+   * One thing you can do with a material shader is animate the positions of vertices
+   * over time:
    *
-   * Called at the start of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getObjectInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
-   * - `vec3 position`, the position of the vertex
-   * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
-   * - `vec4 color`, the per-vertex color
-   * The struct can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getWorldInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getCameraInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterVertex`
-   *
-   * </td><td>
-   *
-   * Called at the end of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void beforeFragment`
-   *
-   * </td><td>
-   *
-   * Called at the start of the fragment shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Inputs getPixelInputs`
-   *
-   * </td><td>
-   *
-   * Update the per-pixel inputs of the material. It takes in an `Inputs` struct, which includes:
-   * - `vec3 normal`, the direction pointing out of the surface
-   * - `vec2 texCoord`, a vector where `x` and `y` are between 0 and 1 describing the spot on a texture the pixel is mapped to, as a fraction of the texture size
-   * - `vec3 ambientLight`, the ambient light color on the vertex
-   * - `vec4 color`, the base material color of the pixel
-   * - `vec3 ambientMaterial`, the color of the pixel when affected by ambient light
-   * - `vec3 specularMaterial`, the color of the pixel when reflecting specular highlights
-   * - `vec3 emissiveMaterial`, the light color emitted by the pixel
-   * - `float shininess`, a number representing how sharp specular reflections should be, from 1 to infinity
-   * - `float metalness`, a number representing how mirrorlike the material should be, between 0 and 1
-   * The struct can be modified and returned.
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 combineColors`
-   *
-   * </td><td>
-   *
-   * Take in a `ColorComponents` struct containing all the different components of light, and combining them into
-   * a single final color. The struct contains:
-   * - `vec3 baseColor`, the base color of the pixel
-   * - `float opacity`, the opacity between 0 and 1 that it should be drawn at
-   * - `vec3 ambientColor`, the color of the pixel when affected by ambient light
-   * - `vec3 specularColor`, the color of the pixel when affected by specular reflections
-   * - `vec3 diffuse`, the amount of diffused light hitting the pixel
-   * - `vec3 ambient`, the amount of ambient light hitting the pixel
-   * - `vec3 specular`, the amount of specular reflection hitting the pixel
-   * - `vec3 emissive`, the amount of light emitted by the pixel
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getFinalColor`
-   *
-   * </td><td>
-   *
-   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterFragment`
-   *
-   * </td><td>
-   *
-   * Called at the end of the fragment shader.
-   *
-   * </td></tr>
-   * </table>
-   *
-   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
-   * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
-   *
-   * Call `baseMaterialShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @method baseMaterialShader
-   * @beta
-   * @returns {p5.Shader} The material shader
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify(() => {
+   *   myShader = createMaterialShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
@@ -1395,47 +1375,13 @@ function material(p5, fn){
    *   fill('red');
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let myShader;
+   * There are also many uses in updating values per pixel. This can be a good
+   * way to give your sketch texture and detail. For example, instead of having a single
+   * shininess or metalness value for a whole shape, you could vary it in different spots on its surface:
    *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify({
-   *     declarations: 'vec3 myNormal;',
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       myNormal = inputs.normal;
-   *       return inputs;
-   *     }`,
-   *     'vec4 getFinalColor': `(vec4 color) {
-   *       return mix(
-   *         vec4(1.0, 1.0, 1.0, 1.0),
-   *         color,
-   *         abs(dot(myNormal, vec3(0.0, 0.0, 1.0)))
-   *       );
-   *     }`
-   *   });
-   * }
-   *
-   * function draw() {
-   *   background(255);
-   *   rotateY(millis() * 0.001);
-   *   shader(myShader);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   torus(30);
-   * }
-   * </code>
-   * </div>
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    * let environment;
    *
@@ -1443,7 +1389,7 @@ function material(p5, fn){
    *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify(() => {
+   *   myShader = createMaterialShader(() => {
    *     getPixelInputs((inputs) => {
    *       let factor = sin(
    *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
@@ -1466,17 +1412,19 @@ function material(p5, fn){
    *   specularMaterial(150);
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * A technique seen often in games called *bump mapping* is to vary the
+   * *normal*, which is the orientation of the surface, per pixel to create texture
+   * rather than using many tightly packed vertices. Sometimes this can come from
+   * bump images, but it can also be done generatively with math.
+   *
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseMaterialShader().modify(() => {
+   *   myShader = createMaterialShader(() => {
    *     getPixelInputs((inputs) => {
    *       inputs.normal.x += 0.2 * sin(
    *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
@@ -1504,8 +1452,150 @@ function material(p5, fn){
    *   specularMaterial(255);
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * You can also update the final color directly instead of modifying
+   * lighting settings. Sometimes in photographs, a light source is placed
+   * behind the subject to create *rim lighting,* where the edges of the
+   * subject are lit up. This can be simulated by adding white to the final
+   * color on parts of the shape that are facing away from the camera.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = createMaterialShader(() => {
+   *     let myNormal = sharedVec3();
+   *     getPixelInputs((inputs) => {
+   *       myNormal = inputs.normal;
+   *       return inputs;
+   *     });
+   *     getFinalColor((color) => {
+   *       return mix(
+   *         [1, 1, 1, 1],
+   *         color,
+   *         abs(dot(myNormal, [0, 0, 1]))
+   *       );
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   rotateY(millis() * 0.001);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   torus(30);
+   * }
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in hooks using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info.
+   *
+   * @method createMaterialShader
+   * @beta
+   * @param {Function} callback A function building a p5.strands shader.
+   * @returns {p5.Shader} The material shader.
+   */
+  /**
+   * @method createMaterialShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @returns {p5.Shader} The material shader.
+   */
+  fn.createMaterialShader = function(cb) {
+    return this.baseMaterialShader().modify(cb);
+  };
+
+  /**
+   * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
+   * to any fills you draw.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * let myShader;
+   * async function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = await loadMaterialShader('myMaterial.js');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   sphere(50);
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
+   * might call `getPixelInputs()` with a callback to change each pixel on the surface of a shape.
+   *
+   * ```js
+   * // myMaterial.js
+   * let time = uniformFloat(() => millis());
+   * getWorldInputs((inputs) => {
+   *   inputs.position.y +=
+   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *   return inputs;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createMaterialShader">`createMaterialShader`</a>,
+   * the version of `loadMaterialShader` that takes in a function instead of a separate file,
+   * for a full list of hooks you can use and examples for each.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadMaterialShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadMaterialShader('myShader.js', onLoaded)`.
+   *
+   * @method loadMaterialShader
+   * @beta
+   * @param {String} url The URL of your p5.strands JavaScript file.
+   * @param {Function} [onSuccess] A callback function to run when loading completes.
+   * @param {Function} [onFailure] A callback function to run when loading fails.
+   * @returns {Promise<p5.Shader>} The material shader.
+   */
+  fn.loadMaterialShader = async function (url, onSuccess, onFail) {
+    try {
+      let shader = this.createMaterialShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        shader = onSuccess(shader) || shader;
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
+
+  /**
+   * Returns the default shader used for fills when lights or textures are used.
+   *
+   * Calling <a href="#/p5/createMaterialShader">`createMaterialShader(shaderFunction)`</a>
+   * is equivalent to calling `baseMaterialShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/createMaterialShader">the `createMaterialShader` reference</a> or
+   * call `baseMaterialShader().inspectHooks()` for more information on what you can do with
+   * the base material shader.
+   *
+   * @method baseMaterialShader
+   * @beta
+   * @returns {p5.Shader} The base material shader.
    */
   fn.baseMaterialShader = function() {
     this._assert3d('baseMaterialShader');
@@ -1513,70 +1603,18 @@ function material(p5, fn){
   };
 
   /**
-   * Get the base shader for filters.
+   * Returns the base shader used for filters.
    *
-   * You can then call <a href="#/p5.Shader/modify">`baseFilterShader().modify()`</a>
-   * and change the following hook:
+   * Calling <a href="#/p5/createMaterialShader">`createFilterShader(shaderFunction)`</a>
+   * is equivalent to calling `baseFilterShader().modify(shaderFunction)`.
    *
-   * <table>
-   * <tr><th>Hook</th><th>Description</th></tr>
-   * <tr><td>
-   *
-   * `vec4 getColor`
-   *
-   * </td><td>
-   *
-   * Output the final color for the current pixel. It takes in two parameters:
-   * `FilterInputs inputs`, and `in sampler2D canvasContent`, and must return a color
-   * as a `vec4`.
-   *
-   * `FilterInputs inputs` is a scruct with the following properties:
-   * - `vec2 texCoord`, the position on the canvas, with coordinates between 0 and 1. Calling
-   *   `getTexture(canvasContent, texCoord)` returns the original color of the current pixel.
-   * - `vec2 canvasSize`, the width and height of the sketch.
-   * - `vec2 texelSize`, the size of one real pixel relative to the size of the whole canvas.
-   *   This is equivalent to `1 / (canvasSize * pixelDensity)`.
-   *
-   * `in sampler2D canvasContent` is a texture with the contents of the sketch, pre-filter. Call
-   * `getTexture(canvasContent, someCoordinate)` to retrieve the color of the sketch at that coordinate,
-   * with coordinate values between 0 and 1.
-   *
-   * </td></tr>
-   * </table>
-   *
-   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
-   * are using WebGL 1, write your hooks in GLSL ES 100 instead.
+   * Read <a href="#/p5/createFilterShader">the `createFilterShader` reference</a> or
+   * call `baseFilterShader().inspectHooks()` for more information on what you can do with
+   * the base filter shader.
    *
    * @method baseFilterShader
    * @beta
-   * @returns {p5.Shader} The filter shader
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let img;
-   * let myShader;
-   *
-   * async function setup() {
-   *   img = await loadImage('assets/bricks.jpg');
-   *   createCanvas(100, 100, WEBGL);
-   *   myShader = baseFilterShader().modify(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getColor((inputs, canvasContent) => {
-   *       inputs.texCoord.y +=
-   *         0.02 * sin(time * 0.001 + inputs.texCoord.x * 5);
-   *       return texture(canvasContent, inputs.texCoord);
-   *     });
-   *   });
-   * }
-   *
-   * function draw() {
-   *   image(img, -50, -50);
-   *   filter(myShader);
-   *   describe('an image of bricks, distorting over time');
-   * }
-   * </code>
-   * </div>
+   * @returns {p5.Shader} The base filter shader.
    */
   fn.baseFilterShader = function() {
     return (this._renderer.filterRenderer || this._renderer)
@@ -1584,118 +1622,37 @@ function material(p5, fn){
   };
 
   /**
-   * Get the shader used by <a href="#/p5/normalMaterial">`normalMaterial()`</a>.
+   * Create a new shader that can change how fills are drawn, based on the material used
+   * when <a href="#/p5/normalMaterial">`normalMaterial()`</a> is active. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it to any fills
+   * you draw.
    *
-   * You can call <a href="#/p5.Shader/modify">`baseNormalShader().modify()`</a>
-   * and change any of the following hooks:
+   * The main way to use `createNormalShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * <table>
-   * <tr><th>Hook</th><th>Description</th></tr>
-   * <tr><td>
+    * In your function, you can call *hooks* to change part of the shader. In a material
+   * shader, these are the hooks available:
+   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
-   * `void beforeVertex`
+   * Read the linked reference page for each hook for more information about how to use them.
    *
-   * </td><td>
+   * One thing you may want to do is update the position of all the vertices in an object over time:
    *
-   * Called at the start of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getObjectInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
-   * - `vec3 position`, the position of the vertex
-   * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
-   * - `vec4 color`, the per-vertex color
-   * The struct can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getWorldInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getCameraInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterVertex`
-   *
-   * </td><td>
-   *
-   * Called at the end of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void beforeFragment`
-   *
-   * </td><td>
-   *
-   * Called at the start of the fragment shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getFinalColor`
-   *
-   * </td><td>
-   *
-   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterFragment`
-   *
-   * </td><td>
-   *
-   * Called at the end of the fragment shader.
-   *
-   * </td></tr>
-   * </table>
-   *
-   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
-   * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
-   *
-   * Call `baseNormalShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @method baseNormalShader
-   * @beta
-   * @returns {p5.Shader} The `normalMaterial` shader
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseNormalShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *   myShader = createNormalShader(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
    *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1705,31 +1662,31 @@ function material(p5, fn){
    *   noStroke();
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * You may also want to change the colors used. By default, the x, y, and z values of the orientation
+   * of the surface are mapped directly to red, green, and blue. But you can pick different colors:
+   *
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseNormalShader().modify({
-   *     'Vertex getCameraInputs': `(Vertex inputs) {
+   *   myShader = createNormalShader(() => {
+   *     getCameraInputs((inputs) => {
    *       inputs.normal = abs(inputs.normal);
    *       return inputs;
-   *     }`,
-   *     'vec4 getFinalColor': `(vec4 color) {
+   *     });
+   *     getFinalColor((color) => {
    *       // Map the r, g, and b values of the old normal to new colors
    *       // instead of just red, green, and blue:
-   *       vec3 newColor =
-   *         color.r * vec3(89.0, 240.0, 232.0) / 255.0 +
-   *         color.g * vec3(240.0, 237.0, 89.0) / 255.0 +
-   *         color.b * vec3(205.0, 55.0, 222.0) / 255.0;
+   *       let newColor =
+   *         color.r * [89, 240, 232] / 255 +
+   *         color.g * [240, 237, 89] / 255 +
+   *         color.b * [205, 55, 222] / 255;
    *       newColor = newColor / (color.r + color.g + color.b);
-   *       return vec4(newColor, 1.0) * color.a;
-   *     }`
+   *       return [newColor.r, newColor.g, newColor.b, color.a];
+   *     });
    *   });
    * }
    *
@@ -1741,8 +1698,114 @@ function material(p5, fn){
    *   rotateY(frameCount * 0.015);
    *   box(100);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in hooks using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info.
+   *
+   * @method createNormalShader
+   * @beta
+   * @param {Function} callback A function building a p5.strands shader.
+   * @returns {p5.Shader} The normal shader.
+   */
+  /**
+   * @method createNormalShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @returns {p5.Shader} The normal shader.
+   */
+  fn.createNormalShader = function(cb) {
+    return this.baseNormalShader().modify(cb);
+  };
+
+  /**
+   * Loads a new shader from a file that can change how fills are drawn, based on the material used
+   * when <a href="#/p5/normalMaterial">`normalMaterial()`</a> is active. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
+   * to any fills you draw.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * let myShader;
+   * async function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = await loadNormalShader('myMaterial.js');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   sphere(50);
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
+   * might call `getFinalColor()` with a callback to change the color of each pixel on the surface of a shape.
+   *
+   * ```js
+   * // myMaterial.js
+   * let time = uniformFloat(() => millis());
+   * getWorldInputs((inputs) => {
+   *   inputs.position.y +=
+   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *   return inputs;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createNormalShader">`createNormalShader`</a>,
+   * the version of `loadNormalShader` that takes in a function instead of a separate file,
+   * for a full list of hooks you can use and examples for each.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadNormalShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadNormalShader('myShader.js', onLoaded)`.
+   *
+   * @method loadNormalShader
+   * @beta
+   * @param {String} url The URL of your p5.strands JavaScript file.
+   * @param {Function} [onSuccess] A callback function to run when loading completes.
+   * @param {Function} [onFailure] A callback function to run when loading fails.
+   * @returns {Promise<p5.Shader>} The normal shader.
+   */
+  fn.loadNormalShader = async function (url, onSuccess, onFail) {
+    try {
+      let shader = this.createNormalShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        shader = onSuccess(shader) || shader;
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
+
+  /**
+   * Returns the default shader used for fills when
+   * <a href="#/p5/normalMaterial">`normalMaterial()`</a> is activated.
+   *
+   * Calling <a href="#/p5/createNormalShader">`createNormalShader(shaderFunction)`</a>
+   * is equivalent to calling `baseNormalShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/createNormalShader">the `createNormalShader` reference</a> or
+   * call `baseNormalShader().inspectHooks()` for more information on what you can do with
+   * the base normal shader.
+   *
+   * @method baseNormalShader
+   * @beta
+   * @returns {p5.Shader} The base material shader.
    */
   fn.baseNormalShader = function() {
     this._assert3d('baseNormalShader');
@@ -1750,118 +1813,37 @@ function material(p5, fn){
   };
 
   /**
-   * Get the shader used when no lights or materials are applied.
+   * Create a new shader that can change how fills are drawn, based on the default shader
+   * used when no lights or textures are applied. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
+   * to any fills you draw.
    *
-   * You can call <a href="#/p5.Shader/modify">`baseColorShader().modify()`</a>
-   * and change any of the following hooks:
+   * The main way to use `createColorShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * <table>
-   * <tr><th>Hook</th><th>Description</th></tr>
-   * <tr><td>
+   * In your function, you can call *hooks* to change part of the shader. In a material
+   * shader, these are the hooks available:
+   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
-   * `void beforeVertex`
+   * Read the linked reference page for each hook for more information about how to use them.
    *
-   * </td><td>
+   * One thing you might want to do is modify the position of every vertex over time:
    *
-   * Called at the start of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getObjectInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn before any positioning has been applied. It takes in a `Vertex` struct, which includes:
-   * - `vec3 position`, the position of the vertex
-   * - `vec3 normal`, the direction facing out of the surface
-   * - `vec2 texCoord`, the texture coordinates associeted with the vertex
-   * - `vec4 color`, the per-vertex color
-   * The struct can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getWorldInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Vertex getCameraInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `Vertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterVertex`
-   *
-   * </td><td>
-   *
-   * Called at the end of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void beforeFragment`
-   *
-   * </td><td>
-   *
-   * Called at the start of the fragment shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getFinalColor`
-   *
-   * </td><td>
-   *
-   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterFragment`
-   *
-   * </td><td>
-   *
-   * Called at the end of the fragment shader.
-   *
-   * </td></tr>
-   * </table>
-   *
-   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
-   * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
-   *
-   * Call `baseColorShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @method baseColorShader
-   * @beta
-   * @returns {p5.Shader} The color shader
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseColorShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'Vertex getWorldInputs': `(Vertex inputs) {
+   *   myShader = createColorShader(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
-   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -1872,8 +1854,113 @@ function material(p5, fn){
    *   fill('red');
    *   circle(0, 0, 50);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in hooks using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info.
+   *
+   * @method createColorShader
+   * @beta
+   * @param {Function} callback A function building a p5.strands shader.
+   * @returns {p5.Shader} The color shader.
+   */
+  /**
+   * @method createColorShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @returns {p5.Shader} The color shader.
+   */
+  fn.createColorShader = function(cb) {
+    return this.baseColorShader().modify(cb);
+  };
+
+  /**
+   * Loads a new shader from a file that can change how fills are drawn, based on the material used
+   * when no lights or textures are active. Pass the resulting
+   * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
+   * to any fills you draw.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * let myShader;
+   * async function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = await loadColorShader('myMaterial.js');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   shader(myShader);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   circle(0, 0, 50);
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
+   * might call `getFinalColor()` with a callback to change the color of each pixel on the surface of a shape.
+   *
+   * ```js
+   * // myMaterial.js
+   * let time = uniformFloat(() => millis());
+   * getWorldInputs((inputs) => {
+   *   inputs.position.y +=
+   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *   return inputs;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createColorShader">`createColorShader`</a>,
+   * the version of `loadColorShader` that takes in a function instead of a separate file,
+   * for a full list of hooks you can use and examples for each.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadColorShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadColorShader('myShader.js', onLoaded)`.
+   *
+   * @method loadColorShader
+   * @beta
+   * @param {String} url The URL of your p5.strands JavaScript file.
+   * @param {Function} [onSuccess] A callback function to run when loading completes.
+   * @param {Function} [onFailure] A callback function to run when loading fails.
+   * @returns {Promise<p5.Shader>} The color shader.
+   */
+  fn.loadColorShader = async function (url, onSuccess, onFail) {
+    try {
+      let shader = this.createColorShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        shader = onSuccess(shader) || shader;
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
+
+  /**
+   * Returns the default shader used for fills when no lights or textures are activate.
+   *
+   * Calling <a href="#/p5/createColorShader">`createColorShader(shaderFunction)`</a>
+   * is equivalent to calling `baseColorShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/createColorShader">the `createColorShader` reference</a> or
+   * call `baseColorShader().inspectHooks()` for more information on what you can do with
+   * the base color shader.
+   *
+   * @method baseColorShader
+   * @beta
+   * @returns {p5.Shader} The base color shader.
    */
   fn.baseColorShader = function() {
     this._assert3d('baseColorShader');
@@ -1881,143 +1968,43 @@ function material(p5, fn){
   };
 
   /**
-   * Get the shader used when drawing the strokes of shapes.
+   * Create a new shader that can change how strokes are drawn, based on the default
+   * shader used for strokes. Pass the resulting shader into the
+   * <a href="#/p5/strokeShader">`strokeShader()`</a> function to apply it to any
+   * strokes you draw.
    *
-   * You can call <a href="#/p5.Shader/modify">`baseStrokeShader().modify()`</a>
-   * and change any of the following hooks:
+   * The main way to use `createStrokeShader` is to pass a function in as a parameter.
+   * This will let you create a shader using p5.strands.
    *
-   * <table>
-   * <tr><th>Hook</th><th>Description</th></tr>
-   * <tr><td>
+   * In your function, you can call *hooks* to change part of the shader. In a material
+   * shader, these are the hooks available:
+   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/getPixelInputs">`getPixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/shouldDiscard">`shouldDiscard`</a>: Decide whether or not a pixel should be drawn, generally used to carve out pieces to make rounded or mitered joins and caps. Your function gets run on every pixel.
+   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
-   * `void beforeVertex`
+   * Read the linked reference page for each hook for more information about how to use them.
    *
-   * </td><td>
+   * One thing you might want to do is update the color of a stroke per pixel. Here, it is being used
+   * to create a soft texture:
    *
-   * Called at the start of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `StrokeVertex getObjectInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the stroke being drawn before any positioning has been applied. It takes in a `StrokeVertex` struct, which includes:
-   * - `vec3 position`, the position of the vertex
-   * - `vec3 tangentIn`, the tangent coming in to the vertex
-   * - `vec3 tangentOut`, the tangent coming out of the vertex. In straight segments, this will be the same as `tangentIn`. In joins, it will be different. In caps, one of the tangents will be 0.
-   * - `vec4 color`, the per-vertex color
-   * - `float weight`, the stroke weight
-   * The struct can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `StrokeVertex getWorldInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn after transformations such as `translate()` and `scale()` have been applied, but before the camera has been applied. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `StrokeVertex getCameraInputs`
-   *
-   * </td><td>
-   *
-   * Update the vertex data of the model being drawn as they appear relative to the camera. It takes in a `StrokeVertex` struct like, in the `getObjectInputs` hook above, that can be modified and returned.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterVertex`
-   *
-   * </td><td>
-   *
-   * Called at the end of the vertex shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void beforeFragment`
-   *
-   * </td><td>
-   *
-   * Called at the start of the fragment shader.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `Inputs getPixelInputs`
-   *
-   * </td><td>
-   *
-   * Update the inputs to the shader. It takes in a struct `Inputs inputs`, which includes:
-   * - `vec4 color`, the color of the stroke
-   * - `vec2 tangent`, the direction of the stroke in screen space
-   * - `vec2 center`, the coordinate of the center of the stroke in screen space p5.js pixels
-   * - `vec2 position`, the coordinate of the current pixel in screen space p5.js pixels
-   * - `float strokeWeight`, the thickness of the stroke in p5.js pixels
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `bool shouldDiscard`
-   *
-   * </td><td>
-   *
-   * Caps and joins are made by discarded pixels in the fragment shader to carve away unwanted areas. Use this to change this logic. It takes in a `bool willDiscard` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `vec4 getFinalColor`
-   *
-   * </td><td>
-   *
-   * Update the final color after mixing. It takes in a `vec4 color` and must return a modified version.
-   *
-   * </td></tr>
-   * <tr><td>
-   *
-   * `void afterFragment`
-   *
-   * </td><td>
-   *
-   * Called at the end of the fragment shader.
-   *
-   * </td></tr>
-   * </table>
-   *
-   * Most of the time, you will need to write your hooks in GLSL ES version 300. If you
-   * are using WebGL 1 instead of 2, write your hooks in GLSL ES 100 instead.
-   *
-   * Call `baseStrokeShader().inspectHooks()` to see all the possible hooks and
-   * their default implementations.
-   *
-   * @method baseStrokeShader
-   * @beta
-   * @returns {p5.Shader} The stroke shader
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseStrokeShader().modify({
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
-   *       float opacity = 1.0 - smoothstep(
-   *         0.0,
-   *         15.0,
+   *   myShader = createStrokeShader(() => {
+   *     getPixelInputs((inputs) => {
+   *       let opacity = 1 - smoothstep(
+   *         0,
+   *         15,
    *         length(inputs.position - inputs.center)
    *       );
-   *       inputs.color *= opacity;
+   *       inputs.color.a *= opacity;
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -2032,72 +2019,28 @@ function material(p5, fn){
    *     sin(millis()*0.001 + 1) * height/4
    *   );
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * Rather than using opacity, we could use a form of *dithering* to get a different
+   * texture. This involves using only fully opaque or transparent pixels. Here, we
+   * randomly choose which pixels to be transparent:
+   *
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseStrokeShader().modify({
-   *     uniforms: {
-   *       'float time': () => millis()
-   *     },
-   *     'StrokeVertex getWorldInputs': `(StrokeVertex inputs) {
-   *       // Add a somewhat random offset to the weight
-   *       // that varies based on position and time
-   *       float scale = 0.8 + 0.2*sin(10.0 * sin(
-   *         floor(time/250.) +
-   *         inputs.position.x*0.01 +
-   *         inputs.position.y*0.01
-   *       ));
-   *       inputs.weight *= scale;
-   *       return inputs;
-   *     }`
-   *   });
-   * }
-   *
-   * function draw() {
-   *   background(255);
-   *   strokeShader(myShader);
-   *   myShader.setUniform('time', millis());
-   *   strokeWeight(10);
-   *   beginShape();
-   *   for (let i = 0; i <= 50; i++) {
-   *     let r = map(i, 0, 50, 0, width/3);
-   *     let x = r*cos(i*0.2);
-   *     let y = r*sin(i*0.2);
-   *     vertex(x, y);
-   *   }
-   *   endShape();
-   * }
-   * </code>
-   * </div>
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = baseStrokeShader().modify({
-   *     'float random': `(vec2 p) {
-   *       vec3 p3  = fract(vec3(p.xyx) * .1031);
-   *       p3 += dot(p3, p3.yzx + 33.33);
-   *       return fract((p3.x + p3.y) * p3.z);
-   *     }`,
-   *     'Inputs getPixelInputs': `(Inputs inputs) {
+   *   myShader = createStrokeShader(() => {
+   *     getPixelInputs((inputs) => {
    *       // Replace alpha in the color with dithering by
    *       // randomly setting pixel colors to 0 based on opacity
-   *       float a = inputs.color.a;
-   *       inputs.color.a = 1.0;
-   *       inputs.color *= random(inputs.position.xy) > a ? 0.0 : 1.0;
+   *       let a = 1;
+   *       if (noise(inputs.position.xy) > inputs.color.a) {
+   *         a = 0;
+   *       }
+   *       inputs.color.a = a;
    *       return inputs;
-   *     }`
+   *     });
    *   });
    * }
    *
@@ -2120,8 +2063,158 @@ function material(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * You might also want to update some properties per vertex, such as the stroke
+   * thickness. This lets you create a more varied line:
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = createStrokeShader(() => {
+   *     let time = uniformFloat(() => millis());
+   *     getWorldInputs((inputs) => {
+   *       // Add a somewhat random offset to the weight
+   *       // that varies based on position and time
+   *       let scale = noise(
+   *         inputs.position.x * 0.1,
+   *         inputs.position.y * 0.1,
+   *         time * 0.001
+   *       );
+   *       inputs.weight *= scale;
+   *       return inputs;
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   strokeShader(myShader);
+   *   myShader.setUniform('time', millis());
+   *   strokeWeight(10);
+   *   beginShape();
+   *   for (let i = 0; i <= 50; i++) {
+   *     let r = map(i, 0, 50, 0, width/3);
+   *     let x = r*cos(i*0.2);
+   *     let y = r*sin(i*0.2);
+   *     vertex(x, y);
+   *   }
+   *   endShape();
+   * }
+   * ```
+   *
+   * Like the `modify()` method on shaders,
+   * advanced users can also fill in hooks using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * instead of JavaScript.
+   * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
+   * for more info.
+   *
+   * @method createStrokeShader
+   * @beta
+   * @param {Function} callback A function building a p5.strands shader.
+   * @returns {p5.Shader} The stroke shader.
+   */
+  /**
+   * @method createStrokeShader
+   * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @returns {p5.Shader} The stroke shader.
+   */
+  fn.createStrokeShader = function(cb) {
+    return this.baseStrokeShader().modify(cb);
+  };
+
+  /**
+   * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
+   * shader into the <a href="#/p5/strokeShader">`strokeShader()`</a> function to apply it
+   * to any strokes you draw.
+   *
+   * Since this function loads data from another file, it returns a `Promise`.
+   * Use it in an `async function setup`, and `await` its result.
+   *
+   * ```js
+   * let myShader;
+   * async function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = await loadStrokeShader('myMaterial.js');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   strokeShader(myShader);
+   *   strokeWeight(30);
+   *   line(
+   *     -width/3,
+   *     sin(millis()*0.001) * height/4,
+   *     width/3,
+   *     sin(millis()*0.001 + 1) * height/4
+   *   );
+   * }
+   * ```
+   *
+   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
+   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
+   * might call `getPixelInputs()` with a callback to change each pixel on the surface of a stroke.
+   *
+   * ```js
+   * // myMaterial.js
+   * getPixelInputs((inputs) => {
+   *   let opacity = 1 - smoothstep(
+   *     0,
+   *     15,
+   *     length(inputs.position - inputs.center)
+   *   );
+   *   inputs.color.a *= opacity;
+   *   return inputs;
+   * });
+   * ```
+   *
+   * Read the reference for <a href="#/p5/createStrokeShader">`createStrokeShader`</a>,
+   * the version of `loadStrokeShader` that takes in a function instead of a separate file,
+   * for a full list of hooks you can use and examples for each.
+   *
+   * The second parameter, `successCallback`, is optional. If a function is passed, as in
+   * `loadStrokeShader('myShader.js', onLoaded)`, then the `onLoaded()` function will be called
+   * once the shader loads. The shader will be passed to `onLoaded()` as its only argument.
+   * The return value of `handleData()`, if present, will be used as the final return value of
+   * `loadStrokeShader('myShader.js', onLoaded)`.
+   *
+   * @method loadStrokeShader
+   * @beta
+   * @param {String} url The URL of your p5.strands JavaScript file.
+   * @param {Function} [onSuccess] A callback function to run when loading completes.
+   * @param {Function} [onFailure] A callback function to run when loading fails.
+   * @returns {Promise<p5.Shader>} The stroke shader.
+   */
+  fn.loadStrokeShader = async function (url, onSuccess, onFail) {
+    try {
+      let shader = this.createStrokeShader(await urlToStrandsCallback(url));
+      if (onSuccess) {
+        shader = onSuccess(shader) || shader;
+      }
+      return shader;
+    } catch (e) {
+      console.error(e);
+      if (onFail) {
+        onFail(e);
+      }
+    }
+  };
+
+  /**
+   * Returns the default shader used for strokes.
+   *
+   * Calling <a href="#/p5/createStrokeShader">`createStrokeShader(shaderFunction)`</a>
+   * is equivalent to calling `baseStrokeShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/createStrokeShader">the `createStrokeShader` reference</a> or
+   * call `baseStrokeShader().inspectHooks()` for more information on what you can do with
+   * the base material shader.
+   *
+   * @method baseStrokeShader
+   * @beta
+   * @returns {p5.Shader} The base material shader.
    */
   fn.baseStrokeShader = function() {
     this._assert3d('baseStrokeShader');
