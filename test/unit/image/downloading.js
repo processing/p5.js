@@ -6,7 +6,11 @@ import files from '../../../src/io/files';
 import loading from '../../../src/image/loading_displaying';
 import p5Image from '../../../src/image/p5.Image';
 
-vi.mock('file-saver');
+vi.mock('file-saver', () => {
+  return {
+    saveAs: vi.fn()
+  };
+});
 
 expect.extend({
   tobeGif: received => {

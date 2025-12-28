@@ -3,7 +3,11 @@ import files from '../../../src/io/files';
 import { vi } from 'vitest';
 import * as fileSaver from 'file-saver';
 
-vi.mock('file-saver');
+vi.mock('file-saver', () => {
+  return {
+    saveAs: vi.fn()
+  };
+});
 
 suite('Files', function() {
   beforeAll(async function() {

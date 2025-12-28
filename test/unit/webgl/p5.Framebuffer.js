@@ -1,7 +1,11 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 import * as fileSaver from 'file-saver';
-vi.mock('file-saver');
+vi.mock('file-saver', () => {
+  return {
+    saveAs: vi.fn()
+  };
+});
 
 expect.extend({
   tobePng: received => {
