@@ -10,7 +10,7 @@
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
-    "test:types": "tsc test/types/*.ts --noEmit --lib es2022",
+    "test:types": "tsc test/types/*.ts --noEmit --lib es2022,dom",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "generate-types": "npm run docs && node utils/typescript.mjs"
