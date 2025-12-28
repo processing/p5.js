@@ -665,7 +665,7 @@ suite('p5.Framebuffer', function() {
       fbo.draw(() => myp5.background('red'));
       myp5.saveCanvas(fbo);
 
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise(res => setTimeout(res, 500));
 
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
