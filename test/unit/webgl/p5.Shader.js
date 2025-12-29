@@ -426,6 +426,54 @@ suite('p5.Shader', function() {
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
     });
+
+    test('handle custom uniform names with automatic values', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // Variable name is 'brightness' but uniform name is 'customBrightness'
+        const brightness = myp5.uniformFloat('customBrightness', () => 0.8);
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [brightness, brightness, brightness, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      // Check that the shader uses the automatic value (0.8)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 = 204
+      assert.approximately(pixelColor[1], 204, 5);
+      assert.approximately(pixelColor[2], 204, 5);
+    });
+
+    test('handle custom uniform names with manual setUniform', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // Variable name is 'brightness' but uniform name is 'customBrightness'
+        const brightness = myp5.uniformFloat('customBrightness');
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [brightness, brightness, brightness, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // Set the uniform using the custom name
+      testShader.setUniform('customBrightness', 0.6);
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      // Check that the shader uses the manual value (0.6)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 153, 5); // 0.6 * 255 = 153
+      assert.approximately(pixelColor[1], 153, 5);
+      assert.approximately(pixelColor[2], 153, 5);
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -843,6 +891,37 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[0], 127, 5); // Red channel should be ~127 (gray)
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
+      });
+
+      test('handle comma-separated expressions with assignments', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 1.0); // true condition
+          myp5.getPixelInputs(inputs => {
+            let red = myp5.float(0.0);
+            let green = myp5.float(0.0);
+            let blue = myp5.float(0.0);
+
+            if (condition > 0.5) {
+              // Use comma-separated expressions with assignments
+              red = myp5.float(1.0), green = myp5.float(0.5), blue = myp5.float(0.2);
+            } else {
+              red = myp5.float(0.0), green = myp5.float(0.0), blue = myp5.float(0.0);
+            }
+
+            inputs.color = [red, green, blue, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Check that the center pixel has the expected color (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
+        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+        assert.approximately(pixelColor[2], 51, 5);  // Blue channel should be ~51
       });
     });
 

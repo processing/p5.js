@@ -1,7 +1,13 @@
 import * as constants from './constants';
 
 /*
- * Creates p5.strands filter shaders for cross-platform compatibility
+ * Creates p5.strands filter shaders for cross-platform compatibility.
+ *
+ * NOTE: These work a little differently than p5.js web editor shaders work!
+ * Firstly, it uses instance mode, so we have to explicitly pass in context
+ * variables in an argument to your callback and as a second argument to `modify`.
+ * Secondly, always manually specify uniform names, as variable names will change
+ * in minified builds.
  */
 export function makeFilterShader(renderer, operation, p5) {
   switch (operation) {
@@ -26,7 +32,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
     case constants.THRESHOLD:
       return renderer.baseFilterShader().modify(({ p5 }) => {
-        const filterParameter = p5.uniformFloat();
+        const filterParameter = p5.uniformFloat('filterParameter');
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           // weighted grayscale with luminance values
@@ -39,7 +45,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
     case constants.POSTERIZE:
       return renderer.baseFilterShader().modify(({ p5 }) => {
-        const filterParameter = p5.uniformFloat();
+        const filterParameter = p5.uniformFloat('filterParameter');
         const quantize = (color, n) => {
           // restrict values to N options/bins
           // and floor each channel to nearest value
@@ -61,8 +67,8 @@ export function makeFilterShader(renderer, operation, p5) {
 
     case constants.BLUR:
       return renderer.baseFilterShader().modify(({ p5 }) => {
-        const radius = p5.uniformFloat();
-        const direction = p5.uniformVec2();
+        const radius = p5.uniformFloat('radius');
+        const direction = p5.uniformVec2('direction');
 
         // This isn't a real Gaussian weight, it's a quadratic weight
         const quadWeight = (x, e) => {
