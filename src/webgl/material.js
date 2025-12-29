@@ -2079,10 +2079,10 @@ function material(p5, fn){
    *     getWorldInputs((inputs) => {
    *       // Add a somewhat random offset to the weight
    *       // that varies based on position and time
-   *       let scale = noise(
-   *         inputs.position.x * 0.1,
-   *         inputs.position.y * 0.1,
-   *         time * 0.001
+   *       let scale = 0.5 + noise(
+   *         inputs.position.x * 0.01,
+   *         inputs.position.y * 0.01,
+   *         time * 0.0005
    *       );
    *       inputs.weight *= scale;
    *       return inputs;
