@@ -648,6 +648,7 @@ function material(p5, fn){
    * For example, you could pass in the mouse cursor position and use that to control how much
    * you warp the content. If you create a uniform inside the shader using a function like `uniformFloat()`, with
    * `uniform` + the type of the data, you can set its value using `setUniform` right before applying the filter.
+   * In the example below, move your mouse across the image to see it update the `warpAmount` uniform:
    *
    * ```js example
    * let img;
