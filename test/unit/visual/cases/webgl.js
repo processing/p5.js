@@ -929,4 +929,22 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('background()', function () {
+    visualTest('background(image) works in WEBGL', function (p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const g = p5.createGraphics(50, 50);
+      g.background(255, 0, 0);
+      g.fill(0);
+      g.noStroke();
+      g.circle(25, 25, 20);
+
+      p5.background(0, 0, 255);
+      p5.background(g);
+
+      screenshot();
+    });
+  });
+
 });
