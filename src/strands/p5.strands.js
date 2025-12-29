@@ -1,6 +1,6 @@
 /**
  * @module 3D
- * @submodule strands
+ * @submodule p5.strands
  * @for p5
  * @requires core
  */

@@ -571,6 +571,7 @@ function material(p5, fn){
    * `loadFilterShader('myShader.js', onLoaded)`.
    *
    * @method loadFilterShader
+   * @submodule p5.strands
    * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is
    *                                     loaded. Will be passed the
@@ -746,6 +747,7 @@ function material(p5, fn){
    * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
    *
    * @method createFilterShader
+   * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The material shader
    */
@@ -1500,6 +1502,7 @@ function material(p5, fn){
    * for more info.
    *
    * @method createMaterialShader
+   * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The material shader.
@@ -1563,6 +1566,7 @@ function material(p5, fn){
    * `loadMaterialShader('myShader.js', onLoaded)`.
    *
    * @method loadMaterialShader
+   * @submodule p5.strands
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
    * @param {Function} [onSuccess] A callback function to run when loading completes.
@@ -1595,6 +1599,7 @@ function material(p5, fn){
    * the base material shader.
    *
    * @method baseMaterialShader
+   * @submodule p5.strands
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
@@ -1614,6 +1619,7 @@ function material(p5, fn){
    * the base filter shader.
    *
    * @method baseFilterShader
+   * @submodule p5.strands
    * @beta
    * @returns {p5.Shader} The base filter shader.
    */
@@ -1708,6 +1714,7 @@ function material(p5, fn){
    * for more info.
    *
    * @method createNormalShader
+   * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The normal shader.
@@ -1772,6 +1779,7 @@ function material(p5, fn){
    * `loadNormalShader('myShader.js', onLoaded)`.
    *
    * @method loadNormalShader
+   * @submodule p5.strands
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
    * @param {Function} [onSuccess] A callback function to run when loading completes.
@@ -1805,6 +1813,7 @@ function material(p5, fn){
    * the base normal shader.
    *
    * @method baseNormalShader
+   * @submodule p5.strands
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
@@ -1864,6 +1873,7 @@ function material(p5, fn){
    * for more info.
    *
    * @method createColorShader
+   * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The color shader.
@@ -1928,6 +1938,7 @@ function material(p5, fn){
    * `loadColorShader('myShader.js', onLoaded)`.
    *
    * @method loadColorShader
+   * @submodule p5.strands
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
    * @param {Function} [onSuccess] A callback function to run when loading completes.
@@ -1960,6 +1971,7 @@ function material(p5, fn){
    * the base color shader.
    *
    * @method baseColorShader
+   * @submodule p5.strands
    * @beta
    * @returns {p5.Shader} The base color shader.
    */
@@ -2113,6 +2125,7 @@ function material(p5, fn){
    * for more info.
    *
    * @method createStrokeShader
+   * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The stroke shader.
@@ -2182,6 +2195,7 @@ function material(p5, fn){
    * `loadStrokeShader('myShader.js', onLoaded)`.
    *
    * @method loadStrokeShader
+   * @submodule p5.strands
    * @beta
    * @param {String} url The URL of your p5.strands JavaScript file.
    * @param {Function} [onSuccess] A callback function to run when loading completes.
@@ -2214,6 +2228,7 @@ function material(p5, fn){
    * the base material shader.
    *
    * @method baseStrokeShader
+   * @submodule p5.strands
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
