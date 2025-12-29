@@ -654,7 +654,7 @@ function material(p5, fn){
    * let myFilter;
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   let img = await loadImage('assets/bricks.jpg');
+   *   img = await loadImage('assets/bricks.jpg');
    *   myFilter = createFilterShader(() => {
    *     let warpAmount = uniformFloat();
    *     getColor((inputs, canvasContent) => {
