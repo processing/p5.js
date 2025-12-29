@@ -111,19 +111,34 @@ const ASTCallbacks = {
   VariableDeclarator(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
     if (nodeIsUniform(node.init)) {
-      const uniformNameLiteral = {
-        type: 'Literal',
-        value: node.id.name
+      // Only inject the variable name if the first argument isn't already a string
+      if (node.init.arguments.length === 0 ||
+          node.init.arguments[0].type !== 'Literal' ||
+          typeof node.init.arguments[0].value !== 'string') {
+        const uniformNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(uniformNameLiteral);
       }
-      node.init.arguments.unshift(uniformNameLiteral);
     }
     if (nodeIsVarying(node.init)) {
-      const varyingNameLiteral = {
-        type: 'Literal',
-        value: node.id.name
+      // Only inject the variable name if the first argument isn't already a string
+      if (
+        node.init.arguments.length === 0 ||
+        node.init.arguments[0].type !== 'Literal' ||
+        typeof node.init.arguments[0].value !== 'string'
+      ) {
+        const varyingNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(varyingNameLiteral);
+        _state.varyings[node.id.name] = varyingNameLiteral;
+      } else {
+        // Still track it as a varying even if name wasn't injected
+        _state.varyings[node.id.name] = node.init.arguments[0];
       }
-      node.init.arguments.unshift(varyingNameLiteral);
-      _state.varyings[node.id.name] = varyingNameLiteral;
     }
   },
   Identifier(node, _state, ancestors) {
