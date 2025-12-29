@@ -844,6 +844,37 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+
+      test('handle comma-separated expressions with assignments', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const condition = myp5.uniformFloat(() => 1.0); // true condition
+          myp5.getPixelInputs(inputs => {
+            let red = myp5.float(0.0);
+            let green = myp5.float(0.0);
+            let blue = myp5.float(0.0);
+
+            if (condition > 0.5) {
+              // Use comma-separated expressions with assignments
+              red = myp5.float(1.0), green = myp5.float(0.5), blue = myp5.float(0.2);
+            } else {
+              red = myp5.float(0.0), green = myp5.float(0.0), blue = myp5.float(0.0);
+            }
+
+            inputs.color = [red, green, blue, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Check that the center pixel has the expected color (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
+        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
+        assert.approximately(pixelColor[2], 51, 5);  // Blue channel should be ~51
+      });
     });
 
     suite('for loop statements', () => {

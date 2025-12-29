@@ -362,24 +362,56 @@ const ASTCallbacks = {
       };
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
-      const analyzeBlock = (body) => {
-        if (body.type !== 'BlockStatement') return;
-        // First pass: collect variable declarations within this block
-        const localVars = new Set();
-        for (const stmt of body.body) {
+
+      // Helper function to check if a block contains strands control flow calls as immediate children
+      const blockContainsStrandsControlFlow = (node) => {
+        if (node.type !== 'BlockStatement') return false;
+        return node.body.some(stmt => {
+          // Check for variable declarations with strands control flow init
           if (stmt.type === 'VariableDeclaration') {
-            for (const decl of stmt.declarations) {
-              if (decl.id.type === 'Identifier') {
-                localVars.add(decl.id.name);
-              }
+            const match = stmt.declarations.some(decl =>
+              decl.init?.type === 'CallExpression' &&
+              (
+                (
+                  decl.init?.callee?.type === 'MemberExpression' &&
+                  decl.init?.callee?.object?.type === 'Identifier' &&
+                  decl.init?.callee?.object?.name === '__p5' &&
+                  (decl.init?.callee?.property?.name === 'strandsFor' ||
+                    decl.init?.callee?.property?.name === 'strandsIf')
+                ) ||
+                (
+                  decl.init?.callee?.type === 'Identifier' &&
+                  (decl.init?.callee?.name === '__p5.strandsFor' ||
+                    decl.init?.callee?.name === '__p5.strandsIf')
+                )
+              )
+            );
+            return match
+          }
+          return false;
+        });
+      };
+
+      const analyzeBranch = (functionBody) => {
+        // First pass: collect all variable declarations in the branch
+        const localVars = new Set();
+        ancestor(functionBody, {
+          VariableDeclarator(node, ancestors) {
+            // Skip if we're inside a block that contains strands control flow
+            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+            if (node.id.type === 'Identifier') {
+              localVars.add(node.id.name);
             }
           }
-        }
-        // Second pass: find assignments to non-local variables
-        for (const stmt of body.body) {
-          if (stmt.type === 'ExpressionStatement' &&
-              stmt.expression.type === 'AssignmentExpression') {
-            const left = stmt.expression.left;
+        });
+
+        // Second pass: find assignments to non-local variables using acorn-walk
+        ancestor(functionBody, {
+          AssignmentExpression(node, ancestors) {
+            // Skip if we're inside a block that contains strands control flow
+            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+
+            const left = node.left;
             if (left.type === 'Identifier') {
               // Direct variable assignment: x = value
               if (!localVars.has(left.name)) {
@@ -387,20 +419,18 @@ const ASTCallbacks = {
               }
             } else if (left.type === 'MemberExpression' &&
                        left.object.type === 'Identifier') {
-              // Property assignment: obj.prop = value
+              // Property assignment: obj.prop = value (includes swizzles)
               if (!localVars.has(left.object.name)) {
                 assignedVars.add(left.object.name);
               }
             }
-          } else if (stmt.type === 'BlockStatement') {
-            // Recursively analyze nested block statements
-            analyzeBlock(stmt);
           }
-        }
+        });
       };
+
       // Analyze all branches for assignments to outer scope variables
-      analyzeBlock(thenFunction.body);
-      analyzeBlock(elseFunction.body);
+      analyzeBranch(thenFunction.body);
+      analyzeBranch(elseFunction.body);
       if (assignedVars.size > 0) {
         // Add copying, reference replacement, and return statements to branch functions
         const addCopyingAndReturn = (functionBody, varsToReturn) => {
