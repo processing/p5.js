@@ -141,8 +141,6 @@ class Framebuffer {
    * @param {Number} height height of the framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -173,8 +171,6 @@ class Framebuffer {
    * function mouseMoved() {
    *   myBuffer.resize(mouseX, mouseY);
    * }
-   * </code>
-   * </div>
    */
   resize(width, height) {
     this._autoSized = false;
@@ -208,8 +204,6 @@ class Framebuffer {
    * @returns {Number} current pixel density.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -243,11 +237,8 @@ class Framebuffer {
    * function mouseReleased() {
    *   myBuffer.pixelDensity(2);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myBuffer;
    * let myFont;
    *
@@ -276,8 +267,6 @@ class Framebuffer {
    *
    *   describe(`The text "Density: ${d}" written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   pixelDensity(density) {
     if (density) {
@@ -303,8 +292,6 @@ class Framebuffer {
    * @returns {Boolean} current autosize setting.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle the autosizing mode.
    *
    * let myBuffer;
@@ -345,8 +332,6 @@ class Framebuffer {
    *   let isAuto = myBuffer.autoSized();
    *   myBuffer.autoSized(!isAuto);
    * }
-   * </code>
-   * </div>
    */
   autoSized(autoSized) {
     if (autoSized === undefined) {
@@ -585,8 +570,6 @@ class Framebuffer {
    * @returns {p5.Camera} new camera.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let myBuffer;
@@ -653,8 +636,6 @@ class Framebuffer {
    *     usingCam1 = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   createCamera() {
     const cam = new FramebufferCamera(this);
@@ -684,8 +665,6 @@ class Framebuffer {
    * collected.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the p5.Framebuffer object.
    *
    * let myBuffer;
@@ -728,8 +707,6 @@ class Framebuffer {
    *   // Delete the framebuffer from CPU memory.
    *   myBuffer = undefined;
    * }
-   * </code>
-   * </div>
    */
   remove() {
     this._deleteTextures();
@@ -751,8 +728,6 @@ class Framebuffer {
    * as an image or texture.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -784,8 +759,6 @@ class Framebuffer {
    *     image(myBuffer, -50, -50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   begin() {
     this.prevFramebuffer = this.renderer.activeFramebuffer();
@@ -882,8 +855,6 @@ class Framebuffer {
    * or texture.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -915,8 +886,6 @@ class Framebuffer {
    *     image(myBuffer, -50, -50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   end() {
     this.renderer.pop();
@@ -956,8 +925,6 @@ class Framebuffer {
    * @param {Function} callback function that draws to the framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * // Click the canvas to display the framebuffer.
    *
    * let myBuffer;
@@ -991,8 +958,6 @@ class Framebuffer {
    *   normalMaterial();
    *   torus(30);
    * }
-   * </code>
-   * </div>
    */
   draw(callback) {
     this.begin();
@@ -1008,8 +973,6 @@ class Framebuffer {
    * <a href="#/p5.Framebuffer/pixels">myBuffer.pixels</a>.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1041,8 +1004,6 @@ class Framebuffer {
    *
    *   describe('A pink rectangle above a gray rectangle.');
    * }
-   * </code>
-   * </div>
    */
   loadPixels() {
     this._update('colorTexture');
@@ -1138,8 +1099,6 @@ class Framebuffer {
    * @method updatePixels
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1171,8 +1130,6 @@ class Framebuffer {
    *
    *   describe('A pink rectangle above a gray rectangle.');
    * }
-   * </code>
-   * </div>
    */
   updatePixels() {
     // Let renderer handle the pixel update process
@@ -1255,8 +1212,6 @@ function framebuffer(p5, fn){
    * @for p5.Framebuffer
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1284,8 +1239,6 @@ function framebuffer(p5, fn){
    *
    *   describe('A white triangle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1308,8 +1261,6 @@ function framebuffer(p5, fn){
    * @for p5.Framebuffer
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1384,8 +1335,6 @@ function framebuffer(p5, fn){
    *   // Draw the plane.
    *   plane(myBuffer.width, myBuffer.height);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1405,8 +1354,6 @@ function framebuffer(p5, fn){
    * @for p5.Framebuffer
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1438,8 +1385,6 @@ function framebuffer(p5, fn){
    *
    *   describe('A pink rectangle above a gray rectangle.');
    * }
-   * </code>
-   * </div>
    */
 
   /**

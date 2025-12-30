@@ -5,7 +5,11 @@ import files from '../../../src/io/files';
 import table from '../../../src/io/p5.Table';
 import tableRow from '../../../src/io/p5.TableRow';
 
-vi.mock('file-saver');
+vi.mock('file-saver', () => {
+  return {
+    saveAs: vi.fn()
+  };
+});
 
 suite('saveTable', function() {
   const validFile = '/test/unit/assets/csv.csv';

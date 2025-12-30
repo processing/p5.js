@@ -1955,8 +1955,6 @@ function rendererGL(p5, fn) {
    * @param  {String}  key Name of attribute
    * @param  {Boolean}        value New value of named attribute
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    * }
@@ -1971,11 +1969,8 @@ function rendererGL(p5, fn) {
    *   box(50);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    *  // Now with the antialias attribute set to true.
    * function setup() {
    *   setAttributes('antialias', true);
@@ -1992,11 +1987,8 @@ function rendererGL(p5, fn) {
    *   box(50);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // press the mouse button to disable perPixelLighting
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -2045,8 +2037,6 @@ function rendererGL(p5, fn) {
    *   noStroke();
    *   fill(255);
    * }
-   * </code>
-   * </div>
    *
    * @alt a rotating cube with smoother edges
    */

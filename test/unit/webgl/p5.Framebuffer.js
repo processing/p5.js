@@ -1,7 +1,11 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 import * as fileSaver from 'file-saver';
-vi.mock('file-saver');
+vi.mock('file-saver', () => {
+  return {
+    saveAs: vi.fn()
+  };
+});
 
 expect.extend({
   tobePng: received => {
@@ -661,7 +665,7 @@ suite('p5.Framebuffer', function() {
       fbo.draw(() => myp5.background('red'));
       myp5.saveCanvas(fbo);
 
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise(res => setTimeout(res, 500));
 
       expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
       expect(fileSaver.saveAs)
