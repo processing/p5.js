@@ -59,8 +59,6 @@ function material(p5, fn){
    * @return {Promise<p5.Shader>} new shader created from the vertex and fragment shader files.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * let mandelbrot;
@@ -85,11 +83,8 @@ function material(p5, fn){
    *
    *   describe('A black fractal image on a magenta background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * let mandelbrot;
@@ -116,8 +111,6 @@ function material(p5, fn){
    *   // Add a quad as a display surface for the shader.
    *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
    * }
-   * </code>
-   * </div>
    */
   fn.loadShader = async function (
     vertFilename,
@@ -220,8 +213,6 @@ function material(p5, fn){
    * vertex and fragment shaders.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -269,11 +260,8 @@ function material(p5, fn){
    *
    *   describe('A yellow square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -349,11 +337,8 @@ function material(p5, fn){
    *
    *   describe('A black fractal image on a magenta background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -437,11 +422,8 @@ function material(p5, fn){
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // A shader with hooks.
    * let myShader;
    *
@@ -506,8 +488,6 @@ function material(p5, fn){
    *   sphere(10);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
     // p5._validateParameters('createShader', arguments);
@@ -528,8 +508,6 @@ function material(p5, fn){
    * @return {Promise<p5.Shader>} a promise that resolves with a shader object
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * async function setup() {
@@ -545,8 +523,7 @@ function material(p5, fn){
    *   // rect gives us some geometry on the screen
    *   rect(-50, -50, width, height);
    * }
-   * </code>
-   * </div>
+   *
    * @alt
    * A rectangle with a shader applied to it.
    */
@@ -611,8 +588,6 @@ function material(p5, fn){
    * @returns {p5.Shader} new shader object created from the fragment shader.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * function setup() {
    *   let fragSrc = `precision highp float;
    *   void main() {
@@ -624,11 +599,8 @@ function material(p5, fn){
    *   filter(s);
    *   describe('a yellow canvas');
    * }
-   * </code>
-   * </div>
    *
-   * <div modernizr='webgl'>
-   * <code>
+   * @example
    * let img, s;
    * async function setup() {
    *   img = await loadImage('assets/bricks.jpg');
@@ -664,8 +636,6 @@ function material(p5, fn){
    *   filter(s);
    *   describe('a image of bricks tinted dark blue');
    * }
-   * </code>
-   * </div>
    */
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     // p5._validateParameters('createFilterShader', arguments);
@@ -765,8 +735,6 @@ function material(p5, fn){
    *                      to apply.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let fillShader;
    *
    * let vertSrc = `
@@ -814,12 +782,8 @@ function material(p5, fn){
    *   //lights();
    *   torus(25, 10, 30, 30);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let fillShader;
    *
    * let vertSrc = `
@@ -864,12 +828,8 @@ function material(p5, fn){
    *   fillShader.setUniform('uFillColor', fillColor);
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -897,9 +857,6 @@ function material(p5, fn){
    *
    *   box(50);
    * }
-   * </code>
-   * </div>
-   *
    */
   fn.shader = function (s) {
     this._assert3d('shader');
@@ -932,8 +889,6 @@ function material(p5, fn){
    *
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let animatedStrokeShader;
    *
    * let vertSrc = `
@@ -1026,13 +981,8 @@ function material(p5, fn){
    *   orbitControl();
    *   box(50);
    * }
-   * </code>
-   * </div>
-   *
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1071,8 +1021,6 @@ function material(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.strokeShader = function (s) {
     this._assert3d('strokeShader');
@@ -1102,8 +1050,6 @@ function material(p5, fn){
    *                      to apply for images.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let img;
    * let imgShader;
    *
@@ -1163,12 +1109,8 @@ function material(p5, fn){
    *   image(img, -width / 2, -height / 2, width, height);
    * }
    *
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let img;
    * let imgShader;
    *
@@ -1224,8 +1166,6 @@ function material(p5, fn){
    *   imgShader.setUniform('uTexture', img);
    *   image(img, -width / 2, -height / 2, width, height);
    * }
-   * </code>
-   * </div>
    */
   fn.imageShader = function (s) {
     this._assert3d('imageShader');
@@ -1371,8 +1311,6 @@ function material(p5, fn){
    * @returns {p5.Shader} The material shader
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1395,12 +1333,8 @@ function material(p5, fn){
    *   fill('red');
    *   sphere(50);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1430,12 +1364,8 @@ function material(p5, fn){
    *   fill('red');
    *   torus(30);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    * let environment;
    *
@@ -1466,12 +1396,8 @@ function material(p5, fn){
    *   specularMaterial(150);
    *   sphere(50);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1504,8 +1430,6 @@ function material(p5, fn){
    *   specularMaterial(255);
    *   sphere(50);
    * }
-   * </code>
-   * </div>
    */
   fn.baseMaterialShader = function() {
     this._assert3d('baseMaterialShader');
@@ -1552,8 +1476,6 @@ function material(p5, fn){
    * @returns {p5.Shader} The filter shader
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let img;
    * let myShader;
    *
@@ -1575,8 +1497,6 @@ function material(p5, fn){
    *   filter(myShader);
    *   describe('an image of bricks, distorting over time');
    * }
-   * </code>
-   * </div>
    */
   fn.baseFilterShader = function() {
     return (this._renderer.filterRenderer || this._renderer)
@@ -1681,8 +1601,6 @@ function material(p5, fn){
    * @returns {p5.Shader} The `normalMaterial` shader
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1705,12 +1623,8 @@ function material(p5, fn){
    *   noStroke();
    *   sphere(50);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1741,8 +1655,6 @@ function material(p5, fn){
    *   rotateY(frameCount * 0.015);
    *   box(100);
    * }
-   * </code>
-   * </div>
    */
   fn.baseNormalShader = function() {
     this._assert3d('baseNormalShader');
@@ -1847,8 +1759,6 @@ function material(p5, fn){
    * @returns {p5.Shader} The color shader
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -1872,8 +1782,6 @@ function material(p5, fn){
    *   fill('red');
    *   circle(0, 0, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.baseColorShader = function() {
     this._assert3d('baseColorShader');
@@ -2002,8 +1910,6 @@ function material(p5, fn){
    * @returns {p5.Shader} The stroke shader
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -2032,12 +1938,8 @@ function material(p5, fn){
    *     sin(millis()*0.001 + 1) * height/4
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -2074,12 +1976,8 @@ function material(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let myShader;
    *
    * function setup() {
@@ -2120,8 +2018,6 @@ function material(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.baseStrokeShader = function() {
     this._assert3d('baseStrokeShader');
@@ -2141,8 +2037,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Create a string with the vertex shader program.
    * // The vertex shader is called for each vertex.
    * let vertSrc = `
@@ -2209,8 +2103,6 @@ function material(p5, fn){
    *   box(width / 4);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.resetShader = function () {
     this._renderer.resetShader();
@@ -2243,8 +2135,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2270,11 +2160,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box(50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -2304,11 +2191,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box(50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let vid;
    *
    * function setup() {
@@ -2338,11 +2222,8 @@ function material(p5, fn){
    *   // Draw the rectangle.
    *   rect(-40, -40, 80, 80);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let vid;
    *
    * function setup() {
@@ -2380,8 +2261,6 @@ function material(p5, fn){
    *   vertex(-40, 40, 0, 1);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.texture = function (tex) {
     this._assert3d('texture');
@@ -2497,8 +2376,6 @@ function material(p5, fn){
    * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2525,11 +2402,8 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, img.height);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2559,8 +2433,6 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, 1);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.textureMode = function (mode) {
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
@@ -2675,8 +2547,6 @@ function material(p5, fn){
    * @param {(CLAMP|REPEAT|MIRROR)} [wrapY=wrapX] either CLAMP, REPEAT, or MIRROR
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2714,11 +2584,8 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, 0, 2);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2753,11 +2620,8 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, 0, 2);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2794,11 +2658,8 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, 0, 2);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2835,8 +2696,6 @@ function material(p5, fn){
    *   vertex(-30, 30, 0, 0, 2);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
     this._renderer.states.setValue('textureWrapX', wrapX);
@@ -2860,8 +2719,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2882,8 +2739,6 @@ function material(p5, fn){
    *   // Draw the torus.
    *   torus(30);
    * }
-   * </code>
-   * </div>
    */
   fn.normalMaterial = function (...args) {
     this._assert3d('normalMaterial');
@@ -2932,8 +2787,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2954,11 +2807,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2982,11 +2832,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -3010,11 +2857,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -3039,11 +2883,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -3067,11 +2908,8 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -3095,16 +2933,12 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method ambientMaterial
    * @param  {Number} gray grayscale value between 0 (black) and 255 (white).
    * @chainable
    */
-
   /**
    * @method ambientMaterial
    * @param  {p5.Color|Number[]|String} color
@@ -3168,8 +3002,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -3193,16 +3025,12 @@ function material(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method emissiveMaterial
    * @param  {Number} gray grayscale value between 0 (black) and 255 (white).
    * @chainable
    */
-
   /**
    * @method emissiveMaterial
    * @param  {p5.Color|Number[]|String} color
@@ -3265,8 +3093,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to apply a specular material.
    *
@@ -3305,11 +3131,8 @@ function material(p5, fn){
    * function doubleClicked() {
    *   isGlossy = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to apply a specular material.
    *
@@ -3350,11 +3173,8 @@ function material(p5, fn){
    * function doubleClicked() {
    *   isGlossy = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to apply a specular material.
    *
@@ -3397,11 +3217,8 @@ function material(p5, fn){
    * function doubleClicked() {
    *   isGlossy = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to apply a specular material.
    *
@@ -3442,10 +3259,7 @@ function material(p5, fn){
    * function doubleClicked() {
    *   isGlossy = true;
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method specularMaterial
    * @param  {Number}        v1      red or hue value in
@@ -3457,7 +3271,6 @@ function material(p5, fn){
    * @param  {Number}        [alpha]
    * @chainable
    */
-
   /**
    * @method specularMaterial
    * @param  {p5.Color|Number[]|String} color
@@ -3496,8 +3309,6 @@ function material(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -3535,8 +3346,6 @@ function material(p5, fn){
    *   shininess(100);
    *   sphere(20);
    * }
-   * </code>
-   * </div>
    */
   fn.shininess = function (shine) {
     this._assert3d('shininess');
@@ -3568,8 +3377,6 @@ function material(p5, fn){
    * @param {Number} metallic amount of metalness.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -3607,11 +3414,8 @@ function material(p5, fn){
    *   metalness(50);
    *   sphere(20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let img;
@@ -3651,8 +3455,6 @@ function material(p5, fn){
    *   metalness(50);
    *   sphere(20);
    * }
-   * </code>
-   * </div>
    */
   fn.metalness = function (metallic) {
     this._assert3d('metalness');

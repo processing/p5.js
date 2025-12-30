@@ -91,10 +91,7 @@ class Graphics {
    * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
    * objects must reset these values manually by calling `myGraphics.reset()`.
    *
-   *
    * @example
-   * <div>
-   * <code>
    * let pg;
    *
    * function setup() {
@@ -131,11 +128,8 @@ class Graphics {
    *     pg.reset();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -163,11 +157,8 @@ class Graphics {
    *   // Reset the p5.Graphics object automatically.
    *   pg.reset();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -204,11 +195,8 @@ class Graphics {
    *     pg.reset();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -240,8 +228,6 @@ class Graphics {
    *   // Reset the p5.Graphics object automatically.
    *   pg.reset();
    * }
-   * </code>
-   * </div>
    */
   reset() {
     this._renderer.resetMatrix();
@@ -271,8 +257,6 @@ class Graphics {
    * collected.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the p5.Graphics object.
    *
    * let pg;
@@ -307,14 +291,11 @@ class Graphics {
    *   pg.remove();
    *   pg = undefined;
    * }
-   * </code>
-   * </div>
    */
   remove() {
     this._renderer.remove();
     this._renderer = undefined;
   }
-
 
   /**
    * Creates a new <a href="#/p5.Framebuffer">p5.Framebuffer</a> object with
@@ -359,8 +340,6 @@ class Graphics {
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and hold a mouse button to change shapes.
    *
    * let pg;
@@ -458,11 +437,8 @@ class Graphics {
    *   // Start drawing to the box p5.Framebuffer.
    *   boxLayer.end();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and hold a mouse button to change shapes.
    *
    * let pg;
@@ -564,8 +540,6 @@ class Graphics {
    *   // Start drawing to the box p5.Framebuffer.
    *   boxLayer.end();
    * }
-   * </code>
-   * </div>
    */
   createFramebuffer(options) {
     return new Framebuffer(this._renderer, options);
@@ -626,8 +600,6 @@ function graphics(p5, fn){
    * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
    *
    * @example
-   * <div>
-   * <code>
    * let pg;
    *
    * function setup() {
@@ -649,11 +621,8 @@ function graphics(p5, fn){
    *   // Display the p5.Graphics object.
    *   image(pg, 25, 25);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the canvas to display the graphics buffer.
    *
    * let pg;
@@ -682,8 +651,6 @@ function graphics(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    */
   p5.Graphics = Graphics;
 
