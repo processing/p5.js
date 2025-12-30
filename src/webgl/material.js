@@ -538,7 +538,7 @@ function material(p5, fn){
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
    *   let img = await loadImage('assets/bricks.jpg');
-   *   let myFilter = loadFilterShader('myFilter.js');
+   *   let myFilter = await loadFilterShader('myFilter.js');
    *
    *   image(img, -50, -50);
    *   filter(myFilter);
