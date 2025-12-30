@@ -150,7 +150,8 @@ export function processData(rawData, strategy) {
         alt: getAlt(entry),
         module,
         submodule,
-        class: forEntry || 'p5'
+        class: forEntry || 'p5',
+        beta: entry.tags?.some(t => t.title === 'beta') || undefined,
       };
 
       processed.classitems.push(item);
@@ -269,6 +270,7 @@ export function processData(rawData, strategy) {
         static: entry.scope === 'static' && 1,
         module: prevItem?.module ?? module,
         submodule: prevItem?.submodule ?? submodule,
+        beta: prevItem?.beta || entry.tags?.some(t => t.title === 'beta') || undefined,
       };
 
       processed.classMethods[className] = processed.classMethods[className] || {};

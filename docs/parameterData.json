@@ -2885,14 +2885,18 @@
         ]
       ]
     },
-    "createFilterShader": {
+    "buildFilterShader": {
       "overloads": [
         [
           "Function"
         ],
         [
           "Object"
-        ],
+        ]
+      ]
+    },
+    "createFilterShader": {
+      "overloads": [
         [
           "String"
         ]
@@ -2919,7 +2923,7 @@
         ]
       ]
     },
-    "createMaterialShader": {
+    "buildMaterialShader": {
       "overloads": [
         [
           "Function"
@@ -2948,7 +2952,7 @@
         []
       ]
     },
-    "createNormalShader": {
+    "buildNormalShader": {
       "overloads": [
         [
           "Function"
@@ -2972,7 +2976,7 @@
         []
       ]
     },
-    "createColorShader": {
+    "buildColorShader": {
       "overloads": [
         [
           "Function"
@@ -2996,7 +3000,7 @@
         []
       ]
     },
-    "createStrokeShader": {
+    "buildStrokeShader": {
       "overloads": [
         [
           "Function"
