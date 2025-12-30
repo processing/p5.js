@@ -2005,7 +2005,6 @@ function material(p5, fn){
    * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
    * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
    * - <a href="#/p5/getPixelInputs">`getPixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
-   * - <a href="#/p5/shouldDiscard">`shouldDiscard`</a>: Decide whether or not a pixel should be drawn, generally used to carve out pieces to make rounded or mitered joins and caps. Your function gets run on every pixel.
    * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
    * Read the linked reference page for each hook for more information about how to use them.
