@@ -500,4 +500,9 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     window[hookType.name] = hook;
     fn[hookType.name] = hook;
   }
+
+  // TODO: remove this if we find a better way to make loaded strands shaders
+  // run in what looks like global mode
+  strandsContext.windowOverrides.getTexture = window.getTexture;
+  window.getTexture = fn.getTexture.bind(strandsContext.p5);
 }

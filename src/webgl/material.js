@@ -517,7 +517,7 @@ function material(p5, fn){
 
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
-      if (fragString.test(/void\s+main/)) {
+      if (/void\s+main/.exec(fragString)) {
         loadedShader = this.createFilterShader(fragString, true);
       } else {
         loadedShader = this.baseFilterShader().modify(new Function(fragString));
