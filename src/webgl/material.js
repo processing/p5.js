@@ -165,13 +165,11 @@ function material(p5, fn){
    *
    * Shaders are programs that run on the graphics processing unit (GPU). They
    * can process many pixels at the same time, making them fast for many
-   * graphics tasks. They’re written in a language called
-   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
-   * and run along with the rest of the code in a sketch.
+   * graphics tasks.
    *
    * Once the <a href="#/p5.Shader">p5.Shader</a> object is created, it can be
    * used with the <a href="#/p5/shader">shader()</a> function, as in
-   * `shader(myShader)`. A shader program consists of two parts, a vertex shader
+   * `shader(myShader)`. A GLSL shader program consists of two parts, a vertex shader
    * and a fragment shader. The vertex shader affects where 3D geometry is drawn
    * on the screen and the fragment shader affects color.
    *
@@ -181,62 +179,11 @@ function material(p5, fn){
    * The second parameter, `fragSrc`, sets the fragment shader. It’s a string
    * that contains the fragment shader program written in GLSL.
    *
-   * A shader can optionally describe *hooks,* which are functions in GLSL that
-   * users may choose to provide to customize the behavior of the shader using the
-   * <a href="#/p5.Shader/modify">`modify()`</a> method of `p5.Shader`. These are added by
-   * describing the hooks in a third parameter, `options`, and referencing the hooks in
-   * your `vertSrc` or `fragSrc`. Hooks for the vertex or fragment shader are described under
-   * the `vertex` and `fragment` keys of `options`. Each one is an object. where each key is
-   * the type and name of a hook function, and each value is a string with the
-   * parameter list and default implementation of the hook. For example, to let users
-   * optionally run code at the start of the vertex shader, the options object could
-   * include:
+   * Here is a simple example with a simple vertex shader that applies whatevre
+   * transformations have been set, and a simple fragment shader that ignores
+   * all material settings and just outputs yellow:
    *
-   * ```js
-   * {
-   *   vertex: {
-   *     'void beforeVertex': '() {}'
-   *   }
-   * }
-   * ```
-   *
-   * Then, in your vertex shader source, you can run a hook by calling a function
-   * with the same name prefixed by `HOOK_`. If you want to check if the default
-   * hook has been replaced, maybe to avoid extra overhead, you can check if the
-   * same name prefixed by `AUGMENTED_HOOK_` has been defined:
-   *
-   * ```glsl
-   * void main() {
-   *   // In most cases, just calling the hook is fine:
-   *   HOOK_beforeVertex();
-   *
-   *   // Alternatively, for more efficiency:
-   *   #ifdef AUGMENTED_HOOK_beforeVertex
-   *   HOOK_beforeVertex();
-   *   #endif
-   *
-   *   // Add the rest of your shader code here!
-   * }
-   * ```
-   *
-   * Note: Only filter shaders can be used in 2D mode. All shaders can be used
-   * in WebGL mode.
-   *
-   * @method createShader
-   * @param {String} vertSrc source code for the vertex shader.
-   * @param {String} fragSrc source code for the fragment shader.
-   * @param {Object} [options] An optional object describing how this shader can
-   * be augmented with hooks. It can include:
-   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
-   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
-   * @returns {p5.Shader} new shader object created from the
-   * vertex and fragment shaders.
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * // Note: A "uniform" is a global variable within a shader program.
-   *
+   * ```js example
    * // Create a string with the vertex shader program.
    * // The vertex shader is called for each vertex.
    * let vertSrc = `
@@ -282,93 +229,14 @@ function material(p5, fn){
    *
    *   describe('A yellow square.');
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
-   * // Note: A "uniform" is a global variable within a shader program.
+   * Fragment shaders are often the fastest way to dynamically create per-pixel textures.
+   * Here is an example of a fractal being drawn in the fragment shader. It also creates custom
+   * *uniform* variables in the shader, which can be set from your main sketch code. By passing
+   * the time in as a uniform, we can animate the fractal in the shader.
    *
-   * // Create a string with the vertex shader program.
-   * // The vertex shader is called for each vertex.
-   * let vertSrc = `
-   * precision highp float;
-   * uniform mat4 uModelViewMatrix;
-   * uniform mat4 uProjectionMatrix;
-   * attribute vec3 aPosition;
-   * attribute vec2 aTexCoord;
-   * varying vec2 vTexCoord;
-   *
-   * void main() {
-   *   vTexCoord = aTexCoord;
-   *   vec4 positionVec4 = vec4(aPosition, 1.0);
-   *   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-   * }
-   * `;
-   *
-   * // Create a string with the fragment shader program.
-   * // The fragment shader is called for each pixel.
-   * let fragSrc = `
-   * precision highp float;
-   * uniform vec2 p;
-   * uniform float r;
-   * const int numIterations = 500;
-   * varying vec2 vTexCoord;
-   *
-   * void main() {
-   *   vec2 c = p + gl_FragCoord.xy * r;
-   *   vec2 z = c;
-   *   float n = 0.0;
-   *
-   *   for (int i = numIterations; i > 0; i--) {
-   *     if (z.x * z.x + z.y * z.y > 4.0) {
-   *       n = float(i) / float(numIterations);
-   *       break;
-   *     }
-   *     z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-   *   }
-   *
-   *   gl_FragColor = vec4(
-   *     0.5 - cos(n * 17.0) / 2.0,
-   *     0.5 - cos(n * 13.0) / 2.0,
-   *     0.5 - cos(n * 23.0) / 2.0,
-   *     1.0
-   *   );
-   * }
-   * `;
-   *
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   // Create a p5.Shader object.
-   *   let mandelbrot = createShader(vertSrc, fragSrc);
-   *
-   *   // Compile and apply the p5.Shader object.
-   *   shader(mandelbrot);
-   *
-   *   // Set the shader uniform p to an array.
-   *   // p is the center point of the Mandelbrot image.
-   *   mandelbrot.setUniform('p', [-0.74364388703, 0.13182590421]);
-   *
-   *   // Set the shader uniform r to 0.005.
-   *   // r is the size of the image in Mandelbrot-space.
-   *   mandelbrot.setUniform('r', 0.005);
-   *
-   *   // Style the drawing surface.
-   *   noStroke();
-   *
-   *   // Add a plane as a drawing surface.
-   *   plane(100, 100);
-   *
-   *   describe('A black fractal image on a magenta background.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * // Note: A "uniform" is a global variable within a shader program.
-   *
+   * ```js example
    * // Create a string with the vertex shader program.
    * // The vertex shader is called for each vertex.
    * let vertSrc = `
@@ -444,17 +312,57 @@ function material(p5, fn){
    *   let radius = 0.005 * (sin(frameCount * 0.01) + 1);
    *   mandelbrot.setUniform('r', radius);
    *
-   *   // Style the drawing surface.
-   *   noStroke();
-   *
    *   // Add a plane as a drawing surface.
+   *   noStroke();
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * A shader can optionally describe *hooks,* which are functions in GLSL that
+   * users may choose to provide to customize the behavior of the shader using the
+   * <a href="#/p5.Shader/modify">`modify()`</a> method of `p5.Shader`. Users can
+   * write their modifications using p5.strands, without needing to learn GLSL.
+   *
+   * These are added by
+   * describing the hooks in a third parameter, `options`, and referencing the hooks in
+   * your `vertSrc` or `fragSrc`. Hooks for the vertex or fragment shader are described under
+   * the `vertex` and `fragment` keys of `options`. Each one is an object. where each key is
+   * the type and name of a hook function, and each value is a string with the
+   * parameter list and default implementation of the hook. For example, to let users
+   * optionally run code at the start of the vertex shader, the options object could
+   * include:
+   *
+   * ```js
+   * {
+   *   vertex: {
+   *     'void beforeVertex': '() {}'
+   *   }
+   * }
+   * ```
+   *
+   * Then, in your vertex shader source, you can run a hook by calling a function
+   * with the same name prefixed by `HOOK_`. If you want to check if the default
+   * hook has been replaced, maybe to avoid extra overhead, you can check if the
+   * same name prefixed by `AUGMENTED_HOOK_` has been defined:
+   *
+   * ```glsl
+   * void main() {
+   *   // In most cases, just calling the hook is fine:
+   *   HOOK_beforeVertex();
+   *
+   *   // Alternatively, for more efficiency:
+   *   #ifdef AUGMENTED_HOOK_beforeVertex
+   *   HOOK_beforeVertex();
+   *   #endif
+   *
+   *   // Add the rest of your shader code here!
+   * }
+   * ```
+   *
+   * Then, a user of your shader can modify it with p5.strands. Here is what
+   * that looks like when we put everything together:
+   *
+   * ```js example
    * // A shader with hooks.
    * let myShader;
    *
@@ -487,9 +395,10 @@ function material(p5, fn){
    * `;
    *
    * function setup() {
-   *   createCanvas(50, 50, WEBGL);
+   *   createCanvas(100, 100, WEBGL);
    *
-   *   // Create a shader with hooks
+   *   // Create a shader with hooks. By default, this hook returns
+   *   // the initial value.
    *   myShader = createShader(vertSrc, fragSrc, {
    *     fragment: {
    *       'vec4 getColor': '(vec4 color) { return color; }'
@@ -497,10 +406,12 @@ function material(p5, fn){
    *   });
    *
    *   // Make a version of the shader with a hook overridden
-   *   modifiedShader = myShader.modify({
-   *     'vec4 getColor': `(vec4 color) {
-   *       return vec4(0., 0., 1., 1.);
-   *     }`
+   *   modifiedShader = myShader.modify(() => {
+   *     // Create new uniforms and override the getColor hook
+   *     let t = uniformFloat(() => millis() / 1000);
+   *     getColor(() => {
+   *       return [0, 0.5 + 0.5 * sin(t), 1, 1];
+   *     });
    *   });
    * }
    *
@@ -510,17 +421,29 @@ function material(p5, fn){
    *   push();
    *   shader(myShader);
    *   translate(-width/3, 0);
-   *   sphere(10);
+   *   sphere(20);
    *   pop();
    *
    *   push();
    *   shader(modifiedShader);
    *   translate(width/3, 0);
-   *   sphere(10);
+   *   sphere(20);
    *   pop();
    * }
-   * </code>
-   * </div>
+   * ```js
+   *
+   * Note: Only filter shaders can be used in 2D mode. All shaders can be used
+   * in WebGL mode.
+   *
+   * @method createShader
+   * @param {String} vertSrc source code for the vertex shader.
+   * @param {String} fragSrc source code for the fragment shader.
+   * @param {Object} [options] An optional object describing how this shader can
+   * be augmented with hooks. It can include:
+   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
+   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
+   * @returns {p5.Shader} new shader object created from the
+   * vertex and fragment shaders.
    */
   fn.createShader = function (vertSrc, fragSrc, options) {
     // p5._validateParameters('createShader', arguments);
@@ -747,6 +670,7 @@ function material(p5, fn){
    * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
    *
    * @method buildFilterShader
+   * @beta
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The material shader
@@ -912,12 +836,16 @@ function material(p5, fn){
    *
    * Shaders are programs that run on the graphics processing unit (GPU). They
    * can process many pixels or vertices at the same time, making them fast for
-   * many graphics tasks. They’re written in a language called
-   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
-   * and run along with the rest of the code in a sketch.
-   * <a href="#/p5.Shader">p5.Shader</a> objects can be created using the
-   * <a href="#/p5/createShader">createShader()</a> and
-   * <a href="#/p5/loadShader">loadShader()</a> functions.
+   * many graphics tasks.
+   *
+   * You can make new shaders using p5.strands with the
+   * <a href="#/p5/buildMaterialShader">`buildMaterialShader`</a>,
+   * <a href="#/p5/buildColorShader">`buildColorShader`</a>, and
+   * <a href="#/p5/buildNormalShader">`buildNormalShader`</a> functions. You can also use
+   * <a href="#/p5/buildFilterShader">`buildFilterShader`</a> alongside
+   * <a href="#/p5/filter">`filter`</a>, and
+   * <a href="#/p5/buildStrokeShader">`buildStrokeShader`</a> alongside
+   * <a href="#/p5/stroke">`stroke`</a>.
    *
    * The parameter, `s`, is the <a href="#/p5.Shader">p5.Shader</a> object to
    * apply. For example, calling `shader(myShader)` applies `myShader` to
@@ -925,34 +853,49 @@ function material(p5, fn){
    * but does not affect the outlines (strokes) or any images drawn using the `image()` function.
    * The source code from a <a href="#/p5.Shader">p5.Shader</a> object's
    * fragment and vertex shaders will be compiled the first time it's passed to
-   * `shader()`. See
-   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/compileShader" target="_blank">MDN</a>
-   * for more information about compiling shaders.
+   * `shader()`.
    *
    * Calling <a href="#/p5/resetShader">resetShader()</a> restores a sketch’s
    * default shaders.
    *
    * Note: Shaders can only be used in WebGL mode.
    *
-   * <div>
-   * <p>
+   * ```js example
+   * let myShader;
    *
-   * If you want to apply shaders to strokes or images, use the following methods:
-   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
-   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
    *
-   * </p>
-   * </div>
+   *   myShader = createMaterialShader(() => {
+   *     let time = uniformFloat(() => millis() / 1000);
+   *     getFinalColor(() => {
+   *       let r = 0.2 + 0.5 * abs(sin(time + 0));
+   *       let g = 0.2 + 0.5 * abs(sin(time + 1));
+   *       let b = 0.2 + 0.5 * abs(sin(time + 2));
+   *       return [r, g, b, 1];
+   *     });
+   *   });
    *
+   *   noStroke();
+   *   describe('A square with dynamically changing colors on a beige background.');
+   * }
    *
-   * @method shader
-   * @chainable
-   * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
-   *                      to apply.
+   * function draw() {
+   *   background(245, 245, 220);
+   *   shader(myShader);
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   *   rectMode(CENTER);
+   *   rect(0, 0, 50, 50);
+   * }
+   * ```
+   *
+   * For advanced usage, shaders can be written in a language called
+   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+   * <a href="#/p5.Shader">p5.Shader</a> objects can be created in this way using the
+   * <a href="#/p5/createShader">createShader()</a> and
+   * <a href="#/p5/loadShader">loadShader()</a> functions.
+   *
+   * ```js
    * let fillShader;
    *
    * let vertSrc = `
@@ -992,20 +935,16 @@ function material(p5, fn){
    *
    * function draw() {
    *   background(20, 20, 40);
-   *   let lightDir = [0.5, 0.5, -1.0];
+   *   let lightDir = [0.5, 0.5, 1.0];
    *   fillShader.setUniform('uLightDir', lightDir);
    *   shader(fillShader);
    *   rotateY(frameCount * 0.02);
    *   rotateX(frameCount * 0.02);
-   *   //lights();
    *   torus(25, 10, 30, 30);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let fillShader;
    *
    * let vertSrc = `
@@ -1048,43 +987,25 @@ function material(p5, fn){
    *   let fillColor = [map(mouseX, 0, width, 0, 1),
    *     map(mouseY, 0, height, 0, 1), 0.5];
    *   fillShader.setUniform('uFillColor', fillColor);
-   *   plane(100, 100);
+   *   plane(width, height);
    * }
-   * </code>
+   * ```
+   *
+   * <div>
+   * <p>
+   *
+   * If you want to apply shaders to strokes or images, use the following methods:
+   * - <a href="#/p5/strokeShader">strokeShader()</a> : Applies a shader to the stroke (outline) of shapes, allowing independent control over the stroke rendering using shaders.
+   * - <a href="#/p5/imageShader">imageShader()</a> : Applies a shader to images or textures, controlling how the shader modifies their appearance during rendering.
+   *
+   * </p>
    * </div>
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
-   * let myShader;
    *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *
-   *   myShader = baseMaterialShader().modify({
-   *     declarations: 'uniform float time;',
-   *     'vec4 getFinalColor': `(vec4 color) {
-   *       float r = 0.2 + 0.5 * abs(sin(time + 0.0));
-   *       float g = 0.2 + 0.5 * abs(sin(time + 1.0));
-   *       float b = 0.2 + 0.5 * abs(sin(time + 2.0));
-   *       color.rgb = vec3(r, g, b);
-   *       return color;
-   *     }`
-   *   });
-   *
-   *   noStroke();
-   *   describe('A 3D cube with dynamically changing colors on a beige background.');
-   * }
-   *
-   * function draw() {
-   *   background(245, 245, 220);
-   *   shader(myShader);
-   *   myShader.setUniform('time', millis() / 1000.0);
-   *
-   *   box(50);
-   * }
-   * </code>
-   * </div>
+   * @method shader
+   * @chainable
+   * @param {p5.Shader} s <a href="#/p5.Shader">p5.Shader</a> object
+   *                      to apply.
    *
    */
   fn.shader = function (s) {
