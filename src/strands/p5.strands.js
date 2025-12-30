@@ -22,6 +22,11 @@ import {
 } from "./strands_api";
 
 function strands(p5, fn) {
+  // Whether or not strands callbacks should be forced to be executed in global mode.
+  // This is turned on while loading shaders from files, when there is not a feasible
+  // way to pass context in.
+  fn._runStrandsInGlobalMode = false;
+
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
@@ -68,6 +73,30 @@ function strands(p5, fn) {
   initStrandsContext(strandsContext);
   initGlobalStrandsAPI(p5, fn, strandsContext);
 
+  function withTempGlobalMode(pInst, callback) {
+    if (pInst._isGlobal) return callback();
+
+    const prev = {};
+    for (const key of Object.getOwnPropertyNames(fn)) {
+      const descriptor = Object.getOwnPropertyDescriptor(
+        fn,
+        key
+      );
+      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+        prev[key] = window[key];
+        window[key] = fn[key].bind(pInst);
+      }
+    }
+
+    try {
+      callback();
+    } finally {
+      for (const key in prev) {
+        window[key] = prev[key];
+      }
+    }
+  }
+
   //////////////////////////////////////////////
   // Entry Point
   //////////////////////////////////////////////
@@ -111,7 +140,11 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
-        strandsCallback();
+        if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
+          withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
+        } else {
+          strandsCallback();
+        }
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
