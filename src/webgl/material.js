@@ -156,9 +156,9 @@ function material(p5, fn){
    * Creates a new <a href="#/p5.Shader">p5.Shader</a> object using GLSL.
    *
    * If you are interested in writing shaders, consider using p5.strands shaders using
-   * <a href="#/p5/createMaterialShader">`createMaterialShader`<a>,
-   * <a href="#/p5/createStrokeShader">`createStrokeShader`</a>, or
-   * <a href="#/p5/createFilterShader">`createFiltershader`</a>.
+   * <a href="#/p5/buildMaterialShader">`buildMaterialShader`<a>,
+   * <a href="#/p5/buildStrokeShader">`buildStrokeShader`</a>, or
+   * <a href="#/p5/buildFilterShader">`buildFilterShader`</a>.
    * With p5.strands, you can modify existing shaders using JavaScript. With
    * `createShader`, shaders are made from scratch, and are written in GLSL. This
    * will be most useful for advanced cases, and for authors of add-on libraries.
@@ -560,7 +560,7 @@ function material(p5, fn){
    * });
    * ```
    *
-   * Read the reference for <a href="#/p5/createFilterShader">`createFilterShader`</a>,
+   * Read the reference for <a href="#/p5/buildFilterShader">`buildFilterShader`</a>,
    * the version of `loadFilterShader` that takes in a function instead of a separate file,
    * for more examples.
    *
@@ -592,12 +592,12 @@ function material(p5, fn){
       const fragSrc = await this.loadStrings(fragFilename);
       const fragString = await fragSrc.join('\n');
 
-      // Create the shader using createFilterShader
+      // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (fragString.test(/void\s+main/)) {
-        loadedShader = this.createFilterShader(new Function(fragString));
-      } else {
         loadedShader = this.createFilterShader(fragString, true);
+      } else {
+        loadedShader = this.baseFilterShader().modify(new Function(fragString));
       }
 
       if (successCallback) {
@@ -618,7 +618,7 @@ function material(p5, fn){
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
    * <a href="#/p5/filter">filter()</a> function.
    *
-   * The main way to use `createFilterShader` is to pass a function in as a parameter.
+   * The main way to use `buildFilterShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
    * In your function, you can call <a href="#/p5/getColor">`getColor`</a> with a function
@@ -629,7 +629,7 @@ function material(p5, fn){
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
    *   let img = await loadImage('assets/bricks.jpg');
-   *   let myFilter = createFilterShader(() => {
+   *   let myFilter = buildFilterShader(() => {
    *     getColor((inputs, canvasContent) => {
    *       let result = getTexture(canvasContent, inputs.texCoord);
    *       // Zero out the green and blue channels, leaving red
@@ -657,7 +657,7 @@ function material(p5, fn){
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
    *   img = await loadImage('assets/bricks.jpg');
-   *   myFilter = createFilterShader(() => {
+   *   myFilter = buildFilterShader(() => {
    *     let warpAmount = uniformFloat();
    *     getColor((inputs, canvasContent) => {
    *       let coord = inputs.texCoord;
@@ -685,7 +685,7 @@ function material(p5, fn){
    * ```js example
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   let myFilter = createFilterShader(() => {
+   *   let myFilter = buildFilterShader(() => {
    *     getColor((inputs) => {
    *       return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
    *     });
@@ -698,7 +698,7 @@ function material(p5, fn){
    * ```js example
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   let myFilter = createFilterShader(() => {
+   *   let myFilter = buildFilterShader(() => {
    *     getColor((inputs) => {
    *       return mix(
    *         [1, 0, 0, 1], // Red
@@ -718,7 +718,7 @@ function material(p5, fn){
    * let myFilter;
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   myFilter = createFilterShader(() => {
+   *   myFilter = buildFilterShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getColor((inputs) => {
    *       return mix(
@@ -740,32 +740,121 @@ function material(p5, fn){
    * advanced users can also fill in `getColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
    * instead of JavaScript.
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
-   * for more info. Alternatively, `createFilterShader()` can also be used like
+   * for more info. Alternatively, `buildFilterShader()` can also be used like
    * <a href="#/p5/createShader">createShader()</a>, but where you only specify a fragment shader.
    *
    * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
    * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
    *
-   * @method createFilterShader
+   * @method buildFilterShader
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The material shader
    */
   /**
-   * @method createFilterShader
+   * @method buildFilterShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader
    */
+  fn.buildFilterShader = function (callback) {
+    return this.baseFilterShader().modify(callback);
+  }
+
   /**
+   * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
+   * <a href="#/p5/filter">filter()</a> function using GLSL.
+   *
+   * Since this method requires you to write your shaders in GLSL, it is most suitable
+   * for advanced use cases. Consider using <a href="#/p5/buildFilterShader">`buildFilterShader`</a>
+   * first, as a way to create filters in JavaScript using p5.strands.
+   *
+   * `createFilterShader()` works like
+   * <a href="#/p5/createShader">createShader()</a> but has a default vertex
+   * shader included. `createFilterShader()` is intended to be used along with
+   * <a href="#/p5/filter">filter()</a> for filtering the contents of a canvas.
+   * A filter shader will be applied to the whole canvas instead of just
+   * <a href="#/p5.Geometry">p5.Geometry</a> objects.
+   *
+   * The parameter, `fragSrc`, sets the fragment shader. It’s a string that
+   * contains the fragment shader program written in
+   * <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>.
+   *
+   * The <a href="#/p5.Shader">p5.Shader</a> object that's created has some
+   * uniforms that can be set:
+   * - `sampler2D tex0`, which contains the canvas contents as a texture.
+   * - `vec2 canvasSize`, which is the width and height of the canvas, not including pixel density.
+   * - `vec2 texelSize`, which is the size of a physical pixel including pixel density. This is calculated as `1.0 / (width * density)` for the pixel width and `1.0 / (height * density)` for the pixel height.
+   *
+   * The <a href="#/p5.Shader">p5.Shader</a> that's created also provides
+   * `varying vec2 vTexCoord`, a coordinate with values between 0 and 1.
+   * `vTexCoord` describes where on the canvas the pixel will be drawn.
+   *
+   * For more info about filters and shaders, see Adam Ferriss' <a href="https://github.com/aferriss/p5jsShaderExamples">repo of shader examples</a>
+   * or the <a href="https://p5js.org/learn/getting-started-in-webgl-shaders.html">Introduction to Shaders</a> tutorial.
+   *
    * @method createFilterShader
-   * @param {String} fragSrc Full GLSL source code for the fragment shader.
-   * @returns {p5.Shader} The material shader
+   * @param {String} fragSrc source code for the fragment shader.
+   * @returns {p5.Shader} new shader object created from the fragment shader.
+   *
+   * @example
+   * <div modernizr='webgl'>
+   * <code>
+   * function setup() {
+   *   let fragSrc = `precision highp float;
+   *   void main() {
+   *     gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+   *   }`;
+   *
+   *   createCanvas(100, 100, WEBGL);
+   *   let s = createFilterShader(fragSrc);
+   *   filter(s);
+   *   describe('a yellow canvas');
+   * }
+   * </code>
+   * </div>
+   *
+   * <div modernizr='webgl'>
+   * <code>
+   * let img, s;
+   * async function setup() {
+   *   img = await loadImage('assets/bricks.jpg');
+   *   let fragSrc = `precision highp float;
+   *
+   *   // x,y coordinates, given from the vertex shader
+   *   varying vec2 vTexCoord;
+   *
+   *   // the canvas contents, given from filter()
+   *   uniform sampler2D tex0;
+   *   // other useful information from the canvas
+   *   uniform vec2 texelSize;
+   *   uniform vec2 canvasSize;
+   *   // a custom variable from this sketch
+   *   uniform float darkness;
+   *
+   *   void main() {
+   *     // get the color at current pixel
+   *     vec4 color = texture2D(tex0, vTexCoord);
+   *     // set the output color
+   *     color.b = 1.0;
+   *     color *= darkness;
+   *     gl_FragColor = vec4(color.rgb, 1.0);
+   *   }`;
+   *
+   *   createCanvas(100, 100, WEBGL);
+   *   s = createFilterShader(fragSrc);
+   * }
+   *
+   * function draw() {
+   *   image(img, -50, -50);
+   *   s.setUniform('darkness', 0.5);
+   *   filter(s);
+   *   describe('a image of bricks tinted dark blue');
+   * }
+   * </code>
+   * </div>
    */
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
-    if (fragSrc instanceof Function) {
-      return this.baseFilterShader().modify(fragSrc);
-    }
-    // p5._validateParameters('createFilterShader', arguments);
+    // p5._validateParameters('buildFilterShader', arguments);
     let defaultVertV1 = `
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
@@ -1338,7 +1427,7 @@ function material(p5, fn){
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
    * to any fills you draw.
    *
-   * The main way to use `createMaterialShader` is to pass a function in as a parameter.
+   * The main way to use `buildMaterialShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
@@ -1360,7 +1449,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader(() => {
+   *   myShader = buildMaterialShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
@@ -1392,7 +1481,7 @@ function material(p5, fn){
    *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader(() => {
+   *   myShader = buildMaterialShader(() => {
    *     getPixelInputs((inputs) => {
    *       let factor = sin(
    *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
@@ -1427,7 +1516,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader(() => {
+   *   myShader = buildMaterialShader(() => {
    *     getPixelInputs((inputs) => {
    *       inputs.normal.x += 0.2 * sin(
    *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
@@ -1468,7 +1557,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createMaterialShader(() => {
+   *   myShader = buildMaterialShader(() => {
    *     let myNormal = sharedVec3();
    *     getPixelInputs((inputs) => {
    *       myNormal = inputs.normal;
@@ -1501,18 +1590,18 @@ function material(p5, fn){
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
    * for more info.
    *
-   * @method createMaterialShader
+   * @method buildMaterialShader
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The material shader.
    */
   /**
-   * @method createMaterialShader
+   * @method buildMaterialShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader.
    */
-  fn.createMaterialShader = function(cb) {
+  fn.buildMaterialShader = function(cb) {
     return this.baseMaterialShader().modify(cb);
   };
 
@@ -1555,7 +1644,7 @@ function material(p5, fn){
    * });
    * ```
    *
-   * Read the reference for <a href="#/p5/createMaterialShader">`createMaterialShader`</a>,
+   * Read the reference for <a href="#/p5/buildMaterialShader">`buildMaterialShader`</a>,
    * the version of `loadMaterialShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
@@ -1575,7 +1664,7 @@ function material(p5, fn){
    */
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
-      let shader = this.createMaterialShader(await urlToStrandsCallback(url));
+      let shader = this.buildMaterialShader(await urlToStrandsCallback(url));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1591,10 +1680,10 @@ function material(p5, fn){
   /**
    * Returns the default shader used for fills when lights or textures are used.
    *
-   * Calling <a href="#/p5/createMaterialShader">`createMaterialShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildMaterialShader">`buildMaterialShader(shaderFunction)`</a>
    * is equivalent to calling `baseMaterialShader().modify(shaderFunction)`.
    *
-   * Read <a href="#/p5/createMaterialShader">the `createMaterialShader` reference</a> or
+   * Read <a href="#/p5/buildMaterialShader">the `buildMaterialShader` reference</a> or
    * call `baseMaterialShader().inspectHooks()` for more information on what you can do with
    * the base material shader.
    *
@@ -1611,10 +1700,10 @@ function material(p5, fn){
   /**
    * Returns the base shader used for filters.
    *
-   * Calling <a href="#/p5/createMaterialShader">`createFilterShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildMaterialShader">`buildFilterShader(shaderFunction)`</a>
    * is equivalent to calling `baseFilterShader().modify(shaderFunction)`.
    *
-   * Read <a href="#/p5/createFilterShader">the `createFilterShader` reference</a> or
+   * Read <a href="#/p5/buildFilterShader">the `buildFilterShader` reference</a> or
    * call `baseFilterShader().inspectHooks()` for more information on what you can do with
    * the base filter shader.
    *
@@ -1634,7 +1723,7 @@ function material(p5, fn){
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it to any fills
    * you draw.
    *
-   * The main way to use `createNormalShader` is to pass a function in as a parameter.
+   * The main way to use `buildNormalShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
     * In your function, you can call *hooks* to change part of the shader. In a material
@@ -1653,7 +1742,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createNormalShader(() => {
+   *   myShader = buildNormalShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
@@ -1679,7 +1768,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createNormalShader(() => {
+   *   myShader = buildNormalShader(() => {
    *     getCameraInputs((inputs) => {
    *       inputs.normal = abs(inputs.normal);
    *       return inputs;
@@ -1713,18 +1802,18 @@ function material(p5, fn){
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
    * for more info.
    *
-   * @method createNormalShader
+   * @method buildNormalShader
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The normal shader.
    */
   /**
-   * @method createNormalShader
+   * @method buildNormalShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The normal shader.
    */
-  fn.createNormalShader = function(cb) {
+  fn.buildNormalShader = function(cb) {
     return this.baseNormalShader().modify(cb);
   };
 
@@ -1768,7 +1857,7 @@ function material(p5, fn){
    * });
    * ```
    *
-   * Read the reference for <a href="#/p5/createNormalShader">`createNormalShader`</a>,
+   * Read the reference for <a href="#/p5/buildNormalShader">`buildNormalShader`</a>,
    * the version of `loadNormalShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
@@ -1788,7 +1877,7 @@ function material(p5, fn){
    */
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
-      let shader = this.createNormalShader(await urlToStrandsCallback(url));
+      let shader = this.buildNormalShader(await urlToStrandsCallback(url));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1805,10 +1894,10 @@ function material(p5, fn){
    * Returns the default shader used for fills when
    * <a href="#/p5/normalMaterial">`normalMaterial()`</a> is activated.
    *
-   * Calling <a href="#/p5/createNormalShader">`createNormalShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildNormalShader">`buildNormalShader(shaderFunction)`</a>
    * is equivalent to calling `baseNormalShader().modify(shaderFunction)`.
    *
-   * Read <a href="#/p5/createNormalShader">the `createNormalShader` reference</a> or
+   * Read <a href="#/p5/buildNormalShader">the `buildNormalShader` reference</a> or
    * call `baseNormalShader().inspectHooks()` for more information on what you can do with
    * the base normal shader.
    *
@@ -1828,7 +1917,7 @@ function material(p5, fn){
    * shader into the <a href="#/p5/shader">`shader()`</a> function to apply it
    * to any fills you draw.
    *
-   * The main way to use `createColorShader` is to pass a function in as a parameter.
+   * The main way to use `buildColorShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
@@ -1847,7 +1936,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createColorShader(() => {
+   *   myShader = buildColorShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getWorldInputs((inputs) => {
    *       inputs.position.y +=
@@ -1872,18 +1961,18 @@ function material(p5, fn){
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
    * for more info.
    *
-   * @method createColorShader
+   * @method buildColorShader
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The color shader.
    */
   /**
-   * @method createColorShader
+   * @method buildColorShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The color shader.
    */
-  fn.createColorShader = function(cb) {
+  fn.buildColorShader = function(cb) {
     return this.baseColorShader().modify(cb);
   };
 
@@ -1927,7 +2016,7 @@ function material(p5, fn){
    * });
    * ```
    *
-   * Read the reference for <a href="#/p5/createColorShader">`createColorShader`</a>,
+   * Read the reference for <a href="#/p5/buildColorShader">`buildColorShader`</a>,
    * the version of `loadColorShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
@@ -1947,7 +2036,7 @@ function material(p5, fn){
    */
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
-      let shader = this.createColorShader(await urlToStrandsCallback(url));
+      let shader = this.buildColorShader(await urlToStrandsCallback(url));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1963,10 +2052,10 @@ function material(p5, fn){
   /**
    * Returns the default shader used for fills when no lights or textures are activate.
    *
-   * Calling <a href="#/p5/createColorShader">`createColorShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildColorShader">`buildColorShader(shaderFunction)`</a>
    * is equivalent to calling `baseColorShader().modify(shaderFunction)`.
    *
-   * Read <a href="#/p5/createColorShader">the `createColorShader` reference</a> or
+   * Read <a href="#/p5/buildColorShader">the `buildColorShader` reference</a> or
    * call `baseColorShader().inspectHooks()` for more information on what you can do with
    * the base color shader.
    *
@@ -1986,7 +2075,7 @@ function material(p5, fn){
    * <a href="#/p5/strokeShader">`strokeShader()`</a> function to apply it to any
    * strokes you draw.
    *
-   * The main way to use `createStrokeShader` is to pass a function in as a parameter.
+   * The main way to use `buildStrokeShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
@@ -2008,7 +2097,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createStrokeShader(() => {
+   *   myShader = buildStrokeShader(() => {
    *     getPixelInputs((inputs) => {
    *       let opacity = 1 - smoothstep(
    *         0,
@@ -2043,7 +2132,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createStrokeShader(() => {
+   *   myShader = buildStrokeShader(() => {
    *     getPixelInputs((inputs) => {
    *       // Replace alpha in the color with dithering by
    *       // randomly setting pixel colors to 0 based on opacity
@@ -2086,7 +2175,7 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = createStrokeShader(() => {
+   *   myShader = buildStrokeShader(() => {
    *     let time = uniformFloat(() => millis());
    *     getWorldInputs((inputs) => {
    *       // Add a somewhat random offset to the weight
@@ -2124,18 +2213,18 @@ function material(p5, fn){
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
    * for more info.
    *
-   * @method createStrokeShader
+   * @method buildStrokeShader
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
    * @returns {p5.Shader} The stroke shader.
    */
   /**
-   * @method createStrokeShader
+   * @method buildStrokeShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.createStrokeShader = function(cb) {
+  fn.buildStrokeShader = function(cb) {
     return this.baseStrokeShader().modify(cb);
   };
 
@@ -2184,7 +2273,7 @@ function material(p5, fn){
    * });
    * ```
    *
-   * Read the reference for <a href="#/p5/createStrokeShader">`createStrokeShader`</a>,
+   * Read the reference for <a href="#/p5/buildStrokeShader">`buildStrokeShader`</a>,
    * the version of `loadStrokeShader` that takes in a function instead of a separate file,
    * for a full list of hooks you can use and examples for each.
    *
@@ -2204,7 +2293,7 @@ function material(p5, fn){
    */
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
-      let shader = this.createStrokeShader(await urlToStrandsCallback(url));
+      let shader = this.buildStrokeShader(await urlToStrandsCallback(url));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2220,10 +2309,10 @@ function material(p5, fn){
   /**
    * Returns the default shader used for strokes.
    *
-   * Calling <a href="#/p5/createStrokeShader">`createStrokeShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildStrokeShader">`buildStrokeShader(shaderFunction)`</a>
    * is equivalent to calling `baseStrokeShader().modify(shaderFunction)`.
    *
-   * Read <a href="#/p5/createStrokeShader">the `createStrokeShader` reference</a> or
+   * Read <a href="#/p5/buildStrokeShader">the `buildStrokeShader` reference</a> or
    * call `baseStrokeShader().inspectHooks()` for more information on what you can do with
    * the base material shader.
    *
