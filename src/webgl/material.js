@@ -430,7 +430,7 @@ function material(p5, fn){
    *   sphere(20);
    *   pop();
    * }
-   * ```js
+   * ```
    *
    * Note: Only filter shaders can be used in 2D mode. All shaders can be used
    * in WebGL mode.
