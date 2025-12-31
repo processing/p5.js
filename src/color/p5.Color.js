@@ -330,25 +330,27 @@ class Color {
     if (!colorString) {
       colorString = serialize(this._color, {
         format: outputFormat
-    });
+      });
       
-    colorString = String(colorString);
+      if (format === '#rrggbb') {
+        colorString = String(colorString);
         
-    if (colorString.length <= 5) { 
-      const match = colorString.match(/^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/);
-      if (match) {
-        colorString = `#${match[1]}${match[1]}${match[2]}${match[2]}${match[3]}${match[3]}`;
+        if (colorString.length <= 5) { 
+          const match = colorString.match(/^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/);
+          if (match) {
+            colorString = `#${match[1]}${match[1]}${match[2]}${match[2]}${match[3]}${match[3]}`;
+          }
+        }
+        if (colorString.length > 7) {
+           colorString = colorString.substring(0, 7);
+        }
+        colorString = colorString.toLowerCase();
       }
+
+      serializationMap[key] = colorString;
     }
-    if (colorString.length > 7) {
-      colorString = colorString.substring(0, 7);
-    }
-    colorString = colorString.toLowerCase();
-    serializationMap[key] = colorString;
-    
     return colorString;
   }
- }
 
   /**
    * Checks the contrast between two colors. This method returns a boolean
