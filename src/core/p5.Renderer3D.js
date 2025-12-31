@@ -1911,14 +1911,14 @@ export class Renderer3D extends Renderer {
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
       const p5 = this._pInst;
-      this.sphereMapping = this.baseFilterShader().modify(() => {
-        const uEnvMap = p5.uniformTexture();
-        const uFovY = p5.uniformFloat();
-        const uAspect = p5.uniformFloat();
+      this.sphereMapping = this.baseFilterShader().modify(({ p5 }) => {
+        const uEnvMap = p5.uniformTexture('uEnvMap');
+        const uFovY = p5.uniformFloat('uFovY');
+        const uAspect = p5.uniformFloat('uAspect');
         // Hack: we don't have matrix uniforms yet; use three vectors
-        const uN1 = p5.uniformVec3();
-        const uN2 = p5.uniformVec3();
-        const uN3 = p5.uniformVec3();
+        const uN1 = p5.uniformVec3('uN1');
+        const uN2 = p5.uniformVec3('uN2');
+        const uN3 = p5.uniformVec3('uN3');
         p5.getColor((inputs) => {
           const uFovX = uFovY * uAspect;
           const angleY = p5.mix(uFovY/2.0,  -uFovY/2.0, inputs.texCoord.y);
