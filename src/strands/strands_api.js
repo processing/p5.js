@@ -418,23 +418,28 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      if (args.length === 1 && hookType.parameters[0].type.properties) {
-        for (const key of args[0].structProperties || []) {
-          Object.defineProperty(hook, key, {
-            get() {
-              return args[0][key];
-            },
-            set(val) {
-              args[0][key] = val;
-            },
-            enumerable: true,
-          });
-        }
-        if (hookType.returnType?.typeName === hookType.parameters[0].type.typeName) {
-          hook._result = args[0];
-        }
-      } else {
-        for (let i = 0; i < args.length; i++) {
+      const numStructArgs = hookType.parameters.filter(param => param.type.properties);
+      let argIdx = -1;
+      if (numStructArgs === 1) {
+        argIdx = hookType.parameters.findIndex(param => param.type.properties);
+      }
+      for (let i = 0; i < args.length; i++) {
+        if (i === argIdx) {
+          for (const key of args[argIdx].structProperties || []) {
+            Object.defineProperty(hook, key, {
+              get() {
+                return args[argIdx][key];
+              },
+              set(val) {
+                args[argIdx][key] = val;
+              },
+              enumerable: true,
+            });
+          }
+          if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
+            hook._result = args[argIdx];
+          }
+        } else {
           hook[hookType.parameters[i].name] = args[i];
         }
       }
