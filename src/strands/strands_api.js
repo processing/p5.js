@@ -501,9 +501,27 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     };
     hook.begin = setupHook;
     hook.end = finishHook;
-    strandsContext.windowOverrides[hookType.name] = window[hookType.name];
-    strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
-    window[hookType.name] = hook;
-    fn[hookType.name] = hook;
+
+    const aliases = [hookType.name];
+    if (strandsContext.baseShader?.hooks?.hookAliases?.[hookType.name]) {
+      aliases.push(...strandsContext.baseShader.hooks.hookAliases[hookType.name]);
+    }
+
+    // If the hook has a name like getPixelInputs, create an alias without
+    // the get* prefix, like pixelInputs
+    const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+    if (nameMatch) {
+      const unprefixedName = nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1);
+      if (!(unprefixedName in fn)) {
+        aliases.push(unprefixedName);
+      }
+    }
+
+    for (const name of aliases) {
+      strandsContext.windowOverrides[name] = window[name];
+      strandsContext.fnOverrides[name] = fn[name];
+      window[name] = hook;
+      fn[name] = hook;
+    }
   }
 }
