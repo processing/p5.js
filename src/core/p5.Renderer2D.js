@@ -672,9 +672,10 @@ class Renderer2D extends Renderer {
       const tempPath = new Path2D();
       tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
+      return this;
     }
     // Determines whether to add a line to the center, which should be done
     // when the mode is PIE or default; as well as when the start and end
@@ -687,16 +688,16 @@ class Renderer2D extends Renderer {
 
     // Fill curves
     if (this.states.fillColor) {
-      if (!this._clipping) ctx.beginPath();
+      ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
       if (createPieSlice) ctx.lineTo(centerX, centerY);
       ctx.closePath();
-      if (!this._clipping) ctx.fill();
+      ctx.fill();
     }
 
     // Stroke curves
     if (this.states.strokeColor) {
-      if (!this._clipping) ctx.beginPath();
+      ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
 
       if (mode === constants.PIE && createPieSlice) {
@@ -709,8 +710,7 @@ class Renderer2D extends Renderer {
         // Stroke connects back to path begin for both PIE and CHORD
         ctx.closePath();
       }
-
-      if (!this._clipping) ctx.stroke();
+      ctx.stroke();
     }
 
     return this;
@@ -742,9 +742,10 @@ class Renderer2D extends Renderer {
       const tempPath = new Path2D();
       tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
+      return this;
     } else {
       ctx.beginPath();
       ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
@@ -772,15 +773,16 @@ class Renderer2D extends Renderer {
       tempPath.moveTo(x1, y1);
       tempPath.lineTo(x2, y2);
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
     }
-    if (!this._clipping) ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    if (!this._clipping) ctx.stroke();
     return this;
   }
 
@@ -798,18 +800,14 @@ class Renderer2D extends Renderer {
       const drawingContextWidth = this.drawingContext.lineWidth;
       tempPath.arc(x, y, drawingContextWidth / 2, 0, constants.TWO_PI);
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    }
-    if (!this._clipping) {
-      // swapping fill color to stroke and back after for correct point rendering
+    } else {
       this._setFill(s);
-    }
-    if (!this._clipping) ctx.beginPath();
-    ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
-    if (!this._clipping) {
+      ctx.beginPath();
+      ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
       ctx.fill();
       this._setFill(f);
     }
@@ -837,9 +835,10 @@ class Renderer2D extends Renderer {
       tempPath.lineTo(x4, y4);
       tempPath.closePath();
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
+      return this;
     } else{
       ctx.beginPath();
       ctx.moveTo(x1, y1);
@@ -847,10 +846,10 @@ class Renderer2D extends Renderer {
       ctx.lineTo(x3, y3);
       ctx.lineTo(x4, y4);
       ctx.closePath();
-      if (!this._clipping && doFill) {
+      if (doFill) {
         ctx.fill();
       }
-      if (!this._clipping && doStroke) {
+      if (doStroke) {
         ctx.stroke();
       }
     }
@@ -886,13 +885,12 @@ class Renderer2D extends Renderer {
         tempPath.roundRect(x, y, w, h, [tl, tr, br, bl]);
       }
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
     }
-    if (!this._clipping) ctx.beginPath();
-
+    ctx.beginPath();
     if (typeof tl === 'undefined') {
       // No rounded corners
       ctx.rect(x, y, w, h);
@@ -943,10 +941,10 @@ class Renderer2D extends Renderer {
 
       ctx.roundRect(x, y, w, h, [tl, tr, br, bl]);
     }
-    if (!this._clipping && this.states.fillColor) {
+    if (doFill) {
       ctx.fill();
     }
-    if (!this._clipping && this.states.strokeColor) {
+    if (doStroke) {
       ctx.stroke();
     }
     return this;
@@ -979,21 +977,22 @@ class Renderer2D extends Renderer {
       tempPath.lineTo(x3, y3);
       tempPath.closePath();
       const currentTransform = this.drawingContext.getTransform();
-      const ClipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = ClipBaseTransform.multiply(currentTransform);
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    }
-    if (!this._clipping) ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(x3, y3);
-    ctx.closePath();
-    if (!this._clipping && doFill) {
-      ctx.fill();
-    }
-    if (!this._clipping && doStroke) {
-      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.lineTo(x3, y3);
+      ctx.closePath();
+      if (doFill) {
+        ctx.fill();
+      }
+      if (doStroke) {
+        ctx.stroke();
+      }
     }
     return this;
   }
