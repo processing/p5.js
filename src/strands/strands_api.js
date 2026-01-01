@@ -418,7 +418,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const numStructArgs = hookType.parameters.filter(param => param.type.properties);
+      const numStructArgs = hookType.parameters.filter(param => param.type.properties).length;
       let argIdx = -1;
       if (numStructArgs === 1) {
         argIdx = hookType.parameters.findIndex(param => param.type.properties);
@@ -437,7 +437,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             });
           }
           if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
-            hook._result = args[argIdx];
+            hook.set(args[argIdx]);
           }
         } else {
           hook[hookType.parameters[i].name] = args[i];
@@ -517,7 +517,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
     if (nameMatch) {
       const unprefixedName = nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1);
-      if (!(unprefixedName in fn)) {
+      if (!fn[unprefixedName]) {
         aliases.push(unprefixedName);
       }
     }
