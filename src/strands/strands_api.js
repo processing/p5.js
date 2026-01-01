@@ -402,9 +402,15 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   for (const hookType of hookTypes) {
     const hook = function(hookUserCallback) {
       const args = setupHook();
-      hook.result = hookUserCallback(...args);
+      hook._result = hookUserCallback(...args);
       finishHook();
     }
+
+    // In the flat strands API, this is how result-returning hooks
+    // are used
+    hook.set = function(result) {
+      hook._result = result;
+    };
 
     let entryBlockID;
     function setupHook() {
@@ -425,7 +431,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           });
         }
         if (hookType.returnType?.typeName === hookType.parameters[0].type.typeName) {
-          hook.result = args[0];
+          hook._result = args[0];
         }
       } else {
         for (let i = 0; i < args.length; i++) {
@@ -436,7 +442,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     };
 
     function finishHook() {
-      const userReturned = hook.result;
+      const userReturned = hook._result;
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
       if(isStructType(expectedReturnType)) {
