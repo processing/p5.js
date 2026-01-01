@@ -2537,6 +2537,9 @@ function rendererWebGPU(p5, fn) {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
               }`,
             },
+            hookAliases: {
+              'getColor': ['filterColor'],
+            },
           }
         );
       }

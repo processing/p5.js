@@ -36,7 +36,7 @@ export function descriptionString(node, parent) {
     if (classes.length > 0) {
       attrs=` class="${classes.join(' ')}"`;
     }
-    return `<pre><code${attrs}>${node.value}</code></pre>`;
+    return `<pre><code${attrs}>${node.value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
