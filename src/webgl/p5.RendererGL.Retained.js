@@ -244,24 +244,31 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   }
 };
 
-p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
+p5.RendererGL.prototype._drawPoints = function(vertices, pointBuffers) {
   const gl = this.GL;
   const pointShader = this._getImmediatePointShader();
   this._setPointUniforms(pointShader);
 
-  this._bindBuffer(
-    vertexBuffer,
-    gl.ARRAY_BUFFER,
-    this._vToNArray(vertices),
-    Float32Array,
-    gl.STATIC_DRAW
-  );
-
-  pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
+  // Prepare position and optional per-vertex color buffers
+  if (Array.isArray(pointBuffers)) {
+    for (const buff of pointBuffers) {
+      buff._prepareBuffer(this.immediateMode.geometry, pointShader);
+    }
+  } else {
+    // Backward compatibility if a raw GL buffer is passed
+    this._bindBuffer(
+      pointBuffers,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(vertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
+    pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
+  }
 
   this._applyColorBlend(this.curStrokeColor);
 
-  gl.drawArrays(gl.Points, 0, vertices.length);
+  gl.drawArrays(gl.POINTS, 0, vertices.length);
 
   pointShader.unbindShader();
 };
