@@ -5,14 +5,14 @@
  * @requires core
  */
 
-import * as constants from '../core/constants';
-import { Renderer3D } from '../core/p5.Renderer3D';
-import { Shader } from './p5.Shader';
-import { request } from '../io/files';
-import { Color } from '../color/p5.Color';
+import * as constants from "../core/constants";
+import { Renderer3D } from "../core/p5.Renderer3D";
+import { Shader } from "./p5.Shader";
+import { request } from "../io/files";
+import { Color } from "../color/p5.Color";
 
 async function urlToStrandsCallback(url) {
-  const src = await fetch(url).then(res => res.text());
+  const src = await fetch(url).then((res) => res.text());
   return new Function(src);
 }
 
@@ -26,7 +26,7 @@ function withGlobalStrands(p5, cb) {
   }
 }
 
-function material(p5, fn){
+function material(p5, fn) {
   /**
    * Loads vertex and fragment shaders to create a
    * <a href="#/p5.Shader">p5.Shader</a> object.
@@ -138,22 +138,22 @@ function material(p5, fn){
     vertFilename,
     fragFilename,
     successCallback,
-    failureCallback
+    failureCallback,
   ) {
     // p5._validateParameters('loadShader', arguments);
 
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
-      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
+      loadedShader._vertSrc = (await request(vertFilename, "text")).data;
+      loadedShader._fragSrc = (await request(fragFilename, "text")).data;
 
       if (successCallback) {
         return successCallback(loadedShader) || loadedShader;
       } else {
         return loadedShader;
       }
-    } catch(err) {
+    } catch (err) {
       if (failureCallback) {
         return failureCallback(err);
       } else {
@@ -517,20 +517,22 @@ function material(p5, fn){
   fn.loadFilterShader = async function (
     fragFilename,
     successCallback,
-    failureCallback
+    failureCallback,
   ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
-      const fragString = await fragSrc.join('\n');
+      const fragString = await fragSrc.join("\n");
 
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
         loadedShader = this.createFilterShader(fragString, true);
       } else {
-        loadedShader = withGlobalStrands(this, () => this.baseFilterShader().modify(new Function(fragString)));
+        loadedShader = withGlobalStrands(this, () =>
+          this.baseFilterShader().modify(new Function(fragString)),
+        );
       }
 
       if (successCallback) {
@@ -562,19 +564,21 @@ function material(p5, fn){
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
    *   let img = await loadImage('assets/bricks.jpg');
-   *   let myFilter = buildFilterShader(() => {
-   *     getColor((inputs, canvasContent) => {
-   *       let result = getTexture(canvasContent, inputs.texCoord);
-   *       // Zero out the green and blue channels, leaving red
-   *       result.g = 0;
-   *       result.b = 0;
-   *       return result;
-   *     });
-   *   });
+   *   let myFilter = buildFilterShader(tintShader);
    *
    *   image(img, -50, -50);
    *   filter(myFilter);
    *   describe('Bricks tinted red');
+   * }
+   *
+   * function tintShader() {
+   *   getColor((inputs, canvasContent) => {
+   *     let result = getTexture(canvasContent, inputs.texCoord);
+   *     // Zero out the green and blue channels, leaving red
+   *     result.g = 0;
+   *     result.b = 0;
+   *     return result;
+   *   });
    * }
    * ```
    *
@@ -590,15 +594,17 @@ function material(p5, fn){
    * async function setup() {
    *   createCanvas(50, 50, WEBGL);
    *   img = await loadImage('assets/bricks.jpg');
-   *   myFilter = buildFilterShader(() => {
-   *     let warpAmount = uniformFloat();
-   *     getColor((inputs, canvasContent) => {
-   *       let coord = inputs.texCoord;
-   *       coord.y += sin(coord.x * 10) * warpAmount;
-   *       return getTexture(canvasContent, coord);
-   *     });
-   *   });
+   *   myFilter = buildFilterShader(warpShader);
    *   describe('Warped bricks');
+   * }
+   *
+   * function warpShader() {
+   *   let warpAmount = uniformFloat();
+   *   getColor((inputs, canvasContent) => {
+   *     let coord = inputs.texCoord;
+   *     coord.y += sin(coord.x * 10) * warpAmount;
+   *     return getTexture(canvasContent, coord);
+   *   });
    * }
    *
    * function draw() {
@@ -618,30 +624,34 @@ function material(p5, fn){
    * ```js example
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   let myFilter = buildFilterShader(() => {
-   *     getColor((inputs) => {
-   *       return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
-   *     });
-   *   });
+   *   let myFilter = buildFilterShader(gradient);
    *   describe('A gradient with red, green, yellow, and black');
    *   filter(myFilter);
+   * }
+   *
+   * function gradient() {
+   *   getColor((inputs) => {
+   *     return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
+   *   });
    * }
    * ```
    *
    * ```js example
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   let myFilter = buildFilterShader(() => {
-   *     getColor((inputs) => {
-   *       return mix(
-   *         [1, 0, 0, 1], // Red
-   *         [0, 0, 1, 1], // Blue
-   *         inputs.texCoord.x // x coordinate, from 0 to 1
-   *       );
-   *     });
-   *   });
+   *   let myFilter = buildFilterShader(gradient);
    *   describe('A gradient from red to blue');
    *   filter(myFilter);
+   * }
+   *
+   * function gradient() {
+   *   getColor((inputs) => {
+   *     return mix(
+   *       [1, 0, 0, 1], // Red
+   *       [0, 0, 1, 1], // Blue
+   *       inputs.texCoord.x // x coordinate, from 0 to 1
+   *     );
+   *   });
    * }
    * ```
    *
@@ -651,17 +661,19 @@ function material(p5, fn){
    * let myFilter;
    * function setup() {
    *   createCanvas(50, 50, WEBGL);
-   *   myFilter = buildFilterShader(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getColor((inputs) => {
-   *       return mix(
-   *         [1, 0, 0, 1], // Red
-   *         [0, 0, 1, 1], // Blue
-   *         sin(inputs.texCoord.x*15 + time*0.004)/2+0.5
-   *       );
-   *     });
-   *   });
+   *   myFilter = buildFilterShader(gradient);
    *   describe('A moving, repeating gradient from red to blue');
+   * }
+   *
+   * function gradient() {
+   *   let time = uniformFloat(() => millis());
+   *   getColor((inputs) => {
+   *     return mix(
+   *       [1, 0, 0, 1], // Red
+   *       [0, 0, 1, 1], // Blue
+   *       sin(inputs.texCoord.x*15 + time*0.004)/2+0.5
+   *     );
+   *   });
    * }
    *
    * function draw() {
@@ -692,7 +704,7 @@ function material(p5, fn){
    */
   fn.buildFilterShader = function (callback) {
     return this.baseFilterShader().modify(callback);
-  }
+  };
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
@@ -829,7 +841,9 @@ function material(p5, fn){
         gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
       }
     `;
-    let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
+    let vertSrc = fragSrc.includes("#version 300 es")
+      ? defaultVertV2
+      : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
     if (!skipContextCheck) {
       if (this._renderer.GL) {
@@ -875,19 +889,19 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *
-   *   myShader = createMaterialShader(() => {
-   *     let time = uniformFloat(() => millis() / 1000);
-   *     getFinalColor(() => {
-   *       let r = 0.2 + 0.5 * abs(sin(time + 0));
-   *       let g = 0.2 + 0.5 * abs(sin(time + 1));
-   *       let b = 0.2 + 0.5 * abs(sin(time + 2));
-   *       return [r, g, b, 1];
-   *     });
-   *   });
-   *
+   *   myShader = buildMaterialShader(material);
    *   noStroke();
    *   describe('A square with dynamically changing colors on a beige background.');
+   * }
+   *
+   * function material() {
+   *   let time = uniformFloat(() => millis() / 1000);
+   *   getFinalColor(() => {
+   *     let r = 0.2 + 0.5 * abs(sin(time + 0));
+   *     let g = 0.2 + 0.5 * abs(sin(time + 1));
+   *     let b = 0.2 + 0.5 * abs(sin(time + 2));
+   *     return [r, g, b, 1];
+   *   });
    * }
    *
    * function draw() {
@@ -1019,7 +1033,7 @@ function material(p5, fn){
    *
    */
   fn.shader = function (s) {
-    this._assert3d('shader');
+    this._assert3d("shader");
     // p5._validateParameters('shader', arguments);
 
     this._renderer.shader(s);
@@ -1192,7 +1206,7 @@ function material(p5, fn){
    * </div>
    */
   fn.strokeShader = function (s) {
-    this._assert3d('strokeShader');
+    this._assert3d("strokeShader");
     // p5._validateParameters('strokeShader', arguments);
 
     this._renderer.strokeShader(s);
@@ -1345,7 +1359,7 @@ function material(p5, fn){
    * </div>
    */
   fn.imageShader = function (s) {
-    this._assert3d('imageShader');
+    this._assert3d("imageShader");
     // p5._validateParameters('imageShader', arguments);
 
     this._renderer.imageShader(s);
@@ -1380,13 +1394,15 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getWorldInputs((inputs) => {
-   *       inputs.position.y +=
-   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *       return inputs;
-   *     });
+   *   myShader = buildMaterialShader(material);
+   * }
+   *
+   * function material() {
+   *   let time = uniformFloat(() => millis());
+   *   getWorldInputs((inputs) => {
+   *     inputs.position.y +=
+   *       20 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *     return inputs;
    *   });
    * }
    *
@@ -1412,16 +1428,18 @@ function material(p5, fn){
    *   environment = await loadImage('assets/outdoor_spheremap.jpg');
    *
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(() => {
-   *     getPixelInputs((inputs) => {
-   *       let factor = sin(
-   *         TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
-   *       );
-   *       inputs.shininess = mix(1, 100, factor);
-   *       inputs.metalness = factor;
-   *       return inputs;
-   *     })
-   *   });
+   *   myShader = buildMaterialShader(material);
+   * }
+   *
+   * function material() {
+   *   getPixelInputs((inputs) => {
+   *     let factor = sin(
+   *       TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
+   *     );
+   *     inputs.shininess = mix(1, 100, factor);
+   *     inputs.metalness = factor;
+   *     return inputs;
+   *   })
    * }
    *
    * function draw() {
@@ -1447,17 +1465,19 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(() => {
-   *     getPixelInputs((inputs) => {
-   *       inputs.normal.x += 0.2 * sin(
-   *         sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
-   *       );
-   *       inputs.normal.y += 0.2 * sin(
-   *         sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
-   *       );
-   *       inputs.normal = normalize(inputs.normal);
-   *       return inputs;
-   *     });
+   *   myShader = buildMaterialShader(material);
+   * }
+   *
+   * function material() {
+   *   getPixelInputs((inputs) => {
+   *     inputs.normal.x += 0.2 * sin(
+   *       sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
+   *     );
+   *     inputs.normal.y += 0.2 * sin(
+   *       sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
+   *     );
+   *     inputs.normal = normalize(inputs.normal);
+   *     return inputs;
    *   });
    * }
    *
@@ -1488,19 +1508,21 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(() => {
-   *     let myNormal = sharedVec3();
-   *     getPixelInputs((inputs) => {
-   *       myNormal = inputs.normal;
-   *       return inputs;
-   *     });
-   *     getFinalColor((color) => {
-   *       return mix(
-   *         [1, 1, 1, 1],
-   *         color,
-   *         abs(dot(myNormal, [0, 0, 1]))
-   *       );
-   *     });
+   *   myShader = buildMaterialShader(material);
+   * }
+   *
+   * function material() {
+   *   let myNormal = sharedVec3();
+   *   getPixelInputs((inputs) => {
+   *     myNormal = inputs.normal;
+   *     return inputs;
+   *   });
+   *   getFinalColor((color) => {
+   *     return mix(
+   *       [1, 1, 1, 1],
+   *       color,
+   *       abs(dot(myNormal, [0, 0, 1]))
+   *     );
    *   });
    * }
    *
@@ -1532,7 +1554,7 @@ function material(p5, fn){
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function(cb) {
+  fn.buildMaterialShader = function (cb) {
     return this.baseMaterialShader().modify(cb);
   };
 
@@ -1624,8 +1646,8 @@ function material(p5, fn){
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
-  fn.baseMaterialShader = function() {
-    this._assert3d('baseMaterialShader');
+  fn.baseMaterialShader = function () {
+    this._assert3d("baseMaterialShader");
     return this._renderer.baseMaterialShader();
   };
 
@@ -1644,9 +1666,8 @@ function material(p5, fn){
    * @beta
    * @returns {p5.Shader} The base filter shader.
    */
-  fn.baseFilterShader = function() {
-    return (this._renderer.filterRenderer || this._renderer)
-      .baseFilterShader();
+  fn.baseFilterShader = function () {
+    return (this._renderer.filterRenderer || this._renderer).baseFilterShader();
   };
 
   /**
@@ -1658,7 +1679,7 @@ function material(p5, fn){
    * The main way to use `buildNormalShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
-    * In your function, you can call *hooks* to change part of the shader. In a material
+   * In your function, you can call *hooks* to change part of the shader. In a material
    * shader, these are the hooks available:
    * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
    * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
@@ -1674,13 +1695,15 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildNormalShader(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getWorldInputs((inputs) => {
-   *       inputs.position.y +=
-   *         20. * sin(time * 0.001 + inputs.position.x * 0.05);
-   *       return inputs;
-   *     });
+   *   myShader = buildNormalShader(material);
+   * }
+   *
+   * function material() {
+   *   let time = uniformFloat(() => millis());
+   *   getWorldInputs((inputs) => {
+   *     inputs.position.y +=
+   *       20. * sin(time * 0.001 + inputs.position.x * 0.05);
+   *     return inputs;
    *   });
    * }
    *
@@ -1700,21 +1723,23 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildNormalShader(() => {
-   *     getCameraInputs((inputs) => {
-   *       inputs.normal = abs(inputs.normal);
-   *       return inputs;
-   *     });
-   *     getFinalColor((color) => {
-   *       // Map the r, g, and b values of the old normal to new colors
-   *       // instead of just red, green, and blue:
-   *       let newColor =
-   *         color.r * [89, 240, 232] / 255 +
-   *         color.g * [240, 237, 89] / 255 +
-   *         color.b * [205, 55, 222] / 255;
-   *       newColor = newColor / (color.r + color.g + color.b);
-   *       return [newColor.r, newColor.g, newColor.b, color.a];
-   *     });
+   *   myShader = buildNormalShader(material);
+   * }
+   *
+   * function material() {
+   *   getCameraInputs((inputs) => {
+   *     inputs.normal = abs(inputs.normal);
+   *     return inputs;
+   *   });
+   *   getFinalColor((color) => {
+   *     // Map the r, g, and b values of the old normal to new colors
+   *     // instead of just red, green, and blue:
+   *     let newColor =
+   *       color.r * [89, 240, 232] / 255 +
+   *       color.g * [240, 237, 89] / 255 +
+   *       color.b * [205, 55, 222] / 255;
+   *     newColor = newColor / (color.r + color.g + color.b);
+   *     return [newColor.r, newColor.g, newColor.b, color.a];
    *   });
    * }
    *
@@ -1745,7 +1770,7 @@ function material(p5, fn){
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function(cb) {
+  fn.buildNormalShader = function (cb) {
     return this.baseNormalShader().modify(cb);
   };
 
@@ -1810,7 +1835,9 @@ function material(p5, fn){
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this.withGlobalStrands(this, () => this.buildNormalShader(cb));
+      let shader = this.withGlobalStrands(this, () =>
+        this.buildNormalShader(cb),
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1839,8 +1866,8 @@ function material(p5, fn){
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
-  fn.baseNormalShader = function() {
-    this._assert3d('baseNormalShader');
+  fn.baseNormalShader = function () {
+    this._assert3d("baseNormalShader");
     return this._renderer.baseNormalShader();
   };
 
@@ -1869,13 +1896,15 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildColorShader(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getWorldInputs((inputs) => {
-   *       inputs.position.y +=
-   *         20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *       return inputs;
-   *     });
+   *   myShader = buildColorShader(material);
+   * }
+   *
+   * function material() {
+   *   let time = uniformFloat(() => millis());
+   *   getWorldInputs((inputs) => {
+   *     inputs.position.y +=
+   *       20 * sin(time * 0.001 + inputs.position.x * 0.05);
+   *     return inputs;
    *   });
    * }
    *
@@ -1905,7 +1934,7 @@ function material(p5, fn){
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function(cb) {
+  fn.buildColorShader = function (cb) {
     return this.baseColorShader().modify(cb);
   };
 
@@ -1969,7 +1998,7 @@ function material(p5, fn){
    */
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
-      const cb = await urlToStrandsCallback(url)
+      const cb = await urlToStrandsCallback(url);
       let shader = withGlobalStrands(this, () => this.buildColorShader(cb));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
@@ -1998,8 +2027,8 @@ function material(p5, fn){
    * @beta
    * @returns {p5.Shader} The base color shader.
    */
-  fn.baseColorShader = function() {
-    this._assert3d('baseColorShader');
+  fn.baseColorShader = function () {
+    this._assert3d("baseColorShader");
     return this._renderer.baseColorShader();
   };
 
@@ -2030,16 +2059,18 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildStrokeShader(() => {
-   *     getPixelInputs((inputs) => {
-   *       let opacity = 1 - smoothstep(
-   *         0,
-   *         15,
-   *         length(inputs.position - inputs.center)
-   *       );
-   *       inputs.color.a *= opacity;
-   *       return inputs;
-   *     });
+   *   myShader = buildStrokeShader(material);
+   * }
+   *
+   * function material() {
+   *   getPixelInputs((inputs) => {
+   *     let opacity = 1 - smoothstep(
+   *       0,
+   *       15,
+   *       length(inputs.position - inputs.center)
+   *     );
+   *     inputs.color.a *= opacity;
+   *     return inputs;
    *   });
    * }
    *
@@ -2065,17 +2096,19 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildStrokeShader(() => {
-   *     getPixelInputs((inputs) => {
-   *       // Replace alpha in the color with dithering by
-   *       // randomly setting pixel colors to 0 based on opacity
-   *       let a = 1;
-   *       if (noise(inputs.position.xy) > inputs.color.a) {
-   *         a = 0;
-   *       }
-   *       inputs.color.a = a;
-   *       return inputs;
-   *     });
+   *   myShader = buildStrokeShader(material);
+   * }
+   *
+   * function material() {
+   *   getPixelInputs((inputs) => {
+   *     // Replace alpha in the color with dithering by
+   *     // randomly setting pixel colors to 0 based on opacity
+   *     let a = 1;
+   *     if (noise(inputs.position.xy) > inputs.color.a) {
+   *       a = 0;
+   *     }
+   *     inputs.color.a = a;
+   *     return inputs;
    *   });
    * }
    *
@@ -2108,19 +2141,21 @@ function material(p5, fn){
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildStrokeShader(() => {
-   *     let time = uniformFloat(() => millis());
-   *     getWorldInputs((inputs) => {
-   *       // Add a somewhat random offset to the weight
-   *       // that varies based on position and time
-   *       let scale = 0.5 + noise(
-   *         inputs.position.x * 0.01,
-   *         inputs.position.y * 0.01,
-   *         time * 0.0005
-   *       );
-   *       inputs.weight *= scale;
-   *       return inputs;
-   *     });
+   *   myShader = buildStrokeShader(material);
+   * }
+   *
+   * function material() {
+   *   let time = uniformFloat(() => millis());
+   *   getWorldInputs((inputs) => {
+   *     // Add a somewhat random offset to the weight
+   *     // that varies based on position and time
+   *     let scale = 0.5 + noise(
+   *       inputs.position.x * 0.01,
+   *       inputs.position.y * 0.01,
+   *       time * 0.0005
+   *     );
+   *     inputs.weight *= scale;
+   *     return inputs;
    *   });
    * }
    *
@@ -2157,7 +2192,7 @@ function material(p5, fn){
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function(cb) {
+  fn.buildStrokeShader = function (cb) {
     return this.baseStrokeShader().modify(cb);
   };
 
@@ -2255,8 +2290,8 @@ function material(p5, fn){
    * @beta
    * @returns {p5.Shader} The base material shader.
    */
-  fn.baseStrokeShader = function() {
-    this._assert3d('baseStrokeShader');
+  fn.baseStrokeShader = function () {
+    this._assert3d("baseStrokeShader");
     return this._renderer.baseStrokeShader();
   };
 
@@ -2516,7 +2551,7 @@ function material(p5, fn){
    * </div>
    */
   fn.texture = function (tex) {
-    this._assert3d('texture');
+    this._assert3d("texture");
     // p5._validateParameters('texture', arguments);
 
     // NOTE: make generic or remove need for
@@ -2697,10 +2732,10 @@ function material(p5, fn){
   fn.textureMode = function (mode) {
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
       console.warn(
-        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
+        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `,
       );
     } else {
-      this._renderer.states.setValue('textureMode', mode);
+      this._renderer.states.setValue("textureMode", mode);
     }
   };
 
@@ -2971,8 +3006,8 @@ function material(p5, fn){
    * </div>
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.states.setValue('textureWrapX', wrapX);
-    this._renderer.states.setValue('textureWrapY', wrapY);
+    this._renderer.states.setValue("textureWrapX", wrapX);
+    this._renderer.states.setValue("textureWrapY", wrapY);
 
     for (const texture of this._renderer.textures.values()) {
       texture.setWrapMode(wrapX, wrapY);
@@ -3018,7 +3053,7 @@ function material(p5, fn){
    * </div>
    */
   fn.normalMaterial = function (...args) {
-    this._assert3d('normalMaterial');
+    this._assert3d("normalMaterial");
     // p5._validateParameters('normalMaterial', args);
 
     this._renderer.normalMaterial(...args);
@@ -3245,16 +3280,16 @@ function material(p5, fn){
    * @chainable
    */
   fn.ambientMaterial = function (v1, v2, v3) {
-    this._assert3d('ambientMaterial');
+    this._assert3d("ambientMaterial");
     // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue('_hasSetAmbient', true);
-    this._renderer.states.setValue('curAmbientColor', color._array);
-    this._renderer.states.setValue('_useNormalMaterial', false);
-    this._renderer.states.setValue('enableLighting', true);
+    this._renderer.states.setValue("_hasSetAmbient", true);
+    this._renderer.states.setValue("curAmbientColor", color._array);
+    this._renderer.states.setValue("_useNormalMaterial", false);
+    this._renderer.states.setValue("enableLighting", true);
     if (!this._renderer.states.fillColor) {
-      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
+      this._renderer.states.setValue("fillColor", new Color([1, 1, 1]));
     }
     return this;
   };
@@ -3343,14 +3378,14 @@ function material(p5, fn){
    * @chainable
    */
   fn.emissiveMaterial = function (v1, v2, v3, a) {
-    this._assert3d('emissiveMaterial');
+    this._assert3d("emissiveMaterial");
     // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue('curEmissiveColor', color._array);
-    this._renderer.states.setValue('_useEmissiveMaterial', true);
-    this._renderer.states.setValue('_useNormalMaterial', false);
-    this._renderer.states.setValue('enableLighting', true);
+    this._renderer.states.setValue("curEmissiveColor", color._array);
+    this._renderer.states.setValue("_useEmissiveMaterial", true);
+    this._renderer.states.setValue("_useNormalMaterial", false);
+    this._renderer.states.setValue("enableLighting", true);
 
     return this;
   };
@@ -3598,14 +3633,14 @@ function material(p5, fn){
    * @chainable
    */
   fn.specularMaterial = function (v1, v2, v3, alpha) {
-    this._assert3d('specularMaterial');
+    this._assert3d("specularMaterial");
     // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue('curSpecularColor', color._array);
-    this._renderer.states.setValue('_useSpecularMaterial', true);
-    this._renderer.states.setValue('_useNormalMaterial', false);
-    this._renderer.states.setValue('enableLighting', true);
+    this._renderer.states.setValue("curSpecularColor", color._array);
+    this._renderer.states.setValue("_useSpecularMaterial", true);
+    this._renderer.states.setValue("_useNormalMaterial", false);
+    this._renderer.states.setValue("enableLighting", true);
 
     return this;
   };
@@ -3671,7 +3706,7 @@ function material(p5, fn){
    * </div>
    */
   fn.shininess = function (shine) {
-    this._assert3d('shininess');
+    this._assert3d("shininess");
     // p5._validateParameters('shininess', arguments);
 
     this._renderer.shininess(shine);
@@ -3787,54 +3822,54 @@ function material(p5, fn){
    * </div>
    */
   fn.metalness = function (metallic) {
-    this._assert3d('metalness');
+    this._assert3d("metalness");
 
     this._renderer.metalness(metallic);
 
     return this;
   };
 
-  Renderer3D.prototype.shader = function(s) {
+  Renderer3D.prototype.shader = function (s) {
     // Always set the shader as a fill shader
-    this.states.setValue('userFillShader', s);
-    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue("userFillShader", s);
+    this.states.setValue("_useNormalMaterial", false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
-  Renderer3D.prototype.strokeShader = function(s) {
-    this.states.setValue('userStrokeShader', s);
+  Renderer3D.prototype.strokeShader = function (s) {
+    this.states.setValue("userStrokeShader", s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
-  Renderer3D.prototype.imageShader = function(s) {
-    this.states.setValue('userImageShader', s);
+  Renderer3D.prototype.imageShader = function (s) {
+    this.states.setValue("userImageShader", s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
-  Renderer3D.prototype.resetShader = function() {
-    this.states.setValue('userFillShader', null);
-    this.states.setValue('userStrokeShader', null);
-    this.states.setValue('userImageShader', null);
+  Renderer3D.prototype.resetShader = function () {
+    this.states.setValue("userFillShader", null);
+    this.states.setValue("userStrokeShader", null);
+    this.states.setValue("userImageShader", null);
   };
 
-  Renderer3D.prototype.texture = function(tex) {
-    this.states.setValue('drawMode', constants.TEXTURE);
-    this.states.setValue('_useNormalMaterial', false);
-    this.states.setValue('_tex', tex);
-    this.states.setValue('fillColor', new Color([1, 1, 1]));
+  Renderer3D.prototype.texture = function (tex) {
+    this.states.setValue("drawMode", constants.TEXTURE);
+    this.states.setValue("_useNormalMaterial", false);
+    this.states.setValue("_tex", tex);
+    this.states.setValue("fillColor", new Color([1, 1, 1]));
   };
 
-  Renderer3D.prototype.normalMaterial = function(...args) {
-    this.states.setValue('drawMode', constants.FILL);
-    this.states.setValue('_useSpecularMaterial', false);
-    this.states.setValue('_useEmissiveMaterial', false);
-    this.states.setValue('_useNormalMaterial', true);
-    this.states.setValue('curFillColor', [1, 1, 1, 1]);
-    this.states.setValue('fillColor', new Color([1, 1, 1]));
-    this.states.setValue('strokeColor', null);
+  Renderer3D.prototype.normalMaterial = function (...args) {
+    this.states.setValue("drawMode", constants.FILL);
+    this.states.setValue("_useSpecularMaterial", false);
+    this.states.setValue("_useEmissiveMaterial", false);
+    this.states.setValue("_useNormalMaterial", true);
+    this.states.setValue("curFillColor", [1, 1, 1, 1]);
+    this.states.setValue("fillColor", new Color([1, 1, 1]));
+    this.states.setValue("strokeColor", null);
   };
 
   // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -3846,21 +3881,21 @@ function material(p5, fn){
   // Renderer3D.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   // }
 
-  Renderer3D.prototype.shininess = function(shine) {
+  Renderer3D.prototype.shininess = function (shine) {
     if (shine < 1) {
       shine = 1;
     }
-    this.states.setValue('_useShininess', shine);
+    this.states.setValue("_useShininess", shine);
   };
 
-  Renderer3D.prototype.metalness = function(metallic) {
+  Renderer3D.prototype.metalness = function (metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
-    this.states.setValue('_useMetalness', metalMix);
+    this.states.setValue("_useMetalness", metalMix);
   };
 }
 
 export default material;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== "undefined") {
   loading(p5, p5.prototype);
 }
