@@ -630,7 +630,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: [
+          new p5.RenderBuffer(3, 'vertices', 'pointVertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(4, 'vertexStrokeColors', 'pointColorBuffer', 'aVertexColor', this)
+        ]
       }
     };
 
@@ -2010,6 +2013,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
             'vec3 getLocalPosition': '(vec3 position) { return position; }',
             'vec3 getWorldPosition': '(vec3 position) { return position; }',
             'float getPointSize': '(float size) { return size; }',
+            'vec4 getVertexColor': '(vec4 color) { return color; }',
             'void afterVertex': '() {}'
           },
           fragment: {
@@ -2361,6 +2365,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       'uPointSize',
       this.pointSize * this._pInst._pixelDensity
     );
+    // Enable per-vertex color for POINTS when available
+    const useVertexColor =
+      (this.immediateMode && this.immediateMode.geometry &&
+       this.immediateMode.geometry.vertexStrokeColors &&
+       this.immediateMode.geometry.vertexStrokeColors.length > 0);
+    pointShader.setUniform('uUseVertexColor', !!useVertexColor);
   }
 
   /* Binds a buffer to the drawing context
