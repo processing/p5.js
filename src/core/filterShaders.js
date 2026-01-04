@@ -1,12 +1,18 @@
 import * as constants from './constants';
 
 /*
- * Creates p5.strands filter shaders for cross-platform compatibility
+ * Creates p5.strands filter shaders for cross-platform compatibility.
+ *
+ * NOTE: These work a little differently than p5.js web editor shaders work!
+ * Firstly, it uses instance mode, so we have to explicitly pass in context
+ * variables in an argument to your callback and as a second argument to `modify`.
+ * Secondly, always manually specify uniform names, as variable names will change
+ * in minified builds.
  */
 export function makeFilterShader(renderer, operation, p5) {
   switch (operation) {
     case constants.GRAY:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const tex = p5.getTexture(canvasContent, inputs.texCoord);
           // weighted grayscale with luminance values
@@ -16,7 +22,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.INVERT:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           const invertedColor = p5.vec3(1.0) - color.rgb;
@@ -25,8 +31,8 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.THRESHOLD:
-      return renderer.baseFilterShader().modify(() => {
-        const filterParameter = p5.uniformFloat();
+      return renderer.baseFilterShader().modify(({ p5 }) => {
+        const filterParameter = p5.uniformFloat('filterParameter');
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           // weighted grayscale with luminance values
@@ -38,8 +44,8 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.POSTERIZE:
-      return renderer.baseFilterShader().modify(() => {
-        const filterParameter = p5.uniformFloat();
+      return renderer.baseFilterShader().modify(({ p5 }) => {
+        const filterParameter = p5.uniformFloat('filterParameter');
         const quantize = (color, n) => {
           // restrict values to N options/bins
           // and floor each channel to nearest value
@@ -60,9 +66,9 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.BLUR:
-      return renderer.baseFilterShader().modify(() => {
-        const radius = p5.uniformFloat();
-        const direction = p5.uniformVec2();
+      return renderer.baseFilterShader().modify(({ p5 }) => {
+        const radius = p5.uniformFloat('radius');
+        const direction = p5.uniformVec2('direction');
 
         // This isn't a real Gaussian weight, it's a quadratic weight
         const quadWeight = (x, e) => {
@@ -120,7 +126,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.ERODE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const luma = (color) => {
           return p5.dot(color.rgb, p5.vec3(0.2126, 0.7152, 0.0722));
         };
@@ -150,7 +156,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.DILATE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         const luma = (color) => {
           return p5.dot(color.rgb, p5.vec3(0.2126, 0.7152, 0.0722));
         };
@@ -180,7 +186,7 @@ export function makeFilterShader(renderer, operation, p5) {
       }, { p5 });
 
     case constants.OPAQUE:
-      return renderer.baseFilterShader().modify(() => {
+      return renderer.baseFilterShader().modify(({ p5 }) => {
         p5.getColor((inputs, canvasContent) => {
           const color = p5.getTexture(canvasContent, inputs.texCoord);
           return p5.vec4(color.rgb, 1.0);

@@ -359,7 +359,7 @@ export class StrandsFor {
     CFG.popBlock(cfg);
 
     const loopVarNode = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
-    this.bodyResults = this.bodyCb(loopVarNode, phiVars);
+    this.bodyResults = this.bodyCb(loopVarNode, phiVars) || {};
     for (const key in this.bodyResults) {
       this.bodyResults[key] = this.strandsContext.p5.strandsNode(this.bodyResults[key]);
     }

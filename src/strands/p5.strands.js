@@ -75,7 +75,7 @@ function strands(p5, fn) {
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
     try {
-      if (shaderModifier instanceof Function) {
+      if (shaderModifier instanceof Function || typeof shaderModifier === 'string') {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
@@ -92,7 +92,9 @@ function strands(p5, fn) {
         if (options.parser) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
-          const sourceString = `(${shaderModifier.toString()})`;
+          const sourceString = typeof shaderModifier === 'string'
+            ? `(${shaderModifier})`
+            : `(${shaderModifier.toString()})`;
           strandsCallback = transpileStrandsToJS(
             p5,
             sourceString,
