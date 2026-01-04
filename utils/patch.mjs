@@ -118,6 +118,11 @@ export function applyPatches() {
   );
   replace(
     'p5.d.ts',
+    'mouseButton: object;',
+    'mouseButton: { left: boolean; center: boolean; right: boolean };'
+  );
+  replace(
+    'p5.d.ts',
     'textBounds(str: string, x: number, y: number, width?: number, height?: number): object;',
     'textBounds(str: string, x: number, y: number, width?: number, height?: number): { x: number; y: number; w: number; h: number };',
   );

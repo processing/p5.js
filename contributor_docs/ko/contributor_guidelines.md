@@ -306,7 +306,6 @@ p5.js 폴더 안에 있는 몇 가지 주요 파일과 폴더는 다음과 같�
 - `src` - 모든 코드가 최종적으로 p5.js와 p5.min.js 파일로 결합되어 위치하는 곳입니다.
 - [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - 단위 테스트와 모든 문서 예제를 테스트하기 위한 코드가 위치하는 곳입니다.
 - `tasks` - 세밀하게 맞춤화된 빌드 코드가 위치한 곳입니다.
-- `Gruntfile.js` - 주요 빌드 구성 파일입니다.
 - `contributor_docs` - 기여자들이 작성한 문서를 비롯한 모든 문서 파일이 있는 곳입니다.
 
 다른 파일과 폴더들은 구성 파일이나 다른 종류의 지원 파일일 뿐입니다; 대부분의 경우, 수정할 필요가 없습니다.
