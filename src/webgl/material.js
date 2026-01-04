@@ -479,18 +479,21 @@ function material(p5, fn) {
    * }
    * ```
    *
-   * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
-   * a filter shader, call `getColor()` with a callback to change each pixel on the canvas.
+   * Inside your shader file, you can use p5.strands hooks to change parts of the shader. For
+   * a filter shader, use `filterColor` to change each pixel on the canvas.
    *
    * ```js
    * // myFilter.js
-   * getColor((inputs, canvasContent) => {
-   *   let result = getTexture(canvasContent, inputs.texCoord);
-   *   // Zero out the green and blue channels, leaving red
-   *   result.g = 0;
-   *   result.b = 0;
-   *   return result;
-   * });
+   * filterColor.begin();
+   * let result = getTexture(
+   *   filterColor.canvasContent,
+   *   filterColor.texCoord
+   * );
+   * // Zero out the green and blue channels, leaving red
+   * result.g = 0;
+   * result.b = 0;
+   * filterColor.set(result);
+   * filterColor.end();
    * ```
    *
    * Read the reference for <a href="#/p5/buildFilterShader">`buildFilterShader`</a>,
@@ -556,7 +559,7 @@ function material(p5, fn) {
    * The main way to use `buildFilterShader` is to pass a function in as a parameter.
    * This will let you create a shader using p5.strands.
    *
-   * In your function, you can call <a href="#/p5/getColor">`getColor`</a> with a function
+   * In your function, you can use <a href="#/p5/filterColor">`filterColor`</a> with a function
    * that will be called for each pixel on the image to determine its final color. You can
    * read the color of the current pixel with `getTexture(canvasContent, coord)`.
    *
@@ -572,13 +575,16 @@ function material(p5, fn) {
    * }
    *
    * function tintShader() {
-   *   getColor((inputs, canvasContent) => {
-   *     let result = getTexture(canvasContent, inputs.texCoord);
-   *     // Zero out the green and blue channels, leaving red
-   *     result.g = 0;
-   *     result.b = 0;
-   *     return result;
-   *   });
+   *   filterColor.begin();
+   *   let result = getTexture(
+   *     filterColor.canvasContent,
+   *     filterColor.texCoord
+   *   );
+   *   // Zero out the green and blue channels, leaving red
+   *   result.g = 0;
+   *   result.b = 0;
+   *   filterColor.set(result);
+   *   filterColor.end();
    * }
    * ```
    *
@@ -600,11 +606,13 @@ function material(p5, fn) {
    *
    * function warpShader() {
    *   let warpAmount = uniformFloat();
-   *   getColor((inputs, canvasContent) => {
-   *     let coord = inputs.texCoord;
-   *     coord.y += sin(coord.x * 10) * warpAmount;
-   *     return getTexture(canvasContent, coord);
-   *   });
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *   coord.y += sin(coord.x * 10) * warpAmount;
+   *   filterColor.set(
+   *     getTexture(filterColor.canvasContent, coord)
+   *   );
+   *   filterColor.end();
    * }
    *
    * function draw() {
@@ -630,9 +638,9 @@ function material(p5, fn) {
    * }
    *
    * function gradient() {
-   *   getColor((inputs) => {
-   *     return [inputs.texCoord.x, inputs.texCoord.y, 0, 1];
-   *   });
+   *   filterColor.begin();
+   *   filterColor.set([filterColor.texCoord.x, filterColor.texCoord.y, 0, 1]);
+   *   filterColor.end();
    * }
    * ```
    *
@@ -645,13 +653,13 @@ function material(p5, fn) {
    * }
    *
    * function gradient() {
-   *   getColor((inputs) => {
-   *     return mix(
-   *       [1, 0, 0, 1], // Red
-   *       [0, 0, 1, 1], // Blue
-   *       inputs.texCoord.x // x coordinate, from 0 to 1
-   *     );
-   *   });
+   *   filterColor.begin();
+   *   filterColor.set(mix(
+   *     [1, 0, 0, 1], // Red
+   *     [0, 0, 1, 1], // Blue
+   *     filterColor.texCoord.x // x coordinate, from 0 to 1
+   *   ));
+   *   filterColor.end();
    * }
    * ```
    *
@@ -666,23 +674,24 @@ function material(p5, fn) {
    * }
    *
    * function gradient() {
-   *   let time = uniformFloat(() => millis());
-   *   getColor((inputs) => {
-   *     return mix(
-   *       [1, 0, 0, 1], // Red
-   *       [0, 0, 1, 1], // Blue
-   *       sin(inputs.texCoord.x*15 + time*0.004)/2+0.5
-   *     );
-   *   });
+   *   let time = uniformFloat();
+   *   filterColor.begin();
+   *   filterColor.set(mix(
+   *     [1, 0, 0, 1], // Red
+   *     [0, 0, 1, 1], // Blue
+   *     sin(filterColor.texCoord.x*15 + time*0.004)/2+0.5
+   *   ));
+   *   filterColor.end();
    * }
    *
    * function draw() {
+   *   myFilter.setUniform('time', millis());
    *   filter(myFilter);
    * }
    * ```
    *
    * Like the `modify()` method on shaders,
-   * advanced users can also fill in `getColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
+   * advanced users can also fill in `filterColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
    * instead of JavaScript.
    * Read the <a href="#/p5.Shader/modify">reference entry for `modify()`</a>
    * for more info. Alternatively, `buildFilterShader()` can also be used like
@@ -895,17 +904,18 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat(() => millis() / 1000);
-   *   getFinalColor(() => {
-   *     let r = 0.2 + 0.5 * abs(sin(time + 0));
-   *     let g = 0.2 + 0.5 * abs(sin(time + 1));
-   *     let b = 0.2 + 0.5 * abs(sin(time + 2));
-   *     return [r, g, b, 1];
-   *   });
+   *   let time = uniformFloat();
+   *   finalColor.begin();
+   *   let r = 0.2 + 0.5 * abs(sin(time + 0));
+   *   let g = 0.2 + 0.5 * abs(sin(time + 1));
+   *   let b = 0.2 + 0.5 * abs(sin(time + 2));
+   *   finalColor.set([r, g, b, 1]);
+   *   finalColor.end();
    * }
    *
    * function draw() {
    *   background(245, 245, 220);
+   *   myShader.setUniform('time', millis() / 1000);
    *   shader(myShader);
    *
    *   rectMode(CENTER);
@@ -1377,12 +1387,12 @@ function material(p5, fn) {
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
    * shader, these are the hooks available:
-   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
-   * - <a href="#/p5/getPixelInputs">`getPixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/objectInputs">`objectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/worldInputs">`worldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/cameraInputs">`cameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/pixelInputs">`pixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
    * - <a href="#/p5/combineColors">`combineColors`</a>: Control how the ambient, diffuse, and specular components of lighting are combined into a single color on the surface of a shape. Your function gets run on every pixel.
-   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/finalColor">`finalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
    * Read the linked reference page for each hook for more information about how to use them.
    *
@@ -1398,17 +1408,17 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat(() => millis());
-   *   getWorldInputs((inputs) => {
-   *     inputs.position.y +=
-   *       20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *     return inputs;
-   *   });
+   *   let time = uniformFloat();
+   *   worldInputs.begin();
+   *   worldInputs.position.y +=
+   *     20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1432,14 +1442,13 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   getPixelInputs((inputs) => {
-   *     let factor = sin(
-   *       TWO_PI * (inputs.texCoord.x + inputs.texCoord.y)
-   *     );
-   *     inputs.shininess = mix(1, 100, factor);
-   *     inputs.metalness = factor;
-   *     return inputs;
-   *   })
+   *   pixelInputs.begin();
+   *   let factor = sin(
+   *     TWO_PI * (pixelInputs.texCoord.x + pixelInputs.texCoord.y)
+   *   );
+   *   pixelInputs.shininess = mix(1, 100, factor);
+   *   pixelInputs.metalness = factor;
+   *   pixelInputs.end();
    * }
    *
    * function draw() {
@@ -1469,16 +1478,15 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   getPixelInputs((inputs) => {
-   *     inputs.normal.x += 0.2 * sin(
-   *       sin(TWO_PI * dot(inputs.texCoord.yx, vec2(10, 25)))
-   *     );
-   *     inputs.normal.y += 0.2 * sin(
-   *       sin(TWO_PI * dot(inputs.texCoord, vec2(10, 25)))
-   *     );
-   *     inputs.normal = normalize(inputs.normal);
-   *     return inputs;
-   *   });
+   *   pixelInputs.begin();
+   *   pixelInputs.normal.x += 0.2 * sin(
+   *     sin(TWO_PI * dot(pixelInputs.texCoord.yx, vec2(10, 25)))
+   *   );
+   *   pixelInputs.normal.y += 0.2 * sin(
+   *     sin(TWO_PI * dot(pixelInputs.texCoord, vec2(10, 25)))
+   *   );
+   *   pixelInputs.normal = normalize(pixelInputs.normal);
+   *   pixelpixelInputs.end();
    * }
    *
    * function draw() {
@@ -1513,17 +1521,18 @@ function material(p5, fn) {
    *
    * function material() {
    *   let myNormal = sharedVec3();
-   *   getPixelInputs((inputs) => {
-   *     myNormal = inputs.normal;
-   *     return inputs;
-   *   });
-   *   getFinalColor((color) => {
-   *     return mix(
-   *       [1, 1, 1, 1],
-   *       color,
-   *       abs(dot(myNormal, [0, 0, 1]))
-   *     );
-   *   });
+   *
+   *   pixelInputs.begin();
+   *   myNormal = pixelInputs.normal;
+   *   pixelInputs.end();
+   *
+   *   finalColor.begin();
+   *   finalColor.set(mix(
+   *     [1, 1, 1, 1],
+   *     finalColor.color,
+   *     abs(dot(myNormal, [0, 0, 1]))
+   *   ));
+   *   finalColor.end();
    * }
    *
    * function draw() {
@@ -1576,6 +1585,7 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1584,17 +1594,16 @@ function material(p5, fn) {
    * ```
    *
    * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
-   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
-   * might call `getPixelInputs()` with a callback to change each pixel on the surface of a shape.
+   * example, you might use the `worldInputs` hook to change each vertex, or you
+   * might use the `pixelInputs` hook to change each pixel on the surface of a shape.
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat(() => millis());
-   * getWorldInputs((inputs) => {
-   *   inputs.position.y +=
-   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *   return inputs;
-   * });
+   * let time = uniformFloat();
+   * worldInputs.begin();
+   * worldInputs.position.y +=
+   *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   * worldInputs.end();
    * ```
    *
    * Read the reference for <a href="#/p5/buildMaterialShader">`buildMaterialShader`</a>,
@@ -1681,10 +1690,10 @@ function material(p5, fn) {
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
    * shader, these are the hooks available:
-   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
-   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/objectInputs">`objectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/worldInputs">`worldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/cameraInputs">`cameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/finalColor">`finalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
    * Read the linked reference page for each hook for more information about how to use them.
    *
@@ -1699,17 +1708,17 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat(() => millis());
-   *   getWorldInputs((inputs) => {
-   *     inputs.position.y +=
-   *       20. * sin(time * 0.001 + inputs.position.x * 0.05);
-   *     return inputs;
-   *   });
+   *   let time = uniformFloat();
+   *   worldInputs.begin();
+   *   worldInputs.position.y +=
+   *     20. * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   noStroke();
    *   sphere(50);
    * }
@@ -1727,20 +1736,20 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   getCameraInputs((inputs) => {
-   *     inputs.normal = abs(inputs.normal);
-   *     return inputs;
-   *   });
-   *   getFinalColor((color) => {
-   *     // Map the r, g, and b values of the old normal to new colors
-   *     // instead of just red, green, and blue:
-   *     let newColor =
-   *       color.r * [89, 240, 232] / 255 +
-   *       color.g * [240, 237, 89] / 255 +
-   *       color.b * [205, 55, 222] / 255;
-   *     newColor = newColor / (color.r + color.g + color.b);
-   *     return [newColor.r, newColor.g, newColor.b, color.a];
-   *   });
+   *   cameraInputs.begin();
+   *   cameraInputs.normal = abs(cameraInputs.normal);
+   *   cameraInputs.end();
+   *
+   *   finalColor.begin();
+   *   // Map the r, g, and b values of the old normal to new colors
+   *   // instead of just red, green, and blue:
+   *   let newColor =
+   *     finalColor.color.r * [89, 240, 232] / 255 +
+   *     finalColor.color.g * [240, 237, 89] / 255 +
+   *     finalColor.color.b * [205, 55, 222] / 255;
+   *   newColor = newColor / (color.r + color.g + color.b);
+   *   finalColor.set([newColor.r, newColor.g, newColor.b, color.a]);
+   *   finalColor.end();
    * }
    *
    * function draw() {
@@ -1793,6 +1802,7 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1801,17 +1811,16 @@ function material(p5, fn) {
    * ```
    *
    * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
-   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
-   * might call `getFinalColor()` with a callback to change the color of each pixel on the surface of a shape.
+   * example, you might use the `worldInputs` hook to change each vertex, or you
+   * might use the `finalColor` hook to change the color of each pixel on the surface of a shape.
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat(() => millis());
-   * getWorldInputs((inputs) => {
-   *   inputs.position.y +=
-   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *   return inputs;
-   * });
+   * let time = uniformFloat();
+   * worldInputs.begin();
+   * worldInputs.position.y +=
+   *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   * worldInputs.end();
    * ```
    *
    * Read the reference for <a href="#/p5/buildNormalShader">`buildNormalShader`</a>,
@@ -1882,10 +1891,10 @@ function material(p5, fn) {
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
    * shader, these are the hooks available:
-   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
-   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/objectInputs">`objectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/worldInputs">`worldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/cameraInputs">`cameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/finalColor">`finalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
    * Read the linked reference page for each hook for more information about how to use them.
    *
@@ -1900,17 +1909,17 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat(() => millis());
-   *   getWorldInputs((inputs) => {
-   *     inputs.position.y +=
-   *       20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *     return inputs;
-   *   });
+   *   let time = uniformFloat();
+   *   worldInputs.begin();
+   *   worldInputs.position.y +=
+   *     20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   noStroke();
    *   fill('red');
    *   circle(0, 0, 50);
@@ -1957,6 +1966,7 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
+   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1965,17 +1975,16 @@ function material(p5, fn) {
    * ```
    *
    * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
-   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
-   * might call `getFinalColor()` with a callback to change the color of each pixel on the surface of a shape.
+   * example, you might use the `worldInputs` hook to change each vertex, or you
+   * might use the `finalColor` hook to change the color of each pixel on the surface of a shape.
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat(() => millis());
-   * getWorldInputs((inputs) => {
-   *   inputs.position.y +=
-   *     20 * sin(time * 0.001 + inputs.position.x * 0.05);
-   *   return inputs;
-   * });
+   * let time = uniformFloat();
+   * worldInputs.begin();
+   * worldInputs.position.y +=
+   *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
+   * worldInputs.end();
    * ```
    *
    * Read the reference for <a href="#/p5/buildColorShader">`buildColorShader`</a>,
@@ -2043,11 +2052,11 @@ function material(p5, fn) {
    *
    * In your function, you can call *hooks* to change part of the shader. In a material
    * shader, these are the hooks available:
-   * - <a href="#/p5/getObjectInputs">`getObjectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getWorldInputs">`getWorldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
-   * - <a href="#/p5/getCameraInputs">`getCameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
-   * - <a href="#/p5/getPixelInputs">`getPixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
-   * - <a href="#/p5/getFinalColor">`getFinalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/objectInputs">`objectInputs`</a>: Update vertices before any positioning has been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/worldInputs">`worldInputs`</a>: Update vertices after transformations have been applied. Your function gets run on every vertex.
+   * - <a href="#/p5/cameraInputs">`cameraInputs`</a>: Update vertices after transformations have been applied, relative to the camera. Your function gets run on every vertex.
+   * - <a href="#/p5/pixelInputs">`pixelInputs`</a>: Update property values on pixels on the surface of a shape. Your function gets run on every pixel.
+   * - <a href="#/p5/finalColor">`finalColor`</a>: Update or replace the pixel color on the surface of a shape. Your function gets run on every pixel.
    *
    * Read the linked reference page for each hook for more information about how to use them.
    *
@@ -2063,15 +2072,14 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   getPixelInputs((inputs) => {
-   *     let opacity = 1 - smoothstep(
-   *       0,
-   *       15,
-   *       length(inputs.position - inputs.center)
-   *     );
-   *     inputs.color.a *= opacity;
-   *     return inputs;
-   *   });
+   *   pixelInputs.begin();
+   *   let opacity = 1 - smoothstep(
+   *     0,
+   *     15,
+   *     length(pixelInputs.position - pixelInputs.center)
+   *   );
+   *   pixelInputs.color.a *= opacity;
+   *   pixelInputs.end();
    * }
    *
    * function draw() {
@@ -2100,16 +2108,15 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   getPixelInputs((inputs) => {
-   *     // Replace alpha in the color with dithering by
-   *     // randomly setting pixel colors to 0 based on opacity
-   *     let a = 1;
-   *     if (noise(inputs.position.xy) > inputs.color.a) {
-   *       a = 0;
-   *     }
-   *     inputs.color.a = a;
-   *     return inputs;
-   *   });
+   *   pixelInputs.begin();
+   *   // Replace alpha in the color with dithering by
+   *   // randomly setting pixel colors to 0 based on opacity
+   *   let a = 1;
+   *   if (noise(pixelInputs.position.xy) > pixelInputs.color.a) {
+   *     a = 0;
+   *   }
+   *   pixelInputs.color.a = a;
+   *   pixelInputs.end();
    * }
    *
    * function draw() {
@@ -2145,18 +2152,17 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat(() => millis());
-   *   getWorldInputs((inputs) => {
-   *     // Add a somewhat random offset to the weight
-   *     // that varies based on position and time
-   *     let scale = 0.5 + noise(
-   *       inputs.position.x * 0.01,
-   *       inputs.position.y * 0.01,
-   *       time * 0.0005
-   *     );
-   *     inputs.weight *= scale;
-   *     return inputs;
-   *   });
+   *   let time = uniformFloat();
+   *   worldInputs.begin();
+   *   // Add a somewhat random offset to the weight
+   *   // that varies based on position and time
+   *   let scale = 0.5 + noise(
+   *     worldInputs.position.x * 0.01,
+   *     worldInputs.position.y * 0.01,
+   *     time * 0.0005
+   *   );
+   *   worldInputs.weight *= scale;
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -2225,20 +2231,19 @@ function material(p5, fn) {
    * ```
    *
    * Inside your shader file, you can call p5.strands hooks to change parts of the shader. For
-   * example, you might call `getWorldInputs()` with a callback to change each vertex, or you
-   * might call `getPixelInputs()` with a callback to change each pixel on the surface of a stroke.
+   * example, you might use the `worldInputs` hook to change each vertex, or you
+   * might use the `pixelInputs` hook to change each pixel on the surface of a stroke.
    *
    * ```js
    * // myMaterial.js
-   * getPixelInputs((inputs) => {
-   *   let opacity = 1 - smoothstep(
-   *     0,
-   *     15,
-   *     length(inputs.position - inputs.center)
-   *   );
-   *   inputs.color.a *= opacity;
-   *   return inputs;
-   * });
+   * pixelInputs.begin();
+   * let opacity = 1 - smoothstep(
+   *   0,
+   *   15,
+   *   length(pixelInputs.position - pixelInputs.center)
+   * );
+   * pixelInputs.color.a *= opacity;
+   * pixelInputs.end();
    * ```
    *
    * Read the reference for <a href="#/p5/buildStrokeShader">`buildStrokeShader`</a>,
