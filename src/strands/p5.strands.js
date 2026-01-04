@@ -655,7 +655,7 @@ if (typeof p5 !== "undefined") {
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader(material);
+ *   myShader = buildMaterialShader(material);
  * }
  *
  * function material() {

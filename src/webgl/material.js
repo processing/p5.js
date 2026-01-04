@@ -1486,7 +1486,7 @@ function material(p5, fn) {
    *     sin(TWO_PI * dot(pixelInputs.texCoord, vec2(10, 25)))
    *   );
    *   pixelInputs.normal = normalize(pixelInputs.normal);
-   *   pixelpixelInputs.end();
+   *   pixelInputs.end();
    * }
    *
    * function draw() {
@@ -1747,8 +1747,8 @@ function material(p5, fn) {
    *     finalColor.color.r * [89, 240, 232] / 255 +
    *     finalColor.color.g * [240, 237, 89] / 255 +
    *     finalColor.color.b * [205, 55, 222] / 255;
-   *   newColor = newColor / (color.r + color.g + color.b);
-   *   finalColor.set([newColor.r, newColor.g, newColor.b, color.a]);
+   *   newColor = newColor / (newColor.r + newColor.g + newColor.b);
+   *   finalColor.set([newColor.r, newColor.g, newColor.b, finalColor.color.a]);
    *   finalColor.end();
    * }
    *
