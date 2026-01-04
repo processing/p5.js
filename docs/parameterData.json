@@ -2033,13 +2033,6 @@
         ]
       ]
     },
-    "combineColors": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
     "getPixelInputs": {
       "overloads": [
         [

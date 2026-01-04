@@ -679,3 +679,33 @@ if (typeof p5 !== "undefined") {
  * </code>
  * </div>
  */
+
+/**
+ * @method getWorldInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getPixelInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getFinalColor
+ * @param {Function} callback
+ */
+
+/**
+ * @method getColor
+ * @param {Function} callback
+ */
+
+/**
+ * @method getObjectInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getCameraInputs
+ * @param {Function} callback
+ */
