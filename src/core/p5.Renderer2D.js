@@ -746,16 +746,15 @@ class Renderer2D extends Renderer {
       const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    } else {
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-      ctx.closePath();
-      if (doFill) {
-        ctx.fill();
-      }
-      if (doStroke) {
-        ctx.stroke();
-      }
+    }
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+    ctx.closePath();
+    if (doFill) {
+      ctx.fill();
+    }
+    if (doStroke) {
+      ctx.stroke();
     }
 
     return this;
@@ -777,12 +776,12 @@ class Renderer2D extends Renderer {
       const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    } else {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
     }
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
     return this;
   }
 
@@ -804,13 +803,13 @@ class Renderer2D extends Renderer {
       const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    } else {
-      this._setFill(s);
-      ctx.beginPath();
-      ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
-      ctx.fill();
-      this._setFill(f);
     }
+    this._setFill(s);
+    ctx.beginPath();
+    ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
+    ctx.fill();
+    this._setFill(f);
+
     return this;
   }
 
@@ -839,19 +838,18 @@ class Renderer2D extends Renderer {
       const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    } else{
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.lineTo(x3, y3);
-      ctx.lineTo(x4, y4);
-      ctx.closePath();
-      if (doFill) {
-        ctx.fill();
-      }
-      if (doStroke) {
-        ctx.stroke();
-      }
+    }
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.lineTo(x4, y4);
+    ctx.closePath();
+    if (doFill) {
+      ctx.fill();
+    }
+    if (doStroke) {
+      ctx.stroke();
     }
     return this;
   }
@@ -981,19 +979,19 @@ class Renderer2D extends Renderer {
       const relativeTransform = clipBaseTransform.multiply(currentTransform);
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
-    } else {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.lineTo(x3, y3);
-      ctx.closePath();
-      if (doFill) {
-        ctx.fill();
-      }
-      if (doStroke) {
-        ctx.stroke();
-      }
     }
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+    if (doFill) {
+      ctx.fill();
+    }
+    if (doStroke) {
+      ctx.stroke();
+    }
+
     return this;
   }
 
