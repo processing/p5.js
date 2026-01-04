@@ -724,7 +724,10 @@ function fesCore(p5, fn){
         stacktrace &&
         stacktrace[0].fileName &&
         stacktrace[0].lineNumber &&
-        stacktrace[0].columnNumber
+        stacktrace[0].columnNumber &&
+        friendlyStack &&
+        friendlyStack[0] &&
+        friendlyStack[0].lineNumber
       ) {
         locationObj = {
           location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
