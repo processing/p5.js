@@ -1747,7 +1747,7 @@ function material(p5, fn) {
    *     finalColor.color.r * [89, 240, 232] / 255 +
    *     finalColor.color.g * [240, 237, 89] / 255 +
    *     finalColor.color.b * [205, 55, 222] / 255;
-   *   newColor = newColor / (newColor.r + newColor.g + newColor.b);
+   *   newColor = newColor / (finalColor.color.r + finalColor.color.g + finalColor.color.b);
    *   finalColor.set([newColor.r, newColor.g, newColor.b, finalColor.color.a]);
    *   finalColor.end();
    * }
