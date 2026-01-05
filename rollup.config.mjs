@@ -36,6 +36,53 @@ const bundleSize = (name, sourcemap) => {
   });
 };
 
+const modules = ['webgpu']; // TODO: also generate math build
+const generateModuleBuild = () => {
+  return modules.map(module => {
+    return {
+      input: `src/${module}/index.js`,
+      output: [
+        {
+          file: `./lib/p5.${module}.js`,
+          format: 'iife',
+          plugins: [
+            bundleSize(`p5.${module}.js`)
+          ]
+        },
+        {
+          file: `./lib/p5.${module}.min.js`,
+          format: 'iife',
+          sourcemap: 'hidden',
+          plugins: [
+            terser({
+              compress: {
+                global_defs: {
+                  IS_MINIFIED: true
+                }
+              },
+              format: {
+                comments: false
+              }
+            }),
+            bundleSize(`p5.${module}.min.js`)
+          ]
+        },
+        {
+          file: `./lib/p5.${module}.esm.js`,
+          format: 'esm',
+          plugins: [
+            bundleSize(`p5.${module}.esm.js`)
+          ]
+        }
+      ],
+      external: ['../core/main'],
+      plugins: [
+        ...plugins
+      ]
+    };
+  });
+};
+
 rmSync('./dist', {
   force: true,
   recursive: true
@@ -148,5 +195,6 @@ export default [
     },
     external: /node_modules/,
     plugins
-  }
+  },
+  ...generateModuleBuild()
 ];

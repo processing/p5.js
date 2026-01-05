@@ -7,7 +7,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { Matrix } from '../math/p5.Matrix';
@@ -1637,7 +1637,7 @@ function primitives3D(p5, fn){
   ///////////////////////
   //
   // Note: Documentation is not generated on the p5.js website for functions on
-  // the p5.RendererGL prototype.
+  // the p5.Renderer3D prototype.
 
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel,
@@ -1671,16 +1671,15 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  RendererGL.prototype.point = function(x, y, z = 0) {
-
-    const _vertex = [];
-    _vertex.push(new Vector(x, y, z));
-    this._drawPoints(_vertex, this.buffers.point);
+  Renderer3D.prototype.point = function(x, y, z = 0) {
+    this.beginShape(constants.POINTS);
+    this.vertex(x, y, z);
+    this.endShape();
 
     return this;
   };
 
-  RendererGL.prototype.triangle = function(args) {
+  Renderer3D.prototype.triangle = function(args) {
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -1726,7 +1725,7 @@ function primitives3D(p5, fn){
 
       this.states.setValue('uModelMatrix', mult);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1734,7 +1733,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.ellipse = function(args) {
+  Renderer3D.prototype.ellipse = function(args) {
     this.arc(
       args[0],
       args[1],
@@ -1747,7 +1746,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.arc = function(...args) {
+  Renderer3D.prototype.arc = function(...args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -1858,7 +1857,7 @@ function primitives3D(p5, fn){
       this.states.uModelMatrix.translate([x, y, 0]);
       this.states.uModelMatrix.scale(width, height, 1);
 
-      this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+      this.model(this.geometryBufferCache.getGeometryByID(gid));
     } finally {
       this.states.setValue('uModelMatrix', uModelMatrix);
     }
@@ -1866,7 +1865,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.rect = function(args) {
+  Renderer3D.prototype.rect = function(args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -1875,7 +1874,7 @@ function primitives3D(p5, fn){
     if (typeof args[4] === 'undefined') {
       // Use the retained mode for drawing rectangle,
       // if args for rounding rectangle is not provided by user.
-      const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
+      const perPixelLighting = this._pInst._glAttributes?.perPixelLighting ?? true;
       const detailX = args[4] || (perPixelLighting ? 1 : 24);
       const detailY = args[5] || (perPixelLighting ? 1 : 16);
       const gid = `rect|${detailX}|${detailY}`;
@@ -1919,7 +1918,7 @@ function primitives3D(p5, fn){
         this.states.uModelMatrix.translate([x, y, 0]);
         this.states.uModelMatrix.scale(width, height, 1);
 
-        this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+        this.model(this.geometryBufferCache.getGeometryByID(gid));
       } finally {
         this.states.setValue('uModelMatrix', uModelMatrix);
       }
@@ -1967,7 +1966,7 @@ function primitives3D(p5, fn){
       const prevOrder = this.bezierOrder();
       this.bezierOrder(2);
       this.beginShape();
-      const addUVs = (x, y) => [x, y, (x - x1)/width, (y - y1)/height];
+      const addUVs = (x, y) => [x, y, 0, (x - x1)/width, (y - y1)/height];
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
         this.bezierVertex(...addUVs(x2, y1));
@@ -2004,8 +2003,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-
-  RendererGL.prototype.quad = function(
+  Renderer3D.prototype.quad = function(
     x1, y1, z1,
     x2, y2, z2,
     x3, y3, z3,
@@ -2013,7 +2011,6 @@ function primitives3D(p5, fn){
     detailX=2,
     detailY=2
   ) {
-
 
     const gid =
       `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
@@ -2069,14 +2066,14 @@ function primitives3D(p5, fn){
       quadGeom.gid = gid;
       this.geometryBufferCache.ensureCached(quadGeom);
     }
-    this._drawGeometry(this.geometryBufferCache.getGeometryByID(gid));
+    this.model(this.geometryBufferCache.getGeometryByID(gid));
     return this;
   };
 
   //this implementation of bezier curve
   //is based on Bernstein polynomial
   // pretier-ignore
-  RendererGL.prototype.bezier = function(
+  Renderer3D.prototype.bezier = function(
     x1,
     y1,
     z1, // x2
@@ -2111,7 +2108,7 @@ function primitives3D(p5, fn){
   };
 
   // pretier-ignore
-  RendererGL.prototype.curve = function(
+  Renderer3D.prototype.curve = function(
     x1,
     y1,
     z1, // x2
@@ -2171,7 +2168,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  RendererGL.prototype.line = function(...args) {
+  Renderer3D.prototype.line = function(...args) {
     if (args.length === 6) {
       // TODO shapes refactor
       this.beginShape(constants.LINES);
@@ -2187,7 +2184,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  RendererGL.prototype.image = function(
+  Renderer3D.prototype.image = function(
     img,
     sx,
     sy,
@@ -2367,7 +2364,7 @@ function primitives3D(p5, fn){
     }
   };
 
-  RendererGL.prototype.plane = function(
+  Renderer3D.prototype.plane = function(
     width = 50,
     height = width,
     detailX = 1,
@@ -2409,7 +2406,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.box = function(
+  Renderer3D.prototype.box = function(
     width = 50,
     height = width,
     depth = height,
@@ -2495,7 +2492,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.sphere = function(
+  Renderer3D.prototype.sphere = function(
     radius = 50,
     detailX = 24,
     detailY = 16
@@ -2503,7 +2500,7 @@ function primitives3D(p5, fn){
     this.ellipsoid(radius, radius, radius, detailX, detailY);
   };
 
-  RendererGL.prototype.ellipsoid = function(
+  Renderer3D.prototype.ellipsoid = function(
     radiusX = 50,
     radiusY = radiusX,
     radiusZ = radiusX,
@@ -2556,7 +2553,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.cylinder = function(
+  Renderer3D.prototype.cylinder = function(
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2599,7 +2596,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.cone = function(
+  Renderer3D.prototype.cone = function(
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2640,7 +2637,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  RendererGL.prototype.torus = function(
+  Renderer3D.prototype.torus = function(
     radius = 50,
     tubeRadius = 10,
     detailX = 24,
@@ -2767,7 +2764,7 @@ function primitives3D(p5, fn){
    * </div>
    */
   fn.curveDetail = function(d) {
-    if (!(this._renderer instanceof RendererGL)) {
+    if (!(this._renderer instanceof Renderer3D)) {
       throw new Error(
         'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
       );

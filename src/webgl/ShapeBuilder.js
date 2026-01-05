@@ -280,8 +280,6 @@ export class ShapeBuilder {
    * @private
    */
   _tesselateShape() {
-    // TODO: handle non-PATH shape modes that have contours
-    this.shapeMode = constants.TRIANGLES;
     // const contours = [[]];
     const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
@@ -316,6 +314,15 @@ export class ShapeBuilder {
     }
 
     const polyTriangles = this._triangulate(contours);
+
+    // If there were no valid faces, we still want to use the original vertices
+    // for strokes, so we'll stop here.
+    if (polyTriangles.length === 0) {
+      return;
+    }
+
+    // TODO: handle non-PATH shape modes that have contours
+    this.shapeMode = constants.TRIANGLES;
     const originalVertices = this.geometry.vertices;
     this.geometry.vertices = [];
     this.geometry.vertexNormals = [];

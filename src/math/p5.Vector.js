@@ -265,14 +265,14 @@ class Vector {
    * function setup() {
    *   let v = createVector(20, 30);
    *
-   *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+   *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
    * </code>
    * </div>
    */
   toString() {
-    return `[${this._values.join(', ')}]`;
+    return `vector[${this._values.join(', ')}]`;
   }
 
   /**
@@ -3536,7 +3536,7 @@ class Vector {
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
-   * @return {Number}     cross product.
+   * @return {p5.Vector}     cross product.
    */
   static cross(v1, v2) {
     return v1.cross(v2);

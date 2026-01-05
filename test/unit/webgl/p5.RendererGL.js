@@ -107,10 +107,9 @@ suite('p5.RendererGL', function() {
       // Make a red texture
       const tex = myp5.createFramebuffer();
       tex.draw(() => myp5.background('red'));
-      console.log(tex.get().canvas.toDataURL());
 
       myp5.shader(myShader);
-      myp5.fill('red');
+      myp5.fill('blue')
       myp5.noStroke();
       myShader.setUniform('myTex', tex);
 
@@ -2948,6 +2947,33 @@ suite('p5.RendererGL', function() {
       });
       myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.checkPMatrix();
+    });
+  });
+
+  suite('buildGeometry', function() {
+    test('captures geometry without drawing', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.background(255, 0, 0);
+      const geom = myp5.buildGeometry(() => myp5.circle(0, 0, 5));
+      expect(geom.vertices.length).toBeGreaterThan(0);
+      expect(myp5.get(5, 5)).toEqual([255, 0, 0, 255]);
+    });
+
+    test('returns fill state back to a previous color', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.background(255, 0, 0);
+      myp5.fill(0, 255, 0);
+      const geom = myp5.buildGeometry(() => myp5.circle(0, 0, 10));
+      myp5.model(geom);
+      expect(myp5.get(5, 5)).toEqual([0, 255, 0, 255]);
+    });
+    test('returns fill state back to no fill', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.background(255, 0, 0);
+      myp5.noFill();
+      const geom = myp5.buildGeometry(() => myp5.circle(0, 0, 10));
+      myp5.model(geom);
+      expect(myp5.get(5, 5)).toEqual([255, 0, 0, 255]);
     });
   });
 });
