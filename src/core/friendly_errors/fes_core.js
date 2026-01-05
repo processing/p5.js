@@ -1039,7 +1039,17 @@ function fesCore(p5, fn){
         })
         .map(name => {
           let type;
-
+          
+          // Use getOwnPropertyDescriptor to avoid triggering getters
+          // that depend on instance state (like 'pixels' which accesses this._renderer)
+          const descriptor = Object.getOwnPropertyDescriptor(obj, name);
+          
+          if (descriptor && descriptor.get) {
+            // It's a getter, skip it to avoid accessing instance properties
+            // when obj is the prototype
+            return null;
+          }
+          
           if (typeof obj[name] === 'function') {
             type = 'function';
           } else if (name === name.toUpperCase()) {
@@ -1049,7 +1059,8 @@ function fesCore(p5, fn){
           }
 
           return { name, type };
-        });
+        })
+        .filter(symbol => symbol !== null);
 
     misusedAtTopLevelCode = [].concat(
       getSymbols(fn),
