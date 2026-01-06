@@ -385,6 +385,8 @@ function structure(p5, fn){
         }
         await this._runLifecycleHook('postdraw');
       }
+      // Finish drawing
+      await this._renderer.finishDraw?.();
     }
   };
 

@@ -10,7 +10,7 @@ function textOutput(p5, fn){
 
   //updates textOutput
   fn._updateTextOutput = function(idT) {
-    if (this._renderer && this._renderer instanceof p5.RendererGL) {
+    if (this._renderer && this._renderer.isP3D) {
       if (!this._didOutputTextWebGLMessage) {
         this._didOutputTextWebGLMessage = true;
         console.error('textOutput() does not yet work in WebGL mode.');

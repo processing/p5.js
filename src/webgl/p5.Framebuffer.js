@@ -5,11 +5,9 @@
 
 import * as constants from '../core/constants';
 import { RGB, RGBA } from '../color/creating_reading';
-import { checkWebGLCapabilities } from './p5.Texture';
-import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
+import { checkWebGLCapabilities } from './utils';
 import { Camera } from './p5.Camera';
 import { Texture } from './p5.Texture';
-import { Image } from '../image/p5.Image';
 
 const constrain = (n, low, high) => Math.max(Math.min(n, high), low);
 
@@ -18,11 +16,7 @@ class FramebufferCamera extends Camera {
     super(framebuffer.renderer);
     this.fbo = framebuffer;
 
-    // WebGL textures are upside-down compared to textures that come from
-    // images and graphics. Framebuffer cameras need to invert their y
-    // axes when being rendered to so that the texture comes out rightway up
-    // when read in shaders or image().
-    this.yScale = -1;
+    this.yScale = framebuffer.renderer.framebufferYScale();
   }
 
   _computeCameraDefaultSettings() {
@@ -58,7 +52,7 @@ class FramebufferTexture {
   }
 
   rawTexture() {
-    return this.framebuffer[this.property];
+    return { texture: this.framebuffer[this.property] };
   }
 }
 
@@ -75,7 +69,7 @@ class Framebuffer {
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
-      this.renderer._pInst._glAttributes.alpha
+      this.renderer.defaultFramebufferAlpha()
         ? RGBA
         : RGB
     );
@@ -83,7 +77,7 @@ class Framebuffer {
     this.depthFormat = settings.depthFormat || constants.FLOAT;
     this.textureFiltering = settings.textureFiltering || constants.LINEAR;
     if (settings.antialias === undefined) {
-      this.antialiasSamples = this.renderer._pInst._glAttributes.antialias
+      this.antialiasSamples = this.renderer.defaultFramebufferAntialias()
         ? 2
         : 0;
     } else if (typeof settings.antialias === 'number') {
@@ -92,13 +86,11 @@ class Framebuffer {
       this.antialiasSamples = settings.antialias ? 2 : 0;
     }
     this.antialias = this.antialiasSamples > 0;
-    if (this.antialias && this.renderer.webglVersion !== constants.WEBGL2) {
-      console.warn('Antialiasing is unsupported in a WebGL 1 context');
+    if (this.antialias && !this.renderer.supportsFramebufferAntialias()) {
+      console.warn('Framebuffer antialiasing is unsupported in this context');
       this.antialias = false;
     }
     this.density = settings.density || this.renderer._pixelDensity;
-    const gl = this.renderer.GL;
-    this.gl = gl;
     if (settings.width && settings.height) {
       const dimensions =
         this.renderer._adjustDimensions(settings.width, settings.height);
@@ -117,7 +109,8 @@ class Framebuffer {
       this.height = this.renderer.height;
       this._autoSized = true;
     }
-    this._checkIfFormatsAvailable();
+    // Let renderer validate and adjust formats for this context
+    this.renderer.validateFramebufferFormats(this);
 
     if (settings.stencil && !this.useDepth) {
       console.warn('A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.');
@@ -125,23 +118,13 @@ class Framebuffer {
     this.useStencil = this.useDepth &&
       (settings.stencil === undefined ? true : settings.stencil);
 
-    this.framebuffer = gl.createFramebuffer();
-    if (!this.framebuffer) {
-      throw new Error('Unable to create a framebuffer');
-    }
-    if (this.antialias) {
-      this.aaFramebuffer = gl.createFramebuffer();
-      if (!this.aaFramebuffer) {
-        throw new Error('Unable to create a framebuffer for antialiasing');
-      }
-    }
+    // Let renderer create framebuffer resources with antialiasing support
+    this.renderer.createFramebufferResources(this);
 
     this._recreateTextures();
 
-    const prevCam = this.renderer.states.curCamera;
     this.defaultCamera = this.createCamera();
     this.filterCamera = this.createCamera();
-    this.renderer.states.setValue('curCamera', prevCam);
 
     this.draw(() => this.renderer.clear());
   }
@@ -471,6 +454,10 @@ class Framebuffer {
     }
   }
 
+  _deleteTextures() {
+    this.renderer.deleteFramebufferTextures(this);
+  }
+
   /**
    * Creates new textures and renderbuffers given the current size of the
    * framebuffer.
@@ -478,121 +465,14 @@ class Framebuffer {
    * @private
    */
   _recreateTextures() {
-    const gl = this.gl;
-
     this._updateSize();
 
-    const prevBoundTexture = gl.getParameter(gl.TEXTURE_BINDING_2D);
-    const prevBoundFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-
-    const colorTexture = gl.createTexture();
-    if (!colorTexture) {
-      throw new Error('Unable to create color texture');
-    }
-    gl.bindTexture(gl.TEXTURE_2D, colorTexture);
-    const colorFormat = this._glColorFormat();
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      colorFormat.internalFormat,
-      this.width * this.density,
-      this.height * this.density,
-      0,
-      colorFormat.format,
-      colorFormat.type,
-      null
-    );
-    this.colorTexture = colorTexture;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    gl.framebufferTexture2D(
-      gl.FRAMEBUFFER,
-      gl.COLOR_ATTACHMENT0,
-      gl.TEXTURE_2D,
-      colorTexture,
-      0
-    );
-
-    if (this.useDepth) {
-      // Create the depth texture
-      const depthTexture = gl.createTexture();
-      if (!depthTexture) {
-        throw new Error('Unable to create depth texture');
-      }
-      const depthFormat = this._glDepthFormat();
-      gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        depthFormat.internalFormat,
-        this.width * this.density,
-        this.height * this.density,
-        0,
-        depthFormat.format,
-        depthFormat.type,
-        null
-      );
-
-      gl.framebufferTexture2D(
-        gl.FRAMEBUFFER,
-        this.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
-        gl.TEXTURE_2D,
-        depthTexture,
-        0
-      );
-      this.depthTexture = depthTexture;
-    }
-
-    // Create separate framebuffer for antialiasing
-    if (this.antialias) {
-      this.colorRenderbuffer = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, this.colorRenderbuffer);
-      gl.renderbufferStorageMultisample(
-        gl.RENDERBUFFER,
-        Math.max(
-          0,
-          Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
-        ),
-        colorFormat.internalFormat,
-        this.width * this.density,
-        this.height * this.density
-      );
-
-      if (this.useDepth) {
-        const depthFormat = this._glDepthFormat();
-        this.depthRenderbuffer = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
-        gl.renderbufferStorageMultisample(
-          gl.RENDERBUFFER,
-          Math.max(
-            0,
-            Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
-          ),
-          depthFormat.internalFormat,
-          this.width * this.density,
-          this.height * this.density
-        );
-      }
-
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.aaFramebuffer);
-      gl.framebufferRenderbuffer(
-        gl.FRAMEBUFFER,
-        gl.COLOR_ATTACHMENT0,
-        gl.RENDERBUFFER,
-        this.colorRenderbuffer
-      );
-      if (this.useDepth) {
-        gl.framebufferRenderbuffer(
-          gl.FRAMEBUFFER,
-          this.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
-          gl.RENDERBUFFER,
-          this.depthRenderbuffer
-        );
-      }
-    }
+    // Let renderer handle texture creation and framebuffer setup
+    this.renderer.recreateFramebufferTextures(this);
 
     if (this.useDepth) {
       this.depth = new FramebufferTexture(this, 'depthTexture');
-      const depthFilter = gl.NEAREST;
+      const depthFilter = constants.NEAREST;
       this.depthP5Texture = new Texture(
         this.renderer,
         this.depth,
@@ -606,8 +486,8 @@ class Framebuffer {
 
     this.color = new FramebufferTexture(this, 'colorTexture');
     const filter = this.textureFiltering === constants.LINEAR
-      ? gl.LINEAR
-      : gl.NEAREST;
+      ? constants.LINEAR
+      : constants.NEAREST;
     this.colorP5Texture = new Texture(
       this.renderer,
       this.color,
@@ -617,131 +497,6 @@ class Framebuffer {
       }
     );
     this.renderer.textures.set(this.color, this.colorP5Texture);
-
-    gl.bindTexture(gl.TEXTURE_2D, prevBoundTexture);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, prevBoundFramebuffer);
-  }
-
-  /**
-   * To create a WebGL texture, one needs to supply three pieces of information:
-   * the type (the data type each channel will be stored as, e.g. int or float),
-   * the format (the color channels that will each be stored in the previously
-   * specified type, e.g. rgb or rgba), and the internal format (the specifics
-   * of how data for each channel, in the aforementioned type, will be packed
-   * together, such as how many bits to use, e.g. RGBA32F or RGB565.)
-   *
-   * The format and channels asked for by the user hint at what these values
-   * need to be, and the WebGL version affects what options are avaiable.
-   * This method returns the values for these three properties, given the
-   * framebuffer's settings.
-   *
-   * @private
-   */
-  _glColorFormat() {
-    let type, format, internalFormat;
-    const gl = this.gl;
-
-    if (this.format === constants.FLOAT) {
-      type = gl.FLOAT;
-    } else if (this.format === constants.HALF_FLOAT) {
-      type = this.renderer.webglVersion === constants.WEBGL2
-        ? gl.HALF_FLOAT
-        : gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES;
-    } else {
-      type = gl.UNSIGNED_BYTE;
-    }
-
-    if (this.channels === RGBA) {
-      format = gl.RGBA;
-    } else {
-      format = gl.RGB;
-    }
-
-    if (this.renderer.webglVersion === constants.WEBGL2) {
-      // https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
-      const table = {
-        [gl.FLOAT]: {
-          [gl.RGBA]: gl.RGBA32F
-          // gl.RGB32F is not available in Firefox without an alpha channel
-        },
-        [gl.HALF_FLOAT]: {
-          [gl.RGBA]: gl.RGBA16F
-          // gl.RGB16F is not available in Firefox without an alpha channel
-        },
-        [gl.UNSIGNED_BYTE]: {
-          [gl.RGBA]: gl.RGBA8, // gl.RGBA4
-          [gl.RGB]: gl.RGB8 // gl.RGB565
-        }
-      };
-      internalFormat = table[type][format];
-    } else if (this.format === constants.HALF_FLOAT) {
-      internalFormat = gl.RGBA;
-    } else {
-      internalFormat = format;
-    }
-
-    return { internalFormat, format, type };
-  }
-
-  /**
-   * To create a WebGL texture, one needs to supply three pieces of information:
-   * the type (the data type each channel will be stored as, e.g. int or float),
-   * the format (the color channels that will each be stored in the previously
-   * specified type, e.g. rgb or rgba), and the internal format (the specifics
-   * of how data for each channel, in the aforementioned type, will be packed
-   * together, such as how many bits to use, e.g. RGBA32F or RGB565.)
-   *
-   * This method takes into account the settings asked for by the user and
-   * returns values for these three properties that can be used for the
-   * texture storing depth information.
-   *
-   * @private
-   */
-  _glDepthFormat() {
-    let type, format, internalFormat;
-    const gl = this.gl;
-
-    if (this.useStencil) {
-      if (this.depthFormat === constants.FLOAT) {
-        type = gl.FLOAT_32_UNSIGNED_INT_24_8_REV;
-      } else if (this.renderer.webglVersion === constants.WEBGL2) {
-        type = gl.UNSIGNED_INT_24_8;
-      } else {
-        type = gl.getExtension('WEBGL_depth_texture').UNSIGNED_INT_24_8_WEBGL;
-      }
-    } else {
-      if (this.depthFormat === constants.FLOAT) {
-        type = gl.FLOAT;
-      } else {
-        type = gl.UNSIGNED_INT;
-      }
-    }
-
-    if (this.useStencil) {
-      format = gl.DEPTH_STENCIL;
-    } else {
-      format = gl.DEPTH_COMPONENT;
-    }
-
-    if (this.useStencil) {
-      if (this.depthFormat === constants.FLOAT) {
-        internalFormat = gl.DEPTH32F_STENCIL8;
-      } else if (this.renderer.webglVersion === constants.WEBGL2) {
-        internalFormat = gl.DEPTH24_STENCIL8;
-      } else {
-        internalFormat = gl.DEPTH_STENCIL;
-      }
-    } else if (this.renderer.webglVersion === constants.WEBGL2) {
-      if (this.depthFormat === constants.FLOAT) {
-        internalFormat = gl.DEPTH_COMPONENT32F;
-      } else {
-        internalFormat = gl.DEPTH_COMPONENT24;
-      }
-    } else {
-      internalFormat = gl.DEPTH_COMPONENT;
-    }
-
-    return { internalFormat, format, type };
   }
 
   /**
@@ -780,17 +535,7 @@ class Framebuffer {
    * @private
    */
   _handleResize() {
-    const oldColor = this.color;
-    const oldDepth = this.depth;
-    const oldColorRenderbuffer = this.colorRenderbuffer;
-    const oldDepthRenderbuffer = this.depthRenderbuffer;
-
-    this._deleteTexture(oldColor);
-    if (oldDepth) this._deleteTexture(oldDepth);
-    const gl = this.gl;
-    if (oldColorRenderbuffer) gl.deleteRenderbuffer(oldColorRenderbuffer);
-    if (oldDepthRenderbuffer) gl.deleteRenderbuffer(oldDepthRenderbuffer);
-
+    this._deleteTextures();
     this._recreateTextures();
     this.defaultCamera._resize();
   }
@@ -919,20 +664,6 @@ class Framebuffer {
   }
 
   /**
-   * Given a raw texture wrapper, delete its stored texture from WebGL memory,
-   * and remove it from p5's list of active textures.
-   *
-   * @param {p5.FramebufferTexture} texture
-   * @private
-   */
-  _deleteTexture(texture) {
-    const gl = this.gl;
-    gl.deleteTexture(texture.rawTexture());
-
-    this.renderer.textures.delete(texture);
-  }
-
-  /**
    * Deletes the framebuffer from GPU memory.
    *
    * Calling `myBuffer.remove()` frees the GPU memory used by the framebuffer.
@@ -1001,19 +732,11 @@ class Framebuffer {
    * </div>
    */
   remove() {
-    const gl = this.gl;
-    this._deleteTexture(this.color);
-    if (this.depth) this._deleteTexture(this.depth);
-    gl.deleteFramebuffer(this.framebuffer);
-    if (this.aaFramebuffer) {
-      gl.deleteFramebuffer(this.aaFramebuffer);
-    }
-    if (this.depthRenderbuffer) {
-      gl.deleteRenderbuffer(this.depthRenderbuffer);
-    }
-    if (this.colorRenderbuffer) {
-      gl.deleteRenderbuffer(this.colorRenderbuffer);
-    }
+    this._deleteTextures();
+
+    // Let renderer clean up framebuffer resources
+    this.renderer.deleteFramebufferResources(this);
+
     this.renderer.framebuffers.delete(this);
   }
 
@@ -1100,14 +823,7 @@ class Framebuffer {
    * @private
    */
   _framebufferToBind() {
-    if (this.antialias) {
-      // If antialiasing, draw to an antialiased renderbuffer rather
-      // than directly to the texture. In end() we will copy from the
-      // renderbuffer to the texture.
-      return this.aaFramebuffer;
-    } else {
-      return this.framebuffer;
-    }
+    return this.renderer.getFramebufferToBind(this);
   }
 
   /**
@@ -1116,40 +832,9 @@ class Framebuffer {
    * @param {'colorTexutre'|'depthTexture'} property The property to update
    */
   _update(property) {
-    if (this.dirty[property] && this.antialias) {
-      const gl = this.gl;
-      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
-      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
-      const partsToCopy = {
-        colorTexture: [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
-      };
-      if (this.useDepth) {
-        partsToCopy.depthTexture = [
-          gl.DEPTH_BUFFER_BIT,
-          this.depthP5Texture.glMagFilter
-        ];
-      }
-      const [flag, filter] = partsToCopy[property];
-      gl.blitFramebuffer(
-        0,
-        0,
-        this.width * this.density,
-        this.height * this.density,
-        0,
-        0,
-        this.width * this.density,
-        this.height * this.density,
-        flag,
-        filter
-      );
+    if (this.dirty[property]) {
+      this.renderer.updateFramebufferTexture(this, property);
       this.dirty[property] = false;
-
-      const activeFbo = this.renderer.activeFramebuffer();
-      if (activeFbo) {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, activeFbo._framebufferToBind());
-      } else {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      }
     }
   }
 
@@ -1159,12 +844,14 @@ class Framebuffer {
    * @private
    */
   _beforeBegin() {
-    const gl = this.gl;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this._framebufferToBind());
+    this.renderer.bindFramebuffer(this);
     this.renderer.viewport(
       this.width * this.density,
       this.height * this.density
     );
+    if (this.renderer.flushDraw) {
+      this.renderer.flushDraw();
+    }
   }
 
   /**
@@ -1175,6 +862,12 @@ class Framebuffer {
   _beforeEnd() {
     if (this.antialias) {
       this.dirty = { colorTexture: true, depthTexture: true };
+    }
+    // TODO
+    // This should work but flushes more often than we need to. Ideally we only do this
+    // right before the fbo is read as a texture.
+    if (this.renderer.flushDraw) {
+      this.renderer.flushDraw();
     }
   }
 
@@ -1226,8 +919,8 @@ class Framebuffer {
    * </div>
    */
   end() {
-    const gl = this.gl;
     this.renderer.pop();
+
     const fbo = this.renderer.activeFramebuffers.pop();
     if (fbo !== this) {
       throw new Error("It looks like you've called end() while another Framebuffer is active.");
@@ -1236,7 +929,7 @@ class Framebuffer {
     if (this.prevFramebuffer) {
       this.prevFramebuffer._beforeBegin();
     } else {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      this.renderer.bindFramebuffer(null);
       this.renderer.viewport(
         this.renderer._origViewport.width,
         this.renderer._origViewport.height
@@ -1353,25 +1046,19 @@ class Framebuffer {
    */
   loadPixels() {
     this._update('colorTexture');
-    const gl = this.gl;
-    const prevFramebuffer = this.renderer.activeFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    const colorFormat = this._glColorFormat();
-    this.pixels = readPixelsWebGL(
-      this.pixels,
-      gl,
-      this.framebuffer,
-      0,
-      0,
-      this.width * this.density,
-      this.height * this.density,
-      colorFormat.format,
-      colorFormat.type
-    );
-    if (prevFramebuffer) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer._framebufferToBind());
+    const result = this.renderer.readFramebufferPixels(this);
+
+    // Check if renderer returned a Promise (WebGPU) or data directly (WebGL)
+    if (result && typeof result.then === 'function') {
+      // WebGPU async case - return Promise
+      return result.then(pixels => {
+        this.pixels = pixels;
+        return pixels;
+      });
     } else {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      // WebGL sync case - assign directly
+      this.pixels = result;
+      return result;
     }
   }
 
@@ -1413,7 +1100,7 @@ class Framebuffer {
   get(x, y, w, h) {
     this._update('colorTexture');
     // p5._validateParameters('p5.Framebuffer.get', arguments);
-    const colorFormat = this._glColorFormat();
+
     if (x === undefined && y === undefined) {
       x = 0;
       y = 0;
@@ -1428,14 +1115,7 @@ class Framebuffer {
         y = constrain(y, 0, this.height - 1);
       }
 
-      return readPixelWebGL(
-        this.gl,
-        this.framebuffer,
-        x * this.density,
-        y * this.density,
-        colorFormat.format,
-        colorFormat.type
-      );
+      return this.renderer.readFramebufferPixel(this, x * this.density, y * this.density);
     }
 
     x = constrain(x, 0, this.width - 1);
@@ -1443,60 +1123,7 @@ class Framebuffer {
     w = constrain(w, 1, this.width - x);
     h = constrain(h, 1, this.height - y);
 
-    const rawData = readPixelsWebGL(
-      undefined,
-      this.gl,
-      this.framebuffer,
-      x * this.density,
-      y * this.density,
-      w * this.density,
-      h * this.density,
-      colorFormat.format,
-      colorFormat.type
-    );
-    // Framebuffer data might be either a Uint8Array or Float32Array
-    // depending on its format, and it may or may not have an alpha channel.
-    // To turn it into an image, we have to normalize the data into a
-    // Uint8ClampedArray with alpha.
-    const fullData = new Uint8ClampedArray(
-      w * h * this.density * this.density * 4
-    );
-
-    // Default channels that aren't in the framebuffer (e.g. alpha, if the
-    // framebuffer is in RGB mode instead of RGBA) to 255
-    fullData.fill(255);
-
-    const channels = colorFormat.type === this.gl.RGB ? 3 : 4;
-    for (let y = 0; y < h * this.density; y++) {
-      for (let x = 0; x < w * this.density; x++) {
-        for (let channel = 0; channel < 4; channel++) {
-          const idx = (y * w * this.density + x) * 4 + channel;
-          if (channel < channels) {
-            // Find the index of this pixel in `rawData`, which might have a
-            // different number of channels
-            const rawDataIdx = channels === 4
-              ? idx
-              : (y * w * this.density + x) * channels + channel;
-            fullData[idx] = rawData[rawDataIdx];
-          }
-        }
-      }
-    }
-
-    // Create an image from the data
-    const region = new Image(w * this.density, h * this.density);
-    region.imageData = region.canvas.getContext('2d').createImageData(
-      region.width,
-      region.height
-    );
-    region.imageData.data.set(fullData);
-    region.pixels = region.imageData.data;
-    region.updatePixels();
-    if (this.density !== 1) {
-      // TODO: support get() at a pixel density > 1
-      region.resize(w, h);
-    }
-    return region;
+    return this.renderer.readFramebufferRegion(this, x, y, w, h);
   }
 
   /**
@@ -1548,85 +1175,8 @@ class Framebuffer {
    * </div>
    */
   updatePixels() {
-    const gl = this.gl;
-    this.colorP5Texture.bindTexture();
-    const colorFormat = this._glColorFormat();
-
-    const channels = colorFormat.format === gl.RGBA ? 4 : 3;
-    const len =
-      this.width * this.height * this.density * this.density * channels;
-    const TypedArrayClass = colorFormat.type === gl.UNSIGNED_BYTE
-      ? Uint8Array
-      : Float32Array;
-    if (
-      !(this.pixels instanceof TypedArrayClass) || this.pixels.length !== len
-    ) {
-      throw new Error(
-        'The pixels array has not been set correctly. Please call loadPixels() before updatePixels().'
-      );
-    }
-
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      colorFormat.internalFormat,
-      this.width * this.density,
-      this.height * this.density,
-      0,
-      colorFormat.format,
-      colorFormat.type,
-      this.pixels
-    );
-    this.colorP5Texture.unbindTexture();
-    this.dirty.colorTexture = false;
-
-    const prevFramebuffer = this.renderer.activeFramebuffer();
-    if (this.antialias) {
-      // We need to make sure the antialiased framebuffer also has the updated
-      // pixels so that if more is drawn to it, it goes on top of the updated
-      // pixels instead of replacing them.
-      // We can't blit the framebuffer to the multisampled antialias
-      // framebuffer to leave both in the same state, so instead we have
-      // to use image() to put the framebuffer texture onto the antialiased
-      // framebuffer.
-      this.begin();
-      this.renderer.push();
-      // this.renderer.imageMode(constants.CENTER);
-      this.renderer.states.setValue('imageMode', constants.CORNER);
-      this.renderer.setCamera(this.filterCamera);
-      this.renderer.resetMatrix();
-      this.renderer.states.setValue('strokeColor', null);
-      this.renderer.clear();
-      this.renderer._drawingFilter = true;
-      this.renderer.image(
-        this,
-        0, 0,
-        this.width, this.height,
-        -this.renderer.width / 2, -this.renderer.height / 2,
-        this.renderer.width, this.renderer.height
-      );
-      this.renderer._drawingFilter = false;
-      this.renderer.pop();
-      if (this.useDepth) {
-        gl.clearDepth(1);
-        gl.clear(gl.DEPTH_BUFFER_BIT);
-      }
-      this.end();
-    } else {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-      if (this.useDepth) {
-        gl.clearDepth(1);
-        gl.clear(gl.DEPTH_BUFFER_BIT);
-      }
-      if (prevFramebuffer) {
-        gl.bindFramebuffer(
-          gl.FRAMEBUFFER,
-          prevFramebuffer._framebufferToBind()
-        );
-      } else {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      }
-    }
+    // Let renderer handle the pixel update process
+    this.renderer.updateFramebufferPixels(this);
   }
 }
 
