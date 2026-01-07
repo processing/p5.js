@@ -15,14 +15,12 @@
 
 import HSBSpace from '../../../src/color/color_spaces/hsb.js';
 
-// Helper function to compare arrays with tolerance
-const arrayApproximately = (arr1, arr2, delta = 0.01) => {
-  if (arr1.length !== arr2.length) return false;
-  for (let i = 0; i < arr1.length; i++) {
-    if (Math.abs(arr1[i] - arr2[i]) > delta) return false;
+assert.arrayApproximately = function (arr1, arr2, delta, desc) {
+  assert.equal(arr1.length, arr2.length);
+  for (var i = 0; i < arr1.length; i++) {
+    assert.approximately(arr1[i], arr2[i], delta, desc);
   }
-  return true;
-};
+}
 
 suite('color/HSB Color Space', function() {
   const accuracy = 0.01;
