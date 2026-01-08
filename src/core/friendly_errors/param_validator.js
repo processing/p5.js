@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -415,46 +415,70 @@ function validateParams(p5, fn, lifecycles) {
       const expectedTypes = new Set();
       let actualType;
 
-      error.errors.forEach(err => {
-        const issue = err[0];
-        if (issue) {
+      let sawNumber = false;
+      let sawInfinityLiteral = false;
+      let sawNonInfinityConstant = false;
+
+      const flattenIssues = iss => {
+        if (!iss) return [];
+        if (iss.code === 'invalid_union') {
+          const subs = iss.unionErrors?.flatMap(u => u.issues) || [];
+          return subs.flatMap(si => flattenIssues(si[0] || si));
+        }
+        return [iss];
+      };
+
+      const flat = (error.errors || []).flatMap(e => flattenIssues(e[0]));
+
+      for (const issue of flat) {
+        if (!issue) continue;
+
+        if (issue.code === 'invalid_type') {
+          if (issue.expected === 'number') sawNumber = true;
           if (!actualType) {
-            actualType = issue.message;
+            const rec = issue.message?.split(', received ')[1];
+            if (rec) actualType = rec;
           }
-
-          if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1];
-            expectedTypes.add(issue.expected);
-          }
-          // The case for constants. Since we don't want to print out the actual
-          // constant values in the error message, the error message will
-          // direct users to the documentation.
-          else if (issue.code === 'invalid_value') {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
-            actualType = args[error.path[0]];
-          } else if (issue.code === 'custom') {
-            const match = issue.message.match(/Input not instance of (\w+)/);
-            if (match) expectedTypes.add(match[1]);
-            actualType = undefined;
-          }
-        }
-      });
-
-      if (expectedTypes.size > 0) {
-        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
-          message += 'Did you mean to put `await` before a loading function? ' +
-            'An unexpected Promise was found. ';
-          isVersionError = true;
+          continue;
         }
 
-        const expectedTypesStr = Array.from(expectedTypes).join(' or ');
-        const position = error.path.join('.');
+        if (issue.code === 'invalid_literal' || issue.code === 'invalid_value') {
+          const exp = 'expected' in issue ? issue.expected : undefined;
+          if (exp === Infinity || exp === -Infinity) {
+            sawInfinityLiteral = true;
+          } else {
+            sawNonInfinityConstant = true;
+          }
+          if (!actualType) actualType = args[error.path[0]];
+          continue;
+        }
 
-        message += buildTypeMismatchMessage(
-          actualType, expectedTypesStr, position
-        );
+        if (issue.code === 'custom') {
+          const m = issue.message?.match(/Input not instance of (\w+)/);
+          if (m) expectedTypes.add(m[1]);
+          actualType = undefined;
+          continue;
+        }
       }
 
+      if (sawNumber) expectedTypes.add('number');
+      if (sawNonInfinityConstant) {
+        expectedTypes.add('constant (please refer to documentation for allowed values)');
+      }
+
+      if (sawNumber && sawInfinityLiteral && !sawNonInfinityConstant) {
+        expectedTypes.delete('constant (please refer to documentation for allowed values)');
+      }
+
+      if (expectedTypes.size > 0) {
+        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise) {
+          message += 'Did you mean to put `await` before a loading function? An unexpected Promise was found. ';
+          isVersionError = true;
+        }
+        const expectedTypesStr = Array.from(expectedTypes).join(' or ');
+        const position = error.path.join('.');
+        message += buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+      }
       return message;
     };
 
