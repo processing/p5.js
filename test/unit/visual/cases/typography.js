@@ -43,6 +43,22 @@ visualSuite('Typography', function () {
       screenshot();
     });
 
+    visualTest('with a font file and special chars', async function (p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf',
+        'Incönsolata'
+      );
+      p5.textFont(font);
+      p5.textAlign(p5.CENTER, p5.CENTER);
+      p5.textSize(35);
+      p5.text('p5*js', 0, 0);
+      p5.noFill();
+      p5.rectMode(p5.CENTER);
+      p5.rect(0, 0, p5.fontWidth('p5*js'), p5.textLeading());
+      screenshot();
+    });
+
     visualTest('with a woff font file', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
