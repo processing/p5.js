@@ -497,6 +497,28 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
         assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
       });
+      test('handle simple if statement with condition that is not a swizzle', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const x = myp5.uniformFloat(() => 1.0); // true condition
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            if (x > 0.5) {
+              color = myp5.float(1.0); // set to white in if branch
+            }
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is white (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255 (white)
+        assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
+        assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
+      });
       test('handle simple if statement with simpler assignment', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const testShader = myp5.baseMaterialShader().modify(() => {
@@ -822,6 +844,33 @@ suite('p5.Shader', function() {
         assert.approximately(bottomLeftPixel[1], 0, 5);
         assert.approximately(bottomLeftPixel[2], 0, 5);
       });
+      test('handle struct property assignment in if-else branches', () => {
+        myp5.createCanvas(100, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            if (inputs.texCoord.x > 0.5) {
+              inputs.color = [1, 0, 0, 1];
+            } else {
+              inputs.color = [0, 0, 1, 1];
+            }
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = myp5.get(25, 25);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = myp5.get(75, 25);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
       // Keep one direct API test for completeness
       test('handle direct StrandsIf API usage', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
