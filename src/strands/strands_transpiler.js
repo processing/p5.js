@@ -201,13 +201,23 @@ const ASTCallbacks = {
     },
     AssignmentExpression(node, _state, ancestors) {
       if (ancestors.some(nodeIsUniform)) { return; }
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
             type: 'MemberExpression',
-            object: node.left,
+            object: unsafeTypes.includes(node.left.type)
+              ? {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: '__p5.strandsNode',
+                  },
+                  arguments: [node.left]
+                }
+              : node.left,
             property: {
               type: 'Identifier',
               name: methodName,
@@ -402,6 +412,7 @@ const ASTCallbacks = {
         },
         arguments: [elseFunction]
       };
+
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
 
@@ -1007,14 +1018,17 @@ const ASTCallbacks = {
     // Second pass: transform if/for statements in post-order using recursive traversal
     const postOrderControlFlowTransform = {
       IfStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.test) c(node.test, state);
         if (node.consequent) c(node.consequent, state);
         if (node.alternate) c(node.alternate, state);
         // Then apply the transformation to this node
         ASTCallbacks.IfStatement(node, state, []);
+        state.inControlFlow--;
       },
       ForStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.init) c(node.init, state);
         if (node.test) c(node.test, state);
@@ -1022,9 +1036,24 @@ const ASTCallbacks = {
         if (node.body) c(node.body, state);
         // Then apply the transformation to this node
         ASTCallbacks.ForStatement(node, state, []);
+        state.inControlFlow--;
+      },
+      ReturnStatement(node, state, c) {
+        if (!state.inControlFlow) return;
+        // Convert return statement to strandsEarlyReturn call
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsEarlyReturn'
+          },
+          arguments: node.argument ? [node.argument] : []
+        };
+        delete node.argument;
       }
     };
-    recursive(ast, { varyings: {} }, postOrderControlFlowTransform);
+    recursive(ast, { varyings: {}, inControlFlow: 0 }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
     const match = /\(?\s*(?:function)?\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/

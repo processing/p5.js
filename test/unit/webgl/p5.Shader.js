@@ -919,9 +919,82 @@ suite('p5.Shader', function() {
 
         // Check that the center pixel has the expected color (condition was true)
         const pixelColor = myp5.get(25, 25);
-        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
-        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
-        assert.approximately(pixelColor[2], 51, 5);  // Blue channel should be ~51
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 127, 5);
+        assert.approximately(pixelColor[2], 51, 5);
+      });
+
+      test('handle early return in if-else branches', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value > 0.5) {
+              return [1, 0, 0, 1];
+            } else {
+              return [0, 1, 0, 1];
+            }
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handle early return in if with content afterwards', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value > 0.5) {
+              return [1, 0, 0, 1];
+            }
+
+            let otherValue = 0.2;
+            otherValue *= 2;
+            return [otherValue, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handle false early return in if with content afterwards', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value < 0.5) {
+              return [1, 0, 0, 1];
+            }
+
+            let otherValue = 0.2;
+            otherValue *= 2;
+            return [otherValue, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 0.4 * 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
       });
     });
 
