@@ -54,6 +54,33 @@ function nodeIsVarying(node) {
       )
     );
 }
+
+// Helper function to check if a statement is a variable declaration with strands control flow init
+function statementContainsStrandsControlFlow(stmt) {
+  // Check for variable declarations with strands control flow init
+  if (stmt.type === 'VariableDeclaration') {
+    const match = stmt.declarations.some(decl =>
+      decl.init?.type === 'CallExpression' &&
+      (
+        (
+          decl.init?.callee?.type === 'MemberExpression' &&
+          decl.init?.callee?.object?.type === 'Identifier' &&
+          decl.init?.callee?.object?.name === '__p5' &&
+          (decl.init?.callee?.property?.name === 'strandsFor' ||
+            decl.init?.callee?.property?.name === 'strandsIf')
+        ) ||
+        (
+          decl.init?.callee?.type === 'Identifier' &&
+          (decl.init?.callee?.name === '__p5.strandsFor' ||
+            decl.init?.callee?.name === '__p5.strandsIf')
+        )
+      )
+    );
+    return match
+  }
+  return false;
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -378,42 +405,13 @@ const ASTCallbacks = {
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
 
-      // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (stmt) => {
-        // if (node.type !== 'BlockStatement') return false;
-        // return node.body.some(stmt => {
-          // Check for variable declarations with strands control flow init
-          if (stmt.type === 'VariableDeclaration') {
-            const match = stmt.declarations.some(decl =>
-              decl.init?.type === 'CallExpression' &&
-              (
-                (
-                  decl.init?.callee?.type === 'MemberExpression' &&
-                  decl.init?.callee?.object?.type === 'Identifier' &&
-                  decl.init?.callee?.object?.name === '__p5' &&
-                  (decl.init?.callee?.property?.name === 'strandsFor' ||
-                    decl.init?.callee?.property?.name === 'strandsIf')
-                ) ||
-                (
-                  decl.init?.callee?.type === 'Identifier' &&
-                  (decl.init?.callee?.name === '__p5.strandsFor' ||
-                    decl.init?.callee?.name === '__p5.strandsIf')
-                )
-              )
-            );
-            return match
-          }
-          return false;
-        // });
-      };
-
       const analyzeBranch = (functionBody) => {
         // First pass: collect all variable declarations in the branch
         const localVars = new Set();
         ancestor(functionBody, {
           VariableDeclarator(node, ancestors) {
             // Skip if we're inside a block that contains strands control flow
-            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
             if (node.id.type === 'Identifier') {
               localVars.add(node.id.name);
             }
@@ -424,7 +422,7 @@ const ASTCallbacks = {
         ancestor(functionBody, {
           AssignmentExpression(node, ancestors) {
             // Skip if we're inside a block that contains strands control flow
-            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
 
             const left = node.left;
             if (left.type === 'Identifier') {
@@ -756,41 +754,12 @@ const ASTCallbacks = {
       // Analyze which outer scope variables are assigned in the loop body
       const assignedVars = new Set();
 
-      // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (stmt) => {
-        // if (node.type !== 'BlockStatement') return false;
-        // return node.body.some(stmt => {
-          // // Check for variable declarations with strands control flow init
-          if (stmt.type === 'VariableDeclaration') {
-            const match = stmt.declarations.some(decl =>
-              decl.init?.type === 'CallExpression' &&
-              (
-                (
-                  decl.init?.callee?.type === 'MemberExpression' &&
-                  decl.init?.callee?.object?.type === 'Identifier' &&
-                  decl.init?.callee?.object?.name === '__p5' &&
-                  (decl.init?.callee?.property?.name === 'strandsFor' ||
-                    decl.init?.callee?.property?.name === 'strandsIf')
-                ) ||
-                (
-                  decl.init?.callee?.type === 'Identifier' &&
-                  (decl.init?.callee?.name === '__p5.strandsFor' ||
-                    decl.init?.callee?.name === '__p5.strandsIf')
-                )
-              )
-            );
-            return match
-          }
-          return false;
-        // });
-      };
-
       // First pass: collect all variable declarations in the body
       const localVars = new Set();
       ancestor(bodyFunction.body, {
         VariableDeclarator(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
-          if (ancestors.some(blockContainsStrandsControlFlow)) return;
+          if (ancestors.some(statementContainsStrandsControlFlow)) return;
           if (node.id.type === 'Identifier') {
             localVars.add(node.id.name);
           }
@@ -801,7 +770,7 @@ const ASTCallbacks = {
       ancestor(bodyFunction.body, {
         AssignmentExpression(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
-          if (ancestors.some(blockContainsStrandsControlFlow)) {
+          if (ancestors.some(statementContainsStrandsControlFlow)) {
             return
           }
 
@@ -1074,7 +1043,6 @@ const ASTCallbacks = {
       paramVals = scopeKeys.map(key => scope[key]);
     }
     const body = match[2];
-    console.log(body)
     try {
       const internalStrandsCallback = new Function(
           // Create a parameter called __p5, not just p5, because users of instance mode
