@@ -54,6 +54,33 @@ function nodeIsVarying(node) {
       )
     );
 }
+
+// Helper function to check if a statement is a variable declaration with strands control flow init
+function statementContainsStrandsControlFlow(stmt) {
+  // Check for variable declarations with strands control flow init
+  if (stmt.type === 'VariableDeclaration') {
+    const match = stmt.declarations.some(decl =>
+      decl.init?.type === 'CallExpression' &&
+      (
+        (
+          decl.init?.callee?.type === 'MemberExpression' &&
+          decl.init?.callee?.object?.type === 'Identifier' &&
+          decl.init?.callee?.object?.name === '__p5' &&
+          (decl.init?.callee?.property?.name === 'strandsFor' ||
+            decl.init?.callee?.property?.name === 'strandsIf')
+        ) ||
+        (
+          decl.init?.callee?.type === 'Identifier' &&
+          (decl.init?.callee?.name === '__p5.strandsFor' ||
+            decl.init?.callee?.name === '__p5.strandsIf')
+        )
+      )
+    );
+    return match
+  }
+  return false;
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -174,13 +201,23 @@ const ASTCallbacks = {
     },
     AssignmentExpression(node, _state, ancestors) {
       if (ancestors.some(nodeIsUniform)) { return; }
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
             type: 'MemberExpression',
-            object: node.left,
+            object: unsafeTypes.includes(node.left.type)
+              ? {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: '__p5.strandsNode',
+                  },
+                  arguments: [node.left]
+                }
+              : node.left,
             property: {
               type: 'Identifier',
               name: methodName,
@@ -375,37 +412,9 @@ const ASTCallbacks = {
         },
         arguments: [elseFunction]
       };
+
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
-
-      // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (node) => {
-        if (node.type !== 'BlockStatement') return false;
-        return node.body.some(stmt => {
-          // Check for variable declarations with strands control flow init
-          if (stmt.type === 'VariableDeclaration') {
-            const match = stmt.declarations.some(decl =>
-              decl.init?.type === 'CallExpression' &&
-              (
-                (
-                  decl.init?.callee?.type === 'MemberExpression' &&
-                  decl.init?.callee?.object?.type === 'Identifier' &&
-                  decl.init?.callee?.object?.name === '__p5' &&
-                  (decl.init?.callee?.property?.name === 'strandsFor' ||
-                    decl.init?.callee?.property?.name === 'strandsIf')
-                ) ||
-                (
-                  decl.init?.callee?.type === 'Identifier' &&
-                  (decl.init?.callee?.name === '__p5.strandsFor' ||
-                    decl.init?.callee?.name === '__p5.strandsIf')
-                )
-              )
-            );
-            return match
-          }
-          return false;
-        });
-      };
 
       const analyzeBranch = (functionBody) => {
         // First pass: collect all variable declarations in the branch
@@ -413,7 +422,7 @@ const ASTCallbacks = {
         ancestor(functionBody, {
           VariableDeclarator(node, ancestors) {
             // Skip if we're inside a block that contains strands control flow
-            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
             if (node.id.type === 'Identifier') {
               localVars.add(node.id.name);
             }
@@ -424,7 +433,7 @@ const ASTCallbacks = {
         ancestor(functionBody, {
           AssignmentExpression(node, ancestors) {
             // Skip if we're inside a block that contains strands control flow
-            if (ancestors.some(blockContainsStrandsControlFlow)) return;
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
 
             const left = node.left;
             if (left.type === 'Identifier') {
@@ -756,41 +765,12 @@ const ASTCallbacks = {
       // Analyze which outer scope variables are assigned in the loop body
       const assignedVars = new Set();
 
-      // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (node) => {
-        if (node.type !== 'BlockStatement') return false;
-        return node.body.some(stmt => {
-          // Check for variable declarations with strands control flow init
-          if (stmt.type === 'VariableDeclaration') {
-            const match = stmt.declarations.some(decl =>
-              decl.init?.type === 'CallExpression' &&
-              (
-                (
-                  decl.init?.callee?.type === 'MemberExpression' &&
-                  decl.init?.callee?.object?.type === 'Identifier' &&
-                  decl.init?.callee?.object?.name === '__p5' &&
-                  (decl.init?.callee?.property?.name === 'strandsFor' ||
-                    decl.init?.callee?.property?.name === 'strandsIf')
-                ) ||
-                (
-                  decl.init?.callee?.type === 'Identifier' &&
-                  (decl.init?.callee?.name === '__p5.strandsFor' ||
-                    decl.init?.callee?.name === '__p5.strandsIf')
-                )
-              )
-            );
-            return match
-          }
-          return false;
-        });
-      };
-
       // First pass: collect all variable declarations in the body
       const localVars = new Set();
       ancestor(bodyFunction.body, {
         VariableDeclarator(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
-          if (ancestors.some(blockContainsStrandsControlFlow)) return;
+          if (ancestors.some(statementContainsStrandsControlFlow)) return;
           if (node.id.type === 'Identifier') {
             localVars.add(node.id.name);
           }
@@ -801,7 +781,7 @@ const ASTCallbacks = {
       ancestor(bodyFunction.body, {
         AssignmentExpression(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
-          if (ancestors.some(blockContainsStrandsControlFlow)) {
+          if (ancestors.some(statementContainsStrandsControlFlow)) {
             return
           }
 
@@ -1038,14 +1018,17 @@ const ASTCallbacks = {
     // Second pass: transform if/for statements in post-order using recursive traversal
     const postOrderControlFlowTransform = {
       IfStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.test) c(node.test, state);
         if (node.consequent) c(node.consequent, state);
         if (node.alternate) c(node.alternate, state);
         // Then apply the transformation to this node
         ASTCallbacks.IfStatement(node, state, []);
+        state.inControlFlow--;
       },
       ForStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.init) c(node.init, state);
         if (node.test) c(node.test, state);
@@ -1053,9 +1036,24 @@ const ASTCallbacks = {
         if (node.body) c(node.body, state);
         // Then apply the transformation to this node
         ASTCallbacks.ForStatement(node, state, []);
+        state.inControlFlow--;
+      },
+      ReturnStatement(node, state, c) {
+        if (!state.inControlFlow) return;
+        // Convert return statement to strandsEarlyReturn call
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsEarlyReturn'
+          },
+          arguments: node.argument ? [node.argument] : []
+        };
+        delete node.argument;
       }
     };
-    recursive(ast, { varyings: {} }, postOrderControlFlowTransform);
+    recursive(ast, { varyings: {}, inControlFlow: 0 }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
     const match = /\(?\s*(?:function)?\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
