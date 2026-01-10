@@ -81,6 +81,43 @@ function statementContainsStrandsControlFlow(stmt) {
   return false;
 }
 
+// Helper function to build property path from MemberExpression
+// e.g., inputs.color -> "inputs.color", vec.x -> "vec.x"
+function isSwizzle(propertyName) {
+  if (!propertyName || typeof propertyName !== 'string') return false;
+  const swizzleSets = [
+    ['x', 'y', 'z', 'w'],
+    ['r', 'g', 'b', 'a'],
+    ['s', 't', 'p', 'q']
+  ];
+  return swizzleSets.some(set =>
+    [...propertyName].every(char => set.includes(char))
+  );
+}
+
+function buildPropertyPath(memberExpr) {
+  const parts = [];
+  let current = memberExpr;
+  while (current.type === 'MemberExpression') {
+    if (current.computed) {
+      return null;
+    }
+    const propName = current.property.name || current.property.value;
+    if (isSwizzle(propName)) {
+      current = current.object;
+      break;
+    }
+    parts.unshift(propName);
+    current = current.object;
+  }
+  if (current.type === 'Identifier') {
+    parts.unshift(current.name);
+  } else {
+    return null;
+  }
+  return parts.join('.');
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -441,11 +478,14 @@ const ASTCallbacks = {
               if (!localVars.has(left.name)) {
                 assignedVars.add(left.name);
               }
-            } else if (left.type === 'MemberExpression' &&
-                       left.object.type === 'Identifier') {
-              // Property assignment: obj.prop = value (includes swizzles)
-              if (!localVars.has(left.object.name)) {
-                assignedVars.add(left.object.name);
+            } else if (left.type === 'MemberExpression') {
+              // Property assignment: obj.prop = value or obj.a.b = value
+              const propertyPath = buildPropertyPath(left);
+              if (propertyPath) {
+                const baseName = propertyPath.split('.')[0];
+                if (!localVars.has(baseName)) {
+                  assignedVars.add(propertyPath);
+                }
               }
             }
           }
@@ -460,12 +500,25 @@ const ASTCallbacks = {
         const addCopyingAndReturn = (functionBody, varsToReturn) => {
           if (functionBody.type === 'BlockStatement') {
             // Create temporary variables and copy statements
-            const tempVarMap = new Map(); // original name -> temp name
+            const tempVarMap = new Map(); // property path -> temp name
             const copyStatements = [];
-            for (const varName of varsToReturn) {
-              const tempName = `__copy_${varName}_${blockVarCounter++}`;
-              tempVarMap.set(varName, tempName);
-              // let tempName = originalVar.copy()
+            for (const varPath of varsToReturn) {
+              const parts = varPath.split('.');
+              const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+              tempVarMap.set(varPath, tempName);
+
+              // Build the member expression for the property path
+              let sourceExpr = { type: 'Identifier', name: parts[0] };
+              for (let i = 1; i < parts.length; i++) {
+                sourceExpr = {
+                  type: 'MemberExpression',
+                  object: sourceExpr,
+                  property: { type: 'Identifier', name: parts[i] },
+                  computed: false
+                };
+              }
+
+              // let tempName = propertyPath.copy()
               copyStatements.push({
                 type: 'VariableDeclaration',
                 declarations: [{
@@ -475,7 +528,7 @@ const ASTCallbacks = {
                     type: 'CallExpression',
                     callee: {
                       type: 'MemberExpression',
-                      object: { type: 'Identifier', name: varName },
+                      object: sourceExpr,
                       property: { type: 'Identifier', name: 'copy' },
                       computed: false
                     },
@@ -489,32 +542,62 @@ const ASTCallbacks = {
             // and wrap literal assignments in strandsNode calls
             const replaceReferences = (node) => {
               if (!node || typeof node !== 'object') return;
+
+              // Check if this MemberExpression matches a tracked property path
+              if (node.type === 'MemberExpression') {
+                const propName = node.property.name || node.property.value;
+                if (isSwizzle(propName)) {
+                  // For swizzles, only replace the object part, keep the swizzle
+                  replaceReferences(node.object);
+                  return;
+                }
+                const propertyPath = buildPropertyPath(node);
+                if (propertyPath && tempVarMap.has(propertyPath)) {
+                  // Replace entire member expression with temp variable
+                  Object.assign(node, {
+                    type: 'Identifier',
+                    name: tempVarMap.get(propertyPath)
+                  });
+                  return; // Don't recurse into replaced node
+                }
+              }
+
+              // Handle simple identifier replacements
               if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
                 node.name = tempVarMap.get(node.name);
-              } else if (node.type === 'MemberExpression' &&
-                         node.object.type === 'Identifier' &&
-                         tempVarMap.has(node.object.name)) {
-                node.object.name = tempVarMap.get(node.object.name);
               }
+
               // Handle literal assignments to temp variables
-              if (node.type === 'AssignmentExpression' &&
-                  node.left.type === 'Identifier' &&
-                  tempVarMap.has(node.left.name) &&
-                  (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
-                // Wrap the right hand side in a strandsNode call to make sure
-                // it's not just a literal and has a type
-                node.right = {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'Identifier',
-                    name: '__p5.strandsNode'
-                  },
-                  arguments: [node.right]
-                };
+              if (node.type === 'AssignmentExpression') {
+                let leftPath = null;
+                if (node.left.type === 'Identifier') {
+                  leftPath = node.left.name;
+                } else if (node.left.type === 'MemberExpression') {
+                  leftPath = buildPropertyPath(node.left);
+                }
+
+                if (leftPath && tempVarMap.has(leftPath) &&
+                    (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
+                  // Wrap the right hand side in a strandsNode call to make sure
+                  // it's not just a literal and has a type
+                  node.right = {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Identifier',
+                      name: '__p5.strandsNode'
+                    },
+                    arguments: [node.right]
+                  };
+                }
               }
+
               // Recursively process all properties
               for (const key in node) {
                 if (node.hasOwnProperty(key) && key !== 'parent') {
+                  // Don't recurse into property names of non-computed member expressions
+                  if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
+                    continue;
+                  }
                   if (Array.isArray(node[key])) {
                     node[key].forEach(replaceReferences);
                   } else if (typeof node[key] === 'object') {
@@ -527,13 +610,13 @@ const ASTCallbacks = {
             functionBody.body.forEach(replaceReferences);
             // Insert copy statements at the beginning
             functionBody.body.unshift(...copyStatements);
-            // Add return statement with temp variable names
+            // Add return statement with flat object using property paths as keys
             const returnObj = {
               type: 'ObjectExpression',
-              properties: Array.from(varsToReturn).map(varName => ({
+              properties: Array.from(varsToReturn).map(varPath => ({
                 type: 'Property',
-                key: { type: 'Identifier', name: varName },
-                value: { type: 'Identifier', name: tempVarMap.get(varName) },
+                key: { type: 'Literal', value: varPath },
+                value: { type: 'Identifier', name: tempVarMap.get(varPath) },
                 kind: 'init',
                 computed: false,
                 shorthand: false
@@ -552,17 +635,41 @@ const ASTCallbacks = {
         // Replace with a block statement
         const statements = [];
         // Make sure every assigned variable starts as a node
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side - same as left for strandsNode wrapping
+          let rightArgExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            rightArgExpr = {
+              type: 'MemberExpression',
+              object: rightArgExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
+              left: leftExpr,
               right: {
                 type: 'CallExpression',
                 callee: { type: 'Identifier', name: '__p5.strandsNode' },
-                arguments: [{ type: 'Identifier', name: varName }],
+                arguments: [rightArgExpr],
               }
             }
           });
@@ -577,19 +684,35 @@ const ASTCallbacks = {
           kind: 'const'
         });
         // 2. Assignments for each modified variable
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side: __block_2['inputs.color'] or __block_2['x']
+          const rightExpr = {
+            type: 'MemberExpression',
+            object: { type: 'Identifier', name: blockVar },
+            property: { type: 'Literal', value: varPath },
+            computed: true
+          };
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
-              right: {
-                type: 'MemberExpression',
-                object: { type: 'Identifier', name: blockVar },
-                property: { type: 'Identifier', name: varName },
-                computed: false
-              }
+              left: leftExpr,
+              right: rightExpr
             }
           });
         }
@@ -791,11 +914,14 @@ const ASTCallbacks = {
             if (!localVars.has(left.name)) {
               assignedVars.add(left.name);
             }
-          } else if (left.type === 'MemberExpression' &&
-                     left.object.type === 'Identifier') {
-            // Property assignment: obj.prop = value (includes swizzles)
-            if (!localVars.has(left.object.name)) {
-              assignedVars.add(left.object.name);
+          } else if (left.type === 'MemberExpression') {
+            // Property assignment: obj.prop = value or obj.a.b = value
+            const propertyPath = buildPropertyPath(left);
+            if (propertyPath) {
+              const baseName = propertyPath.split('.')[0];
+              if (!localVars.has(baseName)) {
+                assignedVars.add(propertyPath);
+              }
             }
           }
         }
@@ -808,9 +934,22 @@ const ASTCallbacks = {
             const tempVarMap = new Map();
             const copyStatements = [];
 
-            for (const varName of varsToReturn) {
-              const tempName = `__copy_${varName}_${blockVarCounter++}`;
-              tempVarMap.set(varName, tempName);
+            for (const varPath of varsToReturn) {
+              const parts = varPath.split('.');
+              const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+              tempVarMap.set(varPath, tempName);
+
+              // Build the member expression for vars.propertyPath
+              // e.g., vars.inputs.color or vars.x
+              let sourceExpr = { type: 'Identifier', name: 'vars' };
+              for (const part of parts) {
+                sourceExpr = {
+                  type: 'MemberExpression',
+                  object: sourceExpr,
+                  property: { type: 'Identifier', name: part },
+                  computed: false
+                };
+              }
 
               copyStatements.push({
                 type: 'VariableDeclaration',
@@ -821,12 +960,7 @@ const ASTCallbacks = {
                     type: 'CallExpression',
                     callee: {
                       type: 'MemberExpression',
-                      object: {
-                        type: 'MemberExpression',
-                        object: { type: 'Identifier', name: 'vars' },
-                        property: { type: 'Identifier', name: varName },
-                        computed: false
-                      },
+                      object: sourceExpr,
                       property: { type: 'Identifier', name: 'copy' },
                       computed: false
                     },
@@ -840,12 +974,33 @@ const ASTCallbacks = {
             // Replace references to original variables with temp variables
             const replaceReferences = (node) => {
               if (!node || typeof node !== 'object') return;
+
+              if (node.type === 'MemberExpression') {
+                const propName = node.property.name || node.property.value;
+                if (isSwizzle(propName)) {
+                  replaceReferences(node.object);
+                  return;
+                }
+                const propertyPath = buildPropertyPath(node);
+                if (propertyPath && tempVarMap.has(propertyPath)) {
+                  Object.assign(node, {
+                    type: 'Identifier',
+                    name: tempVarMap.get(propertyPath)
+                  });
+                  return;
+                }
+              }
+
               if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
                 node.name = tempVarMap.get(node.name);
               }
 
               for (const key in node) {
                 if (node.hasOwnProperty(key) && key !== 'parent') {
+                  // Don't recurse into property names of non-computed member expressions
+                  if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
+                    continue;
+                  }
                   if (Array.isArray(node[key])) {
                     node[key].forEach(replaceReferences);
                   } else if (typeof node[key] === 'object') {
@@ -858,13 +1013,13 @@ const ASTCallbacks = {
             functionBody.body.forEach(replaceReferences);
             functionBody.body.unshift(...copyStatements);
 
-            // Add return statement
+            // Add return statement with flat object using property paths as keys
             const returnObj = {
               type: 'ObjectExpression',
-              properties: Array.from(varsToReturn).map(varName => ({
+              properties: Array.from(varsToReturn).map(varPath => ({
                 type: 'Property',
-                key: { type: 'Identifier', name: varName },
-                value: { type: 'Identifier', name: tempVarMap.get(varName) },
+                key: { type: 'Literal', value: varPath },
+                value: { type: 'Identifier', name: tempVarMap.get(varPath) },
                 kind: 'init',
                 computed: false,
                 shorthand: false
@@ -884,32 +1039,33 @@ const ASTCallbacks = {
         const blockVar = `__block_${blockVarCounter++}`;
         const statements = [];
 
-        // Create initial vars object from assigned variables
-        const initialVarsProperties = [];
-        for (const varName of assignedVars) {
-          initialVarsProperties.push({
-            type: 'Property',
-            key: { type: 'Identifier', name: varName },
-            value: {
-              type: 'CallExpression',
-              callee: {
-                type: 'Identifier',
-                name: '__p5.strandsNode',
-              },
-              arguments: [
-                { type: 'Identifier', name: varName },
-              ],
-            },
-            kind: 'init',
-            method: false,
-            shorthand: false,
-            computed: false
-          });
-        }
-
         const initialVarsObject = {
           type: 'ObjectExpression',
-          properties: initialVarsProperties
+          properties: Array.from(assignedVars).map(varPath => {
+            const parts = varPath.split('.');
+            let expr = { type: 'Identifier', name: parts[0] };
+            for (let i = 1; i < parts.length; i++) {
+              expr = {
+                type: 'MemberExpression',
+                object: expr,
+                property: { type: 'Identifier', name: parts[i] },
+                computed: false
+              };
+            }
+            const wrappedExpr = {
+              type: 'CallExpression',
+              callee: { type: 'Identifier', name: '__p5.strandsNode' },
+              arguments: [expr]
+            };
+            return {
+              type: 'Property',
+              key: { type: 'Literal', value: varPath },
+              value: wrappedExpr,
+              kind: 'init',
+              computed: false,
+              shorthand: false
+            };
+          })
         };
 
         // Create the strandsFor call
@@ -933,19 +1089,38 @@ const ASTCallbacks = {
         });
 
         // Add assignments back to original variables
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side: __block_2.inputs.color or __block_2.x
+          let rightExpr = { type: 'Identifier', name: blockVar };
+          for (const part of parts) {
+            rightExpr = {
+              type: 'MemberExpression',
+              object: rightExpr,
+              property: { type: 'Identifier', name: part },
+              computed: false
+            };
+          }
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
-              right: {
-                type: 'MemberExpression',
-                object: { type: 'Identifier', name: blockVar },
-                property: { type: 'Identifier', name: varName },
-                computed: false
-              }
+              left: leftExpr,
+              right: rightExpr
             }
           });
         }
