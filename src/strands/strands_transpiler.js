@@ -118,6 +118,79 @@ function buildPropertyPath(memberExpr) {
   return parts.join('.');
 }
 
+// Replace all references to original variables with temp variables
+// and wrap literal assignments in strandsNode calls
+function replaceReferences(node, tempVarMap) {
+  const internalReplaceReferences = (node) => {
+    if (!node || typeof node !== 'object') return;
+
+    // Check if this MemberExpression matches a tracked property path
+    if (node.type === 'MemberExpression') {
+      const propName = node.property.name || node.property.value;
+      if (isSwizzle(propName)) {
+        // For swizzles, only replace the object part, keep the swizzle
+        internalReplaceReferences(node.object);
+        return;
+      }
+      const propertyPath = buildPropertyPath(node);
+      if (propertyPath && tempVarMap.has(propertyPath)) {
+        // Replace entire member expression with temp variable
+        Object.assign(node, {
+          type: 'Identifier',
+          name: tempVarMap.get(propertyPath)
+        });
+        return; // Don't recurse into replaced node
+      }
+    }
+
+    // Handle simple identifier replacements
+    if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
+      node.name = tempVarMap.get(node.name);
+    }
+
+    // Handle literal assignments to temp variables
+    if (node.type === 'AssignmentExpression') {
+      let leftPath = null;
+      if (node.left.type === 'Identifier') {
+        leftPath = node.left.name;
+      } else if (node.left.type === 'MemberExpression') {
+        leftPath = buildPropertyPath(node.left);
+      }
+
+      if (leftPath && tempVarMap.has(leftPath) &&
+          (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
+        // Wrap the right hand side in a strandsNode call to make sure
+        // it's not just a literal and has a type
+        node.right = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsNode'
+          },
+          arguments: [node.right]
+        };
+      }
+    }
+
+    // Recursively process all properties
+    for (const key in node) {
+      if (node.hasOwnProperty(key) && key !== 'parent') {
+        // Don't recurse into property names of non-computed member expressions
+        if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
+          continue;
+        }
+        if (Array.isArray(node[key])) {
+          node[key].forEach(internalReplaceReferences);
+        } else if (typeof node[key] === 'object') {
+          internalReplaceReferences(node[key]);
+        }
+      }
+    }
+  };
+
+  internalReplaceReferences(node);
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -538,76 +611,8 @@ const ASTCallbacks = {
                 kind: 'let'
               });
             }
-            // Replace all references to original variables with temp variables
-            // and wrap literal assignments in strandsNode calls
-            const replaceReferences = (node) => {
-              if (!node || typeof node !== 'object') return;
-
-              // Check if this MemberExpression matches a tracked property path
-              if (node.type === 'MemberExpression') {
-                const propName = node.property.name || node.property.value;
-                if (isSwizzle(propName)) {
-                  // For swizzles, only replace the object part, keep the swizzle
-                  replaceReferences(node.object);
-                  return;
-                }
-                const propertyPath = buildPropertyPath(node);
-                if (propertyPath && tempVarMap.has(propertyPath)) {
-                  // Replace entire member expression with temp variable
-                  Object.assign(node, {
-                    type: 'Identifier',
-                    name: tempVarMap.get(propertyPath)
-                  });
-                  return; // Don't recurse into replaced node
-                }
-              }
-
-              // Handle simple identifier replacements
-              if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
-                node.name = tempVarMap.get(node.name);
-              }
-
-              // Handle literal assignments to temp variables
-              if (node.type === 'AssignmentExpression') {
-                let leftPath = null;
-                if (node.left.type === 'Identifier') {
-                  leftPath = node.left.name;
-                } else if (node.left.type === 'MemberExpression') {
-                  leftPath = buildPropertyPath(node.left);
-                }
-
-                if (leftPath && tempVarMap.has(leftPath) &&
-                    (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
-                  // Wrap the right hand side in a strandsNode call to make sure
-                  // it's not just a literal and has a type
-                  node.right = {
-                    type: 'CallExpression',
-                    callee: {
-                      type: 'Identifier',
-                      name: '__p5.strandsNode'
-                    },
-                    arguments: [node.right]
-                  };
-                }
-              }
-
-              // Recursively process all properties
-              for (const key in node) {
-                if (node.hasOwnProperty(key) && key !== 'parent') {
-                  // Don't recurse into property names of non-computed member expressions
-                  if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
-                    continue;
-                  }
-                  if (Array.isArray(node[key])) {
-                    node[key].forEach(replaceReferences);
-                  } else if (typeof node[key] === 'object') {
-                    replaceReferences(node[key]);
-                  }
-                }
-              }
-            };
             // Apply reference replacement to all statements
-            functionBody.body.forEach(replaceReferences);
+            functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
             // Insert copy statements at the beginning
             functionBody.body.unshift(...copyStatements);
             // Add return statement with flat object using property paths as keys
@@ -971,46 +976,7 @@ const ASTCallbacks = {
               });
             }
 
-            // Replace references to original variables with temp variables
-            const replaceReferences = (node) => {
-              if (!node || typeof node !== 'object') return;
-
-              if (node.type === 'MemberExpression') {
-                const propName = node.property.name || node.property.value;
-                if (isSwizzle(propName)) {
-                  replaceReferences(node.object);
-                  return;
-                }
-                const propertyPath = buildPropertyPath(node);
-                if (propertyPath && tempVarMap.has(propertyPath)) {
-                  Object.assign(node, {
-                    type: 'Identifier',
-                    name: tempVarMap.get(propertyPath)
-                  });
-                  return;
-                }
-              }
-
-              if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
-                node.name = tempVarMap.get(node.name);
-              }
-
-              for (const key in node) {
-                if (node.hasOwnProperty(key) && key !== 'parent') {
-                  // Don't recurse into property names of non-computed member expressions
-                  if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
-                    continue;
-                  }
-                  if (Array.isArray(node[key])) {
-                    node[key].forEach(replaceReferences);
-                  } else if (typeof node[key] === 'object') {
-                    replaceReferences(node[key]);
-                  }
-                }
-              }
-            };
-
-            functionBody.body.forEach(replaceReferences);
+            functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
             functionBody.body.unshift(...copyStatements);
 
             // Add return statement with flat object using property paths as keys
