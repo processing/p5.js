@@ -790,6 +790,33 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    visualTest('text renders correctly after geometry with many indices', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+
+      p5.background(255);
+      p5.noStroke();
+
+      p5.textFont(font);
+      p5.textSize(20);
+      p5.textAlign(p5.CENTER, p5.CENTER);
+      p5.text('Test 1', 0, -20);
+
+      // Draw a sphere which has many more indices than text
+      p5.fill(200, 200, 255);
+      p5.sphere(30);
+
+      p5.clearDepth();
+
+      // Draw text - should bind its own index buffer
+      p5.fill(0);
+      p5.text('Test 2', 0, 20);
+
+      screenshot();
+    });
   });
 
   visualSuite('texture()', () => {
