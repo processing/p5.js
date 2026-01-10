@@ -166,18 +166,20 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   background(...args) {
+    if (args.length === 0) {
+      return this.states.background; // getter (#8278)
+    }
+    let bgForState = null;
     this.push();
     this.resetMatrix();
-
     if (args[0] instanceof Image) {
+      const img = args[0];
       if (args[1] >= 0) {
         // set transparency of background
-        const img = args[0];
         this.drawingContext.globalAlpha = args[1] / 255;
-        this._pInst.image(img, 0, 0, this.width, this.height);
-      } else {
-        this._pInst.image(args[0], 0, 0, this.width, this.height);
       }
+      this._pInst.image(img, 0, 0, this.width, this.height);
+      bgForState = img; // save for getter (#8278)
     } else {
       // create background rect
       const color = this._pInst.color(...args);
@@ -200,8 +202,11 @@ class Renderer2D extends Renderer {
       if (this._isErasing) {
         this._pInst.erase();
       }
+      bgForState = color; // save for getter (#8278)
     }
     this.pop();
+
+    this.states.setValue('background', bgForState); // set state (#8278)
   }
 
   clear() {
@@ -214,6 +219,9 @@ class Renderer2D extends Renderer {
   fill(...args) {
     super.fill(...args);
     const color = this.states.fillColor;
+    if (args.length === 0) {
+      return color; // getter
+    }
     this._setFill(color.toString());
 
     // Add accessible outputs if the method exists; on success,
@@ -226,6 +234,9 @@ class Renderer2D extends Renderer {
   stroke(...args) {
     super.stroke(...args);
     const color = this.states.strokeColor;
+    if (args.length === 0) {
+      return color; // getter
+    }
     this._setStroke(color.toString());
 
     // Add accessible outputs if the method exists; on success,
@@ -481,6 +492,9 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   blendMode(mode) {
+    if (typeof mode === 'undefined') { // getter
+      return this._cachedBlendMode;
+    }
     if (mode === constants.SUBTRACT) {
       console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
     } else if (
@@ -1000,6 +1014,9 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   strokeCap(cap) {
+    if (typeof cap === 'undefined') { // getter
+      return this.drawingContext.lineCap;
+    }
     if (
       cap === constants.ROUND ||
       cap === constants.SQUARE ||
@@ -1011,6 +1028,9 @@ class Renderer2D extends Renderer {
   }
 
   strokeJoin(join) {
+    if (typeof join === 'undefined') { // getter
+      return this.drawingContext.lineJoin;
+    }
     if (
       join === constants.ROUND ||
       join === constants.BEVEL ||
@@ -1023,7 +1043,10 @@ class Renderer2D extends Renderer {
 
   strokeWeight(w) {
     super.strokeWeight(w);
-    if (typeof w === 'undefined' || w === 0) {
+    if (typeof w === 'undefined') {
+      return this.states.strokeWeight;
+    }
+    if (w === 0) {
       // hack because lineWidth 0 doesn't work
       this.drawingContext.lineWidth = 0.0001;
     } else {
@@ -1085,17 +1108,42 @@ class Renderer2D extends Renderer {
   }
 
   rotate(rad) {
+    if (typeof rad === 'undefined') {
+      const matrix = this.drawingContext.getTransform();
+      let angle = this._pInst.decomposeMatrix(matrix).rotation;
+      if (angle < 0) {
+        angle += Math.PI * 2; // ensure a positive angle
+      }
+      if (this._pInst._angleMode === this._pInst.DEGREES) {
+        angle *= constants.RAD_TO_DEG; // to degrees
+      }
+      return Math.abs(angle);
+    }
     this.drawingContext.rotate(rad);
+    return this;
   }
 
   scale(x, y) {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      const matrix = this.drawingContext.getTransform();
+      return this._pInst.decomposeMatrix(matrix).scale;
+    }
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
+      y = x.y;
+      x = x.x;
+    }
     this.drawingContext.scale(x, y);
     return this;
   }
 
   translate(x, y) {
-    // support passing a vector as the 1st parameter
-    if (x instanceof p5.Vector) {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      const matrix = this.drawingContext.getTransform();
+      return this._pInst.decomposeMatrix(matrix).translation;
+    }
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
       y = x.y;
       x = x.x;
     }
