@@ -1,6 +1,7 @@
 {
   "name": "p5",
   "repository": "processing/p5.js",
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "vite preview/",
@@ -21,7 +22,7 @@
   },
   "version": "2.2.0-rc.5",
   "dependencies": {
-    "@davepagurek/bezier-path": "^0.0.2",
+    "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",
     "acorn": "^8.12.1",
     "acorn-walk": "^8.3.4",
@@ -78,6 +79,10 @@
     "./global": {
       "types": "./types/global.d.ts",
       "default": "./dist/app.js"
+    },
+    "./node": {
+      "types": "./types/p5.d.ts",
+      "default": "./dist/app.node.js"
     },
     "./core": {
       "default": "./dist/core/main.js"
