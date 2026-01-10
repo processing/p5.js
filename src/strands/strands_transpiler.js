@@ -379,9 +379,9 @@ const ASTCallbacks = {
       const assignedVars = new Set();
 
       // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (node) => {
-        if (node.type !== 'BlockStatement') return false;
-        return node.body.some(stmt => {
+      const blockContainsStrandsControlFlow = (stmt) => {
+        // if (node.type !== 'BlockStatement') return false;
+        // return node.body.some(stmt => {
           // Check for variable declarations with strands control flow init
           if (stmt.type === 'VariableDeclaration') {
             const match = stmt.declarations.some(decl =>
@@ -404,7 +404,7 @@ const ASTCallbacks = {
             return match
           }
           return false;
-        });
+        // });
       };
 
       const analyzeBranch = (functionBody) => {
@@ -757,10 +757,10 @@ const ASTCallbacks = {
       const assignedVars = new Set();
 
       // Helper function to check if a block contains strands control flow calls as immediate children
-      const blockContainsStrandsControlFlow = (node) => {
-        if (node.type !== 'BlockStatement') return false;
-        return node.body.some(stmt => {
-          // Check for variable declarations with strands control flow init
+      const blockContainsStrandsControlFlow = (stmt) => {
+        // if (node.type !== 'BlockStatement') return false;
+        // return node.body.some(stmt => {
+          // // Check for variable declarations with strands control flow init
           if (stmt.type === 'VariableDeclaration') {
             const match = stmt.declarations.some(decl =>
               decl.init?.type === 'CallExpression' &&
@@ -782,7 +782,7 @@ const ASTCallbacks = {
             return match
           }
           return false;
-        });
+        // });
       };
 
       // First pass: collect all variable declarations in the body
@@ -1074,6 +1074,7 @@ const ASTCallbacks = {
       paramVals = scopeKeys.map(key => scope[key]);
     }
     const body = match[2];
+    console.log(body)
     try {
       const internalStrandsCallback = new Function(
           // Create a parameter called __p5, not just p5, because users of instance mode

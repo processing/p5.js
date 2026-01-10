@@ -1330,6 +1330,36 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 25, 5);  // 0.1 * 255 ≈ 25
         assert.approximately(pixelColor[2], 77, 5);  // 0.3 * 255 ≈ 77
       });
+
+      test('handle nested loops with accumulator modified in inner loop', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let aliveNeighbours = 0;
+
+            for (let xOff = -1; xOff <= 1; xOff++) {
+              for (let yOff = -1; yOff <= 1; yOff++) {
+                if (xOff != 0 || yOff != 0) {
+                  aliveNeighbours += 0.1;
+                }
+              }
+            }
+
+            // 8 neighbors (all except center): 8 * 0.1 = 0.8
+            return [aliveNeighbours, aliveNeighbours, aliveNeighbours, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background
+        myp5.filter(testShader);
+
+        // Should be: 8 * 0.1 = 0.8
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 ≈ 204
+        assert.approximately(pixelColor[1], 204, 5);
+        assert.approximately(pixelColor[2], 204, 5);
+      });
     });
 
     suite('passing data between shaders', () => {
