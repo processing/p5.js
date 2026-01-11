@@ -428,13 +428,23 @@ function validateParams(p5, fn, lifecycles) {
         return [iss];
       };
 
-      const flat = (error.errors || []).flatMap(e => flattenIssues(e[0]));
+     const flat = (error.errors || []).flatMap(e =>
+      (Array.isArray(e) ? e : [e]).flatMap(i => flattenIssues(i))
+     );
+
+      const typeOfArg = val => {
+        if (val === null) return 'null';
+        if (Array.isArray(val)) return 'array';
+        if (typeof val === 'number' && Number.isNaN(val)) return 'NaN';
+        return typeof val;
+      };
 
       for (const issue of flat) {
         if (!issue) continue;
 
         if (issue.code === 'invalid_type') {
           if (issue.expected === 'number') sawNumber = true;
+          if (issue.expected) expectedTypes.add(issue.expected);
           if (!actualType) {
             const rec = issue.message?.split(', received ')[1];
             if (rec) actualType = rec;
@@ -443,13 +453,21 @@ function validateParams(p5, fn, lifecycles) {
         }
 
         if (issue.code === 'invalid_literal' || issue.code === 'invalid_value') {
-          const exp = 'expected' in issue ? issue.expected : undefined;
-          if (exp === Infinity || exp === -Infinity) {
-            sawInfinityLiteral = true;
-          } else {
-            sawNonInfinityConstant = true;
-          }
-          if (!actualType) actualType = args[error.path[0]];
+        const values = Array.isArray(issue.values)
+          ? issue.values
+          : ('expected' in issue ? [issue.expected] : []);
+        
+        if (values.some(v => v === Infinity || v === -Infinity)) {
+          sawInfinityLiteral = true;
+        }
+        
+        if (values.some(v => v !== Infinity && v !== -Infinity)) {
+          sawNonInfinityConstant = true;
+        }
+        
+        const idx = issue.path?.[0] ?? error.path?.[0];
+        if (!actualType && idx !== undefined) actualType = typeOfArg(args[idx]);
+
           continue;
         }
 
