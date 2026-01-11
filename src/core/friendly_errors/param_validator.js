@@ -422,8 +422,15 @@ function validateParams(p5, fn, lifecycles) {
       const flattenIssues = iss => {
         if (!iss) return [];
         if (iss.code === 'invalid_union') {
-          const subs = iss.unionErrors?.flatMap(u => u.issues) || [];
-          return subs.flatMap(si => flattenIssues(si[0] || si));
+          const subsV3 = iss.unionErrors?.flatMap(u => u.issues) || [];
+          const subsV4 = iss.errors || [];
+        
+          const flatV3 = subsV3.flatMap(si => flattenIssues(si[0] || si));
+          const flatV4 = subsV4.flatMap(e =>
+            (Array.isArray(e) ? e : [e]).flatMap(i => flattenIssues(i))
+          );
+        
+          return [...flatV3, ...flatV4];
         }
         return [iss];
       };
@@ -493,9 +500,17 @@ function validateParams(p5, fn, lifecycles) {
           message += 'Did you mean to put `await` before a loading function? An unexpected Promise was found. ';
           isVersionError = true;
         }
-        const expectedTypesStr = Array.from(expectedTypes).join(' or ');
+        let expectedArr = Array.from(expectedTypes);
+        if (expectedTypes.has('number')) {
+          expectedArr = ['number', ...expectedArr.filter(t => t !== 'number')];
+        }
+        const expectedTypesStr = expectedArr.join(' or ');
+
         const position = error.path.join('.');
-        message += buildTypeMismatchMessage(actualType, expectedTypesStr, position);
+        const idx = error.path?.[0];
+        const received =
+          sawNonInfinityConstant && idx !== undefined ? args[idx] : actualType;
+        message += buildTypeMismatchMessage(received, expectedTypesStr, position);
       }
       return message;
     };
