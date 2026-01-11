@@ -10,7 +10,10 @@ import { Framebuffer } from '../webgl/p5.Framebuffer';
 let renderers;
 function rendering(p5, fn){
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
-  renderers = p5.renderers = {};
+  if (!p5.renderers) {
+    p5.renderers = {};
+  }
+  renderers = p5.renderers;
 
   /**
    * Creates a canvas element on the web page.
@@ -30,7 +33,7 @@ function rendering(p5, fn){
    * the sketch's rendering mode. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
    * is passed, as in `createCanvas(900, 500, myCanvas)`, then it will be used
-   * by the sketch.
+   * by the sketch. To use `WEBGPU` mode, make sure you have the WebGPU mode addon included.
    *
    * The fourth parameter is also optional. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
@@ -45,7 +48,7 @@ function rendering(p5, fn){
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
    * @param  {Number} [height] height of the canvas. Defaults to 100.
-   * @param  {(P2D|WEBGL|P2DHDR)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+   * @param  {(P2D|WEBGL|P2DHDR|WEBGPU)} [renderer] either P2D, WEBGL, or WEBGPU. Defaults to `P2D`.
    * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
    * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
    *
@@ -151,7 +154,11 @@ function rendering(p5, fn){
       });
     }
 
-    return this._renderer;
+    if (this._renderer.contextReady) {
+      return this._renderer.contextReady.then(() => this._renderer);
+    } else {
+      return this._renderer;
+    }
   };
 
   /**
@@ -434,6 +441,16 @@ function rendering(p5, fn){
    *
    * @method createFramebuffer
    * @param {Object} [options] configuration options.
+   * @param {UNSIGNED_BYTE|FLOAT|HALF_FLOAT} [options.format=UNSIGNED_BYTE] The data format of the texture.
+   * @param {RGB|RGBA} [options.channels=RGBA] What color channels to include in the texture.
+   * @param {Boolean} [options.depth=true] Whether to store depth information in the framebuffer.
+   * @param {UNSIGNED_INT|FLOAT} [options.depthFormat=FLOAT] The format to store depth values in.
+   * @param {Boolean} [options.stencil=true] Whether to include a stencil buffer (required for clipping.)
+   * @param {Boolean|Number} [options.antialias] Whether to antialias when drawing to this framebuffer. Either a boolean, or the number of antialias samples to use.
+   * @param {Number} [options.width] The width of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.height] The height of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.density] The pixel density of the framebuffer. By default, it will match the main canvas.
+   * @param {LINEAR|NEAREST} [options.textureFiltering=LINEAR] The strategy used when reading values in the framebuffer in between pixels.
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
@@ -640,7 +657,7 @@ function rendering(p5, fn){
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>
    * object.
    *
-   * @property drawingContext
+   * @property {CanvasRenderingContext2D|WebGLRenderingContext|WebGL2RenderingContext} drawingContext
    *
    * @example
    * <div>

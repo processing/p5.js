@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import {_sanitizeFontName} from '../../../src/type/p5.Font.js';
 
 suite('p5.Font', function () {
   var myp5;
@@ -59,5 +60,33 @@ suite('p5.Font', function () {
         expect(pt.y).not.toBeNaN();
       }
     });
+
+    test('simplifies collinear points', async () => {
+      const font = await myp5.loadFont(fontFile);
+      myp5.textSize(50);
+      const pts = font.textToPoints('T', 0, 0);
+      const simplifiedPts = font.textToPoints('T', 0, 0, { simplifyThreshold: Math.PI * 0.01 });
+      expect(pts.length).toBeGreaterThan(simplifiedPts.length);
+    });
+  });
+});
+
+suite('sanitizeFontName', function () {
+  test('fully alphabetic or alpha-leading alnum do not need quotes', function () {
+    assert.equal(_sanitizeFontName('Arial'), 'Arial');
+    assert.equal(_sanitizeFontName('Family900'), 'Family900');
+    assert.equal(_sanitizeFontName('A_b-c'), 'A_b-c');
+  });
+
+  test('names starting with a digit need quotes', function () {
+    assert.equal(_sanitizeFontName('9lives'), "'9lives'");
+  });
+
+  test('names with spaces need quotes', function () {
+    assert.equal(_sanitizeFontName('My Font'), "'My Font'");
+  });
+
+  test('names with commas need quotes', function () {
+    assert.equal(_sanitizeFontName('Foo,Bar'), "'Foo,Bar'");
   });
 });

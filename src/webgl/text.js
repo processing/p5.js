@@ -1,11 +1,11 @@
 import * as constants from '../core/constants';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { Font, arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn) {
-  RendererGL.prototype.maxCachedGlyphs = function() {
+  Renderer3D.prototype.maxCachedGlyphs = function() {
     // TODO: use more than vibes to find a good value for this
     return 200;
   };
@@ -24,17 +24,6 @@ function text(p5, fn) {
       return val;
     }
   };
-
-  // Text/Typography (see src/type/textCore.js)
-  /*
-  RendererGL.prototype.textWidth = function(s) {
-    if (this._isOpenType()) {
-      return this.states.textFont.font._textWidth(s, this.states.textSize);
-    }
-
-    return 0; // TODO: error
-  };
-  */
 
   // rendering constants
 
@@ -132,6 +121,7 @@ function text(p5, fn) {
 
   /**
    * @function setPixel
+   * @private
    * @param {Object} imageInfo
    * @param {Number} r
    * @param {Number} g
@@ -230,6 +220,7 @@ function text(p5, fn) {
 
       /**
        * @function push
+       * @private
        * @param {Number[]} xs the x positions of points in the curve
        * @param {Number[]} ys the y positions of points in the curve
        * @param {Object} v    the curve information
@@ -242,6 +233,7 @@ function text(p5, fn) {
 
         /**
          * @function minMax
+         * @private
          * @param {Number[]} rg the list of values to compare
          * @param {Number} min the initial minimum value
          * @param {Number} max the initial maximum value
@@ -291,6 +283,7 @@ function text(p5, fn) {
 
       /**
        * @function clamp
+       * @private
        * @param {Number} v the value to clamp
        * @param {Number} min the minimum value
        * @param {Number} max the maxmimum value
@@ -305,6 +298,7 @@ function text(p5, fn) {
 
       /**
        * @function byte
+       * @private
        * @param {Number} v the value to scale
        *
        * converts a floating-point number in the range 0-1 to a byte 0-255
@@ -440,6 +434,7 @@ function text(p5, fn) {
 
       /**
        * @function cubicToQuadratics
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} cx0
@@ -508,6 +503,7 @@ function text(p5, fn) {
 
       /**
        * @function pushLine
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} x1
@@ -523,6 +519,7 @@ function text(p5, fn) {
 
       /**
        * @function samePoint
+       * @private
        * @param {Number} x0
        * @param {Number} y0
        * @param {Number} x1
@@ -608,9 +605,10 @@ function text(p5, fn) {
 
       /**
        * @function layout
+       * @private
        * @param {Number[][]} dim
-       * @param {ImageInfo[]} dimImageInfos
-       * @param {ImageInfo[]} cellImageInfos
+       * @param {ImageInfos} dimImageInfos
+       * @param {ImageInfos} cellImageInfos
        * @return {Object}
        *
        * lays out the curves in a dimension (row or col) into two
@@ -674,7 +672,7 @@ function text(p5, fn) {
     }
   }
 
-  RendererGL.prototype._renderText = function (line, x, y, maxY, minY) {
+  Renderer3D.prototype._renderText = function (line, x, y, maxY, minY) {
     if (!this.states.textFont || typeof this.states.textFont === 'string') {
       console.log(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
@@ -720,11 +718,10 @@ function text(p5, fn) {
     this.scale(scale, scale, 1);
 
     // initialize the font shader
-    const gl = this.GL;
     const initializeShader = !this._defaultFontShader;
     const sh = this._getFontShader();
     sh.init();
-    sh.bindShader(); // first time around, bind the shader fully
+    sh.bindShader('text'); // first time around, bind the shader fully
 
     if (initializeShader) {
       // these are constants, really. just initialize them one-time.
@@ -736,7 +733,7 @@ function text(p5, fn) {
 
     const curFillColor = this.states.fillSet
       ? this.states.curFillColor
-      : [0, 0, 0, 255];
+      : [0, 0, 0, 1];
 
     this._setGlobalUniforms(sh);
     this._applyColorBlend(curFillColor);
@@ -766,15 +763,11 @@ function text(p5, fn) {
     for (const buff of this.buffers.text) {
       buff._prepareBuffer(g, sh);
     }
-    this._bindBuffer(
-      this.geometryBufferCache.cache.glyph.indexBuffer,
-      gl.ELEMENT_ARRAY_BUFFER
-    );
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-
+    this._disableRemainingAttributes(sh);
+    this._beforeDrawText();
     this.glyphDataCache = this.glyphDataCache || new Set();
 
     try {
@@ -825,7 +818,7 @@ function text(p5, fn) {
           sh.bindTextures(); // afterwards, only textures need updating
 
           // draw it
-          gl.drawElements(gl.TRIANGLES, 6, this.GL.UNSIGNED_SHORT, 0);
+          this._drawBuffers(g, { mode: constants.TRIANGLES, count: 1 });
         }
       }
     } finally {
@@ -834,8 +827,8 @@ function text(p5, fn) {
 
       this.states.setValue('strokeColor', doStroke);
       this.states.setValue('drawMode', drawMode);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
+      this._afterDrawText();
       this.pop();
     }
   };

@@ -8,6 +8,7 @@
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
+
 import {
   ColorSpace,
   to,
@@ -25,7 +26,8 @@ import {
 
   OKLab,
   OKLCH as OKLCHSpace,
-
+  contrastWCAG21,
+  contrastAPCA,
   P3
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
@@ -40,6 +42,9 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
 }
 
 const serializationMap = {};
+
+
+
 
 class Color {
   // Reference to underlying color object depending on implementation
@@ -325,6 +330,125 @@ class Color {
     }
     return colorString;
   }
+
+  /**
+   * Checks the contrast between two colors. This method returns a boolean
+   * value to indicate if the two color has enough contrast. `true` means that
+   * the colors has enough contrast to be used as background color and body
+   * text color. `false` means there is not enough contrast.
+   *
+   * A second argument can be passed to the method, `options` , which defines
+   * the algorithm to be used. The algorithms currently supported are
+   * WCAG 2.1 (`'WCAG21'`) or APCA (`'APCA'`). The default is WCAG 2.1. If a
+   * value of `'all'` is passed to the `options` argument, an object containing
+   * more details is returned. The details object will include the calculated
+   * contrast value of the colors and different passing criteria.
+   *
+   * For more details about color contrast, you can check out
+   * <a href="https://colorjs.io/docs/contrast">this page from color.js</a>, and the
+   * <a href="https://webaim.org/resources/contrastchecker/">WebAIM color contrast checker.</a>
+   *
+   * @param {Color} other
+   * @returns {boolean|object}
+   * @example
+   * <div>
+   * <code>
+   * let bgColor, fg1Color, fg2Color, msg1, msg2;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fg1Color = color(100);
+   *   fg2Color = color(220);
+   *
+   *   if(bgColor.contrast(fg1Color)){
+   *     msg1 = 'good';
+   *   }else{
+   *     msg1 = 'bad';
+   *   }
+   *
+   *   if(bgColor.contrast(fg2Color)){
+   *     msg2 = 'good';
+   *   }else{
+   *     msg2 = 'bad';
+   *   }
+   *
+   *   describe('A black canvas with a faint grey word saying "bad" at the top left and a brighter light grey word saying "good" in the middle of the canvas.');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(18);
+   *
+   *   fill(fg1Color);
+   *   text(msg1, 10, 30);
+   *
+   *   fill(fg2Color);
+   *   text(msg2, 10, 60);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * let bgColor, fgColor, contrast;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fgColor = color(200);
+   *   contrast = bgColor.contrast(fgColor, 'all');
+   *
+   *   describe('A black canvas with four short lines of grey text that respectively says: "WCAG 2.1", "12.55", "APCA", and "-73.30".');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(14);
+   *
+   *   fill(fgColor);
+   *   text('WCAG 2.1', 10, 25);
+   *   text(nf(contrast.WCAG21.value, 0, 2), 10, 40);
+   *
+   *   text('APCA', 10, 70);
+   *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
+   * }
+   * </code>
+   * </div>
+   */
+  contrast(other_color, options='WCAG21') {
+    if(options !== 'all'){
+      let contrastVal, minimum;
+      switch(options){
+        case 'WCAG21':
+          contrastVal = contrastWCAG21(this._color, other_color._color);
+          minimum = 4.5;
+          break;
+        case 'APCA':
+          contrastVal = Math.abs(contrastAPCA(this._color, other_color._color));
+          minimum = 75;
+          break;
+        default:
+          return null;
+      }
+
+      return contrastVal >= minimum;
+    }else{
+      const wcag21Value = contrastWCAG21(this._color, other_color._color);
+      const apcaValue = contrastAPCA(this._color, other_color._color);
+      return {
+        WCAG21: {
+          value: wcag21Value,
+          passedMinimum: wcag21Value >= 4.5,
+          passedAAA: wcag21Value >= 7
+        },
+        APCA: {
+          value: apcaValue,
+          passedMinimum: Math.abs(apcaValue) >= 75
+        }
+      };
+    }
+  };
 
   /**
    * Sets the red component of a color.
@@ -689,6 +813,7 @@ class Color {
       return map(to(this._color, 'hsl').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
     }
   }
+
   /**
    * Brightness obtains the HSB brightness value from either a p5.Color object,
    * an array of color components, or a CSS color string.Depending on value,
@@ -696,7 +821,6 @@ class Color {
    * brightness value in the range. By default, this function will return
    * the HSB brightness within the range 0 - 100.
    */
-
   _getBrightness(max=[0, 100]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -758,11 +882,15 @@ function color(p5, fn, lifecycles){
    * instance of this class.
    *
    * @class p5.Color
-   * @param {p5} [pInst]                      pointer to p5 instance.
+   * @param {p5} pInst                      pointer to p5 instance.
    *
    * @param {Number[]|String} vals            an array containing the color values
    *                                          for red, green, blue and alpha channel
    *                                          or CSS color.
+   */
+  /**
+   * @class p5.Color
+   * @param {Number[]|String} vals
    */
   p5.Color = Color;
 

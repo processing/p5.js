@@ -33,12 +33,12 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let values = args.map(arg => arg || 0);
+    let values = args; // .map(arg => arg || 0);
     if (typeof args[0] === 'function') {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      values = args.slice(2).map(arg => arg || 0);
+      values = args.slice(2); // .map(arg => arg || 0);
     }
     let dimensions = values.length; // TODO: make default 3 if no arguments
     if (dimensions === 0) {
@@ -265,14 +265,14 @@ class Vector {
    * function setup() {
    *   let v = createVector(20, 30);
    *
-   *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+   *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
    * </code>
    * </div>
    */
   toString() {
-    return `[${this.values.join(', ')}]`;
+    return `vector[${this._values.join(', ')}]`;
   }
 
   /**
@@ -334,13 +334,13 @@ class Vector {
    */
   set(...args) {
     if (args[0] instanceof Vector) {
-      this.values = args[0].values.slice();
+      this._values = args[0].values.slice();
     } else if (Array.isArray(args[0])) {
-      this.values = args[0].map(arg => arg || 0);
+      this._values = args[0].map(arg => arg || 0);
     } else {
-      this.values = args.map(arg => arg || 0);
+      this._values = args.map(arg => arg || 0);
     }
-    this.dimensions = this.values.length;
+    this.dimensions = this._values.length;
     return this;
   }
 
@@ -374,9 +374,9 @@ class Vector {
    */
   copy() {
     if (this.isPInst) {
-      return new Vector(this._fromRadians, this._toRadians, ...this.values);
+      return new Vector(this._fromRadians, this._toRadians, ...this._values);
     } else {
-      return new Vector(...this.values);
+      return new Vector(...this._values);
     }
   }
 
@@ -521,7 +521,7 @@ class Vector {
       args = args[0];
     }
     args.forEach((value, index) => {
-      this.values[index] = (this.values[index] || 0) + (value || 0);
+      this._values[index] = (this._values[index] || 0) + (value || 0);
     });
     return this;
   }
@@ -833,15 +833,15 @@ class Vector {
   sub(...args) {
     if (args[0] instanceof Vector) {
       args[0].values.forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     } else if (Array.isArray(args[0])) {
       args[0].forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     } else {
       args.forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     }
     return this;
@@ -864,7 +864,6 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
@@ -1044,7 +1043,7 @@ class Vector {
   mult(...args) {
     if (args.length === 1 && args[0] instanceof Vector) {
       const v = args[0];
-      const maxLen = Math.min(this.values.length, v.values.length);
+      const maxLen = Math.min(this._values.length, v.values.length);
       for (let i = 0; i < maxLen; i++) {
         if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
           this._values[i] *= v.values[i];
@@ -1058,7 +1057,7 @@ class Vector {
       }
     } else if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
-      const maxLen = Math.min(this.values.length, arr.length);
+      const maxLen = Math.min(this._values.length, arr.length);
       for (let i = 0; i < maxLen; i++) {
         if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
           this._values[i] *= arr[i];
@@ -1591,7 +1590,6 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
-   * @method dist
    * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
@@ -3060,7 +3058,6 @@ class Vector {
    *
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
    *
-   * @method clampToZero
    * @return {p5.Vector} with components very close to zero replaced with zero.
    * @chainable
    */
@@ -3155,7 +3152,7 @@ class Vector {
     if (typeof length === 'undefined') {
       length = 1;
     }
-    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle));
   }
 
   /**
@@ -3241,7 +3238,7 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
    *
-   *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+   *   // Prints "p5.Vector Object : [x, y]" to the console
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
@@ -3539,7 +3536,7 @@ class Vector {
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
-   * @return {Number}     cross product.
+   * @return {p5.Vector}     cross product.
    */
   static cross(v1, v2) {
     return v1.cross(v2);

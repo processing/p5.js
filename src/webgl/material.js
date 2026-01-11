@@ -6,7 +6,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from './p5.Shader';
 import { request } from '../io/files';
 import { Color } from '../color/p5.Color';
@@ -214,8 +214,8 @@ function material(p5, fn){
    * @param {String} fragSrc source code for the fragment shader.
    * @param {Object} [options] An optional object describing how this shader can
    * be augmented with hooks. It can include:
-   *  - `vertex`: An object describing the available vertex shader hooks.
-   *  - `fragment`: An object describing the available frament shader hooks.
+   * @param {Object} [options.vertex] An object describing the available vertex shader hooks.
+   * @param {Object} [options.fragment] An object describing the available frament shader hooks.
    * @returns {p5.Shader} new shader object created from the
    * vertex and fragment shaders.
    *
@@ -3662,131 +3662,7 @@ function material(p5, fn){
     return this;
   };
 
-
-  /**
-   * @private blends colors according to color components.
-   * If alpha value is less than 1, or non-standard blendMode
-   * we need to enable blending on our gl context.
-   * @param  {Number[]} color The currently set color, with values in 0-1 range
-   * @param  {Boolean} [hasTransparency] Whether the shape being drawn has other
-   * transparency internally, e.g. via vertex colors
-   * @return {Number[]}  Normalized numbers array
-   */
-  RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
-    const gl = this.GL;
-
-    const isTexture = this.states.drawMode === constants.TEXTURE;
-    const doBlend =
-      hasTransparency ||
-      this.states.userFillShader ||
-      this.states.userStrokeShader ||
-      this.states.userPointShader ||
-      isTexture ||
-      this.states.curBlendMode !== constants.BLEND ||
-      colors[colors.length - 1] < 1.0 ||
-      this._isErasing;
-
-    if (doBlend !== this._isBlending) {
-      if (
-        doBlend ||
-        (this.states.curBlendMode !== constants.BLEND &&
-          this.states.curBlendMode !== constants.ADD)
-      ) {
-        gl.enable(gl.BLEND);
-      } else {
-        gl.disable(gl.BLEND);
-      }
-      gl.depthMask(true);
-      this._isBlending = doBlend;
-    }
-    this._applyBlendMode();
-    return colors;
-  };
-
-  /**
-   * @private sets blending in gl context to curBlendMode
-   * @param  {Number[]} color [description]
-   * @return {Number[]}  Normalized numbers array
-   */
-  RendererGL.prototype._applyBlendMode = function () {
-    if (this._cachedBlendMode === this.states.curBlendMode) {
-      return;
-    }
-    const gl = this.GL;
-    switch (this.states.curBlendMode) {
-      case constants.BLEND:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        break;
-      case constants.ADD:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.ONE, gl.ONE);
-        break;
-      case constants.REMOVE:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
-        break;
-      case constants.MULTIPLY:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA);
-        break;
-      case constants.SCREEN:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
-        break;
-      case constants.EXCLUSION:
-        gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-        gl.blendFuncSeparate(
-          gl.ONE_MINUS_DST_COLOR,
-          gl.ONE_MINUS_SRC_COLOR,
-          gl.ONE,
-          gl.ONE
-        );
-        break;
-      case constants.REPLACE:
-        gl.blendEquation(gl.FUNC_ADD);
-        gl.blendFunc(gl.ONE, gl.ZERO);
-        break;
-      case constants.SUBTRACT:
-        gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
-        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        break;
-      case constants.DARKEST:
-        if (this.blendExt) {
-          gl.blendEquationSeparate(
-            this.blendExt.MIN || this.blendExt.MIN_EXT,
-            gl.FUNC_ADD
-          );
-          gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
-        } else {
-          console.warn(
-            'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
-          );
-        }
-        break;
-      case constants.LIGHTEST:
-        if (this.blendExt) {
-          gl.blendEquationSeparate(
-            this.blendExt.MAX || this.blendExt.MAX_EXT,
-            gl.FUNC_ADD
-          );
-          gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
-        } else {
-          console.warn(
-            'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
-          );
-        }
-        break;
-      default:
-        console.error(
-          'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
-        );
-        break;
-    }
-    this._cachedBlendMode = this.states.curBlendMode;
-  };
-
-  RendererGL.prototype.shader = function(s) {
+  Renderer3D.prototype.shader = function(s) {
     // Always set the shader as a fill shader
     this.states.setValue('userFillShader', s);
     this.states.setValue('_useNormalMaterial', false);
@@ -3794,32 +3670,32 @@ function material(p5, fn){
     s.setDefaultUniforms();
   };
 
-  RendererGL.prototype.strokeShader = function(s) {
+  Renderer3D.prototype.strokeShader = function(s) {
     this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
-  RendererGL.prototype.imageShader = function(s) {
+  Renderer3D.prototype.imageShader = function(s) {
     this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
-  RendererGL.prototype.resetShader = function() {
+  Renderer3D.prototype.resetShader = function() {
     this.states.setValue('userFillShader', null);
     this.states.setValue('userStrokeShader', null);
     this.states.setValue('userImageShader', null);
   };
 
-  RendererGL.prototype.texture = function(tex) {
+  Renderer3D.prototype.texture = function(tex) {
     this.states.setValue('drawMode', constants.TEXTURE);
     this.states.setValue('_useNormalMaterial', false);
     this.states.setValue('_tex', tex);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
-  RendererGL.prototype.normalMaterial = function(...args) {
+  Renderer3D.prototype.normalMaterial = function(...args) {
     this.states.setValue('drawMode', constants.FILL);
     this.states.setValue('_useSpecularMaterial', false);
     this.states.setValue('_useEmissiveMaterial', false);
@@ -3829,23 +3705,23 @@ function material(p5, fn){
     this.states.setValue('strokeColor', null);
   };
 
-  // RendererGL.prototype.ambientMaterial = function(v1, v2, v3) {
+  // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
   // }
 
-  // RendererGL.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+  // Renderer3D.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   // }
 
-  // RendererGL.prototype.specularMaterial = function(v1, v2, v3, alpha) {
+  // Renderer3D.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   // }
 
-  RendererGL.prototype.shininess = function(shine) {
+  Renderer3D.prototype.shininess = function(shine) {
     if (shine < 1) {
       shine = 1;
     }
     this.states.setValue('_useShininess', shine);
   };
 
-  RendererGL.prototype.metalness = function(metallic) {
+  Renderer3D.prototype.metalness = function(metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
     this.states.setValue('_useMetalness', metalMix);
   };

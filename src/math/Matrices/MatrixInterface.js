@@ -11,7 +11,8 @@ export class MatrixInterface {
     if (this.constructor === MatrixInterface) {
       throw new Error("Class is of abstract type and can't be instantiated");
     }
-    const methods = [
+    // TODO: don't check this at runtime but still at compile time
+    /*const methods = [
       'add',
       'setElement',
       'reset',
@@ -48,6 +49,6 @@ export class MatrixInterface {
       if (this[method] === undefined) {
         throw new Error(`${method}() method must be implemented`);
       }
-    });
+    });*/
   }
 }

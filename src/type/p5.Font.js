@@ -6,6 +6,7 @@ import { textCoreConstants } from './textCore';
 import * as constants from '../core/constants';
 import { UnicodeRange } from '@japont/unicode-range';
 import { unicodeRanges } from './unicodeRanges';
+import { Vector } from '../math/p5.Vector';
 
 /*
   API:
@@ -109,7 +110,6 @@ export class Font {
    * @param  {Number} y              y‐coordinate of the text baseline.
    * @param  {Number} [width]        Optional width for text wrapping.
    * @param  {Number} [height]       Optional height for text wrapping.
-   * @param  {Object} [options]      Configuration object for rendering text.
    * @return {Array<Array>}          A flat array of path commands.
    *
    * @example
@@ -235,14 +235,15 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radian sbetween two segments. Segments with a shallower angle will be merged.
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -306,14 +307,15 @@ export class Font {
    * path and are more precise.
    *
    * `simplifyThreshold` removes collinear points if it's set to a number other
-   * than 0. The value represents the threshold angle to use when determining
+   * than 0. The value represents the threshold angle in radians to use when determining
    * whether two edges are collinear.
    *
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
-   * @param  {Object} [options]  object with sampleFactor and simplifyThreshold
-   *                             properties.
+   * @param  {Object} [options]  Configuration options:
+   * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
+   * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radians between two segments. Segments with a shallower angle will be merged.
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
@@ -541,63 +543,148 @@ export class Font {
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
-    const contours = this.textToContours(str, x, y, width, height, options);
 
+    let contours = this.textToContours(str, x, y, width, height, options);
+    // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
-      if (extrude === 0) {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
-        this._pInst.beginShape();
-        this._pInst.normal(0, 0, 1);
-        for (const contour of contours) {
-          this._pInst.beginContour();
-          for (const { x, y } of contour) {
-            this._pInst.vertex(x, y);
-          }
-          this._pInst.endContour(this._pInst.CLOSE);
-        }
-        this._pInst.endShape();
-        this._pInst._renderer._validateFaces = prevValidateFaces;
-      } else {
-        const prevValidateFaces = this._pInst._renderer._validateFaces;
-        this._pInst._renderer._validateFaces = true;
+      const prevValidateFaces = this._pInst._renderer._validateFaces;
+      this._pInst._renderer._validateFaces = true;
 
-        // Draw front faces
-        for (const side of [1, -1]) {
-          this._pInst.beginShape();
-          for (const contour of contours) {
-            this._pInst.beginContour();
-            for (const { x, y } of contour) {
-              this._pInst.vertex(x, y, side * extrude * 0.5);
-            }
-            this._pInst.endContour(this._pInst.CLOSE);
-          }
-          this._pInst.endShape();
+      this._pInst.beginShape();
+      for (const contour of contours) {
+        this._pInst.beginContour();
+        for (const pt of contour) {
+          this._pInst.vertex(pt.x, pt.y, 0);
         }
-        this._pInst._renderer._validateFaces = prevValidateFaces;
-
-        // Draw sides
-        for (const contour of contours) {
-          this._pInst.beginShape(this._pInst.QUAD_STRIP);
-          for (const v of contour) {
-            for (const side of [-1, 1]) {
-              this._pInst.vertex(v.x, v.y, side * extrude * 0.5);
-            }
-          }
-          this._pInst.endShape();
-        }
+        this._pInst.endContour(this._pInst.CLOSE);
       }
+
+      this._pInst.endShape(this._pInst.CLOSE);
+
+      this._pInst._renderer._validateFaces = prevValidateFaces;
     });
-    if (extrude !== 0) {
-      geom.computeNormals();
-      for (const face of geom.faces) {
-        if (face.every(idx => geom.vertices[idx].z <= -extrude * 0.5 + 0.1)) {
-          for (const idx of face) geom.vertexNormals[idx].set(0, 0, -1);
-          face.reverse();
-        }
+
+    if (extrude === 0) {
+      return geom;
+    }
+
+    // The tessellation process creates separate vertices for each triangle,
+    // even when they share the same position. We need to deduplicate them
+    // to find which faces are actually connected, so we can identify the
+    // outer edges for extrusion.
+
+    const vertexIndices = {};
+    const vertexId = v => `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
+    const newVertices = [];
+    const newVertexIndex = [];
+
+    for (const v of geom.vertices) {
+      const id = vertexId(v);
+      if (!(id in vertexIndices)) {
+        const index = newVertices.length;
+        vertexIndices[id] = index;
+        newVertices.push(v.copy());
+      }
+      newVertexIndex.push(vertexIndices[id]);
+    }
+
+    // Remap faces to use deduplicated vertices
+    const newFaces = geom.faces.map(f => f.map(i => newVertexIndex[i]));
+
+    //Find outer edges (edges that appear in only one face)
+    const seen = {};
+    for (const face of newFaces) {
+      for (let off = 0; off < face.length; off++) {
+        const a = face[off];
+        const b = face[(off + 1) % face.length];
+        const id = `${Math.min(a, b)}-${Math.max(a, b)}`;
+        if (!seen[id]) seen[id] = [];
+        seen[id].push([a, b]);
       }
     }
-    return geom;
+    const validEdges = [];
+    for (const key in seen) {
+      if (seen[key].length === 1) {
+        validEdges.push(seen[key][0]);
+      }
+    }
+
+    // Step 5: Create extruded geometry
+    const extruded = this._pInst.buildGeometry(() => {});
+    const half = extrude * 0.5;
+    extruded.vertices = [];
+    extruded.faces = [];
+    extruded.edges = []; // INITIALIZE EDGES ARRAY
+
+    // Add side face vertices (separate for each edge for flat shading)
+    for (const [a, b] of validEdges) {
+      const vA = newVertices[a];
+      const vB = newVertices[b];
+
+      // Skip if vertices are too close (degenerate edge)
+      // We only need to check the perimeter edge length since the other edge
+      // is the extrude direction, which is always > 0 for extruded geometry
+
+      const edgeVector = new Vector(vB.x - vA.x, vB.y - vA.y, vB.z - vA.z);
+      const extrudeVector = new Vector(0, 0, extrude);
+      const crossProduct = Vector.cross(edgeVector, extrudeVector);
+      const dist = edgeVector.mag();
+      if (crossProduct.mag() < 0.0001 || dist < 0.0001) continue;
+      // Front face vertices
+      const frontA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z + half));
+      const frontB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z + half));
+      const backA = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vA.x, vA.y, vA.z - half));
+      const backB = extruded.vertices.length;
+      extruded.vertices.push(new Vector(vB.x, vB.y, vB.z - half));
+
+      extruded.faces.push([frontA, backA, backB]);
+      extruded.faces.push([frontA, backB, frontB]);
+      extruded.edges.push([frontA, frontB]);
+      extruded.edges.push([backA, backB]);
+      extruded.edges.push([frontA, backA]);
+      extruded.edges.push([frontB, backB]);
+    }
+
+    // Add front face (with unshared vertices for flat shading)
+    const frontVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z + half));
+    }
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = face.map(i => i + frontVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR FRONT FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    // Add back face (reversed winding order)
+    const backVertexOffset = extruded.vertices.length;
+    for (const v of newVertices) {
+      extruded.vertices.push(new Vector(v.x, v.y, v.z - half));
+    }
+
+    for (const face of newFaces) {
+      if (face.length < 3) continue;
+      const mappedFace = [...face].reverse().map(i => i + backVertexOffset);
+      extruded.faces.push(mappedFace);
+
+      // ADD EDGES FOR BACK FACE
+      for (let i = 0; i < mappedFace.length; i++) {
+        const nextIndex = (i + 1) % mappedFace.length;
+        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+      }
+    }
+
+    extruded.computeNormals();
+    return extruded;
   }
 
   variations() {
@@ -650,25 +737,14 @@ export class Font {
 
   /////////////////////////////// HELPERS ////////////////////////////////
 
-  _verticalAlign(size) {
-    const { sCapHeight } = this.data?.['OS/2'] || {};
-    const { unitsPerEm = 1000 } = this.data?.head || {};
-    const { ascender = 0, descender = 0 } = this.data?.hhea || {};
-    const current = ascender / 2;
-    const target = (sCapHeight || (ascender + descender)) / 2;
-    const offset = target - current;
-    return offset * size / unitsPerEm;
-  }
-
   /*
     Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
   */
   _lineateAndPathify(str, x, y, width, height, options = {}) {
 
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
-
-    // save the baseline
-    let setBaseline = renderer.drawingContext.textBaseline;
+    renderer.push();
+    renderer.textFont(this);
 
     // lineate and compute bounds for the text
     let { lines, bounds } = renderer._computeBounds
@@ -685,8 +761,7 @@ export class Font {
     const axs = this._currentAxes(renderer);
     let pathsForLine = lines.map(l => this._lineToGlyphs(l, { scale, axs }));
 
-    // restore the baseline
-    renderer.drawingContext.textBaseline = setBaseline;
+    renderer.pop();
 
     return pathsForLine;
   }
@@ -770,7 +845,7 @@ export class Font {
 
   _position(renderer, lines, bounds, width, height) {
 
-    let { textAlign, textLeading } = renderer.states;
+    let { textAlign, textLeading, textSize } = renderer.states;
     let metrics = this._measureTextDefault(renderer, 'X');
     let ascent = metrics.fontBoundingBoxAscent;
 
@@ -981,10 +1056,17 @@ async function create(pInst, name, path, descriptors, rawFont) {
   return new Font(pInst, face, name, path, rawFont);
 }
 
+
+function sanitizeFontName(name) {
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(name)) {
+    name = "'" + String(name).replace(/'/g, "\\'") + "'";
+  }
+  return name;
+}
+
 function createFontFace(name, path, descriptors, rawFont) {
 
-  if (name.includes(' ')) name = "'" + name + "'"; // NOTE: must be single-quotes
-
+  name = sanitizeFontName(name);
   let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
     if (!validFontTypesRe.test(path)) {
@@ -1082,6 +1164,35 @@ function pathToPoints(cmds, options, font) {
       }
     }
     return num;
+  };
+
+  const collinear = (a, b, c, thresholdAngle) => {
+    if (!thresholdAngle) {
+      return areaTriangle(a, b, c) === 0;
+    }
+
+    if (typeof collinear.tmpPoint1 === 'undefined') {
+      collinear.tmpPoint1 = [];
+      collinear.tmpPoint2 = [];
+    }
+
+    const ab = collinear.tmpPoint1,
+      bc = collinear.tmpPoint2;
+    ab.x = b.x - a.x;
+    ab.y = b.y - a.y;
+    bc.x = c.x - b.x;
+    bc.y = c.y - b.y;
+
+    const dot = ab.x * bc.x + ab.y * bc.y,
+      magA = Math.sqrt(ab.x * ab.x + ab.y * ab.y),
+      magB = Math.sqrt(bc.x * bc.x + bc.y * bc.y),
+      angle = Math.acos(dot / (magA * magB));
+
+    return angle < thresholdAngle;
+  };
+
+  const areaTriangle = (a, b, c) => {
+    return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
   };
 
   const path = createFromCommands(arrayCommandsToObjects(cmds));
@@ -1328,7 +1439,8 @@ function font(p5, fn) {
    * <code>
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-   * loadFont(`@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }`);
+   *
+   * loadFont('@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }');
    * </code>
    * </div>
    */
@@ -1357,7 +1469,15 @@ function font(p5, fn) {
     let isCSS = path.includes('@font-face');
 
     if (!isCSS) {
-      const info = await fetch(path, { method: 'HEAD' });
+      let info;
+      try {
+        info = await fetch(path, { method: 'HEAD' });
+      } catch (e) {
+        // Sometimes files fail when requested with HEAD. Fallback to a
+        // regular GET. It loads more data, but at least then it's cached
+        // for the likely case when we have to fetch the whole thing.
+        info = await fetch(path);
+      }
       const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
       if (isCSSFile) {
         isCSS = true;
@@ -1530,6 +1650,7 @@ export const arrayCommandsToObjects = commands => commands.map(command => {
   }
 });
 
+export { sanitizeFontName as _sanitizeFontName };
 export default font;
 
 if (typeof p5 !== 'undefined') {

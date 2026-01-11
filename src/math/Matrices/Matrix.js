@@ -6,7 +6,7 @@ import { Vector } from '../p5.Vector';
 import { MatrixInterface } from './MatrixInterface';
 
 const isPerfectSquare = arr => {
-  const sqDimention = Math.sqrt(Array.from(arr).length);
+  const sqDimention = Math.sqrt(arr.length);
   if (sqDimention % 1 !== 0) {
     throw new Error('Array length must be a perfect square.');
   }
@@ -29,7 +29,7 @@ export class Matrix extends MatrixInterface {
     // This is default behavior when object
     // instantiated using createMatrix()
     if (isMatrixArray(args[0]) && isPerfectSquare(args[0])) {
-      const sqDimention = Math.sqrt(Array.from(args[0]).length);
+      const sqDimention = Math.sqrt(args[0].length);
       this.#sqDimention = sqDimention;
       this.matrix = GLMAT_ARRAY_TYPE.from(args[0]);
     } else if (typeof args[0] === 'number') {
@@ -568,7 +568,7 @@ export class Matrix extends MatrixInterface {
       _src = multMatrix.matrix;
     } else if (isMatrixArray(multMatrix) && isPerfectSquare(multMatrix)) {
       _src = multMatrix;
-    } else if (isPerfectSquare(arguments)) {
+    } else if (isPerfectSquare(Array.from(arguments))) {
       _src = Array.from(arguments);
     } else {
       return; // nothing to do.

@@ -273,7 +273,7 @@ function structure(p5, fn){
    * second. Calling <a href="#/p5/noLoop">noLoop()</a> stops
    * <a href="#/p5/draw">draw()</a> from repeating. Calling `redraw()` will
    * execute the code in the <a href="#/p5/draw">draw()</a> function a set
-   * number of times.
+   * number of times. `await` the result of `redraw` to make sure it has finished.
    *
    * The parameter, `n`, is optional. If a number is passed, as in `redraw(5)`,
    * then the draw loop will run the given number of times. By default, `n` is
@@ -281,6 +281,7 @@ function structure(p5, fn){
    *
    * @method redraw
    * @param  {Integer} [n] number of times to run <a href="#/p5/draw">draw()</a>. Defaults to 1.
+   * @returns {Promise<void>}
    *
    * @example
    * <div>
@@ -311,8 +312,8 @@ function structure(p5, fn){
    * }
    *
    * // Run the draw loop when the user double-clicks.
-   * function doubleClicked() {
-   *   redraw();
+   * async function doubleClicked() {
+   *   await redraw();
    * }
    * </code>
    * </div>
@@ -345,8 +346,8 @@ function structure(p5, fn){
    * }
    *
    * // Run the draw loop three times when the user double-clicks.
-   * function doubleClicked() {
-   *   redraw(3);
+   * async function doubleClicked() {
+   *   await redraw(3);
    * }
    * </code>
    * </div>
@@ -384,6 +385,8 @@ function structure(p5, fn){
         }
         await this._runLifecycleHook('postdraw');
       }
+      // Finish drawing
+      await this._renderer.finishDraw?.();
     }
   };
 
