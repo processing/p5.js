@@ -62,7 +62,7 @@ The majority of the activity on p5.js' GitHub repositories (repo for short) happ
 
 While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed
 
-either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.gg/SHQ8dH25r9).
+either on the [forum](https://discourse.processing.org) or on other platforms such as [Discord](https://discord.com/invite/SHQ8dH25r9).
 
 We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
 
