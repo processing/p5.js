@@ -348,7 +348,7 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  *
  * @method noiseDetail
  * @param {Number} lod number of octaves to be used by the noise.
- * @param {Number} falloff falloff factor for each octave.
+ * @param {Number} [falloff=0.5] falloff factor for each octave.
  *
  * @example
  * <div>
