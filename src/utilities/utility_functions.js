@@ -676,7 +676,7 @@ function utilityFunctions(p5, fn){
    *
    * @method shuffle
    * @param  {Array} array array to shuffle.
-   * @param  {Boolean} [bool] if `true`, shuffle the original array in place. Defaults to `false`.
+   * @param  {Boolean} [modify] if `true`, shuffle the original array in place. Defaults to `false`.
    * @return {Array} shuffled array.
    *
    * @example
@@ -759,9 +759,9 @@ function utilityFunctions(p5, fn){
    * </code>
    * </div>
    */
-  fn.shuffle = function (arr, bool) {
+  fn.shuffle = function (arr, modify) {
     const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
-    arr = bool || isView ? arr : arr.slice();
+    arr = modify || isView ? arr : arr.slice();
 
     let rnd,
       tmp,
