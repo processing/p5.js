@@ -408,6 +408,26 @@ suite('p5.Shader', function() {
     });
   });
   suite('p5.strands', () => {
+    test('handles named function callbacks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      function myMaterial() {
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [
+            1,
+            0,
+            0,
+            1
+          ];
+          return inputs;
+        });
+      }
+      const myShader = myp5.baseMaterialShader().modify(myMaterial, { myp5 });
+      expect(() => {
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
     test('does not break when arrays are in uniform callbacks', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       const myShader = myp5.baseMaterialShader().modify(() => {
