@@ -1197,7 +1197,7 @@ const ASTCallbacks = {
     recursive(ast, { varyings: {}, inControlFlow: 0 }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
-    const match = /\(?\s*(?:function)?\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
+    const match = /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
       .exec(transpiledSource);
     if (!match) {
       console.log(transpiledSource);
