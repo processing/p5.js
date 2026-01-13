@@ -46,8 +46,8 @@ export function applyPatches() {
 
   replace(
     ['p5.d.ts', 'global.d.ts'],
-    'shuffle(array: any[], bool?: boolean): any[];',
-    'shuffle<T>(array: T[], bool?: boolean): T[];'
+    'shuffle(array: any[], modify?: boolean): any[];',
+    'shuffle<T>(array: T[], modify?: boolean): T[];'
   );
 
   replace(
