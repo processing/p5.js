@@ -45,6 +45,12 @@ export function applyPatches() {
   );
 
   replace(
+    ['p5.d.ts', 'global.d.ts'],
+    'shuffle(array: any[], bool?: boolean): any[];',
+    'shuffle<T>(array: T[], bool?: boolean): T[];'
+  );
+
+  replace(
     'p5.d.ts',
     'textToContours(str: string, x: number, y: number, options?: { sampleFactor?: number; simplifyThreshold?: number }): object[][];',
     'textToContours(str: string, x: number, y: number, options?: { sampleFactor?: number; simplifyThreshold?: number }): { x: number; y: number; alpha: number }[][];',
