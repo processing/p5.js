@@ -393,6 +393,9 @@ p5.prototype.saveGif = async function(
     pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   }
 
+  // store current looping status
+  const wasLooping = this.isLooping();
+
   // stop the loop since we are going to manually redraw
   this.noLoop();
 
@@ -452,7 +455,10 @@ p5.prototype.saveGif = async function(
   }
   if (!silent) p.html('Frames processed, generating color palette...');
 
-  this.loop();
+  if (wasLooping) {
+    this.loop();
+  }
+
   this.pixelDensity(lastPixelDensity);
 
   // create the gif encoder and the colorspace format
@@ -552,7 +558,10 @@ p5.prototype.saveGif = async function(
 
   frames = [];
   this._recording = false;
-  this.loop();
+
+  if (wasLooping) {
+    this.loop();
+  }
 
   if (!silent){
     p.html('Done. Downloading your gif!🌸');
