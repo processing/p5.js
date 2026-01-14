@@ -1485,11 +1485,14 @@
     "noiseDetail": {
       "overloads": [
         [
-          "Number",
+          "Number"
+        ],
+        [
+          "Number", 
           "Number"
         ]
-      ]
-    },
+  ]
+},
     "noiseSeed": {
       "overloads": [
         [
