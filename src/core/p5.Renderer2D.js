@@ -551,16 +551,17 @@ class Renderer2D extends Renderer {
     // round down to get integer numbers
     x = Math.floor(x);
     y = Math.floor(y);
-    if (imgOrCol instanceof Image) {
+    if (imgOrCol instanceof Graphics || imgOrCol instanceof Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
       this.drawingContext.scale(
         this._pixelDensity,
         this._pixelDensity
       );
-      this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
-      this.drawingContext.drawImage(imgOrCol.canvas, x, y);
-      this.drawingContext.restore();
+      const width = imgOrCol.width;
+      const height = imgOrCol.height;
+      this.drawingContext.clearRect(x, y, width, height);
+      this.drawingContext.drawImage(imgOrCol.canvas, x, y, width, height);
     } else {
       let r = 0,
         g = 0,
