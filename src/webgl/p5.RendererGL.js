@@ -680,6 +680,127 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
+
+    // Register cleanup hook to free WebGL resources when sketch is removed
+    this._pInst.registerMethod('remove', this._cleanupWebGLResources.bind(this));
+  }
+
+  /**
+   * Frees all WebGL resources (shaders, textures, buffers) associated with
+   * this renderer. Called automatically when the p5 instance is removed.
+   *
+   * @method _cleanupWebGLResources
+   * @private
+   */
+  _cleanupWebGLResources() {
+    // Dispose all cached shaders
+    const shadersToDispose = [
+      this._defaultLightShader,
+      this._defaultImmediateModeShader,
+      this._defaultNormalShader,
+      this._defaultColorShader,
+      this._defaultPointShader,
+      this.userFillShader,
+      this.userStrokeShader,
+      this.userPointShader,
+      this._curShader,
+      this.specularShader,
+      this.diffusedShader,
+      this.filterShader
+    ];
+
+    // Also dispose filter shaders
+    if (this.defaultFilterShaders) {
+      for (const key in this.defaultFilterShaders) {
+        shadersToDispose.push(this.defaultFilterShaders[key]);
+      }
+    }
+
+    // Dispose each shader
+    for (const shader of shadersToDispose) {
+      if (shader && typeof shader.dispose === 'function') {
+        shader.dispose();
+      }
+    }
+
+    // Dispose all cached textures
+    if (this.textures) {
+      for (const texture of this.textures.values()) {
+        if (texture && typeof texture.dispose === 'function') {
+          texture.dispose();
+        }
+      }
+      this.textures.clear();
+    }
+
+    // Remove all framebuffers (they have their own remove() method)
+    if (this.framebuffers) {
+      for (const fb of this.framebuffers) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.framebuffers.clear();
+    }
+
+    // Clean up diffused and specular texture caches (these store framebuffers)
+    if (this.diffusedTextures) {
+      for (const fb of this.diffusedTextures.values()) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.diffusedTextures.clear();
+    }
+
+    if (this.specularTextures) {
+      for (const fb of this.specularTextures.values()) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.specularTextures.clear();
+    }
+
+    // Dispose empty texture singleton
+    if (this._emptyTexture) {
+      if (typeof this._emptyTexture.dispose === 'function') {
+        this._emptyTexture.dispose();
+      }
+      this._emptyTexture = null;
+    }
+
+    // Free all retained mode geometry buffers
+    if (this.retainedMode && this.retainedMode.geometry) {
+      for (const gId in this.retainedMode.geometry) {
+        this._freeBuffers(gId);
+      }
+    }
+
+    // Clean up filter layers
+    if (this.filterLayer && typeof this.filterLayer.remove === 'function') {
+      this.filterLayer.remove();
+      this.filterLayer = undefined;
+    }
+    if (this.filterLayerTemp && typeof this.filterLayerTemp.remove === 'function') {
+      this.filterLayerTemp.remove();
+      this.filterLayerTemp = undefined;
+    }
+
+    // Clear shader references
+    this._defaultLightShader = undefined;
+    this._defaultImmediateModeShader = undefined;
+    this._defaultNormalShader = undefined;
+    this._defaultColorShader = undefined;
+    this._defaultPointShader = undefined;
+    this.userFillShader = undefined;
+    this.userStrokeShader = undefined;
+    this.userPointShader = undefined;
+    this._curShader = undefined;
+    this.specularShader = undefined;
+    this.diffusedShader = undefined;
+    this.filterShader = undefined;
+    this.defaultFilterShaders = {};
   }
 
   /**

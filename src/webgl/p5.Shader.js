@@ -1492,6 +1492,53 @@ p5.Shader = class {
       }
     }
   }
+
+  /**
+   * Frees the GPU resources associated with this shader.
+   *
+   * This method deletes the vertex shader, fragment shader, and shader program
+   * from GPU memory. Call this when you no longer need the shader to prevent
+   * memory leaks, especially when creating and destroying multiple p5 instances.
+   *
+   * @method dispose
+   * @private
+   */
+  dispose() {
+    if (this._glProgram === 0) {
+      return; // Already disposed or never initialized
+    }
+
+    const gl = this._renderer.GL;
+
+    // Unbind if currently bound
+    if (this._bound) {
+      this.unbindShader();
+    }
+
+    // Detach shaders from program before deletion
+    if (this._vertShader !== -1) {
+      gl.detachShader(this._glProgram, this._vertShader);
+      gl.deleteShader(this._vertShader);
+      this._vertShader = -1;
+    }
+
+    if (this._fragShader !== -1) {
+      gl.detachShader(this._glProgram, this._fragShader);
+      gl.deleteShader(this._fragShader);
+      this._fragShader = -1;
+    }
+
+    // Delete the program
+    gl.deleteProgram(this._glProgram);
+    this._glProgram = 0;
+
+    // Clear cached data
+    this._loadedAttributes = false;
+    this._loadedUniforms = false;
+    this.attributes = {};
+    this.uniforms = {};
+    this.samplers = [];
+  }
 };
 
 export default p5.Shader;
