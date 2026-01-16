@@ -257,6 +257,7 @@ class RendererGL extends Renderer3D {
        }
     } else if (this._curShader.shaderType === 'text') {
       // Text rendering uses a fixed quad geometry with 6 indices
+      this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     } else if (glBuffers.indexBuffer) {
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
@@ -1049,7 +1050,8 @@ class RendererGL extends Renderer3D {
     const gl = this.GL;
 
     if (indices) {
-      const buffer = gl.createBuffer();
+      let buffer = buffers.indexBuffer;
+      if (!buffer) buffer = gl.createBuffer();
       this._bindBuffer(buffer, gl.ELEMENT_ARRAY_BUFFER, indices, indexType);
 
       buffers.indexBuffer = buffer;
