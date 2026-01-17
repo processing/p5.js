@@ -856,13 +856,16 @@ class RendererGL extends Renderer3D {
         this._webGL2CompatibilityPrefix("frag", "highp") +
           defaultShaders.filterBaseFrag,
         {
-            vertex: {},
-            fragment: {
-              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
-                return getTexture(canvasContent, inputs.texCoord);
-              }`,
-            },
-          }
+          vertex: {},
+          fragment: {
+            "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+              return getTexture(canvasContent, inputs.texCoord);
+            }`,
+          },
+          hookAliases: {
+            'getColor': ['filterColor'],
+          },
+        }
       );
     }
     return this._baseFilterShader;

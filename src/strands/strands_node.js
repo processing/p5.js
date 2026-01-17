@@ -7,6 +7,7 @@ export class StrandsNode {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension;
+    this.structProperties = null;
     this.isStrandsNode = true;
 
     // Store original identifier for varying variables
@@ -19,6 +20,10 @@ export class StrandsNode {
       this._originalBaseType = nodeData.baseType;
       this._originalDimension = nodeData.dimension;
     }
+  }
+  withStructProperties(properties) {
+    this.structProperties = properties;
+    return this;
   }
   copy() {
     return createStrandsNode(this.id, this.dimension, this.strandsContext);
