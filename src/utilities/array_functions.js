@@ -195,9 +195,10 @@ p5.prototype.shorten = function(list) {
  * making a copy.
  *
  * @method shuffle
- * @param  {Array} array array to shuffle.
- * @param  {Boolean} [bool] if `true`, shuffle the original array in place. Defaults to `false`.
- * @return {Array} shuffled array.
+ * @template T
+ * @param {T[]} arr array to shuffle.
+ * @param {Boolean} [bool] if `true`, shuffle the original array in place. Defaults to `false`.
+ * @return {T[]} shuffled array.
  *
  * @example
  * <div>
