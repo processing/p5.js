@@ -794,7 +794,7 @@ visualSuite('WebGL', function() {
     visualTest('text renders correctly after geometry with many indices', async (p5, screenshot) => {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
 
       p5.background(255);

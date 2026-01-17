@@ -46,7 +46,7 @@ visualSuite('Typography', function () {
     visualTest('with a font file and special chars', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf',
+        'test/unit/assets/Inconsolata-Bold.ttf',
         'Incönsolata'
       );
       p5.textFont(font);
