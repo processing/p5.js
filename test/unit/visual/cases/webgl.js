@@ -852,6 +852,41 @@ visualSuite('WebGL', function() {
       p5.rect(-20, -20, 40, 40);
       screenshot();
     });
+
+    visualTest('getTexture in vertex shaders', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const positionData = p5.createFramebuffer({
+        width: 3,
+        height: 1,
+        density: 1,
+        antialias: false,
+        format: p5.FLOAT,
+        textureFiltering: p5.NEAREST
+      });
+      positionData.loadPixels();
+      for (let i = 0; i < 3; i++) {
+        positionData.pixels[i * 4] = i / 3;
+        positionData.pixels[i * 4 + 1] = 0;
+        positionData.pixels[i * 4 + 2] = 0;
+        positionData.pixels[i * 4 + 3] = 1;
+      }
+      positionData.updatePixels();
+      const sh = p5.baseMaterialShader().modify(() => {
+        const data = p5.uniformTexture(() => positionData);
+        p5.getWorldInputs((inputs) => {
+          const angle = p5.getTexture(data, [p5.instanceID()/3, 0]).r * p5.TWO_PI;
+          inputs.position.xy += [p5.cos(angle) * 10, p5.sin(angle) * 10];
+          return inputs;
+        });
+      }, { p5, positionData });
+      const instance = p5.buildGeometry(() => p5.sphere(3));
+
+      p5.noStroke();
+      p5.fill('red');
+      p5.shader(sh);
+      p5.model(instance, 3);
+      screenshot();
+    });
   });
 
   visualSuite("Image Based Lighting", function () {
