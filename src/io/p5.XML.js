@@ -21,8 +21,6 @@ class XML {
    * @return {p5.XML} parent element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -55,8 +53,6 @@ class XML {
    *
    *   describe('The word "animals" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   getParent() {
     return new XML(this.DOM.parentElement);
@@ -71,8 +67,6 @@ class XML {
    * @return {String} name of the element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -102,8 +96,6 @@ class XML {
    *
    *   describe('The word "mammal" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   getName() {
     return this.DOM.tagName;
@@ -122,8 +114,6 @@ class XML {
    * @param {String} name new tag name of the element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -156,7 +146,6 @@ class XML {
    *     'The words "animals" and "monsters" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code></div>
    */
   setName(name) {
     const content = this.DOM.innerHTML;
@@ -176,8 +165,6 @@ class XML {
    * @return {boolean} whether the element has children.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -205,8 +192,6 @@ class XML {
    *
    *   describe('The word "Parent" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   hasChildren() {
     return this.DOM.children.length > 0;
@@ -219,8 +204,6 @@ class XML {
    * @return {String[]} names of the child elements.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -253,8 +236,6 @@ class XML {
    *     'The words "mammal", "mammal", "mammal", and "reptile" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   listChildren() {
     const arr = [];
@@ -276,8 +257,6 @@ class XML {
    * @return {p5.XML[]} child elements.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -313,11 +292,8 @@ class XML {
    *     'The words "Goat", "Leopard", "Zebra", and "Turtle" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myXML;
    *
    * async function setup() {
@@ -354,8 +330,6 @@ class XML {
    *     'The words "Goat", "Leopard", and "Zebra" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   getChildren(param) {
     if (param) {
@@ -378,8 +352,6 @@ class XML {
    * @return {p5.XML} child element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -406,11 +378,8 @@ class XML {
    *
    *   describe('The word "Goat" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myXML;
    *
    * async function setup() {
@@ -437,8 +406,6 @@ class XML {
    *
    *   describe('The word "Leopard" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   getChild(param) {
     if (typeof param === 'string') {
@@ -461,8 +428,6 @@ class XML {
    * @return {p5.XML} added child element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -501,8 +466,6 @@ class XML {
    *
    *   describe('The word "Bluebottle" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   addChild(node) {
     if (node instanceof XML) {
@@ -524,8 +487,6 @@ class XML {
    * @param {String|Integer} name name or index of the child element to remove.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -564,11 +525,8 @@ class XML {
    *     'The words "Leopard", "Zebra", and "Turtle" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myXML;
    *
    * async function setup() {
@@ -607,8 +565,6 @@ class XML {
    *     'The words "Goat", "Leopard", and "Turtle" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   removeChild(param) {
     let ind = -1;
@@ -633,8 +589,6 @@ class XML {
    * @return {Integer} number of attributes.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -661,8 +615,6 @@ class XML {
    *
    *   describe('The number "2" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   getAttributeCount() {
     return this.DOM.attributes.length;
@@ -678,8 +630,6 @@ class XML {
    * @return {String[]} attribute names.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -706,8 +656,6 @@ class XML {
    *
    *   describe('The text "id,species" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   listAttributes() {
     const arr = [];
@@ -733,8 +681,6 @@ class XML {
    * @return {boolean} whether the element has the attribute.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -766,8 +712,6 @@ class XML {
    *
    *   describe('The text "Species" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   hasAttribute(name) {
     const obj = {};
@@ -799,8 +743,6 @@ class XML {
    * @return {Number} attribute value as a number.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -830,11 +772,8 @@ class XML {
    *
    *   describe(`The text "${content} is ${id + 1}th" written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myXML;
    *
    * async function setup() {
@@ -866,8 +805,6 @@ class XML {
    *     `The text "${content} is ${weight}kg" written in black on a gray background.`
    *   );
    * }
-   * </code>
-   * </div>
    */
   getNum(name, defaultValue) {
     const obj = {};
@@ -899,8 +836,6 @@ class XML {
    * @return {String} attribute value as a string.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -930,11 +865,8 @@ class XML {
    *
    *   describe(`The text "${content}: ${species}" written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myXML;
    *
    * async function setup() {
@@ -965,8 +897,6 @@ class XML {
    *
    *   describe(`The text "${content}" written in green on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   getString(name, defaultValue) {
     const obj = {};
@@ -992,8 +922,6 @@ class XML {
    * @param {Number|String|Boolean} value attribute's new value.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -1028,8 +956,6 @@ class XML {
    *     `The text "${content} is ${attribute}" written in green on a gray background.`
    *   );
    * }
-   * </code>
-   * </div>
    */
   setAttribute(name, value) {
     this.DOM.setAttribute(name, value);
@@ -1047,8 +973,6 @@ class XML {
    * @return {String} element's content as a string.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -1075,11 +999,8 @@ class XML {
    *
    *   describe(`The text "${content}" written in green on a gray background.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1101,8 +1022,6 @@ class XML {
    *
    *   describe(`The text "${content}" written in green on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   getContent(defaultValue) {
     let str;
@@ -1123,8 +1042,6 @@ class XML {
    * @param {String} content new content for the element.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -1159,8 +1076,6 @@ class XML {
    *     `The text "${oldContent}: ${newContent}" written in green on a gray background.`
    *   );
    * }
-   * </code>
-   * </div>
    */
   setContent(content) {
     if (!this.DOM.children.length) {
@@ -1177,8 +1092,6 @@ class XML {
    * @return {String} element as a string.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -1215,8 +1128,6 @@ class XML {
    *   // Save the file and close the print stream.
    *   myWriter.close();
    * }
-   * </code>
-   * </div>
    */
   serialize() {
     const xmlSerializer = new XMLSerializer();
@@ -1247,8 +1158,6 @@ function xml(p5, fn){
    *
    * @class p5.XML
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * async function setup() {
@@ -1284,8 +1193,6 @@ function xml(p5, fn){
    *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   p5.XML = XML;
 }

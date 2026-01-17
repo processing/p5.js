@@ -146,8 +146,6 @@ export const WAIT = 'wait';
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -158,11 +156,8 @@ export const WAIT = 'wait';
  *
  *   describe('The bottom-right quarter of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -182,11 +177,8 @@ export const WAIT = 'wait';
  *
  *   describe('Two black lines on a gray background. One line extends from the center to the right. The other line extends from the center to the bottom.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -216,8 +208,6 @@ export const WAIT = 'wait';
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const HALF_PI = _PI / 2;
 
@@ -235,8 +225,6 @@ export const HALF_PI = _PI / 2;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -247,11 +235,8 @@ export const HALF_PI = _PI / 2;
  *
  *   describe('The bottom half of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -271,11 +256,8 @@ export const HALF_PI = _PI / 2;
  *
  *   describe('A horizontal black line on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -305,8 +287,6 @@ export const HALF_PI = _PI / 2;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const PI = _PI;
 
@@ -325,8 +305,6 @@ export const PI = _PI;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -337,11 +315,8 @@ export const PI = _PI;
  *
  *   describe('A one-eighth slice of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -361,11 +336,8 @@ export const PI = _PI;
  *
  *   describe('Two black lines that form a "V" opening towards the bottom-right corner of a gray square.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -395,8 +367,6 @@ export const PI = _PI;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const QUARTER_PI = _PI / 4;
 
@@ -415,8 +385,6 @@ export const QUARTER_PI = _PI / 4;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -427,11 +395,8 @@ export const QUARTER_PI = _PI / 4;
  *
  *   describe('A white circle drawn on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -456,11 +421,8 @@ export const QUARTER_PI = _PI / 4;
  *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
  *   );
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -490,8 +452,6 @@ export const QUARTER_PI = _PI / 4;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 10);
  * }
- * </code>
- * </div>
  */
 export const TAU = _PI * 2;
 
@@ -510,8 +470,6 @@ export const TAU = _PI * 2;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -522,11 +480,8 @@ export const TAU = _PI * 2;
  *
  *   describe('A white circle drawn on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -551,11 +506,8 @@ export const TAU = _PI * 2;
  *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
  *   );
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -585,8 +537,6 @@ export const TAU = _PI * 2;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 10);
  * }
- * </code>
- * </div>
  */
 export const TWO_PI = _PI * 2;
 
