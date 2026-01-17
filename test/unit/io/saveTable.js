@@ -1,14 +1,21 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
-import * as fileSaver from 'file-saver';
 import { vi } from 'vitest';
 import files from '../../../src/io/files';
 import table from '../../../src/io/p5.Table';
 import tableRow from '../../../src/io/p5.TableRow';
 
-vi.mock('file-saver', () => {
-  return {
-    saveAs: vi.fn()
-  };
+const mockAnchorElement = vi.mockObject({
+  href: null,
+  download: null,
+  click: () => {}
+});
+const originalCreateElement = document.createElement;
+vi.spyOn(document, 'createElement').mockImplementation((...args) => {
+  if(args[0] !== 'a'){
+    return originalCreateElement.apply(document, args);
+  }else{
+    return mockAnchorElement;
+  }
 });
 
 suite('saveTable', function() {
@@ -35,35 +42,28 @@ suite('saveTable', function() {
     mockP5Prototype.saveTable(myTable, 'filename');
 
     // TODO: Need comprehensive way to compare blobs in spy call
-    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-    expect(fileSaver.saveAs)
-      .toHaveBeenCalledWith(
-        expect.any(Blob),
-        'filename.csv'
-      );
+    // REF: io/files.js
+    expect(document.createElement).toHaveBeenCalledTimes(1);
+    expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+    assert.equal(mockAnchorElement.download, 'filename.csv');
   });
 
   test('should download a file with expected contents (tsv)', async () => {
     mockP5Prototype.saveTable(myTable, 'filename', 'tsv');
 
     // TODO: Need comprehensive way to compare blobs in spy call
-    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-    expect(fileSaver.saveAs)
-      .toHaveBeenCalledWith(
-        expect.any(Blob),
-        'filename.tsv'
-      );
+    // REF: io/files.js
+    expect(document.createElement).toHaveBeenCalledTimes(1);
+    expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+    assert.equal(mockAnchorElement.download, 'filename.tsv');
   });
 
   test('should download a file with expected contents (html)', async () => {
     mockP5Prototype.saveTable(myTable, 'filename', 'html');
 
-    expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-    expect(fileSaver.saveAs)
-      .toHaveBeenCalledWith(
-        expect.any(Blob),
-        'filename.html'
-      );
+    expect(document.createElement).toHaveBeenCalledTimes(1);
+    expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+    assert.equal(mockAnchorElement.download, 'filename.html');
   });
   // testWithDownload(
   //   'should download a file with expected contents (html)',

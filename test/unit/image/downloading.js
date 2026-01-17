@@ -1,15 +1,22 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
-import * as fileSaver from 'file-saver';
 import { vi } from 'vitest';
 import image from '../../../src/image/image';
 import files from '../../../src/io/files';
 import loading from '../../../src/image/loading_displaying';
 import p5Image from '../../../src/image/p5.Image';
 
-vi.mock('file-saver', () => {
-  return {
-    saveAs: vi.fn()
-  };
+const mockAnchorElement = vi.mockObject({
+  href: null,
+  download: null,
+  click: () => {}
+});
+const originalCreateElement = document.createElement;
+vi.spyOn(document, 'createElement').mockImplementation((...args) => {
+  if(args[0] !== 'a'){
+    return originalCreateElement.apply(document, args);
+  }else{
+    return mockAnchorElement;
+  }
 });
 
 expect.extend({
@@ -90,12 +97,10 @@ suite('Downloading', () => {
 
       test('should download a gif', async () => {
         mockP5Prototype.encodeAndDownloadGif(myGif);
-        expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-        expect(fileSaver.saveAs)
-          .toHaveBeenCalledWith(
-            expect.tobeGif(),
-            'untitled.gif'
-          );
+
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        assert.equal(mockAnchorElement.download, 'untitled.gif');
       });
     });
   });
@@ -109,34 +114,25 @@ suite('Downloading', () => {
     test('should download a png file', async () => {
       mockP5Prototype.saveCanvas();
       await wait(100);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobePng(),
-          'untitled.png'
-        );
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'untitled.png');
     });
 
     test('should download a jpg file I', async () => {
       mockP5Prototype.saveCanvas('filename.jpg');
       await wait(100);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobeJpg(),
-          'filename.jpg'
-        );
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'filename.jpg');
     });
 
     test('should download a jpg file II', async () => {
       mockP5Prototype.saveCanvas('filename', 'jpg');
       await wait(100);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobeJpg(),
-          'filename.jpg'
-        );
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'filename.jpg');
     });
   });
 
@@ -192,12 +188,9 @@ suite('Downloading', () => {
 
     test.todo('should download a GIF', async () => {
       await mockP5Prototype.saveGif('myGif', 3, 2);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobeGif(),
-          'myGif.gif'
-        );
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'myGif.gif');
     });
   });
 });
