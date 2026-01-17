@@ -1013,6 +1013,7 @@ function rendererWebGPU(p5, fn) {
       this.states.setValue('activeImageLight', null);
       this._pInst.setCamera(this.finalCamera);
       this._pInst.resetShader();
+      this._pInst.resetMatrix();
       this._pInst.imageMode(this._pInst.CENTER);
       this._pInst.image(this.mainFramebuffer, 0, 0);
       this._pInst.pop();
