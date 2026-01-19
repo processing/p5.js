@@ -1090,6 +1090,7 @@
       <td align="center" valign="top" width="16.66%"><a href="http://piyushh.me"><img src="https://avatars.githubusercontent.com/u/163632958?v=4?s=64" width="64px;" alt="PIYUSH RATHORE"/><br /><sub><b>PIYUSH RATHORE</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Piyushrathoree" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Aayushdev18"><img src="https://avatars.githubusercontent.com/u/148681565?v=4?s=64" width="64px;" alt="Ayush Dev"/><br /><sub><b>Ayush Dev</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aayushdev18" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/rakesh2OO5"><img src="https://avatars.githubusercontent.com/u/160116250?v=4?s=64" width="64px;" alt="Rakesh D"/><br /><sub><b>Rakesh D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rakesh2OO5" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://doradocodes.com/"><img src="https://avatars.githubusercontent.com/u/140831752?v=4?s=64" width="64px;" alt="Dora Do"/><br /><sub><b>Dora Do</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Adoradocodes" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
 </table>
