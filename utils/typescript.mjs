@@ -504,9 +504,13 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
 
       let returnType = 'void';
-      if (method.chainable && !globalFunction && options.currentClass !== 'p5') {
-        returnType = options.currentClass || 'this';
-        // TODO: Decide what should be chainable. Many of these are accidental / not thought through
+      if (method.chainable && !globalFunction) {
+        // In global mode, use P5 (the imported class type) instead of p5 (the namespace)
+        if (options.inGlobalMode && options.currentClass === 'p5') {
+          returnType = 'P5';
+        } else {
+          returnType = options.currentClass || 'this';
+        }
       } else if (overload.return && overload.return.type) {
         returnType = convertTypeToTypeScript(overload.return.type, options);
       } else if (method.return && method.return.type) {
