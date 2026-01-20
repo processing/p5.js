@@ -314,6 +314,10 @@ function environment(p5, fn, lifecycles){
   fn.cursor = function(type, x, y) {
     let cursor = 'auto';
     const canvas = this._curElement.elt;
+    if (typeof type === 'undefined') {
+      let curstr = canvas.style.cursor;
+      return curstr.length ? curstr : 'default';
+    }
     if (standardCursors.includes(type)) {
       // Standard css cursor
       cursor = type;

@@ -668,8 +668,7 @@ function setting(p5, fn){
    * @chainable
    */
   fn.background = function(...args) {
-    this._renderer.background(...args);
-    return this;
+    return this._renderer.background(...args);
   };
 
   /**
@@ -1470,8 +1469,7 @@ function setting(p5, fn){
    * @chainable
    */
   fn.fill = function(...args) {
-    this._renderer.fill(...args);
-    return this;
+    return this._renderer.fill(...args);
   };
 
   /**
@@ -1839,8 +1837,7 @@ function setting(p5, fn){
    * @chainable
    */
   fn.stroke = function(...args) {
-    this._renderer.stroke(...args);
-    return this;
+    return this._renderer.stroke(...args);
   };
 
   /**
@@ -2443,7 +2440,7 @@ function setting(p5, fn){
       );
       mode = constants.BLEND;
     }
-    this._renderer.blendMode(mode);
+    return this._renderer.blendMode(mode);
   };
 }
 
