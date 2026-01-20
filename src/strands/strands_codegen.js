@@ -1,5 +1,6 @@
-import { sortCFG } from "./ir_cfg";
-import { structType, TypeInfoFromGLSLName } from './ir_types';
+import { sortCFG } from './ir_cfg';
+import * as DAG from './ir_dag';
+import { NodeType, StatementType, structType, TypeInfoFromGLSLName } from './ir_types';
 
 export function generateShaderCode(strandsContext) {
   const {
@@ -68,7 +69,10 @@ export function generateShaderCode(strandsContext) {
       }
       returnType = hookType.returnType.dataType;
     }
-    backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
+
+    if (rootNodeID) {
+      backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
+    }
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
   }
 
