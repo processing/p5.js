@@ -1,5 +1,5 @@
 import p5 from '../../../src/app.js';
-import { server } from '@vitest/browser/context';
+import { server } from 'vitest/browser';
 import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands;
 import pixelmatch from 'pixelmatch';
@@ -418,7 +418,7 @@ export function visualTest(
       let expectedScreenshots;
       try {
         const metadata = JSON.parse(await readFile(
-          `../screenshots/${name}/metadata.json`
+          `./test/unit/visual/screenshots/${name}/metadata.json`
         ));
         expectedScreenshots = metadata.numScreenshots;
       } catch (e) {
@@ -446,31 +446,31 @@ export function visualTest(
       }
       if (!expectedScreenshots) {
         await writeFile(
-          `../screenshots/${name}/metadata.json`,
+          `./test/unit/visual/screenshots/${name}/metadata.json`,
           JSON.stringify({ numScreenshots: actual.length }, null, 2)
         );
       }
 
       const expectedFilenames = actual.map(
-        (_, i) => `../screenshots/${name}/${i.toString().padStart(3, '0')}.png`
+        (_, i) => `./test/unit/visual/screenshots/${name}/${i.toString().padStart(3, '0')}.png`
       );
       const expected = expectedScreenshots
         ? (
           await Promise.all(
-            expectedFilenames.map(path => myp5.loadImage('/unit/visual' + path.slice(2)))
+            expectedFilenames.map(path => myp5.loadImage(path.slice(2)))
           )
         )
         : [];
 
       for (let i = 0; i < actual.length; i++) {
         const flatName = name.replace(/\//g, '-');
-        const actualFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
+        const actualFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
         if (expected[i]) {
           const result = checkMatch(actual[i], expected[i], myp5);
           // Always save the actual image before potentially throwing an error
           writeImageFile(actualFilename, toBase64(actual[i]));
           if (!result.ok) {
-            const diffFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
+            const diffFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
             writeImageFile(diffFilename, toBase64(result.diff));
             throw new Error(
               `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +

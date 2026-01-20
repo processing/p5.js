@@ -40,8 +40,6 @@ function outputs(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Add the text description.
    *   textOutput();
@@ -56,11 +54,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Add the text description and
    *   // display it for debugging.
@@ -76,12 +71,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
@@ -101,12 +92,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
@@ -127,8 +114,6 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    */
   fn.textOutput = function(display) {
     // p5._validateParameters('textOutput', arguments);
@@ -184,8 +169,6 @@ function outputs(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Add the grid description.
    *   gridOutput();
@@ -200,11 +183,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Add the grid description and
    *   // display it for debugging.
@@ -220,12 +200,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    * }
@@ -245,12 +221,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
@@ -271,11 +243,7 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    */
-
-
   fn.gridOutput = function(display) {
     // p5._validateParameters('gridOutput', arguments);
     //if gridOutput is already true

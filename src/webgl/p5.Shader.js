@@ -485,8 +485,6 @@ class Shader {
    * @returns {p5.Shader} new shader compiled for the target context.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -557,11 +555,8 @@ class Shader {
    *   // Draw the p5.Graphics object to the main canvas.
    *   image(pg, -25, -25);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -630,8 +625,6 @@ class Shader {
    *   // Draw the box.
    *   box(50);
    * }
-   * </code>
-   * </div>
    */
   copyToContext(context) {
     const shader = new Shader(
@@ -656,7 +649,6 @@ class Shader {
       this.init();
     }
   }
-
 
   /**
    * Queries the active attributes for this shader and loads
@@ -809,8 +801,6 @@ class Shader {
    * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -863,11 +853,8 @@ class Shader {
    *
    *   describe('A cyan square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -927,11 +914,8 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1015,8 +999,6 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    */
   setUniform(uniformName, rawData) {
     this.init();
@@ -1134,8 +1116,6 @@ function shader(p5, fn){
    *  - `fragment`: An object describing the available frament shader hooks.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1184,11 +1164,8 @@ function shader(p5, fn){
    *
    *   describe('A yellow square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * let mandelbrot;
@@ -1213,8 +1190,6 @@ function shader(p5, fn){
    *   // Add a quad as a display surface for the shader.
    *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
    * }
-   * </code>
-   * </div>
    */
   p5.Shader = Shader;
 }

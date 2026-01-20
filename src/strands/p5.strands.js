@@ -158,8 +158,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives a vertex object containing position (vec3), normal (vec3), texCoord (vec2), and color (vec4) properties. The function should return the modified vertex object.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -182,8 +180,6 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -209,8 +205,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the object described above and returns a vector with four components for the final color.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -228,6 +222,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(255);
  *   shader(myShader);
@@ -236,8 +231,6 @@ if (typeof p5 !== "undefined") {
  *   fill('white');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -292,8 +285,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called before each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -309,6 +300,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(220);
  *   shader(myShader);
@@ -316,8 +308,6 @@ if (typeof p5 !== "undefined") {
  *   fill('teal');
  *   box(100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -355,8 +345,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the fragment inputs object and should return it after making any changes.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -369,6 +357,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(240);
  *   shader(myShader);
@@ -377,8 +366,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -397,8 +384,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives a boolean and should return a boolean.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -406,14 +391,13 @@ if (typeof p5 !== "undefined") {
  *      'bool shouldDiscard': '(bool outside) { return outside; }'
  *   });
  * }
+ *
  * function draw() {
  *   background(255);
  *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(-width/3, 0, width/3, 0);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -433,8 +417,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the color array and should return a color array.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -446,6 +428,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(230);
  *   shader(myShader);
@@ -453,8 +436,6 @@ if (typeof p5 !== "undefined") {
  *   fill('green');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -473,8 +454,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called after each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -490,6 +469,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(240);
  *   shader(myShader);
@@ -497,8 +477,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   sphere(60);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -520,8 +498,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the inputs object and canvasContent, and should return a color array.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -533,6 +509,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(180);
  *   // Draw something to the canvas
@@ -540,8 +517,6 @@ if (typeof p5 !== "undefined") {
  *   circle(0, 0, 150);
  *   filter(myShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -566,8 +541,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the vertex object and should return it after making any changes.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -580,6 +553,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(220);
  *   shader(myShader);
@@ -587,8 +561,6 @@ if (typeof p5 !== "undefined") {
  *   fill('orange');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -613,8 +585,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives the vertex object and should return it after making any changes.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -629,6 +599,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(200);
  *   shader(myShader);
@@ -636,6 +607,4 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */

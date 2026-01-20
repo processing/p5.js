@@ -41,8 +41,6 @@ function dom(p5, fn){
    * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing the element.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -53,11 +51,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -74,11 +69,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -95,8 +87,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    */
   fn.select = function (e, p) {
     // p5._validateParameters('select', arguments);
@@ -129,8 +119,6 @@ function dom(p5, fn){
    * @return {p5.Element[]} array of <a href="#/p5.Element">p5.Element</a>s containing any elements found.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -149,11 +137,8 @@ function dom(p5, fn){
    *
    *   describe('Three buttons stacked vertically. The buttons are labeled, "1", "2", and "3".');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create three buttons and position them.
    *   let b1 = createButton('1');
@@ -189,8 +174,6 @@ function dom(p5, fn){
    *   btn.style('background', 'deeppink');
    *   btn.style('color', 'white');
    * }
-   * </code>
-   * </div>
    */
   fn.selectAll = function (e, p) {
     // p5._validateParameters('selectAll', arguments);
@@ -271,8 +254,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -283,11 +264,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -302,8 +280,6 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written in pink in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createElement = function (tag, content) {
     // p5._validateParameters('createElement', arguments);
@@ -325,8 +301,6 @@ function dom(p5, fn){
    * @method removeElements
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -344,11 +318,8 @@ function dom(p5, fn){
    * function mousePressed() {
    *   removeElements();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -377,8 +348,6 @@ function dom(p5, fn){
    * function doubleClicked() {
    *   removeElements();
    * }
-   * </code>
-   * </div>
    */
   fn.removeElements = function (e) {
     // p5._validateParameters('removeElements', arguments);
@@ -415,8 +384,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -428,11 +395,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -444,8 +408,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    */
   fn.createDiv = function (html = '') {
     let elt = document.createElement('div');
@@ -466,8 +428,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -479,8 +439,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square displaying the text "Tell me a story." written in black.');
    * }
-   * </code>
-   * </div>
    */
   fn.createP = function (html = '') {
     let elt = document.createElement('p');
@@ -504,8 +462,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -517,11 +473,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background(200);
    *
@@ -550,8 +503,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in black at its center. The asterisk is pink.');
    * }
-   * </code>
-   * </div>
    */
   fn.createSpan = function (html = '') {
     let elt = document.createElement('span');
@@ -585,8 +536,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -600,8 +549,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a magenta asterisk in its center.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createImg
@@ -657,8 +604,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -670,11 +615,8 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background(200);
    *
@@ -685,8 +627,6 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createA = function (href, html, target) {
     // p5._validateParameters('createA', arguments);
@@ -721,8 +661,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let slider;
    *
    * function setup() {
@@ -741,11 +679,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -765,11 +700,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -790,11 +722,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -815,8 +744,6 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    */
   fn.createSlider = function (min, max, value, step) {
     // p5._validateParameters('createSlider', arguments);
@@ -850,8 +777,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -872,11 +797,8 @@ function dom(p5, fn){
    *   let g = random(255);
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let button;
    *
    * function setup() {
@@ -906,8 +828,6 @@ function dom(p5, fn){
    *   let c = random(['red', 'green', 'blue', 'yellow']);
    *   button.value(c);
    * }
-   * </code>
-   * </div>
    */
   fn.createButton = function (label, value) {
     // p5._validateParameters('createButton', arguments);
@@ -936,8 +856,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let checkbox;
    *
    * function setup() {
@@ -958,11 +876,8 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let checkbox;
    *
    * function setup() {
@@ -984,11 +899,8 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let checkbox;
    *
    * function setup() {
@@ -1010,8 +922,6 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createCheckbox = function (...args) {
     // p5._validateParameters('createCheckbox', args);
@@ -1094,8 +1004,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let mySelect;
    *
    * function setup() {
@@ -1122,11 +1030,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mySelect;
    *
    * function setup() {
@@ -1156,11 +1061,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mySelect;
    *
    * function setup() {
@@ -1187,11 +1089,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Hold CTRL to select multiple options on Windows and Linux.
    * // Hold CMD to select multiple options on macOS.
    * let mySelect;
@@ -1230,8 +1129,6 @@ function dom(p5, fn){
    *     circle(x, 50, 20);
    *   }
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createSelect
@@ -1239,7 +1136,6 @@ function dom(p5, fn){
    *                          a <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement" target="_blank">HTMLSelectElement</a>.
    * @return {p5.Element}
    */
-
   fn.createSelect = function (...args) {
     // p5._validateParameters('createSelect', args);
     let self;
@@ -1373,8 +1269,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let style = document.createElement('style');
    * style.innerHTML = `
    * .p5-radio label {
@@ -1415,11 +1309,8 @@ function dom(p5, fn){
    *   let g = myRadio.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myRadio;
    *
    * function setup() {
@@ -1449,11 +1340,8 @@ function dom(p5, fn){
    *   let c = myRadio.value();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myRadio;
    *
    * function setup() {
@@ -1493,8 +1381,6 @@ function dom(p5, fn){
    * function disableRadio() {
    *   myRadio.disable(true);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createRadio
@@ -1685,8 +1571,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let myPicker;
    *
    * function setup() {
@@ -1704,11 +1588,8 @@ function dom(p5, fn){
    *   let c = myPicker.color();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myPicker;
    *
    * function setup() {
@@ -1729,8 +1610,6 @@ function dom(p5, fn){
    *   // Display the current color as a hex string.
    *   text(c, 25, 55);
    * }
-   * </code>
-   * </div>
    */
   fn.createColorPicker = function (value) {
     // p5._validateParameters('createColorPicker', arguments);
@@ -1790,8 +1669,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let myInput;
    *
    * function setup() {
@@ -1812,11 +1689,8 @@ function dom(p5, fn){
    *   let msg = myInput.value();
    *   text(msg, 25, 55);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myInput;
    *
    * function setup() {
@@ -1838,8 +1712,6 @@ function dom(p5, fn){
    *   let msg = myInput.value();
    *   text(msg, 25, 55);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createInput
@@ -1874,8 +1746,6 @@ function dom(p5, fn){
    * @return {p5.Element} The new input element.
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to select an image to
    * // load and display.
    * let input;
@@ -1910,11 +1780,8 @@ function dom(p5, fn){
    *     img = null;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use the file input to select multiple images
    * // to load and display.
    * let input;
@@ -1953,8 +1820,6 @@ function dom(p5, fn){
    *     images.push(img);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createFileInput = function (callback, multiple = false) {
     // p5._validateParameters('createFileInput', arguments);

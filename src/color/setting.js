@@ -34,8 +34,6 @@ function setting(p5, fn){
    * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -52,12 +50,8 @@ function setting(p5, fn){
    *
    *   describe('A white triangle and circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -74,11 +68,8 @@ function setting(p5, fn){
    *
    *   describe('A white square at the top-left corner of a gray square. The white square has a triangle and a circle cut out of it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -115,12 +106,8 @@ function setting(p5, fn){
    *
    *   describe('In the top left, a white triangle and circle. In the bottom right, a white square with a triangle and circle cut out of it.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -145,12 +132,8 @@ function setting(p5, fn){
    *   fill('fuchsia');
    *   plane(100);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -181,8 +164,6 @@ function setting(p5, fn){
    *   vertex(width / 2, height / 2);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.beginClip = function(options = {}) {
     this._renderer.beginClip(options);
@@ -195,8 +176,6 @@ function setting(p5, fn){
    * @method endClip
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -213,8 +192,6 @@ function setting(p5, fn){
    *
    *   describe('A white triangle and circle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.endClip = function() {
     this._renderer.endClip();
@@ -245,8 +222,6 @@ function setting(p5, fn){
    * @param {Boolean} [options.invert=false] Whether or not to invert the mask.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -266,12 +241,8 @@ function setting(p5, fn){
    *   triangle(15, 37, 30, 13, 43, 37);
    *   circle(45, 45, 7);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -291,11 +262,8 @@ function setting(p5, fn){
    *   triangle(15, 37, 30, 13, 43, 37);
    *   circle(45, 45, 7);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -332,12 +300,8 @@ function setting(p5, fn){
    *   triangle(15, 37, 30, 13, 43, 37);
    *   circle(45, 45, 7);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -365,12 +329,8 @@ function setting(p5, fn){
    *   torus(30, 15);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -404,8 +364,6 @@ function setting(p5, fn){
    *   torus(30, 15);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.clip = function(callback, options) {
     this._renderer.beginClip(options);
@@ -451,8 +409,6 @@ function setting(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -461,11 +417,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a dark charcoal gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -473,11 +426,8 @@ function setting(p5, fn){
    *   background(51, 0.4);
    *   describe('A canvas with a transparent gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -486,11 +436,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a yellow background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -499,11 +446,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a semi-transparent red background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -515,11 +459,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a royal blue background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -528,11 +469,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a red background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -541,11 +479,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a pink background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -554,11 +489,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a black background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -567,11 +499,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a bright green background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -580,11 +509,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a transparent green background.');
    * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
+   * <
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -593,11 +519,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a red background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -606,11 +529,8 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a transparent purple background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -620,11 +540,7 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a blue background.');
    * }
-   * </code>
-   * </div>
-   *
    */
-
   /**
    * @method background
    * @param {String} colorstring color string, possible formats include: integer
@@ -634,14 +550,12 @@ function setting(p5, fn){
    *                             color range (default is 0-255).
    * @chainable
    */
-
   /**
    * @method background
    * @param {Number} gray   specifies a value between white and black.
    * @param {Number} [a]
    * @chainable
    */
-
   /**
    * @method background
    * @param {Number} v1     red value if color mode is RGB, or hue value if color mode is HSB.
@@ -650,14 +564,12 @@ function setting(p5, fn){
    * @param  {Number} [a]
    * @chainable
    */
-
   /**
    * @method background
    * @param  {Number[]}      values  an array containing the red, green, blue
    *                                 and alpha components of the color.
    * @chainable
    */
-
   /**
    * @method background
    * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a>
@@ -690,8 +602,6 @@ function setting(p5, fn){
    * @method clear
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -708,11 +618,8 @@ function setting(p5, fn){
    *   clear();
    *   background(200);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -732,8 +639,6 @@ function setting(p5, fn){
    *   clear();
    *   image(pg, 20, 20);
    * }
-   * </code>
-   * </div>
    *
    * @param {Number} [r] normalized red value.
    * @param {Number} [g] normalized green value.
@@ -824,8 +729,6 @@ function setting(p5, fn){
    * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -838,12 +741,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -859,12 +758,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -880,12 +775,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -901,12 +792,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -927,12 +814,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center, drawn using HWB color mode.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -953,12 +836,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center, drawn using LAB color mode.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -978,12 +857,8 @@ function setting(p5, fn){
    *
    *   describe('A gray square with a red circle at its center, drawn using LCH color mode.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1001,11 +876,8 @@ function setting(p5, fn){
    *     'A diagonal green to red gradient from bottom-left to top-right with shading transitioning to black at top-left corner.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1021,11 +893,8 @@ function setting(p5, fn){
    *
    *   describe('A rainbow gradient from left-to-right. Brightness transitions to white at the top.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1053,11 +922,8 @@ function setting(p5, fn){
    *
    *   describe('A purple canvas with the red, green, and blue decimal values of the color written on it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1074,12 +940,8 @@ function setting(p5, fn){
    *
    *   describe('Two overlapping translucent pink circle outlines.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let hslGraphic, lchGraphic, oklchGraphic;
    *
    * function setup() {
@@ -1129,12 +991,8 @@ function setting(p5, fn){
    *   image(lchGraphic, 200, 0);
    *   image(oklchGraphic, 400, 0);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * // Example: Single-value (Grayscale) colors in different color modes.
    * // The rectangle is filled with one parameter, but its final color depends
    * // on how that parameter is interpreted by the current color mode.
@@ -1158,8 +1016,6 @@ function setting(p5, fn){
    *   textSize(14);
    *   text("RGB (128)", 10, 20);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method colorMode
@@ -1247,8 +1103,6 @@ function setting(p5, fn){
    * @param  {Number}        [alpha] alpha value, controls transparency (0 - transparent, 255 - opaque).
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1260,11 +1114,8 @@ function setting(p5, fn){
    *
    *   describe('A dark charcoal gray square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1276,11 +1127,8 @@ function setting(p5, fn){
    *
    *   describe('A yellow square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1292,11 +1140,8 @@ function setting(p5, fn){
    *
    *   describe('A semi-transparent red square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1311,11 +1156,8 @@ function setting(p5, fn){
    *
    *   describe('A royal blue square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1327,11 +1169,8 @@ function setting(p5, fn){
    *
    *   describe('A red square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1343,11 +1182,8 @@ function setting(p5, fn){
    *
    *   describe('A pink square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1359,11 +1195,8 @@ function setting(p5, fn){
    *
    *   describe('A purple square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1375,11 +1208,8 @@ function setting(p5, fn){
    *
    *   describe('A bright green square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1391,11 +1221,8 @@ function setting(p5, fn){
    *
    *   describe('A soft green rectange with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1407,11 +1234,8 @@ function setting(p5, fn){
    *
    *   describe('A red square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1423,11 +1247,8 @@ function setting(p5, fn){
    *
    *   describe('A dark fuchsia square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1440,30 +1261,24 @@ function setting(p5, fn){
    *
    *   describe('A blue square with a black outline.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method fill
    * @param  {String}        value   a color string.
    * @chainable
    */
-
   /**
    * @method fill
    * @param  {Number}        gray   a grayscale value.
    * @param  {Number}        [alpha]
    * @chainable
    */
-
   /**
    * @method fill
    * @param  {Number[]}      values  an array containing the red, green, blue &
    *                                 and alpha components of the color.
    * @chainable
    */
-
   /**
    * @method fill
    * @param  {p5.Color}      color   the fill color.
@@ -1485,8 +1300,6 @@ function setting(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1501,11 +1314,8 @@ function setting(p5, fn){
    *
    *   describe('A white square on above an empty square. Both squares have black outlines.');
    * }
-   * </code>
-   * </div>
    *
-   * <div modernizr='webgl'>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1526,8 +1336,6 @@ function setting(p5, fn){
    *   // Draw the box.
    *   box(45);
    * }
-   * </code>
-   * </div>
    */
   fn.noFill = function() {
     this._renderer.noFill();
@@ -1545,8 +1353,6 @@ function setting(p5, fn){
    * @method noStroke
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1557,11 +1363,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with no outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div modernizr='webgl'>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1582,8 +1385,6 @@ function setting(p5, fn){
    *   // Draw the box.
    *   box(45);
    * }
-   * </code>
-   * </div>
    */
   fn.noStroke = function() {
     this._renderer.states.setValue('strokeColor', null);
@@ -1622,8 +1423,6 @@ function setting(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1636,11 +1435,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a dark charcoal gray outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1653,11 +1449,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a yellow outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1673,11 +1466,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a royal blue outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1690,11 +1480,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a red outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1707,11 +1494,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a pink outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1724,11 +1508,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a black outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1741,11 +1522,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a bright green outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1758,11 +1536,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a soft green outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1775,11 +1550,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a red outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1792,11 +1564,8 @@ function setting(p5, fn){
    *
    *   describe('A white square with a dark fuchsia outline.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1809,30 +1578,24 @@ function setting(p5, fn){
    *
    *   describe('A white square with a blue outline.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method stroke
    * @param  {String}        value   a color string.
    * @chainable
    */
-
   /**
    * @method stroke
    * @param  {Number}        gray   a grayscale value.
    * @param  {Number}        [alpha]
    * @chainable
    */
-
   /**
    * @method stroke
    * @param  {Number[]}      values  an array containing the red, green, blue,
    *                                 and alpha components of the color.
    * @chainable
    */
-
   /**
    * @method stroke
    * @param  {p5.Color}      color   the stroke color.
@@ -1880,8 +1643,6 @@ function setting(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1898,12 +1659,8 @@ function setting(p5, fn){
    *
    *   describe('A purple canvas with a pink square in the middle. A circle is erased from the top-left, leaving a hole.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1921,8 +1678,6 @@ function setting(p5, fn){
    *
    *   describe('A purple canvas with a pink square in the middle. A circle at the top-left partially erases its interior and a fully erases its outline.');
    * }
-   * </code>
-   * </div>
    */
   fn.erase = function(opacityFill = 255, opacityStroke = 255) {
     this._renderer.erase(opacityFill, opacityStroke);
@@ -1940,8 +1695,6 @@ function setting(p5, fn){
    * @method noErase
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1962,8 +1715,6 @@ function setting(p5, fn){
    *
    *   describe('An orange canvas with two tall blue rectangles. A circular hole in the center erases the rectangle on the left but not the one on the right.');
    * }
-   * </code>
-   * </div>
    */
   fn.noErase = function() {
     this._renderer.noErase();
@@ -2018,8 +1769,6 @@ function setting(p5, fn){
    *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2041,11 +1790,8 @@ function setting(p5, fn){
    *
    *   describe('A blue line and a red line form an X on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2067,11 +1813,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2093,11 +1836,8 @@ function setting(p5, fn){
    *
    *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2119,11 +1859,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2145,11 +1882,8 @@ function setting(p5, fn){
    *
    *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2171,11 +1905,8 @@ function setting(p5, fn){
    *
    *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2197,11 +1928,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint magenta.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2223,11 +1951,8 @@ function setting(p5, fn){
    *
    *   describe('A diagonal red line.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2249,11 +1974,8 @@ function setting(p5, fn){
    *
    *   describe('The silhouette of an X is missing from a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2275,11 +1997,8 @@ function setting(p5, fn){
    *
    *   describe('A yellow line and a cyan line form an X on a gray background. The area where they overlap is green.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2301,11 +2020,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is bright magenta.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2327,11 +2043,8 @@ function setting(p5, fn){
    *
    *   describe('A blue line and a red line form an X on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2353,11 +2066,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is violet.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2379,11 +2089,8 @@ function setting(p5, fn){
    *
    *   describe('A faint blue line and a faint red line form an X on a gray background. The area where they overlap is faint violet.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2405,11 +2112,8 @@ function setting(p5, fn){
    *
    *   describe('A blue line and a red line form an X on a gray background. The area where they overlap is black.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2431,8 +2135,6 @@ function setting(p5, fn){
    *
    *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
    * }
-   * </code>
-   * </div>
    */
   fn.blendMode = function (mode) {
     // p5._validateParameters('blendMode', arguments);

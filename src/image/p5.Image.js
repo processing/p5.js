@@ -112,8 +112,6 @@ class Image {
    * values.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -140,11 +138,8 @@ class Image {
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -175,8 +170,6 @@ class Image {
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   loadPixels() {
     // Renderer2D.prototype.loadPixels.call(this);
@@ -217,8 +210,6 @@ class Image {
    * @param {Integer} [h] height of the subsection to update.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,11 +236,8 @@ class Image {
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -281,8 +269,6 @@ class Image {
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   updatePixels(x, y, w, h) {
     // Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -343,8 +329,6 @@ class Image {
    * @return {p5.Image}             subsection as a <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -366,11 +350,8 @@ class Image {
    *
    *   describe('Two identical mountain landscapes shown side-by-side.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -394,11 +375,8 @@ class Image {
    *
    *   describe('A mountain landscape with an olive green square in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -418,8 +396,6 @@ class Image {
    *
    *   describe('A mountain landscape drawn on top of another mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @return {p5.Image}      whole <a href="#/p5.Image">p5.Image</a>
@@ -500,8 +476,6 @@ class Image {
    *                                   <a href="#/p5.Image">p5.Image</a> to copy.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -524,11 +498,8 @@ class Image {
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -554,11 +525,8 @@ class Image {
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -583,11 +551,8 @@ class Image {
    *
    *   describe('A square with a horiztonal color gradient from black to white drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -607,8 +572,6 @@ class Image {
    *
    *   describe('An image of a mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   set(x, y, imgOrCol) {
     // Renderer2D.prototype.set.call(this, x, y, imgOrCol);
@@ -696,8 +659,6 @@ class Image {
    * @param {Number} height resized image height.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -717,11 +678,8 @@ class Image {
    *
    *   describe('Two images of a mountain landscape. One copy of the image is squeezed horizontally.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -741,11 +699,8 @@ class Image {
    *
    *   describe('Two images of a mountain landscape. The small copy of the image covers the top-left corner of the larger image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -765,8 +720,6 @@ class Image {
    *
    *   describe('Two images of a mountain landscape. The small copy of the image covers the top-left corner of the larger image.');
    * }
-   * </code>
-   * </div>
    */
   resize(width, height) {
     // Copy contents to a temporary canvas, resize the original
@@ -877,8 +830,6 @@ class Image {
    * @param  {Integer} dh destination image height.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -900,11 +851,8 @@ class Image {
    *
    *   describe('An image of a mountain landscape. A square region is outlined in white. A larger square contains a pixelated view of the outlined region.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mountains;
    * let bricks;
    *
@@ -926,8 +874,6 @@ class Image {
    *
    *   describe('An image of a brick wall drawn at the top-left of an image of a mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Integer} sx
@@ -1034,8 +980,6 @@ class Image {
    * @param {p5.Image} srcImage source image.
    *
    * @example
-   * <div>
-   * <code>
    * let photo;
    * let maskImage;
    *
@@ -1053,8 +997,6 @@ class Image {
    *
    *   describe('An image of a mountain landscape. The right side of the image has a faded patch of white.');
    * }
-   * </code>
-   * </div>
    */
   // TODO: - Accept an array of alpha values.
   mask(p5Image) {
@@ -1150,8 +1092,6 @@ class Image {
    * @param  {Number} [filterParam] parameter unique to each filter.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1168,11 +1108,8 @@ class Image {
    *
    *   describe('A blue brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1189,11 +1126,8 @@ class Image {
    *
    *   describe('A brick wall drawn in grayscale.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1210,11 +1144,8 @@ class Image {
    *
    *   describe('A brick wall drawn in black and white.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1231,11 +1162,8 @@ class Image {
    *
    *   describe('A red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1252,11 +1180,8 @@ class Image {
    *
    *   describe('An image of a red brick wall drawn with a limited color palette.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1273,11 +1198,8 @@ class Image {
    *
    *   describe('A blurry image of a red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1294,11 +1216,8 @@ class Image {
    *
    *   describe('A red brick wall with bright lines between each brick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1315,8 +1234,6 @@ class Image {
    *
    *   describe('A red brick wall with faint lines between each brick.');
    * }
-   * </code>
-   * </div>
    */
   filter(operation, value) {
     Filters.apply(this.canvas, Filters[operation], value);
@@ -1364,8 +1281,6 @@ class Image {
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    *
    * @example
-   * <div>
-   * <code>
    * let mountains;
    * let bricks;
    *
@@ -1386,11 +1301,8 @@ class Image {
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mountains;
    * let bricks;
    *
@@ -1412,11 +1324,8 @@ class Image {
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mountains;
    * let bricks;
    *
@@ -1438,8 +1347,6 @@ class Image {
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Integer} sx
@@ -1514,8 +1421,6 @@ class Image {
    *                            Defaults to 'png'.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1540,8 +1445,6 @@ class Image {
    *     img.save('rockies', 'png');
    *   }
    * }
-   * </code>
-   * </div>
    */
   save(filename, extension) {
     if (this.gifProperties) {
@@ -1585,8 +1488,6 @@ class Image {
    * Restarts an animated GIF at its first frame.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    *
    * async function setup() {
@@ -1609,8 +1510,6 @@ class Image {
    * function mousePressed() {
    *   gif.reset();
    * }
-   * </code>
-   * </div>
    */
   reset() {
     if (this.gifProperties) {
@@ -1631,8 +1530,6 @@ class Image {
    * @return {Number}       index of the GIF's current frame.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    *
    * async function setup() {
@@ -1654,8 +1551,6 @@ class Image {
    *   // Display the current frame.
    *   text(index, 10, 90);
    * }
-   * </code>
-   * </div>
    */
   getCurrentFrame() {
     if (this.gifProperties) {
@@ -1670,8 +1565,6 @@ class Image {
    * @param {Number} index index of the frame to display.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    * let frameSlider;
    *
@@ -1702,8 +1595,6 @@ class Image {
    *   // Display the image.
    *   image(gif, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   setFrame(index) {
     if (this.gifProperties) {
@@ -1727,8 +1618,6 @@ class Image {
    * @return {Number} number of frames in the GIF.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    *
    * async function setup() {
@@ -1749,8 +1638,6 @@ class Image {
    *   let index = gif.getCurrentFrame();
    *   text(`${index} / ${total}`, 30, 90);
    * }
-   * </code>
-   * </div>
    */
   numFrames() {
     if (this.gifProperties) {
@@ -1763,8 +1650,6 @@ class Image {
    * <a href="#/p5.Image/pause">img.pause()</a>.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    *
    * async function setup() {
@@ -1790,8 +1675,6 @@ class Image {
    * function mouseReleased() {
    *   gif.play();
    * }
-   * </code>
-   * </div>
    */
   play() {
     if (this.gifProperties) {
@@ -1806,8 +1689,6 @@ class Image {
    * <a href="#/p5.Image/play">img.play()</a>.
    *
    * @example
-   * <div>
-   * <code>
    * let gif;
    *
    * async function setup() {
@@ -1835,8 +1716,6 @@ class Image {
    * function mouseReleased() {
    *   gif.play();
    * }
-   * </code>
-   * </div>
    */
   pause() {
     if (this.gifProperties) {
@@ -1857,8 +1736,6 @@ class Image {
    * @param {Number} [index] index of the frame that will have its delay modified.
    *
    * @example
-   * <div>
-   * <code>
    * let gifFast;
    * let gifSlow;
    *
@@ -1887,11 +1764,8 @@ class Image {
    *   image(gifFast, 0, 0);
    *   image(gifSlow, 50, 0);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let gif;
    *
    * async function setup() {
@@ -1910,8 +1784,6 @@ class Image {
    *   // Display the image.
    *   image(gif, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   delay(d, index) {
     if (this.gifProperties) {
@@ -2166,8 +2038,6 @@ function image(p5, fn){
    * pixel values.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2181,11 +2051,8 @@ function image(p5, fn){
    *
    *   describe('An image of a brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2202,11 +2069,8 @@ function image(p5, fn){
    *
    *   describe('A grayscale image of a brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2233,8 +2097,6 @@ function image(p5, fn){
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
    * @class p5.Image
    * @param {Number} width
@@ -2252,8 +2114,6 @@ function image(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2274,8 +2134,6 @@ function image(p5, fn){
    *
    *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2288,8 +2146,6 @@ function image(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2310,8 +2166,6 @@ function image(p5, fn){
    *
    *   describe('An image of a mountain landscape with a white circle drawn in the middle.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2342,8 +2196,6 @@ function image(p5, fn){
    * @name pixels
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2374,11 +2226,8 @@ function image(p5, fn){
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2410,8 +2259,6 @@ function image(p5, fn){
    *
    *   describe('A red square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
 }
 

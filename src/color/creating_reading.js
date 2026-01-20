@@ -142,8 +142,6 @@ function creatingReading(p5, fn){
    * @return {p5.Color} resulting color.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -159,12 +157,8 @@ function creatingReading(p5, fn){
    *
    *   describe('A yellow square on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -189,12 +183,8 @@ function creatingReading(p5, fn){
    *     'Two circles on a gray canvas. The circle in the top-left corner is yellow and the one at the bottom-right is gray.'
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -210,12 +200,8 @@ function creatingReading(p5, fn){
    *
    *   describe('A magenta square on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -238,12 +224,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two bright green rectangles on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -279,12 +261,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Four blue squares in the corners of a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -307,11 +285,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two sea green rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -334,11 +309,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two green rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -363,10 +335,7 @@ function creatingReading(p5, fn){
    *
    *   describe('Two blue rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method color
    * @param  {Number}        v1      red or hue value relative to
@@ -378,20 +347,17 @@ function creatingReading(p5, fn){
    * @param  {Number}        [alpha]
    * @return {p5.Color}
    */
-
   /**
    * @method color
    * @param  {String}        value   a color string.
    * @return {p5.Color}
    */
-
   /**
    * @method color
    * @param  {Number[]}      values  an array containing the red, green, blue,
    *                                 and alpha components of the color.
    * @return {p5.Color}
    */
-
   /**
    * @method color
    * @param  {p5.Color}     color
@@ -430,8 +396,6 @@ function creatingReading(p5, fn){
    * @return {Number} the red value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -454,12 +418,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -482,12 +442,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -510,12 +466,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -541,8 +493,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
-   * </code>
-   * </div>
    */
   fn.red = function(c) {
     // p5._validateParameters('red', arguments);
@@ -567,8 +517,6 @@ function creatingReading(p5, fn){
    * @return {Number} the green value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -591,12 +539,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -619,12 +563,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -647,12 +587,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -678,8 +614,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
-   * </code>
-   * </div>
    */
   fn.green = function(c) {
     // p5._validateParameters('green', arguments);
@@ -704,8 +638,6 @@ function creatingReading(p5, fn){
    * @return {Number} the blue value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -728,12 +660,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -756,12 +684,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -784,12 +708,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -815,8 +735,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
-   * </code>
-   * </div>
    */
   fn.blue = function(c) {
     // p5._validateParameters('blue', arguments);
@@ -837,8 +755,6 @@ function creatingReading(p5, fn){
    * @return {Number} the alpha value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -861,12 +777,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -889,12 +801,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -917,8 +825,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
-   * </code>
-   * </div>
    */
   fn.alpha = function(c) {
     // p5._validateParameters('alpha', arguments);
@@ -944,8 +850,6 @@ function creatingReading(p5, fn){
    * @return {Number} the hue value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -973,12 +877,8 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1006,12 +906,8 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1039,8 +935,6 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.hue = function(c) {
     let colorMode = HSL;
@@ -1082,8 +976,6 @@ function creatingReading(p5, fn){
    * @return {Number} the saturation value
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1109,12 +1001,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is dark gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1140,12 +1028,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1171,12 +1055,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1202,12 +1082,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1233,8 +1109,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    */
   fn.saturation = function(c) {
     const colorMode = (this._renderer.states.colorMode === HSB) ? HSB : HSL;
@@ -1260,8 +1134,6 @@ function creatingReading(p5, fn){
    * @return {Number} the brightness value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1287,12 +1159,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1318,12 +1186,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1349,12 +1213,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1380,8 +1240,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
-   * </code>
-   * </div>
    */
   fn.brightness = function(c) {
     return this.color(c)._getBrightness(
@@ -1406,8 +1264,6 @@ function creatingReading(p5, fn){
    * @return {Number} the lightness value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1433,12 +1289,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1464,12 +1316,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1495,12 +1343,8 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1526,8 +1370,6 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
-   * </code>
-   * </div>
    */
   fn.lightness = function(c) {
     return this.color(c)._getLightness(
@@ -1555,8 +1397,6 @@ function creatingReading(p5, fn){
    * @return {p5.Color}     interpolated color.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1591,8 +1431,6 @@ function creatingReading(p5, fn){
    *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.lerpColor = function(c1, c2, amt) {
     // p5._validateParameters('lerpColor', arguments);
@@ -1616,8 +1454,6 @@ function creatingReading(p5, fn){
    * @return {p5.Color} interpolated color.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(400, 400);
    * }
@@ -1631,8 +1467,6 @@ function creatingReading(p5, fn){
    *     ['blue', 1]
    *   ], millis() / 10000 % 1));
    * }
-   * </code>
-   * </div>
    */
   fn.paletteLerp = function(color_stops, amt) {
     const first_color_stop = color_stops[0];
