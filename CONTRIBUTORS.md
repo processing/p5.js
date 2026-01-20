@@ -1091,6 +1091,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Aayushdev18"><img src="https://avatars.githubusercontent.com/u/148681565?v=4?s=64" width="64px;" alt="Ayush Dev"/><br /><sub><b>Ayush Dev</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aayushdev18" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/rakesh2OO5"><img src="https://avatars.githubusercontent.com/u/160116250?v=4?s=64" width="64px;" alt="Rakesh D"/><br /><sub><b>Rakesh D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rakesh2OO5" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://doradocodes.com/"><img src="https://avatars.githubusercontent.com/u/140831752?v=4?s=64" width="64px;" alt="Dora Do"/><br /><sub><b>Dora Do</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Adoradocodes" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/Nwakaego-Ego"><img src="https://avatars.githubusercontent.com/u/81041326?v=4?s=64" width="64px;" alt="Nwakaego Glory Nwaekpe"/><br /><sub><b>Nwakaego Glory Nwaekpe</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3ANwakaego-Ego" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
 </table>
