@@ -102,6 +102,5 @@ fn noise(st: vec3<f32>, octaves: i32, ampFalloff: f32) -> f32 {
     frequency *= 2.0;
     amplitude *= ampFalloff;
   }
-
-  return result;
+  return result * 0.5 + 0.5;
 }`;
