@@ -790,6 +790,33 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    visualTest('text renders correctly after geometry with many indices', async (p5, screenshot) => {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      const font = await p5.loadFont(
+        '/unit/assets/Inconsolata-Bold.ttf'
+      );
+
+      p5.background(255);
+      p5.noStroke();
+
+      p5.textFont(font);
+      p5.textSize(20);
+      p5.textAlign(p5.CENTER, p5.CENTER);
+      p5.text('Test 1', 0, -20);
+
+      // Draw a sphere which has many more indices than text
+      p5.fill(200, 200, 255);
+      p5.sphere(30);
+
+      p5.clearDepth();
+
+      // Draw text - should bind its own index buffer
+      p5.fill(0);
+      p5.text('Test 2', 0, 20);
+
+      screenshot();
+    });
   });
 
   visualSuite('texture()', () => {
@@ -823,6 +850,41 @@ visualSuite('WebGL', function() {
       }, { p5, tex });
       p5.shader(shader);
       p5.rect(-20, -20, 40, 40);
+      screenshot();
+    });
+
+    visualTest('getTexture in vertex shaders', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const positionData = p5.createFramebuffer({
+        width: 3,
+        height: 1,
+        density: 1,
+        antialias: false,
+        format: p5.FLOAT,
+        textureFiltering: p5.NEAREST
+      });
+      positionData.loadPixels();
+      for (let i = 0; i < 3; i++) {
+        positionData.pixels[i * 4] = i / 3;
+        positionData.pixels[i * 4 + 1] = 0;
+        positionData.pixels[i * 4 + 2] = 0;
+        positionData.pixels[i * 4 + 3] = 1;
+      }
+      positionData.updatePixels();
+      const sh = p5.baseMaterialShader().modify(() => {
+        const data = p5.uniformTexture(() => positionData);
+        p5.getWorldInputs((inputs) => {
+          const angle = p5.getTexture(data, [p5.instanceID()/3, 0]).r * p5.TWO_PI;
+          inputs.position.xy += [p5.cos(angle) * 10, p5.sin(angle) * 10];
+          return inputs;
+        });
+      }, { p5, positionData });
+      const instance = p5.buildGeometry(() => p5.sphere(3));
+
+      p5.noStroke();
+      p5.fill('red');
+      p5.shader(sh);
+      p5.model(instance, 3);
       screenshot();
     });
   });
