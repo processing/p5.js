@@ -249,6 +249,11 @@ It also has the following per-vertex attributes:
 title: p5.js WebGL Classes
 ---
 classDiagram
+    accTitle: p5.js WebGL Class Diagram
+    accDescr {
+      p5.Renderer is the base class for p5.Renderer2D and p5.RendererGL.
+      p5.RendererGL has a one-to-many composition relationship with multiple p5.Shaders, p5.Textures, and p5.Framebuffers. Additionally, p5.RendererGL has a many-to-many aggregation relationship with p5.Geometry.
+    }
     class Base["p5.Renderer"] {
     }
     class P2D["p5.Renderer2D"] {
