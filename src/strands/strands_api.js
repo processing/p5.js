@@ -165,7 +165,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   strandsContext._noiseOctaves = null;
   strandsContext._noiseAmpFalloff = null;
 
-  fn.noiseDetail = function (lod, falloff) {
+  fn.noiseDetail = function (lod, falloff = 0.5) {
     if (!strandsContext.active) {
       return originalNoiseDetail.apply(this, arguments);
     }
