@@ -1093,6 +1093,9 @@
       <td align="center" valign="top" width="16.66%"><a href="https://doradocodes.com/"><img src="https://avatars.githubusercontent.com/u/140831752?v=4?s=64" width="64px;" alt="Dora Do"/><br /><sub><b>Dora Do</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Adoradocodes" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Nwakaego-Ego"><img src="https://avatars.githubusercontent.com/u/81041326?v=4?s=64" width="64px;" alt="Nwakaego Glory Nwaekpe"/><br /><sub><b>Nwakaego Glory Nwaekpe</b></sub></a><br /><a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3ANwakaego-Ego" title="Reviewed Pull Requests">👀</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/vietnguyen2358"><img src="https://avatars.githubusercontent.com/u/107826279?v=4?s=64" width="64px;" alt="Viet Nguyen"/><br /><sub><b>Viet Nguyen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vietnguyen2358" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
