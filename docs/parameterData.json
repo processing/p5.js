@@ -2036,13 +2036,6 @@
         ]
       ]
     },
-    "combineColors": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
     "getPixelInputs": {
       "overloads": [
         [
@@ -2888,6 +2881,16 @@
         ]
       ]
     },
+    "buildFilterShader": {
+      "overloads": [
+        [
+          "Function"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
     "createFilterShader": {
       "overloads": [
         [
@@ -2916,6 +2919,25 @@
         ]
       ]
     },
+    "buildMaterialShader": {
+      "overloads": [
+        [
+          "Function"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
+    "loadMaterialShader": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "baseMaterialShader": {
       "overloads": [
         []
@@ -2926,14 +2948,71 @@
         []
       ]
     },
+    "buildNormalShader": {
+      "overloads": [
+        [
+          "Function"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
+    "loadNormalShader": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "baseNormalShader": {
       "overloads": [
         []
       ]
     },
+    "buildColorShader": {
+      "overloads": [
+        [
+          "Function"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
+    "loadColorShader": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "baseColorShader": {
       "overloads": [
         []
+      ]
+    },
+    "buildStrokeShader": {
+      "overloads": [
+        [
+          "Function"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
+    "loadStrokeShader": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
       ]
     },
     "baseStrokeShader": {
