@@ -489,6 +489,37 @@ visualSuite('WebGL', function() {
       p5.image(img, -p5.width / 2, -p5.height / 2, p5.width, p5.height);
       screenshot();
     });
+
+    visualTest('loadMaterialShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const materialShader = await p5.loadMaterialShader('/unit/assets/testMaterial.js');
+
+      p5.noStroke();
+      p5.shader(materialShader);
+      p5.plane(p5.width, p5.height);
+      screenshot();
+    });
+
+    visualTest('loadFilterShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      // Create a scene to filter (red and green stripes)
+      p5.background(255);
+      p5.noStroke();
+      for (let i = 0; i < 5; i++) {
+        if (i % 2 === 0) {
+          p5.fill(255, 0, 0); // Red
+        } else {
+          p5.fill(0, 255, 0); // Green
+        }
+        p5.rect(-p5.width/2 + i * 10, -p5.height/2, 10, p5.height);
+      }
+
+      // Apply the filter shader (should swap red and green channels)
+      const filterShader = await p5.loadFilterShader('/unit/assets/testFilter.js');
+      p5.filter(filterShader);
+      screenshot();
+    });
   });
 
   visualSuite('Strokes', function() {
@@ -989,6 +1020,111 @@ visualSuite('WebGL', function() {
       p5.background('red');
       p5.circle(p5.noise(0), p5.noise(0), 20);
       screenshot();
+    });
+
+    visualSuite('auto-return for shader hooks', () => {
+      visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += 10;
+            // No explicit return - should auto-return inputs
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.noStroke();
+        p5.shader(shader);
+        p5.sphere(20);
+        screenshot();
+      });
+
+      visualTest('explicit return still works', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += 10;
+            return inputs; // Explicit return should still work
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.noStroke();
+        p5.shader(shader);
+        p5.sphere(20);
+        screenshot();
+      });
+
+      visualTest('auto-return works with getObjectInputs', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getObjectInputs((inputs) => {
+            inputs.position.x += 0.25;
+            // No explicit return
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.lights();
+        p5.fill('red');
+        p5.noStroke();
+        p5.rotateY(p5.PI / 2);
+        p5.camera(-800, 0, 0, 0, 0, 0);
+        p5.shader(shader);
+        p5.sphere(20);
+        screenshot();
+      });
+
+      visualTest('auto-return works with getCameraInputs', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getCameraInputs((inputs) => {
+            inputs.position.x += 10;
+            // No explicit return
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.lights();
+        p5.fill('red');
+        p5.noStroke();
+        p5.rotateY(p5.PI / 2);
+        p5.camera(-800, 0, 0, 0, 0, 0);
+        p5.shader(shader);
+        p5.sphere(20);
+        screenshot();
+      });
+
+      visualTest('auto-return preserves multiple property modifications', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += 5;
+            inputs.position.y += 5;
+            inputs.normal.x += 0.5;
+            inputs.normal = p5.normalize(inputs.normal);
+            // No explicit return - all modifications should be preserved
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.lights();
+        p5.fill('red');
+        p5.noStroke();
+        p5.shader(shader);
+        p5.sphere(20);
+        screenshot();
+      });
+
+      visualTest('auto-return works with getPixelInputs', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(() => {
+          p5.getPixelInputs((inputs) => {
+            inputs.color = p5.vec4(1.0, 0.0, 0.0, 1.0); // Red
+            // No explicit return
+          });
+        }, { p5 });
+        p5.background(255);
+        p5.noStroke();
+        p5.shader(shader);
+        p5.circle(0, 0, 40);
+        screenshot();
+      });
     });
   });
 

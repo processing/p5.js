@@ -326,7 +326,9 @@ function createHookArguments(strandsContext, parameters){
     if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
       const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
-      const structNode = createStrandsNode(id, dimension, strandsContext);
+      const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
+        structTypeInfo.properties.map(prop => prop.name)
+      );
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const propertyType = structTypeInfo.properties[i];
         Object.defineProperty(structNode, propertyType.name, {
@@ -433,14 +435,57 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
-    const hookImplementation = function(hookUserCallback) {
-      const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
+    const hook = function(hookUserCallback) {
+      const args = setupHook();
+      hook._result = hookUserCallback(...args) ?? hook._result;
+      finishHook();
+    }
+
+    // In the flat strands API, this is how result-returning hooks
+    // are used
+    hook.set = function(result) {
+      hook._result = result;
+    };
+
+    let entryBlockID;
+    function setupHook() {
+      strandsContext.activeHook = hook;
+      entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      strandsContext.activeHook = hookImplementation;
-      const userReturned = hookUserCallback(...args);
+      const numStructArgs = hookType.parameters.filter(param => param.type.properties).length;
+      let argIdx = -1;
+      if (numStructArgs === 1) {
+        argIdx = hookType.parameters.findIndex(param => param.type.properties);
+      }
+      for (let i = 0; i < args.length; i++) {
+        if (i === argIdx) {
+          for (const key of args[argIdx].structProperties || []) {
+            Object.defineProperty(hook, key, {
+              get() {
+                return args[argIdx][key];
+              },
+              set(val) {
+                args[argIdx][key] = val;
+              },
+              enumerable: true,
+            });
+          }
+          if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
+            hook.set(args[argIdx]);
+          }
+        } else {
+          hook[hookType.parameters[i].name] = args[i];
+        }
+      }
+      return args;
+    };
+
+    function finishHook() {
+      const userReturned = hook._result;
       strandsContext.activeHook = undefined;
+
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
       const handleRetVal = (retNode) => {
@@ -489,7 +534,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           return enforceReturnTypeMatch(strandsContext, expectedTypeInfo, retNode, hookType.name);
         }
       }
-      for (const { valueNode, earlyReturnID } of hookImplementation.earlyReturns) {
+      for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
         const id = handleRetVal(valueNode);
         dag.dependsOn[earlyReturnID] = [id];
       }
@@ -503,11 +548,31 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
       });
       CFG.popBlock(cfg);
+    };
+    hook.begin = setupHook;
+    hook.end = finishHook;
+
+    const aliases = [hookType.name];
+    if (strandsContext.baseShader?.hooks?.hookAliases?.[hookType.name]) {
+      aliases.push(...strandsContext.baseShader.hooks.hookAliases[hookType.name]);
     }
-    hookImplementation.earlyReturns = [];
-    strandsContext.windowOverrides[hookType.name] = window[hookType.name];
-    strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
-    window[hookType.name] = hookImplementation;
-    fn[hookType.name] = hookImplementation;
+
+    // If the hook has a name like getPixelInputs, create an alias without
+    // the get* prefix, like pixelInputs
+    const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+    if (nameMatch) {
+      const unprefixedName = nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1);
+      if (!fn[unprefixedName]) {
+        aliases.push(unprefixedName);
+      }
+    }
+
+    for (const name of aliases) {
+      strandsContext.windowOverrides[name] = window[name];
+      strandsContext.fnOverrides[name] = fn[name];
+      window[name] = hook;
+      fn[name] = hook;
+    }
+    hook.earlyReturns = [];
   }
 }
