@@ -437,7 +437,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   for (const hookType of hookTypes) {
     const hook = function(hookUserCallback) {
       const args = setupHook();
-      hook._result = hookUserCallback(...args);
+      hook._result = hookUserCallback(...args) ?? hook._result;
       finishHook();
     }
 
