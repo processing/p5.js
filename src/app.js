@@ -104,3 +104,4 @@ import './webgl/text';
 import './core/init';
 
 module.exports = p5;
+export default p5;
