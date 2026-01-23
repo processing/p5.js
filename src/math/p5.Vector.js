@@ -2934,9 +2934,12 @@ class Vector {
     return this.sub(surfaceNormalCopy.mult(2 * this.dot(surfaceNormalCopy)));
   }
 
+
+
   /**
-   * Returns the vector's components as an array of numbers.
+   * Returns the vector's first three components as an array of three numbers.
    *
+   * @deprecated array() will be removed in a future version of p5.js; use the more flexible v.values instead of v.array()
    * @return {Number[]} array with the vector's components.
    * @example
    * <div class = "norender">
@@ -2952,6 +2955,7 @@ class Vector {
    * </div>
    */
   array() {
+    this._showArrayDeprecationWarning();
     return [this.x || 0, this.y || 0, this.z || 0];
   }
 
@@ -3781,6 +3785,7 @@ class Vector {
    * method to copy into your own vector.
    */
   /**
+   * @deprecated
    * @static
    * @param  {p5.Vector} v the vector to convert to an array
    * @return {Number[]} an Array with the 3 values
@@ -3899,6 +3904,17 @@ function vector(p5, fn) {
    * </div>
    */
   p5.Vector = Vector;
+
+  let arrayDeprecationWarningShown = false;
+  Vector.prototype._showArrayDeprecationWarning = function() {
+    if (p5._friendlyError && !arrayDeprecationWarningShown) {
+      p5._friendlyError(
+        'array() is deprecated and will be removed in a future version of p5.js; use the more flexible v.values instead of v.array()',
+        'p5.Vector.array'
+      );
+      arrayDeprecationWarningShown = true;
+    }
+  };
 
   /**
    * The x component of the vector
