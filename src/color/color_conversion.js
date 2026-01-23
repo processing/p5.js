@@ -13,8 +13,8 @@
  * interchangeably.
  */
 
-import p5 from '../core/main';
-p5.ColorConversion = {
+// import p5 from '../core/main';
+const ColorConversion = {
   /**
    * Convert an HSBA array to HSLA.
    */
@@ -267,4 +267,4 @@ p5.ColorConversion = {
     return [hue / 6, sat, li / 2, rgba[3]];
   }
 };
-export default p5.ColorConversion;
+export default ColorConversion;
