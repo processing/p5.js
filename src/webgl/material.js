@@ -1189,7 +1189,7 @@ p5.prototype.shader = function (s) {
  * </code>
  * </div>
  */
-p5.prototype.baseMaterialShader = function() {
+p5.prototype.baseMaterialShader = function () {
   this._assert3d('baseMaterialShader');
   return this._renderer.baseMaterialShader();
 };
@@ -1284,7 +1284,7 @@ p5.prototype.baseMaterialShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseNormalShader = function() {
+p5.prototype.baseNormalShader = function () {
   this._assert3d('baseNormalShader');
   return this._renderer.baseNormalShader();
 };
@@ -1347,7 +1347,7 @@ p5.prototype.baseNormalShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseColorShader = function() {
+p5.prototype.baseColorShader = function () {
   this._assert3d('baseColorShader');
   return this._renderer.baseColorShader();
 };
@@ -1620,7 +1620,7 @@ p5.prototype.baseColorShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseStrokeShader = function() {
+p5.prototype.baseStrokeShader = function () {
   this._assert3d('baseStrokeShader');
   return this._renderer.baseStrokeShader();
 };
@@ -3191,7 +3191,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
@@ -3242,8 +3242,13 @@ p5.RendererGL.prototype._applyBlendMode = function () {
       gl.blendFunc(gl.ONE, gl.ONE);
       break;
     case constants.REMOVE:
-      gl.blendEquation(gl.FUNC_ADD);
-      gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(
+        gl.ZERO,
+        gl.ONE_MINUS_SRC_ALPHA,
+        gl.ZERO,
+        gl.ONE_MINUS_SRC_ALPHA
+      );
       break;
     case constants.MULTIPLY:
       gl.blendEquation(gl.FUNC_ADD);

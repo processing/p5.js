@@ -829,7 +829,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (adjustedWidth !== width || adjustedHeight !== height) {
       console.warn(
         'Warning: The requested width/height exceeds hardware limits. ' +
-          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
+        `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
       );
     }
 
@@ -966,7 +966,26 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const _g = _col.levels[1] / 255;
     const _b = _col.levels[2] / 255;
     const _a = _col.levels[3] / 255;
-    this.clear(_r, _g, _b, _a);
+    this.clear(0, 0, 0, 0);
+    // This allows transparent pixels to show through
+    this._pInst.push();
+    this._pInst.resetMatrix();
+    // Disable depth testing for this specific draw operation
+    const gl = this.GL;
+    const depthTestEnabled = gl.isEnabled(gl.DEPTH_TEST);
+    gl.disable(gl.DEPTH_TEST);
+
+    // Draw background quad
+    this._pInst.translate(0, 0, -1000);
+    this._pInst.noStroke();
+    this._pInst.fill(_r * 255, _g * 255, _b * 255, _a * 255);
+    this._pInst.rectMode(this._pInst.CENTER);
+    this._pInst.rect(0, 0, this.width * 2, this.height * 2);
+
+    // Restore depth testing to its previous state
+    if (depthTestEnabled) {
+      gl.enable(gl.DEPTH_TEST);
+    }
   }
 
   //////////////////////////////////////////////
@@ -2368,8 +2387,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Enable per-vertex color for POINTS when available
     const useVertexColor =
       (this.immediateMode && this.immediateMode.geometry &&
-       this.immediateMode.geometry.vertexStrokeColors &&
-       this.immediateMode.geometry.vertexStrokeColors.length > 0);
+        this.immediateMode.geometry.vertexStrokeColors &&
+        this.immediateMode.geometry.vertexStrokeColors.length > 0);
     pointShader.setUniform('uUseVertexColor', !!useVertexColor);
   }
 

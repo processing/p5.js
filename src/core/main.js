@@ -283,7 +283,15 @@ class p5 {
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
-    this._glAttributes = null;
+    this._glAttributes = {
+      alpha: true,
+      depth: true,
+      stencil: true,
+      antialias: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: true,
+      perPixelLighting: true
+    };
     this._requestAnimId = 0;
     this._preloadCount = 0;
     this._loop = true;
@@ -406,7 +414,7 @@ class p5 {
       }
     };
 
-    this._runIfPreloadsAreDone = function() {
+    this._runIfPreloadsAreDone = function () {
       const context = this._isGlobal ? window : this;
       if (context._preloadCount === 0) {
         const loadingScreen = document.getElementById(context._loadingScreenId);
@@ -425,7 +433,7 @@ class p5 {
       }
     };
 
-    this._decrementPreload = function() {
+    this._decrementPreload = function () {
       const context = this._isGlobal ? window : this;
       if (!context._preloadDone && typeof context.preload === 'function') {
         context._setProperty('_preloadCount', context._preloadCount - 1);
@@ -433,7 +441,7 @@ class p5 {
       }
     };
 
-    this._wrapPreload = function(obj, fnName) {
+    this._wrapPreload = function (obj, fnName) {
       return (...args) => {
         //increment counter
         this._incrementPreload();
@@ -442,7 +450,7 @@ class p5 {
       };
     };
 
-    this._incrementPreload = function() {
+    this._incrementPreload = function () {
       const context = this._isGlobal ? window : this;
       // Do nothing if we tried to increment preloads outside of `preload`
       if (context._preloadDone) return;
@@ -596,7 +604,7 @@ class p5 {
      */
     this.remove = () => {
       // Remove start listener to prevent orphan canvas being created
-      if(this._startListener){
+      if (this._startListener) {
         window.removeEventListener('load', this._startListener, false);
       }
       const loadingScreen = document.getElementById(this._loadingScreenId);
