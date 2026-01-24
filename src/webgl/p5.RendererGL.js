@@ -682,17 +682,23 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this._curShader = undefined;
 
     // Register cleanup hook to free WebGL resources when sketch is removed
-    this._pInst.registerMethod('remove', this._cleanupWebGLResources.bind(this));
+    // Only register if this is the main p5 instance (not a p5.Graphics)
+    // For p5.Graphics, cleanup is called directly from p5.Graphics.remove()
+    const isPGraphics = this._pInst instanceof p5.Graphics;
+    if (!isPGraphics && this._pInst && typeof this._pInst.registerMethod === 'function') {
+      this._pInst.registerMethod('remove', this.remove.bind(this));
+    }
   }
 
   /**
    * Frees all WebGL resources (shaders, textures, buffers) associated with
-   * this renderer. Called automatically when the p5 instance is removed.
+   * this renderer. Called automatically when the p5 instance is removed,
+   * or when a p5.Graphics object is removed.
    *
-   * @method _cleanupWebGLResources
+   * @method remove
    * @private
    */
-  _cleanupWebGLResources() {
+  remove() {
     // Dispose all cached shaders
     const shadersToDispose = [
       this._defaultLightShader,
