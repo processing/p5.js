@@ -1013,6 +1013,7 @@ function rendererWebGPU(p5, fn) {
       this.states.setValue('activeImageLight', null);
       this._pInst.setCamera(this.finalCamera);
       this._pInst.resetShader();
+      this._pInst.resetMatrix();
       this._pInst.imageMode(this._pInst.CENTER);
       this._pInst.image(this.mainFramebuffer, 0, 0);
       this._pInst.pop();
@@ -2536,6 +2537,9 @@ function rendererWebGPU(p5, fn) {
               "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, tex_sampler: sampler) -> vec4<f32> {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
               }`,
+            },
+            hookAliases: {
+              'getColor': ['filterColor'],
             },
           }
         );

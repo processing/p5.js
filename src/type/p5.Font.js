@@ -545,6 +545,10 @@ export class Font {
     const extrude = options?.extrude || 0;
 
     let contours = this.textToContours(str, x, y, width, height, options);
+    if (!contours || contours.length === 0) {
+      return new p5.Geometry();
+    }
+
     // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;

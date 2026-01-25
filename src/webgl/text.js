@@ -766,6 +766,7 @@ function text(p5, fn) {
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
+    this._disableRemainingAttributes(sh);
     this._beforeDrawText();
     this.glyphDataCache = this.glyphDataCache || new Set();
 
