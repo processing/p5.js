@@ -669,7 +669,9 @@ p5.prototype.createFilterShader = function (fragSrc) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
     }
   `;
-  let vertSrc = fragSrc.includes('#version 300 es') ? defaultVertV2 : defaultVertV1;
+  let vertSrc = fragSrc.includes('#version 300 es')
+    ? defaultVertV2
+    : defaultVertV1;
   const shader = new p5.Shader(this._renderer, vertSrc, fragSrc);
   if (this._renderer.GL) {
     shader.ensureCompiledOnContext(this);
@@ -1189,7 +1191,7 @@ p5.prototype.shader = function (s) {
  * </code>
  * </div>
  */
-p5.prototype.baseMaterialShader = function() {
+p5.prototype.baseMaterialShader = function () {
   this._assert3d('baseMaterialShader');
   return this._renderer.baseMaterialShader();
 };
@@ -1284,7 +1286,7 @@ p5.prototype.baseMaterialShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseNormalShader = function() {
+p5.prototype.baseNormalShader = function () {
   this._assert3d('baseNormalShader');
   return this._renderer.baseNormalShader();
 };
@@ -1347,7 +1349,7 @@ p5.prototype.baseNormalShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseColorShader = function() {
+p5.prototype.baseColorShader = function () {
   this._assert3d('baseColorShader');
   return this._renderer.baseColorShader();
 };
@@ -1490,6 +1492,16 @@ p5.prototype.baseColorShader = function() {
  * Call `baseStrokeShader().inspectHooks()` to see all the possible hooks and
  * their default implementations.
  *
+ * GLSL provides the built-in function `smoothstep(edge0, edge1, x)` to smoothly
+ * interpolate values between `0.0` and `1.0`.
+ *
+ * When `x` is less than `edge0`, the result is `0.0`. When `x` is greater than
+ * `edge1`, the result is `1.0`. For values between `edge0` and `edge1`, the
+ * transition is smooth and continuous.
+ *
+ * `smoothstep()` is commonly used in shaders to create soft edges, gradual fades,
+ * and anti-aliased stroke effects.
+ *
  * @method baseStrokeShader
  * @beta
  * @returns {p5.Shader} The stroke shader
@@ -1620,7 +1632,7 @@ p5.prototype.baseColorShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseStrokeShader = function() {
+p5.prototype.baseStrokeShader = function () {
   this._assert3d('baseStrokeShader');
   return this._renderer.baseStrokeShader();
 };
@@ -3191,7 +3203,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
