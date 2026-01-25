@@ -456,14 +456,14 @@ suite('p5.Shader', function() {
           mxInHook = window.mouseX;
           wInHook = window.width;
           inputs.color = [1, 0, 0, 1];
+          assert.isTrue(mxInHook && mxInHook.isStrandsNode);
+          assert.isTrue(wInHook && wInHook.isStrandsNode);
           return inputs;
         });
       }, { myp5 });
 
       const mx = window.mouseX;
       const w = window.width;
-      assert.isTrue(mxInHook && mxInHook.isStrandsNode);
-      assert.isTrue(wInHook && wInHook.isStrandsNode);
       assert.isNumber(mx);
       assert.isNumber(w);
       assert.strictEqual(w, myp5.width);
