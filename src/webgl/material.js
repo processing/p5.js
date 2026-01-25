@@ -562,6 +562,7 @@ function material(p5, fn) {
    * In your function, you can use <a href="#/p5/filterColor">`filterColor`</a> with a function
    * that will be called for each pixel on the image to determine its final color. You can
    * read the color of the current pixel with `getTexture(canvasContent, coord)`.
+   * See <a href="#/p5/getTexture">getTexture()</a>.
    *
    * ```js example
    * async function setup() {
