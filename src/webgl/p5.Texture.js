@@ -460,10 +460,10 @@ p5.Texture = class Texture {
    * This method deletes the WebGL texture from GPU memory. Call this when
    * you no longer need the texture to prevent memory leaks.
    *
-   * @method dispose
+   * @method remove
    * @private
    */
-  dispose() {
+  remove() {
     // FramebufferTextures are managed by their parent Framebuffer
     if (this.isFramebufferTexture || this.glTex === undefined) {
       return;

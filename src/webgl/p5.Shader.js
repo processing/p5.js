@@ -1500,12 +1500,12 @@ p5.Shader = class {
    * from GPU memory. Call this when you no longer need the shader to prevent
    * memory leaks, especially when creating and destroying multiple p5 instances.
    *
-   * @method dispose
+   * @method remove
    * @private
    */
-  dispose() {
+  remove() {
     if (this._glProgram === 0) {
-      return; // Already disposed or never initialized
+      return; // Already removed or never initialized
     }
 
     const gl = this._renderer.GL;

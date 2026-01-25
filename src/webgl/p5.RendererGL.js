@@ -699,8 +699,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * @private
    */
   remove() {
-    // Dispose all cached shaders
-    const shadersToDispose = [
+    // Remove all cached shaders
+    const shadersToRemove = [
       this._defaultLightShader,
       this._defaultImmediateModeShader,
       this._defaultNormalShader,
@@ -715,25 +715,25 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.filterShader
     ];
 
-    // Also dispose filter shaders
+    // Also add filter shaders
     if (this.defaultFilterShaders) {
       for (const key in this.defaultFilterShaders) {
-        shadersToDispose.push(this.defaultFilterShaders[key]);
+        shadersToRemove.push(this.defaultFilterShaders[key]);
       }
     }
 
-    // Dispose each shader
-    for (const shader of shadersToDispose) {
-      if (shader && typeof shader.dispose === 'function') {
-        shader.dispose();
+    // Remove each shader
+    for (const shader of shadersToRemove) {
+      if (shader && typeof shader.remove === 'function') {
+        shader.remove();
       }
     }
 
-    // Dispose all cached textures
+    // Remove all cached textures
     if (this.textures) {
       for (const texture of this.textures.values()) {
-        if (texture && typeof texture.dispose === 'function') {
-          texture.dispose();
+        if (texture && typeof texture.remove === 'function') {
+          texture.remove();
         }
       }
       this.textures.clear();
@@ -768,10 +768,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       this.specularTextures.clear();
     }
 
-    // Dispose empty texture singleton
+    // Remove empty texture singleton
     if (this._emptyTexture) {
-      if (typeof this._emptyTexture.dispose === 'function') {
-        this._emptyTexture.dispose();
+      if (typeof this._emptyTexture.remove === 'function') {
+        this._emptyTexture.remove();
       }
       this._emptyTexture = null;
     }
