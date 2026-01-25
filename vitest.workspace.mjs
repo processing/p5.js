@@ -46,13 +46,12 @@ export default defineWorkspace([
           capabilities: process.env.CI ? {
             'goog:chromeOptions': {
               args: [
-                '--no-sandbox',
                 '--headless=new',
-                '--enable-unsafe-webgpu',
-                '--use-vulkan=swiftshader',
-                '--use-webgpu-adapter=swiftshader',
-                '--use-angle=vulkan',
                 '--no-sandbox',
+                '--enable-webgl',
+                '--use-gl=angle',
+                '--use-angle=swiftshader-webgl',
+                '--enable-unsafe-swiftshader',
               ]
             }
           } : undefined
@@ -105,7 +104,6 @@ export default defineWorkspace([
                 '--use-vulkan=swiftshader',
                 '--use-webgpu-adapter=swiftshader',
                 '--use-angle=vulkan',
-                '--no-sandbox',
               ]
             }
           } : undefined
