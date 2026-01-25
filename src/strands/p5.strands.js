@@ -685,11 +685,11 @@ if (typeof p5 !== "undefined") {
  * @description
  * Retrieves the current color of a given texture at given coordinates.  The coordinates should be between [0, 0] representing the top-left of the texture, and [1, 1] representing the bottom-right of the texture.  The retrieved color will be a vec4, with components for red, green, blue, and alpha, each between 0.0 and 1.0.
  *
- * @param {sampler2D} texture
+ * @param {typeof sampler2D} texture
  *         The texture to sample from.
- * @param {vec2} coords
+ * @param {typeof vec2} coords
  *         The coordinates to sample from, from (0,0) (top-left) to (1,1) (bottom-right) of texture.
- * @returns {vec4} The color of the given texture at the given coordinates, in RGBA,
+ * @returns {typeof vec4} The color of the given texture at the given coordinates, in RGBA,
  * with each element being between 0.0 and 1.0.
  *
  * @example
