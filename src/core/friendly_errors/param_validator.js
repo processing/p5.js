@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.number({invalid_type_error: 'Expected number'}).refine(val=>val!==null, {message:'Expected Number'}), //Added validation for null
     'Object': z.object({}),
     'String': z.string()
   };
