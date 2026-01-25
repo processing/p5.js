@@ -447,6 +447,28 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
+    test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let mxInHook;
+      let wInHook;
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          mxInHook = window.mouseX;
+          wInHook = window.width;
+          inputs.color = [1, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      const mx = window.mouseX;
+      const w = window.width;
+      assert.isTrue(mxInHook && mxInHook.isStrandsNode);
+      assert.isTrue(wInHook && wInHook.isStrandsNode);
+      assert.isNumber(mx);
+      assert.isNumber(w);
+      assert.strictEqual(w, myp5.width);
+    });
+
     test('handle custom uniform names with automatic values', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(() => {
