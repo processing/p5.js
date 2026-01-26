@@ -2,6 +2,10 @@
 
 # Contributing to the p5.js Reference
 
+A note about versions:
+
+This document is being updated for p5 version 2, whose reference documentation can be found at https://beta.p5js.org/reference/ until it becomes the recommended stable version.
+
 In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including them alongside the library’s source code as specialized comments. These reference comments include the description, the function’s signature (its parameters and return value), and usage examples. In other words, the content on each p5.js function/variable’s reference page is built from the reference comments in the source code.
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
@@ -11,12 +15,14 @@ This document will show you how to write and format the reference comments so th
 
 When you look at the source code of p5.js, you will see many lines in the library being reference comments; they look like this:
 
-```
+```js
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * Calculates the sine of an angle.
+ *
+ * `sin()` is useful for many geometric tasks in creative coding. The values
+ * returned oscillate between -1 and 1 as the input angle increases. `sin()`
+ * calculates the sine of an angle, using radians by default, or according to
+ * the <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
  *
  * @method sin
  * @param  {Number} angle the angle.
@@ -25,65 +31,121 @@ When you look at the source code of p5.js, you will see many lines in the librar
  * @example
  * <div>
  * <code>
- * function draw() {
- *   background(200);
- *
- *   let t = frameCount;
- *   let x = 50;
- *   let y = 30 * sin(t * 0.05) + 50;
- *   line(x, 50, x, y);
- *   circle(x, y, 20);
+ * function setup() {
+ *   createCanvas(100, 100);
  *
  *   describe('A white ball on a string oscillates up and down.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
  * function draw() {
- *   let x = frameCount;
- *   let y = 30 * sin(x * 0.1) + 50;
- *   point(x, y);
+ *   background(200);
  *
- *   describe('A series of black dots form a wave pattern.');
+ *   // Calculate the coordinates.
+ *   let x = 50;
+ *   let y = 30 * sin(frameCount * 0.05) + 50;
+ *
+ *   // Draw the oscillator.
+ *   line(50, y, x, y);
+ *   circle(x, y, 20);
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   describe('A series of black dots form a wave pattern.');
+ * }
+ *
  * function draw() {
- *   let t = frameCount;
- *   let x = 30 * cos(t * 0.1) + 50;
- *   let y = 10 * sin(t * 0.2) + 50;
+ *   // Calculate the coordinates.
+ *   let x = frameCount;
+ *   let y = 30 * sin(x * 0.1) + 50;
+ *
+ *   // Draw the point.
  *   point(x, y);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
  *
  *   describe('A series of black dots form an infinity symbol.');
+ * }
+ *
+ * function draw() {
+ *   // Calculate the coordinates.
+ *   let x = 30 * cos(frameCount * 0.1) + 50;
+ *   let y = 10 * sin(frameCount * 0.2) + 50;
+ *
+ *   // Draw the point.
+ *   point(x, y);
  * }
  * </code>
  * </div>
  */
 ```
 
-They are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.
+These reference comments are usually followed by the actual JavaScript code that defines the function. Reference comments always start with `/**` and end with `*/`, with each line in between the two starting with `*`.  
 
-Anything in a block in this manner will be interpreted as reference documentation. You may be familiar with this style of code comments through [JSDoc](https://jsdoc.app/). While p5.js does not use JSDoc, it uses a very similar tool called [YUIDoc](https://yui.github.io/yuidoc/), which has a very similar reference syntax. In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
+Anything in a block in this manner will be interpreted as reference documentation. These follow a format called [JSDoc](https://jsdoc.app/).
+
+In this style of reference comments, each comment block is further divided into individual elements, which we will have a look at next.
+
+Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
+
+#### Differences between p5 v1 and v2
+
+Note that p5 v1.x does _not_ use JSDoc syntax but a slightly  modified [syntax called YUIDoc](https://yui.github.io/yuidoc/syntax/index.html).  In practice the syntaxes are largely compatible but there _are_ differences.
+
+Syntax and tooling per version
+
+* in p5 v1, documentation comments are written in YUIDoc syntax and processed with a [tool called YUIDoc](https://yui.github.io/yuidoc/).
+
+* in p5 v2, documentation comments are written in JSDoc syntax and processed with a [tool called documentation.js](https://documentation.js.org/).
 
 
-## Reference comments block
+From here on, we'll focus only on reference comments written in JSDoc format, for p5 v2.x.
+
+## Reference comments block for functions
 
 Let’s break down the reference comments block above for the `sin()` function and see what each section does. You can compare what you see in the comments here and what you can see on the reference page for [`sin()`](https://p5js.org/reference/p5/sin/).
 
-```
+(You might later also want to look at the most up-to-date source code and documentation comments for `sin` in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/trigonometry.js) - search for `fn.sin`)
+
+### Describing the function or variable
+
+Example: 
+
+```js
 /**
- * Calculates the sine of an angle. `sin()` is useful for many geometric tasks
- * in creative coding. The values returned oscillate between -1 and 1 as the
- * input angle increases. `sin()` takes into account the current
- * <a href="#/p5/angleMode">angleMode</a>.
+ * Calculates the sine of an angle.
+ *
+ * `sin()` is useful for many geometric tasks in creative coding. The values
+ * returned oscillate between -1 and 1 as the input angle increases. `sin()`
+ * calculates the sine of an angle, using radians by default, or according to
+ * the <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES). 
+ * ...omitted ...
 ```
 
 At the very top of the comment is the text description of the function. This description can contain both markdown syntax and HTML. The description should be concise and describe what the function does and, if necessary, some details about its quirks or behaviors.
+
+In some places, you may see the  `@description` tag used.  This is only actually necessary if the description text isn't placed at the very beginning of the JSDoc comment.
+
+In either case, [here's the JSDoc documentation on this description section](https://jsdoc.app/tags-description).
+
+### Specifying the function name, parameters, return
+
+Example:
 
 ```
  * @method sin
@@ -93,14 +155,15 @@ At the very top of the comment is the text description of the function. This des
 
 A function will typically have the three sections above, each starting with an `@` symbol followed by one of the following keywords:
 
-- `@method` is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).
-- `@param` is used to define the parameters or arguments that the function accepts.
+- [`@method`](https://jsdoc.app/tags-method) is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).  This may often be omitted with JSDoc which will try to read the name from the following source code.  It is also used when detailing multiple signatures for a function (see later).
+- [`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.
   - Following the keyword `@param`, stored in curly brackets `{}` is the type of the parameter.
   - After the type, the next word (angle) is the name of the parameter.
   - After the name, the rest of the line is the description of the parameter.
-- `@return` is used to define the return value of the function.
+- [`@return`](https://jsdoc.app/tags-returns) is used to define the return value of the function.
   - Following the keyword `@return`, stored in curly brackets `{}` is the type of the return value.
   - After the type, the rest of the line is the description of the return value.
+  - If the function does not return a value, the `@return` tag can be left out.
 
 More generically for parameters, you should follow this format:
 
@@ -117,19 +180,41 @@ If the parameter is optional, add square brackets around the name:
 
 ### Additional info: Constants
 
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, e.g.:
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js), the valid values should be listed in the parameter type, separated by `|` characters (pipe characters).
 
-```
-@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
-```
+Example:
 
-For return types you should follow this format:
-
+```js
+/**
+ * @method rectMode
+ * @param {CENTER|RADIUS|CORNER|CORNERS} mode
+ * ...
+ */
 ```
-@return {type} Description of the data returned.
-```
+Constants: A difference with p5 v1.x
 
-If the function does not return a value, the `@return` tag can be left out.
+Previously for p5 v1.x, such parameter types were specified only as `{Constant}`, and the specific values mentioned only in the free text of the parameter description.
+
+Example difference:
+
+```js
+For p5 v1.x: 
+/**
+ * @method textAlign
+ * @param {Constant} horizAlign horizontal alignment, either LEFT,
+ *                            CENTER, or RIGHT.
+ * ...
+ */
+ ```
+ 
+ As describe above, this changes for p5 v2.x to the following:
+ ```js
+/**
+  * @method textAlign
+  * @param {LEFT|CENTER|RIGHT} [horizAlign] horizontal alignment
+  * ...
+ */
+ ```
 
 
 ### Additional info: Chaining
@@ -141,11 +226,11 @@ If the method returns the parent object, you can skip the `@return` tag and add 
 ```
 
 
-## Additional signatures
+## Additional function signatures
 
 If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. At the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
-```
+```js
 /**
  * @method background
  * @param {String} colorstring color string, possible formats include: integer
@@ -171,7 +256,7 @@ It is not necessary to create a separate signature if the only difference betwee
 
 So far, we have looked at how to write references for functions and constants. Variables follow the same structure but use different tags.
 
-```
+```js
 /**
  * The system variable mouseX always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the canvas. The value at
@@ -319,7 +404,7 @@ You can use the `@private` if a property or variable is a private function or va
 
 
 
-```
+```js
 /**
  * _start calls preload() setup() and draw()
  *
@@ -338,7 +423,7 @@ The `@for` tag defines the relationship between this module and the overall `p5`
 
 The `@requires` tag defines the required imported modules that the current module depends on.
 
-```
+```js
 /**
  * @module Color
  * @submodule Creating & Reading
@@ -355,7 +440,7 @@ The convention p5.js follows is that each subfolder in the `src/` folder will be
 
 Class constructors are defined with the `@class` tag and the `@constructor` tag. The format for this block is similar to how a function is defined with the `@method` block, the class’s name will need to be defined with the `@class` tag and the `@constructor` tag will indicate the class has a constructor function. See the example below for the `p5.Color` class:
 
-```
+```js
 /**
  * A class to describe a color. Each `p5.Color` object stores the color mode
  * and level maxes that were active during its construction. These values are
@@ -414,3 +499,10 @@ For additional details about the reference system, you can checkout the document
 
 For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](./contributor_guidelines.md) document is also a good place to start.
 
+## Appendix: Syntax differences between YUIDoc and JSDoc
+* YUIDoc requires function names be provided with the `@method` tag, whereas JSDoc can generally extract that information from the implementation source code.
+
+## TODO: 
+* check how we want to mark parameter optionality
+* whether to omit @method tag or not?
+* update/deprecate @chainable?
