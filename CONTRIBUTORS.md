@@ -1096,6 +1096,7 @@
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/vietnguyen2358"><img src="https://avatars.githubusercontent.com/u/107826279?v=4?s=64" width="64px;" alt="Viet Nguyen"/><br /><sub><b>Viet Nguyen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vietnguyen2358" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shuklaaryan367-byte"><img src="https://avatars.githubusercontent.com/u/228463828?v=4?s=64" width="64px;" alt="aryan-shukla"/><br /><sub><b>aryan-shukla</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shuklaaryan367-byte" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://skyash.me"><img src="https://avatars.githubusercontent.com/u/52105266?v=4?s=64" width="64px;" alt="yash"/><br /><sub><b>yash</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyash-dev" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
