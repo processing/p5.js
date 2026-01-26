@@ -2,14 +2,13 @@
 
 # Contributing to the p5.js Reference
 
-A note about versions:
-
-This document is being updated for p5 version 2, whose reference documentation can be found at https://beta.p5js.org/reference/ until it becomes the recommended stable version.
-
 In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including them alongside the library’s source code as specialized comments. These reference comments include the description, the function’s signature (its parameters and return value), and usage examples. In other words, the content on each p5.js function/variable’s reference page is built from the reference comments in the source code.
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
 
+### Aside: A note about versions
+
+This document is updated for p5 version 2.x, whose reference documentation is being hosted at https://beta.p5js.org/reference/ until it eventually replaces v1.x as the recommended stable version.  Until then, the differences in how the two p5 versions handle documentation generation will be mentioned in this document to help the reader who encounters both formats, or systems, in the wild.
 
 ## A quick introduction to how reference comments work
 
@@ -19,10 +18,14 @@ When you look at the source code of p5.js, you will see many lines in the librar
 /**
  * Calculates the sine of an angle.
  *
- * `sin()` is useful for many geometric tasks in creative coding. The values
- * returned oscillate between -1 and 1 as the input angle increases. `sin()`
- * calculates the sine of an angle, using radians by default, or according to
- * the <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
+ * `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned
+ * oscillate between -1 and 1 as the input
+ * angle increases. `sin()` calculates the
+ * sine of an angle, using radians by default,
+ * or according to the <a
+ * href="#/p5/angleMode">angleMode()</a>
+ * setting (RADIANS or DEGREES).
  *
  * @method sin
  * @param  {Number} angle the angle.
@@ -130,11 +133,15 @@ Example:
 /**
  * Calculates the sine of an angle.
  *
- * `sin()` is useful for many geometric tasks in creative coding. The values
- * returned oscillate between -1 and 1 as the input angle increases. `sin()`
- * calculates the sine of an angle, using radians by default, or according to
- * the <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES). 
- * ...omitted ...
+ * `sin()` is useful for many geometric tasks
+ * in creative coding. The values returned
+ * oscillate between -1 and 1 as the input
+ * angle increases. `sin()` calculates the
+ * sine of an angle, using radians by default,
+ * or according to the <a
+ * href="#/p5/angleMode">angleMode()</a>
+ * setting (RADIANS or DEGREES).
+ * ...omitted...
 ```
 
 At the very top of the comment is the text description of the function. This description can contain both markdown syntax and HTML. The description should be concise and describe what the function does and, if necessary, some details about its quirks or behaviors.
@@ -155,7 +162,7 @@ Example:
 
 A function will typically have the three sections above, each starting with an `@` symbol followed by one of the following keywords:
 
-- [`@method`](https://jsdoc.app/tags-method) is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).  This may often be omitted with JSDoc which will try to read the name from the following source code.  It is also used when detailing multiple signatures for a function (see later).
+- [`@method`](https://jsdoc.app/tags-function) is used to define the name of the function, in this case `sin` (note that the function name does not include the brackets `()`).  This may often be omitted with JSDoc which will try to read the name from the following source code.  It is also used when detailing multiple signatures for a function (see later).
 - [`@param`](https://jsdoc.app/tags-param) is used to define the parameters or arguments that the function accepts.
   - Following the keyword `@param`, stored in curly brackets `{}` is the type of the parameter.
   - After the type, the next word (angle) is the name of the parameter.
@@ -197,12 +204,12 @@ Previously for p5 v1.x, such parameter types were specified only as `{Constant}`
 
 Example difference:
 
-```js
 For p5 v1.x: 
+```js
 /**
  * @method textAlign
- * @param {Constant} horizAlign horizontal alignment, either LEFT,
- *                            CENTER, or RIGHT.
+ * @param {Constant} horizAlign horizontal
+ *      alignment, either LEFT, CENTER, or RIGHT.
  * ...
  */
  ```
@@ -211,7 +218,8 @@ For p5 v1.x:
  ```js
 /**
   * @method textAlign
-  * @param {LEFT|CENTER|RIGHT} [horizAlign] horizontal alignment
+  * @param {LEFT|CENTER|RIGHT} horizAlign 
+  *                        horizontal alignment.
   * ...
  */
  ```
@@ -233,15 +241,17 @@ If a function has multiple possible parameter options, you can specify each indi
 ```js
 /**
  * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
+ * @param {String} colorstring color string, 
+ *   possible formats include: integer rgb()
+ *   or rgba(), percentage rgb() or rgba(),
+ *   3-digit hex, 6-digit hex
  * @param {Number} [a] alpha value
  */
 
 /**
  * @method background
- * @param {Number} gray specifies a value between white and black
+ * @param {Number} gray specifies a value 
+ *                between white and black
  * @param {Number} [a]
  */
 ```
@@ -258,11 +268,14 @@ So far, we have looked at how to write references for functions and constants. V
 
 ```js
 /**
- * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. The value at
- * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
- * of the most recent touch point.
+ * The system variable mouseX always contains
+ * the current horizontal position of the
+ * mouse, relative to (0, 0) of the canvas.
+ * The value at the top-left corner is (0, 0)
+ * for 2-D and (-width/2, -height/2) for
+ * WebGL.  If touch is used instead of mouse
+ * input, mouseX will hold the x value of the
+ * most recent touch point.
  *
  * @property {Number} mouseX
  * @readOnly
@@ -274,7 +287,8 @@ So far, we have looked at how to write references for functions and constants. V
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, 0, mouseX, 100);
- *   describe('horizontal black line moves left and right with mouse x-position');
+ *   describe('horizontal black line moves 
+ *   left and right with mouse x-position');
  * }
  * </code>
  * </div>
@@ -442,30 +456,40 @@ Class constructors are defined with the `@class` tag and the `@constructor` tag.
 
 ```js
 /**
- * A class to describe a color. Each `p5.Color` object stores the color mode
- * and level maxes that were active during its construction. These values are
- * used to interpret the arguments passed to the object's constructor. They
- * also determine output formatting such as when
- * <a href="#/p5/saturation">saturation()</a> is called.
+ * A class to describe a color. Each
+ * `p5.Color` object stores the color mode and
+ * level maxes that were active during its
+ * construction. These values are used to
+ * interpret the arguments passed to the
+ * object's constructor. They also determine
+ * output formatting such as when <a
+ * href="#/p5/saturation">saturation()</a> is
+ * called.
  *
- * Color is stored internally as an array of ideal RGBA values in floating
- * point form, normalized from 0 to 1. These values are used to calculate the
- * closest screen colors, which are RGBA levels from 0 to 255. Screen colors
- * are sent to the renderer.
+ * Color is stored internally as an array of
+ * ideal RGBA values in floating point form,
+ * normalized from 0 to 1. These values are
+ * used to calculate the closest screen
+ * colors, which are RGBA levels from 0 to
+ * 255. Screen colors are sent to the
+ * renderer.
  *
- * When different color representations are calculated, the results are cached
- * for performance. These values are normalized, floating-point numbers.
+ * When different color representations are
+ * calculated, the results are cached for
+ * performance. These values are normalized,
+ * floating-point numbers.
  *
- * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class.
+ * <a href="#/p5/color">color()</a> is the
+ * recommended way to create an instance of
+ * this class.
  *
  * @class p5.Color
  * @constructor
- * @param {p5} [pInst]                  pointer to p5 instance.
+ * @param {p5} [pInst] pointer to p5 instance.
  *
- * @param {Number[]|String} vals        an array containing the color values
- *                                      for red, green, blue and alpha channel
- *                                      or CSS color.
+ * @param {Number[]|String} vals an array 
+ * containing the color values for red, 
+ * green, blue and alpha channel or CSS color.
  */
 ```
 
@@ -506,3 +530,58 @@ For examples of issues related to the reference, have a look at [#6519](https://
 * check how we want to mark parameter optionality
 * whether to omit @method tag or not?
 * update/deprecate @chainable?
+
+## Appendix: About the reference-generation process
+
+In the p5.js repo, `npm run docs` runs (roughly):
+```bash
+"documentation build ./src/**/*.js  
+  -o ./docs/data.json 
+  && node ./utils/convert.mjs",
+```
+### Flow diagram for reference generation
+See [mermaid flowchart syntax reference](https://mermaid.ai/open-source/syntax/flowchart.html)
+
+```mermaid
+graph LR
+  npmRunDocs[[npm run<br>docs]] --> docBuild[[documentation<br>build<br>/src/**/*.js]]
+  docBuild --> /docs/data.json@{ shape: doc }
+  /docs/data.json --> convert[[convert.mjs]]
+  convert --> /docs/reference/data.json@{ shape: doc }
+  convert --> /docs/reference/data.min.json@{ shape: doc }        
+  /docs/reference/data.json --> websiteNpmBuildReference[[website<br>npm run<br>build:reference]]
+  websiteNpmBuildReference --> /content/reference/@{shape: docs}
+
+  /docs/data.json --> typescript[[typescript.mjs]]  
+  
+  subgraph type-generation
+  typescript --> /types/p5.d.ts
+  typescript --> /types/global.d.ts
+  npmRunGenerateTypes[[npm run<br>generate-types]]
+  npmRunGenerateTypes --> typescript
+  end
+  
+```
+### Flow diagram for search index generation
+On the p5js-website repo, we run `npm run build:search`
+
+```mermaid
+graph LR
+  contentReference["/content/reference"]@{shape: docs}
+  contentExamples["/content/examples"]@{shape: docs}
+  
+  npmBuildSearch[[npm run<br>build:search]]
+  npmBuildSearch --> buildSearchIndices[[buildSearchIndices]] --> genSearchIndexForExamples[[generateSearchIndex<br>examples]]
+  buildSearchIndices --> genSearchIndexForReference[[generateSearchIndex<br>reference]]
+  contentReference --> genSearchIndexForReference
+  contentExamples --> genSearchIndexForExamples
+  buildSearchIndices --> saveSearchIndex[[saveSearchIndex]] --> outDir[[public/search-indices en.json, ja.json, ...]]@{shape: docs}
+```
+### Type-generation
+
+On the p5js repo...
+
+`npm run generate-types` runs:
+```bash
+"npm run docs && node utils/typescript.mjs"
+```
