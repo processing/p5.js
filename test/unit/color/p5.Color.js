@@ -791,15 +791,29 @@ suite('p5.Color', function() {
     });
   });
 
-  suite.todo('p5.Color.prototype.toString', function() {
-    // var colorStr;
+  suite('p5.Color.prototype.toString', function() {
+    test('should format as #rrggbb hex string', function() {
+      const testColor = mockP5Prototype.color(153, 50, 204); // darkorchid
+      const result = testColor.toString('#rrggbb');
+      assert.equal(result, '#9932cc');
+    });
 
-    // beforeEach(function() {
-    //   mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
-    //   c = mockP5Prototype.color(128, 0, 128, 128);
-    //   colorStr = c.toString();
-    // });
+    test('should format as hex string with "hex" alias', function() {
+      const testColor = mockP5Prototype.color(153, 50, 204); // darkorchid
+      const result = testColor.toString('hex');
+      assert.equal(result, '#9932cc');
+    });
 
-    // NOTE: need some tests here
+    test('should handle single digit hex values with padding', function() {
+      const testColor = mockP5Prototype.color(10, 5, 15);
+      const result = testColor.toString('#rrggbb');
+      assert.equal(result, '#0a050f');
+    });
+
+    test('should format hex with alpha channel', function() {
+      const testColor = mockP5Prototype.color(153, 50, 204, 128);
+      const result = testColor.toString('hex');
+      assert.match(result, /^#[0-9a-f]{8}$/i);
+    });
   });
 });

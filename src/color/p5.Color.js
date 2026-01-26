@@ -336,6 +336,7 @@ class Color {
    * @param {String} [format] how the color string will be formatted.
    * Leaving this empty formats the string as rgba(r, g, b, a).
    * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
+   * 'hex' is an alias for hexadecimal format.
    * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
    * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
    * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
@@ -369,12 +370,23 @@ class Color {
       return this._defaultStringValue;
     }
 
+    // Map p5.js format strings to colorjs.io format strings
+    let colorjsFormat = format;
+    if (format === 'hex') {
+      // 'hex' is a common alias for '#rrggbb'
+      colorjsFormat = 'hex';
+    } else if (format === '#rrggbb' || format === '#rrggbbaa' || 
+               format === '#rgb' || format === '#rgba') {
+      // colorjs.io uses 'hex' for all hex formats
+      colorjsFormat = 'hex';
+    }
+
     const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
     let colorString = serializationMap.get(key);
 
     if(!colorString){
       colorString = serialize(this._color, {
-        format
+        format: colorjsFormat
       });
       if (serializationMap.size > 1000) {
         serializationMap.delete(serializationMap.keys().next().value)
