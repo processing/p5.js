@@ -384,15 +384,14 @@ class Color {
       
       if (format === '#rrggbb') {
         colorString = String(colorString);
-        
-        if (colorString.length <= 5) { 
-          const match = colorString.match(/^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/);
-          if (match) {
-            colorString = `#${match[1]}${match[1]}${match[2]}${match[2]}${match[3]}${match[3]}`;
-          }
+        if (colorString.length === 4) { 
+            const r = colorString[1];
+            const g = colorString[2];
+            const b = colorString[3];
+            colorString = `#${r}${r}${g}${g}${b}${b}`;
         }
         if (colorString.length > 7) {
-           colorString = colorString.substring(0, 7);
+            colorString = colorString.slice(0, 7);
         }
         colorString = colorString.toLowerCase();
       }
@@ -404,7 +403,6 @@ class Color {
     }
     return colorString;
   }
-
   /**
    * Checks the contrast between two colors. This method returns a boolean
    * value to indicate if the two color has enough contrast. `true` means that
