@@ -276,6 +276,45 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
+ * @method smoothstep
+ * @description
+ * A shader function that performs smooth Hermite interpolation between `0.0`
+ * and `1.0`.
+ *
+ * This function is equivalent to the GLSL built-in
+ * `smoothstep(edge0, edge1, x)` and is available inside p5.strands shader
+ * callbacks. It is commonly used to create soft transitions, smooth edges,
+ * fades, and anti-aliased effects.
+ *
+ * - Returns `0.0` when `x` is less than or equal to `edge0`
+ * - Returns `1.0` when `x` is greater than or equal to `edge1`
+ * - Smoothly interpolates between `0.0` and `1.0` when `x` is between them
+ *
+ * @param {Number} edge0
+ *        Lower edge of the transition
+ * @param {Number} edge1
+ *        Upper edge of the transition
+ * @param {Number} x
+ *        Input value to interpolate
+ *
+ * @returns {Number}
+ *          A value between `0.0` and `1.0`
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function material() {
+ *   let t = uniformFloat();
+ *   combineColors.begin();
+ *   let fade = smoothstep(0.2, 0.8, sin(t * 0.001));
+ *   combineColors.opacity *= fade;
+ *   combineColors.end();
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
  * @method beforeVertex
  * @private
  * @description
