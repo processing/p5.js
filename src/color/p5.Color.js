@@ -364,18 +364,38 @@ class Color {
    * </code>
    * </div>
    */
-  toString(format) {
-    if (format === undefined && this._defaultStringValue !== undefined) {
+ toString(format) {
+   if (format === undefined && this._defaultStringValue !== undefined) {
       return this._defaultStringValue;
+   }
+   
+    let outputFormat = format;
+    if (format === '#rrggbb') {
+      outputFormat = 'hex';
     }
 
     const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
     let colorString = serializationMap.get(key);
 
-    if(!colorString){
+    if (!colorString) {
       colorString = serialize(this._color, {
-        format
+        format: outputFormat
       });
+      
+      if (format === '#rrggbb') {
+        colorString = String(colorString);
+        if (colorString.length === 4) { 
+            const r = colorString[1];
+            const g = colorString[2];
+            const b = colorString[3];
+            colorString = `#${r}${r}${g}${g}${b}${b}`;
+        }
+        if (colorString.length > 7) {
+            colorString = colorString.slice(0, 7);
+        }
+        colorString = colorString.toLowerCase();
+      }
+
       if (serializationMap.size > 1000) {
         serializationMap.delete(serializationMap.keys().next().value)
       }
@@ -383,7 +403,6 @@ class Color {
     }
     return colorString;
   }
-
   /**
    * Checks the contrast between two colors. This method returns a boolean
    * value to indicate if the two color has enough contrast. `true` means that
