@@ -188,19 +188,22 @@ export const glslBackend = {
   },
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
+    // Generate the expression followed by semicolon (unless suppressed)
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
     if (node.statementType === StatementType.DISCARD) {
       generationContext.write(`discard${semicolon}`);
     } else if (node.statementType === StatementType.BREAK) {
       generationContext.write(`break${semicolon}`);
     } else if (node.statementType === StatementType.EXPRESSION) {
-      // Generate the expression followed by semicolon (unless suppressed)
       const exprNodeID = node.dependsOn[0];
       const expr = this.generateExpression(generationContext, dag, exprNodeID);
       generationContext.write(`${expr}${semicolon}`);
     } else if (node.statementType === StatementType.EMPTY) {
-      // Generate just a semicolon (unless suppressed)
       generationContext.write(semicolon);
+    } else if (node.statementType === StatementType.EARLY_RETURN) {
+      const exprNodeID = node.dependsOn[0];
+      const expr = this.generateExpression(generationContext, dag, exprNodeID);
+      generationContext.write(`return ${expr}${semicolon}`);
     }
   },
   generateAssignment(generationContext, dag, nodeID) {
