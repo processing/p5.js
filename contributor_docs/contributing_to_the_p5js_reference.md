@@ -106,7 +106,7 @@ In this style of reference comments, each comment block is further divided into 
 
 Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
 
-#### Differences between p5 v1 and v2
+### Differences between p5 v1 and v2
 
 Note that p5 v1.x does _not_ use JSDoc syntax but a slightly  modified [syntax called YUIDoc](https://yui.github.io/yuidoc/syntax/index.html).  In practice the syntaxes are largely compatible but there _are_ differences.
 
@@ -295,12 +295,14 @@ So far, we have looked at how to write references for functions and constants. V
  */
 ```
 
-The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use `@property` instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
+The start of the block contains the description of the variable (`mouseX` in this case). To define the name of the variable, we use [`@property`](https://jsdoc.app/tags-property) instead of `@method`. `@property` follows the same syntax as `@param` for defining the type and its name. 
+
+The `@readonly` tag is present on most p5.js variables and is used internally to indicate this value should not be overwritten directly by a library user.
 
 
 ## Adding examples
 
-One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the `@example` tag. This tag is where you define the code example(s) that is run when you visit the reference page.
+One tag that is present in both `sin()` and `mouseX`’s reference comments that we have not talked about yet is the [`@example`](https://jsdoc.app/tags-example) tag. This tag is where you define the code examples that are shown and run when you visit the reference page.
 
 ![Screenshot of the p5.js reference page of the "red()" function, showing only the example code section.](images/reference-screenshot.png)
 
@@ -324,7 +326,13 @@ The relevant `@example` tag to create the above is as follows:
  * </div>
 ```
 
-After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated. The example’s canvas should be 100x100 pixels and if the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. We won’t go through the details about best practices and code style for the example code here; please see the reference style guide instead.
+After the `@example` tag, you should start an HTML `<div>` tag followed by a `<code>` tag. In between the opening and closing `<code>`  tag, you will insert the relevant example code. 
+
+The basic principle of writing good example code for the reference is to keep things simple and minimal. The example should be meaningful and explain how the feature works without being too complicated. 
+
+The example’s canvas should be 100x100 pixels and if the `setup()` function is not included, such as in the example above, the code will be automatically wrapped in a `setup()` function with a default 100x100 pixels gray background canvas created. 
+
+We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
 
 You can have multiple examples for one feature. To do so, add an additional `<div>` and `<code>` HTML block right after the first closed, separated by a blank line.
 
@@ -345,7 +353,11 @@ You can have multiple examples for one feature. To do so, add an additional `<di
 * </div>
 ```
 
-If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class “`norender`” in the `<div>`:
+Optionally, you can also include prose after that gap between examples, to add context or more nuanced detail.
+
+### preventing execution of example code
+
+If you do not want the reference page to execute your example code (i.e., you just want the code to show up), include the class "`norender`" in the `<div>`:
 
 ```
 * @example
@@ -356,8 +368,9 @@ If you do not want the reference page to execute your example code (i.e., you ju
 * </code>
 * </div>
 ```
+### preventing testing of example code
 
-If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class “`notest`” in the `<div>`:
+If you do not want the example to be run as part of the automated tests (for example, if the example requires user interaction), include the class "`notest`" in the `<div>`:
 
 ```
 * @example
@@ -368,15 +381,63 @@ If you do not want the example to be run as part of the automated tests (for exa
 * }
 * </code></div>
 ```
+### requiring browser features for example code
 
-If your example uses external asset files, put them in the [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) folder (or reuse one already in there) then link to them with "assets/filename.ext" in the code. See the [tint()](https://p5js.org/reference/p5/tint/) reference for example.
+In some cases, the example code may be intended to demonstrate  p5.js functionality that depends on a feature that is not universally available on all browsers or devices (most notably, WebGL).  Rather than having this code run and break on incompatible browsers, use the "modernizr" attribute along with the name of the required feature.  At runtime, if that feature is not detected on the user's browser, the code will not be executed.  ([Features are listed here](https://modernizr.com/docs/#features).)
 
+Example:
+This example code will not try to run if WebGL is not available to the user's browser.
+
+```js
+* @example
+* <div modernizr='webgl'>
+* <code>
+* function setup() {
+*   createCanvas(100, 100, WEBGL);
+* }
+* </code>
+* </div>
+```
+
+### Including asset files (images, fonts, etc) in examples
+
+If your example code uses external asset files (e.g. images, fonts, sounds), they must be added in the _p5.js-website_ repo's [/public/assets](https://github.com/processing/p5.js-website/tree/2.0/public/assets) folder.  Then, link to the asset with `assets/filename.ext` in the code.  
+
+(Note that this is a change from p5 v1.x where such assets were stored in the p5.js repo.)
+
+Examples: 
+
+For a full working example, see the [tint()](https://beta.p5js.org/reference/p5/tint/) reference.
+
+```js
+img = await loadImage('assets/rockies.jpg');
+```
+The above code will load the image file, [/public/assets/rockies.jpg](https://github.com/processing/p5.js-website/blob/2.0/public/assets/rockies.jpg), stored in the p5.js-website repo.
+
+```js
+font = await loadFont('assets/inconsolata.otf');
+```
+The above code will load the font file, [/public/assets/inconsolata.otf](https://github.com/processing/p5.js-website/blob/2.0/public/assets/inconsolata.otf), stored in the p5.js-website repo.
+
+#### Re-using existing assets
+
+You may wish to make use of an asset that's already in that directory, linking to it in the same way.  (Reusing assets also provides familiarity to the reader across the documentation).  You can see all such assets [here](https://github.com/processing/p5.js-website/tree/2.0/public/assets).  (Cloning that repo and using a file explorer to open `public/assets` will make it easier to browse the assets.)
+
+#### Hotlinking asset files in examples
+
+TODO: check policies here - what follows is just a sketched placeholder.
+
+Whilst it is technically possible to hotlink to an asset file hosted elsewhere (such as [wikimedia commons](https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia/technical)) when permitted by the copyright license and hosting provider, anyone could later change, vandalise, rename, or delete that hotlinked asset.
+
+(It also makes offline copies of the reference much harder to produce.)
+
+It is recommended, instead, to use assets hosted by the p5.js-website itself as described previously here.
 
 ### Add a canvas description using `describe()`
 
 Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas.
 
-```
+```js
 * @example
 * <div>
 * <code>
@@ -409,7 +470,13 @@ Finally, for every example you add, you are required to use the p5.js function `
 
 For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
-With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc style reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
+## Less common JSDoc tags
+
+With all the above you should have most of the tools needed to write and edit p5.js reference comments. However, there are a few more specialized usage of JSDoc reference comments that you may come across in p5.js. These are situationally useful and not something that you need often.
+
+TODO: perhaps just link here to [./jsdoc.md](./jsdoc.md)?
+
+<!-- TODO: done to this point -->
 
 
 ### `@private` tag
@@ -519,17 +586,24 @@ This will launch a live preview of the rendered reference that will update each 
 
 ## Next steps
 
-For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/) and [YUIDoc](https://yui.github.io/yuidoc/).
-
-For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). The [contributor guidelines](./contributor_guidelines.md) document is also a good place to start.
+* We also have a [JSDoc best practices](https://beta.p5js.org/contribute/jsdoc/) document.
+* For additional details about the reference system, you can checkout the documentation for [JSDoc](https://jsdoc.app/)
+* For examples of issues related to the reference, have a look at [#6519](https://github.com/processing/p5.js/issues/6519) and [#6045](https://github.com/processing/p5.js/issues/6045). 
+* The [contributor guidelines](./contributor_guidelines.md) document is also a good place to start.
 
 ## Appendix: Syntax differences between YUIDoc and JSDoc
+
 * YUIDoc requires function names be provided with the `@method` tag, whereas JSDoc can generally extract that information from the implementation source code.
 
-## TODO: 
-* check how we want to mark parameter optionality
-* whether to omit @method tag or not?
-* update/deprecate @chainable?
+## Appendix: Summary of other documentation differences between p5 v1 and v2
+
+For the syntactic differences between YUIDoc and JSDoc, see above.  Here are some other differences:
+
+* For v2, code example assets (images, fonts, etc) go in the website repo's `public/assets` folder.  In v1 these went in the `docs/yuidoc-p5-theme/assets` folder of the p5.js repo.
+
+* In v2, previewing the reference site locally can no longer be done with the p5.js repo alone, but requires running build:reference on the website repo.  In v1 this was possible without requiring the website repo.
+
+* The documentation is generated with the tool documentation.js, not the YUIDoc tool.
 
 ## Appendix: About the reference-generation process
 
@@ -540,6 +614,7 @@ In the p5.js repo, `npm run docs` runs (roughly):
   && node ./utils/convert.mjs",
 ```
 ### Flow diagram for reference generation
+
 See [mermaid flowchart syntax reference](https://mermaid.ai/open-source/syntax/flowchart.html)
 
 ```mermaid
@@ -563,6 +638,7 @@ graph LR
   
 ```
 ### Flow diagram for search index generation
+
 On the p5js-website repo, we run `npm run build:search`
 
 ```mermaid
@@ -585,3 +661,27 @@ On the p5js repo...
 ```bash
 "npm run docs && node utils/typescript.mjs"
 ```
+
+
+## TODO:
+* move this TODO section out before submitting PR
+* document how to use images/videos/sounds _inside_ description.  So far asset-use is only covered for code examples.  [applyMatrix](https://beta.p5js.org/reference/p5/applymatrix/) is an example of images in function description.
+* update how to use any asset inside code example
+* check how we want to mark parameter optionality
+* whether to omit @method tag or not?
+* update/deprecate @chainable?
+* check if we want to encourage  text between code examples? (e.g. for gradual introduction and explanation of more complex use-cases).  Or is there a risk the user misses critical detail because it was in the "examples" section?
+* perhaps acknowledge that there are limits to the types info we can carry in JSDoc and that types are currently sometimes patched in patch.mjs.
+* find (and use) any recommended mechanism for adding asides as (e.g.) (accessible) default-collapsed sections.
+* add section on minimising unnecessary concept dependencies in code examples? Where's the balance between cool examples vs ones that can be most easily understood?  What's the line with regard to generating engagement with examples?  (If it belongs in the style guide, develop it more there and link to it from here).
+* assets: 
+  * ? say anything about licensing (e.g. for assets)
+  * ? say anything about preferred file formats (for size, for browser compat, for licensing?)
+  * ? say anything / link to AI policy?
+* ? accessibility, inclusivity considerations for examples?
+  * text size
+  * color choices (wrt color blindness, also contrast)
+  * ?reduced-motion?
+* ? run a comprehensive broken-link check? broken example check?  develop one?
+* add a ToC?
+* check if tagging incomplete snippets in the markdown as js is harmless (e.g. doesn't break the highlighter library).  It provides useful best-effort syntax-highlighting in some contexts, helping to spot errors.
