@@ -681,6 +681,94 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
+ * @method getTexture
+ * @description
+ * Retrieves the current color of a given texture at given coordinates.  The coordinates should be between [0, 0] representing the top-left of the texture, and [1, 1] representing the bottom-right of the texture.  The retrieved color will be a vec4, with components for red, green, blue, and alpha, each between 0.0 and 1.0.
+ *
+ * @param {typeof sampler2D} texture
+ *         The texture to sample from.
+ * @param {typeof vec2} coords
+ *         The coordinates to sample from, from (0,0) (top-left) to (1,1) (bottom-right) of texture.
+ * @returns {typeof vec4} The color of the given texture at the given coordinates, in RGBA,
+ * with each element being between 0.0 and 1.0.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myColorFlipShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   myColorFlipShader = baseFilterShader().modify(setupMyShader);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   stroke("green");
+ *   strokeWeight(10);
+ *   fill("red");
+ *   circle(50, 50, 70);
+ *
+ *   //try commenting this out
+ *   filter(myColorFlipShader);
+ * }
+ *
+ * function setupMyShader() {
+ *   getColor((inputs, canvasContent) => {
+ *     //get the color at the current coordinate
+ *     let c = getTexture(canvasContent, inputs.texCoord);
+ *     //return a new color formed by inverting
+ *     //each channel: r, g, b
+ *     return [1 - c.r, 1 - c.g, 1 - c.b, c.a];
+ *   });
+ * }
+ * </code>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   myShader = baseFilterShader().modify(setupMyShader);
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *   noStroke();
+ *   textSize(70);
+ *   fill("orange");
+ *   textAlign(CENTER, CENTER);
+ *   text("p5", width / 2, height / 2);
+ *   fill("skyblue");
+ *   circle(mouseX, mouseY, 40);
+ *
+ *   //try commenting this out
+ *   filter(myShader);
+ * }
+ *
+ * function setupMyShader(){
+ *   getColor((inputs, canvasContent) => {
+ *     let coordHere = inputs.texCoord;
+ *     //some small amount to the right
+ *     let coordRight = inputs.texCoord + [0.01, 0];
+ *
+ *     let colorHere = getTexture(canvasContent, coordHere);
+ *     let colorRight = getTexture(canvasContent, coordRight);
+ *     //a naive difference between the two colours
+ *     let difference = length(abs(colorHere - colorRight));
+ *     if (difference > 0.2) {
+ *       return [1, 1, 1, 1];
+ *     }
+ *     return [0, 0, 0, 1];
+ *   });
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
  * @method getWorldInputs
  * @param {Function} callback
  */
