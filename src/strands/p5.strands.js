@@ -303,12 +303,65 @@ if (typeof p5 !== "undefined") {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * function material() {
- *   let t = uniformFloat();
- *   combineColors.begin();
- *   let fade = smoothstep(0.2, 0.8, sin(t * 0.001));
- *   combineColors.opacity *= fade;
- *   combineColors.end();
+ * // Example 1: Smooth color fade across the canvas (no uniforms)
+ *
+ * let fadeShader;
+ *
+ * function fadeCallback() {
+ *   getFinalColor((color) => {
+ *     // Normalize x position from 0 → 1 across the canvas
+ *     let x = pixelInputs.position.x / canvasSize.x;
+ *
+ *     // Smooth transition from black to red
+ *     let t = smoothstep(0.2, 0.8, x);
+ *
+ *     return [t, 0, 0, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   fadeShader = baseColorShader().modify(fadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   shader(fadeShader);
+ *   rect(-width / 2, -height / 2, width, height);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Example 2: Animate the smooth transition over time (uses a uniform)
+ *
+ * let animatedShader;
+ *
+ * function animatedFadeCallback() {
+ *   const time = uniformFloat(() => millis() * 0.001);
+ *
+ *   getFinalColor((color) => {
+ *     let x = pixelInputs.position.x / canvasSize.x;
+ *
+ *     // Move the smoothstep window over time
+ *     let center = 0.5 + 0.3 * sin(time);
+ *     let t = smoothstep(center - 0.1, center + 0.1, x);
+ *
+ *     return [t, 0, 0, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   animatedShader = baseColorShader().modify(animatedFadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   shader(animatedShader);
+ *   rect(-width / 2, -height / 2, width, height);
  * }
  * </code>
  * </div>
