@@ -580,7 +580,7 @@ function validateParams(p5, fn, lifecycles) {
         if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
           validate(name, args);
         }
-        return target.call(this, ...args);
+        return target.apply(this, args);
       };
     }
   );

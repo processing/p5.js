@@ -133,7 +133,7 @@ export function visualSuite(
  * these acceptable variations and actual visual bugs.
  */
 
-export async function checkMatch(actual, expected, p5) {
+export function checkMatch(actual, expected, p5) {
   let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
   const ratio = expected.width / expected.height;
   const narrow = ratio !== 1;
@@ -385,7 +385,7 @@ function findClusterSize(
 export function visualTest(
   testName,
   callback,
-  { focus = false, skip = false } = {}
+  { focus = false, skip = false, timeout } = {}
 ) {
   let suiteFn = describe;
   if (focus) {
@@ -429,8 +429,8 @@ export function visualTest(
       const actual = [];
 
       // Generate screenshots
-      await callback(myp5, () => {
-        const img = myp5.get();
+      await callback(myp5, async () => {
+        const img = await myp5.get();
         img.pixelDensity(1);
         actual.push(img);
       });
@@ -466,7 +466,7 @@ export function visualTest(
         const flatName = name.replace(/\//g, '-');
         const actualFilename = `../actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
         if (expected[i]) {
-          const result = await checkMatch(actual[i], expected[i], myp5);
+          const result = checkMatch(actual[i], expected[i], myp5);
           // Always save the actual image before potentially throwing an error
           writeImageFile(actualFilename, toBase64(actual[i]));
           if (!result.ok) {
@@ -483,6 +483,6 @@ export function visualTest(
           writeImageFile(actualFilename, toBase64(actual[i]));
         }
       }
-    });
+    }, timeout);
   });
 }

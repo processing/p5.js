@@ -545,6 +545,10 @@ export class Font {
     const extrude = options?.extrude || 0;
 
     let contours = this.textToContours(str, x, y, width, height, options);
+    if (!contours || contours.length === 0) {
+      return new p5.Geometry();
+    }
+
     // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;
@@ -737,25 +741,14 @@ export class Font {
 
   /////////////////////////////// HELPERS ////////////////////////////////
 
-  _verticalAlign(size) {
-    const { sCapHeight } = this.data?.['OS/2'] || {};
-    const { unitsPerEm = 1000 } = this.data?.head || {};
-    const { ascender = 0, descender = 0 } = this.data?.hhea || {};
-    const current = ascender / 2;
-    const target = (sCapHeight || (ascender + descender)) / 2;
-    const offset = target - current;
-    return offset * size / unitsPerEm;
-  }
-
   /*
     Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
   */
   _lineateAndPathify(str, x, y, width, height, options = {}) {
 
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
-
-    // save the baseline
-    let setBaseline = renderer.drawingContext.textBaseline;
+    renderer.push();
+    renderer.textFont(this);
 
     // lineate and compute bounds for the text
     let { lines, bounds } = renderer._computeBounds
@@ -772,8 +765,7 @@ export class Font {
     const axs = this._currentAxes(renderer);
     let pathsForLine = lines.map(l => this._lineToGlyphs(l, { scale, axs }));
 
-    // restore the baseline
-    renderer.drawingContext.textBaseline = setBaseline;
+    renderer.pop();
 
     return pathsForLine;
   }
@@ -857,7 +849,7 @@ export class Font {
 
   _position(renderer, lines, bounds, width, height) {
 
-    let { textAlign, textLeading } = renderer.states;
+    let { textAlign, textLeading, textSize } = renderer.states;
     let metrics = this._measureTextDefault(renderer, 'X');
     let ascent = metrics.fontBoundingBoxAscent;
 

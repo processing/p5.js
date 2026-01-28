@@ -27,6 +27,7 @@ export const NodeTypeRequiredFields = {
 export const StatementType = {
   DISCARD: 'discard',
   BREAK: 'break',
+  EARLY_RETURN: 'early_return',
   EXPRESSION: 'expression', // Used when we want to output a single expression as a statement, e.g. a for loop condition
   EMPTY: 'empty', // Used for empty statements like ; in for loops
 };
@@ -37,6 +38,7 @@ export const BaseType = {
   MAT: "mat",
   DEFER: "defer",
   SAMPLER2D: "sampler2D",
+  SAMPLER: "sampler",
 };
 export const BasePriority = {
   [BaseType.FLOAT]: 3,
@@ -45,6 +47,7 @@ export const BasePriority = {
   [BaseType.MAT]: 0,
   [BaseType.DEFER]: -1,
   [BaseType.SAMPLER2D]: -10,
+  [BaseType.SAMPLER]: -11,
 };
 export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
@@ -64,6 +67,7 @@ export const DataType = {
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
   sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
+  sampler: { fnName: "sampler", baseType: BaseType.SAMPLER, dimension: 1, priority: -11 },
 }
 export const structType = function (hookType) {
   let T = hookType.type === undefined ? hookType : hookType.type;
@@ -74,43 +78,15 @@ export const structType = function (hookType) {
   };
   // TODO: handle struct properties that are themselves structs
   for (const prop of T.properties) {
-    const propType = TypeInfoFromGLSLName[prop.type.typeName];
+    const propType = prop.type.dataType;
     structType.properties.push(
       {name: prop.name, dataType: propType }
     );
   }
   return structType;
 };
-export function isStructType(typeName) {
-  return !isNativeType(typeName);
-}
-export function isNativeType(typeName) {
-  // Check if it's in DataType keys (internal names like 'float4')
-  if (Object.keys(DataType).includes(typeName)) {
-    return true;
-  }
-
-  // Check if it's a GLSL type name (like 'vec4', 'float', etc.)
-  const glslNativeTypes = {
-    'float': true,
-    'vec2': true,
-    'vec3': true,
-    'vec4': true,
-    'int': true,
-    'ivec2': true,
-    'ivec3': true,
-    'ivec4': true,
-    'bool': true,
-    'bvec2': true,
-    'bvec3': true,
-    'bvec4': true,
-    'mat2': true,
-    'mat3': true,
-    'mat4': true,
-    'sampler2D': true
-  };
-
-  return !!glslNativeTypes[typeName];
+export function isStructType(typeInfo) {
+  return !!(typeInfo && typeInfo.properties);
 }
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },

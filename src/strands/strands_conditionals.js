@@ -71,6 +71,9 @@ function buildConditional(strandsContext, conditional) {
     CFG.pushBlock(cfg, branchContentBlock);
     const branchResults = branchCallback();
     for (const key in branchResults) {
+      branchResults[key] = strandsContext.p5.strandsNode(branchResults[key]);
+    }
+    for (const key in branchResults) {
       if (!phiBlockDependencies[key]) {
         phiBlockDependencies[key] = [{ value: branchResults[key], blockId: branchContentBlock }];
       } else {

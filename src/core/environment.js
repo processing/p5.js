@@ -319,10 +319,11 @@ function environment(p5, fn, lifecycles){
       cursor = type;
     } else if (typeof type === 'string') {
       let coords = '';
-      if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+      if (typeof x === 'number') { // fix for #8323
+        y = typeof y === 'number' ? y : 0;
         // Note that x and y values must be unit-less positive integers < 32
         // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-        coords = `${x} ${y}`;
+        coords = `${Math.max(x, 0)} ${Math.max(y, 0)}`;
       }
       if (
         type.substring(0, 7) === 'http://' ||

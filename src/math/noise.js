@@ -343,7 +343,7 @@ function noise(p5, fn){
    *
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise.
-   * @param {Number} falloff falloff factor for each octave.
+   * @param {Number} [falloff=0.5] falloff factor for each octave.
    *
    * @example
    * <div>
@@ -388,13 +388,29 @@ function noise(p5, fn){
    * </code>
    * </div>
    */
-  fn.noiseDetail = function(lod, falloff) {
+  fn.noiseDetail = function(lod, falloff=0.5) {
     if (lod > 0) {
       perlin_octaves = lod;
     }
     if (falloff > 0) {
       perlin_amp_falloff = falloff;
     }
+  };
+
+  /**
+   * @private
+   * Returns the current number of octaves used by noise().
+   */
+  fn._getNoiseOctaves = function() {
+    return perlin_octaves;
+  };
+
+  /**
+   * @private
+   * Returns the current falloff factor used by noise().
+   */
+  fn._getNoiseAmpFalloff = function() {
+    return perlin_amp_falloff;
   };
 
   /**
