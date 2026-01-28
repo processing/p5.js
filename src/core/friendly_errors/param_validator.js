@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -415,46 +415,103 @@ function validateParams(p5, fn, lifecycles) {
       const expectedTypes = new Set();
       let actualType;
 
-      error.errors.forEach(err => {
-        const issue = err[0];
-        if (issue) {
+      let sawNumber = false;
+      let sawInfinityLiteral = false;
+      let sawNonInfinityConstant = false;
+
+      const flattenIssues = iss => {
+        if (!iss) return [];
+        if (iss.code === 'invalid_union') {
+          const subsV3 = iss.unionErrors?.flatMap(u => u.issues) || [];
+          const subsV4 = iss.errors || [];
+        
+          const flatV3 = subsV3.flatMap(si => flattenIssues(si[0] || si));
+          const flatV4 = subsV4.flatMap(e =>
+            (Array.isArray(e) ? e : [e]).flatMap(i => flattenIssues(i))
+          );
+        
+          return [...flatV3, ...flatV4];
+        }
+        return [iss];
+      };
+
+     const flat = (error.errors || []).flatMap(e =>
+      (Array.isArray(e) ? e : [e]).flatMap(i => flattenIssues(i))
+     );
+
+      const typeOfArg = val => {
+        if (val === null) return 'null';
+        if (Array.isArray(val)) return 'array';
+        if (typeof val === 'number' && Number.isNaN(val)) return 'NaN';
+        return typeof val;
+      };
+
+      for (const issue of flat) {
+        if (!issue) continue;
+
+        if (issue.code === 'invalid_type') {
+          if (issue.expected === 'number') sawNumber = true;
+          if (issue.expected) expectedTypes.add(issue.expected);
           if (!actualType) {
-            actualType = issue.message;
+            const rec = issue.message?.split(', received ')[1];
+            if (rec) actualType = rec;
           }
-
-          if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1];
-            expectedTypes.add(issue.expected);
-          }
-          // The case for constants. Since we don't want to print out the actual
-          // constant values in the error message, the error message will
-          // direct users to the documentation.
-          else if (issue.code === 'invalid_value') {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
-            actualType = args[error.path[0]];
-          } else if (issue.code === 'custom') {
-            const match = issue.message.match(/Input not instance of (\w+)/);
-            if (match) expectedTypes.add(match[1]);
-            actualType = undefined;
-          }
-        }
-      });
-
-      if (expectedTypes.size > 0) {
-        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
-          message += 'Did you mean to put `await` before a loading function? ' +
-            'An unexpected Promise was found. ';
-          isVersionError = true;
+          continue;
         }
 
-        const expectedTypesStr = Array.from(expectedTypes).join(' or ');
-        const position = error.path.join('.');
+        if (issue.code === 'invalid_literal' || issue.code === 'invalid_value') {
+        const values = Array.isArray(issue.values)
+          ? issue.values
+          : ('expected' in issue ? [issue.expected] : []);
+        
+        if (values.some(v => v === Infinity || v === -Infinity)) {
+          sawInfinityLiteral = true;
+        }
+        
+        if (values.some(v => v !== Infinity && v !== -Infinity)) {
+          sawNonInfinityConstant = true;
+        }
+        
+        const idx = issue.path?.[0] ?? error.path?.[0];
+        if (!actualType && idx !== undefined) actualType = typeOfArg(args[idx]);
 
-        message += buildTypeMismatchMessage(
-          actualType, expectedTypesStr, position
-        );
+          continue;
+        }
+
+        if (issue.code === 'custom') {
+          const m = issue.message?.match(/Input not instance of (\w+)/);
+          if (m) expectedTypes.add(m[1]);
+          actualType = undefined;
+          continue;
+        }
       }
 
+      if (sawNumber) expectedTypes.add('number');
+      if (sawNonInfinityConstant) {
+        expectedTypes.add('constant (please refer to documentation for allowed values)');
+      }
+
+      if (sawNumber && sawInfinityLiteral && !sawNonInfinityConstant) {
+        expectedTypes.delete('constant (please refer to documentation for allowed values)');
+      }
+
+      if (expectedTypes.size > 0) {
+        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise) {
+          message += 'Did you mean to put `await` before a loading function? An unexpected Promise was found. ';
+          isVersionError = true;
+        }
+        let expectedArr = Array.from(expectedTypes);
+        if (expectedTypes.has('number')) {
+          expectedArr = ['number', ...expectedArr.filter(t => t !== 'number')];
+        }
+        const expectedTypesStr = expectedArr.join(' or ');
+
+        const position = error.path.join('.');
+        const idx = error.path?.[0];
+        const received =
+          sawNonInfinityConstant && idx !== undefined ? args[idx] : actualType;
+        message += buildTypeMismatchMessage(received, expectedTypesStr, position);
+      }
       return message;
     };
 
