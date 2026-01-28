@@ -21,6 +21,86 @@ import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
 
+const BUILTIN_GLOBAL_SPECS = {
+  width: { typeInfo: DataType.float1, get: (p) => p.width },
+  height: { typeInfo: DataType.float1, get: (p) => p.height },
+  mouseX: { typeInfo: DataType.float1, get: (p) => p.mouseX },
+  mouseY: { typeInfo: DataType.float1, get: (p) => p.mouseY },
+  pmouseX: { typeInfo: DataType.float1, get: (p) => p.pmouseX },
+  pmouseY: { typeInfo: DataType.float1, get: (p) => p.pmouseY },
+  winMouseX: { typeInfo: DataType.float1, get: (p) => p.winMouseX },
+  winMouseY: { typeInfo: DataType.float1, get: (p) => p.winMouseY },
+  pwinMouseX: { typeInfo: DataType.float1, get: (p) => p.pwinMouseX },
+  pwinMouseY: { typeInfo: DataType.float1, get: (p) => p.pwinMouseY },
+  frameCount: { typeInfo: DataType.float1, get: (p) => p.frameCount },
+  deltaTime: { typeInfo: DataType.float1, get: (p) => p.deltaTime },
+  displayWidth: { typeInfo: DataType.float1, get: (p) => p.displayWidth },
+  displayHeight: { typeInfo: DataType.float1, get: (p) => p.displayHeight },
+  windowWidth: { typeInfo: DataType.float1, get: (p) => p.windowWidth },
+  windowHeight: { typeInfo: DataType.float1, get: (p) => p.windowHeight },
+  mouseIsPressed: { typeInfo: DataType.bool1, get: (p) => p.mouseIsPressed },
+}
+
+function _getBuiltinGlobalsCache(strandsContext) {
+  if (!strandsContext._builtinGlobals || strandsContext._builtinGlobals.dag !== strandsContext.dag) {
+    strandsContext._builtinGlobals = {
+      dag: strandsContext.dag,
+      nodes: new Map(),
+      uniformsAdded: new Set(),
+    }
+  }
+  // return the cache
+  return strandsContext._builtinGlobals
+}
+
+function getBuiltinGlobalNode(strandsContext, name) {
+  const spec = BUILTIN_GLOBAL_SPECS[name]
+  if (!spec) return null
+  
+  const cache = _getBuiltinGlobalsCache(strandsContext)
+  const uniformName = `_p5_global_${name}`
+  const cached = cache.nodes.get(uniformName)
+  if (cached) return cached
+
+  if (!cache.uniformsAdded.has(uniformName)) {
+    cache.uniformsAdded.add(uniformName)
+    strandsContext.uniforms.push({
+      name: uniformName,
+      typeInfo: spec.typeInfo,
+      defaultValue: () => {
+        const p5Instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance
+        return p5Instance ? spec.get(p5Instance) : undefined
+      },
+    })
+  }
+
+  const { id, dimension } = build.variableNode(strandsContext, spec.typeInfo, uniformName)
+  const node = createStrandsNode(id, dimension, strandsContext)
+  node._originalBuiltinName = name
+  cache.nodes.set(uniformName, node)
+  return node
+}
+
+function installBuiltinGlobalAccessors(strandsContext) {
+  if (strandsContext._builtinGlobalsAccessorsInstalled) return
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance
+
+  for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
+    const spec = BUILTIN_GLOBAL_SPECS[name]
+    Object.defineProperty(window, name, {
+      get: () => {
+        if (strandsContext.active) {
+          return getBuiltinGlobalNode(strandsContext, name);
+        }
+        const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+      },
+    })
+  }
+  strandsContext._builtinGlobalsAccessorsInstalled = true
+}
+
 //////////////////////////////////////////////
 // User nodes
 //////////////////////////////////////////////
@@ -419,6 +499,8 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
+  installBuiltinGlobalAccessors(strandsContext)
+
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
     Object.entries(shader.hooks.vertex).map(([name, hook]) => [name, { ...hook, shaderContext: 'vertex' }])
