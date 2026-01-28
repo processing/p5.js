@@ -15,7 +15,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 ## Table of Contents
 
 ### Writing
-- [YUIDoc](#yuidoc)
+- [documentation.js and JSDoc](#documentation.js-and-jsdoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
 - [Wording](#wording)
@@ -42,15 +42,13 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Classes](#classes)
 - [Assets](#assets)
 
-## YUIDoc
+## documentation.js and JSDoc
 
-We use YUIDoc to generate the p5.js API documentation. To generate the docs, navigate to the p5.js root directory, run `npm install`, and execute:
+We use [documentation.js](https://documentation.js.org/) to generate the p5.js API documentation.
 
-```
-$ npm run grunt yui:dev
-```
+TODO: add or link to instructions for generating and previewing the reference docs.
 
-The output will appear in docs/reference. Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
+Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
 
 **[⬆ back to top](#table-of-contents)**
 
