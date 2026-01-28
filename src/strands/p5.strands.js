@@ -306,25 +306,22 @@ if (typeof p5 !== "undefined") {
  *          A value between `0.0` and `1.0`
  *
  * @example
- * <div modernizr='webgl'>
+ * <div modernizr="webgl">
  * <code>
- * // Example 1: Smooth fade across the canvas using coordinates (no uniforms)
+ * // Example 1: A soft vertical fade using smoothstep (no uniforms)
  *
  * let fadeShader;
  *
  * function fadeCallback() {
- *   getColor((inputs, canvasContent) => {
- *     // Normalized x coordinate (0 → 1 across the canvas)
+ *   getColor((inputs) => {
+ *     // x goes from 0 → 1 across the canvas
  *     let x = inputs.texCoord.x;
  *
- *     // Narrow smooth transition band
- *     let t = smoothstep(0.4, 0.6, x);
+ *     // smoothstep creates a soft transition instead of a hard edge
+ *     let t = smoothstep(0.45, 0.55, x);
  *
- *     // Sample the original color
- *     let col = getTexture(canvasContent, inputs.texCoord);
- *
- *     // Fade from black to the original image
- *     return [col.rgb * t, col.a];
+ *     // Use t directly as brightness
+ *     return [t, t, t, 1];
  *   });
  * }
  *
@@ -335,15 +332,13 @@ if (typeof p5 !== "undefined") {
  *
  * function draw() {
  *   background(0);
- *   fill(255);
- *   rect(-100, -50, 200, 100);
  *   filter(fadeShader);
  * }
  * </code>
  * </div>
  *
  * @example
- * <div modernizr='webgl'>
+ * <div modernizr="webgl">
  * <code>
  * // Example 2: Animate the smooth transition using a uniform
  *
@@ -352,15 +347,14 @@ if (typeof p5 !== "undefined") {
  * function animatedFadeCallback() {
  *   const time = uniformFloat(() => millis() * 0.001);
  *
- *   getColor((inputs, canvasContent) => {
+ *   getColor((inputs) => {
  *     let x = inputs.texCoord.x;
  *
- *     // Move the smoothstep band back and forth
+ *     // Move the smoothstep band back and forth over time
  *     let center = 0.5 + 0.25 * sin(time);
  *     let t = smoothstep(center - 0.05, center + 0.05, x);
  *
- *     let col = getTexture(canvasContent, inputs.texCoord);
- *     return [col.rgb * t, col.a];
+ *     return [t, t, t, 1];
  *   });
  * }
  *
@@ -371,8 +365,6 @@ if (typeof p5 !== "undefined") {
  *
  * function draw() {
  *   background(0);
- *   fill(255);
- *   rect(-100, -50, 200, 100);
  *   filter(animatedShader);
  * }
  * </code>
