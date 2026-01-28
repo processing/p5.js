@@ -30,7 +30,11 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
-  function initStrandsContext(ctx, backend, { active = false, renderer = null, baseShader = null } = {}) {
+  function initStrandsContext(
+    ctx,
+    backend,
+    { active = false, renderer = null, baseShader = null } = {},
+  ) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
@@ -78,11 +82,8 @@ function strands(p5, fn) {
 
     const prev = {};
     for (const key of Object.getOwnPropertyNames(fn)) {
-      const descriptor = Object.getOwnPropertyDescriptor(
-        fn,
-        key
-      );
-      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
+      if (descriptor && !descriptor.get && typeof fn[key] === "function") {
         prev[key] = window[key];
         window[key] = fn[key].bind(pInst);
       }
@@ -104,7 +105,10 @@ function strands(p5, fn) {
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
     try {
-      if (shaderModifier instanceof Function || typeof shaderModifier === 'string') {
+      if (
+        shaderModifier instanceof Function ||
+        typeof shaderModifier === "string"
+      ) {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
@@ -121,9 +125,10 @@ function strands(p5, fn) {
         if (options.parser) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
-          const sourceString = typeof shaderModifier === 'string'
-            ? `(${shaderModifier})`
-            : `(${shaderModifier.toString()})`;
+          const sourceString =
+            typeof shaderModifier === "string"
+              ? `(${shaderModifier})`
+              : `(${shaderModifier.toString()})`;
           strandsCallback = transpileStrandsToJS(
             p5,
             sourceString,
@@ -303,31 +308,36 @@ if (typeof p5 !== "undefined") {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 1: Smooth color fade across the canvas (no uniforms)
+ * // Example 1: Smooth fade across the canvas using coordinates (no uniforms)
  *
  * let fadeShader;
  *
  * function fadeCallback() {
- *   getFinalColor((color) => {
- *     // Normalize x position from 0 → 1 across the canvas
- *     let x = pixelInputs.position.x / canvasSize.x;
+ *   getColor((inputs, canvasContent) => {
+ *     // Normalized x coordinate (0 → 1 across the canvas)
+ *     let x = inputs.texCoord.x;
  *
- *     // Smooth transition from black to red
- *     let t = smoothstep(0.2, 0.8, x);
+ *     // Narrow smooth transition band
+ *     let t = smoothstep(0.4, 0.6, x);
  *
- *     return [t, 0, 0, 1];
+ *     // Sample the original color
+ *     let col = getTexture(canvasContent, inputs.texCoord);
+ *
+ *     // Fade from black to the original image
+ *     return [col.rgb * t, col.a];
  *   });
  * }
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   fadeShader = baseColorShader().modify(fadeCallback);
+ *   fadeShader = baseFilterShader().modify(fadeCallback);
  * }
  *
  * function draw() {
  *   background(0);
- *   shader(fadeShader);
- *   rect(-width / 2, -height / 2, width, height);
+ *   fill(255);
+ *   rect(-100, -50, 200, 100);
+ *   filter(fadeShader);
  * }
  * </code>
  * </div>
@@ -335,33 +345,35 @@ if (typeof p5 !== "undefined") {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // Example 2: Animate the smooth transition over time (uses a uniform)
+ * // Example 2: Animate the smooth transition using a uniform
  *
  * let animatedShader;
  *
  * function animatedFadeCallback() {
  *   const time = uniformFloat(() => millis() * 0.001);
  *
- *   getFinalColor((color) => {
- *     let x = pixelInputs.position.x / canvasSize.x;
+ *   getColor((inputs, canvasContent) => {
+ *     let x = inputs.texCoord.x;
  *
- *     // Move the smoothstep window over time
- *     let center = 0.5 + 0.3 * sin(time);
- *     let t = smoothstep(center - 0.1, center + 0.1, x);
+ *     // Move the smoothstep band back and forth
+ *     let center = 0.5 + 0.25 * sin(time);
+ *     let t = smoothstep(center - 0.05, center + 0.05, x);
  *
- *     return [t, 0, 0, 1];
+ *     let col = getTexture(canvasContent, inputs.texCoord);
+ *     return [col.rgb * t, col.a];
  *   });
  * }
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   animatedShader = baseColorShader().modify(animatedFadeCallback);
+ *   animatedShader = baseFilterShader().modify(animatedFadeCallback);
  * }
  *
  * function draw() {
  *   background(0);
- *   shader(animatedShader);
- *   rect(-width / 2, -height / 2, width, height);
+ *   fill(255);
+ *   rect(-100, -50, 200, 100);
+ *   filter(animatedShader);
  * }
  * </code>
  * </div>
