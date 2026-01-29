@@ -453,6 +453,26 @@ p5.Texture = class Texture {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
     this.unbindTexture();
   }
+
+  /**
+   * Frees the GPU resources associated with this texture.
+   *
+   * This method deletes the WebGL texture from GPU memory. Call this when
+   * you no longer need the texture to prevent memory leaks.
+   *
+   * @method remove
+   * @private
+   */
+  remove() {
+    // FramebufferTextures are managed by their parent Framebuffer
+    if (this.isFramebufferTexture || this.glTex === undefined) {
+      return;
+    }
+
+    const gl = this._renderer.GL;
+    gl.deleteTexture(this.glTex);
+    this.glTex = undefined;
+  }
 };
 
 export class MipmapTexture extends p5.Texture {
