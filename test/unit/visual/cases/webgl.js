@@ -1203,4 +1203,13 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('media assets', function() {
+    visualTest('drawing gifs', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
+  });
 });
