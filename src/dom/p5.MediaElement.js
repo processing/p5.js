@@ -66,7 +66,7 @@ class MediaElement extends Element {
         source.src = newValue;
         elt.appendChild(source);
         self.elt.src = newValue;
-        self.modified = true;
+        self._modified = true;
       }
     });
 
