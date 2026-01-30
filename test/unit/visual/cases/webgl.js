@@ -1211,5 +1211,17 @@ visualSuite('WebGL', function() {
       p5.image(gif, 0, 0);
       screenshot();
     });
+
+    visualTest('drawing gifs after a time delay', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      p5.clear()
+      // Simulate waiting for successive draw calls
+      p5._lastRealFrameTime += 300;
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
   });
 });

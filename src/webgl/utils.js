@@ -289,9 +289,6 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
         uniform.texture = data instanceof Texture ? data : getTexture(data);
         gl.uniform1i(location, uniform.samplerIndex);
-        if (uniform.texture.src.gifProperties) {
-          uniform.texture.src._animateGif(shader._renderer._pInst);
-        }
       }
       break;
     case gl.SAMPLER_CUBE:
