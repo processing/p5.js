@@ -256,7 +256,7 @@ class Shader {
    *   sketch.setup = function() {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
    *     myShader = sketch.baseMaterialShader().modify(({ sketch }) => {
-   *       let b = uniformFloat('b');
+   *       let b = sketch.uniformFloat('b');
    *       sketch.getPixelInputs((inputs) => {
    *         inputs.color = [inputs.texCoord, b, 1];
    *         return inputs;
