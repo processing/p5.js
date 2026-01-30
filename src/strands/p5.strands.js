@@ -1,6 +1,6 @@
 /**
  * @module 3D
- * @submodule strands
+ * @submodule p5.strands
  * @for p5
  * @requires core
  */
@@ -22,6 +22,11 @@ import {
 } from "./strands_api";
 
 function strands(p5, fn) {
+  // Whether or not strands callbacks should be forced to be executed in global mode.
+  // This is turned on while loading shaders from files, when there is not a feasible
+  // way to pass context in.
+  fn._runStrandsInGlobalMode = false;
+
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
@@ -68,6 +73,30 @@ function strands(p5, fn) {
   initStrandsContext(strandsContext);
   initGlobalStrandsAPI(p5, fn, strandsContext);
 
+  function withTempGlobalMode(pInst, callback) {
+    if (pInst._isGlobal) return callback();
+
+    const prev = {};
+    for (const key of Object.getOwnPropertyNames(fn)) {
+      const descriptor = Object.getOwnPropertyDescriptor(
+        fn,
+        key
+      );
+      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+        prev[key] = window[key];
+        window[key] = fn[key].bind(pInst);
+      }
+    }
+
+    try {
+      callback();
+    } finally {
+      for (const key in prev) {
+        window[key] = prev[key];
+      }
+    }
+  }
+
   //////////////////////////////////////////////
   // Entry Point
   //////////////////////////////////////////////
@@ -111,7 +140,11 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
-        strandsCallback();
+        if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
+          withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
+        } else {
+          strandsCallback();
+        }
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
@@ -138,43 +171,43 @@ if (typeof p5 !== "undefined") {
 
 /* ------------------------------------------------------------- */
 /**
- * @method getWorldInputs
+ * @property {Object} worldInputs
  * @description
- * Registers a callback to modify the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ * A shader hook block that modifies the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/buildColorShader">`buildColorShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  *
- * The callback receives a vertex object with the following properties:
+ * `worldInputs` has the following properties:
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
  * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  *
  * This hook is available in:
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives a vertex object containing position (vec3), normal (vec3), texCoord (vec2), and color (vec4) properties. The function should return the modified vertex object.
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify(() => {
- *     let t = uniformFloat(() => millis());
- *     getWorldInputs(inputs => {
- *       // Move the vertex up and down in a wave in world space
- *       // In world space, moving the object (e.g., with translate()) will affect these coordinates
- *       // The sphere is ~50 units tall here, so 20 gives a noticeable wave
- *       inputs.position.y += 20 * sin(t * 0.001 + inputs.position.x * 0.05);
- *       return inputs;
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
  * }
+ *
+ * function material() {
+ *   let t = uniformFloat();
+ *   worldInputs.begin();
+ *   // Move the vertex up and down in a wave in world space
+ *   // In world space, moving the object (e.g., with translate()) will affect these coordinates
+ *   // The sphere is ~50 units tall here, so 20 gives a noticeable wave
+ *   worldInputs.position.y += 20 * sin(t * 0.001 + worldInputs.position.x * 0.05);
+ *   worldInputs.end();
+ * }
+ *
  * function draw() {
  *   background(255);
  *   shader(myShader);
+ *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('red');
@@ -183,9 +216,11 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method combineColors
+ * @property {Object} combineColors
  * @description
- * Registers a callback to customize how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to control the final color output of a material. The callback receives an object with the following properties:
+ * A shader hook block that modifies how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to control the final color output of a material. Modifications happen between the `.begin()` and `.end()` methods of the hook.
+ *
+ * `combineColors` has the following properties:
  *
  * - `baseColor`: a three-component vector representing the base color (red, green, blue).
  * - `diffuse`: a single number representing the diffuse reflection.
@@ -196,31 +231,30 @@ if (typeof p5 !== "undefined") {
  * - `emissive`: a three-component vector representing the emissive color.
  * - `opacity`: a single number representing the opacity.
  *
- * The callback should return a vector with four components (red, green, blue, alpha) for the final color.
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) for the final color.
  *
  * This hook is available in:
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the object described above and returns a vector with four components for the final color.
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify(() => {
- *     combineColors(components => {
- *       // Custom color combination: add a green tint using vector properties
- *       return [
- *         components.baseColor * components.diffuse +
- *           components.ambientColor * components.ambient +
- *           components.specularColor * components.specular +
- *           components.emissive +
- *           [0, 0.2, 0], // Green tint for visibility
- *         components.opacity
- *       ];
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   combineColors.begin();
+ *   // Custom color combination: add a green tint using vector properties
+ *   combineColors.set([
+ *     combineColors.baseColor * combineColors.diffuse +
+ *       combineColors.ambientColor * combineColors.ambient +
+ *       combineColors.specularColor * combineColors.specular +
+ *       combineColors.emissive +
+ *       [0, 0.2, 0], // Green tint
+ *     combineColors.opacity
+ *   ]);
+ *   combineColors.end();
  * }
  *
  * function draw() {
@@ -311,13 +345,13 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method getPixelInputs
+ * @property {Object} pixelInputs
  * @description
- * Registers a callback to modify the properties of each fragment (pixel) before the final color is calculated in the fragment shader. This hook can be used inside <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to adjust per-pixel data before lighting/mixing.
+ * A shader hook block that modifies the properties of each pixel before the final color is calculated. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust per-pixel data before lighting is applied. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
- * The callback receives an `Inputs` object. Available fields depend on the shader:
+ * The properties of `pixelInputs` depend on the shader:
  *
- * - In <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>:
+ * - In <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>:
  *   - `normal`: a three-component vector representing the surface normal.
  *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
  *   - `ambientLight`: a three-component vector representing the ambient light color.
@@ -328,39 +362,37 @@ if (typeof p5 !== "undefined") {
  *   - `shininess`: a number controlling specular highlights.
  *   - `metalness`: a number controlling the metalness factor.
  *
- * - In <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>:
+ * - In <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>:
  *   - `color`: a four-component vector representing the stroke color (red, green, blue, alpha).
  *   - `tangent`: a two-component vector representing the stroke tangent.
  *   - `center`: a two-component vector representing the cap/join center.
  *   - `position`: a two-component vector representing the current fragment position.
  *   - `strokeWeight`: a number representing the stroke weight in pixels.
  *
- * Return the modified object to update the fragment.
- *
  * This hook is available in:
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the fragment inputs object and should return it after making any changes.
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseMaterialShader().modify(() => {
- *     let t = uniformFloat(() => millis());
- *     getPixelInputs(inputs => {
- *       // Animate alpha (transparency) based on x position
- *       inputs.color.a = 0.5 + 0.5 * sin(inputs.texCoord.x * 10.0 + t * 0.002);
- *       return inputs;
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = uniformFloat();
+ *   pixelInputs.begin();
+ *   // Animate alpha (transparency) based on x position
+ *   pixelInputs.color.a = 0.5 + 0.5 *
+ *     sin(pixelInputs.texCoord.x * 10.0 + t * 0.002);
+ *   pixelInputs.end();
  * }
  *
  * function draw() {
  *   background(240);
  *   shader(myShader);
+ *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('purple');
@@ -401,32 +433,35 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method getFinalColor
+ * @property finalColor
  * @description
- * Registers a callback to change the final color of each pixel after all lighting and mixing is done in the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to adjust the color before it appears on the screen. The callback receives a four component vector representing red, green, blue, and alpha.
+ * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
- * Return a new color array to change the output color.
+ * `finalColor` has the following properties:
+ * - `color`: a four-component vector representing the pixel color (red, green, blue, alpha).
+ *
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
  *
  * This hook is available in:
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the color array and should return a color array.
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     getFinalColor(color => {
- *       // Add a blue tint to the output color
- *       color.b += 0.4;
- *       return color;
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   finalColor.begin();
+ *   let color = finalColor.color;
+ *   // Add a blue tint to the output color
+ *   color.b += 0.4;
+ *   finalColor.set(color);
+ *   finalColor.end();
  * }
  *
  * function draw() {
@@ -480,34 +515,37 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method getColor
+ * @property {Object} filterColor
  * @description
- * Registers a callback to set the final color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/baseFilterShader">baseFilterShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to control the output color for each pixel. The callback receives the following arguments:
- * - `inputs`: an object with the following properties:
- *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
- *   - `canvasSize`: a two-component vector representing the canvas size in pixels (width, height).
- *   - `texelSize`: a two-component vector representing the size of a single texel in texture space.
+ * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
+ *
+ * `filterColor` has the following properties:
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v).
+ * - `canvasSize`: a two-component vector representing the canvas size in pixels (width, height).
+ * - `texelSize`: a two-component vector representing the size of a single texel in texture space.
  * - `canvasContent`: a texture containing the sketch's contents before the filter is applied.
  *
- * Return a four-component vector `[r, g, b, a]` for the pixel.
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
  *
  * This hook is available in:
- * - <a href="#/p5/baseFilterShader">baseFilterShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the inputs object and canvasContent, and should return a color array.
+ * - <a href="#/p5/buildFilterShader">`buildFilterShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseFilterShader().modify(() => {
- *     getColor((inputs, canvasContent) => {
- *       // Warp the texture coordinates for a wavy effect
- *       let warped = [inputs.texCoord.x, inputs.texCoord.y + 0.1 * sin(inputs.texCoord.x * 10.0)];
- *       return getTexture(canvasContent, warped);
- *     });
- *   });
+ *   myShader = buildFilterShader(warp);
+ * }
+ *
+ * function warp() {
+ *   filterColor.begin();
+ *   // Warp the texture coordinates for a wavy effect
+ *   let warped = [
+ *     filterColor.texCoord.x,
+ *     filterColor.texCoord.y + 0.1 * sin(filterColor.texCoord.x * 10)
+ *   ];
+ *   filterColor.set(getTexture(canvasContent, warped));
+ *   filterColor.end();
  * }
  *
  * function draw() {
@@ -520,43 +558,41 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method getObjectInputs
+ * @property {Object} objectInputs
  * @description
- * Registers a callback to modify the properties of each vertex before any transformations are applied in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to move, color, or otherwise modify the raw model data. The callback receives an object with the following properties:
+ * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
  *
+ * `objectInputs` has the following properties:
  * - `position`: a three-component vector representing the original position of the vertex.
  * - `normal`: a three-component vector representing the direction the surface is facing.
  * - `texCoord`: a two-component vector representing the texture coordinates.
  * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  *
- * Return the modified object to update the vertex.
- *
  * This hook is available in:
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the vertex object and should return it after making any changes.
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     let t = uniformFloat(() => millis());
- *     getObjectInputs(inputs => {
- *       // Create a sine wave along the x axis in object space
- *       inputs.position.y += sin(t * 0.001 + inputs.position.x);
- *       return inputs;
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = uniformFloat();
+ *   objectInputs.begin();
+ *   // Create a sine wave along the object
+ *   objectInputs.position.y += sin(t * 0.001 + objectInputs.position.x);
+ *   objectInputs.end();
  * }
  *
  * function draw() {
  *   background(220);
  *   shader(myShader);
+ *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('orange');
  *   sphere(50);
@@ -564,47 +600,75 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method getCameraInputs
+ * @property {Object} cameraInputs
  * @description
- * Registers a callback to adjust vertex properties after the model has been transformed by the camera, but before projection, in the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects that depend on the camera's view. The callback receives an object with the following properties:
+ * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.
  *
+ * `cameraInputs`  has the following properties:
  * - `position`: a three-component vector representing the position after camera transformation.
  * - `normal`: a three-component vector representing the normal after camera transformation.
  * - `texCoord`: a two-component vector representing the texture coordinates.
  * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
  *
- * Return the modified object to update the vertex.
- *
  * This hook is available in:
- * - <a href="#/p5/baseColorShader">baseColorShader()</a>
- * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
- * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
- * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
- *
- * @param {Function} callback
- *        A callback function which receives the vertex object and should return it after making any changes.
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
- *   myShader = baseColorShader().modify(() => {
- *     getCameraInputs(inputs => {
- *       // Move vertices in camera space based on their x position
- *       let t = uniformFloat(() => millis());
- *       inputs.position.y += 30 * sin(inputs.position.x * 0.05 + t * 0.001);
- *       // Tint all vertices blue
- *       inputs.color.b = 1;
- *       return inputs;
- *     });
- *   });
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = uniformFloat();
+ *   cameraInputs.begin();
+ *   // Move vertices in camera space based on their x position
+ *   cameraInputs.position.y += 30 * sin(cameraInputs.position.x * 0.05 + t * 0.001);
+ *   // Tint all vertices blue
+ *   cameraInputs.color.b = 1;
+ *   cameraInputs.end();
  * }
  *
  * function draw() {
  *   background(200);
  *   shader(myShader);
+ *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('red');
  *   sphere(50);
  * }
+ */
+
+/**
+ * @method getWorldInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getPixelInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getFinalColor
+ * @param {Function} callback
+ */
+
+/**
+ * @method getColor
+ * @param {Function} callback
+ */
+
+/**
+ * @method getObjectInputs
+ * @param {Function} callback
+ */
+
+/**
+ * @method getCameraInputs
+ * @param {Function} callback
  */

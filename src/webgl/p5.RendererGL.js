@@ -746,9 +746,9 @@ class RendererGL extends Renderer3D {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "mediump") +
+        this._webGL2CompatibilityPrefix("vert", "highp") +
           defaultShaders.normalVert,
-        this._webGL2CompatibilityPrefix("frag", "mediump") +
+        this._webGL2CompatibilityPrefix("frag", "highp") +
           defaultShaders.normalFrag,
         {
           vertex: {
@@ -774,9 +774,9 @@ class RendererGL extends Renderer3D {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "mediump") +
+        this._webGL2CompatibilityPrefix("vert", "highp") +
           defaultShaders.normalVert,
-        this._webGL2CompatibilityPrefix("frag", "mediump") +
+        this._webGL2CompatibilityPrefix("frag", "highp") +
           defaultShaders.basicFrag,
         {
           vertex: {
@@ -802,9 +802,9 @@ class RendererGL extends Renderer3D {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "mediump") +
+        this._webGL2CompatibilityPrefix("vert", "highp") +
           defaultShaders.lineVert,
-        this._webGL2CompatibilityPrefix("frag", "mediump") +
+        this._webGL2CompatibilityPrefix("frag", "highp") +
           defaultShaders.lineFrag,
         {
           vertex: {
@@ -856,13 +856,16 @@ class RendererGL extends Renderer3D {
         this._webGL2CompatibilityPrefix("frag", "highp") +
           defaultShaders.filterBaseFrag,
         {
-            vertex: {},
-            fragment: {
-              "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
-                return getTexture(canvasContent, inputs.texCoord);
-              }`,
-            },
-          }
+          vertex: {},
+          fragment: {
+            "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+              return getTexture(canvasContent, inputs.texCoord);
+            }`,
+          },
+          hookAliases: {
+            'getColor': ['filterColor'],
+          },
+        }
       );
     }
     return this._baseFilterShader;
@@ -889,14 +892,20 @@ class RendererGL extends Renderer3D {
    */
   _createImageLightShader(type) {
     if (type === 'diffused') {
-      return this._pInst.createShader(
-        defaultShaders.imageLightVert,
-        defaultShaders.imageLightDiffusedFrag
+      return new Shader(
+        this,
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          defaultShaders.imageLightVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          defaultShaders.imageLightDiffusedFrag
       );
     } else if (type === 'specular') {
-      return this._pInst.createShader(
-        defaultShaders.imageLightVert,
-        defaultShaders.imageLightSpecularFrag
+      return new Shader(
+        this,
+        this._webGL2CompatibilityPrefix("vert", "highp") +
+          defaultShaders.imageLightVert,
+        this._webGL2CompatibilityPrefix("frag", "highp") +
+          defaultShaders.imageLightSpecularFrag
       );
     }
     throw new Error(`Unknown imageLight shader type: ${type}`);

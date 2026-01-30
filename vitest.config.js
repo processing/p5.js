@@ -46,13 +46,12 @@ export default defineConfig({
               capabilities: process.env.CI ? {
                 'goog:chromeOptions': {
                   args: [
-                    '--no-sandbox',
                     '--headless=new',
-                    '--enable-unsafe-webgpu',
-                    '--use-vulkan=swiftshader',
-                    '--use-webgpu-adapter=swiftshader',
-                    '--use-angle=vulkan',
-                    '--no-sandbox'
+                    '--no-sandbox',
+                    '--enable-webgl',
+                    '--use-gl=angle',
+                    '--use-angle=swiftshader-webgl',
+                    '--enable-unsafe-swiftshader'
                   ]
                 }
               } : undefined
@@ -104,8 +103,7 @@ export default defineConfig({
                     '--enable-unsafe-webgpu',
                     '--use-vulkan=swiftshader',
                     '--use-webgpu-adapter=swiftshader',
-                    '--use-angle=vulkan',
-                    '--no-sandbox'
+                    '--use-angle=vulkan'
                   ]
                 }
               } : undefined

@@ -844,4 +844,14 @@ visualSuite("WebGPU", function () {
       );
     }
   });
+
+  visualSuite('transformation', function() {
+    visualTest('outside of push() and pop()', async function (p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(200);
+      p5.rotateY(p5.PI * 0.1);
+      p5.box(30);
+      await screenshot();
+    });
+  });
 });

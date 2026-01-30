@@ -324,7 +324,7 @@ function noise(p5, fn){
    *
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise.
-   * @param {Number} falloff falloff factor for each octave.
+   * @param {Number} [falloff=0.5] falloff factor for each octave.
    *
    * @example
    * function setup() {
@@ -365,7 +365,7 @@ function noise(p5, fn){
    *   describe('Two gray cloudy patterns. The pattern on the right is cloudier than the pattern on the left.');
    * }
    */
-  fn.noiseDetail = function(lod, falloff) {
+  fn.noiseDetail = function(lod, falloff=0.5) {
     if (lod > 0) {
       perlin_octaves = lod;
     }

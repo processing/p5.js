@@ -40,6 +40,8 @@ class Shader {
       vertex: options.vertex || {},
       fragment: options.fragment || {},
 
+      hookAliases: options.hookAliases || {},
+
       // Stores whether or not the hook implementation has been modified
       // from the default. This is supplied automatically by calling
       // yourShader.modify(...).
@@ -398,6 +400,7 @@ class Shader {
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
+      hookAliases: Object.assign({}, this.hooks.hookAliases, newHooks.hookAliases || {}),
       modified: {
         vertex: modifiedVertex,
         fragment: modifiedFragment

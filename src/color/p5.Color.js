@@ -41,18 +41,22 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
   return result;
 }
 
-const serializationMap = {};
+const toHexComponent = (v) => {
+  const vInt = ~~(v * 255);
+  const hex = vInt.toString(16)
+  if (hex.length < 2) {
+    return '0' + hex
+  } else {
+    return hex
+  }
+}
+
+const serializationMap = new Map();
 
 
 
 
 class Color {
-  // Reference to underlying color object depending on implementation
-  // Not meant to be used publicly unless the implementation is known for sure
-  _color;
-  // Color mode of the Color object, uses p5 color modes
-  mode;
-
   static colorMap = {};
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
@@ -77,40 +81,47 @@ class Color {
 
   constructor(vals, colorMode, colorMaxes, { clamp = false } = {}) {
     // This changes with the color object
-    this.mode = colorMode || RGB;
+    this._cachedMode = colorMode || RGB;
 
     if(vals instanceof Color){
       // Received Color object to be used for color mode conversion
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         Color.colorMap[vals.mode];
-      this._color = to(vals._color, mode);
-      this.mode = mode;
+      this._initialize = () => {
+        this._cachedColor = to(vals._color, mode);
+        this._cachedMode = mode;
+      };
 
     }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
       // Received color.js object to be used internally
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         vals.spaceId;
-      this._color = to(vals, mode);
-      this.mode = colorMode || Object.entries(Color.colorMap)
-        .find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
+      this._initialize = () => {
+        this._cachedColor = to(vals, mode);
+        this._cachedMode = colorMode || Object.entries(Color.colorMap)
+          .find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+      };
 
     } else if(typeof vals[0] === 'string') {
       // Received string
-      try{
-        this._color = parse(vals[0]);
-        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
-        this.mode = mode;
-        this._color = to(this._color, this._color.spaceId);
-      }catch(err){
-        // TODO: Invalid color string
-        throw new Error('Invalid color string');
-      }
+      this._defaultStringValue = vals[0];
+      this._initialize = () => {
+        try{
+          this._cachedColor = parse(vals[0]);
+          const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+          this._cachedMode = mode;
+          this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
+        }catch(err){
+          // TODO: Invalid color string
+          throw new Error('Invalid color string');
+        }
+      };
 
     }else{
       // Received individual channel values
@@ -119,19 +130,19 @@ class Color {
       if(colorMaxes){
         // NOTE: need to consider different number of arguments (eg. CMYK)
         if(vals.length === 4){
-          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes, clamp);
+          mappedVals = Color.mapColorRange(vals, this._cachedMode, colorMaxes, clamp);
         }else if(vals.length === 3){
           mappedVals = Color.mapColorRange(
             [vals[0], vals[1], vals[2]],
-            this.mode,
+            this._cachedMode,
             colorMaxes,
             clamp
           );
           mappedVals.push(1);
         }else if(vals.length === 2){
           // Grayscale with alpha
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
@@ -139,7 +150,7 @@ class Color {
           }else{
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
-              this.mode,
+              this._cachedMode,
               colorMaxes,
               clamp
             );
@@ -159,8 +170,8 @@ class Color {
           );
         }else if(vals.length === 1){
           // Grayscale only
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
@@ -168,7 +179,7 @@ class Color {
           }else{
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
-              this.mode,
+              this._cachedMode,
               colorMaxes,
               clamp
             );
@@ -180,17 +191,52 @@ class Color {
       }else{
         mappedVals = vals;
       }
+      if (this._cachedMode === RGB) {
+        if (mappedVals[3] === 1) {
+          // Faster for the browser to parse than rgba
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]);
+        } else {
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]) + toHexComponent(mappedVals[3]);;
+        }
+      }
 
-      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
-      const coords = mappedVals.slice(0, 3);
+      this._initialize = () => {
+        const space = Color.colorMap[this._cachedMode] || console.error('Invalid color mode');
+        const coords = mappedVals.slice(0, 3);
 
-      const color = {
-        space,
-        coords,
-        alpha: mappedVals[3]
+        const color = {
+          space,
+          coords,
+          alpha: mappedVals[3]
+        };
+        this._cachedColor = to(color, space);
       };
-      this._color = to(color, space);
     }
+  }
+
+  // Color mode of the Color object, uses p5 color modes
+  get mode() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedMode;
+  }
+  // Reference to underlying color object depending on implementation
+  // Not meant to be used publicly unless the implementation is known for sure
+  get _color() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedColor;
+  }
+  set _color(newColor) {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    this._cachedColor = newColor;
   }
 
   // Convert from p5 color range to color.js color range
@@ -314,19 +360,45 @@ class Color {
    *   describe('The text "#9932cc" written in purple on a gray background.');
    * }
    */
-  toString(format) {
-    const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
-    let colorString = serializationMap[key];
+ toString(format) {
+   if (format === undefined && this._defaultStringValue !== undefined) {
+      return this._defaultStringValue;
+   }
+   
+    let outputFormat = format;
+    if (format === '#rrggbb') {
+      outputFormat = 'hex';
+    }
 
-    if(!colorString){
+    const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
+    let colorString = serializationMap.get(key);
+
+    if (!colorString) {
       colorString = serialize(this._color, {
-        format
+        format: outputFormat
       });
-      serializationMap[key] = colorString;
+      
+      if (format === '#rrggbb') {
+        colorString = String(colorString);
+        if (colorString.length === 4) { 
+            const r = colorString[1];
+            const g = colorString[2];
+            const b = colorString[3];
+            colorString = `#${r}${r}${g}${g}${b}${b}`;
+        }
+        if (colorString.length > 7) {
+            colorString = colorString.slice(0, 7);
+        }
+        colorString = colorString.toLowerCase();
+      }
+
+      if (serializationMap.size > 1000) {
+        serializationMap.delete(serializationMap.keys().next().value)
+      }
+      serializationMap.set(key, colorString);
     }
     return colorString;
   }
-
   /**
    * Checks the contrast between two colors. This method returns a boolean
    * value to indicate if the two color has enough contrast. `true` means that
@@ -472,6 +544,7 @@ class Color {
    * }
    */
   setRed(new_red, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -523,6 +596,7 @@ class Color {
    * }
    */
   setGreen(new_green, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -574,6 +648,7 @@ class Color {
    * }
    */
   setBlue(new_blue, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -626,6 +701,7 @@ class Color {
    * }
    */
   setAlpha(new_alpha, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
