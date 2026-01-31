@@ -1163,4 +1163,83 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('Transforms', function() {
+    visualTest('translate() moves shapes in x and y axes', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+
+      // Red circle at origin
+      p5.fill('red');
+      p5.circle(0, 0, 10);
+
+      // Green circle translated by (15, 0)
+      p5.push();
+      p5.translate(15, 0);
+      p5.fill('green');
+      p5.circle(0, 0, 10);
+      p5.pop();
+
+      // Blue circle translated by (0, 15)
+      p5.push();
+      p5.translate(0, 15);
+      p5.fill('blue');
+      p5.circle(0, 0, 10);
+      p5.pop();
+
+      screenshot();
+    });
+
+    visualTest('rotate() rotates shapes around z-axis', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+      p5.fill('red');
+      p5.rectMode(p5.CENTER);
+      p5.rotate(p5.PI / 4);
+      p5.rect(0, 0, 30, 30);
+      screenshot();
+    });
+
+    visualTest('scale() uniformly scales shapes', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+      p5.fill('red');
+
+      // Unscaled circle
+      p5.circle(-12, 0, 20);
+
+      // Scaled circle (half size)
+      p5.push();
+      p5.translate(12, 0);
+      p5.scale(0.5);
+      p5.circle(0, 0, 20);
+      p5.pop();
+
+      screenshot();
+    });
+  });
+
+  visualSuite('media assets', function() {
+    visualTest('drawing gifs', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
+
+    visualTest('drawing gifs after a time delay', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      p5.clear()
+      // Simulate waiting for successive draw calls
+      p5._lastRealFrameTime += 300;
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
+  });
 });
