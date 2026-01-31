@@ -6,6 +6,7 @@ import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
+import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
 import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
@@ -381,7 +382,7 @@ function rendererWebGPU(p5, fn) {
 
       const requestedSampleCount = activeFramebuffer ?
         (activeFramebuffer.antialias ? activeFramebuffer.antialiasSamples : 1) :
-        (this.antialias || 1);
+        1;  // No MSAA needed when blitting already-antialiased textures to canvas
       const sampleCount = this._getValidSampleCount(requestedSampleCount);
 
       const depthFormat = activeFramebuffer && activeFramebuffer.useDepth ?
@@ -1012,7 +1013,7 @@ function rendererWebGPU(p5, fn) {
       this.states.setValue('enableLighting', false);
       this.states.setValue('activeImageLight', null);
       this._pInst.setCamera(this.finalCamera);
-      this._pInst.resetShader();
+      this._pInst.shader(this._getBlitShader());
       this._pInst.resetMatrix();
       this._pInst.imageMode(this._pInst.CENTER);
       this._pInst.image(this.mainFramebuffer, 0, 0);
@@ -1617,6 +1618,17 @@ function rendererWebGPU(p5, fn) {
         );
       }
       return this._defaultFontShader;
+    }
+
+    _getBlitShader() {
+      if (!this._defaultBlitShader) {
+        this._defaultBlitShader = new Shader(
+          this,
+          blitVertexShader,
+          blitFragmentShader
+        );
+      }
+      return this._defaultBlitShader;
     }
 
     //////////////////////////////////////////////
