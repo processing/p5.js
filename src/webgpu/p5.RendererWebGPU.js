@@ -35,6 +35,10 @@ function rendererWebGPU(p5, fn) {
 
       this.samplers = new Map();
 
+      // Cache for current frame's canvas texture view
+      this.currentCanvasColorTexture = null;
+      this.currentCanvasColorTextureView = null;
+
       // Single reusable staging buffer for pixel reading
       this.pixelReadBuffer = null;
       this.pixelReadBufferSize = 0;
@@ -160,6 +164,7 @@ function rendererWebGPU(p5, fn) {
     _updateSize() {
       if (this.depthTexture && this.depthTexture.destroy) {
         this.depthTexture.destroy();
+        this.depthTextureView = null;
       }
       this.depthTexture = this.device.createTexture({
         size: {
@@ -170,9 +175,20 @@ function rendererWebGPU(p5, fn) {
         format: this.depthFormat,
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
       });
+      this.depthTextureView = this.depthTexture.createView();
 
       // Clear the main canvas after resize
       this.clear();
+    }
+
+    _getCanvasColorTextureView() {
+      const canvasTexture = this.drawingContext.getCurrentTexture();
+      // If texture changed (new frame), update cache
+      if (this.currentCanvasColorTexture !== canvasTexture) {
+        this.currentCanvasColorTexture = canvasTexture;
+        this.currentCanvasColorTextureView = canvasTexture.createView();
+      }
+      return this.currentCanvasColorTextureView;
     }
 
     clear(...args) {
@@ -185,25 +201,28 @@ function rendererWebGPU(p5, fn) {
 
       // Use framebuffer texture if active, otherwise use canvas texture
       const activeFramebuffer = this.activeFramebuffer();
-      const colorTexture = activeFramebuffer ?
-        (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) :
-        this.drawingContext.getCurrentTexture();
 
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: activeFramebuffer
+          ? (activeFramebuffer.aaColorTexture
+              ? activeFramebuffer.aaColorTextureView
+              : activeFramebuffer.colorTextureView)
+          : this._getCanvasColorTextureView(),
         clearValue: { r: _r * _a, g: _g * _a, b: _b * _a, a: _a },
         loadOp: 'clear',
         storeOp: 'store',
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ?
-          activeFramebuffer.colorTexture.createView() : undefined,
+        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
+          ? activeFramebuffer.colorTextureView
+          : undefined,
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
       const depthAttachment = depthTextureView
         ? {
           view: depthTextureView,
@@ -238,10 +257,11 @@ function rendererWebGPU(p5, fn) {
       const activeFramebuffer = this.activeFramebuffer();
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
       if (!depthTextureView) {
         // No depth buffer to clear
@@ -786,7 +806,7 @@ function rendererWebGPU(p5, fn) {
       }
       const commandEncoder = this.device.createCommandEncoder();
 
-      const depthTextureView = this.depthTexture?.createView();
+      const depthTextureView = this.depthTextureView;
       const depthAttachment = depthTextureView
         ? {
           view: depthTextureView,
@@ -974,6 +994,10 @@ function rendererWebGPU(p5, fn) {
 
         // Submit the commands
         this.queue.submit(commandsToSubmit);
+
+        // Reset canvas texture cache for next frame
+        this.currentCanvasColorTexture = null;
+        this.currentCanvasColorTextureView = null;
       }
     }
 
@@ -1059,24 +1083,27 @@ function rendererWebGPU(p5, fn) {
 
       // Use framebuffer texture if active, otherwise use canvas texture
       const activeFramebuffer = this.activeFramebuffer();
-      const colorTexture = activeFramebuffer ?
-        (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) :
-        this.drawingContext.getCurrentTexture();
 
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: activeFramebuffer
+          ? (activeFramebuffer.aaColorTexture
+              ? activeFramebuffer.aaColorTextureView
+              : activeFramebuffer.colorTextureView)
+          : this._getCanvasColorTextureView(),
         loadOp: "load",
         storeOp: "store",
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ?
-          activeFramebuffer.colorTexture.createView() : undefined,
+        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
+          ? activeFramebuffer.colorTextureView
+          : undefined,
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
       const renderPassDescriptor = {
         colorAttachments: [colorAttachment],
         depthStencilAttachment: depthTextureView
@@ -1643,16 +1670,18 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       const activeFramebuffer = this.activeFramebuffer();
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
-      if (!depthTexture) {
+      if (!depthTextureView) {
         return;
       }
 
       const depthStencilAttachment = {
-        view: depthTexture.createView(),
+        view: depthTextureView,
         stencilLoadOp: 'clear',
         stencilStoreOp: 'store',
         stencilClearValue: 0,
@@ -1682,16 +1711,18 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       const activeFramebuffer = this.activeFramebuffer();
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
-      if (!depthTexture) {
+      if (!depthTextureView) {
         return;
       }
 
       const depthStencilAttachment = {
-        view: depthTexture.createView(),
+        view: depthTextureView,
         stencilLoadOp: 'clear',
         stencilStoreOp: 'store',
         stencilClearValue: 1,
@@ -2145,15 +2176,19 @@ function rendererWebGPU(p5, fn) {
       // Clean up existing textures
       if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
         framebuffer.colorTexture.destroy();
+        framebuffer.colorTextureView = null;
       }
       if (framebuffer.aaColorTexture && framebuffer.aaColorTexture.destroy) {
         framebuffer.aaColorTexture.destroy();
+        framebuffer.aaColorTextureView = null;
       }
       if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
         framebuffer.depthTexture.destroy();
+        framebuffer.depthTextureView = null;
       }
       if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
         framebuffer.aaDepthTexture.destroy();
+        framebuffer.aaDepthTextureView = null;
       }
 
       const baseDescriptor = {
@@ -2172,6 +2207,7 @@ function rendererWebGPU(p5, fn) {
         sampleCount: 1,
       };
       framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
+      framebuffer.colorTextureView = framebuffer.colorTexture.createView();
 
       // Create multisampled texture for rendering if antialiasing is enabled
       if (framebuffer.antialias) {
@@ -2181,6 +2217,7 @@ function rendererWebGPU(p5, fn) {
           sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
         };
         framebuffer.aaColorTexture = this.device.createTexture(aaColorTextureDescriptor);
+        framebuffer.aaColorTextureView = framebuffer.aaColorTexture.createView();
       }
 
       if (framebuffer.useDepth) {
@@ -2200,6 +2237,7 @@ function rendererWebGPU(p5, fn) {
           sampleCount: 1,
         };
         framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
+        framebuffer.depthTextureView = framebuffer.depthTexture.createView();
 
         // Create multisampled depth texture for rendering if antialiasing is enabled
         if (framebuffer.antialias) {
@@ -2209,6 +2247,7 @@ function rendererWebGPU(p5, fn) {
             sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
           };
           framebuffer.aaDepthTexture = this.device.createTexture(aaDepthTextureDescriptor);
+          framebuffer.aaDepthTextureView = framebuffer.aaDepthTexture.createView();
         }
       }
 
@@ -2220,20 +2259,24 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       // Clear the color texture (and multisampled texture if it exists)
-      const colorTexture = framebuffer.aaColorTexture || framebuffer.colorTexture;
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: framebuffer.aaColorTexture
+          ? framebuffer.aaColorTextureView
+          : framebuffer.colorTextureView,
         loadOp: "clear",
         storeOp: "store",
         clearValue: { r: 0, g: 0, b: 0, a: 0 },
-        resolveTarget: framebuffer.aaColorTexture ?
-          framebuffer.colorTexture.createView() : undefined,
+        resolveTarget: framebuffer.aaColorTexture
+          ? framebuffer.colorTextureView
+          : undefined,
       };
 
       // Clear the depth texture if it exists
       const depthTexture = framebuffer.aaDepthTexture || framebuffer.depthTexture;
       const depthStencilAttachment = depthTexture ? {
-        view: depthTexture.createView(),
+        view: framebuffer.aaDepthTexture
+          ? framebuffer.aaDepthTextureView
+          : framebuffer.depthTextureView,
         depthLoadOp: "clear",
         depthStoreOp: "store",
         depthClearValue: 1.0,
@@ -2257,7 +2300,7 @@ function rendererWebGPU(p5, fn) {
 
     _getFramebufferColorTextureView(framebuffer) {
       if (framebuffer.colorTexture) {
-        return framebuffer.colorTexture.createView();
+        return framebuffer.colorTextureView;
       }
       return null;
     }
