@@ -17,31 +17,24 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install system deps for canvas
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libcairo2-dev \
-            libjpeg-dev
-
       - name: Install dependencies
-        run: npm install canvas node-fetch
+        run: npm install canvas
 
-      - name: Run contributors-svg generator
+      - name: Run contributors-png generator
         run: node utils/contributors-png.js
 
       - name: Reset all changes except contributors.png
         run: |
           git restore --staged .
-          git add contributors.svg
+          git add contributors.png
           git checkout -- .
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "Update contributors.png from .all-contributorsrc"
-          branch: update-contributors-svg
+          branch: update-contributors-png
           title: "chore: update contributors.png from .all-contributorsrc"
           body: "This PR updates the contributors.png to reflect changes in .all-contributorsrc"
-          add-paths: contributors.svg
+          add-paths: contributors.png
           token: ${{ secrets.ACCESS_TOKEN }}
