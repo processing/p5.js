@@ -447,27 +447,26 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
-    test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
-      myp5.createCanvas(5, 5, myp5.WEBGL);
-      let mxInHook;
-      let wInHook;
-      myp5.baseMaterialShader().modify(() => {
-        myp5.getPixelInputs(inputs => {
-          mxInHook = window.mouseX;
-          wInHook = window.width;
-          inputs.color = [1, 0, 0, 1];
-          assert.isTrue(mxInHook.isStrandsNode);
-          assert.isTrue(wInHook.isStrandsNode);
-          return inputs;
-        });
-      }, { myp5 });
-
-      const mx = window.mouseX;
-      const w = window.width;
-      assert.isNumber(mx);
-      assert.isNumber(w);
-      assert.strictEqual(w, myp5.width);
+test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
+  myp5.createCanvas(5, 5, myp5.WEBGL);
+  myp5.baseMaterialShader().modify(() => {
+    myp5.getPixelInputs(inputs => {
+      const mxInHook = window.mouseX;
+      const wInHook = window.width;
+      assert.isTrue(mxInHook.isStrandsNode);
+      assert.isTrue(wInHook.isStrandsNode);
+      inputs.color = [1, 0, 0, 1];
+      return inputs;
     });
+  }, { myp5 });
+
+  const mx = window.mouseX;
+  const w = window.width;
+  assert.isNumber(mx);
+  assert.isNumber(w);
+  assert.strictEqual(w, myp5.width);
+});
+
 
     test('handle custom uniform names with automatic values', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
