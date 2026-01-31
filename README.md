@@ -121,6 +121,6 @@ Lead/Mentor Alumni
 
 We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md)) and our nice bot will add you to [CONTRIBUTORS.md](./CONTRIBUTORS.md) automatically!
 
-![](contributors.png "contributors")
+![Grid of avatars representing contributors to the p5.js project](contributors.png)
 
 Thanks to all the wonderful contributors! 💓
