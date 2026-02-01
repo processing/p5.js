@@ -162,7 +162,6 @@
     },
     "background": {
       "overloads": [
-        [],
         [
           "p5.Color"
         ],
@@ -2969,7 +2968,8 @@
       "overloads": [
         [
           "IMAGE|NORMAL"
-        ]
+        ],
+        []
       ]
     },
     "textureWrap": {
@@ -2977,7 +2977,8 @@
         [
           "CLAMP|REPEAT|MIRROR",
           "CLAMP|REPEAT|MIRROR?"
-        ]
+        ],
+        []
       ]
     },
     "normalMaterial": {
