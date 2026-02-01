@@ -1022,6 +1022,24 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
+      let firstShader;
+      function firstShaderCallback() {
+        getFinalColor((color) => {
+          color = [width / 60, height / 60, 0, 1];
+          return color;
+        });
+      }
+      p5.createCanvas(60, 60, p5.WEBGL);
+      p5.pixelDensity(1);
+      firstShader = p5.baseColorShader().modify(firstShaderCallback);
+      p5.background(0);
+      p5.shader(firstShader);
+      p5.noStroke();
+      p5.plane(20, 20);
+      screenshot();
+    });
+
     visualSuite('auto-return for shader hooks', () => {
       visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
         p5.createCanvas(50, 50, p5.WEBGL);
