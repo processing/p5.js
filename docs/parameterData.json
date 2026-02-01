@@ -534,32 +534,28 @@
         [
           "Number",
           "p5.Vector|Number[]?"
-        ],
-        []
+        ]
       ]
     },
     "rotateX": {
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "rotateY": {
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "rotateZ": {
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "scale": {
@@ -571,24 +567,21 @@
         ],
         [
           "p5.Vector|Number[]"
-        ],
-        []
+        ]
       ]
     },
     "shearX": {
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "shearY": {
       "overloads": [
         [
           "Number"
-        ],
-        []
+        ]
       ]
     },
     "translate": {

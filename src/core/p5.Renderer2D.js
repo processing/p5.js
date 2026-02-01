@@ -1030,26 +1030,11 @@ class Renderer2D extends Renderer {
   }
 
   rotate(rad) {
-    if (typeof rad === 'undefined') {
-      const matrix = this.drawingContext.getTransform();
-      let angle = this._pInst.decomposeMatrix(matrix).rotation;
-      if (angle < 0) {
-        angle += Math.PI * 2; // ensure a positive angle
-      }
-      if (this._pInst._angleMode === this._pInst.DEGREES) {
-        angle *= constants.RAD_TO_DEG; // to degrees
-      }
-      return Math.abs(angle);
-    }
     this.drawingContext.rotate(rad);
     return this;
   }
 
   scale(x, y) {
-    if (typeof x === 'undefined' && typeof y === 'undefined') {
-      const matrix = this.drawingContext.getTransform();
-      return this._pInst.decomposeMatrix(matrix).scale;
-    }
     // support passing objects with x,y properties (including p5.Vector)
     if (typeof x === 'object' && 'x' in x && 'y' in x) {
       y = x.y;
@@ -1060,10 +1045,6 @@ class Renderer2D extends Renderer {
   }
 
   translate(x, y) {
-    if (typeof x === 'undefined' && typeof y === 'undefined') {
-      const matrix = this.drawingContext.getTransform();
-      return this._pInst.decomposeMatrix(matrix).translation;
-    }
     // support passing objects with x,y properties (including p5.Vector)
     if (typeof x === 'object' && 'x' in x && 'y' in x) {
       y = x.y;
