@@ -492,7 +492,7 @@ visualSuite('WebGL', function() {
 
     visualTest('loadMaterialShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const materialShader = await p5.loadMaterialShader('/unit/assets/testMaterial.js');
+      const materialShader = await p5.loadMaterialShader('/test/unit/assets/testMaterial.js');
 
       p5.noStroke();
       p5.shader(materialShader);
