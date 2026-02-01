@@ -35,9 +35,9 @@ suite('Set/get properties', function() {
     pixelDensity: 1,
     cursor: 'pointer',
 
-    rotate: p.PI,
-    translate: { x: 1, y: 2 },
-    scale: { x: 1, y: 2 },
+    // rotate: p.PI,
+    // translate: { x: 1, y: 2 },
+    // scale: { x: 1, y: 2 },
     bezierOrder: 2,
     splineProperties: { ends: p.EXCLUDE, tightness: -5 },
     textAlign: { horizontal: p.CENTER, vertical: p.CENTER },

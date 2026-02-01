@@ -1296,6 +1296,7 @@ function loadingDisplaying(p5, fn){
     }
     const c = this.color(...args);
     this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    return this;
   };
 
   /**
@@ -1333,6 +1334,7 @@ function loadingDisplaying(p5, fn){
    */
   fn.noTint = function() {
     this._renderer.states.setValue('tint', null);
+    return this;
   };
 
   /**
