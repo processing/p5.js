@@ -62,6 +62,7 @@ function rendererWebGPU(p5, fn) {
       this._pixelReadCanvas = null;
       this._pixelReadCtx = null;
       this.mainFramebuffer = null;
+      this._framePromotedToFramebuffer = false;
 
       this.finalCamera = new Camera(this);
       this.finalCamera._computeCameraDefaultSettings();
@@ -107,7 +108,7 @@ function rendererWebGPU(p5, fn) {
 
       // TODO disablable stencil
       this.depthFormat = 'depth24plus-stencil8';
-      this.mainFramebuffer = this.createFramebuffer();
+      this.mainFramebuffer = this.createFramebuffer({ _useCanvasFormat: true });
       this._updateSize();
       this._update();
     }
@@ -801,7 +802,8 @@ function rendererWebGPU(p5, fn) {
     }
 
     _resetBuffersBeforeDraw() {
-      if (!this.activeFramebuffer()) {
+      // Only use mainFramebuffer if promotion has occurred
+      if (!this.activeFramebuffer() && this._framePromotedToFramebuffer) {
         this.mainFramebuffer.begin();
       }
       const commandEncoder = this.device.createCommandEncoder();
@@ -828,6 +830,64 @@ function rendererWebGPU(p5, fn) {
 
       this._pendingCommandEncoders.push(commandEncoder.finish());
       this._hasPendingDraws = true;
+    }
+
+    /**
+     * Promotes the current frame to use mainFramebuffer.
+     * Copies current canvas content to mainFramebuffer, then switches to rendering there.
+     * @private
+     */
+    _promoteToFramebuffer() {
+      // Already promoted this frame
+      if (this._framePromotedToFramebuffer) {
+        return;
+      }
+
+      // Already drawing to a custom framebuffer, no promotion needed
+      if (this.activeFramebuffer()) {
+        return;
+      }
+
+      // Flush any pending draws to canvas first
+      this.flushDraw();
+
+      // Mark as promoted
+      this._framePromotedToFramebuffer = true;
+
+      // Get current canvas texture
+      const canvasTexture = this.drawingContext.getCurrentTexture();
+
+      // Ensure mainFramebuffer matches canvas size
+      if (this.mainFramebuffer.width !== this.width ||
+          this.mainFramebuffer.height !== this.height) {
+        this.mainFramebuffer.resize(this.width, this.height);
+      }
+
+      // Copy canvas texture to mainFramebuffer
+      const commandEncoder = this.device.createCommandEncoder();
+      commandEncoder.copyTextureToTexture(
+        {
+          texture: canvasTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          texture: this.mainFramebuffer.colorTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          width: Math.ceil(this.width * this._pixelDensity),
+          height: Math.ceil(this.height * this._pixelDensity),
+          depthOrArrayLayers: 1,
+        }
+      );
+
+      this._pendingCommandEncoders.push(commandEncoder.finish());
+      this._hasPendingDraws = true;
+
+      // Activate mainFramebuffer for subsequent draws
+      this.mainFramebuffer.begin();
     }
 
     //////////////////////////////////////////////
@@ -1025,24 +1085,29 @@ function rendererWebGPU(p5, fn) {
 
     async finishDraw() {
       this.flushDraw();
-      const states = [];
-      while (this.activeFramebuffers.length > 0) {
-        const fbo = this.activeFramebuffers.pop();
-        states.unshift({ fbo, diff: { ...this.states } });
-      }
-      this.flushDraw();
 
-      // this._pInst.background('red');
-      this._pInst.push();
-      this.states.setValue('enableLighting', false);
-      this.states.setValue('activeImageLight', null);
-      this._pInst.setCamera(this.finalCamera);
-      this._pInst.shader(this._getBlitShader());
-      this._pInst.resetMatrix();
-      this._pInst.imageMode(this._pInst.CENTER);
-      this._pInst.image(this.mainFramebuffer, 0, 0);
-      this._pInst.pop();
-      this.flushDraw();
+      const states = [];
+
+      // Only blit if we promoted to framebuffer this frame
+      if (this._framePromotedToFramebuffer) {
+        while (this.activeFramebuffers.length > 0) {
+          const fbo = this.activeFramebuffers.pop();
+          states.unshift({ fbo, diff: { ...this.states } });
+        }
+        this.flushDraw();
+
+        // this._pInst.background('red');
+        this._pInst.push();
+        this.states.setValue('enableLighting', false);
+        this.states.setValue('activeImageLight', null);
+        this._pInst.setCamera(this.finalCamera);
+        this._pInst.shader(this._getBlitShader());
+        this._pInst.resetMatrix();
+        this._pInst.imageMode(this._pInst.CENTER);
+        this._pInst.image(this.mainFramebuffer, 0, 0);
+        this._pInst.pop();
+        this.flushDraw();
+      }
 
       // Return all uniform buffers to their pools
       this._returnUniformBuffersToPool();
@@ -1063,12 +1128,19 @@ function rendererWebGPU(p5, fn) {
       }
       this._retiredBuffers = [];
 
-      for (const { fbo, diff } of states) {
-        fbo.begin();
-        for (const key in diff) {
-          this.states.setValue(key, diff[key]);
+      if (this._framePromotedToFramebuffer) {
+        for (const { fbo, diff } of states) {
+          if (fbo !== this.mainFramebuffer || !this._framePromotedToFramebuffer) {
+            fbo.begin();
+          }
+          for (const key in diff) {
+            this.states.setValue(key, diff[key]);
+          }
         }
       }
+
+      // Reset promotion state for next frame
+      this._framePromotedToFramebuffer = false;
     }
 
     //////////////////////////////////////////////
@@ -2203,7 +2275,10 @@ function rendererWebGPU(p5, fn) {
       // Create non-multisampled texture for texture binding (always needed)
       const colorTextureDescriptor = {
         ...baseDescriptor,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT |
+               GPUTextureUsage.TEXTURE_BINDING |
+               GPUTextureUsage.COPY_SRC |
+               (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
         sampleCount: 1,
       };
       framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
@@ -2324,6 +2399,11 @@ function rendererWebGPU(p5, fn) {
       } else if (framebuffer.format === constants.HALF_FLOAT) {
         return framebuffer.channels === RGBA ? 'rgba16float' : 'rgba16float';
       } else {
+        // Framebuffer with _useCanvasFormat should match canvas presentation format
+        if (framebuffer._useCanvasFormat) {
+          return this.presentationFormat;
+        }
+        // Other framebuffers use standard RGBA format
         return framebuffer.channels === RGBA ? 'rgba8unorm' : 'rgba8unorm';
       }
     }
@@ -2413,13 +2493,13 @@ function rendererWebGPU(p5, fn) {
       const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
 
       // If alignment was needed, extract the actual pixel data
+      let result;
       if (alignedBytesPerRow === unalignedBytesPerRow) {
-        const result = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
+        result = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
         stagingBuffer.unmap();
-        return result;
       } else {
         // Need to extract pixel data from aligned buffer
-        const result = new Uint8Array(width * height * bytesPerPixel);
+        result = new Uint8Array(width * height * bytesPerPixel);
         const mappedData = new Uint8Array(mappedRange);
         for (let y = 0; y < height; y++) {
           const srcOffset = y * alignedBytesPerRow;
@@ -2427,8 +2507,14 @@ function rendererWebGPU(p5, fn) {
           result.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
         }
         stagingBuffer.unmap();
-        return result;
       }
+
+      // Convert BGRA to RGBA if reading from canvas-format framebuffer on BGRA systems
+      if (framebuffer._useCanvasFormat && this.presentationFormat === 'bgra8unorm') {
+        this._convertBGRtoRGB(result);
+      }
+
+      return result;
     }
 
     async readFramebufferPixel(framebuffer, x, y) {
@@ -2556,23 +2642,32 @@ function rendererWebGPU(p5, fn) {
     //////////////////////////////////////////////
 
     _convertBGRtoRGB(pixelData) {
-      // Convert BGR to RGB by swapping red and blue channels
       for (let i = 0; i < pixelData.length; i += 4) {
-        const temp = pixelData[i];     // Store red
-        pixelData[i] = pixelData[i + 2]; // Red = Blue
-        pixelData[i + 2] = temp;         // Blue = Red
-        // Green (i + 1) and Alpha (i + 3) stay the same
+        const temp = pixelData[i];
+        pixelData[i] = pixelData[i + 2];
+        pixelData[i + 2] = temp;
       }
       return pixelData;
     }
 
     async loadPixels() {
+      this._promoteToFramebuffer();
       await this.mainFramebuffer.loadPixels();
       this.pixels = this.mainFramebuffer.pixels.slice();
     }
 
     async get(x, y, w, h) {
+      this._promoteToFramebuffer();
       return this.mainFramebuffer.get(x, y, w, h);
+    }
+
+    filter(...args) {
+      // If no custom framebuffer is active, promote to mainFramebuffer
+      if (!this.activeFramebuffer()) {
+        this._promoteToFramebuffer();
+      }
+
+      return super.filter(...args);
     }
 
     getNoiseShaderSnippet() {
