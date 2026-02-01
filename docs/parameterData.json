@@ -416,7 +416,7 @@
         [
           "Number?",
           "Number?",
-          "P2D|WEBGL|P2DHDR?",
+          "P2D|WEBGL|P2DHDR|WEBGPU?",
           "HTMLCanvasElement?"
         ],
         [
@@ -1959,8 +1959,7 @@
       "overloads": [
         [
           "Object"
-        ],
-        []
+        ]
       ]
     },
     "vertex": {
