@@ -12,6 +12,12 @@ import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 
+const FRAME_STATE = {
+  PENDING: 0,
+  UNPROMOTED: 1,
+  PROMOTED: 2
+};
+
 function rendererWebGPU(p5, fn) {
   const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
 
@@ -65,7 +71,7 @@ function rendererWebGPU(p5, fn) {
       this._pixelReadCanvas = null;
       this._pixelReadCtx = null;
       this.mainFramebuffer = null;
-      this._framePromotedToFramebuffer = false;
+      this._frameState = FRAME_STATE.PENDING;
 
       this.finalCamera = new Camera(this);
       this.finalCamera._computeCameraDefaultSettings();
@@ -203,6 +209,11 @@ function rendererWebGPU(p5, fn) {
       const _g = args[1] || 0;
       const _b = args[2] || 0;
       const _a = args[3] || 0;
+
+      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED
+      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
+        this._frameState = FRAME_STATE.UNPROMOTED;
+      }
 
       const commandEncoder = this.device.createCommandEncoder();
 
@@ -808,34 +819,37 @@ function rendererWebGPU(p5, fn) {
     }
 
     _resetBuffersBeforeDraw() {
-      // Only use mainFramebuffer if promotion has occurred
-      if (!this.activeFramebuffer() && this._framePromotedToFramebuffer) {
-        this.mainFramebuffer.begin();
-      }
+      // Set state to PENDING - we'll decide on first draw
+      this._frameState = FRAME_STATE.PENDING;
+
+      // Clear depth buffer but DON'T start any render pass yet
+      const activeFramebuffer = this.activeFramebuffer();
       const commandEncoder = this.device.createCommandEncoder();
 
-      const depthTextureView = this.depthTextureView;
-      const depthAttachment = depthTextureView
-        ? {
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
+
+      if (depthTextureView) {
+        const depthAttachment = {
           view: depthTextureView,
           depthClearValue: 1.0,
           depthLoadOp: 'clear',
           depthStoreOp: 'store',
           stencilLoadOp: 'load',
-          stencilStoreOp: "store",
-        }
-        : undefined;
-
-      const renderPassDescriptor = {
-        colorAttachments: [],
-        ...(depthAttachment ? { depthStencilAttachment: depthAttachment } : {}),
-      };
-
-      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-      passEncoder.end();
-
-      this._pendingCommandEncoders.push(commandEncoder.finish());
-      this._hasPendingDraws = true;
+          stencilStoreOp: 'store',
+        };
+        const renderPassDescriptor = {
+          colorAttachments: [],
+          depthStencilAttachment: depthAttachment,
+        };
+        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        passEncoder.end();
+        this._pendingCommandEncoders.push(commandEncoder.finish());
+        this._hasPendingDraws = true;
+      }
     }
 
     /**
@@ -845,7 +859,7 @@ function rendererWebGPU(p5, fn) {
      */
     _promoteToFramebuffer() {
       // Already promoted this frame
-      if (this._framePromotedToFramebuffer) {
+      if (this._frameState === FRAME_STATE.PROMOTED) {
         return;
       }
 
@@ -858,7 +872,7 @@ function rendererWebGPU(p5, fn) {
       this.flushDraw();
 
       // Mark as promoted
-      this._framePromotedToFramebuffer = true;
+      this._frameState = FRAME_STATE.PROMOTED;
 
       // Get current canvas texture
       const canvasTexture = this.drawingContext.getCurrentTexture();
@@ -919,6 +933,29 @@ function rendererWebGPU(p5, fn) {
       const savedModelMatrix = this.states.uModelMatrix.copy();
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
+      this.mainFramebuffer.begin();
+
+      this.states.uModelMatrix.set(savedModelMatrix);
+    }
+
+    _promoteToFramebufferWithoutCopy() {
+      // Ensure mainFramebuffer matches canvas size
+      if (this.mainFramebuffer.width !== this.width ||
+          this.mainFramebuffer.height !== this.height) {
+        this.mainFramebuffer.resize(this.width, this.height);
+      }
+
+      // Mark as promoted WITHOUT copying canvas content
+      this._frameState = FRAME_STATE.PROMOTED;
+
+      // Flush any pending draws first
+      this.flushDraw();
+
+      // Preserve transformation state
+      const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
+
+      // Begin rendering to mainFramebuffer
       this.mainFramebuffer.begin();
 
       this.states.uModelMatrix.set(savedModelMatrix);
@@ -1134,7 +1171,7 @@ function rendererWebGPU(p5, fn) {
       const states = [];
 
       // Only blit if we promoted to framebuffer this frame
-      if (this._framePromotedToFramebuffer) {
+      if (this._frameState === FRAME_STATE.PROMOTED) {
         while (this.activeFramebuffers.length > 0) {
           const fbo = this.activeFramebuffers.pop();
           states.unshift({ fbo, diff: { ...this.states } });
@@ -1173,9 +1210,9 @@ function rendererWebGPU(p5, fn) {
       }
       this._retiredBuffers = [];
 
-      if (this._framePromotedToFramebuffer) {
+      if (this._frameState === FRAME_STATE.PROMOTED) {
         for (const { fbo, diff } of states) {
-          if (fbo !== this.mainFramebuffer || !this._framePromotedToFramebuffer) {
+          if (fbo !== this.mainFramebuffer || this._frameState !== FRAME_STATE.PROMOTED) {
             fbo.begin();
           }
           for (const key in diff) {
@@ -1183,9 +1220,6 @@ function rendererWebGPU(p5, fn) {
           }
         }
       }
-
-      // Reset promotion state for next frame
-      this._framePromotedToFramebuffer = false;
     }
 
     //////////////////////////////////////////////
@@ -1195,6 +1229,11 @@ function rendererWebGPU(p5, fn) {
     _drawBuffers(geometry, { mode = constants.TRIANGLES, count = 1 }) {
       const buffers = this.geometryBufferCache.getCached(geometry);
       if (!buffers) return;
+
+      // If PENDING and no custom framebuffer, regular draw means PROMOTE
+      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
+        this._promoteToFramebufferWithoutCopy();
+      }
 
       const commandEncoder = this.device.createCommandEncoder();
 
