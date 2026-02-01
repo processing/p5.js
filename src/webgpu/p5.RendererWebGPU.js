@@ -175,7 +175,7 @@ function rendererWebGPU(p5, fn) {
           depthOrArrayLayers: 1,
         },
         format: this.depthFormat,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
       });
       this.depthTextureView = this.depthTexture.createView();
 
@@ -864,8 +864,10 @@ function rendererWebGPU(p5, fn) {
         this.mainFramebuffer.resize(this.width, this.height);
       }
 
-      // Copy canvas texture to mainFramebuffer
+      // Copy canvas textures to mainFramebuffer
       const commandEncoder = this.device.createCommandEncoder();
+
+      // Copy color texture
       commandEncoder.copyTextureToTexture(
         {
           texture: canvasTexture,
@@ -884,19 +886,36 @@ function rendererWebGPU(p5, fn) {
         }
       );
 
+      // Copy depth texture
+      commandEncoder.copyTextureToTexture(
+        {
+          texture: this.depthTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          texture: this.mainFramebuffer.depthTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          width: Math.ceil(this.width * this._pixelDensity),
+          height: Math.ceil(this.height * this._pixelDensity),
+          depthOrArrayLayers: 1,
+        }
+      );
+
       this._pendingCommandEncoders.push(commandEncoder.finish());
       this._hasPendingDraws = true;
 
-      // Save current transformation state
+      // We want to make sure the transformation state is the same
+      // once we're drawing to the framebuffer, because normally
+      // those are reset.
       const savedModelMatrix = this.states.uModelMatrix.copy();
-
-      // Copy current camera state to framebuffer's camera
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
-      // Activate mainFramebuffer for subsequent draws
       this.mainFramebuffer.begin();
 
-      // Restore transformation state
       this.states.uModelMatrix.set(savedModelMatrix);
     }
 
@@ -2322,7 +2341,9 @@ function rendererWebGPU(p5, fn) {
         // Create non-multisampled depth texture for texture binding (always needed)
         const depthTextureDescriptor = {
           ...depthBaseDescriptor,
-          usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+          usage: GPUTextureUsage.RENDER_ATTACHMENT |
+                 GPUTextureUsage.TEXTURE_BINDING |
+                 (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
           sampleCount: 1,
         };
         framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
@@ -2423,6 +2444,9 @@ function rendererWebGPU(p5, fn) {
     }
 
     _getWebGPUDepthFormat(framebuffer) {
+      if (framebuffer._useCanvasFormat) {
+        return this.depthFormat;
+      }
       if (framebuffer.useStencil) {
         return framebuffer.depthFormat === constants.FLOAT ? 'depth32float-stencil8' : 'depth24plus-stencil8';
       } else {
@@ -2523,10 +2547,7 @@ function rendererWebGPU(p5, fn) {
         stagingBuffer.unmap();
       }
 
-      // Convert BGRA to RGBA if reading from canvas-format framebuffer on BGRA systems
-      if (framebuffer._useCanvasFormat && this.presentationFormat === 'bgra8unorm') {
-        this._convertBGRtoRGB(result);
-      }
+      this._ensurePixelsAreRGBA(framebuffer, result);
 
       return result;
     }
@@ -2558,6 +2579,9 @@ function rendererWebGPU(p5, fn) {
       const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
       const pixelData = new Uint8Array(mappedRange);
       const result = [pixelData[0], pixelData[1], pixelData[2], pixelData[3]];
+
+
+      this._ensurePixelsAreRGBA(framebuffer, result);
 
       stagingBuffer.unmap();
       return result;
@@ -2611,6 +2635,7 @@ function rendererWebGPU(p5, fn) {
           pixelData.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
         }
       }
+      this._ensurePixelsAreRGBA(framebuffer, pixelData);
 
       // WebGPU doesn't need vertical flipping unlike WebGL
       const region = new Image(width, height);
@@ -2655,13 +2680,19 @@ function rendererWebGPU(p5, fn) {
     // Main canvas pixel methods
     //////////////////////////////////////////////
 
+    _ensurePixelsAreRGBA(framebuffer, result) {
+      // Convert BGRA to RGBA if reading from canvas-format framebuffer on BGRA systems
+      if (framebuffer._useCanvasFormat && this.presentationFormat === 'bgra8unorm') {
+        this._convertBGRtoRGB(result);
+      }
+    }
+
     _convertBGRtoRGB(pixelData) {
       for (let i = 0; i < pixelData.length; i += 4) {
         const temp = pixelData[i];
         pixelData[i] = pixelData[i + 2];
         pixelData[i + 2] = temp;
       }
-      return pixelData;
     }
 
     async loadPixels() {
