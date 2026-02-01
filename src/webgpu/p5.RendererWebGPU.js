@@ -164,6 +164,7 @@ function rendererWebGPU(p5, fn) {
 
     _updateSize() {
       if (this.depthTexture && this.depthTexture.destroy) {
+        this.flushDraw();
         this.depthTexture.destroy();
         this.depthTextureView = null;
       }
@@ -886,8 +887,17 @@ function rendererWebGPU(p5, fn) {
       this._pendingCommandEncoders.push(commandEncoder.finish());
       this._hasPendingDraws = true;
 
+      // Save current transformation state
+      const savedModelMatrix = this.states.uModelMatrix.copy();
+
+      // Copy current camera state to framebuffer's camera
+      this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
+
       // Activate mainFramebuffer for subsequent draws
       this.mainFramebuffer.begin();
+
+      // Restore transformation state
+      this.states.uModelMatrix.set(savedModelMatrix);
     }
 
     //////////////////////////////////////////////
@@ -1048,7 +1058,7 @@ function rendererWebGPU(p5, fn) {
       // Only submit if we actually had any draws
       if (this._hasPendingDraws) {
         // Create a copy of pending command encoders
-        const commandsToSubmit = this._pendingCommandEncoders.slice();
+        const commandsToSubmit = this._pendingCommandEncoders;
         this._pendingCommandEncoders = [];
         this._hasPendingDraws = false;
 
@@ -1080,6 +1090,10 @@ function rendererWebGPU(p5, fn) {
     resize(w, h) {
       super.resize(w, h);
       this._hasPendingDraws = true;
+      this.flushDraw();
+    }
+
+    finishSetup() {
       this.flushDraw();
     }
 
