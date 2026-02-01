@@ -516,7 +516,7 @@ visualSuite('WebGL', function() {
       }
 
       // Apply the filter shader (should swap red and green channels)
-      const filterShader = await p5.loadFilterShader('/unit/assets/testFilter.js');
+      const filterShader = await p5.loadFilterShader('/test/unit/assets/testFilter.js');
       p5.filter(filterShader);
       screenshot();
     });
