@@ -55,6 +55,9 @@ function rendererWebGPU(p5, fn) {
       this._hasPendingDraws = false;
       this._pendingCommandEncoders = [];
 
+      // Queue of callbacks to run after next submit (mainly for safe texture deletion)
+      this._postSubmitCallbacks = [];
+
       // Retired buffers to destroy at end of frame
       this._retiredBuffers = [];
 
@@ -111,6 +114,7 @@ function rendererWebGPU(p5, fn) {
       this.mainFramebuffer = this.createFramebuffer({ _useCanvasFormat: true });
       this._updateSize();
       this._update();
+      this.flushDraw();
     }
 
     async _setAttributes(key, value) {
@@ -165,7 +169,8 @@ function rendererWebGPU(p5, fn) {
     _updateSize() {
       if (this.depthTexture && this.depthTexture.destroy) {
         this.flushDraw();
-        this.depthTexture.destroy();
+        const textureToDestroy = this.depthTexture;
+        this._postSubmitCallbacks.push(() => textureToDestroy.destroy());
         this.depthTextureView = null;
       }
       this.depthTexture = this.device.createTexture({
@@ -1084,6 +1089,17 @@ function rendererWebGPU(p5, fn) {
         // Submit the commands
         this.queue.submit(commandsToSubmit);
 
+        // Execute post-submit callbacks after GPU work completes
+        if (this._postSubmitCallbacks.length > 0) {
+          const callbacks = this._postSubmitCallbacks;
+          this._postSubmitCallbacks = [];
+          this.device.queue.onSubmittedWorkDone().then(() => {
+            for (const callback of callbacks) {
+              callback();
+            }
+          });
+        }
+
         // Reset canvas texture cache for next frame
         this.currentCanvasColorTexture = null;
         this.currentCanvasColorTextureView = null;
@@ -1109,10 +1125,6 @@ function rendererWebGPU(p5, fn) {
     resize(w, h) {
       super.resize(w, h);
       this._hasPendingDraws = true;
-      this.flushDraw();
-    }
-
-    finishSetup() {
       this.flushDraw();
     }
 
@@ -1652,7 +1664,7 @@ function rendererWebGPU(p5, fn) {
     bindTextureToShader(_texture, _sampler, _uniformName, _unit) {}
 
     deleteTexture({ gpuTexture }) {
-      gpuTexture.destroy();
+      this._postSubmitCallbacks.push(() => gpuTexture.destroy());
     }
 
     _getLightShader() {
@@ -2212,6 +2224,7 @@ function rendererWebGPU(p5, fn) {
       if (!this.pixelReadBuffer || this.pixelReadBufferSize < requiredSize) {
         // Clean up old buffer
         if (this.pixelReadBuffer) {
+          this.flushDraw();
           this.pixelReadBuffer.destroy();
         }
 
@@ -2278,21 +2291,26 @@ function rendererWebGPU(p5, fn) {
     }
 
     recreateFramebufferTextures(framebuffer) {
+      this.flushDraw();
       // Clean up existing textures
       if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
-        framebuffer.colorTexture.destroy();
+        const tex = framebuffer.colorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
         framebuffer.colorTextureView = null;
       }
       if (framebuffer.aaColorTexture && framebuffer.aaColorTexture.destroy) {
-        framebuffer.aaColorTexture.destroy();
+        const tex = framebuffer.aaColorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
         framebuffer.aaColorTextureView = null;
       }
       if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
-        framebuffer.depthTexture.destroy();
+        const tex = framebuffer.depthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
         framebuffer.depthTextureView = null;
       }
       if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
-        framebuffer.aaDepthTexture.destroy();
+        const tex = framebuffer.aaDepthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
         framebuffer.aaDepthTextureView = null;
       }
 
@@ -2455,9 +2473,11 @@ function rendererWebGPU(p5, fn) {
     }
 
     _deleteFramebufferTexture(texture) {
+      this.flushDraw();
       const handle = texture.rawTexture();
       if (handle.texture && handle.texture.destroy) {
-        handle.texture.destroy();
+        const tex = handle.texture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       this.textures.delete(texture);
     }
@@ -2468,14 +2488,18 @@ function rendererWebGPU(p5, fn) {
     }
 
     deleteFramebufferResources(framebuffer) {
+      this.flushDraw();
       if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
-        framebuffer.colorTexture.destroy();
+        const tex = framebuffer.colorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
-        framebuffer.depthTexture.destroy();
+        const tex = framebuffer.depthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
-        framebuffer.aaDepthTexture.destroy();
+        const tex = framebuffer.aaDepthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
     }
 

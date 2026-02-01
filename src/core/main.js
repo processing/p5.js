@@ -272,7 +272,6 @@ class p5 {
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._updateAccsOutput();
     }
-    this._renderer.finishSetup?.();
 
     // Run `postsetup` hooks
     await this._runLifecycleHook('postsetup');
