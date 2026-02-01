@@ -18,7 +18,6 @@ suite('Set/get properties', function() {
   });*/
 
   let getters = {
-    background: new p5.Color([100, 100, 50]),
     fill: new p5.Color([100, 200, 50]),
     stroke: new p5.Color([200, 100, 50, 100]),
     tint: new p5.Color([100, 140, 50]),
@@ -28,6 +27,7 @@ suite('Set/get properties', function() {
     blendMode: 'source-over',
     imageMode: p.CORNER,
     ellipseMode: p.CORNER,
+    angleMode: p.DEGREES,
 
     strokeWeight: 6,
     strokeCap: p.ROUND,
@@ -35,11 +35,12 @@ suite('Set/get properties', function() {
     pixelDensity: 1,
     cursor: 'pointer',
 
-    // rotate: p.PI,
-    // translate: { x: 1, y: 2 },
-    // scale: { x: 1, y: 2 },
     bezierOrder: 2,
     splineProperties: { ends: p.EXCLUDE, tightness: -5 },
+
+    textureMode: p.IMAGE, // 3D only
+    textureWrap: { x: p.REPEAT, y: p.MIRROR }, // 3D only
+
     textAlign: { horizontal: p.CENTER, vertical: p.CENTER },
     textLeading: 18,
     textFont: 'arial',
@@ -48,6 +49,12 @@ suite('Set/get properties', function() {
     textWrap: p.WORD,
     textDirection: 1,
     textWeight: 1
+
+    // rotate: p.PI, see #8278
+    // translate: { x: 1, y: 2 },
+    // scale: { x: 1, y: 2 },
+    // background: new p5.Color([100, 100, 50]),
+
   };
 
   Object.keys(getters).forEach(prop => {
@@ -62,7 +69,7 @@ suite('Set/get properties', function() {
         p[prop](...arg); // set with array
       }
       else {
-        p[prop](arg); // set with primitive
+        p[prop](arg); // set with primitive or p5.Color
       }
       // getter
       assert.strictEqual(p[prop]().toString(), arg.toString(), `${arg.toString()}`);

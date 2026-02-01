@@ -1294,8 +1294,10 @@ function loadingDisplaying(p5, fn){
     if (args.length === 0) {
       return this.color(this._renderer.states.tint); // getter
     }
-    const c = this.color(...args);
-    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    if (args && args.length) {
+      const c = this.color(...args);
+      this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    }
     return this;
   };
 

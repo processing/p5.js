@@ -167,7 +167,8 @@ class Renderer2D extends Renderer {
 
   background(...args) {
     if (args.length === 0) {
-      return this.states.background; // getter (#8278)
+      return this;// setter with no args does nothing
+      //return this.states.background; // getter (#8278)
     }
     let bgForState = null;
     this.push();
@@ -207,6 +208,7 @@ class Renderer2D extends Renderer {
     this.pop();
 
     this.states.setValue('background', bgForState); // set state (#8278)
+    return this;
   }
 
   clear() {
