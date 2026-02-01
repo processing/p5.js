@@ -2517,7 +2517,8 @@ function rendererWebGPU(p5, fn) {
     }
 
     async readFramebufferPixels(framebuffer) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // Ensure all pending GPU work is complete before reading pixels
       // await this.queue.onSubmittedWorkDone();
 
@@ -2577,7 +2578,8 @@ function rendererWebGPU(p5, fn) {
     }
 
     async readFramebufferPixel(framebuffer, x, y) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // Ensure all pending GPU work is complete before reading pixels
       // await this.queue.onSubmittedWorkDone();
 
@@ -2612,7 +2614,8 @@ function rendererWebGPU(p5, fn) {
     }
 
     async readFramebufferRegion(framebuffer, x, y, w, h) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // const wasActive = this.activeFramebuffer() === framebuffer;
       // if (wasActive) {
         // framebuffer.end();
