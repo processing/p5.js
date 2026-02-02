@@ -291,6 +291,9 @@ if (typeof p5 !== "undefined") {
  * callbacks. It is commonly used to create soft transitions, smooth edges,
  * fades, and anti-aliased effects.
  *
+ * Smoothstep is useful when a threshold or cutoff is needed, but with a
+ * gradual transition instead of a hard edge.
+ *
  * - Returns `0.0` when `x` is less than or equal to `edge0`
  * - Returns `1.0` when `x` is greater than or equal to `edge1`
  * - Smoothly interpolates between `0.0` and `1.0` when `x` is between them
@@ -318,7 +321,7 @@ if (typeof p5 !== "undefined") {
  *     let x = inputs.texCoord.x;
  *
  *     // smoothstep creates a soft transition instead of a hard edge
- *     let t = smoothstep(0.45, 0.55, x);
+ *     let t = smoothstep(0.25, 0.35, x);
  *
  *     // Use t directly as brightness
  *     return [t, t, t, 1];
