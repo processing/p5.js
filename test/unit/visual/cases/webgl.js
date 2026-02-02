@@ -1242,4 +1242,74 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('3D Primitives', function() {
+    visualTest('cylinder() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.cylinder(30, 60);
+      screenshot();
+    });
+
+    visualTest('cone() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.cone(30, 60);
+      screenshot();
+    });
+
+    visualTest('ellipsoid() renders with non-uniform radii', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.ellipsoid(20, 30, 40);
+      screenshot();
+    });
+
+    visualTest('torus() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.torus(30, 10);
+      screenshot();
+    });
+  });
 });
