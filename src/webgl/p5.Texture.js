@@ -225,6 +225,9 @@ class Texture {
         data.setModified && data.setModified(true);
       }
     } else if (this.isSrcP5Image) {
+      if (data.gifProperties) {
+        data._animateGif(this._renderer._pInst);
+      }
       // for an image, we only update if the modified field has been set,
       // for example, by a call to p5.Image.set
       if (data.isModified()) {

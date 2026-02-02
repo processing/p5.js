@@ -62,6 +62,7 @@ class Framebuffer {
     this.renderer.framebuffers.add(this);
 
     this._isClipApplied = false;
+    this._useCanvasFormat = settings._useCanvasFormat || false;
 
     this.dirty = { colorTexture: false, depthTexture: false };
 

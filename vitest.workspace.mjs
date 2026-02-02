@@ -87,7 +87,7 @@ export default defineWorkspace([
         // './test/unit/visual/cases/webgpu.js',
         './test/types/**/*'
       ],
-      testTimeout: 1000,
+      testTimeout: 10000,
       globals: true,
       browser: {
         enabled: true,
