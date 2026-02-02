@@ -6,10 +6,17 @@ import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
 import { materialVertexShader, materialFragmentShader } from './shaders/material';
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
+import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
 import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
+
+const FRAME_STATE = {
+  PENDING: 0,
+  UNPROMOTED: 1,
+  PROMOTED: 2
+};
 
 function rendererWebGPU(p5, fn) {
   const { lineDefs } = getStrokeDefs((n, v, t) => `const ${n}: ${t} = ${v};\n`);
@@ -34,6 +41,10 @@ function rendererWebGPU(p5, fn) {
 
       this.samplers = new Map();
 
+      // Cache for current frame's canvas texture view
+      this.currentCanvasColorTexture = null;
+      this.currentCanvasColorTextureView = null;
+
       // Single reusable staging buffer for pixel reading
       this.pixelReadBuffer = null;
       this.pixelReadBufferSize = 0;
@@ -50,6 +61,9 @@ function rendererWebGPU(p5, fn) {
       this._hasPendingDraws = false;
       this._pendingCommandEncoders = [];
 
+      // Queue of callbacks to run after next submit (mainly for safe texture deletion)
+      this._postSubmitCallbacks = [];
+
       // Retired buffers to destroy at end of frame
       this._retiredBuffers = [];
 
@@ -57,6 +71,7 @@ function rendererWebGPU(p5, fn) {
       this._pixelReadCanvas = null;
       this._pixelReadCtx = null;
       this.mainFramebuffer = null;
+      this._frameState = FRAME_STATE.PENDING;
 
       this.finalCamera = new Camera(this);
       this.finalCamera._computeCameraDefaultSettings();
@@ -102,9 +117,10 @@ function rendererWebGPU(p5, fn) {
 
       // TODO disablable stencil
       this.depthFormat = 'depth24plus-stencil8';
-      this.mainFramebuffer = this.createFramebuffer();
+      this.mainFramebuffer = this.createFramebuffer({ _useCanvasFormat: true });
       this._updateSize();
       this._update();
+      this.flushDraw();
     }
 
     async _setAttributes(key, value) {
@@ -158,7 +174,10 @@ function rendererWebGPU(p5, fn) {
 
     _updateSize() {
       if (this.depthTexture && this.depthTexture.destroy) {
-        this.depthTexture.destroy();
+        this.flushDraw();
+        const textureToDestroy = this.depthTexture;
+        this._postSubmitCallbacks.push(() => textureToDestroy.destroy());
+        this.depthTextureView = null;
       }
       this.depthTexture = this.device.createTexture({
         size: {
@@ -167,11 +186,22 @@ function rendererWebGPU(p5, fn) {
           depthOrArrayLayers: 1,
         },
         format: this.depthFormat,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
       });
+      this.depthTextureView = this.depthTexture.createView();
 
       // Clear the main canvas after resize
       this.clear();
+    }
+
+    _getCanvasColorTextureView() {
+      const canvasTexture = this.drawingContext.getCurrentTexture();
+      // If texture changed (new frame), update cache
+      if (this.currentCanvasColorTexture !== canvasTexture) {
+        this.currentCanvasColorTexture = canvasTexture;
+        this.currentCanvasColorTextureView = canvasTexture.createView();
+      }
+      return this.currentCanvasColorTextureView;
     }
 
     clear(...args) {
@@ -180,29 +210,37 @@ function rendererWebGPU(p5, fn) {
       const _b = args[2] || 0;
       const _a = args[3] || 0;
 
+      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED
+      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
+        this._frameState = FRAME_STATE.UNPROMOTED;
+      }
+
       const commandEncoder = this.device.createCommandEncoder();
 
       // Use framebuffer texture if active, otherwise use canvas texture
       const activeFramebuffer = this.activeFramebuffer();
-      const colorTexture = activeFramebuffer ?
-        (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) :
-        this.drawingContext.getCurrentTexture();
 
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: activeFramebuffer
+          ? (activeFramebuffer.aaColorTexture
+              ? activeFramebuffer.aaColorTextureView
+              : activeFramebuffer.colorTextureView)
+          : this._getCanvasColorTextureView(),
         clearValue: { r: _r * _a, g: _g * _a, b: _b * _a, a: _a },
         loadOp: 'clear',
         storeOp: 'store',
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ?
-          activeFramebuffer.colorTexture.createView() : undefined,
+        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
+          ? activeFramebuffer.colorTextureView
+          : undefined,
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
       const depthAttachment = depthTextureView
         ? {
           view: depthTextureView,
@@ -237,10 +275,11 @@ function rendererWebGPU(p5, fn) {
       const activeFramebuffer = this.activeFramebuffer();
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
       if (!depthTextureView) {
         // No depth buffer to clear
@@ -381,7 +420,7 @@ function rendererWebGPU(p5, fn) {
 
       const requestedSampleCount = activeFramebuffer ?
         (activeFramebuffer.antialias ? activeFramebuffer.antialiasSamples : 1) :
-        (this.antialias || 1);
+        1;  // No MSAA needed when blitting already-antialiased textures to canvas
       const sampleCount = this._getValidSampleCount(requestedSampleCount);
 
       const depthFormat = activeFramebuffer && activeFramebuffer.useDepth ?
@@ -780,33 +819,146 @@ function rendererWebGPU(p5, fn) {
     }
 
     _resetBuffersBeforeDraw() {
-      if (!this.activeFramebuffer()) {
-        this.mainFramebuffer.begin();
-      }
+      // Set state to PENDING - we'll decide on first draw
+      this._frameState = FRAME_STATE.PENDING;
+
+      // Clear depth buffer but DON'T start any render pass yet
+      const activeFramebuffer = this.activeFramebuffer();
       const commandEncoder = this.device.createCommandEncoder();
 
-      const depthTextureView = this.depthTexture?.createView();
-      const depthAttachment = depthTextureView
-        ? {
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
+
+      if (depthTextureView) {
+        const depthAttachment = {
           view: depthTextureView,
           depthClearValue: 1.0,
           depthLoadOp: 'clear',
           depthStoreOp: 'store',
           stencilLoadOp: 'load',
-          stencilStoreOp: "store",
+          stencilStoreOp: 'store',
+        };
+        const renderPassDescriptor = {
+          colorAttachments: [],
+          depthStencilAttachment: depthAttachment,
+        };
+        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        passEncoder.end();
+        this._pendingCommandEncoders.push(commandEncoder.finish());
+        this._hasPendingDraws = true;
+      }
+    }
+
+    /**
+     * Promotes the current frame to use mainFramebuffer.
+     * Copies current canvas content to mainFramebuffer, then switches to rendering there.
+     * @private
+     */
+    _promoteToFramebuffer() {
+      // Already promoted this frame
+      if (this._frameState === FRAME_STATE.PROMOTED) {
+        return;
+      }
+
+      // Already drawing to a custom framebuffer, no promotion needed
+      if (this.activeFramebuffer()) {
+        return;
+      }
+
+      // Flush any pending draws to canvas first
+      this.flushDraw();
+
+      // Mark as promoted
+      this._frameState = FRAME_STATE.PROMOTED;
+
+      // Get current canvas texture
+      const canvasTexture = this.drawingContext.getCurrentTexture();
+
+      // Ensure mainFramebuffer matches canvas size
+      if (this.mainFramebuffer.width !== this.width ||
+          this.mainFramebuffer.height !== this.height) {
+        this.mainFramebuffer.resize(this.width, this.height);
+      }
+
+      // Copy canvas textures to mainFramebuffer
+      const commandEncoder = this.device.createCommandEncoder();
+
+      // Copy color texture
+      commandEncoder.copyTextureToTexture(
+        {
+          texture: canvasTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          texture: this.mainFramebuffer.colorTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          width: Math.ceil(this.width * this._pixelDensity),
+          height: Math.ceil(this.height * this._pixelDensity),
+          depthOrArrayLayers: 1,
         }
-        : undefined;
+      );
 
-      const renderPassDescriptor = {
-        colorAttachments: [],
-        ...(depthAttachment ? { depthStencilAttachment: depthAttachment } : {}),
-      };
-
-      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-      passEncoder.end();
+      // Copy depth texture
+      commandEncoder.copyTextureToTexture(
+        {
+          texture: this.depthTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          texture: this.mainFramebuffer.depthTexture,
+          origin: { x: 0, y: 0, z: 0 },
+          mipLevel: 0,
+        },
+        {
+          width: Math.ceil(this.width * this._pixelDensity),
+          height: Math.ceil(this.height * this._pixelDensity),
+          depthOrArrayLayers: 1,
+        }
+      );
 
       this._pendingCommandEncoders.push(commandEncoder.finish());
       this._hasPendingDraws = true;
+
+      // We want to make sure the transformation state is the same
+      // once we're drawing to the framebuffer, because normally
+      // those are reset.
+      const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
+
+      this.mainFramebuffer.begin();
+
+      this.states.uModelMatrix.set(savedModelMatrix);
+    }
+
+    _promoteToFramebufferWithoutCopy() {
+      // Ensure mainFramebuffer matches canvas size
+      if (this.mainFramebuffer.width !== this.width ||
+          this.mainFramebuffer.height !== this.height) {
+        this.mainFramebuffer.resize(this.width, this.height);
+      }
+
+      // Mark as promoted WITHOUT copying canvas content
+      this._frameState = FRAME_STATE.PROMOTED;
+
+      // Flush any pending draws first
+      this.flushDraw();
+
+      // Preserve transformation state
+      const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
+
+      // Begin rendering to mainFramebuffer
+      this.mainFramebuffer.begin();
+
+      this.states.uModelMatrix.set(savedModelMatrix);
     }
 
     //////////////////////////////////////////////
@@ -967,12 +1119,27 @@ function rendererWebGPU(p5, fn) {
       // Only submit if we actually had any draws
       if (this._hasPendingDraws) {
         // Create a copy of pending command encoders
-        const commandsToSubmit = this._pendingCommandEncoders.slice();
+        const commandsToSubmit = this._pendingCommandEncoders;
         this._pendingCommandEncoders = [];
         this._hasPendingDraws = false;
 
         // Submit the commands
         this.queue.submit(commandsToSubmit);
+
+        // Execute post-submit callbacks after GPU work completes
+        if (this._postSubmitCallbacks.length > 0) {
+          const callbacks = this._postSubmitCallbacks;
+          this._postSubmitCallbacks = [];
+          this.device.queue.onSubmittedWorkDone().then(() => {
+            for (const callback of callbacks) {
+              callback();
+            }
+          });
+        }
+
+        // Reset canvas texture cache for next frame
+        this.currentCanvasColorTexture = null;
+        this.currentCanvasColorTextureView = null;
       }
     }
 
@@ -1000,23 +1167,29 @@ function rendererWebGPU(p5, fn) {
 
     async finishDraw() {
       this.flushDraw();
-      const states = [];
-      while (this.activeFramebuffers.length > 0) {
-        const fbo = this.activeFramebuffers.pop();
-        states.unshift({ fbo, diff: { ...this.states } });
-      }
-      this.flushDraw();
 
-      // this._pInst.background('red');
-      this._pInst.push();
-      this.states.setValue('enableLighting', false);
-      this.states.setValue('activeImageLight', null);
-      this._pInst.setCamera(this.finalCamera);
-      this._pInst.resetShader();
-      this._pInst.imageMode(this._pInst.CENTER);
-      this._pInst.image(this.mainFramebuffer, 0, 0);
-      this._pInst.pop();
-      this.flushDraw();
+      const states = [];
+
+      // Only blit if we promoted to framebuffer this frame
+      if (this._frameState === FRAME_STATE.PROMOTED) {
+        while (this.activeFramebuffers.length > 0) {
+          const fbo = this.activeFramebuffers.pop();
+          states.unshift({ fbo, diff: { ...this.states } });
+        }
+        this.flushDraw();
+
+        // this._pInst.background('red');
+        this._pInst.push();
+        this.states.setValue('enableLighting', false);
+        this.states.setValue('activeImageLight', null);
+        this._pInst.setCamera(this.finalCamera);
+        this._pInst.shader(this._getBlitShader());
+        this._pInst.resetMatrix();
+        this._pInst.imageMode(this._pInst.CENTER);
+        this._pInst.image(this.mainFramebuffer, 0, 0);
+        this._pInst.pop();
+        this.flushDraw();
+      }
 
       // Return all uniform buffers to their pools
       this._returnUniformBuffersToPool();
@@ -1037,10 +1210,14 @@ function rendererWebGPU(p5, fn) {
       }
       this._retiredBuffers = [];
 
-      for (const { fbo, diff } of states) {
-        fbo.begin();
-        for (const key in diff) {
-          this.states.setValue(key, diff[key]);
+      if (this._frameState === FRAME_STATE.PROMOTED) {
+        for (const { fbo, diff } of states) {
+          if (fbo !== this.mainFramebuffer || this._frameState !== FRAME_STATE.PROMOTED) {
+            fbo.begin();
+          }
+          for (const key in diff) {
+            this.states.setValue(key, diff[key]);
+          }
         }
       }
     }
@@ -1053,28 +1230,36 @@ function rendererWebGPU(p5, fn) {
       const buffers = this.geometryBufferCache.getCached(geometry);
       if (!buffers) return;
 
+      // If PENDING and no custom framebuffer, regular draw means PROMOTE
+      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
+        this._promoteToFramebufferWithoutCopy();
+      }
+
       const commandEncoder = this.device.createCommandEncoder();
 
       // Use framebuffer texture if active, otherwise use canvas texture
       const activeFramebuffer = this.activeFramebuffer();
-      const colorTexture = activeFramebuffer ?
-        (activeFramebuffer.aaColorTexture || activeFramebuffer.colorTexture) :
-        this.drawingContext.getCurrentTexture();
 
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: activeFramebuffer
+          ? (activeFramebuffer.aaColorTexture
+              ? activeFramebuffer.aaColorTextureView
+              : activeFramebuffer.colorTextureView)
+          : this._getCanvasColorTextureView(),
         loadOp: "load",
         storeOp: "store",
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture ?
-          activeFramebuffer.colorTexture.createView() : undefined,
+        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
+          ? activeFramebuffer.colorTextureView
+          : undefined,
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
-      const depthTextureView = depthTexture?.createView();
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
       const renderPassDescriptor = {
         colorAttachments: [colorAttachment],
         depthStencilAttachment: depthTextureView
@@ -1518,7 +1703,7 @@ function rendererWebGPU(p5, fn) {
     bindTextureToShader(_texture, _sampler, _uniformName, _unit) {}
 
     deleteTexture({ gpuTexture }) {
-      gpuTexture.destroy();
+      this._postSubmitCallbacks.push(() => gpuTexture.destroy());
     }
 
     _getLightShader() {
@@ -1618,6 +1803,17 @@ function rendererWebGPU(p5, fn) {
       return this._defaultFontShader;
     }
 
+    _getBlitShader() {
+      if (!this._defaultBlitShader) {
+        this._defaultBlitShader = new Shader(
+          this,
+          blitVertexShader,
+          blitFragmentShader
+        );
+      }
+      return this._defaultBlitShader;
+    }
+
     //////////////////////////////////////////////
     // Setting
     //////////////////////////////////////////////
@@ -1630,16 +1826,18 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       const activeFramebuffer = this.activeFramebuffer();
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
-      if (!depthTexture) {
+      if (!depthTextureView) {
         return;
       }
 
       const depthStencilAttachment = {
-        view: depthTexture.createView(),
+        view: depthTextureView,
         stencilLoadOp: 'clear',
         stencilStoreOp: 'store',
         stencilClearValue: 0,
@@ -1669,16 +1867,18 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       const activeFramebuffer = this.activeFramebuffer();
-      const depthTexture = activeFramebuffer ?
-        (activeFramebuffer.aaDepthTexture || activeFramebuffer.depthTexture) :
-        this.depthTexture;
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
 
-      if (!depthTexture) {
+      if (!depthTextureView) {
         return;
       }
 
       const depthStencilAttachment = {
-        view: depthTexture.createView(),
+        view: depthTextureView,
         stencilLoadOp: 'clear',
         stencilStoreOp: 'store',
         stencilClearValue: 1,
@@ -2063,6 +2263,7 @@ function rendererWebGPU(p5, fn) {
       if (!this.pixelReadBuffer || this.pixelReadBufferSize < requiredSize) {
         // Clean up old buffer
         if (this.pixelReadBuffer) {
+          this.flushDraw();
           this.pixelReadBuffer.destroy();
         }
 
@@ -2129,18 +2330,27 @@ function rendererWebGPU(p5, fn) {
     }
 
     recreateFramebufferTextures(framebuffer) {
+      this.flushDraw();
       // Clean up existing textures
       if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
-        framebuffer.colorTexture.destroy();
+        const tex = framebuffer.colorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
+        framebuffer.colorTextureView = null;
       }
       if (framebuffer.aaColorTexture && framebuffer.aaColorTexture.destroy) {
-        framebuffer.aaColorTexture.destroy();
+        const tex = framebuffer.aaColorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
+        framebuffer.aaColorTextureView = null;
       }
       if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
-        framebuffer.depthTexture.destroy();
+        const tex = framebuffer.depthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
+        framebuffer.depthTextureView = null;
       }
       if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
-        framebuffer.aaDepthTexture.destroy();
+        const tex = framebuffer.aaDepthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
+        framebuffer.aaDepthTextureView = null;
       }
 
       const baseDescriptor = {
@@ -2155,10 +2365,14 @@ function rendererWebGPU(p5, fn) {
       // Create non-multisampled texture for texture binding (always needed)
       const colorTextureDescriptor = {
         ...baseDescriptor,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT |
+               GPUTextureUsage.TEXTURE_BINDING |
+               GPUTextureUsage.COPY_SRC |
+               (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
         sampleCount: 1,
       };
       framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
+      framebuffer.colorTextureView = framebuffer.colorTexture.createView();
 
       // Create multisampled texture for rendering if antialiasing is enabled
       if (framebuffer.antialias) {
@@ -2168,6 +2382,7 @@ function rendererWebGPU(p5, fn) {
           sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
         };
         framebuffer.aaColorTexture = this.device.createTexture(aaColorTextureDescriptor);
+        framebuffer.aaColorTextureView = framebuffer.aaColorTexture.createView();
       }
 
       if (framebuffer.useDepth) {
@@ -2183,10 +2398,13 @@ function rendererWebGPU(p5, fn) {
         // Create non-multisampled depth texture for texture binding (always needed)
         const depthTextureDescriptor = {
           ...depthBaseDescriptor,
-          usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+          usage: GPUTextureUsage.RENDER_ATTACHMENT |
+                 GPUTextureUsage.TEXTURE_BINDING |
+                 (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
           sampleCount: 1,
         };
         framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
+        framebuffer.depthTextureView = framebuffer.depthTexture.createView();
 
         // Create multisampled depth texture for rendering if antialiasing is enabled
         if (framebuffer.antialias) {
@@ -2196,6 +2414,7 @@ function rendererWebGPU(p5, fn) {
             sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
           };
           framebuffer.aaDepthTexture = this.device.createTexture(aaDepthTextureDescriptor);
+          framebuffer.aaDepthTextureView = framebuffer.aaDepthTexture.createView();
         }
       }
 
@@ -2207,20 +2426,24 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       // Clear the color texture (and multisampled texture if it exists)
-      const colorTexture = framebuffer.aaColorTexture || framebuffer.colorTexture;
       const colorAttachment = {
-        view: colorTexture.createView(),
+        view: framebuffer.aaColorTexture
+          ? framebuffer.aaColorTextureView
+          : framebuffer.colorTextureView,
         loadOp: "clear",
         storeOp: "store",
         clearValue: { r: 0, g: 0, b: 0, a: 0 },
-        resolveTarget: framebuffer.aaColorTexture ?
-          framebuffer.colorTexture.createView() : undefined,
+        resolveTarget: framebuffer.aaColorTexture
+          ? framebuffer.colorTextureView
+          : undefined,
       };
 
       // Clear the depth texture if it exists
       const depthTexture = framebuffer.aaDepthTexture || framebuffer.depthTexture;
       const depthStencilAttachment = depthTexture ? {
-        view: depthTexture.createView(),
+        view: framebuffer.aaDepthTexture
+          ? framebuffer.aaDepthTextureView
+          : framebuffer.depthTextureView,
         depthLoadOp: "clear",
         depthStoreOp: "store",
         depthClearValue: 1.0,
@@ -2244,7 +2467,7 @@ function rendererWebGPU(p5, fn) {
 
     _getFramebufferColorTextureView(framebuffer) {
       if (framebuffer.colorTexture) {
-        return framebuffer.colorTexture.createView();
+        return framebuffer.colorTextureView;
       }
       return null;
     }
@@ -2268,11 +2491,19 @@ function rendererWebGPU(p5, fn) {
       } else if (framebuffer.format === constants.HALF_FLOAT) {
         return framebuffer.channels === RGBA ? 'rgba16float' : 'rgba16float';
       } else {
+        // Framebuffer with _useCanvasFormat should match canvas presentation format
+        if (framebuffer._useCanvasFormat) {
+          return this.presentationFormat;
+        }
+        // Other framebuffers use standard RGBA format
         return framebuffer.channels === RGBA ? 'rgba8unorm' : 'rgba8unorm';
       }
     }
 
     _getWebGPUDepthFormat(framebuffer) {
+      if (framebuffer._useCanvasFormat) {
+        return this.depthFormat;
+      }
       if (framebuffer.useStencil) {
         return framebuffer.depthFormat === constants.FLOAT ? 'depth32float-stencil8' : 'depth24plus-stencil8';
       } else {
@@ -2281,9 +2512,11 @@ function rendererWebGPU(p5, fn) {
     }
 
     _deleteFramebufferTexture(texture) {
+      this.flushDraw();
       const handle = texture.rawTexture();
       if (handle.texture && handle.texture.destroy) {
-        handle.texture.destroy();
+        const tex = handle.texture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       this.textures.delete(texture);
     }
@@ -2294,14 +2527,18 @@ function rendererWebGPU(p5, fn) {
     }
 
     deleteFramebufferResources(framebuffer) {
+      this.flushDraw();
       if (framebuffer.colorTexture && framebuffer.colorTexture.destroy) {
-        framebuffer.colorTexture.destroy();
+        const tex = framebuffer.colorTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       if (framebuffer.depthTexture && framebuffer.depthTexture.destroy) {
-        framebuffer.depthTexture.destroy();
+        const tex = framebuffer.depthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
       if (framebuffer.aaDepthTexture && framebuffer.aaDepthTexture.destroy) {
-        framebuffer.aaDepthTexture.destroy();
+        const tex = framebuffer.aaDepthTexture;
+        this._postSubmitCallbacks.push(() => tex.destroy());
       }
     }
 
@@ -2319,7 +2556,8 @@ function rendererWebGPU(p5, fn) {
     }
 
     async readFramebufferPixels(framebuffer) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // Ensure all pending GPU work is complete before reading pixels
       // await this.queue.onSubmittedWorkDone();
 
@@ -2357,13 +2595,13 @@ function rendererWebGPU(p5, fn) {
       const mappedRange = stagingBuffer.getMappedRange(0, bufferSize);
 
       // If alignment was needed, extract the actual pixel data
+      let result;
       if (alignedBytesPerRow === unalignedBytesPerRow) {
-        const result = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
+        result = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
         stagingBuffer.unmap();
-        return result;
       } else {
         // Need to extract pixel data from aligned buffer
-        const result = new Uint8Array(width * height * bytesPerPixel);
+        result = new Uint8Array(width * height * bytesPerPixel);
         const mappedData = new Uint8Array(mappedRange);
         for (let y = 0; y < height; y++) {
           const srcOffset = y * alignedBytesPerRow;
@@ -2371,12 +2609,16 @@ function rendererWebGPU(p5, fn) {
           result.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
         }
         stagingBuffer.unmap();
-        return result;
       }
+
+      this._ensurePixelsAreRGBA(framebuffer, result);
+
+      return result;
     }
 
     async readFramebufferPixel(framebuffer, x, y) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // Ensure all pending GPU work is complete before reading pixels
       // await this.queue.onSubmittedWorkDone();
 
@@ -2403,12 +2645,16 @@ function rendererWebGPU(p5, fn) {
       const pixelData = new Uint8Array(mappedRange);
       const result = [pixelData[0], pixelData[1], pixelData[2], pixelData[3]];
 
+
+      this._ensurePixelsAreRGBA(framebuffer, result);
+
       stagingBuffer.unmap();
       return result;
     }
 
     async readFramebufferRegion(framebuffer, x, y, w, h) {
-      await this.finishDraw();
+      this.flushDraw();
+      // await this.finishDraw();
       // const wasActive = this.activeFramebuffer() === framebuffer;
       // if (wasActive) {
         // framebuffer.end();
@@ -2455,6 +2701,7 @@ function rendererWebGPU(p5, fn) {
           pixelData.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
         }
       }
+      this._ensurePixelsAreRGBA(framebuffer, pixelData);
 
       // WebGPU doesn't need vertical flipping unlike WebGL
       const region = new Image(width, height);
@@ -2499,24 +2746,39 @@ function rendererWebGPU(p5, fn) {
     // Main canvas pixel methods
     //////////////////////////////////////////////
 
-    _convertBGRtoRGB(pixelData) {
-      // Convert BGR to RGB by swapping red and blue channels
-      for (let i = 0; i < pixelData.length; i += 4) {
-        const temp = pixelData[i];     // Store red
-        pixelData[i] = pixelData[i + 2]; // Red = Blue
-        pixelData[i + 2] = temp;         // Blue = Red
-        // Green (i + 1) and Alpha (i + 3) stay the same
+    _ensurePixelsAreRGBA(framebuffer, result) {
+      // Convert BGRA to RGBA if reading from canvas-format framebuffer on BGRA systems
+      if (framebuffer._useCanvasFormat && this.presentationFormat === 'bgra8unorm') {
+        this._convertBGRtoRGB(result);
       }
-      return pixelData;
+    }
+
+    _convertBGRtoRGB(pixelData) {
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const temp = pixelData[i];
+        pixelData[i] = pixelData[i + 2];
+        pixelData[i + 2] = temp;
+      }
     }
 
     async loadPixels() {
+      this._promoteToFramebuffer();
       await this.mainFramebuffer.loadPixels();
       this.pixels = this.mainFramebuffer.pixels.slice();
     }
 
     async get(x, y, w, h) {
+      this._promoteToFramebuffer();
       return this.mainFramebuffer.get(x, y, w, h);
+    }
+
+    filter(...args) {
+      // If no custom framebuffer is active, promote to mainFramebuffer
+      if (!this.activeFramebuffer()) {
+        this._promoteToFramebuffer();
+      }
+
+      return super.filter(...args);
     }
 
     getNoiseShaderSnippet() {
@@ -2536,6 +2798,9 @@ function rendererWebGPU(p5, fn) {
               "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, tex_sampler: sampler) -> vec4<f32> {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
               }`,
+            },
+            hookAliases: {
+              'getColor': ['filterColor'],
             },
           }
         );

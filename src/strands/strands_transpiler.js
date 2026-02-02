@@ -54,6 +54,143 @@ function nodeIsVarying(node) {
       )
     );
 }
+
+// Helper function to check if a statement is a variable declaration with strands control flow init
+function statementContainsStrandsControlFlow(stmt) {
+  // Check for variable declarations with strands control flow init
+  if (stmt.type === 'VariableDeclaration') {
+    const match = stmt.declarations.some(decl =>
+      decl.init?.type === 'CallExpression' &&
+      (
+        (
+          decl.init?.callee?.type === 'MemberExpression' &&
+          decl.init?.callee?.object?.type === 'Identifier' &&
+          decl.init?.callee?.object?.name === '__p5' &&
+          (decl.init?.callee?.property?.name === 'strandsFor' ||
+            decl.init?.callee?.property?.name === 'strandsIf')
+        ) ||
+        (
+          decl.init?.callee?.type === 'Identifier' &&
+          (decl.init?.callee?.name === '__p5.strandsFor' ||
+            decl.init?.callee?.name === '__p5.strandsIf')
+        )
+      )
+    );
+    return match
+  }
+  return false;
+}
+
+// Helper function to build property path from MemberExpression
+// e.g., inputs.color -> "inputs.color", vec.x -> "vec.x"
+function isSwizzle(propertyName) {
+  if (!propertyName || typeof propertyName !== 'string') return false;
+  const swizzleSets = [
+    ['x', 'y', 'z', 'w'],
+    ['r', 'g', 'b', 'a'],
+    ['s', 't', 'p', 'q']
+  ];
+  return swizzleSets.some(set =>
+    [...propertyName].every(char => set.includes(char))
+  );
+}
+
+function buildPropertyPath(memberExpr) {
+  const parts = [];
+  let current = memberExpr;
+  while (current.type === 'MemberExpression') {
+    if (current.computed) {
+      return null;
+    }
+    const propName = current.property.name || current.property.value;
+    if (isSwizzle(propName)) {
+      current = current.object;
+      break;
+    }
+    parts.unshift(propName);
+    current = current.object;
+  }
+  if (current.type === 'Identifier') {
+    parts.unshift(current.name);
+  } else {
+    return null;
+  }
+  return parts.join('.');
+}
+
+// Replace all references to original variables with temp variables
+// and wrap literal assignments in strandsNode calls
+function replaceReferences(node, tempVarMap) {
+  const internalReplaceReferences = (node) => {
+    if (!node || typeof node !== 'object') return;
+
+    // Check if this MemberExpression matches a tracked property path
+    if (node.type === 'MemberExpression') {
+      const propName = node.property.name || node.property.value;
+      if (isSwizzle(propName)) {
+        // For swizzles, only replace the object part, keep the swizzle
+        internalReplaceReferences(node.object);
+        return;
+      }
+      const propertyPath = buildPropertyPath(node);
+      if (propertyPath && tempVarMap.has(propertyPath)) {
+        // Replace entire member expression with temp variable
+        Object.assign(node, {
+          type: 'Identifier',
+          name: tempVarMap.get(propertyPath)
+        });
+        return; // Don't recurse into replaced node
+      }
+    }
+
+    // Handle simple identifier replacements
+    if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
+      node.name = tempVarMap.get(node.name);
+    }
+
+    // Handle literal assignments to temp variables
+    if (node.type === 'AssignmentExpression') {
+      let leftPath = null;
+      if (node.left.type === 'Identifier') {
+        leftPath = node.left.name;
+      } else if (node.left.type === 'MemberExpression') {
+        leftPath = buildPropertyPath(node.left);
+      }
+
+      if (leftPath && tempVarMap.has(leftPath) &&
+          (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
+        // Wrap the right hand side in a strandsNode call to make sure
+        // it's not just a literal and has a type
+        node.right = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsNode'
+          },
+          arguments: [node.right]
+        };
+      }
+    }
+
+    // Recursively process all properties
+    for (const key in node) {
+      if (node.hasOwnProperty(key) && key !== 'parent') {
+        // Don't recurse into property names of non-computed member expressions
+        if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
+          continue;
+        }
+        if (Array.isArray(node[key])) {
+          node[key].forEach(internalReplaceReferences);
+        } else if (typeof node[key] === 'object') {
+          internalReplaceReferences(node[key]);
+        }
+      }
+    }
+  };
+
+  internalReplaceReferences(node);
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -111,41 +248,53 @@ const ASTCallbacks = {
   VariableDeclarator(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
     if (nodeIsUniform(node.init)) {
-      const uniformNameLiteral = {
-        type: 'Literal',
-        value: node.id.name
+      // Only inject the variable name if the first argument isn't already a string
+      if (node.init.arguments.length === 0 ||
+          node.init.arguments[0].type !== 'Literal' ||
+          typeof node.init.arguments[0].value !== 'string') {
+        const uniformNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(uniformNameLiteral);
       }
-      node.init.arguments.unshift(uniformNameLiteral);
     }
     if (nodeIsVarying(node.init)) {
-      const varyingNameLiteral = {
-        type: 'Literal',
-        value: node.id.name
+      // Only inject the variable name if the first argument isn't already a string
+      if (
+        node.init.arguments.length === 0 ||
+        node.init.arguments[0].type !== 'Literal' ||
+        typeof node.init.arguments[0].value !== 'string'
+      ) {
+        const varyingNameLiteral = {
+          type: 'Literal',
+          value: node.id.name
+        }
+        node.init.arguments.unshift(varyingNameLiteral);
+        _state.varyings[node.id.name] = varyingNameLiteral;
+      } else {
+        // Still track it as a varying even if name wasn't injected
+        _state.varyings[node.id.name] = node.init.arguments[0];
       }
-      node.init.arguments.unshift(varyingNameLiteral);
-      _state.varyings[node.id.name] = varyingNameLiteral;
     }
   },
   Identifier(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
     if (_state.varyings[node.name]
       && !ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)) {
-        node.type = 'ExpressionStatement';
-        node.expression = {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: {
-              type: 'Identifier',
-              name: node.name
-            },
-            property: {
-              type: 'Identifier',
-              name: 'getValue'
-            },
+        node.type = 'CallExpression';
+        node.callee = {
+          type: 'MemberExpression',
+          object: {
+            type: 'Identifier',
+            name: node.name
           },
-          arguments: [],
-        }
+          property: {
+            type: 'Identifier',
+            name: 'getValue'
+          },
+        };
+        node.arguments = [];
       }
     },
     // The callbacks for AssignmentExpression and BinaryExpression handle
@@ -162,13 +311,23 @@ const ASTCallbacks = {
     },
     AssignmentExpression(node, _state, ancestors) {
       if (ancestors.some(nodeIsUniform)) { return; }
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
       if (node.operator !== '=') {
         const methodName = replaceBinaryOperator(node.operator.replace('=',''));
         const rightReplacementNode = {
           type: 'CallExpression',
           callee: {
             type: 'MemberExpression',
-            object: node.left,
+            object: unsafeTypes.includes(node.left.type)
+              ? {
+                  type: 'CallExpression',
+                  callee: {
+                    type: 'Identifier',
+                    name: '__p5.strandsNode',
+                  },
+                  arguments: [node.left]
+                }
+              : node.left,
             property: {
               type: 'Identifier',
               name: methodName,
@@ -208,13 +367,12 @@ const ASTCallbacks = {
           varyingName = node.left.object.name;
         }
         // Check if it's a getValue() call: myVarying.getValue().xyz
-        else if (node.left.object.type === 'ExpressionStatement' &&
-                 node.left.object.expression?.type === 'CallExpression' &&
-                 node.left.object.expression.callee?.type === 'MemberExpression' &&
-                 node.left.object.expression.callee.property?.name === 'getValue' &&
-                 node.left.object.expression.callee.object?.type === 'Identifier' &&
-                 _state.varyings[node.left.object.expression.callee.object.name]) {
-          varyingName = node.left.object.expression.callee.object.name;
+        else if (node.left.object.type === 'CallExpression' &&
+                 node.left.object.callee?.type === 'MemberExpression' &&
+                 node.left.object.callee.property?.name === 'getValue' &&
+                 node.left.object.callee.object?.type === 'Identifier' &&
+                 _state.varyings[node.left.object.callee.object.name]) {
+          varyingName = node.left.object.callee.object.name;
         }
 
         if (varyingName) {
@@ -264,6 +422,37 @@ const ASTCallbacks = {
       }
       // Replace the binary operator with a call expression
       // in other words a call to BaseNode.mult(), .div() etc.
+      node.type = 'CallExpression';
+      node.callee = {
+        type: 'MemberExpression',
+        object: node.left,
+        property: {
+          type: 'Identifier',
+          name: replaceBinaryOperator(node.operator),
+        },
+      };
+      node.arguments = [node.right];
+    },
+    LogicalExpression(node, _state, ancestors) {
+      // Don't convert uniform default values to node methods, as
+      // they should be evaluated at runtime, not compiled.
+      if (ancestors.some(nodeIsUniform)) { return; }
+      // If the left hand side of an expression is one of these types,
+      // we should construct a node from it.
+      const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
+      if (unsafeTypes.includes(node.left.type)) {
+        const leftReplacementNode = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsNode',
+          },
+          arguments: [node.left]
+        }
+        node.left = leftReplacementNode;
+      }
+      // Replace the logical operator with a call expression
+      // in other words a call to BaseNode.or(), .and() etc.
       node.type = 'CallExpression';
       node.callee = {
         type: 'MemberExpression',
@@ -333,58 +522,76 @@ const ASTCallbacks = {
         },
         arguments: [elseFunction]
       };
+
       // Analyze which outer scope variables are assigned in any branch
       const assignedVars = new Set();
-      const analyzeBlock = (body) => {
-        if (body.type !== 'BlockStatement') return;
-        // First pass: collect variable declarations within this block
+
+      const analyzeBranch = (functionBody) => {
+        // First pass: collect all variable declarations in the branch
         const localVars = new Set();
-        for (const stmt of body.body) {
-          if (stmt.type === 'VariableDeclaration') {
-            for (const decl of stmt.declarations) {
-              if (decl.id.type === 'Identifier') {
-                localVars.add(decl.id.name);
-              }
+        ancestor(functionBody, {
+          VariableDeclarator(node, ancestors) {
+            // Skip if we're inside a block that contains strands control flow
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
+            if (node.id.type === 'Identifier') {
+              localVars.add(node.id.name);
             }
           }
-        }
-        // Second pass: find assignments to non-local variables
-        for (const stmt of body.body) {
-          if (stmt.type === 'ExpressionStatement' &&
-              stmt.expression.type === 'AssignmentExpression') {
-            const left = stmt.expression.left;
+        });
+
+        // Second pass: find assignments to non-local variables using acorn-walk
+        ancestor(functionBody, {
+          AssignmentExpression(node, ancestors) {
+            // Skip if we're inside a block that contains strands control flow
+            if (ancestors.some(statementContainsStrandsControlFlow)) return;
+
+            const left = node.left;
             if (left.type === 'Identifier') {
               // Direct variable assignment: x = value
               if (!localVars.has(left.name)) {
                 assignedVars.add(left.name);
               }
-            } else if (left.type === 'MemberExpression' &&
-                       left.object.type === 'Identifier') {
-              // Property assignment: obj.prop = value
-              if (!localVars.has(left.object.name)) {
-                assignedVars.add(left.object.name);
+            } else if (left.type === 'MemberExpression') {
+              // Property assignment: obj.prop = value or obj.a.b = value
+              const propertyPath = buildPropertyPath(left);
+              if (propertyPath) {
+                const baseName = propertyPath.split('.')[0];
+                if (!localVars.has(baseName)) {
+                  assignedVars.add(propertyPath);
+                }
               }
             }
-          } else if (stmt.type === 'BlockStatement') {
-            // Recursively analyze nested block statements
-            analyzeBlock(stmt);
           }
-        }
+        });
       };
+
       // Analyze all branches for assignments to outer scope variables
-      analyzeBlock(thenFunction.body);
-      analyzeBlock(elseFunction.body);
+      analyzeBranch(thenFunction.body);
+      analyzeBranch(elseFunction.body);
       if (assignedVars.size > 0) {
         // Add copying, reference replacement, and return statements to branch functions
         const addCopyingAndReturn = (functionBody, varsToReturn) => {
           if (functionBody.type === 'BlockStatement') {
             // Create temporary variables and copy statements
-            const tempVarMap = new Map(); // original name -> temp name
+            const tempVarMap = new Map(); // property path -> temp name
             const copyStatements = [];
-            for (const varName of varsToReturn) {
-              const tempName = `__copy_${varName}_${blockVarCounter++}`;
-              tempVarMap.set(varName, tempName);
-              // let tempName = originalVar.copy()
+            for (const varPath of varsToReturn) {
+              const parts = varPath.split('.');
+              const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+              tempVarMap.set(varPath, tempName);
+
+              // Build the member expression for the property path
+              let sourceExpr = { type: 'Identifier', name: parts[0] };
+              for (let i = 1; i < parts.length; i++) {
+                sourceExpr = {
+                  type: 'MemberExpression',
+                  object: sourceExpr,
+                  property: { type: 'Identifier', name: parts[i] },
+                  computed: false
+                };
+              }
+
+              // let tempName = propertyPath.copy()
               copyStatements.push({
                 type: 'VariableDeclaration',
                 declarations: [{
@@ -394,7 +601,7 @@ const ASTCallbacks = {
                     type: 'CallExpression',
                     callee: {
                       type: 'MemberExpression',
-                      object: { type: 'Identifier', name: varName },
+                      object: sourceExpr,
                       property: { type: 'Identifier', name: 'copy' },
                       computed: false
                     },
@@ -404,55 +611,17 @@ const ASTCallbacks = {
                 kind: 'let'
               });
             }
-            // Replace all references to original variables with temp variables
-            // and wrap literal assignments in strandsNode calls
-            const replaceReferences = (node) => {
-              if (!node || typeof node !== 'object') return;
-              if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
-                node.name = tempVarMap.get(node.name);
-              } else if (node.type === 'MemberExpression' &&
-                         node.object.type === 'Identifier' &&
-                         tempVarMap.has(node.object.name)) {
-                node.object.name = tempVarMap.get(node.object.name);
-              }
-              // Handle literal assignments to temp variables
-              if (node.type === 'AssignmentExpression' &&
-                  node.left.type === 'Identifier' &&
-                  tempVarMap.has(node.left.name) &&
-                  (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
-                // Wrap the right hand side in a strandsNode call to make sure
-                // it's not just a literal and has a type
-                node.right = {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'Identifier',
-                    name: '__p5.strandsNode'
-                  },
-                  arguments: [node.right]
-                };
-              }
-              // Recursively process all properties
-              for (const key in node) {
-                if (node.hasOwnProperty(key) && key !== 'parent') {
-                  if (Array.isArray(node[key])) {
-                    node[key].forEach(replaceReferences);
-                  } else if (typeof node[key] === 'object') {
-                    replaceReferences(node[key]);
-                  }
-                }
-              }
-            };
             // Apply reference replacement to all statements
-            functionBody.body.forEach(replaceReferences);
+            functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
             // Insert copy statements at the beginning
             functionBody.body.unshift(...copyStatements);
-            // Add return statement with temp variable names
+            // Add return statement with flat object using property paths as keys
             const returnObj = {
               type: 'ObjectExpression',
-              properties: Array.from(varsToReturn).map(varName => ({
+              properties: Array.from(varsToReturn).map(varPath => ({
                 type: 'Property',
-                key: { type: 'Identifier', name: varName },
-                value: { type: 'Identifier', name: tempVarMap.get(varName) },
+                key: { type: 'Literal', value: varPath },
+                value: { type: 'Identifier', name: tempVarMap.get(varPath) },
                 kind: 'init',
                 computed: false,
                 shorthand: false
@@ -471,17 +640,41 @@ const ASTCallbacks = {
         // Replace with a block statement
         const statements = [];
         // Make sure every assigned variable starts as a node
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side - same as left for strandsNode wrapping
+          let rightArgExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            rightArgExpr = {
+              type: 'MemberExpression',
+              object: rightArgExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
+              left: leftExpr,
               right: {
                 type: 'CallExpression',
                 callee: { type: 'Identifier', name: '__p5.strandsNode' },
-                arguments: [{ type: 'Identifier', name: varName }],
+                arguments: [rightArgExpr],
               }
             }
           });
@@ -496,19 +689,35 @@ const ASTCallbacks = {
           kind: 'const'
         });
         // 2. Assignments for each modified variable
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side: __block_2['inputs.color'] or __block_2['x']
+          const rightExpr = {
+            type: 'MemberExpression',
+            object: { type: 'Identifier', name: blockVar },
+            property: { type: 'Literal', value: varPath },
+            computed: true
+          };
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
-              right: {
-                type: 'MemberExpression',
-                object: { type: 'Identifier', name: blockVar },
-                property: { type: 'Identifier', name: varName },
-                computed: false
-              }
+              left: leftExpr,
+              right: rightExpr
             }
           });
         }
@@ -564,7 +773,7 @@ const ASTCallbacks = {
 
       // Transform for statement into strandsFor() call
       // for (init; test; update) body -> strandsFor(initCb, conditionCb, updateCb, bodyCb, initialVars)
-      
+
       // Generate unique loop variable name
       const uniqueLoopVar = `loopVar${loopVarCounter++}`;
 
@@ -683,46 +892,45 @@ const ASTCallbacks = {
 
       // Analyze which outer scope variables are assigned in the loop body
       const assignedVars = new Set();
-      const analyzeBlock = (body, parentLocalVars = new Set()) => {
-        if (body.type !== 'BlockStatement') return;
 
-        // First pass: collect variable declarations within this block
-        const localVars = new Set([...parentLocalVars]);
-        for (const stmt of body.body) {
-          if (stmt.type === 'VariableDeclaration') {
-            for (const decl of stmt.declarations) {
-              if (decl.id.type === 'Identifier') {
-                localVars.add(decl.id.name);
+      // First pass: collect all variable declarations in the body
+      const localVars = new Set();
+      ancestor(bodyFunction.body, {
+        VariableDeclarator(node, ancestors) {
+          // Skip if we're inside a block that contains strands control flow
+          if (ancestors.some(statementContainsStrandsControlFlow)) return;
+          if (node.id.type === 'Identifier') {
+            localVars.add(node.id.name);
+          }
+        }
+      });
+
+      // Second pass: find assignments to non-local variables using acorn-walk
+      ancestor(bodyFunction.body, {
+        AssignmentExpression(node, ancestors) {
+          // Skip if we're inside a block that contains strands control flow
+          if (ancestors.some(statementContainsStrandsControlFlow)) {
+            return
+          }
+
+          const left = node.left;
+          if (left.type === 'Identifier') {
+            // Direct variable assignment: x = value
+            if (!localVars.has(left.name)) {
+              assignedVars.add(left.name);
+            }
+          } else if (left.type === 'MemberExpression') {
+            // Property assignment: obj.prop = value or obj.a.b = value
+            const propertyPath = buildPropertyPath(left);
+            if (propertyPath) {
+              const baseName = propertyPath.split('.')[0];
+              if (!localVars.has(baseName)) {
+                assignedVars.add(propertyPath);
               }
             }
           }
         }
-
-        // Second pass: find assignments to non-local variables
-        for (const stmt of body.body) {
-          if (stmt.type === 'ExpressionStatement' &&
-              stmt.expression.type === 'AssignmentExpression') {
-            const left = stmt.expression.left;
-            if (left.type === 'Identifier') {
-              // Direct variable assignment: x = value
-              if (!localVars.has(left.name)) {
-                assignedVars.add(left.name);
-              }
-            } else if (left.type === 'MemberExpression' &&
-                       left.object.type === 'Identifier') {
-              // Property assignment: obj.prop = value (includes swizzles)
-              if (!localVars.has(left.object.name)) {
-                assignedVars.add(left.object.name);
-              }
-            }
-          } else if (stmt.type === 'BlockStatement') {
-            // Recursively analyze nested block statements, passing down local vars
-            analyzeBlock(stmt, localVars);
-          }
-        }
-      };
-
-      analyzeBlock(bodyFunction.body);
+      });
 
       if (assignedVars.size > 0) {
         // Add copying, reference replacement, and return statements similar to if statements
@@ -731,9 +939,22 @@ const ASTCallbacks = {
             const tempVarMap = new Map();
             const copyStatements = [];
 
-            for (const varName of varsToReturn) {
-              const tempName = `__copy_${varName}_${blockVarCounter++}`;
-              tempVarMap.set(varName, tempName);
+            for (const varPath of varsToReturn) {
+              const parts = varPath.split('.');
+              const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+              tempVarMap.set(varPath, tempName);
+
+              // Build the member expression for vars.propertyPath
+              // e.g., vars.inputs.color or vars.x
+              let sourceExpr = { type: 'Identifier', name: 'vars' };
+              for (const part of parts) {
+                sourceExpr = {
+                  type: 'MemberExpression',
+                  object: sourceExpr,
+                  property: { type: 'Identifier', name: part },
+                  computed: false
+                };
+              }
 
               copyStatements.push({
                 type: 'VariableDeclaration',
@@ -744,12 +965,7 @@ const ASTCallbacks = {
                     type: 'CallExpression',
                     callee: {
                       type: 'MemberExpression',
-                      object: {
-                        type: 'MemberExpression',
-                        object: { type: 'Identifier', name: 'vars' },
-                        property: { type: 'Identifier', name: varName },
-                        computed: false
-                      },
+                      object: sourceExpr,
                       property: { type: 'Identifier', name: 'copy' },
                       computed: false
                     },
@@ -760,34 +976,16 @@ const ASTCallbacks = {
               });
             }
 
-            // Replace references to original variables with temp variables
-            const replaceReferences = (node) => {
-              if (!node || typeof node !== 'object') return;
-              if (node.type === 'Identifier' && tempVarMap.has(node.name)) {
-                node.name = tempVarMap.get(node.name);
-              }
-
-              for (const key in node) {
-                if (node.hasOwnProperty(key) && key !== 'parent') {
-                  if (Array.isArray(node[key])) {
-                    node[key].forEach(replaceReferences);
-                  } else if (typeof node[key] === 'object') {
-                    replaceReferences(node[key]);
-                  }
-                }
-              }
-            };
-
-            functionBody.body.forEach(replaceReferences);
+            functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
             functionBody.body.unshift(...copyStatements);
 
-            // Add return statement
+            // Add return statement with flat object using property paths as keys
             const returnObj = {
               type: 'ObjectExpression',
-              properties: Array.from(varsToReturn).map(varName => ({
+              properties: Array.from(varsToReturn).map(varPath => ({
                 type: 'Property',
-                key: { type: 'Identifier', name: varName },
-                value: { type: 'Identifier', name: tempVarMap.get(varName) },
+                key: { type: 'Literal', value: varPath },
+                value: { type: 'Identifier', name: tempVarMap.get(varPath) },
                 kind: 'init',
                 computed: false,
                 shorthand: false
@@ -807,32 +1005,33 @@ const ASTCallbacks = {
         const blockVar = `__block_${blockVarCounter++}`;
         const statements = [];
 
-        // Create initial vars object from assigned variables
-        const initialVarsProperties = [];
-        for (const varName of assignedVars) {
-          initialVarsProperties.push({
-            type: 'Property',
-            key: { type: 'Identifier', name: varName },
-            value: {
-              type: 'CallExpression',
-              callee: {
-                type: 'Identifier',
-                name: '__p5.strandsNode',
-              },
-              arguments: [
-                { type: 'Identifier', name: varName },
-              ],
-            },
-            kind: 'init',
-            method: false,
-            shorthand: false,
-            computed: false
-          });
-        }
-
         const initialVarsObject = {
           type: 'ObjectExpression',
-          properties: initialVarsProperties
+          properties: Array.from(assignedVars).map(varPath => {
+            const parts = varPath.split('.');
+            let expr = { type: 'Identifier', name: parts[0] };
+            for (let i = 1; i < parts.length; i++) {
+              expr = {
+                type: 'MemberExpression',
+                object: expr,
+                property: { type: 'Identifier', name: parts[i] },
+                computed: false
+              };
+            }
+            const wrappedExpr = {
+              type: 'CallExpression',
+              callee: { type: 'Identifier', name: '__p5.strandsNode' },
+              arguments: [expr]
+            };
+            return {
+              type: 'Property',
+              key: { type: 'Literal', value: varPath },
+              value: wrappedExpr,
+              kind: 'init',
+              computed: false,
+              shorthand: false
+            };
+          })
         };
 
         // Create the strandsFor call
@@ -856,19 +1055,38 @@ const ASTCallbacks = {
         });
 
         // Add assignments back to original variables
-        for (const varName of assignedVars) {
+        for (const varPath of assignedVars) {
+          const parts = varPath.split('.');
+
+          // Build left side: inputs.color or just x
+          let leftExpr = { type: 'Identifier', name: parts[0] };
+          for (let i = 1; i < parts.length; i++) {
+            leftExpr = {
+              type: 'MemberExpression',
+              object: leftExpr,
+              property: { type: 'Identifier', name: parts[i] },
+              computed: false
+            };
+          }
+
+          // Build right side: __block_2.inputs.color or __block_2.x
+          let rightExpr = { type: 'Identifier', name: blockVar };
+          for (const part of parts) {
+            rightExpr = {
+              type: 'MemberExpression',
+              object: rightExpr,
+              property: { type: 'Identifier', name: part },
+              computed: false
+            };
+          }
+
           statements.push({
             type: 'ExpressionStatement',
             expression: {
               type: 'AssignmentExpression',
               operator: '=',
-              left: { type: 'Identifier', name: varName },
-              right: {
-                type: 'MemberExpression',
-                object: { type: 'Identifier', name: blockVar },
-                property: { type: 'Identifier', name: varName },
-                computed: false
-              }
+              left: leftExpr,
+              right: rightExpr
             }
           });
         }
@@ -928,7 +1146,7 @@ const ASTCallbacks = {
     // Reset counters at the start of each transpilation
     blockVarCounter = 0;
     loopVarCounter = 0;
-    
+
     const ast = parse(sourceString, {
       ecmaVersion: 2021,
       locations: srcLocations
@@ -941,14 +1159,17 @@ const ASTCallbacks = {
     // Second pass: transform if/for statements in post-order using recursive traversal
     const postOrderControlFlowTransform = {
       IfStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.test) c(node.test, state);
         if (node.consequent) c(node.consequent, state);
         if (node.alternate) c(node.alternate, state);
         // Then apply the transformation to this node
         ASTCallbacks.IfStatement(node, state, []);
+        state.inControlFlow--;
       },
       ForStatement(node, state, c) {
+        state.inControlFlow++;
         // First recursively process children
         if (node.init) c(node.init, state);
         if (node.test) c(node.test, state);
@@ -956,23 +1177,57 @@ const ASTCallbacks = {
         if (node.body) c(node.body, state);
         // Then apply the transformation to this node
         ASTCallbacks.ForStatement(node, state, []);
+        state.inControlFlow--;
+      },
+      ReturnStatement(node, state, c) {
+        if (!state.inControlFlow) return;
+        // Convert return statement to strandsEarlyReturn call
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'CallExpression',
+          callee: {
+            type: 'Identifier',
+            name: '__p5.strandsEarlyReturn'
+          },
+          arguments: node.argument ? [node.argument] : []
+        };
+        delete node.argument;
       }
     };
-    recursive(ast, { varyings: {} }, postOrderControlFlowTransform);
+    recursive(ast, { varyings: {}, inControlFlow: 0 }, postOrderControlFlowTransform);
     const transpiledSource = escodegen.generate(ast);
     const scopeKeys = Object.keys(scope);
-    const internalStrandsCallback = new Function(
-        // Create a parameter called __p5, not just p5, because users of instance mode
-        // may pass in a variable called p5 as a scope variable. If we rely on a variable called
-        // p5, then the scope variable called p5 might accidentally override internal function
-        // calls to p5 static methods.
-      '__p5',
-      ...scopeKeys,
-      transpiledSource
-      .slice(
-        transpiledSource.indexOf('{') + 1,
-        transpiledSource.lastIndexOf('}')
-      ).replaceAll(';', '')
-    );
-    return () => internalStrandsCallback(p5, ...scopeKeys.map(key => scope[key]));
+    const match = /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
+      .exec(transpiledSource);
+    if (!match) {
+      console.log(transpiledSource);
+      throw new Error('Could not parse p5.strands function!');
+    }
+    const params = match[1].split(/,\s*/).filter(param => !!param.trim());
+    let paramVals, paramNames;
+    if (params.length > 0) {
+      paramNames = params;
+      paramVals = [scope];
+    } else {
+      paramNames = scopeKeys;
+      paramVals = scopeKeys.map(key => scope[key]);
+    }
+    const body = match[2];
+    try {
+      const internalStrandsCallback = new Function(
+          // Create a parameter called __p5, not just p5, because users of instance mode
+          // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+          // p5, then the scope variable called p5 might accidentally override internal function
+          // calls to p5 static methods.
+        '__p5',
+        ...paramNames,
+        body,
+      );
+      return () => internalStrandsCallback(p5, ...paramVals);
+    } catch (e) {
+      console.error(e);
+      console.log(paramNames);
+      console.log(body);
+      throw new Error('Error transpiling p5.strands callback!');
+    }
   }

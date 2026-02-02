@@ -24,6 +24,7 @@ function textCore(p5, fn) {
   const LinebreakRe = /\r?\n/g;
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
+  const SpecialCharRe = /[^\x00-\x7F]/; // Non-ascii
   const TabsRe = /\t/g;
 
   const FontVariationSettings = 'fontVariationSettings';
@@ -2432,7 +2433,7 @@ function textCore(p5, fn) {
     let parts = familyStr.split(CommaDelimRe);
     let family = parts.map(part => {
       part = part.trim();
-      if (part.indexOf(' ') > -1 && !QuotedRe.test(part)) {
+      if ((part.indexOf(' ') > -1 || SpecialCharRe.test(part)) && !QuotedRe.test(part)) {
         part = `"${part}"`; // quote font names with spaces
       }
       return part;

@@ -107,6 +107,7 @@
 
       p.draw = function () {
         p.clear();
+        p.rotateY(p.millis() * 0.001);
         p.push();
         //p.clip(() => p.rect(-50, -50, 200, 200));
         /*p.orbitControl();

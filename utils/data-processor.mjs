@@ -70,6 +70,8 @@ export function processData(rawData, strategy) {
     const entryForTagValue = entryForTag?.description;
     const file = entry.context?.file;
     let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
+    module = entry.tags?.find(tag => tag.title === 'module')?.description || module;
+    submodule = entry.tags?.find(tag => tag.title === 'submodule')?.description || submodule;
     let memberof = entry.memberof;
     if (memberof === 'fn') memberof = 'p5';
     if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
@@ -148,7 +150,8 @@ export function processData(rawData, strategy) {
         alt: getAlt(entry),
         module,
         submodule,
-        class: forEntry || 'p5'
+        class: forEntry || 'p5',
+        beta: entry.tags?.some(t => t.title === 'beta') || undefined,
       };
 
       processed.classitems.push(item);
@@ -265,8 +268,9 @@ export function processData(rawData, strategy) {
         },
         class: className,
         static: entry.scope === 'static' && 1,
-        module,
-        submodule
+        module: prevItem?.module ?? module,
+        submodule: prevItem?.submodule ?? submodule,
+        beta: prevItem?.beta || entry.tags?.some(t => t.title === 'beta') || undefined,
       };
 
       processed.classMethods[className] = processed.classMethods[className] || {};

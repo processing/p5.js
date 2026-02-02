@@ -281,7 +281,7 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
               "You're trying to use a number as the data for a texture." +
               "Please use a texture.",
           );
-          return this;
+          return;
         }
         gl.activeTexture(data);
         gl.uniform1i(location, data);
@@ -289,9 +289,6 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
         uniform.texture = data instanceof Texture ? data : getTexture(data);
         gl.uniform1i(location, uniform.samplerIndex);
-        if (uniform.texture.src.gifProperties) {
-          uniform.texture.src._animateGif(this._pInst);
-        }
       }
       break;
     case gl.SAMPLER_CUBE:

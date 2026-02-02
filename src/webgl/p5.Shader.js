@@ -40,6 +40,8 @@ class Shader {
       vertex: options.vertex || {},
       fragment: options.fragment || {},
 
+      hookAliases: options.hookAliases || {},
+
       // Stores whether or not the hook implementation has been modified
       // from the default. This is supplied automatically by calling
       // yourShader.modify(...).
@@ -239,8 +241,13 @@ class Shader {
    * p5.strands functions are special, since they get turned into a shader instead of being
    * run like the rest of your code. They only have access to p5.js functions, and variables
    * you declare inside the `modify` callback. If you need access to local variables, you
-   * can pass them into `modify` with an optional second parameter, `variables`. If you are
+   * can pass them into `modify` with an optional second parameter, `variables`. These will
+   * then be passed into your function as an argument. If you are
    * using instance mode, you will need to pass your sketch object in this way.
+   *
+   * If you are also using a build system for your sketch, variable names may be changed as
+   * part of minification. When creating a uniform, you can pass the name of the uniform in
+   * as a first parameter to ensure it doesn't get changed.
    *
    * ```js example
    * new p5((sketch) => {
@@ -248,9 +255,10 @@ class Shader {
    *
    *   sketch.setup = function() {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
-   *     myShader = sketch.baseMaterialShader().modify(() => {
+   *     myShader = sketch.baseMaterialShader().modify(({ sketch }) => {
+   *       let b = uniformFloat('b');
    *       sketch.getPixelInputs((inputs) => {
-   *         inputs.color = [inputs.texCoord, 0, 1];
+   *         inputs.color = [inputs.texCoord, b, 1];
    *         return inputs;
    *       });
    *     }, { sketch });
@@ -259,6 +267,7 @@ class Shader {
    *   sketch.draw = function() {
    *     sketch.background(255);
    *     sketch.noStroke();
+   *     myShader.setUniform('b', 0.5);
    *     sketch.shader(myShader); // Apply the custom shader
    *     sketch.plane(sketch.width, sketch.height); // Draw a plane with the shader applied
    *   }
@@ -391,6 +400,7 @@ class Shader {
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
+      hookAliases: Object.assign({}, this.hooks.hookAliases, newHooks.hookAliases || {}),
       modified: {
         vertex: modifiedVertex,
         fragment: modifiedFragment
