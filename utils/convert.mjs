@@ -9,9 +9,17 @@ const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
 
-// Strategy for HTML documentation output (maintains exact convert.mjs behavior)
+// Generate documentation used in the p5.js reference. This data will get read in
+// the p5.js-website repo: https://github.com/processing/p5.js-website/
 const htmlStrategy = {
-  shouldSkipEntry: () => false, // Don't skip anything (including Foundation)
+  shouldSkipEntry: (entry) =>
+    // Skip static methods on p5.Vector for now because the names clash with
+    // the non static versions
+    entry.scope === 'static' &&
+    entry.memberof === 'Vector' &&
+    ['add', 'sub', 'mult', 'div', 'copy', 'rem', 'rotate', 'dot', 'cross', 'dist', 'lerp', 'slerp',
+    'mag', 'magSq', 'normalize', 'limit', 'setMag', 'heading', 'angleBetween', 'reflect',
+    'array', 'equals'].includes(entry.name),
   
   processDescription: (desc) => descriptionString(desc),
   
@@ -161,7 +169,7 @@ function cleanUpClassItems(data) {
 function buildParamDocs(docs) {
   let newClassItems = {};
   // the fields we need—note that `name` and `class` are needed at this step because it's used to group classitems together. They will be removed later in cleanUpClassItems.
-  let allowed = new Set(['name', 'class', 'params', 'overloads']);
+  let allowed = new Set(['name', 'class', 'params', 'overloads', 'beta']);
 
   for (let classitem of docs.classitems) {
     // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case

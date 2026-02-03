@@ -164,7 +164,7 @@ export function memberAccessNode(strandsContext, parentNode, componentNode, memb
 }
 
 export function structInstanceNode(strandsContext, structTypeInfo, identifier, dependsOn) {
-  const { cfg, dag, } = strandsContext;
+  const { cfg, dag } = strandsContext;
   if (dependsOn.length === 0) {
     for (const prop of structTypeInfo.properties) {
       const typeInfo = prop.dataType;
@@ -202,7 +202,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
   let calculatedDimensions = 0;
   let originalNodeID = null;
   for (const dep of inputs.flat(Infinity)) {
-    if (dep instanceof StrandsNode) {
+    if (dep && dep.isStrandsNode) {
       const node = DAG.getNodeDataFromID(dag, dep.id);
       originalNodeID = dep.id;
       baseType = node.baseType;
