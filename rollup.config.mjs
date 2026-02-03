@@ -36,7 +36,7 @@ const bundleSize = (name, sourcemap) => {
   });
 };
 
-const modules = ['math'];
+const modules = ['webgpu']; // TODO: also generate math build
 const generateModuleBuild = () => {
   return modules.map(module => {
     return {
@@ -195,7 +195,6 @@ export default [
     },
     external: /node_modules/,
     plugins
-  }
-  // NOTE: comment to NOT build standalone math module
-  // ...generateModuleBuild()
+  },
+  ...generateModuleBuild()
 ];

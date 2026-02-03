@@ -3540,7 +3540,7 @@ class Vector {
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
-   * @return {Number}     cross product.
+   * @return {p5.Vector}     cross product.
    */
   static cross(v1, v2) {
     return v1.cross(v2);
