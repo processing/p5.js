@@ -1126,7 +1126,7 @@ function rendererWebGPU(p5, fn) {
           for (const bufferInfo of bufferGroup.buffersInUse.keys()) {
             bufferGroup.bufferPool.push(bufferInfo);
           }
-          bufferGroup.currentBuffer = null;
+          // bufferGroup.currentBuffer = null;
           bufferGroup.buffersInUse.clear();
         }
       }
@@ -1506,16 +1506,17 @@ function rendererWebGPU(p5, fn) {
         const currentData = fullUniform._cachedData;
         const cachedOffset = fullUniform.offset;
 
+        // Note: intentionally using == instead of === below
         if (fullUniform.baseType === 'u32' || fullUniform.baseType === 'i32') {
           if (fullUniform.size === 4) {
             // Single value
-            if (cachedDataView.getUint32(cachedOffset, true) !== currentData) {
+            if (cachedDataView.getUint32(cachedOffset, true) != currentData) {
               return true;
             }
           } else {
             // Array
             for (let i = 0; i < currentData.length; i++) {
-              if (cachedDataView.getUint32(cachedOffset + i * 4, true) !== currentData[i]) {
+              if (cachedDataView.getUint32(cachedOffset + i * 4, true) != currentData[i]) {
                 return true;
               }
             }
@@ -1523,14 +1524,14 @@ function rendererWebGPU(p5, fn) {
         } else {
           if (fullUniform.size === 4) {
             // Single float
-            if (cachedData[cachedOffset / 4] !== currentData) {
+            if (cachedData[cachedOffset / 4] != currentData) {
               return true;
             }
           } else if (currentData !== undefined) {
             // Float array
             const floatOffset = cachedOffset / 4;
             for (let i = 0; i < currentData.length; i++) {
-              if (cachedData[floatOffset + i] !== currentData[i]) {
+              if (cachedData[floatOffset + i] != currentData[i]) {
                 return true;
               }
             }
