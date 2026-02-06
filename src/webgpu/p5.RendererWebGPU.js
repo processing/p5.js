@@ -37,7 +37,8 @@ function rendererWebGPU(p5, fn) {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt)
 
-      this.renderPass = {};
+      this.activeRenderPass = null;
+      this.activeRenderPassEncoder = null;
 
       this.samplers = new Map();
 
@@ -204,6 +205,66 @@ function rendererWebGPU(p5, fn) {
       return this.currentCanvasColorTextureView;
     }
 
+    _beginActiveRenderPass() {
+      if (this.activeRenderPass) return;
+
+      // Use framebuffer texture if active, otherwise use canvas texture
+      const activeFramebuffer = this.activeFramebuffer();
+
+      const colorAttachment = {
+        view: activeFramebuffer
+          ? (activeFramebuffer.aaColorTexture
+              ? activeFramebuffer.aaColorTextureView
+              : activeFramebuffer.colorTextureView)
+          : this._getCanvasColorTextureView(),
+        loadOp: "load",
+        storeOp: "store",
+        // If using multisampled texture, resolve to non-multisampled texture
+        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
+          ? activeFramebuffer.colorTextureView
+          : undefined,
+      };
+
+      // Use framebuffer depth texture if active, otherwise use canvas depth texture
+      const depthTextureView = activeFramebuffer
+        ? (activeFramebuffer.aaDepthTexture
+            ? activeFramebuffer.aaDepthTextureView
+            : activeFramebuffer.depthTextureView)
+        : this.depthTextureView;
+      const renderPassDescriptor = {
+        colorAttachments: [colorAttachment],
+        depthStencilAttachment: depthTextureView
+          ? {
+              view: depthTextureView,
+              depthLoadOp: "load",
+              depthStoreOp: "store",
+              depthClearValue: 1.0,
+              stencilLoadOp: "load",
+              stencilStoreOp: "store",
+              depthReadOnly: false,
+              stencilReadOnly: false,
+            }
+          : undefined,
+      };
+      const commandEncoder = this.device.createCommandEncoder();
+      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+      this.activeRenderPassEncoder = commandEncoder;
+      this.activeRenderPass = passEncoder;
+    }
+
+    _finishActiveRenderPass() {
+      if (!this.activeRenderPass) return;
+
+      const commandEncoder = this.activeRenderPassEncoder;
+      const passEncoder = this.activeRenderPass;
+      passEncoder.end();
+
+      // Store the command encoder for later submission
+      this._pendingCommandEncoders.push(commandEncoder.finish());
+      this.activeRenderPassEncoder = null;
+      this.activeRenderPass = null;
+    }
+
     clear(...args) {
       const _r = args[0] || 0;
       const _g = args[1] || 0;
@@ -214,6 +275,8 @@ function rendererWebGPU(p5, fn) {
       if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
         this._frameState = FRAME_STATE.UNPROMOTED;
       }
+
+      this._finishActiveRenderPass();
 
       const commandEncoder = this.device.createCommandEncoder();
 
@@ -269,6 +332,7 @@ function rendererWebGPU(p5, fn) {
      * occlude anything subsequently drawn.
      */
     clearDepth(depth = 1) {
+      this._finishActiveRenderPass();
       const commandEncoder = this.device.createCommandEncoder();
 
       // Use framebuffer texture if active, otherwise use canvas texture
@@ -359,7 +423,6 @@ function rendererWebGPU(p5, fn) {
       const loc = attr.location;
       if (!this.registerEnabled.has(loc)) {
         // TODO
-        // this.renderPass.setVertexBuffer(loc, buffer);
         this.registerEnabled.add(loc);
       }
     }
@@ -833,6 +896,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _resetBuffersBeforeDraw() {
+      this._finishActiveRenderPass();
       // Set state to PENDING - we'll decide on first draw
       this._frameState = FRAME_STATE.PENDING;
 
@@ -1133,6 +1197,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     flushDraw() {
+      this._finishActiveRenderPass();
       // Only submit if we actually had any draws
       if (this._hasPendingDraws) {
         // Create a copy of pending command encoders
@@ -1255,48 +1320,8 @@ function rendererWebGPU(p5, fn) {
         this._promoteToFramebufferWithoutCopy();
       }
 
-      const commandEncoder = this.device.createCommandEncoder();
-
-      // Use framebuffer texture if active, otherwise use canvas texture
-      const activeFramebuffer = this.activeFramebuffer();
-
-      const colorAttachment = {
-        view: activeFramebuffer
-          ? (activeFramebuffer.aaColorTexture
-              ? activeFramebuffer.aaColorTextureView
-              : activeFramebuffer.colorTextureView)
-          : this._getCanvasColorTextureView(),
-        loadOp: "load",
-        storeOp: "store",
-        // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
-          ? activeFramebuffer.colorTextureView
-          : undefined,
-      };
-
-      // Use framebuffer depth texture if active, otherwise use canvas depth texture
-      const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
-        : this.depthTextureView;
-      const renderPassDescriptor = {
-        colorAttachments: [colorAttachment],
-        depthStencilAttachment: depthTextureView
-          ? {
-              view: depthTextureView,
-              depthLoadOp: "load",
-              depthStoreOp: "store",
-              depthClearValue: 1.0,
-              stencilLoadOp: "load",
-              stencilStoreOp: "store",
-              depthReadOnly: false,
-              stencilReadOnly: false,
-            }
-          : undefined,
-      };
-
-      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+      this._beginActiveRenderPass();
+      const passEncoder = this.activeRenderPass;
       const currentShader = this._curShader;
       passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
 
@@ -1438,17 +1463,12 @@ function rendererWebGPU(p5, fn) {
         passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
       }
 
-      passEncoder.end();
-
-      // Store the command encoder for later submission
-      this._pendingCommandEncoders.push(commandEncoder.finish());
-
       // Mark that we have pending draws that need submission
       this._hasPendingDraws = true;
 
-      if (this._pendingCommandEncoders.length > 50) {
+      /*if (this._pendingCommandEncoders.length > 50) {
         this.flushDraw();
-      }
+      }*/
     }
 
     //////////////////////////////////////////////
@@ -2063,6 +2083,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _clearClipBuffer() {
+      this._finishActiveRenderPass();
       const commandEncoder = this.device.createCommandEncoder();
 
       const activeFramebuffer = this.activeFramebuffer();
@@ -2643,6 +2664,7 @@ ${hookUniformFields}}
     }
 
     _clearFramebufferTextures(framebuffer) {
+      this._finishActiveRenderPass();
       const commandEncoder = this.device.createCommandEncoder();
 
       // Clear the color texture (and multisampled texture if it exists)
