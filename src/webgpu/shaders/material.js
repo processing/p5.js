@@ -3,7 +3,7 @@ const uniforms = `
 struct CameraUniforms {
   uViewMatrix: mat4x4<f32>,
   uProjectionMatrix: mat4x4<f32>,
-  uCameraRotation: mat3x3<f32>,
+  uCameraNormalMatrix: mat3x3<f32>,
 }
 
 // Group 2: Model Transform
@@ -11,7 +11,6 @@ struct ModelUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
   uModelNormalMatrix: mat3x3<f32>,
-  uCameraNormalMatrix: mat3x3<f32>,
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   uModelViewMatrix: mat4x4<f32>,
@@ -115,7 +114,7 @@ fn main(input: VertexInput) -> VertexOutput {
 // @p5 ifdef Vertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
   inputs.position = (camera.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = model.uCameraNormalMatrix * inputs.normal;
+  inputs.normal = camera.uCameraNormalMatrix * inputs.normal;
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   // Apply both at once
@@ -222,7 +221,7 @@ fn mapTextureToNormal(v: vec3<f32>) -> vec2<f32> {
 fn calculateImageDiffuse(vNormal: vec3<f32>, vViewPosition: vec3<f32>, metallic: f32) -> vec3<f32> {
   // make 2 seperate builds
   let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);  // hardcoded world camera position
-  let worldNormal = normalize(vNormal * camera.uCameraRotation);
+  let worldNormal = normalize(vNormal * camera.uCameraNormalMatrix);
   let newTexCoord = mapTextureToNormal(worldNormal);
   let texture = textureSample(environmentMapDiffused, environmentMapDiffused_sampler, newTexCoord);
   // this is to make the darker sections more dark
@@ -234,7 +233,7 @@ fn calculateImageSpecular(vNormal: vec3<f32>, vViewPosition: vec3<f32>, shinines
   let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);
   let worldNormal = normalize(vNormal);
   let lightDirection = normalize(vViewPosition - worldCameraPosition);
-  let R = reflect(lightDirection, worldNormal) * camera.uCameraRotation;
+  let R = reflect(lightDirection, worldNormal) * camera.uCameraNormalMatrix;
   let newTexCoord = mapTextureToNormal(R);
 
   // In p5js the range of shininess is >= 1,

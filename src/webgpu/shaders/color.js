@@ -5,6 +5,7 @@ struct CameraUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uViewMatrix: mat4x4<f32>,
 // @p5 endif
+  uCameraNormalMatrix: mat3x3<f32>,
 }
 
 // Group 2: Model Transform
@@ -12,7 +13,6 @@ struct ModelUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
   uModelNormalMatrix: mat3x3<f32>,
-  uCameraNormalMatrix: mat3x3<f32>,
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   uModelViewMatrix: mat4x4<f32>,
@@ -80,7 +80,7 @@ fn main(input: VertexInput) -> VertexOutput {
 // @p5 ifdef Vertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
   inputs.position = (camera.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = model.uCameraNormalMatrix * inputs.normal;
+  inputs.normal = camera.uCameraNormalMatrix * inputs.normal;
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   // Apply both at once
