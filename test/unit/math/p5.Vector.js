@@ -398,7 +398,7 @@ suite('p5.Vector', function () {
 
   suite('add()', function () {
     beforeEach(function () {
-      v = new mockP5.Vector();
+      v = new mockP5.Vector(0, 0, 0);
     });
 
     suite('with p5.Vector', function () {
@@ -1370,7 +1370,7 @@ suite('p5.Vector', function () {
       expect(v.lerp()).to.eql(v);
     });
 
-    // PEND: ADD BACK IN
+    // TODO PEND: ADD BACK IN
     // suite('with p5.Vector', function() {
     //   test('should call lerp with 4 arguments', function() {
     //     spyOn(v, 'lerp').andCallThrough();
@@ -1956,12 +1956,12 @@ suite('p5.Vector', function () {
       v = new mockP5.Vector();
     });
 
-    test('should set values to [0,0,0] if values array is empty', function () {
+    test('should NOT set values to [0,0,0] if values array is empty', function () {
       v.values = [];
       assert.equal(v.x, 0);
       assert.equal(v.y, 0);
       assert.equal(v.z, 0);
-      assert.equal(v.dimensions, 2);
+      assert.equal(v.dimensions, 0);
     });
   });
   suite('get value', function () {

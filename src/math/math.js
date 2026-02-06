@@ -100,11 +100,6 @@ function math(p5, fn) {
    * </div>
    */
   fn.createVector = function (x, y, z) {
-    if (arguments.length === 0) {
-      p5._friendlyError(
-        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
-      );
-    }
     if (this instanceof p5) {
       return new p5.Vector(
         this._fromRadians.bind(this),

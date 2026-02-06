@@ -5,31 +5,34 @@
 
 import * as constants from '../core/constants';
 
-/// HELPERS FOR REMAINDER METHOD
-const calculateRemainder2D = function (xComponent, yComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
-  }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  return this;
-};
+/// HELPER FOR SMALLER DIMENSION PRIORITY LOGIC.
+/// Pending implementation as decorator.
+const smallerDimensionPriorityHelper = function(dimOther, dimSelf) {
+  const resultDimension = Math.min(dimOther, dimSelf);
+  if (dimOther != dimSelf) {
 
-const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
+    console.warn(
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.',
+    );
   }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  if (zComponent !== 0) {
-    this.z = this.z % zComponent;
-  }
-  return this;
-};
+  return resultDimension
+}
 
 class Vector {
+  /**
+   * The values of the N-dimensional vector.
+  *
+   * This array of numbers that represents the vector.
+   * Each number in the array corresponds to a different component of the vector,
+   * like its position in different directions (e.g., x, y, z).
+   * 
+   * You can update the values of the entire vector to a new set of values.
+   * You need to provide an array of numbers, where each number represents a component
+   * of the vector (e.g., x, y, z). The length of the array will become the number of
+   * dimensions of the vector.
+   *
+   * @type {Array<number>} The array of values representing the vector.
+   */
   values = [];
 
   // This is how it comes in with createVector()
@@ -41,44 +44,18 @@ class Vector {
       this._toRadians = args[1];
       args = args.slice(2);
     }
+
+    // TODO Implement using decorator API to reduce duplication.
+    // Should use the same check as patchVector on 'createVector'
+    if(args.length === 0){
+      console.warn(
+        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
+      );
+      args = [0, 0, 0]
+    }
+
     this.values = args;
   }
-
-  // /**
-  //  * Gets the values of the N-dimensional vector.
-  //  *
-  //  * This method returns an array of numbers that represent the vector.
-  //  * Each number in the array corresponds to a different component of the vector,
-  //  * like its position in different directions (e.g., x, y, z).
-  //  *
-  //  * @returns {Array<number>} The array of values representing the vector.
-  //  */
-  // get values() {
-  //   return this._values;
-  // }
-
-  // /**
-  //  * Sets the values of the vector.
-  //  *
-  //  * This method allows you to update the entire vector with a new set of values.
-  //  * You need to provide an array of numbers, where each number represents a component
-  //  * of the vector (e.g., x, y, z). The length of the array should match the number of
-  //  * dimensions of the vector. If the array is shorter, the missing components will be
-  //  * set to 0. If the array is longer, the extra values will be ignored.
-  //  *
-  //  * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
-  //  *
-  //  */
-  // set values(newValues) {
-  //   let dimensions = newValues.length;
-  //   if (dimensions === 0) {
-  //     this.dimensions = 2;
-  //     this._values = [0, 0, 0];
-  //   } else {
-  //     this.dimensions = dimensions;
-  //     this._values = newValues.slice();
-  //   }
-  // }
 
   get dimensions(){
     return this.values.length;
@@ -377,6 +354,8 @@ class Vector {
     }
   }
 
+
+
   /**
    * Adds to a vector's components.
    *
@@ -512,13 +491,17 @@ class Vector {
    * @chainable
    */
   add(...args) {
+
+    // TODO Implement using decorator API to reduce duplication.
     if (args[0] instanceof Vector) {
       args = args[0].values;
     } else if (Array.isArray(args[0])) {
       args = args[0];
+    } else if (args.length === 0) {
+      return this;
     }
 
-    const resultDimension = Math.min(args.length, this.dimensions);
+    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
     this.values = this.values.reduce((acc, v, i) => {
       if(i < resultDimension) acc[i] = this.values[i] + args[i];
       return acc;
@@ -526,6 +509,8 @@ class Vector {
 
     return this;
   }
+
+
 
   /**
    * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
@@ -648,73 +633,37 @@ class Vector {
    * @chainable
    */
   rem(...args) {
+
+    // TODO Implement using decorator API to reduce duplication.
+
     if (args[0] instanceof Vector) {
       args = args[0].values;
     } else if (Array.isArray(args[0])) {
       args = args[0];
+    } else if (args.length === 1) {
+      args = new Array(this.dimensions).fill(args[0]);
+    } else if (args.length === 0) {
+      return this;
     }
 
-    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
+    if(!args.every(v => Number.isFinite(v))){
+      console.warn(
+       'p5.Vector.prototype.rem',
+       'Arguments contain non-finite numbers'
+      );
+      return this;
+    };
+    
+    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
 
-    const resultDimension = Math.min(args.length, this.dimensions);
     this.values = this.values.reduce((acc, v, i) => {
-      if(i < resultDimension) acc[i] = this.values[i] % args[i];
+      // Extra check for non empty operand
+      if(i < resultDimension && args[i] > 0) acc[i] = this.values[i] % args[i];
+      else acc[i] = this.values[i]
       return acc;
     }, new Array(resultDimension));
 
     return this;
-    // if (x instanceof Vector) {
-    //   if ([x.x, x.y, x.z].every(Number.isFinite)) {
-    //     const xComponent = parseFloat(x.x);
-    //     const yComponent = parseFloat(x.y);
-    //     const zComponent = parseFloat(x.z);
-    //     return calculateRemainder3D.call(
-    //       this,
-    //       xComponent,
-    //       yComponent,
-    //       zComponent
-    //     );
-    //   }
-    // } else if (Array.isArray(x)) {
-    //   if (x.every(element => Number.isFinite(element))) {
-    //     if (x.length === 2) {
-    //       return calculateRemainder2D.call(this, x[0], x[1]);
-    //     }
-    //     if (x.length === 3) {
-    //       return calculateRemainder3D.call(this, x[0], x[1], x[2]);
-    //     }
-    //   }
-    // } else if (arguments.length === 1) {
-    //   if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
-    //     this.x = this.x % arguments[0];
-    //     this.y = this.y % arguments[0];
-    //     this.z = this.z % arguments[0];
-    //     return this;
-    //   }
-    // } else if (arguments.length === 2) {
-    //   const vectorComponents = [...arguments];
-    //   if (vectorComponents.every(element => Number.isFinite(element))) {
-    //     if (vectorComponents.length === 2) {
-    //       return calculateRemainder2D.call(
-    //         this,
-    //         vectorComponents[0],
-    //         vectorComponents[1]
-    //       );
-    //     }
-    //   }
-    // } else if (arguments.length === 3) {
-    //   const vectorComponents = [...arguments];
-    //   if (vectorComponents.every(element => Number.isFinite(element))) {
-    //     if (vectorComponents.length === 3) {
-    //       return calculateRemainder3D.call(
-    //         this,
-    //         vectorComponents[0],
-    //         vectorComponents[1],
-    //         vectorComponents[2]
-    //       );
-    //     }
-    //   }
-    // }
   }
 
   /**
@@ -847,13 +796,18 @@ class Vector {
    * @chainable
    */
   sub(...args) {
+
+    // TODO Implement using decorator API to reduce duplication.
     if (args[0] instanceof Vector) {
       args = args[0].values;
     } else if (Array.isArray(args[0])) {
       args = args[0];
+    } else if (args.length === 0) {
+      return this;
     }
 
-    const resultDimension = Math.min(args.length, this.dimensions);
+    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+
     this.values = this.values.reduce((acc, v, i) => {
       if(i < resultDimension) acc[i] = this.values[i] - args[i];
       return acc;
@@ -1056,15 +1010,28 @@ class Vector {
    * @chainable
    */
   mult(...args) {
+    // TODO Implement using decorator API to reduce duplication.
+
     if (args[0] instanceof Vector) {
       args = args[0].values;
     } else if (Array.isArray(args[0])) {
       args = args[0];
+    } else if (args.length === 1) {
+      args = new Array(this.dimensions).fill(args[0]);
+    } else if (args.length === 0) {
+      return this;
     }
 
-    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
+    if(!args.every(v => Number.isFinite(v))){
+      console.warn(
+       'p5.Vector.prototype.mult',
+       'Arguments contain non-finite numbers'
+      );
+      return this;
+    };
 
-    const resultDimension = Math.min(args.length, this.dimensions);
+    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+
     this.values = this.values.reduce((acc, v, i) => {
       if(i < resultDimension) acc[i] = this.values[i] * args[i];
       return acc;
@@ -1306,78 +1273,34 @@ class Vector {
    * @chainable
    */
   div(...args) {
+
+    // TODO Implement using decorator API to reduce duplication.
+
     if (args[0] instanceof Vector) {
       args = args[0].values;
     } else if (Array.isArray(args[0])) {
       args = args[0];
+    } else if (args.length === 1) {
+      args = new Array(this.dimensions).fill(args[0]);
+
+    } else if (args.length === 0) {
+      return this;
     }
 
-    if(!args.every(v => v !== 0 && Number.isFinite(v))) return this;
+    if(!args.every(v => typeof v === 'number' && v !== 0 && Number.isFinite(v))){
+      console.warn(
+       'p5.Vector.prototype.div:',
+       'arguments contain components that are either 0 or not finite numbers'
+      );
+      return this;
+    };
 
-    const resultDimension = Math.min(args.length, this.dimensions);
+    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+
     this.values = this.values.reduce((acc, v, i) => {
       if(i < resultDimension) acc[i] = this.values[i] / args[i];
       return acc;
     }, new Array(resultDimension));
-
-    // if (args.length === 0) return this;
-    // // If passed a vector
-    // if (args.length === 1 && args[0] instanceof Vector) {
-    //   const v = args[0];
-    //   if (
-    //     v.values.every(
-    //       val => Number.isFinite(val) && typeof val === 'number'
-    //     )
-    //   ) {
-    //     if (v.values.some(val => val === 0)) {
-    //       console.warn('p5.Vector.prototype.div:', 'divide by 0');
-    //       return this;
-    //     }
-    //     // this._values = this._values.map((val, i) => val / v.values[i]);
-    //     for (let i = 0; i < v.values.length; i++) {
-    //       if(!this.values[i]) this.values[i] = 0;
-    //       this.values[i] /= v.values[i];
-    //     }
-    //   } else {
-    //     console.warn(
-    //       'p5.Vector.prototype.div:',
-    //       'vector contains components that are either undefined or not finite numbers'
-    //     );
-    //   }
-    //   return this;
-    // }
-
-    // // If passed an array
-    // if (args.length === 1 && Array.isArray(args[0])) {
-    //   const arr = args[0];
-    //   if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
-    //     if (arr.some(val => val === 0)) {
-    //       console.warn('p5.Vector.prototype.div:', 'divide by 0');
-    //       return this;
-    //     }
-    //     this.values = this.values.map((val, i) => val / arr[i]);
-    //   } else {
-    //     console.warn(
-    //       'p5.Vector.prototype.div:',
-    //       'array contains components that are either undefined or not finite numbers'
-    //     );
-    //   }
-    //   return this;
-    // }
-
-    // // If passed individual arguments
-    // if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
-    //   if (args.some(val => val === 0)) {
-    //     console.warn('p5.Vector.prototype.div:', 'divide by 0');
-    //     return this;
-    //   }
-    //   this.values = this.values.map((val, i) => val / args[0]);
-    // } else {
-    //   console.warn(
-    //     'p5.Vector.prototype.div:',
-    //     'arguments contain components that are either undefined or not finite numbers'
-    //   );
-    // }
 
     return this;
   }
@@ -1436,7 +1359,8 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let p = createVector(30, 40);
    *
-   *   // Draw a line from the origin.
+   *   // Draw a line from th
+   * e origin.
    *   line(0, 0, p.x, p.y);
    *
    *   // Style the text.
