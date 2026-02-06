@@ -1,8 +1,16 @@
 const uniforms = `
-struct Uniforms {
+// Group 1: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+// @p5 ifdef Vertex getWorldInputs
+  uViewMatrix: mat4x4<f32>,
+// @p5 endif
+}
+
+// Group 2: Model Transform
+struct ModelUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
-  uViewMatrix: mat4x4<f32>,
   uModelNormalMatrix: mat3x3<f32>,
   uCameraNormalMatrix: mat3x3<f32>,
 // @p5 endif
@@ -10,10 +18,13 @@ struct Uniforms {
   uModelViewMatrix: mat4x4<f32>,
   uNormalMatrix: mat3x3<f32>,
 // @p5 endif
-  uProjectionMatrix: mat4x4<f32>,
+}
+
+// Group 3: Material Properties
+struct MaterialUniforms {
   uMaterialColor: vec4<f32>,
   uUseVertexColor: u32,
-};
+}
 `;
 
 export const colorVertexShader = `
@@ -32,7 +43,9 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> material: MaterialUniforms;
 
 struct Vertex {
   position: vec3<f32>,
@@ -46,12 +59,12 @@ fn main(input: VertexInput) -> VertexOutput {
   HOOK_beforeVertex();
   var output: VertexOutput;
 
-  let useVertexColor = (uniforms.uUseVertexColor != 0 && input.aVertexColor.x >= 0.0);
+  let useVertexColor = (material.uUseVertexColor != 0 && input.aVertexColor.x >= 0.0);
   var inputs = Vertex(
     input.aPosition,
     input.aNormal,
     input.aTexCoord,
-    select(uniforms.uMaterialColor, input.aVertexColor, useVertexColor)
+    select(material.uMaterialColor, input.aVertexColor, useVertexColor)
   );
 
 // @p5 ifdef Vertex getObjectInputs
@@ -59,20 +72,20 @@ fn main(input: VertexInput) -> VertexOutput {
 // @p5 endif
 
 // @p5 ifdef Vertex getWorldInputs
-  inputs.position = (uniforms.uModelMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uModelNormalMatrix * inputs.normal;
+  inputs.position = (model.uModelMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uModelNormalMatrix * inputs.normal;
   inputs = HOOK_getWorldInputs(inputs);
 // @p5 endif
 
 // @p5 ifdef Vertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
-  inputs.position = (uniforms.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uCameraNormalMatrix * inputs.normal;
+  inputs.position = (camera.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uCameraNormalMatrix * inputs.normal;
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   // Apply both at once
-  inputs.position = (uniforms.uModelViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uNormalMatrix * inputs.normal;
+  inputs.position = (model.uModelViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uNormalMatrix * inputs.normal;
 // @p5 endif
 
 // @p5 ifdef Vertex getCameraInputs
@@ -83,7 +96,7 @@ fn main(input: VertexInput) -> VertexOutput {
   output.vVertexNormal = normalize(inputs.normal);
   output.vColor = inputs.color;
 
-  output.Position = uniforms.uProjectionMatrix * vec4<f32>(inputs.position, 1.0);
+  output.Position = camera.uProjectionMatrix * vec4<f32>(inputs.position, 1.0);
 
   HOOK_afterVertex();
   return output;
@@ -98,7 +111,9 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> material: MaterialUniforms;
 
 
 @fragment

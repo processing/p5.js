@@ -1,5 +1,13 @@
 const uniforms = `
-struct Uniforms {
+// Group 1: Camera and Projection
+struct CameraUniforms {
+  uViewMatrix: mat4x4<f32>,
+  uProjectionMatrix: mat4x4<f32>,
+  uCameraRotation: mat3x3<f32>,
+}
+
+// Group 2: Model Transform
+struct ModelUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
   uModelNormalMatrix: mat3x3<f32>,
@@ -9,32 +17,34 @@ struct Uniforms {
   uModelViewMatrix: mat4x4<f32>,
   uNormalMatrix: mat3x3<f32>,
 // @p5 endif
-  uViewMatrix: mat4x4<f32>,
-  uProjectionMatrix: mat4x4<f32>,
+}
+
+// Group 3: Material Properties
+struct MaterialUniforms {
   uMaterialColor: vec4<f32>,
   uUseVertexColor: u32,
-
   uHasSetAmbient: u32,
   uAmbientColor: vec3<f32>,
   uSpecularMatColor: vec4<f32>,
   uAmbientMatColor: vec4<f32>,
   uEmissiveMatColor: vec4<f32>,
-
   uTint: vec4<f32>,
   isTexture: u32,
+  uSpecular: u32,
+  uShininess: f32,
+  uMetallic: f32,
+}
 
-  uCameraRotation: mat3x3<f32>,
-
+// Group 4: Lighting
+struct LightingUniforms {
   uDirectionalLightCount: i32,
   uLightingDirection: array<vec3<f32>, 5>,
   uDirectionalDiffuseColors: array<vec3<f32>, 5>,
   uDirectionalSpecularColors: array<vec3<f32>, 5>,
-
   uPointLightCount: i32,
   uPointLightLocation: array<vec3<f32>, 5>,
   uPointLightDiffuseColors: array<vec3<f32>, 5>,
   uPointLightSpecularColors: array<vec3<f32>, 5>,
-
   uSpotLightCount: i32,
   uSpotLightAngle: vec4<f32>,
   uSpotLightConc: vec4<f32>,
@@ -42,18 +52,12 @@ struct Uniforms {
   uSpotLightSpecularColors: array<vec3<f32>, 4>,
   uSpotLightLocation: array<vec3<f32>, 4>,
   uSpotLightDirection: array<vec3<f32>, 4>,
-
-  uSpecular: u32,
-  uShininess: f32,
-  uMetallic: f32,
-
   uConstantAttenuation: f32,
   uLinearAttenuation: f32,
   uQuadraticAttenuation: f32,
-
   uUseImageLight: u32,
   uUseLighting: u32,
-};
+}
 `;
 
 export const materialVertexShader = `
@@ -73,7 +77,10 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> material: MaterialUniforms;
+@group(0) @binding(3) var<uniform> lighting: LightingUniforms;
 
 struct Vertex {
   position: vec3<f32>,
@@ -87,12 +94,12 @@ fn main(input: VertexInput) -> VertexOutput {
   HOOK_beforeVertex();
   var output: VertexOutput;
 
-  let useVertexColor = (uniforms.uUseVertexColor != 0 && input.aVertexColor.x >= 0.0);
+  let useVertexColor = (material.uUseVertexColor != 0 && input.aVertexColor.x >= 0.0);
   var inputs = Vertex(
     input.aPosition,
     input.aNormal,
     input.aTexCoord,
-    select(uniforms.uMaterialColor, input.aVertexColor, useVertexColor)
+    select(material.uMaterialColor, input.aVertexColor, useVertexColor)
   );
 
 // @p5 ifdef Vertex getObjectInputs
@@ -100,20 +107,20 @@ fn main(input: VertexInput) -> VertexOutput {
 // @p5 endif
 
 // @p5 ifdef Vertex getWorldInputs
-  inputs.position = (uniforms.uModelMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uModelNormalMatrix * inputs.normal;
+  inputs.position = (model.uModelMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uModelNormalMatrix * inputs.normal;
   inputs = HOOK_getWorldInputs(inputs);
 // @p5 endif
 
 // @p5 ifdef Vertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
-  inputs.position = (uniforms.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uCameraNormalMatrix * inputs.normal;
+  inputs.position = (camera.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uCameraNormalMatrix * inputs.normal;
 // @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   // Apply both at once
-  inputs.position = (uniforms.uModelViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
-  inputs.normal = uniforms.uNormalMatrix * inputs.normal;
+  inputs.position = (model.uModelViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
+  inputs.normal = model.uNormalMatrix * inputs.normal;
 // @p5 endif
 
 // @p5 ifdef Vertex getCameraInputs
@@ -125,7 +132,7 @@ fn main(input: VertexInput) -> VertexOutput {
   output.vNormal = normalize(inputs.normal);
   output.vColor = inputs.color;
 
-  output.Position = uniforms.uProjectionMatrix * vec4<f32>(inputs.position, 1.0);
+  output.Position = camera.uProjectionMatrix * vec4<f32>(inputs.position, 1.0);
 
   HOOK_afterVertex();
   return output;
@@ -141,15 +148,18 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> material: MaterialUniforms;
+@group(0) @binding(3) var<uniform> lighting: LightingUniforms;
 
-@group(0) @binding(1) var uSampler: texture_2d<f32>;
-@group(0) @binding(2) var uSampler_sampler: sampler;
+@group(0) @binding(4) var uSampler: texture_2d<f32>;
+@group(0) @binding(5) var uSampler_sampler: sampler;
 
-@group(0) @binding(3) var environmentMapDiffused: texture_2d<f32>;
-@group(0) @binding(4) var environmentMapDiffused_sampler: sampler;
-@group(0) @binding(5) var environmentMapSpecular: texture_2d<f32>;
-@group(0) @binding(6) var environmentMapSpecular_sampler: sampler;
+@group(0) @binding(6) var environmentMapDiffused: texture_2d<f32>;
+@group(0) @binding(7) var environmentMapDiffused_sampler: sampler;
+@group(0) @binding(8) var environmentMapSpecular: texture_2d<f32>;
+@group(0) @binding(9) var environmentMapSpecular_sampler: sampler;
 
 struct ColorComponents {
   baseColor: vec3<f32>,
@@ -212,7 +222,7 @@ fn mapTextureToNormal(v: vec3<f32>) -> vec2<f32> {
 fn calculateImageDiffuse(vNormal: vec3<f32>, vViewPosition: vec3<f32>, metallic: f32) -> vec3<f32> {
   // make 2 seperate builds
   let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);  // hardcoded world camera position
-  let worldNormal = normalize(vNormal * uniforms.uCameraRotation);
+  let worldNormal = normalize(vNormal * camera.uCameraRotation);
   let newTexCoord = mapTextureToNormal(worldNormal);
   let texture = textureSample(environmentMapDiffused, environmentMapDiffused_sampler, newTexCoord);
   // this is to make the darker sections more dark
@@ -224,7 +234,7 @@ fn calculateImageSpecular(vNormal: vec3<f32>, vViewPosition: vec3<f32>, shinines
   let worldCameraPosition = vec3<f32>(0.0, 0.0, 0.0);
   let worldNormal = normalize(vNormal);
   let lightDirection = normalize(vViewPosition - worldCameraPosition);
-  let R = reflect(lightDirection, worldNormal) * uniforms.uCameraRotation;
+  let R = reflect(lightDirection, worldNormal) * camera.uCameraRotation;
   let newTexCoord = mapTextureToNormal(R);
 
   // In p5js the range of shininess is >= 1,
@@ -273,7 +283,7 @@ fn singleLight(
   let specular = select(
     0.,
     phongSpecular(lightDir, viewDirection, normal, shininess) * specularIntensity,
-    uniforms.uSpecular == 1
+    material.uSpecular == 1
   );
   return LightIntensityResult(diffuse, specular);
 }
@@ -287,69 +297,69 @@ fn totalLight(
   var totalSpecular = vec3<f32>(0.0, 0.0, 0.0);
   var totalDiffuse = vec3<f32>(0.0, 0.0, 0.0);
 
-  if (uniforms.uUseLighting == 0) {
+  if (lighting.uUseLighting == 0) {
     return LightResult(vec3<f32>(1.0, 1.0, 1.0), totalSpecular);
   }
 
   let viewDirection = normalize(-modelPosition);
 
   for (var j = 0; j < 5; j++) {
-    if (j < uniforms.uDirectionalLightCount) {
-      let lightVector = (uniforms.uViewMatrix * vec4<f32>(
-        uniforms.uLightingDirection[j],
+    if (j < lighting.uDirectionalLightCount) {
+      let lightVector = (camera.uViewMatrix * vec4<f32>(
+        lighting.uLightingDirection[j],
         0.0
       )).xyz;
-      let lightColor = uniforms.uDirectionalDiffuseColors[j];
-      let specularColor = uniforms.uDirectionalSpecularColors[j];
+      let lightColor = lighting.uDirectionalDiffuseColors[j];
+      let specularColor = lighting.uDirectionalSpecularColors[j];
       let result = singleLight(viewDirection, normal, lightVector, shininess, metallic);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * specularColor;
     }
 
-    if (j < uniforms.uPointLightCount) {
-      let lightPosition = (uniforms.uViewMatrix * vec4<f32>(
-        uniforms.uPointLightLocation[j],
+    if (j < lighting.uPointLightCount) {
+      let lightPosition = (camera.uViewMatrix * vec4<f32>(
+        lighting.uPointLightLocation[j],
         1.0
       )).xyz;
       let lightVector = modelPosition - lightPosition;
       let lightDistance = length(lightVector);
       let lightFalloff = 1.0 / (
-        uniforms.uConstantAttenuation +
-        lightDistance * uniforms.uLinearAttenuation +
-        lightDistance * lightDistance * uniforms.uQuadraticAttenuation
+        lighting.uConstantAttenuation +
+        lightDistance * lighting.uLinearAttenuation +
+        lightDistance * lightDistance * lighting.uQuadraticAttenuation
       );
-      let lightColor = uniforms.uPointLightDiffuseColors[j] * lightFalloff;
-      let specularColor = uniforms.uPointLightSpecularColors[j] * lightFalloff;
+      let lightColor = lighting.uPointLightDiffuseColors[j] * lightFalloff;
+      let specularColor = lighting.uPointLightSpecularColors[j] * lightFalloff;
       let result = singleLight(viewDirection, normal, lightVector, shininess, metallic);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * specularColor;
     }
 
-    if (j < uniforms.uSpotLightCount) {
-      let lightPosition = (uniforms.uViewMatrix * vec4<f32>(
-        uniforms.uSpotLightLocation[j],
+    if (j < lighting.uSpotLightCount) {
+      let lightPosition = (camera.uViewMatrix * vec4<f32>(
+        lighting.uSpotLightLocation[j],
         1.0
       )).xyz;
       let lightVector = modelPosition - lightPosition;
       let lightDistance = length(lightVector);
       var lightFalloff = 1.0 / (
-        uniforms.uConstantAttenuation +
-        lightDistance * uniforms.uLinearAttenuation +
-        lightDistance * lightDistance * uniforms.uQuadraticAttenuation
+        lighting.uConstantAttenuation +
+        lightDistance * lighting.uLinearAttenuation +
+        lightDistance * lightDistance * lighting.uQuadraticAttenuation
       );
-      let lightDirection = (uniforms.uViewMatrix * vec4<f32>(
-        uniforms.uSpotLightDirection[j],
+      let lightDirection = (camera.uViewMatrix * vec4<f32>(
+        lighting.uSpotLightDirection[j],
         0.0
       )).xyz;
       let spotDot = dot(normalize(lightVector), normalize(lightDirection));
       let spotFalloff = select(
         0.0,
-        pow(spotDot, uniforms.uSpotLightConc[j]),
-        spotDot < uniforms.uSpotLightAngle[j]
+        pow(spotDot, lighting.uSpotLightConc[j]),
+        spotDot < lighting.uSpotLightAngle[j]
       );
       lightFalloff *= spotFalloff;
-      let lightColor = uniforms.uSpotLightDiffuseColors[j];
-      let specularColor = uniforms.uSpotLightSpecularColors[j];
+      let lightColor = lighting.uSpotLightDiffuseColors[j];
+      let specularColor = lighting.uSpotLightSpecularColors[j];
       let result = singleLight(viewDirection, normal, lightVector, shininess, metallic);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * specularColor;
@@ -357,7 +367,7 @@ fn totalLight(
   }
 
   // Image light contribution
-  if (uniforms.uUseImageLight != 0) {
+  if (lighting.uUseImageLight != 0) {
     totalDiffuse += calculateImageDiffuse(normal, modelPosition, metallic);
     totalSpecular += calculateImageSpecular(normal, modelPosition, shininess, metallic);
   }
@@ -374,19 +384,19 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
 
   let color = select(
     input.vColor,
-    textureSample(uSampler, uSampler_sampler, input.vTexCoord) * (uniforms.uTint/255.0),
-    uniforms.isTexture == 1
+    textureSample(uSampler, uSampler_sampler, input.vTexCoord) * (material.uTint/255.0),
+    material.isTexture == 1
   ); // TODO: check isTexture and apply tint
   var inputs = Inputs(
     normalize(input.vNormal),
     input.vTexCoord,
-    uniforms.uAmbientColor,
-    select(color.rgb, uniforms.uAmbientMatColor.rgb, uniforms.uHasSetAmbient == 1),
-    uniforms.uSpecularMatColor.rgb,
-    uniforms.uEmissiveMatColor.rgb,
+    material.uAmbientColor,
+    select(color.rgb, material.uAmbientMatColor.rgb, material.uHasSetAmbient == 1),
+    material.uSpecularMatColor.rgb,
+    material.uEmissiveMatColor.rgb,
     color,
-    uniforms.uShininess,
-    uniforms.uMetallic
+    material.uShininess,
+    material.uMetallic
   );
   inputs = HOOK_getPixelInputs(inputs);
 

@@ -496,39 +496,46 @@ function rendererWebGPU(p5, fn) {
     }
 
     _finalizeShader(shader) {
-      const rawSize = Math.max(
-        0,
-        ...Object.values(shader.uniforms).filter(u => !u.isSampler).map(u => u.offsetEnd)
-      );
-      const alignedSize = Math.ceil(rawSize / 16) * 16;
-      shader._uniformData = new Float32Array(alignedSize / 4);
-      shader._uniformDataView = new DataView(shader._uniformData.buffer);
+      // Create per-group buffer pools instead of a single pool
+      shader._uniformBufferGroups = [];
 
-      // Create pools for uniform buffers (both GPU buffers and data arrays.) This
-      // is so that we can queue up multiple things to be able to be drawn and have
-      // the GPU go through them as fast as possible. If we're overwriting the same
-      // data again and again, we would have to wait for the GPU after each primitive
-      // that we draw.
-      shader._uniformBufferPool = [];
-      shader._uniformBuffersInUse = [];
-      shader._uniformBufferSize = alignedSize;
+      for (const group of shader._uniformGroups) {
+        // Calculate the size needed for this group's uniforms
+        const groupUniforms = Object.values(group.uniforms);
+        const rawSize = Math.max(
+          0,
+          ...groupUniforms.map(u => u.offsetEnd)
+        );
+        const alignedSize = Math.ceil(rawSize / 16) * 16;
 
-      // Create the first buffer for the pool
-      const firstGPUBuffer = this.device.createBuffer({
-        size: alignedSize,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-      });
-      const firstData = new Float32Array(alignedSize / 4);
-      const firstDataView = new DataView(firstData.buffer);
+        // Create staging data arrays for this group
+        const groupData = new Float32Array(alignedSize / 4);
+        const groupDataView = new DataView(groupData.buffer);
 
-      shader._uniformBufferPool.push({
-        buffer: firstGPUBuffer,
-        data: firstData,
-        dataView: firstDataView
-      });
+        // Create GPU buffer pool for this group
+        const firstGPUBuffer = this.device.createBuffer({
+          size: alignedSize,
+          usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+        const firstData = new Float32Array(alignedSize / 4);
+        const firstDataView = new DataView(firstData.buffer);
 
-      // Keep backward compatibility reference
-      shader._uniformBuffer = firstGPUBuffer;
+        shader._uniformBufferGroups.push({
+          binding: group.binding,
+          varName: group.varName,
+          structType: group.structType,
+          uniforms: groupUniforms,
+          size: alignedSize,
+          bufferPool: [{
+            buffer: firstGPUBuffer,
+            data: firstData,
+            dataView: firstDataView
+          }],
+          buffersInUse: [],
+          currentBuffer: null,  // For caching
+          cachedData: null      // For caching comparison
+        });
+      }
 
       // Register this shader in our registry for pool cleanup
       this._shadersWithPools.push(shader);
@@ -536,12 +543,17 @@ function rendererWebGPU(p5, fn) {
       const bindGroupLayouts = new Map(); // group index -> bindGroupLayout
       const groupEntries = new Map(); // group index -> array of entries
 
-      // We're enforcing that every shader have a single uniform struct in binding 0
-      groupEntries.set(0, [{
-        binding: 0,
-        visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-        buffer: { type: 'uniform' },
-      }]);
+      // Add all uniform group bindings to group 0
+      const group0Entries = [];
+      for (const bufferGroup of shader._uniformBufferGroups) {
+        group0Entries.push({
+          binding: bufferGroup.binding,
+          visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+          buffer: { type: 'uniform' },
+        });
+      }
+      group0Entries.sort((a, b) => a.binding - b.binding);
+      groupEntries.set(0, group0Entries);
 
       // Add the variable amount of samplers and texture bindings that can come after
       for (const sampler of shader.samplers) {
@@ -563,6 +575,7 @@ function rendererWebGPU(p5, fn) {
           uniform: sampler,
         });
 
+        entries.sort((a, b) => a.binding - b.binding);
         groupEntries.set(group, entries);
       }
 
@@ -1072,6 +1085,7 @@ function rendererWebGPU(p5, fn) {
     // Uniform buffer pool management
     //////////////////////////////////////////////
 
+      // TODO(dave): delete?
     _getUniformBufferFromPool(shader) {
       // Try to get a buffer from the pool
       if (shader._uniformBufferPool.length > 0) {
@@ -1101,17 +1115,24 @@ function rendererWebGPU(p5, fn) {
     _returnUniformBuffersToPool() {
       // Return all used buffers back to their pools for all registered shaders
       for (const shader of this._shadersWithPools) {
-        if (shader._uniformBuffersInUse && shader._uniformBuffersInUse.length > 0) {
-          this._returnShaderBuffersToPool(shader);
-        }
+        this._returnShaderBuffersToPool(shader);
       }
     }
 
     _returnShaderBuffersToPool(shader) {
-      // Move all buffers from inUse back to pool
-      while (shader._uniformBuffersInUse.length > 0) {
-        const bufferInfo = shader._uniformBuffersInUse.pop();
-        shader._uniformBufferPool.push(bufferInfo);
+      if (shader._uniformBufferGroups) {
+        for (const bufferGroup of shader._uniformBufferGroups) {
+          const seen = new Set();
+          while (bufferGroup.buffersInUse.length > 0) {
+            const bufferInfo = bufferGroup.buffersInUse.pop();
+            const prevSeen = seen.has(bufferInfo);
+            seen.add(bufferInfo);
+
+            if (!prevSeen) {
+              bufferGroup.bufferPool.push(bufferInfo);
+            }
+          }
+        }
       }
     }
 
@@ -1297,31 +1318,101 @@ function rendererWebGPU(p5, fn) {
         const gpuBuffer = buffers[buffer.dst];
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
       }
-      // Bind uniforms - get a buffer from the pool
-      const uniformBufferInfo = this._getUniformBufferFromPool(currentShader);
-      this._packUniforms(currentShader, uniformBufferInfo);
-      this.device.queue.writeBuffer(
-        uniformBufferInfo.buffer,
-        0,
-        uniformBufferInfo.data.buffer,
-        uniformBufferInfo.data.byteOffset,
-        uniformBufferInfo.data.byteLength
-      );
 
-      // Bind sampler/texture uniforms
-      for (const [group, entries] of currentShader._groupEntries) {
-        const bgEntries = entries.map(entry => {
-          if (group === 0 && entry.binding === 0) {
-            return {
-              binding: 0,
-              resource: { buffer: uniformBufferInfo.buffer },
+      const uniformBuffersForBinding = [];
+
+      for (const bufferGroup of currentShader._uniformBufferGroups) {
+        let bufferInfo;
+        const dataChanged = this._hasGroupDataChanged(currentShader, bufferGroup);
+
+        if (!dataChanged && bufferGroup.currentBuffer) {
+          // Reuse the cached buffer - no need to pack or write
+          bufferInfo = bufferGroup.currentBuffer;
+          // Still need to track it in buffersInUse for proper cleanup
+          bufferGroup.buffersInUse.push(bufferInfo);
+        } else {
+          // Data changed - get a buffer from the pool
+          if (bufferGroup.bufferPool.length > 0) {
+            bufferInfo = bufferGroup.bufferPool.pop();
+          } else {
+            // Create a new buffer
+            const gpuBuffer = this.device.createBuffer({
+              size: bufferGroup.size,
+              usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+            });
+            bufferInfo = {
+              buffer: gpuBuffer,
+              data: new Float32Array(bufferGroup.size / 4),
+              dataView: new DataView(new Float32Array(bufferGroup.size / 4).buffer)
             };
           }
 
+          // Pack and write the data
+          this._packUniformGroup(currentShader, bufferGroup.uniforms, bufferInfo);
+          this.device.queue.writeBuffer(
+            bufferInfo.buffer,
+            0,
+            bufferInfo.data.buffer,
+            bufferInfo.data.byteOffset,
+            bufferInfo.data.byteLength
+          );
+
+          // Cache this buffer and data for next frame
+          bufferGroup.buffersInUse.push(bufferInfo);
+          bufferGroup.currentBuffer = bufferInfo;
+
+          // Store cached data for comparison
+          if (!bufferGroup.cachedData) {
+            bufferGroup.cachedData = new Float32Array(bufferGroup.size / 4);
+            bufferGroup.cachedDataView = new DataView(bufferGroup.cachedData.buffer);
+          }
+          bufferGroup.cachedData.set(bufferInfo.data);
+        }
+
+        uniformBuffersForBinding.push({
+          binding: bufferGroup.binding,
+          buffer: bufferInfo.buffer
+        });
+      }
+
+      // Bind sampler/texture uniforms and uniform buffers
+      for (const [group, entries] of currentShader._groupEntries) {
+        const bgEntries = entries.map(entry => {
+          // Check if this is a uniform buffer binding
+          const uniformBuffer = uniformBuffersForBinding.find(ub => ub.binding === entry.binding);
+          if (uniformBuffer) {
+            return {
+              binding: entry.binding,
+              resource: { buffer: uniformBuffer.buffer },
+            };
+          }
+
+          // This must be a texture/sampler entry
+          if (!entry.uniform) {
+            console.error('Entry missing uniform field:', entry, 'uniformBuffersForBinding:', uniformBuffersForBinding);
+            throw new Error(
+              `Bind group entry at binding ${entry.binding} has no uniform field and is not a uniform buffer!`
+            );
+          }
+
           if (!entry.uniform.isSampler) {
+            console.error('Non-sampler uniform not handled:', entry.uniform);
             throw new Error(
               'All non-texture/sampler uniforms should be in the uniform struct!'
             );
+          }
+
+          const texture = entry.uniform.type === 'sampler'
+            ? entry.uniform.textureSource?.texture
+            : entry.uniform.texture;
+
+          if (!texture && entry.uniform.type !== 'sampler') {
+            console.warn(`Texture uniform ${entry.uniform.name} at binding ${entry.binding} has no texture! Using empty texture.`, {
+              uniform: entry.uniform,
+              type: entry.uniform.type,
+              hasTexture: !!entry.uniform.texture,
+              texture: entry.uniform.texture
+            });
           }
 
           return {
@@ -1374,6 +1465,92 @@ function rendererWebGPU(p5, fn) {
     //////////////////////////////////////////////
     // SHADER
     //////////////////////////////////////////////
+
+    _packUniformGroup(shader, groupUniforms, bufferInfo) {
+      // Pack a single group's uniforms into a buffer
+      const data = bufferInfo.data;
+      const dataView = bufferInfo.dataView;
+
+      for (const uniform of groupUniforms) {
+        const fullUniform = shader.uniforms[uniform.name];
+        if (!fullUniform || fullUniform.isSampler) continue;
+
+        if (fullUniform.baseType === 'u32') {
+          if (fullUniform.size === 4) {
+            dataView.setUint32(fullUniform.offset, fullUniform._cachedData, true);
+          } else {
+            const uniformData = fullUniform._cachedData;
+            for (let i = 0; i < uniformData.length; i++) {
+              dataView.setUint32(fullUniform.offset + i * 4, uniformData[i], true);
+            }
+          }
+        } else if (fullUniform.baseType === 'i32') {
+          if (fullUniform.size === 4) {
+            dataView.setInt32(fullUniform.offset, fullUniform._cachedData, true);
+          } else {
+            const uniformData = fullUniform._cachedData;
+            for (let i = 0; i < uniformData.length; i++) {
+              dataView.setInt32(fullUniform.offset + i * 4, uniformData[i], true);
+            }
+          }
+        } else if (fullUniform.size === 4) {
+          data.set([fullUniform._cachedData], fullUniform.offset / 4);
+        } else if (fullUniform._cachedData !== undefined) {
+          data.set(fullUniform._cachedData, fullUniform.offset / 4);
+        }
+      }
+    }
+
+    _hasGroupDataChanged(shader, bufferGroup) {
+      return true
+      // Check if any uniform in this group has changed since last pack
+      if (!bufferGroup.cachedData) {
+        return true; // First time
+      }
+
+      for (const uniform of bufferGroup.uniforms) {
+        const fullUniform = shader.uniforms[uniform.name];
+        if (!fullUniform || fullUniform.isSampler) continue;
+
+        // Compare typed arrays bytewise
+        const currentData = fullUniform._cachedData;
+        const cachedOffset = fullUniform.offset;
+        const size = fullUniform.size;
+
+        if (fullUniform.baseType === 'u32' || fullUniform.baseType === 'i32') {
+          if (fullUniform.size === 4) {
+            // Single value
+            if (bufferGroup.cachedDataView.getUint32(cachedOffset, true) !== currentData) {
+              return true;
+            }
+          } else {
+            // Array
+            for (let i = 0; i < currentData.length; i++) {
+              if (bufferGroup.cachedDataView.getUint32(cachedOffset + i * 4, true) !== currentData[i]) {
+                return true;
+              }
+            }
+          }
+        } else {
+          if (fullUniform.size === 4) {
+            // Single float
+            if (bufferGroup.cachedData[cachedOffset / 4] !== currentData) {
+              return true;
+            }
+          } else if (currentData !== undefined) {
+            // Float array
+            const floatOffset = cachedOffset / 4;
+            for (let i = 0; i < currentData.length; i++) {
+              if (bufferGroup.cachedData[floatOffset + i] !== currentData[i]) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      return false; // No changes detected
+    }
 
     _packUniforms(shader, bufferInfo) {
       const data = bufferInfo.data;
@@ -1542,22 +1719,54 @@ function rendererWebGPU(p5, fn) {
     }
 
     getUniformMetadata(shader) {
-      // Currently, for ease of parsing, we enforce that the first bind group is a
-      // struct, which contains all non-sampler uniforms. Then, any subsequent
-      // groups contain samplers.
+      // Parse all uniform struct bindings in group 0
+      // Each binding represents a logical group of uniforms
+      const uniformGroups = [];
+      const uniformVarRegex = /@group\(0\)\s+@binding\((\d+)\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/g;
 
-      // Extract the struct name from the uniform variable declaration
-      const uniformVarRegex = /@group\(0\)\s+@binding\(0\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/;
-      const uniformVarMatch = uniformVarRegex.exec(shader.vertSrc());
-      if (!uniformVarMatch) {
-        throw new Error('Expected a uniform struct bound to @group(0) @binding(0)');
+      let match;
+      while ((match = uniformVarRegex.exec(shader.vertSrc())) !== null) {
+        const [_, binding, varName, structType] = match;
+        const bindingIndex = parseInt(binding);
+        const uniforms = this._parseStruct(shader.vertSrc(), structType);
+
+        uniformGroups.push({
+          binding: bindingIndex,
+          varName,
+          structType,
+          uniforms
+        });
       }
-      const structType = uniformVarMatch[2];
-      const uniforms = this._parseStruct(shader.vertSrc(), structType);
+
+      if (uniformGroups.length === 0) {
+        throw new Error('Expected at least one uniform struct bound to @group(0)');
+      }
+
+      // Flatten all uniforms for backward compatibility, but keep track of their groups
+      const allUniforms = {};
+      for (const group of uniformGroups) {
+        for (const [uniformName, uniformData] of Object.entries(group.uniforms)) {
+          allUniforms[uniformName] = {
+            ...uniformData,
+            group: 0,
+            binding: group.binding,
+            varName: group.varName
+          };
+        }
+      }
+
+      const uniforms = allUniforms;
+      // Store uniform groups for buffer pooling
+      shader._uniformGroups = uniformGroups;
+
       // Extract samplers from group bindings
       const samplers = {};
       // TODO: support other texture types
       const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
+
+      // Track which bindings in group 0 are taken by uniforms
+      const group0UniformBindings = new Set(uniformGroups.map(g => g.binding));
+
       for (const [src, visibility] of [
         [shader.vertSrc(), GPUShaderStage.VERTEX],
         [shader.fragSrc(), GPUShaderStage.FRAGMENT]
@@ -1567,10 +1776,8 @@ function rendererWebGPU(p5, fn) {
           const [_, group, binding, name, type] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
-          // We're currently reserving group 0 for non-sampler stuff, which we parse
-          // above, so we can skip it here while we grab the remaining sampler
-          // uniforms
-          if (groupIndex === 0 && bindingIndex === 0) continue;
+          // Skip uniform bindings in group 0 which we've already parsed
+          if (groupIndex === 0 && group0UniformBindings.has(bindingIndex)) continue;
 
           const key = `${groupIndex},${bindingIndex}`;
           samplers[key] = {
@@ -1602,14 +1809,14 @@ function rendererWebGPU(p5, fn) {
       return [...Object.values(uniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers)];
     }
 
-    getNextBindingIndex(shader, group = 0) {
+    getNextBindingIndex({ vert, frag }, group = 0) {
       // Get the highest binding index in the specified group and return the next available
       const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler|uniform)/g;
       let maxBindingIndex = -1;
 
       for (const [src, visibility] of [
-        [shader.vertSrc(), GPUShaderStage.VERTEX],
-        [shader.fragSrc(), GPUShaderStage.FRAGMENT]
+        [vert, GPUShaderStage.VERTEX],
+        [frag, GPUShaderStage.FRAGMENT]
       ]) {
         let match;
         while ((match = samplerRegex.exec(src)) !== null) {
@@ -1947,12 +2154,33 @@ function rendererWebGPU(p5, fn) {
         }
       }
 
-      let uniforms = '';
+      // Inject hook uniforms as a separate struct at a new binding
+      let hookUniformFields = '';
       for (const key in shader.hooks.uniforms) {
         // WGSL format: "name: type"
-        uniforms += `${key},\n`;
+        hookUniformFields += `  ${key},\n`;
       }
-      preMain = preMain.replace(/struct\s+Uniforms\s+\{/, `$&\n${uniforms}`);
+
+      if (hookUniformFields) {
+        // Find the next available binding in group 0
+        // Use the source we're currently building (preMain) so we can see texture bindings
+        // added by strands, and use the original source for the other shader type
+        const nextBinding = this.getNextBindingIndex({
+          vert: shaderType === 'vertex' ? preMain + (shader.hooks.vertex?.declarations ?? '') + shader.hooks.declarations : shader._vertSrc,
+          frag: shaderType === 'fragment' ? preMain + (shader.hooks.fragment?.declarations ?? '') + shader.hooks.declarations : shader._fragSrc,
+        }, 0);
+
+        // Create HookUniforms struct and binding
+        const hookUniformsDecl = `
+// Hook Uniforms (from .modify())
+struct HookUniforms {
+${hookUniformFields}}
+
+@group(0) @binding(${nextBinding}) var<uniform> hooks: HookUniforms;
+`;
+        // Insert before the first @group binding
+        preMain = preMain.replace(/(@group\(0\)\s+@binding)/, `${hookUniformsDecl}\n$1`);
+      }
 
       // Handle varying variables by injecting them into VertexOutput and FragmentInput structs
       if (shader.hooks.varyingVariables && shader.hooks.varyingVariables.length > 0) {
