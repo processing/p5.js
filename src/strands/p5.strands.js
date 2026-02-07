@@ -709,14 +709,14 @@ if (typeof p5 !== "undefined") {
  * @method getTexture
  * @beta
  *
- * @param {*} texture The texture to sample from.
+ * @param texture The texture to sample from.
  * (e.g. a p5.Image, p5.Graphics, or p5.Framebuffer).
  *
- * @param {*} coords The 2D coordinates to sample from.
+ * @param coords The 2D coordinates to sample from.
  * This should be between [0,0] (the top-left) and [1,1] (the bottom-right)
  * of the texture.  It should be compatible with a vec2.
  *
- * @returns {*} The color of the given texture at the given coordinates.  This
+ * @returns The color of the given texture at the given coordinates.  This
  * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
  *
  * @example
