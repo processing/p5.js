@@ -807,8 +807,6 @@ export class Renderer3D extends Renderer {
    * @param  {Number}            [a]  opacity
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    * }
@@ -821,8 +819,6 @@ export class Renderer3D extends Renderer {
    *   rotateY(frameCount * 0.01);
    *   box(75, 75, 75);
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * black canvas with purple cube spinning
@@ -847,8 +843,6 @@ export class Renderer3D extends Renderer {
    * @param  {Number}            [v3] blue or brightness value
    * @param  {Number}            [a]  opacity
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    * }
@@ -861,8 +855,6 @@ export class Renderer3D extends Renderer {
    *   rotateY(frameCount * 0.01);
    *   box(75, 75, 75);
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * black canvas with purple cube with pink outline spinning
