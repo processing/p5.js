@@ -680,6 +680,133 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.fontInfos = {};
 
     this._curShader = undefined;
+
+    // Register cleanup hook to free WebGL resources when sketch is removed
+    // Only register if this is the main p5 instance (not a p5.Graphics)
+    // For p5.Graphics, cleanup is called directly from p5.Graphics.remove()
+    const isPGraphics = this._pInst instanceof p5.Graphics;
+    if (!isPGraphics && this._pInst && typeof this._pInst.registerMethod === 'function') {
+      this._pInst.registerMethod('remove', this.remove.bind(this));
+    }
+  }
+
+  /**
+   * Frees all WebGL resources (shaders, textures, buffers) associated with
+   * this renderer. Called automatically when the p5 instance is removed,
+   * or when a p5.Graphics object is removed.
+   *
+   * @method remove
+   * @private
+   */
+  remove() {
+    // Remove all cached shaders
+    const shadersToRemove = [
+      this._defaultLightShader,
+      this._defaultImmediateModeShader,
+      this._defaultNormalShader,
+      this._defaultColorShader,
+      this._defaultPointShader,
+      this.userFillShader,
+      this.userStrokeShader,
+      this.userPointShader,
+      this._curShader,
+      this.specularShader,
+      this.diffusedShader,
+      this.filterShader
+    ];
+
+    // Also add filter shaders
+    if (this.defaultFilterShaders) {
+      for (const key in this.defaultFilterShaders) {
+        shadersToRemove.push(this.defaultFilterShaders[key]);
+      }
+    }
+
+    // Remove each shader
+    for (const shader of shadersToRemove) {
+      if (shader && typeof shader.remove === 'function') {
+        shader.remove();
+      }
+    }
+
+    // Remove all cached textures
+    if (this.textures) {
+      for (const texture of this.textures.values()) {
+        if (texture && typeof texture.remove === 'function') {
+          texture.remove();
+        }
+      }
+      this.textures.clear();
+    }
+
+    // Remove all framebuffers (they have their own remove() method)
+    if (this.framebuffers) {
+      for (const fb of this.framebuffers) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.framebuffers.clear();
+    }
+
+    // Clean up diffused and specular texture caches (these store framebuffers)
+    if (this.diffusedTextures) {
+      for (const fb of this.diffusedTextures.values()) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.diffusedTextures.clear();
+    }
+
+    if (this.specularTextures) {
+      for (const fb of this.specularTextures.values()) {
+        if (fb && typeof fb.remove === 'function') {
+          fb.remove();
+        }
+      }
+      this.specularTextures.clear();
+    }
+
+    // Remove empty texture singleton
+    if (this._emptyTexture) {
+      if (typeof this._emptyTexture.remove === 'function') {
+        this._emptyTexture.remove();
+      }
+      this._emptyTexture = null;
+    }
+
+    // Free all retained mode geometry buffers
+    if (this.retainedMode && this.retainedMode.geometry) {
+      for (const gId in this.retainedMode.geometry) {
+        this._freeBuffers(gId);
+      }
+    }
+
+    // Clean up filter layers
+    if (this.filterLayer && typeof this.filterLayer.remove === 'function') {
+      this.filterLayer.remove();
+      this.filterLayer = undefined;
+    }
+    if (this.filterLayerTemp && typeof this.filterLayerTemp.remove === 'function') {
+      this.filterLayerTemp.remove();
+      this.filterLayerTemp = undefined;
+    }
+
+    // Clear shader references
+    this._defaultLightShader = undefined;
+    this._defaultImmediateModeShader = undefined;
+    this._defaultNormalShader = undefined;
+    this._defaultColorShader = undefined;
+    this._defaultPointShader = undefined;
+    this.userFillShader = undefined;
+    this.userStrokeShader = undefined;
+    this.userPointShader = undefined;
+    this._curShader = undefined;
+    this.specularShader = undefined;
+    this.diffusedShader = undefined;
+    this.filterShader = undefined;
+    this.defaultFilterShaders = {};
   }
 
   /**
