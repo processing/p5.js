@@ -1098,6 +1098,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/shuklaaryan367-byte"><img src="https://avatars.githubusercontent.com/u/228463828?v=4?s=64" width="64px;" alt="aryan-shukla"/><br /><sub><b>aryan-shukla</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shuklaaryan367-byte" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/aashu2006"><img src="https://avatars.githubusercontent.com/u/170659176?v=4?s=64" width="64px;" alt="akshat patil"/><br /><sub><b>akshat patil</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aashu2006" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/avinxshKD"><img src="https://avatars.githubusercontent.com/u/152387616?v=4?s=64" width="64px;" alt="Avinash Kumar Deepak"/><br /><sub><b>Avinash Kumar Deepak</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=avinxshKD" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/rdharshinir"><img src="https://avatars.githubusercontent.com/u/174322358?v=4?s=64" width="64px;" alt="DHARSHINI RAJAMANI"/><br /><sub><b>DHARSHINI RAJAMANI</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ardharshinir" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
