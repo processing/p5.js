@@ -31,8 +31,6 @@ if (typeof Float32Array !== 'undefined') {
  * @param {Array} [mat4] column-major array literal of our 4×4 matrix
  * @param {Array} [mat3] column-major array literal of our 3×3 matrix
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -42,8 +40,6 @@ if (typeof Float32Array !== 'undefined') {
  *   let p1 = createMatrix(1,1,1,1,1,1,1,1,1);
  *   console.log(p1);
  * }
- * </code>
- * </div>
  */
 // const matrixEngine = "numjs";
 export class MatrixNumjs extends MatrixInterface{
