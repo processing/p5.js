@@ -42,14 +42,14 @@
 
         instance = p.buildGeometry(() => p.sphere(5));
 
-        redFilter = p.baseFilterShader().modify(() => {
+        /*redFilter = p.baseFilterShader().modify(() => {
           p.getColor((inputs, canvasContent) => {
             let col = p.getTexture(canvasContent, inputs.texCoord);
             col.g = col.r;
             col.b = col.r;
             return col;
           })
-        }, { p })
+        }, { p })*/
 
         tex = p.createImage(100, 100);
         tex.loadPixels();

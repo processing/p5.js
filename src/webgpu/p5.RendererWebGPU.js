@@ -42,6 +42,11 @@ function rendererWebGPU(p5, fn) {
 
       this.samplers = new Map();
 
+      this.uniformBufferAlignment = 256;
+      this.uniformBufferPool = [];
+      this.activeUniformBuffers = [];
+      this.currentUniformBuffer = undefined;
+
       // Cache for current frame's canvas texture view
       this.currentCanvasColorTexture = null;
       this.currentCanvasColorTextureView = null;
@@ -600,6 +605,7 @@ function rendererWebGPU(p5, fn) {
             // data: firstData,
             // dataView: firstDataView
           // }],
+          dynamic: groupUniforms.some(u => u.name.startsWith('uModel')),
           buffersInUse: new Set(),
           currentBuffer: null,  // For caching
           cachedData: null      // For caching comparison
@@ -616,9 +622,10 @@ function rendererWebGPU(p5, fn) {
       const group0Entries = [];
       for (const bufferGroup of shader._uniformBufferGroups) {
         group0Entries.push({
+          bufferGroup,
           binding: bufferGroup.binding,
           visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-          buffer: { type: 'uniform' },
+          buffer: { type: 'uniform', hasDynamicOffset: bufferGroup.dynamic },
         });
       }
       group0Entries.sort((a, b) => a.binding - b.binding);
@@ -1155,7 +1162,6 @@ function rendererWebGPU(p5, fn) {
     // Uniform buffer pool management
     //////////////////////////////////////////////
 
-      // TODO(dave): delete?
     _getUniformBufferFromPool(bufferGroup) {
       // Try to get a buffer from the pool
       if (bufferGroup.bufferPool.length > 0) {
@@ -1171,7 +1177,6 @@ function rendererWebGPU(p5, fn) {
       });
       const newData = new Float32Array(bufferGroup.size / 4);
       const newDataView = new DataView(newData.buffer);
-
       const bufferInfo = {
         buffer: newBuffer,
         data: newData,
@@ -1180,6 +1185,39 @@ function rendererWebGPU(p5, fn) {
 
       bufferGroup.buffersInUse.add(bufferInfo);
       return bufferInfo;
+    }
+
+    _getDynamicUniformBufferFromPool(bufferGroup) {
+      let buffer;
+      if (this.currentUniformBuffer && this.currentUniformBuffer.offset + bufferGroup.size < this.currentUniformBuffer.size) {
+        buffer = this.currentUniformBuffer;
+      } else if (this.uniformBufferPool.length > 0) {
+        buffer = this.uniformBufferPool.pop();
+        this.activeUniformBuffers.push(buffer);
+      } else {
+        const size = 256 * 10 * 4;
+        buffer = {
+          dynamic: true,
+          lastOffset: 0,
+          offset: 0,
+          size,
+          buffer: this.device.createBuffer({
+            size: size,
+            usage: GPUBufferUsage.UNIFORM,
+            mappedAtCreation: true,
+          }),
+        }
+        this.activeUniformBuffers.push(buffer);
+      }
+
+      if (!buffer.data) {
+        buffer.data = new Float32Array(buffer.buffer.getMappedRange());
+        buffer.dataView = new DataView(buffer.data.buffer);
+      }
+
+      this.currentUniformBuffer = buffer;
+
+      return buffer;
     }
 
     _returnUniformBuffersToPool() {
@@ -1213,8 +1251,15 @@ function rendererWebGPU(p5, fn) {
         this._pendingCommandEncoders = [];
         this._hasPendingDraws = false;
 
+        for (const bufferInfo of this.activeUniformBuffers) {
+          bufferInfo.buffer.unmap();
+        }
+
         // Submit the commands
         this.queue.submit(commandsToSubmit);
+
+        this.activeUniformBuffers = [];
+        this.currentUniformBuffer = undefined;
 
         // Execute post-submit callbacks after GPU work completes
         if (this._postSubmitCallbacks.length > 0) {
@@ -1355,83 +1400,83 @@ function rendererWebGPU(p5, fn) {
       this._uniformBuffersForBinding.clear();
 
       for (const bufferGroup of currentShader._uniformBufferGroups) {
-        let bufferInfo;
-        const dataChanged = this._hasGroupDataChanged(currentShader, bufferGroup);
-
-        if (!dataChanged && bufferGroup.currentBuffer) {
-          // Reuse the cached buffer - no need to pack or write
-          bufferInfo = bufferGroup.currentBuffer;
-          // Still need to track it in buffersInUse for proper cleanup
-          bufferGroup.buffersInUse.add(bufferInfo);
-        } else {
-          // Data changed - get a buffer from the pool
-          bufferInfo = this._getUniformBufferFromPool(bufferGroup);
-
-          // Pack and write the data
-          this._packUniformGroup(currentShader, bufferGroup.uniforms, bufferInfo);
-          this.device.queue.writeBuffer(
-            bufferInfo.buffer,
+        if (bufferGroup.dynamic) {
+          // Bind uniforms - get a buffer from the pool
+          const uniformBufferInfo = this._getDynamicUniformBufferFromPool(bufferGroup);
+          this._packUniformGroup(currentShader, bufferGroup.uniforms, uniformBufferInfo);
+          // this._packUniforms(currentShader, uniformBufferInfo);
+          uniformBufferInfo.lastOffset = uniformBufferInfo.offset;
+          uniformBufferInfo.offset += Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment;
+          /*this.device.queue.writeBuffer(
+            uniformBufferInfo.buffer,
             0,
-            bufferInfo.data.buffer,
-            bufferInfo.data.byteOffset,
-            bufferInfo.data.byteLength
-          );
+            uniformBufferInfo.data.buffer,
+            uniformBufferInfo.data.byteOffset,
+            uniformBufferInfo.data.byteLength
+          );*/
+          // Make a shallow copy so that we keep track of the last offset for this uniform
+          this._uniformBuffersForBinding.set(bufferGroup.binding, { ...uniformBufferInfo });
+        } else {
+          let bufferInfo;
+          const dataChanged = this._hasGroupDataChanged(currentShader, bufferGroup);
 
-          currentShader.buffersDirty = currentShader.buffersDirty || {};
-          currentShader.buffersDirty[bufferGroup.group + ',' + bufferGroup.binding] = false;
-          /*for (const uniform of bufferGroup.uniforms) {
-            const fullUniform = currentShader.uniforms[uniform.name];
-            if (fullUniform) {
-              fullUniform.dirty = false;
-            }
-          }*/
+          if (!dataChanged && bufferGroup.currentBuffer) {
+            // Reuse the cached buffer - no need to pack or write
+            bufferInfo = bufferGroup.currentBuffer;
+            // Still need to track it in buffersInUse for proper cleanup
+            bufferGroup.buffersInUse.add(bufferInfo);
+          } else {
+            // Data changed - get a buffer from the pool
+            bufferInfo = this._getUniformBufferFromPool(bufferGroup);
 
-          // Cache this buffer and data for next frame
-          bufferGroup.currentBuffer = bufferInfo;
+            // Pack and write the data
+            this._packUniformGroup(currentShader, bufferGroup.uniforms, bufferInfo);
+            this.device.queue.writeBuffer(
+              bufferInfo.buffer,
+              0,
+              bufferInfo.data.buffer,
+              bufferInfo.data.byteOffset,
+              bufferInfo.data.byteLength
+            );
+
+            currentShader.buffersDirty = currentShader.buffersDirty || {};
+            currentShader.buffersDirty[bufferGroup.group + ',' + bufferGroup.binding] = false;
+            /*for (const uniform of bufferGroup.uniforms) {
+              const fullUniform = currentShader.uniforms[uniform.name];
+              if (fullUniform) {
+                fullUniform.dirty = false;
+              }
+            }*/
+
+            // Cache this buffer and data for next frame
+            bufferGroup.currentBuffer = bufferInfo;
+          }
+
+          this._uniformBuffersForBinding.set(bufferGroup.binding, bufferInfo);
         }
-
-        this._uniformBuffersForBinding.set(bufferGroup.binding, bufferInfo.buffer);
       }
 
       // Bind sampler/texture uniforms and uniform buffers
       for (const [group, entries] of currentShader._groupEntries) {
         const bgEntries = entries.map(entry => {
           // Check if this is a uniform buffer binding
-          const uniformBuffer = this._uniformBuffersForBinding.get(entry.binding);
-          if (uniformBuffer) {
+          const uniformBufferInfo = this._uniformBuffersForBinding.get(entry.binding);
+          if (uniformBufferInfo) {
             return {
               binding: entry.binding,
-              resource: { buffer: uniformBuffer },
+              resource: entry.bufferGroup.dynamic
+                ? {
+                  buffer: uniformBufferInfo.buffer,
+                  offset: 0,
+                  size: Math.ceil(entry.bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
+                }
+                : { buffer: uniformBufferInfo.buffer },
             };
           }
 
-          // This must be a texture/sampler entry
-          if (!entry.uniform) {
-            console.error('Entry missing uniform field:', entry, 'uniformBuffersForBinding:', this._uniformBuffersForBinding);
-            throw new Error(
-              `Bind group entry at binding ${entry.binding} has no uniform field and is not a uniform buffer!`
-            );
-          }
-
-          if (!entry.uniform.isSampler) {
-            console.error('Non-sampler uniform not handled:', entry.uniform);
-            throw new Error(
-              'All non-texture/sampler uniforms should be in the uniform struct!'
-            );
-          }
-
-          const texture = entry.uniform.type === 'sampler'
-            ? entry.uniform.textureSource?.texture
-            : entry.uniform.texture;
-
-          if (!texture && entry.uniform.type !== 'sampler') {
-            console.warn(`Texture uniform ${entry.uniform.name} at binding ${entry.binding} has no texture! Using empty texture.`, {
-              uniform: entry.uniform,
-              type: entry.uniform.type,
-              hasTexture: !!entry.uniform.texture,
-              texture: entry.uniform.texture
-            });
-          }
+          // const texture = entry.uniform.type === 'sampler'
+            // ? entry.uniform.textureSource?.texture
+            // : entry.uniform.texture;
 
           return {
             binding: entry.binding,
@@ -1446,7 +1491,13 @@ function rendererWebGPU(p5, fn) {
           layout,
           entries: bgEntries,
         });
-        passEncoder.setBindGroup(group, bindGroup);
+        passEncoder.setBindGroup(
+          group,
+          bindGroup,
+          entries.map(e => this._uniformBuffersForBinding.get(e.binding))
+            .filter(b => b?.dynamic)
+            .map(b => b.lastOffset)
+        );
       }
 
       if (currentShader.shaderType === "fill") {
@@ -1488,32 +1539,33 @@ function rendererWebGPU(p5, fn) {
       const data = bufferInfo.data;
       const dataView = bufferInfo.dataView;
 
+      const offset = bufferInfo.offset || 0;
       for (const uniform of groupUniforms) {
         const fullUniform = shader.uniforms[uniform.name];
         if (!fullUniform || fullUniform.isSampler) continue;
 
         if (fullUniform.baseType === 'u32') {
           if (fullUniform.size === 4) {
-            dataView.setUint32(fullUniform.offset, fullUniform._cachedData, true);
+            dataView.setUint32(offset + fullUniform.offset, fullUniform._cachedData, true);
           } else {
             const uniformData = fullUniform._cachedData;
             for (let i = 0; i < uniformData.length; i++) {
-              dataView.setUint32(fullUniform.offset + i * 4, uniformData[i], true);
+              dataView.setUint32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
           }
         } else if (fullUniform.baseType === 'i32') {
           if (fullUniform.size === 4) {
-            dataView.setInt32(fullUniform.offset, fullUniform._cachedData, true);
+            dataView.setInt32(offset + fullUniform.offset, fullUniform._cachedData, true);
           } else {
             const uniformData = fullUniform._cachedData;
             for (let i = 0; i < uniformData.length; i++) {
-              dataView.setInt32(fullUniform.offset + i * 4, uniformData[i], true);
+              dataView.setInt32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
           }
         } else if (fullUniform.size === 4) {
-          data.set([fullUniform._cachedData], fullUniform.offset / 4);
+          data.set([fullUniform._cachedData], (offset + fullUniform.offset) / 4);
         } else if (fullUniform._cachedData !== undefined) {
-          data.set(fullUniform._cachedData, fullUniform.offset / 4);
+          data.set(fullUniform._cachedData, (offset + fullUniform.offset) / 4);
         }
       }
     }
@@ -1571,10 +1623,12 @@ function rendererWebGPU(p5, fn) {
       return false; // No changes detected
     }
 
+    // TODO: delete
     _packUniforms(shader, bufferInfo) {
       const data = bufferInfo.data;
       const dataView = bufferInfo.dataView;
 
+      const offset = bufferInfo.offset;
       for (const name in shader.uniforms) {
         const uniform = shader.uniforms[name];
         if (uniform.isSampler) continue;
@@ -1582,31 +1636,31 @@ function rendererWebGPU(p5, fn) {
         if (uniform.baseType === 'u32') {
           if (uniform.size === 4) {
             // Single u32
-            dataView.setUint32(uniform.offset, uniform._cachedData, true);
+            dataView.setUint32(offset + uniform.offset, uniform._cachedData, true);
           } else {
             // Vector of u32s
             const uniformData = uniform._cachedData;
             for (let i = 0; i < uniformData.length; i++) {
-              dataView.setUint32(uniform.offset + i * 4, uniformData[i], true);
+              dataView.setUint32(offset + uniform.offset + i * 4, uniformData[i], true);
             }
           }
         } else if (uniform.baseType === 'i32') {
           if (uniform.size === 4) {
             // Single i32
-            dataView.setInt32(uniform.offset, uniform._cachedData, true);
+            dataView.setInt32(offset + uniform.offset, uniform._cachedData, true);
           } else {
             // Vector of i32s
             const uniformData = uniform._cachedData;
             for (let i = 0; i < uniformData.length; i++) {
-              dataView.setInt32(uniform.offset + i * 4, uniformData[i], true);
+              dataView.setInt32(offset + uniform.offset + i * 4, uniformData[i], true);
             }
           }
         } else if (uniform.size === 4) {
           // Single float value
-          data.set([uniform._cachedData], uniform.offset / 4);
+          data.set([uniform._cachedData], (offset + uniform.offset) / 4);
         } else if (uniform._cachedData !== undefined) {
           // Float array (including vec2<f32>, vec3<f32>, vec4<f32>, mat4x4<f32>)
-          data.set(uniform._cachedData, uniform.offset / 4);
+          data.set(uniform._cachedData, (offset + uniform.offset) / 4);
         }
       }
     }
@@ -3116,6 +3170,7 @@ ${hookUniformFields}}
      * Copy framebuffer content directly to WebGPU texture mip level
      */
     _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
+      this.flushDraw();
       // Copy from framebuffer texture to the mip level
       const commandEncoder = this.device.createCommandEncoder();
 
