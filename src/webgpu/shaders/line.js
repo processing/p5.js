@@ -1,5 +1,13 @@
 const uniforms = `
-struct Uniforms {
+// Group 1: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+  uViewport: vec4<f32>,
+  uPerspective: u32,
+}
+
+// Group 2: Model Transform
+struct ModelUniforms {
 // @p5 ifdef StrokeVertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
   uViewMatrix: mat4x4<f32>,
@@ -8,12 +16,13 @@ struct Uniforms {
   uModelViewMatrix: mat4x4<f32>,
 // @p5 endif
   uMaterialColor: vec4<f32>,
-  uProjectionMatrix: mat4x4<f32>,
+}
+
+// Group 3: Stroke Properties
+struct StrokeUniforms {
   uStrokeWeight: f32,
   uUseLineColor: f32,
   uSimpleLines: f32,
-  uViewport: vec4<f32>,
-  uPerspective: u32,
   uStrokeCap: u32,
   uStrokeJoin: u32,
 }`;
@@ -40,7 +49,9 @@ struct StrokeVertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> stroke: StrokeUniforms;
 
 struct StrokeVertex {
   position: vec3<f32>,
@@ -73,7 +84,7 @@ fn lineIntersection(aPoint: vec2f, aDir: vec2f, bPoint: vec2f, bDir: vec2f) -> v
 fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   HOOK_beforeVertex();
   var output: StrokeVertexOutput;
-  let simpleLines = (uniforms.uSimpleLines != 0.);
+  let simpleLines = (stroke.uSimpleLines != 0.);
   if (!simpleLines) {
     if (all(input.aTangentIn == vec3<f32>()) != all(input.aTangentOut == vec3<f32>())) {
       output.vCap = 1.;
@@ -90,17 +101,17 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
     }
   }
   var lineColor: vec4<f32>;
-  if (uniforms.uUseLineColor != 0.) {
+  if (stroke.uUseLineColor != 0.) {
     lineColor = input.aVertexColor;
   } else {
-    lineColor = uniforms.uMaterialColor;
+    lineColor = model.uMaterialColor;
   }
   var inputs = StrokeVertex(
     input.aPosition.xyz,
     input.aTangentIn,
     input.aTangentOut,
     lineColor,
-    uniforms.uStrokeWeight
+    stroke.uStrokeWeight
   );
 
 // @p5 ifdef StrokeVertex getObjectInputs
@@ -108,23 +119,23 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
 // @p5 endif
 
 // @p5 ifdef StrokeVertex getWorldInputs
-  inputs.position = (uniforms.uModelMatrix * vec4<f32>(inputs.position, 1.)).xyz;
-  inputs.tangentIn = (uniforms.uModelMatrix * vec4<f32>(input.aTangentIn, 1.)).xyz;
-  inputs.tangentOut = (uniforms.uModelMatrix * vec4<f32>(input.aTangentOut, 1.)).xyz;
+  inputs.position = (model.uModelMatrix * vec4<f32>(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (model.uModelMatrix * vec4<f32>(input.aTangentIn, 1.)).xyz;
+  inputs.tangentOut = (model.uModelMatrix * vec4<f32>(input.aTangentOut, 1.)).xyz;
   inputs = HOOK_getWorldInputs(inputs);
 // @p5 endif
 
 // @p5 ifdef StrokeVertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
-  inputs.position = (uniforms.uViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
-  inputs.tangentIn = (uniforms.uViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
-  inputs.tangentOut = (uniforms.uViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
+  inputs.position = (model.uViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (model.uViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
+  inputs.tangentOut = (model.uViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
 // @p5 endif
 // @p5 ifndef StrokeVertex getWorldInputs
   // Apply both at once
-  inputs.position = (uniforms.uModelViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
-  inputs.tangentIn = (uniforms.uModelViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
-  inputs.tangentOut = (uniforms.uModelViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
+  inputs.position = (model.uModelViewMatrix * vec4<f32>(inputs.position, 1.)).xyz;
+  inputs.tangentIn = (model.uModelViewMatrix * vec4<f32>(input.aTangentIn, 0.)).xyz;
+  inputs.tangentOut = (model.uModelViewMatrix * vec4<f32>(input.aTangentOut, 0.)).xyz;
 // @p5 endif
 // @p5 ifdef StrokeVertex getCameraInputs
   inputs = HOOK_getCameraInputs(inputs);
@@ -174,27 +185,27 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   posqIn.z -= dynamicZAdjustment;
   posqOut.z -= dynamicZAdjustment;
 
-  var p = uniforms.uProjectionMatrix * posp;
-  var qIn = uniforms.uProjectionMatrix * posqIn;
-  var qOut = uniforms.uProjectionMatrix * posqOut;
+  var p = camera.uProjectionMatrix * posp;
+  var qIn = camera.uProjectionMatrix * posqIn;
+  var qOut = camera.uProjectionMatrix * posqOut;
 
-  var tangentIn = normalize((qIn.xy * p.w - p.xy * qIn.w) * uniforms.uViewport.zw);
-  var tangentOut = normalize((qOut.xy * p.w - p.xy * qOut.w) * uniforms.uViewport.zw);
+  var tangentIn = normalize((qIn.xy * p.w - p.xy * qIn.w) * camera.uViewport.zw);
+  var tangentOut = normalize((qOut.xy * p.w - p.xy * qOut.w) * camera.uViewport.zw);
 
   var curPerspScale = vec2<f32>();
-  if (uniforms.uPerspective == 1) {
+  if (camera.uPerspective == 1) {
     // Perspective ---
     // convert from world to clip by multiplying with projection scaling factor
     // to get the right thickness (see https://github.com/processing/processing/issues/5182)
 
     // The y value of the projection matrix may be flipped if rendering to a Framebuffer.
     // Multiplying again by its sign here negates the flip to get just the scale.
-    curPerspScale = (uniforms.uProjectionMatrix * vec4(1., sign(uniforms.uProjectionMatrix[1][1]), 0., 0.)).xy;
+    curPerspScale = (camera.uProjectionMatrix * vec4(1., sign(camera.uProjectionMatrix[1][1]), 0., 0.)).xy;
   } else {
     // No Perspective ---
     // multiply by W (to cancel out division by W later in the pipeline) and
     // convert from screen to clip (derived from clip to screen above)
-    curPerspScale = p.w / (0.5 * uniforms.uViewport.zw);
+    curPerspScale = p.w / (0.5 * camera.uViewport.zw);
   }
 
   var offset = vec2<f32>();
@@ -217,7 +228,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
       if (sideEnum == 2.) {
         // Calculate the position + tangent on either side of the join, and
         // find where the lines intersect to find the elbow of the join
-        var c = (posp.xy / posp.w + vec2<f32>(1.)) * 0.5 * uniforms.uViewport.zw;
+        var c = (posp.xy / posp.w + vec2<f32>(1.)) * 0.5 * camera.uViewport.zw;
 
         var intersection = lineIntersection(
           c + (side * normalIn * inputs.weight / 2.),
@@ -243,7 +254,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
           offset = side * normalOut * inputs.weight / 2.;
       }
     }
-    if (uniforms.uStrokeJoin == 2) {
+    if (stroke.uStrokeJoin == 2) {
       var avgNormal = vec2<f32>(-output.vTangent.y, output.vTangent.x);
       output.vMaxDist = abs(dot(avgNormal, normalIn * inputs.weight / 2.));
     } else {
@@ -292,7 +303,9 @@ struct StrokeFragmentInput {
 }
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> camera: CameraUniforms;
+@group(0) @binding(1) var<uniform> model: ModelUniforms;
+@group(0) @binding(2) var<uniform> stroke: StrokeUniforms;
 
 
 fn distSquared(a: vec2<f32>, b: vec2<f32>) -> f32 {
@@ -321,12 +334,12 @@ fn main(input: StrokeFragmentInput) -> @location(0) vec4<f32> {
 
   if (input.vCap > 0.) {
     if (
-      uniforms.uStrokeCap == STROKE_CAP_ROUND &&
+      stroke.uStrokeCap == STROKE_CAP_ROUND &&
       HOOK_shouldDiscard(distSquared(inputs.position, inputs.center) > inputs.strokeWeight * inputs.strokeWeight * 0.25)
     ) {
       discard;
     } else if (
-      uniforms.uStrokeCap == STROKE_CAP_SQUARE &&
+      stroke.uStrokeCap == STROKE_CAP_SQUARE &&
       HOOK_shouldDiscard(dot(inputs.position - inputs.center, inputs.tangent) > 0.)
     ) {
       discard;
@@ -335,11 +348,11 @@ fn main(input: StrokeFragmentInput) -> @location(0) vec4<f32> {
     }
   } else if (input.vJoin > 0.) {
     if (
-      uniforms.uStrokeJoin == STROKE_JOIN_ROUND &&
+      stroke.uStrokeJoin == STROKE_JOIN_ROUND &&
       HOOK_shouldDiscard(distSquared(inputs.position, inputs.center) > inputs.strokeWeight * inputs.strokeWeight * 0.25)
     ) {
       discard;
-    } else if (uniforms.uStrokeJoin == STROKE_JOIN_BEVEL) {
+    } else if (stroke.uStrokeJoin == STROKE_JOIN_BEVEL) {
       let normal = vec2<f32>(-inputs.tangent.y, -inputs.tangent.x);
       if (HOOK_shouldDiscard(abs(dot(inputs.position - inputs.center, normal)) > input.vMaxDist)) {
         discard;

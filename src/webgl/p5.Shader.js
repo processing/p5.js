@@ -1028,8 +1028,12 @@ class Shader {
       return;
     } else {
       if (Array.isArray(data)) {
+        if (uniform._cachedData && this._renderer._arraysEqual(uniform._cachedData, data)) {
+          return;
+        }
         uniform._cachedData = data.slice(0);
       } else {
+        if (uniform._cachedData === data) return;
         uniform._cachedData = data;
       }
     }
