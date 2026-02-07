@@ -15,11 +15,11 @@ struct ModelUniforms {
 // @p5 ifndef StrokeVertex getWorldInputs
   uModelViewMatrix: mat4x4<f32>,
 // @p5 endif
+  uMaterialColor: vec4<f32>,
 }
 
 // Group 3: Stroke Properties
 struct StrokeUniforms {
-  uMaterialColor: vec4<f32>,
   uStrokeWeight: f32,
   uUseLineColor: f32,
   uSimpleLines: f32,
@@ -104,7 +104,7 @@ fn main(input: StrokeVertexInput) -> StrokeVertexOutput {
   if (stroke.uUseLineColor != 0.) {
     lineColor = input.aVertexColor;
   } else {
-    lineColor = stroke.uMaterialColor;
+    lineColor = model.uMaterialColor;
   }
   var inputs = StrokeVertex(
     input.aPosition.xyz,

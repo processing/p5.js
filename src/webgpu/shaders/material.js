@@ -16,11 +16,11 @@ struct ModelUniforms {
   uModelViewMatrix: mat4x4<f32>,
   uNormalMatrix: mat3x3<f32>,
 // @p5 endif
+  uMaterialColor: vec4<f32>,
 }
 
 // Group 3: Material Properties
 struct MaterialUniforms {
-  uMaterialColor: vec4<f32>,
   uUseVertexColor: u32,
   uHasSetAmbient: u32,
   uAmbientColor: vec3<f32>,
@@ -98,7 +98,7 @@ fn main(input: VertexInput) -> VertexOutput {
     input.aPosition,
     input.aNormal,
     input.aTexCoord,
-    select(material.uMaterialColor, input.aVertexColor, useVertexColor)
+    select(model.uMaterialColor, input.aVertexColor, useVertexColor)
   );
 
 // @p5 ifdef Vertex getObjectInputs
