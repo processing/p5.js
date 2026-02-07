@@ -79,8 +79,6 @@ class Camera {
    *                           Defaults to `10 * 800`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -129,11 +127,8 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -186,8 +181,6 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   perspective(fovy, aspect, near, far) {
     const range = this._renderer.zClipRange();
@@ -292,8 +285,6 @@ class Camera {
    * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `max(width, height) + 800`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -346,11 +337,8 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -410,8 +398,6 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   ortho(left, right, bottom, top, near, far) {
     const source = this.fbo || this._renderer;
@@ -483,8 +469,6 @@ class Camera {
    * @param  {Number} [far]    z-coordinate of the frustum’s far plane. Defaults to `10 * 800`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -543,8 +527,6 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   frustum(left, right, bottom, top, near, far) {
     if (left === undefined) left = -this._renderer.width * 0.05;
@@ -650,8 +632,6 @@ class Camera {
    * @param {Number} angle amount to rotate camera in current
    * <a href="#/p5/angleMode">angleMode</a> units.
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let delta = 0.01;
    *
@@ -686,8 +666,6 @@ class Camera {
    *   translate(0, 30, 0);
    *   box(20);
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * camera view rotates in counter clockwise direction with vertically stacked boxes in front of it.
@@ -731,8 +709,6 @@ class Camera {
    *                       <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let delta = 0.001;
    *
@@ -770,8 +746,6 @@ class Camera {
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   pan(amount) {
     const local = this._getLocalAxes();
@@ -796,8 +770,6 @@ class Camera {
    *                       <a href="#/p5/angleMode">angleMode()</a>.
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let delta = 0.001;
    *
@@ -835,8 +807,6 @@ class Camera {
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   tilt(amount) {
     const local = this._getLocalAxes();
@@ -860,8 +830,6 @@ class Camera {
    * @param {Number} z z-coordinate of the position where the camera should look in "world" space.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to look at a different cube.
    *
    * let cam;
@@ -921,8 +889,6 @@ class Camera {
    *     isLookingLeft = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   lookAt(x, y, z) {
     this.camera(
@@ -979,8 +945,6 @@ class Camera {
    * @param  {Number} [upZ]      z-component of the camera’s "up" vector. Defaults to 0.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -1037,11 +1001,8 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -1103,8 +1064,6 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   camera(
     eyeX,
@@ -1182,8 +1141,6 @@ class Camera {
    * @param {Number} y distance to move along the camera’s "local" y-axis.
    * @param {Number} z distance to move along the camera’s "local" z-axis.
    * @example
-   * <div>
-   * <code>
    * // Click the canvas to begin detecting key presses.
    *
    * let cam;
@@ -1242,8 +1199,6 @@ class Camera {
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   move(x, y, z) {
     const local = this._getLocalAxes();
@@ -1280,8 +1235,6 @@ class Camera {
    * @param {Number} z z-coordinate in "world" space.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -1336,11 +1289,8 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -1399,8 +1349,6 @@ class Camera {
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   setPosition(x, y, z) {
     const diffX = x - this.eyeX;
@@ -1430,8 +1378,6 @@ class Camera {
    * @param {p5.Camera} cam camera to copy.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to "reset" the camera zoom.
    *
    * let cam1;
@@ -1530,8 +1476,6 @@ class Camera {
    * @param {Number} amt amount of interpolation between 0.0 (`cam0`) and 1.0 (`cam1`).
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let cam0;
    * let cam1;
@@ -1573,8 +1517,6 @@ class Camera {
    *
    *   box();
    * }
-   * </code>
-   * </div>
    */
   slerp(cam0, cam1, amt) {
     // If t is 0 or 1, do not interpolate and set the argument camera.
@@ -2120,8 +2062,6 @@ function camera(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2137,11 +2077,8 @@ function camera(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2160,11 +2097,8 @@ function camera(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Adjust the range sliders to change the camera's position.
    *
    * let xSlider;
@@ -2204,8 +2138,6 @@ function camera(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.camera = function (...args) {
     this._assert3d('camera');
@@ -2271,8 +2203,6 @@ function camera(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to squeeze the box.
    *
    * let isSqueezed = false;
@@ -2303,11 +2233,8 @@ function camera(p5, fn){
    * function doubleClicked() {
    *   isSqueezed = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2335,8 +2262,6 @@ function camera(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.perspective = function (...args) {
     this._assert3d('perspective');
@@ -2344,7 +2269,6 @@ function camera(p5, fn){
     this._renderer.perspective(...args);
     return this;
   };
-
 
   /**
    * Enables or disables perspective for lines in 3D sketches.
@@ -2381,8 +2305,6 @@ function camera(p5, fn){
    * @param {Boolean} enable whether to enable line perspective.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click the canvas to toggle the line perspective.
    *
    * function setup() {
@@ -2415,11 +2337,8 @@ function camera(p5, fn){
    *   let isEnabled = linePerspective();
    *   linePerspective(!isEnabled);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click the canvas to toggle the line perspective.
    *
    * function setup() {
@@ -2455,8 +2374,6 @@ function camera(p5, fn){
    *   let isEnabled = linePerspective();
    *   linePerspective(!isEnabled);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method linePerspective
@@ -2510,8 +2427,6 @@ function camera(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2537,11 +2452,8 @@ function camera(p5, fn){
    *     box(10);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2571,8 +2483,6 @@ function camera(p5, fn){
    *     box(10);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.ortho = function (...args) {
     this._assert3d('ortho');
@@ -2623,8 +2533,6 @@ function camera(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2650,11 +2558,8 @@ function camera(p5, fn){
    *     box(10);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   describe('A white cube on a gray background.');
@@ -2683,8 +2588,6 @@ function camera(p5, fn){
    *     box(10);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.frustum = function (...args) {
     this._assert3d('frustum');
@@ -2715,8 +2618,6 @@ function camera(p5, fn){
    * @for p5
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -2760,8 +2661,6 @@ function camera(p5, fn){
    *     usingCam1 = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createCamera = function () {
     this._assert3d('createCamera');
@@ -2782,8 +2681,6 @@ function camera(p5, fn){
    * @for p5
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -2827,8 +2724,6 @@ function camera(p5, fn){
    *     usingCam1 = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.setCamera = function (cam) {
     this._renderer.setCamera(cam);
@@ -2863,8 +2758,6 @@ function camera(p5, fn){
    * @param {RendererGL} rendererGL instance of WebGL renderer
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let delta = 0.001;
    *
@@ -2902,11 +2795,8 @@ function camera(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to toggle between cameras.
    *
    * let cam1;
@@ -2952,8 +2842,6 @@ function camera(p5, fn){
    *     isDefaultCamera = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   p5.Camera = Camera;
 
@@ -3017,8 +2905,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3062,11 +2948,8 @@ function camera(p5, fn){
    *   // Display the value of eyeX, rounded to the nearest integer.
    *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3113,8 +2996,6 @@ function camera(p5, fn){
    *   // Display the value of eyeX, rounded to the nearest integer.
    *   text(`eyeX: ${round(cam.eyeX)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3127,8 +3008,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3172,11 +3051,8 @@ function camera(p5, fn){
    *   // Display the value of eyeY, rounded to the nearest integer.
    *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3226,8 +3102,6 @@ function camera(p5, fn){
    *   // Display the value of eyeY, rounded to the nearest integer.
    *   text(`eyeY: ${round(cam.eyeY)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3240,8 +3114,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3285,11 +3157,8 @@ function camera(p5, fn){
    *   // Display the value of eyeZ, rounded to the nearest integer.
    *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3339,8 +3208,6 @@ function camera(p5, fn){
    *   // Display the value of eyeZ, rounded to the nearest integer.
    *   text(`eyeZ: ${round(cam.eyeZ)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3354,8 +3221,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3399,11 +3264,8 @@ function camera(p5, fn){
    *   // Display the value of centerX, rounded to the nearest integer.
    *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3453,8 +3315,6 @@ function camera(p5, fn){
    *   // Display the value of centerX, rounded to the nearest integer.
    *   text(`centerX: ${round(cam.centerX)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3468,8 +3328,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3513,11 +3371,8 @@ function camera(p5, fn){
    *   // Display the value of centerY, rounded to the nearest integer.
    *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3567,8 +3422,6 @@ function camera(p5, fn){
    *   // Display the value of centerY, rounded to the nearest integer.
    *   text(`centerY: ${round(cam.centerY)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3582,8 +3435,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3627,11 +3478,8 @@ function camera(p5, fn){
    *   // Display the value of centerZ, rounded to the nearest integer.
    *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3678,8 +3526,6 @@ function camera(p5, fn){
    *   // Display the value of centerZ, rounded to the nearest integer.
    *   text(`centerZ: ${round(cam.centerZ)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3693,8 +3539,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3737,11 +3581,8 @@ function camera(p5, fn){
    *   // Display the value of upX, rounded to the nearest tenth.
    *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3790,8 +3631,6 @@ function camera(p5, fn){
    *   // Display the value of upX, rounded to the nearest tenth.
    *   text(`upX: ${round(cam.upX, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3805,8 +3644,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3849,11 +3686,8 @@ function camera(p5, fn){
    *   // Display the value of upY, rounded to the nearest tenth.
    *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -3902,8 +3736,6 @@ function camera(p5, fn){
    *   // Display the value of upY, rounded to the nearest tenth.
    *   text(`upY: ${round(cam.upY, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -3917,8 +3749,6 @@ function camera(p5, fn){
    * @readonly
    *
    * @example
-   * <div>
-   * <code>
    * let cam;
    * let font;
    *
@@ -3961,11 +3791,8 @@ function camera(p5, fn){
    *   // Display the value of upZ, rounded to the nearest tenth.
    *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let cam;
    * let font;
    *
@@ -4014,8 +3841,6 @@ function camera(p5, fn){
    *   // Display the value of upZ, rounded to the nearest tenth.
    *   text(`upZ: ${round(cam.upZ, 1)}`, 0, 45);
    * }
-   * </code>
-   * </div>
    */
 }
 

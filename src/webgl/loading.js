@@ -106,8 +106,6 @@ function loading(p5, fn){
    * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -130,11 +128,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -158,11 +153,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -192,11 +184,8 @@ function loading(p5, fn){
    *   shape = data;
    *   console.log(shape.gid);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -231,11 +220,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -270,11 +256,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -315,8 +298,6 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method loadModel
@@ -999,8 +980,6 @@ function loading(p5, fn){
    *
    * @param {Number} [count=1] number of instances to draw.
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1028,11 +1007,8 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1078,11 +1054,8 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1104,8 +1077,6 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');
@@ -1147,8 +1118,6 @@ function loading(p5, fn){
    * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * const octahedron_model = `
    * v 0.000000E+00 0.000000E+00 40.0000
    * v 22.5000 22.5000 0.000000E+00
@@ -1179,9 +1148,7 @@ function loading(p5, fn){
    *   rotateX(frameCount * 0.01);
    *   rotateY(frameCount * 0.01);
    *   model(octahedron);
-   *}
-   * </code>
-   * </div>
+   * }
    */
   /**
    * @method createModel

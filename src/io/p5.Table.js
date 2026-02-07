@@ -38,8 +38,6 @@ class Table {
    *  @return  {p5.TableRow} the row that was added
    *
    * @example
-   * <div>
-   * <code>
    * // Given the CSV file "mammals.csv"
    * // in the project's "assets" folder:
    * //
@@ -79,8 +77,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   addRow (row) {
   // make sure it is a valid TableRow
@@ -98,12 +94,10 @@ class Table {
   /**
    * Removes a row from the table object.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    * @param   {Integer} id ID number of the row to remove
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -135,8 +129,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   removeRow (id) {
     this.rows[id].table = null; // remove reference to table
@@ -154,8 +146,6 @@ class Table {
    * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -180,22 +170,18 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getRow (r) {
     return this.rows[r];
   }
 
   /**
-   *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
+   * Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -232,29 +218,25 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getRows () {
     return this.rows;
   }
 
   /**
-   *  Finds the first row in the Table that contains the value
-   *  provided, and returns a reference to that row. Even if
-   *  multiple rows are possible matches, only the first matching
-   *  row is returned. The column to search may be specified by
-   *  either its ID or title.
+   * Finds the first row in the Table that contains the value
+   * provided, and returns a reference to that row. Even if
+   * multiple rows are possible matches, only the first matching
+   * row is returned. The column to search may be specified by
+   * either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String} value  The value to match
-   *  @param  {Integer|String} column ID number or title of the
-   *                                 column to search
-   *  @return {p5.TableRow}
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String} value  The value to match
+   * @param  {Integer|String} column ID number or title of the
+   *                                column to search
+   * @return {p5.TableRow}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -278,8 +260,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   findRow (value, column) {
   // try the Object
@@ -302,21 +282,19 @@ class Table {
   }
 
   /**
-   *  Finds the rows in the Table that contain the value
-   *  provided, and returns references to those rows. Returns an
-   *  Array, so for must be used to iterate through all the rows,
-   *  as shown in the example above. The column to search may be
-   *  specified by either its ID or title.
+   * Finds the rows in the Table that contain the value
+   * provided, and returns references to those rows. Returns an
+   * Array, so for must be used to iterate through all the rows,
+   * as shown in the example above. The column to search may be
+   * specified by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String} value  The value to match
-   *  @param  {Integer|String} column ID number or title of the
-   *                                 column to search
-   *  @return {p5.TableRow[]}        An Array of TableRow objects
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String} value  The value to match
+   * @param  {Integer|String} column ID number or title of the
+   *                                column to search
+   * @return {p5.TableRow[]}        An Array of TableRow objects
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -345,8 +323,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   findRows (value, column) {
     const ret = [];
@@ -381,8 +357,6 @@ class Table {
    * @return {p5.TableRow}        TableRow object
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -406,8 +380,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   matchRow (regexp, column) {
     if (typeof column === 'number') {
@@ -438,8 +410,6 @@ class Table {
    *                                  title (string)
    * @return {p5.TableRow[]}          An Array of TableRow objects
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * function setup() {
@@ -453,15 +423,15 @@ class Table {
    *   table.addColumn('type');
    *
    *   // Add rows to the table
-   *    let newRow = table.addRow();
+   *   let newRow = table.addRow();
    *   newRow.setString('name', 'Lion');
-   *    newRow.setString('type', 'Mammal');
+   *   newRow.setString('type', 'Mammal');
    *
    *   newRow = table.addRow();
    *   newRow.setString('name', 'Snake');
    *   newRow.setString('type', 'Reptile');
    *
-   *    newRow = table.addRow();
+   *   newRow = table.addRow();
    *   newRow.setString('name', 'Mosquito');
    *   newRow.setString('type', 'Insect');
    *
@@ -484,8 +454,6 @@ class Table {
    *     y += 20;
    *   }
    * }
-   * </code>
-   * </div>
    */
   matchRows (regexp, column) {
     const ret = [];
@@ -514,8 +482,7 @@ class Table {
    *  @return {Array}       Array of column values
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Given the CSV file "mammals.csv"
    * // in the project's "assets" folder:
    * //
@@ -536,8 +503,6 @@ class Table {
    *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getColumn (value) {
     const ret = [];
@@ -554,14 +519,12 @@ class Table {
   }
 
   /**
-   *  Removes all rows from a Table. While all rows are removed,
-   *  columns and column titles are maintained.
+   * Removes all rows from a Table. While all rows are removed,
+   * columns and column titles are maintained.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    *
    * @example
-   * <div>
-   * <code>
    * // Given the CSV file "mammals.csv"
    * // in the project's "assets" folder:
    * //
@@ -592,8 +555,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   clearRows () {
     delete this.rows;
@@ -601,17 +562,15 @@ class Table {
   }
 
   /**
-   *  Use <a href="/reference/p5.Table/addColumn/">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
-   *  Typically, you will want to specify a title, so the column
-   *  may be easily referenced later by name. (If no title is
-   *  specified, the new column's title will be null.)
+   * Use <a href="/reference/p5.Table/addColumn/">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
+   * Typically, you will want to specify a title, so the column
+   * may be easily referenced later by name. (If no title is
+   * specified, the new column's title will be null.)
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param {String} [title] title of the given column
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param {String} [title] title of the given column
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -638,8 +597,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   addColumn (title) {
     const t = title || null;
@@ -647,13 +604,11 @@ class Table {
   }
 
   /**
-   *  Returns the total number of columns in a Table.
+   * Returns the total number of columns in a Table.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @return {Integer} Number of columns in this table
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @return {Integer} Number of columns in this table
    * @example
-   * <div>
-   * <code>
    * // given the cvs file "blobs.csv" in /assets directory
    * // ID, Name, Flavor, Shape, Color
    * // Blob1, Blobby, Sweet, Blob, Pink
@@ -673,21 +628,17 @@ class Table {
    *   let numOfColumn = table.getColumnCount();
    *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
    * }
-   * </code>
-   * </div>
    */
   getColumnCount () {
     return this.columns.length;
   }
 
   /**
-   *  Returns the total number of rows in a Table.
+   * Returns the total number of rows in a Table.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @return {Integer} Number of rows in this table
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @return {Integer} Number of rows in this table
    * @example
-   * <div>
-   * <code>
    * // given the cvs file "blobs.csv" in /assets directory
    * //
    * // ID, Name, Flavor, Shape, Color
@@ -707,27 +658,25 @@ class Table {
    * function draw() {
    *   text('There are ' + table.getRowCount() + ' rows in the table.', 100, 50);
    * }
-   * </code>
-   * </div>
    */
   getRowCount () {
     return this.rows.length;
   }
 
   /**
-   *  Removes any of the specified characters (or "tokens").
+   * Removes any of the specified characters (or "tokens").
    *
-   *  If no column is specified, then the values in all columns and
-   *  rows are processed. A specific column may be referenced by
-   *  either its ID or title.
+   * If no column is specified, then the values in all columns and
+   * rows are processed. A specific column may be referenced by
+   * either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String} chars  String listing characters to be removed
-   *  @param  {String|Integer} [column] Column ID (number)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String} chars  String listing characters to be removed
+   * @param  {String|Integer} [column] Column ID (number)
    *                                   or name (string)
    *
    * @example
-   * <div class="norender"><code>
+   * // META:norender
    * function setup() {
    *   let table = new p5.Table();
    *
@@ -749,7 +698,6 @@ class Table {
    * // prints:
    * //  0  "Lion"   "Mamal"
    * //  1  "Snake"  "Reptile"
-   * </code></div>
    */
   removeTokens (chars, column) {
     const escape = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -787,16 +735,16 @@ class Table {
   }
 
   /**
-   *  Trims leading and trailing whitespace, such as spaces and tabs,
-   *  from String table values. If no column is specified, then the
-   *  values in all columns and rows are trimmed. A specific column
-   *  may be referenced by either its ID or title.
+   * Trims leading and trailing whitespace, such as spaces and tabs,
+   * from String table values. If no column is specified, then the
+   * values in all columns and rows are trimmed. A specific column
+   * may be referenced by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String|Integer} [column] Column ID (number)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String|Integer} [column] Column ID (number)
    *                                   or name (string)
    * @example
-   * <div class="norender"><code>
+   * // META:norender
    * function setup() {
    *   let table = new p5.Table();
    *
@@ -818,7 +766,6 @@ class Table {
    * // prints:
    * //  0  "Lion"   "Mamal"
    * //  1  "Snake"  "Reptile"
-   * </code></div>
    */
   trim (column) {
     const regex = new RegExp(' ', 'g');
@@ -851,18 +798,16 @@ class Table {
   }
 
   /**
-   *  Use <a href="/reference/p5.Table/removeColumn/">removeColumn()</a> to remove an existing column from a Table
-   *  object. The column to be removed may be identified by either
-   *  its title (a String) or its index value (an int).
-   *  removeColumn(0) would remove the first column, removeColumn(1)
-   *  would remove the second column, and so on.
+   * Use <a href="/reference/p5.Table/removeColumn/">removeColumn()</a> to remove an existing column from a Table
+   * object. The column to be removed may be identified by either
+   * its title (a String) or its index value (an int).
+   * removeColumn(0) would remove the first column, removeColumn(1)
+   * would remove the second column, and so on.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String|Integer} column columnName (string) or ID (number)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String|Integer} column columnName (string) or ID (number)
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -888,8 +833,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   removeColumn (c) {
     let cString;
@@ -928,8 +871,6 @@ class Table {
    * @param {String|Number} value  value to assign
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -962,8 +903,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   set (row, column, value) {
     this.rows[row].set(column, value);
@@ -981,8 +920,6 @@ class Table {
    * @param {Number} value  value to assign
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1007,8 +944,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   setNum (row, column, value) {
     this.rows[row].setNum(column, value);
@@ -1025,8 +960,6 @@ class Table {
    *                               or title (String)
    * @param {String} value  value to assign
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1061,8 +994,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   setString (row, column, value) {
     this.rows[row].setString(column, value);
@@ -1080,8 +1011,6 @@ class Table {
    * @return {String|Number}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1106,8 +1035,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   get (row, column) {
     if(typeof column === 'string'){
@@ -1129,8 +1056,6 @@ class Table {
    * @return {Number}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1151,8 +1076,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getNum (row, column) {
     return this.rows[row].getNum(column);
@@ -1170,8 +1093,6 @@ class Table {
    * @return {String}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1209,8 +1130,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getString (row, column) {
     return this.rows[row].getString(column);
@@ -1227,8 +1146,7 @@ class Table {
    * @return {Object}
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Given the CSV file "mammals.csv"
    * // in the project's "assets" folder:
    * //
@@ -1251,8 +1169,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getObject (headerColumn) {
     const tableObject = {};
@@ -1283,8 +1199,6 @@ class Table {
    * @return {Array}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1311,8 +1225,6 @@ class Table {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getArray () {
     const tableArray = [];
@@ -1368,8 +1280,6 @@ function table(p5, fn){
    * @for p5.Table
    * @name columns
    * @example
-   * <div >
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -1388,8 +1298,6 @@ function table(p5, fn){
    *     text('column ' + c + ' is named ' + table.columns[c], 10, 30 + c * 20);
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
