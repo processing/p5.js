@@ -193,8 +193,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -220,8 +218,6 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -246,8 +242,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -276,8 +270,6 @@ if (typeof p5 !== "undefined") {
  *   fill('white');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -426,8 +418,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called before each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -443,6 +433,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(220);
  *   shader(myShader);
@@ -450,8 +441,6 @@ if (typeof p5 !== "undefined") {
  *   fill('teal');
  *   box(100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -484,8 +473,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -510,8 +497,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -530,8 +515,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives a boolean and should return a boolean.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -539,14 +522,13 @@ if (typeof p5 !== "undefined") {
  *      'bool shouldDiscard': '(bool outside) { return outside; }'
  *   });
  * }
+ *
  * function draw() {
  *   background(255);
  *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(-width/3, 0, width/3, 0);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -566,8 +548,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -590,8 +570,6 @@ if (typeof p5 !== "undefined") {
  *   fill('green');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -610,8 +588,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called after each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -627,6 +603,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(240);
  *   shader(myShader);
@@ -634,8 +611,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   sphere(60);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -655,8 +630,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildFilterShader">`buildFilterShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -681,8 +654,6 @@ if (typeof p5 !== "undefined") {
  *   circle(0, 0, 150);
  *   filter(myShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -703,8 +674,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -727,8 +696,6 @@ if (typeof p5 !== "undefined") {
  *   fill('orange');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -749,8 +716,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -775,8 +740,6 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**

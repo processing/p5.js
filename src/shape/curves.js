@@ -39,8 +39,6 @@ function curves(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -72,11 +70,8 @@ function curves(p5, fn){
    *     'A gray square with three curves. A black s-curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the mouse near the red dot in the top-left corner
    * // and drag to change the curve's shape.
    *
@@ -137,11 +132,8 @@ function curves(p5, fn){
    *     y2 = mouseY;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -156,11 +148,8 @@ function curves(p5, fn){
    *
    *   describe('A red balloon in a blue sky.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -180,10 +169,7 @@ function curves(p5, fn){
    *   // Draw the balloon string.
    *   line(0, 0, 0, 0, 20, 0);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method bezier
    * @param  {Number} x1
@@ -248,8 +234,6 @@ function curves(p5, fn){
    * @return {Number} coordinate of the point on the curve.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -291,11 +275,8 @@ function curves(p5, fn){
    *
    *   describe('A black s-curve on a gray square. The endpoints and center of the curve are marked with white circles.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -328,8 +309,6 @@ function curves(p5, fn){
    *   fill(255);
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
   fn.bezierPoint = function(a, b, c, d, t) {
     // p5._validateParameters('bezierPoint', arguments);
@@ -377,8 +356,6 @@ function curves(p5, fn){
    * @return {Number} coordinate of a point on the tangent line.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -446,8 +423,6 @@ function curves(p5, fn){
    *     'A black s-curve on a gray square. The endpoints and center of the curve are marked with white circles. Red tangent lines extend from the white circles.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.bezierTangent = function(a, b, c, d, t) {
     // p5._validateParameters('bezierTangent', arguments);
@@ -489,9 +464,6 @@ function curves(p5, fn){
    * @chainable
    *
    * @example
-   *
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200);
    *   background(240);
@@ -509,30 +481,27 @@ function curves(p5, fn){
    *
    *   describe('A black spline passes smoothly through four points');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(200, 200);
    *   background(245);
-   * 
+   *
    *   // Ensure the curve includes both end spans p0->p1 and p2->p3
    *   splineProperty('ends', INCLUDE);
-   * 
+   *
    *   // Control / anchor points
    *   const p0 = createVector(30, 160);
    *   const p1 = createVector(60, 40);
    *   const p2 = createVector(140, 40);
    *   const p3 = createVector(170, 160);
-   * 
+   *
    *   // Draw the spline that passes through ALL four points (INCLUDE)
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
    *   spline(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-   * 
+   *
    *   // Draw markers + labels
    *   fill(255);
    *   stroke(0);
@@ -541,21 +510,18 @@ function curves(p5, fn){
    *   circle(p1.x, p1.y, r);
    *   circle(p2.x, p2.y, r);
    *   circle(p3.x, p3.y, r);
-   * 
+   *
    *   noStroke();
    *   fill(0);
    *   text('p0', p0.x - 14, p0.y + 14);
    *   text('p1', p1.x - 14, p1.y - 8);
    *   text('p2', p2.x + 4, p2.y - 8);
    *   text('p3', p3.x + 4, p3.y + 14);
-   * 
+   *
    *   describe('A black Catmull-Rom spline passes through p0, p1, p2, p3 with endpoints included.');
    * }
-   * </code>
-   * </div>
-   * 
-   * <div>
-   * <code>
+   *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -590,11 +556,8 @@ function curves(p5, fn){
    *     'A gray square with a curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let x1 = 5;
    * let y1 = 26;
    * let isChanging = false;
@@ -655,11 +618,8 @@ function curves(p5, fn){
    *     y1 = mouseY;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -677,11 +637,8 @@ function curves(p5, fn){
    *
    *   describe('A red balloon in a blue sky.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -704,10 +661,7 @@ function curves(p5, fn){
    *   // Draw the balloon string.
    *   line(0, 10, 0, 0, 30, 0);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method spline
    * @param  {Number} x1
@@ -767,8 +721,6 @@ function curves(p5, fn){
    * @return {Number} coordinate of a point on the curve.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -809,11 +761,8 @@ function curves(p5, fn){
    *
    *   describe('A black curve on a gray square. The endpoints and center of the curve are marked with white circles.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -846,47 +795,44 @@ function curves(p5, fn){
    *   fill(255);
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
-   * 
-   * <div>
-   * <code>
+   *
+   * @example
    * let p0, p1, p2, p3;
-   * 
+   *
    * function setup() {
    *   createCanvas(200, 200);
    *   splineProperty('ends', INCLUDE); // make endpoints part of the curve
-   * 
+   *
    *   // Four points forming a gentle arch
    *   p0 = createVector(30, 160);
    *   p1 = createVector(60, 50);
    *   p2 = createVector(140, 50);
    *   p3 = createVector(170, 160);
-   * 
+   *
    *   describe('Black spline through p0–p3. A red dot marks the location at parameter t on p1->p2 using splinePoint.');
    * }
-   * 
+   *
    * function draw() {
    *   background(245);
-   * 
+   *
    *   // Draw the spline for context
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
    *   spline(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-   * 
+   *
    *   // Map mouse X to t in [0, 1] (span p1->p2)
    *   let t = constrain(map(mouseX, 0, width, 0, 1), 0, 1);
-   * 
+   *
    *   // Evaluate the curve point by axis (splinePoint works one axis at a time)
    *   let x = splinePoint(p0.x, p1.x, p2.x, p3.x, t);
    *   let y = splinePoint(p0.y, p1.y, p2.y, p3.y, t);
-   * 
+   *
    *   // Marker at the evaluated position
    *   noStroke();
    *   fill('red');
    *   circle(x, y, 8);
-   * 
+   *
    *   // Draw control/anchor points
    *   stroke(0);
    *   strokeWeight(1);
@@ -896,7 +842,7 @@ function curves(p5, fn){
    *   circle(p1.x, p1.y, r);
    *   circle(p2.x, p2.y, r);
    *   circle(p3.x, p3.y, r);
-   * 
+   *
    *   // Labels + UI hint
    *   noStroke();
    *   fill(20);
@@ -907,11 +853,7 @@ function curves(p5, fn){
    *   text('p3', p3.x + 4, p3.y + 14);
    *   text('t = ' + nf(t, 1, 2) + ' (p1→p2)', 8, 16);
    * }
-   * </code>
-   * </div>
-   * 
    */
-
   fn.splinePoint = function(a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       t3 = t * t * t,
@@ -954,8 +896,6 @@ function curves(p5, fn){
    * @return {Number} coordinate of a point on the tangent line.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(120, 120);
    *   describe('A black spline on a gray canvas. A red dot moves along the curve on its own. A short line shows the tangent direction at the dot.');
@@ -994,11 +934,8 @@ function curves(p5, fn){
    *   fill('red');
    *   circle(px, py, 7);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1064,8 +1001,6 @@ function curves(p5, fn){
    *     'A black curve on a gray square. A white circle moves back and forth along the curve.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.splineTangent = function(a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
