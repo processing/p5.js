@@ -1461,7 +1461,7 @@ function rendererWebGPU(p5, fn) {
         const bgEntries = entries.map(entry => {
           // Check if this is a uniform buffer binding
           const uniformBufferInfo = this._uniformBuffersForBinding.get(entry.binding);
-          if (uniformBufferInfo) {
+          if (uniformBufferInfo && entry.bufferGroup) {
             return {
               binding: entry.binding,
               resource: entry.bufferGroup.dynamic
@@ -1494,7 +1494,7 @@ function rendererWebGPU(p5, fn) {
         passEncoder.setBindGroup(
           group,
           bindGroup,
-          entries.map(e => this._uniformBuffersForBinding.get(e.binding))
+          entries.map(e => e.bufferGroup && this._uniformBuffersForBinding.get(e.binding))
             .filter(b => b?.dynamic)
             .map(b => b.lastOffset)
         );

@@ -4,6 +4,7 @@ precision highp float;
 precision highp int;
 
 uniform mat4 uViewMatrix;
+uniform mat3 uCameraNormalMatrix;
 
 uniform bool uUseLighting;
 
