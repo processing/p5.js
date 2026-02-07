@@ -5,7 +5,7 @@
     "build": "rollup -c",
     "dev": "vite preview/",
     "dev:global": "concurrently -n build,server \"rollup -c -w\" \"npx vite preview/global/\"",
-    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js -o ./docs/data.json && node ./utils/convert.mjs",
+    "docs": "documentation build ./src/**/*.js ./src/**/**/*.js --shallow -o ./docs/data.json && node ./utils/convert.mjs",
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
@@ -19,7 +19,7 @@
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.2.0",
+  "version": "2.2.1-rc.0",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.2",
     "@japont/unicode-range": "^1.0.0",
