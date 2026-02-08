@@ -213,33 +213,67 @@ suite('loadModel', function() {
     assert.instanceOf(model, p5.Geometry);
   });
 
-  test('OBJ with negative vertex indices loads correctly', async function() {
-    const model = await promisedSketch(function(sketch, resolve, reject) {
-      sketch.preload = function() {
-        sketch.loadModel('unit/assets/cube-negative-indices.obj', resolve, reject);
-      };
-    });
-    assert.instanceOf(model, p5.Geometry);
-    assert.isAbove(model.vertices.length, 0, 'Model should have vertices');
-    assert.isAbove(model.faces.length, 0, 'Model should have faces');
-  });
+  test('OBJ with negative vertex indices loads',
+    async function() {
+      var model = await promisedSketch(
+        function(sketch, resolve, reject) {
+          sketch.preload = function() {
+            sketch.loadModel(
+              'unit/assets/cube-negative-indices.obj',
+              resolve,
+              reject
+            );
+          };
+        }
+      );
+      assert.instanceOf(model, p5.Geometry);
+      assert.isAbove(model.vertices.length, 0);
+      assert.isAbove(model.faces.length, 0);
+    }
+  );
 
-  test('OBJ with negative indices produces same geometry as positive indices', async function() {
-    const [positiveModel, negativeModel] = await promisedSketch(function(sketch, resolve, reject) {
-      let positive, negative;
-      let loaded = 0;
-      function checkDone() {
-        loaded++;
-        if (loaded === 2) resolve([positive, negative]);
-      }
-      sketch.preload = function() {
-        sketch.loadModel('unit/assets/cube.obj', function(m) { positive = m; checkDone(); }, reject);
-        sketch.loadModel('unit/assets/cube-negative-indices.obj', function(m) { negative = m; checkDone(); }, reject);
-      };
-    });
-    assert.equal(positiveModel.vertices.length, negativeModel.vertices.length,
-      'Vertex count should match between positive and negative index OBJs');
-    assert.equal(positiveModel.faces.length, negativeModel.faces.length,
-      'Face count should match between positive and negative index OBJs');
-  });
+  test('OBJ negative indices match positive',
+    async function() {
+      const results = await promisedSketch(
+        function(sketch, resolve, reject) {
+          let positive, negative;
+          let loaded = 0;
+          function checkDone() {
+            loaded++;
+            if (loaded === 2) {
+              resolve([positive, negative]);
+            }
+          }
+          sketch.preload = function() {
+            sketch.loadModel(
+              'unit/assets/cube.obj',
+              function(m) {
+                positive = m;
+                checkDone();
+              },
+              reject
+            );
+            sketch.loadModel(
+              'unit/assets/cube-negative-indices.obj',
+              function(m) {
+                negative = m;
+                checkDone();
+              },
+              reject
+            );
+          };
+        }
+      );
+      var pos = results[0];
+      var neg = results[1];
+      assert.equal(
+        pos.vertices.length,
+        neg.vertices.length
+      );
+      assert.equal(
+        pos.faces.length,
+        neg.faces.length
+      );
+    }
+  );
 });
