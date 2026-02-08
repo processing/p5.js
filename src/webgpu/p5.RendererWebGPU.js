@@ -40,6 +40,8 @@ function rendererWebGPU(p5, fn) {
       // Used to group draws into one big render pass
       this.activeRenderPass = null;
       this.activeRenderPassEncoder = null;
+      this.activeShaderOptions = null;
+      this.activeShader = null;
 
       this.samplers = new Map();
 
@@ -69,9 +71,6 @@ function rendererWebGPU(p5, fn) {
 
       // Registry to track geometries with buffer pools
       this._geometriesWithPools = [];
-
-      // Reusable Map for uniform buffer bindings to avoid GC
-      this._uniformBuffersForBinding = new Map();
 
       // Flag to track if any draws have happened that need queue submission
       this._hasPendingDraws = false;
@@ -278,6 +277,8 @@ function rendererWebGPU(p5, fn) {
       this._pendingCommandEncoders.push(commandEncoder.finish());
       this.activeRenderPassEncoder = null;
       this.activeRenderPass = null;
+      this.activeShader = null;
+      this.activeShaderOptions = null;
     }
 
     clear(...args) {
@@ -518,6 +519,14 @@ function rendererWebGPU(p5, fn) {
         clipping,
         clipApplied,
       }
+    }
+
+    _shaderOptionsDifferent(newOptions) {
+      if (!this.activeShaderOptions) return true;
+      for (const key in this.activeShaderOptions) {
+        if (this.activeShaderOptions[key] !== newOptions[key]) return true;
+      }
+      return false;
     }
 
     _initShader(shader) {
@@ -1296,13 +1305,14 @@ function rendererWebGPU(p5, fn) {
           // });
           buf.offset = 0;
           buf.lastOffset = 0;
-          this.resettingUniformBuffers.push(
+          // this.resettingUniformBuffers.push(
             buf.buffer.mapAsync(GPUMapMode.WRITE).then(() => {
               buf.data = new Float32Array(buf.buffer.getMappedRange());
               buf.dataView = new DataView(buf.data.buffer);
+              this.uniformBufferPool.push(buf);
               return buf;
             })
-          )
+          // )
         }
         this.activeUniformBuffers = [];
         this.currentUniformBuffer = undefined;
@@ -1380,7 +1390,7 @@ function rendererWebGPU(p5, fn) {
         this._markGeometryBuffersForReturn(geometry);
       }
 
-      this.uniformBufferPool.push(...(await Promise.all(this.resettingUniformBuffers)));
+      // this.uniformBufferPool.push(...(await Promise.all(this.resettingUniformBuffers)));
       this.resettingUniformBuffers = [];
 
       // Return all vertex buffers to their pools
@@ -1425,7 +1435,12 @@ function rendererWebGPU(p5, fn) {
       this._beginActiveRenderPass();
       const passEncoder = this.activeRenderPass;
       const currentShader = this._curShader;
-      passEncoder.setPipeline(currentShader.getPipeline(this._shaderOptions({ mode })));
+      const shaderOptions = this._shaderOptions({ mode });
+      if (this.activeShader !== currentShader || this._shaderOptionsDifferent(shaderOptions)) {
+        passEncoder.setPipeline(currentShader.getPipeline(shaderOptions));
+      }
+      this.activeShader = currentShader;
+      this.activeShaderOptions = shaderOptions;
 
       // Set stencil reference value for clipping
       const drawTarget = this.drawTarget();
@@ -1445,8 +1460,8 @@ function rendererWebGPU(p5, fn) {
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
       }
 
-      // Clear and reuse the map to avoid GC
-      this._uniformBuffersForBinding.clear();
+      const uniformBuffersForBinding = {};
+      const uniformBufferOffsets = {};
 
       for (const bufferGroup of currentShader._uniformBufferGroups) {
         if (bufferGroup.dynamic) {
@@ -1462,7 +1477,8 @@ function rendererWebGPU(p5, fn) {
           uniformBufferInfo.offset += Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment;
 
           // Make a shallow copy so that we keep track of the last offset for this uniform
-          this._uniformBuffersForBinding.set(bufferGroup.cacheKey, { ...uniformBufferInfo });
+          uniformBuffersForBinding[bufferGroup.cacheKey] = uniformBufferInfo;
+          uniformBufferOffsets[bufferGroup.cacheKey] = uniformBufferInfo.lastOffset;
         } else {
           // Bind uniforms to a binding-specific buffer, which may be cached for performance
           let bufferInfo;
@@ -1492,45 +1508,53 @@ function rendererWebGPU(p5, fn) {
             bufferGroup.currentBuffer = bufferInfo;
           }
 
-          this._uniformBuffersForBinding.set(bufferGroup.cacheKey, bufferInfo);
+          uniformBuffersForBinding[bufferGroup.cacheKey] = bufferInfo;
+        }
+      }
+      for (const sampler of currentShader.samplers) {
+        const key = sampler.group + ',' + sampler.binding;
+        if (currentShader.buffersDirty[key]) {
+          currentShader._cachedBindGroup[sampler.group] = undefined;
+          currentShader.buffersDirty[key] = false;
         }
       }
 
       // Bind sampler/texture uniforms and uniform buffers
       for (const [group, entries] of currentShader._groupEntries) {
-        const bgEntries = entries.map(entry => {
+        const dynamicEntryOffsets = [];
+        const bgEntries = [];
+        let bindGroup = currentShader._cachedBindGroup[group];
+        for (const entry of entries) {
           // Check if this is a uniform buffer binding
           const uniformBufferInfo = entry.bufferGroup &&
-            this._uniformBuffersForBinding.get(entry.bufferGroup.cacheKey);
+            uniformBuffersForBinding[entry.bufferGroup.cacheKey];
           if (uniformBufferInfo && entry.bufferGroup) {
-            return {
+            if (entry.bufferGroup.dynamic) {
+              dynamicEntryOffsets.push(uniformBufferOffsets[entry.bufferGroup.cacheKey]);
+            }
+            if (!bindGroup) {
+              bgEntries.push({
+                binding: entry.binding,
+                resource: entry.bufferGroup.dynamic
+                  ? {
+                    buffer: uniformBufferInfo.uniformBuffer,
+                    offset: 0,
+                    size: Math.ceil(entry.bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
+                  }
+                  : { buffer: uniformBufferInfo.buffer },
+              });
+            }
+          } else if (!bindGroup) {
+            bgEntries.push({
               binding: entry.binding,
-              resource: entry.bufferGroup.dynamic
-                ? {
-                  buffer: uniformBufferInfo.uniformBuffer,
-                  offset: 0,
-                  size: Math.ceil(entry.bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
-                }
-                : { buffer: uniformBufferInfo.buffer },
-            };
+              resource: entry.uniform.type === 'sampler'
+                ? (entry.uniform.textureSource.texture || this._getEmptyTexture()).getSampler()
+                : (entry.uniform.texture || this._getEmptyTexture()).textureHandle.view,
+            });
           }
-
-          const key = entry.uniform.group + ',' + entry.uniform.binding;
-          if (currentShader.buffersDirty[key]) {
-            currentShader._cachedBindGroup[group] = undefined;
-            currentShader.buffersDirty[key] = false;
-          }
-
-          return {
-            binding: entry.binding,
-            resource: entry.uniform.type === 'sampler'
-              ? (entry.uniform.textureSource.texture || this._getEmptyTexture()).getSampler()
-              : (entry.uniform.texture || this._getEmptyTexture()).textureHandle.view,
-          };
-        });
+        }
 
         const layout = currentShader._bindGroupLayouts[group];
-        let bindGroup = currentShader._cachedBindGroup[group];
         if (!bindGroup) {
           bindGroup = this.device.createBindGroup({
             layout,
@@ -1538,10 +1562,6 @@ function rendererWebGPU(p5, fn) {
           });
         }
         currentShader._cachedBindGroup[group] = bindGroup;
-        const dynamicEntryOffsets = entries
-          .map(e => e.bufferGroup && this._uniformBuffersForBinding.get(e.bufferGroup.cacheKey))
-          .filter(b => b?.dynamic)
-          .map(b => b.lastOffset);
         passEncoder.setBindGroup(
           group,
           bindGroup,
@@ -1588,29 +1608,45 @@ function rendererWebGPU(p5, fn) {
       for (const uniform of groupUniforms) {
         const fullUniform = shader.uniforms[uniform.name];
         if (!fullUniform || fullUniform.isSampler) continue;
+        const uniformData = fullUniform._mappedData;
 
         if (fullUniform.baseType === 'u32') {
           if (fullUniform.size === 4) {
-            dataView.setUint32(offset + fullUniform.offset, fullUniform._cachedData, true);
+            dataView.setUint32(offset + fullUniform.offset, uniformData, true);
           } else {
-            const uniformData = fullUniform._cachedData;
+            const uniformData = uniformData;
             for (let i = 0; i < uniformData.length; i++) {
               dataView.setUint32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
           }
         } else if (fullUniform.baseType === 'i32') {
           if (fullUniform.size === 4) {
-            dataView.setInt32(offset + fullUniform.offset, fullUniform._cachedData, true);
+            dataView.setInt32(offset + fullUniform.offset, uniformData, true);
           } else {
-            const uniformData = fullUniform._cachedData;
+            const uniformData = uniformData;
             for (let i = 0; i < uniformData.length; i++) {
               dataView.setInt32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
           }
+        } else if (fullUniform.packInPlace) {
+          // In-place packing for mat3: write directly to buffer with padding
+          const baseOffset = (offset + fullUniform.offset) / 4;
+          // Column 0
+          data[baseOffset + 0] = uniformData[0];
+          data[baseOffset + 1] = uniformData[1];
+          data[baseOffset + 2] = uniformData[2];
+          // Column 1
+          data[baseOffset + 4] = uniformData[3];
+          data[baseOffset + 5] = uniformData[4];
+          data[baseOffset + 6] = uniformData[5];
+          // Column 2
+          data[baseOffset + 8] = uniformData[6];
+          data[baseOffset + 9] = uniformData[7];
+          data[baseOffset + 10] = uniformData[8];
         } else if (fullUniform.size === 4) {
-          data.set([fullUniform._cachedData], (offset + fullUniform.offset) / 4);
-        } else if (fullUniform._cachedData !== undefined) {
-          data.set(fullUniform._cachedData, (offset + fullUniform.offset) / 4);
+          data.set([uniformData], (offset + fullUniform.offset) / 4);
+        } else if (uniformData !== undefined) {
+          data.set(uniformData, (offset + fullUniform.offset) / 4);
         }
       }
     }
@@ -1664,17 +1700,16 @@ function rendererWebGPU(p5, fn) {
           const align = dim === 2 ? 8 : 16;
           // Each column must be aligned
           const size = Math.ceil(dim * 4 / align) * align * dim;
+          // For mat3, use in-place packing to avoid array allocation
           const pack = dim === 3
             ? (data) => [
               ...data.slice(0, 3),
-              0,
               ...data.slice(3, 6),
-              0,
               ...data.slice(6, 9),
-              0
             ]
             : undefined;
-          return { align, size, pack, items: dim * dim, baseType: 'f32' };
+          const packInPlace = dim === 3;
+          return { align, size, pack, packInPlace, items: dim * dim, baseType: 'f32' };
         }
         if (/^array<.+>$/.test(type)) {
           const [, subtype, rawLength] = type.match(/^array<(.+),\s*(\d+)>/);
@@ -1711,7 +1746,7 @@ function rendererWebGPU(p5, fn) {
 
       while ((match = elementRegex.exec(structBody)) !== null) {
         const [_, location, name, type] = match;
-        const { size, align, pack, baseType } = baseAlignAndSize(type);
+        const { size, align, pack, packInPlace, baseType } = baseAlignAndSize(type);
         offset = Math.ceil(offset / align) * align;
         const offsetEnd = offset + size;
         elements[name] = {
@@ -1723,6 +1758,7 @@ function rendererWebGPU(p5, fn) {
           offset,
           offsetEnd,
           pack,
+          packInPlace,
           baseType
         };
         index++;
@@ -1873,6 +1909,8 @@ function rendererWebGPU(p5, fn) {
       if (uniform.isSampler) {
         uniform.texture =
           data instanceof Texture ? data : this.getTexture(data);
+      } else {
+        uniform._mappedData = this._mapUniformData(uniform, uniform._cachedData);
       }
       shader.buffersDirty = shader.buffersDirty || {};
       shader.buffersDirty[uniform.group + ',' + uniform.binding] = true;
