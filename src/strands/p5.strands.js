@@ -743,6 +743,146 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
+ * Retrieves the current color of a given texture at given coordinates.
+ *
+ * The given coordinates should be between [0, 0] representing the top-left of
+ * the texture, and [1, 1] representing the bottom-right of the texture.
+ *
+ * The given texture could be, for example:
+ * * <a href="#/p5.Image">p5.Image</a>,
+ * * a <a href="#/p5.Graphics">p5.Graphics</a>, or
+ * * a <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * The retrieved color that is returned will behave like a vec4, with components
+ * for red, green, blue, and alpha, each between 0.0 and 1.0.
+ *
+ * Linear interpolation is used by default. For Framebuffer sources, you can
+ * prevent this by creating the buffer with:
+ * ```js
+ * createFramebuffer({
+ *     textureFiltering: NEAREST
+ *  })
+ * ```
+ * This can be useful if you are using your texture to store data other than color.
+ * See <a href="#/p5/createFramebuffer/">createFramebuffer</a>.
+ *
+ * Note: The `getTexture` function is only available when using p5.strands.
+ *
+ * @method getTexture
+ * @beta
+ *
+ * @param texture The texture to sample from.
+ * (e.g. a p5.Image, p5.Graphics, or p5.Framebuffer).
+ *
+ * @param coords The 2D coordinates to sample from.
+ * This should be between [0,0] (the top-left) and [1,1] (the bottom-right)
+ * of the texture.  It should be compatible with a vec2.
+ *
+ * @returns {*} The color of the given texture at the given coordinates.  This
+ * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // A filter shader (using p5.strands) which will
+ * // sample and invert the color of each pixel
+ * // from the canvas.
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   let myShader = buildFilterShader(buildIt);
+ *
+ *   background("white");
+ *   fill("red");
+ *   circle(0, 0, 50);
+ *
+ *   filter(myShader); //Try commenting this out!
+ *
+ *   describe("A cyan circle on black background");
+ * }
+ *
+ * function buildIt() {
+ *   filterColor.begin();
+ *
+ *   //Sample the color of the pixel from the
+ *   //canvas at the same coordinate.
+ *   let c = getTexture(filterColor.canvasContent,
+ *                      filterColor.texCoord);
+ *
+ *   //Make a new color by inverting r, g, and b
+ *   let newColor = [1 - c.r, 1 - c.g, 1 - c.b, c.a];
+ *
+ *   //Finally, use it for this pixel!
+ *   filterColor.set(newColor);
+ *
+ *   filterColor.end();
+ * }
+ * </code>
+ *
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // This primitive edge-detection filter samples
+ * // and compares the colors of the current pixel
+ * // on the canvas, and a little to the right.
+ * // It marks if they differ much.
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myShader = buildFilterShader(myShaderBuilder);
+ *   describe("A rough partial outline of a square rotating around a circle");
+ * }
+ *
+ * function draw() {
+ *   drawADesign();
+ *
+ *   filter(myShader); // try commenting this out
+ * }
+ *
+ * function myShaderBuilder() {
+ *   filterColor.begin();
+ *
+ *   //The position of the current pixel...
+ *   let coordHere = filterColor.texCoord;
+ *   //and some small amount to the right.
+ *   let coordRight = coordHere + [0.01, 0];
+ *
+ *   //The canvas content is a texture.
+ *   let cnvTex = filterColor.canvasContent;
+ *
+ *   //Sample the colors from it at our two positions
+ *   let colorHere = getTexture(cnvTex, coordHere);
+ *   let colorRight = getTexture(cnvTex, coordRight);
+ *
+ *   // Calculate a (very rough) color difference.
+ *   let difference = length(colorHere - colorRight);
+ *
+ *   //We'll use a black color by default...
+ *   let resultColor = [0, 0, 0, 1];
+ *   //or white if the samples were different.
+ *   if (difference > 0.3) {
+ *     resultColor = [1, 1, 1, 1];
+ *   }
+ *   filterColor.set(resultColor);
+ *
+ *   filterColor.end();
+ * }
+ *
+ * //Draw a few shapes, just to test the filter with
+ * function drawADesign() {
+ *   background(50);
+ *   noStroke();
+ *   lights();
+ *   sphere(20);
+ *   rotate(frameCount / 300);
+ *   square(0, 0, 30);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
  * @method getWorldInputs
  * @param {Function} callback
  */
