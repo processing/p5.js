@@ -1,14 +1,10 @@
 const uniforms = `
-// Group 1: Camera and Projection
-struct CameraUniforms {
-  uProjectionMatrix: mat4x4<f32>,
-// @p5 ifdef Vertex getWorldInputs
-  uViewMatrix: mat4x4<f32>,
-// @p5 endif
-  uCameraNormalMatrix: mat3x3<f32>,
+// Group 0: Material Properties
+struct MaterialUniforms {
+  uUseVertexColor: u32,
 }
 
-// Group 2: Model Transform
+// Group 1: Model Transform
 struct ModelUniforms {
 // @p5 ifdef Vertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
@@ -21,9 +17,13 @@ struct ModelUniforms {
   uMaterialColor: vec4<f32>,
 }
 
-// Group 3: Material Properties
-struct MaterialUniforms {
-  uUseVertexColor: u32,
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+// @p5 ifdef Vertex getWorldInputs
+  uViewMatrix: mat4x4<f32>,
+// @p5 endif
+  uCameraNormalMatrix: mat3x3<f32>,
 }
 `;
 
@@ -43,9 +43,9 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> material: MaterialUniforms;
+@group(0) @binding(0) var<uniform> material: MaterialUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 struct Vertex {
   position: vec3<f32>,
@@ -111,9 +111,9 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> material: MaterialUniforms;
+@group(0) @binding(0) var<uniform> material: MaterialUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 
 @fragment
