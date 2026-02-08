@@ -590,6 +590,7 @@ function rendererWebGPU(p5, fn) {
         shader._uniformBufferGroups.push({
           group: group.group,
           binding: group.binding,
+          cacheKey: group.group + ',' + group.binding,
           varName: group.varName,
           structType: group.structType,
           uniforms: groupUniforms,
@@ -1413,7 +1414,7 @@ function rendererWebGPU(p5, fn) {
           uniformBufferInfo.offset += Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment;
 
           // Make a shallow copy so that we keep track of the last offset for this uniform
-          this._uniformBuffersForBinding.set(bufferGroup.binding, { ...uniformBufferInfo });
+          this._uniformBuffersForBinding.set(bufferGroup.cacheKey, { ...uniformBufferInfo });
           currentShader._cachedBindGroup[bufferGroup.group] = undefined;
         } else {
           // Bind uniforms to a binding-specific buffer, which may be cached for performance
@@ -1444,7 +1445,7 @@ function rendererWebGPU(p5, fn) {
             bufferGroup.currentBuffer = bufferInfo;
           }
 
-          this._uniformBuffersForBinding.set(bufferGroup.binding, bufferInfo);
+          this._uniformBuffersForBinding.set(bufferGroup.cacheKey, bufferInfo);
         }
       }
 
@@ -1452,7 +1453,7 @@ function rendererWebGPU(p5, fn) {
       for (const [group, entries] of currentShader._groupEntries) {
         const bgEntries = entries.map(entry => {
           // Check if this is a uniform buffer binding
-          const uniformBufferInfo = this._uniformBuffersForBinding.get(entry.binding);
+          const uniformBufferInfo = this._uniformBuffersForBinding.get(group + ',' + entry.binding);
           if (uniformBufferInfo && entry.bufferGroup) {
             return {
               binding: entry.binding,
@@ -1482,13 +1483,17 @@ function rendererWebGPU(p5, fn) {
             entries: bgEntries,
           });
         }
-        currentShader._cachedBindGroup[group] = bindGroup;
+        const dynamicEntryOffsets = entries
+          .map(e => e.bufferGroup && this._uniformBuffersForBinding.get(e.bufferGroup.cacheKey))
+          .filter(b => b?.dynamic)
+          .map(b => b.lastOffset);
+        if (dynamicEntryOffsets.length === 0) {
+          currentShader._cachedBindGroup[group] = bindGroup;
+        }
         passEncoder.setBindGroup(
           group,
           bindGroup,
-          entries.map(e => e.bufferGroup && this._uniformBuffersForBinding.get(e.binding))
-            .filter(b => b?.dynamic)
-            .map(b => b.lastOffset)
+          dynamicEntryOffsets,
         );
       }
 
