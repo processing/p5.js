@@ -864,22 +864,25 @@ function rendererWebGPU(p5, fn) {
     }
 
     _getVertexBuffers(shader) {
-      const buffers = [];
+      if (!shader._vertexBuffers) {
+        const buffers = [];
 
-      for (const attrName in shader.attributes) {
-        const attr = shader.attributes[attrName];
-        if (!attr || attr.location === -1) continue;
+        for (const attrName in shader.attributes) {
+          const attr = shader.attributes[attrName];
+          if (!attr || attr.location === -1) continue;
 
-        // Get the vertex buffer info associated with this attribute
-        const renderBuffer =
-          this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
-          this.buffers.user.find(buf => buf.attr === attrName);
-        if (!renderBuffer) continue;
+          // Get the vertex buffer info associated with this attribute
+          const renderBuffer =
+            this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
+            this.buffers.user.find(buf => buf.attr === attrName);
+          if (!renderBuffer) continue;
 
-        buffers.push(renderBuffer);
+          buffers.push(renderBuffer);
+        }
+        shader._vertexBuffers = buffers;
       }
 
-      return buffers;
+      return shader._vertexBuffers;
     }
 
     _getFormatFromSize(size) {
