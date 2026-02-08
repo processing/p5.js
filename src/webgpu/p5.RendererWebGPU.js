@@ -590,6 +590,7 @@ function rendererWebGPU(p5, fn) {
       // global so that we can reuse the last used buffer when uniform values
       // don't change.
       shader._uniformBufferGroups = [];
+      shader.buffersDirty = new Set();
 
       for (const group of shader._uniformGroups) {
         // Calculate the size needed for this group's uniforms
@@ -603,7 +604,7 @@ function rendererWebGPU(p5, fn) {
         shader._uniformBufferGroups.push({
           group: group.group,
           binding: group.binding,
-          cacheKey: group.group + ',' + group.binding,
+          cacheKey: group.group * 1000 + group.binding,
           varName: group.varName,
           structType: group.structType,
           uniforms: groupUniforms,
@@ -1461,7 +1462,7 @@ function rendererWebGPU(p5, fn) {
         passEncoder.setStencilReference(1);
       }
       // Bind vertex buffers
-      for (const buffer of this._getVertexBuffers(currentShader)) {
+      for (const buffer of currentShader._vertexBuffers || this._getVertexBuffers(currentShader)) {
         const location = currentShader.attributes[buffer.attr].location;
         const gpuBuffer = buffers[buffer.dst];
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
@@ -1504,8 +1505,7 @@ function rendererWebGPU(p5, fn) {
               bufferInfo.data.byteLength
             );
 
-            currentShader.buffersDirty = currentShader.buffersDirty || {};
-            currentShader.buffersDirty[bufferGroup.group + ',' + bufferGroup.binding] = false;
+            currentShader.buffersDirty.delete(bufferGroup.group * 1000 + bufferGroup.binding);
             currentShader._cachedBindGroup[bufferGroup.group] = undefined;
 
             // Cache this buffer and data for next frame
@@ -1514,10 +1514,10 @@ function rendererWebGPU(p5, fn) {
         }
       }
       for (const sampler of currentShader.samplers) {
-        const key = sampler.group + ',' + sampler.binding;
-        if (currentShader.buffersDirty[key]) {
+        const key = sampler.group * 1000 + sampler.binding;
+        if (currentShader.buffersDirty.has(key)) {
           currentShader._cachedBindGroup[sampler.group] = undefined;
-          currentShader.buffersDirty[key] = false;
+          currentShader.buffersDirty.delete(key);
         }
       }
 
@@ -1668,7 +1668,7 @@ function rendererWebGPU(p5, fn) {
     _hasGroupDataChanged(shader, bufferGroup) {
       // First time
       if (!bufferGroup.currentBuffer) return true;
-      return shader.buffersDirty?.[bufferGroup.group + ',' + bufferGroup.binding];
+      return shader.buffersDirty.has(bufferGroup.group * 1000 + bufferGroup.binding);
     }
 
     _parseStruct(shaderSource, structName) {
@@ -1926,8 +1926,7 @@ function rendererWebGPU(p5, fn) {
       } else {
         uniform._mappedData = this._mapUniformData(uniform, uniform._cachedData);
       }
-      shader.buffersDirty = shader.buffersDirty || {};
-      shader.buffersDirty[uniform.group + ',' + uniform.binding] = true;
+      shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
     }
 
     _updateTexture(uniform, tex) {
