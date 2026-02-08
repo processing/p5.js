@@ -1950,7 +1950,7 @@ suite('p5.Shader', function() {
 
       assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
       const errMsg = mockUserError.mock.calls[0][1];
-      assert.notInclude(errMsg, 'a undefined'); // #8444
+      assert.notInclude(errMsg, 'a undefined'); //
       assert.include(errMsg, 'float4');
       assert.include(errMsg, 'getWorldInputs');
       assert.include(errMsg, 'Vertex');
