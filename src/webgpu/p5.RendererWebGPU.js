@@ -56,6 +56,8 @@ function rendererWebGPU(p5, fn) {
       this.uniformBufferPool = [];
       this.resettingUniformBuffers = [];
 
+      this.dynamicEntryOffsets = new Uint32Array(64);
+
       // Cache for current frame's canvas texture view
       this.currentCanvasColorTexture = null;
       this.currentCanvasColorTextureView = null;
@@ -664,12 +666,14 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Create layouts and bind groups
+      const groupEntriesArr = [];
       for (const [group, entries] of groupEntries) {
         const layout = this.device.createBindGroupLayout({ entries });
         bindGroupLayouts.set(group, layout);
+        groupEntriesArr.push([group, entries]);
       }
 
-      shader._groupEntries = groupEntries;
+      shader._groupEntries = groupEntriesArr;
       shader._bindGroupLayouts = [...bindGroupLayouts.values()];
       // Reuse bind groups if they don't change
       shader._cachedBindGroup = {};
@@ -1463,9 +1467,6 @@ function rendererWebGPU(p5, fn) {
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
       }
 
-      const uniformBuffersForBinding = {};
-      const uniformBufferOffsets = {};
-
       for (const bufferGroup of currentShader._uniformBufferGroups) {
         if (bufferGroup.dynamic) {
           // Bind uniforms into a part of a big dynamic memory block because
@@ -1480,8 +1481,8 @@ function rendererWebGPU(p5, fn) {
           uniformBufferInfo.offset += Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment;
 
           // Make a shallow copy so that we keep track of the last offset for this uniform
-          uniformBuffersForBinding[bufferGroup.cacheKey] = uniformBufferInfo;
-          uniformBufferOffsets[bufferGroup.cacheKey] = uniformBufferInfo.lastOffset;
+          bufferGroup.currentDynamicBuffer = uniformBufferInfo;
+          bufferGroup.lastOffset = uniformBufferInfo.lastOffset;
         } else {
           // Bind uniforms to a binding-specific buffer, which may be cached for performance
           let bufferInfo;
@@ -1510,8 +1511,6 @@ function rendererWebGPU(p5, fn) {
             // Cache this buffer and data for next frame
             bufferGroup.currentBuffer = bufferInfo;
           }
-
-          uniformBuffersForBinding[bufferGroup.cacheKey] = bufferInfo;
         }
       }
       for (const sampler of currentShader.samplers) {
@@ -1523,26 +1522,29 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Bind sampler/texture uniforms and uniform buffers
-      for (const [group, entries] of currentShader._groupEntries) {
-        const dynamicEntryOffsets = [];
+      for (const iter of currentShader._groupEntries) {
+        const group = iter[0];
+        const entries = iter[1];
+        let dynamicOffsetIdx = 0;
         const bgEntries = [];
         let bindGroup = currentShader._cachedBindGroup[group];
         for (const entry of entries) {
+          const bufferGroup = entry.bufferGroup;
           // Check if this is a uniform buffer binding
-          const uniformBufferInfo = entry.bufferGroup &&
-            uniformBuffersForBinding[entry.bufferGroup.cacheKey];
-          if (uniformBufferInfo && entry.bufferGroup) {
-            if (entry.bufferGroup.dynamic) {
-              dynamicEntryOffsets.push(uniformBufferOffsets[entry.bufferGroup.cacheKey]);
+          const uniformBufferInfo =
+            bufferGroup?.currentBuffer || bufferGroup?.currentDynamicBuffer;
+          if (uniformBufferInfo) {
+            if (bufferGroup.dynamic) {
+              this.dynamicEntryOffsets[dynamicOffsetIdx++] = bufferGroup.lastOffset;
             }
             if (!bindGroup) {
               bgEntries.push({
                 binding: entry.binding,
-                resource: entry.bufferGroup.dynamic
+                resource: bufferGroup.dynamic
                   ? {
                     buffer: uniformBufferInfo.uniformBuffer,
                     offset: 0,
-                    size: Math.ceil(entry.bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
+                    size: Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
                   }
                   : { buffer: uniformBufferInfo.buffer },
               });
@@ -1565,11 +1567,20 @@ function rendererWebGPU(p5, fn) {
           });
         }
         currentShader._cachedBindGroup[group] = bindGroup;
-        passEncoder.setBindGroup(
-          group,
-          bindGroup,
-          dynamicEntryOffsets,
-        );
+        if (dynamicOffsetIdx === 0) {
+          passEncoder.setBindGroup(
+            group,
+            bindGroup,
+          );
+        } else {
+          passEncoder.setBindGroup(
+            group,
+            bindGroup,
+            this.dynamicEntryOffsets,
+            0,
+            dynamicOffsetIdx
+          );
+        }
       }
 
       if (currentShader.shaderType === "fill") {
