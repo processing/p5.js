@@ -30,7 +30,11 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
-  function initStrandsContext(ctx, backend, { active = false, renderer = null, baseShader = null } = {}) {
+  function initStrandsContext(
+    ctx,
+    backend,
+    { active = false, renderer = null, baseShader = null } = {},
+  ) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
@@ -78,11 +82,8 @@ function strands(p5, fn) {
 
     const prev = {};
     for (const key of Object.getOwnPropertyNames(fn)) {
-      const descriptor = Object.getOwnPropertyDescriptor(
-        fn,
-        key
-      );
-      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
+      if (descriptor && !descriptor.get && typeof fn[key] === "function") {
         prev[key] = window[key];
         window[key] = fn[key].bind(pInst);
       }
@@ -104,7 +105,10 @@ function strands(p5, fn) {
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
     try {
-      if (shaderModifier instanceof Function || typeof shaderModifier === 'string') {
+      if (
+        shaderModifier instanceof Function ||
+        typeof shaderModifier === "string"
+      ) {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
@@ -121,9 +125,10 @@ function strands(p5, fn) {
         if (options.parser) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
-          const sourceString = typeof shaderModifier === 'string'
-            ? `(${shaderModifier})`
-            : `(${shaderModifier.toString()})`;
+          const sourceString =
+            typeof shaderModifier === "string"
+              ? `(${shaderModifier})`
+              : `(${shaderModifier.toString()})`;
           strandsCallback = transpileStrandsToJS(
             p5,
             sourceString,
@@ -188,8 +193,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -215,8 +218,6 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -241,8 +242,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -270,6 +269,98 @@ if (typeof p5 !== "undefined") {
  *   noStroke();
  *   fill('white');
  *   sphere(50);
+ * }
+ */
+
+/**
+ * @method smoothstep
+ * @description
+ * A shader function that performs smooth Hermite interpolation between `0.0`
+ * and `1.0`.
+ *
+ * This function is equivalent to the GLSL built-in
+ * `smoothstep(edge0, edge1, x)` and is available inside p5.strands shader
+ * callbacks. It is commonly used to create soft transitions, smooth edges,
+ * fades, and anti-aliased effects.
+ *
+ * Smoothstep is useful when a threshold or cutoff is needed, but with a
+ * gradual transition instead of a hard edge.
+ *
+ * - Returns `0.0` when `x` is less than or equal to `edge0`
+ * - Returns `1.0` when `x` is greater than or equal to `edge1`
+ * - Smoothly interpolates between `0.0` and `1.0` when `x` is between them
+ *
+ * @param {Number} edge0
+ *        Lower edge of the transition
+ * @param {Number} edge1
+ *        Upper edge of the transition
+ * @param {Number} x
+ *        Input value to interpolate
+ *
+ * @returns {Number}
+ *          A value between `0.0` and `1.0`
+ *
+ * @example
+ * <div modernizr="webgl">
+ * <code>
+ * // Example 1: A soft vertical fade using smoothstep (no uniforms)
+ *
+ * let fadeShader;
+ *
+ * function fadeCallback() {
+ *   getColor((inputs) => {
+ *     // x goes from 0 → 1 across the canvas
+ *     let x = inputs.texCoord.x;
+ *
+ *     // smoothstep creates a soft transition instead of a hard edge
+ *     let t = smoothstep(0.25, 0.35, x);
+ *
+ *     // Use t directly as brightness
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   fadeShader = baseFilterShader().modify(fadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(fadeShader);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr="webgl">
+ * <code>
+ * // Example 2: Animate the smooth transition using a uniform
+ *
+ * let animatedShader;
+ *
+ * function animatedFadeCallback() {
+ *   const time = uniformFloat(() => millis() * 0.001);
+ *
+ *   getColor((inputs) => {
+ *     let x = inputs.texCoord.x;
+ *
+ *     // Move the smoothstep band back and forth over time
+ *     let center = 0.5 + 0.25 * sin(time);
+ *     let t = smoothstep(center - 0.05, center + 0.05, x);
+ *
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   animatedShader = baseFilterShader().modify(animatedFadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(animatedShader);
  * }
  * </code>
  * </div>
@@ -327,8 +418,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called before each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -344,6 +433,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(220);
  *   shader(myShader);
@@ -351,8 +441,6 @@ if (typeof p5 !== "undefined") {
  *   fill('teal');
  *   box(100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -385,8 +473,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -411,8 +497,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -431,8 +515,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives a boolean and should return a boolean.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -440,14 +522,13 @@ if (typeof p5 !== "undefined") {
  *      'bool shouldDiscard': '(bool outside) { return outside; }'
  *   });
  * }
+ *
  * function draw() {
  *   background(255);
  *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(-width/3, 0, width/3, 0);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -467,8 +548,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -491,8 +570,6 @@ if (typeof p5 !== "undefined") {
  *   fill('green');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -511,8 +588,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called after each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -528,6 +603,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(240);
  *   shader(myShader);
@@ -535,8 +611,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   sphere(60);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -556,8 +630,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildFilterShader">`buildFilterShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -582,8 +654,6 @@ if (typeof p5 !== "undefined") {
  *   circle(0, 0, 150);
  *   filter(myShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -604,8 +674,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -628,8 +696,6 @@ if (typeof p5 !== "undefined") {
  *   fill('orange');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -650,8 +716,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -676,8 +740,6 @@ if (typeof p5 !== "undefined") {
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**

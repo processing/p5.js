@@ -105,8 +105,6 @@ class Geometry {
    * @returns {Object} bounding box of the geometry.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let particles;
@@ -165,8 +163,6 @@ class Geometry {
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
@@ -268,8 +264,6 @@ class Geometry {
    * <a href="#/p5/fill">fill()</a> function to apply color to the geometry.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -313,8 +307,6 @@ class Geometry {
    *     'Three squares drawn against a gray background. Red squares are at the center and the bottom-right. A blue square is at the top-right.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   clearColors() {
     this.vertexColors = [];
@@ -334,8 +326,6 @@ class Geometry {
    * @param {String} [fileName='model.obj'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.obj'.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn;
    * function setup() {
@@ -367,8 +357,6 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
   saveObj(fileName = 'model.obj') {
     let objStr= '';
@@ -438,8 +426,6 @@ class Geometry {
    * @param {Object} [options] Optional settings.
    * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn1;
    * let saveBtn2;
@@ -478,8 +464,6 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
   saveStl(fileName = 'model.stl', { binary = false } = {}){
     let modelOutput;
@@ -580,8 +564,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -621,8 +603,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipU() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -672,8 +652,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -713,8 +691,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -761,8 +737,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -804,11 +778,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -852,8 +823,6 @@ class Geometry {
    *   // Compute the faces array.
    *   this.computeFaces();
    * }
-   * </code>
-   * </div>
    */
   computeFaces() {
     this.faces.length = 0;
@@ -930,8 +899,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -992,11 +959,8 @@ class Geometry {
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1041,11 +1005,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1092,11 +1053,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1143,11 +1101,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1197,8 +1152,6 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
@@ -1353,8 +1306,6 @@ class Geometry {
 
   /**
    * @example
-   * <div>
-   * <code>
    * let tetrahedron;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
@@ -1382,6 +1333,7 @@ class Geometry {
    *   tetrahedron.faces.push([1, 2, 3]);
    *   tetrahedron.makeEdgesFromFaces();
    * }
+   *
    * function draw() {
    *   background(200);
    *   strokeWeight(2);
@@ -1389,8 +1341,6 @@ class Geometry {
    *   rotateY(millis() * 0.001);
    *   model(tetrahedron);
    * }
-   * </code>
-   * </div>
    */
   makeEdgesFromFaces() {
     this._makeTriangleEdges();
@@ -1681,8 +1631,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let myGeometry;
    *
    * function setup() {
@@ -1715,8 +1663,6 @@ class Geometry {
    *   // Draw the torus.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
   normalize() {
     if (this.vertices.length > 0) {
@@ -1771,8 +1717,6 @@ class Geometry {
    * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
    *
    * @example
-   * <div>
-   * <code>
    * let geo;
    *
    * function cartesianToSpherical(x, y, z) {
@@ -1842,8 +1786,6 @@ class Geometry {
    *   // Draw the geometry
    *   model(geo);
    * }
-   * </code>
-   * </div>
    *
    * @param {String} propertyName the name of the vertex property.
    * @param {Number|Number[]} data the data tied to the vertex property.
@@ -1965,8 +1907,6 @@ function geometry(p5, fn){
    * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1997,11 +1937,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2041,11 +1978,8 @@ function geometry(p5, fn){
    *   // left to top to right.
    *   this.faces.push([0, 1, 2]);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2088,11 +2022,8 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * // Adapted from Paul Wheeler's wonderful p5.Geometry tutorial.
@@ -2169,8 +2100,6 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    */
   p5.Geometry = Geometry;
 
@@ -2189,8 +2118,6 @@ function geometry(p5, fn){
    * @name vertices
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2221,11 +2148,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2273,8 +2197,6 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2293,8 +2215,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2355,11 +2275,8 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2404,8 +2321,6 @@ function geometry(p5, fn){
    *   // Display the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2440,8 +2355,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2491,8 +2404,6 @@ function geometry(p5, fn){
    *
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2515,8 +2426,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2556,8 +2465,6 @@ function geometry(p5, fn){
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
 
   /**
