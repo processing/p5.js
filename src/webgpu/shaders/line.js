@@ -1,12 +1,14 @@
 const uniforms = `
-// Group 1: Camera and Projection
-struct CameraUniforms {
-  uProjectionMatrix: mat4x4<f32>,
-  uViewport: vec4<f32>,
-  uPerspective: u32,
+// Group 0: Stroke Properties
+struct StrokeUniforms {
+  uStrokeWeight: f32,
+  uUseLineColor: f32,
+  uSimpleLines: f32,
+  uStrokeCap: u32,
+  uStrokeJoin: u32,
 }
 
-// Group 2: Model Transform
+// Group 1: Model Transform
 struct ModelUniforms {
 // @p5 ifdef StrokeVertex getWorldInputs
   uModelMatrix: mat4x4<f32>,
@@ -18,14 +20,13 @@ struct ModelUniforms {
   uMaterialColor: vec4<f32>,
 }
 
-// Group 3: Stroke Properties
-struct StrokeUniforms {
-  uStrokeWeight: f32,
-  uUseLineColor: f32,
-  uSimpleLines: f32,
-  uStrokeCap: u32,
-  uStrokeJoin: u32,
-}`;
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+  uViewport: vec4<f32>,
+  uPerspective: u32,
+}
+`;
 
 export const lineVertexShader = `
 struct StrokeVertexInput {
@@ -49,9 +50,9 @@ struct StrokeVertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> stroke: StrokeUniforms;
+@group(0) @binding(0) var<uniform> stroke: StrokeUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 struct StrokeVertex {
   position: vec3<f32>,
@@ -303,9 +304,9 @@ struct StrokeFragmentInput {
 }
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> stroke: StrokeUniforms;
+@group(0) @binding(0) var<uniform> stroke: StrokeUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 
 fn distSquared(a: vec2<f32>, b: vec2<f32>) -> f32 {
