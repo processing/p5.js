@@ -7356,6 +7356,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LuLaValva",
+      "name": "Luke LaValva",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26027232?v=4",
+      "profile": "http://lavalva.dev",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",

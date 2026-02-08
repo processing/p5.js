@@ -1099,6 +1099,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/aashu2006"><img src="https://avatars.githubusercontent.com/u/170659176?v=4?s=64" width="64px;" alt="akshat patil"/><br /><sub><b>akshat patil</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aashu2006" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/avinxshKD"><img src="https://avatars.githubusercontent.com/u/152387616?v=4?s=64" width="64px;" alt="Avinash Kumar Deepak"/><br /><sub><b>Avinash Kumar Deepak</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=avinxshKD" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Sanchit2662"><img src="https://avatars.githubusercontent.com/u/217499010?v=4?s=64" width="64px;" alt="SANCHIT KUMAR"/><br /><sub><b>SANCHIT KUMAR</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Sanchit2662" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://lavalva.dev"><img src="https://avatars.githubusercontent.com/u/26027232?v=4?s=64" width="64px;" alt="Luke LaValva"/><br /><sub><b>Luke LaValva</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ALuLaValva" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=LuLaValva" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
