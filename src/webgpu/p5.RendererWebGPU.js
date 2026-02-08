@@ -1628,7 +1628,6 @@ function rendererWebGPU(p5, fn) {
           if (fullUniform.size === 4) {
             dataView.setUint32(offset + fullUniform.offset, uniformData, true);
           } else {
-            const uniformData = uniformData;
             for (let i = 0; i < uniformData.length; i++) {
               dataView.setUint32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
@@ -1637,7 +1636,6 @@ function rendererWebGPU(p5, fn) {
           if (fullUniform.size === 4) {
             dataView.setInt32(offset + fullUniform.offset, uniformData, true);
           } else {
-            const uniformData = uniformData;
             for (let i = 0; i < uniformData.length; i++) {
               dataView.setInt32(offset + fullUniform.offset + i * 4, uniformData[i], true);
             }
