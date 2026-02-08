@@ -47,8 +47,6 @@ function loadingDisplaying(p5, fn){
    * @return {Promise<p5.Image>}   the <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * // Load the image and create a p5.Image object.
@@ -61,11 +59,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads.
    *   await loadImage('assets/laDefense.jpg', handleImage);
@@ -77,11 +72,8 @@ function loadingDisplaying(p5, fn){
    * function handleImage(img) {
    *   image(img, 0, 0);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
@@ -99,8 +91,6 @@ function loadingDisplaying(p5, fn){
    * function handleError(event) {
    *   console.error('Oops!', event);
    * }
-   * </code>
-   * </div>
    */
   fn.loadImage = async function(
     path,
@@ -190,8 +180,6 @@ function loadingDisplaying(p5, fn){
    * @param {String} [options.notificationID='progressBar'] The id to give to the notification's DOM element.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -215,11 +203,8 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -244,8 +229,6 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5, { delay: 1 });
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.saveGif = async function(
     fileName,
@@ -273,7 +256,7 @@ function loadingDisplaying(p5, fn){
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-     const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
+    const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -328,7 +311,7 @@ function loadingDisplaying(p5, fn){
     // initialize variables for the frames processing
     let frameIterator;
     let totalNumberOfFrames;
-    
+
     if (resetAnimation) {
       frameIterator = nFramesDelay;
       this.frameCount = frameIterator;
@@ -379,7 +362,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-   await new Promise(requestAnimationFrame)
+    await new Promise(requestAnimationFrame);
 
     while (frameIterator < totalNumberOfFrames) {
       /*
@@ -929,8 +912,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}   [height] height to draw the image.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -946,11 +927,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image has dark gray borders on its left and top.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -966,11 +944,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image is drawn in the top left corner of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -986,11 +961,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a gridded ceiling drawn in the center of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1005,11 +977,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of an astronaut on the moon. The top and bottom borders of the image are dark gray.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1025,8 +994,6 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A pixelated image of the underside of a white umbrella with a gridded ceiling above.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method image
@@ -1176,8 +1143,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}        [alpha]
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1196,11 +1161,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1219,11 +1181,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1242,11 +1201,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a transparent red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1265,26 +1221,21 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right is transparent.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method tint
    * @param  {String}        value   CSS color string.
    */
-
   /**
    * @method tint
    * @param  {Number}        gray   grayscale value.
    * @param  {Number}        [alpha]
    */
-
   /**
    * @method tint
    * @param  {Number[]}      values  array containing the red, green, blue &
    *                                 alpha components of the color.
    */
-
   /**
    * @method tint
    * @param  {p5.Color}      color   the tint color
@@ -1303,8 +1254,6 @@ function loadingDisplaying(p5, fn){
    * @method noTint
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1325,8 +1274,6 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the left has a red tint.');
    * }
-   * </code>
-   * </div>
    */
   fn.noTint = function() {
     this._renderer.states.setValue('tint', null);
@@ -1365,9 +1312,6 @@ function loadingDisplaying(p5, fn){
    * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1386,11 +1330,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn at the top left of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1409,11 +1350,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a brick wall is drawn on a gray square. The image is squeezed into a small rectangular area.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1432,8 +1370,6 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn on a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.imageMode = function(m) {
     // p5._validateParameters('imageMode', arguments);

@@ -11,24 +11,47 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            browser: chrome
+          # - os: windows-latest
+          #   browser: chrome
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
+      
+      - name: Verify Chrome (Ubuntu)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: |
+          google-chrome --version
+
+      - name: Verify Chrome (Windows)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        run: |
+          & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
+      
       - name: Get node modules
         run: npm ci
         env:
           CI: true
-      - name: build and test
+
+      - name: Build and test (Ubuntu)
         id: test
-        run: npm test
+        if: matrix.os == 'ubuntu-latest'
+        run: npm test -- --project=unit-tests
         continue-on-error: true
         env:
           CI: true
+
       - name: Generate Visual Test Report
         if: always()
         run: node visual-report.js

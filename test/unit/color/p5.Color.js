@@ -308,7 +308,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), '#ff0066cc');
     });
 
     test('should correctly get RGBA property after overwrite', function() {
@@ -471,7 +471,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
     });
   });
 
@@ -498,7 +498,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
+      assert.equal(c.toString(), 'hsla(336, 100%, 50%, 0.8)');
     });
   });
 
@@ -525,7 +525,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'hsba(336, 100%, 100%, 0.8)');
     });
   });
 
@@ -641,7 +641,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'rgba(255, 0, 102, 0.8)');
     });
   });
 
@@ -666,7 +666,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgb(100% 0% 40% / 0.8)');
+      assert.equal(c.toString(), 'hsba(336, 100%, 100%, 0.8)');
     });
   });
 
@@ -691,7 +691,7 @@ suite('p5.Color', function() {
     });
 
     test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'hsl(336 100% 50% / 0.8)');
+      assert.equal(c.toString(), 'hsla(336, 100%, 50%, 0.8)');
     });
   });
 
@@ -791,15 +791,58 @@ suite('p5.Color', function() {
     });
   });
 
-  suite.todo('p5.Color.prototype.toString', function() {
-    // var colorStr;
+  suite('p5.Color.prototype.toString', function() {
+    suite('#rrggbb format', function() {
+      test('should expand short hex (#rgb) to full 6-digit format', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color('#f06');
+        const result = c.toString('#rrggbb');
+        assert.equal(result, '#ff0066');
+      });
 
-    // beforeEach(function() {
-    //   mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
-    //   c = mockP5Prototype.color(128, 0, 128, 128);
-    //   colorStr = c.toString();
-    // });
+      test('should truncate hex with alpha (#rrggbbaa) to 6 digits', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color(255, 0, 102, 128);
+        const result = c.toString('#rrggbb');
+        assert.equal(result.length, 7);
+        assert.equal(result, '#ff0066');
+      });
 
-    // NOTE: need some tests here
+      test('should output lowercase hex string', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color(255, 170, 187);
+        const result = c.toString('#rrggbb');
+        assert.equal(result, result.toLowerCase());
+        assert.equal(result, '#ffaabb');
+      });
+
+      test('should correctly format standard RGB colors', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color(255, 0, 102);
+        const result = c.toString('#rrggbb');
+        assert.equal(result, '#ff0066');
+      });
+
+      test('should correctly format black color', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color(0, 0, 0);
+        const result = c.toString('#rrggbb');
+        assert.equal(result, '#000000');
+      });
+
+      test('should correctly format white color', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color(255, 255, 255);
+        const result = c.toString('#rrggbb');
+        assert.equal(result, '#ffffff');
+      });
+
+      test('should handle colors created from 6-digit hex string', function() {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255, 255, 255, 255);
+        const c = mockP5Prototype.color('#9932cc');
+        const result = c.toString('#rrggbb');
+        assert.equal(result, '#9932cc');
+      });
+    });
   });
 });

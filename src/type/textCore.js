@@ -5,6 +5,8 @@
 
 import { Renderer } from '../core/p5.Renderer';
 
+export const DefaultFill = '#000000';
+
 export const textCoreConstants = {
   IDEOGRAPHIC: 'ideographic',
   RIGHT_TO_LEFT: 'rtl',
@@ -19,10 +21,10 @@ export const textCoreConstants = {
 
 function textCore(p5, fn) {
   const LeadingScale = 1.275;
-  const DefaultFill = '#000000';
   const LinebreakRe = /\r?\n/g;
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
+  const SpecialCharRe = /[^\x00-\x7F]/; // Non-ascii
   const TabsRe = /\t/g;
 
   const FontVariationSettings = 'fontVariationSettings';
@@ -92,8 +94,6 @@ function textCore(p5, fn) {
    *
    * @for p5
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -101,11 +101,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "hi" written in black in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *   background('skyblue');
@@ -114,12 +111,8 @@ function textCore(p5, fn) {
    *
    *   describe('A rainbow in a blue sky.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   textSize(32);
@@ -130,12 +123,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "hi" written in white with a black outline.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background('black');
@@ -151,12 +140,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "rainbows" written on several lines, each in a different color.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -165,12 +150,8 @@ function textCore(p5, fn) {
    *
    *   describe('The sample text "The quick brown fox..." written in black across several lines.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -180,12 +161,8 @@ function textCore(p5, fn) {
    *
    *   describe('The sample text "The quick brown fox..." written in black across several lines.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let font;
    *
    * async function setup() {
@@ -203,8 +180,6 @@ function textCore(p5, fn) {
    *
    *   describe('The text "p5*js" written in white and spinning in 3D.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -232,8 +207,6 @@ function textCore(p5, fn) {
    * @param {TOP|BOTTOM|CENTER|BASELINE} [vertAlign] vertical alignment
    * @returns {Object} If no arguments are provided, returns an object with current horizontal and vertical alignment
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -258,12 +231,8 @@ function textCore(p5, fn) {
    *
    *   describe('The letters ABCD displayed at top-left, EFGH at center, and IJKL at bottom-right. A vertical line divides the canvas in half.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -293,8 +262,6 @@ function textCore(p5, fn) {
    *
    *   describe('The words "TOP", "CENTER", "BASELINE", and "BOTTOM" each drawn relative to a horizontal line. Their positions demonstrate different vertical alignments.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -314,8 +281,6 @@ function textCore(p5, fn) {
    * @returns {Number} The ascent value in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(400, 300);
    *   background(220);
@@ -344,13 +309,8 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("textAscent: " + asc.toFixed(2) + " pixels", x, y - asc - 10);
    * }
-   * </code>
-   * </div>
-   *
    *
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup()  {
@@ -389,10 +349,7 @@ function textCore(p5, fn) {
    *
    *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends upward from each baseline to the top of the "d".');
    * }
-   * </code>
-   * </div>
    */
-
 
   /**
    * Returns the descent of the text.
@@ -411,8 +368,6 @@ function textCore(p5, fn) {
    * @returns {Number} The descent value in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(400, 300);
    *   background(220);
@@ -441,12 +396,8 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("textDescent: " + desc.toFixed(2) + " pixels", x, y + desc + 20);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup()  {
@@ -485,8 +436,6 @@ function textCore(p5, fn) {
    *
    *   describe('The letters "dp" written twice in different sizes. Each version has a horizontal baseline. A vertical line extends downward from each baseline to the bottom of the "p".');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -503,8 +452,6 @@ function textCore(p5, fn) {
    * @returns {Number} If no arguments are provided, the current text leading
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -522,8 +469,6 @@ function textCore(p5, fn) {
    *
    *   describe('The words "one" and "two" written on separate lines twice. The words on the left have less vertical spacing than the words on the right.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -548,8 +493,6 @@ function textCore(p5, fn) {
    * @for p5
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -559,12 +502,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "hi" written in a black, monospace font on a gray background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background('black');
@@ -575,12 +514,8 @@ function textCore(p5, fn) {
    *
    *   describe('A text prompt from a game is written in a green, monospace font on a black background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -590,12 +525,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "Verdana" written in a black, sans-serif font on a gray background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let fontRegular;
    * let fontItalic;
    * let fontBold;
@@ -616,8 +547,6 @@ function textCore(p5, fn) {
    *
    *   describe('The statements "I am Normal", "I am Italic", and "I am Bold" written in black on separate lines. The statements have normal, italic, and bold fonts, respectively.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -636,8 +565,6 @@ function textCore(p5, fn) {
    * @returns {Number} If no arguments are provided, the current text size in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(600, 200);
    *   background(240);
@@ -657,12 +584,8 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("Current text size: " + currentSize, width / 2, height - 20);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -682,8 +605,6 @@ function textCore(p5, fn) {
    *
    *   describe('The text "Font Size 12" drawn small, "Font Size 14" drawn medium, and "Font Size 16" drawn large.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textSize
@@ -707,8 +628,6 @@ function textCore(p5, fn) {
    * @returns {NORMAL|ITALIC|BOLD|BOLDITALIC} If no arguments are provided, the current style
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -736,8 +655,6 @@ function textCore(p5, fn) {
    *
    *   describe('The words "Normal" displayed normally, "Italic" in italic, "Bold" in bold, and "Bold Italic" in bold italics.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textStyle
@@ -767,8 +684,6 @@ function textCore(p5, fn) {
    * @returns {Number} The width of the text
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200);
    *   background(220);
@@ -792,12 +707,8 @@ function textCore(p5, fn) {
    *   textSize(20);
    *   text("Text width: " + tw, 10, 150);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -819,12 +730,8 @@ function textCore(p5, fn) {
    *
    *   describe('The word "yoyo" underlined.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 160);
    *   background(235);
@@ -861,12 +768,8 @@ function textCore(p5, fn) {
    *
    *   describe('Three lines: Hello with 0, 2, and many trailing spaces. Red boxes use textWidth and are identical. Captions show spaces as dots.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -889,8 +792,6 @@ function textCore(p5, fn) {
    *
    *   describe('The word "yo" written twice, one copy beneath the other. The words are divided by a horizontal line.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -918,8 +819,6 @@ function textCore(p5, fn) {
    * @returns {CHAR|WORD} If no arguments are provided, the current wrapping style
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -934,12 +833,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "Have a wonderful day" written across three lines.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -954,12 +849,8 @@ function textCore(p5, fn) {
    *
    *   describe('The text "Have a wonderful day" written across two lines.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -974,15 +865,12 @@ function textCore(p5, fn) {
    *
    *   describe('The text "祝你有美好的一天" written across two lines.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textWrap
    * @for p5
    * @returns {CHAR|WORD} The current wrapping style
    */
-
 
   /**
    * Computes the tight bounding box for a block of text.
@@ -1008,8 +896,6 @@ function textCore(p5, fn) {
    *                   bounding box of the rendered text.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 200);
    *   background(220);
@@ -1031,10 +917,7 @@ function textCore(p5, fn) {
    *   stroke('red');
    *   rect(bounds.x, bounds.y, bounds.w, bounds.h);
    * }
-   * </code>
-   * </div>
    */
-
 
   /**
    * Sets or gets the text drawing direction.
@@ -1053,8 +936,6 @@ function textCore(p5, fn) {
    * @returns {String} If no arguments are provided, the current text direction, either "ltr", "rtl", or "inherit"
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 300);
    *   background(240);
@@ -1078,8 +959,6 @@ function textCore(p5, fn) {
    *   textAlign(LEFT, TOP);
    *   text("Current textDirection: " + textDirection(), 50, 250);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textDirection
@@ -1108,8 +987,6 @@ function textCore(p5, fn) {
    * @returns If no arguments are provided, the current value of the specified text property
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 300);
    *   background(240);
@@ -1134,8 +1011,6 @@ function textCore(p5, fn) {
    *   text("Current textAlign: " + currentAlign, 50, 150);
    *   text("Current textBaseline: " + currentBaseline, 50, 170);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textProperty
@@ -1189,8 +1064,6 @@ function textCore(p5, fn) {
    *                   bounding box of the text based on the font's intrinsic metrics.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
@@ -1216,10 +1089,7 @@ function textCore(p5, fn) {
    *   text("Font Bounds: x=" + bounds.x.toFixed(1) + ", y=" + bounds.y.toFixed(1) +
    *        ", w=" + bounds.w.toFixed(1) + ", h=" + bounds.h.toFixed(1), 8, 100);
    * }
-   * </code>
-   * </div>
    */
-
 
   /**
    * Returns the loose width of a text string based on the current font.
@@ -1238,8 +1108,6 @@ function textCore(p5, fn) {
    * @returns {Number} The loose width of the text in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
@@ -1262,10 +1130,7 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("Font width: " + fw.toFixed(2) + " pixels", 50, 100);
    * }
-   * </code>
-   * </div>
    */
-
 
   /**
    * Returns the loose ascent of the text based on the font's intrinsic metrics.
@@ -1281,8 +1146,6 @@ function textCore(p5, fn) {
    * @returns {Number} The loose ascent value in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 300);
    *   background(220);
@@ -1311,8 +1174,6 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("fontAscent: " + fasc.toFixed(2) + " pixels", x, y + fdesc + 20);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1329,8 +1190,6 @@ function textCore(p5, fn) {
    * @returns {Number} The loose descent value in pixels.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 300);
    *   background(220);
@@ -1359,8 +1218,6 @@ function textCore(p5, fn) {
    *   textSize(16);
    *   text("fontDescent: " + fdesc.toFixed(2) + " pixels", x, y + fdesc + 20);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1379,8 +1236,6 @@ function textCore(p5, fn) {
    * @returns {Number} If no arguments are provided, the current font weight
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(300, 200);
    *   background(240);
@@ -1412,11 +1267,8 @@ function textCore(p5, fn) {
    *   text("Normal Weight: " + normalWeight, 150, 52);
    *   text("Bold Weight: " + boldWeight, 150, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -1435,8 +1287,6 @@ function textCore(p5, fn) {
    *   text('p5*js', 0, 10);
    *   describe('The text p5*js pulsing its weight over time');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method textWeight
@@ -2424,7 +2274,7 @@ function textCore(p5, fn) {
     let parts = familyStr.split(CommaDelimRe);
     let family = parts.map(part => {
       part = part.trim();
-      if (part.indexOf(' ') > -1 && !QuotedRe.test(part)) {
+      if ((part.indexOf(' ') > -1 || SpecialCharRe.test(part)) && !QuotedRe.test(part)) {
         part = `"${part}"`; // quote font names with spaces
       }
       return part;
@@ -2517,229 +2367,6 @@ function textCore(p5, fn) {
 
     return this._pInst;
   };
-
-  Renderer.prototype._middleAlignOffset = function() {
-    const { textFont, textSize } = this.states;
-    const font = textFont?.font;
-    const ctx = this.textDrawingContext();
-    const metrics = ctx.measureText('X');
-    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
-    if (sCapHeight) {
-      const unitsPerEm = font.data.head.unitsPerEm;
-      sCapHeight *= textSize / unitsPerEm;
-    } else {
-      sCapHeight = metrics.fontBoundingBoxAscent;
-    }
-    return metrics.alphabeticBaseline + sCapHeight / 2;
-  };
-
-  if (p5.Renderer2D) {
-    p5.Renderer2D.prototype.textCanvas = function () {
-      return this.canvas;
-    };
-    p5.Renderer2D.prototype.textDrawingContext = function () {
-      return this.drawingContext;
-    };
-
-    p5.Renderer2D.prototype._renderText = function (text, x, y, maxY, minY) {
-      let states = this.states;
-      let context = this.textDrawingContext();
-
-      if (y < minY || y >= maxY) {
-        return; // don't render lines beyond minY/maxY
-      }
-
-      this.push();
-
-      // no stroke unless specified by user
-      if (states.strokeColor && states.strokeSet) {
-        context.strokeText(text, x, y);
-      }
-
-      if (!this._clipping && states.fillColor) {
-
-        // if fill hasn't been set by user, use default text fill
-        if (!states.fillSet) {
-          this._setFill(DefaultFill);
-        }
-        context.fillText(text, x, y);
-      }
-
-      this.pop();
-    };
-
-    /*
-      Position the lines of text based on their textAlign/textBaseline properties
-    */
-    p5.Renderer2D.prototype._positionLines = function (
-      x, y,
-      width, height,
-      lines
-    ) {
-
-      let { textLeading, textAlign } = this.states;
-      let adjustedX, lineData = new Array(lines.length);
-      let adjustedW = typeof width === 'undefined' ? 0 : width;
-      let adjustedH = typeof height === 'undefined' ? 0 : height;
-
-      for (let i = 0; i < lines.length; i++) {
-        switch (textAlign) {
-          case textCoreConstants.START:
-            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
-          case fn.LEFT:
-            adjustedX = x;
-            break;
-          case fn.CENTER:
-            adjustedX = x + adjustedW / 2;
-            break;
-          case fn.RIGHT:
-            adjustedX = x + adjustedW;
-            break;
-          case textCoreConstants.END:
-            throw new Error('textBounds: END not yet supported for textAlign');
-        }
-        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
-      }
-
-      return this._yAlignOffset(lineData, adjustedH);
-    };
-
-    /*
-      Get the y-offset for text given the height, leading, line-count and textBaseline property
-    */
-    p5.Renderer2D.prototype._yAlignOffset = function (dataArr, height) {
-
-      if (typeof height === 'undefined') {
-        throw Error('_yAlignOffset: height is required');
-      }
-
-      let { textLeading, textBaseline } = this.states;
-      let yOff = 0, numLines = dataArr.length;
-      let ydiff = height - (textLeading * (numLines - 1));
-      switch (textBaseline) { // drawingContext ?
-        case fn.TOP:
-          break; // ??
-        case fn.BASELINE:
-          break;
-        case textCoreConstants._CTX_MIDDLE:
-          yOff = ydiff / 2 + this._middleAlignOffset();
-          break;
-        case fn.BOTTOM:
-          yOff = ydiff;
-          break;
-        case textCoreConstants.IDEOGRAPHIC:
-          console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
-          break;
-        case textCoreConstants.HANGING:
-          console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
-          break;
-      }
-      dataArr.forEach(ele => ele.y += yOff);
-      return dataArr;
-    };
-  }
-
-  if (p5.RendererGL) {
-    p5.RendererGL.prototype.textCanvas = function () {
-      if (!this._textCanvas) {
-        this._textCanvas = document.createElement('canvas');
-        this._textCanvas.width = 1;
-        this._textCanvas.height = 1;
-        this._textCanvas.style.display = 'none';
-        // Has to be added to the DOM for measureText to work properly!
-        this.canvas.parentElement.insertBefore(this._textCanvas, this.canvas);
-      }
-      return this._textCanvas;
-    };
-    p5.RendererGL.prototype.textDrawingContext = function () {
-      if (!this._textDrawingContext) {
-        const textCanvas = this.textCanvas();
-        this._textDrawingContext = textCanvas.getContext('2d');
-      }
-      return this._textDrawingContext;
-    };
-    const oldRemove = p5.RendererGL.prototype.remove;
-    p5.RendererGL.prototype.remove = function () {
-      if (this._textCanvas) {
-        this._textCanvas.parentElement.removeChild(this._textCanvas);
-      }
-      oldRemove.call(this);
-    };
-
-    p5.RendererGL.prototype._positionLines = function (
-      x, y,
-      width, height,
-      lines
-    ) {
-
-      let { textLeading, textAlign } = this.states;
-      const widths = lines.map(line => this._fontWidthSingle(line));
-      let adjustedX, lineData = new Array(lines.length);
-      let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
-      let adjustedH = typeof height === 'undefined' ? 0 : height;
-
-      for (let i = 0; i < lines.length; i++) {
-        switch (textAlign) {
-          case textCoreConstants.START:
-            throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
-          case fn.LEFT:
-            adjustedX = x;
-            break;
-          case fn.CENTER:
-            adjustedX = x +
-              (adjustedW - widths[i]) / 2 -
-              adjustedW / 2 +
-              (width || 0) / 2;
-            break;
-          case fn.RIGHT:
-            adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
-            break;
-          case textCoreConstants.END:
-            throw new Error('textBounds: END not yet supported for textAlign');
-        }
-        lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
-      }
-
-      return this._yAlignOffset(lineData, adjustedH);
-    };
-
-    p5.RendererGL.prototype._verticalAlignFont = function() {
-      const ctx = this.textDrawingContext();
-      const metrics = ctx.measureText('X');
-      return -metrics.alphabeticBaseline ||
-        (-metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent);
-    }
-
-    p5.RendererGL.prototype._yAlignOffset = function (dataArr, height) {
-
-      if (typeof height === 'undefined') {
-        throw Error('_yAlignOffset: height is required');
-      }
-
-      let { textLeading, textBaseline, textSize, textFont } = this.states;
-      let yOff = 0, numLines = dataArr.length;
-      let totalHeight = textSize * numLines +
-        ((textLeading - textSize) * (numLines - 1));
-      switch (textBaseline) { // drawingContext ?
-        case fn.TOP:
-          yOff = this._verticalAlignFont();
-          break;
-        case fn.BASELINE:
-          break;
-        case textCoreConstants._CTX_MIDDLE:
-          yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont() + this._middleAlignOffset();
-          break;
-        case fn.BOTTOM:
-          yOff = -(totalHeight - textSize) + (height || 0);
-          break;
-        default:
-          console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
-          break;
-      }
-      dataArr.forEach(ele => ele.y += yOff);
-      return dataArr;
-    };
-  }
 }
 
 export default textCore;

@@ -64,6 +64,7 @@ class p5 {
     this._curElement = null;
     this._elements = [];
     this._glAttributes = null;
+    this._webgpuAttributes = null;
     this._requestAnimId = 0;
     this._isGlobal = false;
     this._loop = true;
@@ -148,8 +149,15 @@ class p5 {
     return this._renderer?.drawingContext;
   }
 
+  static _registeredAddons = new Set();
   static registerAddon(addon) {
     const lifecycles = {};
+
+    // Don't re-register an addon. This allows addons
+    // to register dependency addons without worrying about
+    // them getting double-added.
+    if (p5._registeredAddons.has(addon)) return;
+    p5._registeredAddons.add(addon);
 
     addon(p5, p5.prototype, lifecycles);
 
@@ -324,8 +332,6 @@ class p5 {
    * `new p5()`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the canvas.
    *
    * function setup() {
@@ -348,8 +354,6 @@ class p5 {
    * function doubleClicked() {
    *   remove();
    * }
-   * </code>
-   * </div>
    */
   async remove() {
     // Remove start listener to prevent orphan canvas being created
@@ -671,8 +675,6 @@ export default p5;
  * @for p5
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -683,11 +685,8 @@ export default p5;
  *
  *   describe('A white circle on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -703,11 +702,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * let img;
  *
  * async function setup() {
@@ -730,8 +726,6 @@ export default p5;
  *   // Draw the circle.
  *   circle(mouseX, mouseY, 10);
  * }
- * </code>
- * </div>
  */
 /**
  * A function that's called repeatedly while the sketch runs.
@@ -764,8 +758,6 @@ export default p5;
  * @for p5
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -781,11 +773,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -801,11 +790,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Double-click the canvas to change the circle's color.
  *
  * function setup() {
@@ -828,8 +814,6 @@ export default p5;
  * function doubleClicked() {
  *   fill('deeppink');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -845,8 +829,6 @@ export default p5;
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
- * <div>
- * <code>
  * // Disable the FES.
  * p5.disableFriendlyErrors = true;
  *
@@ -863,8 +845,6 @@ export default p5;
  *
  *   describe('A gray square.');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -881,8 +861,6 @@ export default p5;
  * @param {Function} library The library function to register
  *
  * @example
- * <div>
- * <code>
  * function myAddon(p5, fn, lifecycles) {
  *   fn.sayHello = function() {
  *     this.textAlign(this.CENTER, this.CENTER);
@@ -899,6 +877,4 @@ export default p5;
  *
  *   describe('The text "Hello!"');
  * }
- * </code>
- * </div>
  */

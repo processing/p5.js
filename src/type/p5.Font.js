@@ -113,8 +113,6 @@ export class Font {
    * @return {Array<Array>}          A flat array of path commands.
    *
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup() {
@@ -191,10 +189,7 @@ export class Font {
    *   endContour();
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-
   textToPaths(str, x, y, width, height, options) {
 
     ({ width, height, options } = this._parseArgs(width, height, options));
@@ -247,8 +242,6 @@ export class Font {
    * @return {Array<Object>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup() {
@@ -268,8 +261,6 @@ export class Font {
    *
    *   describe('A set of black dots outlining the text "p5*js" on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   textToPoints(str, x, y, width, height, options) {
     // By segmenting per contour, pointAtLength becomes much faster
@@ -319,8 +310,6 @@ export class Font {
    * @return {Array<Array<Object>>} array of point objects, each with `x`, `y`, and `alpha` (path angle) properties.
    *
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup() {
@@ -348,8 +337,6 @@ export class Font {
    *
    *   describe('The text p5*js wobbling over time');
    * }
-   * </code>
-   * </div>
    */
   textToContours(str, x = 0, y = 0, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
@@ -400,8 +387,6 @@ export class Font {
    * @return {p5.Geometry} A geometry object representing the 3D model of the text.
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let font;
    * let geom;
    *
@@ -423,12 +408,8 @@ export class Font {
    *   model(geom);
    *   describe('A red non-extruded "Hello" in Anton on white canvas, rotatable via mouse.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let font;
    * let geom;
    *
@@ -457,12 +438,8 @@ export class Font {
    *   model(geom);
    *   describe('3D red extruded "Hello" in Source Serif on white, rotatable via mouse.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div modernizr='webgl'>
-   * <code>
    * let geom;
    * let activeFont;
    * let artShader;
@@ -537,14 +514,16 @@ export class Font {
    *   model(geom);
    *   describe('3D wavy with different color sets "Hello" in Anton on white canvas, rotatable via mouse.');
    * }
-   * </code>
-   * </div>
    */
   textToModel(str, x, y, width, height, options) {
     ({ width, height, options } = this._parseArgs(width, height, options));
     const extrude = options?.extrude || 0;
 
     let contours = this.textToContours(str, x, y, width, height, options);
+    if (!contours || contours.length === 0) {
+      return new p5.Geometry();
+    }
+
     // Step 2: build base flat geometry - single shape
     const geom = this._pInst.buildGeometry(() => {
       const prevValidateFaces = this._pInst._renderer._validateFaces;
@@ -1360,8 +1339,6 @@ function font(p5, fn) {
    *                                           object if the font fails to load.
    * @return {Promise<p5.Font>}                         <a href="#/p5.Font">p5.Font</a> object.
    * @example
-   * <div>
-   * <code>
    * let font;
    *
    * async function setup() {
@@ -1374,12 +1351,8 @@ function font(p5, fn) {
    *
    *   describe('The text "p5*js" written in pink on a white background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   loadFont('assets/inconsolata.otf', font => {
@@ -1391,12 +1364,8 @@ function font(p5, fn) {
    *     describe('The text "p5*js" written in pink on a white background.');
    *   });
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   loadFont('assets/inconsolata.otf', success, failure);
@@ -1414,12 +1383,8 @@ function font(p5, fn) {
    * function failure(event) {
    *   console.error('Oops!', event);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * async function setup() {
    *   createCanvas(100, 100);
    *   await loadFont('assets/inconsolata.otf');
@@ -1431,18 +1396,13 @@ function font(p5, fn) {
    *
    *   describe('The text "p5*js" written in pink on a white background.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Some other forms of loading fonts:
    * loadFont("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
    *
    * loadFont('@font-face { font-family: "Bricolage Grotesque", serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-variation-settings: "wdth" 100; }');
-   * </code>
-   * </div>
    */
   /**
    * @method loadFont

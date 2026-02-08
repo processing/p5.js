@@ -73,8 +73,6 @@ function noise(p5, fn){
    * @return {Number}     Perlin noise value at specified coordinates.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -92,11 +90,8 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -121,11 +116,8 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -147,11 +139,8 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -178,11 +167,8 @@ function noise(p5, fn){
    *     line(x, 0, x, y);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -211,11 +197,8 @@ function noise(p5, fn){
    *
    *   describe('A gray cloudy pattern.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,8 +228,6 @@ function noise(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.noise = function(x, y = 0, z = 0) {
     if (perlin == null) {
@@ -343,11 +324,9 @@ function noise(p5, fn){
    *
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise.
-   * @param {Number} falloff falloff factor for each octave.
+   * @param {Number} [falloff=0.5] falloff factor for each octave.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -385,16 +364,30 @@ function noise(p5, fn){
    *
    *   describe('Two gray cloudy patterns. The pattern on the right is cloudier than the pattern on the left.');
    * }
-   * </code>
-   * </div>
    */
-  fn.noiseDetail = function(lod, falloff) {
+  fn.noiseDetail = function(lod, falloff=0.5) {
     if (lod > 0) {
       perlin_octaves = lod;
     }
     if (falloff > 0) {
       perlin_amp_falloff = falloff;
     }
+  };
+
+  /**
+   * @private
+   * Returns the current number of octaves used by noise().
+   */
+  fn._getNoiseOctaves = function() {
+    return perlin_octaves;
+  };
+
+  /**
+   * @private
+   * Returns the current falloff factor used by noise().
+   */
+  fn._getNoiseAmpFalloff = function() {
+    return perlin_amp_falloff;
   };
 
   /**
@@ -409,8 +402,6 @@ function noise(p5, fn){
    * @param {Number} seed   seed value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -436,8 +427,6 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, height);
    * }
-   * </code>
-   * </div>
    */
   fn.noiseSeed = function(seed) {
     // Linear Congruential Generator

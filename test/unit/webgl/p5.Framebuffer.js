@@ -1,7 +1,19 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
-import * as fileSaver from 'file-saver';
-vi.mock('file-saver');
+
+const mockAnchorElement = vi.mockObject({
+  href: null,
+  download: null,
+  click: () => {}
+});
+const originalCreateElement = document.createElement;
+vi.spyOn(document, 'createElement').mockImplementation((...args) => {
+  if(args[0] !== 'a'){
+    return originalCreateElement.apply(document, args);
+  }else{
+    return mockAnchorElement;
+  }
+});
 
 expect.extend({
   tobePng: received => {
@@ -35,6 +47,10 @@ suite('p5.Framebuffer', function() {
   afterAll(function() {
     myp5.remove();
     window.devicePixelRatio = prevPixelRatio;
+  });
+
+  afterEach(function(){
+    vi.clearAllMocks();
   });
 
   suite('formats and channels', function() {
@@ -114,7 +130,6 @@ suite('p5.Framebuffer', function() {
 
     afterEach(() => {
       if (glStub) {
-        vi.restoreAllMocks();
         glStub = null;
       }
     });
@@ -156,7 +171,7 @@ suite('p5.Framebuffer', function() {
       expect(fbo.density).to.equal(1);
 
       // The texture should not be recreated
-      expect(fbo.color.rawTexture()).to.equal(oldTexture);
+      expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
     });
 
     test('manually-sized framebuffers can be made auto-sized', function() {
@@ -216,7 +231,7 @@ suite('p5.Framebuffer', function() {
         expect(fbo.density).to.equal(2);
 
         // The texture should not be recreated
-        expect(fbo.color.rawTexture()).to.equal(oldTexture);
+        expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
       });
 
       test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
@@ -461,7 +476,7 @@ suite('p5.Framebuffer', function() {
       }
     });
 
-    test('get() creates a p5.Image with 1x pixel density', function() {
+    test('get() creates a p5.Image matching the source pixel density', function() {
       const mainCanvas = myp5.createCanvas(20, 20, myp5.WEBGL);
       myp5.pixelDensity(2);
       const fbo = myp5.createFramebuffer();
@@ -482,22 +497,17 @@ suite('p5.Framebuffer', function() {
         myp5.pop();
       });
       const img = fbo.get();
-      const p2d = myp5.createGraphics(20, 20);
-      p2d.pixelDensity(1);
       myp5.image(fbo, -10, -10);
-      p2d.image(mainCanvas, 0, 0);
 
       fbo.loadPixels();
       img.loadPixels();
-      p2d.loadPixels();
 
       expect(img.width).to.equal(fbo.width);
       expect(img.height).to.equal(fbo.height);
-      expect(img.pixels.length).to.equal(fbo.pixels.length / 4);
-      // The pixels should be approximately the same in the 1x image as when we
-      // draw the framebuffer onto a 1x canvas
+      expect(img.pixels.length).to.equal(fbo.pixels.length);
+      // The pixels should be approximately the same as the framebuffer's
       for (let i = 0; i < img.pixels.length; i++) {
-        expect(img.pixels[i]).to.be.closeTo(p2d.pixels[i], 2);
+        expect(img.pixels[i]).to.be.closeTo(fbo.pixels[i], 2);
       }
     });
   });
@@ -638,10 +648,10 @@ suite('p5.Framebuffer', function() {
         });
 
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.NEAREST
+          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.NEAREST
         );
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.NEAREST
+          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.NEAREST
         );
       });
     test('can create a framebuffer that uses LINEAR texture filtering',
@@ -651,10 +661,10 @@ suite('p5.Framebuffer', function() {
         const fbo = myp5.createFramebuffer({});
 
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMinFilter, fbo.gl.LINEAR
+          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.LINEAR
         );
         assert.equal(
-          fbo.color.framebuffer.colorP5Texture.glMagFilter, fbo.gl.LINEAR
+          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.LINEAR
         );
       });
   });
@@ -666,14 +676,11 @@ suite('p5.Framebuffer', function() {
       fbo.draw(() => myp5.background('red'));
       myp5.saveCanvas(fbo);
 
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise(res => setTimeout(res, 500));
 
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobePng(),
-          'untitled.png'
-        );
+      expect(document.createElement).toHaveBeenCalledWith('a');
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'untitled.png');
     });
   });
 });

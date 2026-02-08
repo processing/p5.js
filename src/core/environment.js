@@ -44,24 +44,19 @@ function environment(p5, fn, lifecycles){
    * @method print
    * @param {Any} contents content to print to the console.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Prints "hello, world" to the console.
    *   print('hello, world');
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   let name = 'ada';
    *   // Prints "hello, ada" to the console.
    *   print(`hello, ${name}`);
    * }
-   * </code>
-   * </div>
    */
   fn.print = function(...args) {
     if (!args.length) {
@@ -91,8 +86,6 @@ function environment(p5, fn, lifecycles){
    * @property {Integer} frameCount
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -106,11 +99,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The number 0 written in black in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -130,8 +120,6 @@ function environment(p5, fn, lifecycles){
    *   // frameCount.
    *   text(frameCount, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.frameCount = 0;
 
@@ -146,8 +134,6 @@ function environment(p5, fn, lifecycles){
    * @property {Integer} deltaTime
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * let x = 0;
    * let speed = 0.05;
    *
@@ -180,8 +166,6 @@ function environment(p5, fn, lifecycles){
    *   // position.
    *   circle(x, 50, 20);
    * }
-   * </code>
-   * </div>
    */
   fn.deltaTime = 0;
 
@@ -194,8 +178,6 @@ function environment(p5, fn, lifecycles){
    * @property {Boolean} focused
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Open this example in two separate browser
    * // windows placed side-by-side to demonstrate.
    *
@@ -215,8 +197,6 @@ function environment(p5, fn, lifecycles){
    *     background(255, 0, 0);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.focused = document.hasFocus();
 
@@ -243,8 +223,6 @@ function environment(p5, fn, lifecycles){
    * @param {Number}          [x]  horizontal active spot of the cursor.
    * @param {Number}          [y]  vertical active spot of the cursor.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -257,11 +235,8 @@ function environment(p5, fn, lifecycles){
    *   // Set the cursor to crosshairs: +
    *   cursor(CROSS);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -286,11 +261,8 @@ function environment(p5, fn, lifecycles){
    *     cursor('grab');
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -308,8 +280,6 @@ function environment(p5, fn, lifecycles){
    *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16');
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.cursor = function(type, x, y) {
     let cursor = 'auto';
@@ -359,8 +329,6 @@ function environment(p5, fn, lifecycles){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -386,11 +354,8 @@ function environment(p5, fn, lifecycles){
    *   // position.
    *   circle(x, 50, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -413,8 +378,6 @@ function environment(p5, fn, lifecycles){
    *   let fps = frameRate();
    *   text(fps, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method frameRate
@@ -468,8 +431,6 @@ function environment(p5, fn, lifecycles){
    * @method getTargetFrameRate
    * @return {Number} _targetFrameRate
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -487,8 +448,6 @@ function environment(p5, fn, lifecycles){
    *   let fps = getTargetFrameRate();
    *   text(fps, 43, 54);
    * }
-   * </code>
-   * </div>
    */
   fn.getTargetFrameRate = function() {
     return this._targetFrameRate;
@@ -499,8 +458,6 @@ function environment(p5, fn, lifecycles){
    *
    * @method noCursor
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Hide the cursor.
    *   noCursor();
@@ -513,8 +470,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A white circle on a gray background. The circle follows the mouse as it moves. The cursor is hidden.');
    * }
-   * </code>
-   * </div>
    */
   fn.noCursor = function() {
     this._curElement.elt.style.cursor = 'none';
@@ -536,8 +491,6 @@ function environment(p5, fn, lifecycles){
    * @property {(WEBGL|WEBGL2)} webglVersion
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -546,11 +499,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The text "p2d" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -568,11 +518,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The text "webgl2" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -594,8 +541,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The text "webgl" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.webglVersion = C.P2D;
 
@@ -611,8 +556,7 @@ function environment(p5, fn, lifecycles){
    * @property {Number} displayWidth
    * @readOnly
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Set the canvas' width and height
    *   // using the display's dimensions.
@@ -622,8 +566,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A gray canvas that is the same size as the display.');
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * This example does not render anything.
@@ -642,8 +584,7 @@ function environment(p5, fn, lifecycles){
    * @property {Number} displayHeight
    * @readOnly
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Set the canvas' width and height
    *   // using the display's dimensions.
@@ -653,8 +594,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A gray canvas that is the same size as the display.');
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * This example does not render anything.
@@ -670,8 +609,7 @@ function environment(p5, fn, lifecycles){
    * @property {Number} windowWidth
    * @readOnly
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Set the canvas' width and height
    *   // using the browser's dimensions.
@@ -681,8 +619,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A gray canvas that takes up the entire browser window.');
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * This example does not render anything.
@@ -698,8 +634,7 @@ function environment(p5, fn, lifecycles){
    * @property {Number} windowHeight
    * @readOnly
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Set the canvas' width and height
    *   // using the browser's dimensions.
@@ -709,8 +644,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A gray canvas that takes up the entire browser window.');
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * This example does not render anything.
@@ -731,8 +664,7 @@ function environment(p5, fn, lifecycles){
    * @method windowResized
    * @param {Event} [event] optional resize Event.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(windowWidth, windowHeight);
    *
@@ -751,13 +683,12 @@ function environment(p5, fn, lifecycles){
    * function windowResized() {
    *   resizeCanvas(windowWidth, windowHeight);
    * }
-   * </code>
-   * </div>
+   *
    * @alt
    * This example does not render anything.
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(windowWidth, windowHeight);
    * }
@@ -776,8 +707,7 @@ function environment(p5, fn, lifecycles){
    *   // Print the resize event to the console for debugging.
    *   print(event);
    * }
-   * </code>
-   * </div>
+   *
    * @alt
    * This example does not render anything.
    */
@@ -852,8 +782,6 @@ function environment(p5, fn, lifecycles){
    * @param  {Boolean} [val] whether the sketch should be in fullscreen mode.
    * @return {Boolean} current fullscreen state.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -868,8 +796,6 @@ function environment(p5, fn, lifecycles){
    *     fullscreen(!fs);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.fullscreen = function(val) {
     // p5._validateParameters('fullscreen', arguments);
@@ -910,8 +836,6 @@ function environment(p5, fn, lifecycles){
    * @param  {Number} [val] desired pixel density.
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Set the pixel density to 1.
    *   pixelDensity(1);
@@ -924,11 +848,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A fuzzy white circle on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Set the pixel density to 3.
    *   pixelDensity(3);
@@ -942,8 +863,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('A sharp white circle on a gray canvas.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method pixelDensity
@@ -970,8 +889,6 @@ function environment(p5, fn, lifecycles){
    * @method displayDensity
    * @returns {Number} current pixel density of the display.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Set the pixel density to 1.
    *   pixelDensity(1);
@@ -998,8 +915,6 @@ function environment(p5, fn, lifecycles){
    *   background(200);
    *   circle(50, 50, 70);
    * }
-   * </code>
-   * </div>
    */
   fn.displayDensity = () => window.devicePixelRatio;
 
@@ -1043,8 +958,6 @@ function environment(p5, fn, lifecycles){
    * @method getURL
    * @return {String} url
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -1056,8 +969,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The URL "https://p5js.org/reference/p5/getURL" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.getURL = () => location.href;
 
@@ -1075,8 +986,6 @@ function environment(p5, fn, lifecycles){
    * @method getURLPath
    * @return {String[]} path components.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -1088,8 +997,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The word "reference" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.getURLPath = () =>
     location.pathname.split('/').filter(v => v !== '');
@@ -1106,8 +1013,7 @@ function environment(p5, fn, lifecycles){
    * @method getURLParams
    * @return {Object} URL params
    * @example
-   * <div class='norender notest'>
-   * <code>
+   * // META:norender
    * // Imagine this sketch is hosted at the following URL:
    * // https://p5js.org?year=2014&month=May&day=15
    *
@@ -1124,8 +1030,6 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The text "15", "May", and "2014" written in black on separate lines.');
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * This example does not render anything.
@@ -1157,9 +1061,6 @@ function environment(p5, fn, lifecycles){
    * @param {Number} [z] The z coordinate in world space.
    * @return {p5.Vector} A vector containing the 2D screen coordinates.
    * @example
-   * <div>
-   * <code>
-   *
    * function setup() {
    *   createCanvas(150, 150);
    *   let vertices = [
@@ -1210,12 +1111,8 @@ function environment(p5, fn, lifecycles){
    *   describe('A rotating square is transformed and drawn using screen coordinates.');
    *
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let vertices;
    *
    * function setup() {
@@ -1261,9 +1158,6 @@ function environment(p5, fn, lifecycles){
    *     ellipse(screenX, screenY, 3, 3);
    *   });
    * }
-   * </code>
-   * </div>
-   *
    */
   fn.worldToScreen = function(worldPosition) {
     if (typeof worldPosition === 'number') {
@@ -1275,6 +1169,7 @@ function environment(p5, fn, lifecycles){
     const screenPosition = matrix.multiplyAndNormalizePoint(worldPosition);
     return screenPosition;
   };
+
   /**
    * Converts 2D screen coordinates to 3D world coordinates.
    *
@@ -1291,9 +1186,6 @@ function environment(p5, fn, lifecycles){
    * @param {Number} [z] The z coordinate in screen space.
    * @return {p5.Vector} A vector containing the 3D world space coordinates.
    * @example
-   * <div>
-   * <code>
-   *
    * function setup() {
    *   createCanvas(100, 100);
    *   describe('A rotating square with a line passing through the mouse drawn across it.');
@@ -1313,10 +1205,6 @@ function environment(p5, fn, lifecycles){
    *   // Draw a line parallel to the local Y axis, passing through the mouse
    *   line(localMouse.x, -30, localMouse.x, 30);
    * }
-   *
-   * </code>
-   * </div>
-   *
    */
   fn.screenToWorld = function(screenPosition) {
     if (typeof screenPosition === 'number') {
@@ -1350,8 +1238,6 @@ function environment(p5, fn, lifecycles){
    * 0.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -1360,11 +1246,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The number 100 written in black on a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(50, 100);
    *
@@ -1375,11 +1258,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The number 50 written in black on a gray rectangle.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1401,8 +1281,6 @@ function environment(p5, fn, lifecycles){
    *     text(width, 21, 54);
    *   }
    * }
-   * </code>
-   * </div>
    *
    * @property {Number} width
    * @readOnly
@@ -1418,8 +1296,6 @@ function environment(p5, fn, lifecycles){
    * 0.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background(200);
    *
@@ -1428,11 +1304,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The number 100 written in black on a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 50);
    *
@@ -1443,11 +1316,8 @@ function environment(p5, fn, lifecycles){
    *
    *   describe('The number 50 written in black on a gray rectangle.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1469,8 +1339,6 @@ function environment(p5, fn, lifecycles){
    *     text(height, 42, 27);
    *   }
    * }
-   * </code>
-   * </div>
    *
    * @property {Number} height
    * @readOnly

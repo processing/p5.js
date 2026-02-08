@@ -5,7 +5,7 @@
  * @requires core
  */
 
-import { RendererGL } from './p5.RendererGL';
+import { Renderer3D } from '../core/p5.Renderer3D';
 import { Vector } from '../math/p5.Vector';
 import { Color } from '../color/p5.Color';
 
@@ -48,8 +48,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to turn on the light.
    *
@@ -81,11 +79,8 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -108,11 +103,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -134,11 +126,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -160,30 +149,24 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method ambientLight
    * @param  {Number}        gray  grayscale value between 0 and 255.
    * @param  {Number}        [alpha]
    * @chainable
    */
-
   /**
    * @method ambientLight
    * @param  {String}        value color as a CSS string.
    * @chainable
    */
-
   /**
    * @method ambientLight
    * @param  {Number[]}      values color as an array of RGBA, HSBA, or HSLA
    *                                 values.
    * @chainable
    */
-
   /**
    * @method ambientLight
    * @param  {p5.Color}      color color as a <a href="#/p5.Color">p5.Color</a> object.
@@ -245,8 +228,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -265,11 +246,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click the canvas to add a point light.
    *
@@ -306,11 +284,8 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -342,11 +317,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -377,11 +349,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -412,29 +381,23 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method specularColor
    * @param  {Number}        gray grayscale value between 0 and 255.
    * @chainable
    */
-
   /**
    * @method specularColor
    * @param  {String}        value color as a CSS string.
    * @chainable
    */
-
   /**
    * @method specularColor
    * @param  {Number[]}      values color as an array of RGBA, HSBA, or HSLA
    *                                 values.
    * @chainable
    */
-
   /**
    * @method specularColor
    * @param  {p5.Color}      color color as a <a href="#/p5.Color">p5.Color</a> object.
@@ -505,8 +468,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to turn on the directional light.
    *
@@ -537,11 +498,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -567,11 +525,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -598,10 +553,7 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method directionalLight
    * @param  {Number}    v1
@@ -611,7 +563,6 @@ function light(p5, fn){
    *                               <a href="#/p5.Vector">p5.Vector</a> object.
    * @chainable
    */
-
   /**
    * @method directionalLight
    * @param  {p5.Color|Number[]|String} color color as a <a href="#/p5.Color">p5.Color</a> object,
@@ -621,7 +572,6 @@ function light(p5, fn){
    * @param  {Number}                   z
    * @chainable
    */
-
   /**
    * @method directionalLight
    * @param  {p5.Color|Number[]|String} color
@@ -690,9 +640,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   *
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to turn on the point light.
    *
@@ -728,11 +675,8 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -758,11 +702,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -789,11 +730,8 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -841,10 +779,7 @@ function light(p5, fn){
    *   sphere(10);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method pointLight
    * @param  {Number}     v1
@@ -854,7 +789,6 @@ function light(p5, fn){
    *                               <a href="#/p5.Vector">p5.Vector</a> object.
    * @chainable
    */
-
   /**
    * @method pointLight
    * @param  {p5.Color|Number[]|String} color color as a <a href="#/p5.Color">p5.Color</a> object,
@@ -864,7 +798,6 @@ function light(p5, fn){
    * @param  {Number}                   z
    * @chainable
    */
-
   /**
    * @method pointLight
    * @param  {p5.Color|Number[]|String} color
@@ -898,8 +831,6 @@ function light(p5, fn){
    * @param  {p5.Image}    img image to use as the light source.
    *
    * @example
-   * <div class="notest">
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let img;
@@ -934,8 +865,6 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    */
   fn.imageLight = function (img) {
     this._renderer.imageLight(img);
@@ -954,8 +883,6 @@ function light(p5, fn){
    * @param {p5.Image} img 360˚ image to use as the background.
    *
    * @example
-   * <div class="notest">
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let img;
@@ -988,8 +915,6 @@ function light(p5, fn){
    *   // Draw the sphere.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    */
   fn.panorama = function (img) {
     this.filter(this._renderer._getSphereMapping(img));
@@ -1009,8 +934,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to turn on the lights.
    *
@@ -1041,11 +964,8 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1067,8 +987,6 @@ function light(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.lights = function () {
     this._assert3d('lights');
@@ -1101,8 +1019,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to change the falloff rate.
    *
@@ -1139,8 +1055,6 @@ function light(p5, fn){
    * function doubleClicked() {
    *   useFalloff = true;
    * }
-   * </code>
-   * </div>
    */
   fn.lightFalloff = function (
     constantAttenuation,
@@ -1202,8 +1116,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to adjust the spotlight.
    *
@@ -1239,11 +1151,8 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    * // Double-click to adjust the spotlight.
    *
@@ -1283,8 +1192,6 @@ function light(p5, fn){
    * function doubleClicked() {
    *   isLit = true;
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method spotLight
@@ -1397,8 +1304,6 @@ function light(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1437,8 +1342,6 @@ function light(p5, fn){
    *   sphere(20);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.noLights = function (...args) {
     this._assert3d('noLights');
@@ -1450,7 +1353,7 @@ function light(p5, fn){
   };
 
 
-  RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
+  Renderer3D.prototype.ambientLight = function(v1, v2, v3, a) {
     const color = this._pInst.color(...arguments);
 
     this.states.setValue('ambientLightColors', [...this.states.ambientLightColors]);
@@ -1463,7 +1366,7 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  RendererGL.prototype.specularColor = function(v1, v2, v3) {
+  Renderer3D.prototype.specularColor = function(v1, v2, v3) {
     const color = this._pInst.color(...arguments);
 
     this.states.setValue('specularColors', [
@@ -1473,7 +1376,7 @@ function light(p5, fn){
     ]);
   };
 
-  RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+  Renderer3D.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
     let color;
     if (v1 instanceof Color) {
       color = v1;
@@ -1514,7 +1417,7 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+  Renderer3D.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     let color;
     if (v1 instanceof Color) {
       color = v1;
@@ -1553,20 +1456,23 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  RendererGL.prototype.imageLight = function(img) {
+  Renderer3D.prototype.imageLight = function(img) {
     // activeImageLight property is checked by _setFillUniforms
     // for sending uniforms to the fillshader
     this.states.setValue('activeImageLight', img);
     this.states.setValue('enableLighting', true);
+    // Make sure textures are cached
+    this.makeDiffusedTexture(img);
+    this.makeSpecularTexture(img);
   };
 
-  RendererGL.prototype.lights = function() {
+  Renderer3D.prototype.lights = function() {
     const grayColor = this._pInst.color('rgb(128,128,128)');
     this.ambientLight(grayColor);
     this.directionalLight(grayColor, 0, 0, -1);
   };
 
-  RendererGL.prototype.lightFalloff = function(
+  Renderer3D.prototype.lightFalloff = function(
     constantAttenuation,
     linearAttenuation,
     quadraticAttenuation
@@ -1607,7 +1513,7 @@ function light(p5, fn){
     this.states.setValue('quadraticAttenuation', quadraticAttenuation);
   };
 
-  RendererGL.prototype.spotLight = function(
+  Renderer3D.prototype.spotLight = function(
     v1,
     v2,
     v3,
@@ -1620,6 +1526,8 @@ function light(p5, fn){
     angle,
     concentration
   ) {
+    if (this.states.spotLightDiffuseColors.length / 3 >= 4) return;
+
     let color, position, direction;
     const length = arguments.length;
 
@@ -1777,18 +1685,26 @@ function light(p5, fn){
         return;
     }
     this.states.setValue('spotLightDiffuseColors', [
+      ...this.states.spotLightDiffuseColors,
       color._array[0],
       color._array[1],
       color._array[2]
     ]);
 
     this.states.setValue('spotLightSpecularColors', [
+      ...this.states.spotLightSpecularColors,
       ...this.states.specularColors
     ]);
 
-    this.states.setValue('spotLightPositions', [position.x, position.y, position.z]);
+    this.states.setValue('spotLightPositions', [
+      ...this.states.spotLightPositions,
+      position.x,
+      position.y,
+      position.z
+    ]);
     direction.normalize();
     this.states.setValue('spotLightDirections', [
+      ...this.states.spotLightDirections,
       direction.x,
       direction.y,
       direction.z
@@ -1808,13 +1724,13 @@ function light(p5, fn){
     }
 
     angle = this._pInst._toRadians(angle);
-    this.states.setValue('spotLightAngle', [Math.cos(angle)]);
-    this.states.setValue('spotLightConc', [concentration]);
+    this.states.setValue('spotLightAngle', [...this.states.spotLightAngle, Math.cos(angle)]);
+    this.states.setValue('spotLightConc', [...this.states.spotLightConc, concentration]);
 
     this.states.setValue('enableLighting', true);
   };
 
-  RendererGL.prototype.noLights = function() {
+  Renderer3D.prototype.noLights = function() {
     this.states.setValue('activeImageLight', null);
     this.states.setValue('enableLighting', false);
 

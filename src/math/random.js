@@ -47,8 +47,6 @@ function random(p5, fn){
    * @param {Number} seed   seed value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -74,8 +72,6 @@ function random(p5, fn){
    *
    *   describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
    * }
-   * </code>
-   * </div>
    */
   fn.randomSeed = function(seed) {
     this._lcgSetSeed(randomStateProp, seed);
@@ -116,8 +112,6 @@ function random(p5, fn){
    * @return {Number} random number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -133,11 +127,8 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -153,11 +144,8 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -178,11 +166,8 @@ function random(p5, fn){
    *
    *   describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -203,11 +188,8 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -228,11 +210,8 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let x = 50;
    * let y = 50;
    *
@@ -252,8 +231,6 @@ function random(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method random
@@ -317,8 +294,6 @@ function random(p5, fn){
    * @param  {Number} [sd]    standard deviation.
    * @return {Number} random number.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -347,8 +322,6 @@ function random(p5, fn){
    *   y = 75;
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
   fn.randomGaussian = function(mean, sd = 1) {
     let y1, x1, x2, w;
