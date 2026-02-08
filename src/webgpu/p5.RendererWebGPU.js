@@ -611,17 +611,21 @@ function rendererWebGPU(p5, fn) {
       const groupEntries = new Map(); // group index -> array of entries
 
       // Add all uniform group bindings to group 0
-      const group0Entries = [];
+      const structEntries = new Map();
       for (const bufferGroup of shader._uniformBufferGroups) {
-        group0Entries.push({
+        const entries = structEntries.get(bufferGroup.group) || [];
+        entries.push({
           bufferGroup,
           binding: bufferGroup.binding,
           visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
           buffer: { type: 'uniform', hasDynamicOffset: bufferGroup.dynamic },
         });
+        structEntries.set(bufferGroup.group, entries);
       }
-      group0Entries.sort((a, b) => a.binding - b.binding);
-      groupEntries.set(0, group0Entries);
+      for (const [group, entries] of structEntries.entries()) {
+        entries.sort((a, b) => a.binding - b.binding);
+        groupEntries.set(group, entries);
+      }
 
       // Add the variable amount of samplers and texture bindings that can come after
       for (const sampler of shader.samplers) {
@@ -655,6 +659,7 @@ function rendererWebGPU(p5, fn) {
 
       shader._groupEntries = groupEntries;
       shader._bindGroupLayouts = [...bindGroupLayouts.values()];
+      shader._cachedBindGroup = {};
       shader._pipelineLayout = this.device.createPipelineLayout({
         bindGroupLayouts: shader._bindGroupLayouts,
       });
@@ -1409,6 +1414,7 @@ function rendererWebGPU(p5, fn) {
 
           // Make a shallow copy so that we keep track of the last offset for this uniform
           this._uniformBuffersForBinding.set(bufferGroup.binding, { ...uniformBufferInfo });
+          currentShader._cachedBindGroup[bufferGroup.group] = undefined;
         } else {
           // Bind uniforms to a binding-specific buffer, which may be cached for performance
           let bufferInfo;
@@ -1432,6 +1438,7 @@ function rendererWebGPU(p5, fn) {
 
             currentShader.buffersDirty = currentShader.buffersDirty || {};
             currentShader.buffersDirty[bufferGroup.group + ',' + bufferGroup.binding] = false;
+            currentShader._cachedBindGroup[bufferGroup.group] = undefined;
 
             // Cache this buffer and data for next frame
             bufferGroup.currentBuffer = bufferInfo;
@@ -1468,10 +1475,14 @@ function rendererWebGPU(p5, fn) {
         });
 
         const layout = currentShader._bindGroupLayouts[group];
-        const bindGroup = this.device.createBindGroup({
-          layout,
-          entries: bgEntries,
-        });
+        let bindGroup = currentShader._cachedBindGroup[group];
+        if (!bindGroup) {
+          bindGroup = this.device.createBindGroup({
+            layout,
+            entries: bgEntries,
+          });
+        }
+        currentShader._cachedBindGroup[group] = bindGroup;
         passEncoder.setBindGroup(
           group,
           bindGroup,
