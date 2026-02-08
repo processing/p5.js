@@ -1,15 +1,5 @@
 const uniforms = `
-// Group 1: Camera and Projection
-struct CameraUniforms {
-  uProjectionMatrix: mat4x4<f32>,
-}
-
-// Group 2: Model Transform
-struct ModelUniforms {
-  uModelViewMatrix: mat4x4<f32>,
-}
-
-// Group 3: Font Properties
+// Group 0: Font Properties
 struct FontUniforms {
   uStrokeImageSize: vec2<i32>,
   uCellsImageSize: vec2<i32>,
@@ -19,6 +9,16 @@ struct FontUniforms {
   uGlyphRect: vec4<f32>,
   uGlyphOffset: f32,
   uMaterialColor: vec4<f32>,
+}
+
+// Group 1: Model Transform
+struct ModelUniforms {
+  uModelViewMatrix: mat4x4<f32>,
+}
+
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
 }
 `;
 
@@ -34,9 +34,9 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> font: FontUniforms;
+@group(0) @binding(0) var<uniform> font: FontUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 @vertex
 fn main(input: VertexInput) -> VertexOutput {
@@ -85,20 +85,19 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> font: FontUniforms;
-
-@group(1) @binding(0) var uSamplerStrokes: texture_2d<f32>;
-@group(1) @binding(1) var uSamplerStrokes_sampler: sampler;
-@group(1) @binding(2) var uSamplerRowStrokes: texture_2d<f32>;
-@group(1) @binding(3) var uSamplerRowStrokes_sampler: sampler;
-@group(1) @binding(4) var uSamplerRows: texture_2d<f32>;
-@group(1) @binding(5) var uSamplerRows_sampler: sampler;
-@group(1) @binding(6) var uSamplerColStrokes: texture_2d<f32>;
-@group(1) @binding(7) var uSamplerColStrokes_sampler: sampler;
-@group(1) @binding(8) var uSamplerCols: texture_2d<f32>;
-@group(1) @binding(9) var uSamplerCols_sampler: sampler;
+@group(0) @binding(0) var<uniform> font: FontUniforms;
+@group(0) @binding(1) var uSamplerStrokes: texture_2d<f32>;
+@group(0) @binding(2) var uSamplerStrokes_sampler: sampler;
+@group(0) @binding(3) var uSamplerRowStrokes: texture_2d<f32>;
+@group(0) @binding(4) var uSamplerRowStrokes_sampler: sampler;
+@group(0) @binding(5) var uSamplerRows: texture_2d<f32>;
+@group(0) @binding(6) var uSamplerRows_sampler: sampler;
+@group(0) @binding(7) var uSamplerColStrokes: texture_2d<f32>;
+@group(0) @binding(8) var uSamplerColStrokes_sampler: sampler;
+@group(0) @binding(9) var uSamplerCols: texture_2d<f32>;
+@group(0) @binding(10) var uSamplerCols_sampler: sampler;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 // some helper functions
 fn ROUND_f32(v: f32) -> i32 { return i32(floor(v + 0.5)); }

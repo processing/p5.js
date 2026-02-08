@@ -6,6 +6,7 @@
  * @requires core
  */
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     this._renderer = renderer;
@@ -1003,17 +1004,13 @@ class Shader {
    *   plane(100, 100);
    * }
    */
-  setUniform(uniformName, rawData) {
+  setUniform(uniformName, data) {
     this.init();
 
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
     }
-
-    const data = this._renderer._mapUniformData
-      ? this._renderer._mapUniformData(uniform, rawData)
-      : rawData;
 
     if (uniform.isArray) {
       if (
@@ -1027,7 +1024,7 @@ class Shader {
     } else if (uniform._cachedData && uniform._cachedData === data) {
       return;
     } else {
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) || data instanceof TypedArray) {
         if (uniform._cachedData && this._renderer._arraysEqual(uniform._cachedData, data)) {
           return;
         }
