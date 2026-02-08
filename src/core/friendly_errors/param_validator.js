@@ -573,7 +573,7 @@ function validateParams(p5, fn, lifecycles) {
 
   fn._validate = validate; // TEMP: For unit tests
 
-  p5.decorateHelper(
+  p5.registerDecorator(
     ({ path }) => {
       return path.startsWith('p5.prototype');
     },

@@ -162,7 +162,7 @@ class p5 {
   }
 
   static decorations = new Map();
-  static decorateHelper(pattern, decoration){
+  static registerDecorator(pattern, decoration){
     if(typeof pattern === 'string'){
       const patternStr = pattern;
       pattern = ({ path }) => patternStr === path;
