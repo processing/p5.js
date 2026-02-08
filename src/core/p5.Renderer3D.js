@@ -728,6 +728,27 @@ export class Renderer3D extends Renderer {
   }
 
   background(...args) {
+    const a0 = args[0];
+
+    const isImageLike =
+      a0 != null &&
+      typeof a0 === 'object' &&
+      typeof a0.width === 'number' &&
+      typeof a0.height === 'number' &&
+      (a0.canvas != null || a0.elt != null);
+
+    // WEBGL / 3D: support background(image-like)
+    if (isImageLike) {
+      this._pInst.clear();
+      this._pInst.push();
+      this._pInst.resetMatrix();
+      this._pInst.imageMode(constants.CENTER);
+      this._pInst.image(a0, 0, 0, this._pInst.width, this._pInst.height);
+      this._pInst.pop();
+      return;
+    }
+
+    // Default: background(color)
     const _col = this._pInst.color(...args);
     this.clear(..._col._getRGBA());
   }
@@ -786,8 +807,6 @@ export class Renderer3D extends Renderer {
    * @param  {Number}            [a]  opacity
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    * }
@@ -800,8 +819,6 @@ export class Renderer3D extends Renderer {
    *   rotateY(frameCount * 0.01);
    *   box(75, 75, 75);
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * black canvas with purple cube spinning
@@ -826,8 +843,6 @@ export class Renderer3D extends Renderer {
    * @param  {Number}            [v3] blue or brightness value
    * @param  {Number}            [a]  opacity
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    * }
@@ -840,8 +855,6 @@ export class Renderer3D extends Renderer {
    *   rotateY(frameCount * 0.01);
    *   box(75, 75, 75);
    * }
-   * </code>
-   * </div>
    *
    * @alt
    * black canvas with purple cube with pink outline spinning
@@ -1435,10 +1448,6 @@ export class Renderer3D extends Renderer {
       this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
       shader.setUniform("uCameraNormalMatrix", this.scratchMat3.mat3);
     }
-    if (shader.uniforms.uCameraRotation) {
-      this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
-      shader.setUniform("uCameraRotation", this.scratchMat3.mat3);
-    }
     shader.setUniform("uViewport", this._viewport);
   }
 
@@ -1890,14 +1899,14 @@ export class Renderer3D extends Renderer {
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
       const p5 = this._pInst;
-      this.sphereMapping = this.baseFilterShader().modify(() => {
-        const uEnvMap = p5.uniformTexture();
-        const uFovY = p5.uniformFloat();
-        const uAspect = p5.uniformFloat();
+      this.sphereMapping = this.baseFilterShader().modify(({ p5 }) => {
+        const uEnvMap = p5.uniformTexture('uEnvMap');
+        const uFovY = p5.uniformFloat('uFovY');
+        const uAspect = p5.uniformFloat('uAspect');
         // Hack: we don't have matrix uniforms yet; use three vectors
-        const uN1 = p5.uniformVec3();
-        const uN2 = p5.uniformVec3();
-        const uN3 = p5.uniformVec3();
+        const uN1 = p5.uniformVec3('uN1');
+        const uN2 = p5.uniformVec3('uN2');
+        const uN3 = p5.uniformVec3('uN3');
         p5.getColor((inputs) => {
           const uFovX = uFovY * uAspect;
           const angleY = p5.mix(uFovY/2.0,  -uFovY/2.0, inputs.texCoord.y);

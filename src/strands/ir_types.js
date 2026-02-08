@@ -27,6 +27,7 @@ export const NodeTypeRequiredFields = {
 export const StatementType = {
   DISCARD: 'discard',
   BREAK: 'break',
+  EARLY_RETURN: 'early_return',
   EXPRESSION: 'expression', // Used when we want to output a single expression as a statement, e.g. a for loop condition
   EMPTY: 'empty', // Used for empty statements like ; in for loops
 };
