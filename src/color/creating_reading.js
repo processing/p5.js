@@ -1388,7 +1388,7 @@ function creatingReading(p5, fn){
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/p5/colorMode/">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a>.
    *
    * @method lerpColor
    * @param  {p5.Color} c1  interpolate from this color.
