@@ -524,11 +524,11 @@ function material(p5, fn) {
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
-        loadedShader = this.createFilterShader(fragString, true);
+        loadedShader = this._internal(() => this.createFilterShader(fragString, true));
       } else {
-        loadedShader = withGlobalStrands(this, () =>
+        loadedShader = this._internal(() => withGlobalStrands(this, () =>
           this.baseFilterShader().modify(new Function(fragString)),
-        );
+        ));
       }
 
       if (successCallback) {
@@ -1597,7 +1597,7 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildMaterialShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildMaterialShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1814,9 +1814,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this.withGlobalStrands(this, () =>
+      let shader = this._internal(() => this.withGlobalStrands(this, () =>
         this.buildNormalShader(cb),
-      );
+      ));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1978,7 +1978,7 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildColorShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildColorShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2237,7 +2237,7 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildStrokeShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildStrokeShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }

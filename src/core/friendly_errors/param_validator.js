@@ -573,14 +573,35 @@ function validateParams(p5, fn, lifecycles) {
 
   fn._validate = validate; // TEMP: For unit tests
 
+  // Suppress FES param checking for the duration of a callback.
+  // Use this to wrap internal p5 calls that happen after an await.
+  // NOTE: shares the same _isUserCall flag logic as the decorator below.
+  fn._internal = function(callback) {
+    const wasInternalCall = this._isUserCall;
+    this._isUserCall = true;
+    try {
+      return callback();
+    } finally {
+      this._isUserCall = wasInternalCall;
+    }
+  };
+
+  // Skip FES validation for nested (internal) calls.
+  // NOTE: shares the same _isUserCall flag logic as _internal() above.
   p5.decorateHelper(
     /^(?!_).+$/,
     function(target, { name }){
       return function(...args){
-        if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
-          validate(name, args);
+        const wasInternalCall = this._isUserCall;
+        this._isUserCall = true;
+        try {
+          if (!wasInternalCall && !p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+            validate(name, args);
+          }
+          return target.apply(this, args);
+        } finally {
+          this._isUserCall = wasInternalCall;
         }
-        return target.apply(this, args);
       };
     }
   );
