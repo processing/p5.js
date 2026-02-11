@@ -148,19 +148,24 @@ class p5 {
     const blurHandler = () => {
       this.focused = false;
     };
-    window.addEventListener('focus', focusHandler);
-    window.addEventListener('blur', blurHandler);
-    p5.lifecycleHooks.remove.push(function() {
-      window.removeEventListener('focus', focusHandler);
-      window.removeEventListener('blur', blurHandler);
-    });
 
-    // Initialization complete, start runtime
-    if (document.readyState === 'complete') {
+    if(typeof window !== 'undefined'){
+      window.addEventListener('focus', focusHandler);
+      window.addEventListener('blur', blurHandler);
+      p5.lifecycleHooks.remove.push(function() {
+        window.removeEventListener('focus', focusHandler);
+        window.removeEventListener('blur', blurHandler);
+      });
+
+      // Initialization complete, start runtime
+      if (document.readyState === 'complete') {
+        this.#_start();
+      } else {
+        this._startListener = this.#_start.bind(this);
+        window.addEventListener('load', this._startListener, false);
+      }
+    }else{
       this.#_start();
-    } else {
-      this._startListener = this.#_start.bind(this);
-      window.addEventListener('load', this._startListener, false);
     }
   }
 
@@ -237,15 +242,17 @@ class p5 {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    this.createCanvas(
-      100,
-      100,
-      constants.P2D
-    );
+    if(typeof window !== 'undefined'){
+      this.createCanvas(
+        100,
+        100,
+        constants.P2D
+      );
+    }
 
     // Record the time when setup starts. millis() will start at 0 within
     // setup, but this isn't documented, locked-in behavior yet.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
@@ -253,21 +260,23 @@ class p5 {
     }
     if (this.hitCriticalError) return;
 
-    const canvases = document.getElementsByTagName('canvas');
-    for (const k of canvases) {
-      // Apply touchAction = 'none' to canvases to prevent scrolling
-      // when dragging on canvas elements
-      k.style.touchAction = 'none';
+    if(typeof document !== 'undefined'){
+      const canvases = document.getElementsByTagName('canvas');
+      for (const k of canvases) {
+        // Apply touchAction = 'none' to canvases to prevent scrolling
+        // when dragging on canvas elements
+        k.style.touchAction = 'none';
 
-      // unhide any hidden canvases that were created
-      if (k.dataset.hidden === 'true') {
-        k.style.visibility = '';
-        delete k.dataset.hidden;
+        // unhide any hidden canvases that were created
+        if (k.dataset.hidden === 'true') {
+          k.style.visibility = '';
+          delete k.dataset.hidden;
+        }
       }
     }
 
-    this._lastTargetFrameTime = window.performance.now();
-    this._lastRealFrameTime = window.performance.now();
+    this._lastTargetFrameTime = globalThis.performance.now();
+    this._lastRealFrameTime = globalThis.performance.now();
     this._setupDone = true;
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._updateAccsOutput();
@@ -278,7 +287,7 @@ class p5 {
 
     // Record the time when the draw loop starts so that millis() starts at 0
     // when the draw loop begins.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
   }
 
   // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
@@ -288,7 +297,7 @@ class p5 {
   // and 'postdraw'.
   async _draw(requestAnimationFrameTimestamp) {
     if (this.hitCriticalError) return;
-    const now = requestAnimationFrameTimestamp || window.performance.now();
+    const now = requestAnimationFrameTimestamp || globalThis.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
 
@@ -330,9 +339,10 @@ class p5 {
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
-      this._requestAnimId = window.requestAnimationFrame(
-        this._draw.bind(this)
-      );
+      const boundDraw = this._draw.bind(this);
+      this._requestAnimId = typeof window !== 'undefined' ?
+        window.requestAnimationFrame(boundDraw) :
+        setImmediate(boundDraw);
     }
   }
 
