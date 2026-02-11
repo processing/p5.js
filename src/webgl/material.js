@@ -684,6 +684,39 @@ function material(p5, fn) {
    * }
    * ```
    *
+   * We can use the `noise()` function built into strands to generate a color for each pixel.  Again we'll animate by setting an announced uniform variable - time - with `setUniform()` each frame.
+   *
+   * ```js example
+   * let myFilter;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myFilter = buildFilterShader(noiseShaderCallback);
+   * }
+   *
+   * function noiseShaderCallback() {
+   *   let time = uniformFloat();
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *
+   *   //generate a value roughly between 0 and 1
+   *   let noiseVal = noise(coord.x, coord.y, time / 2000);
+   *
+   *   let result = mix(
+   *     [1, 0, 1, 1], // Magenta
+   *     [0, 1, 1, 1], // Cyan
+   *     noiseVal
+   *   );
+   *   filterColor.set(result);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   myFilter.setUniform("time", millis());
+   *   filter(myFilter);
+   * }
+   * ```
+   *
    * Like the `modify()` method on shaders,
    * advanced users can also fill in `filterColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
    * instead of JavaScript.
