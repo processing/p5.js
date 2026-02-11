@@ -684,7 +684,7 @@ function material(p5, fn) {
    * }
    * ```
    *
-   * We can use the `noise()` function built into strands to generate a color for each pixel.  Again we'll animate by setting an announced uniform variable - time - with `setUniform()` each frame.
+   * We can use the `noise()` function built into strands to generate a color for each pixel.  (Again no need here for underlying content for the filter to operate on.)  Again we'll animate by passing in an announced uniform variable  `time` with `setUniform()`, each frame.
    *
    * ```js example
    * let myFilter;
@@ -692,6 +692,7 @@ function material(p5, fn) {
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myFilter = buildFilterShader(noiseShaderCallback);
+   *   describe('Evolving animated cloud-like noise in cyan and magenta');
    * }
    *
    * function noiseShaderCallback() {
