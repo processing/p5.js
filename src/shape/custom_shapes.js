@@ -1615,8 +1615,6 @@ function customShapes(p5, fn) {
    * @param {Number} order The new order to set. Can be either 2 or 3, by default 3
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1643,8 +1641,6 @@ function customShapes(p5, fn) {
    *
    *   describe('A black curve drawn on a gray square. The curve starts at the top-left corner and ends at the center.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method bezierOrder
@@ -1735,8 +1731,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1762,11 +1756,7 @@ function customShapes(p5, fn) {
    *   );
    * }
    *
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -1782,11 +1772,7 @@ function customShapes(p5, fn) {
    *   );
    * }
    *
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
+   * @example
    * let ringInnerRadius, ringWidth;
    * let radius, dRadius;
    * let theta, dTheta;
@@ -1827,12 +1813,8 @@ function customShapes(p5, fn) {
    *   }
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let vertexA;
    * let vertexB;
    * let vertexC;
@@ -1914,10 +1896,7 @@ function customShapes(p5, fn) {
    *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method splineVertex
    * @param {Number} x
@@ -1926,8 +1905,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1968,8 +1945,6 @@ function customShapes(p5, fn) {
    *   splineVertex(34, 41, -20);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method splineVertex
@@ -2085,8 +2060,6 @@ function customShapes(p5, fn) {
    * @param value Value to set the given property to.
    *
    * @example
-   * <div>
-   * <code>
    * // Move the mouse left and right to see the curve change.
    *
    * let t;
@@ -2127,74 +2100,65 @@ function customShapes(p5, fn) {
    *   text(`tightness: ${round(t, 1)}`, 15, 90);
    *   describe('A black spline forms a sideways U shape through four points. The spline passes through the points more loosely as the mouse moves left of center (negative tightness), and more tightly as it moves right of center (positive tightness). The tightness is displayed at the bottom.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
-   * createCanvas(360, 140);
-   * background(240);
-   * noFill();
+   *   createCanvas(360, 140);
+   *   background(240);
+   *   noFill();
    *
-   * // Right panel: ends = INCLUDE (all spans).
-   * push();
-   * translate(10, 10);
-   * stroke(220);
-   * rect(0, 0, 160, 120);
-   * fill(30);
-   * textSize(11);
-   * text('ends: INCLUDE (all spans)', 8, 16);
-   * noFill();
+   *   // Right panel: ends = INCLUDE (all spans).
+   *   push();
+   *   translate(10, 10);
+   *   stroke(220);
+   *   rect(0, 0, 160, 120);
+   *   fill(30);
+   *   textSize(11);
+   *   text('ends: INCLUDE (all spans)', 8, 16);
+   *   noFill();
    *
-   * splineProperty('ends', INCLUDE);
-   * stroke(0);
-   * strokeWeight(2);
-   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *   splineProperty('ends', INCLUDE);
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(25, 46, 93, 44, 93, 81, 35, 85);
    *
-   * // vertices
-   * strokeWeight(5);
-   * stroke(0);
-   * point(25, 46);
-   * point(93, 44);
-   * point(93, 81);
-   * point(35, 85);
-   * pop();
+   *   // vertices
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(25, 46);
+   *   point(93, 44);
+   *   point(93, 81);
+   *   point(35, 85);
+   *   pop();
    *
-   * // Right panel: ends = EXCLUDE (middle only).
-   * push();
-   * translate(190, 10);
-   * stroke(220);
-   * rect(0, 0, 160, 120);
-   * noStroke();
-   * fill(30);
-   * text('ends: EXCLUDE ', 18, 16);
-   * noFill();
+   *   // Right panel: ends = EXCLUDE (middle only).
+   *   push();
+   *   translate(190, 10);
+   *   stroke(220);
+   *   rect(0, 0, 160, 120);
+   *   noStroke();
+   *   fill(30);
+   *   text('ends: EXCLUDE ', 18, 16);
+   *   noFill();
    *
-   * splineProperty('ends', EXCLUDE);
-   * stroke(0);
-   * strokeWeight(2);
-   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *   splineProperty('ends', EXCLUDE);
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(25, 46, 93, 44, 93, 81, 35, 85);
    *
-   * // vertices
-   * strokeWeight(5);
-   * stroke(0);
-   * point(25, 46);
-   * point(93, 44);
-   * point(93, 81);
-   * point(35, 85);
-   *  pop();
+   *   // vertices
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(25, 46);
+   *   point(93, 44);
+   *   point(93, 81);
+   *   point(35, 85);
+   *   pop();
    *
-   * describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
+   *   describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let vertexA;
    * let vertexB;
    * let vertexC;
@@ -2276,11 +2240,7 @@ function customShapes(p5, fn) {
    *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
-   * </code>
-   * </div>
-   *
    */
-
   /**
    * @method splineProperty
    * @param {String} property
@@ -2321,8 +2281,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -2336,7 +2294,7 @@ function customShapes(p5, fn) {
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
-   *   
+   *
    *   beginShape();
    *   splineVertex(20, 80);
    *   splineVertex(30, 30);
@@ -2354,12 +2312,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A smooth curved line with tightness 0.5 connecting four red points.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -2374,7 +2328,7 @@ function customShapes(p5, fn) {
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
-   *   
+   *
    *   beginShape();
    *   splineVertex(10, 50);  // Control point (affects curve but not drawn to)
    *   splineVertex(30, 20);  // Start of visible curve
@@ -2387,15 +2341,13 @@ function customShapes(p5, fn) {
    *   noStroke();
    *   circle(10, 50, 6);  // Control point
    *   circle(90, 50, 6);  // Control point
-   *   
+   *
    *   fill(0, 0, 255);
    *   circle(30, 20, 6);  // Visible curve point
    *   circle(70, 80, 6);  // Visible curve point
    *
    *   describe('A curved line between two blue points, with red control points at the ends.');
    * }
-   * </code>
-   * </div>
    *
    * @method splineProperties
    * @return {Object}
@@ -2426,8 +2378,6 @@ function customShapes(p5, fn) {
    * @param  {Number} y y-coordinate of the vertex.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2451,11 +2401,8 @@ function customShapes(p5, fn) {
    *
    *   describe('Four black dots that form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2475,11 +2422,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2499,11 +2443,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2528,11 +2469,8 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2569,11 +2507,8 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let vid;
    * function setup() {
    *   // Load a video and create a p5.MediaElement object.
@@ -2609,8 +2544,6 @@ function customShapes(p5, fn) {
    *   vertex(-40, 40, 0, 1);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method vertex
@@ -2677,8 +2610,6 @@ function customShapes(p5, fn) {
    * @method beginContour
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2706,11 +2637,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square with a square hole in its center drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2745,8 +2673,6 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.beginContour = function(kind) {
     this._renderer.beginContour(kind);
@@ -2783,8 +2709,6 @@ function customShapes(p5, fn) {
    * @param {OPEN|CLOSE} [mode=OPEN] By default, the value is OPEN
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2812,11 +2736,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square with a square hole in its center drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2851,8 +2772,6 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.endContour = function(mode = constants.OPEN) {
     this._renderer.endContour(mode);
