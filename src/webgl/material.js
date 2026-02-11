@@ -1633,7 +1633,7 @@ function material(p5, fn) {
   /**
    * Returns the base shader used for filters.
    *
-   * Calling <a href="#/p5/buildMaterialShader">`buildFilterShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildFilterShader">`buildFilterShader(shaderFunction)`</a>
    * is equivalent to calling `baseFilterShader().modify(shaderFunction)`.
    *
    * Read <a href="#/p5/buildFilterShader">the `buildFilterShader` reference</a> or
