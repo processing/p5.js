@@ -739,8 +739,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader
    */
-  fn.buildFilterShader = function (callback) {
-    return this.baseFilterShader().modify(callback);
+  fn.buildFilterShader = function (callback, scope) {
+    return this.baseFilterShader().modify(callback, scope);
   };
 
   /**
@@ -1567,8 +1567,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function (cb) {
-    return this.baseMaterialShader().modify(cb);
+  fn.buildMaterialShader = function (cb, scope) {
+    return this.baseMaterialShader().modify(cb, scope);
   };
 
   /**
@@ -1783,8 +1783,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function (cb) {
-    return this.baseNormalShader().modify(cb);
+  fn.buildNormalShader = function (cb, scope) {
+    return this.baseNormalShader().modify(cb, scope);
   };
 
   /**
@@ -1947,8 +1947,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function (cb) {
-    return this.baseColorShader().modify(cb);
+  fn.buildColorShader = function (cb, scope) {
+    return this.baseColorShader().modify(cb, scope);
   };
 
   /**
@@ -2202,8 +2202,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function (cb) {
-    return this.baseStrokeShader().modify(cb);
+  fn.buildStrokeShader = function (cb, scope) {
+    return this.baseStrokeShader().modify(cb, scope);
   };
 
   /**
