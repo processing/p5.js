@@ -2,9 +2,9 @@
  * @for p5
  * @requires core
  */
-import * as constants from '../constants.js';
+import * as constants from '../core/constants.js';
 import { z } from 'zod/v4';
-import dataDoc from '../../../docs/parameterData.json';
+import dataDoc from '../../docs/parameterData.json';
 
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
@@ -175,6 +175,8 @@ function validateParams(p5, fn, lifecycles) {
       // All p5 objects start with `p5` in the documentation, i.e. `p5.Camera`.
       else if (/^p5\.[a-zA-Z0-9]+$/.exec(baseType) || baseType === 'p5') {
         const className = baseType.substring(baseType.indexOf('.') + 1);
+        // NOTE: Will need to refactor to account for classes not imported
+        if(!p5Constructors[className]) return z.any();
         typeSchema = z.instanceof(p5Constructors[className]);
       }
       // For primitive types and web API objects.

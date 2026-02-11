@@ -22,9 +22,9 @@
  * sequence of each function, please look at the FES Reference + Dev Notes:
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
-import { translator } from '../internationalization';
+import { translator } from '../core/internationalization';
 import errorTable from './browser_errors';
-import * as contants from '../constants';
+import * as contants from '../core/constants';
 
 function fesCore(p5, fn){
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
@@ -51,8 +51,6 @@ function fesCore(p5, fn){
       () => {};
   } else {
     let doFriendlyWelcome = false; // TEMP until we get it all working LM
-
-    // const errorTable = require('./browser_errors').default;
 
     // -- Borrowed from jQuery 1.11.3 --
     const class2type = {};

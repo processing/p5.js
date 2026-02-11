@@ -89,7 +89,7 @@ rmSync('./dist', {
 });
 
 export default [
-  //// Library builds (IIFE and ESM) ////
+  // Library builds (IIFE and ESM) ////
   {
     input: 'src/app.js',
     output: [
@@ -137,7 +137,7 @@ export default [
       ...plugins
     ]
   },
-  //// Minified build ////
+  // Minified build ////
   {
     input: 'src/app.js',
     output: [
@@ -168,13 +168,13 @@ export default [
     plugins: [
       alias({
         entries: [
-          { find: './core/friendly_errors', replacement: './core/noop' }
+          { find: './friendly_errors', replacement: './core/noop' }
         ]
       }),
       ...plugins
     ]
   },
-  //// ESM source build ////
+  // ESM source build ////
   {
     input: Object.fromEntries(
       globSync('src/**/*.js').map(file => [

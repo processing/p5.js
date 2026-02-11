@@ -1,6 +1,6 @@
 import { parse } from 'acorn';
 import { simple as walk } from 'acorn-walk';
-import * as constants from '../constants';
+import * as constants from '../core/constants';
 
 // List of functions to ignore as they either are meant to be re-defined or
 // generate false positive outputs.
@@ -24,17 +24,10 @@ const ignoreFunction = [
   'keyPressed',
   'keyReleased',
   'keyTyped',
-  'windowResized',
-  // 'name',
-  // 'parent',
-  // 'toString',
-  // 'print',
-  // 'stop',
-  // 'onended'
+  'windowResized'
 ];
 
 export const verifierUtils = {
-
   /**
    * Fetches the contents of a script element in the user's sketch.
    *
