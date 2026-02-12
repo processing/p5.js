@@ -1101,6 +1101,9 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Sanchit2662"><img src="https://avatars.githubusercontent.com/u/217499010?v=4?s=64" width="64px;" alt="SANCHIT KUMAR"/><br /><sub><b>SANCHIT KUMAR</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Sanchit2662" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://lavalva.dev"><img src="https://avatars.githubusercontent.com/u/26027232?v=4?s=64" width="64px;" alt="Luke LaValva"/><br /><sub><b>Luke LaValva</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ALuLaValva" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=LuLaValva" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://my-portfolio-phi-seven-50.vercel.app/"><img src="https://avatars.githubusercontent.com/u/187937240?v=4?s=64" width="64px;" alt="Saurabh Singh"/><br /><sub><b>Saurabh Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=saurabh24thakur" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=saurabh24thakur" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 
