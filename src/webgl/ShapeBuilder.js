@@ -313,6 +313,27 @@ export class ShapeBuilder {
       }
     }
 
+    // Normalize nearly identical consecutive vertices to prevent tessellation artifacts
+    // This addresses numerical precision issues in libtess when consecutive vertices
+    // have coordinates that are almost (but not exactly) equal (e.g., differing by ~1e-8)
+    const epsilon = 1e-6;
+    for (const contour of contours) {
+      const stride = this.tessyVertexSize;
+      for (let i = stride; i < contour.length; i += stride) {
+        const prevX = contour[i - stride];
+        const prevY = contour[i - stride + 1];
+        const currX = contour[i];
+        const currY = contour[i + 1];
+
+        if (Math.abs(currX - prevX) < epsilon) {
+          contour[i] = prevX;
+        }
+        if (Math.abs(currY - prevY) < epsilon) {
+          contour[i + 1] = prevY;
+        }
+      }
+    }
+
     const polyTriangles = this._triangulate(contours);
 
     // If there were no valid faces, we still want to use the original vertices
