@@ -732,11 +732,13 @@ function material(p5, fn) {
    * @beta
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
   /**
    * @method buildFilterShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
   fn.buildFilterShader = function (callback, scope) {
@@ -1560,11 +1562,13 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
   /**
    * @method buildMaterialShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
   fn.buildMaterialShader = function (cb, scope) {
@@ -1776,11 +1780,13 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
   /**
    * @method buildNormalShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
   fn.buildNormalShader = function (cb, scope) {
@@ -1940,11 +1946,13 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
   /**
    * @method buildColorShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
   fn.buildColorShader = function (cb, scope) {
@@ -2195,11 +2203,13 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
   /**
    * @method buildStrokeShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
   fn.buildStrokeShader = function (cb, scope) {
