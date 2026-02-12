@@ -684,6 +684,40 @@ function material(p5, fn) {
    * }
    * ```
    *
+   * We can use the `noise()` function built into strands to generate a color for each pixel.  (Again no need here for underlying content for the filter to operate on.)  Again we'll animate by passing in an announced uniform variable  `time` with `setUniform()`, each frame.
+   *
+   * ```js example
+   * let myFilter;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myFilter = buildFilterShader(noiseShaderCallback);
+   *   describe('Evolving animated cloud-like noise in cyan and magenta');
+   * }
+   *
+   * function noiseShaderCallback() {
+   *   let time = uniformFloat();
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *
+   *   //generate a value roughly between 0 and 1
+   *   let noiseVal = noise(coord.x, coord.y, time / 2000);
+   *
+   *   let result = mix(
+   *     [1, 0, 1, 1], // Magenta
+   *     [0, 1, 1, 1], // Cyan
+   *     noiseVal
+   *   );
+   *   filterColor.set(result);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   myFilter.setUniform("time", millis());
+   *   filter(myFilter);
+   * }
+   * ```
+   *
    * Like the `modify()` method on shaders,
    * advanced users can also fill in `filterColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
    * instead of JavaScript.
@@ -1633,7 +1667,7 @@ function material(p5, fn) {
   /**
    * Returns the base shader used for filters.
    *
-   * Calling <a href="#/p5/buildMaterialShader">`buildFilterShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildFilterShader">`buildFilterShader(shaderFunction)`</a>
    * is equivalent to calling `baseFilterShader().modify(shaderFunction)`.
    *
    * Read <a href="#/p5/buildFilterShader">the `buildFilterShader` reference</a> or
