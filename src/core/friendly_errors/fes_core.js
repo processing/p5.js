@@ -724,7 +724,10 @@ function fesCore(p5, fn){
         stacktrace &&
         stacktrace[0].fileName &&
         stacktrace[0].lineNumber &&
-        stacktrace[0].columnNumber
+        stacktrace[0].columnNumber &&
+        friendlyStack &&
+        friendlyStack[0] &&
+        friendlyStack[0].lineNumber
       ) {
         locationObj = {
           location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
@@ -1019,9 +1022,12 @@ function fesCore(p5, fn){
    */
   defineMisusedAtTopLevelCode = () => {
     const uniqueNamesFound = {};
+    const currentInstance = p5.instance || null;
 
-    const getSymbols = obj =>
-      Object.getOwnPropertyNames(obj)
+    const getSymbols = obj => {
+      const instanceToUse = obj === fn ? currentInstance : null;
+      
+      return Object.getOwnPropertyNames(obj)
         .filter(name => {
           if (name[0] === '_') {
             return false;
@@ -1036,23 +1042,44 @@ function fesCore(p5, fn){
         })
         .map(name => {
           let type;
-
-          if (typeof obj[name] === 'function') {
-            type = 'function';
-          } else if (name === name.toUpperCase()) {
-            type = 'constant';
+          
+          if (instanceToUse) {
+            try {
+              const value = instanceToUse[name];
+              if (typeof value === 'function') {
+                type = 'function';
+              } else if (name === name.toUpperCase()) {
+                type = 'constant';
+              } else {
+                type = 'variable';
+              }
+            } catch (e) {
+              const descriptor = Object.getOwnPropertyDescriptor(obj, name);
+              if (descriptor && descriptor.value && typeof descriptor.value === 'function') {
+                type = 'function';
+              } else if (name === name.toUpperCase()) {
+                type = 'constant';
+              } else {
+                type = 'variable';
+              }
+            }
           } else {
-            type = 'variable';
+            const descriptor = Object.getOwnPropertyDescriptor(obj, name);
+            if (descriptor && descriptor.value && typeof descriptor.value === 'function') {
+              type = 'function';
+            } else if (name === name.toUpperCase()) {
+              type = 'constant';
+            } else {
+              type = 'variable';
+            }
           }
 
           return { name, type };
         });
+    };
 
     misusedAtTopLevelCode = [].concat(
       getSymbols(fn),
-      // At present, p5 only adds its constants to fn during
-      // construction, which may not have happened at the time a
-      // ReferenceError is thrown, so we'll manually add them to our list.
       getSymbols(contants)
     );
 
