@@ -1097,6 +1097,8 @@ p5.prototype._onmousemove = function(e) {
 
 /**
  * A function that's called once when a mouse button is pressed.
+ * The  specific mouse button pressed can be accessed via the optional MouseEvent parameter.
+ * Right click behavior may vary between browsers and operating systems.
  *
  * Declaring the function `mousePressed()` sets a code block to run
  * automatically when the user presses a mouse button:
