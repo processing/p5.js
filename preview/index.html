@@ -122,16 +122,16 @@
           const posY_idx = idx * 2 + 1;
 
           // Read current position and velocity
-          let posX = positions.get(posX_idx);
-          let posY = positions.get(posY_idx);
-          let velX = velocities.get(posX_idx);
-          let velY = velocities.get(posY_idx);
+          let posX = positions[posX_idx];
+          let posY = positions[posY_idx];
+          let velX = velocities[posX_idx];
+          let velY = velocities[posY_idx];
 
           // Update position
           posX = posX + velX * deltaTime;
           posY = posY + velY * deltaTime;
 
-          // Bounce off boundaries (DVD logo style)
+          // Bounce off boundaries
           if (posX > bounds.x || posX < -bounds.x) {
             velX = -velX;
             posX = p.clamp(posX, -bounds.x, bounds.x);
@@ -141,11 +141,10 @@
             posY = p.clamp(posY, -bounds.y, bounds.y);
           }
 
-          // Write back
-          positions.set(posX_idx, posX);
-          positions.set(posY_idx, posY);
-          velocities.set(posX_idx, velX);
-          velocities.set(posY_idx, velY);
+          positions[posX_idx] = posX;
+          positions[posY_idx] = posY;
+          velocities[posX_idx] = velX;
+          velocities[posY_idx] = velY;
         }, { p, RADIUS });
 
         // Shader for rendering bouncing circles from storage buffer
