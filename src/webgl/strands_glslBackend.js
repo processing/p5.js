@@ -231,6 +231,10 @@ export const glslBackend = {
     return `${typeName} ${tmp} = ${expr};`;
   },
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+    if (!returnType) {
+      generationContext.write('return;');
+      return;
+    }
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
     if (isStructType(returnType)) {

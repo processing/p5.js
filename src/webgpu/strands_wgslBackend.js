@@ -195,10 +195,10 @@ export const wgslBackend = {
     // Add texture and sampler bindings for sampler2D uniforms to both vertex and fragment declarations
     if (!strandsContext.renderer || !strandsContext.baseShader) return;
 
-    // Get the next available binding index from the renderer
     let bindingIndex = strandsContext.renderer.getNextBindingIndex({
-      vert: strandsContext.baseShader.vertSrc(),
-      frag: strandsContext.baseShader.fragSrc(),
+      vert: strandsContext.baseShader._vertSrc,
+      frag: strandsContext.baseShader._fragSrc,
+      compute: strandsContext.baseShader._computeSrc,
     });
 
     for (const {name, typeInfo} of strandsContext.uniforms) {
@@ -215,6 +215,31 @@ export const wgslBackend = {
       }
     }
   },
+  addStorageBufferBindingsToDeclarations(strandsContext) {
+    if (!strandsContext.renderer || !strandsContext.baseShader) return;
+
+    const isComputeShader = strandsContext.baseShader.shaderType === 'compute';
+    let bindingIndex = strandsContext.renderer.getNextBindingIndex({
+      vert: strandsContext.baseShader._vertSrc,
+      frag: strandsContext.baseShader._fragSrc,
+      compute: strandsContext.baseShader._computeSrc,
+    });
+
+    for (const {name, typeInfo} of strandsContext.uniforms) {
+      if (typeInfo.baseType === 'storage') {
+        if (isComputeShader) {
+          const storageBinding = `@group(0) @binding(${bindingIndex}) var<storage, read_write> ${name}: array<f32>;`;
+          strandsContext.computeDeclarations.add(storageBinding);
+        } else {
+          const storageBinding = `@group(0) @binding(${bindingIndex}) var<storage, read> ${name}: array<f32>;`;
+          strandsContext.vertexDeclarations.add(storageBinding);
+          strandsContext.fragmentDeclarations.add(storageBinding);
+        }
+
+        bindingIndex += 1;
+      }
+    }
+  },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {
@@ -226,6 +251,11 @@ export const wgslBackend = {
     // For sampler2D types, we don't add them to the uniform struct
     // Instead, they become separate texture and sampler bindings
     if (typeInfo.baseType === 'sampler2D') {
+      return null; // Signal that this should not be added to uniform struct
+    }
+    // For storage buffers, we don't add them to the uniform struct
+    // Instead, they become separate storage buffer bindings
+    if (typeInfo.baseType === 'storage') {
       return null; // Signal that this should not be added to uniform struct
     }
     return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
@@ -267,6 +297,16 @@ export const wgslBackend = {
 
     const targetNode = getNodeDataFromID(dag, targetNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
+
+    // Check if target is an array access (storage buffer assignment)
+    if (targetNode.opCode === OpCode.Binary.ARRAY_ACCESS) {
+      const [bufferID, indexID] = targetNode.dependsOn;
+      const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+      const indexExpr = this.generateExpression(generationContext, dag, indexID);
+      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+      generationContext.write(`${bufferExpr}[i32(${indexExpr})] = ${sourceExpr}${semicolon}`);
+      return;
+    }
 
     // Check if target is a swizzle assignment
     if (targetNode.opCode === OpCode.Unary.SWIZZLE) {
@@ -325,6 +365,10 @@ export const wgslBackend = {
     return `var ${tmp}: ${typeName} = ${expr};`;
   },
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+    if (!returnType) {
+      generationContext.write('return;');
+      return;
+    }
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
     if (isStructType(returnType)) {
@@ -365,9 +409,9 @@ export const wgslBackend = {
         }
       }
 
-      // Check if this is a uniform variable (but not a texture)
+      // Check if this is a uniform variable (but not a texture or storage buffer)
       const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
-      if (uniform && uniform.typeInfo.baseType !== 'sampler2D') {
+      if (uniform && uniform.typeInfo.baseType !== 'sampler2D' && uniform.typeInfo.baseType !== 'storage') {
         return `hooks.${node.identifier}`;
       }
 
@@ -419,6 +463,12 @@ export const wgslBackend = {
         const parentID = node.dependsOn[0];
         const parentExpr = this.generateExpression(generationContext, dag, parentID);
         return `${parentExpr}.${node.swizzle}`;
+      }
+      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+        const [bufferID, indexID] = node.dependsOn;
+        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+        const indexExpr = this.generateExpression(generationContext, dag, indexID);
+        return `${bufferExpr}[i32(${indexExpr})]`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;

@@ -117,6 +117,7 @@ export const OpCode = {
     LOGICAL_AND: 11,
     LOGICAL_OR: 12,
     MEMBER_ACCESS: 13,
+    ARRAY_ACCESS: 14,
   },
   Unary: {
     LOGICAL_NOT: 100,
@@ -127,6 +128,7 @@ export const OpCode = {
   Nary: {
     FUNCTION_CALL: 200,
     CONSTRUCTOR: 201,
+    ARRAY_ASSIGNMENT: 202,
   },
   ControlFlow: {
     RETURN: 300,

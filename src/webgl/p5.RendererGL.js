@@ -1129,6 +1129,7 @@ class RendererGL extends Renderer3D {
       );
     }
 
+    shader._compiled = true;
     shader._glProgram = program;
     shader._vertShader = vertShader;
     shader._fragShader = fragShader;

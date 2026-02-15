@@ -212,7 +212,7 @@ const ASTCallbacks = {
       ];
       let isSwizzle = swizzleSets.some(set =>
         [...property].every(char => set.includes(char))
-      ) && node.argument.type === 'MemberExpression';
+      ) && node.argument.type === 'MemberExpression' && !node.argument.computed;
       if (isSwizzle) {
         node.type = 'MemberExpression';
         node.object = {
@@ -244,6 +244,28 @@ const ASTCallbacks = {
     };
     node.arguments = [];
     node.type = 'CallExpression';
+  },
+  MemberExpression(node, _state, ancestors) {
+    if (ancestors.some(nodeIsUniform)) { return; }
+    // Skip sets -- these will be converted to .set() method
+    // calls at the AssignmentExpression level
+    if (ancestors.at(-2)?.type === 'AssignmentExpression') return;
+    if (node.computed) {
+      const callee = node.object;
+      const member = node.property;
+      node.computed = undefined;
+      node.object = undefined;
+      node.callee = {
+        type: 'MemberExpression',
+        object: callee,
+        property: {
+          type: 'Identifier',
+          name: 'get',
+        }
+      };
+      node.arguments = [member];
+      node.type = 'CallExpression';
+    }
   },
   VariableDeclarator(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
@@ -360,6 +382,27 @@ const ASTCallbacks = {
       // Handle swizzle assignment to varying variable: myVarying.xyz = value
       // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
       else if (node.left.type === 'MemberExpression') {
+        if (node.left.computed) {
+          const source = node.left;
+          const value = node.right;
+          const callee = source.object;
+          const member = source.property;
+          node.right = undefined;
+          node.left = undefined;
+          node.operator = undefined;
+          node.callee = {
+            type: 'MemberExpression',
+            object: callee,
+            property: {
+              type: 'Identifier',
+              name: 'set'
+            }
+          };
+          node.arguments = [member, value];
+          node.type = 'CallExpression';
+          return;
+        }
+
         let varyingName = null;
 
         // Check if it's a direct identifier: myVarying.xyz

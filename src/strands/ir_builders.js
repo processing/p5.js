@@ -549,3 +549,91 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
   };
   return trap;
 }
+
+export function arrayAccessNode(strandsContext, bufferNode, indexNode, accessMode) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Array access returns a single float
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Binary.ARRAY_ACCESS,
+    dependsOn: [bufferNode.id, index.id],
+    dimension: 1,
+    baseType: BaseType.FLOAT,
+    accessMode // 'read' or 'read_write'
+  });
+
+  const id = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+
+  return { id, dimension: 1 };
+}
+
+export function arrayAssignmentNode(strandsContext, bufferNode, indexNode, valueNode) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Ensure value is a StrandsNode
+  let value;
+  if (valueNode instanceof StrandsNode) {
+    value = valueNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.FLOAT, dimension: 1 },
+      valueNode
+    );
+    value = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Create array access node as the assignment target
+  const arrayAccessData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Binary.ARRAY_ACCESS,
+    dependsOn: [bufferNode.id, index.id],
+    dimension: 1,
+    baseType: BaseType.FLOAT
+  });
+  const arrayAccessID = DAG.getOrCreateNode(dag, arrayAccessData);
+
+  // Create assignment node: buffer[index] = value
+  const assignmentData = DAG.createNodeData({
+    nodeType: NodeType.ASSIGNMENT,
+    dependsOn: [arrayAccessID, value.id],
+    phiBlocks: []
+  });
+  const assignmentID = DAG.getOrCreateNode(dag, assignmentData);
+
+  // CRITICAL: Record in CFG to preserve sequential ordering
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
+
+  // Track for global assignments processing
+  strandsContext.globalAssignments.push(assignmentID);
+
+  return { id: assignmentID };
+}
