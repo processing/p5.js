@@ -115,41 +115,38 @@
           const bounds = p.uniformVec2(() => [p.width / 2 - RADIUS, p.height / 2 - RADIUS]);
           const deltaTime = p.uniformFloat(() => p.deltaTime * 0.1);
 
-          p.processData((inputs) => {
-            const idx = inputs.globalId.x;
+          const idx = iteration.index.x;
 
-            // Each circle has 2 floats (x, y)
-            const posX_idx = idx * 2;
-            const posY_idx = idx * 2 + 1;
+          // Each circle has 2 floats (x, y)
+          const posX_idx = idx * 2;
+          const posY_idx = idx * 2 + 1;
 
-            // Read current position and velocity
-            let posX = positions.get(posX_idx);
-            let posY = positions.get(posY_idx);
-            let velX = velocities.get(posX_idx);
-            let velY = velocities.get(posY_idx);
+          // Read current position and velocity
+          let posX = positions.get(posX_idx);
+          let posY = positions.get(posY_idx);
+          let velX = velocities.get(posX_idx);
+          let velY = velocities.get(posY_idx);
 
-            // Update position
-            posX = posX + velX * deltaTime;
-            posY = posY + velY * deltaTime;
+          // Update position
+          posX = posX + velX * deltaTime;
+          posY = posY + velY * deltaTime;
 
-            // Bounce off boundaries (DVD logo style)
-            if (posX > bounds.x || posX < -bounds.x) {
-              velX = -velX;
-              posX = p.clamp(posX, -bounds.x, bounds.x);
-            }
-            if (posY > bounds.y || posY < -bounds.y) {
-              velY = -velY;
-              posY = p.clamp(posY, -bounds.y, bounds.y);
-            }
+          // Bounce off boundaries (DVD logo style)
+          if (posX > bounds.x || posX < -bounds.x) {
+            velX = -velX;
+            posX = p.clamp(posX, -bounds.x, bounds.x);
+          }
+          if (posY > bounds.y || posY < -bounds.y) {
+            velY = -velY;
+            posY = p.clamp(posY, -bounds.y, bounds.y);
+          }
 
-            // Write back
-            positions.set(posX_idx, posX);
-            positions.set(posY_idx, posY);
-            velocities.set(posX_idx, velX);
-            velocities.set(posY_idx, velY);
-          });
+          // Write back
+          positions.set(posX_idx, posX);
+          positions.set(posY_idx, posY);
+          velocities.set(posX_idx, velX);
+          velocities.set(posY_idx, velY);
         }, { p, RADIUS });
-        console.log(computeShader.computeSrc());
 
         // Shader for rendering bouncing circles from storage buffer
         bouncingCirclesShader = p.baseMaterialShader().modify(() => {

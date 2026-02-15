@@ -3313,7 +3313,7 @@ ${hookUniformFields}}
           baseComputeShader,
           {
             compute: {
-              'void processData': '(inputs: ComputeInputs) {}',
+              'void iteration': '(inputs: ComputeInputs) {}',
             },
           }
         );
@@ -3508,7 +3508,7 @@ ${hookUniformFields}}
    * @returns {p5.Shader} The compute shader.
    */
   fn.buildComputeShader = function (cb, context) {
-    return this.baseComputeShader().modify(cb, context);
+    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
   };
 
   /**

@@ -105,7 +105,7 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
 
-  p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
+  p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
     try {
       if (
         shaderModifier instanceof Function ||
@@ -120,7 +120,8 @@ function strands(p5, fn) {
         });
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
-        const options = { parser: true, srcLocations: false };
+        options.parser = true;
+        options.srcLocations = false;
 
         // 1. Transpile from strands DSL to JS
         let strandsCallback;
@@ -147,11 +148,13 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
+        if (options.hook) strandsContext.renderer._pInst[options.hook].begin();
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
           strandsCallback();
         }
+        if (options.hook) strandsContext.renderer._pInst[options.hook].end();
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
