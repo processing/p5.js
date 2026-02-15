@@ -40,6 +40,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.globalAssignments = [];
     ctx.backend = backend;
@@ -61,6 +62,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.globalAssignments = [];
     ctx.active = false;

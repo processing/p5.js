@@ -10,11 +10,32 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     this._renderer = renderer;
-    this._vertSrc = vertSrc;
-    this._fragSrc = fragSrc;
+
+    // Detect compute shader: first arg is STRING and second is undefined OR an options object
+    if (
+      typeof vertSrc === 'string' && (
+        fragSrc === undefined || (typeof fragSrc === 'object' && !Array.isArray(fragSrc))
+      )
+    ) {
+      // Compute shader
+      this.shaderType = 'compute';
+      this._computeSrc = vertSrc;
+      this._vertSrc = null;
+      this._fragSrc = null;
+      // If fragSrc is an options object, use it
+      if (typeof fragSrc === 'object') {
+        options = fragSrc;
+      }
+    } else {
+      // Render shader - shaderType will be set later during binding ('fill', 'stroke', etc.)
+      this._vertSrc = vertSrc;
+      this._fragSrc = fragSrc;
+      this._computeSrc = null;
+    }
+
     this._vertShader = -1;
     this._fragShader = -1;
-    this._glProgram = 0;
+    this._compiled = false;
     this._loadedAttributes = false;
     this.attributes = {};
     this._loadedUniforms = false;
@@ -40,6 +61,7 @@ class Shader {
       // Stores the hook implementations
       vertex: options.vertex || {},
       fragment: options.fragment || {},
+      compute: options.compute || {},
 
       hookAliases: options.hookAliases || {},
 
@@ -48,7 +70,8 @@ class Shader {
       // yourShader.modify(...).
       modified: {
         vertex: (options.modified && options.modified.vertex) || {},
-        fragment: (options.modified && options.modified.fragment) || {}
+        fragment: (options.modified && options.modified.fragment) || {},
+        compute: (options.modified && options.modified.compute) || {},
       }
     };
   }
@@ -80,11 +103,18 @@ class Shader {
   }
 
   vertSrc() {
+    if (this.shaderType === 'compute') return null;
     return this.shaderSrc(this._vertSrc, 'vertex');
   }
 
   fragSrc() {
+    if (this.shaderType === 'compute') return null;
     return this.shaderSrc(this._fragSrc, 'fragment');
+  }
+
+  computeSrc() {
+    if (this.shaderType !== 'compute') return null;
+    return this.shaderSrc(this._computeSrc, 'compute');
   }
 
   /**
@@ -143,22 +173,33 @@ class Shader {
    * @beta
    */
   inspectHooks() {
-    console.log('==== Vertex shader hooks: ====');
-    for (const key in this.hooks.vertex) {
-      console.log(
-        (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.vertex[key]
-      );
-    }
-    console.log('');
-    console.log('==== Fragment shader hooks: ====');
-    for (const key in this.hooks.fragment) {
-      console.log(
-        (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.fragment[key]
-      );
+    if (this.shaderType === 'compute') {
+      console.log('==== Compute shader hooks: ====');
+      for (const key in this.hooks.compute) {
+        console.log(
+          (this.hooks.modified.compute[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.compute[key]
+        );
+      }
+    } else {
+      console.log('==== Vertex shader hooks: ====');
+      for (const key in this.hooks.vertex) {
+        console.log(
+          (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.vertex[key]
+        );
+      }
+      console.log('');
+      console.log('==== Fragment shader hooks: ====');
+      for (const key in this.hooks.fragment) {
+        console.log(
+          (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.fragment[key]
+        );
+      }
     }
     console.log('');
     console.log('==== Helper functions: ====');
@@ -362,6 +403,7 @@ class Shader {
     const newHooks = {
       vertex: {},
       fragment: {},
+      compute: {},
       helpers: {}
     };
     for (const key in hooks) {
@@ -374,16 +416,22 @@ class Shader {
       } else if (key === 'fragmentDeclarations') {
         newHooks.fragment.declarations =
           (newHooks.fragment.declarations || '') + '\n' + hooks[key];
+      } else if (key === 'computeDeclarations') {
+        newHooks.compute.declarations =
+          (newHooks.compute.declarations || '') + '\n' + hooks[key];
       } else if (this.hooks.vertex[key]) {
         newHooks.vertex[key] = hooks[key];
       } else if (this.hooks.fragment[key]) {
         newHooks.fragment[key] = hooks[key];
+      } else if (this.hooks.compute[key]) {
+        newHooks.compute[key] = hooks[key];
       } else {
         newHooks.helpers[key] = hooks[key];
       }
     }
     const modifiedVertex = Object.assign({}, this.hooks.modified.vertex);
     const modifiedFragment = Object.assign({}, this.hooks.modified.fragment);
+    const modifiedCompute = Object.assign({}, this.hooks.modified.compute);
     for (const key in newHooks.vertex || {}) {
       if (key === 'declarations') continue;
       modifiedVertex[key] = true;
@@ -392,21 +440,35 @@ class Shader {
       if (key === 'declarations') continue;
       modifiedFragment[key] = true;
     }
+    for (const key in newHooks.compute || {}) {
+      if (key === 'declarations') continue;
+      modifiedCompute[key] = true;
+    }
 
-    return new Shader(this._renderer, this._vertSrc, this._fragSrc, {
+    const args = [this._renderer];
+    if (this.shaderType === 'compute') {
+      args.push(this._computeSrc);
+    } else {
+      args.push(this._vertSrc, this._fragSrc);
+    }
+    args.push({
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
       varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
+      compute: Object.assign({}, this.hooks.compute, newHooks.compute || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
       hookAliases: Object.assign({}, this.hooks.hookAliases, newHooks.hookAliases || {}),
       modified: {
         vertex: modifiedVertex,
-        fragment: modifiedFragment
+        fragment: modifiedFragment,
+        compute: modifiedCompute,
       }
     });
+
+    return new Shader(...args);
   }
 
   /**
@@ -428,7 +490,9 @@ class Shader {
         );
       }
 
-      this._loadAttributes();
+      if (this.shaderType !== 'compute') {
+        this._loadAttributes();
+      }
       this._loadUniforms();
       this._renderer._finalizeShader(this);
 
@@ -631,11 +695,14 @@ class Shader {
    * }
    */
   copyToContext(context) {
-    const shader = new Shader(
-      context._renderer,
-      this._vertSrc,
-      this._fragSrc
-    );
+    const args = [context._renderer];
+    if (this.shaderType === 'compute') {
+      args.push(this._computeSrc);
+    } else {
+      args.push(this._vertSrc, this._fragSrc);
+    }
+    args.push(this.hooks);
+    const shader = new Shader(...args);
     shader.ensureCompiledOnContext(context._renderer);
     return shader;
   }
@@ -644,11 +711,11 @@ class Shader {
    * @private
    */
   ensureCompiledOnContext(context) {
-    if (this._glProgram !== 0 && this._renderer !== context) {
+    if (this._compiled && this._renderer !== context) {
       throw new Error(
         'The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?'
       );
-    } else if (this._glProgram === 0) {
+    } else if (!this._compiled) {
       this._renderer = context?._renderer?.filterRenderer?._renderer || context;
       this.init();
     }

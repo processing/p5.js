@@ -56,7 +56,7 @@ function _getBuiltinGlobalsCache(strandsContext) {
 function getBuiltinGlobalNode(strandsContext, name) {
   const spec = BUILTIN_GLOBAL_SPECS[name]
   if (!spec) return null
-  
+
   const cache = _getBuiltinGlobalsCache(strandsContext)
   const uniformName = `_p5_global_${name}`
   const cached = cache.nodes.get(uniformName)
@@ -262,6 +262,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const noiseSnippet = this._renderer.getNoiseShaderSnippet();
     strandsContext.vertexDeclarations.add(noiseSnippet);
     strandsContext.fragmentDeclarations.add(noiseSnippet);
+    strandsContext.computeDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
     const strandsArgs = args.flat().map(arg => p5.strandsNode(arg));
@@ -395,6 +396,28 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
+
+  // Storage buffer uniform function for compute shaders
+  fn.uniformStorage = function(name, defaultValue) {
+    const { id, dimension } = build.variableNode(
+      strandsContext,
+      { baseType: 'storage', dimension: 1 },
+      name
+    );
+    strandsContext.uniforms.push({
+      name,
+      typeInfo: { baseType: 'storage', dimension: 1 },
+      defaultValue,
+    });
+
+    // Create StrandsNode with _originalIdentifier set (like varying variables)
+    // This enables proper assignment node creation and ordering preservation
+    const node = createStrandsNode(id, dimension, strandsContext);
+    node._originalIdentifier = name;
+    node._originalBaseType = 'storage';
+    node._originalDimension = 1;
+    return node;
+  };
 }
 //////////////////////////////////////////////
 // Per-Hook functions
@@ -508,10 +531,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const fragmentHooksWithContext = Object.fromEntries(
     Object.entries(shader.hooks.fragment).map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
   );
+  const computeHooksWithContext = Object.fromEntries(
+    Object.entries(shader.hooks.compute).map(([name, hook]) => [name, { ...hook, shaderContext: 'compute' }])
+  );
 
   const availableHooks = {
     ...vertexHooksWithContext,
     ...fragmentHooksWithContext,
+    ...computeHooksWithContext,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
 
@@ -627,7 +654,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         hookType,
         entryBlockID,
         rootNodeID,
-        shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
+        shaderContext: hookInfo?.shaderContext, // 'vertex', 'fragment', or 'compute'
       });
       CFG.popBlock(cfg);
     };

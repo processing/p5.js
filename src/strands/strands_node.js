@@ -1,4 +1,4 @@
-import { swizzleTrap, primitiveConstructorNode, variableNode } from './ir_builders';
+import { swizzleTrap, primitiveConstructorNode, variableNode, arrayAccessNode, arrayAssignmentNode } from './ir_builders';
 import { BaseType, NodeType, OpCode } from './ir_types';
 import { getNodeDataFromID, createNodeData, getOrCreateNode } from './ir_dag';
 import { recordInBasicBlock } from './ir_cfg';
@@ -165,6 +165,42 @@ export class StrandsNode {
       return createStrandsNode(id, dimension, this.strandsContext);
     }
 
+    return this;
+  }
+
+  get(index) {
+    // Validate baseType is 'storage'
+    const nodeData = getNodeDataFromID(this.strandsContext.dag, this.id);
+    if (nodeData.baseType !== 'storage') {
+      throw new Error('get() can only be used on storage buffers');
+    }
+
+    // Create array access node: buffer.get(index) -> buffer[index]
+    const { id, dimension } = arrayAccessNode(
+      this.strandsContext,
+      this,
+      index,
+      'read'
+    );
+    return createStrandsNode(id, dimension, this.strandsContext);
+  }
+
+  set(index, value) {
+    // Validate baseType is 'storage' and has _originalIdentifier
+    const nodeData = getNodeDataFromID(this.strandsContext.dag, this.id);
+    if (nodeData.baseType !== 'storage') {
+      throw new Error('set() can only be used on storage buffers');
+    }
+    if (!this._originalIdentifier) {
+      throw new Error('set() can only be used on storage buffers with an identifier');
+    }
+
+    // Create array assignment node: buffer.set(index, value) -> buffer[index] = value
+    // This creates an ASSIGNMENT node and records it in the CFG basic block
+    // CFG preserves sequential order, preventing reordering of assignments
+    arrayAssignmentNode(this.strandsContext, this, index, value);
+
+    // Return this for chaining
     return this;
   }
 }

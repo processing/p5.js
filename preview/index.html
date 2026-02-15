@@ -32,6 +32,15 @@
       let env;
       let instance;
 
+      // Compute shader variables
+      let computeShader;
+      let positionBuffer;
+      let velocityBuffer;
+      let bouncingCirclesShader;
+      let circleGeometry;
+      const NUM_CIRCLES = 10_000;
+      const RADIUS = 2;
+
       p.setup = async function () {
         await p.createCanvas(400, 400, p.WEBGPU);
         env = await p.loadImage('img/spheremap.jpg');
@@ -41,6 +50,7 @@
         fbo = p.createFramebuffer();
 
         instance = p.buildGeometry(() => p.sphere(5));
+        circleGeometry = p.buildGeometry(() => p.sphere(RADIUS));
 
         redFilter = p.baseFilterShader().modify(() => {
           p.getColor((inputs, canvasContent) => {
@@ -64,22 +74,10 @@
         }
         tex.updatePixels();
         fbo.draw(() => {
-          //p.clear();
-          //p.background('orange');
           p.imageMode(p.CENTER);
           p.image(tex, 0, 0, p.width, p.height);
         });
 
-        /*sh = p.baseMaterialShader().modify({
-          uniforms: {
-            'f32 time': () => p.millis(),
-          },
-          'Vertex getWorldInputs': `(inputs: Vertex) {
-            var result = inputs;
-            result.position.y += 40.0 * sin(uniforms.time * 0.005);
-            return result;
-          }`,
-        })*/
         sh = p.baseMaterialShader().modify(() => {
           const time = p.uniformFloat(() => p.millis());
           p.getWorldInputs((inputs) => {
@@ -93,19 +91,94 @@
             return inputs;
           });
         }, { p })
-	/*ssh = p.baseStrokeShader().modify({
-          uniforms: {
-            'f32 time': () => p.millis(),
-          },
-          'StrokeVertex getWorldInputs': `(inputs: StrokeVertex) {
-            var result = inputs;
-            result.position.y += 40.0 * sin(uniforms.time * 0.005);
-            return result;
-          }`,
-	})*/
+
+        // Initialize storage buffers with random positions and velocities
+        const initialPositions = [];
+        const initialVelocities = [];
+        for (let i = 0; i < NUM_CIRCLES * 2; i += 2) {
+          // Random position (x, y) - store as pairs
+          initialPositions.push(p.random(-150, 150)); // x
+          initialPositions.push(p.random(-150, 150)); // y
+
+          // Random velocity (vx, vy) - DVD logo style
+          initialVelocities.push(0.1 * p.random(1, 3) * (p.random() > 0.5 ? 1 : -1)); // vx
+          initialVelocities.push(0.1 * p.random(1, 3) * (p.random() > 0.5 ? 1 : -1)); // vy
+        }
+
+        positionBuffer = p.createStorage(initialPositions);
+        velocityBuffer = p.createStorage(initialVelocities);
+
+        // Create compute shader for physics simulation
+        computeShader = p.buildComputeShader(() => {
+          const positions = p.uniformStorage('positions');
+          const velocities = p.uniformStorage('velocities');
+          const bounds = p.uniformVec2(() => [p.width / 2 - RADIUS, p.height / 2 - RADIUS]);
+          const deltaTime = p.uniformFloat(() => p.deltaTime * 0.1);
+
+          p.processData((inputs) => {
+            const idx = inputs.globalId.x;
+
+            // Each circle has 2 floats (x, y)
+            const posX_idx = idx * 2;
+            const posY_idx = idx * 2 + 1;
+
+            // Read current position and velocity
+            let posX = positions.get(posX_idx);
+            let posY = positions.get(posY_idx);
+            let velX = velocities.get(posX_idx);
+            let velY = velocities.get(posY_idx);
+
+            // Update position
+            posX = posX + velX * deltaTime;
+            posY = posY + velY * deltaTime;
+
+            // Bounce off boundaries (DVD logo style)
+            if (posX > bounds.x || posX < -bounds.x) {
+              velX = -velX;
+              posX = p.clamp(posX, -bounds.x, bounds.x);
+            }
+            if (posY > bounds.y || posY < -bounds.y) {
+              velY = -velY;
+              posY = p.clamp(posY, -bounds.y, bounds.y);
+            }
+
+            // Write back
+            positions.set(posX_idx, posX);
+            positions.set(posY_idx, posY);
+            velocities.set(posX_idx, velX);
+            velocities.set(posY_idx, velY);
+          });
+        }, { p, RADIUS });
+        console.log(computeShader.computeSrc());
+
+        // Shader for rendering bouncing circles from storage buffer
+        bouncingCirclesShader = p.baseMaterialShader().modify(() => {
+          const positions = p.uniformStorage('positions');
+
+          p.getWorldInputs((inputs) => {
+            const instanceIdx = p.instanceID();
+            const posX = positions.get(instanceIdx * 2);
+            const posY = positions.get(instanceIdx * 2 + 1);
+
+            inputs.position.x += posX;
+            inputs.position.y += posY;
+            return inputs;
+          });
+        }, { p });
+
+        // Set storage buffers for compute shader
+        computeShader.setUniform('positions', positionBuffer);
+        computeShader.setUniform('velocities', velocityBuffer);
+
+        // Set storage buffer for rendering shader
+        bouncingCirclesShader.setUniform('positions', positionBuffer);
       };
 
       p.draw = function () {
+        // Run compute shader to update physics
+        debugger
+        p.compute(computeShader, NUM_CIRCLES);
+
         p.clear();
         p.rotateY(p.millis() * 0.001);
         p.push();
@@ -166,6 +239,14 @@
         p.noStroke();
         p.fill('red');
         p.model(instance, 10);
+        p.pop();
+
+        // Draw compute shader-driven bouncing circles
+        p.push();
+        p.shader(bouncingCirclesShader);
+        p.noStroke();
+        p.fill('#4ECDC4');
+        p.model(circleGeometry, NUM_CIRCLES);
         p.pop();
 
         // Test beginShape/endShape with immediate mode shapes

@@ -7,7 +7,8 @@ export function generateShaderCode(strandsContext) {
     cfg,
     backend,
     vertexDeclarations,
-    fragmentDeclarations
+    fragmentDeclarations,
+    computeDeclarations
   } = strandsContext;
 
   const hooksObj = {
@@ -25,6 +26,11 @@ export function generateShaderCode(strandsContext) {
   // Add texture bindings to declarations for WebGPU backend
   if (backend.addTextureBindingsToDeclarations) {
     backend.addTextureBindingsToDeclarations(strandsContext);
+  }
+
+  // Add storage buffer bindings to declarations for WebGPU backend
+  if (backend.addStorageBufferBindingsToDeclarations) {
+    backend.addStorageBufferBindingsToDeclarations(strandsContext);
   }
 
   for (const { hookType, rootNodeID, entryBlockID, shaderContext } of strandsContext.hooks) {
@@ -63,6 +69,8 @@ export function generateShaderCode(strandsContext) {
     let returnType;
     if (hookType.returnType.properties) {
       returnType = structType(hookType.returnType);
+    } else if (hookType.returnType.typeName === 'void') {
+      returnType = null;
     } else {
       if (!hookType.returnType.dataType) {
         throw new Error(`Missing dataType for return type ${hookType.returnType.typeName}`);
@@ -95,6 +103,7 @@ export function generateShaderCode(strandsContext) {
 
   hooksObj.vertexDeclarations = [...vertexDeclarations].join('\n');
   hooksObj.fragmentDeclarations = [...fragmentDeclarations].join('\n');
+  hooksObj.computeDeclarations = [...computeDeclarations].join('\n');
 
   return hooksObj;
 }
