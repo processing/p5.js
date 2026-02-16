@@ -1,0 +1,223 @@
+<html>
+
+<head>
+  <meta charset='UTF-8'>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script type='module'>
+
+    import p5 from '../../../src/app.js';
+
+    p5.disableFriendlyErrors = true;
+
+    let sketch8278 = function (p) {
+      p.setup = async function () {
+
+        let getters = {
+          background: p.color(100, 100, 50),
+          fill: p.color(100, 100, 50),
+          stroke: p.color(100, 100, 50),
+          tint: p.color(100, 100, 50),
+
+          strokeWeight: 6,
+          rectMode: p.CENTER,
+          colorMode: p.RGB,
+          blendMode: 'source-over',
+          imageMode: p.CORNER,
+          ellipseMode: p.CORNER,
+          textAlign: { horizontal: p.CENTER, vertical: p.CENTER },
+
+          strokeCap: p.ROUND,
+          strokeJoin: p.MITER,
+          pixelDensity: 1,
+          cursor: 'pointer',
+
+          rotate: p.PI,
+          translate: { x: 1, y: 2 },
+          scale: { x: 1, y: 2 },
+          // shearX: 0, // ?
+          // shearY: 0, // ?
+        };
+        p.createCanvas(400, 400);
+        Object.keys(getters).forEach(g => {
+          p.push();
+          let k, arg = getters[g];
+          //console.log('trying ' + g, 'default=', k = p[g](), typeof k);
+          if (typeof arg === 'object' && !(arg instanceof p5.Color)) {
+            p[g](...Object.values(arg)); // set object
+          }
+          else if (Array.isArray(arg)) {
+            p[g](...arg); // set array
+          }
+          else {
+            p[g](arg); // set primitive
+          }
+
+          let val = p[g](); // get
+          if (val.toString() !== arg.toString()) {
+            console.error(g, 'expected ' + arg + ' got ' + val, typeof val);
+            return;
+          }
+          console.log(g + ':', val)
+          p.pop();
+        });
+      };
+    };
+
+
+
+    let sketch = function (p) {
+      p.setup = async function () {
+        p.createCanvas(400, 400);
+      }
+      p.draw = function () {
+        p.background(255);
+        let txt = 'here is \n\tsome text';
+        p.textSize(50);
+        p.text(txt, 100, 100); // has tabs
+        p.text(txt, 100, 200, p.width, p.height) // removes tabs
+      }
+    };
+
+    let sketch8312 = function (p5) {
+      p5.setup = async function () {
+        p5.createCanvas(800, 600);
+        p5.background(255);
+
+        let sampleText = 'This is a sample text that will be wrapped using the new PRETTY and BALANCE modes. It should result in more balanced line lengths compared to standard WORD wrapping.';
+        let boxWidth = 200;
+        let boxHeight = 150;
+
+        // Test 1: WORD wrap (standard)
+        p5.fill(0);
+        p5.textSize(16);
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textWrap(p5.WORD);
+
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(50, 50, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textWrap(p5.WORD);
+
+        p5.text('WORD wrap:', 50, 30);
+        p5.text(sampleText, 50, 50, boxWidth, boxHeight);
+
+        // Test 2: PRETTY wrap
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(300, 50, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textWrap(p5.PRETTY);
+        p5.text('PRETTY wrap:', 300, 30);
+        p5.text(sampleText, 300, 50, boxWidth, boxHeight);
+
+        // Test 3: BALANCE wrap (alias for PRETTY)
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(550, 50, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textWrap(p5.BALANCE);
+        p5.text('BALANCE wrap:', 550, 30);
+        p5.text(sampleText, 550, 50, boxWidth, boxHeight);
+      }
+
+    };
+
+    let sketch4 = function (p5) {
+      p5.setup = async function () {
+        p5.createCanvas(800, 600);
+        p5.background(255);
+
+        let sampleText = 'This is a sample text that will be justified. The spacing between words will be adjusted to align both left and right edges.';
+        let boxWidth = 300;
+        let boxHeight = 150;
+
+        // Test 1: JUSTIFIED with WORD wrap
+        p5.fill(0);
+        p5.textSize(16);
+        p5.textAlign(p5.JUSTIFIED, p5.TOP);
+        p5.textWrap(p5.WORD);
+
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(50, 50, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.text('JUSTIFIED + WORD wrap:', 50, 30);
+        p5.text(sampleText, 50, 50, boxWidth, boxHeight);
+
+        // Test 2: JUSTIFIED with CHAR wrap
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(450, 50, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textWrap(p5.CHAR);
+        p5.text('JUSTIFIED + CHAR wrap:', 450, 30);
+        p5.text(sampleText, 450, 50, boxWidth, boxHeight);
+
+        //Test 3: LEFT alignment for comparison
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(50, 250, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.LEFT, p5.TOP);
+        p5.textWrap(p5.WORD);
+        p5.text('LEFT + WORD wrap (comparison):', 50, 230);
+        p5.text(sampleText, 50, 250, boxWidth, boxHeight);
+
+        // Test 4: Show last line is ragged
+        let multiLineText = 'First line will be justified. Second line will also be justified. But the last line stays ragged.';
+
+        p5.stroke(200);
+        p5.noFill();
+        p5.rect(450, 250, boxWidth, boxHeight);
+
+        p5.fill(0);
+        p5.noStroke();
+        p5.textAlign(p5.JUSTIFIED, p5.TOP);
+        p5.text('JUSTIFIED - last line ragged:', 450, 230);
+        p5.text(multiLineText, 450, 250, boxWidth, boxHeight);
+      }
+    }
+
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>
