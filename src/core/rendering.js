@@ -100,7 +100,7 @@ const defaultClass = 'p5Canvas';
  * <div>
  * <code>
  * function setup() {
- *   // Create a p5.Render object.
+ *   // Create a p5.Renderer object.
  *   let cnv = createCanvas(50, 50);
  *
  *   // Position the canvas.
