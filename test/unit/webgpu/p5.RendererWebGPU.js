@@ -16,7 +16,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
   });
 
   beforeEach(async function() {
-    await myp5.createCanvas(50, 50, 'webgpu');
+    await myp5.createCanvas(50, 50, myp5.WEBGPU);
   });
 
   afterEach(function() {
@@ -124,6 +124,43 @@ suite('WebGPU p5.RendererWebGPU', function() {
         expect(currentTotalBuffers).to.equal(initialTotalBuffers, 
           `Buffer count should stay constant across frames (frame ${frame})`);
       }
+    });
+  });
+
+  suite('Stability', function() {
+    test('pixelDensity() after setAttributes() should not crash', async function() {
+      // This test simulates the issue where a synchronous call (pixelDensity)
+      // happens before an asynchronous initialization (setAttributes -> _resetContext)
+      // is complete.
+      await new Promise((resolve, reject) => {
+        try {
+          myp5 = new p5(p => {
+            p.setup = async function() {
+              try {
+                await p.createCanvas(100, 100, p.WEBGPU);
+
+                // This triggers an asynchronous _resetContext
+                p.setAttributes({ antialias: true });
+
+                // This triggers a synchronous resize() -> _updateSize()
+                // before the new renderer's device is ready.
+                expect(() => {
+                  p.pixelDensity(1);
+                }).not.toThrow();
+
+                resolve();
+              } catch (err) {
+                reject(err);
+              }
+            };
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
+
+      // Verify stability after the async reset
+      expect(myp5._renderer).to.exist;
     });
   });
 });

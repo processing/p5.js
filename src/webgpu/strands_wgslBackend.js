@@ -196,7 +196,10 @@ export const wgslBackend = {
     if (!strandsContext.renderer || !strandsContext.baseShader) return;
 
     // Get the next available binding index from the renderer
-    let bindingIndex = strandsContext.renderer.getNextBindingIndex(strandsContext.baseShader);
+    let bindingIndex = strandsContext.renderer.getNextBindingIndex({
+      vert: strandsContext.baseShader.vertSrc(),
+      frag: strandsContext.baseShader.fragSrc(),
+    });
 
     for (const {name, typeInfo} of strandsContext.uniforms) {
       if (typeInfo.baseType === 'sampler2D') {
@@ -237,19 +240,23 @@ export const wgslBackend = {
   },
   generateStatement(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
+    // Generate the expression followed by semicolon (unless suppressed)
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
     if (node.statementType === StatementType.DISCARD) {
       generationContext.write(`discard${semicolon}`);
     } else if (node.statementType === StatementType.BREAK) {
       generationContext.write(`break${semicolon}`);
     } else if (node.statementType === StatementType.EXPRESSION) {
-      // Generate the expression followed by semicolon (unless suppressed)
       const exprNodeID = node.dependsOn[0];
       const expr = this.generateExpression(generationContext, dag, exprNodeID);
       generationContext.write(`${expr}${semicolon}`);
     } else if (node.statementType === StatementType.EMPTY) {
       // Generate just a semicolon (unless suppressed)
       generationContext.write(semicolon);
+    } else if (node.statementType === StatementType.EARLY_RETURN) {
+      const exprNodeID = node.dependsOn[0];
+      const expr = this.generateExpression(generationContext, dag, exprNodeID);
+      generationContext.write(`return ${expr}${semicolon}`);
     }
   },
   generateAssignment(generationContext, dag, nodeID) {
@@ -361,7 +368,7 @@ export const wgslBackend = {
       // Check if this is a uniform variable (but not a texture)
       const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
       if (uniform && uniform.typeInfo.baseType !== 'sampler2D') {
-        return `uniforms.${node.identifier}`;
+        return `hooks.${node.identifier}`;
       }
 
       return node.identifier;

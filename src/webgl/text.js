@@ -685,7 +685,7 @@ function text(p5, fn) {
 
     if (!p5.Font.hasGlyphData(this.states.textFont)) {
       console.log(
-        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported'
+        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported. Make sure to set the font using textFont() before drawing text.'
       );
       return;
     }
@@ -766,6 +766,7 @@ function text(p5, fn) {
 
     // this will have to do for now...
     sh.setUniform('uMaterialColor', curFillColor);
+    this._disableRemainingAttributes(sh);
     this._beforeDrawText();
     this.glyphDataCache = this.glyphDataCache || new Set();
 

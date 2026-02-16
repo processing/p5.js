@@ -104,6 +104,5 @@ float noise(vec3 st, int octaves, float ampFalloff) {
     frequency *= 2.0;
     amplitude *= ampFalloff;
   }
-
-  return result;
+  return (result + 1.0) * 0.5;
 }

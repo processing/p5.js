@@ -437,7 +437,7 @@ visualSuite("WebGPU", function () {
       visualTest('with a font file in WebGPU', async function (p5, screenshot) {
         await p5.createCanvas(100, 100, p5.WEBGPU);
         const font = await p5.loadFont(
-          '/unit/assets/Inconsolata-Bold.ttf'
+          'test/unit/assets/Inconsolata-Bold.ttf'
         );
         p5.textFont(font);
         p5.textAlign(p5.LEFT, p5.TOP);
@@ -451,7 +451,7 @@ visualSuite("WebGPU", function () {
       visualTest('can control variable fonts from files in WebGPU', async function (p5, screenshot) {
         await p5.createCanvas(100, 100, p5.WEBGPU);
         const font = await p5.loadFont(
-          '/unit/assets/BricolageGrotesque-Variable.ttf'
+          'test/unit/assets/BricolageGrotesque-Variable.ttf'
         );
         for (let weight = 400; weight <= 800; weight += 100) {
           p5.push();
@@ -487,7 +487,7 @@ visualSuite("WebGPU", function () {
           p5.translate(-p5.width/2, -p5.height/2);
           p5.textSize(60);
           const font = await p5.loadFont(
-            '/unit/assets/Inconsolata-Bold.ttf'
+            'test/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
           for (const alignment of alignments) {
@@ -524,7 +524,7 @@ visualSuite("WebGPU", function () {
           p5.translate(-p5.width/2, -p5.height/2);
           p5.textSize(45);
           const font = await p5.loadFont(
-            '/unit/assets/Inconsolata-Bold.ttf'
+            'test/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
           for (const alignment of alignments) {
@@ -560,7 +560,7 @@ visualSuite("WebGPU", function () {
             p5.textSize(20);
             p5.textWrap(p5.WORD);
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -625,7 +625,7 @@ visualSuite("WebGPU", function () {
             p5.textSize(19);
             p5.textWrap(p5.CHAR);
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -690,7 +690,7 @@ visualSuite("WebGPU", function () {
             p5.textSize(20);
 
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -815,7 +815,7 @@ visualSuite("WebGPU", function () {
           await p5.createCanvas(100, 100, p5.WEBGPU);
 
           // Load the environment map
-          const env = await p5.loadImage('/unit/assets/spheremap.jpg');
+          const env = await p5.loadImage('test/unit/assets/spheremap.jpg');
           p5.clear();
 
           // Set up panorama background
@@ -843,5 +843,15 @@ visualSuite("WebGPU", function () {
         { timeout: 2000 }
       );
     }
+  });
+
+  visualSuite('transformation', function() {
+    visualTest('outside of push() and pop()', async function (p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(200);
+      p5.rotateY(p5.PI * 0.1);
+      p5.box(30);
+      await screenshot();
+    });
   });
 });

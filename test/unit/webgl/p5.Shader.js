@@ -1,4 +1,16 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
+const mockUserError = vi.fn();
+vi.mock('../../../src/strands/strands_FES', () => ({
+  userError: (...args) => {
+    mockUserError(...args);
+    const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
+    throw new Error(prefixedMessage);
+  },
+  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
+}));
+
 suite('p5.Shader', function() {
   var myp5;
   beforeAll(function() {
@@ -408,6 +420,26 @@ suite('p5.Shader', function() {
     });
   });
   suite('p5.strands', () => {
+    test('handles named function callbacks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      function myMaterial() {
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [
+            1,
+            0,
+            0,
+            1
+          ];
+          return inputs;
+        });
+      }
+      const myShader = myp5.baseMaterialShader().modify(myMaterial, { myp5 });
+      expect(() => {
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
     test('does not break when arrays are in uniform callbacks', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       const myShader = myp5.baseMaterialShader().modify(() => {
@@ -426,6 +458,27 @@ suite('p5.Shader', function() {
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
     });
+
+test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
+  myp5.createCanvas(5, 5, myp5.WEBGL);
+  myp5.baseMaterialShader().modify(() => {
+    myp5.getPixelInputs(inputs => {
+      const mxInHook = window.mouseX;
+      const wInHook = window.width;
+      assert.isTrue(mxInHook.isStrandsNode);
+      assert.isTrue(wInHook.isStrandsNode);
+      inputs.color = [1, 0, 0, 1];
+      return inputs;
+    });
+  }, { myp5 });
+
+  const mx = window.mouseX;
+  const w = window.width;
+  assert.isNumber(mx);
+  assert.isNumber(w);
+  assert.strictEqual(w, myp5.width);
+});
+
 
     test('handle custom uniform names with automatic values', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -482,6 +535,28 @@ suite('p5.Shader', function() {
           myp5.getPixelInputs(inputs => {
             let color = myp5.float(0.5); // initial gray
             if (condition > 0.5) {
+              color = myp5.float(1.0); // set to white in if branch
+            }
+            inputs.color = [color, color, color, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        // Check that the center pixel is white (condition was true)
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255 (white)
+        assert.approximately(pixelColor[1], 255, 5); // Green channel should be 255
+        assert.approximately(pixelColor[2], 255, 5); // Blue channel should be 255
+      });
+      test('handle simple if statement with condition that is not a swizzle', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          const x = myp5.uniformFloat(() => 1.0); // true condition
+          myp5.getPixelInputs(inputs => {
+            let color = myp5.float(0.5); // initial gray
+            if (x > 0.5) {
               color = myp5.float(1.0); // set to white in if branch
             }
             inputs.color = [color, color, color, 1.0];
@@ -822,6 +897,33 @@ suite('p5.Shader', function() {
         assert.approximately(bottomLeftPixel[1], 0, 5);
         assert.approximately(bottomLeftPixel[2], 0, 5);
       });
+      test('handle struct property assignment in if-else branches', () => {
+        myp5.createCanvas(100, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            if (inputs.texCoord.x > 0.5) {
+              inputs.color = [1, 0, 0, 1];
+            } else {
+              inputs.color = [0, 0, 1, 1];
+            }
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = myp5.get(25, 25);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = myp5.get(75, 25);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
       // Keep one direct API test for completeness
       test('handle direct StrandsIf API usage', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -919,9 +1021,82 @@ suite('p5.Shader', function() {
 
         // Check that the center pixel has the expected color (condition was true)
         const pixelColor = myp5.get(25, 25);
-        assert.approximately(pixelColor[0], 255, 5); // Red channel should be 255
-        assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
-        assert.approximately(pixelColor[2], 51, 5);  // Blue channel should be ~51
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 127, 5);
+        assert.approximately(pixelColor[2], 51, 5);
+      });
+
+      test('handle early return in if-else branches', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value > 0.5) {
+              return [1, 0, 0, 1];
+            } else {
+              return [0, 1, 0, 1];
+            }
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handle early return in if with content afterwards', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value > 0.5) {
+              return [1, 0, 0, 1];
+            }
+
+            let otherValue = 0.2;
+            otherValue *= 2;
+            return [otherValue, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handle false early return in if with content afterwards', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            if (value < 0.5) {
+              return [1, 0, 0, 1];
+            }
+
+            let otherValue = 0.2;
+            otherValue *= 2;
+            return [otherValue, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 0.4 * 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
       });
     });
 
@@ -1330,6 +1505,36 @@ suite('p5.Shader', function() {
         assert.approximately(pixelColor[1], 25, 5);  // 0.1 * 255 ≈ 25
         assert.approximately(pixelColor[2], 77, 5);  // 0.3 * 255 ≈ 77
       });
+
+      test('handle nested loops with accumulator modified in inner loop', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let aliveNeighbours = 0;
+
+            for (let xOff = -1; xOff <= 1; xOff++) {
+              for (let yOff = -1; yOff <= 1; yOff++) {
+                if (xOff != 0 || yOff != 0) {
+                  aliveNeighbours += 0.1;
+                }
+              }
+            }
+
+            // 8 neighbors (all except center): 8 * 0.1 = 0.8
+            return [aliveNeighbours, aliveNeighbours, aliveNeighbours, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background
+        myp5.filter(testShader);
+
+        // Should be: 8 * 0.1 = 0.8
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 ≈ 204
+        assert.approximately(pixelColor[1], 204, 5);
+        assert.approximately(pixelColor[2], 204, 5);
+      });
     });
 
     suite('passing data between shaders', () => {
@@ -1629,6 +1834,180 @@ suite('p5.Shader', function() {
           }).toThrowError();
         });
       }
+    });
+
+    test('Can use begin/end API for hooks with result', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.getColor.begin();
+        myp5.getColor.set([1.0, 0.5, 0.0, 1.0]);
+        myp5.getColor.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Apply the filter
+      myp5.filter(testShader);
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 127, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('Can use begin/end API for hooks with hook alias', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        myp5.filterColor.set([1.0, 0.5, 0.0, 1.0]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Apply the filter
+      myp5.filter(testShader);
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 127, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('Can use begin/end API for hooks modifying inputs', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs.begin();
+        myp5.getPixelInputs.color = [1.0, 0.5, 0.0, 1.0];
+        myp5.getPixelInputs.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Draw a fullscreen rectangle
+      myp5.noStroke();
+      myp5.fill('red')
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 127, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('Can use begin/end API for hooks with struct access', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        let c = myp5.getTexture(myp5.filterColor.canvasContent, myp5.filterColor.texCoord);
+        c.r = 1;
+        myp5.filterColor.set(c);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Apply the filter
+      myp5.filter(testShader);
+
+      // Check that the filter was applied (should be magenta)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 255, 5);
+    });
+
+    test('Can use begin/end API for hooks with get* prefix removed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.pixelInputs.begin();
+        myp5.pixelInputs.color = [1.0, 0.5, 0.0, 1.0];
+        myp5.pixelInputs.end();
+      }, { myp5 });
+
+      // Create a simple scene to filter
+      myp5.background(0, 0, 255); // Blue background
+
+      // Draw a fullscreen rectangle
+      myp5.noStroke();
+      myp5.fill('red')
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      // Check that the filter was applied (should be orange)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 127, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+  });
+
+  suite('p5.strands error messages', () => {
+    afterEach(() => {
+      mockUserError.mockClear();
+    });
+
+    test('wrong type in struct hook shows actual type and expected properties', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs(() => [1, 2, 3, 4]); // vec4 instead of Vertex struct
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.notInclude(errMsg, 'a undefined'); //
+      assert.include(errMsg, 'float4');
+      assert.include(errMsg, 'getWorldInputs');
+      assert.include(errMsg, 'Vertex');
+      assert.include(errMsg, 'properties');
+    });
+
+    test('vector dimension mismatch shows actual and expected types', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getFinalColor((c) => [c.r, c.g, c.b]); // vec3 instead of vec4
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'float3');
+      assert.include(errMsg, 'float4');
+    });
+
+    test('incomplete struct shows expected vs received properties', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs((inputs) => {
+            return { position: inputs.position };
+          });
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'Expected properties');
+      assert.include(errMsg, 'Received properties');
     });
   });
 });

@@ -106,8 +106,6 @@ function loading(p5, fn){
    * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -130,11 +128,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -158,11 +153,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -192,11 +184,8 @@ function loading(p5, fn){
    *   shape = data;
    *   console.log(shape.gid);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -231,11 +220,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -270,11 +256,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -315,8 +298,6 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method loadModel
@@ -612,12 +593,10 @@ function loading(p5, fn){
               const vertString = tokens[vertexTokens[tokenInd]];
               let vertParts = vertString.split('/');
 
-              // TODO: Faces can technically use negative numbers to refer to the
-              // previous nth vertex. I haven't seen this used in practice, but
-              // it might be good to implement this in the future.
-
               for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
+                let index = parseInt(vertParts[i]);
+                if (index > 0) index -= 1; // OBJ uses 1-based indexing
+                vertParts[i] = index;
               }
 
               if (!usedVerts[vertString]) {
@@ -626,11 +605,11 @@ function loading(p5, fn){
 
               if (usedVerts[vertString][currentMaterial] === undefined) {
                 const vertIndex = model.vertices.length;
-                model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-                model.uvs.push(loadedVerts.vt[vertParts[1]] ?
-                  loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
-                  loadedVerts.vn[vertParts[2]].copy() : new Vector());
+                model.vertices.push(loadedVerts.v.at(vertParts[0]).copy());
+                model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
+                  loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
+                model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
+                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector());
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
@@ -999,8 +978,6 @@ function loading(p5, fn){
    *
    * @param {Number} [count=1] number of instances to draw.
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1028,11 +1005,8 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1078,11 +1052,8 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1104,8 +1075,6 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');
@@ -1147,8 +1116,6 @@ function loading(p5, fn){
    * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * const octahedron_model = `
    * v 0.000000E+00 0.000000E+00 40.0000
    * v 22.5000 22.5000 0.000000E+00
@@ -1179,9 +1146,7 @@ function loading(p5, fn){
    *   rotateX(frameCount * 0.01);
    *   rotateY(frameCount * 0.01);
    *   model(octahedron);
-   *}
-   * </code>
-   * </div>
+   * }
    */
   /**
    * @method createModel
