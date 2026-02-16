@@ -89,6 +89,13 @@ visualSuite('Typography', function () {
       p5.text('p5*js', -p5.width / 2, -p5.height / 2 + 10, p5.width);
       screenshot();
     });
+
+    visualTest('Preserve leading tabs',function (p5, screenshot){
+      p5.createCanvas(100, 100);
+      p5.textSize(35);
+      p5.text('test\n\ttest', 0, 0, p5.width, p5.height);
+      screenshot();
+    });
   });
 
   visualSuite('textWeight', function () {
@@ -166,7 +173,7 @@ visualSuite('Typography', function () {
       Inter: 'https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf',
       Raleway: 'https://fonts.gstatic.com/s/raleway/v36/1Ptxg8zYS_SKggPN4iEgvnHyvveLxVvaooCPNLA3JC9c.ttf',
       'Inknut Antiqua': 'https://fonts.gstatic.com/s/inknutantiqua/v16/Y4GRYax7VC4ot_qNB4nYpBdaKU2_xbj5bBoIYJNf.ttf',
-      Oswald: 'https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUFoZAaRliE.ttf',
+      Oswald: 'https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUFoZAaRliE.ttf'
     };
     for (const mode of ['2d', 'webgl']) {
       for (const fontName in fonts) {
