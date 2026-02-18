@@ -1904,7 +1904,7 @@ function rendererWebGPU(p5, fn) {
 
     getNextBindingIndex({ vert, frag }, group = 0) {
       // Get the highest binding index in the specified group and return the next available
-      const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler|uniform)/g;
+      const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var(?:<uniform>)?\s+(\w+)\s*:\s*(texture_2d<f32>|sampler|uniform|\w+)/g;
       let maxBindingIndex = -1;
 
       for (const [src, visibility] of [
@@ -2254,6 +2254,9 @@ function rendererWebGPU(p5, fn) {
       // Inject hook uniforms as a separate struct at a new binding
       let hookUniformFields = '';
       for (const key in shader.hooks.uniforms) {
+        // Skip textures, they don't get added to structs
+        if (key.endsWith(': sampler2D')) continue;
+
         // WGSL format: "name: type"
         hookUniformFields += `  ${key},\n`;
       }
