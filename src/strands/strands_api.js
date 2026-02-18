@@ -56,7 +56,7 @@ function _getBuiltinGlobalsCache(strandsContext) {
 function getBuiltinGlobalNode(strandsContext, name) {
   const spec = BUILTIN_GLOBAL_SPECS[name]
   if (!spec) return null
-  
+
   const cache = _getBuiltinGlobalsCache(strandsContext)
   const uniformName = `_p5_global_${name}`
   const cached = cache.nodes.get(uniformName)
@@ -154,7 +154,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
 
     // Convert value to a StrandsNode if it isn't already
-    const valueNode = value instanceof StrandsNode ? value : p5.strandsNode(value);
+    const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
 
     // Create a new CFG block for the early return
     const earlyReturnBlockID = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
@@ -369,12 +369,17 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
         if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
-          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
-            overloads: [{
-              params: [args[0].typeInfo()],
-              returnType: typeInfo,
-            }]
-          });
+          const { id, dimension } = build.functionCallNode(
+            strandsContext,
+            strandsContext.backend.getTypeName(typeInfo.baseType, typeInfo.dimension),
+            args,
+            {
+              overloads: [{
+                params: [args[0].typeInfo()],
+                returnType: typeInfo,
+              }]
+            }
+          );
           return createStrandsNode(id, dimension, strandsContext);
         } else {
           // For vector types with a single argument, repeat it for each component
@@ -431,7 +436,7 @@ function createHookArguments(strandsContext, parameters){
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
-            if (val instanceof StrandsNode) {
+            if (val?.isStrandsNode) {
               newValueID = val.id;
             }
             else {
@@ -463,7 +468,7 @@ function createHookArguments(strandsContext, parameters){
   return args;
 }
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
-  if (!(returned instanceof StrandsNode)) {
+  if (!(returned?.isStrandsNode)) {
     // try {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
@@ -485,7 +490,12 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   }
   if (receivedType.dimension !== expectedType.dimension) {
     if (receivedType.dimension !== 1) {
-      FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookName} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
+      const receivedTypeDisplay = receivedType.baseType + (receivedType.dimension > 1 ? receivedType.dimension : '');
+      const expectedTypeDisplay = expectedType.baseType + expectedType.dimension;
+      FES.userError('type error',
+        `You have returned a ${receivedTypeDisplay} in ${hookName} when a ${expectedTypeDisplay} was expected!\n\n` +
+        `Make sure your hook returns the correct type.`
+      );
     }
     else {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
@@ -573,10 +583,27 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       const handleRetVal = (retNode) => {
         if(isStructType(expectedReturnType)) {
           const expectedStructType = structType(expectedReturnType);
-          if (retNode instanceof StrandsNode) {
+          if (retNode?.isStrandsNode) {
             const returnedNode = getNodeDataFromID(strandsContext.dag, retNode.id);
             if (returnedNode.baseType !== expectedStructType.typeName) {
-              FES.userError("type error", `You have returned a ${retNode.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
+              const receivedTypeName = returnedNode.baseType || 'undefined';
+              const receivedDim = dag.dimensions[retNode.id];
+              const receivedTypeDisplay = receivedDim > 1 ?
+                `${receivedTypeName}${receivedDim}` : receivedTypeName;
+
+              const expectedProps = expectedStructType.properties
+                .map(p => p.name).join(', ');
+              FES.userError('type error',
+                `You have returned a ${receivedTypeDisplay} from ${hookType.name} when a ${expectedStructType.typeName} was expected.\n\n` +
+                `The ${expectedStructType.typeName} struct has these properties: { ${expectedProps} }\n\n` +
+                `Instead of returning a different type, you should modify and return the ${expectedStructType.typeName} struct that was passed to your hook.\n\n` +
+                `For example:\n` +
+                `${hookType.name}((inputs) => {\n` +
+                `  // Modify properties of inputs\n` +
+                `  inputs.someProperty = ...;\n` +
+                `  return inputs; // Return the modified struct\n` +
+                `})`
+              );
             }
             const newDeps = returnedNode.dependsOn.slice();
             for (let i = 0; i < expectedStructType.properties.length; i++) {
@@ -595,10 +622,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
               const propName = expectedProp.name;
               const receivedValue = retNode[propName];
               if (receivedValue === undefined) {
-                FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` +
-                  `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
-                  `Received: { ${Object.keys(retNode).join(', ')} }\n` +
-                  `All of the properties are required!`);
+                const expectedProps = expectedReturnType.properties.map(p => p.name).join(', ');
+                const receivedProps = Object.keys(retNode).join(', ');
+                FES.userError('type error',
+                  `You've returned an incomplete ${expectedStructType.typeName} struct from ${hookType.name}.\n\n` +
+                  `Expected properties: { ${expectedProps} }\n` +
+                  `Received properties: { ${receivedProps} }\n\n` +
+                  `All properties are required! Make sure to include all properties in the returned struct.`
+                );
               }
               const expectedTypeInfo = expectedProp.dataType;
               const returnedPropID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, receivedValue, hookType.name);
