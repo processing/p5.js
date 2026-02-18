@@ -1567,8 +1567,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function (cb) {
-    return this.baseMaterialShader().modify(cb);
+  fn.buildMaterialShader = function (cb, context) {
+    return this.baseMaterialShader().modify(cb, context);
   };
 
   /**
@@ -1631,7 +1631,7 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildMaterialShader(cb));
+      let shader = withGlobalStrands(this, () => this.buildMaterialShader(cb, context));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1783,8 +1783,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function (cb) {
-    return this.baseNormalShader().modify(cb);
+  fn.buildNormalShader = function (cb, context) {
+    return this.baseNormalShader().modify(cb, context);
   };
 
   /**
@@ -1849,7 +1849,7 @@ function material(p5, fn) {
     try {
       const cb = await urlToStrandsCallback(url);
       let shader = this.withGlobalStrands(this, () =>
-        this.buildNormalShader(cb),
+        this.buildNormalShader(cb, this),
       );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
@@ -1947,8 +1947,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function (cb) {
-    return this.baseColorShader().modify(cb);
+  fn.buildColorShader = function (cb, context) {
+    return this.baseColorShader().modify(cb, context);
   };
 
   /**
@@ -2012,7 +2012,7 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildColorShader(cb));
+      let shader = withGlobalStrands(this, () => this.buildColorShader(cb, this));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2202,8 +2202,8 @@ function material(p5, fn) {
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function (cb) {
-    return this.baseStrokeShader().modify(cb);
+  fn.buildStrokeShader = function (cb, context) {
+    return this.baseStrokeShader().modify(cb, context);
   };
 
   /**
@@ -2271,7 +2271,7 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildStrokeShader(cb));
+      let shader = withGlobalStrands(this, () => this.buildStrokeShader(cb, this));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
