@@ -257,6 +257,20 @@ export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray
 
 export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const cfg = strandsContext.cfg;
+  dependsOn = (Array.isArray(dependsOn) ? dependsOn : [dependsOn])
+    .flat(Infinity)
+    .map(a => {
+      if (
+        a.isStrandsNode &&
+        a.typeInfo().baseType === BaseType.INT &&
+        // TODO: handle ivec inputs instead of just int scalars
+        a.typeInfo().dimension === 1
+      ) {
+        return castToFloat(strandsContext, a);
+      } else {
+        return a;
+      }
+    });
   const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
 
   const finalType = {
@@ -270,6 +284,24 @@ export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   }
 
   return { id, dimension: finalType.dimension, components: mappedDependencies };
+}
+
+export function castToFloat(strandsContext, dep) {
+  const { id, dimension } = functionCallNode(
+    strandsContext,
+    strandsContext.backend.getTypeName('float', dep.typeInfo().dimension),
+    [dep],
+    {
+      overloads: [{
+        params: [dep.typeInfo()],
+        returnType: {
+          ...dep.typeInfo(),
+          baseType: BaseType.FLOAT,
+        },
+      }],
+    }
+  );
+  return createStrandsNode(id, dimension, strandsContext);
 }
 
 export function structConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {

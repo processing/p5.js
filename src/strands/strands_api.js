@@ -56,7 +56,7 @@ function _getBuiltinGlobalsCache(strandsContext) {
 function getBuiltinGlobalNode(strandsContext, name) {
   const spec = BUILTIN_GLOBAL_SPECS[name]
   if (!spec) return null
-  
+
   const cache = _getBuiltinGlobalsCache(strandsContext)
   const uniformName = `_p5_global_${name}`
   const cached = cache.nodes.get(uniformName)
@@ -369,12 +369,17 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     fn[typeInfo.fnName] = function(...args) {
       if (strandsContext.active) {
         if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
-          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
-            overloads: [{
-              params: [args[0].typeInfo()],
-              returnType: typeInfo,
-            }]
-          });
+          const { id, dimension } = build.functionCallNode(
+            strandsContext,
+            strandsContext.backend.getTypeName(typeInfo.baseType, typeInfo.dimension),
+            args,
+            {
+              overloads: [{
+                params: [args[0].typeInfo()],
+                returnType: typeInfo,
+              }]
+            }
+          );
           return createStrandsNode(id, dimension, strandsContext);
         } else {
           // For vector types with a single argument, repeat it for each component
