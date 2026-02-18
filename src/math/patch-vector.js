@@ -14,5 +14,4 @@ export default function patchVector(p5, fn, lifecycles){
     };
   });
 
-
 }

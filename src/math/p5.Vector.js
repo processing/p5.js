@@ -7,21 +7,21 @@ import * as constants from '../core/constants';
 
 /// HELPER FOR SMALLER DIMENSION PRIORITY LOGIC.
 /// Pending implementation as decorator.
-const smallerDimensionPriorityHelper = function(dimOther, dimSelf) {
-  const resultDimension = Math.min(dimOther, dimSelf);
-  if (dimOther != dimSelf) {
+const smallerDimensionPriority = function(dimOther, dimSelf) {
+  const minDimension = Math.min(dimOther, dimSelf);
+  if (dimOther !== dimSelf) {
 
     console.warn(
-      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.',
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + minDimension + 'D vectors, and any additional values of the linger vector will be ignored.',
     );
   }
-  return resultDimension
+  return minDimension
 }
 
 class Vector {
   /**
    * The values of the N-dimensional vector.
-  *
+   *
    * This array of numbers that represents the vector.
    * Each number in the array corresponds to a different component of the vector,
    * like its position in different directions (e.g., x, y, z).
@@ -501,11 +501,11 @@ class Vector {
       return this;
     }
 
-    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
     this.values = this.values.reduce((acc, v, i) => {
-      if(i < resultDimension) acc[i] = this.values[i] + args[i];
+      if(i < minDimension) acc[i] = this.values[i] + Number(args[i]);
       return acc;
-    }, new Array(resultDimension));
+    }, new Array(minDimension));
 
     return this;
   }
@@ -654,14 +654,14 @@ class Vector {
       return this;
     };
     
-    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
       // Extra check for non empty operand
-      if(i < resultDimension && args[i] > 0) acc[i] = this.values[i] % args[i];
+      if(i < minDimension && args[i] > 0) acc[i] = this.values[i] % args[i];
       else acc[i] = this.values[i]
       return acc;
-    }, new Array(resultDimension));
+    }, new Array(minDimension));
 
     return this;
   }
@@ -806,12 +806,12 @@ class Vector {
       return this;
     }
 
-    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
-      if(i < resultDimension) acc[i] = this.values[i] - args[i];
+      if(i < minDimension) acc[i] = this.values[i] - args[i];
       return acc;
-    }, new Array(resultDimension));
+    }, new Array(minDimension));
 
     return this;
   }
@@ -1030,12 +1030,12 @@ class Vector {
       return this;
     };
 
-    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
-      if(i < resultDimension) acc[i] = this.values[i] * args[i];
+      if(i < minDimension) acc[i] = this.values[i] * args[i];
       return acc;
-    }, new Array(resultDimension));
+    }, new Array(minDimension));
 
     // if (args.length === 1 && args[0] instanceof Vector) {
     //   const v = args[0];
@@ -1295,12 +1295,12 @@ class Vector {
       return this;
     };
 
-    const resultDimension = smallerDimensionPriorityHelper(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
-      if(i < resultDimension) acc[i] = this.values[i] / args[i];
+      if(i < minDimension) acc[i] = this.values[i] / args[i];
       return acc;
-    }, new Array(resultDimension));
+    }, new Array(minDimension));
 
     return this;
   }
