@@ -140,7 +140,7 @@ visualSuite("WebGPU", function () {
         const skyRadius = p5.uniformFloat(90);
 
         function rand2(st) {
-          return p5.fract(p5.sin(p5.dot(st, [12.9898, 78.233])) * 43758.5453123);
+          return p5.sin((st.x + st.y) * 123.456);
         }
 
         function semiSphere() {
