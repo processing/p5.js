@@ -40,7 +40,7 @@ export class StrandsNode {
     const baseType = orig?.baseType ?? BaseType.FLOAT;
 
     let newValueID;
-    if (value instanceof StrandsNode) {
+    if (value?.isStrandsNode) {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
@@ -95,7 +95,7 @@ export class StrandsNode {
     const baseType = orig?.baseType ?? BaseType.FLOAT;
 
     let newValueID;
-    if (value instanceof StrandsNode) {
+    if (value?.isStrandsNode) {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(

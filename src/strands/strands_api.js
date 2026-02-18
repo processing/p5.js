@@ -154,7 +154,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
 
     // Convert value to a StrandsNode if it isn't already
-    const valueNode = value instanceof StrandsNode ? value : p5.strandsNode(value);
+    const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
 
     // Create a new CFG block for the early return
     const earlyReturnBlockID = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
@@ -436,7 +436,7 @@ function createHookArguments(strandsContext, parameters){
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
-            if (val instanceof StrandsNode) {
+            if (val?.isStrandsNode) {
               newValueID = val.id;
             }
             else {
@@ -468,7 +468,7 @@ function createHookArguments(strandsContext, parameters){
   return args;
 }
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
-  if (!(returned instanceof StrandsNode)) {
+  if (!(returned?.isStrandsNode)) {
     // try {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
@@ -583,7 +583,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       const handleRetVal = (retNode) => {
         if(isStructType(expectedReturnType)) {
           const expectedStructType = structType(expectedReturnType);
-          if (retNode instanceof StrandsNode) {
+          if (retNode?.isStrandsNode) {
             const returnedNode = getNodeDataFromID(strandsContext.dag, retNode.id);
             if (returnedNode.baseType !== expectedStructType.typeName) {
               const receivedTypeName = returnedNode.baseType || 'undefined';

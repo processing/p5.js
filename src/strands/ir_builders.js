@@ -43,7 +43,7 @@ export function unaryOpNode(strandsContext, nodeOrValue, opCode) {
   const { dag, cfg } = strandsContext;
   let dependsOn;
   let node;
-  if (nodeOrValue instanceof StrandsNode) {
+  if (nodeOrValue?.isStrandsNode) {
     node = nodeOrValue;
   } else {
     const { id, dimension } = primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, nodeOrValue);
@@ -523,7 +523,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       // This may not be the most efficient way, as we swizzle each component individually,
       // so that .xyz becomes .x, .y, .z
       let scalars = [];
-      if (value instanceof StrandsNode) {
+      if (value?.isStrandsNode) {
         if (value.dimension === 1) {
           scalars = Array(chars.length).fill(value);
         } else if (value.dimension === chars.length) {
