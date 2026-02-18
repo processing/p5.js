@@ -2254,6 +2254,9 @@ function rendererWebGPU(p5, fn) {
       // Inject hook uniforms as a separate struct at a new binding
       let hookUniformFields = '';
       for (const key in shader.hooks.uniforms) {
+        // Skip textures, they don't get added to structs
+        if (key.endsWith(': sampler2D')) continue;
+
         // WGSL format: "name: type"
         hookUniformFields += `  ${key},\n`;
       }
