@@ -79,14 +79,14 @@ function getBuiltinGlobalNode(strandsContext, name) {
   if (!spec) return null;
 
   const uniformName = `_p5_global_${name}`;
+  const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
 
   const node = getOrCreateUniformNode(
     strandsContext,
     uniformName,
     spec.typeInfo,
     () => {
-      const p5Instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
-      return p5Instance ? spec.get(p5Instance) : undefined;
+      return instance ? spec.get(instance) : undefined;
     }
   );
 
@@ -321,13 +321,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (!strandsContext.active) {
       return originalMillis.apply(this, args);
     }
+    const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
     return getOrCreateUniformNode(
       strandsContext,
       '_p5_global_millis',
       DataType.float1,
       () => {
-        const p5Instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
-        return p5Instance ? p5Instance.millis() : undefined;
+        return instance ? instance.millis() : undefined;
       }
     );
   };
