@@ -223,10 +223,11 @@ export const wgslBackend = {
     return primitiveTypeName;
   },
   generateHookUniformKey(name, typeInfo) {
-    // For sampler2D types, we don't add them to the uniform struct
-    // Instead, they become separate texture and sampler bindings
+    // For sampler2D types, we don't add them to the uniform struct,
+    // but we still need them in the shader's hooks object so that
+    // they can be set by users.
     if (typeInfo.baseType === 'sampler2D') {
-      return null; // Signal that this should not be added to uniform struct
+      return `${name}: sampler2D`; // Signal that this should not be added to uniform struct
     }
     return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
   },
