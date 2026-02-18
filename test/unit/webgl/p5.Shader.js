@@ -459,6 +459,21 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
+    test('buildMaterialShader forwards scope to modify', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      expect(() => {
+        const myShader = myp5.buildMaterialShader(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [1, 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
 test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
   myp5.createCanvas(5, 5, myp5.WEBGL);
   myp5.baseMaterialShader().modify(() => {
