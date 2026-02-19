@@ -627,294 +627,84 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param {*} e  Event object to extract error details from
    */
   const fesErrorMonitor = e => {
-    if (p5.disableFriendlyErrors) return;
-    // Try to get the error object from e
-    let error;
-    if (e instanceof Error) {
-      error = e;
-    } else if (e instanceof ErrorEvent) {
-      error = e.error;
-    } else if (e instanceof PromiseRejectionEvent) {
-      error = e.reason;
-      if (!(error instanceof Error)) return;
-    }
-    if (!error) return;
+    try {
+      if (p5.disableFriendlyErrors) return;
 
-    let stacktrace = p5._getErrorStackParser().parse(error);
-    // process the stacktrace from the browser and simplify it to give
-    // friendlyStack.
-    let [isInternal, friendlyStack] = processStack(error, stacktrace);
-
-    // if this is an internal library error, the type of the error is not relevant,
-    // only the user code that lead to it is.
-    if (isInternal) {
-      return;
-    }
-
-    const errList = errorTable[error.name];
-    if (!errList) return; // this type of error can't be handled yet
-    let matchedError;
-    for (const obj of errList) {
-      let string = obj.msg;
-      // capture the primary symbol mentioned in the error
-      string = string.replace(new RegExp('{{}}', 'g'), '([a-zA-Z0-9_]+)');
-      string = string.replace(new RegExp('{{.}}', 'g'), '(.+)');
-      string = string.replace(new RegExp('{}', 'g'), '(?:[a-zA-Z0-9_]+)');
-      let matched = error.message.match(string);
-
-      if (matched) {
-        matchedError = Object.assign({}, obj);
-        matchedError.match = matched;
-        break;
+      let error;
+      if (e instanceof Error) {
+        error = e;
+      } else if (e instanceof ErrorEvent) {
+        error = e.error;
+      } else if (e instanceof PromiseRejectionEvent) {
+        error = e.reason;
+        if (!(error instanceof Error)) return;
       }
-    }
+      if (!error) return;
 
-    if (!matchedError) return;
+      const stacktrace = p5._getErrorStackParser().parse(error);
+      const [isInternal, friendlyStack] = processStack(error, stacktrace);
 
-    // Try and get the location from the top element of the stack
-    let locationObj;
-    if (
-      stacktrace &&
+      if (isInternal) return;
+
+      const errList = errorTable[error.name];
+      if (!errList) return;
+
+      let matchedError;
+      for (const obj of errList) {
+        let pattern = obj.msg
+          .replace(/{{}}/g, '([a-zA-Z0-9_]+)')
+          .replace(/{{.}}/g, '(.+)')
+          .replace(/{}/g, '(?:[a-zA-Z0-9_]+)');
+
+        const matched = error.message.match(pattern);
+        if (matched) {
+          matchedError = Object.assign({}, obj, { match: matched });
+          break;
+        }
+      }
+
+      if (!matchedError) return;
+
+      let locationObj;
+      if (
+        stacktrace &&
+      stacktrace[0] &&
       stacktrace[0].fileName &&
       stacktrace[0].lineNumber &&
       stacktrace[0].columnNumber
-    ) {
-      locationObj = {
-        location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
-          stacktrace[0].columnNumber
-        }`,
-        file: stacktrace[0].fileName.split('/').slice(-1),
-        line: friendlyStack[0].lineNumber
-      };
-    }
-
-    switch (error.name) {
-      case 'SyntaxError': {
-        // We can't really do much with syntax errors other than try to use
-        // a simpler framing of the error message. The stack isn't available
-        // for syntax errors
-        switch (matchedError.type) {
-          case 'INVALIDTOKEN': {
-            //Error if there is an invalid or unexpected token that doesn't belong at this position in the code
-            //let x = “not a string”; -> string not in proper quotes
-            let url =
-              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.syntax.invalidToken', {
-                url
-              })
-            );
-            break;
-          }
-          case 'UNEXPECTEDTOKEN': {
-            //Error if a specific language construct(, { ; etc) was expected, but something else was provided
-            //for (let i = 0; i < 5,; ++i) -> a comma after i<5 instead of a semicolon
-            let url =
-              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.syntax.unexpectedToken', {
-                url
-              })
-            );
-            break;
-          }
-          case 'REDECLAREDVARIABLE': {
-            //Error if a variable is redeclared by the user. Example=>
-            //let a = 10;
-            //let a = 100;
-            let errSym = matchedError.match[1];
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.syntax.redeclaredVariable', {
-                symbol: errSym,
-                url
-              })
-            );
-            break;
-          }
-          case 'MISSINGINITIALIZER': {
-            //Error if a const variable is not initialized during declaration
-            //Example => const a;
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.syntax.missingInitializer', {
-                url
-              })
-            );
-            break;
-          }
-          case 'BADRETURNORYIELD': {
-            //Error when a return statement is misplaced(usually outside of a function)
-            // const a = function(){
-            //  .....
-            //  }
-            //  return; -> misplaced return statement
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.syntax.badReturnOrYield', {
-                url
-              })
-            );
-            break;
-          }
-        }
-        break;
-      }
-      case 'ReferenceError': {
-        switch (matchedError.type) {
-          case 'NOTDEFINED': {
-            //Error if there is a non-existent variable referenced somewhere
-            //let a = 10;
-            //console.log(x);
-            let errSym = matchedError.match[1];
-
-            if (errSym && handleMisspelling(errSym, error)) {
-              break;
-            }
-
-            // if the flow gets this far, this is likely not a misspelling
-            // of a p5 property/function
-            let url = 'https://p5js.org/tutorials/variables-and-change/';
-            p5._friendlyError(
-              translator('fes.globalErrors.reference.notDefined', {
-                url,
-                symbol: errSym,
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
-              })
-            );
-
-            if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
-          }
-          case 'CANNOTACCESS': {
-            //Error if a lexical variable was accessed before it was initialized
-            //console.log(a); -> variable accessed before it was initialized
-            //let a=100;
-            let errSym = matchedError.match[1];
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.reference.cannotAccess', {
-                url,
-                symbol: errSym,
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
-              })
-            );
-
-            if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
-          }
-        }
-        break;
+      ) {
+        locationObj = {
+          location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${stacktrace[0].columnNumber}`,
+          file: stacktrace[0].fileName.split('/').slice(-1),
+          line: stacktrace[0].lineNumber
+        };
       }
 
-      case 'TypeError': {
-        switch (matchedError.type) {
-          case 'NOTFUNC': {
-            //Error when some code expects you to provide a function, but that didn't happen
-            //let a = document.getElementByID('foo'); -> getElementById instead of getElementByID
-            let errSym = matchedError.match[1];
-            let splitSym = errSym.split('.');
-            let url =
-              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+      switch (error.name) {
+        case 'ReferenceError': {
+          if (matchedError.type === 'NOTDEFINED') {
+            const errSym = matchedError.match[1];
 
-            // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
-            let translationObj = {
-              url,
-              symbol: splitSym[splitSym.length - 1],
-              obj: splitSym.slice(0, splitSym.length - 1).join('.'),
-              location: locationObj
-                ? translator('fes.location', locationObj)
-                : ''
-            };
-
-            // There are two cases to handle here. When the function is called
-            // as a property of an object and when it's called independently.
-            // Both have different explanations.
-            if (splitSym.length > 1) {
+            if (!(errSym && handleMisspelling(errSym, error))) {
               p5._friendlyError(
-                translator('fes.globalErrors.type.notfuncObj', translationObj)
-              );
-            } else {
-              p5._friendlyError(
-                translator('fes.globalErrors.type.notfunc', translationObj)
+                translator('fes.globalErrors.reference.notDefined', {
+                  symbol: errSym,
+                  location: locationObj
+                    ? translator('fes.location', locationObj)
+                    : '',
+                  url: 'https://p5js.org/tutorials/variables-and-change/'
+                })
               );
             }
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
           }
-          case 'READNULL': {
-            //Error if a property of null is accessed
-            //let a = null;
-            //console.log(a.property); -> a is null
-            let errSym = matchedError.match[1];
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-            /*let url2 =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';*/
-            p5._friendlyError(
-              translator('fes.globalErrors.type.readFromNull', {
-                url,
-                symbol: errSym,
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
-              })
-            );
-
-            if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
-          }
-          case 'READUDEFINED': {
-            //Error if a property of undefined is accessed
-            //let a; -> default value of a is undefined
-            //console.log(a.property); -> a is undefined
-            let errSym = matchedError.match[1];
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-            /*let url2 =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';*/
-            p5._friendlyError(
-              translator('fes.globalErrors.type.readFromUndefined', {
-                url,
-                symbol: errSym,
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
-              })
-            );
-
-            if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
-          }
-          case 'CONSTASSIGN': {
-            //Error when a const variable is reassigned a value
-            //const a = 100;
-            //a=10;
-            let url =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
-            p5._friendlyError(
-              translator('fes.globalErrors.type.constAssign', {
-                url,
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
-              })
-            );
-
-            if (friendlyStack) printFriendlyStack(friendlyStack);
-            break;
-          }
+          break;
         }
       }
+    } catch (fesError) {
+    // Friendly Errors must NEVER mask the original runtime error
+    // Intentionally empty
     }
   };
 
