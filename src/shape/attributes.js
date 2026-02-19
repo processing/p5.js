@@ -150,12 +150,16 @@ function attributes(p5, fn){
    *   describe('A pixelated white circle on a gray background.');
    * }
    */
-  fn.noSmooth = function() {
-    if (!this._renderer.isP3D) {
-      if ('imageSmoothingEnabled' in this.drawingContext) {
-        this.drawingContext.imageSmoothingEnabled = false;
-      }
-    } else {
+  fn.noSmooth = function () {
+    if (this._renderer && typeof this._renderer.setSmoothing === 'function') {
+      this._renderer.setSmoothing(false);
+    } else if (
+      !this._renderer.isP3D &&
+      this.drawingContext &&
+      'imageSmoothingEnabled' in this.drawingContext
+    ) {
+      this.drawingContext.imageSmoothingEnabled = false;
+    } else if (typeof this.setAttributes === 'function') {
       this.setAttributes('antialias', false);
     }
     return this;
