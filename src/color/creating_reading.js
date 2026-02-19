@@ -111,8 +111,12 @@ import '../core/friendly_errors/fes_core';
  */
 p5.prototype.alpha = function(c) {
   p5._validateParameters('alpha', arguments);
-  return this.color(c)._getAlpha();
+  if (!(c instanceof p5.Color)) {
+    c = this.color(c);
+  }
+  return c._getAlpha();
 };
+
 
 /**
  * Gets the blue value of a color.
@@ -1008,11 +1012,8 @@ p5.prototype.hue = function(c) {
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
 
-  if (!(c1 instanceof p5.Color)) {
-    c1 = color(c1);
-  }
-  if (!(c2 instanceof p5.Color)) {
-    c2 = color(c2);
+  if (!(c1 instanceof p5.Color) || !(c2 instanceof p5.Color)) {
+    return;
   }
 
   const mode = this._colorMode;
