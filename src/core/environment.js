@@ -782,7 +782,39 @@ p5.prototype._onresize = function(e) {
   }
 };
 
+// Prefer the visual viewport when available (better for mobile: pinch/keyboard/zoom),
+// then the layout viewport, then the window inner size, then the body content size.
+// Order chosen intentionally:
+// 1) window.visualViewport.*         -> visual viewport (mobile-friendly; adapts to on-screen keyboard)
+// 2) document.documentElement.client* -> layout viewport (avoids including scrollbars on some platforms)
+// 3) window.inner*                   -> includes scrollbars on some platforms (Chrome)
+// 4) document.body.client*           -> content-box fallback if the above are unavailable
+// Caveat: different browsers expose subtly different viewport measurements (scrollbars, zoom,
+// and visual viewport). This ordering prefers mobile-friendly measurements while retaining
+// sensible fallbacks for desktop browsers.
 function getWindowWidth() {
+  // Prefer including scrollbars when possible per contributor guidance.
+  // Order: experimental visualViewport.segments (may include scrollbars/handle rotation),
+  // visualViewport.width, window.innerWidth (includes scrollbars),
+  // documentElement.clientWidth (excludes scrollbars), document.body.clientWidth.
+  try {
+    if (window.visualViewport) {
+      const segs = window.visualViewport.segments;
+      if (Array.isArray(segs) && segs.length > 0) {
+        const w = segs[0] && typeof segs[0].width === 'number' ? segs[0].width : null;
+        if (w && w > 0) {
+          return w;
+        }
+      }
+
+      // if (typeof window.visualViewport.width === 'number' && window.visualViewport.width > 0) {
+      //   return window.visualViewport.width;
+      // }
+    }
+  } catch (e) {
+    // experimental access may throw; ignore and continue with fallbacks
+  }
+
   return (
     window.innerWidth ||
     (document.documentElement && document.documentElement.clientWidth) ||
@@ -792,6 +824,24 @@ function getWindowWidth() {
 }
 
 function getWindowHeight() {
+  try {
+    if (window.visualViewport) {
+      const segs = window.visualViewport.segments;
+      if (Array.isArray(segs) && segs.length > 0) {
+        const h = segs[0] && typeof segs[0].height === 'number' ? segs[0].height : null;
+        if (h && h > 0) {
+          return h;
+        }
+      }
+
+      // if (typeof window.visualViewport.height === 'number' && window.visualViewport.height > 0) {
+      //   return window.visualViewport.height;
+      // }
+    }
+  } catch (e) {
+    // experimental access may throw; ignore and continue with fallbacks
+  }
+
   return (
     window.innerHeight ||
     (document.documentElement && document.documentElement.clientHeight) ||
