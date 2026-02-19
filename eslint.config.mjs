@@ -14,20 +14,15 @@ const gitignore = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 const off = 0;
 const warn = 1;
-// const error = 2;
-
-const mitigatedJsRules = Object.fromEntries(
-  Object.entries(js.configs.recommended.rules).map(([rule]) => [rule, warn])
-);
+const error = 2;
 
 /**  @type {import('eslint').Linter.RulesRecord} */
 const commonRules = {
   // https://github.com/eslint/eslint/blob/main/packages/js/src/configs/eslint-recommended.js
-  // ...js.configs.recommended.rules,
-  ...mitigatedJsRules,
+  ...js.configs.recommended.rules,
 
   // https://eslint.org/docs/latest/rules/eqeqeq
-  eqeqeq: [warn, 'smart'],
+  eqeqeq: [error, 'smart'],
 
   // https://eslint.org/docs/latest/rules/new-cap
   'new-cap': off,
@@ -36,16 +31,16 @@ const commonRules = {
   'no-async-promise-executor': off,
 
   // https://eslint.org/docs/latest/rules/no-caller
-  'no-caller': warn,
+  'no-caller': error,
 
   // https://eslint.org/docs/latest/rules/no-cond-assign
-  'no-cond-assign': [warn, 'except-parens'],
+  'no-cond-assign': [error, 'except-parens'],
 
   // https://eslint.org/docs/latest/rules/no-console
   'no-console': off,
 
   // https://eslint.org/docs/latest/rules/no-empty
-  'no-empty': [warn, { allowEmptyCatch: true }],
+  'no-empty': [error, { allowEmptyCatch: true }],
 
   // https://eslint.org/docs/latest/rules/no-prototype-builtins
   'no-prototype-builtins': off,
@@ -55,14 +50,14 @@ const commonRules = {
 
   // https://eslint.org/docs/latest/rules/no-unused-vars
   'no-unused-vars': [
-    warn,
+    error,
     {
       args: 'none'
     }
   ],
 
   // https://eslint.org/docs/latest/rules/no-use-before-define
-  'no-use-before-define': [warn, { functions: false }],
+  'no-use-before-define': [error, { functions: false }],
 
   // https://eslint.style/rules/js/arrow-parens#arrow-parens
   '@stylistic/arrow-parens': [warn, 'as-needed'],
@@ -101,6 +96,7 @@ const commonRules = {
   '@stylistic/semi': [warn, 'always']
 };
 
+// https://github.com/gajus/eslint-plugin-jsdoc?tab=readme-ov-file#rules
 /**  @type {import('eslint').Linter.RulesRecord} */
 const jsdocRules = {
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/check-alignment.md
@@ -115,6 +111,26 @@ const jsdocRules = {
 
   // https://github.com/gajus/eslint-plugin-jsdoc/blob/99cb131ee40fa10f943aadfd73a6d18da082882f/docs/rules/require-asterisk-prefix.md#readme
   'jsdoc/require-asterisk-prefix': warn
+};
+
+// https://github.com/eslint/markdown?tab=readme-ov-file#rules
+/**  @type {import('eslint').Linter.RulesRecord} */
+const markdownRules = {
+  'markdown/fenced-code-language': off,
+  'markdown/heading-increment': off,
+  'markdown/no-duplicate-definitions': warn,
+  'markdown/no-duplicate-headings': [warn, { checkSiblingsOnly: true }],
+  'markdown/no-empty-definitions': warn,
+  'markdown/no-empty-images': warn,
+  'markdown/no-empty-links': warn,
+  'markdown/no-html': off,
+  'markdown/no-invalid-label-refs': off,
+  'markdown/no-missing-atx-heading-space': warn,
+  'markdown/no-missing-label-refs': off, // @todo
+  'markdown/no-missing-link-fragments': off,
+  'markdown/no-multiple-h1': off,
+  'markdown/require-alt-text': warn,
+  'markdown/table-column-count': warn
 };
 
 export default defineConfig([
@@ -246,24 +262,8 @@ export default defineConfig([
       markdown
     },
     language: 'markdown/commonmark',
-    rules: {
-      'markdown/fenced-code-language': off,
-      'markdown/heading-increment': off,
-      'markdown/no-duplicate-definitions': warn,
-      // 'markdown/no-duplicate-headings': ["error", { checkSiblingsOnly: true }], // @todo waiting for @eslint/markdown@6.6.0
-      'markdown/no-empty-definitions': warn,
-      'markdown/no-empty-images': warn,
-      'markdown/no-empty-links': warn,
-      'markdown/no-html': off,
-      'markdown/no-invalid-label-refs': off,
-      'markdown/no-missing-atx-heading-space': warn,
-      'markdown/no-missing-label-refs': off, // @todo
-      'markdown/no-missing-link-fragments': off,
-      'markdown/no-multiple-h1': off,
-      'markdown/require-alt-text': warn,
-      'markdown/table-column-count': warn
-    }
-  }
+    rules: markdownRules
+  },
   // https://github.com/eslint/markdown?tab=readme-ov-file#file-name-details
   // @todo
   // works out of the box but results in some `Parsing error`s
@@ -271,5 +271,5 @@ export default defineConfig([
   // * contributor_docs/fes_contribution_guide.md 354:1  error  Parsing error: Unexpected character '🌸'
   // * contributor_docs/zh-Hans/unit_testing.md 35:1  error  Parsing error: Unexpected token
   // * rfc_p5js_2.md 205:50  error  Parsing error: Binding arguments in strict mode
-  // ...markdown.configs.processor
+  ...markdown.configs.processor
 ]);
