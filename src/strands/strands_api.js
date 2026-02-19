@@ -53,32 +53,45 @@ function _getBuiltinGlobalsCache(strandsContext) {
   return strandsContext._builtinGlobals
 }
 
-function getBuiltinGlobalNode(strandsContext, name) {
-  const spec = BUILTIN_GLOBAL_SPECS[name]
-  if (!spec) return null
+function getOrCreateUniformNode(strandsContext, uniformName, typeInfo, defaultValueFn) {
+  const cache = _getBuiltinGlobalsCache(strandsContext);
 
-  const cache = _getBuiltinGlobalsCache(strandsContext)
-  const uniformName = `_p5_global_${name}`
-  const cached = cache.nodes.get(uniformName)
-  if (cached) return cached
+  const cached = cache.nodes.get(uniformName);
+  if (cached) return cached;
 
   if (!cache.uniformsAdded.has(uniformName)) {
-    cache.uniformsAdded.add(uniformName)
+    cache.uniformsAdded.add(uniformName);
     strandsContext.uniforms.push({
       name: uniformName,
-      typeInfo: spec.typeInfo,
-      defaultValue: () => {
-        const p5Instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance
-        return p5Instance ? spec.get(p5Instance) : undefined
-      },
-    })
+      typeInfo,
+      defaultValue: defaultValueFn,
+    });
   }
 
-  const { id, dimension } = build.variableNode(strandsContext, spec.typeInfo, uniformName)
-  const node = createStrandsNode(id, dimension, strandsContext)
-  node._originalBuiltinName = name
-  cache.nodes.set(uniformName, node)
-  return node
+  const { id, dimension } = build.variableNode(strandsContext, typeInfo, uniformName);
+  const node = createStrandsNode(id, dimension, strandsContext);
+  cache.nodes.set(uniformName, node);
+  return node;
+}
+
+function getBuiltinGlobalNode(strandsContext, name) {
+  const spec = BUILTIN_GLOBAL_SPECS[name];
+  if (!spec) return null;
+
+  const uniformName = `_p5_global_${name}`;
+  const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const node = getOrCreateUniformNode(
+    strandsContext,
+    uniformName,
+    spec.typeInfo,
+    () => {
+      return instance ? spec.get(instance) : undefined;
+    }
+  );
+
+  node._originalBuiltinName = name;
+  return node;
 }
 
 function installBuiltinGlobalAccessors(strandsContext) {
@@ -241,6 +254,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
+  const originalMillis = fn.millis;
 
   strandsContext._noiseOctaves = null;
   strandsContext._noiseAmpFalloff = null;
@@ -301,6 +315,21 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
+  };
+
+  fn.millis = function (...args) {
+    if (!strandsContext.active) {
+      return originalMillis.apply(this, args);
+    }
+    const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+    return getOrCreateUniformNode(
+      strandsContext,
+      '_p5_global_millis',
+      DataType.float1,
+      () => {
+        return instance ? instance.millis() : undefined;
+      }
+    );
   };
 
   // Next is type constructors and uniform functions.
