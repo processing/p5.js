@@ -722,6 +722,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     let argCount = args.length;
 
+    // Allow loadFont() to accept a callback without triggering a warning
+    if (func === 'loadFont' && argCount === 2 && typeof args[1] === 'function') {
+      return;
+    }
     // the following line ignores trailing undefined arguments, commenting
     // it to resolve https://github.com/processing/p5.js/issues/4571
     // '== null' checks for 'null' and typeof 'undefined'
