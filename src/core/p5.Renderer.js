@@ -72,7 +72,9 @@ class Renderer {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+    this._pixelDensity = typeof window !== 'undefined' ?
+      Math.ceil(window.devicePixelRatio) :
+      1;
 
     this.width = w;
     this.height = h;

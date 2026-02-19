@@ -79,6 +79,10 @@
       "types": "./types/global.d.ts",
       "default": "./dist/app.js"
     },
+    "./node": {
+      "types": "./types/p5.d.ts",
+      "default": "./dist/app.node.js"
+    },
     "./core": {
       "default": "./dist/core/main.js"
     },

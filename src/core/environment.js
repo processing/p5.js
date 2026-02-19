@@ -11,12 +11,13 @@ import * as C from './constants';
 
 function environment(p5, fn, lifecycles){
   const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+  const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
 
   fn._frameRate = 0;
-  fn._lastFrameTime = window.performance.now();
+  fn._lastFrameTime = globalThis.performance.now();
   fn._targetFrameRate = 60;
 
-  const _windowPrint = window.print;
+  const windowPrint = isBrowser ? window.print : null;
   let windowPrintDisabled = false;
 
   lifecycles.presetup = function(){
@@ -24,11 +25,13 @@ function environment(p5, fn, lifecycles){
       'resize'
     ];
 
-    for(const event of events){
-      window.addEventListener(event, this[`_on${event}`].bind(this), {
-        passive: false,
-        signal: this._removeSignal
-      });
+    if(isBrowser){
+      for(const event of events){
+        window.addEventListener(event, this[`_on${event}`].bind(this), {
+          passive: false,
+          signal: this._removeSignal
+        });
+      }
     }
   };
 
@@ -59,9 +62,9 @@ function environment(p5, fn, lifecycles){
    * }
    */
   fn.print = function(...args) {
-    if (!args.length) {
+    if (!args.length && windowPrint !== null) {
       if (!windowPrintDisabled) {
-        _windowPrint();
+        windowPrint();
         if (
           window.confirm(
             'You just tried to print the webpage. Do you want to prevent this from running again?'
@@ -198,7 +201,7 @@ function environment(p5, fn, lifecycles){
    *   }
    * }
    */
-  fn.focused = document.hasFocus();
+  fn.focused = isBrowser ? document.hasFocus() : true;
 
   /**
    * Changes the cursor's appearance.
@@ -570,7 +573,7 @@ function environment(p5, fn, lifecycles){
    * @alt
    * This example does not render anything.
    */
-  fn.displayWidth = screen.width;
+  fn.displayWidth = isBrowser ? window.screen.width : 0;
 
   /**
    * A `Number` variable that stores the height of the screen display.
@@ -598,7 +601,7 @@ function environment(p5, fn, lifecycles){
    * @alt
    * This example does not render anything.
    */
-  fn.displayHeight = screen.height;
+  fn.displayHeight = isBrowser ? window.screen.height : 0;
 
   /**
    * A `Number` variable that stores the width of the browser's viewport.
@@ -724,21 +727,11 @@ function environment(p5, fn, lifecycles){
   };
 
   function getWindowWidth() {
-    return (
-      window.innerWidth ||
-      (document.documentElement && document.documentElement.clientWidth) ||
-      (document.body && document.body.clientWidth) ||
-      0
-    );
+    return isBrowser ? document.documentElement.clientWidth : 0;
   }
 
   function getWindowHeight() {
-    return (
-      window.innerHeight ||
-      (document.documentElement && document.documentElement.clientHeight) ||
-      (document.body && document.body.clientHeight) ||
-      0
-    );
+    return isBrowser ? document.documentElement.clientHeight : 0;
   }
 
   /**
@@ -794,7 +787,6 @@ function environment(p5, fn, lifecycles){
    * }
    */
   fn.fullscreen = function(val) {
-    // p5._validateParameters('fullscreen', arguments);
     // no arguments, return fullscreen or not
     if (typeof val === 'undefined') {
       return (
@@ -865,7 +857,6 @@ function environment(p5, fn, lifecycles){
    * @returns {Number} current pixel density of the sketch.
    */
   fn.pixelDensity = function(val) {
-    // p5._validateParameters('pixelDensity', arguments);
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._renderer._pixelDensity) {
