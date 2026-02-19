@@ -1242,8 +1242,14 @@ function loadingDisplaying(p5, fn){
    */
   fn.tint = function(...args) {
     // p5._validateParameters('tint', args);
-    const c = this.color(...args);
-    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    if (args.length === 0) {
+      return this.color(this._renderer.states.tint); // getter
+    }
+    if (args && args.length) {
+      const c = this.color(...args);
+      this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    }
+    return this;
   };
 
   /**
@@ -1277,6 +1283,7 @@ function loadingDisplaying(p5, fn){
    */
   fn.noTint = function() {
     this._renderer.states.setValue('tint', null);
+    return this;
   };
 
   /**
@@ -1373,6 +1380,9 @@ function loadingDisplaying(p5, fn){
    */
   fn.imageMode = function(m) {
     // p5._validateParameters('imageMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer.states.imageMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||

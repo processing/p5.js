@@ -420,8 +420,7 @@ function transform(p5, fn){
    */
   fn.rotate = function(angle, axis) {
     // p5._validateParameters('rotate', arguments);
-    this._renderer.rotate(this._toRadians(angle), axis);
-    return this;
+    return this._renderer.rotate(this._toRadians(angle), axis);
   };
 
   /**
@@ -543,8 +542,7 @@ function transform(p5, fn){
   fn.rotateX = function(angle) {
     this._assert3d('rotateX');
     // p5._validateParameters('rotateX', arguments);
-    this._renderer.rotateX(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateX(this._toRadians(angle));
   };
 
   /**
@@ -666,8 +664,7 @@ function transform(p5, fn){
   fn.rotateY = function(angle) {
     this._assert3d('rotateY');
     // p5._validateParameters('rotateY', arguments);
-    this._renderer.rotateY(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateY(this._toRadians(angle));
   };
 
   /**
@@ -789,8 +786,7 @@ function transform(p5, fn){
   fn.rotateZ = function(angle) {
     this._assert3d('rotateZ');
     // p5._validateParameters('rotateZ', arguments);
-    this._renderer.rotateZ(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateZ(this._toRadians(angle));
   };
 
   /**
@@ -966,9 +962,7 @@ function transform(p5, fn){
       z = 1;
     }
 
-    this._renderer.scale(x, y, z);
-
-    return this;
+    return this._renderer.scale(x, y, z);
   };
 
   /**
@@ -1274,11 +1268,10 @@ function transform(p5, fn){
   fn.translate = function(x, y, z) {
     // p5._validateParameters('translate', arguments);
     if (this._renderer.isP3D) {
-      this._renderer.translate(x, y, z);
+      return this._renderer.translate(x, y, z);
     } else {
-      this._renderer.translate(x, y);
+      return this._renderer.translate(x, y);
     }
-    return this;
   };
 
   /**

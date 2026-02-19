@@ -2725,6 +2725,9 @@ function material(p5, fn) {
    * }
    */
   fn.textureMode = function (mode) {
+    if (typeof mode === 'undefined') { // getter
+      return this._renderer.states.textureMode;
+    }
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
       console.warn(
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `,
@@ -2988,12 +2991,26 @@ function material(p5, fn) {
    * }
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.states.setValue("textureWrapX", wrapX);
-    this._renderer.states.setValue("textureWrapY", wrapY);
-
-    for (const texture of this._renderer.textures.values()) {
-      texture.setWrapMode(wrapX, wrapY);
+    if (typeof wrapX === 'undefined') { // getter
+      return {
+        x: this._renderer.states.textureWrapX,
+        y: this._renderer.states.textureWrapY
+      };
     }
+    // accept what is returned from the getter
+    if (wrapX.hasOwnProperty('x') && wrapX.hasOwnProperty('y')) {
+      wrapX = wrapX.x;
+      wrapY = wrapX.y;
+    }
+    this._renderer.states.setValue('textureWrapX', wrapX);
+    this._renderer.states.setValue('textureWrapY', wrapY);
+
+    if (this._renderer.textures) {
+      for (const texture of this._renderer.textures.values()) {
+        texture.setWrapMode(wrapX, wrapY);
+      }
+    }
+    return this;
   };
 
   /**

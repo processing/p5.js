@@ -1461,7 +1461,14 @@ function textCore(p5, fn) {
 
     // the setter
     if (typeof h !== 'undefined') {
+      // accept what is returned from the getter
+      if (h.hasOwnProperty('horizontal')) {
+        h = h.horizontal;
+      }
       this.states.setValue('textAlign', h);
+      if (h.hasOwnProperty('vertical') && typeof v === 'undefined') {
+        v = h.vertical;
+      }
       if (typeof v !== 'undefined') {
         if (v === fn.CENTER) {
           v = textCoreConstants._CTX_MIDDLE;
