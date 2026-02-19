@@ -609,6 +609,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
         const myError = new Error();
         let parsed = p5._getErrorStackParser().parse(myError);
+        let p5FileName;
+        try {
+          throw new Error();
+        } catch (testError) {
+          const testStacktrace = p5._getErrorStackParser().parse(testError);
+          p5FileName = testStacktrace[0].fileName;
+        }
+        
+        let userFrame = null;
+        for (let i = 0; i < parsed.length; i++) {
+          if (parsed[i].fileName && parsed[i].fileName !== p5FileName) {
+            userFrame = parsed[i];
+            break;
+          }
+        }
+        
         if (
           parsed[3] &&
           parsed[3].functionName &&
@@ -621,22 +637,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
           throw new p5.ValidationError(message, func, errorObj.type);
         }
 
-        // try to extract the location from where the function was called
+        const frameToUse = userFrame || parsed[3];
         if (
-          parsed[3] &&
-          parsed[3].fileName &&
-          parsed[3].lineNumber &&
-          parsed[3].columnNumber
+          frameToUse &&
+          frameToUse.fileName &&
+          frameToUse.lineNumber &&
+          frameToUse.columnNumber
         ) {
-          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
-            parsed[3].columnNumber
+          let location = `${frameToUse.fileName}:${frameToUse.lineNumber}:${
+            frameToUse.columnNumber
           }`;
 
           translationObj.location = translator('fes.location', {
             location,
             // for e.g. get "sketch.js" from "https://example.com/abc/sketch.js"
-            file: parsed[3].fileName.split('/').slice(-1),
-            line: parsed[3].lineNumber
+            file: frameToUse.fileName.split('/').slice(-1),
+            line: frameToUse.lineNumber
           });
 
           // tell fesErrorMonitor that we have already given a friendly message
