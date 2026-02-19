@@ -684,6 +684,40 @@ function material(p5, fn) {
    * }
    * ```
    *
+   * We can use the `noise()` function built into strands to generate a color for each pixel.  (Again no need here for underlying content for the filter to operate on.)  Again we'll animate by passing in an announced uniform variable  `time` with `setUniform()`, each frame.
+   *
+   * ```js example
+   * let myFilter;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myFilter = buildFilterShader(noiseShaderCallback);
+   *   describe('Evolving animated cloud-like noise in cyan and magenta');
+   * }
+   *
+   * function noiseShaderCallback() {
+   *   let time = uniformFloat();
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *
+   *   //generate a value roughly between 0 and 1
+   *   let noiseVal = noise(coord.x, coord.y, time / 2000);
+   *
+   *   let result = mix(
+   *     [1, 0, 1, 1], // Magenta
+   *     [0, 1, 1, 1], // Cyan
+   *     noiseVal
+   *   );
+   *   filterColor.set(result);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   myFilter.setUniform("time", millis());
+   *   filter(myFilter);
+   * }
+   * ```
+   *
    * Like the `modify()` method on shaders,
    * advanced users can also fill in `filterColor` using <a href="https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders" target="_blank">GLSL</a>
    * instead of JavaScript.
@@ -698,15 +732,17 @@ function material(p5, fn) {
    * @beta
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
   /**
    * @method buildFilterShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
-  fn.buildFilterShader = function (callback) {
-    return this.baseFilterShader().modify(callback);
+  fn.buildFilterShader = function (callback, scope) {
+    return this.baseFilterShader().modify(callback, scope);
   };
 
   /**
@@ -1526,15 +1562,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
   /**
    * @method buildMaterialShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function (cb) {
-    return this.baseMaterialShader().modify(cb);
+  fn.buildMaterialShader = function (cb, scope) {
+    return this.baseMaterialShader().modify(cb, scope);
   };
 
   /**
@@ -1633,7 +1671,7 @@ function material(p5, fn) {
   /**
    * Returns the base shader used for filters.
    *
-   * Calling <a href="#/p5/buildMaterialShader">`buildFilterShader(shaderFunction)`</a>
+   * Calling <a href="#/p5/buildFilterShader">`buildFilterShader(shaderFunction)`</a>
    * is equivalent to calling `baseFilterShader().modify(shaderFunction)`.
    *
    * Read <a href="#/p5/buildFilterShader">the `buildFilterShader` reference</a> or
@@ -1742,15 +1780,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
   /**
    * @method buildNormalShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function (cb) {
-    return this.baseNormalShader().modify(cb);
+  fn.buildNormalShader = function (cb, scope) {
+    return this.baseNormalShader().modify(cb, scope);
   };
 
   /**
@@ -1906,15 +1946,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
   /**
    * @method buildColorShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function (cb) {
-    return this.baseColorShader().modify(cb);
+  fn.buildColorShader = function (cb, scope) {
+    return this.baseColorShader().modify(cb, scope);
   };
 
   /**
@@ -2161,15 +2203,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
   /**
    * @method buildStrokeShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function (cb) {
-    return this.baseStrokeShader().modify(cb);
+  fn.buildStrokeShader = function (cb, scope) {
+    return this.baseStrokeShader().modify(cb, scope);
   };
 
   /**

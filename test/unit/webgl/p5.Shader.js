@@ -1,4 +1,16 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
+
+const mockUserError = vi.fn();
+vi.mock('../../../src/strands/strands_FES', () => ({
+  userError: (...args) => {
+    mockUserError(...args);
+    const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
+    throw new Error(prefixedMessage);
+  },
+  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
+}));
+
 suite('p5.Shader', function() {
   var myp5;
   beforeAll(function() {
@@ -442,6 +454,21 @@ suite('p5.Shader', function() {
         });
       }, { myp5 });
       expect(() => {
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
+    test('buildMaterialShader forwards scope to modify', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      expect(() => {
+        const myShader = myp5.buildMaterialShader(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [1, 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
         myp5.shader(myShader);
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
@@ -1940,6 +1967,62 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[0], 255, 5);
       assert.approximately(pixelColor[1], 127, 5);
       assert.approximately(pixelColor[2], 0, 5);
+    });
+  });
+
+  suite('p5.strands error messages', () => {
+    afterEach(() => {
+      mockUserError.mockClear();
+    });
+
+    test('wrong type in struct hook shows actual type and expected properties', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs(() => [1, 2, 3, 4]); // vec4 instead of Vertex struct
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.notInclude(errMsg, 'a undefined'); //
+      assert.include(errMsg, 'float4');
+      assert.include(errMsg, 'getWorldInputs');
+      assert.include(errMsg, 'Vertex');
+      assert.include(errMsg, 'properties');
+    });
+
+    test('vector dimension mismatch shows actual and expected types', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getFinalColor((c) => [c.r, c.g, c.b]); // vec3 instead of vec4
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'float3');
+      assert.include(errMsg, 'float4');
+    });
+
+    test('incomplete struct shows expected vs received properties', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs((inputs) => {
+            return { position: inputs.position };
+          });
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'Expected properties');
+      assert.include(errMsg, 'Received properties');
     });
   });
 });
