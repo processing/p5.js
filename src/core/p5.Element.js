@@ -996,6 +996,12 @@ p5.Element = class {
       p5.Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
+    // Safari fix: <select> elements sometimes ignore 'input' events
+    if (ctx.elt.tagName === 'SELECT' && ev === 'input') {
+      ctx.elt.addEventListener('change', f, false);
+    }
+
+
     ctx.elt.addEventListener(ev, f, false);
     ctx._events[ev] = f;
   }
