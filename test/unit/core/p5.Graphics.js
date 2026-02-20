@@ -186,7 +186,7 @@ suite('Graphics', function() {
   });
 
   suite('p5.Graphics.size()', function () {
-    test('it shows friendly error when size() is called', function () {
+    test('it shows error when size() is called', function () {
       var graph = myp5.createGraphics(100, 100);
       var consoleStub = sinon.stub(console, 'error');
       graph.size(50, 50);
