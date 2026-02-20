@@ -3683,6 +3683,13 @@ p5.Element.prototype.size = function (w, h) {
   if (arguments.length === 0) {
     return { width: this.elt.offsetWidth, height: this.elt.offsetHeight };
   } else {
+    if (this instanceof p5.Graphics) {
+      p5._friendlyError(
+        'size() is not supported for p5.Graphics. Use resizeCanvas() instead.',
+        'p5.Graphics.size'
+      );
+      return this;
+    }
     let aW = w;
     let aH = h;
     const AUTO = p5.prototype.AUTO;
