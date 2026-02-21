@@ -143,34 +143,31 @@ visualSuite('WebGL', function() {
   });
 
   visualSuite('Tessellation', function() {
-    visualTest('Handles nearly identical consecutive vertices from textToContours', async function(p5, screenshot) {
-      p5.createCanvas(200, 200, p5.WEBGL);
-      p5.background(255);
-      p5.fill(0);
-      p5.noStroke();
+    visualTest(
+      'Handles nearly identical consecutive vertices from textToContours',
+      function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.background(220);
+        p5.fill(40);
+        p5.noStroke();
 
-      const font = await p5.loadFont('unit/assets/Inconsolata-Bold.ttf');
-      const contours = font.textToContours('p', 0, 0, 60);
-
-      if (contours && contours.length > 0) {
-        p5.translate(-p5.width / 4, -p5.height / 4);
         p5.beginShape();
-        for (let contourIdx = 0; contourIdx < contours.length; contourIdx++) {
-          const contour = contours[contourIdx];
-          if (contourIdx > 0) {
-            p5.beginContour();
-          }
-          for (let i = 0; i < contour.length; i++) {
-            p5.vertex(contour[i].x, contour[i].y, 0);
-          }
-          if (contourIdx > 0) {
-            p5.endContour();
-          }
-        }
-        p5.endShape(p5.CLOSE);
-      }
+        p5.vertex(-20, -20);
+        p5.vertex(20, -20);
+        p5.vertex(20, 20);
+        p5.vertex(-20, 20);
 
-      screenshot();
-    });
+        // Inner contour (hole) — vertex 2 has x nudged by 1e-8
+        p5.beginContour();
+        p5.vertex(8, -8);
+        p5.vertex(8, 8);
+        p5.vertex(-8.00000001, 8);  // nearly identical x to next vertex
+        p5.vertex(-8, -8);
+        p5.endContour();
+        p5.endShape(p5.CLOSE);
+
+        screenshot();
+      }
+    );
   });
 });

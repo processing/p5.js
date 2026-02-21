@@ -437,27 +437,17 @@ p5.RendererGL.prototype._tesselateShape = function() {
     );
   }
 
-  // Normalize nearly identical consecutive vertices to avoid numerical issues in libtess.
-  // This workaround addresses tessellation artifacts when consecutive vertices have
-  // coordinates that are almost (but not exactly) equal, which can occur when drawing
-  // contours automatically sampled from fonts with font.textToContours().
+  // Snap nearly identical consecutive vertex coordinates to avoid libtess
+  // tessellation artifacts. Common with font.textToContours() output.
+  const stride = p5.RendererGL.prototype.tessyVertexSize;
   const epsilon = 1e-6;
   for (const contour of contours) {
-    for (
-      let i = p5.RendererGL.prototype.tessyVertexSize;
-      i < contour.length;
-      i += p5.RendererGL.prototype.tessyVertexSize
-    ) {
-      const prevX = contour[i - p5.RendererGL.prototype.tessyVertexSize];
-      const prevY = contour[i - p5.RendererGL.prototype.tessyVertexSize + 1];
-      const currX = contour[i];
-      const currY = contour[i + 1];
-
-      if (Math.abs(prevX - currX) < epsilon) {
-        contour[i] = prevX;
+    for (let i = stride; i < contour.length; i += stride) {
+      if (Math.abs(contour[i] - contour[i - stride]) < epsilon) {
+        contour[i] = contour[i - stride];
       }
-      if (Math.abs(prevY - currY) < epsilon) {
-        contour[i + 1] = prevY;
+      if (Math.abs(contour[i + 1] - contour[i - stride + 1]) < epsilon) {
+        contour[i + 1] = contour[i - stride + 1];
       }
     }
   }
