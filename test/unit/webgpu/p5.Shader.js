@@ -440,6 +440,66 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(pixelColor[1], 0, 5);
         assert.approximately(pixelColor[2], 0, 5);
       });
+
+      test('using boolean intermediate variables in functions', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          const conditionMet = () => {
+            let condition = 1 > 2;
+            let value = 1;
+            if (value < 0.5) {
+              condition = 0.5 < 2;
+            }
+            return !condition
+          }
+          myp5.getColor((inputs, canvasContent) => {
+            if (conditionMet()) {
+              return [1, 0, 0, 1]
+            }
+
+            return [0.4, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('using boolean intermediate variables in functions with early returns', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          const conditionMet = () => {
+            let value = 1;
+            if (value < 0.5) {
+              return true
+            }
+            return false
+          }
+          myp5.getColor((inputs, canvasContent) => {
+            if (conditionMet()) {
+              return [1, 0, 0, 1]
+            }
+
+            return [0.4, 0, 0, 1];
+          });
+        }, { myp5 });
+        console.log(testShader.fragSrc())
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 102, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
     });
 
     suite('for loop statements', () => {

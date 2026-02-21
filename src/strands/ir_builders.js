@@ -239,6 +239,17 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       calculatedDimensions += dimension;
       continue;
     }
+    else if (typeof dep === 'boolean') {
+      // Handle boolean literals - convert to bool type
+      const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType: BaseType.BOOL }, dep);
+      mappedDependencies.push(id);
+      calculatedDimensions += dimension;
+      // Update baseType to BOOL if it was inferred
+      if (baseType !== BaseType.BOOL) {
+        baseType = BaseType.BOOL;
+      }
+      continue;
+    }
     else {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
@@ -289,7 +300,12 @@ export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
 
   const finalType = {
-    baseType: typeInfo.baseType,
+    // We might have inferred a non numeric type. Currently this is
+    // just used for booleans. Maybe this needs to be something more robust
+    // if we ever want to support inference of e.g. int vectors?
+    baseType: inferredTypeInfo.baseType === BaseType.BOOL
+      ? BaseType.BOOL
+      : typeInfo.baseType,
     dimension: inferredTypeInfo.dimension
   };
 

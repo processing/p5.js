@@ -1142,6 +1142,177 @@ const ASTCallbacks = {
       return replaceInNode(node);
     }
   }
+
+  // Helper function to check if a function body contains return statements in control flow
+  function functionHasEarlyReturns(functionNode) {
+    let hasEarlyReturn = false;
+    let inControlFlow = 0;
+
+    const checkForEarlyReturns = {
+      IfStatement(node, state, c) {
+        inControlFlow++;
+        if (node.test) c(node.test, state);
+        if (node.consequent) c(node.consequent, state);
+        if (node.alternate) c(node.alternate, state);
+        inControlFlow--;
+      },
+      ForStatement(node, state, c) {
+        inControlFlow++;
+        if (node.init) c(node.init, state);
+        if (node.test) c(node.test, state);
+        if (node.update) c(node.update, state);
+        if (node.body) c(node.body, state);
+        inControlFlow--;
+      },
+      ReturnStatement(node) {
+        if (inControlFlow > 0) {
+          hasEarlyReturn = true;
+        }
+      }
+    };
+
+    if (functionNode.body && functionNode.body.type === 'BlockStatement') {
+      recursive(functionNode.body, {}, checkForEarlyReturns);
+    }
+
+    return hasEarlyReturn;
+  }
+
+  // Helper function to check if an if-statement's consequent contains a return
+  function blockContainsReturn(block) {
+    let hasReturn = false;
+    const findReturn = {
+      ReturnStatement() {
+        hasReturn = true;
+      }
+    };
+    if (block) {
+      recursive(block, {}, findReturn);
+    }
+    return hasReturn;
+  }
+
+  // Transform a helper function to use __returnValue pattern instead of early returns
+  function transformHelperFunction(functionNode) {
+    // 1. Add __returnValue declaration at the start of function body
+    const returnValueDecl = {
+      type: 'VariableDeclaration',
+      declarations: [{
+        type: 'VariableDeclarator',
+        id: { type: 'Identifier', name: '__returnValue' },
+        init: null
+      }],
+      kind: 'let'
+    };
+
+    if (!functionNode.body || functionNode.body.type !== 'BlockStatement') {
+      return; // Can't transform arrow functions with expression bodies
+    }
+
+    functionNode.body.body.unshift(returnValueDecl);
+
+    // 2. Restructure if statements: move siblings after if with return into else block
+    function restructureIfStatements(statements) {
+      for (let i = 0; i < statements.length; i++) {
+        const stmt = statements[i];
+
+        if (stmt.type === 'IfStatement' && blockContainsReturn(stmt.consequent) && !stmt.alternate) {
+          // Find all subsequent statements
+          const subsequentStatements = statements.slice(i + 1);
+
+          if (subsequentStatements.length > 0) {
+            // Create else block with subsequent statements
+            stmt.alternate = {
+              type: 'BlockStatement',
+              body: subsequentStatements
+            };
+
+            // Remove the subsequent statements from this level
+            statements.splice(i + 1);
+
+            // Recursively process the new else block
+            restructureIfStatements(stmt.alternate.body);
+          }
+        }
+
+        // Recursively process nested blocks
+        if (stmt.type === 'IfStatement') {
+          if (stmt.consequent && stmt.consequent.type === 'BlockStatement') {
+            restructureIfStatements(stmt.consequent.body);
+          }
+          if (stmt.alternate && stmt.alternate.type === 'BlockStatement') {
+            restructureIfStatements(stmt.alternate.body);
+          }
+        } else if (stmt.type === 'ForStatement' && stmt.body && stmt.body.type === 'BlockStatement') {
+          restructureIfStatements(stmt.body.body);
+        } else if (stmt.type === 'BlockStatement') {
+          restructureIfStatements(stmt.body);
+        }
+      }
+    }
+
+    restructureIfStatements(functionNode.body.body);
+
+    // 3. Transform all return statements to assignments
+    const transformReturns = {
+      ReturnStatement(node) {
+        // Convert return statement to assignment
+        node.type = 'ExpressionStatement';
+        node.expression = {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: { type: 'Identifier', name: '__returnValue' },
+          right: node.argument || { type: 'Identifier', name: 'undefined' }
+        };
+        delete node.argument;
+      }
+    };
+
+    recursive(functionNode.body, {}, transformReturns);
+
+    // 4. Add final return statement
+    const finalReturn = {
+      type: 'ReturnStatement',
+      argument: { type: 'Identifier', name: '__returnValue' }
+    };
+
+    functionNode.body.body.push(finalReturn);
+  }
+
+  // Main transformation pass: find and transform helper functions with early returns
+  function transformHelperFunctionEarlyReturns(ast) {
+    const helperFunctionsToTransform = [];
+
+    // Collect helper functions that need transformation
+    const collectHelperFunctions = {
+      VariableDeclarator(node, ancestors) {
+        const init = node.init;
+        if (init && (init.type === 'ArrowFunctionExpression' || init.type === 'FunctionExpression')) {
+          if (functionHasEarlyReturns(init)) {
+            helperFunctionsToTransform.push(init);
+          }
+        }
+      },
+      FunctionDeclaration(node, ancestors) {
+        if (functionHasEarlyReturns(node)) {
+          helperFunctionsToTransform.push(node);
+        }
+      },
+      // Don't transform functions that are direct arguments to call expressions
+      CallExpression(node, ancestors) {
+        // Arguments to CallExpressions are base callbacks, not helpers
+        // We skip them by not adding them to the transformation list
+      }
+    };
+
+    ancestor(ast, collectHelperFunctions);
+
+    // Transform each collected helper function
+    for (const funcNode of helperFunctionsToTransform) {
+      transformHelperFunction(funcNode);
+    }
+  }
+
   export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     // Reset counters at the start of each transpilation
     blockVarCounter = 0;
@@ -1156,7 +1327,11 @@ const ASTCallbacks = {
     delete nonControlFlowCallbacks.IfStatement;
     delete nonControlFlowCallbacks.ForStatement;
     ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {} });
-    // Second pass: transform if/for statements in post-order using recursive traversal
+
+    // Second pass: transform helper functions with early returns to use __returnValue pattern
+    transformHelperFunctionEarlyReturns(ast);
+
+    // Third pass: transform if/for statements in post-order using recursive traversal
     const postOrderControlFlowTransform = {
       IfStatement(node, state, c) {
         state.inControlFlow++;

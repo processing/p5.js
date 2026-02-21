@@ -37,6 +37,7 @@ export const BaseType = {
   BOOL: "bool",
   MAT: "mat",
   DEFER: "defer",
+  ASSIGN_ON_USE: "assign_on_use",
   SAMPLER2D: "sampler2D",
   SAMPLER: "sampler",
 };
@@ -46,6 +47,7 @@ export const BasePriority = {
   [BaseType.BOOL]: 1,
   [BaseType.MAT]: 0,
   [BaseType.DEFER]: -1,
+  [BaseType.ASSIGN_ON_USE]: -2,
   [BaseType.SAMPLER2D]: -10,
   [BaseType.SAMPLER]: -11,
 };
@@ -66,6 +68,7 @@ export const DataType = {
   mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
+  assign_on_use: { fnName: null, baseType: BaseType.ASSIGN_ON_USE, dimension: null, priority: -2 },
   sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
   sampler: { fnName: "sampler", baseType: BaseType.SAMPLER, dimension: 1, priority: -11 },
 }
