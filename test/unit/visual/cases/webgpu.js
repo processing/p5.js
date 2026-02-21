@@ -252,6 +252,26 @@ visualSuite("WebGPU", function () {
 
       await screenshot();
     });
+
+    visualTest('filter shaders with flat API', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill(0);
+      p5.circle(0, 0, 20);
+      const invert = p5.buildFilterShader(({ p5 }) => {
+        p5.filterColor.begin();
+        const regular = p5.getTexture(
+          p5.filterColor.canvasContent,
+          p5.filterColor.texCoord
+        );
+        const inverted = [1 - regular.rgb, regular.a];
+        p5.filterColor.set(inverted);
+        p5.filterColor.end();
+      }, { p5 });
+      p5.filter(invert);
+      await screenshot();
+    });
   });
 
   visualSuite('filters', function() {
