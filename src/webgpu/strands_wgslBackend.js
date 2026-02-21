@@ -73,10 +73,10 @@ const cfgHandlers = {
         // Initialize with default value - WGSL requires initialization
         let defaultValue;
         if (T.dimension === 1) {
-          defaultValue = T.baseType === 'float' ? '0.0' : '0';
+          defaultValue = this.defaultScalarValue(T.baseType);
         } else {
           // For vector types, use constructor with repeated scalar values
-          const scalarDefault = T.baseType === 'float' ? '0.0' : '0';
+          const scalarDefault = this.defaultScalarValue(T.baseType);
           const components = Array(T.dimension).fill(scalarDefault).join(', ');
           defaultValue = `${typeName}(${components})`;
         }
@@ -84,6 +84,15 @@ const cfgHandlers = {
       }
     }
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+  },
+  defaultScalarValue(baseType) {
+    if (baseType === BaseType.FLOAT) {
+      return '0.0';
+    } else if (baseType === BaseType.BOOL) {
+      return 'false';
+    } else {
+      return '0';
+    }
   },
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
@@ -464,14 +473,7 @@ export const wgslBackend = {
         if (validInputs.length > 0) {
           return this.generateExpression(generationContext, dag, validInputs[0]);
         } else {
-          throw new Error(`No valid inputs for node`)
-          // Fallback: create a default value
-          const typeName = this.getTypeName(node.baseType, node.dimension);
-          if (node.dimension === 1) {
-            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
-          } else {
-            return `${typeName}(0.0)`;
-          }
+          throw new Error('No valid inputs for node');
         }
       }
       case NodeType.ASSIGNMENT:
