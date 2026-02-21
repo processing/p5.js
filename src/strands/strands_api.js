@@ -198,7 +198,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (args.length > 4) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
+    // Filter out undefined/null values
+    const flatArgs = args.flat();
+    const definedArgs = flatArgs.filter(a => a !== undefined && a !== null);
+
+    // If all args are undefined, this is likely a `let myVar` at the
+    // start of an if statement and it will be assigned within the branches.
+    // For that, we use an assign-on-use node, meaning we'll take the type of the
+    // values assigned to it.
+    if (definedArgs.length === 0) {
+      const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.ASSIGN_ON_USE, dimension: null }, [0]);
+      return createStrandsNode(id, dimension, strandsContext);
+    }
+
+    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, definedArgs);
     return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
   }
   //////////////////////////////////////////////
@@ -337,7 +350,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // variant or also one more directly translated from GLSL, or to be more compatible with
   // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
-    if (type === BaseType.DEFER || type === 'sampler') {
+    if (type === BaseType.DEFER || type === BaseType.ASSIGN_ON_USE || type === 'sampler') {
       continue;
     }
     const typeInfo = DataType[type];
