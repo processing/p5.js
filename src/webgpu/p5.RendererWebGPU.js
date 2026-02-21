@@ -3124,7 +3124,7 @@ ${hookUniformFields}}
           {
             vertex: {},
             fragment: {
-              "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, tex_sampler: sampler) -> vec4<f32> {
+              "vec4<f32> getColor": `(inputs: FilterInputs, canvasContent: texture_2d<f32>, canvasContent_sampler: sampler) -> vec4<f32> {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
               }`,
             },
