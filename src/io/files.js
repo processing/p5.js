@@ -2326,14 +2326,34 @@ p5.prototype.saveTable = function(table, filename, options) {
   if (ext === 'tsv') {
     sep = '\t';
   }
+
+  // RFC 4180-compliant CSV field escaping: if the value contains a comma,
+  // double quote, or newline, escape internal quotes by doubling them and
+  // wrap the whole field in double quotes.
+  function escapeCSVField(value) {
+    const str = String(value);
+    if (
+      str.includes('"') ||
+      str.includes(',') ||
+      str.includes('\n') ||
+      str.includes('\r')
+    ) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
   if (ext !== 'html') {
+    const useEscape = ext === 'csv';
+
     // make header if it has values
     if (header[0] !== '0') {
       for (let h = 0; h < header.length; h++) {
+        const field = useEscape ? escapeCSVField(header[h]) : header[h];
         if (h < header.length - 1) {
-          pWriter.write(header[h] + sep);
+          pWriter.write(field + sep);
         } else {
-          pWriter.write(header[h]);
+          pWriter.write(field);
         }
       }
       pWriter.write('\n');
@@ -2343,20 +2363,13 @@ p5.prototype.saveTable = function(table, filename, options) {
     for (let i = 0; i < table.rows.length; i++) {
       let j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
+        const field = useEscape
+          ? escapeCSVField(table.rows[i].arr[j])
+          : table.rows[i].arr[j];
         if (j < table.rows[i].arr.length - 1) {
-          //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-            pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
-          } else {
-            pWriter.write(table.rows[i].arr[j] + sep);
-          }
+          pWriter.write(field + sep);
         } else {
-          //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-            pWriter.write('"' + table.rows[i].arr[j] + '"');
-          } else {
-            pWriter.write(table.rows[i].arr[j]);
-          }
+          pWriter.write(field);
         }
       }
       pWriter.write('\n');

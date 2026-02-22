@@ -112,6 +112,36 @@ suite('saveTable', function() {
   );
 
   testWithDownload(
+    'should properly escape CSV fields containing quotes, commas, and newlines',
+    async function(blobContainer) {
+      let table = new p5.Table();
+      table.addColumn('name');
+      table.addColumn('value');
+      let row1 = table.addRow();
+      row1.setString('name', 'has "quotes"');
+      row1.setString('value', 'normal');
+      let row2 = table.addRow();
+      row2.setString('name', 'has,comma');
+      row2.setString('value', 'has\nnewline');
+      let row3 = table.addRow();
+      row3.setString('name', 'combo",\n');
+      row3.setString('value', 'plain');
+
+      myp5.saveTable(table, 'test.csv');
+      let myBlob = blobContainer.blob;
+      let text = await myBlob.text();
+
+      let expected = 'name,value\n';
+      expected += '"has ""quotes""",normal\n';
+      expected += '"has,comma","has\nnewline"\n';
+      expected += '"combo"",\n",plain\n';
+
+      assert.strictEqual(text, expected);
+    },
+    true
+  );
+
+  testWithDownload(
     'should download a file with expected contents (html)',
     async function(blobContainer) {
       myp5.saveTable(myTable, 'filename', 'html');
