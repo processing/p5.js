@@ -806,6 +806,7 @@ p5.prototype._onkeypress = function(e) {
  */
 p5.prototype._onblur = function(e) {
   this._downKeys = {};
+  this._setProperty('mouseIsPressed', false);
 };
 
 /**
