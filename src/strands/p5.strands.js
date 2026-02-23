@@ -643,7 +643,8 @@ if (typeof p5 !== "undefined") {
  *     filterColor.texCoord.x,
  *     filterColor.texCoord.y + 0.1 * sin(filterColor.texCoord.x * 10)
  *   ];
- *   filterColor.set(getTexture(canvasContent, warped));
+ *   let tex = filterColor.canvasContent;
+ *   filterColor.set(getTexture(tex, warped));
  *   filterColor.end();
  * }
  *
