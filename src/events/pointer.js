@@ -24,6 +24,10 @@ function pointer(p5, fn, lifecycles){
         signal: this._removeSignal
       });
     }
+
+    window.addEventListener('blur', () => {
+      this.mouseIsPressed = false;
+    }, { signal: this._removeSignal });
   };
 
   /**
