@@ -436,6 +436,22 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.geometry.vertexNormals[i].z
     );
   }
+
+  // Snap nearly identical consecutive vertex coordinates to avoid libtess
+  // tessellation artifacts. Common with font.textToContours() output.
+  const stride = p5.RendererGL.prototype.tessyVertexSize;
+  const epsilon = 1e-6;
+  for (const contour of contours) {
+    for (let i = stride; i < contour.length; i += stride) {
+      if (Math.abs(contour[i] - contour[i - stride]) < epsilon) {
+        contour[i] = contour[i - stride];
+      }
+      if (Math.abs(contour[i + 1] - contour[i - stride + 1]) < epsilon) {
+        contour[i + 1] = contour[i - stride + 1];
+      }
+    }
+  }
+
   const polyTriangles = this._triangulate(contours);
   const originalVertices = this.immediateMode.geometry.vertices;
   this.immediateMode.geometry.vertices = [];

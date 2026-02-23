@@ -141,4 +141,33 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualSuite('Tessellation', function() {
+    visualTest(
+      'Handles nearly identical consecutive vertices from textToContours',
+      function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        p5.background(220);
+        p5.fill(40);
+        p5.noStroke();
+
+        p5.beginShape();
+        p5.vertex(-20, -20);
+        p5.vertex(20, -20);
+        p5.vertex(20, 20);
+        p5.vertex(-20, 20);
+
+        // Inner contour (hole) — vertex 2 has x nudged by 1e-8
+        p5.beginContour();
+        p5.vertex(8, -8);
+        p5.vertex(8, 8);
+        p5.vertex(-8.00000001, 8);  // nearly identical x to next vertex
+        p5.vertex(-8, -8);
+        p5.endContour();
+        p5.endShape(p5.CLOSE);
+
+        screenshot();
+      }
+    );
+  });
 });
