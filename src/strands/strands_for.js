@@ -309,7 +309,7 @@ export class StrandsFor {
     let initialVar = this.initialCb();
 
     // Convert to StrandsNode if it's not already one
-    if (!(initialVar instanceof StrandsNode)) {
+    if (!(initialVar?.isStrandsNode)) {
       const { id, dimension } = primitiveConstructorNode(this.strandsContext, { baseType: BaseType.FLOAT, dimension: 1 }, initialVar);
       initialVar = createStrandsNode(id, dimension, this.strandsContext);
     }

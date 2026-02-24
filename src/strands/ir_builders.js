@@ -1,7 +1,7 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, } from './ir_types';
+import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, booleanOpCode } from './ir_types';
 import { createStrandsNode, StrandsNode } from './strands_node';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
@@ -43,19 +43,29 @@ export function unaryOpNode(strandsContext, nodeOrValue, opCode) {
   const { dag, cfg } = strandsContext;
   let dependsOn;
   let node;
-  if (nodeOrValue instanceof StrandsNode) {
+  if (nodeOrValue?.isStrandsNode) {
     node = nodeOrValue;
   } else {
     const { id, dimension } = primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, nodeOrValue);
     node = createStrandsNode(id, dimension, strandsContext);
   }
   dependsOn = [node.id];
+
+  const typeInfo = {
+    baseType: dag.baseTypes[node.id],
+    dimension: node.dimension
+  };
+  if (booleanOpCode[opCode]) {
+    typeInfo.baseType = BaseType.BOOL;
+    typeInfo.dimension = 1;
+  }
+
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode,
     dependsOn,
-    baseType: dag.baseTypes[node.id],
-    dimension: node.dimension
+    baseType: typeInfo.baseType,
+    dimension: typeInfo.dimension
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
@@ -135,6 +145,11 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
       rightStrandsNode = createStrandsNode(casted.id, casted.dimension, strandsContext);
       finalRightNodeID = rightStrandsNode.id;
     }
+  }
+
+  if (booleanOpCode[opCode]) {
+    cast.toType.baseType = BaseType.BOOL;
+    cast.toType.dimension = 1;
   }
 
   const nodeData = DAG.createNodeData({
@@ -224,6 +239,17 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       calculatedDimensions += dimension;
       continue;
     }
+    else if (typeof dep === 'boolean') {
+      // Handle boolean literals - convert to bool type
+      const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType: BaseType.BOOL }, dep);
+      mappedDependencies.push(id);
+      calculatedDimensions += dimension;
+      // Update baseType to BOOL if it was inferred
+      if (baseType !== BaseType.BOOL) {
+        baseType = BaseType.BOOL;
+      }
+      continue;
+    }
     else {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
@@ -257,10 +283,29 @@ export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray
 
 export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const cfg = strandsContext.cfg;
+  dependsOn = (Array.isArray(dependsOn) ? dependsOn : [dependsOn])
+    .flat(Infinity)
+    .map(a => {
+      if (
+        a.isStrandsNode &&
+        a.typeInfo().baseType === BaseType.INT &&
+        // TODO: handle ivec inputs instead of just int scalars
+        a.typeInfo().dimension === 1
+      ) {
+        return castToFloat(strandsContext, a);
+      } else {
+        return a;
+      }
+    });
   const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
 
   const finalType = {
-    baseType: typeInfo.baseType,
+    // We might have inferred a non numeric type. Currently this is
+    // just used for booleans. Maybe this needs to be something more robust
+    // if we ever want to support inference of e.g. int vectors?
+    baseType: inferredTypeInfo.baseType === BaseType.BOOL
+      ? BaseType.BOOL
+      : typeInfo.baseType,
     dimension: inferredTypeInfo.dimension
   };
 
@@ -270,6 +315,24 @@ export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   }
 
   return { id, dimension: finalType.dimension, components: mappedDependencies };
+}
+
+export function castToFloat(strandsContext, dep) {
+  const { id, dimension } = functionCallNode(
+    strandsContext,
+    strandsContext.backend.getTypeName('float', dep.typeInfo().dimension),
+    [dep],
+    {
+      overloads: [{
+        params: [dep.typeInfo()],
+        returnType: {
+          ...dep.typeInfo(),
+          baseType: BaseType.FLOAT,
+        },
+      }],
+    }
+  );
+  return createStrandsNode(id, dimension, strandsContext);
 }
 
 export function structConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {
@@ -491,7 +554,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       // This may not be the most efficient way, as we swizzle each component individually,
       // so that .xyz becomes .x, .y, .z
       let scalars = [];
-      if (value instanceof StrandsNode) {
+      if (value?.isStrandsNode) {
         if (value.dimension === 1) {
           scalars = Array(chars.length).fill(value);
         } else if (value.dimension === chars.length) {
