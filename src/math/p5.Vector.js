@@ -235,16 +235,13 @@ class Vector {
    * @return {String} string representation of the vector.
    *
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   let v = createVector(20, 30);
    *
    *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    */
   toString() {
     return `vector[${this.values.join(', ')}]`;
@@ -267,8 +264,6 @@ class Vector {
    * @param {Number} [z] z component of the vector.
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -300,8 +295,6 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector|Number[]} value vector to set.
@@ -324,8 +317,6 @@ class Vector {
    * @return {p5.Vector} copy of the <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100 ,100);
    *
@@ -343,8 +334,6 @@ class Vector {
    *
    *   describe('A black point drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   copy() {
     if (this.isPInst) {
@@ -379,8 +368,6 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -412,11 +399,8 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -440,11 +424,8 @@ class Vector {
    *
    *   describe('Three black dots in a diagonal line from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -483,8 +464,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector|Number[]} value The vector to add
@@ -535,8 +514,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -547,11 +525,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 0, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -562,11 +538,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 5]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -577,11 +551,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4, 5);
@@ -593,11 +565,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -609,11 +579,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4, 5);
@@ -625,8 +593,6 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v3.toString());
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector | Number[]}  value  divisor vector.
@@ -687,8 +653,6 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -720,11 +684,8 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -745,11 +706,8 @@ class Vector {
    *
    *   describe('Three black dots in a diagonal line from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -788,8 +746,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector|Number[]} value the vector to subtract
@@ -836,8 +792,6 @@ class Vector {
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -857,11 +811,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   strokeWeight(5);
    *
@@ -876,11 +827,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -901,11 +849,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -926,11 +871,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -953,11 +895,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -992,8 +931,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Number} x number to multiply with the x component of the vector.
@@ -1098,8 +1035,6 @@ class Vector {
    * @param  {Number}    n The number to divide the vector by
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1119,11 +1054,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1143,11 +1075,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1168,11 +1097,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1193,11 +1119,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1220,11 +1143,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function draw() {
    *   background(200);
    *
@@ -1255,8 +1175,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Number} x number to divide with the x component of the vector.
@@ -1314,8 +1232,6 @@ class Vector {
    * @return {Number} magnitude of the vector.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1337,8 +1253,6 @@ class Vector {
    *
    *   describe('A diagonal black line extends from the top left corner of a gray square. The number 50 is written at the end of the line.');
    * }
-   * </code>
-   * </div>
    */
   mag() {
     return Math.sqrt(this.magSq());
@@ -1349,8 +1263,6 @@ class Vector {
    *
    * @return {Number} squared magnitude of the vector.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1373,8 +1285,6 @@ class Vector {
    *
    *   describe('A diagonal black line extends from the top left corner of a gray square. The number 2500 is written at the end of the line.');
    * }
-   * </code>
-   * </div>
    */
   magSq() {
     return this.values.reduce(
@@ -1407,8 +1317,7 @@ class Vector {
    * @return {Number}     dot product.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4);
@@ -1420,11 +1329,9 @@ class Vector {
    *   // Prints "9" to the console.
    *   print(dp);
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1436,11 +1343,8 @@ class Vector {
    *   // Prints "0" to the console.
    *   print(dp);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1480,8 +1384,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
@@ -1510,8 +1412,7 @@ class Vector {
    * @return {p5.Vector}   cross product as a <a href="#/p5.Vector">p5.Vector</a>.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1523,11 +1424,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
    *   print(cp.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1539,8 +1438,6 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
    *   print(cp.toString());
    * }
-   * </code>
-   * </div>
    */
   cross(v) {
     const x = this.y * v.z - this.z * v.y;
@@ -1570,8 +1467,7 @@ class Vector {
    * @return {Number}      distance.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1587,11 +1483,9 @@ class Vector {
    *   // Prints "1.414..." to the console.
    *   print(d);
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1607,11 +1501,8 @@ class Vector {
    *   // Prints "1.414..." to the console.
    *   print(d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1657,8 +1548,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   dist(v) {
     return v.copy().sub(this).mag();
@@ -1675,8 +1564,7 @@ class Vector {
    * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1691,11 +1579,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1712,11 +1598,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1761,8 +1644,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   normalize() {
     const len = this.mag();
@@ -1783,8 +1664,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(10, 20, 2);
@@ -1795,11 +1675,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(10, 20, 2);
@@ -1810,11 +1688,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1857,8 +1732,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   limit(max) {
     const mSq = this.magSq();
@@ -1880,8 +1753,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 0);
@@ -1895,11 +1767,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [6, 8, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 4, 0);
@@ -1913,11 +1783,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [6, 8, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1954,8 +1821,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   setMag(n) {
     return this.normalize().mult(n);
@@ -1977,8 +1842,7 @@ class Vector {
    * @return {Number} angle of rotation.
    *
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1);
@@ -1992,11 +1856,9 @@ class Vector {
    *   // Prints "45" to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class = "norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1);
@@ -2010,11 +1872,8 @@ class Vector {
    *   // Prints "45" to the console.
    *   print(p5.Vector.heading(v));
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2059,8 +1918,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   heading() {
     const h = Math.atan2(this.y, this.x);
@@ -2081,8 +1938,7 @@ class Vector {
    * @param  {Number}    angle angle of rotation.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(0, 1);
@@ -2096,11 +1952,9 @@ class Vector {
    *   // Prints "3.141..." to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2117,11 +1971,8 @@ class Vector {
    *   // Prints "180" to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2159,8 +2010,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   setHeading(a) {
     if (this.isPInst) a = this._toRadians(a);
@@ -2187,8 +2036,7 @@ class Vector {
    * @param  {Number}    angle angle of rotation.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 0);
@@ -2202,11 +2050,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2223,11 +2069,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 0);
@@ -2240,11 +2084,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2261,11 +2103,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let v0;
    * let v1;
    *
@@ -2303,8 +2142,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   rotate(a) {
     let newHeading = this.heading() + a;
@@ -2329,8 +2166,7 @@ class Vector {
    * @param  {p5.Vector}    value x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}       angle between the vectors.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 0);
@@ -2342,11 +2178,9 @@ class Vector {
    *   // Prints "-1.570..." to the console.
    *   print(v1.angleBetween(v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2360,11 +2194,9 @@ class Vector {
    *   // Prints "-90" to the console.
    *   print(v1.angleBetween(v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 0);
@@ -2376,11 +2208,9 @@ class Vector {
    *   // Prints "-1.570..." to the console.
    *   print(p5.Vector.angleBetween(v1, v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2395,11 +2225,8 @@ class Vector {
    *   // Prints "-90" to the console.
    *   print(p5.Vector.angleBetween(v1, v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2448,8 +2275,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   angleBetween(v) {
     const magSqMult = this.magSq() * v.magSq();
@@ -2488,8 +2313,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 1, 1);
@@ -2501,11 +2325,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v0.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
@@ -2516,11 +2338,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 1, 1);
@@ -2532,11 +2352,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v2.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2577,8 +2394,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
@@ -2618,8 +2433,7 @@ class Vector {
    * @return {p5.Vector}
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 0);
@@ -2648,11 +2462,9 @@ class Vector {
    *   // Prints "0.785..." to the console.
    *   print(v0.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 0);
@@ -2681,11 +2493,8 @@ class Vector {
    *   // Prints "0.785..." to the console.
    *   print(v3.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2727,8 +2536,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   slerp(v, amt) {
     // edge cases.
@@ -2814,8 +2621,7 @@ class Vector {
    *                                    to reflect about.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a normal vector.
    *   let n = createVector(0, 1);
@@ -2828,11 +2634,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [4, -6, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a normal vector.
    *   let n = createVector(0, 1);
@@ -2846,11 +2650,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [4, -6, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2901,8 +2702,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   reflect(surfaceNormal) {
     const surfaceNormalCopy = Vector.normalize(surfaceNormal);
@@ -2914,8 +2713,7 @@ class Vector {
    *
    * @return {Number[]} array with the vector's components.
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(20, 30);
@@ -2923,8 +2721,6 @@ class Vector {
    *   // Prints "[20, 30, 0]" to the console.
    *   print(v.array());
    * }
-   * </code>
-   * </div>
    */
   array() {
     return [this.x || 0, this.y || 0, this.z || 0];
@@ -2951,8 +2747,7 @@ class Vector {
    * @param {Number} [z] z component of the vector.
    * @return {Boolean} whether the vectors are equal.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(10, 20, 30);
@@ -2965,11 +2760,9 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(v0.equals(v2));
    * }
-   * </code>
-   * </div>
    *
-   * <div class = "norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(5, 10, 20);
@@ -2982,11 +2775,9 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(v0.equals(v2.x, v2.y, v2.z));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(10, 20, 30);
@@ -2999,8 +2790,6 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(p5.Vector.equals(v0, v2));
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector|Array} value vector to compare.
@@ -3062,8 +2851,7 @@ class Vector {
    * @return {p5.Vector}       new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngle(0);
@@ -3071,11 +2859,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [1, 0, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngle(0, 30);
@@ -3083,11 +2869,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [30, 0, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3120,8 +2903,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   static fromAngle(angle, length) {
     if (typeof length === 'undefined') {
@@ -3141,8 +2922,7 @@ class Vector {
    * @return {p5.Vector}          new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngles(0, 0);
@@ -3150,11 +2930,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, -1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -3182,8 +2959,6 @@ class Vector {
    *   // Draw the sphere.
    *   sphere(35);
    * }
-   * </code>
-   * </div>
    */
   static fromAngles(theta, phi, length) {
     if (typeof length === 'undefined') {
@@ -3207,8 +2982,7 @@ class Vector {
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
@@ -3217,11 +2991,8 @@ class Vector {
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3261,8 +3032,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   static random2D() {
     return this.fromAngle(Math.random() * constants.TWO_PI);
@@ -3274,8 +3043,7 @@ class Vector {
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random3D();
@@ -3284,8 +3052,6 @@ class Vector {
    *   // where x, y, and z are small random numbers.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    */
   static random3D() {
     const angle = Math.random() * constants.TWO_PI;
@@ -3814,8 +3580,6 @@ function vector(p5, fn) {
    * @param {Number} [y] y component of the vector.
    * @param {Number} [z] z component of the vector.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3836,11 +3600,8 @@ function vector(p5, fn) {
    *
    *   describe('Two black dots on a gray square, one at the top left and the other at the bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pos;
    * let vel;
    *
@@ -3870,8 +3631,6 @@ function vector(p5, fn) {
    *   strokeWeight(5);
    *   point(pos);
    * }
-   * </code>
-   * </div>
    */
   p5.Vector = Vector;
 

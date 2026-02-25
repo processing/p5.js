@@ -40,8 +40,6 @@ function attributes(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -59,11 +57,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle with a gray circle at its center. Both circles have black outlines.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -81,8 +76,6 @@ function attributes(p5, fn){
    *
    *   describe('A white circle with a gray circle at its top-left corner. Both circles have black outlines.');
    * }
-   * </code>
-   * </div>
    */
   fn.ellipseMode = function(m) {
     // p5._validateParameters('ellipseMode', arguments);
@@ -111,8 +104,6 @@ function attributes(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let heart;
    *
    * async function setup() {
@@ -133,11 +124,8 @@ function attributes(p5, fn){
    *   image(heart, 20, 60, 16, 16);
    *   image(heart, 40, 60, 32, 32);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -147,11 +135,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -164,8 +149,6 @@ function attributes(p5, fn){
    *
    *   describe('A pixelated white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.noSmooth = function() {
     if (!this._renderer.isP3D) {
@@ -208,8 +191,6 @@ function attributes(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -225,11 +206,8 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the top-left corner of a white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,11 +223,8 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the center of a white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -261,11 +236,8 @@ function attributes(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -281,8 +253,6 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the center of a white square.');
    * }
-   * </code>
-   * </div>
    */
   fn.rectMode = function(m) {
     // p5._validateParameters('rectMode', arguments);
@@ -312,8 +282,6 @@ function attributes(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let heart;
    *
    * async function setup() {
@@ -335,11 +303,8 @@ function attributes(p5, fn){
    *   image(heart, 20, 60, 16, 16);
    *   image(heart, 40, 60, 32, 32);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -349,11 +314,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -366,8 +328,6 @@ function attributes(p5, fn){
    *
    *   describe('A pixelated white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.smooth = function() {
     if (!this._renderer.isP3D) {
@@ -394,8 +354,6 @@ function attributes(p5, fn){
    * @param  {(ROUND|SQUARE|PROJECT)} cap either ROUND, SQUARE, or PROJECT
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -419,8 +377,6 @@ function attributes(p5, fn){
    *     'Three horizontal lines. The top line has rounded ends, the middle line has squared ends, and the bottom line has longer, squared ends.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.strokeCap = function(cap) {
     // p5._validateParameters('strokeCap', arguments);
@@ -449,8 +405,6 @@ function attributes(p5, fn){
    * @param  {(MITER|BEVEL|ROUND)} join either MITER, BEVEL, or ROUND
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -470,11 +424,8 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a pointed tip in center of canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -494,11 +445,8 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a flat tip in center of canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -518,8 +466,6 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a rounded tip in center of canvas.');
    * }
-   * </code>
-   * </div>
    */
   fn.strokeJoin = function(join) {
     // p5._validateParameters('strokeJoin', arguments);
@@ -544,8 +490,6 @@ function attributes(p5, fn){
    * @param  {Number} weight the weight of the stroke (in pixels).
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -564,11 +508,8 @@ function attributes(p5, fn){
    *
    *   describe('Three horizontal black lines. The top line is thin, the middle is medium, and the bottom is thick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -585,8 +526,6 @@ function attributes(p5, fn){
    *
    *   describe('Two horizontal black lines. The top line is thin and the bottom is five times thicker than the top.');
    * }
-   * </code>
-   * </div>
    */
   fn.strokeWeight = function(w) {
     // p5._validateParameters('strokeWeight', arguments);

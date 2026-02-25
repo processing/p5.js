@@ -61,6 +61,16 @@ visualSuite('WebGL', function() {
       p5.image(fbo, 0, 0);
       screenshot();
     });
+
+    visualTest('Works after perspective() with no args', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.perspective();
+      p5.noStroke();
+      p5.lights();
+      p5.sphere(20);
+      screenshot();
+    });
   });
 
   visualSuite('filter', function() {
@@ -262,7 +272,7 @@ visualSuite('WebGL', function() {
     visualTest('OBJ model with MTL file displays diffuse colors correctly', function(p5, screenshot) {
       return new Promise(resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
-        p5.loadModel('/unit/assets/octa-color.obj', model => {
+        p5.loadModel('test/unit/assets/octa-color.obj', model => {
           p5.background(255);
           p5.rotateX(10 * 0.01);
           p5.rotateY(10 * 0.01);
@@ -276,7 +286,7 @@ visualSuite('WebGL', function() {
     visualTest('Object with no colors takes on fill color', function(p5, screenshot) {
       return new Promise(resolve => {
         p5.createCanvas(50, 50, p5.WEBGL);
-        p5.loadModel('/unit/assets/cube.obj', model => {
+        p5.loadModel('test/unit/assets/cube.obj', model => {
           p5.background(255);
           p5.fill('blue'); // Setting a fill color
           p5.rotateX(p5.frameCount * 0.01);
@@ -292,8 +302,8 @@ visualSuite('WebGL', function() {
       'Object with different texture coordinates per use of vertex keeps the coordinates intact',
       async function(p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
-        const tex = await p5.loadImage('/unit/assets/cat.jpg');
-        const cube = await new Promise(resolve => p5.loadModel('/unit/assets/cube-textures.obj', resolve));
+        const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+        const cube = await new Promise(resolve => p5.loadModel('test/unit/assets/cube-textures.obj', resolve));
         cube.normalize();
         p5.background(255);
         p5.texture(tex);
@@ -405,7 +415,7 @@ visualSuite('WebGL', function() {
   visualSuite('ShaderFunctionality', function() {
     visualTest('FillShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const img = await p5.loadImage('/unit/assets/cat.jpg');
+      const img = await p5.loadImage('test/unit/assets/cat.jpg');
       const fillShader = p5.createShader(
         `
       attribute vec3 aPosition;
@@ -456,7 +466,7 @@ visualSuite('WebGL', function() {
 
     visualTest('ImageShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const img = await p5.loadImage('/unit/assets/cat.jpg');
+      const img = await p5.loadImage('test/unit/assets/cat.jpg');
       const imgShader = p5.createShader(
         `
       precision mediump float;
@@ -492,7 +502,7 @@ visualSuite('WebGL', function() {
 
     visualTest('loadMaterialShader', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const materialShader = await p5.loadMaterialShader('/unit/assets/testMaterial.js');
+      const materialShader = await p5.loadMaterialShader('/test/unit/assets/testMaterial.js');
 
       p5.noStroke();
       p5.shader(materialShader);
@@ -516,7 +526,7 @@ visualSuite('WebGL', function() {
       }
 
       // Apply the filter shader (should swap red and green channels)
-      const filterShader = await p5.loadFilterShader('/unit/assets/testFilter.js');
+      const filterShader = await p5.loadFilterShader('/test/unit/assets/testFilter.js');
       p5.filter(filterShader);
       screenshot();
     });
@@ -686,7 +696,7 @@ visualSuite('WebGL', function() {
     visualTest('Flat', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
       const geom = font.textToModel('p5*js', 0, 0, {
@@ -705,7 +715,7 @@ visualSuite('WebGL', function() {
     visualTest('Extruded', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textSize(20);
       const geom = font.textToModel('p5*js', 0, 0, {
@@ -806,7 +816,7 @@ visualSuite('WebGL', function() {
       vi.spyOn(p5._renderer, 'maxCachedGlyphs').mockReturnValue(6);
 
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
 
       p5.textFont(font);
@@ -825,7 +835,7 @@ visualSuite('WebGL', function() {
     visualTest('text renders correctly after geometry with many indices', async (p5, screenshot) => {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
 
       p5.background(255);
@@ -853,7 +863,7 @@ visualSuite('WebGL', function() {
   visualSuite('texture()', () => {
     visualTest('on a rect', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const tex = await p5.loadImage('test/unit/assets/cat.jpg');
       p5.texture(tex);
       p5.rect(-20, -20, 40, 40);
       screenshot();
@@ -861,7 +871,7 @@ visualSuite('WebGL', function() {
 
     visualTest('on a rect with rounded corners', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const tex = await p5.loadImage('test/unit/assets/cat.jpg');
       p5.texture(tex);
       p5.rect(-20, -20, 40, 40, 10);
       screenshot();
@@ -871,7 +881,7 @@ visualSuite('WebGL', function() {
   visualSuite('textures in p5.strands', () => {
     visualTest('uniformTexture() works', async (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
-      const tex = await p5.loadImage('/unit/assets/cat.jpg');
+      const tex = await p5.loadImage('test/unit/assets/cat.jpg');
       const shader = p5.baseMaterialShader().modify(() => {
         const texUniform = p5.uniformTexture(() => tex)
         p5.getPixelInputs((inputs) => {
@@ -929,7 +939,7 @@ visualSuite('WebGL', function() {
           p5.createCanvas(100, 100, p5.WEBGL);
 
           // Load the environment map
-          const env = await p5.loadImage('/unit/assets/spheremap.jpg');
+          const env = await p5.loadImage('test/unit/assets/spheremap.jpg');
           p5.clear();
 
           // Set up panorama background
@@ -1019,6 +1029,24 @@ visualSuite('WebGL', function() {
       } catch (e) {}
       p5.background('red');
       p5.circle(p5.noise(0), p5.noise(0), 20);
+      screenshot();
+    });
+
+    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
+      let firstShader;
+      function firstShaderCallback() {
+        getFinalColor((color) => {
+          color = [width / 60, height / 60, 0, 1];
+          return color;
+        });
+      }
+      p5.createCanvas(60, 60, p5.WEBGL);
+      p5.pixelDensity(1);
+      firstShader = p5.baseColorShader().modify(firstShaderCallback);
+      p5.background(0);
+      p5.shader(firstShader);
+      p5.noStroke();
+      p5.plane(20, 20);
       screenshot();
     });
 
@@ -1126,6 +1154,128 @@ visualSuite('WebGL', function() {
         screenshot();
       });
     });
+
+    visualTest('Strands tutorial', function(p5, screenshot) {
+      // From Luke Plowden's Intro to Strands tutorial
+      // https://beta.p5js.org/tutorials/intro-to-p5-strands/
+
+      function starShaderCallback({ p5 }) {
+        const time = p5.uniformFloat(() => p5.millis());
+        const skyRadius = p5.uniformFloat(90);
+
+        function rand2(st) {
+          return p5.sin((st.x + st.y) * 123.456);
+        }
+
+        function semiSphere() {
+          let id = p5.instanceID();
+          let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
+          let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
+
+          let r = skyRadius;
+          r *= p5.sin(phi);
+          let x = r * p5.sin(phi) * p5.cos(theta);
+          let y = r * 1.5 * p5.cos(phi);
+          let z = r * p5.sin(phi) * p5.sin(theta);
+          return [x, y, z];
+        }
+
+        p5.getWorldInputs((inputs) => {
+          inputs.position += semiSphere();
+          return inputs;
+        });
+
+        p5.getObjectInputs((inputs) => {
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          inputs.position *= size;
+          return inputs;
+        });
+      }
+
+      function pixelateShaderCallback({ p5 }) {
+        const pixelCountX = p5.uniformFloat(() => 100);
+
+        p5.getColor((inputs, canvasContent) => {
+          const aspectRatio = inputs.canvasSize.x / inputs.canvasSize.y;
+          const pixelSize = [pixelCountX, pixelCountX / aspectRatio];
+
+          let coord = inputs.texCoord;
+          coord = p5.floor(coord * pixelSize) / pixelSize;
+
+          let col = p5.getTexture(canvasContent, coord);
+          return col//[coord, 0, 1];
+        });
+      }
+
+      function bloomShaderCallback({ p5, originalImage }) {
+        const preBlur = p5.uniformTexture(() => originalImage);
+
+        getColor((input, canvasContent) => {
+          const blurredCol = p5.getTexture(canvasContent, input.texCoord);
+          const originalCol = p5.getTexture(preBlur, input.texCoord);
+
+          const intensity = p5.max(originalCol, 0.1) * 12.2;
+
+          const bloom = originalCol + blurredCol * intensity;
+          return [bloom.rgb, 1];
+        });
+      }
+
+      p5.createCanvas(200, 200, p5.WEBGL);
+      const stars = p5.buildGeometry(() => p5.sphere(4, 4, 2))
+      const originalImage = p5.createFramebuffer();
+
+      function fresnelShaderCallback({ p5 }) {
+        const fresnelPower = p5.uniformFloat(2);
+        const fresnelBias = p5.uniformFloat(-0.1);
+        const fresnelScale = p5.uniformFloat(2);
+
+        p5.getCameraInputs((inputs) => {
+          let n = p5.normalize(inputs.normal);
+          let v = p5.normalize(-inputs.position);
+          let base = 1.0 - p5.dot(n, v);
+          let fresnel = fresnelScale * p5.pow(base, fresnelPower) + fresnelBias;
+          let col = p5.mix([0, 0, 0], [1, .5, .7], fresnel);
+          inputs.color = [col, 1];
+          return inputs;
+        });
+      }
+
+      const starShader = p5.baseMaterialShader().modify(starShaderCallback, { p5 });
+      const starStrokeShader = p5.baseStrokeShader().modify(starShaderCallback, { p5 })
+      const fresnelShader = p5.baseColorShader().modify(fresnelShaderCallback, { p5 });
+      const bloomShader = p5.baseFilterShader().modify(bloomShaderCallback, { p5, originalImage });
+      const pixelateShader = p5.baseFilterShader().modify(pixelateShaderCallback, { p5 });
+
+      originalImage.begin();
+      p5.background(0);
+
+      p5.push()
+      p5.strokeWeight(2)
+      p5.stroke(255,0,0)
+      p5.fill(255,100, 150)
+      p5.strokeShader(starStrokeShader)
+      p5.shader(starShader);
+      p5.model(stars, 100);
+      p5.pop()
+
+      p5.push()
+      p5.shader(fresnelShader)
+      p5.noStroke()
+      p5.sphere(30);
+      p5.filter(pixelateShader);
+      p5.pop()
+
+      originalImage.end();
+
+      p5.imageMode(p5.CENTER)
+      p5.image(originalImage, 0, 0)
+
+      p5.filter(p5.BLUR, 5)
+      p5.filter(bloomShader);
+
+      screenshot();
+    });
   });
 
   visualSuite('background()', function () {
@@ -1145,4 +1295,226 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('Transforms', function() {
+    visualTest('translate() moves shapes in x and y axes', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+
+      // Red circle at origin
+      p5.fill('red');
+      p5.circle(0, 0, 10);
+
+      // Green circle translated by (15, 0)
+      p5.push();
+      p5.translate(15, 0);
+      p5.fill('green');
+      p5.circle(0, 0, 10);
+      p5.pop();
+
+      // Blue circle translated by (0, 15)
+      p5.push();
+      p5.translate(0, 15);
+      p5.fill('blue');
+      p5.circle(0, 0, 10);
+      p5.pop();
+
+      screenshot();
+    });
+
+    visualTest('rotate() rotates shapes around z-axis', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+      p5.fill('red');
+      p5.rectMode(p5.CENTER);
+      p5.rotate(p5.PI / 4);
+      p5.rect(0, 0, 30, 30);
+      screenshot();
+    });
+
+    visualTest('scale() uniformly scales shapes', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.noStroke();
+      p5.fill('red');
+
+      // Unscaled circle
+      p5.circle(-12, 0, 20);
+
+      // Scaled circle (half size)
+      p5.push();
+      p5.translate(12, 0);
+      p5.scale(0.5);
+      p5.circle(0, 0, 20);
+      p5.pop();
+
+      screenshot();
+    });
+  });
+
+  visualSuite('media assets', function() {
+    visualTest('drawing gifs', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
+
+    visualTest('drawing gifs after a time delay', async function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const gif = await p5.loadImage('/test/unit/assets/nyan_cat.gif');
+      p5.imageMode(p5.CENTER);
+      p5.image(gif, 0, 0);
+      p5.clear()
+      // Simulate waiting for successive draw calls
+      p5._lastRealFrameTime += 300;
+      p5.image(gif, 0, 0);
+      screenshot();
+    });
+  });
+
+  visualSuite('3D Primitives', function() {
+    visualTest('cylinder() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.cylinder(30, 60);
+      screenshot();
+    });
+
+    visualTest('cone() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.cone(30, 60);
+      screenshot();
+    });
+
+    visualTest('ellipsoid() renders with non-uniform radii', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.ellipsoid(20, 30, 40);
+      screenshot();
+    });
+
+    visualTest('torus() renders correctly', function(p5, screenshot) {
+      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.background(255);
+
+      p5.ambientLight(100);
+      p5.directionalLight(255, 255, 255, 0, 0, -1);
+
+      p5.noStroke();
+      p5.fill(200);
+
+      p5.rotateX(p5.PI / 6);
+      p5.rotateY(p5.PI / 4);
+
+      p5.torus(30, 10);
+      screenshot();
+    });
+  });
+
+  visualSuite('Tessellation', function() {
+    visualTest('Handles nearly identical consecutive vertices', function(p5, screenshot) {
+      p5.createCanvas(400, 400, p5.WEBGL);
+
+      const contours = [
+        [
+          [-3.8642425537109375, -6.120738636363637, 0],
+          [3.2025188099254267, -6.120738636363637, 0],
+          [3.2025188099254267, -4.345170454545455, 0],
+          [-3.8642425537109375, -4.345170454545455, 0],
+          [-3.8642425537109375, -6.120738636363637, 0]
+        ],
+        [
+          [-1.8045834628018462, 4.177556818181818, 0],
+          [-1.8045834628018462, -9.387784090909093, 0],
+          [0.29058699174360836, -9.387784090909093, 0],
+          [0.2905869917436083, 3.609374411367136, 0],
+          [0.31044303036623855, 4.068235883781435, 0],
+          [0.38522861430307975, 4.522728865422799, 0],
+          [0.548044378107245, 4.941051136363637, 0],
+          [0.8364672032828204, 5.2932224887960775, 0],
+          [1.2227602871981542, 5.526988636363637, 0],
+          [1.6572258237923885, 5.634502949876295, 0],
+          [2.101666537198154, 5.669034090909091, 0],
+          [2.6695604948237173, 5.633568761673102, 0],
+          [3.0249619917436084, 5.5625, 0],
+          [3.4510983553799726, 7.4446022727272725, 0],
+          [2.8568950819856695, 7.613138889205699, 0],
+          [2.3751340936529037, 7.676962586830456, 0],
+          [1.8892600236717598, 7.693181792704519, 0],
+          [1.2922705720786674, 7.649533731133848, 0],
+          [0.7080836288276859, 7.519788939617751, 0],
+          [0.14854153719815422, 7.311434659090909, 0],
+          [-0.38643934048179873, 7.00959666478984, 0],
+          [-0.858113258144025, 6.61653855366859, 0],
+          [-1.25415732643821, 6.1484375, 0],
+          [-1.5108595282965422, 5.697682732328092, 0],
+          [-1.6824918355513252, 5.207533878495854, 0],
+          [-1.7762971052870198, 4.695933154267308, 0],
+          [-1.8045834628018462, 4.177556818181818, 0]
+        ]
+      ];
+
+      p5.background('red');
+      p5.push();
+      p5.stroke(0);
+      p5.fill('#EEE');
+      p5.scale(15);
+      p5.beginShape();
+      for (const contour of contours) {
+        p5.beginContour();
+        for (const v of contour) {
+          p5.vertex(...v);
+        }
+        p5.endContour();
+      }
+      p5.endShape();
+
+      p5.stroke(0, 255, 0);
+      p5.strokeWeight(5);
+      p5.beginShape(p5.POINTS);
+      for (const contour of contours) {
+        for (const v of contour) {
+          p5.vertex(...v);
+        }
+      }
+      p5.endShape();
+      p5.pop();
+
+      screenshot();
+    });
+  });
 });

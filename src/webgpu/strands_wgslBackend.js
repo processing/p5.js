@@ -73,10 +73,10 @@ const cfgHandlers = {
         // Initialize with default value - WGSL requires initialization
         let defaultValue;
         if (T.dimension === 1) {
-          defaultValue = T.baseType === 'float' ? '0.0' : '0';
+          defaultValue = this.defaultScalarValue(T.baseType);
         } else {
           // For vector types, use constructor with repeated scalar values
-          const scalarDefault = T.baseType === 'float' ? '0.0' : '0';
+          const scalarDefault = this.defaultScalarValue(T.baseType);
           const components = Array(T.dimension).fill(scalarDefault).join(', ');
           defaultValue = `${typeName}(${components})`;
         }
@@ -84,6 +84,15 @@ const cfgHandlers = {
       }
     }
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+  },
+  defaultScalarValue(baseType) {
+    if (baseType === BaseType.FLOAT) {
+      return '0.0';
+    } else if (baseType === BaseType.BOOL) {
+      return 'false';
+    } else {
+      return '0';
+    }
   },
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
@@ -196,7 +205,10 @@ export const wgslBackend = {
     if (!strandsContext.renderer || !strandsContext.baseShader) return;
 
     // Get the next available binding index from the renderer
-    let bindingIndex = strandsContext.renderer.getNextBindingIndex(strandsContext.baseShader);
+    let bindingIndex = strandsContext.renderer.getNextBindingIndex({
+      vert: strandsContext.baseShader.vertSrc(),
+      frag: strandsContext.baseShader.fragSrc(),
+    });
 
     for (const {name, typeInfo} of strandsContext.uniforms) {
       if (typeInfo.baseType === 'sampler2D') {
@@ -220,10 +232,11 @@ export const wgslBackend = {
     return primitiveTypeName;
   },
   generateHookUniformKey(name, typeInfo) {
-    // For sampler2D types, we don't add them to the uniform struct
-    // Instead, they become separate texture and sampler bindings
+    // For sampler2D types, we don't add them to the uniform struct,
+    // but we still need them in the shader's hooks object so that
+    // they can be set by users.
     if (typeInfo.baseType === 'sampler2D') {
-      return null; // Signal that this should not be added to uniform struct
+      return `${name}: sampler2D`; // Signal that this should not be added to uniform struct
     }
     return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
   },
@@ -365,7 +378,7 @@ export const wgslBackend = {
       // Check if this is a uniform variable (but not a texture)
       const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
       if (uniform && uniform.typeInfo.baseType !== 'sampler2D') {
-        return `uniforms.${node.identifier}`;
+        return `hooks.${node.identifier}`;
       }
 
       return node.identifier;
@@ -460,14 +473,7 @@ export const wgslBackend = {
         if (validInputs.length > 0) {
           return this.generateExpression(generationContext, dag, validInputs[0]);
         } else {
-          throw new Error(`No valid inputs for node`)
-          // Fallback: create a default value
-          const typeName = this.getTypeName(node.baseType, node.dimension);
-          if (node.dimension === 1) {
-            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
-          } else {
-            return `${typeName}(0.0)`;
-          }
+          throw new Error('No valid inputs for node');
         }
       }
       case NodeType.ASSIGNMENT:

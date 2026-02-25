@@ -91,8 +91,6 @@ function dataArray(p5, fn){
    * double in size when it goes over its capacity.
    *
    * @example
-   * <div>
-   * <code>
    * // Initialize storage with a capacity of 4
    * const storage = new DataArray(4);
    * console.log(storage.data.length); // 4
@@ -103,8 +101,6 @@ function dataArray(p5, fn){
    * console.log(storage.data.length); // 8
    * console.log(storage.length); // 6
    * console.log(storage.dataArray()); // Float32Array{1, 2, 3, 4, 5, 6}
-   * </code>
-   * </div>
    */
   p5.DataArray = DataArray;
 }

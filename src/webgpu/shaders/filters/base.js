@@ -1,14 +1,25 @@
 const filterUniforms = `
-struct Uniforms {
-  uModelViewMatrix: mat4x4<f32>,
-  uProjectionMatrix: mat4x4<f32>,
+// Group 0: Filter Properties
+struct FilterUniforms {
   canvasSize: vec2<f32>,
   texelSize: vec2<f32>,
 }
 
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+// Group 1: Model Transform
+struct ModelUniforms {
+  uModelViewMatrix: mat4x4<f32>,
+}
+
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+}
+
+@group(0) @binding(0) var<uniform> filterParams: FilterUniforms;
 @group(0) @binding(1) var tex0: texture_2d<f32>;
 @group(0) @binding(2) var tex0_sampler: sampler;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 `;
 
 export const baseFilterVertexShader = filterUniforms + `
@@ -33,7 +44,7 @@ fn main(input: VertexInput) -> VertexOutput {
   let positionVec4 = vec4<f32>(input.aPosition, 1.0);
 
   // project to 3D space
-  output.position = uniforms.uProjectionMatrix * uniforms.uModelViewMatrix * positionVec4;
+  output.position = camera.uProjectionMatrix * model.uModelViewMatrix * positionVec4;
 
   return output;
 }
@@ -59,8 +70,8 @@ fn main(input: FragmentInput) -> FragmentOutput {
   var output: FragmentOutput;
   var inputs: FilterInputs;
   inputs.texCoord = input.vTexCoord;
-  inputs.canvasSize = uniforms.canvasSize;
-  inputs.texelSize = uniforms.texelSize;
+  inputs.canvasSize = filterParams.canvasSize;
+  inputs.texelSize = filterParams.texelSize;
 
   var outColor = HOOK_getColor(inputs, tex0, tex0_sampler);
   outColor = vec4<f32>(outColor.rgb * outColor.a, outColor.a);
