@@ -10,6 +10,8 @@ suite('p5.Vector', function () {
 
   beforeEach(async function () {
     vector(mockP5Prototype);
+  //console.log(typeof mockP5Prototype.createVector); // Debug this
+  //console.log(Object.keys(mockP5Prototype)); // See what was added
   });
 
   afterEach(function () {});
@@ -84,6 +86,7 @@ suite('p5.Vector', function () {
     });
 
     test('should have x, y, z be initialized to 0,0,0', function () {
+      console.log(typeof mockP5Prototype.createVector);
       assert.equal(v.x, 0);
       assert.equal(v.y, 0);
       assert.equal(v.z, 0);
@@ -796,7 +799,7 @@ suite('p5.Vector', function () {
       });
     });
 
-    suite('p5.Vector.mult(v, arr', function () {
+    suite('p5.Vector.mult(v, arr)', function () {
       var v0, arr, res;
       beforeEach(function () {
         v0 = new Vector(1, 2, 3);
@@ -852,7 +855,7 @@ suite('p5.Vector', function () {
     });
 
     suite('with arglist', function () {
-      test('multiply the x, y, z with the scalar', function () {
+      test('divide the x, y, z with the scalar', function () {
         v.div(2, 3, 4);
         expect(v.x).to.be.closeTo(0.5, 0.01);
         expect(v.y).to.be.closeTo(0.333, 0.01);
