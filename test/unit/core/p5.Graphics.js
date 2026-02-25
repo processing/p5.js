@@ -185,6 +185,17 @@ suite('Graphics', function() {
     });
   });
 
+  suite('p5.Graphics.size()', function () {
+    test('it shows error when size() is called', function () {
+      var graph = myp5.createGraphics(100, 100);
+      var consoleStub = sinon.stub(console, 'error');
+      graph.size(50, 50);
+      assert(consoleStub.called);
+      assert.include(consoleStub.getCall(0).args[0], 'resizeCanvas()');
+      consoleStub.restore();
+    });
+  });
+
   suite('p5.Graphics.remove()', function() {
     test('it sets properties to undefined after removal', function() {
       var graph = myp5.createGraphics(10, 17);
