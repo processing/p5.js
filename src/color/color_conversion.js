@@ -12,111 +12,111 @@
  * components are in the range [0, 1]. 'Brightness' and 'value' are used
  * interchangeably.
  */
+/**
+ * @module Color
+ * @submodule Color Conversion
+ * @for p5
+ * @requires core
+ */
+
+/**
+ * Conversions adapted from <http://www.easyrgb.com/en/math.php>.
+ *
+ * In these functions, hue is always in the range [0, 1], just like all other
+ * components are in the range [0, 1]. 'Brightness' and 'value' are used
+ * interchangeably.
+ */
 
 import p5 from '../core/main';
+
+const SECTORS = 6;
+
+/**
+ * Confine hue to the interval [0, 6).
+ */
+const wrapHue = h => (h + SECTORS) % SECTORS;
+
+/**
+ * Calculate brightness/value from lightness and saturation.
+ */
+const valueFromLightness = (li, sat) =>
+  li < 0.5 ? (1 + sat) * li : li + sat - li * sat;
+
+const isGray = chroma => chroma === 0;
+
 p5.ColorConversion = {
+
   /**
    * Convert an HSBA array to HSLA.
    */
-  _hsbaToHSLA(hsba) {
-    const hue = hsba[0];
-    let sat = hsba[1];
-    const val = hsba[2];
-
+  _hsbaToHSLA([h, s, v, a]) {
     // Calculate lightness.
-    const li = (2 - sat) * val / 2;
+    const li = (2 - s) * v / 2;
 
     // Convert saturation.
-    if (li !== 0) {
-      if (li === 1) {
-        sat = 0;
-      } else if (li < 0.5) {
-        sat = sat / (2 - sat);
-      } else {
-        sat = sat * val / (2 - li * 2);
-      }
+    if (li === 0 || li === 1) {
+      return [h, 0, li, a];
     }
 
+    const sat =
+      li < 0.5
+        ? s / (2 - s)
+        : (s * v) / (2 - 2 * li);
+
     // Hue and alpha stay the same.
-    return [hue, sat, li, hsba[3]];
+    return [h, sat, li, a];
   },
 
   /**
    * Convert an HSBA array to RGBA.
    */
-  _hsbaToRGBA(hsba) {
-    const hue = hsba[0] * 6; // We will split hue into 6 sectors.
-    const sat = hsba[1];
-    const val = hsba[2];
+  _hsbaToRGBA([h, s, v, a]) {
+    const hue = h * SECTORS; // We will split hue into 6 sectors.
 
-    let RGBA = [];
-
-    if (sat === 0) {
-      RGBA = [val, val, val, hsba[3]]; // Return early if grayscale.
-    } else {
-      const sector = Math.floor(hue);
-      const tint1 = val * (1 - sat);
-      const tint2 = val * (1 - sat * (hue - sector));
-      const tint3 = val * (1 - sat * (1 + sector - hue));
-      let red, green, blue;
-      if (sector === 1) {
-        // Yellow to green.
-        red = tint2;
-        green = val;
-        blue = tint1;
-      } else if (sector === 2) {
-        // Green to cyan.
-        red = tint1;
-        green = val;
-        blue = tint3;
-      } else if (sector === 3) {
-        // Cyan to blue.
-        red = tint1;
-        green = tint2;
-        blue = val;
-      } else if (sector === 4) {
-        // Blue to magenta.
-        red = tint3;
-        green = tint1;
-        blue = val;
-      } else if (sector === 5) {
-        // Magenta to red.
-        red = val;
-        green = tint1;
-        blue = tint2;
-      } else {
-        // Red to yellow (sector could be 0 or 6).
-        red = val;
-        green = tint3;
-        blue = tint1;
-      }
-      RGBA = [red, green, blue, hsba[3]];
+    if (s === 0) {
+      // Return early if grayscale.
+      return [v, v, v, a];
     }
 
-    return RGBA;
+    const sector = Math.floor(hue);
+    const tint1 = v * (1 - s);
+    const tint2 = v * (1 - s * (hue - sector));
+    const tint3 = v * (1 - s * (1 + sector - hue));
+
+    switch (sector) {
+      case 1:
+        // Yellow to green.
+        return [tint2, v, tint1, a];
+      case 2:
+        // Green to cyan.
+        return [tint1, v, tint3, a];
+      case 3:
+        // Cyan to blue.
+        return [tint1, tint2, v, a];
+      case 4:
+        // Blue to magenta.
+        return [tint3, tint1, v, a];
+      case 5:
+        // Magenta to red.
+        return [v, tint1, tint2, a];
+      default:
+        // Red to yellow (sector could be 0 or 6).
+        return [v, tint3, tint1, a];
+    }
   },
 
   /**
    * Convert an HSLA array to HSBA.
    */
-  _hslaToHSBA(hsla) {
-    const hue = hsla[0];
-    let sat = hsla[1];
-    const li = hsla[2];
-
+  _hslaToHSBA([h, s, li, a]) {
     // Calculate brightness.
-    let val;
-    if (li < 0.5) {
-      val = (1 + sat) * li;
-    } else {
-      val = li + sat - li * sat;
-    }
+    const v = valueFromLightness(li, s);
 
     // Convert saturation.
-    sat = 2 * (val - li) / val;
+    const sat = v === 0 ? 0 : (2 * (v - li)) / v;
 
     // Hue and alpha stay the same.
-    return [hue, sat, val, hsla[3]];
+    return [h, sat, v, a];
   },
 
   /**
@@ -127,144 +127,100 @@ p5.ColorConversion = {
    * components, and pick a convenient third one ('zest') so that we don't need
    * to calculate formal HSBA saturation.
    */
-  _hslaToRGBA(hsla) {
-    const hue = hsla[0] * 6; // We will split hue into 6 sectors.
-    const sat = hsla[1];
-    const li = hsla[2];
+  _hslaToRGBA([h, s, li, a]) {
+    const hue = h * SECTORS; // We will split hue into 6 sectors.
 
-    let RGBA = [];
-
-    if (sat === 0) {
-      RGBA = [li, li, li, hsla[3]]; // Return early if grayscale.
-    } else {
-      // Calculate brightness.
-      let val;
-      if (li < 0.5) {
-        val = (1 + sat) * li;
-      } else {
-        val = li + sat - li * sat;
-      }
-
-      // Define zest.
-      const zest = 2 * li - val;
-
-      // Implement projection (project onto green by default).
-      const hzvToRGB = (hue, zest, val) => {
-        if (hue < 0) {
-          // Hue must wrap to allow projection onto red and blue.
-          hue += 6;
-        } else if (hue >= 6) {
-          hue -= 6;
-        }
-        if (hue < 1) {
-          // Red to yellow (increasing green).
-          return zest + (val - zest) * hue;
-        } else if (hue < 3) {
-          // Yellow to cyan (greatest green).
-          return val;
-        } else if (hue < 4) {
-          // Cyan to blue (decreasing green).
-          return zest + (val - zest) * (4 - hue);
-        } else {
-          // Blue to red (least green).
-          return zest;
-        }
-      };
-
-      // Perform projections, offsetting hue as necessary.
-      RGBA = [
-        hzvToRGB(hue + 2, zest, val),
-        hzvToRGB(hue, zest, val),
-        hzvToRGB(hue - 2, zest, val),
-        hsla[3]
-      ];
+    if (s === 0) {
+      // Return early if grayscale.
+      return [li, li, li, a];
     }
 
-    return RGBA;
+    // Calculate brightness.
+    const v = valueFromLightness(li, s);
+
+    // Define zest.
+    const z = 2 * li - v;
+
+    // Implement projection (project onto green by default).
+    const project = h =>
+      h < 1
+        ? z + (v - z) * h
+        : h < 3
+          ? v
+          : h < 4
+            ? z + (v - z) * (4 - h)
+            : z;
+
+    // Perform projections, offsetting hue as necessary.
+    return [
+      project(wrapHue(hue + 2)),
+      project(wrapHue(hue)),
+      project(wrapHue(hue - 2)),
+      a
+    ];
   },
 
   /**
    * Convert an RGBA array to HSBA.
    */
-  _rgbaToHSBA(rgba) {
-    const red = rgba[0];
-    const green = rgba[1];
-    const blue = rgba[2];
+  _rgbaToHSBA([r, g, b, a]) {
+    const v = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const chroma = v - min;
 
-    const val = Math.max(red, green, blue);
-    const chroma = val - Math.min(red, green, blue);
-
-    let hue, sat;
-    if (chroma === 0) {
+    if (isGray(chroma)) {
       // Return early if grayscale.
-      hue = 0;
-      sat = 0;
-    } else {
-      sat = chroma / val;
-      if (red === val) {
-        // Magenta to yellow.
-        hue = (green - blue) / chroma;
-      } else if (green === val) {
-        // Yellow to cyan.
-        hue = 2 + (blue - red) / chroma;
-      } else if (blue === val) {
-        // Cyan to magenta.
-        hue = 4 + (red - green) / chroma;
-      }
-      if (hue < 0) {
-        // Confine hue to the interval [0, 1).
-        hue += 6;
-      } else if (hue >= 6) {
-        hue -= 6;
-      }
+      return [0, 0, v, a];
     }
 
-    return [hue / 6, sat, val, rgba[3]];
+    let h;
+    if (r === v) {
+      // Magenta to yellow.
+      h = (g - b) / chroma;
+    } else if (g === v) {
+      // Yellow to cyan.
+      h = 2 + (b - r) / chroma;
+    } else {
+      // Cyan to magenta.
+      h = 4 + (r - g) / chroma;
+    }
+
+    return [wrapHue(h) / SECTORS, chroma / v, v, a];
   },
 
   /**
    * Convert an RGBA array to HSLA.
    */
-  _rgbaToHSLA(rgba) {
-    const red = rgba[0];
-    const green = rgba[1];
-    const blue = rgba[2];
+  _rgbaToHSLA([r, g, b, a]) {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const chroma = max - min;
+    const li = (max + min) / 2;
 
-    const val = Math.max(red, green, blue);
-    const min = Math.min(red, green, blue);
-    const li = val + min; // We will halve this later.
-    const chroma = val - min;
-
-    let hue, sat;
-    if (chroma === 0) {
+    if (isGray(chroma)) {
       // Return early if grayscale.
-      hue = 0;
-      sat = 0;
-    } else {
-      if (li < 1) {
-        sat = chroma / li;
-      } else {
-        sat = chroma / (2 - li);
-      }
-      if (red === val) {
-        // Magenta to yellow.
-        hue = (green - blue) / chroma;
-      } else if (green === val) {
-        // Yellow to cyan.
-        hue = 2 + (blue - red) / chroma;
-      } else if (blue === val) {
-        // Cyan to magenta.
-        hue = 4 + (red - green) / chroma;
-      }
-      if (hue < 0) {
-        // Confine hue to the interval [0, 1).
-        hue += 6;
-      } else if (hue >= 6) {
-        hue -= 6;
-      }
+      return [0, 0, li, a];
     }
 
-    return [hue / 6, sat, li / 2, rgba[3]];
+    const sat =
+      li < 0.5
+        ? chroma / (max + min)
+        : chroma / (2 - max - min);
+
+    let h;
+    if (r === max) {
+      // Magenta to yellow.
+      h = (g - b) / chroma;
+    } else if (g === max) {
+      // Yellow to cyan.
+      h = 2 + (b - r) / chroma;
+    } else {
+      // Cyan to magenta.
+      h = 4 + (r - g) / chroma;
+    }
+
+    return [wrapHue(h) / SECTORS, sat, li, a];
   }
 };
+
 export default p5.ColorConversion;
