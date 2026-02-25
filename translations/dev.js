@@ -4,6 +4,7 @@ export { default as ko_translation } from './ko/translation';
 export { default as zh_translation } from './zh/translation';
 export { default as hi_translation } from './hi/translation';
 export { default as ja_translation } from './ja/translation';
+export { default as ne_translation } from './ne/translation';
 
 /**
  * When adding a new language, add a new "export" statement above this.
