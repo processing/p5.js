@@ -588,21 +588,25 @@ function validateParams(p5, fn, lifecycles) {
 
   // Skip FES validation for nested (internal) calls.
   // NOTE: shares the same _isUserCall flag logic as _internal() above.
-  p5.decorateHelper(
-    /^(?!_).+$/,
-    function(target, { name }){
-      return function(...args){
-        const wasInternalCall = this._isUserCall;
-        this._isUserCall = true;
-        try {
-          if (!wasInternalCall && !p5.disableFriendlyErrors && !p5.disableParameterValidator) {
-            validate(name, args);
+  p5.registerDecorator(
+    ({ path }) => {
+      return path.startsWith('p5.prototype');
+    },
+    function(target, { kind, name }){
+      if(kind === 'method'){
+        return function(...args){
+          const wasInternalCall = this._isUserCall;
+          this._isUserCall = true;
+          try {
+            if (!wasInternalCall && !p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+              validate(name, args);
+            }
+            return target.apply(this, args);
+          } finally {
+            this._isUserCall = wasInternalCall;
           }
-          return target.apply(this, args);
-        } finally {
-          this._isUserCall = wasInternalCall;
-        }
-      };
+        };
+      }
     }
   );
 
