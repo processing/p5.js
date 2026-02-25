@@ -1686,6 +1686,73 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TESS mode warns and prevents freeze for >50k vertices', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      var friendlyErrorSpy = sinon.spy(p5, '_friendlyError');
+
+      renderer.beginShape(myp5.TESS);
+      for (let i = 0; i < 60000; i++) {
+        renderer.vertex(
+          Math.random() * 10 - 5,
+          Math.random() * 10 - 5,
+          Math.random() * 10 - 5
+        );
+      }
+      renderer.endShape();
+
+      assert.isTrue(
+        friendlyErrorSpy.called,
+        'p5._friendlyError should be called for large vertex count'
+      );
+
+      const warningCall = friendlyErrorSpy.getCalls().find(call =>
+        call.args[0] && call.args[0].includes('Tessellation warning')
+      );
+      assert.isDefined(
+        warningCall,
+        'Tessellation warning should be shown'
+      );
+
+      assert.equal(
+        renderer.immediateMode.shapeMode,
+        myp5.TRIANGLE_FAN,
+        'Shape mode should be changed to TRIANGLE_FAN when tessellation is skipped'
+      );
+
+      friendlyErrorSpy.restore();
+      done();
+    });
+
+    test('TESS mode works normally for <50k vertices', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      var friendlyErrorSpy = sinon.spy(p5, '_friendlyError');
+
+      // use a simple shape that tessellates quickly
+      renderer.beginShape(myp5.TESS);
+      renderer.vertex(-10, -10, 0);
+      renderer.vertex(10, -10, 0);
+      renderer.vertex(10, 10, 0);
+      renderer.vertex(-10, 10, 0);
+      renderer.endShape(myp5.CLOSE);
+
+      const warningCall = friendlyErrorSpy.getCalls().find(call =>
+        call.args[0] && call.args[0].includes('Tessellation warning')
+      );
+      assert.isUndefined(
+        warningCall,
+        'No tessellation warning should be shown for <50k vertices'
+      );
+
+      assert.equal(
+        renderer.immediateMode.shapeMode,
+        myp5.TRIANGLES,
+        'Shape mode should be TRIANGLES after normal tessellation'
+      );
+
+      friendlyErrorSpy.restore();
+      done();
+    });
+
     test('TESS does not affect stroke colors', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
