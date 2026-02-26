@@ -118,7 +118,7 @@ function installBuiltinGlobalAccessors(strandsContext) {
 // Prototype mirroring helpers
 //////////////////////////////////////////////
 
-/**
+/*
  * Permanently augment both p5.prototype (fn) and p5.Graphics.prototype
  * with a strands function. Overwrites unconditionally - strands wrappers
  * are the correct dual mode implementation.
@@ -131,16 +131,16 @@ function augmentFn(fn, p5, name, value) {
   }
 }
 
-/**
+/*
  * Temporarily augment both p5.prototype (fn) and p5.Graphics.prototype
  * with a hook function. Saves the previous own property value in
- * overridesStore so deinitStrandsContext can restore it.
+ * graphicsOverrides so deinitStrandsContext can restore it.
  */
-function augmentFnTemporary(fn, p5, name, value, overridesStore) {
+function augmentFnTemporary(fn, strandsContext, name, value) {
   fn[name] = value;
-  const GraphicsProto = p5?.Graphics?.prototype;
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
   if (GraphicsProto) {
-    overridesStore[name] = Object.prototype.hasOwnProperty.call(GraphicsProto, name)
+    strandsContext.graphicsOverrides[name] = Object.prototype.hasOwnProperty.call(GraphicsProto, name)
       ? GraphicsProto[name]
       : undefined;
     GraphicsProto[name] = value;
@@ -759,7 +759,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       strandsContext.windowOverrides[name] = window[name];
       strandsContext.fnOverrides[name] = fn[name];
       window[name] = hook;
-      augmentFnTemporary(fn, strandsContext.p5, name, hook, strandsContext.graphicsOverrides);
+      augmentFnTemporary(fn, strandsContext, name, hook);
     }
     hook.earlyReturns = [];
   }
