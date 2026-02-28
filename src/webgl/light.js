@@ -546,6 +546,11 @@ p5.prototype.specularColor = function (v1, v2, v3) {
  *   // Draw the sphere.
  *   sphere(30);
  * }
+ *
+ * function doubleClicked() {
+ *   isLit = !isLit;
+ *   return false;
+ * }
  * </code>
  * </div>
  *
