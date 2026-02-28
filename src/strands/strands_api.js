@@ -132,11 +132,14 @@ function augmentFn(fn, p5, name, value) {
 }
 
 /*
- * Temporarily augment both p5.prototype (fn) and p5.Graphics.prototype
- * with a hook function. Saves the previous own property value in
- * graphicsOverrides so deinitStrandsContext can restore it.
+ * Temporarily augment window, p5.prototype (fn), and p5.Graphics.prototype
+ * with a hook function. Saves previous values into strandsContext override
+ * stores so deinitStrandsContext can restore them.
  */
 function augmentFnTemporary(fn, strandsContext, name, value) {
+  strandsContext.windowOverrides[name] = window[name];
+  strandsContext.fnOverrides[name] = fn[name];
+  window[name] = value;
   fn[name] = value;
   const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
   if (GraphicsProto) {
@@ -756,9 +759,6 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     }
 
     for (const name of aliases) {
-      strandsContext.windowOverrides[name] = window[name];
-      strandsContext.fnOverrides[name] = fn[name];
-      window[name] = hook;
       augmentFnTemporary(fn, strandsContext, name, hook);
     }
     hook.earlyReturns = [];
