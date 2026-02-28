@@ -912,3 +912,400 @@ if (typeof p5 !== "undefined") {
  * @method getCameraInputs
  * @param {Function} callback
  */
+
+/**
+ * Declares a float uniform variable for use in a p5.strands shader.
+ *
+ * Uniforms are values passed from JavaScript into shader code. They stay the
+ * same for each pixel and vertex during one draw call, but can change between
+ * frames.
+ *
+ * `uniformFloat()` creates a uniform that holds one Number. It can only be
+ * called inside a shader <a href="#/p5.Shader/modify">`modify()`</a>
+ * callback or a build function such as
+ * <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>.
+ *
+ * The most common usage is to pass a callback so the value is refreshed each
+ * frame:
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let time = uniformFloat(() => millis() * 0.001);
+ *
+ *   worldInputs.begin();
+ *   worldInputs.position.y += 20 * sin(time + worldInputs.position.x * 0.05);
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ *   describe('A red sphere that undulates over time.');
+ * }
+ * ```
+ *
+ * Advanced usage: pass a name to make the uniform stable even if your build
+ * process minifies variable names.
+ *
+ * ```js
+ * let time = uniformFloat('time');
+ * // later:
+ * myShader.setUniform('time', millis());
+ * ```
+ *
+ * @method uniformFloat
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning a Number each frame.
+ * @param {Function} [callback] callback returning a Number when
+ * `nameOrCallback` is a String.
+ * @returns {Number} a shader value representing a float.
+ */
+
+/**
+ * Declares an integer uniform variable for use in a p5.strands shader.
+ *
+ * `uniformInt()` works like <a href="#/p5/uniformFloat">`uniformFloat()`</a>
+ * but creates an integer uniform.
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let waves = uniformInt(() => 5);
+ *
+ *   worldInputs.begin();
+ *   worldInputs.position.y += 15 * sin(float(waves) * worldInputs.position.x * 0.05);
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('orange');
+ *   sphere(50);
+ *   describe('An orange sphere with a wavy surface.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let count = uniformInt('waveCount');
+ * // later:
+ * myShader.setUniform('waveCount', 5);
+ * ```
+ *
+ * @method uniformInt
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning a Number each frame.
+ * @param {Function} [callback] callback returning a Number when
+ * `nameOrCallback` is a String.
+ * @returns {Number} a shader value representing an integer.
+ */
+
+/**
+ * Declares a boolean uniform variable for use in a p5.strands shader.
+ *
+ * `uniformBool()` works like
+ * <a href="#/p5/uniformFloat">`uniformFloat()`</a> but stores `true`/`false`
+ * values.
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let invert = uniformBool(() => frameCount % 120 < 60);
+ *
+ *   finalColor.begin();
+ *   let color = finalColor.color;
+ *   if (invert) {
+ *     color.r = 1.0 - color.r;
+ *     color.g = 1.0 - color.g;
+ *     color.b = 1.0 - color.b;
+ *   }
+ *   finalColor.set(color);
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('teal');
+ *   sphere(50);
+ *   describe('A sphere that alternates between teal and an inverted color.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let invert = uniformBool('invertSwitch');
+ * // later:
+ * myShader.setUniform('invertSwitch', true);
+ * ```
+ *
+ * @method uniformBool
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning a Boolean each frame.
+ * @param {Function} [callback] callback returning a Boolean when
+ * `nameOrCallback` is a String.
+ * @returns {Boolean} a shader value representing a boolean.
+ */
+
+/**
+ * Declares a two-component vector uniform variable for use in a p5.strands
+ * shader.
+ *
+ * `uniformVec2()` creates a 2D vector uniform. The callback should return two
+ * numbers, such as `[x, y]`.
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let offset = uniformVec2(() => [
+ *     50 * sin(millis() * 0.001),
+ *     50 * cos(millis() * 0.001)
+ *   ]);
+ *
+ *   worldInputs.begin();
+ *   worldInputs.position.x += offset.x;
+ *   worldInputs.position.y += offset.y;
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('green');
+ *   sphere(30);
+ *   describe('A green sphere that moves in a circular path.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let offset = uniformVec2('orbitOffset');
+ * // later:
+ * myShader.setUniform('orbitOffset', [x, y]);
+ * ```
+ *
+ * Note: `uniformVector2()` is an alias for `uniformVec2()`.
+ *
+ * @method uniformVec2
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning two numbers each frame.
+ * @param {Function} [callback] callback returning two numbers when
+ * `nameOrCallback` is a String.
+ * @returns {Number[]} a shader value representing a 2D vector.
+ */
+
+/**
+ * Declares a three-component vector uniform variable for use in a p5.strands
+ * shader.
+ *
+ * `uniformVec3()` creates a 3D vector uniform. The callback should return
+ * three numbers, such as `[x, y, z]`.
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let tint = uniformVec3(() => [
+ *     sin(millis() * 0.001) * 0.5 + 0.5,
+ *     cos(millis() * 0.002) * 0.5 + 0.5,
+ *     sin(millis() * 0.003) * 0.5 + 0.5
+ *   ]);
+ *
+ *   finalColor.begin();
+ *   let color = finalColor.color;
+ *   color.r *= tint.x;
+ *   color.g *= tint.y;
+ *   color.b *= tint.z;
+ *   finalColor.set(color);
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('white');
+ *   sphere(50);
+ *   describe('A white sphere with a smoothly shifting color tint over time.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let tint = uniformVec3('tintColor');
+ * // later:
+ * myShader.setUniform('tintColor', [1, 0.5, 0.8]);
+ * ```
+ *
+ * Note: `uniformVector3()` is an alias for `uniformVec3()`.
+ *
+ * @method uniformVec3
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning three numbers each frame.
+ * @param {Function} [callback] callback returning three numbers when
+ * `nameOrCallback` is a String.
+ * @returns {Number[]} a shader value representing a 3D vector.
+ */
+
+/**
+ * Declares a four-component vector uniform variable for use in a p5.strands
+ * shader.
+ *
+ * `uniformVec4()` creates a 4D vector uniform. The callback should return
+ * four numbers, such as `[x, y, z, w]`.
+ *
+ * ```js example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let overlay = uniformVec4(() => [
+ *     sin(millis() * 0.001) * 0.5 + 0.5,
+ *     0.2,
+ *     0.8,
+ *     0.5
+ *   ]);
+ *
+ *   finalColor.begin();
+ *   let color = finalColor.color;
+ *   finalColor.set(mix(color, overlay, overlay.a));
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('white');
+ *   sphere(50);
+ *   describe('A white sphere with a pulsing blue-purple color overlay.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let overlay = uniformVec4('overlayColor');
+ * // later:
+ * myShader.setUniform('overlayColor', [1, 0, 0, 0.25]);
+ * ```
+ *
+ * Note: `uniformVector4()` is an alias for `uniformVec4()`.
+ *
+ * @method uniformVec4
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning four numbers each frame.
+ * @param {Function} [callback] callback returning four numbers when
+ * `nameOrCallback` is a String.
+ * @returns {Number[]} a shader value representing a 4D vector.
+ */
+
+/**
+ * Declares a texture uniform variable for use in a p5.strands shader.
+ *
+ * `uniformTexture()` creates a texture uniform. The callback should return a
+ * texture source such as a <a href="#/p5.Image">`p5.Image`</a>,
+ * <a href="#/p5.Graphics">`p5.Graphics`</a>, or
+ * <a href="#/p5.Framebuffer">`p5.Framebuffer`</a>. You can sample it with
+ * <a href="#/p5/getTexture">`getTexture()`</a>.
+ *
+ * ```js example
+ * let myShader;
+ * let pg;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   pg = createGraphics(200, 200);
+ *   pg.background('orange');
+ *   pg.fill('white');
+ *   pg.circle(100, 100, 80);
+ *   myShader = buildFilterShader(effect);
+ * }
+ *
+ * function effect() {
+ *   let overlay = uniformTexture(() => pg);
+ *
+ *   filterColor.begin();
+ *   let original = getTexture(filterColor.canvasContent, filterColor.texCoord);
+ *   let tex = getTexture(overlay, filterColor.texCoord);
+ *   filterColor.set(mix(original, tex, 0.5));
+ *   filterColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   fill('blue');
+ *   circle(0, 0, 100);
+ *   filter(myShader);
+ *   describe('A blue circle blended with an orange and white pattern.');
+ * }
+ * ```
+ *
+ * Advanced usage with explicit uniform naming:
+ *
+ * ```js
+ * let overlay = uniformTexture('overlayTex');
+ * // later:
+ * myShader.setUniform('overlayTex', pg);
+ * ```
+ *
+ * Note: `uniformSampler2D()` is an alias for `uniformTexture()`.
+ *
+ * @method uniformTexture
+ * @beta
+ * @param {(String|Function)} [nameOrCallback] optional uniform name, or a
+ * callback returning a texture source each frame.
+ * @param {Function} [callback] callback returning a texture source when
+ * `nameOrCallback` is a String.
+ * @returns {*} a shader value representing a texture.
+ */
