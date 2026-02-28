@@ -136,13 +136,15 @@ function loadingDisplaying(p5, fn){
         pImg.drawingContext.drawImage(img, 0, 0);
       }
 
-      pImg.modified = true;
-
-      if(successCallback){
-        return successCallback(pImg);
-      }else{
-        return pImg;
-      }
+      const cb = () => {
+        pImg.modified = true;
+        if(successCallback){
+          return successCallback(pImg);
+        }else{
+          return pImg;
+        }
+      };
+      return this._internal ? this._internal(cb) : cb();
 
     } catch(err) {
       p5._friendlyFileLoadError(0, path);
