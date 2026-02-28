@@ -143,10 +143,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
-              self._decrementPreload();
             } else {
               console.error(e);
             }
+            self._decrementPreload();
           }
         );
       } else {
@@ -170,10 +170,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           p5._friendlyFileLoadError(0, img.src);
           if (typeof failureCallback === 'function') {
             failureCallback(e);
-            self._decrementPreload();
           } else {
             console.error(e);
           }
+          self._decrementPreload();
         };
 
         // Set crossOrigin in case image is served with CORS headers.
@@ -193,10 +193,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
-        self._decrementPreload();
       } else {
         console.error(e);
       }
+      self._decrementPreload();
     });
   return pImg;
 };
