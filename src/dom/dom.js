@@ -481,9 +481,15 @@ p5.Element.prototype.input = function (fxn) {
 function addElement(elt, pInst, media) {
   const node = pInst._userNode ? pInst._userNode : document.body;
   node.appendChild(elt);
+  elt.addEventListener('mouseup', e => {
+    if (pInst && pInst.mouseIsPressed && typeof pInst._onmouseup === 'function') {
+      pInst._onmouseup(e);
+    }
+  });
   const c = media
     ? new p5.MediaElement(elt, pInst)
     : new p5.Element(elt, pInst);
+
   pInst._elements.push(c);
   return c;
 }
