@@ -11,12 +11,27 @@ export function createPhiNode(strandsContext, phiInputs, varName) {
 
   // Get dimension and baseType from first valid input, skipping ASSIGN_ON_USE nodes
   const inputNodes = validInputs.map((input) => DAG.getNodeDataFromID(strandsContext.dag, input.value.id));
-  let firstInput = inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE && input.dimension) ??
-    inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE) ??
-    inputNodes[0];
 
-  const dimension = firstInput.dimension;
-  const baseType = firstInput.baseType;
+  // Find first non-ASSIGN_ON_USE input to determine type
+  let typeSource = inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE && input.dimension) ??
+    inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE);
+
+  // If all are ASSIGN_ON_USE, fall back to first input
+  if (!typeSource) {
+    typeSource = inputNodes[0];
+  }
+
+  const dimension = typeSource.dimension;
+  const baseType = typeSource.baseType;
+
+  // Propagate the type to all ASSIGN_ON_USE inputs
+  if (baseType !== BaseType.ASSIGN_ON_USE) {
+    for (const input of inputNodes) {
+      if (input.baseType === BaseType.ASSIGN_ON_USE) {
+        DAG.propagateTypeToAssignOnUse(strandsContext.dag, input.id, baseType, dimension);
+      }
+    }
+  }
 
   const nodeData = {
     nodeType: NodeType.PHI,
