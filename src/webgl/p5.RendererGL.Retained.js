@@ -8,9 +8,9 @@ import * as constants from '../core/constants';
 /**
  * @param {p5.Geometry} geometry The model whose resources will be freed
  */
-p5.RendererGL.prototype.freeGeometry = function(geometry) {
+p5.RendererGL.prototype.freeGeometry = function (geometry) {
   if (!geometry.gid) {
-    console.warn('The model you passed to freeGeometry does not have an id!');
+    p5._friendlyError('The model you passed to freeGeometry does not have an id!', 'freeGeometry');
     return;
   }
   this._freeBuffers(geometry.gid);
@@ -24,20 +24,34 @@ p5.RendererGL.prototype.freeGeometry = function(geometry) {
  * @param  {String} gId  key of the geometry object
  * @returns {Object} a new buffer object
  */
-p5.RendererGL.prototype._initBufferDefaults = function(gId) {
+p5.RendererGL.prototype._initBufferDefaults = function (gId) {
   this._freeBuffers(gId);
 
-  //@TODO remove this limit on hashes in retainedMode.geometry
-  if (Object.keys(this.retainedMode.geometry).length > 1000) {
-    const key = Object.keys(this.retainedMode.geometry)[0];
-    this._freeBuffers(key);
+  // LRU cache eviction: when the geometry cache exceeds 1000 entries,
+  // evict the least recently used geometry instead of the oldest created.
+  // This prevents silently freeing geometry that is still being drawn.
+  const keys = Object.keys(this.retainedMode.geometry);
+  if (keys.length > 1000) {
+    let lruKey = null;
+    let lruTime = Infinity;
+    for (const k of keys) {
+      const entry = this.retainedMode.geometry[k];
+      const lastUsed = entry._lastUsed || 0;
+      if (lastUsed < lruTime) {
+        lruTime = lastUsed;
+        lruKey = k;
+      }
+    }
+    if (lruKey !== null && lruKey !== gId) {
+      this._freeBuffers(lruKey);
+    }
   }
 
   //create a new entry in our retainedMode.geometry
   return (this.retainedMode.geometry[gId] = {});
 };
 
-p5.RendererGL.prototype._freeBuffers = function(gId) {
+p5.RendererGL.prototype._freeBuffers = function (gId) {
   const buffers = this.retainedMode.geometry[gId];
   if (!buffers) {
     return;
@@ -71,7 +85,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
  * @param  {String} gId    key of the geometry object
  * @param  {p5.Geometry}  model contains geometry data
  */
-p5.RendererGL.prototype.createBuffers = function(gId, model) {
+p5.RendererGL.prototype.createBuffers = function (gId, model) {
   const gl = this.GL;
   //initialize the gl buffers for our geom groups
   const buffers = this._initBufferDefaults(gId);
@@ -123,9 +137,14 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
  * @param  {String} gId     ID in our geom hash
  * @chainable
  */
-p5.RendererGL.prototype.drawBuffers = function(gId) {
+p5.RendererGL.prototype.drawBuffers = function (gId) {
   const gl = this.GL;
   const geometry = this.retainedMode.geometry[gId];
+
+  // Track last usage time for LRU cache eviction
+  if (geometry) {
+    geometry._lastUsed = performance.now();
+  }
 
   if (
     !this.geometryBuilder &&
@@ -189,7 +208,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
  * @param {Number} scaleY  the amount to scale in the Y direction
  * @param {Number} scaleZ  the amount to scale in the Z direction
  */
-p5.RendererGL.prototype.drawBuffersScaled = function(
+p5.RendererGL.prototype.drawBuffersScaled = function (
   gId,
   scaleX,
   scaleY,
@@ -205,7 +224,7 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
     this.uModelMatrix = originalModelMatrix;
   }
 };
-p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
+p5.RendererGL.prototype._drawArrays = function (drawMode, gId) {
   this.GL.drawArrays(
     drawMode,
     0,
@@ -214,7 +233,7 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   return this;
 };
 
-p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
+p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
   const buffers = this.retainedMode.geometry[gId];
   const gl = this.GL;
   // render the fill
@@ -244,7 +263,7 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   }
 };
 
-p5.RendererGL.prototype._drawPoints = function(vertices, pointBuffers) {
+p5.RendererGL.prototype._drawPoints = function (vertices, pointBuffers) {
   const gl = this.GL;
   const pointShader = this._getImmediatePointShader();
   this._setPointUniforms(pointShader);
