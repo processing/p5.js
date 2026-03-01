@@ -198,8 +198,8 @@ class Framebuffer {
       if ((settings.width === undefined) !== (settings.height === undefined)) {
         console.warn(
           'Please supply both width and height for a framebuffer to give it a ' +
-            'size. Only one was given, so the framebuffer will match the size ' +
-            'of its canvas.'
+          'size. Only one was given, so the framebuffer will match the size ' +
+          'of its canvas.'
         );
       }
       this.width = target.width;
@@ -486,7 +486,7 @@ class Framebuffer {
     ) {
       console.warn(
         'Unable to create depth textures in this environment. Falling back ' +
-          'to a framebuffer without depth.'
+        'to a framebuffer without depth.'
       );
       this.useDepth = false;
     }
@@ -498,7 +498,7 @@ class Framebuffer {
     ) {
       console.warn(
         'FLOAT depth format is unavailable in WebGL 1. ' +
-          'Defaulting to UNSIGNED_INT.'
+        'Defaulting to UNSIGNED_INT.'
       );
       this.depthFormat = constants.UNSIGNED_INT;
     }
@@ -510,8 +510,8 @@ class Framebuffer {
     ].includes(this.format)) {
       console.warn(
         'Unknown Framebuffer format. ' +
-          'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
-          'Defaulting to UNSIGNED_BYTE.'
+        'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
+        'Defaulting to UNSIGNED_BYTE.'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -521,7 +521,7 @@ class Framebuffer {
     ].includes(this.depthFormat)) {
       console.warn(
         'Unknown Framebuffer depth format. ' +
-          'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
+        'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
       );
       this.depthFormat = constants.FLOAT;
     }
@@ -530,7 +530,7 @@ class Framebuffer {
     if (!support.float && this.format === constants.FLOAT) {
       console.warn(
         'This environment does not support FLOAT textures. ' +
-          'Falling back to UNSIGNED_BYTE.'
+        'Falling back to UNSIGNED_BYTE.'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -541,14 +541,14 @@ class Framebuffer {
     ) {
       console.warn(
         'This environment does not support FLOAT depth textures. ' +
-          'Falling back to UNSIGNED_INT.'
+        'Falling back to UNSIGNED_INT.'
       );
       this.depthFormat = constants.UNSIGNED_INT;
     }
     if (!support.halfFloat && this.format === constants.HALF_FLOAT) {
       console.warn(
         'This environment does not support HALF_FLOAT textures. ' +
-          'Falling back to UNSIGNED_BYTE.'
+        'Falling back to UNSIGNED_BYTE.'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -559,7 +559,7 @@ class Framebuffer {
     ) {
       console.warn(
         'FLOAT and HALF_FLOAT formats do not work cross-platform with only ' +
-          'RGB channels. Falling back to RGBA.'
+        'RGB channels. Falling back to RGBA.'
       );
       this.channels = constants.RGBA;
     }
@@ -1500,8 +1500,9 @@ class Framebuffer {
       h = this.height;
     } else if (w === undefined && h === undefined) {
       if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
-        console.warn(
-          'The x and y values passed to p5.Framebuffer.get are outside of its range and will be clamped.'
+        p5._friendlyError(
+          'The x and y values passed to p5.Framebuffer.get are outside of its range and will be clamped.',
+          'p5.Framebuffer.get'
         );
         x = this.target.constrain(x, 0, this.width - 1);
         y = this.target.constrain(y, 0, this.height - 1);
@@ -1562,7 +1563,7 @@ class Framebuffer {
       }
     }
 
-    // Create an image from the data
+    // Create an image from the data at the full framebuffer resolution
     const region = new p5.Image(w * this.density, h * this.density);
     region.imageData = region.canvas.getContext('2d').createImageData(
       region.width,
@@ -1572,8 +1573,11 @@ class Framebuffer {
     region.pixels = region.imageData.data;
     region.updatePixels();
     if (this.density !== 1) {
-      // TODO: support get() at a pixel density > 1
-      region.resize(w, h);
+      // Set the pixel density on the returned image so that it retains
+      // its full-resolution data while reporting the correct logical
+      // width and height. This avoids the lossy downscale that resize()
+      // would perform.
+      region.pixelDensity(this.density);
     }
     return region;
   }
