@@ -30,7 +30,7 @@ import './p5.RenderBuffer';
  *                       and TESS(WEBGL only)
  * @chainable
  */
-p5.RendererGL.prototype.beginShape = function(mode) {
+p5.RendererGL.prototype.beginShape = function (mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
@@ -46,7 +46,7 @@ const immediateBufferStrides = {
   uvs: 2
 };
 
-p5.RendererGL.prototype.beginContour = function() {
+p5.RendererGL.prototype.beginContour = function () {
   if (this.immediateMode.shapeMode !== constants.TESS) {
     throw new Error('WebGL mode can only use contours with beginShape(TESS).');
   }
@@ -65,7 +65,7 @@ p5.RendererGL.prototype.beginContour = function() {
  * @chainable
  * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
  */
-p5.RendererGL.prototype.vertex = function(x, y) {
+p5.RendererGL.prototype.vertex = function (x, y) {
   // WebGL 1 doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
   // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
   // work to convert QUAD_STRIP here, since the only difference is in how edges
@@ -139,15 +139,16 @@ p5.RendererGL.prototype.vertex = function(x, y) {
       this.userStrokeShader !== undefined ||
       this.userPointShader !== undefined
     ) {
-    // Do nothing if user-defined shaders are present
+      // Do nothing if user-defined shaders are present
     } else if (
       this._tex === null &&
       arguments.length >= 4
     ) {
       // Only throw this warning if custom uv's have  been provided
-      console.warn(
+      p5._friendlyError(
         'You must first call texture() before using' +
-          ' vertex() with image based u and v coordinates'
+        ' vertex() with image based u and v coordinates.',
+        'vertex'
       );
     }
   }
@@ -178,7 +179,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
  * @param  {Vector} v
  * @chainable
  */
-p5.RendererGL.prototype.normal = function(xorv, y, z) {
+p5.RendererGL.prototype.normal = function (xorv, y, z) {
   if (xorv instanceof p5.Vector) {
     this._currentNormal = xorv;
   } else {
@@ -192,7 +193,7 @@ p5.RendererGL.prototype.normal = function(xorv, y, z) {
  * End shape drawing and render vertices to screen.
  * @chainable
  */
-p5.RendererGL.prototype.endShape = function(
+p5.RendererGL.prototype.endShape = function (
   mode,
   isCurve,
   isBezier,
@@ -212,7 +213,7 @@ p5.RendererGL.prototype.endShape = function(
   // but in case of triangle we can skip the breaking into small triangle
   // this can optimize performance by skipping the step of breaking it into triangles
   if (this.immediateMode.geometry.vertices.length === 3 &&
-      this.immediateMode.shapeMode === constants.TESS
+    this.immediateMode.shapeMode === constants.TESS
   ) {
     this.immediateMode.shapeMode = constants.TRIANGLES;
   }
@@ -280,7 +281,7 @@ p5.RendererGL.prototype.endShape = function(
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
  *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
  */
-p5.RendererGL.prototype._processVertices = function(mode) {
+p5.RendererGL.prototype._processVertices = function (mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
   const calculateStroke = this._doStroke;
@@ -323,7 +324,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
  * @private
  * @returns  {Number[]} indices for custom shape vertices indicating edges.
  */
-p5.RendererGL.prototype._calculateEdges = function(
+p5.RendererGL.prototype._calculateEdges = function (
   shapeMode,
   verts,
   shouldClose
@@ -409,7 +410,7 @@ p5.RendererGL.prototype._calculateEdges = function(
  * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
  * @private
  */
-p5.RendererGL.prototype._tesselateShape = function() {
+p5.RendererGL.prototype._tesselateShape = function () {
   // TODO: handle non-TESS shape modes that have contours
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [[]];
@@ -421,7 +422,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
       this.immediateMode.contourIndices.shift();
       contours.push([]);
     }
-    contours[contours.length-1].push(
+    contours[contours.length - 1].push(
       this.immediateMode.geometry.vertices[i].x,
       this.immediateMode.geometry.vertices[i].y,
       this.immediateMode.geometry.vertices[i].z,
@@ -486,7 +487,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
               const dX = orig.x - vert.x;
               const dY = orig.y - vert.y;
               const dZ = orig.z - vert.z;
-              const dist = dX*dX + dY*dY + dZ*dZ;
+              const dist = dX * dX + dY * dY + dZ * dZ;
               if (dist < closestDist) {
                 closestDist = dist;
                 closestIndex = i;
@@ -507,7 +508,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
+p5.RendererGL.prototype._drawImmediateFill = function (count = 1) {
   const gl = this.GL;
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
@@ -543,7 +544,7 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
       );
     }
     catch (e) {
-      console.log('🌸 p5.js says: Instancing is only supported in WebGL2 mode');
+      p5._friendlyError('Instancing is only supported in WebGL2 mode.', 'endShape');
     }
   }
   shader.unbindShader();
@@ -554,7 +555,7 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
  * enabling all appropriate buffers, applying color blend, and drawing the stroke geometry.
  * @private
  */
-p5.RendererGL.prototype._drawImmediateStroke = function() {
+p5.RendererGL.prototype._drawImmediateStroke = function () {
   const gl = this.GL;
 
   this._useLineColor =

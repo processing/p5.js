@@ -266,9 +266,10 @@ const filterShaderVert = readFileSync(join(__dirname, '/shaders/filters/default.
  */
 p5.prototype.setAttributes = function (key, value) {
   if (typeof this._glAttributes === 'undefined') {
-    console.log(
+    p5._friendlyError(
       'You are trying to use setAttributes on a p5.Graphics object ' +
-      'that does not use a WEBGL renderer.'
+      'that does not use a WEBGL renderer.',
+      'setAttributes'
     );
     return;
   }
@@ -954,9 +955,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     );
 
     if (adjustedWidth !== width || adjustedHeight !== height) {
-      console.warn(
-        'Warning: The requested width/height exceeds hardware limits. ' +
-          `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
+      p5._friendlyError(
+        'The requested width/height exceeds hardware limits. ' +
+        `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`,
+        'p5.RendererGL'
       );
     }
 
@@ -1359,8 +1361,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       mode === constants.SOFT_LIGHT ||
       mode === constants.DODGE
     ) {
-      console.warn(
-        'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
+      p5._friendlyError(
+        'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.',
+        'blendMode'
       );
     }
   }
@@ -1529,8 +1532,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
-      console.log(
-        'loadPixels only works in WebGL when preserveDrawingBuffer ' + 'is true.'
+      p5._friendlyError(
+        'loadPixels only works in WebGL when preserveDrawingBuffer is true.',
+        'loadPixels'
       );
       return;
     }
@@ -2495,8 +2499,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Enable per-vertex color for POINTS when available
     const useVertexColor =
       (this.immediateMode && this.immediateMode.geometry &&
-       this.immediateMode.geometry.vertexStrokeColors &&
-       this.immediateMode.geometry.vertexStrokeColors.length > 0);
+        this.immediateMode.geometry.vertexStrokeColors &&
+        this.immediateMode.geometry.vertexStrokeColors.length > 0);
     pointShader.setUniform('uUseVertexColor', !!useVertexColor);
   }
 
@@ -2602,13 +2606,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     function begincallback(type) {
       if (type !== libtess.primitiveType.GL_TRIANGLES) {
-        console.log(`expected TRIANGLES but got type: ${type}`);
+        p5._friendlyError(`expected TRIANGLES but got type: ${type}`, 'p5.RendererGL._initTessy');
       }
     }
 
     function errorcallback(errno) {
-      console.log('error callback');
-      console.log(`error number: ${errno}`);
+      p5._friendlyError(`Tesselation error callback: error number ${errno}`, 'p5.RendererGL._initTessy');
     }
     // callback for when segments intersect and must be split
     function combinecallback(coords, data, weight) {
