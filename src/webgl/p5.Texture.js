@@ -41,7 +41,7 @@ import * as constants from '../core/constants';
  * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
  */
 p5.Texture = class Texture {
-  constructor (renderer, obj, settings) {
+  constructor(renderer, obj, settings) {
     this._renderer = renderer;
 
     const gl = this._renderer.GL;
@@ -61,7 +61,7 @@ p5.Texture = class Texture {
 
     const support = checkWebGLCapabilities(renderer);
     if (this.glFormat === gl.HALF_FLOAT && !support.halfFloat) {
-      console.log('This device does not support dataType HALF_FLOAT. Falling back to FLOAT.');
+      p5._friendlyError('This device does not support dataType HALF_FLOAT. Falling back to FLOAT.', 'p5.Texture');
       this.glDataType = gl.FLOAT;
     }
     if (
@@ -69,12 +69,12 @@ p5.Texture = class Texture {
       (this.glMinFilter === gl.LINEAR || this.glMagFilter === gl.LINEAR) &&
       !support.halfFloatLinear
     ) {
-      console.log('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.');
+      p5._friendlyError('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.', 'p5.Texture');
       if (this.glMinFilter === gl.LINEAR) this.glMinFilter = gl.NEAREST;
       if (this.glMagFilter === gl.LINEAR) this.glMagFilter = gl.NEAREST;
     }
     if (this.glFormat === gl.FLOAT && !support.float) {
-      console.log('This device does not support dataType FLOAT. Falling back to UNSIGNED_BYTE.');
+      p5._friendlyError('This device does not support dataType FLOAT. Falling back to UNSIGNED_BYTE.', 'p5.Texture');
       this.glDataType = gl.UNSIGNED_BYTE;
     }
     if (
@@ -82,7 +82,7 @@ p5.Texture = class Texture {
       (this.glMinFilter === gl.LINEAR || this.glMagFilter === gl.LINEAR) &&
       !support.floatLinear
     ) {
-      console.log('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.');
+      p5._friendlyError('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.', 'p5.Texture');
       if (this.glMinFilter === gl.LINEAR) this.glMinFilter = gl.NEAREST;
       if (this.glMagFilter === gl.LINEAR) this.glMagFilter = gl.NEAREST;
     }
@@ -112,20 +112,20 @@ p5.Texture = class Texture {
     return this;
   }
 
-  _getTextureDataFromSource () {
+  _getTextureDataFromSource() {
     let textureData;
     if (this.isFramebufferTexture) {
       textureData = this.src.rawTexture();
     } else if (this.isSrcP5Image) {
-    // param is a p5.Image
+      // param is a p5.Image
       textureData = this.src.canvas;
     } else if (
       this.isSrcMediaElement ||
-    this.isSrcP5Graphics ||
-    this.isSrcP5Renderer ||
-    this.isSrcHTMLElement
+      this.isSrcP5Graphics ||
+      this.isSrcP5Renderer ||
+      this.isSrcHTMLElement
     ) {
-    // if param is a video HTML element
+      // if param is a video HTML element
       if (this.src._ensureCanvas) {
         this.src._ensureCanvas();
       }
@@ -143,7 +143,7 @@ p5.Texture = class Texture {
    * @private
    * @method init
    */
-  init (data) {
+  init(data) {
     const gl = this._renderer.GL;
     if (!this.isFramebufferTexture) {
       this.glTex = gl.createTexture();
@@ -166,8 +166,8 @@ p5.Texture = class Texture {
       this.height === 0 ||
       (this.isSrcMediaElement && !this.src.loadedmetadata)
     ) {
-    // assign a 1×1 empty texture initially, because data is not yet ready,
-    // so that no errors occur in gl console!
+      // assign a 1×1 empty texture initially, because data is not yet ready,
+      // so that no errors occur in gl console!
       const tmpdata = new Uint8Array([1, 1, 1, 1]);
       gl.texImage2D(
         this.glTarget,
@@ -181,7 +181,7 @@ p5.Texture = class Texture {
         tmpdata
       );
     } else {
-    // data is ready: just push the texture!
+      // data is ready: just push the texture!
       gl.texImage2D(
         this.glTarget,
         0,
@@ -200,7 +200,7 @@ p5.Texture = class Texture {
    * not the data has occurred, this method simply re-uploads the texture.
    * @method update
    */
-  update () {
+  update() {
     const data = this.src;
     if (data.width === 0 || data.height === 0) {
       return false; // nothing to do!
@@ -299,7 +299,7 @@ p5.Texture = class Texture {
    * Binds the texture to the appropriate GL target.
    * @method bindTexture
    */
-  bindTexture () {
+  bindTexture() {
     // bind texture using gl context + glTarget and
     // generated gl texture object
     const gl = this._renderer.GL;
@@ -312,7 +312,7 @@ p5.Texture = class Texture {
    * Unbinds the texture from the appropriate GL target.
    * @method unbindTexture
    */
-  unbindTexture () {
+  unbindTexture() {
     // unbind per above, disable texturing on glTarget
     const gl = this._renderer.GL;
     gl.bindTexture(this.glTarget, null);
@@ -337,7 +337,7 @@ p5.Texture = class Texture {
    *                         textures are magnified. Options are LINEAR or NEAREST
    * @todo implement mipmapping filters
    */
-  setInterpolation (downScale, upScale) {
+  setInterpolation(downScale, upScale) {
     const gl = this._renderer.GL;
 
     this.glMinFilter = this.glFilter(downScale);
@@ -367,7 +367,7 @@ p5.Texture = class Texture {
    * @param {String} wrapX Controls the horizontal texture wrapping behavior
    * @param {String} wrapY Controls the vertical texture wrapping behavior
    */
-  setWrapMode (wrapX, wrapY) {
+  setWrapMode(wrapX, wrapY) {
     const gl = this._renderer.GL;
 
     // for webgl 1 we need to check if the texture is power of two
@@ -393,24 +393,26 @@ p5.Texture = class Texture {
     if (wrapX === constants.REPEAT) {
       if (
         this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
+        (widthPowerOfTwo && heightPowerOfTwo)
       ) {
         this.glWrapS = gl.REPEAT;
       } else {
-        console.warn(
-          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+        p5._friendlyError(
+          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead.',
+          'p5.Texture.setWrapMode'
         );
         this.glWrapS = gl.CLAMP_TO_EDGE;
       }
     } else if (wrapX === constants.MIRROR) {
       if (
         this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
+        (widthPowerOfTwo && heightPowerOfTwo)
       ) {
         this.glWrapS = gl.MIRRORED_REPEAT;
       } else {
-        console.warn(
-          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+        p5._friendlyError(
+          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead.',
+          'p5.Texture.setWrapMode'
         );
         this.glWrapS = gl.CLAMP_TO_EDGE;
       }
@@ -422,24 +424,26 @@ p5.Texture = class Texture {
     if (wrapY === constants.REPEAT) {
       if (
         this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
+        (widthPowerOfTwo && heightPowerOfTwo)
       ) {
         this.glWrapT = gl.REPEAT;
       } else {
-        console.warn(
-          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+        p5._friendlyError(
+          'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead.',
+          'p5.Texture.setWrapMode'
         );
         this.glWrapT = gl.CLAMP_TO_EDGE;
       }
     } else if (wrapY === constants.MIRROR) {
       if (
         this._renderer.webglVersion === constants.WEBGL2 ||
-      (widthPowerOfTwo && heightPowerOfTwo)
+        (widthPowerOfTwo && heightPowerOfTwo)
       ) {
         this.glWrapT = gl.MIRRORED_REPEAT;
       } else {
-        console.warn(
-          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+        p5._friendlyError(
+          'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead.',
+          'p5.Texture.setWrapMode'
         );
         this.glWrapT = gl.CLAMP_TO_EDGE;
       }
@@ -517,14 +521,14 @@ export class MipmapTexture extends p5.Texture {
     this.unbindTexture();
   }
 
-  update() {}
+  update() { }
 }
 
 export function checkWebGLCapabilities({ GL, webglVersion }) {
   const gl = GL;
   const supportsFloat = webglVersion === constants.WEBGL2
     ? (gl.getExtension('EXT_color_buffer_float') &&
-        gl.getExtension('EXT_float_blend'))
+      gl.getExtension('EXT_float_blend'))
     : gl.getExtension('OES_texture_float');
   const supportsFloatLinear = supportsFloat &&
     gl.getExtension('OES_texture_float_linear');
