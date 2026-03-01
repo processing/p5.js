@@ -217,7 +217,7 @@ p5.Vector = class {
  * @param {p5.Vector|Number[]} value vector to set.
  * @chainable
  */
-  set (x, y, z) {
+  set(x, y, z) {
     if (x instanceof p5.Vector) {
       this.x = x.x || 0;
       this.y = x.y || 0;
@@ -265,7 +265,7 @@ p5.Vector = class {
  * </code>
  * </div>
  */
-  copy () {
+  copy() {
     if (this.isPInst) {
       return new p5.Vector(
         this._fromRadians,
@@ -413,7 +413,7 @@ p5.Vector = class {
  * @param  {p5.Vector|Number[]} value The vector to add
  * @chainable
  */
-  add (x, y, z) {
+  add(x, y, z) {
     if (x instanceof p5.Vector) {
       this.x += x.x || 0;
       this.y += x.y || 0;
@@ -436,7 +436,7 @@ p5.Vector = class {
    * @private
    * @chainable
    */
-  calculateRemainder2D (xComponent, yComponent) {
+  calculateRemainder2D(xComponent, yComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -450,7 +450,7 @@ p5.Vector = class {
    * @private
    * @chainable
    */
-  calculateRemainder3D (xComponent, yComponent, zComponent) {
+  calculateRemainder3D(xComponent, yComponent, zComponent) {
     if (xComponent !== 0) {
       this.x = this.x % xComponent;
     }
@@ -585,10 +585,10 @@ p5.Vector = class {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem (...args) {
+  rem(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-      if ([x.x,x.y,x.z].every(Number.isFinite)) {
+      if ([x.x, x.y, x.z].every(Number.isFinite)) {
         const xComponent = parseFloat(x.x);
         const yComponent = parseFloat(x.y);
         const zComponent = parseFloat(x.z);
@@ -985,24 +985,24 @@ p5.Vector = class {
   mult(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-    // new p5.Vector will check that values are valid upon construction but it's possible
-    // that someone could change the value of a component after creation, which is why we still
-    // perform this check
+      // new p5.Vector will check that values are valid upon construction but it's possible
+      // that someone could change the value of a component after creation, which is why we still
+      // perform this check
       if (
         Number.isFinite(x.x) &&
-      Number.isFinite(x.y) &&
-      Number.isFinite(x.z) &&
-      typeof x.x === 'number' &&
-      typeof x.y === 'number' &&
-      typeof x.z === 'number'
+        Number.isFinite(x.y) &&
+        Number.isFinite(x.z) &&
+        typeof x.x === 'number' &&
+        typeof x.y === 'number' &&
+        typeof x.z === 'number'
       ) {
         this.x *= x.x;
         this.y *= x.y;
         this.z *= x.z;
       } else {
-        console.warn(
-          'p5.Vector.prototype.mult:',
-          'x contains components that are either undefined or not finite numbers'
+        p5._friendlyError(
+          'p5.Vector.prototype.mult: x contains components that are either undefined or not finite numbers.',
+          'p5.Vector.mult'
         );
       }
       return this;
@@ -1010,7 +1010,7 @@ p5.Vector = class {
     if (Array.isArray(x)) {
       if (
         x.every(element => Number.isFinite(element)) &&
-      x.every(element => typeof element === 'number')
+        x.every(element => typeof element === 'number')
       ) {
         if (x.length === 1) {
           this.x *= x[0];
@@ -1025,9 +1025,9 @@ p5.Vector = class {
           this.z *= x[2];
         }
       } else {
-        console.warn(
-          'p5.Vector.prototype.mult:',
-          'x contains elements that are either undefined or not finite numbers'
+        p5._friendlyError(
+          'p5.Vector.prototype.mult: x contains elements that are either undefined or not finite numbers.',
+          'p5.Vector.mult'
         );
       }
       return this;
@@ -1036,7 +1036,7 @@ p5.Vector = class {
     const vectorComponents = args;
     if (
       vectorComponents.every(element => Number.isFinite(element)) &&
-    vectorComponents.every(element => typeof element === 'number')
+      vectorComponents.every(element => typeof element === 'number')
     ) {
       if (args.length === 1) {
         this.x *= x;
@@ -1053,9 +1053,9 @@ p5.Vector = class {
         this.z *= z;
       }
     } else {
-      console.warn(
-        'p5.Vector.prototype.mult:',
-        'x, y, or z arguments are either undefined or not a finite number'
+      p5._friendlyError(
+        'p5.Vector.prototype.mult: x, y, or z arguments are either undefined or not a finite number.',
+        'p5.Vector.mult'
       );
     }
 
@@ -1266,20 +1266,20 @@ p5.Vector = class {
   div(...args) {
     let [x, y, z] = args;
     if (x instanceof p5.Vector) {
-    // new p5.Vector will check that values are valid upon construction but it's possible
-    // that someone could change the value of a component after creation, which is why we still
-    // perform this check
+      // new p5.Vector will check that values are valid upon construction but it's possible
+      // that someone could change the value of a component after creation, which is why we still
+      // perform this check
       if (
         Number.isFinite(x.x) &&
-      Number.isFinite(x.y) &&
-      Number.isFinite(x.z) &&
-      typeof x.x === 'number' &&
-      typeof x.y === 'number' &&
-      typeof x.z === 'number'
+        Number.isFinite(x.y) &&
+        Number.isFinite(x.z) &&
+        typeof x.x === 'number' &&
+        typeof x.y === 'number' &&
+        typeof x.z === 'number'
       ) {
         const isLikely2D = x.z === 0 && this.z === 0;
         if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
+          p5._friendlyError('p5.Vector.prototype.div: divide by 0.', 'p5.Vector.div');
           return this;
         }
         this.x /= x.x;
@@ -1288,9 +1288,9 @@ p5.Vector = class {
           this.z /= x.z;
         }
       } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'x contains components that are either undefined or not finite numbers'
+        p5._friendlyError(
+          'p5.Vector.prototype.div: x contains components that are either undefined or not finite numbers.',
+          'p5.Vector.div'
         );
       }
       return this;
@@ -1298,10 +1298,10 @@ p5.Vector = class {
     if (Array.isArray(x)) {
       if (
         x.every(Number.isFinite) &&
-      x.every(element => typeof element === 'number')
+        x.every(element => typeof element === 'number')
       ) {
         if (x.some(element => element === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
+          p5._friendlyError('p5.Vector.prototype.div: divide by 0.', 'p5.Vector.div');
           return this;
         }
 
@@ -1318,9 +1318,9 @@ p5.Vector = class {
           this.z /= x[2];
         }
       } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'x contains components that are either undefined or not finite numbers'
+        p5._friendlyError(
+          'p5.Vector.prototype.div: x contains components that are either undefined or not finite numbers.',
+          'p5.Vector.div'
         );
       }
 
@@ -1329,10 +1329,10 @@ p5.Vector = class {
 
     if (
       args.every(Number.isFinite) &&
-    args.every(element => typeof element === 'number')
+      args.every(element => typeof element === 'number')
     ) {
       if (args.some(element => element === 0)) {
-        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        p5._friendlyError('p5.Vector.prototype.div: divide by 0.', 'p5.Vector.div');
         return this;
       }
 
@@ -1351,9 +1351,9 @@ p5.Vector = class {
         this.z /= z;
       }
     } else {
-      console.warn(
-        'p5.Vector.prototype.div:',
-        'x, y, or z arguments are either undefined or not a finite number'
+      p5._friendlyError(
+        'p5.Vector.prototype.div: x, y, or z arguments are either undefined or not a finite number.',
+        'p5.Vector.div'
       );
     }
 
@@ -3914,6 +3914,6 @@ p5.Vector = class {
    * @private
    */
   _clampToZero(val) {
-    return Math.abs((val||0) - 0) <= Number.EPSILON ? 0 : val;
+    return Math.abs((val || 0) - 0) <= Number.EPSILON ? 0 : val;
   }
-};export default p5.Vector;
+}; export default p5.Vector;
