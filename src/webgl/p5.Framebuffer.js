@@ -182,7 +182,7 @@ class Framebuffer {
     }
     this.antialias = this.antialiasSamples > 0;
     if (this.antialias && target.webglVersion !== constants.WEBGL2) {
-      console.warn('Antialiasing is unsupported in a WebGL 1 context');
+      p5._friendlyError('Antialiasing is unsupported in a WebGL 1 context.', 'p5.Framebuffer');
       this.antialias = false;
     }
     this.density = settings.density || target.pixelDensity();
@@ -196,10 +196,11 @@ class Framebuffer {
       this._autoSized = false;
     } else {
       if ((settings.width === undefined) !== (settings.height === undefined)) {
-        console.warn(
+        p5._friendlyError(
           'Please supply both width and height for a framebuffer to give it a ' +
-            'size. Only one was given, so the framebuffer will match the size ' +
-            'of its canvas.'
+          'size. Only one was given, so the framebuffer will match the size ' +
+          'of its canvas.',
+          'p5.Framebuffer'
         );
       }
       this.width = target.width;
@@ -209,7 +210,7 @@ class Framebuffer {
     this._checkIfFormatsAvailable();
 
     if (settings.stencil && !this.useDepth) {
-      console.warn('A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.');
+      p5._friendlyError('A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.', 'p5.Framebuffer');
     }
     this.useStencil = this.useDepth &&
       (settings.stencil === undefined ? true : settings.stencil);
@@ -484,9 +485,10 @@ class Framebuffer {
       this.target.webglVersion === constants.WEBGL &&
       !gl.getExtension('WEBGL_depth_texture')
     ) {
-      console.warn(
+      p5._friendlyError(
         'Unable to create depth textures in this environment. Falling back ' +
-          'to a framebuffer without depth.'
+        'to a framebuffer without depth.',
+        'p5.Framebuffer'
       );
       this.useDepth = false;
     }
@@ -496,9 +498,10 @@ class Framebuffer {
       this.target.webglVersion === constants.WEBGL &&
       this.depthFormat === constants.FLOAT
     ) {
-      console.warn(
+      p5._friendlyError(
         'FLOAT depth format is unavailable in WebGL 1. ' +
-          'Defaulting to UNSIGNED_INT.'
+        'Defaulting to UNSIGNED_INT.',
+        'p5.Framebuffer'
       );
       this.depthFormat = constants.UNSIGNED_INT;
     }
@@ -508,10 +511,11 @@ class Framebuffer {
       constants.FLOAT,
       constants.HALF_FLOAT
     ].includes(this.format)) {
-      console.warn(
+      p5._friendlyError(
         'Unknown Framebuffer format. ' +
-          'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
-          'Defaulting to UNSIGNED_BYTE.'
+        'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
+        'Defaulting to UNSIGNED_BYTE.',
+        'p5.Framebuffer'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -519,18 +523,20 @@ class Framebuffer {
       constants.UNSIGNED_INT,
       constants.FLOAT
     ].includes(this.depthFormat)) {
-      console.warn(
+      p5._friendlyError(
         'Unknown Framebuffer depth format. ' +
-          'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
+        'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.',
+        'p5.Framebuffer'
       );
       this.depthFormat = constants.FLOAT;
     }
 
     const support = checkWebGLCapabilities(this.target._renderer);
     if (!support.float && this.format === constants.FLOAT) {
-      console.warn(
+      p5._friendlyError(
         'This environment does not support FLOAT textures. ' +
-          'Falling back to UNSIGNED_BYTE.'
+        'Falling back to UNSIGNED_BYTE.',
+        'p5.Framebuffer'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -539,16 +545,18 @@ class Framebuffer {
       !support.float &&
       this.depthFormat === constants.FLOAT
     ) {
-      console.warn(
+      p5._friendlyError(
         'This environment does not support FLOAT depth textures. ' +
-          'Falling back to UNSIGNED_INT.'
+        'Falling back to UNSIGNED_INT.',
+        'p5.Framebuffer'
       );
       this.depthFormat = constants.UNSIGNED_INT;
     }
     if (!support.halfFloat && this.format === constants.HALF_FLOAT) {
-      console.warn(
+      p5._friendlyError(
         'This environment does not support HALF_FLOAT textures. ' +
-          'Falling back to UNSIGNED_BYTE.'
+        'Falling back to UNSIGNED_BYTE.',
+        'p5.Framebuffer'
       );
       this.format = constants.UNSIGNED_BYTE;
     }
@@ -557,9 +565,10 @@ class Framebuffer {
       this.channels === constants.RGB &&
       [constants.FLOAT, constants.HALF_FLOAT].includes(this.format)
     ) {
-      console.warn(
+      p5._friendlyError(
         'FLOAT and HALF_FLOAT formats do not work cross-platform with only ' +
-          'RGB channels. Falling back to RGBA.'
+        'RGB channels. Falling back to RGBA.',
+        'p5.Framebuffer'
       );
       this.channels = constants.RGBA;
     }
