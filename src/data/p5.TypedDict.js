@@ -164,7 +164,10 @@ p5.TypedDict = class TypedDict {
     if (this.data.hasOwnProperty(key)) {
       return this.data[key];
     } else {
-      console.log(`${key} does not exist in this Dictionary`);
+      p5._friendlyError(
+        `${key} does not exist in this Dictionary`,
+        'p5.TypedDict.get'
+      );
     }
   }
 
@@ -191,7 +194,10 @@ p5.TypedDict = class TypedDict {
     if (this._validate(value)) {
       this.data[key] = value;
     } else {
-      console.log('Those values dont work for this dictionary type.');
+      p5._friendlyError(
+        "Those values don't work for this dictionary type.",
+        'p5.TypedDict.set'
+      );
     }
   }
 
@@ -235,9 +241,10 @@ p5.TypedDict = class TypedDict {
     } else if (typeof key !== 'undefined') {
       this.set(key, value);
     } else {
-      console.log(
+      p5._friendlyError(
         'In order to create a new Dictionary entry you must pass ' +
-        'an object or a key, value pair'
+        'an object or a key, value pair',
+        'p5.TypedDict.create'
       );
     }
   }
@@ -459,7 +466,10 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] += amount;
     } else {
-      console.log(`The key - ${key} does not exist in this dictionary.`);
+      p5._friendlyError(
+        `The key - ${key} does not exist in this dictionary.`,
+        'p5.NumberDict.add'
+      );
     }
   }
 
@@ -509,7 +519,10 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] *= amount;
     } else {
-      console.log(`The key - ${key} does not exist in this dictionary.`);
+      p5._friendlyError(
+        `The key - ${key} does not exist in this dictionary.`,
+        'p5.NumberDict.mult'
+      );
     }
   }
 
@@ -536,7 +549,10 @@ p5.NumberDict = class NumberDict extends p5.TypedDict {
     if (this.data.hasOwnProperty(key)) {
       this.data[key] /= amount;
     } else {
-      console.log(`The key - ${key} does not exist in this dictionary.`);
+      p5._friendlyError(
+        `The key - ${key} does not exist in this dictionary.`,
+        'p5.NumberDict.div'
+      );
     }
   }
 
