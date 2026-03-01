@@ -2049,16 +2049,18 @@ p5.Camera = class Camera {
 
     if (near <= 0.0001) {
       near = 0.01;
-      console.log(
+      p5._friendlyError(
         'Avoid perspective near plane values close to or below 0. ' +
-        'Setting value to 0.01.'
+        'Setting value to 0.01.',
+        'perspective'
       );
     }
 
     if (far < near) {
-      console.log(
+      p5._friendlyError(
         'Perspective far plane value is less than near plane value. ' +
-        'Nothing will be shown.'
+        'Nothing will be shown.',
+        'perspective'
       );
     }
 
@@ -2072,10 +2074,10 @@ p5.Camera = class Camera {
     const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
     /* eslint-disable indent */
-    this.projMatrix.set(f / aspect,  0,                     0,  0,
-                        0,          -f * this.yScale,       0,  0,
-                        0,           0,     (far + near) * nf, -1,
-                        0,           0, (2 * far * near) * nf,  0);
+    this.projMatrix.set(f / aspect, 0, 0, 0,
+      0, -f * this.yScale, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, (2 * far * near) * nf, 0);
     /* eslint-enable indent */
 
     if (this._isActive()) {
@@ -2241,13 +2243,13 @@ p5.Camera = class Camera {
  * </div>
  */
   ortho(left, right, bottom, top, near, far) {
-    const source = this.fbo||this._renderer;
+    const source = this.fbo || this._renderer;
     if (left === undefined) left = -source.width / 2;
     if (right === undefined) right = +source.width / 2;
     if (bottom === undefined) bottom = -source.height / 2;
     if (top === undefined) top = +source.height / 2;
     if (near === undefined) near = 0;
-    if (far === undefined) far = Math.max(source.width, source.height)+800;
+    if (far === undefined) far = Math.max(source.width, source.height) + 800;
     this.cameraNear = near;
     this.cameraFar = far;
     const w = right - left;
@@ -2261,10 +2263,10 @@ p5.Camera = class Camera {
     const tz = -(far + near) / d;
     this.projMatrix = p5.Matrix.identity();
     /* eslint-disable indent */
-    this.projMatrix.set(  x,  0,  0,  0,
-                          0, -y,  0,  0,
-                          0,  0,  z,  0,
-                          tx, ty, tz,  1);
+    this.projMatrix.set(x, 0, 0, 0,
+      0, -y, 0, 0,
+      0, 0, z, 0,
+      tx, ty, tz, 1);
     /* eslint-enable indent */
     if (this._isActive()) {
       this._renderer.uPMatrix.set(this.projMatrix);
@@ -2399,10 +2401,10 @@ p5.Camera = class Camera {
     this.projMatrix = p5.Matrix.identity();
 
     /* eslint-disable indent */
-    this.projMatrix.set(  x,  0,  0,  0,
-                          0,  -y,  0,  0,
-                        tx, ty, tz, -1,
-                          0,  0,  z,  0);
+    this.projMatrix.set(x, 0, 0, 0,
+      0, -y, 0, 0,
+      tx, ty, tz, -1,
+      0, 0, z, 0);
     /* eslint-enable indent */
 
     if (this._isActive()) {
@@ -2981,9 +2983,9 @@ p5.Camera = class Camera {
     // and rotates it.
     /* eslint-disable indent */
     this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
-                          local.x[1], local.y[1], local.z[1], 0,
-                          local.x[2], local.y[2], local.z[2], 0,
-                                  0,          0,          0, 1);
+      local.x[1], local.y[1], local.z[1], 0,
+      local.x[2], local.y[2], local.z[2], 0,
+      0, 0, 0, 1);
     /* eslint-enable indent */
 
     const tx = -eyeX;
@@ -3456,7 +3458,7 @@ p5.Camera = class Camera {
     // for each camera.
     const divider = diffDiff.magSq();
     let ratio = 1; // default.
-    if (divider > 0.000001){
+    if (divider > 0.000001) {
       ratio = p5.Vector.dot(eyeDiff, diffDiff) / divider;
       ratio = Math.max(0, Math.min(ratio, 1));
     }
@@ -3508,7 +3510,7 @@ p5.Camera = class Camera {
       newFront.set(p5.Vector.lerp(front0, front1, amt)).normalize();
 
       newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-      newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+      newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
 
       newUp.set(p5.Vector.lerp(up0, up1, amt)).normalize();
 
@@ -3582,7 +3584,7 @@ p5.Camera = class Camera {
     lerpedRotMat.multiplyVec3(front0, newFront);
 
     newEye.set(newFront).mult(ratio * lerpedDist).add(lerpedMedium);
-    newCenter.set(newFront).mult((ratio-1) * lerpedDist).add(lerpedMedium);
+    newCenter.set(newFront).mult((ratio - 1) * lerpedDist).add(lerpedMedium);
 
     lerpedRotMat.multiplyVec3(up0, newUp);
 
@@ -3838,7 +3840,7 @@ p5.Camera = class Camera {
     down.mult(Math.sin(directionAngle));
     side.mult(Math.cos(directionAngle)).add(down);
     // The amount of rotation is the size of the vector (dx, dy).
-    const rotAngle = Math.sqrt(dx*dx + dy*dy);
+    const rotAngle = Math.sqrt(dx * dx + dy * dy);
     // The vector that is orthogonal to both the front vector and
     // the rotation direction vector is the rotation axis vector.
     const axis = p5.Vector.cross(front, side);
