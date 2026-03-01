@@ -641,7 +641,16 @@ p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
 
-  //@TODO: check parameters number
+  const args = arguments.length;
+  if (args !== 2 && args !== 4 && args !== 6) {
+    p5._friendlyError(
+      'directionalLight() expects 2, 4, or 6 arguments, but received ' + args + '. ' +
+      'Accepted forms: (color, direction), (v1, v2, v3, direction), (color, x, y, z), or (v1, v2, v3, x, y, z).',
+      'directionalLight'
+    );
+    return this;
+  }
+
   let color;
   if (v1 instanceof p5.Color) {
     color = v1;
@@ -917,7 +926,16 @@ p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
 
-  //@TODO: check parameters number
+  const args = arguments.length;
+  if (args !== 2 && args !== 4 && args !== 6) {
+    p5._friendlyError(
+      'pointLight() expects 2, 4, or 6 arguments, but received ' + args + '. ' +
+      'Accepted forms: (color, position), (v1, v2, v3, position), (color, x, y, z), or (v1, v2, v3, x, y, z).',
+      'pointLight'
+    );
+    return this;
+  }
+
   let color;
   if (v1 instanceof p5.Color) {
     color = v1;
@@ -1637,8 +1655,7 @@ p5.prototype.spotLight = function (
 
     default:
       console.warn(
-        `Sorry, input for spotlight() is not in prescribed format. Too ${
-          length < 3 ? 'few' : 'many'
+        `Sorry, input for spotlight() is not in prescribed format. Too ${length < 3 ? 'few' : 'many'
         } arguments were provided`
       );
       return this;
