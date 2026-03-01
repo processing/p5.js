@@ -1233,22 +1233,25 @@ p5.prototype.lightFalloff = function (
 
   if (constantAttenuation < 0) {
     constantAttenuation = 0;
-    console.warn(
-      'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+    p5._friendlyError(
+      'Value of constant argument in lightFalloff() should be never be negative. Set to 0.',
+      'lightFalloff'
     );
   }
 
   if (linearAttenuation < 0) {
     linearAttenuation = 0;
-    console.warn(
-      'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+    p5._friendlyError(
+      'Value of linear argument in lightFalloff() should be never be negative. Set to 0.',
+      'lightFalloff'
     );
   }
 
   if (quadraticAttenuation < 0) {
     quadraticAttenuation = 0;
-    console.warn(
-      'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+    p5._friendlyError(
+      'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.',
+      'lightFalloff'
     );
   }
 
@@ -1257,8 +1260,9 @@ p5.prototype.lightFalloff = function (
     (linearAttenuation === 0 && quadraticAttenuation === 0)
   ) {
     constantAttenuation = 1;
-    console.warn(
-      'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+    p5._friendlyError(
+      'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.',
+      'lightFalloff'
     );
   }
 
@@ -1636,10 +1640,10 @@ p5.prototype.spotLight = function (
       break;
 
     default:
-      console.warn(
-        `Sorry, input for spotlight() is not in prescribed format. Too ${
-          length < 3 ? 'few' : 'many'
-        } arguments were provided`
+      p5._friendlyError(
+        `Sorry, input for spotlight() is not in prescribed format. Too ${length < 3 ? 'few' : 'many'
+        } arguments were provided.`,
+        'spotLight'
       );
       return this;
   }
@@ -1668,8 +1672,9 @@ p5.prototype.spotLight = function (
 
   if (concentration !== undefined && concentration < 1) {
     concentration = 1;
-    console.warn(
-      'Value of concentration needs to be greater than 1. Setting it to 1'
+    p5._friendlyError(
+      'Value of concentration needs to be greater than 1. Setting it to 1.',
+      'spotLight'
     );
   } else if (concentration === undefined) {
     concentration = 100;

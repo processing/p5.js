@@ -1189,7 +1189,7 @@ p5.prototype.shader = function (s) {
  * </code>
  * </div>
  */
-p5.prototype.baseMaterialShader = function() {
+p5.prototype.baseMaterialShader = function () {
   this._assert3d('baseMaterialShader');
   return this._renderer.baseMaterialShader();
 };
@@ -1284,7 +1284,7 @@ p5.prototype.baseMaterialShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseNormalShader = function() {
+p5.prototype.baseNormalShader = function () {
   this._assert3d('baseNormalShader');
   return this._renderer.baseNormalShader();
 };
@@ -1347,7 +1347,7 @@ p5.prototype.baseNormalShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseColorShader = function() {
+p5.prototype.baseColorShader = function () {
   this._assert3d('baseColorShader');
   return this._renderer.baseColorShader();
 };
@@ -1620,7 +1620,7 @@ p5.prototype.baseColorShader = function() {
  * </code>
  * </div>
  */
-p5.prototype.baseStrokeShader = function() {
+p5.prototype.baseStrokeShader = function () {
   this._assert3d('baseStrokeShader');
   return this._renderer.baseStrokeShader();
 };
@@ -2071,8 +2071,9 @@ p5.prototype.texture = function (tex) {
  */
 p5.prototype.textureMode = function (mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
-    console.warn(
-      `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
+    p5._friendlyError(
+      `You tried to set ${mode} textureMode only supports IMAGE & NORMAL.`,
+      'textureMode'
     );
   } else {
     this._renderer.textureMode = mode;
@@ -3191,7 +3192,7 @@ p5.prototype.metalness = function (metallic) {
  * transparency internally, e.g. via vertex colors
  * @return {Number[]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(colors, hasTransparency) {
+p5.RendererGL.prototype._applyColorBlend = function (colors, hasTransparency) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
@@ -3278,8 +3279,9 @@ p5.RendererGL.prototype._applyBlendMode = function () {
         );
         gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
       } else {
-        console.warn(
-          'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+        p5._friendlyError(
+          'blendMode(DARKEST) does not work in your browser in WEBGL mode.',
+          'blendMode'
         );
       }
       break;
@@ -3291,8 +3293,9 @@ p5.RendererGL.prototype._applyBlendMode = function () {
         );
         gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
       } else {
-        console.warn(
-          'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+        p5._friendlyError(
+          'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.',
+          'blendMode'
         );
       }
       break;
