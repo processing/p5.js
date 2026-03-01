@@ -4,20 +4,23 @@ import './p5.Shader';
 import './p5.RendererGL.Retained';
 
 // Text/Typography
-// @TODO:
-p5.RendererGL.prototype._applyTextProperties = function() {
-  //@TODO finish implementation
-  //console.error('text commands not yet implemented in webgl');
+p5.RendererGL.prototype._applyTextProperties = function () {
   this._setProperty('_textAscent', null);
   this._setProperty('_textDescent', null);
+  return this._pInst;
 };
 
-p5.RendererGL.prototype.textWidth = function(s) {
+p5.RendererGL.prototype.textWidth = function (s) {
   if (this._isOpenType()) {
     return this._textFont._textWidth(s, this._textSize);
   }
 
-  return 0; // TODO: error
+  p5._friendlyError(
+    'textWidth requires an OpenType (.otf) or TrueType (.ttf) font. ' +
+    'Please load and set a font using loadFont() and textFont() before calling textWidth().',
+    'textWidth'
+  );
+  return 0;
 };
 
 // rendering constants
@@ -61,7 +64,7 @@ class ImageInfos {
      *
      * finds free space of a given size in the ImageData list
      */
-  findImage (space) {
+  findImage(space) {
     const imageSize = this.width * this.height;
     if (space > imageSize)
       throw new Error('font is too complex to render in 3D');
@@ -167,7 +170,7 @@ class FontInfo {
      * calculates rendering info for a glyph, including the curve information,
      * row & column stripes compiled into textures.
      */
-  getGlyphInfo (glyph) {
+  getGlyphInfo(glyph) {
     // check the cache
     let gi = this.glyphInfos[glyph.index];
     if (gi) return gi;
@@ -212,7 +215,7 @@ class FontInfo {
          * find the minimum & maximum value in a list of values
          */
       function minMax(rg, min, max) {
-        for (let i = rg.length; i-- > 0; ) {
+        for (let i = rg.length; i-- > 0;) {
           const v = rg[i];
           if (min > v) min = v;
           if (max < v) max = v;
@@ -300,7 +303,7 @@ class FontInfo {
            * converts the cubic to a quadtratic approximation by
            * picking an appropriate quadratic control point
            */
-      toQuadratic () {
+      toQuadratic() {
         return {
           x: this.p0.x,
           y: this.p0.y,
@@ -318,7 +321,7 @@ class FontInfo {
            * calculates the magnitude of error of this curve's
            * quadratic approximation.
            */
-      quadError () {
+      quadError() {
         return (
           p5.Vector.sub(
             p5.Vector.sub(this.p1, this.p0),
@@ -336,7 +339,7 @@ class FontInfo {
            * this cubic keeps its start point and its end point becomes the
            * point at 't'. the 'end half is returned.
            */
-      split (t) {
+      split(t) {
         const m1 = p5.Vector.lerp(this.p0, this.c0, t);
         const m2 = p5.Vector.lerp(this.c0, this.c1, t);
         const mm1 = p5.Vector.lerp(m1, m2, t);
@@ -357,7 +360,7 @@ class FontInfo {
            * from splitting this cubic at its inflection points.
            * this cubic is (potentially) altered and returned in the list.
            */
-      splitInflections () {
+      splitInflections() {
         const a = p5.Vector.sub(this.c0, this.p0);
         const b = p5.Vector.sub(p5.Vector.sub(this.c1, this.c0), a);
         const c = p5.Vector.sub(
@@ -441,7 +444,7 @@ class FontInfo {
         const tail = [];
 
         let t3;
-        for (;;) {
+        for (; ;) {
           // calculate this cubic's precision
           t3 = precision / cubic.quadError();
           if (t3 >= 0.5 * 0.5 * 0.5) {
@@ -641,10 +644,12 @@ class FontInfo {
   }
 }
 
-p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
+p5.RendererGL.prototype._renderText = function (p, line, x, y, maxY) {
   if (!this._textFont || typeof this._textFont === 'string') {
-    console.log(
-      'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
+    p5._friendlyError(
+      'WEBGL: you must load and set a font before drawing text. ' +
+      'See `loadFont` and `textFont` for more details.',
+      'text'
     );
     return;
   }
@@ -653,8 +658,10 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   if (!this._isOpenType()) {
-    console.log(
-      'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported. Make sure to set the font using textFont() before drawing text.'
+    p5._friendlyError(
+      'WEBGL: only OpenType (.otf) and TrueType (.ttf) fonts are supported. ' +
+      'Make sure to set the font using textFont() before drawing text.',
+      'text'
     );
     return p;
   }
@@ -701,7 +708,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   let g = this.retainedMode.geometry['glyph'];
   if (!g) {
     // create the geometry for rendering a quad
-    const geom = (this._textGeom = new p5.Geometry(1, 1, function() {
+    const geom = (this._textGeom = new p5.Geometry(1, 1, function () {
       for (let i = 0; i <= 1; i++) {
         for (let j = 0; j <= 1; j++) {
           this.vertices.push(new p5.Vector(j, i, 0));
