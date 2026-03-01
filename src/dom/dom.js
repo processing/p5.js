@@ -225,7 +225,7 @@ p5.prototype._wrapElement = function (elt) {
   const children = Array.prototype.slice.call(elt.children);
   if (elt.tagName === 'INPUT' && elt.type === 'checkbox') {
     let converted = new p5.Element(elt, this);
-    converted.checked = function(...args) {
+    converted.checked = function (...args) {
       if (args.length === 0) {
         return this.elt.checked;
       } else if (args[0]) {
@@ -1101,7 +1101,7 @@ p5.prototype.createButton = function (label, value) {
  * </code>
  * </div>
  */
-p5.prototype.createCheckbox = function(...args) {
+p5.prototype.createCheckbox = function (...args) {
   p5._validateParameters('createCheckbox', args);
 
   // Create a container element
@@ -1121,7 +1121,7 @@ p5.prototype.createCheckbox = function(...args) {
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
 
-  self.checked = function(...args) {
+  self.checked = function (...args) {
     const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
       if (args.length === 0) {
@@ -1328,7 +1328,7 @@ p5.prototype.createCheckbox = function(...args) {
  * @return {p5.Element}
  */
 
-p5.prototype.createSelect = function(...args) {
+p5.prototype.createSelect = function (...args) {
   p5._validateParameters('createSelect', args);
   let self;
   let arg = args[0];
@@ -1597,7 +1597,7 @@ p5.prototype.createSelect = function(...args) {
 
 //counter for unique names on radio button
 let counter = 0;
-p5.prototype.createRadio = function(...args) {
+p5.prototype.createRadio = function (...args) {
   // Creates a div, adds each option as an individual input inside it.
   // If already given with a containerEl, will search for all input[radio]
   // it, create a p5.Element out of it, add options to it and return the p5.Element.
@@ -2052,8 +2052,9 @@ p5.prototype.createFileInput = function (callback, multiple = false) {
 
   // If File API's are not supported, throw Error
   if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-    console.log(
-      'The File APIs are not fully supported in this browser. Cannot create element.'
+    p5._friendlyError(
+      'The File APIs are not fully supported in this browser. Cannot create element.',
+      'createFileInput'
     );
     return;
   }
@@ -2412,7 +2413,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  */
-p5.prototype.createCapture = function(...args) {
+p5.prototype.createCapture = function (...args) {
   p5._validateParameters('createCapture', args);
 
   // return if getUserMedia is not supported by the browser
@@ -2454,7 +2455,7 @@ p5.prototype.createCapture = function(...args) {
         domElement.src = window.URL.createObjectURL(stream);
       }
     }
-    catch(err) {
+    catch (err) {
       domElement.src = stream;
     }
   }).catch(e => {
@@ -2485,7 +2486,7 @@ p5.prototype.createCapture = function(...args) {
 
     if (callback) callback(domElement.srcObject);
   });
-  videoEl.flipped=flipped;
+  videoEl.flipped = flipped;
   return videoEl;
 };
 
@@ -2965,7 +2966,7 @@ p5.Element.prototype.center = function (align) {
  * @param  {boolean} [append] whether to append HTML to existing
  * @chainable
  */
-p5.Element.prototype.html = function(...args) {
+p5.Element.prototype.html = function (...args) {
   if (args.length === 0) {
     return this.elt.innerHTML;
   } else if (args[1]) {
@@ -3035,7 +3036,7 @@ p5.Element.prototype.html = function(...args) {
  * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
-p5.Element.prototype.position = function(...args) {
+p5.Element.prototype.position = function (...args) {
   if (args.length === 0) {
     return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
   } else {
@@ -3060,7 +3061,7 @@ p5.Element.prototype.position = function(...args) {
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._translate = function(...args) {
+p5.Element.prototype._translate = function (...args) {
   this.elt.style.position = 'absolute';
   // save out initial non-translate transform styling
   let transform = '';
@@ -3092,7 +3093,7 @@ p5.Element.prototype._translate = function(...args) {
 };
 
 /* Helper method called by p5.Element.style() */
-p5.Element.prototype._rotate = function(...args) {
+p5.Element.prototype._rotate = function (...args) {
   // save out initial non-rotate transform styling
   let transform = '';
   if (this.elt.style.transform) {
@@ -3479,7 +3480,7 @@ p5.Element.prototype.removeAttribute = function (attr) {
  * @param  {String|Number}     value
  * @chainable
  */
-p5.Element.prototype.value = function(...args) {
+p5.Element.prototype.value = function (...args) {
   if (args.length > 0) {
     this.elt.value = args[0];
     return this;
@@ -3936,7 +3937,10 @@ p5.Element.prototype.drop = function (callback, fxn) {
       this
     );
   } else {
-    console.log('The File APIs are not fully supported in this browser.');
+    p5._friendlyError(
+      'The File APIs are not fully supported in this browser.',
+      'drop'
+    );
   }
 
   return this;
@@ -4022,10 +4026,10 @@ p5.Element.prototype.draggable = function (elmMove) {
     closeDragElementEvt = isTouch ? 'touchend' : 'mouseup',
     elementDragEvt = isTouch ? 'touchmove' : 'mousemove';
 
-  if(elmMove === undefined){
+  if (elmMove === undefined) {
     elmMove = this.elt;
     elmDrag = elmMove;
-  }else if(elmMove !== this.elt && elmMove.elt !== this.elt){
+  } else if (elmMove !== this.elt && elmMove.elt !== this.elt) {
     elmMove = elmMove.elt;
     elmDrag = this.elt;
   }
@@ -4036,11 +4040,11 @@ p5.Element.prototype.draggable = function (elmMove) {
   function dragMouseDown(e) {
     e = e || window.event;
 
-    if(isTouch){
+    if (isTouch) {
       const touches = e.changedTouches;
       px = parseInt(touches[0].clientX);
       py = parseInt(touches[0].clientY);
-    }else{
+    } else {
       px = parseInt(e.clientX);
       py = parseInt(e.clientY);
     }
@@ -4053,13 +4057,13 @@ p5.Element.prototype.draggable = function (elmMove) {
   function elementDrag(e) {
     e = e || window.event;
 
-    if(isTouch){
+    if (isTouch) {
       const touches = e.changedTouches;
       x = px - parseInt(touches[0].clientX);
       y = py - parseInt(touches[0].clientY);
       px = parseInt(touches[0].clientX);
       py = parseInt(touches[0].clientY);
-    }else{
+    } else {
       x = px - parseInt(e.clientX);
       y = py - parseInt(e.clientY);
       px = parseInt(e.clientX);
@@ -5386,7 +5390,6 @@ class MediaElement extends p5.Element {
   removeCue(id) {
     for (let i = 0; i < this._cues.length; i++) {
       if (this._cues[i].id === id) {
-        console.log(id);
         this._cues.splice(i, 1);
       }
     }
