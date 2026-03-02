@@ -134,8 +134,12 @@ function installBuiltinGlobalAccessors(strandsContext, fn) {
             }
           }
 
-          // Last resort: use the spec's getter
-          return spec.get(this);
+          // Fallback: use the spec's getter on the active p5 instance
+          const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+          if (instance && instance !== target) {
+            return spec.get(instance);
+          }
+          return undefined;
         },
         set: function(val) {
           if (originalDescriptor && originalDescriptor.set) {
@@ -733,7 +737,8 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             const newDeps = returnedNode.dependsOn.slice();
             for (let i = 0; i < expectedStructType.properties.length; i++) {
               const expectedType = expectedStructType.properties[i].dataType;
-              const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[retNode.id], strandsContext);
+              const depID = returnedNode.dependsOn[i];
+              const receivedNode = createStrandsNode(depID, dag.dimensions[depID], strandsContext);
               newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
             }
             dag.dependsOn[retNode.id] = newDeps;

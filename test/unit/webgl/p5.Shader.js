@@ -1,15 +1,11 @@
-import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
+import p5 from '../../../src/app.js';
 
 const mockUserError = vi.fn();
-vi.mock('../../../src/strands/strands_FES', () => ({
-  userError: (...args) => {
-    mockUserError(...args);
-    const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
-    throw new Error(prefixedMessage);
-  },
-  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
-}));
+window.mockUserError = mockUserError;
+
+
+
 
 suite('p5.Shader', function() {
   var myp5;

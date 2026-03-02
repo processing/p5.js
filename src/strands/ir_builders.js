@@ -346,7 +346,7 @@ export function castToFloat(strandsContext, dep) {
 
 export function structConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {
   const { cfg, dag } = strandsContext;
-  const { identifer, properties } = structTypeInfo;
+  const { properties } = structTypeInfo;
 
   if (!(rawUserArgs.length === properties.length)) {
     FES.userError('type error',
@@ -379,7 +379,7 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-  return { id, dimension: properties.length, components: structTypeInfo.components };
+  return { id, dimension: properties.length, components: dependsOn };
 }
 
 export function functionCallNode(
