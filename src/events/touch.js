@@ -95,7 +95,11 @@ p5.prototype.touches = [];
 p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
     const touches = [];
-    for (let i = 0; i < e.touches.length; i++) {
+    // During a touchend event, the lifted finger is removed from e.touches
+    // (W3C spec) and is only present in e.changedTouches. Fall back to
+    // e.changedTouches so that touches[] is populated inside touchEnded().
+    const touchList = e.touches.length > 0 ? e.touches : e.changedTouches;
+    for (let i = 0; i < touchList.length; i++) {
       touches[i] = getTouchInfo(
         this._curElement.elt,
         this.width,
