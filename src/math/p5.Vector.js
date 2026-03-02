@@ -2981,6 +2981,7 @@ p5.Vector = class {
  *
  * @method array
  * @return {Number[]} array with the vector's components.
+ * @deprecated Will be removed in p5.js 2.x. Use the new vector component APIs instead.
  * @example
  * <div class = "norender">
  * <code>
@@ -2995,6 +2996,7 @@ p5.Vector = class {
  * </div>
  */
   array() {
+    console.warn('p5.Vector.array() is deprecated and will be removed in a future version.');
     return [this.x || 0, this.y || 0, this.z || 0];
   }
 
