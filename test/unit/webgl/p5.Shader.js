@@ -1,15 +1,11 @@
-import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
+import p5 from '../../../src/app.js';
 
 const mockUserError = vi.fn();
-vi.mock('../../../src/strands/strands_FES', () => ({
-  userError: (...args) => {
-    mockUserError(...args);
-    const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
-    throw new Error(prefixedMessage);
-  },
-  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
-}));
+window.mockUserError = mockUserError;
+
+
+
 
 suite('p5.Shader', function() {
   var myp5;
@@ -474,25 +470,34 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
-test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
-  myp5.createCanvas(5, 5, myp5.WEBGL);
-  myp5.baseMaterialShader().modify(() => {
-    myp5.getPixelInputs(inputs => {
-      const mxInHook = window.mouseX;
-      const wInHook = window.width;
-      assert.isTrue(mxInHook.isStrandsNode);
-      assert.isTrue(wInHook.isStrandsNode);
-      inputs.color = [1, 0, 0, 1];
-      return inputs;
-    });
-  }, { myp5 });
+    test('returns numbers for builtin globals outside hooks and a strandNode when called inside hooks', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const mxInHook = window.mouseX;
+          const wInHook = window.width;
+          const mxInstInHook = myp5.mouseX;
+          const wInstInHook = myp5.width;
+          assert.isTrue(mxInHook.isStrandsNode, 'window.mouseX should be a StrandsNode');
+          assert.isTrue(wInHook.isStrandsNode, 'window.width should be a StrandsNode');
+          assert.isTrue(mxInstInHook.isStrandsNode, 'myp5.mouseX should be a StrandsNode');
+          assert.isTrue(wInstInHook.isStrandsNode, 'myp5.width should be a StrandsNode');
+          inputs.color = [1, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
 
-  const mx = window.mouseX;
-  const w = window.width;
-  assert.isNumber(mx);
-  assert.isNumber(w);
-  assert.strictEqual(w, myp5.width);
-});
+      const mx = window.mouseX;
+      const w = window.width;
+      const mxInst = myp5.mouseX;
+      const wInst = myp5.width;
+      assert.isNumber(mx);
+      assert.isNumber(w);
+      assert.isNumber(mxInst);
+      assert.isNumber(wInst);
+      assert.strictEqual(w, myp5.width);
+      assert.strictEqual(wInst, myp5.width);
+    });
 
 
     test('handle custom uniform names with automatic values', () => {

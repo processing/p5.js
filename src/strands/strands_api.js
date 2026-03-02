@@ -94,24 +94,75 @@ function getBuiltinGlobalNode(strandsContext, name) {
   return node;
 }
 
-function installBuiltinGlobalAccessors(strandsContext) {
-  if (strandsContext._builtinGlobalsAccessorsInstalled) return
+function installBuiltinGlobalAccessors(strandsContext, fn) {
+  if (strandsContext._builtinGlobalsAccessorsInstalled) return;
 
-  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  
+  // Targets where we want these accessors to be available
+  const targets = [window];
+  if (fn) targets.push(fn);
+  if (GraphicsProto) targets.push(GraphicsProto);
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
-    const spec = BUILTIN_GLOBAL_SPECS[name]
-    Object.defineProperty(window, name, {
-      get: () => {
-        if (strandsContext.active) {
-          return getBuiltinGlobalNode(strandsContext, name);
-        }
-        const inst = getRuntimeP5Instance()
-          return spec.get(inst);
-      },
-    })
+    const spec = BUILTIN_GLOBAL_SPECS[name];
+
+    targets.forEach((target) => {
+      // Find the original descriptor if it exists on this target or its prototype chain
+      let originalDescriptor = null;
+      let curr = target;
+      while (curr && !originalDescriptor) {
+        originalDescriptor = Object.getOwnPropertyDescriptor(curr, name);
+        if (originalDescriptor) break;
+        curr = Object.getPrototypeOf(curr);
+      }
+
+      Object.defineProperty(target, name, {
+        get: function() {
+          // If a shader is active, return the special uniform Node
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+
+          // Fallback: Get the normal value (like mouseX as a number)
+          // If we have an original descriptor, use it to avoid recursion
+          if (originalDescriptor) {
+            if (originalDescriptor.get) {
+              return originalDescriptor.get.call(this);
+            } else if ('value' in originalDescriptor) {
+              return originalDescriptor.value;
+            }
+          }
+
+          // Fallback: use the spec's getter on the active p5 instance
+          const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+          if (instance && instance !== target) {
+            return spec.get(instance);
+          }
+          return undefined;
+        },
+        set: function(val) {
+          if (originalDescriptor && originalDescriptor.set) {
+            originalDescriptor.set.call(this, val);
+          } else {
+            // Shadow with a data property on the instance.
+            // This allows things like 'this.deltaTime = ...' to work in p5._draw
+            // without hitting the prototype's getter-only definition.
+            Object.defineProperty(this, name, {
+              value: val,
+              writable: true,
+              configurable: true,
+              enumerable: true
+            });
+          }
+        },
+        configurable: true,
+        enumerable: true
+      });
+    });
   }
-  strandsContext._builtinGlobalsAccessorsInstalled = true
+
+  strandsContext._builtinGlobalsAccessorsInstalled = true;
 }
 
 //////////////////////////////////////////////
@@ -587,7 +638,7 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
-  installBuiltinGlobalAccessors(strandsContext)
+  installBuiltinGlobalAccessors(strandsContext, fn)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
@@ -686,7 +737,8 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             const newDeps = returnedNode.dependsOn.slice();
             for (let i = 0; i < expectedStructType.properties.length; i++) {
               const expectedType = expectedStructType.properties[i].dataType;
-              const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[retNode.id], strandsContext);
+              const depID = returnedNode.dependsOn[i];
+              const receivedNode = createStrandsNode(depID, dag.dimensions[depID], strandsContext);
               newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
             }
             dag.dependsOn[retNode.id] = newDeps;
