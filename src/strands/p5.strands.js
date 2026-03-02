@@ -49,6 +49,7 @@ function strands(p5, fn) {
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
+    ctx.graphicsOverrides = {};
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -70,6 +71,17 @@ function strands(p5, fn) {
     }
     for (const key in ctx.fnOverrides) {
       fn[key] = ctx.fnOverrides[key];
+    }
+    // Clean up the hooks temporarily installed on p5.Graphics.prototype (#8549)
+    const GraphicsProto = p5.Graphics?.prototype;
+    if (GraphicsProto) {
+      for (const key in ctx.graphicsOverrides) {
+        if (ctx.graphicsOverrides[key] === undefined) {
+          delete GraphicsProto[key];
+        } else {
+          GraphicsProto[key] = ctx.graphicsOverrides[key];
+        }
+      }
     }
   }
 
@@ -643,7 +655,8 @@ if (typeof p5 !== "undefined") {
  *     filterColor.texCoord.x,
  *     filterColor.texCoord.y + 0.1 * sin(filterColor.texCoord.x * 10)
  *   ];
- *   filterColor.set(getTexture(canvasContent, warped));
+ *   let tex = filterColor.canvasContent;
+ *   filterColor.set(getTexture(tex, warped));
  *   filterColor.end();
  * }
  *

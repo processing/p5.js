@@ -86,8 +86,17 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
   let finalRightNodeID = rightStrandsNode.id;
 
   // Check if we have to cast either node
-  const leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
-  const rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+  let leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
+  let rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+
+  // Update ASSIGN_ON_USE nodes to match the type of the other operand
+  if (leftType.baseType === BaseType.ASSIGN_ON_USE && rightType.baseType !== BaseType.ASSIGN_ON_USE) {
+    DAG.propagateTypeToAssignOnUse(dag, leftStrandsNode.id, rightType.baseType, rightType.dimension);
+    leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
+  } else if (rightType.baseType === BaseType.ASSIGN_ON_USE && leftType.baseType !== BaseType.ASSIGN_ON_USE) {
+    DAG.propagateTypeToAssignOnUse(dag, rightStrandsNode.id, leftType.baseType, leftType.dimension);
+    rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+  }
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {

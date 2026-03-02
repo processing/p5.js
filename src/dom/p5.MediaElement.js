@@ -713,6 +713,13 @@ class MediaElement extends Element {
   duration() {
     return this.elt.duration;
   }
+  _checkIfTextureNeedsUpdate() {
+    const needsUpdate = this._frameOnTexture !== this._pInst.frameCount;
+    if (needsUpdate) {
+      this.setModified(true);
+      this._frameOnTexture = this._pInst.frameCount;
+    }
+  }
   _ensureCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
@@ -1647,12 +1654,12 @@ function media(p5, fn){
       if (domElement.width) {
         videoEl.width = domElement.width;
         videoEl.height = domElement.height;
-        if (flipped) {
-          videoEl.elt.style.transform = 'scaleX(-1)';
-        }
       } else {
         videoEl.width = videoEl.elt.width = domElement.videoWidth;
         videoEl.height = videoEl.elt.height = domElement.videoHeight;
+      }
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
       }
       videoEl.loadedmetadata = true;
 

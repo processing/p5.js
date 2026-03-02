@@ -2057,6 +2057,76 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[1], 127, 5);
       assert.approximately(pixelColor[2], 0, 5);
     });
+
+    test('handle .set() in if-else branches with flat API', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        let value = 1;
+        if (value > 0.5) {
+          myp5.filterColor.set([1, 0, 0, 1]);
+        } else {
+          myp5.filterColor.set([0, 1, 0, 1]);
+        }
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle .set() in for loop with flat API', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        for (let i = 0; i < 3; i++) {
+          if (i === 2) {
+            myp5.filterColor.set([i/2, 0, 0, 1]);
+          }
+        }
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle false .set() in if with content afterwards with flat API', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        let value = 1;
+        if (value < 0.5) {
+          myp5.filterColor.set([1, 0, 0, 1]);
+        }
+
+        let otherValue = 0.2;
+        otherValue *= 2;
+        myp5.filterColor.set([otherValue, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0.4 * 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
   });
 
   suite('p5.strands error messages', () => {

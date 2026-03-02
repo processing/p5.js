@@ -255,6 +255,23 @@ visualSuite('WebGL', function() {
         });
       });
     }
+
+    visualTest('On a createGraphics WEBGL buffer', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const g = p5.createGraphics(50, 50, p5.WEBGL);
+      g.background(255);
+      g.noStroke();
+      g.fill('red');
+      g.circle(0, 0, 30);
+
+      g.filter(p5.INVERT);
+
+      p5.imageMode(p5.CENTER);
+      p5.image(g, 0, 0);
+
+      screenshot();
+    });
   });
 
   visualSuite('Lights', function() {
