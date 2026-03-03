@@ -17,6 +17,8 @@ jobs:
   publish:
     if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
+    permissions:
+      pull_requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +48,7 @@ jobs:
               .join('\n');
 
             const cdnLinks = output.packages
-              .map((p) => `- ${p.name}: ${p.url.replace('pkg.pr.new', 'raw.esm.sh/pr')}/lib/p5.min.js`)
+              .map((p) => `- ${p.name}: https://raw.esm.sh/pr/p5@${p.sha}/lib/p5.min.js`)
               .join('\n');
 
             const sha =
