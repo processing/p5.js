@@ -419,50 +419,56 @@ function loading(p5, fn){
     try{
       if (fileType.match(/\.stl$/i)) {
         const { data } = await request(path, 'arrayBuffer');
-        parseSTL(model, data);
+        const cb = () => {
+          parseSTL(model, data);
 
-        if (normalize) {
-          model.normalize();
-        }
+          if (normalize) {
+            model.normalize();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
+          if (flipU) {
+            model.flipU();
+          }
 
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
 
       } else if (fileType.match(/\.obj$/i)) {
         const { data } = await request(path, 'text');
         const lines = data.split('\n');
 
         const parsedMaterials = await getMaterials(lines);
-        parseObj(model, lines, parsedMaterials);
+        const cb = () => {
+          parseObj(model, lines, parsedMaterials);
 
-        if (normalize) {
-          model.normalize();
-        }
-        if (flipU) {
-          model.flipU();
-        }
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
