@@ -15,6 +15,7 @@ permissions: {}
 
 jobs:
   publish:
+    if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
