@@ -1,6 +1,8 @@
 name: Publish approved pull requests and latest commit to pkg.pr.new
 on:
   pull_request:
+    types:
+      - opened
     branches:
       - 'dev-2.0'
   push:
@@ -16,7 +18,7 @@ jobs:
     if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     permissions:
-      pull_requests: write
+      issues: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
