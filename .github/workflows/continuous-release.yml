@@ -9,14 +9,13 @@ on:
     tags:
       - '!**'
 
-permissions: {}
+permissions:
+  pull-requests: write
 
 jobs:
   publish:
     if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
