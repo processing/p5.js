@@ -379,6 +379,7 @@ export function structConstructorNode(strandsContext, structTypeInfo, rawUserArg
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  // components stores specify the child nodes (members) of the struct for re-binding or inspection
   return { id, dimension: properties.length, components: dependsOn };
 }
 

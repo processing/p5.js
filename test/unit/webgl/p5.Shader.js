@@ -416,6 +416,12 @@ suite('p5.Shader', function() {
     });
   });
   suite('p5.strands', () => {
+    test('p5.prototype mouseX is a getter', () => {
+      const desc = Object.getOwnPropertyDescriptor(p5.prototype, 'mouseX');
+      assert.isDefined(desc, 'Descriptor should be defined');
+      assert.isDefined(desc.get, 'p5.prototype.mouseX should have a getter');
+      assert.isFunction(desc.get, 'p5.prototype.mouseX getter should be a function');
+    });
     test('handles named function callbacks', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       function myMaterial() {

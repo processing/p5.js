@@ -105,17 +105,9 @@ function installBuiltinGlobalAccessors(strandsContext, fn) {
   if (GraphicsProto) targets.push(GraphicsProto);
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
-    const spec = BUILTIN_GLOBAL_SPECS[name];
-
     targets.forEach((target) => {
-      // Find the original descriptor if it exists on this target or its prototype chain
-      let originalDescriptor = null;
-      let curr = target;
-      while (curr && !originalDescriptor) {
-        originalDescriptor = Object.getOwnPropertyDescriptor(curr, name);
-        if (originalDescriptor) break;
-        curr = Object.getPrototypeOf(curr);
-      }
+      // Capture the original descriptor ONLY on the target itself (recursive-safe)
+      const originalDesc = Object.getOwnPropertyDescriptor(target, name);
 
       Object.defineProperty(target, name, {
         get: function() {
@@ -124,26 +116,26 @@ function installBuiltinGlobalAccessors(strandsContext, fn) {
             return getBuiltinGlobalNode(strandsContext, name);
           }
 
-          // Fallback: Get the normal value (like mouseX as a number)
-          // If we have an original descriptor, use it to avoid recursion
-          if (originalDescriptor) {
-            if (originalDescriptor.get) {
-              return originalDescriptor.get.call(this);
-            } else if ('value' in originalDescriptor) {
-              return originalDescriptor.value;
+          // Fallback: Get the original value to avoid infinite recursion
+          if (originalDesc) {
+            if (originalDesc.get) {
+              return originalDesc.get.call(this);
             }
+            return originalDesc.value;
           }
 
-          // Fallback: use the spec's getter on the active p5 instance
+          // If no original descriptor exists on this target (e.g. window in instance mode),
+          // fallback to the active p5 instance if we're not already on it.
           const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
           if (instance && instance !== target) {
-            return spec.get(instance);
+            return instance[name];
           }
+
           return undefined;
         },
         set: function(val) {
-          if (originalDescriptor && originalDescriptor.set) {
-            originalDescriptor.set.call(this, val);
+          if (originalDesc && originalDesc.set) {
+            originalDesc.set.call(this, val);
           } else {
             // Shadow with a data property on the instance.
             // This allows things like 'this.deltaTime = ...' to work in p5._draw
@@ -221,6 +213,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
   }
+  //////////////////////////////////////////////
+  // Builtins, uniforms, variable constructors
+  //////////////////////////////////////////////
+  installBuiltinGlobalAccessors(strandsContext, fn);
+
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
@@ -638,7 +635,6 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
-  installBuiltinGlobalAccessors(strandsContext, fn)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
