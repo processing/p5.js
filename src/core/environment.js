@@ -751,14 +751,18 @@ function environment(p5, fn, lifecycles){
   };
 
   Object.defineProperty(fn, 'width', {
+    configurable: true,
+    enumerable: true,
     get(){
-      return this._renderer.width;
+      return this._renderer?.width;
     }
   });
 
   Object.defineProperty(fn, 'height', {
+    configurable: true,
+    enumerable: true,
     get(){
-      return this._renderer.height;
+      return this._renderer?.height;
     }
   });
 

@@ -524,11 +524,11 @@ function material(p5, fn) {
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
-        loadedShader = this.createFilterShader(fragString, true);
+        loadedShader = this._internal(() => this.createFilterShader(fragString, true));
       } else {
-        loadedShader = withGlobalStrands(this, () =>
+        loadedShader = this._internal(() => withGlobalStrands(this, () =>
           this.baseFilterShader().modify(new Function(fragString)),
-        );
+        ));
       }
 
       if (successCallback) {
@@ -732,15 +732,17 @@ function material(p5, fn) {
    * @beta
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
   /**
    * @method buildFilterShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
-  fn.buildFilterShader = function (callback) {
-    return this.baseFilterShader().modify(callback);
+  fn.buildFilterShader = function (callback, scope) {
+    return this.baseFilterShader().modify(callback, scope);
   };
 
   /**
@@ -1560,15 +1562,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
   /**
    * @method buildMaterialShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function (cb) {
-    return this.baseMaterialShader().modify(cb);
+  fn.buildMaterialShader = function (cb, scope) {
+    return this.baseMaterialShader().modify(cb, scope);
   };
 
   /**
@@ -1631,7 +1635,7 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildMaterialShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildMaterialShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1776,15 +1780,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
   /**
    * @method buildNormalShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function (cb) {
-    return this.baseNormalShader().modify(cb);
+  fn.buildNormalShader = function (cb, scope) {
+    return this.baseNormalShader().modify(cb, scope);
   };
 
   /**
@@ -1848,9 +1854,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this.withGlobalStrands(this, () =>
+      let shader = this._internal(() => this.withGlobalStrands(this, () =>
         this.buildNormalShader(cb),
-      );
+      ));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1940,15 +1946,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
   /**
    * @method buildColorShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function (cb) {
-    return this.baseColorShader().modify(cb);
+  fn.buildColorShader = function (cb, scope) {
+    return this.baseColorShader().modify(cb, scope);
   };
 
   /**
@@ -2012,7 +2020,7 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildColorShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildColorShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2195,15 +2203,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
   /**
    * @method buildStrokeShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function (cb) {
-    return this.baseStrokeShader().modify(cb);
+  fn.buildStrokeShader = function (cb, scope) {
+    return this.baseStrokeShader().modify(cb, scope);
   };
 
   /**
@@ -2271,7 +2281,7 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildStrokeShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildStrokeShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
