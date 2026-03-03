@@ -342,8 +342,6 @@ class Color {
    * @return {String} the formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -361,8 +359,6 @@ class Color {
    *
    *   describe('The text "#9932cc" written in purple on a gray background.');
    * }
-   * </code>
-   * </div>
    */
  toString(format) {
    if (format === undefined && this._defaultStringValue !== undefined) {
@@ -423,8 +419,6 @@ class Color {
    * @param {Color} other
    * @returns {boolean|object}
    * @example
-   * <div>
-   * <code>
    * let bgColor, fg1Color, fg2Color, msg1, msg2;
    * function setup() {
    *   createCanvas(100, 100);
@@ -458,11 +452,8 @@ class Color {
    *   fill(fg2Color);
    *   text(msg2, 10, 60);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let bgColor, fgColor, contrast;
    * function setup() {
    *   createCanvas(100, 100);
@@ -485,8 +476,6 @@ class Color {
    *   text('APCA', 10, 70);
    *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
    * }
-   * </code>
-   * </div>
    */
   contrast(other_color, options='WCAG21') {
     if(options !== 'all'){
@@ -531,8 +520,6 @@ class Color {
    * @param {Number} red the new red value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -555,8 +542,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is teal.');
    * }
-   * </code>
-   * </div>
    */
   setRed(new_red, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -587,8 +572,6 @@ class Color {
    * @param {Number} green the new green value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -611,8 +594,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is yellow.');
    * }
-   * </code>
-   * </div>
    */
   setGreen(new_green, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -643,8 +624,6 @@ class Color {
    * @param {Number} blue the new blue value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -667,8 +646,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is pale fuchsia.');
    * }
-   * </code>
-   * </div>
    */
   setBlue(new_blue, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -700,8 +677,6 @@ class Color {
    * @param {Number} alpha the new alpha value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -724,8 +699,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is faded pink.');
    * }
-   * </code>
-   * </div>
    */
   setAlpha(new_alpha, max=[0, 1]) {
     this._defaultStringValue = undefined;

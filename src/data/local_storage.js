@@ -34,8 +34,6 @@ function storage(p5, fn){
    * @param {String|Number|Boolean|Object|Array} value value to be stored.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -64,11 +62,8 @@ function storage(p5, fn){
    *   // Display the score.
    *   text(`${name}: ${score}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -90,9 +85,8 @@ function storage(p5, fn){
    *   // Draw the circle.
    *   circle(p.x, p.y, 30);
    * }
-   * </code>
-   * </div>
    *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -117,8 +111,6 @@ function storage(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, 30);
    * }
-   * </code>
-   * </div>
    */
   fn.storeItem = function(key, value) {
     if (typeof key !== 'string') {
@@ -189,8 +181,6 @@ function storage(p5, fn){
    * @return {String|Number|Boolean|Object|Array} stored item.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -219,11 +209,8 @@ function storage(p5, fn){
    *   // Display the score.
    *   text(`${name}: ${score}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,11 +232,8 @@ function storage(p5, fn){
    *   // Draw the circle.
    *   circle(p.x, p.y, 30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -274,8 +258,6 @@ function storage(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, 30);
    * }
-   * </code>
-   * </div>
    */
   fn.getItem = function(key) {
     let value = localStorage.getItem(key);
@@ -326,8 +308,6 @@ function storage(p5, fn){
    * @for p5
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to clear localStorage.
    *
    * function setup() {
@@ -365,8 +345,6 @@ function storage(p5, fn){
    * function doubleClicked() {
    *   clearStorage();
    * }
-   * </code>
-   * </div>
    */
   fn.clearStorage = function () {
     const keys = Object.keys(localStorage);
@@ -400,8 +378,6 @@ function storage(p5, fn){
    * @for p5
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove an item from localStorage.
    *
    * function setup() {
@@ -439,8 +415,6 @@ function storage(p5, fn){
    * function doubleClicked() {
    *   removeItem('score');
    * }
-   * </code>
-   * </div>
    */
   fn.removeItem = function(key) {
     if (typeof key !== 'string') {
