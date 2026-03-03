@@ -16,7 +16,7 @@ jobs:
     if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
