@@ -15,8 +15,8 @@ const smallerDimensionPriority = function(dimOther, dimSelf) {
       'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + minDimension + 'D vectors, and any additional values of the linger vector will be ignored.',
     );
   }
-  return minDimension
-}
+  return minDimension;
+};
 
 class Vector {
   /**
@@ -51,7 +51,7 @@ class Vector {
       console.warn(
         'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
       );
-      args = [0, 0, 0]
+      args = [0, 0, 0];
     }
 
     this.values = args;

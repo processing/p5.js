@@ -1,4 +1,5 @@
-import {default as vector, Vector} from '../../../src/math/p5.Vector.js';
+import {Vector} from '../../../src/math/p5.Vector.js';
+import {default as math} from '../../../src/math/math.js';
 import { vi } from 'vitest';
 
 // TODO add create Vector coverage
@@ -6,12 +7,11 @@ import { vi } from 'vitest';
 suite('p5.Vector', function () {
   var v;
 
+  const mockP5 = {};
   const mockP5Prototype = {};
 
-  beforeEach(async function () {
-    vector(mockP5Prototype);
-  //console.log(typeof mockP5Prototype.createVector); // Debug this
-  //console.log(Object.keys(mockP5Prototype)); // See what was added
+  beforeAll(async function () {
+    math(mockP5, mockP5Prototype);
   });
 
   afterEach(function () {});
