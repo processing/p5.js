@@ -36,7 +36,7 @@ jobs:
       - name: Post or update comment
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ACCESS_TOKEN }}
           script: |
             const fs = require('fs');
             const output = JSON.parse(fs.readFileSync('output.json', 'utf8'));
