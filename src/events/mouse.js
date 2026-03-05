@@ -1936,7 +1936,7 @@ p5.prototype.requestPointerLock = function() {
   canvas.requestPointerLock =
     canvas.requestPointerLock || canvas.mozRequestPointerLock;
   if (!canvas.requestPointerLock) {
-    console.log('requestPointerLock is not implemented in this browser');
+    p5._friendlyError('requestPointerLock is not implemented in this browser');
     return false;
   }
   canvas.requestPointerLock();
