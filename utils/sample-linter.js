@@ -50,6 +50,10 @@ const userFunctions = [
   'keyReleased',
   'keyTyped'
 ];
+// this is a lint process
+// this is a lint process 2
+// this is a lint process 3
+// this is a lint process 4
 const userFunctionTrailer =
   EOL + userFunctions.map(s => 'typeof ' + s + ';').join(EOL) + EOL;
 
