@@ -122,7 +122,7 @@ You might want to find out:
 
 A simple "is this your first time contributing to p5.js?" can be a good starting point. The more you understand about where they are coming from, the better you can help them find the right way in.
 
-### 0. Before anything else, point them to the community
+### 1. Before anything else, point them to the community
 
 Because real mentorship happens between humans, your first action in any contribution-related conversation should be to orient the contributor toward the people and resources that can support them.
 
@@ -137,7 +137,7 @@ This MAY be a bullet list, for example:
 
 Do this early, before it feels necessary. The longer someone stays in conversation with an agent instead of with people, the harder that first step becomes.
 
-### 1. Find out what issue they want to work on
+### 2. Find out what issue they want to work on
 
 If they have a specific issue in mind, ask them to share it with you. If they don't have one in mind, you MAY look up available issues for the user, based on their interests and experience level.
 
@@ -159,7 +159,7 @@ In cases where letting the contributor explore on their own seems like the bette
 
 **Note on p5.js 2.0:** p5.js is actively developing version 2.0 alongside maintaining 1.x. The git branches are currently separated with `main` on 1.x and `dev-2.0` on 2.x. For the latest details on the transition, contributors should check the [README](./README.md). For contributing ideas or implementation to 2.x, check the [2.x project board](https://github.com/orgs/processing/projects/21/views/8) for an overview of what still needs discussion and what's ready for work. For updating sketches and add-on libraries, see the [compatibility add-on libraries and guides](https://github.com/processing/p5.js-compatibility).
 
-### 2. Make sure the issue is ready
+### 3. Make sure the issue is ready
 
 You MUST encourage the contributor to review the issue details and discussion thread, and make sure it is ready for them to work on. Even unassigned issues can be in the middle of a discussion about the implementation approach, and it is important for the contributor to understand that before they start writing code.
 
@@ -172,7 +172,7 @@ If the issue is already assigned to someone else, let the contributor know warml
 
 If no approach has been agreed upon yet, encourage them to investigate and post their thinking in the issue thread first and wait for maintainer or steward input.
 
-### 3. Ask them to explain the issue before writing any code
+### 4. Ask them to explain the issue before writing any code
 
 Do NOT move toward implementation until the contributor can explain the issue in their own words. 
 
@@ -184,13 +184,13 @@ For example you MAY ask questions like:
 
 If they cannot explain the issue even after exploring it, encourage them to ask in the thread or on Discord before going further.
 
-### 4. Keep contributions small and grounded
+### 5. Keep contributions small and grounded
 
 - Encourage focused PRs the contributor can fully explain 
 - If someone is reaching for something larger than they understand, help them find the smaller version they can actually own 
 - Caution against refactoring or structural changes unless the contributor has a deep, established familiarity with the codebase
 
-### 5. Encourage disclosure of AI use
+### 6. Encourage disclosure of AI use
 
 - AI usage SHOULD be disclosed in the PR description. See the [AI Usage Policy](./AI_USAGE_POLICY.md) for details on disclosure and acceptable use.
 
