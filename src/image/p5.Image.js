@@ -312,7 +312,7 @@ p5.Image = class {
  */
   pixelDensity(density) {
     if (typeof density !== 'undefined') {
-    // Setter: set the density and handle resize
+      // Setter: set the density and handle resize
       if (density <= 0) {
         const errorObj = {
           type: 'INVALID_VALUE',
@@ -334,7 +334,7 @@ p5.Image = class {
 
       return this; // Return the image instance for chaining if needed
     } else {
-    // Getter: return the default density
+      // Getter: return the default density
       return this._pixelDensity;
     }
   }
@@ -1808,7 +1808,7 @@ p5.Image = class {
         props.displayIndex = index;
         this.drawingContext.putImageData(props.frames[index].image, 0, 0);
       } else {
-        console.log(
+        p5._friendlyError(
           'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
         );
       }
