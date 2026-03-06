@@ -1,7 +1,6 @@
 const uniforms = `
-struct Uniforms {
-  uModelViewMatrix: mat4x4<f32>,
-  uProjectionMatrix: mat4x4<f32>,
+// Group 0: Font Properties
+struct FontUniforms {
   uStrokeImageSize: vec2<i32>,
   uCellsImageSize: vec2<i32>,
   uGridImageSize: vec2<i32>,
@@ -10,7 +9,17 @@ struct Uniforms {
   uGlyphRect: vec4<f32>,
   uGlyphOffset: f32,
   uMaterialColor: vec4<f32>,
-};
+}
+
+// Group 1: Model Transform
+struct ModelUniforms {
+  uModelViewMatrix: mat4x4<f32>,
+}
+
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uProjectionMatrix: mat4x4<f32>,
+}
 `;
 
 export const fontVertexShader = `
@@ -25,7 +34,9 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(0) var<uniform> font: FontUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 @vertex
 fn main(input: VertexInput) -> VertexOutput {
@@ -33,35 +44,35 @@ fn main(input: VertexInput) -> VertexOutput {
   var positionVec4 = vec4<f32>(input.aPosition, 1.0);
 
   // scale by the size of the glyph's rectangle
-  positionVec4.x = positionVec4.x * (uniforms.uGlyphRect.z - uniforms.uGlyphRect.x);
-  positionVec4.y = positionVec4.y * (uniforms.uGlyphRect.w - uniforms.uGlyphRect.y);
+  positionVec4.x = positionVec4.x * (font.uGlyphRect.z - font.uGlyphRect.x);
+  positionVec4.y = positionVec4.y * (font.uGlyphRect.w - font.uGlyphRect.y);
 
   // Expand glyph bounding boxes by 1px on each side to give a bit of room
   // for antialiasing
-  let newOrigin = (uniforms.uModelViewMatrix * vec4<f32>(0.0, 0.0, 0.0, 1.0)).xyz;
-  let newDX = (uniforms.uModelViewMatrix * vec4<f32>(1.0, 0.0, 0.0, 1.0)).xyz;
-  let newDY = (uniforms.uModelViewMatrix * vec4<f32>(0.0, 1.0, 0.0, 1.0)).xyz;
+  let newOrigin = (model.uModelViewMatrix * vec4<f32>(0.0, 0.0, 0.0, 1.0)).xyz;
+  let newDX = (model.uModelViewMatrix * vec4<f32>(1.0, 0.0, 0.0, 1.0)).xyz;
+  let newDY = (model.uModelViewMatrix * vec4<f32>(0.0, 1.0, 0.0, 1.0)).xyz;
   let pixelScale = vec2<f32>(
     1.0 / length(newOrigin - newDX),
     1.0 / length(newOrigin - newDY)
   );
   let offset = pixelScale * normalize(input.aTexCoord - vec2<f32>(0.5, 0.5));
   let textureOffset = offset * (1.0 / vec2<f32>(
-    uniforms.uGlyphRect.z - uniforms.uGlyphRect.x,
-    uniforms.uGlyphRect.w - uniforms.uGlyphRect.y
+    font.uGlyphRect.z - font.uGlyphRect.x,
+    font.uGlyphRect.w - font.uGlyphRect.y
   ));
 
   // move to the corner of the glyph
-  positionVec4.x = positionVec4.x + uniforms.uGlyphRect.x;
-  positionVec4.y = positionVec4.y + uniforms.uGlyphRect.y;
+  positionVec4.x = positionVec4.x + font.uGlyphRect.x;
+  positionVec4.y = positionVec4.y + font.uGlyphRect.y;
 
   // move to the letter's line offset
-  positionVec4.x = positionVec4.x + uniforms.uGlyphOffset;
+  positionVec4.x = positionVec4.x + font.uGlyphOffset;
 
   positionVec4.x = positionVec4.x + offset.x;
   positionVec4.y = positionVec4.y + offset.y;
 
-  output.Position = uniforms.uProjectionMatrix * uniforms.uModelViewMatrix * positionVec4;
+  output.Position = camera.uProjectionMatrix * model.uModelViewMatrix * positionVec4;
   output.vTexCoord = input.aTexCoord + textureOffset;
 
   return output;
@@ -74,18 +85,19 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> uniforms: Uniforms;
-
-@group(1) @binding(0) var uSamplerStrokes: texture_2d<f32>;
-@group(1) @binding(1) var uSamplerStrokes_sampler: sampler;
-@group(1) @binding(2) var uSamplerRowStrokes: texture_2d<f32>;
-@group(1) @binding(3) var uSamplerRowStrokes_sampler: sampler;
-@group(1) @binding(4) var uSamplerRows: texture_2d<f32>;
-@group(1) @binding(5) var uSamplerRows_sampler: sampler;
-@group(1) @binding(6) var uSamplerColStrokes: texture_2d<f32>;
-@group(1) @binding(7) var uSamplerColStrokes_sampler: sampler;
-@group(1) @binding(8) var uSamplerCols: texture_2d<f32>;
-@group(1) @binding(9) var uSamplerCols_sampler: sampler;
+@group(0) @binding(0) var<uniform> font: FontUniforms;
+@group(0) @binding(1) var uSamplerStrokes: texture_2d<f32>;
+@group(0) @binding(2) var uSamplerStrokes_sampler: sampler;
+@group(0) @binding(3) var uSamplerRowStrokes: texture_2d<f32>;
+@group(0) @binding(4) var uSamplerRowStrokes_sampler: sampler;
+@group(0) @binding(5) var uSamplerRows: texture_2d<f32>;
+@group(0) @binding(6) var uSamplerRows_sampler: sampler;
+@group(0) @binding(7) var uSamplerColStrokes: texture_2d<f32>;
+@group(0) @binding(8) var uSamplerColStrokes_sampler: sampler;
+@group(0) @binding(9) var uSamplerCols: texture_2d<f32>;
+@group(0) @binding(10) var uSamplerCols_sampler: sampler;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 // some helper functions
 fn ROUND_f32(v: f32) -> i32 { return i32(floor(v + 0.5)); }
@@ -217,14 +229,14 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   let pixelScale = hardness / fwidth(input.vTexCoord);
 
   // which grid cell is this pixel in?
-  let gridCoord = vec2<i32>(floor(input.vTexCoord * vec2<f32>(uniforms.uGridSize)));
+  let gridCoord = vec2<i32>(floor(input.vTexCoord * vec2<f32>(font.uGridSize)));
 
   // intersect curves in this row
   {
     // the index into the row info bitmap
-    let rowIndex = gridCoord.y + uniforms.uGridOffset.y;
+    let rowIndex = gridCoord.y + font.uGridOffset.y;
     // fetch the info texel
-    let rowInfo = getTexel(uSamplerRows, uSamplerRows_sampler, rowIndex, uniforms.uGridImageSize);
+    let rowInfo = getTexel(uSamplerRows, uSamplerRows_sampler, rowIndex, font.uGridImageSize);
     // unpack the rowInfo
     let rowStrokeIndex = getInt16(rowInfo.xy);
     let rowStrokeCount = getInt16(rowInfo.zw);
@@ -237,14 +249,14 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
       // each stroke is made up of 3 points: the start and control point
       // and the start of the next curve.
       // fetch the indices of this pair of strokes:
-      let strokeIndices = getTexel(uSamplerRowStrokes, uSamplerRowStrokes_sampler, rowStrokeIndex + iRowStroke, uniforms.uCellsImageSize);
+      let strokeIndices = getTexel(uSamplerRowStrokes, uSamplerRowStrokes_sampler, rowStrokeIndex + iRowStroke, font.uCellsImageSize);
 
       // unpack the stroke index
       let strokePos = getInt16(strokeIndices.xy);
 
       // fetch the two strokes
-      let stroke0 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 0, uniforms.uStrokeImageSize);
-      let stroke1 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 1, uniforms.uStrokeImageSize);
+      let stroke0 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 0, font.uStrokeImageSize);
+      let stroke1 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 1, font.uStrokeImageSize);
 
       // calculate the coverage
       coverageX(stroke0.xy, stroke0.zw, stroke1.xy, input.vTexCoord, pixelScale, &coverage, &weight);
@@ -253,8 +265,8 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
 
   // intersect curves in this column
   {
-    let colIndex = gridCoord.x + uniforms.uGridOffset.x;
-    let colInfo = getTexel(uSamplerCols, uSamplerCols_sampler, colIndex, uniforms.uGridImageSize);
+    let colIndex = gridCoord.x + font.uGridOffset.x;
+    let colInfo = getTexel(uSamplerCols, uSamplerCols_sampler, colIndex, font.uGridImageSize);
     let colStrokeIndex = getInt16(colInfo.xy);
     let colStrokeCount = getInt16(colInfo.zw);
 
@@ -263,11 +275,11 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
         break;
       }
 
-      let strokeIndices = getTexel(uSamplerColStrokes, uSamplerColStrokes_sampler, colStrokeIndex + iColStroke, uniforms.uCellsImageSize);
+      let strokeIndices = getTexel(uSamplerColStrokes, uSamplerColStrokes_sampler, colStrokeIndex + iColStroke, font.uCellsImageSize);
 
       let strokePos = getInt16(strokeIndices.xy);
-      let stroke0 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 0, uniforms.uStrokeImageSize);
-      let stroke1 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 1, uniforms.uStrokeImageSize);
+      let stroke0 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 0, font.uStrokeImageSize);
+      let stroke1 = getTexel(uSamplerStrokes, uSamplerStrokes_sampler, strokePos + 1, font.uStrokeImageSize);
       coverageY(stroke0.xy, stroke0.zw, stroke1.xy, input.vTexCoord, pixelScale, &coverage, &weight);
     }
   }
@@ -276,7 +288,7 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   let distance = max(weight.x + weight.y, minDistance); // manhattan approx.
   let antialias = abs(dot(coverage, weight) / distance);
   let cover = min(abs(coverage.x), abs(coverage.y));
-  var outColor = vec4<f32>(uniforms.uMaterialColor.rgb, 1.0) * uniforms.uMaterialColor.a;
+  var outColor = vec4<f32>(font.uMaterialColor.rgb, 1.0) * font.uMaterialColor.a;
   outColor = outColor * saturate_f32(max(antialias, cover));
   return outColor;
 }

@@ -1,9 +1,21 @@
 import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import files from '../../../src/io/files';
 import { vi } from 'vitest';
-import * as fileSaver from 'file-saver';
 
-vi.mock('file-saver');
+const mockAnchorElement = vi.mockObject({
+  href: null,
+  download: null,
+  click: () => {}
+});
+const originalCreateElement = document.createElement;
+vi.spyOn(document, 'createElement').mockImplementation((...args) => {
+  if(args[0] !== 'a'){
+    return originalCreateElement.apply(document, args);
+  }else{
+    return mockAnchorElement;
+  }
+});
+vi.spyOn(URL, 'createObjectURL');
 
 suite('Files', function() {
   beforeAll(async function() {
@@ -54,8 +66,10 @@ suite('Files', function() {
       mockP5Prototype.saveStrings(strings, 'myfile');
 
       const saveData = new Blob([strings.join('\n')]);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'myfile.txt');
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile.txt');
     });
 
     test('should download a file with expected contents with CRLF', async () => {
@@ -63,8 +77,10 @@ suite('Files', function() {
       mockP5Prototype.saveStrings(strings, 'myfile', 'txt', true);
 
       const saveData = new Blob([strings.join('\r\n')]);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'myfile.txt');
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile.txt');
     });
   });
 
@@ -80,8 +96,10 @@ suite('Files', function() {
       mockP5Prototype.saveJSON(myObj, 'myfile');
 
       const saveData = new Blob([JSON.stringify(myObj, null, 2)]);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'myfile.json');
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile.json');
     });
   });
 
@@ -97,8 +115,10 @@ suite('Files', function() {
       mockP5Prototype.writeFile(myArray, 'myfile');
 
       const saveData = new Blob(myArray);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'myfile');
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile');
     });
   });
 
@@ -115,8 +135,10 @@ suite('Files', function() {
       mockP5Prototype.downloadFile(inBlob, 'myfile');
 
       const saveData = new Blob(myArray);
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'myfile');
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile');
     });
   });
 
@@ -151,8 +173,10 @@ suite('Files', function() {
         mockP5Prototype.save(myStrings, 'filename');
 
         const saveData = new Blob([myStrings.join('\n')]);
-        expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-        expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'filename.txt');
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.txt');
       });
 
       test('should download a json file', async () => {
@@ -160,8 +184,10 @@ suite('Files', function() {
         mockP5Prototype.save(myObj, 'filename.json');
 
         const saveData = new Blob([JSON.stringify(myObj, null, 2)]);
-        expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-        expect(fileSaver.saveAs).toHaveBeenCalledWith(saveData, 'filename.json');
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.json');
       });
     });
   });

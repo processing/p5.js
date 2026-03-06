@@ -68,8 +68,9 @@ function matrix(p5, fn) {
    * const vector = new Vector(1, 2, 3);
    * const result = matrix.multiplyPoint(vector);
    *
+   * @example
+   * // META:norender
    * // p5.js script example
-   * <div class="norender"><code>
    * function setup() {
    *
    *   // Create a 4x4 identity matrix
@@ -103,7 +104,6 @@ function matrix(p5, fn) {
    *   const transformedVector = matrix.multiplyPoint(vector);
    *   console.log("Transformed Vector:", transformedVector.toString());
    * }
-   * </code></div>
    */
   p5.Matrix = Matrix;
 }

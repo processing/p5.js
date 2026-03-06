@@ -24,6 +24,10 @@ function pointer(p5, fn, lifecycles){
         signal: this._removeSignal
       });
     }
+
+    window.addEventListener('blur', () => {
+      this.mouseIsPressed = false;
+    }, { signal: this._removeSignal });
   };
 
   /**
@@ -41,8 +45,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -66,8 +68,6 @@ function pointer(p5, fn, lifecycles){
    *     text('<<', 50, 50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.movedX = 0;
 
@@ -86,8 +86,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -111,8 +109,6 @@ function pointer(p5, fn, lifecycles){
    *     text('▲', 50, 50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.movedY = 0;
 
@@ -138,8 +134,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -152,11 +146,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw a vertical line that follows the mouse's x-coordinate.
    *   line(mouseX, 0, mouseX, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -173,11 +164,8 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates.
    *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -194,11 +182,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the line.
    *   line(mx, -50, mx, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -224,8 +209,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates.
    *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseX = 0;
 
@@ -243,8 +226,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -257,11 +238,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw a horizontal line that follows the mouse's y-coordinate.
    *   line(0, mouseY, 100, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -278,11 +256,8 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates.
    *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -299,11 +274,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the line.
    *   line(-50, my, 50, my);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -329,8 +301,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates.
    *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseY = 0;
 
@@ -354,8 +324,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -370,11 +338,8 @@ function pointer(p5, fn, lifecycles){
    *
    *   line(pmouseX, pmouseY, mouseX, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -394,8 +359,6 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the line.
    *   line(pmx, pmy, mx, my);
    * }
-   * </code>
-   * </div>
    */
   fn.pmouseX = 0;
 
@@ -419,8 +382,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -435,11 +396,8 @@ function pointer(p5, fn, lifecycles){
    *
    *   line(pmouseX, pmouseY, mouseX, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -459,8 +417,6 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the line.
    *   line(pmx, pmy, mx, my);
    * }
-   * </code>
-   * </div>
    */
   fn.pmouseY = 0;
 
@@ -482,8 +438,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -500,8 +454,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates within the browser window.
    *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.winMouseX = 0;
 
@@ -523,8 +475,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -541,8 +491,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouse's coordinates within the browser window.
    *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.winMouseY = 0;
 
@@ -569,8 +517,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -589,11 +535,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the circle.
    *   circle(50, 50, d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create the canvas and set its position.
    *   let cnv = createCanvas(100, 100);
@@ -612,8 +555,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display pwinMouseX.
    *   text(pwinMouseX, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.pwinMouseX = 0;
 
@@ -640,8 +581,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -660,11 +599,8 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the circle.
    *   circle(50, 50, d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create the canvas and set its position.
    *   let cnv = createCanvas(100, 100);
@@ -683,8 +619,6 @@ function pointer(p5, fn, lifecycles){
    *   // Display pwinMouseY.
    *   text(pwinMouseY, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.pwinMouseY = 0;
 
@@ -708,8 +642,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200);
    *
@@ -730,11 +662,8 @@ function pointer(p5, fn, lifecycles){
    *   text(`Right: ${mouseButton.right}`, width / 2, height / 2);
    *   text(`Center: ${mouseButton.center}`, width / 2, height / 2 + 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -758,8 +687,6 @@ function pointer(p5, fn, lifecycles){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.mouseButton = {
     left: false,
@@ -802,8 +729,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // On a touchscreen device, touch the canvas using one or more fingers
    * // at the same time.
    *
@@ -823,11 +748,8 @@ function pointer(p5, fn, lifecycles){
    *     circle(touch.x, touch.y, 40);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // On a touchscreen device, touch the canvas using one or more fingers
    * // at the same time.
    *
@@ -847,8 +769,6 @@ function pointer(p5, fn, lifecycles){
    *     text(`${touch.x}, ${touch.y}`, touch.x, touch.y - 40);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.touches = [];
   fn._activePointers = new Map();
@@ -861,8 +781,6 @@ function pointer(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -881,11 +799,8 @@ function pointer(p5, fn, lifecycles){
    *   // Display the mouseIsPressed variable.
    *   text(mouseIsPressed, 25, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -907,8 +822,6 @@ function pointer(p5, fn, lifecycles){
    *   // Draw the square.
    *   square(25, 25, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseIsPressed = false;
 
@@ -1035,8 +948,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1068,8 +979,6 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1123,8 +1032,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1156,8 +1063,6 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onpointermove = function(e) {
     let executeDefault;
@@ -1242,8 +1147,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1275,11 +1178,8 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1323,8 +1223,6 @@ function pointer(p5, fn, lifecycles){
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onpointerdown = function(e) {
     let executeDefault;
@@ -1401,8 +1299,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1434,11 +1330,8 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1482,8 +1375,6 @@ function pointer(p5, fn, lifecycles){
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onpointerup = function(e) {
     let executeDefault;
@@ -1565,8 +1456,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1597,11 +1486,8 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1645,8 +1531,6 @@ function pointer(p5, fn, lifecycles){
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onclick = function(e) {
     if (typeof this._customActions.mouseClicked === 'function') {
@@ -1709,8 +1593,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1741,11 +1623,8 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let value = 0;
    *
    * function setup() {
@@ -1774,8 +1653,6 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
 
   fn._ondblclick = function(e) {
@@ -1860,8 +1737,6 @@ function pointer(p5, fn, lifecycles){
    * @param  {WheelEvent} [event] optional `WheelEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let circleSize = 0;
    *
    * function setup() {
@@ -1885,11 +1760,8 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let direction = '';
    *
    * function setup() {
@@ -1922,8 +1794,6 @@ function pointer(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onwheel = function(e) {
     this._mouseWheelDeltaY = e.deltaY;
@@ -1956,8 +1826,6 @@ function pointer(p5, fn, lifecycles){
    * @method requestPointerLock
    *
    * @example
-   * <div>
-   * <code>
    * let score = 0;
    *
    * function setup() {
@@ -1986,8 +1854,6 @@ function pointer(p5, fn, lifecycles){
    * function doubleClicked() {
    *   requestPointerLock();
    * }
-   * </code>
-   * </div>
    */
   fn.requestPointerLock = function() {
     // pointer lock object forking for cross browser
@@ -2018,8 +1884,6 @@ function pointer(p5, fn, lifecycles){
    * @method exitPointerLock
    *
    * @example
-   * <div>
-   * <code>
    * let isLocked = false;
    *
    * function setup() {
@@ -2055,8 +1919,6 @@ function pointer(p5, fn, lifecycles){
    *     isLocked = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.exitPointerLock = function() {
     document.exitPointerLock();

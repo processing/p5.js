@@ -63,8 +63,6 @@
  * @property let
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -82,11 +80,8 @@
  *
  *   describe('The text "Hello, 🌍!" written on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * let x = 0;
  *
  * function setup() {
@@ -103,8 +98,6 @@
  *
  *   circle(x, 50, 20);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -217,8 +210,6 @@
  * @property if
  *
  * @example
- * <div>
- * <code>
  * // Click the mouse to show the circle.
  *
  * function setup() {
@@ -236,11 +227,8 @@
  *     circle(mouseX, mouseY, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Click the mouse to show different shapes.
  *
  * function setup() {
@@ -260,11 +248,8 @@
  *     ellipse(50, 50, 20, 50);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Move the mouse to change the background color.
  *
  * function setup() {
@@ -284,11 +269,8 @@
  *     background(0);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Click on the canvas to begin detecting key presses.
  *
  * function setup() {
@@ -310,8 +292,6 @@
  *
  *   circle(50, 50, 40);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -408,8 +388,6 @@
  * @property function
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -433,11 +411,8 @@
  *   // Draw a flower emoji.
  *   text('🌸', 50, 50);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -465,11 +440,8 @@
  *   // Use the x and y parameters.
  *   text('🌸', x, y);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -495,8 +467,6 @@
  *   let message = `Hello, ${name}!`;
  *   return message;
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -605,8 +575,6 @@
  * @property Boolean
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -621,11 +589,8 @@
  *     circle(mouseX, mouseY, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -640,11 +605,8 @@
  *     circle(mouseX, mouseY, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Click on the canvas to begin detecting key presses.
  *
  * function setup() {
@@ -661,11 +623,8 @@
  *     background('deeppink');
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Click the canvas to begin detecting key presses.
  *
  * // Create a Boolean variable.
@@ -703,8 +662,6 @@
  *     isPlaying = true;
  *   }
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -808,8 +765,6 @@
  * @property String
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -824,11 +779,8 @@
  *
  *   describe('The text "Hello!" written on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -846,8 +798,6 @@
  *
  *   describe('The text "Hello, 🌍!" written on a gray background.');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -961,8 +911,6 @@
  * @property Number
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -976,11 +924,8 @@
  *
  *   describe('Two concentric, white circles drawn on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -992,8 +937,6 @@
  *
  *   circle(frameCount * 0.05, 50, 20);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -1064,8 +1007,6 @@
  * @property Object
  *
  * @example
- * <div>
- * <code>
  * // Declare the variable data and assign it an object with three properties.
  * let data = { x: 50, y: 50, d: 20 };
  *
@@ -1081,11 +1022,8 @@
  *   // Access the object's values using the . operator.
  *   circle(data.x, data.y, data.d);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable data and assign it an object with three properties.
  * let data = { x: 50, y: 50, d: 20 };
  *
@@ -1105,11 +1043,8 @@
  *   fill(data.color);
  *   circle(data.x, data.y, data.d);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable data and assign it an object with three properties.
  * let data = { x: 50, y: 50, d: 20 };
  *
@@ -1133,10 +1068,7 @@
  *   data.x += random(-1, 1);
  *   data.y += random(-1, 1);
  * }
- * </code>
- * </div>
  */
-
 
 /**
  * Asynchronous Asset Loading with Async/Await.
@@ -1188,8 +1120,6 @@
  *
  * @property async_await
  * @example
- * <div>
- * <code>
  * // Click and drag the mouse to view the scene from different angles.
  * 
  * let shape;
@@ -1212,11 +1142,8 @@
  *   // Draw the shape.
  *   model(shape);
  * }
- * </code>
- * </div>
- * 
- * <div>
- * <code>
+ *
+ * @example
  * let font;
  *
  * async function setup() {
@@ -1242,8 +1169,6 @@
  *   // Display the mouse's coordinates.
  *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -1287,8 +1212,6 @@
  * @property Array
  *
  * @example
- * <div>
- * <code>
  * // Declare the variable xCoordinates and assign it an array
  * // with three numeric elements.
  * let xCoordinates = [25, 50, 75];
@@ -1313,11 +1236,8 @@
  *   // Access the element at index 2, which is 75.
  *   circle(xCoordinates[2], 50, 20);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an array with three numeric elements.
  * let xCoordinates = [20, 40, 60];
  *
@@ -1345,11 +1265,8 @@
  *   // Access the element at index 3, which is 80.
  *   circle(xCoordinates[3], 50, 20);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an empty array.
  * let xCoordinates = [];
  *
@@ -1372,11 +1289,8 @@
  *     circle(xCoordinates[i], 50, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an empty array.
  * let xCoordinates = [];
  *
@@ -1399,11 +1313,8 @@
  *     circle(x, 50, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an empty array.
  * let xCoordinates = [];
  *
@@ -1431,8 +1342,6 @@
  *     circle(xCoordinates[i], 50, 20);
  *   }
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -1526,8 +1435,6 @@
  * @property class
  *
  * @example
- * <div>
- * <code>
  * // Declare a frog variable.
  * let fifi;
  *
@@ -1560,11 +1467,8 @@
  *     text('🐸', this.x, this.y);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare two frog variables.
  * let frog1;
  * let frog2;
@@ -1600,11 +1504,8 @@
  *     text('🐸', this.x, this.y);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare two frog variables.
  * let frog1;
  * let frog2;
@@ -1670,11 +1571,8 @@
  *     }
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Create an array that will hold frogs.
  * let frogs = [];
  *
@@ -1750,8 +1648,6 @@
  *     }
  *   }
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -1867,8 +1763,6 @@
  * @property for
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -1883,11 +1777,8 @@
  *     line(x, 25, x, 75);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -1902,11 +1793,8 @@
  *     circle(50, 50, d);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -1930,11 +1818,8 @@
  *     }
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an array of numbers.
  * let xCoordinates = [20, 40, 60, 80];
  *
@@ -1952,11 +1837,8 @@
  *     circle(xCoordinates[i], 50, 20);
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Declare the variable xCoordinates and assign it an array of numbers.
  * let xCoordinates = [20, 40, 60, 80];
  *
@@ -1974,8 +1856,6 @@
  *     circle(x, 50, 20);
  *   }
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -2041,8 +1921,6 @@
  * @property while
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -2063,11 +1941,8 @@
  *     x += 20;
  *   }
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -2090,8 +1965,6 @@
  *     d -= random(5, 15);
  *   }
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -2128,19 +2001,14 @@
  * @property console
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   noCanvas();
  *
  *   // Prints "Hello!" to the console.
  *   console.log('Hello!');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -2164,6 +2032,4 @@
  *
  *   describe('A gray square.');
  * }
- * </code>
- * </div>
  */
