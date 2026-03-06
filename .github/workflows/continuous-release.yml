@@ -51,5 +51,5 @@ jobs:
       - name: Upload output data
         uses: actions/upload-artifact@v4
         with:
-          name: output.json
+          name: output.zip
           path: output.json
