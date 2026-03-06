@@ -1201,6 +1201,8 @@ Steps:
 1. Run `npm install`
 1. Run the following command, using the path to **your** local p5.js repo before the `#`, and the name of **your** branch after the `#`:
 
+(Note the following is a single line, not two lines!)
+
 ```sh
 npm run custom:dev path/to/YOUR/local/repo#yourBranch
 ```
@@ -1217,6 +1219,8 @@ This will build the local website reference pages from the data in your branch a
 
 If you prefer to preview work that's already on github, you can do so.  Use the repo URL instead of its local path, as follows:
 
+(Again, note the following is a single line, not two lines!)
+
 ```sh
 npm run custom:dev https://github.com/yourUsername/p5.js.git#yourBranch
 ```
@@ -1230,10 +1234,12 @@ npm run custom:cleanup
 
 #### Troubleshooting
 
-* [Run the documentation linter](#linting-the-docs) on your source files.
 * Review the log from the above `custom:dev` process, for mentions of your code.
-* Don't forget that if you're [using local asset files](#using-assets), they'll need to be in the _website_ repo.
-* Note that block comments starting with `/*` rather than `/**` will be _ignored_ and won't be used for the reference (even though they may look otherwise identical in your editor).
+* Don't forget that if you're [using local asset files](#using-assets), they'll need to be in the *website* repo, _not_ the main p5.js repo!
+* Note that block comments starting with `/*` rather than `/**` will be *ignored* and won't be used for the reference (even though they may look otherwise identical in your editor).
+* Make sure you've specified the correct branch where your changes are.
+* Ensure you see in the log that your repo _has_ actually been cloned.  There is a caching mechanism in the website build process which prevents a recently cloned repo from being cloned again.  Removing the website folder `in/p5.js/` will force the build process to make a new clone.
+* You can also [Run the documentation linter](#linting-the-docs) on your source files to look for warnings.
 
 
 #### Limitations
