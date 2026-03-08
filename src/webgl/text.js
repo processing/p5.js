@@ -685,7 +685,7 @@ function text(p5, fn) {
 
     if (!p5.Font.hasGlyphData(this.states.textFont)) {
       console.log(
-        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported'
+        'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported. Make sure to set the font using textFont() before drawing text.'
       );
       return;
     }

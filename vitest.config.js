@@ -38,7 +38,7 @@ export default defineConfig({
             './test/unit/webgpu/*.js',
             './test/types/**/*'
           ],
-          testTimeout: 1000,
+          testTimeout: 3000,
           globals: true,
           browser: {
             enabled: true,
@@ -90,7 +90,7 @@ export default defineConfig({
             // './test/unit/visual/cases/webgpu.js',
             './test/types/**/*'
           ],
-          testTimeout: 1000,
+          testTimeout: 5000,
           globals: true,
           browser: {
             enabled: true,

@@ -1,25 +1,5 @@
 const uniforms = `
-// Group 1: Camera and Projection
-struct CameraUniforms {
-  uViewMatrix: mat4x4<f32>,
-  uProjectionMatrix: mat4x4<f32>,
-  uCameraNormalMatrix: mat3x3<f32>,
-}
-
-// Group 2: Model Transform
-struct ModelUniforms {
-// @p5 ifdef Vertex getWorldInputs
-  uModelMatrix: mat4x4<f32>,
-  uModelNormalMatrix: mat3x3<f32>,
-// @p5 endif
-// @p5 ifndef Vertex getWorldInputs
-  uModelViewMatrix: mat4x4<f32>,
-  uNormalMatrix: mat3x3<f32>,
-// @p5 endif
-  uMaterialColor: vec4<f32>,
-}
-
-// Group 3: Material Properties
+// Group 0: Material Properties
 struct MaterialUniforms {
   uUseVertexColor: u32,
   uHasSetAmbient: u32,
@@ -34,7 +14,7 @@ struct MaterialUniforms {
   uMetallic: f32,
 }
 
-// Group 4: Lighting
+// Group 0: Lighting
 struct LightingUniforms {
   uDirectionalLightCount: i32,
   uLightingDirection: array<vec3<f32>, 5>,
@@ -57,6 +37,26 @@ struct LightingUniforms {
   uUseImageLight: u32,
   uUseLighting: u32,
 }
+
+// Group 1: Model Transform
+struct ModelUniforms {
+// @p5 ifdef Vertex getWorldInputs
+  uModelMatrix: mat4x4<f32>,
+  uModelNormalMatrix: mat3x3<f32>,
+// @p5 endif
+// @p5 ifndef Vertex getWorldInputs
+  uModelViewMatrix: mat4x4<f32>,
+  uNormalMatrix: mat3x3<f32>,
+// @p5 endif
+  uMaterialColor: vec4<f32>,
+}
+
+// Group 2: Camera and Projection
+struct CameraUniforms {
+  uViewMatrix: mat4x4<f32>,
+  uProjectionMatrix: mat4x4<f32>,
+  uCameraNormalMatrix: mat3x3<f32>,
+}
 `;
 
 export const materialVertexShader = `
@@ -76,10 +76,10 @@ struct VertexOutput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> material: MaterialUniforms;
-@group(0) @binding(3) var<uniform> lighting: LightingUniforms;
+@group(0) @binding(0) var<uniform> material: MaterialUniforms;
+@group(0) @binding(1) var<uniform> lighting: LightingUniforms;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 struct Vertex {
   position: vec3<f32>,
@@ -147,18 +147,16 @@ struct FragmentInput {
 };
 
 ${uniforms}
-@group(0) @binding(0) var<uniform> camera: CameraUniforms;
-@group(0) @binding(1) var<uniform> model: ModelUniforms;
-@group(0) @binding(2) var<uniform> material: MaterialUniforms;
-@group(0) @binding(3) var<uniform> lighting: LightingUniforms;
-
-@group(0) @binding(4) var uSampler: texture_2d<f32>;
-@group(0) @binding(5) var uSampler_sampler: sampler;
-
-@group(0) @binding(6) var environmentMapDiffused: texture_2d<f32>;
-@group(0) @binding(7) var environmentMapDiffused_sampler: sampler;
-@group(0) @binding(8) var environmentMapSpecular: texture_2d<f32>;
-@group(0) @binding(9) var environmentMapSpecular_sampler: sampler;
+@group(0) @binding(0) var<uniform> material: MaterialUniforms;
+@group(0) @binding(1) var<uniform> lighting: LightingUniforms;
+@group(0) @binding(2) var uSampler: texture_2d<f32>;
+@group(0) @binding(3) var uSampler_sampler: sampler;
+@group(0) @binding(4) var environmentMapDiffused: texture_2d<f32>;
+@group(0) @binding(5) var environmentMapDiffused_sampler: sampler;
+@group(0) @binding(6) var environmentMapSpecular: texture_2d<f32>;
+@group(0) @binding(7) var environmentMapSpecular_sampler: sampler;
+@group(1) @binding(0) var<uniform> model: ModelUniforms;
+@group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 struct ColorComponents {
   baseColor: vec3<f32>,

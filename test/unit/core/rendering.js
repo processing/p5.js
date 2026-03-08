@@ -285,4 +285,40 @@ suite('Rendering', function() {
       assert.deepEqual(pixelFromGfx, pixelFromImg);
     });
   });
+
+  suite('p5.prototype.createGraphics pixelDensity', function() {
+    let myp5;
+
+    beforeEach(function() {
+      myp5 = new p5(function(p) {
+        p.setup = function() {
+          p.createCanvas(100, 100);
+        };
+      });
+    });
+
+    afterEach(function() {
+      myp5.remove();
+    });
+
+    test('createGraphics should inherit pixelDensity from parent sketch', function() {
+      myp5.pixelDensity(1);
+      const g = myp5.createGraphics(100, 100);
+      assert.equal(g.pixelDensity(), 1);
+    });
+
+    test('createGraphics should inherit non-default pixelDensity', function() {
+      myp5.pixelDensity(3);
+      const g = myp5.createGraphics(100, 100);
+      assert.equal(g.pixelDensity(), 3);
+    });
+
+    test('createGraphics should use default pixelDensity when not explicitly set', function() {
+      // When no pixelDensity is set, both should match
+      const expectedDensity = myp5.pixelDensity();
+      const g = myp5.createGraphics(100, 100);
+      assert.equal(g.pixelDensity(), expectedDensity);
+    });
+  });
+
 });

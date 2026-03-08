@@ -239,9 +239,6 @@ export function processData(rawData, strategy) {
         ...locationInfo(entry),
         ...deprecationInfo(entry),
         itemtype: 'method',
-        chainable: (prevItem?.chainable || entry.tags?.some(tag => tag.title === 'chainable'))
-          ? 1
-          : undefined,
         description: prevItem?.description || strategy.processDescription(entry.description),
         example: [
           ...(prevItem?.example || []),
@@ -259,7 +256,8 @@ export function processData(rawData, strategy) {
             return: entry.returns?.[0] && {
               description: strategy.processDescription(entry.returns[0].description),
               ...strategy.processType(entry.returns[0].type)
-            }
+            },
+            chainable: entry.tags?.some(tag => tag.title === 'chainable') ? 1 : undefined
           }
         ],
         return: prevItem?.return || entry.returns?.[0] && {
