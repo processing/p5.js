@@ -6,6 +6,9 @@
 
 function math(p5, fn) {
   /**
+   * 
+   * Testing
+   * 
    * Creates a new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * A vector can be thought of in different ways. In one view, a vector is like
@@ -93,16 +96,7 @@ function math(p5, fn) {
    * }
    */
   fn.createVector = function (x, y, z) {
-    // TODO
-    if (this instanceof p5) {
-      return new p5.Vector(
-        this._fromRadians.bind(this),
-        this._toRadians.bind(this),
-        ...arguments
-      );
-    } else {
-      return new p5.Vector(x, y, z);
-    }
+    return new p5.Vector(x, y, z);
   };
 
   /**
