@@ -6,6 +6,10 @@ In p5.js, we author the code reference you see on the [reference](https://p5js.o
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
 
+### A note about p5.js versions
+
+This document describes how to work with p5.js version 1.x, whose reference documentation is currently being hosted at https://p5js.org/reference/.  If you are documenting code for p5.js **v2.x**, you should consult instead [this document at beta.p5js.org](https://beta.p5js.org/contribute/contributing_to_the_p5js_reference/) as some syntax and processes differ between the versions.
+
 
 ## A quick introduction to how reference comments work
 
