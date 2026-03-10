@@ -32,7 +32,7 @@ For a quick preview, various editors have a feature to render markdown files.  F
 * open the command-palette (`F1` or `cmd-shift-p` or `ctrl-shift-p`)
 * type `Markdown: open preview`
 
-<!-- TODO: list limitations of this quick-preview approach: e.g. images & other assets won't be included, the website styling (including line width) will not be applied. -->
+<!-- TODO: list limitations of this quick-preview approach: e.g.the website styling (including line width) will not be applied. -->
 
 ### Preview on local p5.js-website clone
 
@@ -98,8 +98,6 @@ If your file isn't appearing in the list the website shows at the path `contribu
 * Review the log from the above run of the npm `build:contributor-docs` process, for mentions of your file(s).
 
 * If you see that an .mdx file _is_ being generated, check that you can access it directly on the website by typing its URL.  e.g. if your file is called myFile.md, the path in the URL would be: `contribute/myFile/`
-
-* Don't forget that if you're [using local asset files](#using-assets), they'll need to be in the *website* repo, _not_ the main p5.js repo!
 
 * Ensure you see in the log that your repo _has_ actually been cloned.  There is a caching mechanism in the website build process which prevents a recently cloned repo from being cloned again.  Removing the website folder `in/p5.js/` will force the build process to make a new clone.
 
