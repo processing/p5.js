@@ -95,7 +95,7 @@ Lead/Mentor Alumni
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
 | Area | Steward(s) |
 |------|-------------|
-| Maintainers | [@davepagurek](https://github.com/davepagurek), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17), [@qianqianye](https://github.com/qianqianye) |
+| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17), [@qianqianye](https://github.com/qianqianye) |
 | Accessibility | [@calebfoss](https://github.com/calebfoss) |
 | Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
 | Color | [@limzykenneth](https://github.com/limzykenneth) |
