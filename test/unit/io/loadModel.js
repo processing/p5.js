@@ -212,4 +212,68 @@ suite('loadModel', function() {
     });
     assert.instanceOf(model, p5.Geometry);
   });
+
+  test('OBJ with negative vertex indices loads',
+    async function() {
+      var model = await promisedSketch(
+        function(sketch, resolve, reject) {
+          sketch.preload = function() {
+            sketch.loadModel(
+              'unit/assets/cube-negative-indices.obj',
+              resolve,
+              reject
+            );
+          };
+        }
+      );
+      assert.instanceOf(model, p5.Geometry);
+      assert.isAbove(model.vertices.length, 0);
+      assert.isAbove(model.faces.length, 0);
+    }
+  );
+
+  test('OBJ negative indices match positive',
+    async function() {
+      const results = await promisedSketch(
+        function(sketch, resolve, reject) {
+          let positive, negative;
+          let loaded = 0;
+          function checkDone() {
+            loaded++;
+            if (loaded === 2) {
+              resolve([positive, negative]);
+            }
+          }
+          sketch.preload = function() {
+            sketch.loadModel(
+              'unit/assets/cube.obj',
+              function(m) {
+                positive = m;
+                checkDone();
+              },
+              reject
+            );
+            sketch.loadModel(
+              'unit/assets/cube-negative-indices.obj',
+              function(m) {
+                negative = m;
+                checkDone();
+              },
+              reject
+            );
+          };
+        }
+      );
+      var pos = results[0];
+      var neg = results[1];
+      assert.equal(
+        pos.vertices.length,
+        neg.vertices.length
+      );
+      assert.equal(
+        pos.faces.length,
+        neg.faces.length
+      );
+    }
+  );
 });

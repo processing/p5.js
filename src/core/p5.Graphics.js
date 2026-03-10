@@ -380,6 +380,12 @@ p5.Graphics = class extends p5.Element {
  * </div>
  */
   remove() {
+    // Clean up WebGL resources if the renderer has a remove method
+    // (WebGL renderers need to free GPU resources like shaders and textures)
+    if (this._renderer && typeof this._renderer.remove === 'function') {
+      this._renderer.remove();
+    }
+
     if (this.elt.parentNode) {
       this.elt.parentNode.removeChild(this.elt);
     }
