@@ -620,12 +620,10 @@ function parseObj(model, lines, materials= {}) {
             const vertString = tokens[vertexTokens[tokenInd]];
             let vertParts=vertString.split('/');
 
-            // TODO: Faces can technically use negative numbers to refer to the
-            // previous nth vertex. I haven't seen this used in practice, but
-            // it might be good to implement this in the future.
-
             for (let i = 0; i < vertParts.length; i++) {
-              vertParts[i] = parseInt(vertParts[i]) - 1;
+              let index=parseInt(vertParts[i]);
+              if (index > 0) index -= 1; // OBJ uses 1-based indexing
+              vertParts[i]=index;
             }
 
             if (!usedVerts[vertString]) {
@@ -634,11 +632,11 @@ function parseObj(model, lines, materials= {}) {
 
             if (usedVerts[vertString][currentMaterial] === undefined) {
               const vertIndex = model.vertices.length;
-              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-              model.uvs.push(loadedVerts.vt[vertParts[1]] ?
-                loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
-              model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
-                loadedVerts.vn[vertParts[2]].copy() : new p5.Vector());
+              model.vertices.push(loadedVerts.v.at(vertParts[0]).copy());
+              model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
+                loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
+              model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
+                loadedVerts.vn.at(vertParts[2]).copy() : new p5.Vector());
 
               usedVerts[vertString][currentMaterial] = vertIndex;
               face.push(vertIndex);
@@ -646,7 +644,7 @@ function parseObj(model, lines, materials= {}) {
                 && materials[currentMaterial]
                 && materials[currentMaterial].diffuseColor) {
                 // Mark this vertex as colored
-                coloredVerts.add(loadedVerts.v[vertParts[0]]); //since a set would only push unique values
+                coloredVerts.add(loadedVerts.v.at(vertParts[0])); //since a set would only push unique values
               }
             } else {
               face.push(usedVerts[vertString][currentMaterial]);

@@ -73,6 +73,7 @@ There are different areas of work that stewards can be responsible for. These ar
 - **Maintainers**: This group can merge PRs
 - **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
 - **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+- **p5.js-web-editor**: The [p5.js Web Editor](https://github.com/processing/p5.js-web-editor/)
 
 These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
 
