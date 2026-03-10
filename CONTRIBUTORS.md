@@ -1104,6 +1104,7 @@
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://my-portfolio-phi-seven-50.vercel.app/"><img src="https://avatars.githubusercontent.com/u/187937240?v=4?s=64" width="64px;" alt="Saurabh Singh"/><br /><sub><b>Saurabh Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=saurabh24thakur" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=saurabh24thakur" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/imrinahru"><img src="https://avatars.githubusercontent.com/u/120927437?v=4?s=64" width="64px;" alt="imrinahru"/><br /><sub><b>imrinahru</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aimrinahru" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=imrinahru" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=imrinahru" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://skyash.me"><img src="https://avatars.githubusercontent.com/u/52105266?v=4?s=64" width="64px;" alt="yash"/><br /><sub><b>yash</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyash-dev" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
