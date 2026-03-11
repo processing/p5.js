@@ -59,6 +59,7 @@
     "lint-staged": "^15.1.0",
     "msw": "^2.6.3",
     "pixelmatch": "^7.1.0",
+    "pkg-pr-new": "^0.0.65",
     "rollup": "^4.9.6",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.12.0",
