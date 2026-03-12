@@ -5,14 +5,15 @@
 
 import * as constants from '../core/constants';
 
-/// HELPER FOR SMALLER DIMENSION PRIORITY LOGIC.
-/// Pending implementation as decorator.
+/** 
+ * This function is used by binary vector operations to prioritize shorter vectors,
+ * and to emit a warning when lengths do not match.
+ */
 const smallerDimensionPriority = function(dimOther, dimSelf) {
   const minDimension = Math.min(dimOther, dimSelf);
   if (dimOther !== dimSelf) {
-
     console.warn(
-      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + minDimension + 'D vectors, and any additional values of the linger vector will be ignored.',
+      `Operating on two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ${minDimension}D vectors, and any additional values of the longer vector will be ignored.`
     );
   }
   return minDimension;
@@ -43,15 +44,6 @@ class Vector {
       this._fromRadians = args[0];
       this._toRadians = args[1];
       args = args.slice(2);
-    }
-
-    // TODO Implement using decorator API to reduce duplication.
-    // Should use the same check as patchVector on 'createVector'
-    if(args.length === 0){
-      console.warn(
-        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
-      );
-      args = [0, 0, 0];
     }
 
     this.values = args;
@@ -470,17 +462,8 @@ class Vector {
    * @chainable
    */
   add(...args) {
-
-    // TODO Implement using decorator API to reduce duplication.
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 0) {
-      return this;
-    }
-
     const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+
     this.values = this.values.reduce((acc, v, i) => {
       if(i < minDimension) acc[i] = this.values[i] + Number(args[i]);
       return acc;
@@ -599,35 +582,11 @@ class Vector {
    * @chainable
    */
   rem(...args) {
-
-    // TODO Implement using decorator API to reduce duplication.
-
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 1) {
-      args = new Array(this.dimensions).fill(args[0]);
-    } else if (args.length === 0) {
-      return this;
-    }
-
-    if(!args.every(v => Number.isFinite(v))){
-      console.warn(
-       'p5.Vector.prototype.rem',
-       'Arguments contain non-finite numbers'
-      );
-      return this;
-    };
-    
     const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      // Extra check for non empty operand
-      if(i < minDimension && args[i] > 0) acc[i] = this.values[i] % args[i];
-      else acc[i] = this.values[i]
-      return acc;
-    }, new Array(minDimension));
+    this.values = Array.from({ length: minDimension }, (_, i) => {
+      return (args[i] > 0) ? this.values[i] % args[i] : this.values[i];
+    });
 
     return this;
   }
@@ -752,16 +711,6 @@ class Vector {
    * @chainable
    */
   sub(...args) {
-
-    // TODO Implement using decorator API to reduce duplication.
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 0) {
-      return this;
-    }
-
     const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
@@ -947,26 +896,6 @@ class Vector {
    * @chainable
    */
   mult(...args) {
-    // TODO Implement using decorator API to reduce duplication.
-
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 1) {
-      args = new Array(this.dimensions).fill(args[0]);
-    } else if (args.length === 0) {
-      return this;
-    }
-
-    if(!args.every(v => Number.isFinite(v))){
-      console.warn(
-       'p5.Vector.prototype.mult',
-       'Arguments contain non-finite numbers'
-      );
-      return this;
-    };
-
     const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
@@ -1191,29 +1120,15 @@ class Vector {
    * @chainable
    */
   div(...args) {
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
-    // TODO Implement using decorator API to reduce duplication.
-
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 1) {
-      args = new Array(this.dimensions).fill(args[0]);
-
-    } else if (args.length === 0) {
-      return this;
-    }
-
-    if(!args.every(v => typeof v === 'number' && v !== 0 && Number.isFinite(v))){
+    if(!args.every(v => typeof v === 'number' && v !== 0)){
       console.warn(
-       'p5.Vector.prototype.div:',
-       'arguments contain components that are either 0 or not finite numbers'
+        'p5.Vector.prototype.div',
+        'Arguments contain components that are 0'
       );
       return this;
     };
-
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
 
     this.values = this.values.reduce((acc, v, i) => {
       if(i < minDimension) acc[i] = this.values[i] / args[i];

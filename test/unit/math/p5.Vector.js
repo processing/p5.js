@@ -1,8 +1,8 @@
-import {Vector} from '../../../src/math/p5.Vector.js';
-import {default as math} from '../../../src/math/math.js';
+import { Vector } from '../../../src/math/p5.Vector.js';
+import { default as math } from '../../../src/math/math.js';
+import { _defaultEmptyVector, _validatedVectorOperation } from '../../../src/math/patch-vector.js';
 import { vi } from 'vitest';
 
-// TODO add create Vector coverage
 
 suite('p5.Vector', function () {
   var v;
@@ -11,7 +11,27 @@ suite('p5.Vector', function () {
   const mockP5Prototype = {};
 
   beforeAll(async function () {
+    // Makes createVector available
+    mockP5.Vector = Vector;
     math(mockP5, mockP5Prototype);
+
+    // Ensures all decorators are used by unit tests
+    mockP5Prototype.createVector = _defaultEmptyVector(
+      mockP5Prototype.createVector
+    );
+
+    // The following mocks simulate the validation decorator
+    Vector.prototype.add = _validatedVectorOperation(Vector.prototype.add);
+    Vector.prototype.sub = _validatedVectorOperation(Vector.prototype.sub);
+    Vector.prototype.mult = _validatedVectorOperation(Vector.prototype.mult);
+    Vector.prototype.rem = _validatedVectorOperation(Vector.prototype.rem);
+    Vector.prototype.div = _validatedVectorOperation(Vector.prototype.div);
+
+    globalThis.p5 = {
+      _friendlyError: function(msg, func) {
+        console.warn(msg);
+      }
+    };
   });
 
   afterEach(function () {});

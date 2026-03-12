@@ -95,8 +95,8 @@ function math(p5, fn) {
    *   point(pos);
    * }
    */
-  fn.createVector = function (x, y, z) {
-    return new p5.Vector(x, y, z);
+  fn.createVector = function (...args) {
+    return new p5.Vector(...args);
   };
 
   /**
