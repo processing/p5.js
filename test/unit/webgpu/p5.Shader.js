@@ -490,7 +490,6 @@ suite('WebGPU p5.Shader', function() {
             return [0.4, 0, 0, 1];
           });
         }, { myp5 });
-        console.log(testShader.fragSrc())
 
         myp5.background(255, 255, 255);
         myp5.filter(testShader);
@@ -499,6 +498,55 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(pixelColor[0], 102, 5);
         assert.approximately(pixelColor[1], 0, 5);
         assert.approximately(pixelColor[2], 0, 5);
+      });
+    });
+
+    suite('ternary expressions', () => {
+      test('ternary changes color based on left/right side of canvas', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = inputs.texCoord.x > 0.5 ? [1, 0, 0, 1] : [0, 0, 1, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
+      test('ternary with scalar values', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const brightness = inputs.texCoord.x > 0.5 ? 1.0 : 0.0;
+            inputs.color = [brightness, brightness, brightness, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 0, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 255, 5);
+        assert.approximately(rightPixel[2], 255, 5);
       });
     });
 
