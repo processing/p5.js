@@ -1457,14 +1457,9 @@ p5.Image = class {
    * @param  {Integer} dw destination image width.
    * @param  {Integer} dh destination image height.
    * @param  {Constant} blendMode the blend mode. either
-   *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
-   *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
-   *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
-   *
-   * Available blend modes are: normal | multiply | screen | overlay |
-   *            darken | lighten | color-dodge | color-burn | hard-light |
-   *            soft-light | difference | exclusion | hue | saturation |
-   *            color | luminosity
+   *             BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
+   *             EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+   *             SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
    *
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    *
