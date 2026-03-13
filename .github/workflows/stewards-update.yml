@@ -7,15 +7,21 @@ on:
       - stewards.yml
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build:
     if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20"
 
@@ -32,11 +38,10 @@ jobs:
           git checkout -- .
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 
         with:
           commit-message: "Update README table from stewards.yml"
           branch: update-readme-table
           title: "chore: update README table from stewards.yml"
           body: "This PR updates the README.md table to reflect changes in stewards.yml."
           add-paths: README.md
-          token: ${{ secrets.ACCESS_TOKEN }}
