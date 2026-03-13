@@ -313,6 +313,23 @@ p5.RendererGL.prototype._processVertices = function(mode) {
     this.immediateMode.shapeMode !== constants.LINES;
 
   if (shouldTess) {
+    // libtess can't handle >65k vertices and will freeze the browser
+    const vertexCount = this.immediateMode.geometry.vertices.length;
+    const MAX_SAFE_TESSELATION_VERTICES = 50000;
+
+    if (vertexCount > MAX_SAFE_TESSELATION_VERTICES) {
+      p5._friendlyError(
+        'p5.js WebGL: Tessellation warning',
+        `Attempting to tessellate a shape with ${vertexCount} vertices. ` +
+        `Tessellation of shapes with more than ${MAX_SAFE_TESSELATION_VERTICES} vertices ` +
+        'may cause the browser to freeze. Consider reducing the number of vertices ' +
+        'or using a different shape mode (e.g., TRIANGLES, TRIANGLE_STRIP) instead of TESS.'
+      );
+      // skip tessellation to prevent freeze, use TRIANGLE_FAN as fallback
+      this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+      return;
+    }
+
     this._tesselateShape();
   }
 };
