@@ -475,6 +475,15 @@ p5.Texture = class Texture {
   }
 };
 
+// manual cleanup capability
+p5.Texture.prototype.free = function () {
+  if (this.gl && this.glTex) {
+    this.gl.deleteTexture(this.glTex);
+    this.glTex = null;
+    this._isFinalized = false;
+  }
+};
+
 export class MipmapTexture extends p5.Texture {
   constructor(renderer, levels, settings) {
     super(renderer, levels, settings);
