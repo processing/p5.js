@@ -298,8 +298,9 @@ p5.prototype.loadJSON = function(...args) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        throw err;
+        console.error(err);
       }
+      self._decrementPreload();
     }
   );
 
@@ -494,8 +495,9 @@ p5.prototype.loadStrings = function(...args) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        throw err;
+        console.error(err);
       }
+      self._decrementPreload();
     }
   );
 
@@ -757,6 +759,7 @@ p5.prototype.loadTable = function(path) {
       } else {
         console.error(err);
       }
+      self._decrementPreload();
     }
   );
 
@@ -975,8 +978,9 @@ p5.prototype.loadXML = function(...args) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        throw err;
+        console.error(err);
       }
+      self._decrementPreload();
     }
   );
 
@@ -1033,8 +1037,9 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        throw err;
+        console.error(err);
       }
+      self._decrementPreload();
     }
   );
   return ret;

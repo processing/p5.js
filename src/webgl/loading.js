@@ -498,6 +498,7 @@ p5.prototype.loadModel = function(path,options) {
         'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
       );
     }
+    self._decrementPreload();
   }
   return model;
 };
