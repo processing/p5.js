@@ -261,6 +261,7 @@ export const glslBackend = {
         return node.value;
       }
       case NodeType.VARIABLE:
+        debugger
       // Track shared variable usage context
       if (generationContext.shaderContext && generationContext.strandsContext?.sharedVariables?.has(node.identifier)) {
         const sharedVar = generationContext.strandsContext.sharedVariables.get(node.identifier);
