@@ -2272,6 +2272,16 @@ function escapeHelper(content) {
     .replace(/'/g, '&#039;');
 }
 
+// RFC 4180 escape: double inner quotes, wrap when value has comma/quote/newline
+function csvEscape(val, ext) {
+  if (ext !== 'csv') return String(val);
+  let s = String(val);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
 /**
  *  Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
  *  text file with comma-separated-values ('csv') but can also
@@ -2331,9 +2341,9 @@ p5.prototype.saveTable = function(table, filename, options) {
     if (header[0] !== '0') {
       for (let h = 0; h < header.length; h++) {
         if (h < header.length - 1) {
-          pWriter.write(header[h] + sep);
+          pWriter.write(csvEscape(header[h], ext) + sep);
         } else {
-          pWriter.write(header[h]);
+          pWriter.write(csvEscape(header[h], ext));
         }
       }
       pWriter.write('\n');
@@ -2341,22 +2351,11 @@ p5.prototype.saveTable = function(table, filename, options) {
 
     // make rows
     for (let i = 0; i < table.rows.length; i++) {
-      let j;
-      for (j = 0; j < table.rows[i].arr.length; j++) {
+      for (let j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
-          //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-            pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
-          } else {
-            pWriter.write(table.rows[i].arr[j] + sep);
-          }
+          pWriter.write(csvEscape(table.rows[i].arr[j], ext) + sep);
         } else {
-          //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
-            pWriter.write('"' + table.rows[i].arr[j] + '"');
-          } else {
-            pWriter.write(table.rows[i].arr[j]);
-          }
+          pWriter.write(csvEscape(table.rows[i].arr[j], ext));
         }
       }
       pWriter.write('\n');
