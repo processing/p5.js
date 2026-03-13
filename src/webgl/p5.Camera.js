@@ -601,6 +601,24 @@ class Camera {
     rotatedCenter[1] += this.eyeY;
     rotatedCenter[2] += this.eyeZ;
 
+    // Rotate the up vector to keep the correct camera orientation
+    /* eslint-disable max-len */
+    const rotatedUpX = this.upX * rotation.mat4[0] + this.upY * rotation.mat4[4] + this.upZ * rotation.mat4[8];
+    const rotatedUpY = this.upX * rotation.mat4[1] + this.upY * rotation.mat4[5] + this.upZ * rotation.mat4[9];
+    const rotatedUpZ =  this.upX * rotation.mat4[2] + this.upY * rotation.mat4[6] + this.upZ * rotation.mat4[10];
+    /* eslint-enable max-len */
+
+    //Normalize the up vector
+    const upLength = Math.sqrt(
+      rotatedUpX * rotatedUpX +
+      rotatedUpY * rotatedUpY +
+      rotatedUpZ * rotatedUpZ
+    );
+
+    const normalizedUpX = rotatedUpX / upLength;
+    const normalizedUpY = rotatedUpY / upLength;
+    const normalizedUpZ = rotatedUpZ / upLength;
+
     this.camera(
       this.eyeX,
       this.eyeY,
@@ -608,9 +626,9 @@ class Camera {
       rotatedCenter[0],
       rotatedCenter[1],
       rotatedCenter[2],
-      this.upX,
-      this.upY,
-      this.upZ
+      normalizedUpX,
+      normalizedUpY,
+      normalizedUpZ
     );
   }
 
