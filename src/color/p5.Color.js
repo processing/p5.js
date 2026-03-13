@@ -656,8 +656,8 @@ p5.Color = class Color {
   /**
    * Sets the blue component of a color.
    *
-   * The range depends on the <a href="#/p5/colorMode">colorMode()</a>. In the
-   * default RGB mode it's between 0 and 255.
+   * The value range depends on the <a href="#/p5/colorMode">colorMode()</a>. 
+   * In the default RGB mode, the value ranges from 0 and 255.
    *
    * @method setBlue
    * @param {Number} blue the new blue value.
