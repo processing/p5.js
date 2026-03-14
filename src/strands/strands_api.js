@@ -481,15 +481,26 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function(name, bufferOrSchema) {
-    // Extract schema from:
-    //   - a struct storage buffer created by createStorage([{...}, ...])  (_schema is pre-computed)
-    //   - a plain object used as a template, e.g. { position: [0,0], velocity: [0,0] }
-    //     (schema is inferred the same way createStorage does it)
     let schema = null;
-    if (bufferOrSchema?._schema) {
-      schema = bufferOrSchema._schema;
-    } else if (bufferOrSchema && !bufferOrSchema._isStorageBuffer && typeof bufferOrSchema === 'object') {
-      schema = strandsContext.renderer?._inferStructSchema(bufferOrSchema) ?? null;
+    let defaultValue = null;
+
+    // If it's a function, evaluate it immediately to infer schema,
+    // then store the function so it gets called each frame.
+    let value = bufferOrSchema;
+    if (typeof bufferOrSchema === 'function') {
+      value = bufferOrSchema();
+      if (value?._schema) {
+        defaultValue = bufferOrSchema;
+      }
+    }
+
+    if (value?._schema) {
+      // Struct storage buffer with pre-computed schema
+      schema = value._schema;
+      if (defaultValue === null) defaultValue = value;
+    } else if (value && typeof value === 'object' && !value._isStorageBuffer) {
+      // Plain object schema template -- only used to infer struct layout, not as a default value
+      schema = strandsContext.renderer?._inferStructSchema(value) ?? null;
     }
 
     const { id, dimension } = build.variableNode(
@@ -500,7 +511,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsContext.uniforms.push({
       name,
       typeInfo: { baseType: 'storage', dimension: 1, schema },
-      defaultValue: bufferOrSchema,
+      defaultValue,
     });
 
     // Create StrandsNode with _originalIdentifier set (like varying variables)

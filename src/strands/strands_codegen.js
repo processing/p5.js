@@ -13,13 +13,20 @@ export function generateShaderCode(strandsContext) {
 
   const hooksObj = {
     uniforms: {},
+    storageUniforms: {},
     varyingVariables: [],
   };
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
-    const key = backend.generateHookUniformKey(name, typeInfo);
-    if (key !== null) {
-      hooksObj.uniforms[key] = defaultValue;
+    if (typeInfo.baseType === 'storage') {
+      if (defaultValue !== null && defaultValue !== undefined) {
+        hooksObj.storageUniforms[name] = defaultValue;
+      }
+    } else {
+      const key = backend.generateHookUniformKey(name, typeInfo);
+      if (key !== null) {
+        hooksObj.uniforms[key] = defaultValue;
+      }
     }
   }
 

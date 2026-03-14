@@ -1123,7 +1123,6 @@ visualSuite("WebGPU", function () {
             return inputs;
           });
         }, { p5, particles });
-        sphereShader.setUniform('buf', particles);
 
         const geo = p5.buildGeometry(() => p5.sphere(5));
         p5.background(200);
@@ -1183,7 +1182,6 @@ visualSuite("WebGPU", function () {
           const buf = p5.uniformStorage('buf', particles);
           buf[iteration.index.x].position = [15, -10];
         }, { p5, particles });
-        computeShader.setUniform('buf', particles);
         p5.compute(computeShader, 1);
 
         const sphereShader = p5.baseMaterialShader().modify(() => {
@@ -1195,7 +1193,6 @@ visualSuite("WebGPU", function () {
             return inputs;
           });
         }, { p5, particles });
-        sphereShader.setUniform('buf', particles);
 
         const geo = p5.buildGeometry(() => p5.sphere(5));
         p5.background(200);
@@ -1222,7 +1219,6 @@ visualSuite("WebGPU", function () {
           const idx = iteration.index.x;
           buf[idx].position = buf[idx].position + buf[idx].velocity;
         }, { p5, particles });
-        computeShader.setUniform('buf', particles);
         p5.compute(computeShader, 1);
 
         const sphereShader = p5.baseMaterialShader().modify(() => {
@@ -1234,7 +1230,6 @@ visualSuite("WebGPU", function () {
             return inputs;
           });
         }, { p5, particles });
-        sphereShader.setUniform('buf', particles);
 
         const geo = p5.buildGeometry(() => p5.sphere(5));
         p5.background(200);
@@ -1263,7 +1258,6 @@ visualSuite("WebGPU", function () {
           const entry = buf[idx];
           entry.position = entry.position + entry.velocity;
         }, { p5, particles });
-        computeShader.setUniform('buf', particles);
         p5.compute(computeShader, 1);
 
         const sphereShader = p5.baseMaterialShader().modify(() => {
@@ -1275,7 +1269,6 @@ visualSuite("WebGPU", function () {
             return inputs;
           });
         }, { p5, particles });
-        sphereShader.setUniform('buf', particles);
 
         const geo = p5.buildGeometry(() => p5.sphere(5));
         p5.background(200);
@@ -1305,7 +1298,6 @@ visualSuite("WebGPU", function () {
           pos = pos + buf[idx].velocity;
           buf[idx].position = pos;
         }, { p5, particles });
-        computeShader.setUniform('buf', particles);
         p5.compute(computeShader, 1);
 
         const sphereShader = p5.baseMaterialShader().modify(() => {
@@ -1317,7 +1309,6 @@ visualSuite("WebGPU", function () {
             return inputs;
           });
         }, { p5, particles });
-        sphereShader.setUniform('buf', particles);
 
         const geo = p5.buildGeometry(() => p5.sphere(5));
         p5.background(200);

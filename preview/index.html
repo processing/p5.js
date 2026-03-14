@@ -144,12 +144,6 @@
             return inputs;
           });
         }, { p, particleBuffer });
-
-        // Set storage buffers for compute shader
-        computeShader.setUniform('particles', particleBuffer);
-
-        // Set storage buffer for rendering shader
-        bouncingCirclesShader.setUniform('particles', particleBuffer);
       };
 
       p.draw = function () {
