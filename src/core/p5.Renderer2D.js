@@ -8,7 +8,7 @@ import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
-import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
+import { PrimitiveToPath2DConverter, ArcPrimitive, EllipsePrimitive } from '../shape/custom_shapes';
 import { DefaultFill, textCoreConstants } from '../type/textCore';
 
 
@@ -661,13 +661,6 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-    const ctx = this.drawingContext;
-    const rx = w / 2.0;
-    const ry = h / 2.0;
-    const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
-    let arcToDraw = 0;
-    const curves = [];
-
     const centerX = x + w / 2,
       centerY = y + h / 2,
       radiusX = w / 2,
@@ -681,48 +674,16 @@ class Renderer2D extends Renderer {
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
     }
-    // Determines whether to add a line to the center, which should be done
-    // when the mode is PIE or default; as well as when the start and end
-    // angles do not form a full circle.
-    const createPieSlice = ! (
-      mode === constants.CHORD ||
-      mode === constants.OPEN ||
-      (stop - start) % constants.TWO_PI === 0
-    );
 
-    // Fill curves
-    if (this.states.fillColor) {
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-      if (createPieSlice) ctx.lineTo(centerX, centerY);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    // Stroke curves
-    if (this.states.strokeColor) {
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-
-      if (mode === constants.PIE && createPieSlice) {
-        // In PIE mode, stroke is added to the center and back to path,
-        // unless the pie forms a complete ellipse (see: createPieSlice)
-        ctx.lineTo(centerX, centerY);
-      }
-
-      if (mode === constants.PIE || mode === constants.CHORD) {
-        // Stroke connects back to path begin for both PIE and CHORD
-        ctx.closePath();
-      }
-      ctx.stroke();
-    }
+    const primitive = new ArcPrimitive(x, y, w, h, start, stop, mode);
+    const shape = { accept(visitor) { primitive.accept(visitor); } };
+    this.drawShape(shape);
 
     return this;
 
   }
 
   ellipse(args) {
-    const ctx = this.drawingContext;
     const doFill = !!this.states.fillColor,
       doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
@@ -751,15 +712,10 @@ class Renderer2D extends Renderer {
       this.clipPath.addPath(tempPath, relativeTransform);
       return this;
     }
-    ctx.beginPath();
-    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-    ctx.closePath();
-    if (doFill) {
-      ctx.fill();
-    }
-    if (doStroke) {
-      ctx.stroke();
-    }
+
+    const primitive = new EllipsePrimitive(x, y, w, h);
+    const shape = { accept(visitor) { primitive.accept(visitor); } };
+    this.drawShape(shape);
 
     return this;
   }
