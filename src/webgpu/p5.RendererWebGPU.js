@@ -1706,6 +1706,9 @@ function rendererWebGPU(p5, fn) {
     // value: number or number[] - the data to write
     _packField(field, value, floatView, dataView, baseOffset) {
       if (value === undefined) return;
+      if (value?.isVector) {
+        value = value.values.length !== value.dimensions ? value.values.slice(0, value.dimensions) : value.values;
+      }
       const byteOffset = baseOffset + field.offset;
       if (field.baseType === 'u32') {
         if (field.size === 4) {
@@ -2945,6 +2948,12 @@ ${hookUniformFields}}
     // Maps a plain JS value to the WGSL type string that represents it in a struct.
     _jsValueToWgslType(value) {
       if (typeof value === 'number') return 'f32';
+      if (value?.isVector) {
+        if (value.dimensions === 2) return 'vec2f';
+        if (value.dimensions === 3) return 'vec3f';
+        if (value.dimensions === 4) return 'vec4f';
+        throw new Error(`Unsupported vector dimension ${value.dimensions} for struct storage field`);
+      }
       if (Array.isArray(value)) {
         if (value.length === 2) return 'vec2f';
         if (value.length === 3) return 'vec3f';

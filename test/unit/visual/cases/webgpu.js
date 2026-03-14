@@ -1136,6 +1136,39 @@ visualSuite("WebGPU", function () {
     );
 
     visualTest(
+      'Struct storage buffer fields can use p5.Vector values',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Three particles at known positions: left, center, right
+        const particles = p5.createStorage([
+          { position: p5.createVector(-15, 0) },
+          { position: p5.createVector(0,   0) },
+          { position: p5.createVector(15,  0) },
+        ]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const p = buf[p5.instanceID()].position;
+            inputs.position.x += p.x;
+            inputs.position.y += p.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
       'Struct storage buffer fields can be read using an inline schema template',
       async function(p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
