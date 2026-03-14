@@ -996,4 +996,109 @@ visualSuite("WebGPU", function () {
       await screenshot();
     });
   });
+
+  visualSuite('Compute shaders', function() {
+    visualTest(
+      'Storage buffer (float array) can be read in a vertex shader for instanced rendering',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Positions for 3 spheres: (-15,0), (0,0), (15,0)
+        const positions = p5.createStorage([-15, 0, 0, 0, 15, 0]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const posData = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            const idx = p5.instanceID();
+            inputs.position.x += posData[idx * 2];
+            inputs.position.y += posData[idx * 2 + 1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('posData', positions);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader writes float values to storage buffer, vertex shader reads them',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Start with zeros; compute shader will write [20, -10]
+        const offset = p5.createStorage(2);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage();
+          buf[0] = 20;
+          buf[1] = -10;
+        }, { p5 });
+        computeShader.setUniform('buf', offset);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += buf[0];
+            inputs.position.y += buf[1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('buf', offset);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader reads and transforms float array values',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Initialize with [10, 0] — compute will double x to get [20, 0]
+        const buf = p5.createStorage([10, 0]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const data = p5.uniformStorage();
+          data[0] = data[0] * 2;
+        }, { p5 });
+        computeShader.setUniform('data', buf);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const data = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += data[0];
+            inputs.position.y += data[1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('data', buf);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+  });
 });

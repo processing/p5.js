@@ -249,7 +249,12 @@ const ASTCallbacks = {
     if (ancestors.some(nodeIsUniform)) { return; }
     // Skip sets -- these will be converted to .set() method
     // calls at the AssignmentExpression level
-    if (ancestors.at(-2)?.type === 'AssignmentExpression') return;
+    if (
+      ancestors.at(-2)?.type === 'AssignmentExpression' &&
+      ancestors.at(-2).left === node
+    ) {
+      return;
+    }
     if (node.computed) {
       const callee = node.object;
       const member = node.property;
