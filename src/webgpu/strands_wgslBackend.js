@@ -236,13 +236,20 @@ export const wgslBackend = {
 
     for (const {name, typeInfo} of strandsContext.uniforms) {
       if (typeInfo.baseType === 'storage') {
-        if (isComputeShader) {
-          const storageBinding = `@group(0) @binding(${bindingIndex}) var<storage, read_write> ${name}: array<f32>;`;
-          strandsContext.computeDeclarations.add(storageBinding);
+        const accessMode = isComputeShader ? 'read_write' : 'read';
+        let declaration;
+        if (typeInfo.schema) {
+          const structTypeName = `${name}Element`;
+          declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
         } else {
-          const storageBinding = `@group(0) @binding(${bindingIndex}) var<storage, read> ${name}: array<f32>;`;
-          strandsContext.vertexDeclarations.add(storageBinding);
-          strandsContext.fragmentDeclarations.add(storageBinding);
+          declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
+        }
+
+        if (isComputeShader) {
+          strandsContext.computeDeclarations.add(declaration);
+        } else {
+          strandsContext.vertexDeclarations.add(declaration);
+          strandsContext.fragmentDeclarations.add(declaration);
         }
 
         bindingIndex += 1;
@@ -314,7 +321,8 @@ export const wgslBackend = {
       const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
       const indexExpr = this.generateExpression(generationContext, dag, indexID);
       const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
-      generationContext.write(`${bufferExpr}[i32(${indexExpr})] = ${sourceExpr}${semicolon}`);
+      const fieldSuffix = targetNode.identifier ? `.${targetNode.identifier}` : '';
+      generationContext.write(`${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`);
       return;
     }
 
@@ -478,7 +486,8 @@ export const wgslBackend = {
         const [bufferID, indexID] = node.dependsOn;
         const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
         const indexExpr = this.generateExpression(generationContext, dag, indexID);
-        return `${bufferExpr}[i32(${indexExpr})]`;
+        const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
+        return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;

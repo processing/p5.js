@@ -1695,53 +1695,56 @@ function rendererWebGPU(p5, fn) {
     // SHADER
     //////////////////////////////////////////////
 
+    // Writes a single field's value into a Float32Array+DataView at (baseOffset + field.offset).
+    //
+    // Field interface (shared by uniform fields from _parseStruct and struct storage schema fields):
+    //   baseType:    string  - 'f32', 'i32', 'u32', etc.
+    //   size:        number  - byte size of the field
+    //   offset:      number  - byte offset of the field within its struct
+    //   packInPlace: bool    - true for mat3, written with manual column padding
+    //
+    // value: number or number[] - the data to write
+    _packField(field, value, floatView, dataView, baseOffset) {
+      if (value === undefined) return;
+      const byteOffset = baseOffset + field.offset;
+      if (field.baseType === 'u32') {
+        if (field.size === 4) {
+          dataView.setUint32(byteOffset, value, true);
+        } else {
+          for (let i = 0; i < value.length; i++) {
+            dataView.setUint32(byteOffset + i * 4, value[i], true);
+          }
+        }
+      } else if (field.baseType === 'i32') {
+        if (field.size === 4) {
+          dataView.setInt32(byteOffset, value, true);
+        } else {
+          for (let i = 0; i < value.length; i++) {
+            dataView.setInt32(byteOffset + i * 4, value[i], true);
+          }
+        }
+      } else if (field.packInPlace) {
+        // In-place packing for mat3: write directly to buffer with padding
+        const base = byteOffset / 4;
+        floatView[base + 0] = value[0]; floatView[base + 1] = value[1]; floatView[base + 2] = value[2];
+        floatView[base + 4] = value[3]; floatView[base + 5] = value[4]; floatView[base + 6] = value[5];
+        floatView[base + 8] = value[6]; floatView[base + 9] = value[7]; floatView[base + 10] = value[8];
+      } else if (field.size === 4) {
+        floatView.set([value], byteOffset / 4);
+      } else {
+        floatView.set(value, byteOffset / 4);
+      }
+    }
+
     _packUniformGroup(shader, groupUniforms, bufferInfo) {
       // Pack a single group's uniforms into a buffer
       const data = bufferInfo.data;
       const dataView = bufferInfo.dataView;
-
       const offset = bufferInfo.offset || 0;
       for (const uniform of groupUniforms) {
         const fullUniform = shader.uniforms[uniform.name];
         if (!fullUniform || fullUniform.isSampler) continue;
-        const uniformData = fullUniform._mappedData;
-
-        if (fullUniform.baseType === 'u32') {
-          if (fullUniform.size === 4) {
-            dataView.setUint32(offset + fullUniform.offset, uniformData, true);
-          } else {
-            for (let i = 0; i < uniformData.length; i++) {
-              dataView.setUint32(offset + fullUniform.offset + i * 4, uniformData[i], true);
-            }
-          }
-        } else if (fullUniform.baseType === 'i32') {
-          if (fullUniform.size === 4) {
-            dataView.setInt32(offset + fullUniform.offset, uniformData, true);
-          } else {
-            for (let i = 0; i < uniformData.length; i++) {
-              dataView.setInt32(offset + fullUniform.offset + i * 4, uniformData[i], true);
-            }
-          }
-        } else if (fullUniform.packInPlace) {
-          // In-place packing for mat3: write directly to buffer with padding
-          const baseOffset = (offset + fullUniform.offset) / 4;
-          // Column 0
-          data[baseOffset + 0] = uniformData[0];
-          data[baseOffset + 1] = uniformData[1];
-          data[baseOffset + 2] = uniformData[2];
-          // Column 1
-          data[baseOffset + 4] = uniformData[3];
-          data[baseOffset + 5] = uniformData[4];
-          data[baseOffset + 6] = uniformData[5];
-          // Column 2
-          data[baseOffset + 8] = uniformData[6];
-          data[baseOffset + 9] = uniformData[7];
-          data[baseOffset + 10] = uniformData[8];
-        } else if (fullUniform.size === 4) {
-          data.set([uniformData], (offset + fullUniform.offset) / 4);
-        } else if (uniformData !== undefined) {
-          data.set(uniformData, (offset + fullUniform.offset) / 4);
-        }
+        this._packField(fullUniform, fullUniform._mappedData, data, dataView, offset);
       }
     }
 
@@ -1932,7 +1935,7 @@ function rendererWebGPU(p5, fn) {
 
       // Extract storage buffers
       const storageBuffers = {};
-      const storageRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<f32>/g;
+      const storageRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
 
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
@@ -2939,8 +2942,100 @@ ${hookUniformFields}}
       };
     }
 
+    // Maps a plain JS value to the WGSL type string that represents it in a struct.
+    _jsValueToWgslType(value) {
+      if (typeof value === 'number') return 'f32';
+      if (Array.isArray(value)) {
+        if (value.length === 2) return 'vec2f';
+        if (value.length === 3) return 'vec3f';
+        if (value.length === 4) return 'vec4f';
+        throw new Error(`Unsupported array length ${value.length} for struct storage field`);
+      }
+      throw new Error(`Unsupported value type ${typeof value} for struct storage field`);
+    }
+
+    // Infers a struct schema from the first element of a struct array.
+    //
+    // Returns { fields, stride, structBody } where:
+    //   fields: field has the _packField interface (baseType, size, offset, packInPlace) plus:
+    //     name: string - JS property name
+    //     dim:  number - float component count, used when creating StrandsNodes
+    //   structBody: everything inside the  { ... } of a WGSL struct definition
+    //   stride: how many bytes are reserved for this struct in the buffer
+    _inferStructSchema(firstElement) {
+      const entries = Object.entries(firstElement);
+
+      // TODO: if FES is enabled, check if all elements
+      // share same schema, warn if not. Also check for
+      // deeply nested objects or other unsupported fields
+
+      const fieldLines = entries.map(([name, value]) =>
+        `  ${name}: ${this._jsValueToWgslType(value)},`
+      ).join('\n');
+      const structBody = `{\n${fieldLines}\n}`;
+      const elements = this._parseStruct(`struct _Tmp ${structBody}`, '_Tmp');
+
+      let maxEnd = 0;
+      let maxAlign = 1;
+      const fields = entries.map(([name]) => {
+        const el = elements[name];
+        maxEnd = Math.max(maxEnd, el.offsetEnd);
+        // Alignment for scalars/vectors: <=4 -> 4, <=8 -> 8, else 16
+        const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
+        maxAlign = Math.max(maxAlign, align);
+        return {
+          name,
+          baseType: el.baseType,
+          size: el.size,
+          offset: el.offset,
+          packInPlace: el.packInPlace ?? false,
+          dim: el.size / 4,
+        };
+      });
+
+      const stride = Math.ceil(maxEnd / maxAlign) * maxAlign;
+      return { fields, stride, structBody };
+    }
+
+    // Packs an array of plain objects into a Float32Array using the given struct schema.
+    // Reuses _packField so layout rules match uniform packing exactly.
+    _packStructArray(data, schema) {
+      const { fields, stride } = schema;
+      const totalBytes = Math.max(data.length * stride, 16);
+      const alignedBytes = Math.ceil(totalBytes / 16) * 16;
+      const buffer = new ArrayBuffer(alignedBytes);
+      const floatView = new Float32Array(buffer);
+      const dataView = new DataView(buffer);
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          this._packField(field, item[field.name], floatView, dataView, baseOffset);
+        }
+      }
+      return floatView;
+    }
+
     createStorage(dataOrCount) {
       const device = this.device;
+
+      // Struct array: an array of plain objects
+      if (Array.isArray(dataOrCount) && dataOrCount.length > 0 &&
+          typeof dataOrCount[0] === 'object' && !Array.isArray(dataOrCount[0])) {
+        const schema = this._inferStructSchema(dataOrCount[0]);
+        const packed = this._packStructArray(dataOrCount, schema);
+        const size = packed.byteLength;
+        const buffer = device.createBuffer({
+          size,
+          usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+          mappedAtCreation: true,
+        });
+        new Float32Array(buffer.getMappedRange()).set(packed);
+        buffer.unmap();
+        const storageBuffer = { _isStorageBuffer: true, buffer, size, _schema: schema, _renderer: this };
+        this._storageBuffers.add(storageBuffer);
+        return storageBuffer;
+      }
 
       // Determine buffer size and initial data
       let size, initialData;

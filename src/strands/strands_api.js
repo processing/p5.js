@@ -480,7 +480,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
 
   // Storage buffer uniform function for compute shaders
-  fn.uniformStorage = function(name, defaultValue) {
+  fn.uniformStorage = function(name, bufferOrSchema) {
+    // Extract schema from a struct storage buffer or explicit schema object
+    const schema = bufferOrSchema?._schema ?? null;
+
     const { id, dimension } = build.variableNode(
       strandsContext,
       { baseType: 'storage', dimension: 1 },
@@ -488,8 +491,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     strandsContext.uniforms.push({
       name,
-      typeInfo: { baseType: 'storage', dimension: 1 },
-      defaultValue,
+      typeInfo: { baseType: 'storage', dimension: 1, schema },
+      defaultValue: bufferOrSchema,
     });
 
     // Create StrandsNode with _originalIdentifier set (like varying variables)
@@ -498,6 +501,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     node._originalIdentifier = name;
     node._originalBaseType = 'storage';
     node._originalDimension = 1;
+    node._schema = schema;
     return node;
   };
 }

@@ -654,6 +654,82 @@ export function arrayAccessNode(strandsContext, bufferNode, indexNode, accessMod
   return { id, dimension: 1 };
 }
 
+export function createStructArrayElementProxy(strandsContext, bufferNode, indexNode, schema) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Create a plain object with getters/setters for each struct field.
+  // When read, a field creates an ARRAY_ACCESS IR node with the field name encoded
+  // in the identifier slot. When written, an ASSIGNMENT IR node is recorded in the CFG.
+  const proxy = {};
+
+  for (const field of schema.fields) {
+    Object.defineProperty(proxy, field.name, {
+      get() {
+        // Encode field name in identifier so WGSL backend can emit buf[idx].field
+        const nodeData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Binary.ARRAY_ACCESS,
+          dependsOn: [bufferNode.id, index.id],
+          dimension: field.dim,
+          baseType: BaseType.FLOAT,
+          identifier: field.name,
+        });
+        const id = DAG.getOrCreateNode(dag, nodeData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+        return createStrandsNode(id, field.dim, strandsContext);
+      },
+      set(val) {
+        // Create access node as assignment target (field name in identifier)
+        const accessData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Binary.ARRAY_ACCESS,
+          dependsOn: [bufferNode.id, index.id],
+          dimension: field.dim,
+          baseType: BaseType.FLOAT,
+          identifier: field.name,
+        });
+        const accessID = DAG.getOrCreateNode(dag, accessData);
+
+        let valueID;
+        if (val?.isStrandsNode) {
+          valueID = val.id;
+        } else {
+          const { id } = primitiveConstructorNode(
+            strandsContext,
+            { baseType: BaseType.FLOAT, dimension: field.dim },
+            val
+          );
+          valueID = id;
+        }
+
+        const assignData = DAG.createNodeData({
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [accessID, valueID],
+          phiBlocks: [],
+        });
+        const assignID = DAG.getOrCreateNode(dag, assignData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignID);
+      },
+      configurable: true,
+    });
+  }
+
+  return proxy;
+}
+
 export function arrayAssignmentNode(strandsContext, bufferNode, indexNode, valueNode) {
   const { dag, cfg } = strandsContext;
 

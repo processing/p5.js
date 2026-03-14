@@ -1,4 +1,4 @@
-import { swizzleTrap, primitiveConstructorNode, variableNode, arrayAccessNode, arrayAssignmentNode } from './ir_builders';
+import { swizzleTrap, primitiveConstructorNode, variableNode, arrayAccessNode, arrayAssignmentNode, createStructArrayElementProxy } from './ir_builders';
 import { BaseType, NodeType, OpCode } from './ir_types';
 import { getNodeDataFromID, createNodeData, getOrCreateNode } from './ir_dag';
 import { recordInBasicBlock } from './ir_cfg';
@@ -8,6 +8,9 @@ export class StrandsNode {
     this.strandsContext = strandsContext;
     this.dimension = dimension;
     this.structProperties = null;
+    // Schema for struct storage buffers (set by uniformStorage when buffer has a struct layout).
+    // When set, buf.get(idx) returns a field proxy instead of a scalar StrandsNode.
+    this._schema = null;
     this.isStrandsNode = true;
 
     // Store original identifier for varying variables
@@ -167,6 +170,11 @@ export class StrandsNode {
     const nodeData = getNodeDataFromID(this.strandsContext.dag, this.id);
     if (nodeData.baseType !== 'storage') {
       throw new Error('get() can only be used on storage buffers');
+    }
+
+    // For struct storage, return a proxy with per-field getters/setters
+    if (this._schema) {
+      return createStructArrayElementProxy(this.strandsContext, this, index, this._schema);
     }
 
     // Create array access node: buffer.get(index) -> buffer[index]
