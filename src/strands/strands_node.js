@@ -197,6 +197,17 @@ export class StrandsNode {
       throw new Error('set() can only be used on storage buffers with an identifier');
     }
 
+    // If value is a plain object (struct literal), expand to per-field assignments
+    // e.g. buf[idx] = { position: pos, velocity: vel }
+    // becomes buf[idx].position = pos; buf[idx].velocity = vel;
+    if (value !== null && typeof value === 'object' && !value.isStrandsNode && this._schema) {
+      const proxy = createStructArrayElementProxy(this.strandsContext, this, index, this._schema);
+      for (const [fieldName, fieldValue] of Object.entries(value)) {
+        proxy[fieldName] = fieldValue;
+      }
+      return this;
+    }
+
     // Create array assignment node: buffer.set(index, value) -> buffer[index] = value
     // This creates an ASSIGNMENT node and records it in the CFG basic block
     // CFG preserves sequential order, preventing reordering of assignments

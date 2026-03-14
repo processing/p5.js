@@ -1353,5 +1353,45 @@ visualSuite("WebGPU", function () {
         await screenshot();
       }
     );
+
+    visualTest(
+      'Compute shader writes a whole struct element as an object literal',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [15, -10] },
+        ]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = iteration.index.x;
+          let pos = buf[idx].position;
+          let vel = buf[idx].velocity;
+          pos = pos + vel;
+          buf[idx] = { position: pos, velocity: vel };
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
   });
 });
