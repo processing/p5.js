@@ -704,8 +704,5 @@ export function arrayAssignmentNode(strandsContext, bufferNode, indexNode, value
   // CRITICAL: Record in CFG to preserve sequential ordering
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
 
-  // Track for global assignments processing
-  strandsContext.globalAssignments.push(assignmentID);
-
   return { id: assignmentID };
 }
