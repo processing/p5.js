@@ -11,6 +11,7 @@ import { wgslBackend } from './strands_wgslBackend';
 import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
+import { baseComputeShader } from './shaders/compute';
 
 const FRAME_STATE = {
   PENDING: 0,
@@ -83,6 +84,9 @@ function rendererWebGPU(p5, fn) {
 
       // Retired buffers to destroy at end of frame
       this._retiredBuffers = [];
+
+      // Storage buffers for compute shaders
+      this._storageBuffers = new Set();
 
       // 2D canvas for pixel reading fallback
       this._pixelReadCanvas = null;
@@ -499,7 +503,8 @@ function rendererWebGPU(p5, fn) {
       return 4; // Cap at 4 for broader compatibility
     }
 
-    _shaderOptions({ mode }) {
+    _shaderOptions({ mode, compute, workgroupSize }) {
+      if (compute) return { compute: true, workgroupSize };
       const activeFramebuffer = this.activeFramebuffer();
       const format = activeFramebuffer ?
         this._getWebGPUColorFormat(activeFramebuffer) :
@@ -540,6 +545,31 @@ function rendererWebGPU(p5, fn) {
     _initShader(shader) {
       const device = this.device;
 
+      if (shader.shaderType === 'compute') {
+        // Compute shader initialization
+        shader.computeModule = device.createShaderModule({ code: shader.computeSrc() });
+        shader._computePipelineCache = null;
+        shader._workgroupSize = null;
+
+        // Create compute pipeline (deferred until first compute() call)
+        shader.getPipeline = ({ workgroupSize }) => {
+          if (!shader._computePipelineCache) {
+            shader._computePipelineCache = device.createComputePipeline({
+              layout: shader._pipelineLayout,
+              compute: {
+                module: shader.computeModule,
+                entryPoint: 'main'
+              }
+            });
+            shader._workgroupSize = workgroupSize;
+          }
+          return shader._computePipelineCache;
+        };
+
+        return;
+      }
+
+      // Render shader initialization
       shader.vertModule = device.createShaderModule({ code: shader.vertSrc() });
       shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
 
@@ -638,7 +668,9 @@ function rendererWebGPU(p5, fn) {
         entries.push({
           bufferGroup,
           binding: bufferGroup.binding,
-          visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+          visibility: shader.shaderType === 'compute'
+            ? GPUShaderStage.COMPUTE
+            : GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
           buffer: { type: 'uniform', hasDynamicOffset: bufferGroup.dynamic },
         });
         structEntries.set(bufferGroup.group, entries);
@@ -672,6 +704,24 @@ function rendererWebGPU(p5, fn) {
         groupEntries.set(group, entries);
       }
 
+      // Add storage buffer bindings
+      for (const storage of shader._storageBuffers || []) {
+        const group = storage.group;
+        const entries = groupEntries.get(group) || [];
+
+        entries.push({
+          binding: storage.binding,
+          visibility: storage.visibility,
+          buffer: {
+            type: storage.accessMode === 'read' ? 'read-only-storage' : 'storage'
+          },
+          storage: storage,
+        });
+
+        entries.sort((a, b) => a.binding - b.binding);
+        groupEntries.set(group, entries);
+      }
+
       // Create layouts and bind groups
       const groupEntriesArr = [];
       for (const [group, entries] of groupEntries) {
@@ -690,6 +740,7 @@ function rendererWebGPU(p5, fn) {
       shader._pipelineLayout = this.device.createPipelineLayout({
         bindGroupLayouts: shader._bindGroupLayouts,
       });
+      shader._compiled = true;
     }
 
     _getBlendState(mode) {
@@ -1448,30 +1499,66 @@ function rendererWebGPU(p5, fn) {
 
       this._beginActiveRenderPass();
       const passEncoder = this.activeRenderPass;
-      const currentShader = this._curShader;
-      const shaderOptions = this._shaderOptions({ mode });
-      if (this.activeShader !== currentShader || this._shaderOptionsDifferent(shaderOptions)) {
-        passEncoder.setPipeline(currentShader.getPipeline(shaderOptions));
-      }
-      this.activeShader = currentShader;
-      this.activeShaderOptions = shaderOptions;
 
-      // Set stencil reference value for clipping
-      const drawTarget = this.drawTarget();
-      if (drawTarget._isClipApplied && !this._clipping) {
-        // When using the clip mask, test against reference value 0 (background)
-        // WebGL uses NOTEQUAL with ref 0, so fragments pass where stencil != 0
-        // In WebGPU with 'not-equal', we need ref 0 to pass where stencil != 0
-        passEncoder.setStencilReference(0);
-      } else if (this._clipping) {
-        // When writing to the clip mask, write reference value 1
-        passEncoder.setStencilReference(1);
-      }
+      const currentShader = this._curShader;
+      this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
       // Bind vertex buffers
       for (const buffer of currentShader._vertexBuffers || this._getVertexBuffers(currentShader)) {
         const location = currentShader.attributes[buffer.attr].location;
         const gpuBuffer = buffers[buffer.dst];
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
+      }
+
+      if (currentShader.shaderType === "fill") {
+        // Bind index buffer and issue draw
+        if (buffers.indexBuffer) {
+          const indexFormat = buffers.indexFormat || "uint16";
+          passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
+          passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
+        } else {
+          passEncoder.draw(geometry.vertices.length, count, 0, 0);
+        }
+      } else if (currentShader.shaderType === "text") {
+        if (!buffers.indexBuffer) {
+          throw new Error("Text geometry must have an index buffer");
+        }
+        const indexFormat = buffers.indexFormat || "uint16";
+        passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
+        passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
+      }
+
+      if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
+        passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
+      }
+
+      // Mark that we have pending draws that need submission
+      this._hasPendingDraws = true;
+    }
+
+    setupShaderBindGroups(currentShader, passEncoder, shaderOptionsParams) {
+      const shaderOptions = this._shaderOptions(shaderOptionsParams);
+      if (
+        shaderOptions.compute ||
+        this.activeShader !== currentShader ||
+        this._shaderOptionsDifferent(shaderOptions)
+      ) {
+        passEncoder.setPipeline(currentShader.getPipeline(shaderOptions));
+      }
+      if (!shaderOptions.compute) {
+        this.activeShader = currentShader;
+        this.activeShaderOptions = shaderOptions;
+
+        // Set stencil reference value for clipping
+        const drawTarget = this.drawTarget();
+        if (drawTarget._isClipApplied && !this._clipping) {
+          // When using the clip mask, test against reference value 0 (background)
+          // WebGL uses NOTEQUAL with ref 0, so fragments pass where stencil != 0
+          // In WebGPU with 'not-equal', we need ref 0 to pass where stencil != 0
+          passEncoder.setStencilReference(0);
+        } else if (this._clipping) {
+          // When writing to the clip mask, write reference value 1
+          passEncoder.setStencilReference(1);
+        }
       }
 
       for (const bufferGroup of currentShader._uniformBufferGroups) {
@@ -1555,6 +1642,19 @@ function rendererWebGPU(p5, fn) {
                   : { buffer: uniformBufferInfo.buffer },
               });
             }
+          } else if (entry.storage && !bindGroup) {
+            // Storage buffer binding
+            const uniform = currentShader.uniforms[entry.storage.name];
+            if (!uniform || !uniform._cachedData || !uniform._cachedData._isStorageBuffer) {
+              throw new Error(
+                `Storage buffer "${entry.storage.name}" not set. ` +
+                `Use shader.setUniform("${entry.storage.name}", storageBuffer)`
+              );
+            }
+            bgEntries.push({
+              binding: entry.binding,
+              resource: { buffer: uniform._cachedData.buffer },
+            });
           } else if (!bindGroup) {
             bgEntries.push({
               binding: entry.binding,
@@ -1588,84 +1688,66 @@ function rendererWebGPU(p5, fn) {
           );
         }
       }
-
-      if (currentShader.shaderType === "fill") {
-        // Bind index buffer and issue draw
-        if (buffers.indexBuffer) {
-          const indexFormat = buffers.indexFormat || "uint16";
-          passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
-          passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
-        } else {
-          passEncoder.draw(geometry.vertices.length, count, 0, 0);
-        }
-      } else if (currentShader.shaderType === "text") {
-        if (!buffers.indexBuffer) {
-          throw new Error("Text geometry must have an index buffer");
-        }
-        const indexFormat = buffers.indexFormat || "uint16";
-        passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
-        passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
-      }
-
-      if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
-        passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
-      }
-
-      // Mark that we have pending draws that need submission
-      this._hasPendingDraws = true;
+      return passEncoder;
     }
 
     //////////////////////////////////////////////
     // SHADER
     //////////////////////////////////////////////
 
+    // Writes a single field's value into a Float32Array+DataView at (baseOffset + field.offset).
+    //
+    // Field interface (shared by uniform fields from _parseStruct and struct storage schema fields):
+    //   baseType:    string  - 'f32', 'i32', 'u32', etc.
+    //   size:        number  - byte size of the field
+    //   offset:      number  - byte offset of the field within its struct
+    //   packInPlace: bool    - true for mat3, written with manual column padding
+    //
+    // value: number or number[] - the data to write
+    _packField(field, value, floatView, dataView, baseOffset) {
+      if (value === undefined) return;
+      if (value?.isVector) {
+        value = value.values.length !== value.dimensions ? value.values.slice(0, value.dimensions) : value.values;
+      }
+      const byteOffset = baseOffset + field.offset;
+      if (field.baseType === 'u32') {
+        if (field.size === 4) {
+          dataView.setUint32(byteOffset, value, true);
+        } else {
+          for (let i = 0; i < value.length; i++) {
+            dataView.setUint32(byteOffset + i * 4, value[i], true);
+          }
+        }
+      } else if (field.baseType === 'i32') {
+        if (field.size === 4) {
+          dataView.setInt32(byteOffset, value, true);
+        } else {
+          for (let i = 0; i < value.length; i++) {
+            dataView.setInt32(byteOffset + i * 4, value[i], true);
+          }
+        }
+      } else if (field.packInPlace) {
+        // In-place packing for mat3: write directly to buffer with padding
+        const base = byteOffset / 4;
+        floatView[base + 0] = value[0]; floatView[base + 1] = value[1]; floatView[base + 2] = value[2];
+        floatView[base + 4] = value[3]; floatView[base + 5] = value[4]; floatView[base + 6] = value[5];
+        floatView[base + 8] = value[6]; floatView[base + 9] = value[7]; floatView[base + 10] = value[8];
+      } else if (field.size === 4) {
+        floatView.set([value], byteOffset / 4);
+      } else {
+        floatView.set(value, byteOffset / 4);
+      }
+    }
+
     _packUniformGroup(shader, groupUniforms, bufferInfo) {
       // Pack a single group's uniforms into a buffer
       const data = bufferInfo.data;
       const dataView = bufferInfo.dataView;
-
       const offset = bufferInfo.offset || 0;
       for (const uniform of groupUniforms) {
         const fullUniform = shader.uniforms[uniform.name];
         if (!fullUniform || fullUniform.isSampler) continue;
-        const uniformData = fullUniform._mappedData;
-
-        if (fullUniform.baseType === 'u32') {
-          if (fullUniform.size === 4) {
-            dataView.setUint32(offset + fullUniform.offset, uniformData, true);
-          } else {
-            for (let i = 0; i < uniformData.length; i++) {
-              dataView.setUint32(offset + fullUniform.offset + i * 4, uniformData[i], true);
-            }
-          }
-        } else if (fullUniform.baseType === 'i32') {
-          if (fullUniform.size === 4) {
-            dataView.setInt32(offset + fullUniform.offset, uniformData, true);
-          } else {
-            for (let i = 0; i < uniformData.length; i++) {
-              dataView.setInt32(offset + fullUniform.offset + i * 4, uniformData[i], true);
-            }
-          }
-        } else if (fullUniform.packInPlace) {
-          // In-place packing for mat3: write directly to buffer with padding
-          const baseOffset = (offset + fullUniform.offset) / 4;
-          // Column 0
-          data[baseOffset + 0] = uniformData[0];
-          data[baseOffset + 1] = uniformData[1];
-          data[baseOffset + 2] = uniformData[2];
-          // Column 1
-          data[baseOffset + 4] = uniformData[3];
-          data[baseOffset + 5] = uniformData[4];
-          data[baseOffset + 6] = uniformData[5];
-          // Column 2
-          data[baseOffset + 8] = uniformData[6];
-          data[baseOffset + 9] = uniformData[7];
-          data[baseOffset + 10] = uniformData[8];
-        } else if (fullUniform.size === 4) {
-          data.set([uniformData], (offset + fullUniform.offset) / 4);
-        } else if (uniformData !== undefined) {
-          data.set(uniformData, (offset + fullUniform.offset) / 4);
-        }
+        this._packField(fullUniform, fullUniform._mappedData, data, dataView, offset);
       }
     }
 
@@ -1812,10 +1894,11 @@ function rendererWebGPU(p5, fn) {
       const uniformVarRegex = /@group\((\d+)\)\s+@binding\((\d+)\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/g;
 
       let match;
-      while ((match = uniformVarRegex.exec(shader.vertSrc())) !== null) {
+      const src = shader.shaderType === 'compute' ? shader.computeSrc() : shader.vertSrc();
+      while ((match = uniformVarRegex.exec(src)) !== null) {
         const [_, groupNum, binding, varName, structType] = match;
         const bindingIndex = parseInt(binding);
-        const uniforms = this._parseStruct(shader.vertSrc(), structType);
+        const uniforms = this._parseStruct(src, structType);
 
         uniformGroups.push({
           group: parseInt(groupNum),
@@ -1826,7 +1909,7 @@ function rendererWebGPU(p5, fn) {
         });
       }
 
-      if (uniformGroups.length === 0) {
+      if (uniformGroups.length === 0 && shader.shaderType !== 'compute') {
         throw new Error('Expected at least one uniform struct bound to @group(0)');
       }
 
@@ -1853,6 +1936,10 @@ function rendererWebGPU(p5, fn) {
       // TODO: support other texture types
       const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
 
+      // Extract storage buffers
+      const storageBuffers = {};
+      const storageRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
+
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
       const structUniformBindings = {};
@@ -1862,8 +1949,11 @@ function rendererWebGPU(p5, fn) {
 
       for (const [src, visibility] of [
         [shader.vertSrc(), GPUShaderStage.VERTEX],
-        [shader.fragSrc(), GPUShaderStage.FRAGMENT]
+        [shader.fragSrc(), GPUShaderStage.FRAGMENT],
+        [shader.computeSrc ? shader.computeSrc() : null, GPUShaderStage.COMPUTE]
       ]) {
+        if (!src) continue; // Skip if shader stage doesn't exist
+
         let match;
         while ((match = samplerRegex.exec(src)) !== null) {
           const [_, group, binding, name, type] = match;
@@ -1898,21 +1988,51 @@ function rendererWebGPU(p5, fn) {
             samplerNode.textureSource = sampler;
           }
         }
+
+        // Parse storage buffers
+        while ((match = storageRegex.exec(src)) !== null) {
+          const [_, group, binding, accessMode, name] = match;
+          const groupIndex = parseInt(group);
+          const bindingIndex = parseInt(binding);
+
+          const key = `${groupIndex},${bindingIndex}`;
+          const existing = storageBuffers[key];
+          // If any stage uses read_write, the bind group layout must use read_write
+          const finalAccessMode = (existing?.accessMode === 'read_write' || accessMode === 'read_write')
+            ? 'read_write'
+            : accessMode;
+
+          storageBuffers[key] = {
+            visibility: (existing?.visibility || 0) | visibility,
+            group: groupIndex,
+            binding: bindingIndex,
+            name,
+            accessMode: finalAccessMode, // 'read' or 'read_write'
+            isStorage: true,
+            type: 'storage'
+          };
+        }
       }
-      return [...Object.values(allUniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers)];
+
+      // Store storage buffers on shader for later use
+      shader._storageBuffers = Object.values(storageBuffers);
+
+      return [...Object.values(allUniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers), ...Object.values(storageBuffers)];
     }
 
-    getNextBindingIndex({ vert, frag }, group = 0) {
+    getNextBindingIndex({ vert, frag, compute }, group = 0) {
       // Get the highest binding index in the specified group and return the next available
-      const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var(?:<uniform>)?\s+(\w+)\s*:\s*(texture_2d<f32>|sampler|uniform|\w+)/g;
+      const bindingRegex = /@group\((\d+)\)\s*@binding\((\d+)\)/g;
       let maxBindingIndex = -1;
 
-      for (const [src, visibility] of [
-        [vert, GPUShaderStage.VERTEX],
-        [frag, GPUShaderStage.FRAGMENT]
-      ]) {
+      const sources = [];
+      if (vert) sources.push([vert, GPUShaderStage.VERTEX]);
+      if (frag) sources.push([frag, GPUShaderStage.FRAGMENT]);
+      if (compute) sources.push([compute, GPUShaderStage.COMPUTE]);
+
+      for (const [src, visibility] of sources) {
         let match;
-        while ((match = samplerRegex.exec(src)) !== null) {
+        while ((match = bindingRegex.exec(src)) !== null) {
           const [_, groupIndex, bindingIndex] = match;
           if (parseInt(groupIndex) === group) {
             maxBindingIndex = Math.max(maxBindingIndex, parseInt(bindingIndex));
@@ -2244,8 +2364,8 @@ function rendererWebGPU(p5, fn) {
         }
       );
 
-      let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment)\s*)?fn main[^{]+\{)/);
-      if (shaderType !== 'fragment') {
+      let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment|compute)\s*(?:@workgroup_size\([^)]+\)\s*)?)?fn main[^{]+\{)/);
+      if (shaderType === 'vertex') {
         if (!main.match(/\@builtin\s*\(\s*instance_index\s*\)/)) {
           main = main.replace(/\)\s*(->|\{)/, ', @builtin(instance_index) instanceID: u32) $1');
         }
@@ -2268,6 +2388,7 @@ function rendererWebGPU(p5, fn) {
         const nextBinding = this.getNextBindingIndex({
           vert: shaderType === 'vertex' ? preMain + (shader.hooks.vertex?.declarations ?? '') + shader.hooks.declarations : shader._vertSrc,
           frag: shaderType === 'fragment' ? preMain + (shader.hooks.fragment?.declarations ?? '') + shader.hooks.declarations : shader._fragSrc,
+          compute: shaderType === 'compute' ? preMain + (shader.hooks.compute?.declarations ?? '') + shader.hooks.declarations : shader._computeSrc,
         }, 0);
 
         // Create HookUniforms struct and binding
@@ -2278,8 +2399,14 @@ ${hookUniformFields}}
 
 @group(0) @binding(${nextBinding}) var<uniform> hooks: HookUniforms;
 `;
-        // Insert before the first @group binding
-        preMain = preMain.replace(/(@group\(0\)\s+@binding)/, `${hookUniformsDecl}\n$1`);
+        // Insert before the first @group binding, or at the end if there are none
+        const replaced = preMain.replace(/(@group\(0\)\s+@binding)/, `${hookUniformsDecl}\n$1`);
+        if (replaced === preMain) {
+          // No @group bindings found in base shader, append to preMain
+          preMain = preMain + '\n' + hookUniformsDecl;
+        } else {
+          preMain = replaced;
+        }
       }
 
       // Handle varying variables by injecting them into VertexOutput and FragmentInput structs
@@ -2361,7 +2488,7 @@ ${hookUniformFields}}
       if (shader.hooks.declarations) {
         hooks += shader.hooks.declarations + '\n';
       }
-      if (shader.hooks[shaderType].declarations) {
+      if (shader.hooks[shaderType] && shader.hooks[shaderType].declarations) {
         hooks += shader.hooks[shaderType].declarations + '\n';
       }
       for (const hookDef in shader.hooks.helpers) {
@@ -2385,7 +2512,7 @@ ${hookUniformFields}}
 
         let [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
 
-        if (shaderType !== 'fragment') {
+        if (shaderType === 'vertex') {
           // Splice the instance ID in as a final parameter to every WGSL hook function
           let hasParams = !!params.match(/^\(\s*\S+.*\)$/);
           params = params.slice(0, -1) + (hasParams ? ', ' : '') + 'instanceID: u32)';
@@ -2399,7 +2526,7 @@ ${hookUniformFields}}
       }
 
       // Add the instance ID as a final parameter to each hook call
-      if (shaderType !== 'fragment') {
+      if (shaderType === 'vertex') {
         const addInstanceIDParam = (src) => {
           let result = src;
           let idx = 0;
@@ -2489,6 +2616,10 @@ ${hookUniformFields}}
       if (!body) {
         body = shader.hooks.fragment[hookName];
         fullSrc = shader._fragSrc;
+      }
+      if (!body) {
+        body = shader.hooks.compute[hookName];
+        fullSrc = shader._computeSrc;
       }
       if (!body) {
         throw new Error(`Can't find hook ${hookName}!`);
@@ -2814,6 +2945,202 @@ ${hookUniformFields}}
       };
     }
 
+    // Maps a plain JS value to the WGSL type string that represents it in a struct.
+    _jsValueToWgslType(value) {
+      if (typeof value === 'number') return 'f32';
+      if (value?.isVector) {
+        if (value.dimensions === 2) return 'vec2f';
+        if (value.dimensions === 3) return 'vec3f';
+        if (value.dimensions === 4) return 'vec4f';
+        throw new Error(`Unsupported vector dimension ${value.dimensions} for struct storage field`);
+      }
+      if (Array.isArray(value)) {
+        if (value.length === 2) return 'vec2f';
+        if (value.length === 3) return 'vec3f';
+        if (value.length === 4) return 'vec4f';
+        throw new Error(`Unsupported array length ${value.length} for struct storage field`);
+      }
+      throw new Error(`Unsupported value type ${typeof value} for struct storage field`);
+    }
+
+    // Infers a struct schema from the first element of a struct array.
+    //
+    // Returns { fields, stride, structBody } where:
+    //   fields: field has the _packField interface (baseType, size, offset, packInPlace) plus:
+    //     name: string - JS property name
+    //     dim:  number - float component count, used when creating StrandsNodes
+    //   structBody: everything inside the  { ... } of a WGSL struct definition
+    //   stride: how many bytes are reserved for this struct in the buffer
+    _inferStructSchema(firstElement) {
+      const entries = Object.entries(firstElement);
+
+      if (!p5.disableFriendlyErrors) {
+        for (const [name, value] of entries) {
+          if (
+            value !== null &&
+            typeof value === 'object' &&
+            !Array.isArray(value) &&
+            !value?.isVector
+          ) {
+            p5._friendlyError(
+              `The "${name}" property in your storage data contains a nested object. ` +
+              `Make sure you only use properties with numbers, arrays of numbers, or p5.Vector.`,
+              'createStorage'
+            );
+          }
+        }
+      }
+
+      const fieldLines = entries.map(([name, value]) =>
+        `  ${name}: ${this._jsValueToWgslType(value)},`
+      ).join('\n');
+      const structBody = `{\n${fieldLines}\n}`;
+      const elements = this._parseStruct(`struct _Tmp ${structBody}`, '_Tmp');
+
+      let maxEnd = 0;
+      let maxAlign = 1;
+      const fields = entries.map(([name]) => {
+        const el = elements[name];
+        maxEnd = Math.max(maxEnd, el.offsetEnd);
+        // Alignment for scalars/vectors: <=4 -> 4, <=8 -> 8, else 16
+        const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
+        maxAlign = Math.max(maxAlign, align);
+        return {
+          name,
+          baseType: el.baseType,
+          size: el.size,
+          offset: el.offset,
+          packInPlace: el.packInPlace ?? false,
+          dim: el.size / 4,
+        };
+      });
+
+      const stride = Math.ceil(maxEnd / maxAlign) * maxAlign;
+      return { fields, stride, structBody };
+    }
+
+    // Packs an array of plain objects into a Float32Array using the given struct schema.
+    // Reuses _packField so layout rules match uniform packing exactly.
+    _packStructArray(data, schema) {
+      const { fields, stride } = schema;
+      const totalBytes = Math.max(data.length * stride, 16);
+      const alignedBytes = Math.ceil(totalBytes / 16) * 16;
+      const buffer = new ArrayBuffer(alignedBytes);
+      const floatView = new Float32Array(buffer);
+      const dataView = new DataView(buffer);
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          this._packField(field, item[field.name], floatView, dataView, baseOffset);
+        }
+      }
+      return floatView;
+    }
+
+    createStorage(dataOrCount) {
+      const device = this.device;
+
+      // Struct array: an array of plain objects
+      if (Array.isArray(dataOrCount) && dataOrCount.length > 0 &&
+          typeof dataOrCount[0] === 'object' && !Array.isArray(dataOrCount[0])) {
+        if (!p5.disableFriendlyErrors && dataOrCount.length > 1) {
+          const firstKeys = Object.keys(dataOrCount[0]);
+          let warned = false;
+          for (let i = 1; i < dataOrCount.length; i++) {
+            const el = dataOrCount[i];
+            const elKeys = Object.keys(el);
+            const sameKeys = firstKeys.length === elKeys.length &&
+              firstKeys.every((k, j) => k === elKeys[j]);
+            if (!sameKeys) {
+              p5._friendlyError(
+                `Element ${i} has different fields than element 0. ` +
+                `All elements should have the same properties.`,
+                'createStorage'
+              );
+              break;
+            }
+            for (const key of firstKeys) {
+              const firstType = this._jsValueToWgslType(dataOrCount[0][key]);
+              const elType = this._jsValueToWgslType(el[key]);
+              if (firstType !== elType) {
+                p5._friendlyError(
+                  `The "${key}" property of element ${i} has type ${elType} ` +
+                  `but element 0 has type ${firstType}. Proporties should have the same type across all elements.`,
+                  'createStorage'
+                );
+                warned = true;
+                break;
+              }
+            }
+            if (warned) break;
+          }
+        }
+        const schema = this._inferStructSchema(dataOrCount[0]);
+        const packed = this._packStructArray(dataOrCount, schema);
+        const size = packed.byteLength;
+        const buffer = device.createBuffer({
+          size,
+          usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+          mappedAtCreation: true,
+        });
+        new Float32Array(buffer.getMappedRange()).set(packed);
+        buffer.unmap();
+        const storageBuffer = { _isStorageBuffer: true, buffer, size, _schema: schema, _renderer: this };
+        this._storageBuffers.add(storageBuffer);
+        return storageBuffer;
+      }
+
+      // Determine buffer size and initial data
+      let size, initialData;
+      if (typeof dataOrCount === 'number') {
+        // createStorage(count) - zero-initialized
+        size = dataOrCount * 4; // floats are 4 bytes
+        initialData = new Float32Array(dataOrCount);
+      } else {
+        // createStorage(array) - from data
+        if (dataOrCount instanceof Float32Array) {
+          initialData = dataOrCount;
+        } else if (Array.isArray(dataOrCount)) {
+          initialData = new Float32Array(dataOrCount);
+        } else {
+          throw new Error('createStorage expects a number or array/Float32Array');
+        }
+        size = initialData.byteLength;
+      }
+
+      // Align to 16 bytes (WGSL storage buffer alignment requirement)
+      size = Math.ceil(size / 16) * 16;
+
+      // Create storage buffer with STORAGE | COPY_DST | COPY_SRC usage
+      const buffer = device.createBuffer({
+        size,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+        mappedAtCreation: initialData.length > 0
+      });
+
+      // Write initial data if provided
+      if (initialData.length > 0) {
+        const mapping = new Float32Array(buffer.getMappedRange());
+        mapping.set(initialData);
+        buffer.unmap();
+      }
+
+      // Return wrapper object with metadata
+      const storageBuffer = {
+        _isStorageBuffer: true,
+        buffer,
+        size,
+        elementCount: size / 4, // Number of floats
+        _renderer: this
+      };
+
+      // Track for cleanup
+      this._storageBuffers.add(storageBuffer);
+
+      return storageBuffer;
+    }
+
     _getWebGPUColorFormat(framebuffer) {
       if (framebuffer.format === constants.FLOAT) {
         return framebuffer.channels === RGBA ? 'rgba32float' : 'rgba32float';
@@ -3137,6 +3464,21 @@ ${hookUniformFields}}
       return this._baseFilterShader;
     }
 
+    baseComputeShader() {
+      if (!this._baseComputeShader) {
+        this._baseComputeShader = new Shader(
+          this,
+          baseComputeShader,
+          {
+            compute: {
+              'void iteration': '(inputs: ComputeInputs) {}',
+            },
+          }
+        );
+      }
+      return this._baseComputeShader;
+    }
+
     /*
      * WebGPU-specific implementation of imageLight shader creation
      */
@@ -3236,6 +3578,46 @@ ${hookUniformFields}}
         glDataType: dataType || 'uint8'
       };
     }
+
+    compute(shader, x, y = 1, z = 1) {
+      if (shader.shaderType !== 'compute') {
+        throw new Error('compute() can only be called with a compute shader');
+      }
+
+      this._finishActiveRenderPass();
+
+      // Ensure shader is initialized and finalized
+      if (!shader._compiled) {
+        shader.init();
+      }
+
+      // Set default uniforms
+      shader.setDefaultUniforms();
+      shader.setUniform('uTotalCount', [x, y, z]);
+
+      // Calculate optimal workgroup size (8x8x1 = 64 threads per workgroup)
+      const WORKGROUP_SIZE_X = 8;
+      const WORKGROUP_SIZE_Y = 8;
+      const WORKGROUP_SIZE_Z = 1;
+
+      // Calculate number of workgroups needed
+      const workgroupCountX = Math.ceil(x / WORKGROUP_SIZE_X);
+      const workgroupCountY = Math.ceil(y / WORKGROUP_SIZE_Y);
+      const workgroupCountZ = Math.ceil(z / WORKGROUP_SIZE_Z);
+
+      const commandEncoder = this.device.createCommandEncoder();
+      const passEncoder = commandEncoder.beginComputePass();
+      this.setupShaderBindGroups(shader, passEncoder, {
+        compute: true,
+        workgroupSize: [WORKGROUP_SIZE_X, WORKGROUP_SIZE_Y, WORKGROUP_SIZE_Z],
+      });
+
+      // Dispatch compute workgroups
+      passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
+
+      passEncoder.end();
+      this.device.queue.submit([commandEncoder.finish()]);
+    }
   }
 
   p5.RendererWebGPU = RendererWebGPU;
@@ -3246,6 +3628,61 @@ ${hookUniformFields}}
   fn.setAttributes = async function (key, value) {
     return this._renderer._setAttributes(key, value);
   }
+
+  /**
+   * Creates a storage buffer for use in compute shaders.
+   *
+   * @method createStorage
+   * @param {Number|Array|Float32Array} dataOrCount Either a number specifying the count of floats,
+   *   or an array/Float32Array with initial data.
+   * @returns {Object} A storage buffer object.
+   */
+  fn.createStorage = function (dataOrCount) {
+    return this._renderer.createStorage(dataOrCount);
+  }
+
+  /**
+   * Returns the base compute shader.
+   *
+   * Calling `buildComputeShader(shaderFunction)` is equivalent to
+   * calling `baseComputeShader().modify(shaderFunction)`.
+   *
+   * @method baseComputeShader
+   * @submodule p5.strands
+   * @beta
+   * @returns {p5.Shader} The base compute shader.
+   */
+  fn.baseComputeShader = function () {
+    return this._renderer.baseComputeShader();
+  };
+
+  /**
+   * Create a new compute shader using p5.strands.
+   *
+   * @method buildComputeShader
+   * @submodule p5.strands
+   * @beta
+   * @param {Function} callback A function building a p5.strands compute shader.
+   * @returns {p5.Shader} The compute shader.
+   */
+  fn.buildComputeShader = function (cb, context) {
+    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+  };
+
+  /**
+   * Dispatches a compute shader to run on the GPU.
+   *
+   * @method compute
+   * @submodule p5.strands
+   * @beta
+   * @param {p5.Shader} shader The compute shader to run.
+   * @param {Number} x Number of invocations in the X dimension.
+   * @param {Number} [y=1] Number of invocations in the Y dimension.
+   * @param {Number} [z=1] Number of invocations in the Z dimension.
+   */
+  fn.compute = function (shader, x, y, z) {
+    this._renderer.compute(shader, x, y, z);
+  };
 }
 
 export default rendererWebGPU;
