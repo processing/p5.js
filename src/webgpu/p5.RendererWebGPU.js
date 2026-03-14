@@ -2974,9 +2974,22 @@ ${hookUniformFields}}
     _inferStructSchema(firstElement) {
       const entries = Object.entries(firstElement);
 
-      // TODO: if FES is enabled, check if all elements
-      // share same schema, warn if not. Also check for
-      // deeply nested objects or other unsupported fields
+      if (!p5.disableFriendlyErrors) {
+        for (const [name, value] of entries) {
+          if (
+            value !== null &&
+            typeof value === 'object' &&
+            !Array.isArray(value) &&
+            !value?.isVector
+          ) {
+            p5._friendlyError(
+              `The "${name}" property in your storage data contains a nested object. ` +
+              `Make sure you only use properties with numbers, arrays of numbers, or p5.Vector.`,
+              'createStorage'
+            );
+          }
+        }
+      }
 
       const fieldLines = entries.map(([name, value]) =>
         `  ${name}: ${this._jsValueToWgslType(value)},`
@@ -3031,6 +3044,38 @@ ${hookUniformFields}}
       // Struct array: an array of plain objects
       if (Array.isArray(dataOrCount) && dataOrCount.length > 0 &&
           typeof dataOrCount[0] === 'object' && !Array.isArray(dataOrCount[0])) {
+        if (!p5.disableFriendlyErrors && dataOrCount.length > 1) {
+          const firstKeys = Object.keys(dataOrCount[0]);
+          let warned = false;
+          for (let i = 1; i < dataOrCount.length; i++) {
+            const el = dataOrCount[i];
+            const elKeys = Object.keys(el);
+            const sameKeys = firstKeys.length === elKeys.length &&
+              firstKeys.every((k, j) => k === elKeys[j]);
+            if (!sameKeys) {
+              p5._friendlyError(
+                `Element ${i} has different fields than element 0. ` +
+                `All elements should have the same properties.`,
+                'createStorage'
+              );
+              break;
+            }
+            for (const key of firstKeys) {
+              const firstType = this._jsValueToWgslType(dataOrCount[0][key]);
+              const elType = this._jsValueToWgslType(el[key]);
+              if (firstType !== elType) {
+                p5._friendlyError(
+                  `The "${key}" property of element ${i} has type ${elType} ` +
+                  `but element 0 has type ${firstType}. Proporties should have the same type across all elements.`,
+                  'createStorage'
+                );
+                warned = true;
+                break;
+              }
+            }
+            if (warned) break;
+          }
+        }
         const schema = this._inferStructSchema(dataOrCount[0]);
         const packed = this._packStructArray(dataOrCount, schema);
         const size = packed.byteLength;
