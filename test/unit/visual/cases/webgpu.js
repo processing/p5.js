@@ -1117,7 +1117,6 @@ visualSuite("WebGPU", function () {
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', particles);
           p5.getWorldInputs((inputs) => {
-            debugger
             const p = buf[p5.instanceID()].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
@@ -1134,7 +1133,41 @@ visualSuite("WebGPU", function () {
         p5.model(geo, 3);
 
         await screenshot();
-      },
+      }
+    );
+
+    visualTest(
+      'Struct storage buffer fields can be read using an inline schema template',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Same layout as above but schema is declared inline rather than via the buffer
+        const particles = p5.createStorage([
+          { position: [-15, 0] },
+          { position: [0,   0] },
+          { position: [15,  0] },
+        ]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', { position: [0, 0] });
+          p5.getWorldInputs((inputs) => {
+            const p = buf[p5.instanceID()].position;
+            inputs.position.x += p.x;
+            inputs.position.y += p.y;
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('buf', particles);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
     );
 
     visualTest(

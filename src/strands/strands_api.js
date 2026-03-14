@@ -481,8 +481,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function(name, bufferOrSchema) {
-    // Extract schema from a struct storage buffer or explicit schema object
-    const schema = bufferOrSchema?._schema ?? null;
+    // Extract schema from:
+    //   - a struct storage buffer created by createStorage([{...}, ...])  (_schema is pre-computed)
+    //   - a plain object used as a template, e.g. { position: [0,0], velocity: [0,0] }
+    //     (schema is inferred the same way createStorage does it)
+    let schema = null;
+    if (bufferOrSchema?._schema) {
+      schema = bufferOrSchema._schema;
+    } else if (bufferOrSchema && !bufferOrSchema._isStorageBuffer && typeof bufferOrSchema === 'object') {
+      schema = strandsContext.renderer?._inferStructSchema(bufferOrSchema) ?? null;
+    }
 
     const { id, dimension } = build.variableNode(
       strandsContext,
