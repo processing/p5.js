@@ -97,6 +97,10 @@ function rendererWebGPU(p5, fn) {
       this.finalCamera = new Camera(this);
       this.finalCamera._computeCameraDefaultSettings();
       this.finalCamera._setDefaultCamera();
+
+      this.depthFormat = 'depth24plus-stencil8';
+      this.depthTexture = null;
+      this.depthTextureView = null;
     }
 
     async setupContext() {
@@ -137,7 +141,6 @@ function rendererWebGPU(p5, fn) {
       });
 
       // TODO disablable stencil
-      this.depthFormat = 'depth24plus-stencil8';
       this.mainFramebuffer = this.createFramebuffer({ _useCanvasFormat: true });
       this._updateSize();
       this._update();
@@ -194,6 +197,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _updateSize() {
+      if (!this.device || !this.depthFormat) return;
       if (this.depthTexture && this.depthTexture.destroy) {
         this.flushDraw();
         const textureToDestroy = this.depthTexture;
@@ -288,6 +292,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     clear(...args) {
+      if (!this.device || !this.drawingContext) return;
       const _r = args[0] || 0;
       const _g = args[1] || 0;
       const _b = args[2] || 0;
@@ -354,6 +359,7 @@ function rendererWebGPU(p5, fn) {
      * occlude anything subsequently drawn.
      */
     clearDepth(depth = 1) {
+      if (!this.device || !this.depthTextureView) return;
       this._finishActiveRenderPass();
       const commandEncoder = this.device.createCommandEncoder();
 
@@ -2362,6 +2368,9 @@ function rendererWebGPU(p5, fn) {
       // Inject hook uniforms as a separate struct at a new binding
       let hookUniformFields = '';
       for (const key in shader.hooks.uniforms) {
+        // Skip textures, they don't get added to structs
+        if (key.endsWith(': sampler2D')) continue;
+
         // WGSL format: "name: type"
         hookUniformFields += `  ${key},\n`;
       }
@@ -3293,7 +3302,7 @@ ${hookUniformFields}}
           {
             vertex: {},
             fragment: {
-              "vec4<f32> getColor": `(inputs: FilterInputs, tex: texture_2d<f32>, tex_sampler: sampler) -> vec4<f32> {
+              "vec4<f32> getColor": `(inputs: FilterInputs, canvasContent: texture_2d<f32>, canvasContent_sampler: sampler) -> vec4<f32> {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
               }`,
             },

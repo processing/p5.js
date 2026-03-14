@@ -10,6 +10,8 @@ suite('loadModel', function() {
   const inconsistentColorObjFile = '/test/unit/assets/eg1.obj';
   const objMtlMissing = '/test/unit/assets/objMtlMissing.obj';
   const validSTLfileWithoutExtension = '/test/unit/assets/ascii';
+  const validCubeFile = '/test/unit/assets/cube.obj';
+  const negativeIndexCubeFile = '/test/unit/assets/cube-negative-indices.obj';
 
   beforeAll(async () => {
     loading(mockP5, mockP5Prototype);
@@ -114,5 +116,21 @@ suite('loadModel', function() {
   test('resolves STL file correctly with case insensitive extension', async function() {
     const model = await mockP5Prototype.loadModel(validSTLfileWithoutExtension, '.STL');
     assert.instanceOf(model, Geometry);
+  });
+
+  test('OBJ with negative vertex indices loads correctly', async function() {
+    const model = await mockP5Prototype.loadModel(negativeIndexCubeFile);
+    assert.instanceOf(model, Geometry);
+    assert.isAbove(model.vertices.length, 0, 'Model should have vertices');
+    assert.isAbove(model.faces.length, 0, 'Model should have faces');
+  });
+
+  test('OBJ negative indices produce same geometry as positive', async function() {
+    const positiveModel = await mockP5Prototype.loadModel(validCubeFile);
+    const negativeModel = await mockP5Prototype.loadModel(negativeIndexCubeFile);
+    assert.equal(positiveModel.vertices.length, negativeModel.vertices.length,
+      'Vertex count should match');
+    assert.equal(positiveModel.faces.length, negativeModel.faces.length,
+      'Face count should match');
   });
 });
