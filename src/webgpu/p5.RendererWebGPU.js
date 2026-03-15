@@ -3677,29 +3677,6 @@ ${hookUniformFields}}
   };
 
   /**
-   * @property {Object} iteration
-   * @beta
-   * @webgpu
-   * @description
-   * Information about the current iteration of a compute shader.
-
-   * Use it inside a
-   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
-   * function to write a loop that runs in parallel on the GPU.
-   *
-   * `iteration` has the following properties:
-   * - `index`: a three-component vector with the current index
-   *   across all dimensions passed to
-   *   <a href="#/p5/compute">`compute()`</a>. For example, use
-   *   `iteration.index.x` to get the index when looping in one dimension.
-   * - `localIndex`: an integer index of the thread within its workgroup.
-   * - `localId`: a three-component integer vector with the thread's position
-   *   within its workgroup.
-   * - `workgroupId`: a three-component integer vector identifying which
-   *   workgroup this thread belongs to.
-   */
-
-  /**
    * Create a new compute shader using p5.strands.
    *
    * A compute shader lets you run many calculations all at once on your GPU. They
@@ -3817,6 +3794,29 @@ ${hookUniformFields}}
   fn.compute = function (shader, x, y, z) {
     this._renderer.compute(shader, x, y, z);
   };
+
+  /**
+   * Information about the current iteration of a compute shader.
+
+   * Use it inside a
+   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
+   * function to write a loop that runs in parallel on the GPU.
+   *
+   * `iteration` has the following properties:
+   * - `index`: a three-component vector with the current index
+   *   across all dimensions passed to
+   *   <a href="#/p5/compute">`compute()`</a>. For example, use
+   *   `iteration.index.x` to get the index when looping in one dimension.
+   * - `localIndex`: an integer index of the thread within its workgroup.
+   * - `localId`: a three-component integer vector with the thread's position
+   *   within its workgroup.
+   * - `workgroupId`: a three-component integer vector identifying which
+   *   workgroup this thread belongs to.
+   *
+   * @property {Object} iteration
+   * @beta
+   * @webgpu
+   */
 }
 
 export default rendererWebGPU;
