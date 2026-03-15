@@ -802,6 +802,7 @@ if (typeof p5 !== "undefined") {
  * @method uniformStorage
  * @beta
  * @webgpu
+ * @webgpuOnly
  * @submodule p5.strands
  * @param {String} name The name of the storage buffer uniform in the shader.
  * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema] A storage buffer to bind,

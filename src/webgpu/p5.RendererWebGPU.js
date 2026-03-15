@@ -61,6 +61,7 @@ function rendererWebGPU(p5, fn) {
    * @class p5.StorageBuffer
    * @beta
    * @webgpu
+   * @webgpuOnly
    */
   p5.StorageBuffer = StorageBuffer;
 
@@ -3658,6 +3659,7 @@ ${hookUniformFields}}
    * @method createStorage
    * @beta
    * @webgpu
+   * @webgpuOnly
    * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
    *   an array/Float32Array of floats, or an array of objects describing struct elements.
    * @returns {p5.StorageBuffer} A storage buffer.
@@ -3675,6 +3677,7 @@ ${hookUniformFields}}
    * @method baseComputeShader
    * @beta
    * @webgpu
+   * @webgpuOnly
    * @returns {p5.Shader} The base compute shader.
    */
   fn.baseComputeShader = function () {
@@ -3770,6 +3773,7 @@ ${hookUniformFields}}
    * @method buildComputeShader
    * @beta
    * @webgpu
+   * @webgpuOnly
    * @param {Function} callback A function building a p5.strands compute shader.
    * @returns {p5.Shader} The compute shader.
    */
@@ -3783,6 +3787,7 @@ ${hookUniformFields}}
    * @method compute
    * @beta
    * @webgpu
+   * @webgpuOnly
    * @param {p5.Shader} shader The compute shader to run.
    * @param {Number} x Number of invocations in the X dimension.
    * @param {Number} [y=1] Number of invocations in the Y dimension.
@@ -3813,6 +3818,7 @@ ${hookUniformFields}}
    * @property {Object} iteration
    * @beta
    * @webgpu
+   * @webgpuOnly
    */
 }
 
