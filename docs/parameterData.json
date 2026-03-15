@@ -486,12 +486,54 @@
         ]
       ]
     },
+    "ambientLight": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "selectAll": {
+      "overloads": [
+        [
+          "String",
+          "String|p5.Element|HTMLElement?"
+        ]
+      ]
+    },
     "smoothstep": {
       "overloads": [
         [
           "Number",
           "Number",
           "Number"
+        ]
+      ]
+    },
+    "uniformStorage": {
+      "overloads": [
+        [
+          "String",
+          "p5.StorageBuffer|Function|Object?"
+        ],
+        [
+          "p5.StorageBuffer|Function|Object?"
         ]
       ]
     },
@@ -542,37 +584,6 @@
       "overloads": [
         [
           "Function"
-        ]
-      ]
-    },
-    "ambientLight": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "selectAll": {
-      "overloads": [
-        [
-          "String",
-          "String|p5.Element|HTMLElement?"
         ]
       ]
     },
@@ -1408,23 +1419,6 @@
         ]
       ]
     },
-    "setup": {
-      "overloads": [
-        []
-      ]
-    },
-    "draw": {
-      "overloads": [
-        []
-      ]
-    },
-    "registerAddon": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
     "map": {
       "overloads": [
         [
@@ -1624,6 +1618,23 @@
         ]
       ]
     },
+    "setup": {
+      "overloads": [
+        []
+      ]
+    },
+    "draw": {
+      "overloads": [
+        []
+      ]
+    },
+    "registerAddon": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
     "clear": {
       "overloads": [
         [
@@ -1782,15 +1793,6 @@
         ]
       ]
     },
-    "loadBytes": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
     "noDebugMode": {
       "overloads": [
         []
@@ -1824,6 +1826,15 @@
     "loadPixels": {
       "overloads": [
         []
+      ]
+    },
+    "loadBytes": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
       ]
     },
     "buildFilterShader": {
@@ -1880,15 +1891,6 @@
         ]
       ]
     },
-    "loadBlob": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
     "pow": {
       "overloads": [
         [
@@ -1901,6 +1903,15 @@
       "overloads": [
         [
           "Boolean?"
+        ]
+      ]
+    },
+    "loadBlob": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
         ]
       ]
     },
@@ -2014,6 +2025,21 @@
         ]
       ]
     },
+    "imageLight": {
+      "overloads": [
+        [
+          "p5.Image"
+        ]
+      ]
+    },
+    "pixelDensity": {
+      "overloads": [
+        [
+          "Number?"
+        ],
+        []
+      ]
+    },
     "httpGet": {
       "overloads": [
         [
@@ -2026,21 +2052,6 @@
           "String|Request",
           "Function",
           "Function?"
-        ]
-      ]
-    },
-    "pixelDensity": {
-      "overloads": [
-        [
-          "Number?"
-        ],
-        []
-      ]
-    },
-    "imageLight": {
-      "overloads": [
-        [
-          "p5.Image"
         ]
       ]
     },
@@ -2108,28 +2119,6 @@
         ]
       ]
     },
-    "httpPost": {
-      "overloads": [
-        [
-          "String|Request",
-          "Object|Boolean?",
-          "String?",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Object|Boolean",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
     "unhex": {
       "overloads": [
         [
@@ -2176,6 +2165,28 @@
       "overloads": [
         [
           "Number"
+        ]
+      ]
+    },
+    "httpPost": {
+      "overloads": [
+        [
+          "String|Request",
+          "Object|Boolean?",
+          "String?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Object|Boolean",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
         ]
       ]
     },
@@ -2261,11 +2272,6 @@
         ]
       ]
     },
-    "getURLParams": {
-      "overloads": [
-        []
-      ]
-    },
     "colorMode": {
       "overloads": [
         [
@@ -2279,6 +2285,11 @@
           "Number",
           "Number?"
         ],
+        []
+      ]
+    },
+    "getURLParams": {
+      "overloads": [
         []
       ]
     },
@@ -2326,14 +2337,6 @@
         ]
       ]
     },
-    "model": {
-      "overloads": [
-        [
-          "p5.Geometry",
-          "Number?"
-        ]
-      ]
-    },
     "setContent": {
       "overloads": [
         [
@@ -2341,20 +2344,11 @@
         ]
       ]
     },
-    "httpDo": {
+    "model": {
       "overloads": [
         [
-          "String|Request",
-          "String?",
-          "String?",
-          "Object?",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
+          "p5.Geometry",
+          "Number?"
         ]
       ]
     },
@@ -2377,6 +2371,23 @@
           "Number",
           "Integer?",
           "Integer?"
+        ]
+      ]
+    },
+    "httpDo": {
+      "overloads": [
+        [
+          "String|Request",
+          "String?",
+          "String?",
+          "Object?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
         ]
       ]
     },
@@ -2490,6 +2501,13 @@
         ]
       ]
     },
+    "brightness": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "tint": {
       "overloads": [
         [
@@ -2510,21 +2528,6 @@
         ],
         [
           "p5.Color"
-        ]
-      ]
-    },
-    "brightness": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "createWriter": {
-      "overloads": [
-        [
-          "String",
-          "String?"
         ]
       ]
     },
@@ -2609,6 +2612,14 @@
           "Number",
           "Number?",
           "Number?"
+        ]
+      ]
+    },
+    "createWriter": {
+      "overloads": [
+        [
+          "String",
+          "String?"
         ]
       ]
     },
@@ -2838,13 +2849,6 @@
         []
       ]
     },
-    "write": {
-      "overloads": [
-        [
-          "String|Number|Array"
-        ]
-      ]
-    },
     "lightness": {
       "overloads": [
         [
@@ -2859,6 +2863,13 @@
         ]
       ]
     },
+    "imageShader": {
+      "overloads": [
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
     "mouseReleased": {
       "overloads": [
         [
@@ -2866,10 +2877,10 @@
         ]
       ]
     },
-    "imageShader": {
+    "write": {
       "overloads": [
         [
-          "p5.Shader"
+          "String|Number|Array"
         ]
       ]
     },
@@ -3078,15 +3089,6 @@
         ]
       ]
     },
-    "saveJSON": {
-      "overloads": [
-        [
-          "Array|Object",
-          "String",
-          "Boolean?"
-        ]
-      ]
-    },
     "buildNormalShader": {
       "overloads": [
         [
@@ -3106,6 +3108,15 @@
         ]
       ]
     },
+    "saveJSON": {
+      "overloads": [
+        [
+          "Array|Object",
+          "String",
+          "Boolean?"
+        ]
+      ]
+    },
     "pop": {
       "overloads": [
         []
@@ -3119,11 +3130,6 @@
         ]
       ]
     },
-    "requestPointerLock": {
-      "overloads": [
-        []
-      ]
-    },
     "loadNormalShader": {
       "overloads": [
         [
@@ -3131,6 +3137,11 @@
           "Function?",
           "Function?"
         ]
+      ]
+    },
+    "requestPointerLock": {
+      "overloads": [
+        []
       ]
     },
     "baseNormalShader": {
@@ -3472,10 +3483,39 @@
         ]
       ]
     },
+    "createStorage": {
+      "overloads": [
+        [
+          "Number|Array|Float32Array|Object[]"
+        ]
+      ]
+    },
+    "baseComputeShader": {
+      "overloads": [
+        []
+      ]
+    },
     "metalness": {
       "overloads": [
         [
           "Number"
+        ]
+      ]
+    },
+    "buildComputeShader": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "compute": {
+      "overloads": [
+        [
+          "p5.Shader",
+          "Number",
+          "Number?",
+          "Number?"
         ]
       ]
     }
@@ -4193,44 +4233,6 @@
       ]
     }
   },
-  "p5.Shader": {
-    "version": {
-      "overloads": [
-        []
-      ]
-    },
-    "inspectHooks": {
-      "overloads": [
-        []
-      ]
-    },
-    "modify": {
-      "overloads": [
-        [
-          "Function",
-          "Object?"
-        ],
-        [
-          "Object?"
-        ]
-      ]
-    },
-    "copyToContext": {
-      "overloads": [
-        [
-          "p5|p5.Graphics"
-        ]
-      ]
-    },
-    "setUniform": {
-      "overloads": [
-        [
-          "String",
-          "Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture"
-        ]
-      ]
-    }
-  },
   "p5.Table": {
     "addRow": {
       "overloads": [
@@ -4402,6 +4404,44 @@
     "getArray": {
       "overloads": [
         []
+      ]
+    }
+  },
+  "p5.Shader": {
+    "version": {
+      "overloads": [
+        []
+      ]
+    },
+    "inspectHooks": {
+      "overloads": [
+        []
+      ]
+    },
+    "modify": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object?"
+        ]
+      ]
+    },
+    "copyToContext": {
+      "overloads": [
+        [
+          "p5|p5.Graphics"
+        ]
+      ]
+    },
+    "setUniform": {
+      "overloads": [
+        [
+          "String",
+          "Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer"
+        ]
       ]
     }
   },

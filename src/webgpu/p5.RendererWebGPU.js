@@ -34,6 +34,30 @@ function rendererWebGPU(p5, fn) {
     RGBA,
   } = p5;
 
+  class StorageBuffer {
+    constructor(buffer, size, renderer, schema = null) {
+      this._isStorageBuffer = true;
+      this.buffer = buffer;
+      this.size = size;
+      this._renderer = renderer;
+      this._schema = schema;
+    }
+  }
+
+  /**
+   * Represents a GPU storage buffer created by <a href="#/p5/createStorage">createStorage()</a>.
+   *
+   * Storage buffers hold data that can be read and written by compute shaders,
+   * and read by vertex and fragment shaders. Pass a `p5.StorageBuffer` to
+   * <a href="#/p5.Shader/setUniform">setUniform()</a> or
+   * <a href="#/p5/uniformStorage">uniformStorage()</a> to bind it to a shader.
+   *
+   * @class p5.StorageBuffer
+   * @beta
+   * @webgpu
+   */
+  p5.StorageBuffer = StorageBuffer;
+
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt)
@@ -3086,7 +3110,7 @@ ${hookUniformFields}}
         });
         new Float32Array(buffer.getMappedRange()).set(packed);
         buffer.unmap();
-        const storageBuffer = { _isStorageBuffer: true, buffer, size, _schema: schema, _renderer: this };
+        const storageBuffer = new StorageBuffer(buffer, size, this, schema);
         this._storageBuffers.add(storageBuffer);
         return storageBuffer;
       }
@@ -3126,14 +3150,7 @@ ${hookUniformFields}}
         buffer.unmap();
       }
 
-      // Return wrapper object with metadata
-      const storageBuffer = {
-        _isStorageBuffer: true,
-        buffer,
-        size,
-        elementCount: size / 4, // Number of floats
-        _renderer: this
-      };
+      const storageBuffer = new StorageBuffer(buffer, size, this);
 
       // Track for cleanup
       this._storageBuffers.add(storageBuffer);
@@ -3633,9 +3650,11 @@ ${hookUniformFields}}
    * Creates a storage buffer for use in compute shaders.
    *
    * @method createStorage
-   * @param {Number|Array|Float32Array} dataOrCount Either a number specifying the count of floats,
-   *   or an array/Float32Array with initial data.
-   * @returns {Object} A storage buffer object.
+   * @beta
+   * @webgpu
+   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
+   *   an array/Float32Array of floats, or an array of objects describing struct elements.
+   * @returns {p5.StorageBuffer} A storage buffer.
    */
   fn.createStorage = function (dataOrCount) {
     return this._renderer.createStorage(dataOrCount);
@@ -3650,6 +3669,7 @@ ${hookUniformFields}}
    * @method baseComputeShader
    * @submodule p5.strands
    * @beta
+   * @webgpu
    * @returns {p5.Shader} The base compute shader.
    */
   fn.baseComputeShader = function () {
@@ -3657,11 +3677,124 @@ ${hookUniformFields}}
   };
 
   /**
+   * @property {Object} iteration
+   * @beta
+   * @webgpu
+   * @description
+   * Information about the current iteration of a compute shader.
+
+   * Use it inside a
+   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
+   * function to write a loop that runs in parallel on the GPU.
+   *
+   * `iteration` has the following properties:
+   * - `index`: a three-component vector with the current index
+   *   across all dimensions passed to
+   *   <a href="#/p5/compute">`compute()`</a>. For example, use
+   *   `iteration.index.x` to get the index when looping in one dimension.
+   * - `localIndex`: an integer index of the thread within its workgroup.
+   * - `localId`: a three-component integer vector with the thread's position
+   *   within its workgroup.
+   * - `workgroupId`: a three-component integer vector identifying which
+   *   workgroup this thread belongs to.
+   */
+
+  /**
    * Create a new compute shader using p5.strands.
+   *
+   * A compute shader lets you run many calculations all at once on your GPU. They
+   * are similar to a <a href="#/p5/for>`for` loop,</a> but each iteration of the
+   * loop happens in parallel on the GPU rather than running one after the other.
+   * This makes them ideal for calculations or simulations involving many items.
+   *
+   * You create a compute shader by passing a function to `buildComputeShader`.
+   * The function represents one iteration of a loop.
+   *
+   * The compute shader can be run by calling <a href="#/p5/compute">`compute()`</a>
+   * and passing the shader in, along with the number of iterations.
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 50;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-40, 40),
+   *         random(-40, 40)
+   *       ),
+   *       velocity: createVector(
+   *         random(-1, 1),
+   *         random(-1, 1)
+   *       ),
+   *     });
+   *   }
+   *   particles = createStorage(data);
+   *
+   *   computeShader = buildComputeShader(
+   *     simulate,
+   *     { particles }
+   *   );
+   *   displayShader = buildMaterialShader(
+   *     display,
+   *     { particles }
+   *   );
+   *   instance = buildGeometry(drawParticle);
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(3);
+   * }
+   *
+   * function simulate() {
+   *   let r = 3;
+   *   let particleData = uniformStorage(particles);
+   *   let idx = iteration.index.x;
+   *   let pos = particleData[idx].position;
+   *   let vel = particleData[idx].velocity;
+   *   pos = pos + vel;
+   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
+   *     vel.x = -vel.x;
+   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
+   *   }
+   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
+   *     vel.y = -vel.y;
+   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
+   *   }
+   *   particleData[idx].position = pos;
+   *   particleData[idx].velocity = vel;
+   * }
+   *
+   * function display() {
+   *   let particleData = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = particleData[instanceID()].position;
+   *   worldInputs.position.xy += pos;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255);
+   *   lights();
+   *   shader(displayShader);
+   *   model(geo, numParticles);
+   * }
+   * ```
    *
    * @method buildComputeShader
    * @submodule p5.strands
    * @beta
+   * @webgpu
    * @param {Function} callback A function building a p5.strands compute shader.
    * @returns {p5.Shader} The compute shader.
    */
@@ -3675,6 +3808,7 @@ ${hookUniformFields}}
    * @method compute
    * @submodule p5.strands
    * @beta
+   * @webgpu
    * @param {p5.Shader} shader The compute shader to run.
    * @param {Number} x Number of invocations in the X dimension.
    * @param {Number} [y=1] Number of invocations in the Y dimension.

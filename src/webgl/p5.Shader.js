@@ -880,7 +880,7 @@ class Shader {
    * @chainable
    * @param {String} uniformName name of the uniform. Must match the name
    *                             used in the vertex and fragment shaders.
-   * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture}
+   * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer}
    * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
