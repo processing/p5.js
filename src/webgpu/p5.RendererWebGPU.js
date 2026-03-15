@@ -53,6 +53,8 @@ function rendererWebGPU(p5, fn) {
    * <a href="#/p5/uniformStorage">uniformStorage()</a> to bind it to a shader.
    *
    * @class p5.StorageBuffer
+   * @module 3D
+   * @submodule p5.strands
    * @beta
    * @webgpu
    */
@@ -3652,6 +3654,8 @@ ${hookUniformFields}}
    * @method createStorage
    * @beta
    * @webgpu
+   * @module 3D
+   * @submodule p5.strands
    * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
    *   an array/Float32Array of floats, or an array of objects describing struct elements.
    * @returns {p5.StorageBuffer} A storage buffer.
@@ -3667,6 +3671,7 @@ ${hookUniformFields}}
    * calling `baseComputeShader().modify(shaderFunction)`.
    *
    * @method baseComputeShader
+   * @module 3D
    * @submodule p5.strands
    * @beta
    * @webgpu
@@ -3715,14 +3720,8 @@ ${hookUniformFields}}
    *   }
    *   particles = createStorage(data);
    *
-   *   computeShader = buildComputeShader(
-   *     simulate,
-   *     { particles }
-   *   );
-   *   displayShader = buildMaterialShader(
-   *     display,
-   *     { particles }
-   *   );
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
    *   instance = buildGeometry(drawParticle);
    * }
    *
@@ -3732,10 +3731,10 @@ ${hookUniformFields}}
    *
    * function simulate() {
    *   let r = 3;
-   *   let particleData = uniformStorage(particles);
+   *   let data = uniformStorage(particles);
    *   let idx = iteration.index.x;
-   *   let pos = particleData[idx].position;
-   *   let vel = particleData[idx].velocity;
+   *   let pos = data[idx].position;
+   *   let vel = data[idx].velocity;
    *   pos = pos + vel;
    *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
    *     vel.x = -vel.x;
@@ -3745,14 +3744,14 @@ ${hookUniformFields}}
    *     vel.y = -vel.y;
    *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
    *   }
-   *   particleData[idx].position = pos;
-   *   particleData[idx].velocity = vel;
+   *   data[idx].position = pos;
+   *   data[idx].velocity = vel;
    * }
    *
    * function display() {
-   *   let particleData = uniformStorage(particles);
+   *   let data = uniformStorage(particles);
    *   worldInputs.begin();
-   *   let pos = particleData[instanceID()].position;
+   *   let pos = data[instanceID()].position;
    *   worldInputs.position.xy += pos;
    *   worldInputs.end();
    * }
@@ -3764,11 +3763,12 @@ ${hookUniformFields}}
    *   fill(255);
    *   lights();
    *   shader(displayShader);
-   *   model(geo, numParticles);
+   *   model(instance, numParticles);
    * }
    * ```
    *
    * @method buildComputeShader
+   * @module 3D
    * @submodule p5.strands
    * @beta
    * @webgpu
@@ -3783,6 +3783,7 @@ ${hookUniformFields}}
    * Dispatches a compute shader to run on the GPU.
    *
    * @method compute
+   * @module 3D
    * @submodule p5.strands
    * @beta
    * @webgpu
@@ -3816,6 +3817,8 @@ ${hookUniformFields}}
    * @property {Object} iteration
    * @beta
    * @webgpu
+   * @module 3D
+   * @submodule p5.strands
    */
 }
 
