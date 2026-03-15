@@ -1,35 +1,36 @@
 import { Shader } from '../webgl/p5.Shader';
 import { Texture } from '../webgl/p5.Texture';
 import { Image } from './p5.Image';
+import {
+  getWebGLShaderAttributes,
+  getWebGLUniformMetadata,
+  populateGLSLHooks,
+  setWebGLTextureParams,
+  setWebGLUniformValue
+} from "../webgl/utils";
 import * as constants from '../core/constants';
 
-import filterGrayFrag from '../webgl/shaders/filters/gray.frag';
-import filterErodeFrag from '../webgl/shaders/filters/erode.frag';
-import filterDilateFrag from '../webgl/shaders/filters/dilate.frag';
-import filterBlurFrag from '../webgl/shaders/filters/blur.frag';
-import filterPosterizeFrag from '../webgl/shaders/filters/posterize.frag';
-import filterOpaqueFrag from '../webgl/shaders/filters/opaque.frag';
-import filterInvertFrag from '../webgl/shaders/filters/invert.frag';
-import filterThresholdFrag from '../webgl/shaders/filters/threshold.frag';
-import filterShaderVert from '../webgl/shaders/filters/default.vert';
 import { filterParamDefaults } from './const';
-
 
 import filterBaseFrag from '../webgl/shaders/filters/base.frag';
 import filterBaseVert from '../webgl/shaders/filters/base.vert';
 import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
+import { glslBackend } from '../webgl/strands_glslBackend';
+import { getShaderHookTypes } from '../webgl/shaderHookUtils';
+import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
+import { makeFilterShader } from '../core/filterShaders';
 
 class FilterRenderer2D {
   /**
    * Creates a new FilterRenderer2D instance.
-   * @param {p5} pInst - The p5.js instance.
+   * @param {p5} parentRenderer - The p5.js instance.
    */
-  constructor(pInst) {
-    this.pInst = pInst;
+  constructor(parentRenderer) {
+    this.parentRenderer = parentRenderer;
     // Create a canvas for applying WebGL-based filters
     this.canvas = document.createElement('canvas');
-    this.canvas.width = pInst.width;
-    this.canvas.height = pInst.height;
+    this.canvas.width = parentRenderer.width;
+    this.canvas.height = parentRenderer.height;
 
     // Initialize the WebGL context
     let webglVersion = constants.WEBGL2;
@@ -42,6 +43,9 @@ class FilterRenderer2D {
       console.error('WebGL not supported, cannot apply filter.');
       return;
     }
+
+    this.textures = new Map();
+
     // Minimal renderer object required by p5.Shader and p5.Texture
     this._renderer = {
       GL: this.gl,
@@ -50,8 +54,8 @@ class FilterRenderer2D {
       _emptyTexture: null,
       webglVersion,
       states: {
-        textureWrapX: this.gl.CLAMP_TO_EDGE,
-        textureWrapY: this.gl.CLAMP_TO_EDGE
+        textureWrapX: constants.CLAMP,
+        textureWrapY: constants.CLAMP,
       },
       _arraysEqual: (a, b) => JSON.stringify(a) === JSON.stringify(b),
       _getEmptyTexture: () => {
@@ -61,22 +65,175 @@ class FilterRenderer2D {
           this._emptyTexture = new Texture(this._renderer, im);
         }
         return this._emptyTexture;
-      }
+      },
+      _initShader: (shader) => {
+        const gl = this.gl;
+
+        const vertShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertShader, shader.vertSrc());
+        gl.compileShader(vertShader);
+        if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+          throw new Error(`Yikes! An error occurred compiling the vertex shader: ${
+            gl.getShaderInfoLog(vertShader)
+          }`);
+        }
+
+        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragShader, shader.fragSrc());
+        gl.compileShader(fragShader);
+        if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+          throw new Error(`Darn! An error occurred compiling the fragment shader: ${
+            gl.getShaderInfoLog(fragShader)
+          }`);
+        }
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vertShader);
+        gl.attachShader(program, fragShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          throw new Error(
+            `Snap! Error linking shader program: ${gl.getProgramInfoLog(program)}`
+          );
+        }
+
+        shader._glProgram = program;
+        shader._vertShader = vertShader;
+        shader._fragShader = fragShader;
+      },
+      getTexture: (input) => {
+        let src = input;
+        if (src instanceof Framebuffer) {
+          src = src.color;
+        }
+
+        const texture = this.textures.get(src);
+        if (texture) {
+          return texture;
+        }
+
+        const tex = new Texture(this._renderer, src);
+        this.textures.set(src, tex);
+        return tex;
+      },
+      populateHooks: (shader, src, shaderType) => {
+        return populateGLSLHooks(shader, src, shaderType);
+      },
+      _getShaderAttributes: (shader) => {
+        return getWebGLShaderAttributes(shader, this.gl);
+      },
+      getUniformMetadata: (shader) => {
+        return getWebGLUniformMetadata(shader, this.gl);
+      },
+      _finalizeShader: () => {},
+      _useShader: (shader) => {
+        this.gl.useProgram(shader._glProgram);
+      },
+      bindTexture: (tex) => {
+        // bind texture using gl context + glTarget and
+        // generated gl texture object
+        this.gl.bindTexture(this.gl.TEXTURE_2D, tex.getTexture().texture);
+      },
+      unbindTexture: () => {
+        // unbind per above, disable texturing on glTarget
+        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+      },
+      _unbindFramebufferTexture: (uniform) => {
+        // Make sure an empty texture is bound to the slot so that we don't
+        // accidentally leave a framebuffer bound, causing a feedback loop
+        // when something else tries to write to it
+        const gl = this.gl;
+        const empty = this._getEmptyTexture();
+        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+        empty.bindTexture();
+        gl.uniform1i(uniform.location, uniform.samplerIndex);
+      },
+      createTexture: ({ width, height, format, dataType }) => {
+        const gl = this.gl;
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
+                           gl.RGBA, gl.UNSIGNED_BYTE, null);
+        // TODO use format and data type
+        return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
+      },
+      uploadTextureFromSource: ({ texture, glFormat, glDataType }, source) => {
+        const gl = this.gl;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, glFormat, glFormat, glDataType, source);
+      },
+      uploadTextureFromData: ({ texture, glFormat, glDataType }, data, width, height) => {
+        const gl = this.gl;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          glFormat,
+          width,
+          height,
+          0,
+          glFormat,
+          glDataType,
+          data
+        );
+      },
+      setTextureParams: (texture) => {
+        return setWebGLTextureParams(texture, this.gl, this._renderer.webglVersion);
+      },
+      updateUniformValue: (shader, uniform, data) => {
+        return setWebGLUniformValue(
+          shader,
+          uniform,
+          data,
+          (tex) => this._renderer.getTexture(tex),
+          this.gl
+        );
+      },
+      _enableAttrib: (_shader, attr, size, type, normalized, stride, offset) => {
+        const loc = attr.location;
+        const gl = this.gl;
+        // Enable register even if it is disabled
+        if (!this._renderer.registerEnabled.has(loc)) {
+          gl.enableVertexAttribArray(loc);
+          // Record register availability
+          this._renderer.registerEnabled.add(loc);
+        }
+        gl.vertexAttribPointer(
+          loc,
+          size,
+          type || gl.FLOAT,
+          normalized || false,
+          stride || 0,
+          offset || 0
+        );
+      },
+      _disableRemainingAttributes: (shader) => {
+        for (const location of this._renderer.registerEnabled.values()) {
+          if (
+            !Object.keys(shader.attributes).some(
+              key => shader.attributes[key].location === location
+            )
+          ) {
+            this.gl.disableVertexAttribArray(location);
+            this._renderer.registerEnabled.delete(location);
+          }
+        }
+      },
+      _updateTexture: (uniform, tex) => {
+        const gl = this.gl;
+        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+        tex.bindTexture();
+        tex.update();
+        gl.uniform1i(uniform.location, uniform.samplerIndex);
+      },
+      baseFilterShader: () => this.baseFilterShader(),
+      strandsBackend: glslBackend,
+      getShaderHookTypes: (shader, hookName) => getShaderHookTypes(shader, hookName),
+      uniformNameFromHookKey: (key) => key.slice(key.indexOf(' ') + 1),
     };
 
     this._baseFilterShader = undefined;
-
-    // Store the fragment shader sources
-    this.filterShaderSources = {
-      [constants.BLUR]: filterBlurFrag,
-      [constants.INVERT]: filterInvertFrag,
-      [constants.THRESHOLD]: filterThresholdFrag,
-      [constants.ERODE]: filterErodeFrag,
-      [constants.GRAY]: filterGrayFrag,
-      [constants.DILATE]: filterDilateFrag,
-      [constants.POSTERIZE]: filterPosterizeFrag,
-      [constants.OPAQUE]: filterOpaqueFrag
-    };
 
     // Store initialized shaders for each operation
     this.filterShaders = {};
@@ -149,6 +306,10 @@ class FilterRenderer2D {
     return this._baseFilterShader;
   }
 
+  getNoiseShaderSnippet() {
+    return noiseGLSL;
+  }
+
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
    * that overrides the operation-based shader.
@@ -192,18 +353,8 @@ class FilterRenderer2D {
       return;
     }
 
-    const fragShaderSrc = this.filterShaderSources[this.operation];
-    if (!fragShaderSrc) {
-      console.error('No shader available for this operation:', this.operation);
-      return;
-    }
-
-    // Create and store the new shader
-    const newShader = new Shader(
-      this._renderer,
-      filterShaderVert,
-      fragShaderSrc
-    );
+    // Use the shared makeFilterShader function from filterShaders.js
+    const newShader = makeFilterShader(this._renderer, this.operation, this.parentRenderer._pInst);
     this.filterShaders[this.operation] = newShader;
     this._shader = newShader;
   }
@@ -221,7 +372,7 @@ class FilterRenderer2D {
 
   get canvasTexture() {
     if (!this._canvasTexture) {
-      this._canvasTexture = new Texture(this._renderer, this.pInst.wrappedElt);
+      this._canvasTexture = new Texture(this._renderer, this.parentRenderer.wrappedElt);
     }
     return this._canvasTexture;
   }
@@ -231,13 +382,13 @@ class FilterRenderer2D {
    */
   _renderPass() {
     const gl = this.gl;
-    this._shader.bindShader();
-    const pixelDensity = this.pInst.pixelDensity ?
-      this.pInst.pixelDensity() : 1;
+    this._shader.bindShader('fill');
+    const pixelDensity = this.parentRenderer.pixelDensity ?
+      this.parentRenderer.pixelDensity() : 1;
 
     const texelSize = [
-      1 / (this.pInst.width * pixelDensity),
-      1 / (this.pInst.height * pixelDensity)
+      1 / (this.parentRenderer.width * pixelDensity),
+      1 / (this.parentRenderer.height * pixelDensity)
     ];
 
     const canvasTexture = this.canvasTexture;
@@ -245,15 +396,15 @@ class FilterRenderer2D {
     // Set uniforms for the shader
     this._shader.setUniform('tex0', canvasTexture);
     this._shader.setUniform('texelSize', texelSize);
-    this._shader.setUniform('canvasSize', [this.pInst.width, this.pInst.height]);
+    this._shader.setUniform('canvasSize', [this.parentRenderer.width, this.parentRenderer.height]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
     this._shader.setDefaultUniforms();
 
-    this.pInst.states.setValue('rectMode', constants.CORNER);
-    this.pInst.states.setValue('imageMode', constants.CORNER);
-    this.pInst.blendMode(constants.BLEND);
-    this.pInst.resetMatrix();
+    this.parentRenderer.states.setValue('rectMode', constants.CORNER);
+    this.parentRenderer.states.setValue('imageMode', constants.CORNER);
+    this.parentRenderer.blendMode(constants.BLEND);
+    this.parentRenderer.resetMatrix();
 
 
     const identityMatrix = [1, 0, 0, 0,
@@ -271,7 +422,7 @@ class FilterRenderer2D {
     this._shader.enableAttrib(this._shader.attributes.aTexCoord, 2);
 
     this._shader.bindTextures();
-    this._shader.disableRemainingAttributes();
+    this._renderer._disableRemainingAttributes(this._shader);
 
     // Draw the quad
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -288,8 +439,8 @@ class FilterRenderer2D {
       console.error('Cannot apply filter: shader not initialized.');
       return;
     }
-    this.pInst.push();
-    this.pInst.resetMatrix();
+    this.parentRenderer.push();
+    this.parentRenderer.resetMatrix();
     // For blur, we typically do two passes: one horizontal, one vertical.
     if (this.operation === constants.BLUR && !this.customShader) {
       // Horizontal pass
@@ -297,39 +448,39 @@ class FilterRenderer2D {
       this._renderPass();
 
       // Draw the result onto itself
-      this.pInst.clear();
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.clear();
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
 
       // Vertical pass
       this._shader.setUniform('direction', [0, 1]);
       this._renderPass();
 
-      this.pInst.clear();
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.clear();
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
     } else {
       // Single-pass filters
 
       this._renderPass();
-      this.pInst.clear();
+      this.parentRenderer.clear();
       // con
-      this.pInst.blendMode(constants.BLEND);
+      this.parentRenderer.blendMode(constants.BLEND);
 
 
-      this.pInst.drawingContext.drawImage(
+      this.parentRenderer.drawingContext.drawImage(
         this.canvas,
         0, 0,
-        this.pInst.width, this.pInst.height
+        this.parentRenderer.width, this.parentRenderer.height
       );
     }
-    this.pInst.pop();
+    this.parentRenderer.pop();
   }
 }
 

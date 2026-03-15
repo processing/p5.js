@@ -7,18 +7,32 @@ export class StrandsNode {
     this.id = id;
     this.strandsContext = strandsContext;
     this.dimension = dimension;
+    this.structProperties = null;
+    this.isStrandsNode = true;
 
     // Store original identifier for varying variables
     const dag = this.strandsContext.dag;
     const nodeData = getNodeDataFromID(dag, this.id);
     if (nodeData && nodeData.identifier) {
       this._originalIdentifier = nodeData.identifier;
+    }
+    if (nodeData) {
       this._originalBaseType = nodeData.baseType;
       this._originalDimension = nodeData.dimension;
     }
   }
+  withStructProperties(properties) {
+    this.structProperties = properties;
+    return this;
+  }
   copy() {
     return createStrandsNode(this.id, this.dimension, this.strandsContext);
+  }
+  typeInfo() {
+    return {
+      baseType: this._originalBaseType || BaseType.FLOAT,
+      dimension: this.dimension
+    };
   }
   bridge(value) {
     const { dag, cfg } = this.strandsContext;
@@ -26,12 +40,12 @@ export class StrandsNode {
     const baseType = orig?.baseType ?? BaseType.FLOAT;
 
     let newValueID;
-    if (value instanceof StrandsNode) {
+    if (value?.isStrandsNode) {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;
@@ -54,9 +68,6 @@ export class StrandsNode {
       });
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
-
-      // Track for global assignments processing
-      this.strandsContext.globalAssignments.push(assignmentID);
 
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions
@@ -81,12 +92,12 @@ export class StrandsNode {
     const baseType = orig?.baseType ?? BaseType.FLOAT;
 
     let newValueID;
-    if (value instanceof StrandsNode) {
+    if (value?.isStrandsNode) {
       newValueID = value.id;
     } else {
       const newVal = primitiveConstructorNode(
-        this.strandsContext, 
-        { baseType, dimension: this.dimension }, 
+        this.strandsContext,
+        { baseType, dimension: this.dimension },
         value
       );
       newValueID = newVal.id;
@@ -120,9 +131,6 @@ export class StrandsNode {
       });
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
-
-      // Track for global assignments processing in the current hook context
-      this.strandsContext.globalAssignments.push(assignmentID);
 
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions

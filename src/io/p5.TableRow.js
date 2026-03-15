@@ -14,17 +14,15 @@ class TableRow {
   }
 
   /**
-   *  Stores a value in the TableRow's specified column.
-   *  The column may be specified by either its ID or title.
+   * Stores a value in the TableRow's specified column.
+   * The column may be specified by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param {String|Integer} column Column ID (Number)
-   *                                or Title (String)
-   *  @param {String|Number} value  The value to be stored
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param {String|Integer} column Column ID (Number)
+   *                               or Title (String)
+   * @param {String|Number} value  The value to be stored
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -58,8 +56,6 @@ class TableRow {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   set(column, value) {
   // if typeof column is string, use .obj
@@ -84,17 +80,15 @@ class TableRow {
   }
 
   /**
-   *  Stores a Float value in the TableRow's specified column.
-   *  The column may be specified by either its ID or title.
+   * Stores a Float value in the TableRow's specified column.
+   * The column may be specified by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param {String|Integer} column Column ID (Number)
-   *                                or Title (String)
-   *  @param {Number|String} value  The value to be stored
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param {String|Integer} column Column ID (Number)
+   *                               or Title (String)
+   * @param {Number|String} value  The value to be stored
    *                                as a Float
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -129,8 +123,6 @@ class TableRow {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   setNum(column, value) {
     const floatVal = parseFloat(value);
@@ -138,17 +130,15 @@ class TableRow {
   }
 
   /**
-   *  Stores a String value in the TableRow's specified column.
-   *  The column may be specified by either its ID or title.
+   * Stores a String value in the TableRow's specified column.
+   * The column may be specified by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param {String|Integer} column Column ID (Number)
-   *                                or Title (String)
-   *  @param {String|Number|Boolean|Object} value  The value to be stored
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param {String|Integer} column Column ID (Number)
+   *                               or Title (String)
+   * @param {String|Number|Boolean|Object} value  The value to be stored
    *                                as a String
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -183,7 +173,6 @@ class TableRow {
    *
    *   // describe('no image displayed');
    * }
-   * </code>
    */
   setString(column, value) {
     const stringVal = value.toString();
@@ -191,17 +180,15 @@ class TableRow {
   }
 
   /**
-   *  Retrieves a value from the TableRow's specified column.
-   *  The column may be specified by either its ID or title.
+   * Retrieves a value from the TableRow's specified column.
+   * The column may be specified by either its ID or title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String|Integer} column columnName (string) or
-   *                                   ID (number)
-   *  @return {String|Number}
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String|Integer} column columnName (string) or
+   *                                  ID (number)
+   * @return {String|Number}
    *
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -229,8 +216,6 @@ class TableRow {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   get(column) {
     if (typeof column === 'string') {
@@ -241,17 +226,15 @@ class TableRow {
   }
 
   /**
-   *  Retrieves a Float value from the TableRow's specified
-   *  column. The column may be specified by either its ID or
-   *  title.
+   * Retrieves a Float value from the TableRow's specified
+   * column. The column may be specified by either its ID or
+   * title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {String|Integer} column columnName (string) or
-   *                                   ID (number)
-   *  @return {Number}  Float Floating point number
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @param  {String|Integer} column columnName (string) or
+   *                                  ID (number)
+   * @return {Number}  Float Floating point number
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -281,8 +264,6 @@ class TableRow {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getNum(column) {
     let ret;
@@ -299,18 +280,16 @@ class TableRow {
   }
 
   /**
-   *  Retrieves an String value from the TableRow's specified
-   *  column. The column may be specified by either its ID or
-   *  title.
+   * Retrieves an String value from the TableRow's specified
+   * column. The column may be specified by either its ID or
+   * title.
    *
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
    *
-   *  @param  {String|Integer} column columnName (string) or
-   *                                   ID (number)
-   *  @return {String}  String
+   * @param  {String|Integer} column columnName (string) or
+   *                                  ID (number)
+   * @return {String}  String
    * @example
-   * <div>
-   * <code>
    * let table;
    *
    * async function setup() {
@@ -339,8 +318,6 @@ class TableRow {
    *
    *   describe('no image displayed');
    * }
-   * </code>
-   * </div>
    */
   getString(column) {
     if (typeof column === 'string') {
@@ -353,17 +330,17 @@ class TableRow {
 
 function tableRow(p5, fn){
   /**
-   *  A TableRow object represents a single row of data values,
-   *  stored in columns, from a table.
+   * A TableRow object represents a single row of data values,
+   * stored in columns, from a table.
    *
-   *  A Table Row contains both an ordered array, and an unordered
-   *  JSON object.
+   * A Table Row contains both an ordered array, and an unordered
+   * JSON object.
    *
-   *  @class p5.TableRow
-   *  @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @constructor
-   *  @param {any[]} row         optional: populate the row with an
-   *                              array of values
+   * @class p5.TableRow
+   * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
+   * @constructor
+   * @param {any[]} row         optional: populate the row with an
+   *                             array of values
    */
   p5.TableRow = TableRow;
 }

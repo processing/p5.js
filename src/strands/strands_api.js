@@ -9,16 +9,146 @@ import {
   isStructType,
   OpCode,
   StatementType,
+  NodeType,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
 import { StrandsFor } from './strands_for'
 import * as CFG from './ir_cfg'
+import * as DAG from './ir_dag';
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
-import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
+
+const BUILTIN_GLOBAL_SPECS = {
+  width: { typeInfo: DataType.float1, get: (p) => p.width },
+  height: { typeInfo: DataType.float1, get: (p) => p.height },
+  mouseX: { typeInfo: DataType.float1, get: (p) => p.mouseX },
+  mouseY: { typeInfo: DataType.float1, get: (p) => p.mouseY },
+  pmouseX: { typeInfo: DataType.float1, get: (p) => p.pmouseX },
+  pmouseY: { typeInfo: DataType.float1, get: (p) => p.pmouseY },
+  winMouseX: { typeInfo: DataType.float1, get: (p) => p.winMouseX },
+  winMouseY: { typeInfo: DataType.float1, get: (p) => p.winMouseY },
+  pwinMouseX: { typeInfo: DataType.float1, get: (p) => p.pwinMouseX },
+  pwinMouseY: { typeInfo: DataType.float1, get: (p) => p.pwinMouseY },
+  frameCount: { typeInfo: DataType.float1, get: (p) => p.frameCount },
+  deltaTime: { typeInfo: DataType.float1, get: (p) => p.deltaTime },
+  displayWidth: { typeInfo: DataType.float1, get: (p) => p.displayWidth },
+  displayHeight: { typeInfo: DataType.float1, get: (p) => p.displayHeight },
+  windowWidth: { typeInfo: DataType.float1, get: (p) => p.windowWidth },
+  windowHeight: { typeInfo: DataType.float1, get: (p) => p.windowHeight },
+  mouseIsPressed: { typeInfo: DataType.bool1, get: (p) => p.mouseIsPressed },
+}
+
+function _getBuiltinGlobalsCache(strandsContext) {
+  if (!strandsContext._builtinGlobals || strandsContext._builtinGlobals.dag !== strandsContext.dag) {
+    strandsContext._builtinGlobals = {
+      dag: strandsContext.dag,
+      nodes: new Map(),
+      uniformsAdded: new Set(),
+    }
+  }
+  // return the cache
+  return strandsContext._builtinGlobals
+}
+
+function getOrCreateUniformNode(strandsContext, uniformName, typeInfo, defaultValueFn) {
+  const cache = _getBuiltinGlobalsCache(strandsContext);
+
+  const cached = cache.nodes.get(uniformName);
+  if (cached) return cached;
+
+  if (!cache.uniformsAdded.has(uniformName)) {
+    cache.uniformsAdded.add(uniformName);
+    strandsContext.uniforms.push({
+      name: uniformName,
+      typeInfo,
+      defaultValue: defaultValueFn,
+    });
+  }
+
+  const { id, dimension } = build.variableNode(strandsContext, typeInfo, uniformName);
+  const node = createStrandsNode(id, dimension, strandsContext);
+  cache.nodes.set(uniformName, node);
+  return node;
+}
+
+function getBuiltinGlobalNode(strandsContext, name) {
+  const spec = BUILTIN_GLOBAL_SPECS[name];
+  if (!spec) return null;
+
+  const uniformName = `_p5_global_${name}`;
+  const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const node = getOrCreateUniformNode(
+    strandsContext,
+    uniformName,
+    spec.typeInfo,
+    () => {
+      return instance ? spec.get(instance) : undefined;
+    }
+  );
+
+  node._originalBuiltinName = name;
+  return node;
+}
+
+function installBuiltinGlobalAccessors(strandsContext) {
+  if (strandsContext._builtinGlobalsAccessorsInstalled) return
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance
+
+  for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
+    const spec = BUILTIN_GLOBAL_SPECS[name]
+    Object.defineProperty(window, name, {
+      get: () => {
+        if (strandsContext.active) {
+          return getBuiltinGlobalNode(strandsContext, name);
+        }
+        const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+      },
+    })
+  }
+  strandsContext._builtinGlobalsAccessorsInstalled = true
+}
+
+//////////////////////////////////////////////
+// Prototype mirroring helpers
+//////////////////////////////////////////////
+
+/*
+ * Permanently augment both p5.prototype (fn) and p5.Graphics.prototype
+ * with a strands function. Overwrites unconditionally - strands wrappers
+ * are the correct dual mode implementation.
+ */
+function augmentFn(fn, p5, name, value) {
+  fn[name] = value;
+  const GraphicsProto = p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    GraphicsProto[name] = value;
+  }
+}
+
+/*
+ * Temporarily augment window, p5.prototype (fn), and p5.Graphics.prototype
+ * with a hook function. Saves previous values into strandsContext override
+ * stores so deinitStrandsContext can restore them.
+ */
+function augmentFnTemporary(fn, strandsContext, name, value) {
+  strandsContext.windowOverrides[name] = window[name];
+  strandsContext.fnOverrides[name] = fn[name];
+  window[name] = value;
+  fn[name] = value;
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    strandsContext.graphicsOverrides[name] = Object.prototype.hasOwnProperty.call(GraphicsProto, name)
+      ? GraphicsProto[name]
+      : undefined;
+    GraphicsProto[name] = value;
+  }
+}
 
 //////////////////////////////////////////////
 // User nodes
@@ -43,27 +173,60 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
-  fn.discard = function() {
+  augmentFn(fn, p5, 'discard', function() {
     build.statementNode(strandsContext, StatementType.DISCARD);
-  }
-  fn.break = function() {
+  });
+  augmentFn(fn, p5, 'break', function() {
     build.statementNode(strandsContext, StatementType.BREAK);
-  };
+  });
   p5.break = fn.break;
-  fn.instanceID = function() {
-    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, 'gl_InstanceID');
+  augmentFn(fn, p5, 'instanceID', function() {
+    const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
     return createStrandsNode(node.id, node.dimension, strandsContext);
-  }
+  });
   // Internal methods use p5 static methods; user-facing methods use fn.
   // Some methods need to be used by both.
   p5.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
-  fn.strandsIf = p5.strandsIf;
+  augmentFn(fn, p5, 'strandsIf', p5.strandsIf);
   p5.strandsFor = function(initialCb, conditionCb, updateCb, bodyCb, initialVars) {
     return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
   };
-  fn.strandsFor = p5.strandsFor;
+  augmentFn(fn, p5, 'strandsFor', p5.strandsFor);
+  p5.strandsEarlyReturn = function(value) {
+    const { dag, cfg } = strandsContext;
+
+    // Ensure we're inside a hook
+    if (!strandsContext.activeHook) {
+      throw new Error('strandsEarlyReturn can only be used inside a hook callback');
+    }
+
+    // Convert value to a StrandsNode if it isn't already
+    const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
+
+    // Create a new CFG block for the early return
+    const earlyReturnBlockID = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
+    CFG.addEdge(cfg, cfg.currentBlock, earlyReturnBlockID);
+    CFG.pushBlock(cfg, earlyReturnBlockID);
+
+    // Create the early return statement node
+    const nodeData = DAG.createNodeData({
+      nodeType: NodeType.STATEMENT,
+      statementType: StatementType.EARLY_RETURN,
+      dependsOn: [valueNode.id]
+    });
+    const earlyReturnID = DAG.getOrCreateNode(dag, nodeData);
+    CFG.recordInBasicBlock(cfg, cfg.currentBlock, earlyReturnID);
+
+    // Add the value to the hook's earlyReturns array for later type checking
+    strandsContext.activeHook.earlyReturns.push({ earlyReturnID, valueNode });
+
+    CFG.popBlock(cfg);
+
+    return valueNode;
+  };
+  augmentFn(fn, p5, 'strandsEarlyReturn', p5.strandsEarlyReturn);
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];
@@ -71,7 +234,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (args.length > 4) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
+    // Filter out undefined/null values
+    const flatArgs = args.flat();
+    const definedArgs = flatArgs.filter(a => a !== undefined && a !== null);
+
+    // If all args are undefined, this is likely a `let myVar` at the
+    // start of an if statement and it will be assigned within the branches.
+    // For that, we use an assign-on-use node, meaning we'll take the type of the
+    // values assigned to it.
+    if (definedArgs.length === 0) {
+      const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.ASSIGN_ON_USE, dimension: null }, [0]);
+      return createStrandsNode(id, dimension, strandsContext);
+    }
+
+    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, definedArgs);
     return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
   }
   //////////////////////////////////////////////
@@ -81,16 +257,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
-      fn[functionName] = function(...args) {
+      augmentFn(fn, p5, functionName, function(...args) {
         if (strandsContext.active) {
           const { id, dimension } =  build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
         } else {
           return originalFn.apply(this, args);
         }
-      }
+      });
     } else {
-      fn[functionName] = function (...args) {
+      augmentFn(fn, p5, functionName, function (...args) {
         if (strandsContext.active) {
           const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
@@ -99,20 +275,59 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
             `It looks like you've called ${functionName} outside of a shader's modify() function.`
           )
         }
-      }
+      });
     }
   }
-  // Add GLSL noise. TODO: Replace this with a backend-agnostic implementation
+
+  augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
+    if (strandsContext.active) {
+      const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
+      return createStrandsNode(id, dimension, strandsContext);
+    } else {
+      p5._friendlyError(
+        `It looks like you've called getTexture outside of a shader's modify() function.`
+      )
+    }
+  });
+
+  // Add texture function as alias for getTexture with p5 fallback
+  const originalTexture = fn.texture;
+  augmentFn(fn, p5, 'texture', function (...args) {
+    if (strandsContext.active) {
+      return this.getTexture(...args);
+    } else {
+      return originalTexture.apply(this, args);
+    }
+  });
+
+  // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
-  fn.noise = function (...args) {
+  const originalNoiseDetail = fn.noiseDetail;
+  const originalMillis = fn.millis;
+
+  strandsContext._noiseOctaves = null;
+  strandsContext._noiseAmpFalloff = null;
+
+  augmentFn(fn, p5, 'noiseDetail', function (lod, falloff = 0.5) {
+    if (!strandsContext.active) {
+      return originalNoiseDetail.apply(this, arguments);
+    }
+
+    strandsContext._noiseOctaves = lod;
+    strandsContext._noiseAmpFalloff = falloff;
+  });
+
+  augmentFn(fn, p5, 'noise', function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
-    strandsContext.vertexDeclarations.add(noiseGLSL);
-    strandsContext.fragmentDeclarations.add(noiseGLSL);
+    // Get noise shader snippet from the current renderer
+    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    strandsContext.vertexDeclarations.add(noiseSnippet);
+    strandsContext.fragmentDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
-    const strandsArgs = args.map(arg => p5.strandsNode(arg));
+    const strandsArgs = args.flat().map(arg => p5.strandsNode(arg));
     let nodeArgs;
     if (strandsArgs.length === 3) {
       nodeArgs = [fn.vec3(strandsArgs[0], strandsArgs[1], strandsArgs[2])];
@@ -131,21 +346,47 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
       );
     }
+
+    const octaves = strandsContext._noiseOctaves !== null
+      ? strandsContext._noiseOctaves
+      : fn._getNoiseOctaves();
+    const falloff = strandsContext._noiseAmpFalloff !== null
+      ? strandsContext._noiseAmpFalloff
+      : fn._getNoiseAmpFalloff();
+
+    nodeArgs.push(octaves);
+    nodeArgs.push(falloff);
+
     const { id, dimension } = build.functionCallNode(strandsContext, 'noise', nodeArgs, {
       overloads: [{
-        params: [DataType.float3],
+        params: [DataType.float3, DataType.int1, DataType.float1],
         returnType: DataType.float1,
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
-  };
+  });
+
+  augmentFn(fn, p5, 'millis', function (...args) {
+    if (!strandsContext.active) {
+      return originalMillis.apply(this, args);
+    }
+    const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+    return getOrCreateUniformNode(
+      strandsContext,
+      '_p5_global_millis',
+      DataType.float1,
+      () => {
+        return instance ? instance.millis() : undefined;
+      }
+    );
+  });
 
   // Next is type constructors and uniform functions.
   // For some of them, we have aliases so that you can write either a more human-readable
   // variant or also one more directly translated from GLSL, or to be more compatible with
   // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
-    if (type === BaseType.DEFER) {
+    if (type === BaseType.DEFER || type === BaseType.ASSIGN_ON_USE || type === 'sampler') {
       continue;
     }
     const typeInfo = DataType[type];
@@ -167,13 +408,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
       }
     }
-    fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
+    augmentFn(fn, p5, `uniform${pascalTypeName}`, function(name, defaultValue) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
-    };
+    });
     // Shared variables with smart context detection
-    fn[`shared${pascalTypeName}`] = function(name) {
+    augmentFn(fn, p5, `shared${pascalTypeName}`, function(name) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
 
       // Initialize shared variables tracking if not present
@@ -186,27 +427,47 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeInfo,
         usedInVertex: false,
         usedInFragment: false,
-        declared: false
       });
 
       return createStrandsNode(id, dimension, strandsContext);
-    };
+    });
 
     // Alias varying* as shared* for backward compatibility
-    fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
+    augmentFn(fn, p5, `varying${pascalTypeName}`, fn[`shared${pascalTypeName}`]);
 
     for (const typeAlias of typeAliases) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
-      fn[`uniform${typeAlias}`] = fn[`uniform${pascalTypeName}`];
-      fn[`varying${typeAlias}`] = fn[`varying${pascalTypeName}`];
-      fn[`shared${typeAlias}`] = fn[`shared${pascalTypeName}`];
+      augmentFn(fn, p5, `uniform${typeAlias}`, fn[`uniform${pascalTypeName}`]);
+      augmentFn(fn, p5, `varying${typeAlias}`, fn[`varying${pascalTypeName}`]);
+      augmentFn(fn, p5, `shared${typeAlias}`, fn[`shared${pascalTypeName}`]);
     }
     const originalp5Fn = fn[typeInfo.fnName];
-    fn[typeInfo.fnName] = function(...args) {
+    augmentFn(fn, p5, typeInfo.fnName, function(...args) {
       if (strandsContext.active) {
-        const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
-        return createStrandsNode(id, dimension, strandsContext);
+        if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
+          const { id, dimension } = build.functionCallNode(
+            strandsContext,
+            strandsContext.backend.getTypeName(typeInfo.baseType, typeInfo.dimension),
+            args,
+            {
+              overloads: [{
+                params: [args[0].typeInfo()],
+                returnType: typeInfo,
+              }]
+            }
+          );
+          return createStrandsNode(id, dimension, strandsContext);
+        } else {
+          // For vector types with a single argument, repeat it for each component
+          if (typeInfo.dimension > 1 && args.length === 1 && !Array.isArray(args[0]) &&
+              !(args[0] instanceof StrandsNode && args[0].dimension > 1) &&
+              (typeInfo.baseType === BaseType.FLOAT || typeInfo.baseType === BaseType.INT || typeInfo.baseType === BaseType.BOOL)) {
+            args = Array(typeInfo.dimension).fill(args[0]);
+          }
+          const { id, dimension } = build.primitiveConstructorNode(strandsContext, typeInfo, args);
+          return createStrandsNode(id, dimension, strandsContext);
+        }
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
@@ -214,7 +475,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
         );
       }
-    }
+    });
   }
 }
 //////////////////////////////////////////////
@@ -224,10 +485,12 @@ function createHookArguments(strandsContext, parameters){
   const args = [];
   const dag = strandsContext.dag;
   for (const param of parameters) {
-    if(isStructType(param.type.typeName)) {
+    if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
       const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
-      const structNode = createStrandsNode(id, dimension, strandsContext);
+      const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
+        structTypeInfo.properties.map(prop => prop.name)
+      );
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const propertyType = structTypeInfo.properties[i];
         Object.defineProperty(structNode, propertyType.name, {
@@ -250,7 +513,7 @@ function createHookArguments(strandsContext, parameters){
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
-            if (val instanceof StrandsNode) {
+            if (val?.isStrandsNode) {
               newValueID = val.id;
             }
             else {
@@ -266,7 +529,14 @@ function createHookArguments(strandsContext, parameters){
       args.push(structNode);
     }
     else /*if(isNativeType(paramType.typeName))*/ {
-      const typeInfo = TypeInfoFromGLSLName[param.type.typeName];
+      // Skip sampler parameters - they don't need strands nodes
+      if (param.type.typeName === 'sampler') {
+        continue;
+      }
+      if (!param.type.dataType) {
+        throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
+      }
+      const typeInfo = param.type.dataType;
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
@@ -275,7 +545,7 @@ function createHookArguments(strandsContext, parameters){
   return args;
 }
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
-  if (!(returned instanceof StrandsNode)) {
+  if (!(returned?.isStrandsNode)) {
     // try {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
@@ -297,7 +567,12 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   }
   if (receivedType.dimension !== expectedType.dimension) {
     if (receivedType.dimension !== 1) {
-      FES.userError('type error', `You have returned a vector with ${receivedType.dimension} components in ${hookName} when a ${expectedType.baseType + expectedType.dimension} was expected!`);
+      const receivedTypeDisplay = receivedType.baseType + (receivedType.dimension > 1 ? receivedType.dimension : '');
+      const expectedTypeDisplay = expectedType.baseType + expectedType.dimension;
+      FES.userError('type error',
+        `You have returned a ${receivedTypeDisplay} in ${hookName} when a ${expectedTypeDisplay} was expected!\n\n` +
+        `Make sure your hook returns the correct type.`
+      );
     }
     else {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
@@ -311,6 +586,8 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
+  installBuiltinGlobalAccessors(strandsContext)
+
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
     Object.entries(shader.hooks.vertex).map(([name, hook]) => [name, { ...hook, shaderContext: 'vertex' }])
@@ -327,55 +604,131 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
   const { cfg, dag } = strandsContext;
   for (const hookType of hookTypes) {
-    const hookImplementation = function(hookUserCallback) {
-      const entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
+    const hook = function(hookUserCallback) {
+      const args = setupHook();
+      hook._result = hookUserCallback(...args) ?? hook._result;
+      finishHook();
+    }
+
+    // In the flat strands API, this is how result-returning hooks
+    // are used
+    hook.set = function(result) {
+      hook._result = result;
+    };
+
+    let entryBlockID;
+    function setupHook() {
+      strandsContext.activeHook = hook;
+      entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const userReturned = hookUserCallback(...args);
+      const numStructArgs = hookType.parameters.filter(param => param.type.properties).length;
+      let argIdx = -1;
+      if (numStructArgs === 1) {
+        argIdx = hookType.parameters.findIndex(param => param.type.properties);
+      }
+      for (let i = 0; i < args.length; i++) {
+        if (i === argIdx) {
+          for (const key of args[argIdx].structProperties || []) {
+            Object.defineProperty(hook, key, {
+              get() {
+                return args[argIdx][key];
+              },
+              set(val) {
+                args[argIdx][key] = val;
+              },
+              enumerable: true,
+            });
+          }
+          if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
+            hook.set(args[argIdx]);
+          }
+        } else {
+          hook[hookType.parameters[i].name] = args[i];
+        }
+      }
+      return args;
+    };
+
+    function finishHook() {
+      const userReturned = hook._result;
+      strandsContext.activeHook = undefined;
+
       const expectedReturnType = hookType.returnType;
       let rootNodeID = null;
-      if(isStructType(expectedReturnType.typeName)) {
-        const expectedStructType = structType(expectedReturnType);
-        if (userReturned instanceof StrandsNode) {
-          const returnedNode = getNodeDataFromID(strandsContext.dag, userReturned.id);
-          if (returnedNode.baseType !== expectedStructType.typeName) {
-            FES.userError("type error", `You have returned a ${userReturned.baseType} from ${hookType.name} when a ${expectedStructType.typeName} was expected.`);
-          }
-          const newDeps = returnedNode.dependsOn.slice();
-          for (let i = 0; i < expectedStructType.properties.length; i++) {
-            const expectedType = expectedStructType.properties[i].dataType;
-            const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[userReturned.id], strandsContext);
-            newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
-          }
-          dag.dependsOn[userReturned.id] = newDeps;
-          rootNodeID = userReturned.id;
-        }
-        else {
-          const expectedProperties = expectedStructType.properties;
-          const newStructDependencies = [];
-          for (let i = 0; i < expectedProperties.length; i++) {
-            const expectedProp = expectedProperties[i];
-            const propName = expectedProp.name;
-            const receivedValue = userReturned[propName];
-            if (receivedValue === undefined) {
-              FES.userError('type error', `You've returned an incomplete struct from ${hookType.name}.\n` +
-                `Expected: { ${expectedReturnType.properties.map(p => p.name).join(', ')} }\n` +
-                `Received: { ${Object.keys(userReturned).join(', ')} }\n` +
-                `All of the properties are required!`);
+      const handleRetVal = (retNode) => {
+        if(isStructType(expectedReturnType)) {
+          const expectedStructType = structType(expectedReturnType);
+          if (retNode?.isStrandsNode) {
+            const returnedNode = getNodeDataFromID(strandsContext.dag, retNode.id);
+            if (returnedNode.baseType !== expectedStructType.typeName) {
+              const receivedTypeName = returnedNode.baseType || 'undefined';
+              const receivedDim = dag.dimensions[retNode.id];
+              const receivedTypeDisplay = receivedDim > 1 ?
+                `${receivedTypeName}${receivedDim}` : receivedTypeName;
+
+              const expectedProps = expectedStructType.properties
+                .map(p => p.name).join(', ');
+              FES.userError('type error',
+                `You have returned a ${receivedTypeDisplay} from ${hookType.name} when a ${expectedStructType.typeName} was expected.\n\n` +
+                `The ${expectedStructType.typeName} struct has these properties: { ${expectedProps} }\n\n` +
+                `Instead of returning a different type, you should modify and return the ${expectedStructType.typeName} struct that was passed to your hook.\n\n` +
+                `For example:\n` +
+                `${hookType.name}((inputs) => {\n` +
+                `  // Modify properties of inputs\n` +
+                `  inputs.someProperty = ...;\n` +
+                `  return inputs; // Return the modified struct\n` +
+                `})`
+              );
             }
-            const expectedTypeInfo = expectedProp.dataType;
-            const returnedPropID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, receivedValue, hookType.name);
-            newStructDependencies.push(returnedPropID);
+            const newDeps = returnedNode.dependsOn.slice();
+            for (let i = 0; i < expectedStructType.properties.length; i++) {
+              const expectedType = expectedStructType.properties[i].dataType;
+              const receivedNode = createStrandsNode(returnedNode.dependsOn[i], dag.dependsOn[retNode.id], strandsContext);
+              newDeps[i] = enforceReturnTypeMatch(strandsContext, expectedType, receivedNode, hookType.name);
+            }
+            dag.dependsOn[retNode.id] = newDeps;
+            return retNode.id;
           }
-          const newStruct = build.structConstructorNode(strandsContext, expectedStructType, newStructDependencies);
-          rootNodeID = newStruct.id;
+          else {
+            const expectedProperties = expectedStructType.properties;
+            const newStructDependencies = [];
+            for (let i = 0; i < expectedProperties.length; i++) {
+              const expectedProp = expectedProperties[i];
+              const propName = expectedProp.name;
+              const receivedValue = retNode[propName];
+              if (receivedValue === undefined) {
+                const expectedProps = expectedReturnType.properties.map(p => p.name).join(', ');
+                const receivedProps = Object.keys(retNode).join(', ');
+                FES.userError('type error',
+                  `You've returned an incomplete ${expectedStructType.typeName} struct from ${hookType.name}.\n\n` +
+                  `Expected properties: { ${expectedProps} }\n` +
+                  `Received properties: { ${receivedProps} }\n\n` +
+                  `All properties are required! Make sure to include all properties in the returned struct.`
+                );
+              }
+              const expectedTypeInfo = expectedProp.dataType;
+              const returnedPropID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, receivedValue, hookType.name);
+              newStructDependencies.push(returnedPropID);
+            }
+            const newStruct = build.structConstructorNode(strandsContext, expectedStructType, newStructDependencies);
+            return newStruct.id;
+          }
+        }
+        else /*if(isNativeType(expectedReturnType.typeName))*/ {
+          if (!expectedReturnType.dataType) {
+            throw new Error(`Missing dataType for return type ${expectedReturnType.typeName}`);
+          }
+          const expectedTypeInfo = expectedReturnType.dataType;
+          return enforceReturnTypeMatch(strandsContext, expectedTypeInfo, retNode, hookType.name);
         }
       }
-      else /*if(isNativeType(expectedReturnType.typeName))*/ {
-        const expectedTypeInfo = TypeInfoFromGLSLName[expectedReturnType.typeName];
-        rootNodeID = enforceReturnTypeMatch(strandsContext, expectedTypeInfo, userReturned, hookType.name);
+      for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
+        const id = handleRetVal(valueNode);
+        dag.dependsOn[earlyReturnID] = [id];
       }
+      rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
       const hookInfo = availableHooks[fullHookName];
       strandsContext.hooks.push({
@@ -385,10 +738,28 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
       });
       CFG.popBlock(cfg);
+    };
+    hook.begin = setupHook;
+    hook.end = finishHook;
+
+    const aliases = [hookType.name];
+    if (strandsContext.baseShader?.hooks?.hookAliases?.[hookType.name]) {
+      aliases.push(...strandsContext.baseShader.hooks.hookAliases[hookType.name]);
     }
-    strandsContext.windowOverrides[hookType.name] = window[hookType.name];
-    strandsContext.fnOverrides[hookType.name] = fn[hookType.name];
-    window[hookType.name] = hookImplementation;
-    fn[hookType.name] = hookImplementation;
+
+    // If the hook has a name like getPixelInputs, create an alias without
+    // the get* prefix, like pixelInputs
+    const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+    if (nameMatch) {
+      const unprefixedName = nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1);
+      if (!fn[unprefixedName]) {
+        aliases.push(unprefixedName);
+      }
+    }
+
+    for (const name of aliases) {
+      augmentFnTemporary(fn, strandsContext, name, hook);
+    }
+    hook.earlyReturns = [];
   }
 }

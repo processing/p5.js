@@ -7,8 +7,6 @@ IN vec3 aNormal;
 IN vec2 aTexCoord;
 IN vec4 aVertexColor;
 
-uniform vec3 uAmbientColor[5];
-
 #ifdef AUGMENTED_HOOK_getWorldInputs
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
@@ -19,7 +17,6 @@ uniform mat4 uModelViewMatrix;
 uniform mat3 uNormalMatrix;
 #endif
 uniform mat4 uProjectionMatrix;
-uniform int uAmbientLightCount;
 
 uniform bool uUseVertexColor;
 uniform vec4 uMaterialColor;
@@ -73,14 +70,6 @@ void main(void) {
   vTexCoord = inputs.texCoord;
   vNormal = inputs.normal;
   vColor = inputs.color;
-
-  // TODO: this should be a uniform
-  vAmbientColor = vec3(0.0);
-  for (int i = 0; i < 5; i++) {
-    if (i < uAmbientLightCount) {
-      vAmbientColor += uAmbientColor[i];
-    }
-  }
 
   gl_Position = uProjectionMatrix * vec4(inputs.position, 1.);
   HOOK_afterVertex();

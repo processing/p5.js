@@ -7,7 +7,6 @@ uniform vec4 uGlyphRect;
 uniform float uGlyphOffset;
 
 OUT vec2 vTexCoord;
-OUT float w;
 
 void main() {
   vec4 positionVec4 = vec4(aPosition, 1.0);
@@ -40,5 +39,4 @@ void main() {
   
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
   vTexCoord = aTexCoord + textureOffset;
-  w = gl_Position.w;
 }

@@ -27,6 +27,7 @@ export const NodeTypeRequiredFields = {
 export const StatementType = {
   DISCARD: 'discard',
   BREAK: 'break',
+  EARLY_RETURN: 'early_return',
   EXPRESSION: 'expression', // Used when we want to output a single expression as a statement, e.g. a for loop condition
   EMPTY: 'empty', // Used for empty statements like ; in for loops
 };
@@ -36,7 +37,9 @@ export const BaseType = {
   BOOL: "bool",
   MAT: "mat",
   DEFER: "defer",
+  ASSIGN_ON_USE: "assign_on_use",
   SAMPLER2D: "sampler2D",
+  SAMPLER: "sampler",
 };
 export const BasePriority = {
   [BaseType.FLOAT]: 3,
@@ -44,7 +47,9 @@ export const BasePriority = {
   [BaseType.BOOL]: 1,
   [BaseType.MAT]: 0,
   [BaseType.DEFER]: -1,
+  [BaseType.ASSIGN_ON_USE]: -2,
   [BaseType.SAMPLER2D]: -10,
+  [BaseType.SAMPLER]: -11,
 };
 export const DataType = {
   float1: { fnName: "float", baseType: BaseType.FLOAT, dimension:1, priority: 3,  },
@@ -63,7 +68,9 @@ export const DataType = {
   mat3: { fnName: "mat3x3", baseType: BaseType.MAT, dimension:3, priority: 0,  },
   mat4: { fnName: "mat4x4", baseType: BaseType.MAT, dimension:4, priority: 0,  },
   defer: { fnName:  null, baseType: BaseType.DEFER, dimension: null, priority: -1 },
+  assign_on_use: { fnName: null, baseType: BaseType.ASSIGN_ON_USE, dimension: null, priority: -2 },
   sampler2D: { fnName: "sampler2D", baseType: BaseType.SAMPLER2D, dimension: 1, priority: -10 },
+  sampler: { fnName: "sampler", baseType: BaseType.SAMPLER, dimension: 1, priority: -11 },
 }
 export const structType = function (hookType) {
   let T = hookType.type === undefined ? hookType : hookType.type;
@@ -74,43 +81,15 @@ export const structType = function (hookType) {
   };
   // TODO: handle struct properties that are themselves structs
   for (const prop of T.properties) {
-    const propType = TypeInfoFromGLSLName[prop.type.typeName];
+    const propType = prop.type.dataType;
     structType.properties.push(
       {name: prop.name, dataType: propType }
     );
   }
   return structType;
 };
-export function isStructType(typeName) {
-  return !isNativeType(typeName);
-}
-export function isNativeType(typeName) {
-  // Check if it's in DataType keys (internal names like 'float4')
-  if (Object.keys(DataType).includes(typeName)) {
-    return true;
-  }
-
-  // Check if it's a GLSL type name (like 'vec4', 'float', etc.)
-  const glslNativeTypes = {
-    'float': true,
-    'vec2': true,
-    'vec3': true,
-    'vec4': true,
-    'int': true,
-    'ivec2': true,
-    'ivec3': true,
-    'ivec4': true,
-    'bool': true,
-    'bvec2': true,
-    'bvec3': true,
-    'bvec4': true,
-    'mat2': true,
-    'mat3': true,
-    'mat4': true,
-    'sampler2D': true
-  };
-
-  return !!glslNativeTypes[typeName];
+export function isStructType(typeInfo) {
+  return !!(typeInfo && typeInfo.properties);
 }
 export const GenType = {
   FLOAT: { baseType: BaseType.FLOAT, dimension: null, priority: 3 },
@@ -161,7 +140,7 @@ export const OpCode = {
   }
 };
 export const OperatorTable = [
-  { arity: "unary", name: "not", symbol: "!", opCode: OpCode.Unary.LOGICAL_NOT },
+  { arity: "unary", boolean: true, name: "not", symbol: "!", opCode: OpCode.Unary.LOGICAL_NOT },
   { arity: "unary", name: "neg", symbol: "-", opCode: OpCode.Unary.NEGATE },
   { arity: "unary", name: "plus", symbol: "+", opCode: OpCode.Unary.PLUS },
   { arity: "binary", name: "add", symbol: "+", opCode: OpCode.Binary.ADD },
@@ -169,14 +148,14 @@ export const OperatorTable = [
   { arity: "binary", name: "mult", symbol: "*", opCode: OpCode.Binary.MULTIPLY },
   { arity: "binary", name: "div", symbol: "/", opCode: OpCode.Binary.DIVIDE },
   { arity: "binary", name: "mod", symbol: "%", opCode: OpCode.Binary.MODULO },
-  { arity: "binary", name: "equalTo", symbol: "==", opCode: OpCode.Binary.EQUAL },
-  { arity: "binary", name: "notEqual", symbol: "!=", opCode: OpCode.Binary.NOT_EQUAL },
-  { arity: "binary", name: "greaterThan", symbol: ">", opCode: OpCode.Binary.GREATER_THAN },
-  { arity: "binary", name: "greaterEqual", symbol: ">=", opCode: OpCode.Binary.GREATER_EQUAL },
-  { arity: "binary", name: "lessThan", symbol: "<", opCode: OpCode.Binary.LESS_THAN },
-  { arity: "binary", name: "lessEqual", symbol: "<=", opCode: OpCode.Binary.LESS_EQUAL },
-  { arity: "binary", name: "and", symbol: "&&", opCode: OpCode.Binary.LOGICAL_AND },
-  { arity: "binary", name: "or", symbol: "||", opCode: OpCode.Binary.LOGICAL_OR },
+  { arity: "binary", boolean: true, name: "equalTo", symbol: "==", opCode: OpCode.Binary.EQUAL },
+  { arity: "binary", boolean: true, name: "notEqual", symbol: "!=", opCode: OpCode.Binary.NOT_EQUAL },
+  { arity: "binary", boolean: true, name: "greaterThan", symbol: ">", opCode: OpCode.Binary.GREATER_THAN },
+  { arity: "binary", boolean: true, name: "greaterEqual", symbol: ">=", opCode: OpCode.Binary.GREATER_EQUAL },
+  { arity: "binary", boolean: true, name: "lessThan", symbol: "<", opCode: OpCode.Binary.LESS_THAN },
+  { arity: "binary", boolean: true, name: "lessEqual", symbol: "<=", opCode: OpCode.Binary.LESS_EQUAL },
+  { arity: "binary", boolean: true, name: "and", symbol: "&&", opCode: OpCode.Binary.LOGICAL_AND },
+  { arity: "binary", boolean: true, name: "or", symbol: "||", opCode: OpCode.Binary.LOGICAL_OR },
 ];
 export const ConstantFolding = {
   [OpCode.Binary.ADD]: (a, b) => a + b,
@@ -197,7 +176,8 @@ export const ConstantFolding = {
 export const OpCodeToSymbol = {};
 export const UnarySymbolToName = {};
 export const BinarySymbolToName = {};
-for (const { symbol, opCode, name, arity } of OperatorTable) {
+export const booleanOpCode = {};
+for (const { symbol, opCode, name, arity, boolean } of OperatorTable) {
   // SymbolToOpCode[symbol] = opCode;
   OpCodeToSymbol[opCode] = symbol;
   if (arity === 'unary') {
@@ -205,6 +185,9 @@ for (const { symbol, opCode, name, arity } of OperatorTable) {
   }
   if (arity === 'binary') {
     BinarySymbolToName[symbol] = name;
+  }
+  if (boolean) {
+    booleanOpCode[opCode] = true;
   }
 }
 export const BlockType = {

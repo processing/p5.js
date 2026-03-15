@@ -43,8 +43,6 @@ function pixels(p5, fn){
    *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
    *
    * @example
-   * <div>
-   * <code>
    * let img0;
    * let img1;
    *
@@ -66,11 +64,8 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img0;
    * let img1;
    *
@@ -92,11 +87,8 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img0;
    * let img1;
    *
@@ -118,8 +110,6 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method blend
@@ -171,8 +161,6 @@ function pixels(p5, fn){
    * @param  {Integer} dh destination image height.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -194,8 +182,6 @@ function pixels(p5, fn){
    *
    *   describe('An image of a mountain landscape. A square region is outlined in white. A larger square contains a pixelated view of the outlined region.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method copy
@@ -346,8 +332,6 @@ function pixels(p5, fn){
    *                                filters (CPU); defaults to `true`.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -364,11 +348,8 @@ function pixels(p5, fn){
    *
    *   describe('A blue brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -385,11 +366,8 @@ function pixels(p5, fn){
    *
    *   describe('A brick wall drawn in grayscale.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -406,11 +384,8 @@ function pixels(p5, fn){
    *
    *   describe('A brick wall drawn in black and white.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -427,11 +402,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -448,11 +420,8 @@ function pixels(p5, fn){
    *
    *   describe('An image of a red brick wall drawn with limited color palette.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -469,11 +438,8 @@ function pixels(p5, fn){
    *
    *   describe('A blurry image of a red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -490,11 +456,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall with bright lines between each brick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -511,11 +474,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall with faint lines between each brick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -533,8 +493,6 @@ function pixels(p5, fn){
    *
    *   describe('A blurry image of a red brick wall.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -660,8 +618,6 @@ function pixels(p5, fn){
    * @param  {Number}         h height of the subsection to be returned.
    * @return {p5.Image}       subsection as a <a href="#/p5.Image">p5.Image</a> object.
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -681,11 +637,8 @@ function pixels(p5, fn){
    *
    *   describe('Two identical mountain landscapes shown side-by-side.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -709,11 +662,8 @@ function pixels(p5, fn){
    *
    *   describe('A mountain landscape with an olive green square in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -733,8 +683,6 @@ function pixels(p5, fn){
    *
    *   describe('A mountain landscape drawn on top of another mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method get
@@ -760,8 +708,6 @@ function pixels(p5, fn){
    *
    * @method loadPixels
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -792,12 +738,10 @@ function pixels(p5, fn){
    *
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
-   * </code>
-   * </div>
    */
   fn.loadPixels = function(...args) {
     // p5._validateParameters('loadPixels', args);
-    this._renderer.loadPixels();
+    return this._renderer.loadPixels();
   };
 
   /**
@@ -823,8 +767,6 @@ function pixels(p5, fn){
    * @param {Number|Number[]|Object} c grayscale value | pixel array |
    *                                <a href="#/p5.Color">p5.Color</a> object | <a href="#/p5.Image">p5.Image</a> to copy.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -841,11 +783,8 @@ function pixels(p5, fn){
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -865,11 +804,8 @@ function pixels(p5, fn){
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -891,11 +827,8 @@ function pixels(p5, fn){
    *
    *   describe('A horiztonal color gradient from black to white.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -912,8 +845,6 @@ function pixels(p5, fn){
    *
    *   describe('An image of a mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   fn.set = function(x, y, imgOrCol) {
     this._renderer.set(x, y, imgOrCol);
@@ -936,8 +867,6 @@ function pixels(p5, fn){
    * @param  {Number} [w]    width of region to update.
    * @param  {Number} [h]    height of region to update.
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -968,8 +897,6 @@ function pixels(p5, fn){
    *
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
-   * </code>
-   * </div>
    */
   fn.updatePixels = function(x, y, w, h) {
     // p5._validateParameters('updatePixels', arguments);
@@ -1010,8 +937,6 @@ function pixels(p5, fn){
    * @property {Number[]} pixels
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(128);
@@ -1046,11 +971,8 @@ function pixels(p5, fn){
    *
    *   describe('A black dot in the middle of a gray rectangle.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1080,11 +1002,8 @@ function pixels(p5, fn){
    *
    *   describe('A red rectangle drawn above a gray rectangle.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1113,8 +1032,6 @@ function pixels(p5, fn){
    *
    *   describe('A pink rectangle drawn above a gray rectangle.');
    * }
-   * </code>
-   * </div>
    */
 }
 

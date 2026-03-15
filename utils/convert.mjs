@@ -169,7 +169,7 @@ function cleanUpClassItems(data) {
 function buildParamDocs(docs) {
   let newClassItems = {};
   // the fields we need—note that `name` and `class` are needed at this step because it's used to group classitems together. They will be removed later in cleanUpClassItems.
-  let allowed = new Set(['name', 'class', 'params', 'overloads']);
+  let allowed = new Set(['name', 'class', 'params', 'overloads', 'beta']);
 
   for (let classitem of docs.classitems) {
     // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case

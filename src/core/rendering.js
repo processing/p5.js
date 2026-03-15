@@ -10,7 +10,10 @@ import { Framebuffer } from '../webgl/p5.Framebuffer';
 let renderers;
 function rendering(p5, fn){
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
-  renderers = p5.renderers = {};
+  if (!p5.renderers) {
+    p5.renderers = {};
+  }
+  renderers = p5.renderers;
 
   /**
    * Creates a canvas element on the web page.
@@ -30,7 +33,7 @@ function rendering(p5, fn){
    * the sketch's rendering mode. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
    * is passed, as in `createCanvas(900, 500, myCanvas)`, then it will be used
-   * by the sketch.
+   * by the sketch. To use `WEBGPU` mode, make sure you have the WebGPU mode addon included.
    *
    * The fourth parameter is also optional. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
@@ -45,13 +48,11 @@ function rendering(p5, fn){
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
    * @param  {Number} [height] height of the canvas. Defaults to 100.
-   * @param  {(P2D|WEBGL|P2DHDR)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+   * @param  {(P2D|WEBGL|P2DHDR|WEBGPU)} [renderer] either P2D, WEBGL, or WEBGPU. Defaults to `P2D`.
    * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
    * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -62,11 +63,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 50);
    *
@@ -77,11 +75,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use WebGL mode.
    *
    * function setup() {
@@ -94,11 +89,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create a p5.Render object.
    *   let cnv = createCanvas(50, 50);
@@ -113,8 +105,6 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createCanvas
@@ -151,7 +141,11 @@ function rendering(p5, fn){
       });
     }
 
-    return this._renderer;
+    if (this._renderer.contextReady) {
+      return this._renderer.contextReady.then(() => this._renderer);
+    } else {
+      return this._renderer;
+    }
   };
 
   /**
@@ -189,8 +183,6 @@ function rendering(p5, fn){
    *                              to `false`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to resize the canvas.
    *
    * function setup() {
@@ -212,11 +204,8 @@ function rendering(p5, fn){
    * function doubleClicked() {
    *   resizeCanvas(50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Resize the web browser to change the canvas size.
    *
    * function setup() {
@@ -236,8 +225,6 @@ function rendering(p5, fn){
    * function windowResized() {
    *   resizeCanvas(windowWidth, windowHeight);
    * }
-   * </code>
-   * </div>
    */
   fn.resizeCanvas = function (w, h, noRedraw) {
     // p5._validateParameters('resizeCanvas', arguments);
@@ -266,13 +253,9 @@ function rendering(p5, fn){
    * @method noCanvas
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   noCanvas();
    * }
-   * </code>
-   * </div>
    */
   fn.noCanvas = function () {
     if (this.canvas) {
@@ -321,8 +304,6 @@ function rendering(p5, fn){
    * @return {p5.Graphics} new graphics buffer.
    *
    * @example
-   * <div>
-   * <code>
    * //  Double-click to draw the contents of the graphics buffer.
    *
    * let pg;
@@ -348,11 +329,8 @@ function rendering(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * //  Double-click to draw the contents of the graphics buffer.
    *
    * let pg;
@@ -382,8 +360,6 @@ function rendering(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createGraphics
@@ -447,8 +423,6 @@ function rendering(p5, fn){
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -494,11 +468,8 @@ function rendering(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myBuffer;
    *
    * function setup() {
@@ -548,8 +519,6 @@ function rendering(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createFramebuffer = function (options) {
     return new Framebuffer(this._renderer, options);
@@ -578,8 +547,6 @@ function rendering(p5, fn){
    *                         (none) and 1 (far clipping plane). Defaults to 1.
    *
    * @example
-   * <div>
-   * <code>
    * let previous;
    * let current;
    *
@@ -632,8 +599,6 @@ function rendering(p5, fn){
    *   // Display the current p5.Framebuffer.
    *   image(current, -50, -50);
    * }
-   * </code>
-   * </div>
    */
   fn.clearDepth = function (depth) {
     this._assert3d('clearDepth');
@@ -653,8 +618,6 @@ function rendering(p5, fn){
    * @property {CanvasRenderingContext2D|WebGLRenderingContext|WebGL2RenderingContext} drawingContext
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -671,11 +634,8 @@ function rendering(p5, fn){
    *
    *   describe("A white circle on a gray background. The circle's edges are shadowy.");
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -694,8 +654,6 @@ function rendering(p5, fn){
    *
    *   describe('A fiery sun drawn on a light blue background.');
    * }
-   * </code>
-   * </div>
    */
 }
 

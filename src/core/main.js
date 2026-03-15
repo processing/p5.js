@@ -50,30 +50,7 @@ class p5 {
   constructor(sketch, node) {
     // Apply addon defined decorations
     if(p5.decorations.size > 0){
-      for (const [patternArray, decoration] of p5.decorations) {
-        for(const member in p5.prototype) {
-          // Member must be a function
-          if (typeof p5.prototype[member] !== 'function') continue;
-
-          if (!patternArray.some(pattern => {
-            if (typeof pattern === 'string') {
-              return pattern === member;
-            } else if (pattern instanceof RegExp) {
-              return pattern.test(member);
-            }
-          })) continue;
-
-          p5.prototype[member] = decoration(p5.prototype[member], {
-            kind: 'method',
-            name: member,
-            access: {},
-            static: false,
-            private: false,
-            addInitializer(initializer){}
-          });
-        }
-      }
-
+      decorateClass(p5, p5.decorations);
       p5.decorations.clear();
     }
 
@@ -87,6 +64,7 @@ class p5 {
     this._curElement = null;
     this._elements = [];
     this._glAttributes = null;
+    this._webgpuAttributes = null;
     this._requestAnimId = 0;
     this._isGlobal = false;
     this._loop = true;
@@ -164,15 +142,22 @@ class p5 {
   }
 
   get pixels(){
-    return this._renderer.pixels;
+    return this._renderer?.pixels;
   }
 
   get drawingContext(){
-    return this._renderer.drawingContext;
+    return this._renderer?.drawingContext;
   }
 
+  static _registeredAddons = new Set();
   static registerAddon(addon) {
     const lifecycles = {};
+
+    // Don't re-register an addon. This allows addons
+    // to register dependency addons without worrying about
+    // them getting double-added.
+    if (p5._registeredAddons.has(addon)) return;
+    p5._registeredAddons.add(addon);
 
     addon(p5, p5.prototype, lifecycles);
 
@@ -185,10 +170,20 @@ class p5 {
   }
 
   static decorations = new Map();
-  static decorateHelper(pattern, decoration){
-    let patternArray = pattern;
-    if (!Array.isArray(pattern)) patternArray = [pattern];
-    p5.decorations.set(patternArray, decoration);
+  static registerDecorator(pattern, decoration){
+    if(typeof pattern === 'string'){
+      const patternStr = pattern;
+      pattern = ({ path }) => patternStr === path;
+    }else if(
+      Array.isArray(pattern) &&
+      pattern.every(value => typeof value === 'string')
+    ){
+      const patternArray = pattern;
+      pattern = ({ path }) => patternArray.includes(path);
+    }else if(typeof pattern !== 'function'){
+      throw new Error('Decorator matching pattern must be a function, a string, or an array of strings');
+    }
+    p5.decorations.set(pattern, decoration);
   }
 
   #customActions = {};
@@ -337,8 +332,6 @@ class p5 {
    * `new p5()`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the canvas.
    *
    * function setup() {
@@ -361,8 +354,6 @@ class p5 {
    * function doubleClicked() {
    *   remove();
    * }
-   * </code>
-   * </div>
    */
   async remove() {
     // Remove start listener to prevent orphan canvas being created
@@ -431,6 +422,11 @@ class p5 {
     this._downKeys = {}; //Holds the key codes of currently pressed keys
     this._downKeyCodes = {};
   }
+}
+
+// Attach constants to p5 prototype
+for (const k in constants) {
+  p5.prototype[k] = constants[k];
 }
 
 // Global helper function for binding properties to window in global mode
@@ -523,9 +519,107 @@ function createBindGlobal(instance) {
   };
 }
 
-// Attach constants to p5 prototype
-for (const k in constants) {
-  p5.prototype[k] = constants[k];
+// Generic function to decorate classes
+function decorateClass(Target, decorations, path){
+  path ??= Target.name;
+  // Static properties
+  for(const key in Target){
+    if(!key.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.${key}` })){
+          // Check if method or accessor
+          if(typeof Target[key] === 'function'){
+            const result = decorator(Target[key], {
+              kind: 'method',
+              name: key,
+              static: true
+            });
+            if(result){
+              Object.defineProperty(Target, key, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const result = decorator(undefined, {
+              kind: 'field',
+              name: key,
+              static: true
+            });
+            if(result && typeof result === 'function'){
+              Target[key] = result(Target[key]);
+            }
+          }
+        }
+      }
+
+      if(typeof Target[key] === 'function' && Target[key].prototype){
+        decorateClass(Target[key], decorations, `${path}.${key}`);
+      }
+    }
+  }
+
+  // Member properties
+  for(const member of Object.getOwnPropertyNames(Target.prototype)){
+    if(member !== 'constructor' && !member.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.prototype.${member}` })){
+          // Check if method or accessor
+          if(typeof Target.prototype[member] === 'function'){
+            const result = decorator(Target.prototype[member], {
+              kind: 'method',
+              name: member,
+              static: false
+            });
+            if(result) {
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const descriptor = Object.getOwnPropertyDescriptor(
+              Target.prototype,
+              member
+            );
+            if(descriptor.hasOwnProperty('value')){
+              const result = decorator(undefined, {
+                kind: 'field',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result && typeof result === 'function' ?
+                  result(Target.prototype[member]) :
+                  Target.prototype[member]
+              });
+            }else{
+              const { get, set } = descriptor;
+              const getterResult = decorator(get, {
+                kind: 'getter',
+                name: member,
+                static: false
+              });
+              const setterResult = decorator(set, {
+                kind: 'setter',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                get: getterResult ?? get,
+                set: setterResult ?? set
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 import transform from './transform';
@@ -581,8 +675,6 @@ export default p5;
  * @for p5
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -593,11 +685,8 @@ export default p5;
  *
  *   describe('A white circle on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -613,11 +702,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * let img;
  *
  * async function setup() {
@@ -640,8 +726,6 @@ export default p5;
  *   // Draw the circle.
  *   circle(mouseX, mouseY, 10);
  * }
- * </code>
- * </div>
  */
 /**
  * A function that's called repeatedly while the sketch runs.
@@ -674,8 +758,6 @@ export default p5;
  * @for p5
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -691,11 +773,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -711,11 +790,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Double-click the canvas to change the circle's color.
  *
  * function setup() {
@@ -738,8 +814,6 @@ export default p5;
  * function doubleClicked() {
  *   fill('deeppink');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -755,8 +829,6 @@ export default p5;
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
- * <div>
- * <code>
  * // Disable the FES.
  * p5.disableFriendlyErrors = true;
  *
@@ -773,8 +845,6 @@ export default p5;
  *
  *   describe('A gray square.');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -791,8 +861,6 @@ export default p5;
  * @param {Function} library The library function to register
  *
  * @example
- * <div>
- * <code>
  * function myAddon(p5, fn, lifecycles) {
  *   fn.sayHello = function() {
  *     this.textAlign(this.CENTER, this.CENTER);
@@ -809,6 +877,4 @@ export default p5;
  *
  *   describe('The text "Hello!"');
  * }
- * </code>
- * </div>
  */

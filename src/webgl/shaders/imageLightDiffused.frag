@@ -1,9 +1,9 @@
 precision highp float;
-varying vec3 localPos;
+IN vec3 localPos;
 
 // the HDR cubemap converted (can be from an equirectangular environment map.)
 uniform sampler2D environmentMap;
-varying vec2 vTexCoord;
+IN vec2 vTexCoord;
 
 const float PI = 3.14159265359;
 
@@ -70,7 +70,7 @@ void main()
       vec3 tangentSample = vec3( x, y, z);
       
       vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal;
-        irradiance += (texture2D(environmentMap, nTOE(sampleVec)).xyz) * cos(theta) * sin(theta);
+        irradiance += (TEXTURE(environmentMap, nTOE(sampleVec)).xyz) * cos(theta) * sin(theta);
       nrSamples++;
     }
 	}
@@ -78,5 +78,5 @@ void main()
 	irradiance = PI * irradiance * (1.0 / float(nrSamples )) ;
   
  
-	gl_FragColor = vec4(irradiance, 1.0);
+	OUT_COLOR = vec4(irradiance, 1.0);
 }

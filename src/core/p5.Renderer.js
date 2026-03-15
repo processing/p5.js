@@ -72,7 +72,14 @@ class Renderer {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    if (isMainCanvas) {
+      this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+    } else {
+      
+      const parentDensity = pInst._pInst?._renderer?._pixelDensity;
+      this._pixelDensity = parentDensity || Math.ceil(window.devicePixelRatio) || 1;
+    }
 
     this.width = w;
     this.height = h;
@@ -383,6 +390,29 @@ class Renderer {
     return this;
   }
 
+  finishDraw() {
+    // Default no-op implementation
+    // Override in specific renderers as needed
+  }
+
+  ///////////////////////////////
+  //// TEXT SUPPORT METHODS
+  //////////////////////////////
+
+  _middleAlignOffset = function() {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
+  };
 };
 
 function renderer(p5, fn){

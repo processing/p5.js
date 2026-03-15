@@ -56,6 +56,26 @@ function processStrandsFunctions() {
       description: `Discards the current pixel`,
       static: false
     },
+    {
+      name: 'getTexture',
+      overloads: [{
+        params: [
+          {
+            name: 'tex',
+            type: { type: 'NameExpression', name: 'any' },
+            optional: false,
+          },
+          {
+            name: 'coord',
+            type: { type: 'NameExpression', name: 'any' },
+            optional: false,
+          },
+        ],
+        return: {
+          type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+        }
+      }],
+    }
   ];
 
   // Add ALL GLSL builtin functions (both isp5Function: true and false)
@@ -83,7 +103,7 @@ function processStrandsFunctions() {
   // Add uniform functions: uniformFloat, uniformVec2, etc.
   const typeMethods = [];
   for (const type in DataType) {
-    if (type === 'defer') {
+    if (type === 'defer' || type === 'assign_on_use') {
       continue;
     }
 
@@ -484,7 +504,7 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
 
       let returnType = 'void';
-      if (method.chainable && !globalFunction && options.currentClass !== 'p5') {
+      if (overload.chainable && !globalFunction && options.currentClass !== 'p5') {
         returnType = options.currentClass || 'this';
         // TODO: Decide what should be chainable. Many of these are accidental / not thought through
       } else if (overload.return && overload.return.type) {

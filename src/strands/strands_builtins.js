@@ -105,10 +105,6 @@ const builtInGLSLFunctions = {
   ],
   reflect: [{ params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
   refract: [{ params: [GenType.FLOAT, GenType.FLOAT,DataType.float1], returnType: GenType.FLOAT, isp5Function: false}],
-
-  ////////// Texture sampling //////////
-  texture: [{params: [DataType.sampler2D, DataType.float2], returnType: DataType.float4, isp5Function: true}],
-  getTexture: [{params: [DataType.sampler2D, DataType.float2], returnType: DataType.float4, isp5Function: true}]
 }
 
 export const strandsBuiltinFunctions = {
