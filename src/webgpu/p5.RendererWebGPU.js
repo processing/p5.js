@@ -1,3 +1,9 @@
+/**
+ * @module 3D
+ * @submodule p5.strands
+ * @for p5
+ */
+
 import * as constants from '../core/constants';
 import { getStrokeDefs } from '../webgl/enums';
 import { DataType } from '../strands/ir_types.js';
@@ -53,8 +59,6 @@ function rendererWebGPU(p5, fn) {
    * <a href="#/p5/uniformStorage">uniformStorage()</a> to bind it to a shader.
    *
    * @class p5.StorageBuffer
-   * @module 3D
-   * @submodule p5.strands
    * @beta
    * @webgpu
    */
@@ -3654,8 +3658,6 @@ ${hookUniformFields}}
    * @method createStorage
    * @beta
    * @webgpu
-   * @module 3D
-   * @submodule p5.strands
    * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
    *   an array/Float32Array of floats, or an array of objects describing struct elements.
    * @returns {p5.StorageBuffer} A storage buffer.
@@ -3671,8 +3673,6 @@ ${hookUniformFields}}
    * calling `baseComputeShader().modify(shaderFunction)`.
    *
    * @method baseComputeShader
-   * @module 3D
-   * @submodule p5.strands
    * @beta
    * @webgpu
    * @returns {p5.Shader} The base compute shader.
@@ -3768,8 +3768,6 @@ ${hookUniformFields}}
    * ```
    *
    * @method buildComputeShader
-   * @module 3D
-   * @submodule p5.strands
    * @beta
    * @webgpu
    * @param {Function} callback A function building a p5.strands compute shader.
@@ -3783,8 +3781,6 @@ ${hookUniformFields}}
    * Dispatches a compute shader to run on the GPU.
    *
    * @method compute
-   * @module 3D
-   * @submodule p5.strands
    * @beta
    * @webgpu
    * @param {p5.Shader} shader The compute shader to run.
@@ -3817,8 +3813,6 @@ ${hookUniformFields}}
    * @property {Object} iteration
    * @beta
    * @webgpu
-   * @module 3D
-   * @submodule p5.strands
    */
 }
 
