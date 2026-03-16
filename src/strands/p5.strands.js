@@ -310,8 +310,6 @@ if (typeof p5 !== "undefined") {
  *          A value between `0.0` and `1.0`
  *
  * @example
- * <div modernizr="webgl">
- * <code>
  * // Example 1: A soft vertical fade using smoothstep
  *
  * let fadeShader;
@@ -338,12 +336,8 @@ if (typeof p5 !== "undefined") {
  *   background(0);
  *   filter(fadeShader);
  * }
- * </code>
- * </div>
  *
  * @example
- * <div modernizr="webgl">
- * <code>
  * // Example 2: Animate the smooth transition over time
  *
  * let animatedShader;
@@ -369,8 +363,6 @@ if (typeof p5 !== "undefined") {
  *   background(0);
  *   filter(animatedShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -787,8 +779,6 @@ if (typeof p5 !== "undefined") {
  * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * // A filter shader (using p5.strands) which will
  * // sample and invert the color of each pixel
  * // from the canvas.
@@ -821,12 +811,8 @@ if (typeof p5 !== "undefined") {
  *
  *   filterColor.end();
  * }
- * </code>
- *
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * // This primitive edge-detection filter samples
  * // and compares the colors of the current pixel
  * // on the canvas, and a little to the right.
@@ -883,8 +869,6 @@ if (typeof p5 !== "undefined") {
  *   rotate(frameCount / 300);
  *   square(0, 0, 30);
  * }
- * </code>
- * </div>
  */
 
 /**
