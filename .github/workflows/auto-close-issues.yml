@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 2.0
       - dev-2.0
 
 permissions:
