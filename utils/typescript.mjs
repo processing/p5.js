@@ -635,10 +635,17 @@ function generateTypeDefinitions() {
   // First, define all constants at the top level with their actual values
   const seenConstants = new Set();
   const p5Constants = processed.classitems.filter(item => {
-  if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
-      if (item.name === 'defineProperty' || !item.name) return false;
-      if (seenConstants.has(item.name)) return false;
-      if (item.name in typedefs) return false; // <-- add this line
+    if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
+      // Skip defineProperty, undefined and avoid duplicates
+      if (item.name === 'defineProperty' || !item.name) {
+        return false;
+      }
+      if (seenConstants.has(item.name)) {
+        return false;
+      }
+      if (item.name in typedefs) {
+        return false;
+      } 
       seenConstants.add(item.name);
       return true;
     }
