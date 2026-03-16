@@ -206,29 +206,37 @@ class Shader {
    *
    * In addition to calling hooks, you can create uniforms, which are special variables
    * used to pass data from p5.js into the shader. They can be created by calling `uniform` + the
-   * type of the data, such as `uniformFloat` for a number of `uniformVector2` for a two-component vector.
+   * type of the data, such as `uniformFloat` for a number or `uniformVector2` for a two-component vector.
    * They take in a function that returns the data for the variable. You can then reference these
    * variables in your hooks, and their values will update every time you apply
-   * the shader with the result of your function.
+   * the shader with the result of your function.  
+   * 
+   * Move the mouse over this sketch to increase the moveCounter which will be passed to the shader as a uniform.
    *
    * ```js example
    * let myShader;
-   *
+   * //count of frames in which mouse has been moved
+   * let moveCounter = 0;
+   * 
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify(() => {
-   *     // Get the current time from p5.js
-   *     let t = uniformFloat(() => millis());
+   *     // Get the move counter from our sketch
+   *     let count = uniformFloat(() => moveCounter);
    *
    *     getPixelInputs((inputs) => {
    *       inputs.color = [
    *         inputs.texCoord,
-   *         sin(t * 0.01) / 2 + 0.5,
+   *         sin(count/100) / 2 + 0.5,
    *         1,
    *       ];
    *       return inputs;
    *     });
    *   });
+   * }
+   *
+   * function mouseDragged(){
+   *   moveCounter += 1;
    * }
    *
    * function draw() {
