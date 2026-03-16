@@ -329,7 +329,7 @@ if (typeof p5 !== "undefined") {
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   fadeShader = baseFilterShader().modify(fadeCallback);
+ *   fadeShader = buildFilterShader(fadeCallback);
  * }
  *
  * function draw() {
@@ -356,7 +356,7 @@ if (typeof p5 !== "undefined") {
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   animatedShader = baseFilterShader().modify(animatedFadeCallback);
+ *   animatedShader = buildFilterShader(animatedFadeCallback);
  * }
  *
  * function draw() {
