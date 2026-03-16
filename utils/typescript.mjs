@@ -26,10 +26,18 @@ const constantsLookup = new Set();
 const typedefs = {};
 const mutableProperties = new Set(['disableFriendlyErrors']); // Properties that should be mutable, not constants
 allRawData.forEach(entry => {
-  if (entry.kind === 'constant' || entry.kind === 'typedef') {
+  if (entry.kind === 'constant') {
     constantsLookup.add(entry.name);
-    if (entry.kind === 'typedef') {
-      typedefs[entry.name] = entry.type;
+  }
+
+  // Collect object typedefs so constants referencing them can resolve to proper types
+  if (entry.kind === 'typedef') {
+    if (
+      entry.properties &&
+      entry.properties.length > 0 &&
+      !entry.properties.every(p => p.name === entry.name) // exclude self-referential constants
+    ) {
+      typedefs[entry.name] = entry;
     }
   }
 });
@@ -201,11 +209,26 @@ function convertTypeToTypeScript(typeNode, options = {}) {
     throw new Error(`convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`);
   }
 
+  if (typeNode.properties && typeNode.properties.length > 0) {
+    const props = typeNode.properties.map(prop => {
+      const propType = convertTypeToTypeScript(prop.type, options);
+      const optional = prop.optional ? '?' : '';
+      return `${prop.name}${optional}: ${propType}`;
+    });
+
+    return `{ ${props.join('; ')} }`;
+  }
+
   const { currentClass = null, isInsideNamespace = false, inGlobalMode = false, isConstantDef = false } = options;
 
   switch (typeNode.type) {
     case 'NameExpression': {
       const typeName = typeNode.name;
+
+        // Return typedef name directly so generated TS can reference the alias
+        if (Object.prototype.hasOwnProperty.call(typedefs, typeName)) {
+          return typeName;
+        }
 
       // Handle primitive types
       const primitiveTypes = {
@@ -595,17 +618,27 @@ function generateClassDeclaration(classData) {
 function generateTypeDefinitions() {
   let output = '// This file is auto-generated from JSDoc documentation\n\n';
 
+  Object.entries(typedefs).forEach(([name, entry]) => {
+    if (entry.properties && entry.properties.length > 0) {
+      const props = entry.properties.map(prop => {
+        const propType = prop.type ? convertTypeToTypeScript(prop.type) : 'any';
+        const optional = prop.optional ? '?' : '';
+        return `  ${prop.name}${optional}: ${propType}`;
+      });
+      output += `type ${name} = {\n${props.join(';\n')};\n};\n\n`;
+    } else {
+      const tsType = convertTypeToTypeScript(entry.type || entry);
+      output += `type ${name} = ${tsType};\n\n`;
+    }
+  });
+
   // First, define all constants at the top level with their actual values
   const seenConstants = new Set();
   const p5Constants = processed.classitems.filter(item => {
-    if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
-      // Skip defineProperty, undefined and avoid duplicates
-      if (item.name === 'defineProperty' || !item.name) {
-        return false;
-      }
-      if (seenConstants.has(item.name)) {
-        return false;
-      }
+  if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
+      if (item.name === 'defineProperty' || !item.name) return false;
+      if (seenConstants.has(item.name)) return false;
+      if (item.name in typedefs) return false; // <-- add this line
       seenConstants.add(item.name);
       return true;
     }
@@ -622,8 +655,12 @@ function generateTypeDefinitions() {
     const isMutable = mutableProperties.has(constant.name);
     const declaration = isMutable ? 'declare let' : 'declare const';
     output += `${declaration} ${constant.name}: ${type};\n\n`;
-    // Duplicate with a private identifier so we can re-export in the namespace later
-    output += `${declaration} __${constant.name}: typeof ${constant.name};\n\n`;
+
+    // Avoid __constant alias for typedef-backed hook objects
+    const isTypedefTyped = constant.type?.type === 'NameExpression' && constant.type?.name in typedefs;
+    if (!isTypedefTyped) {
+      output += `${declaration} __${constant.name}: typeof ${constant.name};\n\n`;
+    }
   });
 
   // Generate main p5 class

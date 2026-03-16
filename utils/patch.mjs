@@ -166,21 +166,6 @@ export function applyPatches() {
     `
   );
 
-  // Fix filterColor hook typing
-  replace(
-    ['p5.d.ts'],
-    'declare const filterColor: object;',
-    `declare const filterColor: {
-      texCoord: any;
-      canvasSize: any;
-      texelSize: any;
-      canvasContent: any;
-      begin(): void;
-      end(): void;
-      set(color: any): void;
-    };`
-  );
-
   for (const [path, data] of Object.entries(patched)) {
     try {
       console.log(`Patched ${path}`);
