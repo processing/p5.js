@@ -4,7 +4,13 @@ on:
   pull_request:
     types: [closed]
     branches:
+      - 2.0
       - dev-2.0
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
 
 jobs:
   close_issues:
@@ -12,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Close linked issues on non-default branches
-        uses: processing/branch-pr-close-issue@v1
+        uses: processing/branch-pr-close-issue@9fd7b409a12c677c5cdd8ff82c45600f790074e1 # v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: dev-2.0
