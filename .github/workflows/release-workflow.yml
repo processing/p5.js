@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
-          node-version: 20
+          node-version: 22
       - name: Get semver info
         id: semver
         uses: akshens/semver-tag@8e427cd48c699c97d021df4946f3a0e65af5047e # v4
@@ -43,11 +43,12 @@ jobs:
         run: npm ci
         env:
           CI: true
-      - name: Run build
+      - name: Run test
         run: npm test
         env:
           CI: true
-      - run: rm ./lib/p5-test.js ./lib/p5.pre-min.js
+      - name: Run build
+        run: npm run build
 
       # 2. Prepare release files
       - run: mkdir release && mkdir p5 && cp -r ./lib/* p5/
@@ -69,13 +70,12 @@ jobs:
           prerelease: ${{ steps.semver.outputs.is-prerelease == 'true' }}
           files: release/*
           generate_release_notes: true
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to NPM
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
         uses: JS-DevTools/npm-publish@0f451a94170d1699fd50710966d48fb26194d939 # v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          tag: r1
           
       # 4. Update p5.js website
       - name: Clone p5.js website
