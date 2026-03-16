@@ -69,9 +69,6 @@ export class StrandsNode {
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
 
-      // Track for global assignments processing
-      this.strandsContext.globalAssignments.push(assignmentID);
-
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions
       const variableNodeData = createNodeData({
@@ -134,9 +131,6 @@ export class StrandsNode {
       });
       const assignmentID = getOrCreateNode(dag, assignmentNode);
       recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
-
-      // Track for global assignments processing in the current hook context
-      this.strandsContext.globalAssignments.push(assignmentID);
 
       // Simply update this node to be a variable node with the identifier
       // This ensures it always generates the variable name in expressions
