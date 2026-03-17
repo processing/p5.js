@@ -427,7 +427,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeInfo,
         usedInVertex: false,
         usedInFragment: false,
-        declared: false
       });
 
       return createStrandsNode(id, dimension, strandsContext);
