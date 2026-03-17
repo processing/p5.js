@@ -260,7 +260,7 @@ function convertTypeToTypeScript(typeNode, options = {}) {
         }
       }
 
-      // If constant: use its typedef when defining it, else reference it as a value via `typeof`
+      // If p5 constant: use its typedef when defining it, else reference it as a value via `typeof`
       if (constantsLookup.has(typeName)) {
         if (isConstantDef && typedefs[typeName]) {
           return convertTypeToTypeScript(typedefs[typeName], options);
