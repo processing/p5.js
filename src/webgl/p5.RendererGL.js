@@ -250,9 +250,7 @@ class RendererGL extends Renderer3D {
             count
           );
         } catch (e) {
-          console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
-          );
+          p5._friendlyError("Instancing is only supported in WebGL2 mode.");
         }
        }
     } else if (this._curShader.shaderType === 'text') {
@@ -292,9 +290,7 @@ class RendererGL extends Renderer3D {
             count
           );
         } catch (e) {
-          console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
-          );
+          p5._friendlyError("Instancing is only supported in WebGL2 mode.");
         }
       }
     } else {
@@ -305,9 +301,7 @@ class RendererGL extends Renderer3D {
         try {
           gl.drawArraysInstanced(glMode, 0, geometry.vertices.length, count);
         } catch (e) {
-          console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
-          );
+          p5._friendlyError("Instancing is only supported in WebGL2 mode.");
         }
       }
     }
@@ -351,7 +345,7 @@ class RendererGL extends Renderer3D {
 
   _setAttributes(key, value) {
     if (typeof this._pInst._glAttributes === "undefined") {
-      console.log(
+      p5._friendlyError(
         "You are trying to use setAttributes on a p5.Graphics object " +
           "that does not use a WEBGL renderer."
       );
@@ -538,7 +532,7 @@ class RendererGL extends Renderer3D {
   loadPixels() {
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
-      console.log(
+      p5._friendlyError(
         "loadPixels only works in WebGL when preserveDrawingBuffer " +
           "is true."
       );

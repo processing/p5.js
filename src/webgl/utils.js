@@ -276,9 +276,8 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
           data > gl.TEXTURE31 ||
           data !== Math.ceil(data)
         ) {
-          console.log(
-            "🌸 p5.js says: " +
-              "You're trying to use a number as the data for a texture." +
+          p5._friendlyError(
+            "You're trying to use a number as the data for a texture." +
               "Please use a texture.",
           );
           return;
@@ -313,9 +312,8 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         data > gl.TEXTURE31 ||
         data !== Math.ceil(data)
       ) {
-        console.log(
-          "🌸 p5.js says: " +
-            "You're trying to use a number as the data for a texture." +
+        p5._friendlyError(
+          "You're trying to use a number as the data for a texture." +
             "Please use a texture.",
         );
         break;

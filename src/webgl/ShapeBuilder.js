@@ -438,13 +438,13 @@ export class ShapeBuilder {
 
     function begincallback(type) {
       if (type !== libtess.primitiveType.GL_TRIANGLES) {
-        console.log(`expected TRIANGLES but got type: ${type}`);
+        p5._friendlyError(`Unexpected tessellation type: expected TRIANGLES but got type: ${type}. If you see this, please report it as a bug at https://github.com/processing/p5.js/issues`);
       }
     }
 
     function errorcallback(errno) {
-      console.log('error callback');
-      console.log(`error number: ${errno}`);
+      p5._friendlyError(`Tessellation error (error number: ${errno}). If you see this, please report it as a bug at https://github.com/processing/p5.js/issues`);
+
     }
 
     // callback for when segments intersect and must be split
