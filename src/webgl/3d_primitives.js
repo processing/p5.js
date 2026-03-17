@@ -111,7 +111,8 @@ function primitives3D(p5, fn){
    * will run faster than repeatedly drawing the individual pieces.
    *
    * The parameter, `callback`, is a function with the drawing instructions for
-   *
+   * the new <a href="#/p5.Geometry">p5.Geometry</a> object. It will be called
+   * once to create the new 3D shape.
    * Note: `buildGeometry()` can only be used in WebGL mode.
    *
    * @method buildGeometry

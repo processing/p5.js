@@ -418,11 +418,12 @@ export class Renderer3D extends Renderer {
   /**
    * Starts creating a new p5.Geometry. Subsequent shapes drawn will be added
    * to the geometry and then returned when
+   * <a href="#/p5/endGeometry">endGeometry()</a> is called. One can also use
    * <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
    * draws shapes.
    *
    * If you need to draw complex shapes every frame which don't change over time,
-   * combining them upfront with `buildGeometry()` and then
+   * combining them upfront with `beginGeometry()` and `endGeometry()` and then
    * drawing that will run faster than repeatedly drawing the individual pieces.
    * @private
    */
@@ -439,7 +440,7 @@ export class Renderer3D extends Renderer {
 
   /**
    * Finishes creating a new <a href="#/p5.Geometry">p5.Geometry</a> that was
-   * One can also
+   * started using <a href="#/p5/beginGeometry">beginGeometry()</a>. One can also
    * use <a href="#/p5/buildGeometry">buildGeometry()</a> to pass a function that
    * draws shapes.
    * @private
@@ -471,6 +472,9 @@ export class Renderer3D extends Renderer {
    * combining them with `buildGeometry()` once and then drawing that will run
    * faster than repeatedly drawing the individual pieces.
    *
+   * One can also draw shapes directly between
+   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
+   * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
    * function.
    * @param {Function} callback A function that draws shapes.
    * @returns {p5.Geometry} The model that was built from the callback function.
