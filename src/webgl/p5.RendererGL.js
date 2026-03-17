@@ -637,6 +637,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       }
     };
 
+    // Flag set to true once the user approves tessellating a large shape via
+    // the confirm() prompt. Once set, we skip the prompt for the rest of the
+    // session so the user is only interrupted once.
+    this._largeTessellationAcknowledged = false;
+
     this.curStrokeWeight = 1;
     this.pointSize = this.curStrokeWeight;
     this.curStrokeCap = constants.ROUND;
