@@ -35,7 +35,7 @@ allRawData.forEach(entry => {
     if (
       entry.properties &&
       entry.properties.length > 0 &&
-      !entry.properties.every(p => p.name === entry.name) // exclude self-referential constants
+      !entry.properties.every(p => p.name === entry.name)
     ) {
       typedefs[entry.name] = entry;
     }
@@ -676,7 +676,7 @@ function generateTypeDefinitions() {
     const isMutable = mutableProperties.has(constant.name);
     const declaration = isMutable ? 'declare let' : 'declare const';
     output += `${declaration} ${constant.name}: ${type};\n\n`;
-
+    // Duplicate with a private identifier so we can re-export in the namespace later
     output += `${declaration} __${constant.name}: typeof ${constant.name};\n\n`;
 
   });
