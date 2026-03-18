@@ -8,7 +8,7 @@ import { MediaElement } from '../dom/p5.MediaElement';
 import { RGBHDR } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
-import { PrimitiveToPath2DConverter, ArcPrimitive, EllipsePrimitive } from '../shape/custom_shapes';
+import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 import { DefaultFill, textCoreConstants } from '../type/textCore';
 
 
@@ -661,22 +661,18 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-    const centerX = x + w / 2,
-      centerY = y + h / 2,
-      radiusX = w / 2,
-      radiusY = h / 2;
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, start, stop);
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-
-    const primitive = new ArcPrimitive(x, y, w, h, start, stop, mode);
-    const shape = { accept(visitor) { primitive.accept(visitor); } };
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.arcPrimitive(
+      x,
+      y,
+      w,
+      h,
+      start,
+      stop,
+      mode
+    );
+    shape.endShape();
     this.drawShape(shape);
 
     return this;
@@ -684,39 +680,16 @@ class Renderer2D extends Renderer {
   }
 
   ellipse(args) {
-    const doFill = !!this.states.fillColor,
-      doStroke = this.states.strokeColor;
     const x = parseFloat(args[0]),
       y = parseFloat(args[1]),
       w = parseFloat(args[2]),
       h = parseFloat(args[3]);
-    if (doFill && !doStroke) {
-      if (this._getFill() === styleEmpty) {
-        return this;
-      }
-    } else if (!doFill && doStroke) {
-      if (this._getStroke() === styleEmpty) {
-        return this;
-      }
-    }
-    const centerX = x + w / 2,
-      centerY = y + h / 2,
-      radiusX = w / 2,
-      radiusY = h / 2;
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      tempPath.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
 
-    const primitive = new EllipsePrimitive(x, y, w, h);
-    const shape = { accept(visitor) { primitive.accept(visitor); } };
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.ellipsePrimitive(x,y,w,h);
+    shape.endShape();
     this.drawShape(shape);
-
     return this;
   }
 

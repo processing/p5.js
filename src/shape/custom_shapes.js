@@ -474,12 +474,11 @@ class ArcPrimitive extends ShapePrimitive {
   #start;
   #stop;
   #mode;
-  // vertexCapacity 0 means this primitive should not accumulate normal path vertices
-  #vertexCapacity = 0;
+  #vertexCapacity = 2;
 
-  constructor(x, y, w, h, start, stop, mode) {
+  constructor(startVertex, endVertex, x, y, w, h, start, stop, mode) {
     // ShapePrimitive requires at least one vertex; pass a placeholder
-    super(new Vertex({ position: new Vector(x + w / 2, y + h / 2) }));
+    super(startVertex, endVertex);
     this.#x = x;
     this.#y = y;
     this.#w = w;
@@ -511,12 +510,11 @@ class EllipsePrimitive extends ShapePrimitive {
   #y;
   #w;
   #h;
-  // vertexCapacity 0 means this primitive should not accumulate normal path vertices
-  #vertexCapacity = 0;
+  #vertexCapacity = 1;
 
-  constructor(x, y, w, h) {
+  constructor(centerVertex, x, y, w, h) {
 
-    super(new Vertex({ position: new Vector(x + w / 2, y + h / 2) }));
+    super(centerVertex);
     this.#x = x;
     this.#y = y;
     this.#w = w;
@@ -976,6 +974,44 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
+
+  arcPrimitive(x,y,w,h,start,stop,mode){
+    const centerX = x+w/2;
+    const centerY = y+h/2;
+
+    const startVertex = this.#createVertex(
+      new Vector(
+        centerX+(w/2)*Math.cos(start),
+        centerY+(h/2)*Math.sin(start)
+      )
+    );
+
+    const endVertex = this.#createVertex(
+      new Vector(
+        centerX+(w/2)*Math.cos(stop),
+        centerY+(h/2)*Math.sin(stop)
+      )
+    );
+
+    const primitive = new ArcPrimitive(
+      startVertex,
+      endVertex,
+      x, y, w, h,
+      start,
+      stop,
+      mode
+    );
+    return primitive.addToShape(this);
+
+  }
+
+  ellipsePrimitive(x,y,w,h){
+    const centerVertex = this.#createVertex(new Vector(x+w/2,y+h/2));
+
+    const primitive = new EllipsePrimitive(centerVertex, x, y, w, h);
+    return primitive.addToShape(this);
+  }
+
   beginContour(shapeKind = constants.PATH) {
     if (this.at(-1)?.kind === constants.EMPTY_PATH) {
       this.contours.pop();
@@ -1387,7 +1423,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     const centerY = arc.y + arc.h / 2;
     const radiusX = arc.w / 2;
     const radiusY = arc.h / 2;
-    const numPoints = Math.max(3, this.curveDetail);
+    const avgRadius = (radiusX+radiusY)/2;
+
+    const arcLength = avgRadius*Math.abs(arc.stop-arc.start);
+
+    const numPoints=Math.max(3, Math.ceil(this.curveDetail*arcLength));
     const verts = [];
 
     if (arc.mode === constants.PIE) {
@@ -1396,12 +1436,27 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
 
     for (let i = 0; i <= numPoints; i++) {
       const angle = arc.start + (arc.stop - arc.start) * (i / numPoints);
-      verts.push(new Vertex({
-        position: new Vector(
-          centerX + radiusX * Math.cos(angle),
-          centerY + radiusY * Math.sin(angle)
-        )
-      }));
+      const startVertex=arc.vertices[0];
+      const endVertex=arc.vertices[1];
+      const t=i/numPoints;
+      const props={};
+      for(const key in startVertex){
+        if(key === 'position') continue;
+        if(typeof startVertex[key] === 'number'
+          && typeof endVertex[key]=== 'number'){
+          props[key] = startVertex[key]*(1-t) + endVertex[key]*t;
+        }
+        else{
+          props[key]=startVertex[key];
+        }
+      }
+
+      props.position=new Vector(
+        centerX+radiusX*Math.cos(angle),
+        centerY+radiusY*Math.sin(angle)
+      );
+
+      verts.push(new Vertex(props));
     }
 
     this.contours.push(verts);
