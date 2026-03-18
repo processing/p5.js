@@ -96,7 +96,17 @@ function math(p5, fn) {
    * }
    */
   fn.createVector = function (...args) {
-    return new p5.Vector(...args);
+
+    // TODO MOVE PASSING THESE FUNCTIONS TO VECTOR
+    if (this instanceof p5) {
+      return new p5.Vector(
+        this._fromRadians.bind(this),
+        this._toRadians.bind(this),
+        ...arguments
+      );
+    } else {
+      return new p5.Vector(...args);
+    }
   };
 
   /**

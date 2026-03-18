@@ -1205,7 +1205,7 @@ class Geometry {
     // initialize the vertexNormals array with empty vectors
     vertexNormals.length = 0;
     for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals.push(new Vector());
+      vertexNormals.push(new Vector(0, 0, 0));
     }
 
     // loop through all the faces adding its normal to the normal

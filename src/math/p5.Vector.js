@@ -9,7 +9,8 @@ import * as constants from '../core/constants';
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
-const smallerDimensionPriority = function(dimOther, dimSelf) {
+const smallerDimensionPriority = function(dimOther, dimSelf, args) {
+  console.log("sDP", args);
   const minDimension = Math.min(dimOther, dimSelf);
   if (dimOther !== dimSelf) {
     console.warn(
@@ -39,12 +40,19 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
+
+
+    // not meant to be userfacing so requires valid input
+    // TODO throw error when no input args
+
     if (typeof args[0] === 'function') {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
       args = args.slice(2);
     }
+
+    // todo at this point must be numbers
 
     this.values = args;
   }
@@ -462,7 +470,7 @@ class Vector {
    * @chainable
    */
   add(...args) {
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions, args);
 
     this.values = this.values.reduce((acc, v, i) => {
       if(i < minDimension) acc[i] = this.values[i] + Number(args[i]);
@@ -582,7 +590,7 @@ class Vector {
    * @chainable
    */
   rem(...args) {
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions, args);
 
     this.values = Array.from({ length: minDimension }, (_, i) => {
       return (args[i] > 0) ? this.values[i] % args[i] : this.values[i];
@@ -711,7 +719,7 @@ class Vector {
    * @chainable
    */
   sub(...args) {
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions, args);
 
     this.values = this.values.reduce((acc, v, i) => {
       if(i < minDimension) acc[i] = this.values[i] - args[i];
@@ -896,7 +904,7 @@ class Vector {
    * @chainable
    */
   mult(...args) {
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions, args);
 
     this.values = this.values.reduce((acc, v, i) => {
       if(i < minDimension) acc[i] = this.values[i] * args[i];
@@ -1120,7 +1128,7 @@ class Vector {
    * @chainable
    */
   div(...args) {
-    const minDimension = smallerDimensionPriority(args.length, this.dimensions);
+    const minDimension = smallerDimensionPriority(args.length, this.dimensions, args);
 
     if(!args.every(v => typeof v === 'number' && v !== 0)){
       console.warn(

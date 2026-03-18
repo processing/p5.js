@@ -13,6 +13,9 @@ export function _defaultEmptyVector(target){
       );
       return target.call(this, 0, 0, 0);
     }else{
+      if (Array.isArray(args[0])) {
+        args = args[0];
+      }
       return target.call(this, ...args);
     }
   };
@@ -23,29 +26,37 @@ export function _defaultEmptyVector(target){
  * @private
  * @internal
  */
-export function _validatedVectorOperation(target){
-  return function(...args){
-    if (args.length === 0) {
-      // No arguments? No action
-      return this;
-    } else if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
-    } else if (args.length === 1) {
-      // Solo argument? This is a special case
-      args = new Array(3).fill(args[0]);
-    }
+export function _validatedVectorOperation(expectsSoloNumberArgument){
+  return function(target){
+    return function(...args){
+      console.log("vVO", target.name, args);
+      if (args.length === 0) {
+        // No arguments? No action
+        return this;
+      } else if (args[0] instanceof Vector) {
+        args = args[0].values;
+      } else if (Array.isArray(args[0])) {
+        args = args[0];
+      } else if (args.length === 1) {
+        console.log("A")
+        if (expectsSoloNumberArgument){
+          console.log("b")
+          // && typeof args[0] === 'number' && Number.isFinite(args[0])
+          // Special case handling for a solo numeric argument
+          args = new Array(3).fill(args[0]);
+        }
+      } // (1,2,3) ...args is 1,2,3
 
-    if(!args.every(v => typeof v === 'number' && Number.isFinite(v))){
-      p5._friendlyError(
-        'Arguments contain non-finite numbers',
-        target.name
-      );
-      return this;
+      if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
+        p5._friendlyError(
+          'Arguments contain non-finite numbers',
+          target.name
+        );
+        return this;
+      };
+
+      return target.call(this, ...args);
     };
-
-    return target.call(this, ...args);
   };
 }
 
@@ -57,12 +68,14 @@ export function _validatedVectorOperation(target){
 export default function vectorValidation(p5, fn, lifecycles){
 
   p5.registerDecorator('p5.prototype.createVector', _defaultEmptyVector);
+  p5.registerDecorator('p5.Vector.prototype.mult', _validatedVectorOperation(true));
 
-  p5.registerDecorator('p5.Vector.prototype.add', _validatedVectorOperation);
-  p5.registerDecorator('p5.Vector.prototype.sub', _validatedVectorOperation);
-  p5.registerDecorator('p5.Vector.prototype.mult', _validatedVectorOperation);
+  p5.registerDecorator(function(path){
+    return ['p5.Vector.prototype.add', 'p5.Vector.prototype.sub'].includes(path);
+  }, _validatedVectorOperation(false));
 
-  p5.registerDecorator('p5.Vector.prototype.rem', _validatedVectorOperation);
-  p5.registerDecorator('p5.Vector.prototype.div', _validatedVectorOperation);
+  p5.registerDecorator(function(path){
+    return ['p5.Vector.prototype.rem', 'p5.Vector.prototype.div'].includes(path);
+  }, _validatedVectorOperation(true));
 
 }

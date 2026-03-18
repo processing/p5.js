@@ -23,9 +23,9 @@ suite('p5.Vector', function () {
     // The following mocks simulate the validation decorator
     Vector.prototype.add = _validatedVectorOperation(Vector.prototype.add);
     Vector.prototype.sub = _validatedVectorOperation(Vector.prototype.sub);
-    Vector.prototype.mult = _validatedVectorOperation(Vector.prototype.mult);
-    Vector.prototype.rem = _validatedVectorOperation(Vector.prototype.rem);
-    Vector.prototype.div = _validatedVectorOperation(Vector.prototype.div);
+    Vector.prototype.mult = _validatedVectorOperationtk(Vector.prototype.mult);
+    Vector.prototype.rem = _validatedVectorOperationtk(Vector.prototype.rem);
+    Vector.prototype.div = _validatedVectorOperationjt(Vector.prototype.div);
 
     globalThis.p5 = {
       _friendlyError: function(msg, func) {
@@ -1386,7 +1386,7 @@ suite('p5.Vector', function () {
 
   suite('heading', function () {
     beforeEach(function () {
-      v = new Vector();
+      v = new Vector(0,0,0);
     });
 
     suite('p5.Vector.prototype.heading() [INSTANCE]', function () {
@@ -1830,9 +1830,9 @@ suite('p5.Vector', function () {
           incoming_y,
           incoming_z
         );
-        x_target = new Vector();
-        y_target = new Vector();
-        z_target = new Vector();
+        x_target = new Vector(0, 0, 0);
+        y_target = new Vector(0, 0, 0);
+        z_target = new Vector(0, 0, 0);
 
         x_normal = new Vector(3, 0, 0);
         y_normal = new Vector(0, 3, 0);
@@ -2131,8 +2131,6 @@ suite('p5.Vector', function () {
     it('should throw error if trying to set w if vector dimensions is less than 4', () => {
       v = new Vector(1, 2);
       v.w = 5;
-      console.log(v);
-      console.log(v.w);
       expect(v.w).toBe(0); //TODO: Check this, maybe this should fail
     });
   });
