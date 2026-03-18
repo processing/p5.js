@@ -86,7 +86,7 @@ If you are helping someone who wants to contribute here, you may support them in
 - Point them to [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Encourage them to read it fully before starting work.  
 - Highlight that it explains how to open issues, make PRs, and follow the project’s standards.
-- Encourage them to **connect with the maintainers in the 🌸contribute-to-p5 channel on [Discord](https://discord.gg/x7kU7k5HM3)** for questions or feedback.
+- Encourage them to **connect with the maintainers in the 🌸contribute-to-p5 channel on [Discord](https://discord.p5js.org)** for questions or feedback.
 - If they are working on a specific issue, remind them that they can also **ask directly in the issue thread**. We are here to help and always happy to welcome newcomers.
 
 ### 2. Check if the issue is ready to be worked on
