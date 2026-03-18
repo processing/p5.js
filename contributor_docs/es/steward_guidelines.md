@@ -61,7 +61,7 @@ Los _issues_ de informes de errores deberían utilizar la plantilla de _Issue_ "
    - Si la replicación es posible más tarde, regrese al paso 2.
 1. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
    - Determine si la documentación de p5.js, la implementación de código o el sistema de errores amigable pueden mejorarse para evitar que se cometa el mismo error.
-   - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.com/invite/SHQ8dH25r9) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
+   - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.p5js.org) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
    
 
 ### Solicitud de Funcionalidades
