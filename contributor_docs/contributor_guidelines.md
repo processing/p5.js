@@ -60,14 +60,22 @@ The majority of the activity on p5.js' GitHub repositories (repo for short) happ
 
 “Issue” is the generic name for a post on GitHub that aims to describe, well, an issue. This issue can be a bug report, a request to add a new feature, a discussion, or anything that works as a post related to p5.js library development. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors discuss topics related to the development of the project in the repo.
 
-While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed
-
-either on the [forum](https://discourse.processing.org) or on other platforms such as [Discord](https://discord.p5js.org).
+We only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed either on the [forum](https://discourse.processing.org) or on other platforms such as [the p5.js Discord server](https://discord.p5js.org).
 
 We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
 
+## Find issues using labels
 
-## Issue templates
+Looking for an issue to work on? We use labels to show which issues are ready for work. There are many labels on reach repository: for example, these are the [p5.js library repository labels](https://github.com/processing/p5.js/labels/), and these are the [p5.js-website repository labels](https://github.com/processing/p5.js-website/labels/).
+
+Below are the most important labels you can look for:
+
+* "[Community Input Needed](https://github.com/processing/p5.js/issues?q=state%3Aopen%20label%3A%22Community%20Input%20Needed%22)" issues invite community discussion. These are not ready for implementation, but they welcome new pespectives.
+* "[Good First Issue](https://github.com/processing/p5.js/issues?q=state%3Aopen%20label%3A%22Good%20First%20Issue%22)" issues are best for new contributors; if you have already contributed to p5.js, please leave these to newcomers.
+* "[Help Wanted](https://github.com/processing/p5.js/issues?q=state%3Aopen%20label%3A%22Help%20Wanted%22)" issues are ready for implementation! These welcome both established and new code contributors to p5.js.
+* "[Technical Initiative](https://github.com/processing/p5.js/issues?q=state%3Aopen%20label%3A%22Technical%20Initiative%22)" issues are reserved for established contributors. These are larger technical tasks that require both creativity, and familiarity with a particular part of the codebase. Maintainers will assign based not only on order, but also on whether a volunteer has made significant previous work in a related area.
+
+## Make new issues using templates
 
 p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
 
