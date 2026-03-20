@@ -547,7 +547,7 @@ function files(p5, fn){
    * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
    * is a standard format for sending data between applications. Like HTML, the
    * XML format is based on tags and attributes, as in
-   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+   * `<time units="s">1234</time>`.
    *
    * The first parameter, `path`, is always a string with the path to the file.
    * Paths to local files should be relative, as in
