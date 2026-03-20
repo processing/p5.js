@@ -1170,7 +1170,6 @@ class MediaElement extends Element {
   removeCue(id) {
     for (let i = 0; i < this._cues.length; i++) {
       if (this._cues[i].id === id) {
-        console.log(id);
         this._cues.splice(i, 1);
       }
     }
