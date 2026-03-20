@@ -1686,6 +1686,115 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TESS mode prompts user before tessellating >50k vertices', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      // Stub confirm() so the user "cancels" — shape should draw nothing
+      var confirmStub = sinon.stub(window, 'confirm').returns(false);
+
+      renderer.beginShape(myp5.TESS);
+      for (let i = 0; i < 60000; i++) {
+        renderer.vertex(i % 100, Math.floor(i / 100), 0);
+      }
+      renderer.endShape();
+
+      assert.isTrue(
+        confirmStub.called,
+        'window.confirm should be called when vertex count exceeds threshold'
+      );
+      assert.isTrue(
+        confirmStub.args[0][0].includes('60000'),
+        'confirm message should include the actual vertex count'
+      );
+      // Shape mode must NOT be changed to TRIANGLE_FAN — draw nothing on cancel
+      assert.notEqual(
+        renderer.immediateMode.shapeMode,
+        myp5.TRIANGLE_FAN,
+        'Shape mode should not fall back to TRIANGLE_FAN when user cancels'
+      );
+
+      confirmStub.restore();
+      done();
+    });
+
+    test('TESS mode only prompts once when user approves large tessellation', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      // User approves on the first prompt
+      var confirmStub = sinon.stub(window, 'confirm').returns(true);
+
+      // First large shape — should prompt
+      renderer.beginShape(myp5.TESS);
+      for (let i = 0; i < 60000; i++) {
+        renderer.vertex(i % 100, Math.floor(i / 100), 0);
+      }
+      renderer.endShape();
+
+      assert.equal(confirmStub.callCount, 1, 'confirm should be called once on first large shape');
+      assert.isTrue(
+        renderer._largeTessellationAcknowledged,
+        '_largeTessellationAcknowledged should be set after user approves'
+      );
+
+      // Second large shape — should NOT prompt again
+      renderer.beginShape(myp5.TESS);
+      for (let i = 0; i < 60000; i++) {
+        renderer.vertex(i % 100, Math.floor(i / 100), 0);
+      }
+      renderer.endShape();
+
+      assert.equal(confirmStub.callCount, 1, 'confirm should not be called again after acknowledgement');
+
+      confirmStub.restore();
+      done();
+    });
+
+    test('TESS mode skips prompt when p5.disableFriendlyErrors is true', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      var confirmStub = sinon.stub(window, 'confirm').returns(false);
+      p5.disableFriendlyErrors = true;
+
+      renderer.beginShape(myp5.TESS);
+      for (let i = 0; i < 60000; i++) {
+        renderer.vertex(i % 100, Math.floor(i / 100), 0);
+      }
+      renderer.endShape();
+
+      assert.isFalse(
+        confirmStub.called,
+        'window.confirm should not be called when p5.disableFriendlyErrors is true'
+      );
+
+      p5.disableFriendlyErrors = false;
+      confirmStub.restore();
+      done();
+    });
+
+    test('TESS mode works normally for <50k vertices', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      var confirmStub = sinon.stub(window, 'confirm').returns(false);
+
+      // use a simple shape that tessellates quickly
+      renderer.beginShape(myp5.TESS);
+      renderer.vertex(-10, -10, 0);
+      renderer.vertex(10, -10, 0);
+      renderer.vertex(10, 10, 0);
+      renderer.vertex(-10, 10, 0);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.isFalse(
+        confirmStub.called,
+        'window.confirm should not be called for shapes with fewer than 50k vertices'
+      );
+
+      assert.equal(
+        renderer.immediateMode.shapeMode,
+        myp5.TRIANGLES,
+        'Shape mode should be TRIANGLES after normal tessellation'
+      );
+
+      confirmStub.restore();
+      done();
+    });
+
     test('TESS does not affect stroke colors', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
