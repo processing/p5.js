@@ -26,18 +26,10 @@ const constantsLookup = new Set();
 const typedefs = {};
 const mutableProperties = new Set(['disableFriendlyErrors']); // Properties that should be mutable, not constants
 allRawData.forEach(entry => {
-  if (entry.kind === 'constant') {
+  if (entry.kind === 'constant' || entry.kind === 'typedef') {
     constantsLookup.add(entry.name);
-  }
-
-  // Collect object typedefs so constants referencing them can resolve to proper types
-  if (entry.kind === 'typedef') {
-    if (
-      entry.properties &&
-      entry.properties.length > 0 &&
-      !entry.properties.every(p => p.name === entry.name)
-    ) {
-      typedefs[entry.name] = entry;
+    if (entry.kind === 'typedef') {
+      typedefs[entry.name] = entry.type;
     }
   }
 });
@@ -209,16 +201,6 @@ function convertTypeToTypeScript(typeNode, options = {}) {
     throw new Error(`convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`);
   }
 
-  if (typeNode.properties && typeNode.properties.length > 0) {
-    const props = typeNode.properties.map(prop => {
-      const propType = convertTypeToTypeScript(prop.type, options);
-      const optional = prop.optional ? '?' : '';
-      return `${prop.name}${optional}: ${propType}`;
-    });
-
-    return `{ ${props.join('; ')} }`;
-  }
-
   const { currentClass = null, isInsideNamespace = false, inGlobalMode = false, isConstantDef = false } = options;
 
   switch (typeNode.type) {
@@ -260,18 +242,19 @@ function convertTypeToTypeScript(typeNode, options = {}) {
         }
       }
 
-      // If p5 constant: use its typedef when defining it, else reference it as a value via `typeof`
+      // Check if this is a p5 constant - use typeof since they're defined as values
       if (constantsLookup.has(typeName)) {
-        if (isConstantDef && typedefs[typeName]) {
-          return convertTypeToTypeScript(typedefs[typeName], options);
+        if (inGlobalMode) {
+          return `typeof P5.${typeName}`;
+        } else if (typedefs[typeName]) {
+          if (isConstantDef) {
+            return convertTypeToTypeScript(typedefs[typeName], options);
+          } else {
+            return `typeof p5.${typeName}`
+          }
+        } else {
+          return `Symbol`;
         }
-        return inGlobalMode
-          ? `typeof P5.${typeName}`
-          : `typeof ${typeName}`;
-      }
-
-      if (typedefs[typeName]) {
-        return typeName;
       }
 
       return typeName;
@@ -384,11 +367,6 @@ const typescriptStrategy = {
 };
 
 const processed = processData(rawData, typescriptStrategy);
-
-// Augment constantsLookup with processed constants
-Object.keys(processed.consts).forEach(name => {
-  constantsLookup.add(name);
-});
 
 function normalizeIdentifier(name) {
   return (
@@ -617,22 +595,6 @@ function generateClassDeclaration(classData) {
 function generateTypeDefinitions() {
   let output = '// This file is auto-generated from JSDoc documentation\n\n';
 
-  const strandsMethods = processStrandsFunctions();
-
-  Object.entries(typedefs).forEach(([name, entry]) => {
-    if (entry.properties && entry.properties.length > 0) {
-      const props = entry.properties.map(prop => {
-        const propType = prop.type ? convertTypeToTypeScript(prop.type) : 'any';
-        const optional = prop.optional ? '?' : '';
-        return `  ${prop.name}${optional}: ${propType}`;
-      });
-      output += `type ${name} = {\n${props.join(';\n')};\n};\n\n`;
-    } else {
-      const tsType = convertTypeToTypeScript(entry.type || entry);
-      output += `type ${name} = ${tsType};\n\n`;
-    }
-  });
-
   // First, define all constants at the top level with their actual values
   const seenConstants = new Set();
   const p5Constants = processed.classitems.filter(item => {
@@ -644,9 +606,6 @@ function generateTypeDefinitions() {
       if (seenConstants.has(item.name)) {
         return false;
       }
-      if (item.name in typedefs) {
-        return false;
-      } 
       seenConstants.add(item.name);
       return true;
     }
@@ -659,26 +618,12 @@ function generateTypeDefinitions() {
       output += formatJSDocComment(constant.description, 0) + '\n';
       output += ' */\n';
     }
-    let type;
-    // Avoid invalid self-referential types like `typeof FOO`
-    if (
-      constant.type?.type === 'NameExpression' &&
-      constant.type.name === constant.name
-    ) {
-      // Self-referential constant → fallback
-      type = 'number';
-    } else {
-      type = convertTypeToTypeScript(constant.type, {
-        isInsideNamespace: false,
-        isConstantDef: true
-      });
-    }
+    const type = convertTypeToTypeScript(constant.type, { isInsideNamespace: false, isConstantDef: true });
     const isMutable = mutableProperties.has(constant.name);
     const declaration = isMutable ? 'declare let' : 'declare const';
     output += `${declaration} ${constant.name}: ${type};\n\n`;
     // Duplicate with a private identifier so we can re-export in the namespace later
     output += `${declaration} __${constant.name}: typeof ${constant.name};\n\n`;
-
   });
 
   // Generate main p5 class
@@ -700,6 +645,7 @@ function generateTypeDefinitions() {
   });
 
   // Add strands functions to p5 instance
+  const strandsMethods = processStrandsFunctions();
   strandsMethods.forEach(method => {
     output += generateMethodDeclaration(method, p5Options);
   });
@@ -721,16 +667,9 @@ function generateTypeDefinitions() {
 
   output += '\n';
 
-  p5Constants.forEach(constant => {
-    const isTypedefTyped =
-      constant.type?.type === 'NameExpression' &&
-      constant.type?.name in typedefs;
 
-    if (isTypedefTyped) {
-      output += `${mutableProperties.has(constant.name) ? 'let' : 'const'} ${constant.name}: ${constant.type.name};\n`;
-    } else {
-      output += `${mutableProperties.has(constant.name) ? 'let' : 'const'} ${constant.name}: typeof __${constant.name};\n`;
-    }
+  p5Constants.forEach(constant => {
+    output += `${mutableProperties.has(constant.name) ? 'let' : 'const'} ${constant.name}: typeof __${constant.name};\n`;
   });
 
   output += '\n';
