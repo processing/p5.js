@@ -1832,8 +1832,9 @@ function dom(p5, fn){
 
     // If File API's are not supported, throw Error
     if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-      console.log(
-        'The File APIs are not fully supported in this browser. Cannot create element.'
+      p5._friendlyError(
+        'The File APIs are not fully supported in this browser. Cannot create element.',
+        'createFileInput'
       );
       return;
     }
