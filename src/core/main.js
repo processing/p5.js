@@ -619,6 +619,13 @@ class p5 {
 
         // remove DOM elements created by p5, and listeners
         for (const e of this._elements) {
+          // Stop active media streams (webcam/microphone) to release hardware
+          if (p5.MediaElement && e instanceof p5.MediaElement) {
+            e.stop();
+            if (e.elt.srcObject !== null) {
+              e.elt.srcObject.getTracks().forEach(track => track.stop());
+            }
+          }
           if (e.elt && e.elt.parentNode) {
             e.elt.parentNode.removeChild(e.elt);
           }
