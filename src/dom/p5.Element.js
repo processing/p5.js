@@ -92,9 +92,9 @@ class Element {
   /**
    * Attaches the element to a parent element.
    *
-   * For example, a `&lt;div&gt;&lt;/div&gt;` element may be used as a box to
+   * For example, a `<div></div>` element may be used as a box to
    * hold two pieces of text, a header and a paragraph. The
-   * `&lt;div&gt;&lt;/div&gt;` is the parent element of both the header and
+   * `<div></div>` is the parent element of both the header and
    * paragraph.
    *
    * The parameter `parent` can have one of three types. `parent` can be a
