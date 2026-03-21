@@ -48,6 +48,7 @@ class Vector {
       this.dimensions = dimensions;
       this._values = values;
     }
+    this.isVector = true;
   }
 
   /**

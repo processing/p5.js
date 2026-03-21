@@ -40,6 +40,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.backend = backend;
     ctx.active = active;
@@ -61,6 +62,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
     p5.disableFriendlyErrors = ctx.previousFES;
@@ -113,7 +115,7 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
 
-  p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
+  p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
     try {
       if (
         shaderModifier instanceof Function ||
@@ -128,7 +130,8 @@ function strands(p5, fn) {
         });
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
-        const options = { parser: true, srcLocations: false };
+        options.parser = true;
+        options.srcLocations = false;
 
         // 1. Transpile from strands DSL to JS
         let strandsCallback;
@@ -155,11 +158,13 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
+        if (options.hook) strandsContext.renderer._pInst[options.hook].begin();
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
           strandsCallback();
         }
+        if (options.hook) strandsContext.renderer._pInst[options.hook].end();
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
@@ -764,6 +769,40 @@ if (typeof p5 !== "undefined") {
  * See <a href="#/p5/createFramebuffer/">createFramebuffer</a>.
  *
  * Note: The `getTexture` function is only available when using p5.strands.
+ */
+
+/**
+ * Declares a storage buffer uniform inside a <a href="#/p5.Shader/modify">modify()</a> callback,
+ * making a <a href="#/p5/createStorage">createStorage()</a> buffer accessible in the shader.
+ *
+ * Pass a `p5.StorageBuffer` (or a function returning one) as the second argument
+ * to set it as the default value, applied automatically each frame. Pass a plain
+ * object with the same field layout as the buffer's struct elements to declare the
+ * schema without binding a specific buffer.
+ *
+ * When called without a name, p5.strands automatically uses the name of the
+ * variable it is assigned to as the uniform name.
+ *
+ * Note: `uniformStorage` is only available when using p5.strands.
+ *
+ * @method uniformStorage
+ * @beta
+ * @webgpu
+ * @webgpuOnly
+ * @submodule p5.strands
+ * @param {String} name The name of the storage buffer uniform in the shader.
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema] A storage buffer to bind,
+ *   a function returning a storage buffer (called each frame), or a plain object
+ *   describing the struct field layout.
+ * @returns {*} A strands node representing the storage buffer.
+ */
+/**
+ * @method uniformStorage
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema]
+ * @returns {*}
+ */
+
+/**
  *
  * @method getTexture
  * @beta
