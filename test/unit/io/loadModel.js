@@ -79,11 +79,18 @@ suite('loadModel', function() {
     assert.deepEqual(model.vertexColors, expectedColors);
   });
 
-  test('inconsistent vertex coloring throws error', async function() {
-    // Attempt to load the model and catch the error
-    await expect(mockP5Prototype.loadModel(inconsistentColorObjFile))
-      .rejects
-      .toThrow('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+  test('mixed material coloring loads model with empty vertexColors instead of crashing', async function() {
+    // eg1.obj has some faces without a material and some with one.
+    // Real-world exports from Blender/Sketchfab frequently produce this structure.
+    // The loader should degrade gracefully rather than throwing, so beginners'
+    // sketches don't crash when loading common 3D assets.
+    const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
+    assert.instanceOf(model, Geometry);
+    assert.equal(
+      model.vertexColors.length,
+      0,
+      'Mixed-material model should have no vertex colors (graceful degradation)'
+    );
   });
 
   test('missing MTL file shows OBJ model without vertexColors', async function() {
