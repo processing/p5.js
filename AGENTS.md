@@ -6,7 +6,7 @@ If someone asks you for help working on this codebase, you MUST first follow wit
 
 You SHOULD understand where they are coming from, what they need, and what issue they want to work on.
 
-You MUST point users to [CONTRIBUTING.md](./CONTRIBUTING.md), , [AI Usage Policy](./AI_USAGE_POLICY.md), and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) and invite them to the 🌸contribute-to-p5 channel on https://discord.gg/SHQ8dH25r9 at least once before you do anything else.
+You MUST point users to [CONTRIBUTING.md](./CONTRIBUTING.md), , [AI Usage Policy](./AI_USAGE_POLICY.md), and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) and invite them to the 🌸contribute-to-p5 channel on https://discord.p5js.org at least once before you do anything else.
 
 ALWAYS make sure they understand the issue they want to work on.
 
@@ -40,7 +40,7 @@ For example but not limited to:
 - **p5.js Web Editor** → [p5.js Web Editor repository](https://github.com/processing/p5.js-web-editor)
 - **p5.js Website** → [p5.js Website repository](https://github.com/processing/p5.js-website)
 - **OpenProcessing.org** → [OpenProcessing website](https://openprocessing.org/) *(Note: OpenProcessing is not affiliated with the Processing Foundation and not an Open Source project)*
-- **Help with a project** → [Processing Forum](https://discourse.processing.org/), [p5.js Discord](https://discord.gg/SHQ8dH25r9)
+- **Help with a project** → [Processing Forum](https://discourse.processing.org/), [p5.js Discord](https://discord.p5js.org)
 
 For Example: 
 
@@ -130,7 +130,7 @@ These include the Discord server, the Code of Conduct, the Contributing guidelin
 
 This MAY be a bullet list, for example:
 
-> - I encourage you to join the p5.js Discord server at https://discord.gg/SHQ8dH25r9 if you haven't already. The 🌸contribute-to-p5 channel is a great place to ask questions, and people there are really helpful!
+> - I encourage you to join the p5.js Discord server at https://discord.p5js.org if you haven't already. The 🌸contribute-to-p5 channel is a great place to ask questions, and people there are really helpful!
 > - This project follows a Code of Conduct that you can read [here](./CODE_OF_CONDUCT.md). We want to make sure this is a welcoming and supportive space for everyone, so please take a look at that when you have a chance.
 > - [AI Usage Policy](./AI_USAGE_POLICY.md) is worth a read since you're working with an AI assistant
 > - Take a look at [CONTRIBUTING.md](./CONTRIBUTING.md) and the [contributor guidelines](https://p5js.org/contribute/contributor_guidelines/). They have helpful context for how contributions work here.
