@@ -411,7 +411,7 @@ function material(p5, fn) {
    *   // Make a version of the shader with a hook overridden
    *   modifiedShader = myShader.modify(() => {
    *     // Create new uniforms and override the getColor hook
-   *     let t = uniformFloat(() => millis() / 1000);
+   *     let t = millis() / 1000;
    *     getColor(() => {
    *       return [0, 0.5 + 0.5 * sin(t), 1, 1];
    *     });
@@ -524,11 +524,11 @@ function material(p5, fn) {
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
-        loadedShader = this.createFilterShader(fragString, true);
+        loadedShader = this._internal(() => this.createFilterShader(fragString, true));
       } else {
-        loadedShader = withGlobalStrands(this, () =>
+        loadedShader = this._internal(() => withGlobalStrands(this, () =>
           this.baseFilterShader().modify(new Function(fragString)),
-        );
+        ));
       }
 
       if (successCallback) {
@@ -657,7 +657,7 @@ function material(p5, fn) {
    * }
    * ```
    *
-   * You can also animate your filters over time by passing the time into the shader with `uniformFloat`.
+   * You can also animate your filters over time using the `millis()` function.
    *
    * ```js example
    * let myFilter;
@@ -668,7 +668,7 @@ function material(p5, fn) {
    * }
    *
    * function gradient() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   filterColor.begin();
    *   filterColor.set(mix(
    *     [1, 0, 0, 1], // Red
@@ -679,12 +679,11 @@ function material(p5, fn) {
    * }
    *
    * function draw() {
-   *   myFilter.setUniform('time', millis());
    *   filter(myFilter);
    * }
    * ```
    *
-   * We can use the `noise()` function built into strands to generate a color for each pixel.  (Again no need here for underlying content for the filter to operate on.)  Again we'll animate by passing in an announced uniform variable  `time` with `setUniform()`, each frame.
+   * We can use the `noise()` function built into strands to generate a color for each pixel.  (Again no need here for underlying content for the filter to operate on.)  Again we'll animate by using the millis() function to get an up-to-date time value.
    *
    * ```js example
    * let myFilter;
@@ -696,7 +695,7 @@ function material(p5, fn) {
    * }
    *
    * function noiseShaderCallback() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   filterColor.begin();
    *   let coord = filterColor.texCoord;
    *
@@ -713,7 +712,6 @@ function material(p5, fn) {
    * }
    *
    * function draw() {
-   *   myFilter.setUniform("time", millis());
    *   filter(myFilter);
    * }
    * ```
@@ -732,15 +730,17 @@ function material(p5, fn) {
    * @beta
    * @submodule p5.strands
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
   /**
    * @method buildFilterShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader
    */
-  fn.buildFilterShader = function (callback) {
-    return this.baseFilterShader().modify(callback);
+  fn.buildFilterShader = function (callback, scope) {
+    return this.baseFilterShader().modify(callback, scope);
   };
 
   /**
@@ -925,7 +925,7 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat();
+   *   let time = millis() / 1000;
    *   finalColor.begin();
    *   let r = 0.2 + 0.5 * abs(sin(time + 0));
    *   let g = 0.2 + 0.5 * abs(sin(time + 1));
@@ -936,7 +936,6 @@ function material(p5, fn) {
    *
    * function draw() {
    *   background(245, 245, 220);
-   *   myShader.setUniform('time', millis() / 1000);
    *   shader(myShader);
    *
    *   rectMode(CENTER);
@@ -1412,7 +1411,7 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   worldInputs.begin();
    *   worldInputs.position.y +=
    *     20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -1422,7 +1421,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1560,15 +1558,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
   /**
    * @method buildMaterialShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The material shader.
    */
-  fn.buildMaterialShader = function (cb) {
-    return this.baseMaterialShader().modify(cb);
+  fn.buildMaterialShader = function (cb, scope) {
+    return this.baseMaterialShader().modify(cb, scope);
   };
 
   /**
@@ -1589,7 +1589,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1603,7 +1602,7 @@ function material(p5, fn) {
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat();
+   * let time = millis();
    * worldInputs.begin();
    * worldInputs.position.y +=
    *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -1631,7 +1630,7 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildMaterialShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildMaterialShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1712,7 +1711,7 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   worldInputs.begin();
    *   worldInputs.position.y +=
    *     20. * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -1722,7 +1721,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   noStroke();
    *   sphere(50);
    * }
@@ -1776,15 +1774,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
   /**
    * @method buildNormalShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The normal shader.
    */
-  fn.buildNormalShader = function (cb) {
-    return this.baseNormalShader().modify(cb);
+  fn.buildNormalShader = function (cb, scope) {
+    return this.baseNormalShader().modify(cb, scope);
   };
 
   /**
@@ -1806,7 +1806,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1820,7 +1819,7 @@ function material(p5, fn) {
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat();
+   * let time = millis();
    * worldInputs.begin();
    * worldInputs.position.y +=
    *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -1848,9 +1847,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this.withGlobalStrands(this, () =>
+      let shader = this._internal(() => this.withGlobalStrands(this, () =>
         this.buildNormalShader(cb),
-      );
+      ));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1913,7 +1912,7 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   worldInputs.begin();
    *   worldInputs.position.y +=
    *     20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -1923,7 +1922,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   noStroke();
    *   fill('red');
    *   circle(0, 0, 50);
@@ -1940,15 +1938,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
   /**
    * @method buildColorShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The color shader.
    */
-  fn.buildColorShader = function (cb) {
-    return this.baseColorShader().modify(cb);
+  fn.buildColorShader = function (cb, scope) {
+    return this.baseColorShader().modify(cb, scope);
   };
 
   /**
@@ -1970,7 +1970,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   shader(myShader);
-   *   myShader.setUniform('time', millis());
    *   lights();
    *   noStroke();
    *   fill('red');
@@ -1984,7 +1983,7 @@ function material(p5, fn) {
    *
    * ```js
    * // myMaterial.js
-   * let time = uniformFloat();
+   * let time = millis();
    * worldInputs.begin();
    * worldInputs.position.y +=
    *   20 * sin(time * 0.001 + worldInputs.position.x * 0.05);
@@ -2012,7 +2011,7 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildColorShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildColorShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2156,7 +2155,7 @@ function material(p5, fn) {
    * }
    *
    * function material() {
-   *   let time = uniformFloat();
+   *   let time = millis();
    *   worldInputs.begin();
    *   // Add a somewhat random offset to the weight
    *   // that varies based on position and time
@@ -2172,7 +2171,6 @@ function material(p5, fn) {
    * function draw() {
    *   background(255);
    *   strokeShader(myShader);
-   *   myShader.setUniform('time', millis());
    *   strokeWeight(10);
    *   beginShape();
    *   for (let i = 0; i <= 50; i++) {
@@ -2195,15 +2193,17 @@ function material(p5, fn) {
    * @submodule p5.strands
    * @beta
    * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
   /**
    * @method buildStrokeShader
    * @param {Object} hooks An object specifying p5.strands hooks in GLSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The stroke shader.
    */
-  fn.buildStrokeShader = function (cb) {
-    return this.baseStrokeShader().modify(cb);
+  fn.buildStrokeShader = function (cb, scope) {
+    return this.baseStrokeShader().modify(cb, scope);
   };
 
   /**
@@ -2271,7 +2271,7 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = withGlobalStrands(this, () => this.buildStrokeShader(cb));
+      let shader = this._internal(() => withGlobalStrands(this, () => this.buildStrokeShader(cb)));
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }

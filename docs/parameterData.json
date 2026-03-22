@@ -1,1031 +1,96 @@
 {
-  "p5": {
-    "describe": {
-      "overloads": [
-        [
-          "String",
-          "FALLBACK|LABEL?"
-        ]
-      ]
-    },
-    "describeElement": {
-      "overloads": [
-        [
-          "String",
-          "String",
-          "FALLBACK|LABEL?"
-        ]
-      ]
-    },
-    "textOutput": {
-      "overloads": [
-        [
-          "FALLBACK|LABEL?"
-        ]
-      ]
-    },
-    "gridOutput": {
-      "overloads": [
-        [
-          "FALLBACK|LABEL?"
-        ]
-      ]
-    },
-    "remove": {
-      "overloads": [
-        []
-      ]
-    },
-    "p5": {
-      "overloads": [
-        [
-          "Object",
-          "String|HTMLElement"
-        ]
-      ]
-    },
-    "color": {
-      "overloads": [
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "red": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "green": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "blue": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "alpha": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "hue": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "saturation": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "brightness": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "lightness": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
-    "lerpColor": {
-      "overloads": [
-        [
-          "p5.Color",
-          "p5.Color",
-          "Number"
-        ]
-      ]
-    },
-    "paletteLerp": {
-      "overloads": [
-        [
-          "[p5.Color|String|Number|Number[], Number][]",
-          "Number"
-        ]
-      ]
-    },
-    "beginClip": {
-      "overloads": [
-        [
-          "Object?"
-        ]
-      ]
-    },
-    "endClip": {
-      "overloads": [
-        []
-      ]
-    },
-    "clip": {
-      "overloads": [
-        [
-          "Function",
-          "Object?"
-        ]
-      ]
-    },
-    "background": {
-      "overloads": [
-        [
-          "p5.Color"
-        ],
-        [
-          "String",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Image",
-          "Number?"
-        ]
-      ]
-    },
-    "clear": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ],
-        []
-      ]
-    },
-    "colorMode": {
-      "overloads": [
-        [
-          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
-          "Number?"
-        ],
-        [
-          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        []
-      ]
-    },
-    "fill": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "noFill": {
-      "overloads": [
-        []
-      ]
-    },
-    "noStroke": {
-      "overloads": [
-        []
-      ]
-    },
-    "stroke": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "erase": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "noErase": {
-      "overloads": [
-        []
-      ]
-    },
-    "blendMode": {
-      "overloads": [
-        [
-          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
-        ]
-      ]
-    },
-    "print": {
-      "overloads": [
-        [
-          "Any"
-        ],
-        [
-          "String|Number|Array"
-        ]
-      ]
-    },
-    "cursor": {
-      "overloads": [
-        [
-          "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "frameRate": {
-      "overloads": [
-        [
-          "Number"
-        ],
-        []
-      ]
-    },
-    "getTargetFrameRate": {
-      "overloads": [
-        []
-      ]
-    },
-    "noCursor": {
-      "overloads": [
-        []
-      ]
-    },
-    "windowResized": {
-      "overloads": [
-        [
-          "Event?"
-        ]
-      ]
-    },
-    "fullscreen": {
-      "overloads": [
-        [
-          "Boolean?"
-        ]
-      ]
-    },
+  "p5.Image": {
     "pixelDensity": {
       "overloads": [
         [
           "Number?"
-        ],
-        []
-      ]
-    },
-    "displayDensity": {
-      "overloads": [
-        []
-      ]
-    },
-    "getURL": {
-      "overloads": [
-        []
-      ]
-    },
-    "getURLPath": {
-      "overloads": [
-        []
-      ]
-    },
-    "getURLParams": {
-      "overloads": [
-        []
-      ]
-    },
-    "worldToScreen": {
-      "overloads": [
-        [
-          "Number|p5.Vector",
-          "Number",
-          "Number?"
         ]
       ]
     },
-    "screenToWorld": {
-      "overloads": [
-        [
-          "Number|p5.Vector",
-          "Number",
-          "Number?"
-        ]
-      ]
-    },
-    "setup": {
+    "loadPixels": {
       "overloads": [
         []
       ]
     },
-    "draw": {
-      "overloads": [
-        []
-      ]
-    },
-    "registerAddon": {
+    "updatePixels": {
       "overloads": [
         [
-          "Function"
-        ]
-      ]
-    },
-    "createCanvas": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "P2D|WEBGL|P2DHDR|WEBGPU?",
-          "HTMLCanvasElement?"
-        ],
-        [
-          "Number?",
-          "Number?",
-          "HTMLCanvasElement?"
-        ]
-      ]
-    },
-    "resizeCanvas": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Boolean?"
-        ]
-      ]
-    },
-    "noCanvas": {
-      "overloads": [
-        []
-      ]
-    },
-    "createGraphics": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "P2D|WEBGL?",
-          "HTMLCanvasElement?"
-        ],
-        [
-          "Number",
-          "Number",
-          "HTMLCanvasElement?"
-        ]
-      ]
-    },
-    "createFramebuffer": {
-      "overloads": [
-        [
-          "Object?"
-        ]
-      ]
-    },
-    "clearDepth": {
-      "overloads": [
-        [
-          "Number?"
-        ]
-      ]
-    },
-    "noLoop": {
-      "overloads": [
-        []
-      ]
-    },
-    "loop": {
-      "overloads": [
-        []
-      ]
-    },
-    "isLooping": {
-      "overloads": [
-        []
-      ]
-    },
-    "redraw": {
-      "overloads": [
-        [
+          "Integer?",
+          "Integer?",
+          "Integer?",
           "Integer?"
         ]
       ]
     },
-    "applyMatrix": {
+    "get": {
       "overloads": [
         [
-          "Number[]"
-        ],
-        [
-          "Number",
-          "Number",
           "Number",
           "Number",
           "Number",
           "Number"
         ],
+        [],
         [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
           "Number",
           "Number"
         ]
       ]
     },
-    "resetMatrix": {
-      "overloads": [
-        []
-      ]
-    },
-    "rotate": {
+    "set": {
       "overloads": [
         [
           "Number",
-          "p5.Vector|Number[]?"
+          "Number",
+          "Number|Number[]|Object"
         ]
       ]
     },
-    "rotateX": {
+    "resize": {
       "overloads": [
         [
+          "Number",
           "Number"
         ]
       ]
     },
-    "rotateY": {
+    "copy": {
       "overloads": [
         [
-          "Number"
-        ]
-      ]
-    },
-    "rotateZ": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "scale": {
-      "overloads": [
-        [
-          "Number|p5.Vector|Number[]",
-          "Number?",
-          "Number?"
+          "p5.Image|p5.Element",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer"
         ],
         [
-          "p5.Vector|Number[]"
-        ]
-      ]
-    },
-    "shearX": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "shearY": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "translate": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "p5.Vector"
-        ]
-      ]
-    },
-    "push": {
-      "overloads": [
-        []
-      ]
-    },
-    "pop": {
-      "overloads": [
-        []
-      ]
-    },
-    "storeItem": {
-      "overloads": [
-        [
-          "String",
-          "String|Number|Boolean|Object|Array"
-        ]
-      ]
-    },
-    "getItem": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "clearStorage": {
-      "overloads": [
-        []
-      ]
-    },
-    "removeItem": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "select": {
-      "overloads": [
-        [
-          "String",
-          "String|p5.Element|HTMLElement?"
-        ]
-      ]
-    },
-    "selectAll": {
-      "overloads": [
-        [
-          "String",
-          "String|p5.Element|HTMLElement?"
-        ]
-      ]
-    },
-    "createElement": {
-      "overloads": [
-        [
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "removeElements": {
-      "overloads": [
-        []
-      ]
-    },
-    "addElement": {
-      "overloads": [
-        []
-      ]
-    },
-    "createDiv": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "createP": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "createSpan": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "createImg": {
-      "overloads": [
-        [
-          "String",
-          "String"
-        ],
-        [
-          "String",
-          "String",
-          "String?",
-          "Function?"
-        ]
-      ]
-    },
-    "createA": {
-      "overloads": [
-        [
-          "String",
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "createSlider": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "createButton": {
-      "overloads": [
-        [
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "createCheckbox": {
-      "overloads": [
-        [
-          "String?",
-          "Boolean?"
-        ]
-      ]
-    },
-    "createSelect": {
-      "overloads": [
-        [
-          "Boolean?"
-        ],
-        [
-          "Object"
-        ]
-      ]
-    },
-    "createRadio": {
-      "overloads": [
-        [
-          "Object?"
-        ],
-        [
-          "String?"
-        ],
-        []
-      ]
-    },
-    "createColorPicker": {
-      "overloads": [
-        [
-          "String|p5.Color?"
-        ]
-      ]
-    },
-    "createInput": {
-      "overloads": [
-        [
-          "String?",
-          "String?"
-        ],
-        [
-          "String?"
-        ]
-      ]
-    },
-    "createFileInput": {
-      "overloads": [
-        [
-          "Function",
-          "Boolean?"
-        ]
-      ]
-    },
-    "createVideo": {
-      "overloads": [
-        [
-          "String|String[]?",
-          "Function?"
-        ]
-      ]
-    },
-    "createAudio": {
-      "overloads": [
-        [
-          "String|String[]?",
-          "Function?"
-        ]
-      ]
-    },
-    "createCapture": {
-      "overloads": [
-        [
-          "AUDIO|VIDEO|Object?",
-          "Object?",
-          "Function?"
-        ]
-      ]
-    },
-    "setMoveThreshold": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "setShakeThreshold": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "deviceMoved": {
-      "overloads": [
-        []
-      ]
-    },
-    "deviceTurned": {
-      "overloads": [
-        []
-      ]
-    },
-    "deviceShaken": {
-      "overloads": [
-        []
-      ]
-    },
-    "keyPressed": {
-      "overloads": [
-        [
-          "KeyboardEvent?"
-        ]
-      ]
-    },
-    "keyReleased": {
-      "overloads": [
-        [
-          "KeyboardEvent?"
-        ]
-      ]
-    },
-    "keyTyped": {
-      "overloads": [
-        [
-          "KeyboardEvent?"
-        ]
-      ]
-    },
-    "keyIsDown": {
-      "overloads": [
-        [
-          "Number|String"
-        ]
-      ]
-    },
-    "mouseMoved": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "mouseDragged": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "mousePressed": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "mouseReleased": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "mouseClicked": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "doubleClicked": {
-      "overloads": [
-        [
-          "MouseEvent?"
-        ]
-      ]
-    },
-    "mouseWheel": {
-      "overloads": [
-        [
-          "WheelEvent?"
-        ]
-      ]
-    },
-    "requestPointerLock": {
-      "overloads": [
-        []
-      ]
-    },
-    "exitPointerLock": {
-      "overloads": [
-        []
-      ]
-    },
-    "createImage": {
-      "overloads": [
-        [
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
           "Integer",
           "Integer"
         ]
       ]
     },
-    "saveCanvas": {
+    "mask": {
       "overloads": [
         [
-          "p5.Framebuffer|p5.Element|HTMLCanvasElement",
-          "String?",
-          "String?"
-        ],
-        [
-          "String?",
-          "String?"
+          "p5.Image"
         ]
       ]
     },
-    "saveFrames": {
+    "filter": {
       "overloads": [
         [
-          "String",
-          "String",
-          "Number",
-          "Number",
-          "function(Array)?"
-        ]
-      ]
-    },
-    "loadImage": {
-      "overloads": [
-        [
-          "String|Request",
-          "function(p5.Image)?",
-          "function(Event)?"
-        ]
-      ]
-    },
-    "saveGif": {
-      "overloads": [
-        [
-          "String",
-          "Number",
-          "Object?"
-        ]
-      ]
-    },
-    "image": {
-      "overloads": [
-        [
-          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics",
-          "Number",
-          "Number",
-          "Number?",
+          "THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|ERODE|DILATE|BLUR",
           "Number?"
-        ],
-        [
-          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?",
-          "CONTAIN|COVER?",
-          "LEFT|RIGHT|CENTER?",
-          "TOP|BOTTOM|CENTER?"
-        ]
-      ]
-    },
-    "tint": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "noTint": {
-      "overloads": [
-        []
-      ]
-    },
-    "imageMode": {
-      "overloads": [
-        [
-          "CORNER|CORNERS|CENTER"
         ]
       ]
     },
@@ -1056,255 +121,126 @@
         ]
       ]
     },
-    "copy": {
+    "save": {
       "overloads": [
         [
-          "p5.Image|p5.Element",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
-        ],
-        [
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
+          "String",
+          "String?"
         ]
       ]
     },
-    "filter": {
-      "overloads": [
-        [
-          "THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|BLUR|ERODE|DILATE|BLUR",
-          "Number?",
-          "Boolean?"
-        ],
-        [
-          "p5.Shader"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [],
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "loadPixels": {
+    "reset": {
       "overloads": [
         []
       ]
     },
-    "set": {
+    "getCurrentFrame": {
+      "overloads": [
+        []
+      ]
+    },
+    "setFrame": {
       "overloads": [
         [
-          "Number",
-          "Number",
-          "Number|Number[]|Object"
+          "Number"
         ]
       ]
     },
-    "updatePixels": {
+    "numFrames": {
+      "overloads": [
+        []
+      ]
+    },
+    "play": {
+      "overloads": [
+        []
+      ]
+    },
+    "pause": {
+      "overloads": [
+        []
+      ]
+    },
+    "delay": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ]
+      ]
+    }
+  },
+  "p5.Color": {
+    "toString": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "contrast": {
+      "overloads": [
+        [
+          "Color"
+        ]
+      ]
+    },
+    "setRed": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "setGreen": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "setBlue": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "setAlpha": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    }
+  },
+  "p5": {
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
+    "p5": {
+      "overloads": [
+        [
+          "Object",
+          "String|HTMLElement"
+        ]
+      ]
+    },
+    "fromAxisAngle": {
       "overloads": [
         [
           "Number?",
           "Number?",
           "Number?",
           "Number?"
-        ],
-        []
-      ]
-    },
-    "loadJSON": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
         ]
       ]
     },
-    "loadStrings": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "loadTable": {
-      "overloads": [
-        [
-          "String|Request",
-          "String?",
-          "String?",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "loadXML": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "loadBytes": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "loadBlob": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "httpGet": {
-      "overloads": [
-        [
-          "String|Request",
-          "String?",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Function",
-          "Function?"
-        ]
-      ]
-    },
-    "httpPost": {
-      "overloads": [
-        [
-          "String|Request",
-          "Object|Boolean?",
-          "String?",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Object|Boolean",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "httpDo": {
-      "overloads": [
-        [
-          "String|Request",
-          "String?",
-          "String?",
-          "Object?",
-          "Function?",
-          "Function?"
-        ],
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "createWriter": {
-      "overloads": [
-        [
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "write": {
-      "overloads": [
-        [
-          "String|Number|Array"
-        ]
-      ]
-    },
-    "close": {
+    "day": {
       "overloads": [
         []
-      ]
-    },
-    "save": {
-      "overloads": [
-        [
-          "Object|String?",
-          "String?",
-          "Boolean|String?"
-        ]
-      ]
-    },
-    "saveJSON": {
-      "overloads": [
-        [
-          "Array|Object",
-          "String",
-          "Boolean?"
-        ]
-      ]
-    },
-    "saveStrings": {
-      "overloads": [
-        [
-          "String[]",
-          "String",
-          "String?",
-          "Boolean?"
-        ]
-      ]
-    },
-    "saveTable": {
-      "overloads": [
-        [
-          "p5.Table",
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "setContent": {
-      "overloads": [
-        [
-          "String"
-        ]
       ]
     },
     "abs": {
@@ -1314,10 +250,193 @@
         ]
       ]
     },
+    "mult": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
+    "print": {
+      "overloads": [
+        [
+          "Any"
+        ],
+        [
+          "String|Number|Array"
+        ]
+      ]
+    },
+    "hour": {
+      "overloads": [
+        []
+      ]
+    },
+    "randomSeed": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "float": {
+      "overloads": [
+        [
+          "String"
+        ],
+        [
+          "String[]"
+        ]
+      ]
+    },
+    "rotateBy": {
+      "overloads": [
+        [
+          "p5.Quat?"
+        ]
+      ]
+    },
     "ceil": {
       "overloads": [
         [
           "Number"
+        ]
+      ]
+    },
+    "ellipseMode": {
+      "overloads": [
+        [
+          "CENTER|RADIUS|CORNER|CORNERS"
+        ]
+      ]
+    },
+    "nf": {
+      "overloads": [
+        [
+          "Number|String",
+          "Integer|String?",
+          "Integer|String?"
+        ],
+        [
+          "Number[]",
+          "Integer|String?",
+          "Integer|String?"
+        ]
+      ]
+    },
+    "strokeMode": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "select": {
+      "overloads": [
+        [
+          "String",
+          "String|p5.Element|HTMLElement?"
+        ]
+      ]
+    },
+    "loadImage": {
+      "overloads": [
+        [
+          "String|Request",
+          "function(p5.Image)?",
+          "function(Event)?"
+        ]
+      ]
+    },
+    "createVector": {
+      "overloads": [
+        [
+          "...Number[]"
+        ]
+      ]
+    },
+    "minute": {
+      "overloads": [
+        []
+      ]
+    },
+    "noLoop": {
+      "overloads": [
+        []
+      ]
+    },
+    "describe": {
+      "overloads": [
+        [
+          "String",
+          "FALLBACK|LABEL?"
+        ]
+      ]
+    },
+    "storeItem": {
+      "overloads": [
+        [
+          "String",
+          "String|Number|Boolean|Object|Array"
+        ]
+      ]
+    },
+    "createCanvas": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "P2D|WEBGL|P2DHDR|WEBGPU?",
+          "HTMLCanvasElement?"
+        ],
+        [
+          "Number?",
+          "Number?",
+          "HTMLCanvasElement?"
+        ]
+      ]
+    },
+    "textOutput": {
+      "overloads": [
+        [
+          "FALLBACK|LABEL?"
+        ]
+      ]
+    },
+    "blend": {
+      "overloads": [
+        [
+          "p5.Image",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL"
+        ],
+        [
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL"
+        ]
+      ]
+    },
+    "loadShader": {
+      "overloads": [
+        [
+          "String|Request",
+          "String|Request",
+          "Function?",
+          "Function?"
         ]
       ]
     },
@@ -1330,199 +449,11 @@
         ]
       ]
     },
-    "dist": {
+    "createImage": {
       "overloads": [
         [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "exp": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "floor": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "lerp": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "log": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "mag": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "map": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Boolean?"
-        ]
-      ]
-    },
-    "max": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number[]"
-        ]
-      ]
-    },
-    "min": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number[]"
-        ]
-      ]
-    },
-    "norm": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "pow": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "round": {
-      "overloads": [
-        [
-          "Number",
-          "Number?"
-        ]
-      ]
-    },
-    "sq": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "sqrt": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "fract": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "createVector": {
-      "overloads": [
-        [
-          "...Number[]"
-        ]
-      ]
-    },
-    "noise": {
-      "overloads": [
-        [
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "noiseDetail": {
-      "overloads": [
-        [
-          "Number"
-        ],
-        [
-          "Number", 
-          "Number"
-        ]
-  ]
-},
-    "noiseSeed": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "randomSeed": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "random": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Array"
-        ]
-      ]
-    },
-    "randomGaussian": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?"
+          "Integer",
+          "Integer"
         ]
       ]
     },
@@ -1533,499 +464,42 @@
         ]
       ]
     },
-    "asin": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "atan": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "atan2": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "cos": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "sin": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "tan": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "degrees": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "radians": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "angleMode": {
-      "overloads": [
-        [
-          "RADIANS|DEGREES"
-        ],
-        []
-      ]
-    },
-    "arc": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "CHORD|PIE|OPEN?",
-          "Integer?"
-        ]
-      ]
-    },
-    "ellipse": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Integer?"
-        ]
-      ]
-    },
-    "circle": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "line": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "point": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "p5.Vector"
-        ]
-      ]
-    },
-    "quad": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Integer?",
-          "Integer?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "rect": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "square": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "triangle": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "ellipseMode": {
-      "overloads": [
-        [
-          "CENTER|RADIUS|CORNER|CORNERS"
-        ]
-      ]
-    },
     "noSmooth": {
       "overloads": [
         []
       ]
     },
-    "rectMode": {
+    "orbitControl": {
       "overloads": [
         [
-          "CENTER|RADIUS|CORNER|CORNERS"
-        ]
-      ]
-    },
-    "smooth": {
-      "overloads": [
-        []
-      ]
-    },
-    "strokeCap": {
-      "overloads": [
-        [
-          "ROUND|SQUARE|PROJECT"
-        ]
-      ]
-    },
-    "strokeJoin": {
-      "overloads": [
-        [
-          "MITER|BEVEL|ROUND"
-        ]
-      ]
-    },
-    "strokeWeight": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "bezier": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "bezierPoint": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "bezierTangent": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "spline": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "splinePoint": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "splineTangent": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "bezierOrder": {
-      "overloads": [
-        [
-          "Number"
-        ],
-        []
-      ]
-    },
-    "splineVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
           "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
           "Number?",
-          "Number?"
+          "Number?",
+          "Object?"
         ]
       ]
     },
-    "splineProperty": {
+    "beginClip": {
       "overloads": [
         [
-          "String",
+          "Object?"
+        ]
+      ]
+    },
+    "smoothstep": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "getTexture": {
+      "overloads": [
+        [
+          null,
           null
-        ],
-        [
-          "String"
-        ]
-      ]
-    },
-    "splineProperties": {
-      "overloads": [
-        [
-          "Object"
-        ]
-      ]
-    },
-    "vertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "beginContour": {
-      "overloads": [
-        []
-      ]
-    },
-    "endContour": {
-      "overloads": [
-        [
-          "OPEN|CLOSE?"
-        ]
-      ]
-    },
-    "beginShape": {
-      "overloads": [
-        [
-          "POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH?"
-        ]
-      ]
-    },
-    "bezierVertex": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "endShape": {
-      "overloads": [
-        [
-          "CLOSE?",
-          "Integer?"
-        ]
-      ]
-    },
-    "normal": {
-      "overloads": [
-        [
-          "p5.Vector"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "vertexProperty": {
-      "overloads": [
-        [
-          "String",
-          "Number|Number[]"
         ]
       ]
     },
@@ -2071,19 +545,2122 @@
         ]
       ]
     },
-    "loadFont": {
+    "ambientLight": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "selectAll": {
       "overloads": [
         [
           "String",
+          "String|p5.Element|HTMLElement?"
+        ]
+      ]
+    },
+    "bezier": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "int": {
+      "overloads": [
+        [
+          "String|Boolean|Number"
+        ],
+        [
+          "Array"
+        ]
+      ]
+    },
+    "endClip": {
+      "overloads": [
+        []
+      ]
+    },
+    "copy": {
+      "overloads": [
+        [
+          "p5.Image|p5.Element",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer"
+        ],
+        [
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer",
+          "Integer"
+        ]
+      ]
+    },
+    "loop": {
+      "overloads": [
+        []
+      ]
+    },
+    "dist": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "asin": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "millis": {
+      "overloads": [
+        []
+      ]
+    },
+    "nfc": {
+      "overloads": [
+        [
+          "Number|String",
+          "Integer|String?"
+        ],
+        [
+          "Number[]",
+          "Integer|String?"
+        ]
+      ]
+    },
+    "applyMatrix": {
+      "overloads": [
+        [
+          "Number[]"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "resizeCanvas": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Boolean?"
+        ]
+      ]
+    },
+    "push": {
+      "overloads": [
+        []
+      ]
+    },
+    "noise": {
+      "overloads": [
+        [
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "describeElement": {
+      "overloads": [
+        [
+          "String",
+          "String",
+          "FALLBACK|LABEL?"
+        ]
+      ]
+    },
+    "saveGif": {
+      "overloads": [
+        [
+          "String",
+          "Number",
+          "Object?"
+        ]
+      ]
+    },
+    "month": {
+      "overloads": [
+        []
+      ]
+    },
+    "random": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Array"
+        ]
+      ]
+    },
+    "isLooping": {
+      "overloads": [
+        []
+      ]
+    },
+    "gridOutput": {
+      "overloads": [
+        [
+          "FALLBACK|LABEL?"
+        ]
+      ]
+    },
+    "saveCanvas": {
+      "overloads": [
+        [
+          "p5.Framebuffer|p5.Element|HTMLCanvasElement",
+          "String?",
+          "String?"
+        ],
+        [
+          "String?",
+          "String?"
+        ]
+      ]
+    },
+    "rectMode": {
+      "overloads": [
+        [
+          "CENTER|RADIUS|CORNER|CORNERS"
+        ]
+      ]
+    },
+    "atan": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "noCanvas": {
+      "overloads": [
+        []
+      ]
+    },
+    "resetMatrix": {
+      "overloads": [
+        []
+      ]
+    },
+    "getItem": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "exp": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "second": {
+      "overloads": [
+        []
+      ]
+    },
+    "loadJSON": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "arc": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "CHORD|PIE|OPEN?",
+          "Integer?"
+        ]
+      ]
+    },
+    "cursor": {
+      "overloads": [
+        [
+          "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "createElement": {
+      "overloads": [
+        [
+          "String",
+          "String?"
+        ]
+      ]
+    },
+    "year": {
+      "overloads": [
+        []
+      ]
+    },
+    "floor": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "str": {
+      "overloads": [
+        [
+          "String|Boolean|Number"
+        ]
+      ]
+    },
+    "byte": {
+      "overloads": [
+        [
+          "String|Boolean|Number"
+        ],
+        [
+          "Array"
+        ]
+      ]
+    },
+    "bezierPoint": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "buildGeometry": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "loadModel": {
+      "overloads": [
+        [
+          "String|Request",
+          "String?",
+          "Boolean?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String|Request",
+          "String?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String|Request",
+          "Object?"
+        ]
+      ]
+    },
+    "randomGaussian": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "redraw": {
+      "overloads": [
+        [
+          "Integer?"
+        ]
+      ]
+    },
+    "atan2": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "smooth": {
+      "overloads": [
+        []
+      ]
+    },
+    "clearStorage": {
+      "overloads": [
+        []
+      ]
+    },
+    "nfp": {
+      "overloads": [
+        [
+          "Number",
+          "Integer?",
+          "Integer?"
+        ],
+        [
+          "Number[]",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "removeElements": {
+      "overloads": [
+        []
+      ]
+    },
+    "beginShape": {
+      "overloads": [
+        [
+          "POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH?"
+        ]
+      ]
+    },
+    "saveObj": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "addElement": {
+      "overloads": [
+        []
+      ]
+    },
+    "color": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "clip": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ]
+      ]
+    },
+    "noiseDetail": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "createGraphics": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "P2D|WEBGL?",
+          "HTMLCanvasElement?"
+        ],
+        [
+          "Number",
+          "Number",
+          "HTMLCanvasElement?"
+        ]
+      ]
+    },
+    "strokeCap": {
+      "overloads": [
+        [
+          "ROUND|SQUARE|PROJECT"
+        ]
+      ]
+    },
+    "lerp": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "frameRate": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        []
+      ]
+    },
+    "cos": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "specularColor": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "createDiv": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "loadStrings": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "boolean": {
+      "overloads": [
+        [
+          "String|Boolean|Number"
+        ],
+        [
+          "Array"
+        ]
+      ]
+    },
+    "removeItem": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "rotate": {
+      "overloads": [
+        [
+          "Number",
+          "p5.Vector|Number[]?"
+        ]
+      ]
+    },
+    "freeGeometry": {
+      "overloads": [
+        [
+          "p5.Geometry"
+        ]
+      ]
+    },
+    "setMoveThreshold": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "bezierTangent": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "noiseSeed": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "ellipse": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Integer?"
+        ]
+      ]
+    },
+    "log": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "createP": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "createShader": {
+      "overloads": [
+        [
+          "String",
+          "String",
+          "Object?"
+        ]
+      ]
+    },
+    "getTargetFrameRate": {
+      "overloads": [
+        []
+      ]
+    },
+    "nfs": {
+      "overloads": [
+        [
+          "Number",
+          "Integer?",
+          "Integer?"
+        ],
+        [
+          "Array",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "setShakeThreshold": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "saveStl": {
+      "overloads": [
+        [
+          "String?",
+          "Object?"
+        ]
+      ]
+    },
+    "sin": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "strokeJoin": {
+      "overloads": [
+        [
+          "MITER|BEVEL|ROUND"
+        ]
+      ]
+    },
+    "noCursor": {
+      "overloads": [
+        []
+      ]
+    },
+    "circle": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "mag": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "loadTable": {
+      "overloads": [
+        [
+          "String|Request",
+          "String?",
+          "String?",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "red": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "filter": {
+      "overloads": [
+        [
+          "THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|BLUR|ERODE|DILATE|BLUR",
+          "Number?",
+          "Boolean?"
+        ],
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
+    "tan": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "createSpan": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "loadFilterShader": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "plane": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "createFramebuffer": {
+      "overloads": [
+        [
+          "Object?"
+        ]
+      ]
+    },
+    "strokeWeight": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "degrees": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "rotateX": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "setup": {
+      "overloads": [
+        []
+      ]
+    },
+    "draw": {
+      "overloads": [
+        []
+      ]
+    },
+    "registerAddon": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "map": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Boolean?"
+        ]
+      ]
+    },
+    "createImg": {
+      "overloads": [
+        [
+          "String",
+          "String"
+        ],
+        [
+          "String",
+          "String",
+          "String?",
+          "Function?"
+        ]
+      ]
+    },
+    "radians": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "deviceMoved": {
+      "overloads": [
+        []
+      ]
+    },
+    "deviceTurned": {
+      "overloads": [
+        []
+      ]
+    },
+    "deviceShaken": {
+      "overloads": [
+        []
+      ]
+    },
+    "directionalLight": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "p5.Vector"
+        ]
+      ]
+    },
+    "background": {
+      "overloads": [
+        [
+          "p5.Color"
+        ],
+        [
+          "String",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Image",
+          "Number?"
+        ]
+      ]
+    },
+    "clearDepth": {
+      "overloads": [
+        [
+          "Number?"
+        ]
+      ]
+    },
+    "splitTokens": {
+      "overloads": [
+        [
+          "String",
+          "String?"
+        ]
+      ]
+    },
+    "keyPressed": {
+      "overloads": [
+        [
+          "KeyboardEvent?"
+        ]
+      ]
+    },
+    "green": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "max": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number[]"
+        ]
+      ]
+    },
+    "bezierVertex": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "createA": {
+      "overloads": [
+        [
+          "String",
+          "String",
+          "String?"
+        ]
+      ]
+    },
+    "saveFrames": {
+      "overloads": [
+        [
+          "String",
+          "String",
+          "Number",
+          "Number",
+          "function(Array)?"
+        ]
+      ]
+    },
+    "line": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "clear": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ],
+        []
+      ]
+    },
+    "box": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "char": {
+      "overloads": [
+        [
+          "String|Number"
+        ],
+        [
+          "Array"
+        ]
+      ]
+    },
+    "rotateY": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "debugMode": {
+      "overloads": [
+        [],
+        [
+          "GRID|AXES"
+        ],
+        [
+          "GRID|AXES",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "GRID|AXES",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "roll": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "spline": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "loadXML": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [],
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "min": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number[]"
+        ]
+      ]
+    },
+    "windowResized": {
+      "overloads": [
+        [
+          "Event?"
+        ]
+      ]
+    },
+    "shuffle": {
+      "overloads": [
+        [
+          "Array",
+          "Boolean?"
+        ]
+      ]
+    },
+    "loadBytes": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "noDebugMode": {
+      "overloads": [
+        []
+      ]
+    },
+    "blue": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "unchar": {
+      "overloads": [
+        [
+          "String"
+        ],
+        [
+          "String[]"
+        ]
+      ]
+    },
+    "angleMode": {
+      "overloads": [
+        [
+          "RADIANS|DEGREES"
+        ],
+        []
+      ]
+    },
+    "loadPixels": {
+      "overloads": [
+        []
+      ]
+    },
+    "buildFilterShader": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object",
+          "Object?"
+        ]
+      ]
+    },
+    "createSlider": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "norm": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "sphere": {
+      "overloads": [
+        [
+          "Number?",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "keyReleased": {
+      "overloads": [
+        [
+          "KeyboardEvent?"
+        ]
+      ]
+    },
+    "rotateZ": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "loadBlob": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "pow": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "fullscreen": {
+      "overloads": [
+        [
+          "Boolean?"
+        ]
+      ]
+    },
+    "pointLight": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "p5.Vector"
+        ]
+      ]
+    },
+    "point": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "p5.Vector"
+        ]
+      ]
+    },
+    "alpha": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "createButton": {
+      "overloads": [
+        [
+          "String",
+          "String?"
+        ]
+      ]
+    },
+    "createFilterShader": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "endShape": {
+      "overloads": [
+        [
+          "CLOSE?",
+          "Integer?"
+        ]
+      ]
+    },
+    "set": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number|Number[]|Object"
+        ]
+      ]
+    },
+    "round": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "hex": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number[]",
+          "Number?"
+        ]
+      ]
+    },
+    "splinePoint": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "httpGet": {
+      "overloads": [
+        [
+          "String|Request",
+          "String?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Function",
+          "Function?"
+        ]
+      ]
+    },
+    "pixelDensity": {
+      "overloads": [
+        [
+          "Number?"
+        ],
+        []
+      ]
+    },
+    "imageLight": {
+      "overloads": [
+        [
+          "p5.Image"
+        ]
+      ]
+    },
+    "updatePixels": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ],
+        []
+      ]
+    },
+    "sq": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "displayDensity": {
+      "overloads": [
+        []
+      ]
+    },
+    "panorama": {
+      "overloads": [
+        [
+          "p5.Image"
+        ]
+      ]
+    },
+    "createCheckbox": {
+      "overloads": [
+        [
+          "String?",
+          "Boolean?"
+        ]
+      ]
+    },
+    "keyTyped": {
+      "overloads": [
+        [
+          "KeyboardEvent?"
+        ]
+      ]
+    },
+    "hue": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "scale": {
+      "overloads": [
+        [
+          "Number|p5.Vector|Number[]",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Vector|Number[]"
+        ]
+      ]
+    },
+    "httpPost": {
+      "overloads": [
+        [
+          "String|Request",
+          "Object|Boolean?",
+          "String?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Object|Boolean",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "unhex": {
+      "overloads": [
+        [
+          "String"
+        ],
+        [
+          "String[]"
+        ]
+      ]
+    },
+    "quad": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Integer?",
+          "Integer?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "sqrt": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "cylinder": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Integer?",
+          "Integer?",
+          "Boolean?",
+          "Boolean?"
+        ]
+      ]
+    },
+    "getURL": {
+      "overloads": [
+        []
+      ]
+    },
+    "lights": {
+      "overloads": [
+        []
+      ]
+    },
+    "fract": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "getURLPath": {
+      "overloads": [
+        []
+      ]
+    },
+    "splineTangent": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "normal": {
+      "overloads": [
+        [
+          "p5.Vector"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "image": {
+      "overloads": [
+        [
+          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture|p5.Renderer|p5.Graphics",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?",
+          "CONTAIN|COVER?",
+          "LEFT|RIGHT|CENTER?",
+          "TOP|BOTTOM|CENTER?"
+        ]
+      ]
+    },
+    "getURLParams": {
+      "overloads": [
+        []
+      ]
+    },
+    "colorMode": {
+      "overloads": [
+        [
+          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
+          "Number?"
+        ],
+        [
+          "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        []
+      ]
+    },
+    "shearX": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "lightFalloff": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "mouseMoved": {
+      "overloads": [
+        [
+          "MouseEvent?"
+        ]
+      ]
+    },
+    "mouseDragged": {
+      "overloads": [
+        [
+          "MouseEvent?"
+        ]
+      ]
+    },
+    "keyIsDown": {
+      "overloads": [
+        [
+          "Number|String"
+        ]
+      ]
+    },
+    "shader": {
+      "overloads": [
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
+    "model": {
+      "overloads": [
+        [
+          "p5.Geometry",
+          "Number?"
+        ]
+      ]
+    },
+    "setContent": {
+      "overloads": [
+        [
+          "String"
+        ]
+      ]
+    },
+    "httpDo": {
+      "overloads": [
+        [
+          "String|Request",
+          "String?",
           "String?",
           "Object?",
           "Function?",
           "Function?"
         ],
         [
-          "String",
+          "String|Request",
           "Function?",
           "Function?"
+        ]
+      ]
+    },
+    "rect": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "shearY": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "saturation": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "createSelect": {
+      "overloads": [
+        [
+          "Boolean?"
+        ],
+        [
+          "Object"
+        ]
+      ]
+    },
+    "worldToScreen": {
+      "overloads": [
+        [
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "cone": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Integer?",
+          "Integer?",
+          "Boolean?"
+        ]
+      ]
+    },
+    "createModel": {
+      "overloads": [
+        [
+          "String",
+          "String?",
+          "Boolean?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String",
+          "String?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String",
+          "String?",
+          "Object?"
+        ]
+      ]
+    },
+    "vertexProperty": {
+      "overloads": [
+        [
+          "String",
+          "Number|Number[]"
+        ]
+      ]
+    },
+    "square": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "screenToWorld": {
+      "overloads": [
+        [
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
+        ]
+      ]
+    },
+    "mousePressed": {
+      "overloads": [
+        [
+          "MouseEvent?"
+        ]
+      ]
+    },
+    "strokeShader": {
+      "overloads": [
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
+    "tint": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "brightness": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "createWriter": {
+      "overloads": [
+        [
+          "String",
+          "String?"
+        ]
+      ]
+    },
+    "spotLight": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "p5.Vector",
+          "p5.Vector",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector",
+          "p5.Vector",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "p5.Vector",
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "p5.Vector",
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Color|Number[]|String",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "translate": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "p5.Vector"
+        ]
+      ]
+    },
+    "noTint": {
+      "overloads": [
+        []
+      ]
+    },
+    "fill": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "triangle": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number",
+          "Number"
         ]
       ]
     },
@@ -2240,274 +2817,6 @@
         []
       ]
     },
-    "float": {
-      "overloads": [
-        [
-          "String"
-        ],
-        [
-          "String[]"
-        ]
-      ]
-    },
-    "int": {
-      "overloads": [
-        [
-          "String|Boolean|Number"
-        ],
-        [
-          "Array"
-        ]
-      ]
-    },
-    "str": {
-      "overloads": [
-        [
-          "String|Boolean|Number"
-        ]
-      ]
-    },
-    "boolean": {
-      "overloads": [
-        [
-          "String|Boolean|Number"
-        ],
-        [
-          "Array"
-        ]
-      ]
-    },
-    "byte": {
-      "overloads": [
-        [
-          "String|Boolean|Number"
-        ],
-        [
-          "Array"
-        ]
-      ]
-    },
-    "char": {
-      "overloads": [
-        [
-          "String|Number"
-        ],
-        [
-          "Array"
-        ]
-      ]
-    },
-    "unchar": {
-      "overloads": [
-        [
-          "String"
-        ],
-        [
-          "String[]"
-        ]
-      ]
-    },
-    "hex": {
-      "overloads": [
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number[]",
-          "Number?"
-        ]
-      ]
-    },
-    "unhex": {
-      "overloads": [
-        [
-          "String"
-        ],
-        [
-          "String[]"
-        ]
-      ]
-    },
-    "day": {
-      "overloads": [
-        []
-      ]
-    },
-    "hour": {
-      "overloads": [
-        []
-      ]
-    },
-    "minute": {
-      "overloads": [
-        []
-      ]
-    },
-    "millis": {
-      "overloads": [
-        []
-      ]
-    },
-    "month": {
-      "overloads": [
-        []
-      ]
-    },
-    "second": {
-      "overloads": [
-        []
-      ]
-    },
-    "year": {
-      "overloads": [
-        []
-      ]
-    },
-    "nf": {
-      "overloads": [
-        [
-          "Number|String",
-          "Integer|String?",
-          "Integer|String?"
-        ],
-        [
-          "Number[]",
-          "Integer|String?",
-          "Integer|String?"
-        ]
-      ]
-    },
-    "nfc": {
-      "overloads": [
-        [
-          "Number|String",
-          "Integer|String?"
-        ],
-        [
-          "Number[]",
-          "Integer|String?"
-        ]
-      ]
-    },
-    "nfp": {
-      "overloads": [
-        [
-          "Number",
-          "Integer?",
-          "Integer?"
-        ],
-        [
-          "Number[]",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "nfs": {
-      "overloads": [
-        [
-          "Number",
-          "Integer?",
-          "Integer?"
-        ],
-        [
-          "Array",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "splitTokens": {
-      "overloads": [
-        [
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "shuffle": {
-      "overloads": [
-        [
-          "Array",
-          "Boolean?"
-        ]
-      ]
-    },
-    "strokeMode": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "buildGeometry": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
-    "freeGeometry": {
-      "overloads": [
-        [
-          "p5.Geometry"
-        ]
-      ]
-    },
-    "plane": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "box": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "sphere": {
-      "overloads": [
-        [
-          "Number?",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "cylinder": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Integer?",
-          "Integer?",
-          "Boolean?",
-          "Boolean?"
-        ]
-      ]
-    },
-    "cone": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Integer?",
-          "Integer?",
-          "Boolean?"
-        ]
-      ]
-    },
     "ellipsoid": {
       "overloads": [
         [
@@ -2516,6 +2825,116 @@
           "Number?",
           "Integer?",
           "Integer?"
+        ]
+      ]
+    },
+    "noFill": {
+      "overloads": [
+        []
+      ]
+    },
+    "noLights": {
+      "overloads": [
+        []
+      ]
+    },
+    "write": {
+      "overloads": [
+        [
+          "String|Number|Array"
+        ]
+      ]
+    },
+    "lightness": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
+    "imageMode": {
+      "overloads": [
+        [
+          "CORNER|CORNERS|CENTER"
+        ]
+      ]
+    },
+    "mouseReleased": {
+      "overloads": [
+        [
+          "MouseEvent?"
+        ]
+      ]
+    },
+    "imageShader": {
+      "overloads": [
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
+    "noStroke": {
+      "overloads": [
+        []
+      ]
+    },
+    "createRadio": {
+      "overloads": [
+        [
+          "Object?"
+        ],
+        [
+          "String?"
+        ],
+        []
+      ]
+    },
+    "createVideo": {
+      "overloads": [
+        [
+          "String|String[]?",
+          "Function?"
+        ]
+      ]
+    },
+    "loadFont": {
+      "overloads": [
+        [
+          "String",
+          "String?",
+          "Object?",
+          "Function?",
+          "Function?"
+        ],
+        [
+          "String",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
+    "lerpColor": {
+      "overloads": [
+        [
+          "p5.Color",
+          "p5.Color",
+          "Number"
+        ]
+      ]
+    },
+    "createAudio": {
+      "overloads": [
+        [
+          "String|String[]?",
+          "Function?"
+        ]
+      ]
+    },
+    "paletteLerp": {
+      "overloads": [
+        [
+          "[p5.Color|String|Number|Number[], Number][]",
+          "Number"
         ]
       ]
     },
@@ -2529,403 +2948,75 @@
         ]
       ]
     },
-    "curveDetail": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "orbitControl": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Object?"
-        ]
-      ]
-    },
-    "debugMode": {
-      "overloads": [
-        [],
-        [
-          "GRID|AXES"
-        ],
-        [
-          "GRID|AXES",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "GRID|AXES",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "noDebugMode": {
+    "close": {
       "overloads": [
         []
       ]
     },
-    "ambientLight": {
+    "mouseClicked": {
       "overloads": [
         [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "specularColor": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "directionalLight": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "p5.Vector"
-        ]
-      ]
-    },
-    "pointLight": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "p5.Vector"
-        ]
-      ]
-    },
-    "imageLight": {
-      "overloads": [
-        [
-          "p5.Image"
-        ]
-      ]
-    },
-    "panorama": {
-      "overloads": [
-        [
-          "p5.Image"
-        ]
-      ]
-    },
-    "lights": {
-      "overloads": [
-        []
-      ]
-    },
-    "lightFalloff": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "spotLight": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "p5.Vector",
-          "p5.Vector",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector",
-          "p5.Vector",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "p5.Vector",
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "p5.Vector",
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "p5.Color|Number[]|String",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "noLights": {
-      "overloads": [
-        []
-      ]
-    },
-    "loadModel": {
-      "overloads": [
-        [
-          "String|Request",
-          "String?",
-          "Boolean?",
-          "function(p5.Geometry)?",
-          "function(Event)?"
-        ],
-        [
-          "String|Request",
-          "String?",
-          "function(p5.Geometry)?",
-          "function(Event)?"
-        ],
-        [
-          "String|Request",
-          "Object?"
-        ]
-      ]
-    },
-    "model": {
-      "overloads": [
-        [
-          "p5.Geometry",
-          "Number?"
-        ]
-      ]
-    },
-    "createModel": {
-      "overloads": [
-        [
-          "String",
-          "String?",
-          "Boolean?",
-          "function(p5.Geometry)?",
-          "function(Event)?"
-        ],
-        [
-          "String",
-          "String?",
-          "function(p5.Geometry)?",
-          "function(Event)?"
-        ],
-        [
-          "String",
-          "String?",
-          "Object?"
-        ]
-      ]
-    },
-    "loadShader": {
-      "overloads": [
-        [
-          "String|Request",
-          "String|Request",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "createShader": {
-      "overloads": [
-        [
-          "String",
-          "String",
-          "Object?"
-        ]
-      ]
-    },
-    "loadFilterShader": {
-      "overloads": [
-        [
-          "String",
-          "Function?",
-          "Function?"
-        ]
-      ]
-    },
-    "buildFilterShader": {
-      "overloads": [
-        [
-          "Function"
-        ],
-        [
-          "Object"
-        ]
-      ]
-    },
-    "createFilterShader": {
-      "overloads": [
-        [
-          "String"
-        ]
-      ]
-    },
-    "shader": {
-      "overloads": [
-        [
-          "p5.Shader"
-        ]
-      ]
-    },
-    "strokeShader": {
-      "overloads": [
-        [
-          "p5.Shader"
-        ]
-      ]
-    },
-    "imageShader": {
-      "overloads": [
-        [
-          "p5.Shader"
+          "MouseEvent?"
         ]
       ]
     },
     "buildMaterialShader": {
       "overloads": [
         [
-          "Function"
+          "Function",
+          "Object?"
         ],
         [
-          "Object"
+          "Object",
+          "Object?"
+        ]
+      ]
+    },
+    "createCapture": {
+      "overloads": [
+        [
+          "AUDIO|VIDEO|Object?",
+          "Object?",
+          "Function?"
+        ]
+      ]
+    },
+    "stroke": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
+    "createColorPicker": {
+      "overloads": [
+        [
+          "String|p5.Color?"
+        ]
+      ]
+    },
+    "save": {
+      "overloads": [
+        [
+          "Object|String?",
+          "String?",
+          "Boolean|String?"
         ]
       ]
     },
@@ -2938,9 +3029,32 @@
         ]
       ]
     },
+    "bezierOrder": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        []
+      ]
+    },
+    "doubleClicked": {
+      "overloads": [
+        [
+          "MouseEvent?"
+        ]
+      ]
+    },
     "baseMaterialShader": {
       "overloads": [
         []
+      ]
+    },
+    "erase": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?"
+        ]
       ]
     },
     "baseFilterShader": {
@@ -2948,14 +3062,66 @@
         []
       ]
     },
+    "noErase": {
+      "overloads": [
+        []
+      ]
+    },
+    "createInput": {
+      "overloads": [
+        [
+          "String?",
+          "String?"
+        ],
+        [
+          "String?"
+        ]
+      ]
+    },
+    "saveJSON": {
+      "overloads": [
+        [
+          "Array|Object",
+          "String",
+          "Boolean?"
+        ]
+      ]
+    },
     "buildNormalShader": {
       "overloads": [
         [
-          "Function"
+          "Function",
+          "Object?"
         ],
         [
-          "Object"
+          "Object",
+          "Object?"
         ]
+      ]
+    },
+    "mouseWheel": {
+      "overloads": [
+        [
+          "WheelEvent?"
+        ]
+      ]
+    },
+    "pop": {
+      "overloads": [
+        []
+      ]
+    },
+    "createFileInput": {
+      "overloads": [
+        [
+          "Function",
+          "Boolean?"
+        ]
+      ]
+    },
+    "requestPointerLock": {
+      "overloads": [
+        []
       ]
     },
     "loadNormalShader": {
@@ -2972,13 +3138,65 @@
         []
       ]
     },
+    "exitPointerLock": {
+      "overloads": [
+        []
+      ]
+    },
+    "saveStrings": {
+      "overloads": [
+        [
+          "String[]",
+          "String",
+          "String?",
+          "Boolean?"
+        ]
+      ]
+    },
     "buildColorShader": {
       "overloads": [
         [
-          "Function"
+          "Function",
+          "Object?"
         ],
         [
-          "Object"
+          "Object",
+          "Object?"
+        ]
+      ]
+    },
+    "splineVertex": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "saveTable": {
+      "overloads": [
+        [
+          "p5.Table",
+          "String",
+          "String?"
         ]
       ]
     },
@@ -2996,13 +3214,69 @@
         []
       ]
     },
-    "buildStrokeShader": {
+    "setAttributes": {
       "overloads": [
         [
-          "Function"
+          "String",
+          "Boolean"
         ],
         [
           "Object"
+        ]
+      ]
+    },
+    "blendMode": {
+      "overloads": [
+        [
+          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
+        ]
+      ]
+    },
+    "camera": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "buildStrokeShader": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object",
+          "Object?"
+        ]
+      ]
+    },
+    "splineProperty": {
+      "overloads": [
+        [
+          "String",
+          null
+        ],
+        [
+          "String"
+        ]
+      ]
+    },
+    "perspective": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
         ]
       ]
     },
@@ -3020,9 +3294,36 @@
         []
       ]
     },
+    "splineProperties": {
+      "overloads": [
+        [
+          "Object"
+        ]
+      ]
+    },
+    "linePerspective": {
+      "overloads": [
+        [
+          "Boolean"
+        ],
+        []
+      ]
+    },
     "resetShader": {
       "overloads": [
         []
+      ]
+    },
+    "ortho": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
       ]
     },
     "texture": {
@@ -3032,10 +3333,74 @@
         ]
       ]
     },
+    "vertex": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "frustum": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "curveDetail": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "createCamera": {
+      "overloads": [
+        []
+      ]
+    },
+    "beginContour": {
+      "overloads": [
+        []
+      ]
+    },
     "textureMode": {
       "overloads": [
         [
           "IMAGE|NORMAL"
+        ]
+      ]
+    },
+    "setCamera": {
+      "overloads": [
+        [
+          "p5.Camera"
+        ]
+      ]
+    },
+    "endContour": {
+      "overloads": [
+        [
+          "OPEN|CLOSE?"
         ]
       ]
     },
@@ -3111,195 +3476,6 @@
       "overloads": [
         [
           "Number"
-        ]
-      ]
-    },
-    "roll": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "camera": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "perspective": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "linePerspective": {
-      "overloads": [
-        [
-          "Boolean"
-        ],
-        []
-      ]
-    },
-    "ortho": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "frustum": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "createCamera": {
-      "overloads": [
-        []
-      ]
-    },
-    "setCamera": {
-      "overloads": [
-        [
-          "p5.Camera"
-        ]
-      ]
-    },
-    "saveObj": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "saveStl": {
-      "overloads": [
-        [
-          "String?",
-          "Object?"
-        ]
-      ]
-    },
-    "fromAxisAngle": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "mult": {
-      "overloads": [
-        [
-          "p5.Quat?"
-        ]
-      ]
-    },
-    "rotateBy": {
-      "overloads": [
-        [
-          "p5.Quat?"
-        ]
-      ]
-    },
-    "setAttributes": {
-      "overloads": [
-        [
-          "String",
-          "Boolean"
-        ],
-        [
-          "Object"
-        ]
-      ]
-    }
-  },
-  "p5.Color": {
-    "toString": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "contrast": {
-      "overloads": [
-        [
-          "Color"
-        ]
-      ]
-    },
-    "setRed": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "setGreen": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "setBlue": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "setAlpha": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    }
-  },
-  "p5.Graphics": {
-    "reset": {
-      "overloads": [
-        []
-      ]
-    },
-    "remove": {
-      "overloads": [
-        []
-      ]
-    },
-    "createFramebuffer": {
-      "overloads": [
-        [
-          "Object?"
         ]
       ]
     }
@@ -3550,510 +3726,6 @@
       ]
     }
   },
-  "p5.MediaElement": {
-    "play": {
-      "overloads": [
-        []
-      ]
-    },
-    "stop": {
-      "overloads": [
-        []
-      ]
-    },
-    "pause": {
-      "overloads": [
-        []
-      ]
-    },
-    "loop": {
-      "overloads": [
-        []
-      ]
-    },
-    "noLoop": {
-      "overloads": [
-        []
-      ]
-    },
-    "autoplay": {
-      "overloads": [
-        [
-          "Boolean?"
-        ]
-      ]
-    },
-    "volume": {
-      "overloads": [
-        [],
-        [
-          "Number"
-        ]
-      ]
-    },
-    "speed": {
-      "overloads": [
-        [],
-        [
-          "Number"
-        ]
-      ]
-    },
-    "time": {
-      "overloads": [
-        [
-          "Number?"
-        ]
-      ]
-    },
-    "duration": {
-      "overloads": [
-        []
-      ]
-    },
-    "onended": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
-    "connect": {
-      "overloads": [
-        [
-          "AudioNode|Object"
-        ]
-      ]
-    },
-    "disconnect": {
-      "overloads": [
-        []
-      ]
-    },
-    "showControls": {
-      "overloads": [
-        []
-      ]
-    },
-    "hideControls": {
-      "overloads": [
-        []
-      ]
-    },
-    "addCue": {
-      "overloads": [
-        [
-          "Number",
-          "Function",
-          "Object?"
-        ]
-      ]
-    },
-    "removeCue": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "clearCues": {
-      "overloads": [
-        []
-      ]
-    }
-  },
-  "p5.Image": {
-    "pixelDensity": {
-      "overloads": [
-        [
-          "Number?"
-        ]
-      ]
-    },
-    "loadPixels": {
-      "overloads": [
-        []
-      ]
-    },
-    "updatePixels": {
-      "overloads": [
-        [
-          "Integer?",
-          "Integer?",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [],
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "set": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number|Number[]|Object"
-        ]
-      ]
-    },
-    "resize": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "copy": {
-      "overloads": [
-        [
-          "p5.Image|p5.Element",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
-        ],
-        [
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer"
-        ]
-      ]
-    },
-    "mask": {
-      "overloads": [
-        [
-          "p5.Image"
-        ]
-      ]
-    },
-    "filter": {
-      "overloads": [
-        [
-          "THRESHOLD|GRAY|OPAQUE|INVERT|POSTERIZE|ERODE|DILATE|BLUR",
-          "Number?"
-        ]
-      ]
-    },
-    "blend": {
-      "overloads": [
-        [
-          "p5.Image",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL"
-        ],
-        [
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "Integer",
-          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL"
-        ]
-      ]
-    },
-    "save": {
-      "overloads": [
-        [
-          "String",
-          "String?"
-        ]
-      ]
-    },
-    "reset": {
-      "overloads": [
-        []
-      ]
-    },
-    "getCurrentFrame": {
-      "overloads": [
-        []
-      ]
-    },
-    "setFrame": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "numFrames": {
-      "overloads": [
-        []
-      ]
-    },
-    "play": {
-      "overloads": [
-        []
-      ]
-    },
-    "pause": {
-      "overloads": [
-        []
-      ]
-    },
-    "delay": {
-      "overloads": [
-        [
-          "Number",
-          "Number?"
-        ]
-      ]
-    }
-  },
-  "p5.Table": {
-    "addRow": {
-      "overloads": [
-        [
-          "p5.TableRow?"
-        ]
-      ]
-    },
-    "removeRow": {
-      "overloads": [
-        [
-          "Integer"
-        ]
-      ]
-    },
-    "getRow": {
-      "overloads": [
-        [
-          "Integer"
-        ]
-      ]
-    },
-    "getRows": {
-      "overloads": [
-        []
-      ]
-    },
-    "findRow": {
-      "overloads": [
-        [
-          "String",
-          "Integer|String"
-        ]
-      ]
-    },
-    "findRows": {
-      "overloads": [
-        [
-          "String",
-          "Integer|String"
-        ]
-      ]
-    },
-    "matchRow": {
-      "overloads": [
-        [
-          "String|RegExp",
-          "String|Integer"
-        ]
-      ]
-    },
-    "matchRows": {
-      "overloads": [
-        [
-          "String",
-          "String|Integer?"
-        ]
-      ]
-    },
-    "getColumn": {
-      "overloads": [
-        [
-          "String|Number"
-        ]
-      ]
-    },
-    "clearRows": {
-      "overloads": [
-        []
-      ]
-    },
-    "addColumn": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "getColumnCount": {
-      "overloads": [
-        []
-      ]
-    },
-    "getRowCount": {
-      "overloads": [
-        []
-      ]
-    },
-    "removeTokens": {
-      "overloads": [
-        [
-          "String",
-          "String|Integer?"
-        ]
-      ]
-    },
-    "trim": {
-      "overloads": [
-        [
-          "String|Integer?"
-        ]
-      ]
-    },
-    "removeColumn": {
-      "overloads": [
-        [
-          "String|Integer"
-        ]
-      ]
-    },
-    "set": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "String|Number"
-        ]
-      ]
-    },
-    "setNum": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "Number"
-        ]
-      ]
-    },
-    "setString": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer",
-          "String"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getNum": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getString": {
-      "overloads": [
-        [
-          "Integer",
-          "String|Integer"
-        ]
-      ]
-    },
-    "getObject": {
-      "overloads": [
-        [
-          "String?"
-        ]
-      ]
-    },
-    "getArray": {
-      "overloads": [
-        []
-      ]
-    }
-  },
-  "p5.TableRow": {
-    "set": {
-      "overloads": [
-        [
-          "String|Integer",
-          "String|Number"
-        ]
-      ]
-    },
-    "setNum": {
-      "overloads": [
-        [
-          "String|Integer",
-          "Number|String"
-        ]
-      ]
-    },
-    "setString": {
-      "overloads": [
-        [
-          "String|Integer",
-          "String|Number|Boolean|Object"
-        ]
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "String|Integer"
-        ]
-      ]
-    },
-    "getNum": {
-      "overloads": [
-        [
-          "String|Integer"
-        ]
-      ]
-    },
-    "getString": {
-      "overloads": [
-        [
-          "String|Integer"
-        ]
-      ]
-    }
-  },
   "p5.XML": {
     "getParent": {
       "overloads": [
@@ -4161,6 +3833,53 @@
     "serialize": {
       "overloads": [
         []
+      ]
+    }
+  },
+  "p5.TableRow": {
+    "set": {
+      "overloads": [
+        [
+          "String|Integer",
+          "String|Number"
+        ]
+      ]
+    },
+    "setNum": {
+      "overloads": [
+        [
+          "String|Integer",
+          "Number|String"
+        ]
+      ]
+    },
+    "setString": {
+      "overloads": [
+        [
+          "String|Integer",
+          "String|Number|Boolean|Object"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "getNum": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "getString": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
       ]
     }
   },
@@ -4474,6 +4193,455 @@
       ]
     }
   },
+  "p5.Shader": {
+    "version": {
+      "overloads": [
+        []
+      ]
+    },
+    "inspectHooks": {
+      "overloads": [
+        []
+      ]
+    },
+    "modify": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object?"
+        ]
+      ]
+    },
+    "copyToContext": {
+      "overloads": [
+        [
+          "p5|p5.Graphics"
+        ]
+      ]
+    },
+    "setUniform": {
+      "overloads": [
+        [
+          "String",
+          "Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture"
+        ]
+      ]
+    }
+  },
+  "p5.Table": {
+    "addRow": {
+      "overloads": [
+        [
+          "p5.TableRow?"
+        ]
+      ]
+    },
+    "removeRow": {
+      "overloads": [
+        [
+          "Integer"
+        ]
+      ]
+    },
+    "getRow": {
+      "overloads": [
+        [
+          "Integer"
+        ]
+      ]
+    },
+    "getRows": {
+      "overloads": [
+        []
+      ]
+    },
+    "findRow": {
+      "overloads": [
+        [
+          "String",
+          "Integer|String"
+        ]
+      ]
+    },
+    "findRows": {
+      "overloads": [
+        [
+          "String",
+          "Integer|String"
+        ]
+      ]
+    },
+    "matchRow": {
+      "overloads": [
+        [
+          "String|RegExp",
+          "String|Integer"
+        ]
+      ]
+    },
+    "matchRows": {
+      "overloads": [
+        [
+          "String",
+          "String|Integer?"
+        ]
+      ]
+    },
+    "getColumn": {
+      "overloads": [
+        [
+          "String|Number"
+        ]
+      ]
+    },
+    "clearRows": {
+      "overloads": [
+        []
+      ]
+    },
+    "addColumn": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "getColumnCount": {
+      "overloads": [
+        []
+      ]
+    },
+    "getRowCount": {
+      "overloads": [
+        []
+      ]
+    },
+    "removeTokens": {
+      "overloads": [
+        [
+          "String",
+          "String|Integer?"
+        ]
+      ]
+    },
+    "trim": {
+      "overloads": [
+        [
+          "String|Integer?"
+        ]
+      ]
+    },
+    "removeColumn": {
+      "overloads": [
+        [
+          "String|Integer"
+        ]
+      ]
+    },
+    "set": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "String|Number"
+        ]
+      ]
+    },
+    "setNum": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "Number"
+        ]
+      ]
+    },
+    "setString": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer",
+          "String"
+        ]
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getNum": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getString": {
+      "overloads": [
+        [
+          "Integer",
+          "String|Integer"
+        ]
+      ]
+    },
+    "getObject": {
+      "overloads": [
+        [
+          "String?"
+        ]
+      ]
+    },
+    "getArray": {
+      "overloads": [
+        []
+      ]
+    }
+  },
+  "p5.MediaElement": {
+    "play": {
+      "overloads": [
+        []
+      ]
+    },
+    "stop": {
+      "overloads": [
+        []
+      ]
+    },
+    "pause": {
+      "overloads": [
+        []
+      ]
+    },
+    "loop": {
+      "overloads": [
+        []
+      ]
+    },
+    "noLoop": {
+      "overloads": [
+        []
+      ]
+    },
+    "autoplay": {
+      "overloads": [
+        [
+          "Boolean?"
+        ]
+      ]
+    },
+    "volume": {
+      "overloads": [
+        [],
+        [
+          "Number"
+        ]
+      ]
+    },
+    "speed": {
+      "overloads": [
+        [],
+        [
+          "Number"
+        ]
+      ]
+    },
+    "time": {
+      "overloads": [
+        [
+          "Number?"
+        ]
+      ]
+    },
+    "duration": {
+      "overloads": [
+        []
+      ]
+    },
+    "onended": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "connect": {
+      "overloads": [
+        [
+          "AudioNode|Object"
+        ]
+      ]
+    },
+    "disconnect": {
+      "overloads": [
+        []
+      ]
+    },
+    "showControls": {
+      "overloads": [
+        []
+      ]
+    },
+    "hideControls": {
+      "overloads": [
+        []
+      ]
+    },
+    "addCue": {
+      "overloads": [
+        [
+          "Number",
+          "Function",
+          "Object?"
+        ]
+      ]
+    },
+    "removeCue": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
+    "clearCues": {
+      "overloads": [
+        []
+      ]
+    }
+  },
+  "p5.Geometry": {
+    "calculateBoundingBox": {
+      "overloads": [
+        []
+      ]
+    },
+    "clearColors": {
+      "overloads": [
+        []
+      ]
+    },
+    "flipU": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "computeNormals": {
+      "overloads": [
+        [
+          "FLAT|SMOOTH?",
+          "Object?"
+        ]
+      ]
+    },
+    "makeEdgesFromFaces": {
+      "overloads": [
+        []
+      ]
+    },
+    "normalize": {
+      "overloads": [
+        []
+      ]
+    },
+    "vertexProperty": {
+      "overloads": [
+        [
+          "String",
+          "Number|Number[]",
+          "Number?"
+        ]
+      ]
+    },
+    "flipV": {
+      "overloads": [
+        []
+      ]
+    }
+  },
+  "p5.Framebuffer": {
+    "resize": {
+      "overloads": [
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    },
+    "pixelDensity": {
+      "overloads": [
+        [
+          "Number?"
+        ]
+      ]
+    },
+    "autoSized": {
+      "overloads": [
+        [
+          "Boolean?"
+        ]
+      ]
+    },
+    "createCamera": {
+      "overloads": [
+        []
+      ]
+    },
+    "remove": {
+      "overloads": [
+        []
+      ]
+    },
+    "begin": {
+      "overloads": [
+        []
+      ]
+    },
+    "end": {
+      "overloads": [
+        []
+      ]
+    },
+    "draw": {
+      "overloads": [
+        [
+          "Function"
+        ]
+      ]
+    },
+    "loadPixels": {
+      "overloads": [
+        []
+      ]
+    },
+    "get": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number"
+        ],
+        [],
+        [
+          "Number",
+          "Number"
+        ]
+      ]
+    }
+  },
   "p5.Camera": {
     "perspective": {
       "overloads": [
@@ -4582,30 +4750,8 @@
       ]
     }
   },
-  "p5.Framebuffer": {
-    "resize": {
-      "overloads": [
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    },
-    "pixelDensity": {
-      "overloads": [
-        [
-          "Number?"
-        ]
-      ]
-    },
-    "autoSized": {
-      "overloads": [
-        [
-          "Boolean?"
-        ]
-      ]
-    },
-    "createCamera": {
+  "p5.Graphics": {
+    "reset": {
       "overloads": [
         []
       ]
@@ -4615,132 +4761,10 @@
         []
       ]
     },
-    "begin": {
+    "createFramebuffer": {
       "overloads": [
-        []
-      ]
-    },
-    "end": {
-      "overloads": [
-        []
-      ]
-    },
-    "draw": {
-      "overloads": [
-        [
-          "Function"
-        ]
-      ]
-    },
-    "loadPixels": {
-      "overloads": [
-        []
-      ]
-    },
-    "get": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number"
-        ],
-        [],
-        [
-          "Number",
-          "Number"
-        ]
-      ]
-    }
-  },
-  "p5.Geometry": {
-    "calculateBoundingBox": {
-      "overloads": [
-        []
-      ]
-    },
-    "clearColors": {
-      "overloads": [
-        []
-      ]
-    },
-    "flipU": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "computeNormals": {
-      "overloads": [
-        [
-          "FLAT|SMOOTH?",
-          "Object?"
-        ]
-      ]
-    },
-    "makeEdgesFromFaces": {
-      "overloads": [
-        []
-      ]
-    },
-    "normalize": {
-      "overloads": [
-        []
-      ]
-    },
-    "vertexProperty": {
-      "overloads": [
-        [
-          "String",
-          "Number|Number[]",
-          "Number?"
-        ]
-      ]
-    },
-    "flipV": {
-      "overloads": [
-        []
-      ]
-    }
-  },
-  "p5.Shader": {
-    "version": {
-      "overloads": [
-        []
-      ]
-    },
-    "inspectHooks": {
-      "overloads": [
-        []
-      ]
-    },
-    "modify": {
-      "overloads": [
-        [
-          "Function",
-          "Object?"
-        ],
         [
           "Object?"
-        ]
-      ]
-    },
-    "copyToContext": {
-      "overloads": [
-        [
-          "p5|p5.Graphics"
-        ]
-      ]
-    },
-    "setUniform": {
-      "overloads": [
-        [
-          "String",
-          "Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture"
         ]
       ]
     }

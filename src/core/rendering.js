@@ -607,9 +607,9 @@ function rendering(p5, fn){
 
   /**
    * A system variable that provides direct access to the sketch's
-   * `&lt;canvas&gt;` element.
+   * `<canvas>` element.
    *
-   * The `&lt;canvas&gt;` element provides many specialized features that aren't
+   * The `<canvas>` element provides many specialized features that aren't
    * included in the p5.js library. The `drawingContext` system variable
    * provides access to these features by exposing the sketch's
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>

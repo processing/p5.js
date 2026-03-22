@@ -1799,6 +1799,17 @@ class Camera {
 
     _cam.cameraType = this.cameraType;
 
+    _cam.defaultAspectRatio = this.defaultAspectRatio;
+    _cam.defaultEyeX = this.defaultEyeX;
+    _cam.defaultEyeY = this.defaultEyeY;
+    _cam.defaultEyeZ = this.defaultEyeZ;
+    _cam.defaultCameraFOV = this.defaultCameraFOV;
+    _cam.defaultCenterX = this.defaultCenterX;
+    _cam.defaultCenterY = this.defaultCenterY;
+    _cam.defaultCenterZ = this.defaultCenterZ;
+    _cam.defaultCameraNear = this.defaultCameraNear;
+    _cam.defaultCameraFar = this.defaultCameraFar;
+
     return _cam;
   }
 

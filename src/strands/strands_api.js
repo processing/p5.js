@@ -53,32 +53,45 @@ function _getBuiltinGlobalsCache(strandsContext) {
   return strandsContext._builtinGlobals
 }
 
-function getBuiltinGlobalNode(strandsContext, name) {
-  const spec = BUILTIN_GLOBAL_SPECS[name]
-  if (!spec) return null
-  
-  const cache = _getBuiltinGlobalsCache(strandsContext)
-  const uniformName = `_p5_global_${name}`
-  const cached = cache.nodes.get(uniformName)
-  if (cached) return cached
+function getOrCreateUniformNode(strandsContext, uniformName, typeInfo, defaultValueFn) {
+  const cache = _getBuiltinGlobalsCache(strandsContext);
+
+  const cached = cache.nodes.get(uniformName);
+  if (cached) return cached;
 
   if (!cache.uniformsAdded.has(uniformName)) {
-    cache.uniformsAdded.add(uniformName)
+    cache.uniformsAdded.add(uniformName);
     strandsContext.uniforms.push({
       name: uniformName,
-      typeInfo: spec.typeInfo,
-      defaultValue: () => {
-        const p5Instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance
-        return p5Instance ? spec.get(p5Instance) : undefined
-      },
-    })
+      typeInfo,
+      defaultValue: defaultValueFn,
+    });
   }
 
-  const { id, dimension } = build.variableNode(strandsContext, spec.typeInfo, uniformName)
-  const node = createStrandsNode(id, dimension, strandsContext)
-  node._originalBuiltinName = name
-  cache.nodes.set(uniformName, node)
-  return node
+  const { id, dimension } = build.variableNode(strandsContext, typeInfo, uniformName);
+  const node = createStrandsNode(id, dimension, strandsContext);
+  cache.nodes.set(uniformName, node);
+  return node;
+}
+
+function getBuiltinGlobalNode(strandsContext, name) {
+  const spec = BUILTIN_GLOBAL_SPECS[name];
+  if (!spec) return null;
+
+  const uniformName = `_p5_global_${name}`;
+  const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const node = getOrCreateUniformNode(
+    strandsContext,
+    uniformName,
+    spec.typeInfo,
+    () => {
+      return instance ? spec.get(instance) : undefined;
+    }
+  );
+
+  node._originalBuiltinName = name;
+  return node;
 }
 
 function installBuiltinGlobalAccessors(strandsContext) {
@@ -99,6 +112,42 @@ function installBuiltinGlobalAccessors(strandsContext) {
     })
   }
   strandsContext._builtinGlobalsAccessorsInstalled = true
+}
+
+//////////////////////////////////////////////
+// Prototype mirroring helpers
+//////////////////////////////////////////////
+
+/*
+ * Permanently augment both p5.prototype (fn) and p5.Graphics.prototype
+ * with a strands function. Overwrites unconditionally - strands wrappers
+ * are the correct dual mode implementation.
+ */
+function augmentFn(fn, p5, name, value) {
+  fn[name] = value;
+  const GraphicsProto = p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    GraphicsProto[name] = value;
+  }
+}
+
+/*
+ * Temporarily augment window, p5.prototype (fn), and p5.Graphics.prototype
+ * with a hook function. Saves previous values into strandsContext override
+ * stores so deinitStrandsContext can restore them.
+ */
+function augmentFnTemporary(fn, strandsContext, name, value) {
+  strandsContext.windowOverrides[name] = window[name];
+  strandsContext.fnOverrides[name] = fn[name];
+  window[name] = value;
+  fn[name] = value;
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    strandsContext.graphicsOverrides[name] = Object.prototype.hasOwnProperty.call(GraphicsProto, name)
+      ? GraphicsProto[name]
+      : undefined;
+    GraphicsProto[name] = value;
+  }
 }
 
 //////////////////////////////////////////////
@@ -124,27 +173,27 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
-  fn.discard = function() {
+  augmentFn(fn, p5, 'discard', function() {
     build.statementNode(strandsContext, StatementType.DISCARD);
-  }
-  fn.break = function() {
+  });
+  augmentFn(fn, p5, 'break', function() {
     build.statementNode(strandsContext, StatementType.BREAK);
-  };
+  });
   p5.break = fn.break;
-  fn.instanceID = function() {
+  augmentFn(fn, p5, 'instanceID', function() {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
     return createStrandsNode(node.id, node.dimension, strandsContext);
-  }
+  });
   // Internal methods use p5 static methods; user-facing methods use fn.
   // Some methods need to be used by both.
   p5.strandsIf = function(conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   }
-  fn.strandsIf = p5.strandsIf;
+  augmentFn(fn, p5, 'strandsIf', p5.strandsIf);
   p5.strandsFor = function(initialCb, conditionCb, updateCb, bodyCb, initialVars) {
     return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
   };
-  fn.strandsFor = p5.strandsFor;
+  augmentFn(fn, p5, 'strandsFor', p5.strandsFor);
   p5.strandsEarlyReturn = function(value) {
     const { dag, cfg } = strandsContext;
 
@@ -154,7 +203,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
 
     // Convert value to a StrandsNode if it isn't already
-    const valueNode = value instanceof StrandsNode ? value : p5.strandsNode(value);
+    const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
 
     // Create a new CFG block for the early return
     const earlyReturnBlockID = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
@@ -177,7 +226,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     return valueNode;
   };
-  fn.strandsEarlyReturn = p5.strandsEarlyReturn;
+  augmentFn(fn, p5, 'strandsEarlyReturn', p5.strandsEarlyReturn);
   p5.strandsNode = function(...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
       return args[0];
@@ -185,7 +234,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (args.length > 4) {
       FES.userError("type error", "It looks like you've tried to construct a p5.strands node implicitly, with more than 4 components. This is currently not supported.")
     }
-    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, args.flat());
+    // Filter out undefined/null values
+    const flatArgs = args.flat();
+    const definedArgs = flatArgs.filter(a => a !== undefined && a !== null);
+
+    // If all args are undefined, this is likely a `let myVar` at the
+    // start of an if statement and it will be assigned within the branches.
+    // For that, we use an assign-on-use node, meaning we'll take the type of the
+    // values assigned to it.
+    if (definedArgs.length === 0) {
+      const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.ASSIGN_ON_USE, dimension: null }, [0]);
+      return createStrandsNode(id, dimension, strandsContext);
+    }
+
+    const { id, dimension } = build.primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, definedArgs);
     return createStrandsNode(id, dimension, strandsContext);//new StrandsNode(id, dimension, strandsContext);
   }
   //////////////////////////////////////////////
@@ -195,16 +257,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
-      fn[functionName] = function(...args) {
+      augmentFn(fn, p5, functionName, function(...args) {
         if (strandsContext.active) {
           const { id, dimension } =  build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
         } else {
           return originalFn.apply(this, args);
         }
-      }
+      });
     } else {
-      fn[functionName] = function (...args) {
+      augmentFn(fn, p5, functionName, function (...args) {
         if (strandsContext.active) {
           const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
@@ -213,11 +275,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
             `It looks like you've called ${functionName} outside of a shader's modify() function.`
           )
         }
-      }
+      });
     }
   }
 
-  fn.getTexture = function (...rawArgs) {
+  augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
       return createStrandsNode(id, dimension, strandsContext);
@@ -226,35 +288,36 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         `It looks like you've called getTexture outside of a shader's modify() function.`
       )
     }
-  }
+  });
 
   // Add texture function as alias for getTexture with p5 fallback
   const originalTexture = fn.texture;
-  fn.texture = function (...args) {
+  augmentFn(fn, p5, 'texture', function (...args) {
     if (strandsContext.active) {
       return this.getTexture(...args);
     } else {
       return originalTexture.apply(this, args);
     }
-  }
+  });
 
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
+  const originalMillis = fn.millis;
 
   strandsContext._noiseOctaves = null;
   strandsContext._noiseAmpFalloff = null;
 
-  fn.noiseDetail = function (lod, falloff = 0.5) {
+  augmentFn(fn, p5, 'noiseDetail', function (lod, falloff = 0.5) {
     if (!strandsContext.active) {
       return originalNoiseDetail.apply(this, arguments);
     }
 
     strandsContext._noiseOctaves = lod;
     strandsContext._noiseAmpFalloff = falloff;
-  };
+  });
 
-  fn.noise = function (...args) {
+  augmentFn(fn, p5, 'noise', function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
@@ -301,14 +364,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
-  };
+  });
+
+  augmentFn(fn, p5, 'millis', function (...args) {
+    if (!strandsContext.active) {
+      return originalMillis.apply(this, args);
+    }
+    const instance = strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+    return getOrCreateUniformNode(
+      strandsContext,
+      '_p5_global_millis',
+      DataType.float1,
+      () => {
+        return instance ? instance.millis() : undefined;
+      }
+    );
+  });
 
   // Next is type constructors and uniform functions.
   // For some of them, we have aliases so that you can write either a more human-readable
   // variant or also one more directly translated from GLSL, or to be more compatible with
   // APIs we documented at the release of 2.x and have to continue supporting.
   for (const type in DataType) {
-    if (type === BaseType.DEFER || type === 'sampler') {
+    if (type === BaseType.DEFER || type === BaseType.ASSIGN_ON_USE || type === 'sampler') {
       continue;
     }
     const typeInfo = DataType[type];
@@ -330,13 +408,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
       }
     }
-    fn[`uniform${pascalTypeName}`] = function(name, defaultValue) {
+    augmentFn(fn, p5, `uniform${pascalTypeName}`, function(name, defaultValue) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
       strandsContext.uniforms.push({ name, typeInfo, defaultValue });
       return createStrandsNode(id, dimension, strandsContext);
-    };
+    });
     // Shared variables with smart context detection
-    fn[`shared${pascalTypeName}`] = function(name) {
+    augmentFn(fn, p5, `shared${pascalTypeName}`, function(name) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
 
       // Initialize shared variables tracking if not present
@@ -349,32 +427,36 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeInfo,
         usedInVertex: false,
         usedInFragment: false,
-        declared: false
       });
 
       return createStrandsNode(id, dimension, strandsContext);
-    };
+    });
 
     // Alias varying* as shared* for backward compatibility
-    fn[`varying${pascalTypeName}`] = fn[`shared${pascalTypeName}`];
+    augmentFn(fn, p5, `varying${pascalTypeName}`, fn[`shared${pascalTypeName}`]);
 
     for (const typeAlias of typeAliases) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
-      fn[`uniform${typeAlias}`] = fn[`uniform${pascalTypeName}`];
-      fn[`varying${typeAlias}`] = fn[`varying${pascalTypeName}`];
-      fn[`shared${typeAlias}`] = fn[`shared${pascalTypeName}`];
+      augmentFn(fn, p5, `uniform${typeAlias}`, fn[`uniform${pascalTypeName}`]);
+      augmentFn(fn, p5, `varying${typeAlias}`, fn[`varying${pascalTypeName}`]);
+      augmentFn(fn, p5, `shared${typeAlias}`, fn[`shared${pascalTypeName}`]);
     }
     const originalp5Fn = fn[typeInfo.fnName];
-    fn[typeInfo.fnName] = function(...args) {
+    augmentFn(fn, p5, typeInfo.fnName, function(...args) {
       if (strandsContext.active) {
         if (args.length === 1 && args[0].dimension && args[0].dimension === typeInfo.dimension) {
-          const { id, dimension } = build.functionCallNode(strandsContext, typeInfo.fnName, args, {
-            overloads: [{
-              params: [args[0].typeInfo()],
-              returnType: typeInfo,
-            }]
-          });
+          const { id, dimension } = build.functionCallNode(
+            strandsContext,
+            strandsContext.backend.getTypeName(typeInfo.baseType, typeInfo.dimension),
+            args,
+            {
+              overloads: [{
+                params: [args[0].typeInfo()],
+                returnType: typeInfo,
+              }]
+            }
+          );
           return createStrandsNode(id, dimension, strandsContext);
         } else {
           // For vector types with a single argument, repeat it for each component
@@ -393,7 +475,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
         );
       }
-    }
+    });
   }
 }
 //////////////////////////////////////////////
@@ -431,7 +513,7 @@ function createHookArguments(strandsContext, parameters){
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
-            if (val instanceof StrandsNode) {
+            if (val?.isStrandsNode) {
               newValueID = val.id;
             }
             else {
@@ -463,7 +545,7 @@ function createHookArguments(strandsContext, parameters){
   return args;
 }
 function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName) {
-  if (!(returned instanceof StrandsNode)) {
+  if (!(returned?.isStrandsNode)) {
     // try {
       const result = build.primitiveConstructorNode(strandsContext, expectedType, returned);
       return result.id;
@@ -578,7 +660,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       const handleRetVal = (retNode) => {
         if(isStructType(expectedReturnType)) {
           const expectedStructType = structType(expectedReturnType);
-          if (retNode instanceof StrandsNode) {
+          if (retNode?.isStrandsNode) {
             const returnedNode = getNodeDataFromID(strandsContext.dag, retNode.id);
             if (returnedNode.baseType !== expectedStructType.typeName) {
               const receivedTypeName = returnedNode.baseType || 'undefined';
@@ -676,10 +758,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     }
 
     for (const name of aliases) {
-      strandsContext.windowOverrides[name] = window[name];
-      strandsContext.fnOverrides[name] = fn[name];
-      window[name] = hook;
-      fn[name] = hook;
+      augmentFnTemporary(fn, strandsContext, name, hook);
     }
     hook.earlyReturns = [];
   }

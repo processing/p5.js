@@ -121,7 +121,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
         const currentTotalBuffers = poolForVertexBuffer.length +
           (immediateGeom._vertexBuffersInUse?.vertexBuffer?.length || 0);
 
-        expect(currentTotalBuffers).to.equal(initialTotalBuffers, 
+        expect(currentTotalBuffers).to.equal(initialTotalBuffers,
           `Buffer count should stay constant across frames (frame ${frame})`);
       }
     });
@@ -139,11 +139,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
               try {
                 await p.createCanvas(100, 100, p.WEBGPU);
 
-                // This triggers an asynchronous _resetContext
-                p.setAttributes({ antialias: true });
+                await p.setAttributes({ antialias: true });
 
-                // This triggers a synchronous resize() -> _updateSize()
-                // before the new renderer's device is ready.
                 expect(() => {
                   p.pixelDensity(1);
                 }).not.toThrow();
