@@ -132,7 +132,7 @@ export class Renderer3D extends Renderer {
     this.states._useShininess = 1;
     this.states._useMetalness = 0;
 
-    this.states.tint = new Color([255, 255, 255, 255]);
+    this.states.tint = new Color([1, 1, 1, 1]);
 
     this.states.constantAttenuation = 1;
     this.states.linearAttenuation = 0;
@@ -721,7 +721,7 @@ export class Renderer3D extends Renderer {
     this.states.setValue("enableLighting", false);
 
     //reset tint value for new frame
-    this.states.setValue("tint", new Color([255, 255, 255, 255]));
+    this.states.setValue("tint", new Color([1,1,1,1]));
 
     //Clear depth every frame
     this._resetBuffersBeforeDraw();

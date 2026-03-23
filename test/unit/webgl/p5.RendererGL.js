@@ -1492,7 +1492,7 @@ suite('p5.RendererGL', function() {
   suite('tint() in WEBGL mode', function() {
     test('default tint value is set and not null', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer.states.tint.array(), [255, 255, 255, 255]);
+      assert.deepEqual(myp5._renderer.states.tint.array(), [1,1,1,1]);
     });
 
 
@@ -1503,7 +1503,7 @@ suite('p5.RendererGL', function() {
         if (typeof actual === 'string' && typeof expected === 'string') {
           assert.equal(actual, expected);
         } else {
-          assert.equal(actual.toString(), myp5.color(expected).toString());
+          assert.deepEqual(actual, myp5.color(expected).array());
         }
       }
       myp5.createCanvas(100, 100, myp5.WEBGL);
@@ -1548,7 +1548,7 @@ suite('p5.RendererGL', function() {
           };
         });
       }).then(function(_tint) {
-        assert.deepEqual(_tint, [255, 255, 255, 255]);
+        assert.deepEqual(_tint.array(), [1, 1, 1, 1]);
       });
     });
   });
