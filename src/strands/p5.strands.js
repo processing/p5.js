@@ -215,7 +215,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   worldInputs.begin();
  *   // Move the vertex up and down in a wave in world space
  *   // In world space, moving the object (e.g., with translate()) will affect these coordinates
@@ -227,7 +227,6 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('red');
@@ -316,9 +315,7 @@ if (typeof p5 !== "undefined") {
  *          A value between `0.0` and `1.0`
  *
  * @example
- * <div modernizr="webgl">
- * <code>
- * // Example 1: A soft vertical fade using smoothstep (no uniforms)
+ * // Example 1: A soft vertical fade using smoothstep
  *
  * let fadeShader;
  *
@@ -337,31 +334,25 @@ if (typeof p5 !== "undefined") {
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   fadeShader = baseFilterShader().modify(fadeCallback);
+ *   fadeShader = buildFilterShader(fadeCallback);
  * }
  *
  * function draw() {
  *   background(0);
  *   filter(fadeShader);
  * }
- * </code>
- * </div>
  *
  * @example
- * <div modernizr="webgl">
- * <code>
- * // Example 2: Animate the smooth transition using a uniform
+ * // Example 2: Animate the smooth transition over time
  *
  * let animatedShader;
  *
  * function animatedFadeCallback() {
- *   const time = uniformFloat(() => millis() * 0.001);
- *
  *   getColor((inputs) => {
  *     let x = inputs.texCoord.x;
  *
  *     // Move the smoothstep band back and forth over time
- *     let center = 0.5 + 0.25 * sin(time);
+ *     let center = 0.5 + 0.25 * sin(millis() * 0.001);
  *     let t = smoothstep(center - 0.05, center + 0.05, x);
  *
  *     return [t, t, t, 1];
@@ -370,15 +361,13 @@ if (typeof p5 !== "undefined") {
  *
  * function setup() {
  *   createCanvas(300, 200, WEBGL);
- *   animatedShader = baseFilterShader().modify(animatedFadeCallback);
+ *   animatedShader = buildFilterShader(animatedFadeCallback);
  * }
  *
  * function draw() {
  *   background(0);
  *   filter(animatedShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -495,7 +484,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   pixelInputs.begin();
  *   // Animate alpha (transparency) based on x position
  *   pixelInputs.color.a = 0.5 + 0.5 *
@@ -506,7 +495,6 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(240);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('purple');
@@ -697,7 +685,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   objectInputs.begin();
  *   // Create a sine wave along the object
  *   objectInputs.position.y += sin(t * 0.001 + objectInputs.position.x);
@@ -707,7 +695,6 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(220);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('orange');
  *   sphere(50);
@@ -739,7 +726,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   cameraInputs.begin();
  *   // Move vertices in camera space based on their x position
  *   cameraInputs.position.y += 30 * sin(cameraInputs.position.x * 0.05 + t * 0.001);
@@ -751,7 +738,6 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(200);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('red');
  *   sphere(50);
@@ -832,8 +818,6 @@ if (typeof p5 !== "undefined") {
  * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * // A filter shader (using p5.strands) which will
  * // sample and invert the color of each pixel
  * // from the canvas.
@@ -866,12 +850,8 @@ if (typeof p5 !== "undefined") {
  *
  *   filterColor.end();
  * }
- * </code>
- *
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * // This primitive edge-detection filter samples
  * // and compares the colors of the current pixel
  * // on the canvas, and a little to the right.
@@ -928,8 +908,6 @@ if (typeof p5 !== "undefined") {
  *   rotate(frameCount / 300);
  *   square(0, 0, 30);
  * }
- * </code>
- * </div>
  */
 
 /**

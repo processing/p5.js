@@ -1605,8 +1605,9 @@ class Image {
         props.displayIndex = index;
         this.drawingContext.putImageData(props.frames[index].image, 0, 0);
       } else {
-        console.log(
-          'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
+        p5._friendlyError(
+          'Cannot set GIF to a frame number that is higher than total number of frames or below zero.',
+          'setFrame'
         );
       }
     }

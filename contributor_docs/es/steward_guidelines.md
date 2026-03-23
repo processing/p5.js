@@ -87,7 +87,7 @@ Para permanecer como steward, debes contribuir como steward en al menos 1 de los
 
 1. Mantén estas directrices a mano como referencia: cómo ayudar con nuevos issues, bugs y funcionalidades. Por ejemplo, la sección "Solicitud de Funcionalidades" incluye consejos sobre cómo usar la [declaración de acceso]([access.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/es/access.md)) de p5.js como steward.
 2. Al ayudar a responder preguntas técnicas o revisar, intenta aplicar la [directriz de la Processing Foundation sobre cómo responder preguntas](https://discourse.processing.org/t/guidelines-answering-questions/2145). Estas pueden ser especialmente útiles para dar retroalimentación técnica constructiva.
-3. Únete al [Discord de p5.js](https://discord.com/invite/SHQ8dH25r9). ¡En el canal `#contribute-to-p5` cualquier pregunta o propuesta de mejora sobre este proceso es bienvenida!
+3. Únete al [Discord de p5.js](https://discord.p5js.org). ¡En el canal `#contribute-to-p5` cualquier pregunta o propuesta de mejora sobre este proceso es bienvenida!
 
 ## _Issues_
 
@@ -120,7 +120,7 @@ Los _issues_ de informes de errores deberían utilizar la plantilla de _Issue_ "
    - Si la replicación es posible más tarde, regrese al paso 2.
 1. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
    - Determine si la documentación de p5.js, la implementación de código o el sistema de errores amigable pueden mejorarse para evitar que se cometa el mismo error.
-   - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.com/invite/SHQ8dH25r9) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
+   - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.p5js.org) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
    
 
 ### Solicitud de Funcionalidades
