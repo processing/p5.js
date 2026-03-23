@@ -2190,6 +2190,8 @@ function renderer3D(p5, fn) {
    * ```
    *
    * @method buildComputeShader
+   * @module 3D
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly
