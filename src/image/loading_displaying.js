@@ -1243,13 +1243,11 @@ function loadingDisplaying(p5, fn){
    * @param  {p5.Color}      color   the tint color
    */
   fn.tint = function(...args) {
-    // p5._validateParameters('tint', args);
     if (args.length === 0) {
-      return this.color(this._renderer.states.tint); // getter
+      return this._renderer.states.tint; // getter
     }
     if (args && args.length) {
-      const c = this.color(...args);
-      this._renderer.states.setValue('tint', c);
+      this._renderer.states.setValue('tint', this.color(...args));
     }
     return this;
   };

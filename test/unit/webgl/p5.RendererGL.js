@@ -1492,7 +1492,7 @@ suite('p5.RendererGL', function() {
   suite('tint() in WEBGL mode', function() {
     test('default tint value is set and not null', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer.states.tint, [255, 255, 255, 255]);
+      assert.deepEqual(myp5._renderer.states.tint.array(), [255, 255, 255, 255]);
     });
 
 
@@ -1508,28 +1508,30 @@ suite('p5.RendererGL', function() {
       }
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.tint(0, 153, 204, 126);
-      assertDeepEqualColor(myp5._renderer.states.tint, [0, 153, 204, 126]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [0, 153, 204, 126]);
       myp5.tint(100, 120, 140);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 120, 140, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 120, 140, 255]);
+      
       myp5.tint('violet');
       // Note that in WEBGL mode, we don't convert color strings to arrays until the shader, 
       // so the tint state is still the string 'violet' at this point, not the array [238, 130, 238, 255].
-      //assertDeepEqualColor(myp5._renderer.states.tint, [238, 130, 238, 255]);
-      assertDeepEqualColor(myp5._renderer.states.tint, 'violet');
+      //assertDeepEqualColor(myp5._renderer.states.tint.array(), [238, 130, 238, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), 'violet');
+
       myp5.tint(100);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 100, 100, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 100, 100, 255]);
       myp5.tint(100, 126);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 100, 100, 126]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 100, 100, 126]);
       myp5.tint([100, 126, 0, 200]);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 126, 0, 200]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 126, 0, 200]);
       myp5.tint([100, 126, 0]);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 126, 0, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 126, 0, 255]);
       myp5.tint([100]);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 100, 100, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 100, 100, 255]);
       myp5.tint([100, 126]);
-      assertDeepEqualColor(myp5._renderer.states.tint, [100, 100, 100, 126]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [100, 100, 100, 126]);
       myp5.tint(myp5.color(255, 204, 0));
-      assertDeepEqualColor(myp5._renderer.states.tint, [255, 204, 0, 255]);
+      assertDeepEqualColor(myp5._renderer.states.tint.array(), [255, 204, 0, 255]);
     });
 
     test('tint should be reset after draw loop', function() {
