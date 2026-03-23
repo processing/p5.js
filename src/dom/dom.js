@@ -371,16 +371,16 @@ function dom(p5, fn){
   }
 
   /**
-   * Creates a `&lt;div&gt;&lt;/div&gt;` element.
+   * Creates a `<div></div>` element.
    *
-   * `&lt;div&gt;&lt;/div&gt;` elements are commonly used as containers for
+   * `<div></div>` elements are commonly used as containers for
    * other elements.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;div&gt;&lt;/div&gt;`.
+   * inner HTML of the new `<div></div>`.
    *
    * @method createDiv
-   * @param  {String} [html] inner HTML for the new `&lt;div&gt;&lt;/div&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<div></div>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
@@ -418,13 +418,13 @@ function dom(p5, fn){
   /**
    * Creates a paragraph element.
    *
-   * `&lt;p&gt;&lt;/p&gt;` elements are commonly used for paragraph-length text.
+   * `<p></p>` elements are commonly used for paragraph-length text.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;p&gt;&lt;/p&gt;`.
+   * inner HTML of the new `<p></p>`.
    *
    * @method createP
-   * @param  {String} [html] inner HTML for the new `&lt;p&gt;&lt;/p&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<p></p>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
@@ -447,18 +447,18 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a `&lt;span&gt;&lt;/span&gt;` element.
+   * Creates a `<span></span>` element.
    *
-   * `&lt;span&gt;&lt;/span&gt;` elements are commonly used as containers
-   * for inline elements. For example, a `&lt;span&gt;&lt;/span&gt;`
+   * `<span></span>` elements are commonly used as containers
+   * for inline elements. For example, a `<span></span>`
    * can hold part of a sentence that's a
    * <span style="color: deeppink;">different</span> style.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;span&gt;&lt;/span&gt;`.
+   * inner HTML of the new `<span></span>`.
    *
    * @method createSpan
-   * @param  {String} [html] inner HTML for the new `&lt;span&gt;&lt;/span&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<span></span>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
@@ -511,7 +511,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;img&gt;` element that can appear outside of the canvas.
+   * Creates an `<img>` element that can appear outside of the canvas.
    *
    * The first parameter, `src`, is a string with the path to the image file.
    * `src` should be a relative path, as in `'assets/image.png'`, or a URL, as
@@ -582,7 +582,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;a&gt;&lt;/a&gt;` element that links to another web page.
+   * Creates an `<a></a>` element that links to another web page.
    *
    * The first parmeter, `href`, is a string that sets the URL of the linked
    * page.
@@ -639,7 +639,7 @@ function dom(p5, fn){
 
   /* INPUT */
   /**
-   * Creates a slider `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a slider `<input></input>` element.
    *
    * Range sliders are useful for quickly selecting numbers from a given range.
    *
@@ -761,7 +761,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a `&lt;button&gt;&lt;/button&gt;` element.
+   * Creates a `<button></button>` element.
    *
    * The first parameter, `label`, is a string that sets the label displayed on
    * the button.
@@ -838,7 +838,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a checkbox `<input></input>` element.
    *
    * Checkboxes extend the <a href="#/p5.Element">p5.Element</a> class with a
    * `checked()` method. Calling `myBox.checked()` returns `true` if it the box
@@ -979,11 +979,11 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element.
+   * Creates a dropdown menu `<select></select>` element.
    *
    * The parameter is optional. If `true` is passed, as in
    * `let mySelect = createSelect(true)`, then the dropdown will support
-   * multiple selections. If an existing `&lt;select&gt;&lt;/select&gt;` element
+   * multiple selections. If an existing `<select></select>` element
    * is passed, as in `let mySelect = createSelect(otherSelect)`, the existing
    * element will be wrapped in a new <a href="#/p5.Element">p5.Element</a>
    * object.
@@ -1250,8 +1250,8 @@ function dom(p5, fn){
    *
    * The parameter is optional. If a string is passed, as in
    * `let myRadio = createSelect('food')`, then each radio option will
-   * have `"food"` as its `name` parameter: `&lt;input name="food"&gt;&lt;/input&gt;`.
-   * If an existing `&lt;div&gt;&lt;/div&gt;` or `&lt;span&gt;&lt;/span&gt;`
+   * have `"food"` as its `name` parameter: `<input name="food"></input>`.
+   * If an existing `<div></div>` or `<span></span>`
    * element is passed, as in `let myRadio = createSelect(container)`, it will
    * become the radio button's parent element.
    *
@@ -1264,8 +1264,8 @@ function dom(p5, fn){
    * - `myRadio.disable(shouldDisable)` enables the entire radio button if `true` is passed and disables it if `false` is passed.
    *
    * @method createRadio
-   * @param  {Object} [containerElement] container HTML Element, either a `&lt;div&gt;&lt;/div&gt;`
-   * or `&lt;span&gt;&lt;/span&gt;`.
+   * @param  {Object} [containerElement] container HTML Element, either a `<div></div>`
+   * or `<span></span>`.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
@@ -1384,7 +1384,7 @@ function dom(p5, fn){
    */
   /**
    * @method createRadio
-   * @param {String} [name] name parameter assigned to each option's `&lt;input&gt;&lt;/input&gt;` element.
+   * @param {String} [name] name parameter assigned to each option's `<input></input>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    */
   /**
@@ -1651,7 +1651,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a text `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a text `<input></input>` element.
    *
    * Call `myInput.size()` to set the length of the text box.
    *
@@ -1727,7 +1727,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;input&gt;&lt;/input&gt;` element of type `'file'`.
+   * Creates an `<input></input>` element of type `'file'`.
    *
    * `createFileInput()` allows users to select local files for use in a sketch.
    * It returns a <a href="#/p5.File">p5.File</a> object.
@@ -1832,8 +1832,9 @@ function dom(p5, fn){
 
     // If File API's are not supported, throw Error
     if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-      console.log(
-        'The File APIs are not fully supported in this browser. Cannot create element.'
+      p5._friendlyError(
+        'The File APIs are not fully supported in this browser. Cannot create element.',
+        'createFileInput'
       );
       return;
     }
