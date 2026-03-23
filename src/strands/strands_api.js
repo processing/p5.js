@@ -678,9 +678,11 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       if (numStructArgs === 1) {
         argIdx = hookType.parameters.findIndex(param => param.type.properties);
       }
+      hook._properties = [];
       for (let i = 0; i < args.length; i++) {
         if (i === argIdx) {
           for (const key of args[argIdx].structProperties || []) {
+            hook._properties.push(key);
             Object.defineProperty(hook, key, {
               get() {
                 return args[argIdx][key];
@@ -695,6 +697,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             hook.set(args[argIdx]);
           }
         } else {
+          hook._properties.push(hookType.parameters[i].name);
           hook[hookType.parameters[i].name] = args[i];
         }
       }

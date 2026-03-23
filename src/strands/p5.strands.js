@@ -116,6 +116,7 @@ function strands(p5, fn) {
   const oldModify = p5.Shader.prototype.modify;
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
+    const fnOverrides = {};
     try {
       if (
         shaderModifier instanceof Function ||
@@ -158,7 +159,13 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
-        if (options.hook) strandsContext.renderer._pInst[options.hook].begin();
+        if (options.hook) {
+          strandsContext.renderer._pInst[options.hook].begin();
+          for (const key of strandsContext.renderer._pInst[options.hook]._properties) {
+            fnOverrides[key] = fn[key];
+            fn[key] = strandsContext.renderer._pInst[options.hook][key];
+          }
+        }
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
@@ -177,6 +184,9 @@ function strands(p5, fn) {
         return oldModify.call(this, shaderModifier);
       }
     } finally {
+      for (const key in fnOverrides) {
+        fn[key] = fnOverrides[key];
+      }
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
     }

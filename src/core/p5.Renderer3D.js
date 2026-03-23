@@ -2054,6 +2054,65 @@ function renderer3D(p5, fn) {
    * let computeShader;
    * let displayShader;
    * let instance;
+   * const numParticles = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *   particles = createStorage(makeParticles(width / 2, height / 2));
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   * }
+   *
+   * function makeParticles(x, y) {
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     let angle = (i / numParticles) * TWO_PI;
+   *     let speed = random(0.5, 2);
+   *     data.push({
+   *       position: createVector(x, y),
+   *       velocity: createVector(cos(angle) * speed, sin(angle) * speed),
+   *     });
+   *   }
+   *   return data;
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(2);
+   * }
+   *
+   * function simulate() {
+   *   let data = uniformStorage(particles);
+   *   let idx = index.x;
+   *   data[idx].position = data[idx].position + data[idx].velocity;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos - createVector(width / 2, height / 2);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   if (frameCount % 60 === 0) {
+   *     particles.update(makeParticles(random(width), random(height)));
+   *   }
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255, 200, 50);
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
    * const numParticles = 50;
    *
    * async function setup() {
@@ -2086,7 +2145,7 @@ function renderer3D(p5, fn) {
    * function simulate() {
    *   let r = 3;
    *   let data = uniformStorage(particles);
-   *   let idx = iteration.index.x;
+   *   let idx = index.x;
    *   let pos = data[idx].position;
    *   let vel = data[idx].velocity;
    *   pos = pos + vel;
@@ -2169,18 +2228,12 @@ function renderer3D(p5, fn) {
    * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
    * function to write a loop that runs in parallel on the GPU.
    *
-   * `iteration` has the following properties:
-   * - `index`: a three-component vector with the current index
-   *   across all dimensions passed to
-   *   <a href="#/p5/compute">`compute()`</a>. For example, use
-   *   `iteration.index.x` to get the index when looping in one dimension.
-   * - `localIndex`: an integer index of the thread within its workgroup.
-   * - `localId`: a three-component integer vector with the thread's position
-   *   within its workgroup.
-   * - `workgroupId`: a three-component integer vector identifying which
-   *   workgroup this thread belongs to.
+   * `index` is a three-component vector with the current index
+   *  across all dimensions passed to
+   *  <a href="#/p5/compute">`compute()`</a>. For example, use
+   *  `index.x` to get the index when looping in one dimension.
    *
-   * @property {Object} iteration
+   * @property index
    * @beta
    * @webgpu
    * @webgpuOnly

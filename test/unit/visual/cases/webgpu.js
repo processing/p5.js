@@ -1213,7 +1213,7 @@ visualSuite("WebGPU", function () {
 
         const computeShader = p5.buildComputeShader(() => {
           const buf = p5.uniformStorage('buf', particles);
-          buf[iteration.index.x].position = [15, -10];
+          buf[p5.index.x].position = [15, -10];
         }, { p5, particles });
         p5.compute(computeShader, 1);
 
@@ -1249,7 +1249,7 @@ visualSuite("WebGPU", function () {
 
         const computeShader = p5.buildComputeShader(() => {
           const buf = p5.uniformStorage('buf', particles);
-          const idx = iteration.index.x;
+          const idx = p5.index.x;
           buf[idx].position = buf[idx].position + buf[idx].velocity;
         }, { p5, particles });
         p5.compute(computeShader, 1);
@@ -1287,7 +1287,7 @@ visualSuite("WebGPU", function () {
         // Store the struct element proxy in a variable and assign through it
         const computeShader = p5.buildComputeShader(() => {
           const buf = p5.uniformStorage('buf', particles);
-          const idx = iteration.index.x;
+          const idx = p5.index.x;
           const entry = buf[idx];
           entry.position = entry.position + entry.velocity;
         }, { p5, particles });
@@ -1326,7 +1326,7 @@ visualSuite("WebGPU", function () {
         // Store a field value in an intermediate variable, update it, write it back
         const computeShader = p5.buildComputeShader(() => {
           const buf = p5.uniformStorage('buf', particles);
-          const idx = iteration.index.x;
+          const idx = p5.index.x;
           let pos = buf[idx].position;
           pos = pos + buf[idx].velocity;
           buf[idx].position = pos;
@@ -1365,7 +1365,7 @@ visualSuite("WebGPU", function () {
 
         const computeShader = p5.buildComputeShader(() => {
           const buf = p5.uniformStorage('buf', particles);
-          const idx = iteration.index.x;
+          const idx = p5.index.x;
           let pos = buf[idx].position;
           let vel = buf[idx].velocity;
           pos = pos + vel;

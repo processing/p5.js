@@ -111,7 +111,7 @@
           const bounds = p.uniformVec2(() => [p.width / 2 - RADIUS, p.height / 2 - RADIUS]);
           const deltaTime = p.uniformFloat(() => p.deltaTime * 0.1);
 
-          const idx = iteration.index.x;
+          const idx = p.index.x;
 
           // Read current position and velocity
           let position = particles[idx].position;

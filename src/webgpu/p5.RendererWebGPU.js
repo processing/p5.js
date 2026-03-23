@@ -3564,7 +3564,7 @@ ${hookUniformFields}}
           baseComputeShader,
           {
             compute: {
-              'void iteration': '(inputs: ComputeInputs) {}',
+              'void iteration': '(index: vec3<i32>) {}',
             },
           }
         );

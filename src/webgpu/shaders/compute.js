@@ -1,11 +1,4 @@
 export const baseComputeShader = `
-struct ComputeInputs {
-  index: vec3<i32>,
-  localIndex: i32,
-  localId: vec3<i32>,
-  workgroupId: vec3<i32>,
-}
-
 struct ComputeUniforms {
   uTotalCount: vec3<i32>,
 }
@@ -18,21 +11,16 @@ fn main(
   @builtin(workgroup_id) workgroupId: vec3<u32>,
   @builtin(local_invocation_index) localIndex: u32
 ) {
-  var inputs: ComputeInputs;
-  inputs.index = vec3<i32>(globalId);
+  var index = vec3<i32>(globalId);
 
   if (
-    inputs.index.x > uniforms.uTotalCount.x ||
-    inputs.index.y > uniforms.uTotalCount.y ||
-    inputs.index.z > uniforms.uTotalCount.z
+    index.x > uniforms.uTotalCount.x ||
+    index.y > uniforms.uTotalCount.y ||
+    index.z > uniforms.uTotalCount.z
   ) {
     return;
   }
 
-  inputs.localId = vec3<i32>(localId);
-  inputs.workgroupId = vec3<i32>(workgroupId);
-  inputs.localIndex = i32(localIndex);
-
-  HOOK_iteration(inputs);
+  HOOK_iteration(index);
 }
 `;
