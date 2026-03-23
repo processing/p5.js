@@ -41,8 +41,6 @@ function dom(p5, fn){
    * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing the element.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -53,11 +51,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -74,11 +69,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -95,8 +87,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a dashed pink border.');
    * }
-   * </code>
-   * </div>
    */
   fn.select = function (e, p) {
     // p5._validateParameters('select', arguments);
@@ -129,8 +119,6 @@ function dom(p5, fn){
    * @return {p5.Element[]} array of <a href="#/p5.Element">p5.Element</a>s containing any elements found.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -149,11 +137,8 @@ function dom(p5, fn){
    *
    *   describe('Three buttons stacked vertically. The buttons are labeled, "1", "2", and "3".');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create three buttons and position them.
    *   let b1 = createButton('1');
@@ -189,8 +174,6 @@ function dom(p5, fn){
    *   btn.style('background', 'deeppink');
    *   btn.style('color', 'white');
    * }
-   * </code>
-   * </div>
    */
   fn.selectAll = function (e, p) {
     // p5._validateParameters('selectAll', arguments);
@@ -271,8 +254,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -283,11 +264,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -302,8 +280,6 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written in pink in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createElement = function (tag, content) {
     // p5._validateParameters('createElement', arguments);
@@ -325,8 +301,6 @@ function dom(p5, fn){
    * @method removeElements
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -344,11 +318,8 @@ function dom(p5, fn){
    * function mousePressed() {
    *   removeElements();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -377,8 +348,6 @@ function dom(p5, fn){
    * function doubleClicked() {
    *   removeElements();
    * }
-   * </code>
-   * </div>
    */
   fn.removeElements = function (e) {
     // p5._validateParameters('removeElements', arguments);
@@ -402,21 +371,19 @@ function dom(p5, fn){
   }
 
   /**
-   * Creates a `&lt;div&gt;&lt;/div&gt;` element.
+   * Creates a `<div></div>` element.
    *
-   * `&lt;div&gt;&lt;/div&gt;` elements are commonly used as containers for
+   * `<div></div>` elements are commonly used as containers for
    * other elements.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;div&gt;&lt;/div&gt;`.
+   * inner HTML of the new `<div></div>`.
    *
    * @method createDiv
-   * @param  {String} [html] inner HTML for the new `&lt;div&gt;&lt;/div&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<div></div>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -428,11 +395,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -444,8 +408,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    */
   fn.createDiv = function (html = '') {
     let elt = document.createElement('div');
@@ -456,18 +418,16 @@ function dom(p5, fn){
   /**
    * Creates a paragraph element.
    *
-   * `&lt;p&gt;&lt;/p&gt;` elements are commonly used for paragraph-length text.
+   * `<p></p>` elements are commonly used for paragraph-length text.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;p&gt;&lt;/p&gt;`.
+   * inner HTML of the new `<p></p>`.
    *
    * @method createP
-   * @param  {String} [html] inner HTML for the new `&lt;p&gt;&lt;/p&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<p></p>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -479,8 +439,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square displaying the text "Tell me a story." written in black.');
    * }
-   * </code>
-   * </div>
    */
   fn.createP = function (html = '') {
     let elt = document.createElement('p');
@@ -489,23 +447,21 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a `&lt;span&gt;&lt;/span&gt;` element.
+   * Creates a `<span></span>` element.
    *
-   * `&lt;span&gt;&lt;/span&gt;` elements are commonly used as containers
-   * for inline elements. For example, a `&lt;span&gt;&lt;/span&gt;`
+   * `<span></span>` elements are commonly used as containers
+   * for inline elements. For example, a `<span></span>`
    * can hold part of a sentence that's a
    * <span style="color: deeppink;">different</span> style.
    *
    * The parameter `html` is optional. It accepts a string that sets the
-   * inner HTML of the new `&lt;span&gt;&lt;/span&gt;`.
+   * inner HTML of the new `<span></span>`.
    *
    * @method createSpan
-   * @param  {String} [html] inner HTML for the new `&lt;span&gt;&lt;/span&gt;` element.
+   * @param  {String} [html] inner HTML for the new `<span></span>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -517,11 +473,8 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background(200);
    *
@@ -550,8 +503,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with the text "p5*js" written in black at its center. The asterisk is pink.');
    * }
-   * </code>
-   * </div>
    */
   fn.createSpan = function (html = '') {
     let elt = document.createElement('span');
@@ -560,7 +511,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;img&gt;` element that can appear outside of the canvas.
+   * Creates an `<img>` element that can appear outside of the canvas.
    *
    * The first parameter, `src`, is a string with the path to the image file.
    * `src` should be a relative path, as in `'assets/image.png'`, or a URL, as
@@ -585,8 +536,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -600,8 +549,6 @@ function dom(p5, fn){
    *
    *   describe('A gray square with a magenta asterisk in its center.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createImg
@@ -635,7 +582,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;a&gt;&lt;/a&gt;` element that links to another web page.
+   * Creates an `<a></a>` element that links to another web page.
    *
    * The first parmeter, `href`, is a string that sets the URL of the linked
    * page.
@@ -657,8 +604,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -670,11 +615,8 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background(200);
    *
@@ -685,8 +627,6 @@ function dom(p5, fn){
    *
    *   describe('The text "p5*js" written at the center of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createA = function (href, html, target) {
     // p5._validateParameters('createA', arguments);
@@ -699,7 +639,7 @@ function dom(p5, fn){
 
   /* INPUT */
   /**
-   * Creates a slider `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a slider `<input></input>` element.
    *
    * Range sliders are useful for quickly selecting numbers from a given range.
    *
@@ -721,8 +661,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let slider;
    *
    * function setup() {
@@ -741,11 +679,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -765,11 +700,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -790,11 +722,8 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let slider;
    *
    * function setup() {
@@ -815,8 +744,6 @@ function dom(p5, fn){
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    */
   fn.createSlider = function (min, max, value, step) {
     // p5._validateParameters('createSlider', arguments);
@@ -834,7 +761,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a `&lt;button&gt;&lt;/button&gt;` element.
+   * Creates a `<button></button>` element.
    *
    * The first parameter, `label`, is a string that sets the label displayed on
    * the button.
@@ -850,8 +777,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -872,11 +797,8 @@ function dom(p5, fn){
    *   let g = random(255);
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let button;
    *
    * function setup() {
@@ -906,8 +828,6 @@ function dom(p5, fn){
    *   let c = random(['red', 'green', 'blue', 'yellow']);
    *   button.value(c);
    * }
-   * </code>
-   * </div>
    */
   fn.createButton = function (label, value) {
     // p5._validateParameters('createButton', arguments);
@@ -918,7 +838,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a checkbox `<input></input>` element.
    *
    * Checkboxes extend the <a href="#/p5.Element">p5.Element</a> class with a
    * `checked()` method. Calling `myBox.checked()` returns `true` if it the box
@@ -936,8 +856,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let checkbox;
    *
    * function setup() {
@@ -958,11 +876,8 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let checkbox;
    *
    * function setup() {
@@ -984,11 +899,8 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let checkbox;
    *
    * function setup() {
@@ -1010,8 +922,6 @@ function dom(p5, fn){
    *     background(0);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createCheckbox = function (...args) {
     // p5._validateParameters('createCheckbox', args);
@@ -1069,11 +979,11 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element.
+   * Creates a dropdown menu `<select></select>` element.
    *
    * The parameter is optional. If `true` is passed, as in
    * `let mySelect = createSelect(true)`, then the dropdown will support
-   * multiple selections. If an existing `&lt;select&gt;&lt;/select&gt;` element
+   * multiple selections. If an existing `<select></select>` element
    * is passed, as in `let mySelect = createSelect(otherSelect)`, the existing
    * element will be wrapped in a new <a href="#/p5.Element">p5.Element</a>
    * object.
@@ -1094,8 +1004,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let mySelect;
    *
    * function setup() {
@@ -1122,11 +1030,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mySelect;
    *
    * function setup() {
@@ -1156,11 +1061,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let mySelect;
    *
    * function setup() {
@@ -1187,11 +1089,8 @@ function dom(p5, fn){
    *   let c = mySelect.selected();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Hold CTRL to select multiple options on Windows and Linux.
    * // Hold CMD to select multiple options on macOS.
    * let mySelect;
@@ -1230,8 +1129,6 @@ function dom(p5, fn){
    *     circle(x, 50, 20);
    *   }
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createSelect
@@ -1239,7 +1136,6 @@ function dom(p5, fn){
    *                          a <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement" target="_blank">HTMLSelectElement</a>.
    * @return {p5.Element}
    */
-
   fn.createSelect = function (...args) {
     // p5._validateParameters('createSelect', args);
     let self;
@@ -1354,8 +1250,8 @@ function dom(p5, fn){
    *
    * The parameter is optional. If a string is passed, as in
    * `let myRadio = createSelect('food')`, then each radio option will
-   * have `"food"` as its `name` parameter: `&lt;input name="food"&gt;&lt;/input&gt;`.
-   * If an existing `&lt;div&gt;&lt;/div&gt;` or `&lt;span&gt;&lt;/span&gt;`
+   * have `"food"` as its `name` parameter: `<input name="food"></input>`.
+   * If an existing `<div></div>` or `<span></span>`
    * element is passed, as in `let myRadio = createSelect(container)`, it will
    * become the radio button's parent element.
    *
@@ -1368,13 +1264,11 @@ function dom(p5, fn){
    * - `myRadio.disable(shouldDisable)` enables the entire radio button if `true` is passed and disables it if `false` is passed.
    *
    * @method createRadio
-   * @param  {Object} [containerElement] container HTML Element, either a `&lt;div&gt;&lt;/div&gt;`
-   * or `&lt;span&gt;&lt;/span&gt;`.
+   * @param  {Object} [containerElement] container HTML Element, either a `<div></div>`
+   * or `<span></span>`.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let style = document.createElement('style');
    * style.innerHTML = `
    * .p5-radio label {
@@ -1415,11 +1309,8 @@ function dom(p5, fn){
    *   let g = myRadio.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myRadio;
    *
    * function setup() {
@@ -1449,11 +1340,8 @@ function dom(p5, fn){
    *   let c = myRadio.value();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myRadio;
    *
    * function setup() {
@@ -1493,12 +1381,10 @@ function dom(p5, fn){
    * function disableRadio() {
    *   myRadio.disable(true);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createRadio
-   * @param {String} [name] name parameter assigned to each option's `&lt;input&gt;&lt;/input&gt;` element.
+   * @param {String} [name] name parameter assigned to each option's `<input></input>` element.
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    */
   /**
@@ -1685,8 +1571,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let myPicker;
    *
    * function setup() {
@@ -1704,11 +1588,8 @@ function dom(p5, fn){
    *   let c = myPicker.color();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myPicker;
    *
    * function setup() {
@@ -1729,8 +1610,6 @@ function dom(p5, fn){
    *   // Display the current color as a hex string.
    *   text(c, 25, 55);
    * }
-   * </code>
-   * </div>
    */
   fn.createColorPicker = function (value) {
     // p5._validateParameters('createColorPicker', arguments);
@@ -1772,7 +1651,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates a text `&lt;input&gt;&lt;/input&gt;` element.
+   * Creates a text `<input></input>` element.
    *
    * Call `myInput.size()` to set the length of the text box.
    *
@@ -1790,8 +1669,6 @@ function dom(p5, fn){
    * @return {p5.Element} new <a href="#/p5.Element">p5.Element</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let myInput;
    *
    * function setup() {
@@ -1812,11 +1689,8 @@ function dom(p5, fn){
    *   let msg = myInput.value();
    *   text(msg, 25, 55);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myInput;
    *
    * function setup() {
@@ -1838,8 +1712,6 @@ function dom(p5, fn){
    *   let msg = myInput.value();
    *   text(msg, 25, 55);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createInput
@@ -1855,7 +1727,7 @@ function dom(p5, fn){
   };
 
   /**
-   * Creates an `&lt;input&gt;&lt;/input&gt;` element of type `'file'`.
+   * Creates an `<input></input>` element of type `'file'`.
    *
    * `createFileInput()` allows users to select local files for use in a sketch.
    * It returns a <a href="#/p5.File">p5.File</a> object.
@@ -1874,8 +1746,6 @@ function dom(p5, fn){
    * @return {p5.Element} The new input element.
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to select an image to
    * // load and display.
    * let input;
@@ -1910,11 +1780,8 @@ function dom(p5, fn){
    *     img = null;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use the file input to select multiple images
    * // to load and display.
    * let input;
@@ -1953,8 +1820,6 @@ function dom(p5, fn){
    *     images.push(img);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createFileInput = function (callback, multiple = false) {
     // p5._validateParameters('createFileInput', arguments);
@@ -1967,8 +1832,9 @@ function dom(p5, fn){
 
     // If File API's are not supported, throw Error
     if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-      console.log(
-        'The File APIs are not fully supported in this browser. Cannot create element.'
+      p5._friendlyError(
+        'The File APIs are not fully supported in this browser. Cannot create element.',
+        'createFileInput'
       );
       return;
     }

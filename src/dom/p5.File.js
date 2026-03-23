@@ -71,8 +71,6 @@ function file(p5, fn){
    * @param {File} file wrapped file.
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -102,11 +100,8 @@ function file(p5, fn){
    *   // Display the p5.File's size in bytes.
    *   text(file.size, 10, 90);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use the file input to select an image to
    * // load and display.
    * let img;
@@ -144,8 +139,6 @@ function file(p5, fn){
    *     img = null;
    *   }
    * }
-   * </code>
-   * </div>
    */
   p5.File = File;
 
@@ -157,8 +150,6 @@ function file(p5, fn){
    * @for p5.File
    * @property {File} file
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -188,8 +179,6 @@ function file(p5, fn){
    *   // Display the p5.File's size in bytes.
    *   text(file.size, 10, 90);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -202,8 +191,6 @@ function file(p5, fn){
    * @for p5.File
    * @property {String} type
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -226,8 +213,6 @@ function file(p5, fn){
    *   // Display the p5.File's type.
    *   text(`This is file's type is: ${file.type}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -241,8 +226,6 @@ function file(p5, fn){
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -266,8 +249,6 @@ function file(p5, fn){
    *   // Display the p5.File's subtype.
    *   text(`This is file's subtype is: ${file.subtype}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -277,8 +258,6 @@ function file(p5, fn){
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -302,8 +281,6 @@ function file(p5, fn){
    *   // Display the p5.File's name.
    *   text(`This is file's name is: ${file.name}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -313,8 +290,6 @@ function file(p5, fn){
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -337,8 +312,6 @@ function file(p5, fn){
    *   // Display the p5.File's size.
    *   text(`This is file has ${file.size} bytes.`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -351,8 +324,6 @@ function file(p5, fn){
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -375,8 +346,6 @@ function file(p5, fn){
    *   // Display the p5.File's data, which looks like a random string of characters.
    *   text(file.data, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 }
 

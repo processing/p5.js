@@ -285,7 +285,10 @@ class Renderer2D extends Renderer {
     });
     shape.accept(visitor);
     if (this._clipping) {
-      this.clipPath.addPath(visitor.path);
+      const currentTransform = this.drawingContext.getTransform();
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
+      this.clipPath.addPath(visitor.path, relativeTransform);
       this.clipPath.closePath();
     } else {
       if (this.states.fillColor) {
@@ -299,7 +302,7 @@ class Renderer2D extends Renderer {
 
   beginClip(options = {}) {
     super.beginClip(options);
-
+    this._clipBaseTransform = this.drawingContext.getTransform();
     // cache the fill style
     this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
     const newFill = this._pInst.color(255, 0).toString();

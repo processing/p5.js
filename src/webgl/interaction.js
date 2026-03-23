@@ -75,8 +75,6 @@ function interaction(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -97,11 +95,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -123,11 +118,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -156,8 +148,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    */
 
   // implementation based on three.js 'orbitControls':
@@ -521,8 +511,6 @@ function interaction(p5, fn){
    * @method debugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -546,11 +534,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -575,11 +560,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -607,11 +589,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -645,8 +624,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -726,8 +703,6 @@ function interaction(p5, fn){
    * @method noDebugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -755,8 +730,6 @@ function interaction(p5, fn){
    * function doubleClicked() {
    *   noDebugMode();
    * }
-   * </code>
-   * </div>
    */
   fn.noDebugMode = function() {
     this._assert3d('noDebugMode');

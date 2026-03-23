@@ -6,6 +6,7 @@
  * @requires core
  */
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
     this._renderer = renderer;
@@ -205,29 +206,37 @@ class Shader {
    *
    * In addition to calling hooks, you can create uniforms, which are special variables
    * used to pass data from p5.js into the shader. They can be created by calling `uniform` + the
-   * type of the data, such as `uniformFloat` for a number of `uniformVector2` for a two-component vector.
+   * type of the data, such as `uniformFloat` for a number or `uniformVector2` for a two-component vector.
    * They take in a function that returns the data for the variable. You can then reference these
    * variables in your hooks, and their values will update every time you apply
-   * the shader with the result of your function.
+   * the shader with the result of your function.  
+   * 
+   * Move the mouse over this sketch to increase the moveCounter which will be passed to the shader as a uniform.
    *
    * ```js example
    * let myShader;
-   *
+   * //count of frames in which mouse has been moved
+   * let moveCounter = 0;
+   * 
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify(() => {
-   *     // Get the current time from p5.js
-   *     let t = uniformFloat(() => millis());
+   *     // Get the move counter from our sketch
+   *     let count = uniformFloat(() => moveCounter);
    *
    *     getPixelInputs((inputs) => {
    *       inputs.color = [
    *         inputs.texCoord,
-   *         sin(t * 0.01) / 2 + 0.5,
+   *         sin(count/100) / 2 + 0.5,
    *         1,
    *       ];
    *       return inputs;
    *     });
    *   });
+   * }
+   *
+   * function mouseDragged(){
+   *   moveCounter += 1;
    * }
    *
    * function draw() {
@@ -256,7 +265,7 @@ class Shader {
    *   sketch.setup = function() {
    *     sketch.createCanvas(200, 200, sketch.WEBGL);
    *     myShader = sketch.baseMaterialShader().modify(({ sketch }) => {
-   *       let b = uniformFloat('b');
+   *       let b = sketch.uniformFloat('b');
    *       sketch.getPixelInputs((inputs) => {
    *         inputs.color = [inputs.texCoord, b, 1];
    *         return inputs;
@@ -488,8 +497,6 @@ class Shader {
    * @returns {p5.Shader} new shader compiled for the target context.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -560,11 +567,8 @@ class Shader {
    *   // Draw the p5.Graphics object to the main canvas.
    *   image(pg, -25, -25);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -633,8 +637,6 @@ class Shader {
    *   // Draw the box.
    *   box(50);
    * }
-   * </code>
-   * </div>
    */
   copyToContext(context) {
     const shader = new Shader(
@@ -659,7 +661,6 @@ class Shader {
       this.init();
     }
   }
-
 
   /**
    * Queries the active attributes for this shader and loads
@@ -812,8 +813,6 @@ class Shader {
    * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -866,11 +865,8 @@ class Shader {
    *
    *   describe('A cyan square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -930,11 +926,8 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1018,20 +1011,14 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    */
-  setUniform(uniformName, rawData) {
+  setUniform(uniformName, data) {
     this.init();
 
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
     }
-
-    const data = this._renderer._mapUniformData
-      ? this._renderer._mapUniformData(uniform, rawData)
-      : rawData;
 
     if (uniform.isArray) {
       if (
@@ -1045,9 +1032,13 @@ class Shader {
     } else if (uniform._cachedData && uniform._cachedData === data) {
       return;
     } else {
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) || data instanceof TypedArray) {
+        if (uniform._cachedData && this._renderer._arraysEqual(uniform._cachedData, data)) {
+          return;
+        }
         uniform._cachedData = data.slice(0);
       } else {
+        if (uniform._cachedData === data) return;
         uniform._cachedData = data;
       }
     }
@@ -1137,8 +1128,6 @@ function shader(p5, fn){
    *  - `fragment`: An object describing the available frament shader hooks.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1187,11 +1176,8 @@ function shader(p5, fn){
    *
    *   describe('A yellow square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * let mandelbrot;
@@ -1216,8 +1202,6 @@ function shader(p5, fn){
    *   // Add a quad as a display surface for the shader.
    *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
    * }
-   * </code>
-   * </div>
    */
   p5.Shader = Shader;
 }

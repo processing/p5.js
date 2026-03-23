@@ -53,7 +53,7 @@
     - 如果以后可以复现该 bug，则返回步骤2。
  4. 如果 bug 源于用户在 bug 报告中提供的代码，而不是 p5.js 的行为：
     - 确定是否可以通过改进 p5.js 的文档、代码实现或友好的错误系统来防止发生相同的错误。
-    - 友好地将任何进一步的问题重定向到[论坛](https://discourse.processing.org/)或 [Discord](https://discord.com/invite/SHQ8dH25r9)，如果对 p5.js 没有进一步的更改，则关闭 issue。
+    - 友好地将任何进一步的问题重定向到[论坛](https://discourse.processing.org/)或 [Discord](https://discord.p5js.org)，如果对 p5.js 没有进一步的更改，则关闭 issue。
 
 ### 功能请求
 对于功能请求 issues，应使用“新功能请求” issue 模板。通常使用下面流程来处理功能请求：

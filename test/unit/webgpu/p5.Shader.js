@@ -411,6 +411,95 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(pixelColor[1], 127, 5); // Green channel should be ~127
         assert.approximately(pixelColor[2], 127, 5); // Blue channel should be ~127
       });
+
+      test('using boolean intermediate variables', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor((inputs, canvasContent) => {
+            let value = 1;
+            let condition = 1 > 2;
+
+            if (value < 0.5) {
+              condition = 0.5 < 2;
+            }
+
+            if (condition) {
+              return [1, 0, 0, 1]
+            }
+
+            return [0.4, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 0.4 * 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('using boolean intermediate variables in functions', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          const conditionMet = () => {
+            let condition = 1 > 2;
+            let value = 1;
+            if (value < 0.5) {
+              condition = 0.5 < 2;
+            }
+            return !condition
+          }
+          myp5.getColor((inputs, canvasContent) => {
+            if (conditionMet()) {
+              return [1, 0, 0, 1]
+            }
+
+            return [0.4, 0, 0, 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('using boolean intermediate variables in functions with early returns', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseFilterShader().modify(() => {
+          const conditionMet = () => {
+            let value = 1;
+            if (value < 0.5) {
+              return true
+            }
+            return false
+          }
+          myp5.getColor((inputs, canvasContent) => {
+            if (conditionMet()) {
+              return [1, 0, 0, 1]
+            }
+
+            return [0.4, 0, 0, 1];
+          });
+        }, { myp5 });
+        console.log(testShader.fragSrc())
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 102, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
     });
 
     suite('for loop statements', () => {
@@ -875,6 +964,38 @@ suite('WebGPU p5.Shader', function() {
             // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
             return [myp5.abs(processedNormal), 1];
           });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background to distinguish from result
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Normal of plane facing camera should be [0, 0, 1], so color should be [0, 0, 255]
+        const centerColor = await myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);   // Red component
+        assert.approximately(centerColor[1], 0, 5);   // Green component
+        assert.approximately(centerColor[2], 255, 5); // Blue component
+      });
+
+      test('handle passing a value between fragment hooks only while having a vertex hook', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let processedNormal = myp5.sharedVec3();
+          myp5.objectInputs.begin();
+          myp5.objectInputs.position += [0, 0, 0];
+          myp5.objectInputs.end();
+
+          myp5.pixelInputs.begin();
+          processedNormal = myp5.normalize(myp5.pixelInputs.normal);
+          myp5.pixelInputs.end();
+
+          myp5.finalColor.begin();
+          // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
+          myp5.finalColor.set([myp5.abs(processedNormal), 1]);
+          myp5.finalColor.end();
         }, { myp5 });
 
         myp5.background(255, 0, 0); // Red background to distinguish from result

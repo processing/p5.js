@@ -103,7 +103,7 @@ function processStrandsFunctions() {
   // Add uniform functions: uniformFloat, uniformVec2, etc.
   const typeMethods = [];
   for (const type in DataType) {
-    if (type === 'defer') {
+    if (type === 'defer' || type === 'assign_on_use') {
       continue;
     }
 
@@ -504,7 +504,7 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
 
       let returnType = 'void';
-      if (method.chainable && !globalFunction && options.currentClass !== 'p5') {
+      if (overload.chainable && !globalFunction && options.currentClass !== 'p5') {
         returnType = options.currentClass || 'this';
         // TODO: Decide what should be chainable. Many of these are accidental / not thought through
       } else if (overload.return && overload.return.type) {
@@ -805,6 +805,7 @@ p5: P5;
   });
 
   globalDefinitions += '}\n\n';
+  globalDefinitions += 'export default p5;\n\n';
 
   return { instanceDefinitions, globalDefinitions };
 }

@@ -13,88 +13,80 @@ import { Geometry } from './p5.Geometry';
 import { Matrix } from '../math/p5.Matrix';
 
 function primitives3D(p5, fn){
-/**
- * Sets the stroke rendering mode to balance performance and visual features when drawing lines.
- *
- * `strokeMode()` offers two modes:
- *
- * - `SIMPLE`: Optimizes for speed by disabling caps, joins, and stroke color features.
- *   Use this mode for faster line rendering when these visual details are unnecessary.
- * - `FULL`: Enables caps, joins, and stroke color for lines.
- *   This mode provides enhanced visuals but may reduce performance due to additional processing.
- *
- * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
- *
- * @method strokeMode
- * @param {String} mode - The stroke mode to set. Possible values are:
- *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
- *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(300, 300, WEBGL);
- *   describe('A sphere with red stroke and a red, wavy line on a gray background. The wavy line have caps, joins and colors.');
- * }
- *
- * function draw() {
- *   background(128);
- *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
- *   push();
- *   strokeWeight(1);
- *   translate(0, -50, 0);
- *   sphere(50);
- *   pop();
- *   orbitControl();
- *
- *   noFill();
- *   strokeWeight(15);
- *   stroke('red');
- *   beginShape();
- *   bezierOrder(2); // Sets the order of the Bezier curve.
- *   bezierVertex(80, 80);
- *   bezierVertex(50, -40);
- *   bezierVertex(-80, 80);
- *   endShape();
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(300, 300, WEBGL);
- *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
- * }
- *
- * function draw() {
- *   background(128);
- *   strokeMode(SIMPLE); // Simplifies stroke rendering for better performance.
- *
- *   // Draw sphere
- *   push();
- *   strokeWeight(1);
- *   translate(0, -50, 0);
- *   sphere(50);
- *   pop();
- *   orbitControl();
- *
- *   // Draw modified wavy red line
- *   noFill();
- *   strokeWeight(15);
- *   stroke('red');
- *   beginShape();
- *   bezierOrder(2); // Sets the order of the Bezier curve.
- *   bezierVertex(80, 80);
- *   bezierVertex(50, -40);
- *   bezierVertex(-80, 80);
- *   endShape();
- * }
- * </code>
- * </div>
- */
-
+  /**
+   * Sets the stroke rendering mode to balance performance and visual features when drawing lines.
+   *
+   * `strokeMode()` offers two modes:
+   *
+   * - `SIMPLE`: Optimizes for speed by disabling caps, joins, and stroke color features.
+   *   Use this mode for faster line rendering when these visual details are unnecessary.
+   * - `FULL`: Enables caps, joins, and stroke color for lines.
+   *   This mode provides enhanced visuals but may reduce performance due to additional processing.
+   *
+   * Choose the mode that best suits your application's needs to either improve rendering speed or enhance visual quality.
+   *
+   * @method strokeMode
+   * @param {String} mode - The stroke mode to set. Possible values are:
+   *   - `'SIMPLE'`: Fast rendering without caps, joins, or stroke color.
+   *   - `'FULL'`: Detailed rendering with caps, joins, and stroke color.
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(300, 300, WEBGL);
+   *   describe('A sphere with red stroke and a red, wavy line on a gray background. The wavy line have caps, joins and colors.');
+   * }
+   *
+   * function draw() {
+   *   background(128);
+   *   strokeMode(FULL); // Enables detailed rendering with caps, joins, and stroke color.
+   *   push();
+   *   strokeWeight(1);
+   *   translate(0, -50, 0);
+   *   sphere(50);
+   *   pop();
+   *   orbitControl();
+   *
+   *   noFill();
+   *   strokeWeight(15);
+   *   stroke('red');
+   *   beginShape();
+   *   bezierOrder(2); // Sets the order of the Bezier curve.
+   *   bezierVertex(80, 80);
+   *   bezierVertex(50, -40);
+   *   bezierVertex(-80, 80);
+   *   endShape();
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(300, 300, WEBGL);
+   *   describe('A sphere with red stroke and a  wavy line without full curve decorations without caps and color on a gray background.');
+   * }
+   *
+   * function draw() {
+   *   background(128);
+   *   strokeMode(SIMPLE); // Simplifies stroke rendering for better performance.
+   *
+   *   // Draw sphere
+   *   push();
+   *   strokeWeight(1);
+   *   translate(0, -50, 0);
+   *   sphere(50);
+   *   pop();
+   *   orbitControl();
+   *
+   *   // Draw modified wavy red line
+   *   noFill();
+   *   strokeWeight(15);
+   *   stroke('red');
+   *   beginShape();
+   *   bezierOrder(2); // Sets the order of the Bezier curve.
+   *   bezierVertex(80, 80);
+   *   bezierVertex(50, -40);
+   *   bezierVertex(-80, 80);
+   *   endShape();
+   * }
+   */
   fn.strokeMode = function (mode) {
     if (mode === undefined) {
       return this._renderer._simpleLines ? constants.SIMPLE : constants.FULL;
@@ -106,6 +98,7 @@ function primitives3D(p5, fn){
       throw Error('no such parameter');
     }
   };
+
   /**
    * Creates a custom <a href="#/p5.Geometry">p5.Geometry</a> object from
    * simpler 3D shapes.
@@ -120,11 +113,6 @@ function primitives3D(p5, fn){
    * The parameter, `callback`, is a function with the drawing instructions for
    * the new <a href="#/p5.Geometry">p5.Geometry</a> object. It will be called
    * once to create the new 3D shape.
-   *
-   * See <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a> for another way to build 3D
-   * shapes.
-   *
    * Note: `buildGeometry()` can only be used in WebGL mode.
    *
    * @method buildGeometry
@@ -132,8 +120,6 @@ function primitives3D(p5, fn){
    * @returns {p5.Geometry} new 3D shape.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -167,11 +153,8 @@ function primitives3D(p5, fn){
    * function createShape() {
    *   cone();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -210,11 +193,8 @@ function primitives3D(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -260,11 +240,8 @@ function primitives3D(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let button;
@@ -327,8 +304,6 @@ function primitives3D(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.buildGeometry = function(callback) {
     return this._renderer.buildGeometry(callback);
@@ -341,12 +316,8 @@ function primitives3D(p5, fn){
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can contain lots of data
    * about their vertices, surface normals, colors, and so on. Complex 3D shapes
    * can use lots of memory which is a limited resource in many GPUs. Calling
-   * `freeGeometry()` can improve performance by freeing a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object’s resources from GPU memory.
    * `freeGeometry()` works with <a href="#/p5.Geometry">p5.Geometry</a> objects
-   * created with <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>,
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, and
+   * created with <a href="#/p5/buildGeometry">buildGeometry()</a> and
    * <a href="#/p5/loadModel">loadModel()</a>.
    *
    * The parameter, `geometry`, is the <a href="#/p5.Geometry">p5.Geometry</a>
@@ -362,29 +333,6 @@ function primitives3D(p5, fn){
    * @param {p5.Geometry} geometry 3D shape whose resources should be freed.
    *
    * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   cone();
-   *   let shape = endGeometry();
-   *
-   *   // Draw the shape.
-   *   model(shape);
-   *
-   *   // Free the shape's resources.
-   *   freeGeometry(shape);
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let button;
@@ -445,8 +393,6 @@ function primitives3D(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.freeGeometry = function(geometry) {
     this._renderer.geometryBufferCache.freeBuffers(geometry.gid);
@@ -486,8 +432,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -505,11 +449,8 @@ function primitives3D(p5, fn){
    *   // Draw the plane.
    *   plane();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -528,11 +469,8 @@ function primitives3D(p5, fn){
    *   // Set its width and height to 30.
    *   plane(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -551,8 +489,6 @@ function primitives3D(p5, fn){
    *   // Set its width to 30 and height to 50.
    *   plane(30, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.plane = function(
     width = 50,
@@ -605,8 +541,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -624,11 +558,8 @@ function primitives3D(p5, fn){
    *   // Draw the box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -647,11 +578,8 @@ function primitives3D(p5, fn){
    *   // Set its width and height to 30.
    *   box(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -670,11 +598,8 @@ function primitives3D(p5, fn){
    *   // Set its width to 30 and height to 50.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -693,8 +618,6 @@ function primitives3D(p5, fn){
    *   // Set its width to 30, height to 50, and depth to 10.
    *   box(30, 50, 10);
    * }
-   * </code>
-   * </div>
    */
   fn.box = function(width, height, depth, detailX, detailY) {
     this._assert3d('box');
@@ -734,8 +657,6 @@ function primitives3D(p5, fn){
    *
    * @chainable
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -753,11 +674,8 @@ function primitives3D(p5, fn){
    *   // Draw the sphere.
    *   sphere();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -776,11 +694,8 @@ function primitives3D(p5, fn){
    *   // Set its radius to 30.
    *   sphere(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -800,11 +715,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 6.
    *   sphere(30, 6);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -825,8 +737,6 @@ function primitives3D(p5, fn){
    *   // Set its detailY to 4.
    *   sphere(30, 24, 4);
    * }
-   * </code>
-   * </div>
    */
   fn.sphere = function(radius = 50, detailX = 24, detailY = 16) {
     this._assert3d('sphere');
@@ -883,8 +793,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -902,11 +810,8 @@ function primitives3D(p5, fn){
    *   // Draw the cylinder.
    *   cylinder();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -925,11 +830,8 @@ function primitives3D(p5, fn){
    *   // Set its radius and height to 30.
    *   cylinder(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -948,11 +850,8 @@ function primitives3D(p5, fn){
    *   // Set its radius to 30 and height to 50.
    *   cylinder(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -972,11 +871,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 5.
    *   cylinder(30, 50, 5);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -996,11 +892,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 24 and detailY to 2.
    *   cylinder(30, 50, 24, 2);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1021,11 +914,8 @@ function primitives3D(p5, fn){
    *   // Don't draw its bottom.
    *   cylinder(30, 50, 24, 1, false);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1046,8 +936,6 @@ function primitives3D(p5, fn){
    *   // Don't draw its bottom or top.
    *   cylinder(30, 50, 24, 1, false, false);
    * }
-   * </code>
-   * </div>
    */
   fn.cylinder = function(
     radius = 50,
@@ -1110,8 +998,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1129,11 +1015,8 @@ function primitives3D(p5, fn){
    *   // Draw the cone.
    *   cone();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1152,11 +1035,8 @@ function primitives3D(p5, fn){
    *   // Set its radius and height to 30.
    *   cone(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1175,11 +1055,8 @@ function primitives3D(p5, fn){
    *   // Set its radius to 30 and height to 50.
    *   cone(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1199,11 +1076,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 5.
    *   cone(30, 50, 5);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1223,11 +1097,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 5.
    *   cone(30, 50, 5);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1247,11 +1118,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 24 and detailY to 2.
    *   cone(30, 50, 24, 2);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1272,8 +1140,6 @@ function primitives3D(p5, fn){
    *   // Don't draw its base.
    *   cone(30, 50, 24, 1, false);
    * }
-   * </code>
-   * </div>
    */
   fn.cone = function(
     radius = 50,
@@ -1333,8 +1199,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1353,11 +1217,8 @@ function primitives3D(p5, fn){
    *   // Set its radiusX to 30.
    *   ellipsoid(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1377,11 +1238,8 @@ function primitives3D(p5, fn){
    *   // Set its radiusY to 40.
    *   ellipsoid(30, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1402,11 +1260,8 @@ function primitives3D(p5, fn){
    *   // Set its radiusZ to 50.
    *   ellipsoid(30, 40, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1428,11 +1283,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 4.
    *   ellipsoid(30, 40, 50, 4);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1455,8 +1307,6 @@ function primitives3D(p5, fn){
    *   // Set its detailY to 3.
    *   ellipsoid(30, 40, 50, 4, 3);
    * }
-   * </code>
-   * </div>
    */
   fn.ellipsoid = function(
     radiusX = 50,
@@ -1506,8 +1356,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1525,11 +1373,8 @@ function primitives3D(p5, fn){
    *   // Draw the torus.
    *   torus();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1548,11 +1393,8 @@ function primitives3D(p5, fn){
    *   // Set its radius to 30.
    *   torus(30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1571,11 +1413,8 @@ function primitives3D(p5, fn){
    *   // Set its radius to 30 and tubeRadius to 15.
    *   torus(30, 15);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1595,11 +1434,8 @@ function primitives3D(p5, fn){
    *   // Set its detailX to 5.
    *   torus(30, 15, 5);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1620,8 +1456,6 @@ function primitives3D(p5, fn){
    *   // Set its detailY to 3.
    *   torus(30, 15, 5, 3);
    * }
-   * </code>
-   * </div>
    */
   fn.torus = function(radius, tubeRadius, detailX, detailY) {
     this._assert3d('torus');
@@ -1650,8 +1484,6 @@ function primitives3D(p5, fn){
    * @param {Number} z z-coordinate of point
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    * }
@@ -1668,8 +1500,6 @@ function primitives3D(p5, fn){
    *   strokeWeight(1);
    *   point(0, -25);
    * }
-   * </code>
-   * </div>
    */
   Renderer3D.prototype.point = function(x, y, z = 0) {
     this.beginShape(constants.POINTS);
@@ -2150,8 +1980,6 @@ function primitives3D(p5, fn){
    * @param {Number} z1 z-coordinate of second vertex
    * @chainable
    * @example
-   * <div>
-   * <code>
    * //draw a line
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -2165,8 +1993,6 @@ function primitives3D(p5, fn){
    *   fill(255, 0, 0);
    *   line(10, 10, 0, 60, 60, 20);
    * }
-   * </code>
-   * </div>
    */
   Renderer3D.prototype.line = function(...args) {
     if (args.length === 6) {
@@ -2720,9 +2546,6 @@ function primitives3D(p5, fn){
    * @chainable
    *
    * @example
-   *
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2760,8 +2583,6 @@ function primitives3D(p5, fn){
    *     'A gray square with a jagged curve drawn in three segments. The curve is a sideways U shape with red segments on top and bottom, and a black segment on the right. The endpoints of all the segments are marked with dots.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.curveDetail = function(d) {
     if (!(this._renderer instanceof Renderer3D)) {

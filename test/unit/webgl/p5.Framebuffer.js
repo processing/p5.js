@@ -1,7 +1,19 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
-import * as fileSaver from 'file-saver';
-vi.mock('file-saver');
+
+const mockAnchorElement = vi.mockObject({
+  href: null,
+  download: null,
+  click: () => {}
+});
+const originalCreateElement = document.createElement;
+vi.spyOn(document, 'createElement').mockImplementation((...args) => {
+  if(args[0] !== 'a'){
+    return originalCreateElement.apply(document, args);
+  }else{
+    return mockAnchorElement;
+  }
+});
 
 expect.extend({
   tobePng: received => {
@@ -35,6 +47,10 @@ suite('p5.Framebuffer', function() {
   afterAll(function() {
     myp5.remove();
     window.devicePixelRatio = prevPixelRatio;
+  });
+
+  afterEach(function(){
+    vi.clearAllMocks();
   });
 
   suite('formats and channels', function() {
@@ -114,7 +130,6 @@ suite('p5.Framebuffer', function() {
 
     afterEach(() => {
       if (glStub) {
-        vi.restoreAllMocks();
         glStub = null;
       }
     });
@@ -661,14 +676,11 @@ suite('p5.Framebuffer', function() {
       fbo.draw(() => myp5.background('red'));
       myp5.saveCanvas(fbo);
 
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise(res => setTimeout(res, 500));
 
-      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
-      expect(fileSaver.saveAs)
-        .toHaveBeenCalledWith(
-          expect.tobePng(),
-          'untitled.png'
-        );
+      expect(document.createElement).toHaveBeenCalledWith('a');
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      assert.equal(mockAnchorElement.download, 'untitled.png');
     });
   });
 });

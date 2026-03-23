@@ -30,14 +30,17 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
-  function initStrandsContext(ctx, backend, { active = false, renderer = null, baseShader = null } = {}) {
+  function initStrandsContext(
+    ctx,
+    backend,
+    { active = false, renderer = null, baseShader = null } = {},
+  ) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
-    ctx.globalAssignments = [];
     ctx.backend = backend;
     ctx.active = active;
     ctx.renderer = renderer;
@@ -45,6 +48,7 @@ function strands(p5, fn) {
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
+    ctx.graphicsOverrides = {};
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -58,7 +62,6 @@ function strands(p5, fn) {
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.hooks = [];
-    ctx.globalAssignments = [];
     ctx.active = false;
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
@@ -66,6 +69,17 @@ function strands(p5, fn) {
     }
     for (const key in ctx.fnOverrides) {
       fn[key] = ctx.fnOverrides[key];
+    }
+    // Clean up the hooks temporarily installed on p5.Graphics.prototype (#8549)
+    const GraphicsProto = p5.Graphics?.prototype;
+    if (GraphicsProto) {
+      for (const key in ctx.graphicsOverrides) {
+        if (ctx.graphicsOverrides[key] === undefined) {
+          delete GraphicsProto[key];
+        } else {
+          GraphicsProto[key] = ctx.graphicsOverrides[key];
+        }
+      }
     }
   }
 
@@ -78,11 +92,8 @@ function strands(p5, fn) {
 
     const prev = {};
     for (const key of Object.getOwnPropertyNames(fn)) {
-      const descriptor = Object.getOwnPropertyDescriptor(
-        fn,
-        key
-      );
-      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
+      if (descriptor && !descriptor.get && typeof fn[key] === "function") {
         prev[key] = window[key];
         window[key] = fn[key].bind(pInst);
       }
@@ -104,7 +115,10 @@ function strands(p5, fn) {
 
   p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
     try {
-      if (shaderModifier instanceof Function || typeof shaderModifier === 'string') {
+      if (
+        shaderModifier instanceof Function ||
+        typeof shaderModifier === "string"
+      ) {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
@@ -121,9 +135,10 @@ function strands(p5, fn) {
         if (options.parser) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
-          const sourceString = typeof shaderModifier === 'string'
-            ? `(${shaderModifier})`
-            : `(${shaderModifier.toString()})`;
+          const sourceString =
+            typeof shaderModifier === "string"
+              ? `(${shaderModifier})`
+              : `(${shaderModifier.toString()})`;
           strandsCallback = transpileStrandsToJS(
             p5,
             sourceString,
@@ -188,8 +203,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -197,7 +210,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   worldInputs.begin();
  *   // Move the vertex up and down in a wave in world space
  *   // In world space, moving the object (e.g., with translate()) will affect these coordinates
@@ -209,14 +222,11 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(255);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -241,8 +251,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -271,8 +279,90 @@ if (typeof p5 !== "undefined") {
  *   fill('white');
  *   sphere(50);
  * }
- * </code>
- * </div>
+ */
+
+/**
+ * @method smoothstep
+ * @description
+ * A shader function that performs smooth Hermite interpolation between `0.0`
+ * and `1.0`.
+ *
+ * This function is equivalent to the GLSL built-in
+ * `smoothstep(edge0, edge1, x)` and is available inside p5.strands shader
+ * callbacks. It is commonly used to create soft transitions, smooth edges,
+ * fades, and anti-aliased effects.
+ *
+ * Smoothstep is useful when a threshold or cutoff is needed, but with a
+ * gradual transition instead of a hard edge.
+ *
+ * - Returns `0.0` when `x` is less than or equal to `edge0`
+ * - Returns `1.0` when `x` is greater than or equal to `edge1`
+ * - Smoothly interpolates between `0.0` and `1.0` when `x` is between them
+ *
+ * @param {Number} edge0
+ *        Lower edge of the transition
+ * @param {Number} edge1
+ *        Upper edge of the transition
+ * @param {Number} x
+ *        Input value to interpolate
+ *
+ * @returns {Number}
+ *          A value between `0.0` and `1.0`
+ *
+ * @example
+ * // Example 1: A soft vertical fade using smoothstep
+ *
+ * let fadeShader;
+ *
+ * function fadeCallback() {
+ *   getColor((inputs) => {
+ *     // x goes from 0 → 1 across the canvas
+ *     let x = inputs.texCoord.x;
+ *
+ *     // smoothstep creates a soft transition instead of a hard edge
+ *     let t = smoothstep(0.25, 0.35, x);
+ *
+ *     // Use t directly as brightness
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   fadeShader = buildFilterShader(fadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(fadeShader);
+ * }
+ *
+ * @example
+ * // Example 2: Animate the smooth transition over time
+ *
+ * let animatedShader;
+ *
+ * function animatedFadeCallback() {
+ *   getColor((inputs) => {
+ *     let x = inputs.texCoord.x;
+ *
+ *     // Move the smoothstep band back and forth over time
+ *     let center = 0.5 + 0.25 * sin(millis() * 0.001);
+ *     let t = smoothstep(center - 0.05, center + 0.05, x);
+ *
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   animatedShader = buildFilterShader(animatedFadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(animatedShader);
+ * }
  */
 
 /**
@@ -327,8 +417,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called before each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -344,6 +432,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(220);
  *   shader(myShader);
@@ -351,8 +440,6 @@ if (typeof p5 !== "undefined") {
  *   fill('teal');
  *   box(100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -385,8 +472,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -394,7 +479,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   pixelInputs.begin();
  *   // Animate alpha (transparency) based on x position
  *   pixelInputs.color.a = 0.5 + 0.5 *
@@ -405,14 +490,11 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(240);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   lights();
  *   noStroke();
  *   fill('purple');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -431,8 +513,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which receives a boolean and should return a boolean.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -440,14 +520,13 @@ if (typeof p5 !== "undefined") {
  *      'bool shouldDiscard': '(bool outside) { return outside; }'
  *   });
  * }
+ *
  * function draw() {
  *   background(255);
  *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(-width/3, 0, width/3, 0);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -467,8 +546,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -491,8 +568,6 @@ if (typeof p5 !== "undefined") {
  *   fill('green');
  *   circle(0, 0, 100);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -511,8 +586,6 @@ if (typeof p5 !== "undefined") {
  *        A callback function which is called after each fragment is processed.
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -528,6 +601,7 @@ if (typeof p5 !== "undefined") {
  *     });
  *   });
  * }
+ *
  * function draw() {
  *   background(240);
  *   shader(myShader);
@@ -535,8 +609,6 @@ if (typeof p5 !== "undefined") {
  *   fill('purple');
  *   sphere(60);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -556,8 +628,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildFilterShader">`buildFilterShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -571,7 +641,8 @@ if (typeof p5 !== "undefined") {
  *     filterColor.texCoord.x,
  *     filterColor.texCoord.y + 0.1 * sin(filterColor.texCoord.x * 10)
  *   ];
- *   filterColor.set(getTexture(canvasContent, warped));
+ *   let tex = filterColor.canvasContent;
+ *   filterColor.set(getTexture(tex, warped));
  *   filterColor.end();
  * }
  *
@@ -582,8 +653,6 @@ if (typeof p5 !== "undefined") {
  *   circle(0, 0, 150);
  *   filter(myShader);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -604,8 +673,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -613,7 +680,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   objectInputs.begin();
  *   // Create a sine wave along the object
  *   objectInputs.position.y += sin(t * 0.001 + objectInputs.position.x);
@@ -623,13 +690,10 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(220);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('orange');
  *   sphere(50);
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -650,8 +714,6 @@ if (typeof p5 !== "undefined") {
  * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
  *
  * @example
- * <div modernizr='webgl'>
- * <code>
  * let myShader;
  * function setup() {
  *   createCanvas(200, 200, WEBGL);
@@ -659,7 +721,7 @@ if (typeof p5 !== "undefined") {
  * }
  *
  * function material() {
- *   let t = uniformFloat();
+ *   let t = millis();
  *   cameraInputs.begin();
  *   // Move vertices in camera space based on their x position
  *   cameraInputs.position.y += 30 * sin(cameraInputs.position.x * 0.05 + t * 0.001);
@@ -671,13 +733,142 @@ if (typeof p5 !== "undefined") {
  * function draw() {
  *   background(200);
  *   shader(myShader);
- *   myShader.setUniform('t', millis());
  *   noStroke();
  *   fill('red');
  *   sphere(50);
  * }
- * </code>
- * </div>
+ */
+
+/**
+ * Retrieves the current color of a given texture at given coordinates.
+ *
+ * The given coordinates should be between [0, 0] representing the top-left of
+ * the texture, and [1, 1] representing the bottom-right of the texture.
+ *
+ * The given texture could be, for example:
+ * * <a href="#/p5.Image">p5.Image</a>,
+ * * a <a href="#/p5.Graphics">p5.Graphics</a>, or
+ * * a <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ *
+ * The retrieved color that is returned will behave like a vec4, with components
+ * for red, green, blue, and alpha, each between 0.0 and 1.0.
+ *
+ * Linear interpolation is used by default. For Framebuffer sources, you can
+ * prevent this by creating the buffer with:
+ * ```js
+ * createFramebuffer({
+ *     textureFiltering: NEAREST
+ *  })
+ * ```
+ * This can be useful if you are using your texture to store data other than color.
+ * See <a href="#/p5/createFramebuffer/">createFramebuffer</a>.
+ *
+ * Note: The `getTexture` function is only available when using p5.strands.
+ *
+ * @method getTexture
+ * @beta
+ *
+ * @param texture The texture to sample from.
+ * (e.g. a p5.Image, p5.Graphics, or p5.Framebuffer).
+ *
+ * @param coords The 2D coordinates to sample from.
+ * This should be between [0,0] (the top-left) and [1,1] (the bottom-right)
+ * of the texture.  It should be compatible with a vec2.
+ *
+ * @returns {*} The color of the given texture at the given coordinates.  This
+ * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
+ *
+ * @example
+ * // A filter shader (using p5.strands) which will
+ * // sample and invert the color of each pixel
+ * // from the canvas.
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   let myShader = buildFilterShader(buildIt);
+ *
+ *   background("white");
+ *   fill("red");
+ *   circle(0, 0, 50);
+ *
+ *   filter(myShader); //Try commenting this out!
+ *
+ *   describe("A cyan circle on black background");
+ * }
+ *
+ * function buildIt() {
+ *   filterColor.begin();
+ *
+ *   //Sample the color of the pixel from the
+ *   //canvas at the same coordinate.
+ *   let c = getTexture(filterColor.canvasContent,
+ *                      filterColor.texCoord);
+ *
+ *   //Make a new color by inverting r, g, and b
+ *   let newColor = [1 - c.r, 1 - c.g, 1 - c.b, c.a];
+ *
+ *   //Finally, use it for this pixel!
+ *   filterColor.set(newColor);
+ *
+ *   filterColor.end();
+ * }
+ *
+ * @example
+ * // This primitive edge-detection filter samples
+ * // and compares the colors of the current pixel
+ * // on the canvas, and a little to the right.
+ * // It marks if they differ much.
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myShader = buildFilterShader(myShaderBuilder);
+ *   describe("A rough partial outline of a square rotating around a circle");
+ * }
+ *
+ * function draw() {
+ *   drawADesign();
+ *
+ *   filter(myShader); // try commenting this out
+ * }
+ *
+ * function myShaderBuilder() {
+ *   filterColor.begin();
+ *
+ *   //The position of the current pixel...
+ *   let coordHere = filterColor.texCoord;
+ *   //and some small amount to the right.
+ *   let coordRight = coordHere + [0.01, 0];
+ *
+ *   //The canvas content is a texture.
+ *   let cnvTex = filterColor.canvasContent;
+ *
+ *   //Sample the colors from it at our two positions
+ *   let colorHere = getTexture(cnvTex, coordHere);
+ *   let colorRight = getTexture(cnvTex, coordRight);
+ *
+ *   // Calculate a (very rough) color difference.
+ *   let difference = length(colorHere - colorRight);
+ *
+ *   //We'll use a black color by default...
+ *   let resultColor = [0, 0, 0, 1];
+ *   //or white if the samples were different.
+ *   if (difference > 0.3) {
+ *     resultColor = [1, 1, 1, 1];
+ *   }
+ *   filterColor.set(resultColor);
+ *
+ *   filterColor.end();
+ * }
+ *
+ * //Draw a few shapes, just to test the filter with
+ * function drawADesign() {
+ *   background(50);
+ *   noStroke();
+ *   lights();
+ *   sphere(20);
+ *   rotate(frameCount / 300);
+ *   square(0, 0, 30);
+ * }
  */
 
 /**

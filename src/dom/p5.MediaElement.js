@@ -84,8 +84,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    *
    * function setup() {
@@ -110,8 +108,6 @@ class MediaElement extends Element {
    * function mousePressed() {
    *   beat.play();
    * }
-   * </code>
-   * </div>
    */
   play() {
     if (this.elt.currentTime === this.elt.duration) {
@@ -151,8 +147,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    * let isStopped = true;
    *
@@ -192,8 +186,6 @@ class MediaElement extends Element {
    *     isStopped = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   stop() {
     this.elt.pause();
@@ -209,8 +201,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    * let isPaused = true;
    *
@@ -252,8 +242,6 @@ class MediaElement extends Element {
    *     isPaused = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   pause() {
     this.elt.pause();
@@ -266,8 +254,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    * let isLooping = false;
    *
@@ -309,8 +295,6 @@ class MediaElement extends Element {
    *     isLooping = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   loop() {
     this.elt.setAttribute('loop', true);
@@ -325,8 +309,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    * let isPlaying = false;
    *
@@ -368,8 +350,6 @@ class MediaElement extends Element {
    *     isPlaying = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   noLoop() {
     this.elt.removeAttribute('loop');
@@ -408,8 +388,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div class='notest'>
-   * <code>
    * let video;
    *
    * function setup() {
@@ -426,11 +404,8 @@ class MediaElement extends Element {
    *   video.size(100, 100);
    *   video.autoplay();
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * function setup() {
    *   noCanvas();
    *
@@ -442,8 +417,6 @@ class MediaElement extends Element {
    *
    *   describe('An image of fingers on a treadmill. They start walking when the user double-clicks on them.');
    * }
-   * </code>
-   * </div>
    *
    * // Set the video's size and playback mode.
    * function handleVideo() {
@@ -492,8 +465,6 @@ class MediaElement extends Element {
    * @return {Number} current volume.
    *
    * @example
-   * <div>
-   * <code>
    * let dragon;
    *
    * function setup() {
@@ -530,8 +501,6 @@ class MediaElement extends Element {
    *   // Display the volume.
    *   text(`Volume: ${v}`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {Number}            val volume between 0.0 and 1.0.
@@ -561,8 +530,6 @@ class MediaElement extends Element {
    * @return {Number} current playback speed.
    *
    * @example
-   * <div>
-   * <code>
    * let dragon;
    *
    * function setup() {
@@ -599,7 +566,6 @@ class MediaElement extends Element {
    *   // Display the speed.
    *   text(`Speed: ${s}`, 50, 50);
    * }
-   * </code>
    */
   /**
    * @param {Number} speed  speed multiplier for playback.
@@ -632,8 +598,6 @@ class MediaElement extends Element {
    * @return {Number} current time (in seconds).
    *
    * @example
-   * <div>
-   * <code>
    * let dragon;
    *
    * function setup() {
@@ -664,11 +628,8 @@ class MediaElement extends Element {
    *   // Display the playback time.
    *   text(`${s} seconds`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let dragon;
    *
    * function setup() {
@@ -702,8 +663,6 @@ class MediaElement extends Element {
    *   // Display the playback time.
    *   text(`${s} seconds`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   time(val) {
     if (typeof val !== 'undefined') {
@@ -718,8 +677,6 @@ class MediaElement extends Element {
    * @return {Number} duration (in seconds).
    *
    * @example
-   * <div>
-   * <code>
    * let dragon;
    *
    * function setup() {
@@ -752,11 +709,16 @@ class MediaElement extends Element {
    *   // Display the time remaining.
    *   text(`${s} seconds left`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   duration() {
     return this.elt.duration;
+  }
+  _checkIfTextureNeedsUpdate() {
+    const needsUpdate = this._frameOnTexture !== this._pInst.frameCount;
+    if (needsUpdate) {
+      this.setModified(true);
+      this._frameOnTexture = this._pInst.frameCount;
+    }
   }
   _ensureCanvas() {
     if (!this.canvas) {
@@ -878,8 +840,6 @@ class MediaElement extends Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let beat;
    * let isPlaying = false;
    * let isDone = false;
@@ -925,8 +885,6 @@ class MediaElement extends Element {
    * function handleEnd() {
    *   isDone = false;
    * }
-   * </code>
-   * </div>
    */
   onended(callback) {
     this._onended = callback;
@@ -1019,8 +977,6 @@ class MediaElement extends Element {
    * Note: The controls vary between web browsers.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1041,8 +997,6 @@ class MediaElement extends Element {
    *
    *   describe('A dragon emoji, 🐉, drawn in the center of a blue square. A song plays in the background. Audio controls are displayed beneath the canvas.');
    * }
-   * </code>
-   * </div>
    */
   showControls() {
     // must set style for the element to show on the page
@@ -1056,8 +1010,6 @@ class MediaElement extends Element {
    * controls.
    *
    * @example
-   * <div>
-   * <code>
    * let dragon;
    * let isHidden = false;
    *
@@ -1097,8 +1049,6 @@ class MediaElement extends Element {
    *     isHidden = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   hideControls() {
     this.elt.controls = false;
@@ -1128,8 +1078,6 @@ class MediaElement extends Element {
    *                     useful for `media.removeCue(id)`.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1152,8 +1100,6 @@ class MediaElement extends Element {
    * function changeBackground(c) {
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   addCue(time, callback, val) {
     const id = this._cueIDCounter++;
@@ -1174,8 +1120,6 @@ class MediaElement extends Element {
    * @param  {Number} id ID of the cue, created by `media.addCue()`.
    *
    * @example
-   * <div>
-   * <code>
    * let lavenderID;
    * let isRemoved = false;
    *
@@ -1222,13 +1166,10 @@ class MediaElement extends Element {
    *     isRemoved = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   removeCue(id) {
     for (let i = 0; i < this._cues.length; i++) {
       if (this._cues[i].id === id) {
-        console.log(id);
         this._cues.splice(i, 1);
       }
     }
@@ -1242,8 +1183,6 @@ class MediaElement extends Element {
    * Removes all functions scheduled with `media.addCue()`.
    *
    * @example
-   * <div>
-   * <code>
    * let isChanging = true;
    *
    * function setup() {
@@ -1290,8 +1229,6 @@ class MediaElement extends Element {
    *     isChanging = false;
    *   }
    * }
-   * </code>
-   * </div>
    */
   clearCues() {
     this._cues = [];
@@ -1382,7 +1319,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element for simple audio/video playback.
+   * Creates a `<video>` element for simple audio/video playback.
    *
    * `createVideo()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
@@ -1408,8 +1345,6 @@ function media(p5, fn){
    * @return {p5.MediaElement}   new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
    *
    * @example
-   * <div class='notest'>
-   * <code>
    * function setup() {
    *   noCanvas();
    *
@@ -1422,11 +1357,8 @@ function media(p5, fn){
    *
    *   describe('A video of a toy robot with playback controls beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * function setup() {
    *   noCanvas();
    *
@@ -1441,11 +1373,8 @@ function media(p5, fn){
    *
    *   describe('A video of a toy robot with playback controls beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * let video;
    *
    * function setup() {
@@ -1469,8 +1398,6 @@ function media(p5, fn){
    * function muteVideo() {
    *   video.volume(0);
    * }
-   * </code>
-   * </div>
    */
   fn.createVideo = function (src, callback) {
     // p5._validateParameters('createVideo', arguments);
@@ -1480,7 +1407,7 @@ function media(p5, fn){
   /* AUDIO STUFF */
 
   /**
-   * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
+   * Creates a hidden `<audio>` element for simple audio playback.
    *
    * `createAudio()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
@@ -1504,8 +1431,6 @@ function media(p5, fn){
    * @return {p5.MediaElement}       new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
    *
    * @example
-   * <div class='notest'>
-   * <code>
    * function setup() {
    *   noCanvas();
    *
@@ -1517,8 +1442,6 @@ function media(p5, fn){
    *
    *   describe('An audio beat plays when the user double-clicks the square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createAudio = function (src, callback) {
     // p5._validateParameters('createAudio', arguments);
@@ -1561,7 +1484,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
+   * Creates a `<video>` element that "captures" the audio/video stream from
    * the webcam and microphone.
    *
    * `createCapture()` returns a new
@@ -1602,8 +1525,6 @@ function media(p5, fn){
    * @return {p5.MediaElement} new <a href="#/p5.MediaElement">p5.MediaElement</a> object.
    *
    * @example
-   * <div class='notest'>
-   * <code>
    * function setup() {
    *   noCanvas();
    *
@@ -1612,11 +1533,8 @@ function media(p5, fn){
    *
    *   describe('A video stream from the webcam.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * let capture;
    *
    * function setup() {
@@ -1636,10 +1554,8 @@ function media(p5, fn){
    *   // Invert the colors in the stream.
    *   filter(INVERT);
    * }
-   * </code>
-   * </div>
-   * <div class='notest'>
-   * <code>
+   *
+   * @example
    * let capture;
    *
    * function setup() {
@@ -1652,11 +1568,8 @@ function media(p5, fn){
    *   describe('A video stream from the webcam with flipped or mirrored output.');
    * }
    *
-   * </code>
-   * </div>
    *
-   * <div class='notest norender'>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(480, 120);
    *
@@ -1677,8 +1590,6 @@ function media(p5, fn){
    *
    *   describe('A video stream from the webcam.');
    * }
-   * </code>
-   * </div>
    */
   fn.createCapture = function (...args) {
     // p5._validateParameters('createCapture', args);
@@ -1742,12 +1653,12 @@ function media(p5, fn){
       if (domElement.width) {
         videoEl.width = domElement.width;
         videoEl.height = domElement.height;
-        if (flipped) {
-          videoEl.elt.style.transform = 'scaleX(-1)';
-        }
       } else {
         videoEl.width = videoEl.elt.width = domElement.videoWidth;
         videoEl.height = videoEl.elt.height = domElement.videoHeight;
+      }
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
       }
       videoEl.loadedmetadata = true;
 
@@ -1775,8 +1686,6 @@ function media(p5, fn){
    * @extends p5.Element
    *
    * @example
-   * <div class='notest'>
-   * <code>
    * let capture;
    *
    * function setup() {
@@ -1794,8 +1703,6 @@ function media(p5, fn){
    *   image(capture, 0, 0, width, width * capture.height / capture.width);
    *   filter(INVERT);
    * }
-   * </code>
-   * </div>
    */
   p5.MediaElement = MediaElement;
 
@@ -1803,14 +1710,14 @@ function media(p5, fn){
   // if present in a sketch
   MediaElement.prototype._getSoundOut = function() {
     return p5.soundOut;
-  }
+  };
   MediaElement.prototype._getAudioContext = function() {
     if (typeof fn.getAudioContext === 'function') {
       return fn.getAudioContext();
     } else {
       return undefined;
     }
-  }
+  };
 
   /**
    * Path to the media element's source as a string.
@@ -1819,8 +1726,6 @@ function media(p5, fn){
    * @property src
    * @return {String} src
    * @example
-   * <div>
-   * <code>
    * let beat;
    *
    * function setup() {
@@ -1838,8 +1743,6 @@ function media(p5, fn){
    *   textWrap(CHAR);
    *   text(beat.src, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 }
 
