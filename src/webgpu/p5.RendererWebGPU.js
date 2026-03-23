@@ -48,6 +48,75 @@ function rendererWebGPU(p5, fn) {
       this._renderer = renderer;
       this._schema = schema;
     }
+
+    /**
+     * Updates the contents of the storage buffer with new data.
+     *
+     * The format of the new data must match the format used when the buffer
+     * was created with <a href="#/p5/createStorage">`createStorage()`</a>:
+     * an array of objects for struct buffers, or an array/Float32Array of
+     * floats for plain float buffers.
+     *
+     * @method update
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Array|Float32Array} data The new data to write into the buffer.
+     */
+    update(data) {
+      const device = this._renderer.device;
+
+      if (this._schema !== null) {
+        // Buffer was created with a struct array
+        if (
+          !Array.isArray(data) ||
+          data.length === 0 ||
+          typeof data[0] !== 'object' ||
+          Array.isArray(data[0])
+        ) {
+          throw new Error(
+            'update() expects an array of objects matching the original struct format'
+          );
+        }
+
+        const newSchema = this._renderer._inferStructSchema(data[0]);
+        if (newSchema.structBody !== this._schema.structBody) {
+          throw new Error(
+            `update() data structure doesn't match the original.\n` +
+            `  Expected: ${this._schema.structBody}\n` +
+            `  Got:      ${newSchema.structBody}`
+          );
+        }
+
+        const packed = this._renderer._packStructArray(data, this._schema);
+        if (packed.byteLength > this.size) {
+          throw new Error(
+            `update() data (${packed.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
+          );
+        }
+        device.queue.writeBuffer(this.buffer, 0, packed);
+      } else {
+        // Buffer was created with a float array
+        let floatData;
+        if (data instanceof Float32Array) {
+          floatData = data;
+        } else if (Array.isArray(data)) {
+          floatData = new Float32Array(data);
+        } else {
+          throw new Error(
+            'update() expects a Float32Array or array of numbers for this buffer'
+          );
+        }
+
+        if (floatData.byteLength > this.size) {
+          throw new Error(
+            `update() data (${floatData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
+          );
+        }
+        device.queue.writeBuffer(this.buffer, 0, floatData);
+      }
+    }
   }
 
   /**
@@ -3653,173 +3722,6 @@ ${hookUniformFields}}
     return this._renderer._setAttributes(key, value);
   }
 
-  /**
-   * Creates a storage buffer for use in compute shaders.
-   *
-   * @method createStorage
-   * @beta
-   * @webgpu
-   * @webgpuOnly
-   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
-   *   an array/Float32Array of floats, or an array of objects describing struct elements.
-   * @returns {p5.StorageBuffer} A storage buffer.
-   */
-  fn.createStorage = function (dataOrCount) {
-    return this._renderer.createStorage(dataOrCount);
-  }
-
-  /**
-   * Returns the base compute shader.
-   *
-   * Calling `buildComputeShader(shaderFunction)` is equivalent to
-   * calling `baseComputeShader().modify(shaderFunction)`.
-   *
-   * @method baseComputeShader
-   * @beta
-   * @webgpu
-   * @webgpuOnly
-   * @returns {p5.Shader} The base compute shader.
-   */
-  fn.baseComputeShader = function () {
-    return this._renderer.baseComputeShader();
-  };
-
-  /**
-   * Create a new compute shader using p5.strands.
-   *
-   * A compute shader lets you run many calculations all at once on your GPU. They
-   * are similar to a <a href="#/p5/for>`for` loop,</a> but each iteration of the
-   * loop happens in parallel on the GPU rather than running one after the other.
-   * This makes them ideal for calculations or simulations involving many items.
-   *
-   * You create a compute shader by passing a function to `buildComputeShader`.
-   * The function represents one iteration of a loop.
-   *
-   * The compute shader can be run by calling <a href="#/p5/compute">`compute()`</a>
-   * and passing the shader in, along with the number of iterations.
-   *
-   * ```js example
-   * let particles;
-   * let computeShader;
-   * let displayShader;
-   * let instance;
-   * const numParticles = 50;
-   *
-   * async function setup() {
-   *   await createCanvas(100, 100, WEBGPU);
-   *
-   *   let data = [];
-   *   for (let i = 0; i < numParticles; i++) {
-   *     data.push({
-   *       position: createVector(
-   *         random(-40, 40),
-   *         random(-40, 40)
-   *       ),
-   *       velocity: createVector(
-   *         random(-1, 1),
-   *         random(-1, 1)
-   *       ),
-   *     });
-   *   }
-   *   particles = createStorage(data);
-   *
-   *   computeShader = buildComputeShader(simulate);
-   *   displayShader = buildMaterialShader(display);
-   *   instance = buildGeometry(drawParticle);
-   * }
-   *
-   * function drawParticle() {
-   *   sphere(3);
-   * }
-   *
-   * function simulate() {
-   *   let r = 3;
-   *   let data = uniformStorage(particles);
-   *   let idx = iteration.index.x;
-   *   let pos = data[idx].position;
-   *   let vel = data[idx].velocity;
-   *   pos = pos + vel;
-   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
-   *     vel.x = -vel.x;
-   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
-   *   }
-   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
-   *     vel.y = -vel.y;
-   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
-   *   }
-   *   data[idx].position = pos;
-   *   data[idx].velocity = vel;
-   * }
-   *
-   * function display() {
-   *   let data = uniformStorage(particles);
-   *   worldInputs.begin();
-   *   let pos = data[instanceID()].position;
-   *   worldInputs.position.xy += pos;
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(30);
-   *   compute(computeShader, numParticles);
-   *   noStroke();
-   *   fill(255);
-   *   lights();
-   *   shader(displayShader);
-   *   model(instance, numParticles);
-   * }
-   * ```
-   *
-   * @method buildComputeShader
-   * @beta
-   * @webgpu
-   * @webgpuOnly
-   * @param {Function} callback A function building a p5.strands compute shader.
-   * @returns {p5.Shader} The compute shader.
-   */
-  fn.buildComputeShader = function (cb, context) {
-    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
-  };
-
-  /**
-   * Dispatches a compute shader to run on the GPU.
-   *
-   * @method compute
-   * @beta
-   * @webgpu
-   * @webgpuOnly
-   * @param {p5.Shader} shader The compute shader to run.
-   * @param {Number} x Number of invocations in the X dimension.
-   * @param {Number} [y=1] Number of invocations in the Y dimension.
-   * @param {Number} [z=1] Number of invocations in the Z dimension.
-   */
-  fn.compute = function (shader, x, y, z) {
-    this._renderer.compute(shader, x, y, z);
-  };
-
-  /**
-   * Information about the current iteration of a compute shader.
-
-   * Use it inside a
-   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
-   * function to write a loop that runs in parallel on the GPU.
-   *
-   * `iteration` has the following properties:
-   * - `index`: a three-component vector with the current index
-   *   across all dimensions passed to
-   *   <a href="#/p5/compute">`compute()`</a>. For example, use
-   *   `iteration.index.x` to get the index when looping in one dimension.
-   * - `localIndex`: an integer index of the thread within its workgroup.
-   * - `localId`: a three-component integer vector with the thread's position
-   *   within its workgroup.
-   * - `workgroupId`: a three-component integer vector identifying which
-   *   workgroup this thread belongs to.
-   *
-   * @property {Object} iteration
-   * @beta
-   * @webgpu
-   * @webgpuOnly
-   */
 }
 
 export default rendererWebGPU;

@@ -1985,8 +1985,206 @@ export class Renderer3D extends Renderer {
   }
 }
 
+const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGPU as the last argument to createCanvas.';
+
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
+
+  /**
+   * Creates a storage buffer for use in compute shaders.
+   *
+   * @method createStorage
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
+   *   an array/Float32Array of floats, or an array of objects describing struct elements.
+   * @returns {p5.StorageBuffer} A storage buffer.
+   */
+  fn.createStorage = function (dataOrCount) {
+    if (!this._renderer.createStorage) {
+      p5._friendlyError(
+        `createStorage() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'createStorage'
+      );
+      return;
+    }
+    return this._renderer.createStorage(dataOrCount);
+  };
+
+  /**
+   * Returns the base compute shader.
+   *
+   * Calling `buildComputeShader(shaderFunction)` is equivalent to
+   * calling `baseComputeShader().modify(shaderFunction)`.
+   *
+   * @method baseComputeShader
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @returns {p5.Shader} The base compute shader.
+   */
+  fn.baseComputeShader = function () {
+    if (!this._renderer.baseComputeShader) {
+      p5._friendlyError(
+        `baseComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'baseComputeShader'
+      );
+      return;
+    }
+    return this._renderer.baseComputeShader();
+  };
+
+  /**
+   * Create a new compute shader using p5.strands.
+   *
+   * A compute shader lets you run many calculations all at once on your GPU. They
+   * are similar to a <a href="#/p5/for>`for` loop,</a> but each iteration of the
+   * loop happens in parallel on the GPU rather than running one after the other.
+   * This makes them ideal for calculations or simulations involving many items.
+   *
+   * You create a compute shader by passing a function to `buildComputeShader`.
+   * The function represents one iteration of a loop.
+   *
+   * The compute shader can be run by calling <a href="#/p5/compute">`compute()`</a>
+   * and passing the shader in, along with the number of iterations.
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 50;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-40, 40),
+   *         random(-40, 40)
+   *       ),
+   *       velocity: createVector(
+   *         random(-1, 1),
+   *         random(-1, 1)
+   *       ),
+   *     });
+   *   }
+   *   particles = createStorage(data);
+   *
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(3);
+   * }
+   *
+   * function simulate() {
+   *   let r = 3;
+   *   let data = uniformStorage(particles);
+   *   let idx = iteration.index.x;
+   *   let pos = data[idx].position;
+   *   let vel = data[idx].velocity;
+   *   pos = pos + vel;
+   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
+   *     vel.x = -vel.x;
+   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
+   *   }
+   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
+   *     vel.y = -vel.y;
+   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
+   *   }
+   *   data[idx].position = pos;
+   *   data[idx].velocity = vel;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255);
+   *   lights();
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * @method buildComputeShader
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Function} callback A function building a p5.strands compute shader.
+   * @returns {p5.Shader} The compute shader.
+   */
+  fn.buildComputeShader = function (cb, context) {
+    if (!this._renderer.baseComputeShader) {
+      p5._friendlyError(
+        `buildComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'buildComputeShader'
+      );
+      return;
+    }
+    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+  };
+
+  /**
+   * Dispatches a compute shader to run on the GPU.
+   *
+   * @method compute
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {p5.Shader} shader The compute shader to run.
+   * @param {Number} x Number of invocations in the X dimension.
+   * @param {Number} [y=1] Number of invocations in the Y dimension.
+   * @param {Number} [z=1] Number of invocations in the Z dimension.
+   */
+  fn.compute = function (shader, x, y, z) {
+    if (!this._renderer.compute) {
+      p5._friendlyError(
+        `compute() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'compute'
+      );
+      return;
+    }
+    this._renderer.compute(shader, x, y, z);
+  };
+
+  /**
+   * Information about the current iteration of a compute shader.
+   *
+   * Use it inside a
+   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
+   * function to write a loop that runs in parallel on the GPU.
+   *
+   * `iteration` has the following properties:
+   * - `index`: a three-component vector with the current index
+   *   across all dimensions passed to
+   *   <a href="#/p5/compute">`compute()`</a>. For example, use
+   *   `iteration.index.x` to get the index when looping in one dimension.
+   * - `localIndex`: an integer index of the thread within its workgroup.
+   * - `localId`: a three-component integer vector with the thread's position
+   *   within its workgroup.
+   * - `workgroupId`: a three-component integer vector identifying which
+   *   workgroup this thread belongs to.
+   *
+   * @property {Object} iteration
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   */
 }
 
 export default renderer3D;
