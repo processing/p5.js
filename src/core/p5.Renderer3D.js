@@ -2047,7 +2047,16 @@ function renderer3D(p5, fn) {
    * The function represents one iteration of a loop.
    *
    * The compute shader can be run by calling <a href="#/p5/compute">`compute()`</a>
-   * and passing the shader in, along with the number of iterations.
+   * and passing the shader in, along with the number of iterations in up to three
+   * dimensions. Use the <a href="#/p5/index">`index`</a> vector inside of your
+   * iteration function to refer to the current iteration of the loop. The `x`, `y`,
+   * and `z` properties will count up from zero to the count in each dimension passed
+   * into `compute`.
+   *
+   * A compute shader will read from and write to storage, which is often an array of
+   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a> to construct
+   * initial data. Connect your iteration function to the storage by passing the storage
+   * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
    *
    * ```js example
    * let particles;
@@ -2200,6 +2209,10 @@ function renderer3D(p5, fn) {
 
   /**
    * Dispatches a compute shader to run on the GPU.
+   *
+   * The first parameter, `shader`, is a compute shader created with
+   * <a href="#/p5/buildComputeShader">`buildComputeShader`</a>.
+   *
    *
    * @method compute
    * @beta
