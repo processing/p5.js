@@ -247,8 +247,8 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       if (constantsLookup.has(typeName)) {
         const typedefEntry = typedefs[typeName];
 
-        // Use interface name for object typedefs unless resolving the constant definition itself
-        if (typedefEntry && hasTypedefProperties(typedefEntry) && !isConstantDef) {
+        // Use interface name for object-shaped typedefs in all contexts
+        if (typedefEntry && hasTypedefProperties(typedefEntry)) {
           if (inGlobalMode) {
             return `P5.${typeName}`;
           } else if (isInsideNamespace) {
@@ -718,6 +718,10 @@ function generateTypeDefinitions() {
         return false;
       }
       if (seenConstants.has(item.name)) {
+        return false;
+      }
+      // Skip typedefs that have real object shapes
+      if (typedefs[item.name] && hasTypedefProperties(typedefs[item.name])) {
         return false;
       }
       seenConstants.add(item.name);
