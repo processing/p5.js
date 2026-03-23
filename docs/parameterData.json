@@ -305,6 +305,7 @@
     },
     "ellipseMode": {
       "overloads": [
+        [],
         [
           "CENTER|RADIUS|CORNER|CORNERS"
         ]
@@ -808,6 +809,7 @@
     },
     "rectMode": {
       "overloads": [
+        [],
         [
           "CENTER|RADIUS|CORNER|CORNERS"
         ]
@@ -878,7 +880,8 @@
           "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
           "Number?",
           "Number?"
-        ]
+        ],
+        []
       ]
     },
     "createElement": {
@@ -1086,7 +1089,8 @@
       "overloads": [
         [
           "ROUND|SQUARE|PROJECT"
-        ]
+        ],
+        []
       ]
     },
     "lerp": {
@@ -1292,7 +1296,8 @@
       "overloads": [
         [
           "MITER|BEVEL|ROUND"
-        ]
+        ],
+        []
       ]
     },
     "noCursor": {
@@ -1391,7 +1396,8 @@
       "overloads": [
         [
           "Number"
-        ]
+        ],
+        []
       ]
     },
     "degrees": {
@@ -2268,6 +2274,7 @@
     },
     "colorMode": {
       "overloads": [
+        [],
         [
           "RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH",
           "Number?"
@@ -2492,6 +2499,7 @@
     },
     "tint": {
       "overloads": [
+        [],
         [
           "Number",
           "Number",
@@ -2631,6 +2639,7 @@
     },
     "fill": {
       "overloads": [
+        [],
         [
           "Number",
           "Number",
@@ -2680,7 +2689,8 @@
         [
           "LEFT|CENTER|RIGHT?",
           "TOP|BOTTOM|CENTER|BASELINE?"
-        ]
+        ],
+        []
       ]
     },
     "textAscent": {
@@ -2701,7 +2711,8 @@
       "overloads": [
         [
           "Number?"
-        ]
+        ],
+        []
       ]
     },
     "textFont": {
@@ -2709,7 +2720,8 @@
         [
           "p5.Font|String|Object?",
           "Number?"
-        ]
+        ],
+        []
       ]
     },
     "textSize": {
@@ -2854,6 +2866,7 @@
     },
     "imageMode": {
       "overloads": [
+        [],
         [
           "CORNER|CORNERS|CENTER"
         ]
@@ -2983,6 +2996,7 @@
     },
     "stroke": {
       "overloads": [
+        [],
         [
           "Number",
           "Number",
@@ -3227,6 +3241,7 @@
     },
     "blendMode": {
       "overloads": [
+        [],
         [
           "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
         ]
@@ -3298,7 +3313,8 @@
       "overloads": [
         [
           "Object"
-        ]
+        ],
+        []
       ]
     },
     "linePerspective": {
@@ -3387,7 +3403,8 @@
       "overloads": [
         [
           "IMAGE|NORMAL"
-        ]
+        ],
+        []
       ]
     },
     "setCamera": {
@@ -3409,7 +3426,8 @@
         [
           "CLAMP|REPEAT|MIRROR",
           "CLAMP|REPEAT|MIRROR?"
-        ]
+        ],
+        []
       ]
     },
     "normalMaterial": {

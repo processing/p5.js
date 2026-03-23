@@ -7,16 +7,6 @@ suite('Set/get properties', function() {
     sketch.draw = function () { };
   });
 
-  /*beforeEach(function () {
-    myp5 = new p5(function (p) {
-      p.setup = function () { };
-      p.draw = function () { };
-    });
-  });
-  afterEach(function () {
-    myp5.remove();
-  });*/
-
   let getters = {
     fill: new p5.Color([100, 200, 50]),
     stroke: new p5.Color([200, 100, 50, 100]),
@@ -24,7 +14,7 @@ suite('Set/get properties', function() {
 
     rectMode: p.CENTER,
     colorMode: p.HSB,
-    blendMode: 'source-over',
+    blendMode: p.BLEND,
     imageMode: p.CORNER,
     ellipseMode: p.CORNER,
     angleMode: p.DEGREES,
@@ -32,8 +22,8 @@ suite('Set/get properties', function() {
     strokeWeight: 6,
     strokeCap: p.ROUND,
     strokeJoin: p.MITER,
+    cursor: p.HAND,
     pixelDensity: 1,
-    cursor: 'pointer',
 
     bezierOrder: 2,
     splineProperties: { ends: p.EXCLUDE, tightness: -5 },
@@ -50,11 +40,11 @@ suite('Set/get properties', function() {
     textDirection: 1,
     textWeight: 1
 
-    // rotate: p.PI, see #8278
+    // see #8278
+    // rotate: p.PI,
     // translate: { x: 1, y: 2 },
     // scale: { x: 1, y: 2 },
-    // background: new p5.Color([100, 100, 50]),
-
+    // background: new p5.Color([100, 100, 50])
   };
 
   Object.keys(getters).forEach(prop => {
