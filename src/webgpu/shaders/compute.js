@@ -14,9 +14,9 @@ fn main(
   var index = vec3<i32>(globalId);
 
   if (
-    index.x > uniforms.uTotalCount.x ||
-    index.y > uniforms.uTotalCount.y ||
-    index.z > uniforms.uTotalCount.z
+    index.x >= uniforms.uTotalCount.x ||
+    index.y >= uniforms.uTotalCount.y ||
+    index.z >= uniforms.uTotalCount.z
   ) {
     return;
   }
