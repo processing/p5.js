@@ -410,6 +410,27 @@ p5.prototype.loadModel = function(path,options) {
     try {
       const parsedMaterials = await Promise.all(parsedMaterialPromises);
       const materials= Object.assign({}, ...parsedMaterials);
+      // Warn if any texture paths are referenced but missing
+      for (const [matName, mat] of Object.entries(materials)) {
+        const texturePaths = [
+          mat.texturePath,
+          mat.ambientTexturePath,
+          mat.specularTexturePath,
+          mat.shininessTexturePath,
+          mat.bumpTexturePath
+        ].filter(Boolean);
+
+        for (const texPath of texturePaths) {
+          fileExists(texPath).then(exists => {
+            if (!exists) {
+              console.warn(
+                `Texture file not found for material "${matName}": ${texPath}. The model will render without this texture.`
+              );
+            }
+          });
+        }
+      }
+
       return materials ;
     } catch (error) {
       return {};
@@ -538,8 +559,20 @@ function parseMtl(p5,mtlPath){
             ];
 
           }else if (tokens[0] === 'map_Kd') {
-          //Texture path
+          // Diffuse texture path
             materials[currentMaterial].texturePath = tokens[1];
+          } else if (tokens[0] === 'map_Ka') {
+          // Ambient texture path
+            materials[currentMaterial].ambientTexturePath = tokens[1];
+          } else if (tokens[0] === 'map_Ks') {
+          // Specular texture path
+            materials[currentMaterial].specularTexturePath = tokens[1];
+          } else if (tokens[0] === 'map_Ns') {
+          // Shininess texture path
+            materials[currentMaterial].shininessTexturePath = tokens[1];
+          } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
+          // Bump/normal map path
+            materials[currentMaterial].bumpTexturePath = tokens[1];
           }
         }
         resolve(materials);
@@ -547,7 +580,6 @@ function parseMtl(p5,mtlPath){
     );
   });
 }
-
 /**
  * Parse OBJ lines into model. For reference, this is what a simple model of a
  * square might look like:
