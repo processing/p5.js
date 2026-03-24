@@ -2652,6 +2652,8 @@ function material(p5, fn) {
    *
    * Note: `textureMode()` can only be used in WebGL mode.
    *
+   * Calling `textureMode()` with no arguments returns the current texture mode.
+   *
    * @method  textureMode
    * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
    *
@@ -2713,6 +2715,10 @@ function material(p5, fn) {
    *   vertex(-30, 30, 0, 1);
    *   endShape();
    * }
+   */
+  /**
+   * @method textureMode
+   * @return {(IMAGE|NORMAL)} The current texture mode, either IMAGE or NORMAL.
    */
   fn.textureMode = function (mode) {
     if (typeof mode === 'undefined') { // getter
@@ -2824,6 +2830,9 @@ function material(p5, fn) {
    * the same value as `wrapX`.
    *
    * Note: `textureWrap()` can only be used in WebGL mode.
+   *
+   * Calling `textureWrap()` with no arguments returns an object with the current
+   * mode for x and y directions, as in `{ wrapX: CLAMP, wrapY: REPEAT }`.
    *
    * @method textureWrap
    * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
@@ -2979,6 +2988,10 @@ function material(p5, fn) {
    *   vertex(-30, 30, 0, 0, 2);
    *   endShape();
    * }
+   */
+  /**
+   * @method textureWrap
+   * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
     if (typeof wrapX === 'undefined') { // getter

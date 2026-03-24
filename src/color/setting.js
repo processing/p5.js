@@ -1777,6 +1777,8 @@ function setting(p5, fn){
    *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
    *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
    *
+   * Calling `blendMode()` without an argument returns the current blendMode.
+   *
    * @example
    * function setup() {
    *   createCanvas(100, 100);
@@ -2144,6 +2146,10 @@ function setting(p5, fn){
    *
    *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
    * }
+   */
+  /**
+   * @method blendMode
+   * @return {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)}      the current blend mode.
    */
   fn.blendMode = function (mode) {
     // p5._validateParameters('blendMode', arguments);

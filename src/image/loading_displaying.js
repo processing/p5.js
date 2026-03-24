@@ -1325,6 +1325,8 @@ function loadingDisplaying(p5, fn){
    * <a href="#/p5/image">image()</a> as the x- and y-coordinates of the image's
    * center. The next parameters are its width and height.
    *
+   * Calling `imageMode()` without an argument returns the current image mode, either `CORNER`, `CORNERS`, or `CENTER`.
+   *
    * @method imageMode
    * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
    *
@@ -1387,6 +1389,10 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn on a gray square.');
    * }
+   */
+  /**
+   * @method imageMode
+   * @return {(CORNER|CORNERS|CENTER)}      the current image mode
    */
   fn.imageMode = function(m) {
     // p5._validateParameters('imageMode', arguments);

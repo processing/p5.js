@@ -35,6 +35,8 @@ function attributes(p5, fn){
    * the constants `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this
    * way. JavaScript is a case-sensitive language.
    *
+   * Calling `ellipseMode()` without an argument returns the current ellipseMode, either `CENTER`, `RADIUS`, `CORNER`, or `CORNERS`.
+   * 
    * @method ellipseMode
    * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @chainable
@@ -76,6 +78,10 @@ function attributes(p5, fn){
    *
    *   describe('A white circle with a gray circle at its top-left corner. Both circles have black outlines.');
    * }
+   */
+  /**
+   * @method ellipseMode
+   * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current ellipseMode.
    */
   fn.ellipseMode = function(m) {
     // p5._validateParameters('ellipseMode', arguments);
@@ -416,6 +422,8 @@ function attributes(p5, fn){
    * the constants `MITER`, `BEVEL`, and `ROUND` are defined this way.
    * JavaScript is a case-sensitive language.
    *
+   * Calling `strokeJoin()` without an argument returns the current stroke join style, either `MITER`, `BEVEL`, or `ROUND`.
+   *
    * @method strokeJoin
    * @param  {(MITER|BEVEL|ROUND)} join either MITER, BEVEL, or ROUND
    * @chainable
@@ -482,6 +490,10 @@ function attributes(p5, fn){
    *   describe('A right-facing arrowhead shape with a rounded tip in center of canvas.');
    * }
    */
+  /**
+   * @method strokeJoin
+   * @return {(MITER|BEVEL|ROUND)}      the current stroke join style.
+   */
   fn.strokeJoin = function(join) {
     // p5._validateParameters('strokeJoin', arguments);
     if (typeof join === 'undefined') { // getter
@@ -503,6 +515,8 @@ function attributes(p5, fn){
    *
    * Note: `strokeWeight()` is affected by transformations, especially calls to
    * <a href="#/p5/scale">scale()</a>.
+   * 
+   * Calling `strokeWeight()` without an argument returns the current stroke weight as a number.
    *
    * @method strokeWeight
    * @param  {Number} weight the weight of the stroke (in pixels).
@@ -544,6 +558,10 @@ function attributes(p5, fn){
    *
    *   describe('Two horizontal black lines. The top line is thin and the bottom is five times thicker than the top.');
    * }
+   */
+  /**
+   * @method strokeWeight
+   * @return {Number} the current stroke weight.
    */
   fn.strokeWeight = function(w) {
     // p5._validateParameters('strokeWeight', arguments);
