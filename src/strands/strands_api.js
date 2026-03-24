@@ -501,6 +501,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     } else if (value && typeof value === 'object' && !value._isStorageBuffer) {
       // Plain object schema template -- only used to infer struct layout, not as a default value
       schema = strandsContext.renderer?._inferStructSchema(value) ?? null;
+    } else if (value?._isStorageBuffer) {
+      defaultValue = bufferOrSchema;
     }
 
     const { id, dimension } = build.variableNode(
