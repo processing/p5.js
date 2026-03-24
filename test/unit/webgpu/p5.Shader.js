@@ -490,7 +490,6 @@ suite('WebGPU p5.Shader', function() {
             return [0.4, 0, 0, 1];
           });
         }, { myp5 });
-        console.log(testShader.fragSrc())
 
         myp5.background(255, 255, 255);
         myp5.filter(testShader);
@@ -499,6 +498,55 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(pixelColor[0], 102, 5);
         assert.approximately(pixelColor[1], 0, 5);
         assert.approximately(pixelColor[2], 0, 5);
+      });
+    });
+
+    suite('ternary expressions', () => {
+      test('ternary changes color based on left/right side of canvas', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = inputs.texCoord.x > 0.5 ? [1, 0, 0, 1] : [0, 0, 1, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
+      test('ternary with scalar values', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const brightness = inputs.texCoord.x > 0.5 ? 1.0 : 0.0;
+            inputs.color = [brightness, brightness, brightness, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 0, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 255, 5);
+        assert.approximately(rightPixel[2], 255, 5);
       });
     });
 
@@ -964,6 +1012,38 @@ suite('WebGPU p5.Shader', function() {
             // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
             return [myp5.abs(processedNormal), 1];
           });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0); // Red background to distinguish from result
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        // Normal of plane facing camera should be [0, 0, 1], so color should be [0, 0, 255]
+        const centerColor = await myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);   // Red component
+        assert.approximately(centerColor[1], 0, 5);   // Green component
+        assert.approximately(centerColor[2], 255, 5); // Blue component
+      });
+
+      test('handle passing a value between fragment hooks only while having a vertex hook', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let processedNormal = myp5.sharedVec3();
+          myp5.objectInputs.begin();
+          myp5.objectInputs.position += [0, 0, 0];
+          myp5.objectInputs.end();
+
+          myp5.pixelInputs.begin();
+          processedNormal = myp5.normalize(myp5.pixelInputs.normal);
+          myp5.pixelInputs.end();
+
+          myp5.finalColor.begin();
+          // Use the processed normal to create a color - should be [0, 0, 1] for plane facing camera
+          myp5.finalColor.set([myp5.abs(processedNormal), 1]);
+          myp5.finalColor.end();
         }, { myp5 });
 
         myp5.background(255, 0, 0); // Red background to distinguish from result

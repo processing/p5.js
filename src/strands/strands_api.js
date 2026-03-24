@@ -15,6 +15,7 @@ import {
 import { strandsBuiltinFunctions } from './strands_builtins'
 import { StrandsConditional } from './strands_conditionals'
 import { StrandsFor } from './strands_for'
+import { buildTernary } from './strands_ternary'
 import * as CFG from './ir_cfg'
 import * as DAG from './ir_dag';
 import * as FES from './strands_FES'
@@ -194,6 +195,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return new StrandsFor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars).build();
   };
   augmentFn(fn, p5, 'strandsFor', p5.strandsFor);
+  p5.strandsTernary = function(condition, ifTrue, ifFalse) {
+    return buildTernary(strandsContext, condition, ifTrue, ifFalse);
+  };
+  augmentFn(fn, p5, 'strandsTernary', p5.strandsTernary);
   p5.strandsEarlyReturn = function(value) {
     const { dag, cfg } = strandsContext;
 
@@ -427,7 +432,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeInfo,
         usedInVertex: false,
         usedInFragment: false,
-        declared: false
       });
 
       return createStrandsNode(id, dimension, strandsContext);
