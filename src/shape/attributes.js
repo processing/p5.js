@@ -189,6 +189,8 @@ function attributes(p5, fn){
    * constants `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this way.
    * JavaScript is a case-sensitive language.
    *
+   * Calling `rectMode()` without an argument returns the current rectMode, either `CORNER`, `CORNERS`, `CENTER`, or `RADIUS`.
+   *
    * @method rectMode
    * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @chainable
@@ -256,6 +258,10 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the center of a white square.');
    * }
+   */
+  /**
+   * @method rectMode
+   * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current rectMode.
    */
   fn.rectMode = function(m) {
     // p5._validateParameters('rectMode', arguments);
