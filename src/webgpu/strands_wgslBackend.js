@@ -448,6 +448,13 @@ export const wgslBackend = {
         const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
         return `${T}(${deps.join(', ')})`;
       }
+      if (node.opCode === OpCode.Nary.TERNARY) {
+        const [condID, trueID, falseID] = node.dependsOn;
+        const cond = this.generateExpression(generationContext, dag, condID);
+        const trueExpr = this.generateExpression(generationContext, dag, trueID);
+        const falseExpr = this.generateExpression(generationContext, dag, falseID);
+        return `select(${falseExpr}, ${trueExpr}, ${cond})`;
+      }
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
         // Convert mod() function calls to % operator in WGSL
         if (node.identifier === 'mod' && node.dependsOn.length === 2) {

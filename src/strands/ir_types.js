@@ -131,7 +131,8 @@ export const OpCode = {
   Nary: {
     FUNCTION_CALL: 200,
     CONSTRUCTOR: 201,
-    ARRAY_ASSIGNMENT: 202,
+    TERNARY: 202,
+    ARRAY_ASSIGNMENT: 203,
   },
   ControlFlow: {
     RETURN: 300,
