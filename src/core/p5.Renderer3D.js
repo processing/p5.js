@@ -2065,6 +2065,10 @@ function renderer3D(p5, fn) {
    * initial data. Connect your iteration function to the storage by passing the storage
    * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
    *
+   * Often, compute shaders are paired with <a href="#/p5/model">`model(myGeometry, count)`</a>
+   * to draw one instance per object in the storage, and a shader that uses
+   * <a href="#/p5/instanceID">`instanceID()`</a> to position each instance.
+   *
    * ```js example
    * let particles;
    * let computeShader;
@@ -2107,7 +2111,7 @@ function renderer3D(p5, fn) {
    *   let data = uniformStorage(particles);
    *   worldInputs.begin();
    *   let pos = data[instanceID()].position;
-   *   worldInputs.position.xy += pos - createVector(width / 2, height / 2);
+   *   worldInputs.position.xy += pos - [width / 2, height / 2];
    *   worldInputs.end();
    * }
    *
