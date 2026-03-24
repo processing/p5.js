@@ -1,3 +1,8 @@
+/**
+ * @module 3D
+ * @for p5
+ */
+
 import * as constants from "../core/constants";
 import { Graphics } from "../core/p5.Graphics";
 import { Renderer } from './p5.Renderer';
@@ -1994,6 +1999,7 @@ function renderer3D(p5, fn) {
    * Creates a storage buffer for use in compute shaders.
    *
    * @method createStorage
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly
@@ -2019,6 +2025,7 @@ function renderer3D(p5, fn) {
    * calling `baseComputeShader().modify(shaderFunction)`.
    *
    * @method baseComputeShader
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly
@@ -2190,7 +2197,6 @@ function renderer3D(p5, fn) {
    * ```
    *
    * @method buildComputeShader
-   * @module 3D
    * @submodule p5.strands
    * @beta
    * @webgpu
@@ -2217,6 +2223,7 @@ function renderer3D(p5, fn) {
    *
    *
    * @method compute
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly
