@@ -1138,11 +1138,8 @@ function loadingDisplaying(p5, fn){
    * sets the alpha value. For example, `tint(255, 0, 0, 100)` will give images
    * a red tint and make them transparent.
    *
-   * Calling `tint()` without an argument returns the current tint as a <a href="#/p5.Color">p5.Color</a> object.
-   *
-   * @method frameRate
-   * @param  {Number} fps number of frames to draw per second.
-   * @chainable
+   * Calling `tint()` without an argument returns the current tint as a 
+   * <a href="#/p5.Color">p5.Color</a> object.
    *
    * @method tint
    * @param  {Number}        v1      red or hue value.

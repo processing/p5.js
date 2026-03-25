@@ -35,7 +35,6 @@ class ClonableObject {
 
 class Renderer {
   static states = {
-    background: null,
     strokeColor: null,
     strokeSet: false,
     fillColor: null,
