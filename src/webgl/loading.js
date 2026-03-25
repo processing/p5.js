@@ -1081,7 +1081,7 @@ function loading(p5, fn){
    *
    * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
    * all the instances get drawn to the same spot, but you can use
-   * <a href="#/p5/instanceID">`instanceID()` inside of a shader to handle each instance.
+   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
    * At large counts, this often runs faster than using a `for` loop.
    *
    * ```js example

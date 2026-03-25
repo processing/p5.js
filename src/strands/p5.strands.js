@@ -764,6 +764,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} filterColor
+ * @beta
  * @description
  * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
  *
@@ -808,6 +809,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} objectInputs
+ * @beta
  * @description
  * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
  *
@@ -849,6 +851,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} cameraInputs
+ * @beta
  * @description
  * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.
  *
