@@ -344,7 +344,8 @@ if (typeof p5 !== "undefined") {
  *   worldInputs.begin();
  *   // Spread spheres evenly across the canvas based on their index
  *   let spacing = width / count;
- *   worldInputs.position.x += (instanceID() - (count - 1) / 2) * spacing;
+ *   worldInputs.position.x +=
+ *     (instanceID() - (count - 1) / 2) * spacing;
  *   worldInputs.end();
  * }
  *
@@ -374,8 +375,16 @@ if (typeof p5 !== "undefined") {
  *   let data = [];
  *   for (let i = 0; i < count; i++) {
  *     data.push({
- *       position: createVector((i - (count - 1) / 2) * 40, 0, 0),
- *       color: color(random(255), random(255), random(255)),
+ *       position: createVector(
+ *         random(-1, 1) * width / 2,
+ *         random(-1, 1) * height / 2,
+ *         0,
+ *       ),
+ *       color: color(
+ *         random(255),
+ *         random(255),
+ *         random(255)
+ *       )
  *     });
  *   }
  *   instanceData = createStorage(data);

@@ -1996,7 +1996,156 @@ function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
 
   /**
-   * Creates a storage buffer for use in compute shaders.
+   * Creates a <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`</a>, which is
+   * a block of data that shaders can read from, and compute shaders
+   * can also write to. This is only available in WebGPU mode.
+   *
+   * To read or write the data inside a shader, use
+   * <a href="#/p5/uniformStorage">`uniformStorage()`</a>. To update its contents
+   * from JavaScript, call <a href="#/p5.StorageBuffer/update">`.update()`</a>
+   * on the result with new data.
+   *
+   * Pass an array of objects to store a list of items, each with named
+   * properties. The properties can be numbers, arrays of numbers, vectors
+   * created with <a href="#/p5/createVector">`createVector()`</a>, or colors
+   * created with <a href="#/p5/color">`color()`</a>. Inside the shader, each
+   * item is accessed by index, and its properties are available by name.
+   *
+   * ```js example
+   * let instanceData;
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < count; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-1, 1) * width / 2,
+   *         random(-1, 1) * height / 2,
+   *         0,
+   *       ),
+   *       color: color(
+   *         random(255),
+   *         random(255),
+   *         random(255)
+   *       )
+   *     });
+   *   }
+   *   instanceData = createStorage(data);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawInstances);
+   * }
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function drawInstances() {
+   *   let data = uniformStorage(instanceData);
+   *   let itemColor = sharedVec4();
+   *
+   *   worldInputs.begin();
+   *   let item = data[instanceID()];
+   *   itemColor = item.color;
+   *   worldInputs.position += item.position;
+   *   worldInputs.end();
+   *
+   *   finalColor.begin();
+   *   finalColor.set(itemColor);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * You can also store a plain list of numbers by passing an array of numbers.
+   * Inside the shader, each number is accessed by index directly. To create an
+   * empty list to be filled in by a compute shader, pass a count instead.
+   *
+   * ```js example
+   * let cells;
+   * let nextCells;
+   * let gameShader;
+   * let displayShader;
+   * const W = 100;
+   * const H = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let initial = new Float32Array(W * H);
+   *   for (let i = 0; i < initial.length; i++) {
+   *     initial[i] = random() > 0.7 ? 1 : 0;
+   *   }
+   *   cells = createStorage(initial);
+   *   nextCells = createStorage(W * H);
+   *
+   *   gameShader = buildComputeShader(simulate);
+   *   displayShader = buildFilterShader(display);
+   * }
+   *
+   * function simulate() {
+   *   let current = uniformStorage(() => cells);
+   *   let next = uniformStorage(() => nextCells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *   let x = index.x;
+   *   let y = index.y;
+   *
+   *   let n = 0;
+   *   for (let dy = -1; dy <= 1; dy++) {
+   *     for (let dx = -1; dx <= 1; dx++) {
+   *       if (dx != 0 || dy != 0) {
+   *         let nx = (x + dx + w) % w;
+   *         let ny = (y + dy + h) % h;
+   *         n += current[ny * w + nx];
+   *       }
+   *     }
+   *   }
+   *
+   *   let alive = current[y * w + x];
+   *   let nextOutput = 0;
+   *   if (alive == 1) {
+   *     if (abs(n - 2) < 0.1 || abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   } else {
+   *     if (abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   }
+   *   next[y * w + x] = nextOutput;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(() => cells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *
+   *   filterColor.begin();
+   *   let x = floor(filterColor.texCoord.x * w);
+   *   let y = floor(filterColor.texCoord.y * h);
+   *   let alive = data[y * w + x];
+   *   filterColor.set([alive, alive, alive, 1]);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   compute(gameShader, W, H);
+   *   [nextCells, cells] = [cells, nextCells];
+   *   filter(displayShader);
+   * }
+   * ```
    *
    * @method createStorage
    * @submodule p5.strands
