@@ -1713,6 +1713,13 @@ function rendererWebGPU(p5, fn) {
           currentShader.buffersDirty.delete(key);
         }
       }
+      for (const storage of currentShader._storageBuffers || []) {
+        const key = storage.group * 1000 + storage.binding;
+        if (currentShader.buffersDirty.has(key)) {
+          currentShader._cachedBindGroup[storage.group] = undefined;
+          currentShader.buffersDirty.delete(key);
+        }
+      }
 
       // Bind sampler/texture uniforms and uniform buffers
       for (const iter of currentShader._groupEntries) {
@@ -2147,7 +2154,7 @@ function rendererWebGPU(p5, fn) {
       if (uniform.isSampler) {
         uniform.texture =
           data instanceof Texture ? data : this.getTexture(data);
-      } else {
+      } else if (!data?._isStorageBuffer) {
         uniform._mappedData = this._mapUniformData(uniform, uniform._cachedData);
       }
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
