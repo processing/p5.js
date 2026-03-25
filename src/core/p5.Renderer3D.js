@@ -2170,10 +2170,14 @@ function renderer3D(p5, fn) {
   };
 
   /**
-   * Returns the base compute shader.
+   * Returns the default shader used for compute operations.
    *
-   * Calling `buildComputeShader(shaderFunction)` is equivalent to
-   * calling `baseComputeShader().modify(shaderFunction)`.
+   * Calling <a href="#/p5/buildComputeShader">`buildComputeShader(shaderFunction)`</a>
+   * is equivalent to calling `baseComputeShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/buildComputeShader">the `buildComputeShader` reference</a> or
+   * call `baseComputeShader().inspectHooks()` for more information on what you can do with
+   * the base compute shader.
    *
    * @method baseComputeShader
    * @submodule p5.strands
