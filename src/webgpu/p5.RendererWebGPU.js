@@ -136,6 +136,7 @@ function rendererWebGPU(p5, fn) {
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
    *   instance = buildGeometry(drawParticle);
+   *   describe('100 orange particles shooting outward.');
    * }
    *
    * function makeParticles(x, y) {

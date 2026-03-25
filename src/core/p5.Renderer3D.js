@@ -2038,6 +2038,7 @@ function renderer3D(p5, fn) {
    *   instanceData = createStorage(data);
    *   instance = buildGeometry(drawInstance);
    *   instancesShader = buildMaterialShader(drawInstances);
+   *   describe('Five spheres at random positions, each a different random color.');
    * }
    *
    * function drawInstance() {
@@ -2092,6 +2093,7 @@ function renderer3D(p5, fn) {
    *
    *   gameShader = buildComputeShader(simulate);
    *   displayShader = buildFilterShader(display);
+   *   describe('An animated Game of Life simulation displayed as black and white pixels.');
    * }
    *
    * function simulate() {
@@ -2231,6 +2233,7 @@ function renderer3D(p5, fn) {
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
    *   instance = buildGeometry(drawParticle);
+   *   describe('100 orange particles shooting outward.');
    * }
    *
    * function makeParticles(x, y) {
@@ -2305,6 +2308,7 @@ function renderer3D(p5, fn) {
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
    *   instance = buildGeometry(drawParticle);
+   *   describe('50 white spheres bouncing around the canvas.');
    * }
    *
    * function drawParticle() {
@@ -2406,6 +2410,7 @@ function renderer3D(p5, fn) {
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
    *   instance = buildGeometry(drawParticle);
+   *   describe('50 white spheres bouncing around the canvas.');
    * }
    *
    * function drawParticle() {
@@ -2474,6 +2479,7 @@ function renderer3D(p5, fn) {
    *
    *   gameShader = buildComputeShader(simulate);
    *   displayShader = buildFilterShader(display);
+   *   describe('An animated Game of Life simulation displayed as black and white pixels.');
    * }
    *
    * function simulate() {

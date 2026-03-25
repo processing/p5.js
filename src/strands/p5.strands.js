@@ -338,6 +338,7 @@ if (typeof p5 !== "undefined") {
  *   createCanvas(200, 200, WEBGL);
  *   instance = buildGeometry(drawInstance);
  *   instancesShader = buildMaterialShader(drawSpaced);
+ *   describe('Five red spheres arranged in a horizontal line.');
  * }
  *
  * function drawSpaced() {
@@ -390,6 +391,7 @@ if (typeof p5 !== "undefined") {
  *   instanceData = createStorage(data);
  *   instance = buildGeometry(drawInstance);
  *   instancesShader = buildMaterialShader(drawInstances);
+ *   describe('Five spheres at random positions, each a different random color.');
  * }
  *
  * function drawInstance() {
