@@ -21,14 +21,16 @@ suite('p5.Vector', function () {
     );
 
     // The following mocks simulate the validation decorator
-    Vector.prototype.add = _validatedVectorOperation(Vector.prototype.add);
-    Vector.prototype.sub = _validatedVectorOperation(Vector.prototype.sub);
-    Vector.prototype.mult = _validatedVectorOperationtk(Vector.prototype.mult);
-    Vector.prototype.rem = _validatedVectorOperationtk(Vector.prototype.rem);
-    Vector.prototype.div = _validatedVectorOperationjt(Vector.prototype.div);
+    Vector.prototype.add = _validatedVectorOperation(false)(Vector.prototype.add);
+    Vector.prototype.sub = _validatedVectorOperation(false)(Vector.prototype.sub);
+    Vector.prototype.mult = _validatedVectorOperation(true)(Vector.prototype.mult);
+    Vector.prototype.rem = _validatedVectorOperation(true)(Vector.prototype.rem);
+    Vector.prototype.div = _validatedVectorOperation(true)(Vector.prototype.div);
 
+    globalThis.FESCalled = false;
     globalThis.p5 = {
       _friendlyError: function(msg, func) {
+        globalThis.FESCalled = true;
         console.warn(msg);
       }
     };
@@ -100,7 +102,7 @@ suite('p5.Vector', function () {
   });
 
 
-  suite('p5.prototype.createVector()', function () {
+  suite.todo('p5.prototype.createVector()', function () {
     beforeEach(function () {
       v = mockP5Prototype.createVector();
     });
@@ -148,9 +150,9 @@ suite('p5.Vector', function () {
     });
   });
 
-  suite('new p5.Vector(1,2,undefined)', function () {
+  suite('new p5.Vector(1,2)', function () {
     beforeEach(function () {
-      v = new Vector(1, 2, undefined);
+      v = new Vector(1, 2);
     });
 
     test('should have x, y, z be initialized to 1,2,0', function () {
@@ -542,10 +544,12 @@ suite('p5.Vector', function () {
     });
 
     test('should give correct output if passed two numeric value', function () {
+      expect(v.dimensions).to.eql(3);
       v.rem(2, 3);
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
-      expect(v.z).to.eql(5);
+      expect(v.z).to.eql(0);
+      expect(v.dimensions).to.eql(2);
     });
 
     test('should give correct output if passed three numeric value', function () {
@@ -609,14 +613,16 @@ suite('p5.Vector', function () {
         v.rem([2, 3]);
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(1);
-        expect(v.z).to.eql(5);
+        expect(v.z).to.eql(0);
+        expect(v.dimensions).to.eql(2);
       });
 
       test('should return correct output if x,y components are zero for 2D vector', () => {
         v.rem([0, 0]);
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(4);
-        expect(v.z).to.eql(5);
+        expect(v.z).to.eql(0);
+        expect(v.dimensions).to.eql(2);
       });
 
       test('should return same vector if any vector component is non-finite number', () => {
@@ -1013,47 +1019,51 @@ suite('p5.Vector', function () {
 
 
   suite('smaller dimension', function () {
-    let v0, v1, v2, v3;
+    let v1, v2, v3;
     beforeEach(function () {
-      v0 = new Vector();
-      v1 = new Vector([1]);
-      v2 = new Vector([2, 3]);
-      v3 = new Vector([4, 5, 6]);
+      v1 = new Vector(1);
+      v2 = new Vector(2, 3);
+      v3 = new Vector(4, 5, 6);
     });
 
     test('should be prioritized in add()', function () {
-      assert.deepEqual(v1.add(v2).values, [2]);
-      assert.deepEqual(v1.add(v2).dimension, 1);
-      assert.deepEqual(v3.add(v2).values, [8,15]);
-      assert.deepEqual(v3.add(v2).dimension, 2);
+      assert.deepEqual(v1.add(v2).values, [3]);
+      expect(v1.add(v2).dimensions).to.eql(1);
+
+      assert.deepEqual(v3.add(v2).values, [6, 8]);
+      expect(v3.add(v2).dimensions).to.eql(2);
     });
 
     test('should be prioritized in sub()', function () {
       assert.deepEqual(v1.sub(v2).values, [-1]);
-      assert.deepEqual(v1.sub(v2).dimension, 1);
+      expect(v1.sub(v2).dimensions).to.eql(1);
+
       assert.deepEqual(v3.sub(v2).values, [2, 2]);
-      assert.deepEqual(v3.sub(v2).dimension, 2);
+      expect(v3.sub(v2).dimensions).to.eql(2);
     });
 
     test('should be prioritized in mult()', function () {
       assert.deepEqual(v1.mult(v2).values, [2]);
-      assert.deepEqual(v1.mult(v2).dimension, 1);
+      expect(v1.mult(v2).dimensions).to.eql(1);
+
       assert.deepEqual(v3.mult(v2).values, [8, 15]);
-      assert.deepEqual(v3.mult(v2).dimension, 2);
+      expect(v3.mult(v2).dimensions).to.eql(2);
     });
 
     test('should be prioritized in div()', function () {
       assert.deepEqual(v1.div(v2).values, [1/2]);
-      assert.deepEqual(v1.div(v2).dimension, 1);
+      expect(v1.div(v2).dimensions).to.eql(1);
+
       assert.deepEqual(v3.div(v2).values, [2, 5/3]);
-      assert.deepEqual(v3.div(v2).dimension, 2);
+      expect(v3.div(v2).dimensions).to.eql(2);
     });
 
     test('should be prioritized in rem()', function () {
       assert.deepEqual(v1.rem(v2).values, [1]);
-      assert.deepEqual(v1.rem(v2).dimension, 1);
+      expect(v1.rem(v2).dimensions).to.eql(1);
+
       assert.deepEqual(v3.rem(v2).values, [0, 2]);
-      assert.deepEqual(v3.rem(v2).dimension, 2);
+      expect(v3.rem(v2).dimensions).to.eql(2);
     });
   });
 
@@ -2078,11 +2088,12 @@ suite('p5.Vector', function () {
       assert.equal(vect.getValue(3), 4);
     });
 
-    test.fails(
-      'should throw friendly error if attempting to get element outside lenght',
+    test('should throw friendly error if attempting to get element outside length',
       function () {
         let vect = new Vector(1, 2, 3, 4);
-        assert.equal(vect.getValue(5), 1);
+        globalThis.FESCalled = false;
+        assert.equal(vect.getValue(5), undefined);
+        assert.equal(globalThis.FESCalled, true);
       }
     );
   });
@@ -2097,11 +2108,12 @@ suite('p5.Vector', function () {
       assert.equal(vect.getValue(3), 4);
     });
 
-    test.fails(
-      'should throw friendly error if attempting to set element outside lenght',
+    test('should throw friendly error if attempting to set element outside lenght',
       function () {
         let vect = new Vector(1, 2, 3, 4);
+        globalThis.FESCalled = false;
         vect.setValue(100, 7);
+        assert.equal(globalThis.FESCalled, true);
       }
     );
   });

@@ -2091,7 +2091,9 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
         }, { myp5 });
       } catch (e) { /* expected */ }
 
-      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called, btw: '+globalThis.FESCalled);
       const errMsg = mockUserError.mock.calls[0][1];
       assert.include(errMsg, 'float3');
       assert.include(errMsg, 'float4');

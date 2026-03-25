@@ -29,23 +29,19 @@ export function _defaultEmptyVector(target){
 export function _validatedVectorOperation(expectsSoloNumberArgument){
   return function(target){
     return function(...args){
-      console.log("vVO", target.name, args);
       if (args.length === 0) {
         // No arguments? No action
         return this;
       } else if (args[0] instanceof Vector) {
+        // First argument is a vector? Make it an array
         args = args[0].values;
       } else if (Array.isArray(args[0])) {
+        // First argument is an array? Great, keep it!
         args = args[0];
-      } else if (args.length === 1) {
-        console.log("A")
-        if (expectsSoloNumberArgument){
-          console.log("b")
-          // && typeof args[0] === 'number' && Number.isFinite(args[0])
-          // Special case handling for a solo numeric argument
-          args = new Array(3).fill(args[0]);
-        }
-      } // (1,2,3) ...args is 1,2,3
+      } else if (expectsSoloNumberArgument && args.length === 1){
+        // Special case for a solo numeric arguments only applies sometimes
+        args = new Array(3).fill(args[0]);
+      }
 
       if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
         p5._friendlyError(
@@ -69,13 +65,9 @@ export default function vectorValidation(p5, fn, lifecycles){
 
   p5.registerDecorator('p5.prototype.createVector', _defaultEmptyVector);
   p5.registerDecorator('p5.Vector.prototype.mult', _validatedVectorOperation(true));
-
-  p5.registerDecorator(function(path){
-    return ['p5.Vector.prototype.add', 'p5.Vector.prototype.sub'].includes(path);
-  }, _validatedVectorOperation(false));
-
-  p5.registerDecorator(function(path){
-    return ['p5.Vector.prototype.rem', 'p5.Vector.prototype.div'].includes(path);
-  }, _validatedVectorOperation(true));
+  p5.registerDecorator('p5.Vector.prototype.rem', _validatedVectorOperation(true));
+  p5.registerDecorator('p5.Vector.prototype.div', _validatedVectorOperation(true));
+  p5.registerDecorator('p5.Vector.prototype.add', _validatedVectorOperation(false));
+  p5.registerDecorator('p5.Vector.prototype.sub', _validatedVectorOperation(false));
 
 }
