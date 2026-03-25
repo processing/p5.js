@@ -73,7 +73,7 @@ export function generateShaderCode(strandsContext) {
       returnType = hookType.returnType.dataType;
     }
 
-    if (rootNodeID) {
+    if (rootNodeID !== undefined) {
       backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
     }
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');

@@ -1815,6 +1815,8 @@ function rendererWebGPU(p5, fn) {
       if (value === undefined) return;
       if (value?.isVector) {
         value = value.values.length !== value.dimensions ? value.values.slice(0, value.dimensions) : value.values;
+      } else if (value?.isColor) {
+        value = value._getRGBA([1, 1, 1, 1]);
       }
       const byteOffset = baseOffset + field.offset;
       if (field.baseType === 'u32') {
@@ -3061,6 +3063,9 @@ ${hookUniformFields}}
         if (value.dimensions === 4) return 'vec4f';
         throw new Error(`Unsupported vector dimension ${value.dimensions} for struct storage field`);
       }
+      if (value?.isColor) {
+        return 'vec4f';
+      }
       if (Array.isArray(value)) {
         if (value.length === 2) return 'vec2f';
         if (value.length === 3) return 'vec3f';
@@ -3087,7 +3092,8 @@ ${hookUniformFields}}
             value !== null &&
             typeof value === 'object' &&
             !Array.isArray(value) &&
-            !value?.isVector
+            !value?.isVector &&
+            !value?.isColor
           ) {
             p5._friendlyError(
               `The "${name}" property in your storage data contains a nested object. ` +

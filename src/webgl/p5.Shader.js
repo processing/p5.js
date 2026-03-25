@@ -253,15 +253,15 @@ class Shader {
    * type of the data, such as `uniformFloat` for a number or `uniformVector2` for a two-component vector.
    * They take in a function that returns the data for the variable. You can then reference these
    * variables in your hooks, and their values will update every time you apply
-   * the shader with the result of your function.  
-   * 
+   * the shader with the result of your function.
+   *
    * Move the mouse over this sketch to increase the moveCounter which will be passed to the shader as a uniform.
    *
    * ```js example
    * let myShader;
    * //count of frames in which mouse has been moved
    * let moveCounter = 0;
-   * 
+   *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
    *   myShader = baseMaterialShader().modify(() => {
@@ -888,7 +888,7 @@ class Shader {
    * @chainable
    * @param {String} uniformName name of the uniform. Must match the name
    *                             used in the vertex and fragment shaders.
-   * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer}
+   * @param {Boolean|p5.Vector|p5.Color|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer}
    * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
@@ -1097,6 +1097,12 @@ class Shader {
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
+    }
+
+    if (data?.isVector) {
+      data = data.values.length !== data.dimensions ? data.values.slice(0, data.dimensions) : data.values;
+    } else if (data?.isColor) {
+      data = data._getRGBA([1, 1, 1, 1]);
     }
 
     if (uniform.isArray) {

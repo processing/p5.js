@@ -61,6 +61,9 @@ class Color {
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
 
+  // For duck typing
+  isColor = true;
+
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
   static addColorMode(mode, definition){
@@ -364,7 +367,7 @@ class Color {
    if (format === undefined && this._defaultStringValue !== undefined) {
       return this._defaultStringValue;
    }
-   
+
     let outputFormat = format;
     if (format === '#rrggbb') {
       outputFormat = 'hex';
@@ -377,10 +380,10 @@ class Color {
       colorString = serialize(this._color, {
         format: outputFormat
       });
-      
+
       if (format === '#rrggbb') {
         colorString = String(colorString);
-        if (colorString.length === 4) { 
+        if (colorString.length === 4) {
             const r = colorString[1];
             const g = colorString[2];
             const b = colorString[3];
