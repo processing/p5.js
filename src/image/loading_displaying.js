@@ -1253,10 +1253,10 @@ function loadingDisplaying(p5, fn){
     if (args.length === 0) {
       return this._renderer.states.tint; // getter
     }
-    if (args && args.length) {
+    else {
       this._renderer.states.setValue('tint', this.color(...args));
+      return this;
     }
-    return this;
   };
 
   /**
