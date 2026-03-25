@@ -102,11 +102,18 @@ class Texture {
       this.isSrcMediaElement ||
       this.isSrcHTMLElement
     ) {
-      // if param is a video HTML element
-      if (this.src._ensureCanvas) {
+      // createCapture elements that are flipped need
+      // to go through a canvas
+      if (this.isSrcMediaElement && this.src.flipped) {
         this.src._ensureCanvas();
+        textureData = this.src.canvas;
+      } else {
+        // if param is a video HTML element
+        if (this.src._checkIfTextureNeedsUpdate) {
+          this.src._checkIfTextureNeedsUpdate();
+        }
+        textureData = this.src.elt;
       }
-      textureData = this.src.elt;
     } else if (this.isSrcP5Graphics || this.isSrcP5Renderer) {
       textureData = this.src.canvas;
     } else if (this.isImageData) {

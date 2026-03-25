@@ -15,7 +15,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 ## Table of Contents
 
 ### Writing
-- [YUIDoc](#yuidoc)
+- [documentation.js and JSDoc](#documentationjs-and-jsdoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
 - [Wording](#wording)
@@ -42,15 +42,13 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Classes](#classes)
 - [Assets](#assets)
 
-## YUIDoc
+## documentation.js and JSDoc
 
-We use YUIDoc to generate the p5.js API documentation. To generate the docs, navigate to the p5.js root directory, run `npm install`, and execute:
+We use [documentation.js](https://documentation.js.org/) to generate the p5.js API documentation from [JSDoc](https://jsdoc.app/) comments in the p5.js source code.
 
-```
-$ npm run grunt yui:dev
-```
+Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information on how to structure the documentation comments and what tags to use.
 
-The output will appear in docs/reference. Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
+It also discusses how to [generate and preview the reference documentation](./contributing_to_the_p5js_reference/#generating-and-previewing-the-reference) to see your changes.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -141,7 +139,7 @@ Always use `let` to declare variables.
 
 **Accessibility terminology**
 
-The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
+The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/disability-and-health/articles-documents/communicating-with-and-about-people-with-disabilities.html).
 
 | Recommended | Not Recommended |
 | -- | -- |
@@ -1267,25 +1265,30 @@ class Mover {
 
 ## Assets
 
-- Always load assets from a folder called "assets".
+Whether assets (such as images, fonts, sound files, etc) are being used in the descriptions or code examples of the reference documentation, or in tutorials, the same rules apply:
 
-> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
-- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
-- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
-- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
+- Always load assets from a folder called `assets`.
+- Store the assets in the `public/assets` folder of the p5.js-website repository.
+
+> Why? It models good project organization. It's also required for assets to load on the p5.js website. 
 
 ```javascript
 let img;
 
 // Bad.
-function preload() {
-  img = loadImage('moonwalk.jpg');
+async function setup() {
+  img = await loadImage('moonwalk.jpg');
+  //...
 }
 
 // Good.
-function preload() {
-  img = loadImage('assets/moonwalk.jpg');
+async function setup() {
+  img = await loadImage('assets/moonwalk.jpg');
+  //...
 }
 ```
+
+There is more on working with assets in the guide: [Contributing to the p5.js reference](./contributing_to_the_p5js_reference/#using-assets).
+
 
 **[⬆ back to top](#table-of-contents)**

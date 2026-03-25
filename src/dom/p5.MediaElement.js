@@ -713,6 +713,13 @@ class MediaElement extends Element {
   duration() {
     return this.elt.duration;
   }
+  _checkIfTextureNeedsUpdate() {
+    const needsUpdate = this._frameOnTexture !== this._pInst.frameCount;
+    if (needsUpdate) {
+      this.setModified(true);
+      this._frameOnTexture = this._pInst.frameCount;
+    }
+  }
   _ensureCanvas() {
     if (!this.canvas) {
       this.canvas = document.createElement('canvas');
@@ -1163,7 +1170,6 @@ class MediaElement extends Element {
   removeCue(id) {
     for (let i = 0; i < this._cues.length; i++) {
       if (this._cues[i].id === id) {
-        console.log(id);
         this._cues.splice(i, 1);
       }
     }
@@ -1313,7 +1319,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element for simple audio/video playback.
+   * Creates a `<video>` element for simple audio/video playback.
    *
    * `createVideo()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
@@ -1401,7 +1407,7 @@ function media(p5, fn){
   /* AUDIO STUFF */
 
   /**
-   * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
+   * Creates a hidden `<audio>` element for simple audio playback.
    *
    * `createAudio()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
@@ -1478,7 +1484,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
+   * Creates a `<video>` element that "captures" the audio/video stream from
    * the webcam and microphone.
    *
    * `createCapture()` returns a new
@@ -1647,12 +1653,12 @@ function media(p5, fn){
       if (domElement.width) {
         videoEl.width = domElement.width;
         videoEl.height = domElement.height;
-        if (flipped) {
-          videoEl.elt.style.transform = 'scaleX(-1)';
-        }
       } else {
         videoEl.width = videoEl.elt.width = domElement.videoWidth;
         videoEl.height = videoEl.elt.height = domElement.videoHeight;
+      }
+      if (flipped) {
+        videoEl.elt.style.transform = 'scaleX(-1)';
       }
       videoEl.loadedmetadata = true;
 

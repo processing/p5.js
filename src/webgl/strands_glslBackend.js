@@ -289,6 +289,13 @@ export const glslBackend = {
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }
+      if (node.opCode === OpCode.Nary.TERNARY) {
+        const [condID, trueID, falseID] = node.dependsOn;
+        const cond = this.generateExpression(generationContext, dag, condID);
+        const trueExpr = this.generateExpression(generationContext, dag, trueID);
+        const falseExpr = this.generateExpression(generationContext, dag, falseID);
+        return `(${cond} ? ${trueExpr} : ${falseExpr})`;
+      }
       if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
         const [lID, rID] = node.dependsOn;
         const lName = this.generateExpression(generationContext, dag, lID);

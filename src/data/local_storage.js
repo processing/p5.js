@@ -114,18 +114,20 @@ function storage(p5, fn){
    */
   fn.storeItem = function(key, value) {
     if (typeof key !== 'string') {
-      console.log(
-        `The argument that you passed to storeItem() - ${key} is not a string.`
+      p5._friendlyError(
+        `The argument that you passed to storeItem() - ${key} is not a string.`,
+        'storeItem'
       );
     }
     if (key.endsWith('p5TypeID')) {
-      console.log(
-        `The argument that you passed to storeItem() - ${key} must not end with 'p5TypeID'.`
+      p5._friendlyError(
+        `The argument that you passed to storeItem() - ${key} must not end with 'p5TypeID'.`,
+        'storeItem'
       );
     }
 
     if (typeof value === 'undefined') {
-      console.log('You cannot store undefined variables using storeItem().');
+      p5._friendlyError('You cannot store undefined variables using storeItem().', 'storeItem');
     }
     let type = typeof value;
     switch (type) {
@@ -263,8 +265,9 @@ function storage(p5, fn){
     let value = localStorage.getItem(key);
     const type = localStorage.getItem(`${key}p5TypeID`);
     if (typeof type === 'undefined') {
-      console.log(
-        `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`
+      p5._friendlyError(
+        `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`,
+        'getItem'
       );
     } else if (value !== null) {
       switch (type) {
@@ -418,8 +421,9 @@ function storage(p5, fn){
    */
   fn.removeItem = function(key) {
     if (typeof key !== 'string') {
-      console.log(
-        `The argument that you passed to removeItem() - ${key} is not a string.`
+      p5._friendlyError(
+        `The argument that you passed to removeItem() - ${key} is not a string.`,
+        'removeItem'
       );
     }
     localStorage.removeItem(key);

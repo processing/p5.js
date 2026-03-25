@@ -419,50 +419,56 @@ function loading(p5, fn){
     try{
       if (fileType.match(/\.stl$/i)) {
         const { data } = await request(path, 'arrayBuffer');
-        parseSTL(model, data);
+        const cb = () => {
+          parseSTL(model, data);
 
-        if (normalize) {
-          model.normalize();
-        }
+          if (normalize) {
+            model.normalize();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
+          if (flipU) {
+            model.flipU();
+          }
 
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
 
       } else if (fileType.match(/\.obj$/i)) {
         const { data } = await request(path, 'text');
         const lines = data.split('\n');
 
         const parsedMaterials = await getMaterials(lines);
-        parseObj(model, lines, parsedMaterials);
+        const cb = () => {
+          parseObj(model, lines, parsedMaterials);
 
-        if (normalize) {
-          model.normalize();
-        }
-        if (flipU) {
-          model.flipU();
-        }
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
@@ -966,9 +972,7 @@ function loading(p5, fn){
    * The parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
