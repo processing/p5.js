@@ -414,6 +414,7 @@ if (typeof p5 !== "undefined") {
  * This can be paired with <a href="#/p5/buildComputeShader">`buildComputeShader`</a>
  * to update the data being read.
  *
+ * @webgpu
  * @returns {*} The index of the current instance.
  */
 
