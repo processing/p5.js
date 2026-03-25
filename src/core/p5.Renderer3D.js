@@ -2569,6 +2569,7 @@ function renderer3D(p5, fn) {
    *  `index.x` to get the index when looping in one dimension.
    *
    * @property index
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly

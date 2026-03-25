@@ -54,6 +54,66 @@ function rendererWebGPU(p5, fn) {
      * the same format as the data originally passed to
      * <a href="#/p5/createStorage">`createStorage()`</a>.
      *
+     * ```js example
+     * let particles;
+     * let computeShader;
+     * let displayShader;
+     * let instance;
+     * const numParticles = 100;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *   particles = createStorage(makeParticles(width / 2, height / 2));
+     *   computeShader = buildComputeShader(simulate);
+     *   displayShader = buildMaterialShader(display);
+     *   instance = buildGeometry(drawParticle);
+     *   describe('100 orange particles shooting outward.');
+     * }
+     *
+     * function makeParticles(x, y) {
+     *   let data = [];
+     *   for (let i = 0; i < numParticles; i++) {
+     *     let angle = (i / numParticles) * TWO_PI;
+     *     let speed = random(0.5, 2);
+     *     data.push({
+     *       position: createVector(x, y),
+     *       velocity: createVector(cos(angle) * speed, sin(angle) * speed),
+     *     });
+     *   }
+     *   return data;
+     * }
+     *
+     * function drawParticle() {
+     *   sphere(2);
+     * }
+     *
+     * function simulate() {
+     *   let data = uniformStorage(particles);
+     *   let idx = index.x;
+     *   data[idx].position = data[idx].position + data[idx].velocity;
+     * }
+     *
+     * function display() {
+     *   let data = uniformStorage(particles);
+     *   worldInputs.begin();
+     *   let pos = data[instanceID()].position;
+     *   worldInputs.position.xy += pos - [width / 2, height / 2];
+     *   worldInputs.end();
+     * }
+     *
+     * function draw() {
+     *   background(30);
+     *   if (frameCount % 60 === 0) {
+     *     particles.update(makeParticles(random(width), random(height)));
+     *   }
+     *   compute(computeShader, numParticles);
+     *   noStroke();
+     *   fill(255, 200, 50);
+     *   shader(displayShader);
+     *   model(instance, numParticles);
+     * }
+     * ```
+     *
      * @method update
      * @for p5.StorageBuffer
      * @beta
@@ -122,66 +182,6 @@ function rendererWebGPU(p5, fn) {
    *
    * Note: <a href="#/p5/createStorage">`createStorage()`</a> is the recommended
    * way to create an instance of this class.
-   *
-   * ```js example
-   * let particles;
-   * let computeShader;
-   * let displayShader;
-   * let instance;
-   * const numParticles = 100;
-   *
-   * async function setup() {
-   *   await createCanvas(100, 100, WEBGPU);
-   *   particles = createStorage(makeParticles(width / 2, height / 2));
-   *   computeShader = buildComputeShader(simulate);
-   *   displayShader = buildMaterialShader(display);
-   *   instance = buildGeometry(drawParticle);
-   *   describe('100 orange particles shooting outward.');
-   * }
-   *
-   * function makeParticles(x, y) {
-   *   let data = [];
-   *   for (let i = 0; i < numParticles; i++) {
-   *     let angle = (i / numParticles) * TWO_PI;
-   *     let speed = random(0.5, 2);
-   *     data.push({
-   *       position: createVector(x, y),
-   *       velocity: createVector(cos(angle) * speed, sin(angle) * speed),
-   *     });
-   *   }
-   *   return data;
-   * }
-   *
-   * function drawParticle() {
-   *   sphere(2);
-   * }
-   *
-   * function simulate() {
-   *   let data = uniformStorage(particles);
-   *   let idx = index.x;
-   *   data[idx].position = data[idx].position + data[idx].velocity;
-   * }
-   *
-   * function display() {
-   *   let data = uniformStorage(particles);
-   *   worldInputs.begin();
-   *   let pos = data[instanceID()].position;
-   *   worldInputs.position.xy += pos - [width / 2, height / 2];
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(30);
-   *   if (frameCount % 60 === 0) {
-   *     particles.update(makeParticles(random(width), random(height)));
-   *   }
-   *   compute(computeShader, numParticles);
-   *   noStroke();
-   *   fill(255, 200, 50);
-   *   shader(displayShader);
-   *   model(instance, numParticles);
-   * }
-   * ```
    *
    * @class p5.StorageBuffer
    * @beta
