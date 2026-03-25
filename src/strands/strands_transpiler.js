@@ -465,6 +465,20 @@ const ASTCallbacks = {
     };
     node.arguments = [node.right];
   },
+  ConditionalExpression(node, _state, ancestors) {
+    if (ancestors.some(nodeIsUniform)) { return; }
+    // Transform condition ? consequent : alternate
+    // into __p5.strandsTernary(condition, consequent, alternate)
+    const test = node.test;
+    const consequent = node.consequent;
+    const alternate = node.alternate;
+    node.type = 'CallExpression';
+    node.callee = { type: 'Identifier', name: '__p5.strandsTernary' };
+    node.arguments = [test, consequent, alternate];
+    delete node.test;
+    delete node.consequent;
+    delete node.alternate;
+  },
   IfStatement(node, _state, ancestors) {
     if (ancestors.some(nodeIsUniform)) { return; }
     // Transform if statement into strandsIf() call
