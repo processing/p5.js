@@ -2225,6 +2225,160 @@ function renderer3D(p5, fn) {
    * The first parameter, `shader`, is a compute shader created with
    * <a href="#/p5/buildComputeShader">`buildComputeShader`</a>.
    *
+   * Pass a number for `x` to run a simple loop. Inside the shader's iteration
+   * function, <a href="#/p5/index">`index.x`</a> will count up from 0 to
+   * that number.
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 50;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-40, 40),
+   *         random(-40, 40)
+   *       ),
+   *       velocity: createVector(
+   *         random(-1, 1),
+   *         random(-1, 1)
+   *       ),
+   *     });
+   *   }
+   *   particles = createStorage(data);
+   *
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(3);
+   * }
+   *
+   * function simulate() {
+   *   let r = 3;
+   *   let data = uniformStorage(particles);
+   *   let idx = index.x;
+   *   let pos = data[idx].position;
+   *   let vel = data[idx].velocity;
+   *   pos = pos + vel;
+   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
+   *     vel.x = -vel.x;
+   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
+   *   }
+   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
+   *     vel.y = -vel.y;
+   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
+   *   }
+   *   data[idx].position = pos;
+   *   data[idx].velocity = vel;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255);
+   *   lights();
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * You can also pass `y` and `z` to loop in up to three dimensions, using
+   * `index.y` and `index.z` to get the position in each. This is useful for
+   * working with 2D grids, like in the Game of Life example below.
+   *
+   * ```js example
+   * let cells;
+   * let nextCells;
+   * let gameShader;
+   * let displayShader;
+   * const W = 100;
+   * const H = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let initial = new Float32Array(W * H);
+   *   for (let i = 0; i < initial.length; i++) {
+   *     initial[i] = random() > 0.7 ? 1 : 0;
+   *   }
+   *   cells = createStorage(initial);
+   *   nextCells = createStorage(W * H);
+   *
+   *   gameShader = buildComputeShader(simulate);
+   *   displayShader = buildFilterShader(display);
+   * }
+   *
+   * function simulate() {
+   *   let current = uniformStorage(() => cells);
+   *   let next = uniformStorage(() => nextCells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *   let x = index.x;
+   *   let y = index.y;
+   *
+   *   let n = 0;
+   *   for (let dy = -1; dy <= 1; dy++) {
+   *     for (let dx = -1; dx <= 1; dx++) {
+   *       if (dx != 0 || dy != 0) {
+   *         let nx = (x + dx + w) % w;
+   *         let ny = (y + dy + h) % h;
+   *         n += current[ny * w + nx];
+   *       }
+   *     }
+   *   }
+   *
+   *   let alive = current[y * w + x];
+   *   let nextOutput = 0;
+   *   if (alive == 1) {
+   *     if (abs(n - 2) < 0.1 || abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   } else {
+   *     if (abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   }
+   *   next[y * w + x] = nextOutput;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(() => cells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *
+   *   filterColor.begin();
+   *   let x = floor(filterColor.texCoord.x * w);
+   *   let y = floor(filterColor.texCoord.y * h);
+   *   let alive = data[y * w + x];
+   *   filterColor.set([alive, alive, alive, 1]);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   compute(gameShader, W, H);
+   *   [nextCells, cells] = [cells, nextCells];
+   *   filter(displayShader);
+   * }
+   * ```
    *
    * @method compute
    * @submodule p5.strands
