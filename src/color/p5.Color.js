@@ -724,7 +724,7 @@ class Color {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
-        return v
+        return v;
       }
     });
 
