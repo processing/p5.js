@@ -1204,6 +1204,55 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       });
     });
 
+    suite('ternary expressions', () => {
+      test('ternary changes color based on left/right side of canvas', () => {
+        myp5.createCanvas(50, 25, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = inputs.texCoord.x > 0.5 ? [1, 0, 0, 1] : [0, 0, 1, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
+      test('ternary with scalar values', () => {
+        myp5.createCanvas(50, 25, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const brightness = inputs.texCoord.x > 0.5 ? 1.0 : 0.0;
+            inputs.color = [brightness, brightness, brightness, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 0, 5);
+
+        const rightPixel = myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 255, 5);
+        assert.approximately(rightPixel[2], 255, 5);
+      });
+    });
+
     suite('for loop statements', () => {
       test('handle simple for loop with known iteration count', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -2214,6 +2263,27 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       const errMsg = mockUserError.mock.calls[0][1];
       assert.include(errMsg, 'Expected properties');
       assert.include(errMsg, 'Received properties');
+    });
+
+    test('ternary with mismatched branch types shows both types in error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            // float1 vs float4 - type mismatch
+            const val = inputs.texCoord.x > 0.5 ? myp5.float(1.0) : [1, 0, 0, 1];
+            inputs.color = [val, val, val, 1];
+            return inputs;
+          });
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'ternary');
+      assert.include(errMsg, 'float1');
+      assert.include(errMsg, 'float4');
     });
   });
 });
