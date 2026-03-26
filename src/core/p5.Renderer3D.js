@@ -1486,7 +1486,7 @@ export class Renderer3D extends Renderer {
     // works differently and is global p5 state. If the p5 state has
     // been cleared, we also need to clear the value in uSampler to match.
     fillShader.setUniform("uSampler", this.states._tex || empty);
-    fillShader.setUniform("uTint", this.states.tint.array().map(v => v * 255));
+    fillShader.setUniform("uTint", this.states.tint._getRGBA([255, 255, 255, 255]));
 
     fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
     fillShader.setUniform("uAmbientMatColor", this.states.curAmbientColor);
