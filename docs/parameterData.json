@@ -307,7 +307,8 @@
       "overloads": [
         [
           "CENTER|RADIUS|CORNER|CORNERS"
-        ]
+        ],
+        []
       ]
     },
     "nf": {
@@ -464,11 +465,6 @@
         ]
       ]
     },
-    "noSmooth": {
-      "overloads": [
-        []
-      ]
-    },
     "orbitControl": {
       "overloads": [
         [
@@ -477,6 +473,11 @@
           "Number?",
           "Object?"
         ]
+      ]
+    },
+    "noSmooth": {
+      "overloads": [
+        []
       ]
     },
     "beginClip": {
@@ -822,13 +823,6 @@
         ]
       ]
     },
-    "rectMode": {
-      "overloads": [
-        [
-          "CENTER|RADIUS|CORNER|CORNERS"
-        ]
-      ]
-    },
     "atan": {
       "overloads": [
         [
@@ -865,6 +859,14 @@
         []
       ]
     },
+    "rectMode": {
+      "overloads": [
+        [
+          "CENTER|RADIUS|CORNER|CORNERS"
+        ],
+        []
+      ]
+    },
     "loadJSON": {
       "overloads": [
         [
@@ -888,21 +890,22 @@
         ]
       ]
     },
-    "cursor": {
-      "overloads": [
-        [
-          "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
     "createElement": {
       "overloads": [
         [
           "String",
           "String?"
         ]
+      ]
+    },
+    "cursor": {
+      "overloads": [
+        [
+          "ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String",
+          "Number?",
+          "Number?"
+        ],
+        []
       ]
     },
     "year": {
@@ -1098,13 +1101,6 @@
         ]
       ]
     },
-    "strokeCap": {
-      "overloads": [
-        [
-          "ROUND|SQUARE|PROJECT"
-        ]
-      ]
-    },
     "lerp": {
       "overloads": [
         [
@@ -1133,6 +1129,13 @@
       "overloads": [
         [
           "Number"
+        ]
+      ]
+    },
+    "strokeCap": {
+      "overloads": [
+        [
+          "ROUND|SQUARE|PROJECT"
         ]
       ]
     },
@@ -1263,11 +1266,6 @@
         ]
       ]
     },
-    "getTargetFrameRate": {
-      "overloads": [
-        []
-      ]
-    },
     "nfs": {
       "overloads": [
         [
@@ -1280,6 +1278,11 @@
           "Integer?",
           "Integer?"
         ]
+      ]
+    },
+    "getTargetFrameRate": {
+      "overloads": [
+        []
       ]
     },
     "setShakeThreshold": {
@@ -1304,18 +1307,6 @@
         ]
       ]
     },
-    "strokeJoin": {
-      "overloads": [
-        [
-          "MITER|BEVEL|ROUND"
-        ]
-      ]
-    },
-    "noCursor": {
-      "overloads": [
-        []
-      ]
-    },
     "circle": {
       "overloads": [
         [
@@ -1331,6 +1322,11 @@
           "Number",
           "Number"
         ]
+      ]
+    },
+    "noCursor": {
+      "overloads": [
+        []
       ]
     },
     "loadTable": {
@@ -1359,6 +1355,14 @@
         [
           "p5.Color|Number[]|String"
         ]
+      ]
+    },
+    "strokeJoin": {
+      "overloads": [
+        [
+          "MITER|BEVEL|ROUND"
+        ],
+        []
       ]
     },
     "filter": {
@@ -1393,13 +1397,6 @@
           "String",
           "Function?",
           "Function?"
-        ]
-      ]
-    },
-    "strokeWeight": {
-      "overloads": [
-        [
-          "Number"
         ]
       ]
     },
@@ -1448,6 +1445,14 @@
           "String?",
           "Function?"
         ]
+      ]
+    },
+    "strokeWeight": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        []
       ]
     },
     "radians": {
@@ -1783,18 +1788,18 @@
         ]
       ]
     },
-    "windowResized": {
-      "overloads": [
-        [
-          "Event?"
-        ]
-      ]
-    },
     "shuffle": {
       "overloads": [
         [
           "Array",
           "Boolean?"
+        ]
+      ]
+    },
+    "windowResized": {
+      "overloads": [
+        [
+          "Event?"
         ]
       ]
     },
@@ -1842,6 +1847,15 @@
         []
       ]
     },
+    "loadBytes": {
+      "overloads": [
+        [
+          "String|Request",
+          "Function?",
+          "Function?"
+        ]
+      ]
+    },
     "buildFilterShader": {
       "overloads": [
         [
@@ -1851,15 +1865,6 @@
         [
           "Object",
           "Object?"
-        ]
-      ]
-    },
-    "loadBytes": {
-      "overloads": [
-        [
-          "String|Request",
-          "Function?",
-          "Function?"
         ]
       ]
     },
@@ -1904,13 +1909,6 @@
         ]
       ]
     },
-    "fullscreen": {
-      "overloads": [
-        [
-          "Boolean?"
-        ]
-      ]
-    },
     "loadBlob": {
       "overloads": [
         [
@@ -1945,6 +1943,13 @@
         [
           "p5.Color|Number[]|String",
           "p5.Vector"
+        ]
+      ]
+    },
+    "fullscreen": {
+      "overloads": [
+        [
+          "Boolean?"
         ]
       ]
     },
@@ -2037,14 +2042,6 @@
         ]
       ]
     },
-    "pixelDensity": {
-      "overloads": [
-        [
-          "Number?"
-        ],
-        []
-      ]
-    },
     "httpGet": {
       "overloads": [
         [
@@ -2058,6 +2055,14 @@
           "Function",
           "Function?"
         ]
+      ]
+    },
+    "pixelDensity": {
+      "overloads": [
+        [
+          "Number?"
+        ],
+        []
       ]
     },
     "updatePixels": {
@@ -2078,11 +2083,6 @@
         ]
       ]
     },
-    "displayDensity": {
-      "overloads": [
-        []
-      ]
-    },
     "panorama": {
       "overloads": [
         [
@@ -2096,6 +2096,11 @@
           "String?",
           "Boolean?"
         ]
+      ]
+    },
+    "displayDensity": {
+      "overloads": [
+        []
       ]
     },
     "keyTyped": {
@@ -2224,11 +2229,6 @@
         ]
       ]
     },
-    "getURLPath": {
-      "overloads": [
-        []
-      ]
-    },
     "splineTangent": {
       "overloads": [
         [
@@ -2238,6 +2238,11 @@
           "Number",
           "Number"
         ]
+      ]
+    },
+    "getURLPath": {
+      "overloads": [
+        []
       ]
     },
     "normal": {
@@ -2277,6 +2282,13 @@
         ]
       ]
     },
+    "shearX": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
     "colorMode": {
       "overloads": [
         [
@@ -2296,13 +2308,6 @@
     "getURLParams": {
       "overloads": [
         []
-      ]
-    },
-    "shearX": {
-      "overloads": [
-        [
-          "Number"
-        ]
       ]
     },
     "lightFalloff": {
@@ -2371,6 +2376,13 @@
         ]
       ]
     },
+    "shearY": {
+      "overloads": [
+        [
+          "Number"
+        ]
+      ]
+    },
     "httpDo": {
       "overloads": [
         [
@@ -2385,13 +2397,6 @@
           "String|Request",
           "Function?",
           "Function?"
-        ]
-      ]
-    },
-    "shearY": {
-      "overloads": [
-        [
-          "Number"
         ]
       ]
     },
@@ -2461,15 +2466,6 @@
         ]
       ]
     },
-    "screenToWorld": {
-      "overloads": [
-        [
-          "Number|p5.Vector",
-          "Number",
-          "Number?"
-        ]
-      ]
-    },
     "createModel": {
       "overloads": [
         [
@@ -2489,6 +2485,15 @@
           "String",
           "String?",
           "Object?"
+        ]
+      ]
+    },
+    "screenToWorld": {
+      "overloads": [
+        [
+          "Number|p5.Vector",
+          "Number",
+          "Number?"
         ]
       ]
     },
@@ -2533,6 +2538,19 @@
         ],
         [
           "p5.Color"
+        ],
+        []
+      ]
+    },
+    "translate": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "p5.Vector"
         ]
       ]
     },
@@ -2628,18 +2646,6 @@
         ]
       ]
     },
-    "translate": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "p5.Vector"
-        ]
-      ]
-    },
     "noTint": {
       "overloads": [
         []
@@ -2665,7 +2671,8 @@
         ],
         [
           "p5.Color"
-        ]
+        ],
+        []
       ]
     },
     "triangle": {
@@ -2868,13 +2875,6 @@
         ]
       ]
     },
-    "imageMode": {
-      "overloads": [
-        [
-          "CORNER|CORNERS|CENTER"
-        ]
-      ]
-    },
     "mouseReleased": {
       "overloads": [
         [
@@ -2891,6 +2891,14 @@
     },
     "noStroke": {
       "overloads": [
+        []
+      ]
+    },
+    "imageMode": {
+      "overloads": [
+        [
+          "CORNER|CORNERS|CENTER"
+        ],
         []
       ]
     },
@@ -3017,7 +3025,8 @@
         ],
         [
           "p5.Color"
-        ]
+        ],
+        []
       ]
     },
     "createColorPicker": {
@@ -3078,11 +3087,6 @@
         ]
       ]
     },
-    "noErase": {
-      "overloads": [
-        []
-      ]
-    },
     "createInput": {
       "overloads": [
         [
@@ -3092,6 +3096,11 @@
         [
           "String?"
         ]
+      ]
+    },
+    "noErase": {
+      "overloads": [
+        []
       ]
     },
     "buildNormalShader": {
@@ -3241,13 +3250,6 @@
         ]
       ]
     },
-    "blendMode": {
-      "overloads": [
-        [
-          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
-        ]
-      ]
-    },
     "camera": {
       "overloads": [
         [
@@ -3261,6 +3263,14 @@
           "Number?",
           "Number?"
         ]
+      ]
+    },
+    "blendMode": {
+      "overloads": [
+        [
+          "BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT"
+        ],
+        []
       ]
     },
     "createStorage": {
@@ -3432,7 +3442,8 @@
       "overloads": [
         [
           "IMAGE|NORMAL"
-        ]
+        ],
+        []
       ]
     },
     "setCamera": {
@@ -3454,7 +3465,8 @@
         [
           "CLAMP|REPEAT|MIRROR",
           "CLAMP|REPEAT|MIRROR?"
-        ]
+        ],
+        []
       ]
     },
     "normalMaterial": {

@@ -215,6 +215,8 @@ function environment(p5, fn, lifecycles){
    * cursor, `x` and `y` set the location pointed to within the image. They are
    * both 0 by default, so the cursor points to the image's top-left corner. `x`
    * and `y` must be less than the image's width and height, respectively.
+   * 
+   * Calling `cursor()` without an argument returns the current cursor type as a string.
    *
    * @method cursor
    * @param {(ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String)} type Built-in: either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT.
@@ -281,9 +283,17 @@ function environment(p5, fn, lifecycles){
    *   }
    * }
    */
+  /**
+   * @method cursor
+   * @return {(ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String)} the current cursor type
+   */
   fn.cursor = function(type, x, y) {
     let cursor = 'auto';
     const canvas = this._curElement.elt;
+    if (typeof type === 'undefined') {
+      let curstr = canvas.style.cursor;
+      return curstr.length ? curstr : 'default';
+    }
     if (standardCursors.includes(type)) {
       // Standard css cursor
       cursor = type;
