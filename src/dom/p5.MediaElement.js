@@ -1319,7 +1319,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element for simple audio/video playback.
+   * Creates a `<video>` element for simple audio/video playback.
    *
    * `createVideo()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object. Videos are shown by
@@ -1407,7 +1407,7 @@ function media(p5, fn){
   /* AUDIO STUFF */
 
   /**
-   * Creates a hidden `&lt;audio&gt;` element for simple audio playback.
+   * Creates a hidden `<audio>` element for simple audio playback.
    *
    * `createAudio()` returns a new
    * <a href="#/p5.MediaElement">p5.MediaElement</a> object.
@@ -1484,7 +1484,7 @@ function media(p5, fn){
   }
 
   /**
-   * Creates a `&lt;video&gt;` element that "captures" the audio/video stream from
+   * Creates a `<video>` element that "captures" the audio/video stream from
    * the webcam and microphone.
    *
    * `createCapture()` returns a new

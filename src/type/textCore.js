@@ -1459,22 +1459,37 @@ function textCore(p5, fn) {
 
   Renderer.prototype.textAlign = function (h, v) {
 
-    // the setter
-    if (typeof h !== 'undefined') {
-      this.states.setValue('textAlign', h);
-      if (typeof v !== 'undefined') {
-        if (v === fn.CENTER) {
-          v = textCoreConstants._CTX_MIDDLE;
-        }
-        this.states.setValue('textBaseline', v);
-      }
-      return this._applyTextProperties();
+    if (arguments.length === 0) {  // the getter
+      return {
+        horizontal: this.states.textAlign,
+        vertical: this.states.textBaseline
+      };
     }
-    // the getter
-    return {
-      horizontal: this.states.textAlign,
-      vertical: this.states.textBaseline
-    };
+
+    // allow an object with horizontal and vertical properties
+    if (typeof h === 'object' && h !== null) {
+      if (h.hasOwnProperty('vertical')) {
+        v = h.vertical;
+      }
+      if (h.hasOwnProperty('horizontal')) {
+        h = h.horizontal;
+      }
+    }
+
+    // horizontal value as separate argument
+    if (typeof h === 'string' || h instanceof String) {
+      this.states.setValue('textAlign', h);
+    }
+
+    // vertical value as separate argument
+    if (typeof v === 'string' || v instanceof String) {
+      if (v === fn.CENTER) {
+        v = textCoreConstants._CTX_MIDDLE;
+      }
+      this.states.setValue('textBaseline', v);
+    }
+
+    return this._applyTextProperties();
   };
 
   Renderer.prototype._currentTextFont = function () {

@@ -1138,6 +1138,9 @@ function loadingDisplaying(p5, fn){
    * sets the alpha value. For example, `tint(255, 0, 0, 100)` will give images
    * a red tint and make them transparent.
    *
+   * Calling `tint()` without an argument returns the current tint as a 
+   * <a href="#/p5.Color">p5.Color</a> object.
+   *
    * @method tint
    * @param  {Number}        v1      red or hue value.
    * @param  {Number}        v2      green or saturation value.
@@ -1242,10 +1245,18 @@ function loadingDisplaying(p5, fn){
    * @method tint
    * @param  {p5.Color}      color   the tint color
    */
+  /**
+   * @method tint
+   * @return {p5.Color}      the current tint color
+   */
   fn.tint = function(...args) {
-    // p5._validateParameters('tint', args);
-    const c = this.color(...args);
-    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    if (args.length === 0) {
+      return this._renderer.states.tint; // getter
+    }
+    else {
+      this._renderer.states.setValue('tint', this.color(...args));
+      return this;
+    }
   };
 
   /**
@@ -1279,6 +1290,7 @@ function loadingDisplaying(p5, fn){
    */
   fn.noTint = function() {
     this._renderer.states.setValue('tint', null);
+    return this;
   };
 
   /**
@@ -1309,6 +1321,8 @@ function loadingDisplaying(p5, fn){
    * `imageMode(CENTER)` uses the first two parameters of
    * <a href="#/p5/image">image()</a> as the x- and y-coordinates of the image's
    * center. The next parameters are its width and height.
+   *
+   * Calling `imageMode()` without an argument returns the current image mode, either `CORNER`, `CORNERS`, or `CENTER`.
    *
    * @method imageMode
    * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
@@ -1373,8 +1387,15 @@ function loadingDisplaying(p5, fn){
    *   describe('A square image of a brick wall is drawn on a gray square.');
    * }
    */
+  /**
+   * @method imageMode
+   * @return {(CORNER|CORNERS|CENTER)}      the current image mode
+   */
   fn.imageMode = function(m) {
     // p5._validateParameters('imageMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer.states.imageMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
