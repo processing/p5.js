@@ -495,6 +495,8 @@ class ArcPrimitive extends ShapePrimitive {
   get start() { return this.#start; }
   get stop() { return this.#stop; }
   get mode() { return this.#mode; }
+  get startVertex() { return this.vertices[0]; }
+  get endVertex() { return this.vertices[1]; }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -976,20 +978,23 @@ class Shape {
 
 
   arcPrimitive(x,y,w,h,start,stop,mode){
+    this.beginShape();
     const centerX = x+w/2;
     const centerY = y+h/2;
+    const radiusX = w / 2;
+    const radiusY = h / 2;
 
     const startVertex = this.#createVertex(
       new Vector(
-        centerX+(w/2)*Math.cos(start),
-        centerY+(h/2)*Math.sin(start)
+        centerX + radiusX * Math.cos(start),
+        centerY + radiusY * Math.sin(start)
       )
     );
 
     const endVertex = this.#createVertex(
       new Vector(
-        centerX+(w/2)*Math.cos(stop),
-        centerY+(h/2)*Math.sin(stop)
+        centerX + radiusX * Math.cos(stop),
+        centerY + radiusY * Math.sin(stop)
       )
     );
 
@@ -1001,7 +1006,9 @@ class Shape {
       stop,
       mode
     );
-    return primitive.addToShape(this);
+    primitive.addToShape(this);
+    this.endShape();
+    return this;
 
   }
 
@@ -1419,44 +1426,47 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     this.contours.push(quadStrip.vertices.slice());
   }
   visitArcPrimitive(arc) {
+    const startVertex = arc.startVertex;
+    const endVertex = arc.endVertex;
     const centerX = arc.x + arc.w / 2;
     const centerY = arc.y + arc.h / 2;
     const radiusX = arc.w / 2;
     const radiusY = arc.h / 2;
-    const avgRadius = (radiusX+radiusY)/2;
+    const avgRadius = (radiusX + radiusY) / 2;
 
-    const arcLength = avgRadius*Math.abs(arc.stop-arc.start);
+    const arcLength = avgRadius * Math.abs(arc.stop - arc.start);
 
-    const numPoints=Math.max(3, Math.ceil(this.curveDetail*arcLength));
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * arcLength));
     const verts = [];
-
+    const interpolateVertexProps = (v1, v2, t) => {
+    const props = {};
+    for (const [key, value] of Object.entries(v1)) {
+      if (key === 'position') continue;
+      if (typeof value === 'number' && typeof v2[key] === 'number') {
+        props[key] = value * (1 - t) + v2[key] * t;
+      } else {
+        props[key] = value;
+      }
+    }
+    return props;
+  };
     if (arc.mode === constants.PIE) {
-      verts.push(new Vertex({ position: new Vector(centerX, centerY) }));
+      const centerProps = interpolateVertexProps(startVertex, endVertex, 0.5);
+      centerProps.position = new Vector(centerX, centerY);
+      verts.push(new Vertex(centerProps));
     }
 
     for (let i = 0; i <= numPoints; i++) {
-      const angle = arc.start + (arc.stop - arc.start) * (i / numPoints);
-      const startVertex=arc.vertices[0];
-      const endVertex=arc.vertices[1];
-      const t=i/numPoints;
-      const props={};
-      for(const key in startVertex){
-        if(key === 'position') continue;
-        if(typeof startVertex[key] === 'number'
-          && typeof endVertex[key]=== 'number'){
-          props[key] = startVertex[key]*(1-t) + endVertex[key]*t;
-        }
-        else{
-          props[key]=startVertex[key];
-        }
-      }
+      const t = i / numPoints;
+      const angle = arc.start + (arc.stop - arc.start) * t;
+      const vertexProps = interpolateVertexProps(startVertex, endVertex, t);
 
-      props.position=new Vector(
-        centerX+radiusX*Math.cos(angle),
-        centerY+radiusY*Math.sin(angle)
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
       );
 
-      verts.push(new Vertex(props));
+      verts.push(new Vertex(vertexProps));
     }
 
     this.contours.push(verts);
@@ -1466,17 +1476,23 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     const centerY = ellipse.y + ellipse.h / 2;
     const radiusX = ellipse.w / 2;
     const radiusY = ellipse.h / 2;
-    const numPoints = Math.max(3, this.curveDetail);
+    const avgRadius = (radiusX + radiusY) / 2;
+    const perimeter = 2 * Math.PI * avgRadius;
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * perimeter));
     const verts = [];
-
+    const centerVertex = ellipse.vertices[0];
     for (let i = 0; i <= numPoints; i++) {
       const angle = (2 * Math.PI * i) / numPoints;
-      verts.push(new Vertex({
-        position: new Vector(
-          centerX + radiusX * Math.cos(angle),
-          centerY + radiusY * Math.sin(angle)
-        )
-      }));
+      const vertexProps = {};
+      for (const [key, value] of Object.entries(centerVertex)) {
+        if (key === 'position') continue;
+        vertexProps[key] = value;
+      }
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
+      );
+      verts.push(new Vertex(vertexProps));
     }
 
     this.contours.push(verts);
