@@ -509,7 +509,7 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a transparent green background.');
    * }
-   * <
+   *
    * @example
    * function setup() {
    *   createCanvas(100, 100);
