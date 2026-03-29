@@ -1421,7 +1421,7 @@ p5.prototype.red = function(c) {
  *
  * Saturation is scaled differently in HSB and HSL. By default, `saturation()`
  * returns a color's HSL saturation in the range 0 to 100. If the
- * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the
+ * <a href="#/p5/colorMode">colorMode()</a> is set to HSB or HSL, it returns the
  * saturation value in the given mode.
  *
  * @method saturation
