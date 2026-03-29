@@ -3901,6 +3901,22 @@ p5.Vector = class {
  * @method clampToZero
  * @return {p5.Vector} with components very close to zero replaced with zero.
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   // Create a 2D vector where the x-component is near-zero
+ *   let v = createVector(0.00000000000000005, 5 );
+ *
+ *   console.log('Before:', v.x , v.y);
+ *
+ *   // Clamp negligible value of x-component to zero
+ *   v.clampToZero();
+ *   console.log('After:', v.x , v.y);
+ *   describe('Round down very small numbers of vector components to zero');
+ * }
+ * </code>
+ * </div>
  */
   clampToZero() {
     this.x = this._clampToZero(this.x);
