@@ -122,7 +122,7 @@ p5.prototype.alpha = function(c) {
  * a CSS color string.
  *
  * By default, `blue()` returns a color's blue value in the range 0
- * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * to 255. If the <a href="#/p5/colorMode">colorMode()</a> is set to RGB, it
  * returns the blue value in the given range.
  *
  * @method blue
@@ -258,7 +258,7 @@ p5.prototype.blue = function(c) {
  * a CSS color string.
  *
  * By default, `brightness()` returns a color's HSB brightness in the range 0
- * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSB, it
+ * to 100. If the <a href="#/p5/colorMode">colorMode()</a> is set to HSB, it
  * returns the brightness value in the given range.
  *
  * @method brightness
@@ -697,7 +697,7 @@ p5.prototype.color = function(...args) {
  * a CSS color string.
  *
  * By default, `green()` returns a color's green value in the range 0
- * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * to 255. If the <a href="#/p5/colorMode">colorMode()</a> is set to RGB, it
  * returns the green value in the given range.
  *
  * @method green
@@ -834,7 +834,7 @@ p5.prototype.green = function(c) {
  *
  * Hue describes a color's position on the color wheel. By default, `hue()`
  * returns a color's HSL hue in the range 0 to 360. If the
- * <a href="#/colorMode">colorMode()</a> is set to HSB or HSL, it returns the hue
+ * <a href="#/p5/colorMode">colorMode()</a> is set to HSB or HSL, it returns the hue
  * value in the given mode.
  *
  * @method hue
@@ -1085,7 +1085,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * distance to both.
  *
  * The way that colors are interpolated depends on the current
- * <a href="#/colorMode">colorMode()</a>.
+ * <a href="#/p5/colorMode">colorMode()</a>.
  *
  * @method paletteLerp
  * @param  {[p5.Color, Number][]} colors_stops color stops to interpolate from
@@ -1139,7 +1139,7 @@ p5.prototype.paletteLerp = function(color_stops, amt) {
  * a CSS color string.
  *
  * By default, `lightness()` returns a color's HSL lightness in the range 0
- * to 100. If the <a href="#/colorMode">colorMode()</a> is set to HSL, it
+ * to 100. If the <a href="#/p5/colorMode">colorMode()</a> is set to HSL, it
  * returns the lightness value in the given range.
  *
  * @method lightness
@@ -1284,7 +1284,7 @@ p5.prototype.lightness = function(c) {
  * a CSS color string.
  *
  * By default, `red()` returns a color's red value in the range 0
- * to 255. If the <a href="#/colorMode">colorMode()</a> is set to RGB, it
+ * to 255. If the <a href="#/p5/colorMode">colorMode()</a> is set to RGB, it
  * returns the red value in the given range.
  *
  * @method red
