@@ -1190,7 +1190,7 @@ In some editors, such as vs code, you can hover over a function or variable to s
 
 ### Previewing your work on the website, locally
 
-At some point you will want to preview how your changes will look on the website.  This involves run the website locally and having it import your p5.js code from a branch of your repo.
+At some point you will want to preview how your changes will look on the website.  This involves running the website locally and having it import your p5.js code from a branch of your repo.
 
 Steps: 
 
