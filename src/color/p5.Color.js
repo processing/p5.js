@@ -61,7 +61,11 @@ class Color {
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
 
-  // For duck typing
+  // This property is here where duck typing (checking if obj.isColor) needs
+  // to be used over more standard type checking (obj instanceof Color). This
+  // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+  // where if we `import { Color }` directly, it will be a separate copy of the
+  // Color class from the one imported in the main p5.js bundle.
   isColor = true;
 
   // Used to add additional color modes to p5.js

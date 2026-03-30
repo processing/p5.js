@@ -1869,6 +1869,9 @@ function rendererWebGPU(p5, fn) {
     // value: number or number[] - the data to write
     _packField(field, value, floatView, dataView, baseOffset) {
       if (value === undefined) return;
+
+      // Duck typing instead of instanceof to avoid importing a separate
+      // copy of the Color/Vector classes
       if (value?.isVector) {
         value = value.values.length !== value.dimensions ? value.values.slice(0, value.dimensions) : value.values;
       } else if (value?.isColor) {
@@ -3113,6 +3116,8 @@ ${hookUniformFields}}
     // Maps a plain JS value to the WGSL type string that represents it in a struct.
     _jsValueToWgslType(value) {
       if (typeof value === 'number') return 'f32';
+      // Duck typing instead of instanceof to avoid importing a separate
+      // copy of the Color/Vector classes
       if (value?.isVector) {
         if (value.dimensions === 2) return 'vec2f';
         if (value.dimensions === 3) return 'vec3f';
@@ -3148,6 +3153,8 @@ ${hookUniformFields}}
             value !== null &&
             typeof value === 'object' &&
             !Array.isArray(value) &&
+            // Duck typing instead of instanceof to avoid importing a separate
+            // copy of the Color/Vector classes
             !value?.isVector &&
             !value?.isColor
           ) {

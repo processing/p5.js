@@ -1099,6 +1099,10 @@ class Shader {
       return;
     }
 
+    // In p5.strands-related code, where some of the code may be in
+    // p5.webgpu.js instead of the main p5.js build, we generally use
+    // duck typing instead of instanceof to avoid accidentally importing
+    // and comparing against a separate copy of p5 classes
     if (data?.isVector) {
       data = data.values.length !== data.dimensions ? data.values.slice(0, data.dimensions) : data.values;
     } else if (data?.isColor) {

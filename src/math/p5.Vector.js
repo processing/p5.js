@@ -48,6 +48,12 @@ class Vector {
       this.dimensions = dimensions;
       this._values = values;
     }
+
+    // This property is here where duck typing (checking if obj.isVector) needs
+    // to be used over more standard type checking (obj instanceof Vector). This
+    // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+    // where if we `import { Vector }` directly, it will be a separate copy of the
+    // Vector class from the one imported in the main p5.js bundle.
     this.isVector = true;
   }
 
