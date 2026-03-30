@@ -51,7 +51,7 @@ This tells the translator to get the "`sketch.loading`" message in whatever lang
 You can also inject variables into a translated message. For example,
 
 ```js
-console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
+console.log('I couldn't find ' + file.name + '. Are you sure it's there?')
 ```
 
 would become something like
@@ -67,7 +67,7 @@ Translations like this expect the variables it uses to have a certain name, so m
 ```json
 {
   "fileLoading": {
-    "notFound": "I couldnt find {{fileName}}. Are you sure it's there?"
+    "notFound": "I couldn't find {{fileName}}. Are you sure it's there?"
   }
 }
 ```

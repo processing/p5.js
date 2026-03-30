@@ -1,6 +1,6 @@
 suite('Transform', function() {
   var sketch1; // sketch without WEBGL Mode
-  var sketch2; // skecth with WEBGL mode
+  var sketch2; // sketch with WEBGL mode
   setup(function(done) {
     new p5(function(p) {
       p.setup = function() {

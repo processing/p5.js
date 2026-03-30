@@ -4,7 +4,7 @@
 
 En p5.js, creamos las referencias de código que ves en la página de [referencia](https://p5js.org/reference/) del sitio web de p5.js incluyéndolas junto al código fuente de la biblioteca como comentarios especializados. Estos comentarios de referencia incluyen la descripción, la firma de la función (sus parámetros y valor de retorno) y ejemplos de uso. En otras palabras, el contenido en la página de referencia de cada función/variable de p5.js se construye a partir de los comentarios de referencia en el código fuente.
 
-Este documento te mostrará cómo escribir y formatear los comentarios de referencia para que eventualmente puedan ser renderizados correctamente en el sitio web. Debes seguir esta guía siempre que estés editando o escribiendo una referencia para cualquier función o variable de p5.js.
+Este documento te mostrará cómo escribir y formatear los comentarios de referencia para que eventualmente puedan set renderizados correctamente en el sitio web. Debes seguir esta guía siempre que estés editando o escribiendo una referencia para cualquier función o variable de p5.js.
 
 ## Una introducción rápida al funcionamiento de los comentarios de referencia
 
@@ -67,11 +67,11 @@ Cuando mires el código fuente de p5.js, verás que muchas líneas en la bibliot
 
 Por lo general, estos comentarios están seguidos del código JavaScript real que define a la función. Los comentarios de referencia siempre comienzan con `/**` y terminan con `*/`, con cada línea entre los dos con `*` al inicio.
 
-Cualquier cosa en un bloque de estos se interpretará como documentación de referencia. Es posible que estés familiarizado con este estilo de comentarios de código a través de [JSDoc](https://jsdoc.app/). Aunque p5.js no usa JSDoc, utiliza una herramienta llamada [YUIDoc](https://yui.github.io/yuidoc/) que tiene una sintaxis para referencias muy similar. En este estilo de comentarios de referencia cada bloque de comentarios se subdivide en elementos individuales, como veremos a continuación.
+Cualquier cosa en un bloque de estos se interpretará como documentación de referencia. Es possible que estés familiarizado con este estilo de comentarios de código a través de [JSDoc](https://jsdoc.app/). Aunque p5.js no usa JSDoc, utilize una herramienta llamada [YUIDoc](https://yui.github.io/yuidoc/) que tiene una sintaxis para referencias muy similar. En este estilo de comentarios de referencia cada bloque de comentarios se subdivide en elementos individuales, como veremos a continuación.
 
 ## Bloque de comentarios de referencia
 
-Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué hace cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/p5/sin).
+Desglosemos el bloque de comentarios de referencia anterior para la función `sin()` y veamos qué have cada sección. Puedes comparar lo que vez en estos comentarios con el contenido de la página de referencia para [`sin()`](https://p5js.org/reference/p5/sin).
 
 ```
 /**
@@ -81,7 +81,7 @@ Desglosemos el bloque de comentarios de referencia anterior para la función `si
  * <a href="#/p5/angleMode">angleMode</a>.
 ```
 
-En la parte superior del comentario está la descripción textual de la función. Esta descripción puede contener tanto sintaxis de markdown como HTML. La descripción debe ser concisa y describir qué hace la función y, si es necesario, algunos detalles sobre sus peculiaridades o comportamientos.
+En la parte superior del comentario está la descripción textual de la función. Esta descripción puede container tanto sintaxis de markdown como HTML. La descripción debe set concisa y describir qué have la función y, si es necesario, algunos detalles sobre sus peculiaridades o comportamientos.
 
 ```
  * @method sin
@@ -92,7 +92,7 @@ En la parte superior del comentario está la descripción textual de la función
 Una función normalmente tendrá las tres secciones anteriores, cada una comenzando con el símbolo `@` seguido de una de las siguientes palabras clave:
 
 - `@method` se usa para definir el nombre de la función, en este caso `sin` (nota que el nombre de la función no incluye los paréntesis `()`).
-- `@param` se usa para definir los parámetros o argumentos que acepta la función.
+- `@param` se usa para definir los parámetros o arguments que acepta la función.
   - Después de la palabra clave `@param`, almacenado entre llaves `{}`, está el tipo del parámetro.
   - Después del tipo, la siguiente palabra (angle) es el nombre del parámetro.
   - Después del nombre, el resto de la línea es la descripción del parámetro.
@@ -138,7 +138,7 @@ Si el método devuelve el objeto de la superclase, puedes omitir la etiqueta `@r
 
 ## Firmas adicionales
 
-Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función [`background()`](https://p5js.org/reference/#p5/background) toma una serie de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para incluirla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia puedes agregar firmas adicionales, cada una en su propio bloque, como en el siguiente ejemplo.
+Si una función tiene múltiples opciones de parámetros posibles, puedes especificar cada una individualmente. Por ejemplo, la función [`background()`](https://p5js.org/reference/#p5/background) toma una series de opciones de parámetros diferentes (ver la sección "Sintaxis" en la página de referencia). Elige una versión para incluirla como la primera firma usando la plantilla anterior. Al final del primer bloque de comentarios de referencia puedes agregar firmas adicionales, cada una en su propio bloque, como en el siguiente ejemplo.
 
 ```
 /**
@@ -158,7 +158,7 @@ Si una función tiene múltiples opciones de parámetros posibles, puedes especi
 
 ### Información adicional: Múltiples firmas
 
-No es necesario crear una firma separada si la única diferencia entre dos firmas es la adición de un parámetro opcional. Limita el uso de esta función en la medida de lo posible porque puede crear ruido innecesario en la referencia.
+No es necesario crear una firma separada si la única diferencia entre dos firmas es la adición de un parámetro opcional. Limita el uso de esta función en la medida de lo possible porque puede crear ruido innecesario en la referencia.
 
 ## Referencia para variables de p5.js
 
@@ -189,7 +189,7 @@ Hasta ahora hemos visto cómo escribir referencias para funciones y constantes. 
  */
 ```
 
-El inicio del bloque contiene la descripción de la variable (`mouseX` en este caso). Para definir el nombre de la variable usamos `@property` en lugar de `@method`. `@property` sigue la misma sintaxis que `@param` para definir el tipo y su nombre. La etiqueta `@readonly` está presente en la mayoría de las variables de p5.js y se utiliza internamente para indicar que dicho valor no debe ser sobrescrito directamente por un usuario de la biblioteca.
+El inicio del bloque contiene la descripción de la variable (`mouseX` en este caso). Para definir el nombre de la variable usamos `@property` en lugar de `@method`. `@property` sigue la misma sintaxis que `@param` para definir el tipo y su nombre. La etiqueta `@readonly` está presente en la mayoría de las variables de p5.js y se utilize internamente para indicar que dicho valor no debe set sobrescrito directamente por un usuario de la biblioteca.
 
 ## Agregar ejemplos
 
@@ -217,7 +217,7 @@ El código con la etiqueta `@example` que crea el ejemplo anterior es el siguien
  * </div>
 ```
 
-Después de la etiqueta `@example`, debes comenzar con una etiqueta HTML `<div>` seguida de una etiqueta `<code>`. Entre la etiqueta `<code>` de apertura y cierre, insertarás el ejemplo de código en cuestión. El principio básico para escribir un buen ejemplo de código para la referencia es mantener las cosas simples y mínimas. El ejemplo debe ser significativo y explicar cómo funciona la función, valga la redundancia, sin ser demasiado complicado. El lienzo para el ejemplo debe ser de 100x100 pixeles y si la función `setup()` no está incluida, como en el ejemplo anterior, el código será envuelto automáticamente en una función `setup()` con un lienzo predeterminado de fondo gris y 100x100 píxeles. No entraremos aquí en detalles sobre buenas prácticas y estilo para los ejemplos de código; consulta la guía de estilo de referencia en su lugar.
+Después de la etiqueta `@example`, debes comenzar con una etiqueta HTML `<div>` seguida de una etiqueta `<code>`. Entre la etiqueta `<code>` de apertura y cierre, insertarás el ejemplo de código en cuestión. El principio básico para escribir un buen ejemplo de código para la referencia es mantener las cosas simples y mínimas. El ejemplo debe set significativo y explicar cómo funciona la función, valga la redundancia, sin set demasiado complicado. El lienzo para el ejemplo debe set de 100x100 pixeles y si la función `setup()` no está incluida, como en el ejemplo anterior, el código será envuelto automáticamente en una función `setup()` con un lienzo predeterminado de fondo gris y 100x100 píxeles. No entraremos aquí en detalles sobre buenas prácticas y estilo para los ejemplos de código; consulta la guía de estilo de referencia en su lugar.
 
 Puedes tener múltiples ejemplos para una función. Para hacerlo agrega un `<div>` y un bloque HTML `<code>` adicionales justo después del primer bloque cerrado, separados por una línea en blanco.
 
@@ -250,7 +250,7 @@ Si no deseas que la página de referencia ejecute tu código de ejemplo (es deci
 * </div>
 ```
 
-Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas (por ejemplo, si el ejemplo requiere interacción del usuario), incluye la clase "`notest`" en el `<div>`:
+Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas (por ejemplo, si el ejemplo require interacción del usuario), incluye la clase "`notest`" en el `<div>`:
 
 ```
 * @example
@@ -262,11 +262,11 @@ Si no quieres que el ejemplo se ejecute como parte de las pruebas automatizadas 
 * </code></div>
 ```
 
-Si tu ejemplo utiliza archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](https://p5js.org/reference/p5/tint) como ejemplo.
+Si tu ejemplo utilize archivos externos como recursos, colócalos en la carpeta [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) (o reutiliza uno que ya esté allí) y luego enlázalos con "assets/nombrearchivo.ext" en el código. Consulta la referencia de [tint()](https://p5js.org/reference/p5/tint) como ejemplo.
 
 ### Agregar descripción a un lienzo usando `describe()`
 
-Por último, para cada ejemplo que añadas, se requiere que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accesible del lienzo para lectores de pantalla. Incluye sólo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
+Por último, para cada ejemplo que añadas, se require que utilices la función de p5.js `describe()` en el ejemplo para crear una descripción accessible del lienzo para lectores de pantalla. Incluye sólo un parámetro: una cadena con una breve descripción de lo que está sucediendo en el lienzo.
 
 ```
 * @example
@@ -375,7 +375,7 @@ Los constructores de clases se definen con la etiqueta `@class`y la etiqueta `@c
 
 El repositorio de p5.js está configurado para que puedas generar y previsualizar la referencia sin necesidad de compilar y ejecutar también el sitio web de p5.js.
 
-- El comando principal para generar la referencia a partir de los comentarios de referencia en el código fuente es el siguiente.
+- El commando principal para generar la referencia a partir de los comentarios de referencia en el código fuente es el siguiente.
 
 ```
 npm run docs
@@ -383,7 +383,7 @@ npm run docs
 
 Esto generará los archivos de vista previa necesarios y el archivo principal `docs/reference/data.json`, que es el mismo archivo (después de la minificación) que se utilizará para renderizar la página de referencia en el sitio web.
 
-- Para trabajar continuamente en la referencia, puedes ejecutar el siguiente comando.
+- Para trabajar continuamente en la referencia, puedes ejecutar el siguiente commando.
 
 ```
 npm run docs:dev

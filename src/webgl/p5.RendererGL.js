@@ -320,8 +320,8 @@ p5.prototype.setAttributes = function (key, value) {
  * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
  * @param {WebGLRenderingContext} gl The WebGL context
  * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordiante to read, premultiplied by pixel density
- * @param {Number} y The y coordiante to read, premultiplied by pixel density
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
  * @param {Number} width The width in pixels to be read (factoring in pixel density)
  * @param {Number} height The height in pixels to be read (factoring in pixel density)
  * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
@@ -2593,7 +2593,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return p;
   }
   _initTessy() {
-    // function called for each vertex of tesselator output
+    // function called for each vertex of tessellator output
     function vertexCallback(data, polyVertArray) {
       for (const element of data) {
         polyVertArray.push(element);
@@ -2641,8 +2641,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   _triangulate(contours) {
-    // libtess will take 3d verts and flatten to a plane for tesselation.
-    // libtess is capable of calculating a plane to tesselate on, but
+    // libtess will take 3d verts and flatten to a plane for tessellation.
+    // libtess is capable of calculating a plane to tessellate on, but
     // if all of the vertices have the same z values, we'll just
     // assume the face is facing the camera, letting us skip any performance
     // issues or bugs in libtess's automatic calculation.
@@ -2702,7 +2702,7 @@ p5.prototype._assert3d = function (name) {
     );
 };
 
-// function to initialize GLU Tesselator
+// function to initialize GLU Tessellator
 
 p5.RendererGL.prototype.tessyVertexSize = 12;
 

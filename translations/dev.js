@@ -10,7 +10,7 @@ export { default as ja_translation } from './ja/translation';
  * For example, if we were to add fr ( French ), we would write:
  * export { default as fr_translation } from './fr/translation';
  *
- * If the language key has a hypen (-), replace it with an underscore ( _ )
+ * If the language key has a hyphen (-), replace it with an underscore ( _ )
  * e.g. for es-MX we would write:
  * export { default as es_MX_translation } from './es-MX/translation';
  *

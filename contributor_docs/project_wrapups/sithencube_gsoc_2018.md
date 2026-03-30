@@ -9,7 +9,7 @@ Part of this project included a testing event in the form of a creative coding w
 As part of the project I also attended to some minor issues on Github.
 
 
-## Sumbission contains:
+## Submission contains:
 
 ### 1. [Attending to p5.js mobile issues](https://github.com/processing/p5.js/labels/area%3Amobile)
 

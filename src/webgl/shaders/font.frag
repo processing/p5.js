@@ -95,7 +95,7 @@ void calulateCrossings(vec2 p0, vec2 p1, vec2 p2, out vec2 C1, out vec2 C2) {
   if (abs(a.x) < 0.001)
     t1.y = t2.y = c.x / (2.0 * b.x);
 
-  // plug into quadratic formula to find the corrdinates of the crossings
+  // plug into quadratic formula to find the coordinates of the crossings
   C1 = ((a * t1 - b * 2.0) * t1 + c) * pixelScale;
   C2 = ((a * t2 - b * 2.0) * t2 + c) * pixelScale;
 }

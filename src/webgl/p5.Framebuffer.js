@@ -725,7 +725,7 @@ class Framebuffer {
    * together, such as how many bits to use, e.g. RGBA32F or RGB565.)
    *
    * The format and channels asked for by the user hint at what these values
-   * need to be, and the WebGL version affects what options are avaiable.
+   * need to be, and the WebGL version affects what options are available.
    * This method returns the values for these three properties, given the
    * framebuffer's settings.
    *

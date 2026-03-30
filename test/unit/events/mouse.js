@@ -225,7 +225,7 @@ suite('Mouse Events', function() {
       assert.strictEqual(myp5.mouseButton, 'left');
     });
 
-    test('mouseButton should be "center" on auxillary mouse button click', function() {
+    test('mouseButton should be "center" on auxiliary mouse button click', function() {
       window.dispatchEvent(new MouseEvent('mousedown', { button: 1 }));
       assert.strictEqual(myp5.mouseButton, 'center');
     });

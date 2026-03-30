@@ -280,7 +280,7 @@ class Renderer extends p5.Element {
           finalMinHeight -= maxHeight / 2;
         }
 
-        let originalY = y;
+        let originally = y;
         let ascent = p.textAscent();
 
         switch (this._textBaseline) {
@@ -303,7 +303,7 @@ class Renderer extends p5.Element {
 
         // fix for #5785 (bottom of bounding box)
         if (this._textBaseline === constants.CENTER) {
-          finalMaxHeight = originalY + maxHeight - ascent / 2;
+          finalMaxHeight = originally + maxHeight - ascent / 2;
         }
       } else {
       // no text-height specified, show warning for BOTTOM / CENTER

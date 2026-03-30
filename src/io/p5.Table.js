@@ -782,7 +782,7 @@ p5.Table = class {
  * }
  *
  * // prints:
- * //  0  "Lion"   "Mamal"
+ * //  0  "Lion"   "Mammal"
  * //  1  "Snake"  "Reptile"
  * </code></div>
  */
@@ -851,7 +851,7 @@ p5.Table = class {
  * }
  *
  * // prints:
- * //  0  "Lion"   "Mamal"
+ * //  0  "Lion"   "Mammal"
  * //  1  "Snake"  "Reptile"
  * </code></div>
  */

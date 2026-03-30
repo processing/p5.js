@@ -22,7 +22,7 @@ The current layout of the web editor displays the editor side-by-side with the s
 
 Moreover, the editor itself was previously implemented as a class component, relying on lifecycle methods for various functionalities, including the auto-save feature. Since some of the lifecycle methods are no longer supported I decided to convert the editor to a functional component and along with this me and Linda also improved the autosave logic as needed.
 
-**The SideBar,** or the File drawer for the mobile was really similar to Shuju's designs, There were some minor changes here and there, but the way SideBar opens and closes in the mobile version was totally different in the mobile version. I created some wrappers for the sidebar component and also refactored the present `SideBar` component to make it useable in the mobile version too.
+**The SideBar,** or the File drawer for the mobile was really similar to Shuju's designs, There were some minor changes here and there, but the way SideBar opens and closes in the mobile version was totally different in the mobile version. I created some wrappers for the sidebar component and also refactored the present `SideBar` component to make it usable in the mobile version too.
 
 <img src="https://github.com/processing/p5.js/assets/71703033/f6e1daae-9c46-4bf3-b912-95efeccd1035" alt="editor preview" style="height: 800px;" />
 
@@ -32,7 +32,7 @@ Moreover, the editor itself was previously implemented as a class component, rel
 
 [#2347 FloatingActionButton: added the component in smaller devices](https://github.com/processing/p5.js-web-editor/pull/2347)
 
-[#2387 Useable Mobile Editor 🎉](https://github.com/processing/p5.js-web-editor/pull/2387)
+[#2387 Usable Mobile Editor 🎉](https://github.com/processing/p5.js-web-editor/pull/2387)
 
 ### Nav Bar and Tool Bar
 
@@ -79,7 +79,7 @@ Furthermore, I refactored the `Toolbar` component from a Class component to a fu
 
 [#2361 Mobile Nav Component for smaller devices](https://github.com/processing/p5.js-web-editor/pull/2361)
 
-### My Stuff (Sketchs, Collections, and Assets Page)
+### My Stuff (Sketches, Collections, and Assets Page)
 
 <img src="https://github.com/processing/p5.js/assets/71703033/74ebb77d-b57f-4453-b435-a7c57ce5363f" alt="editor preview" style="height: 800px;" />
 
@@ -95,7 +95,7 @@ According to Shuju’s designs, it was required to add a button next to the tab 
 
 ### Login, SignUp, and Account Page
 
-The Login, SignUp, and Account pages shared certain similarities in their design and layout, they were useable on mobile devices and smaller screens but they just needed some small changes to look good on smaller devices.
+The Login, SignUp, and Account pages shared certain similarities in their design and layout, they were usable on mobile devices and smaller screens but they just needed some small changes to look good on smaller devices.
 
 **Pull Requests:**
 

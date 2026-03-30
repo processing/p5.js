@@ -15,7 +15,7 @@ function setup() {
     image(img, 10, 75);
   });
 
-  //Copy an image into iself
+  //Copy an image into itself
   image3 = loadImage('cat.jpg', function(img) {
     img.copy(
       img.width / 2,

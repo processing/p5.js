@@ -78,7 +78,7 @@ function draw() {
     // The envelope gets triggered with the oscillator as input and the times and levels we defined earlier
     env.play(triOsc);
 
-    // Create the new trigger according to predefined durations and speed it up by deviding by 1.5
+    // Create the new trigger according to predefined durations and speed it up by dividing by 1.5
     trigger = millis() + duration;
 
     // Advance by one note in the midiSequence;

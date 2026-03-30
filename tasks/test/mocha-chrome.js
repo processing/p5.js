@@ -97,7 +97,7 @@ module.exports = function(grunt) {
               resolve(stats);
             });
 
-            // Nagivate to URL and start test
+            // Navigate to URL and start test
             await page.goto(testURL);
           });
         } finally {

@@ -17,7 +17,7 @@
 </p>
 
 ## The New Module system 
-Javascript has  a struggling  history of module sytems , from ``IIFE`` to ``ESM 2015`` we have come a long  way to finally own a native module support ! [here is a great tutorial for the same ](https://www.youtube.com/watch?v=qJWALEoGge4&t=3s).
+Javascript has  a struggling  history of module systems , from ``IIFE`` to ``ESM 2015`` we have come a long  way to finally own a native module support ! [here is a great tutorial for the same ](https://www.youtube.com/watch?v=qJWALEoGge4&t=3s).
 Earlier p5.js-sound library was dependent on  `require.js` for making the codebase modular , which was very cumbersome to maintain and scale , However , now we have been shifted to ESM .
 
 Perks of having native ESM -->
@@ -31,8 +31,8 @@ Perks of having native ESM -->
 
 
 This is not it !,
-Many browsers does not support many ES6 features such as `export/import` , ``classes``  , ``arrow functions `` .. etc , and here we needed the backward compatiblity , and BABEL (JS TRANSPILER ) is 
-here to save the day  , which with help of WEBPACK ( module bundler ) ships the final code in older verion of ES ! YES you heard it right , we write code in NODE.JS env with modern JS syntax but at the end of the day we ship the code in older ES versions to ensure compatiblity in all browsers ! 
+Many browsers does not support many ES6 features such as `export/import` , ``classes``  , ``arrow functions `` .. etc , and here we needed the backward compatibility , and BABEL (JS TRANSPILER ) is 
+here to save the day  , which with help of WEBPACK ( module bundler ) ships the final code in older version of ES ! YES you heard it right , we write code in NODE.JS env with modern JS syntax but at the end of the day we ship the code in older ES versions to ensure compatibility in all browsers ! 
 
 
 
@@ -88,9 +88,9 @@ Following PR REVAMPED the p5.sound's   AUDIO NODES from ``function syntax`` to  
 
 
 ## New Testing architecture 
-Unit automated  testings are fun and helps ship the errorless code to the end users .  Testing Frameworks like ``mocha`` , assertion library ``chai`` , stubbing helpers like ``sinon``  helped achieve the same , however we were still using ``require.js`` mdoule format and chached ``mocha.js`` , ``chai.js`` ,``sinon.js`` file that not only increased the size of the codebase but also very tidious to update them ,
+Unit automated  testings are fun and helps ship the errorless code to the end users .  Testing Frameworks like ``mocha`` , assertion library ``chai`` , stubbing helpers like ``sinon``  helped achieve the same , however we were still using ``require.js`` mdoule format and cached ``mocha.js`` , ``chai.js`` ,``sinon.js`` file that not only increased the size of the codebase but also very tidious to update them ,
 
-With [THIS PR](https://github.com/processing/p5.js-sound/pull/541) i sucessfully revamped the module System to ESM and removed those chached file and made them downloadable using NPM , Moreover i have added following  unit tests to some of uncovered AUDIO NODES and  modules .
+With [THIS PR](https://github.com/processing/p5.js-sound/pull/541) i successfully revamped the module System to ESM and removed those cached file and made them downloadable using NPM , Moreover i have added following  unit tests to some of uncovered AUDIO NODES and  modules .
 
 
 [Unit tests for p5.master](https://github.com/processing/p5.js-sound/pull/463)
@@ -108,10 +108,10 @@ while completing my gsoc tasks , i enjoyed helping jason and kyle in  adding  pr
 
  
 * [p5.js file](https://github.com/processing/p5.js-sound/pull/501)
-Most of out unit  tests and examples  required p5.js to work with , and it was chached too into the codebase which not only was bulking the codebase but also making it hard to update , I removed the cached p5.js file and used NPM to download it  , however after download by default it was present inside the node_modules folder , which was a serious issue beacause  our ``unit tests`` and  ``examples``  used  /lib/p5.js reference to the  p5.js file , i decided to copy the p5.js file from  node_modules folder  to /lib/p5.js on project setup  using ``POSTINSTALL``  NPM SCRIPT .
+Most of out unit  tests and examples  required p5.js to work with , and it was cached too into the codebase which not only was bulking the codebase but also making it hard to update , I removed the cached p5.js file and used NPM to download it  , however after download by default it was present inside the node_modules folder , which was a serious issue because  our ``unit tests`` and  ``examples``  used  /lib/p5.js reference to the  p5.js file , i decided to copy the p5.js file from  node_modules folder  to /lib/p5.js on project setup  using ``POSTINSTALL``  NPM SCRIPT .
 
-Also  i loved  dicussing the issues of others related to the library and reviewing  the code was self rewarding .
+Also  i loved  discussing the issues of others related to the library and reviewing  the code was self rewarding .
 
 
-# Acknowldegements
-I am extremly grateful to Processing Foundation and GSOC team to let me  live my dream here .I would like to thank my amazing mentors Jason Sigal and Kyle James for their unmeasured support and motivation throughout this amazing GSOC period .
+# Acknowledgements
+I am extremely grateful to Processing Foundation and GSOC team to let me  live my dream here .I would like to thank my amazing mentors Jason Sigal and Kyle James for their unmeasured support and motivation throughout this amazing GSOC period .

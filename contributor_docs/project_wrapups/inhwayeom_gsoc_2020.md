@@ -4,7 +4,7 @@
 
 ## Overview
 
-Reaching out to 50 and more p5 educators around the world, "p5 for 50+ teaching" aims to contribute in documenting, showcasing, and sharing teaching experiences, specifically by re-using the existing features of p5js.org. The project was mentored by Qianqian Ye.
+Reaching out to 50 and more p5 educators around the world, "p5 for 50+ teaching" aims to contribute in documenting, showcasing, and sharing teaching experiences, specifically by reusing the existing features of p5js.org. The project was mentored by Qianqian Ye.
 
 * Project Page: https://p5js.org/teach/
 
@@ -17,7 +17,7 @@ Reaching out to 50 and more p5 educators around the world, "p5 for 50+ teaching"
 
 The purpose of “p5 for 50+ teaching” was to collect information on p5 workshops, classes, or relevant materials currently scattered across the Web; archive and visualize the information on a single webpage of p5js.org, namely "/teach". Addressing the need for a better access to educational experiences and resources, my mentor Qianqian and I hope to contribute with this webpage in connecting and consolidating the p5 educator and learner community around the world.
 
-The major functionality of /teach page lies in sharing a spectrum of data, such as dates/numbers, places/proper nouns, quotes, images, etc. To facilitate the user experience of gaining such information, I adhered to the following design principles: 1) maintain the intuitive design and use flow of the website, 2) by either re-activating or re-using the current features and functions on p5js.org.  
+The major functionality of /teach page lies in sharing a spectrum of data, such as dates/numbers, places/proper nouns, quotes, images, etc. To facilitate the user experience of gaining such information, I adhered to the following design principles: 1) maintain the intuitive design and use flow of the website, 2) by either re-activating or reusing the current features and functions on p5js.org.  
 
 In terms of the optimization, I also refrained from adding too much script files, assets, features or functions -- except when necessary for the purpose of this project.
 
@@ -50,7 +50,7 @@ Just as the structure of other pages, /teach also has less than three steps for 
 With the "Search Filter" feature, users can filter teaching cases based on the cases' relevance with diversity & inclusion issues, venue, year, level of difficulty. Although I initially planned to include range sliders for the filtering, I changed to checkboxes to guarantee freedom of selection and to eliminate possible connotations on chronological priority.
 
 #### 4) Delivering Detail Information
-I chose modal box for containing detail infromation to each teaching case, for a number of reasons. First, users can access the detail without having to open a new window. Second, optimization-wise, modal boxes can circumvent the issue of overloading the repository with additional HandleBars and JavaScript files, and assets. 
+I chose modal box for containing detail information to each teaching case, for a number of reasons. First, users can access the detail without having to open a new window. Second, optimization-wise, modal boxes can circumvent the issue of overloading the repository with additional HandleBars and JavaScript files, and assets. 
 
 
 ### Submission Questionnaire Design
@@ -73,7 +73,7 @@ Languages: HTML, CSS, jQuery
 - Added jQuery for showing/hiding an accordion menu to "Search Filter" button; enabling 4 different filters (Diversity & Inclusion, Venue, Year, Level of Difficulty); opening/closing modal boxes to each teaching case
 - Added HTML & jQuery & CSS codes for the preliminary versions of UI/UX design PR#1
 - Edited HTML & jQuery & CSS codes for the final version of UI/UX design
-- Retrieved submissions and organized the infromation on modal contents
+- Retrieved submissions and organized the information on modal contents
 - Added codes for translation on i18n-relevant files 
 
 ## Future Plan & Sustainability
@@ -92,6 +92,6 @@ For Future Contributors:
 
 ## Acknowledgements
 
-First and foremost, I would like to deeply thank my mentor Qianqian for her fullest and cannot-be-better supports. I very much appreciate the fact that she embarked on our mentor meetings with  reflections on the pedagogy of creative coding. Her introduction to related books and people who engage in teaching as their social and art practices led me to ponder on the notion and effects of "teaching" itself. In terms of technical mentorship, she has provided highly detail feedback to the prototypes of UI/UX design and interaction, and submission questionaire. She would even occasionally provie cares to my work-and-life balance with this project. Throughout this project, she taught me a true meaning of "mentorship".
+First and foremost, I would like to deeply thank my mentor Qianqian for her fullest and cannot-be-better supports. I very much appreciate the fact that she embarked on our mentor meetings with  reflections on the pedagogy of creative coding. Her introduction to related books and people who engage in teaching as their social and art practices led me to ponder on the notion and effects of "teaching" itself. In terms of technical mentorship, she has provided highly detail feedback to the prototypes of UI/UX design and interaction, and submission questionnaire. She would even occasionally provie cares to my work-and-life balance with this project. Throughout this project, she taught me a true meaning of "mentorship".
 
 I also feel especially grateful to Lauren McCarthy, who was my very first p5.js teacher and informed me of those amazing opportunities I could have with Processing Foundation for the last six months. I have spent a substantial amount of time with the organization and was indeed grateful of instant responses and supports from all the other members and organizers, as well. Evelyn Masso and Aarón  Montoya-Moraga, to name a few, had also offered an insight to this project with detail feedback. Last but not least, I would like to thank Connie Liu for having me accompanyied throughout the GSoC program with our cheerful talks across the art & design & technology.  

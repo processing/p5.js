@@ -99,7 +99,7 @@ class ImageInfos {
           imageData = ctx.createImageData(this.width, this.height);
         }
         if (created) {
-          // distroy the temporary canvas, if necessary
+          // destroy the temporary canvas, if necessary
           document.body.removeChild(canvas);
         }
       }
@@ -256,7 +256,7 @@ class FontInfo {
        * @function clamp
        * @param {Number} v the value to clamp
        * @param {Number} min the minimum value
-       * @param {Number} max the maxmimum value
+       * @param {Number} max the maximum value
        *
        * clamps a value between a minimum & maximum value
        */

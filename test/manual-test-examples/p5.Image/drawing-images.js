@@ -6,7 +6,7 @@ function setup() {
   background(200);
 
   //
-  // Create an empty image we will driectly draw to
+  // Create an empty image we will directly draw to
   //
   image1 = createImage(40, 40);
 

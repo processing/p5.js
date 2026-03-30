@@ -1,6 +1,6 @@
 # p5.js Math
 
-This folder contains modules with mathmatical functions and any internal state required by those functions.
+This folder contains modules with mathematical functions and any internal state required by those functions.
 
 ## [calculation.js](./calculation.js)
 

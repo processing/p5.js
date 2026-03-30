@@ -1409,7 +1409,7 @@ const _truncatedCone = function(
       ringRadius = 0;
     }
 
-    y -= height / 2; //shift coordiate origin to the center of object
+    y -= height / 2; //shift coordinate origin to the center of object
     for (ii = 0; ii < detailX; ++ii) {
       const u = ii / (detailX - 1);
       const ur = 2 * Math.PI * u;
@@ -2476,7 +2476,7 @@ p5.RendererGL.prototype.triangle = function(args) {
   }
 
   // only one triangle is cached, one point is at the origin, and the
-  // two adjacent sides are tne unit vectors along the X & Y axes.
+  // two adjacent sides are the unit vectors along the X & Y axes.
   //
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the

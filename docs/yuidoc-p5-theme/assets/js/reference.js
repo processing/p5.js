@@ -2569,7 +2569,7 @@ var prettyPrint;
       "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
       "var,virtual,where"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
-      "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
+      "for,if,in,is,isn't,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
       "debugger,eval,export,function,get,null,set,undefined,var,with," +
@@ -3641,9 +3641,9 @@ var prettyPrint;
         var spanStart = spans[spanIndex];
         var spanEnd = spans[spanIndex + 2] || sourceLength;
   
-        var decEnd = decorations[decorationIndex + 2] || sourceLength;
+        var descend = decorations[decorationIndex + 2] || sourceLength;
   
-        var end = Math.min(spanEnd, decEnd);
+        var end = Math.min(spanEnd, descend);
   
         var textNode = spans[spanIndex + 1];
         var styledText;
@@ -3678,7 +3678,7 @@ var prettyPrint;
         if (sourceIndex >= spanEnd) {
           spanIndex += 2;
         }
-        if (sourceIndex >= decEnd) {
+        if (sourceIndex >= descend) {
           decorationIndex += 2;
         }
       }

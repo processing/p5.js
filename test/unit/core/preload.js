@@ -33,7 +33,7 @@ suite('preloads', () => {
           if (resolved) {
             resolve();
           } else {
-            reject(new Error('Sketch enetered setup too early.'));
+            reject(new Error('Sketch entered setup too early.'));
           }
         };
       });
@@ -186,7 +186,7 @@ suite('preloads', () => {
             if (resolved) {
               resolve();
             } else {
-              reject(new Error('Sketch enetered setup too early.'));
+              reject(new Error('Sketch entered setup too early.'));
             }
           };
         });

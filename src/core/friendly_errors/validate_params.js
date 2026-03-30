@@ -663,7 +663,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * If a function is called with some set of wrong arguments, and then called
    * again with the same set of arguments, the messages due to the second call
-   * will be supressed. If two tests test on the same wrong arguments, the
+   * will be suppressed. If two tests test on the same wrong arguments, the
    * second test won't see the validationError. clearing argumentTree solves it
    *
    * @method _clearValidateParamsCache

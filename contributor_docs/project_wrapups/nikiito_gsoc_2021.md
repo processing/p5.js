@@ -24,7 +24,7 @@ The handbook is organized into two main chapters: concepts and technical strateg
 ## Getting Started
 To run the code locally:
 - Download this project repository.
-- Use Visual Studio Code and download the <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server extention</a> to view the website on your local development environment.
+- Use Visual Studio Code and download the <a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer">Live Server extension</a> to view the website on your local development environment.
 
 ## Acknowledgments
 I feel very grateful to have had such amazing support during the development of this project. First and foremost, I would like to extend my deepest gratitude to my mentors Elgin-Skye McLaren and Grace Kwon who have been extremely helpful from start to finish. Every time after meetings with my mentors, I felt so inspired and motivated to move forward. 

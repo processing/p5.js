@@ -6,7 +6,7 @@ En la [Conferencia de Colaboradores de 2019](https://p5js.org/community/contribu
 
 ## Tipos de acceso
 
-Aumentar el acceso no se trata de expandir el número neto de personas en la comunidad de p5.js. Es un compromiso continuo de hacer que p5.js esté disponible y sea accesible para personas que han sido excluidas de la comunidad de p5.js como consecuencia de la opresión estructural. Este compromiso se extiende a las herramientas y plataformas que ofrece p5.js. También incluye la composición, toma de decisiones y acciones del liderazgo de p5.js. Nos resistimos a la cultura tecnológica de la velocidad, el crecimiento y la competencia. Damos prioridad a la intencionalidad, la lentitud, la adaptación y la responsabilidad como actos de cuidado colectivo.
+Aumentar el acceso no se trata de expandir el número neto de personas en la comunidad de p5.js. Es un compromiso continuo de hacer que p5.js esté disponible y sea accessible para personas que han sido excluidas de la comunidad de p5.js como consecuencia de la opresión estructural. Este compromiso se extiende a las herramientas y plataformas que ofrece p5.js. También incluye la composición, toma de decisiones y acciones del liderazgo de p5.js. Nos resistimos a la cultura tecnológica de la velocidad, el crecimiento y la competencia. Damos prioridad a la intencionalidad, la lentitud, la adaptación y la responsabilidad como actos de cuidado colectivo.
 
 Aquí, acceso significa hacer que p5.js sea equitativo para:
 
@@ -44,7 +44,7 @@ Estos son ejemplos de esfuerzos que creemos aumentan el acceso:
 
 ## Mantenimiento
 
-No estamos aceptando solicitudes de características que no respalden nuestro esfuerzo por aumentar el acceso. Verás este criterio reflejado en nuestras plantillas de _issue_ y _pull request_. También afirmamos nuestra intención de mantener el conjunto de características existentes de p5.js. Nos gustaría corregir errores independientemente de donde se encuentren dentro de la base de código. Creemos que la consistencia de la herramienta la hace más accesible para principiantes. Ejemplos de solicitudes de características que mejoran la accesibilidad incluyen:
+No estamos aceptando solicitudes de características que no respalden nuestro esfuerzo por aumentar el acceso. Verás este criterio reflejado en nuestras plantillas de _issue_ y _pull request_. También afirmamos nuestra intención de mantener el conjunto de características existentes de p5.js. Nos gustaría corregir errores independientemente de donde se encuentren dentro de la base de código. Creemos que la consistencia de la herramienta la have más accessible para principiantes. Ejemplos de solicitudes de características que mejoran la accesibilidad incluyen:
 Aumentos de rendimiento para personas que usan hardware menos potente (por ejemplo, Soporte para dibujar-en/leer-desde _framebuffers_)
 Consistencia en la API (por ejemplo, Agregar arcVertex() para crear arcos con beginShape()/endShape())
 

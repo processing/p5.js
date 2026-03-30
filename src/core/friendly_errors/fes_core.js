@@ -509,12 +509,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
 
     for (let i = stacktrace.length - 1; i >= 0; i--) {
-      let splitted = stacktrace[i].functionName.split('.');
-      if (entryPoints.includes(splitted[splitted.length - 1])) {
+      let split = stacktrace[i].functionName.split('.');
+      if (entryPoints.includes(split[split.length - 1])) {
         // remove everything below an entry point function (setup, draw, etc).
         // (it's usually the internal initialization calls)
         friendlyStack = stacktrace.slice(0, i + 1);
-        currentEntryPoint = splitted[splitted.length - 1];
+        currentEntryPoint = split[split.length - 1];
         // We call the error "internal" if the source of the error was a
         // function from within the p5.js library file, but called from the
         // user's code directly. We only need to check the topmost frame in
@@ -930,7 +930,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
 
   /**
-   * Prints out all the colors in the color pallete with white text.
+   * Prints out all the colors in the color palette with white text.
    * For color blindness testing.
    */
   /* function testColors() {

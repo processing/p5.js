@@ -3,7 +3,7 @@
  *  popular web browsers. Most web browsers support MP3, but
  *  some (Firefox, Opera) do not because it is a patented codec.
  *
- *  You can ensure file format compatability by including multiple
+ *  You can ensure file format compatibility by including multiple
  *  file extensions. Both MP3 and OGG are recommended.
  */
 

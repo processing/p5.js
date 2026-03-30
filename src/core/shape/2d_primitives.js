@@ -1078,7 +1078,7 @@ p5.prototype.quad = function(...args) {
         args[8], args[9]);
     } else {
       this._renderer.quad(...args);
-      //accessibile outputs
+      //accessible outputs
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._accsOutput('quadrilateral', args);
       }
@@ -1358,7 +1358,7 @@ p5.prototype._renderRect = function() {
 
     // For the default rectMode (CORNER), restore a possible negative width/height
     // removed by modeAdjust(). This results in flipped/mirrored rendering,
-    // which is especially noticable when using WEGBL rendering and texture().
+    // which is especially noticeable when using WEGBL rendering and texture().
     // Note that this behavior only applies to rect(), NOT to ellipse() and arc().
     if (this._renderer._rectMode === constants.CORNER) {
       vals.w = arguments[2];

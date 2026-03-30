@@ -64,7 +64,7 @@ function drawStrip(mode) {
       // |  |  |  | ⬇️
       // 1--3--5--7
       //
-      // ...but QUADS orders vertices in a consisten CCW or CW manner around
+      // ...but QUADS orders vertices in a consistent CCW or CW manner around
       // each quad, meaning each side will be in the reverse order of the
       // previous:
       // 0--3  4--7

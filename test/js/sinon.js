@@ -671,7 +671,7 @@
 });
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.lolex=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
-/*jslint eqeqeq: false, plusplus: false, evil: true, onevar: false, browser: true, forin: false*/
+/*jslint eqeqeq: false, plusplus: false, evil: true, onevar: false, browser: true, foreign: false*/
 /*global global*/
 /**
  * @author Christian Johansen (christian@cjohansen.no) and contributors
@@ -3514,7 +3514,7 @@ var sinon = (function () {
                 return sinon.spy.invoke.apply(this, arguments);
             },
 
-            atLeast: function atLeast(num) {
+            at least: function at least(num) {
                 if (typeof num != "number") {
                     throw new TypeError("'" + num + "' is not number");
                 }
@@ -3565,7 +3565,7 @@ var sinon = (function () {
                     throw new TypeError("'" + num + "' is not a number");
                 }
 
-                this.atLeast(num);
+                this.at least(num);
                 return this.atMost(num);
             },
 
@@ -5036,7 +5036,7 @@ if (typeof sinon == "undefined") {
 /**
  * The Sinon "server" mimics a web server that receives requests from
  * sinon.FakeXMLHttpRequest and provides an API to respond to those requests,
- * both synchronously and asynchronously. To respond synchronuously, canned
+ * both synchronously and asynchronously. To respond synchronously, canned
  * answers have to be provided upfront.
  *
  * @author Christian Johansen (christian@cjohansen.no)
@@ -5277,7 +5277,7 @@ if (typeof sinon == "undefined") {
  * Add-on for sinon.fakeServer that automatically handles a fake timer along with
  * the FakeXMLHttpRequest. The direct inspiration for this add-on is jQuery
  * 1.3.x, which does not use xhr object's onreadystatehandler at all - instead,
- * it polls the object for completion with setInterval. Dispite the direct
+ * it polls the object for completion with setInterval. Despite the direct
  * motivation, there is nothing jQuery-specific in this file, so it can be used
  * in any environment where the ajax implementation depends on setInterval or
  * setTimeout.

@@ -33,7 +33,7 @@ In weeks-3,4 I've added tests to the files which are not yet covered(16 files). 
 [Week-3,4 PR](https://github.com/processing/p5.js-sound/pull/632)   
 At this point, all the files of the library were covered.  
 
-In weeks-6,7 I've added tests to files which are already coverd(15 files). This is a larger work than week-3,4's as some of the files were massive and needed like 1000 lines of code to test the entire file. During these weeks(3-7), I also fixed some bugs which I came across this period. Later I raised a PR regarding these bugs.  
+In weeks-6,7 I've added tests to files which are already covered(15 files). This is a larger work than week-3,4's as some of the files were massive and needed like 1000 lines of code to test the entire file. During these weeks(3-7), I also fixed some bugs which I came across this period. Later I raised a PR regarding these bugs.  
 
 [Week-6-7 PR](https://github.com/processing/p5.js-sound/pull/636)  
 [Bug fixing PR](https://github.com/processing/p5.js-sound/pull/639)  
@@ -51,7 +51,7 @@ I also implemented headless testing of mocha by using puppeteer, which is inspir
 
 At the start of the project, I thought of implementing the headless testing and using it in github automations, but did not do it as even after implementing all these, some tests were failing in karma-js. Not always, but very rarely. As we cannot take risks on github automations, I refrained from implementing it.  
 
-Also, at the time of writing this document, the last PR is not yet merged. But will hopefully merged whithin a couple of days.  
+Also, at the time of writing this document, the last PR is not yet merged. But will hopefully merged within a couple of days.  
 [Week-8,9,10 PR](https://github.com/processing/p5.js-sound/pull/641)
  
 ## 4.Documenting

@@ -2,7 +2,7 @@
 // Daniel Shiffman
 // http://natureofcode.com
 
-// Forces (Gravity and Fluid Resistence) with Vectors
+// Forces (Gravity and Fluid Resistance) with Vectors
 
 // Demonstration of multiple force acting on bodies (Mover class)
 // Bodies experience gravity continuously

@@ -521,7 +521,7 @@ suite('DOM', function() {
     });
 
     test('should return a p5.Element of anchor type', () => {
-      testElement = myp5.createA('', '');
+      testElement = myp5.create('', '');
       assert.instanceOf(testElement, p5.Element);
       assert.instanceOf(testElement.elt, HTMLAnchorElement);
     });
@@ -529,7 +529,7 @@ suite('DOM', function() {
     test('creates anchor with given link & text', function() {
       const testUrl = 'http://p5js.org/';
       const testText = 'p5js website';
-      testElement = myp5.createA(testUrl, testText);
+      testElement = myp5.create(testUrl, testText);
 
       assert.deepEqual(testElement.elt.href, testUrl);
       assert.deepEqual(testElement.elt.text, testText);
@@ -537,7 +537,7 @@ suite('DOM', function() {
 
     test('creates anchor with given target', function() {
       const testTarget = 'blank';
-      testElement = myp5.createA('http://p5js.org', 'p5js website', testTarget);
+      testElement = myp5.create('http://p5js.org', 'p5js website', testTarget);
       assert.deepEqual(testElement.elt.target, testTarget);
     });
   });
@@ -874,10 +874,10 @@ suite('DOM', function() {
     const createRadioElement = (options = []) => {
       const radioEl = document.createElement('div');
       for (const option of options) {
-        const optionEl = document.createElement('input');
-        optionEl.setAttribute('type', 'radio');
-        optionEl.setAttribute('value', option);
-        radioEl.appendChild(optionEl);
+        const optional = document.createElement('input');
+        optional.setAttribute('type', 'radio');
+        optional.setAttribute('value', option);
+        radioEl.appendChild(optional);
       }
       return radioEl;
     };
@@ -918,8 +918,8 @@ suite('DOM', function() {
       const radioElement = createRadioElement(options);
       testElement = myp5.createRadio(radioElement);
       for (const radioInput of getChildren(radioElement)) {
-        const optionEl = testElement.option(radioInput.value);
-        assert.deepEqual(radioInput, optionEl);
+        const optional = testElement.option(radioInput.value);
+        assert.deepEqual(radioInput, optional);
       }
       assert.deepEqual(getChildren(testElement.elt).length, options.length);
     });
@@ -930,11 +930,11 @@ suite('DOM', function() {
       testElement = myp5.createRadio(testName);
       let count = 0;
       for (const option of options) {
-        const optionEl = testElement.option(option);
-        assert.instanceOf(optionEl, HTMLInputElement);
-        assert.deepEqual(optionEl.type, 'radio');
-        assert.deepEqual(optionEl.value, option);
-        assert.deepEqual(optionEl.name, testName);
+        const optional = testElement.option(option);
+        assert.instanceOf(optional, HTMLInputElement);
+        assert.deepEqual(optional.type, 'radio');
+        assert.deepEqual(optional.value, option);
+        assert.deepEqual(optional.name, testName);
         // Increment by one for every label element
         count += 1;
 
@@ -948,10 +948,10 @@ suite('DOM', function() {
       testElement = myp5.createRadio(testName);
       for (const option of options) {
         const optionLabel = `${option}-label`;
-        const optionEl = testElement.option(option, optionLabel);
-        assert.deepEqual(optionEl.value, option);
-        assert.deepEqual(optionEl.name, testName);
-        const spanEl = optionEl.nextElementSibling;
+        const optional = testElement.option(option, optionLabel);
+        assert.deepEqual(optional.value, option);
+        assert.deepEqual(optional.name, testName);
+        const spanEl = optional.nextElementSibling;
         assert.deepEqual(spanEl.innerHTML, optionLabel);
       }
     });
@@ -963,8 +963,8 @@ suite('DOM', function() {
       testElement = myp5.createRadio(radioElement, testName);
 
       for (const option of options) {
-        const optionEl = testElement.option(option);
-        assert.deepEqual(optionEl.name, testName);
+        const optional = testElement.option(option);
+        assert.deepEqual(optional.name, testName);
       }
     });
 
@@ -1849,7 +1849,7 @@ suite('DOM', function() {
       assert.isTrue(childNodes.includes(childElement.elt));
     });
 
-    test('should not throw error if mathcing element is not found from a given id', function() {
+    test('should not throw error if matching element is not found from a given id', function() {
       testElement = myp5.createElement('div');
       const randomChildId = 'testChildElement';
       expect(() => testElement.child(randomChildId)).to.not.throw();

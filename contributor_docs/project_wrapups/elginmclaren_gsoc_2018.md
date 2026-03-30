@@ -16,7 +16,7 @@ hello.p5js.org is likely to be many users’ first introduction to p5.js (and po
 * Promoted survey on Github, Processing Forum, and Twitter
 * Analyzed results, identified key features, and incorporated feedback into a video script 
 * Drew video storyboards for feedback from mentor and Lauren
-* Designed UX wireframes to illustrate how  p5.js sketches would be overlayed on video content, how captions would appear, and how users would control the video
+* Designed UX wireframes to illustrate how  p5.js sketches would be overlaid on video content, how captions would appear, and how users would control the video
 * Recorded draft video as proof of concept for the final project
 * Recruited volunteers for the video through a second online survey
 * Corresponded with community leaders to ensure diverse representation in the video

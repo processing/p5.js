@@ -64,7 +64,7 @@ Toto je krátky sumár k pravidlám štýlu kódu. Prosím ber na vedomie, že t
 * Všetky premenné definované v kóde by mali byť použité aspoň raz alebo úplne odstránené.
 * Neporovnávaj x == true alebo x == false. Použi namiesto toho (x) alebo (!x). x == true, sa vyhodnotí inak ako (x)! Objekty porovnávaj s null, čísla porovnávaj s 0 alebo znaky s "", aby sa predošlo nedorozumeniam.
 * V prípade, že tvoj kód obstahuje nejasností alebo komplexitu, pridaj komentáre.
-* Pozri si [prakitká Mozilla JS](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) pre užitočné rady a návody ohľadom štylistických tipov.
+* Pozri si [prakitká Mozilla JS](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) pre užitočné ready a návody ohľadom štylistických tipov.
 
 ## Unit Testy
 
@@ -97,7 +97,7 @@ S bežiacim servrom by si mal byť schopný otvoriť `test/test.html` v prehliad
 
 Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, ale v skratke by sa dalo povedať, že akákoľvek závažná zmena alebo nová funkcionalita implementovaná v zdrojom kóde nachádzajúcom sa v priečinku `src/` by mala byť sprevádzaná kódom v testovacích súboroch v priečinku `test/`, ktoré môžu byť vykonané rámcom Mocha za účelom overenia konzistentnosti správania vo všetkých budúcich verziách knižnice. Keď píšeš unit testy, použi [referenčnú príručku Chai.js](http://www.chaijs.com/api/assert/) ako návod k frázovaniu správ tvojich tvrdení tak, aby chyby odchytené testami v budúcnosti boli konzistentné a teda zrozumiteľnejšie pre iných vývojárov.
 
-# Vývojový Proces
+# Vývojový Process
 
 1. Nainštaluj [node.js](http://nodejs.org/), ktorý automaticky nainštaluje balíčkového manažéra [npm](https://www.npmjs.org).
 2. [Rozvetvi](https://help.github.com/articles/fork-a-repo) [repozitár p5.js](https://github.com/processing/p5.js) do svojho GitHub účtu.
@@ -139,7 +139,7 @@ Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, a
 
 9. Ak je všetko pripravené, odovzdaj svoje zmeny vo forme [pull request](https://help.github.com/articles/creating-a-pull-request).
 
-Tento proces je tiež pokrytý [vo videu od The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
+Tento process je tiež pokrytý [vo videu od The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
 
 # Budovanie Dokumentácie
 
@@ -162,5 +162,5 @@ Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
 - [Náhľad Dovnútra p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
 - p5.js [Docker image](https://github.com/toolness/p5.js-docker) môže byť namontovaný do [Docker](https://www.docker.com/) a použitý na vývoj p5.js bez potreby manuálnej inštalácie požiadaviek ako [Node](https://nodejs.org/) alebo iných, takých, ktoré ovlyvňujú hosťovský operačný systém (s výnimkou inštalácie Docker-a).
-- Budovací proces knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
+- Budovací process knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
 

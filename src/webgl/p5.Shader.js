@@ -63,7 +63,7 @@ import p5 from '../core/main';
  * @param {Object} [options] An optional object describing how this shader can
  * be augmented with hooks. It can include:
  *  - `vertex`: An object describing the available vertex shader hooks.
- *  - `fragment`: An object describing the available frament shader hooks.
+ *  - `fragment`: An object describing the available fragment shader hooks.
  *
  * @example
  * <div>
@@ -497,7 +497,7 @@ p5.Shader = class {
 
       //set up the shader by
       // 1. creating and getting a gl id for the shader program,
-      // 2. compliling its vertex & fragment sources,
+      // 2. compiling its vertex & fragment sources,
       // 3. linking the vertex and fragment shaders
       this._vertShader = gl.createShader(gl.VERTEX_SHADER);
       //load in our default vertex shader

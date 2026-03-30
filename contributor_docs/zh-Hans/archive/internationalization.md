@@ -49,7 +49,7 @@ console.log(translator('sketch.loading'))
 您还可以将变量插入翻译后的消息。例如，
 
 ```js
-console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
+console.log('I couldn't find ' + file.name + '. Are you sure it's there?')
 ```
 
 会变成类似于
@@ -65,7 +65,7 @@ console.log(translator('fileLoading.notFound', { fileName: file.name }))
 ```json
 {
   "fileLoading": {
-    "notFound": "I couldnt find {{fileName}}. Are you sure it's there?"
+    "notFound": "I couldn't find {{fileName}}. Are you sure it's there?"
   }
 }
 ```

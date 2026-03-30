@@ -1,5 +1,5 @@
 // first try at live beat detection from fft data
-// contains two classes : one for onset detection - OnsetDetect and one to detect when amplitude reaches a certain treshold - BeatDetect (probably ill named)
+// contains two classes : one for onset detection - OnsetDetect and one to detect when amplitude reaches a certain threshold - BeatDetect (probably ill named)
 
 var file = '../_files/Tripping.mp3';
 

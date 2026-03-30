@@ -7,7 +7,7 @@ const uniqueGeometry = 6;
 let columnWidth;
 
 let currentX,
-  currentY,
+  currently,
   theta = 0;
 
 let img;
@@ -26,8 +26,8 @@ function draw() {
   background(150, 150, 150, 255);
 
   // ambientMaterial() + ambientLight()
-  currentY = -rowHeight * (numberOfRows / 2);
-  translate(0, currentY, 0);
+  currently = -rowHeight * (numberOfRows / 2);
+  translate(0, currently, 0);
   push();
   noStroke();
   ambientMaterial(200, 100, 100);
@@ -37,7 +37,7 @@ function draw() {
 
   // ambientMaterial() + ambientLight()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   noStroke();
   emissiveMaterial(200, 100, 100);
@@ -46,7 +46,7 @@ function draw() {
 
   // ambientLight() + pointLight() + specularMaterial with low shininess()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(0, 0, 150);
   pointLight(200, 0, 0, 0, 0, 0);
@@ -59,7 +59,7 @@ function draw() {
 
   // ambientLight() + pointLight() + specularMaterial with low shininess()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(0, 0, 150);
   pointLight(200, 0, 0, 0, 0, 0);
@@ -72,7 +72,7 @@ function draw() {
 
   // ambientLight() + pointLight() + fill with high lightFalloff()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(100, 200, 100);
   pointLight(0, 0, 200, 0, 0, 0);
@@ -83,7 +83,7 @@ function draw() {
 
   // ambientLight() + pointLight() + fill with high lightFalloff()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(100, 200, 100);
   pointLight(0, 0, 200, 0, 0, 0);
@@ -94,7 +94,7 @@ function draw() {
 
   // texture() + directionalLight()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(255);
   directionalLight(200, 0, 0, 0.5, 0, -1);
@@ -106,7 +106,7 @@ function draw() {
   //specularColor()
   noStroke();
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   shininess(10);
   ambientLight(50);
@@ -120,17 +120,17 @@ function draw() {
 
   // spotLight()
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   ambientLight(50);
-  spotLight(0, 250, 0, 0, currentY + 100, 200, 0, 0, -1, 10, 3);
-  spotLight(0, 0, 250, -width / 2, currentY, 100, 1, 0, 0, 100, 25);
+  spotLight(0, 250, 0, 0, currently + 100, 200, 0, 0, -1, 10, 3);
+  spotLight(0, 0, 250, -width / 2, currently, 100, 1, 0, 0, 100, 25);
   ambientMaterial(250);
   drawGeometryRow();
   pop();
 
   translate(0, rowHeight, 0);
-  currentY += rowHeight;
+  currently += rowHeight;
   push();
   fill(255);
   ambientLight(150);
@@ -143,7 +143,7 @@ function draw() {
 
   // to add test, copy-paste the following lines and uncomment
   // translate(0, rowHeight, 0);
-  // currentY += rowHeight;
+  // currently += rowHeight;
   // push();
   // Add your lighting and material conditions here :-)
   // drawGeometryRow(); // you can change condition halfway through a row by adding a function argument

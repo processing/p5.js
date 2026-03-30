@@ -273,7 +273,7 @@ p5.RendererGL.prototype.endShape = function(
 
 /**
  * Called from endShape(). This function calculates the stroke vertices for custom shapes and
- * tesselates shapes when applicable.
+ * tessellates shapes when applicable.
  * @private
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
@@ -300,7 +300,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   // If the shape has a contour, we have to re-triangulate to cut out the
   // contour region
   const hasContour = this.immediateMode.contourIndices.length > 0;
-  // We tesselate when drawing curves or convex shapes
+  // We tessellate when drawing curves or convex shapes
   const shouldTess =
     this._doFill &&
     (
@@ -319,7 +319,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
 
 /**
  * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
- * tesselates shapes when applicable.
+ * tessellates shapes when applicable.
  * @private
  * @returns  {Number[]} indices for custom shape vertices indicating edges.
  */
@@ -406,7 +406,7 @@ p5.RendererGL.prototype._calculateEdges = function(
 };
 
 /**
- * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
+ * Called from _processVertices() when applicable. This function tessellates immediateMode.geometry.
  * @private
  */
 p5.RendererGL.prototype._tesselateShape = function() {
@@ -452,7 +452,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
     this.vertex(...polyTriangles.slice(j, j + 5));
   }
   if (this.geometryBuilder) {
-    // Tesselating the face causes the indices of edge vertices to stop being
+    // Tessellating the face causes the indices of edge vertices to stop being
     // correct. When rendering, this is not a problem, since _edgesToVertices
     // will have been called before this, and edge vertex indices are no longer
     // needed. However, the geometry builder still needs this information, so
@@ -472,7 +472,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
               orig.z === v.z
           );
           if (newVertIndex === -1) {
-            // The tesselation process didn't output a vertex with the exact
+            // The tessellation process didn't output a vertex with the exact
             // coordinate as before, potentially due to numerical issues. This
             // doesn't happen often, but in this case, pick the closest point
             let closestDist = Infinity;

@@ -9,7 +9,7 @@ Si estás leyendo esta página, probablemente estés interesado en ayudar a trab
 
 - Lee nuestra [visión general de la arquitectura WebGL de p5.js](webgl_mode_architecture.md) para entender cómo difiere el modo WebGL del modo 2D. Esta será una referencia valiosa para algunos detalles de implementación para shaders, trazos y más.
 - Lee nuestras [instrucciones para contribuidores](https://p5js.org/contributor-docs/#/./contributor_guidelines) para obtener información sobre cómo crear issues, configurar el código base y probar cambios.
-- Puede ser útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:[WebGL Fundamentals](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
+- Puede set útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:[WebGL Fundamentals](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
   - [The Book of Shaders](https://thebookofshaders.com/) explica muchas técnicas utilizadas en shaders de WebGL.
 
 
@@ -18,10 +18,10 @@ Si estás leyendo esta página, probablemente estés interesado en ayudar a trab
 Organizamos <em>issues</em> abiertos [en un Proyecto de GitHub](https://github.com/orgs/processing/projects/5), donde los dividimos en algunos tipos:
 
 - **Cambios a nivel del sistema** son objetivos a largo plazo con implicaciones de gran alcance en el código. Estos requieren más discusión y planificación antes de comenzar con la implementación.
-- **Errores sin solución aún** son informes de errores que necesitan un poco de depuración para reducir la causa. Estos aún no están listos para ser corregidos: una vez que se encuentra la causa, entonces podemos discutir la mejor manera de corregirla.
+- **Errores sin solución aún** son informes de errores que necesitan un poco de depuración para reducir la causa. Estos aún no están listos para set corregidos: una vez que se encuentra la causa, entonces podemos discutir la mejor manera de corregirla.
 - **Errores con soluciones pero sin PR** son errores donde hemos decidido cómo solucionarlo y están libres para que alguien escriba el código.
 - **Mejoras menores** son <em>issues</em> para nuevas características que tienen un lugar obvio dentro de la arquitectura actual sin necesidad de discutir cómo encajarlas. Una vez acordado que vale la pena hacerlas, están disponibles para que alguien escriba el código.
-- **Funcionalidades 2D** son aquellas que ya existen en p5.js pero no dentro del modo WebGL. El comportamiento esperado de la funcionalidad, una vez implementada, es que coincida con el modo 2D. Es posible que necesitemos discutir la mejor implementación, pero los requisitos del usuario para estos son claros.
+- **Funcionalidades 2D** son aquellas que ya existen en p5.js pero no dentro del modo WebGL. El comportamiento esperado de la funcionalidad, una vez implementada, es que coincida con el modo 2D. Es possible que necesitemos discutir la mejor implementación, pero los requisitos del usuario para estos son claros.
 - **Funcionalidades que no funcionan en todos los contextos** son aquellas que existen en el modo WebGL pero no funcionan en todas las formas en que se puede usar el modo WebGL. Por ejemplo, algunos métodos de p5.js funcionan tanto con coordenadas 2D como 3D, pero otros fallan si se usan coordenadas 3D. Estás están disponibles para comenzar a trabajar.
 - Las **solicitudes de funcionalidad** son todas las demás solicitudes de cambios de código. Estos necesitan un poco de discusión para asegurarnos de que sean cosas que encajen en la hoja de ruta del modo WebGL.
 - <em>Issues</em> de **documentación** son aquellos que no necesitan un cambio de código, sino una mejor documentación del comportamiento de p5.js.
@@ -29,7 +29,7 @@ Organizamos <em>issues</em> abiertos [en un Proyecto de GitHub](https://github.c
 
 ## Dónde Colocar el Código
 
-Todo lo relacionado con WebGL está en el subdirectorio `src/webgl`. Dentro de ese directorio, las funciones principales de p5.js se dividen en archivos según el área temática: los comandos para configurar la luz se encuentran en `lighting.js`; los comandos para configurar materiales se encuentran en `materials.js`.
+Todo lo relacionado con WebGL está en el subdirectorio `src/webgl`. Dentro de ese directorio, las funciones principales de p5.js se dividen en archivos según el área temática: los commandos para configurar la luz se encuentran en `lighting.js`; los commandos para configurar materiales se encuentran en `materials.js`.
 
 Al implementar clases orientadas al usuario, generalmente intentamos tener un archivo por clase. Estos archivos ocasionalmente pueden tener algunas otras clases de utilidad interna. Por ejemplo, `p5.Framebuffer.js` incluye la clase `p5.Framebuffer`, y también consta adicionalmente de algunas subclases específicas de <em>framebuffer</em> de otras clases principales. Otras subclases específicas de <em>framebuffer</em> pueden ir en este archivo también.
 
@@ -126,7 +126,7 @@ test('color interpolation', function() {
 
 ### Pruebas de rendimiento
 
-Aunque no es la principal preocupación de p5.js, intentamos asegurarnos de que los cambios no causen un gran impacto en el rendimiento. Normalmente, esto se hace creando dos <em>sketches</em> de prueba: uno con su cambio y otro sin él. Luego comparamos las velocidades de fotogramas de ambos.
+Aunque no es la principal preocupación de p5.js, intentamos asegurarnos de que los cambios no causen un gran impacto en el rendimiento. Normalmente, esto se have creando dos <em>sketches</em> de prueba: uno con su cambio y otro sin él. Luego comparamos las velocidades de fotogramas de ambos.
 
 Algunos consejos sobre cómo medir el rendimiento:
 

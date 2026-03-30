@@ -1167,7 +1167,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  *   fill('rgba(0, 255, 0, 0.25)');
  *   square(20, 20, 60);
  *
- *   describe('A soft green rectange with a black outline.');
+ *   describe('A soft green rectangle with a black outline.');
  * }
  * </code>
  * </div>

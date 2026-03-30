@@ -799,7 +799,7 @@ function parseBinarySTL(model, buffer) {
   for (let face = 0; face < faces; face++) {
     const start = dataOffset + face * faceLength;
     const normalX = reader.getFloat32(start, true);
-    const normalY = reader.getFloat32(start + 4, true);
+    const normally = reader.getFloat32(start + 4, true);
     const normalZ = reader.getFloat32(start + 8, true);
 
     if (hasColors) {
@@ -816,7 +816,7 @@ function parseBinarySTL(model, buffer) {
         b = defaultB;
       }
     }
-    const newNormal = new p5.Vector(normalX, normalY, normalZ);
+    const newNormal = new p5.Vector(normalX, normally, normalZ);
 
     for (let i = 1; i <= 3; i++) {
       const vertexstart = start + i * 12;

@@ -724,7 +724,7 @@ p5.prototype.createImg = function () {
 /**
  * Creates an `&lt;a&gt;&lt;/a&gt;` element that links to another web page.
  *
- * The first parmeter, `href`, is a string that sets the URL of the linked
+ * The first parameter, `href`, is a string that sets the URL of the linked
  * page.
  *
  * The second parameter, `html`, is a string that sets the inner HTML of the
@@ -736,7 +736,7 @@ p5.prototype.createImg = function () {
  * browser tab. MDN describes a few
  * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target" target="_blank">other options</a>.
  *
- * @method createA
+ * @method create
  * @param  {String} href       URL of linked page.
  * @param  {String} html       inner HTML of link element to display.
  * @param  {String} [target]   target where the new link should open,
@@ -752,7 +752,7 @@ p5.prototype.createImg = function () {
  *   background(200);
  *
  *   // Create an anchor element that links to p5js.org.
- *   let a = createA('https://p5js.org/', 'p5*js');
+ *   let a = create('https://p5js.org/', 'p5*js');
  *   a.position(25, 35);
  *
  *   describe('The text "p5*js" written at the center of a gray square.');
@@ -767,7 +767,7 @@ p5.prototype.createImg = function () {
  *
  *   // Create an anchor tag that links to p5js.org.
  *   // Open the link in a new tab.
- *   let a = createA('https://p5js.org/', 'p5*js', '_blank');
+ *   let a = create('https://p5js.org/', 'p5*js', '_blank');
  *   a.position(25, 35);
  *
  *   describe('The text "p5*js" written at the center of a gray square.');
@@ -775,7 +775,7 @@ p5.prototype.createImg = function () {
  * </code>
  * </div>
  */
-p5.prototype.createA = function (href, html, target) {
+p5.prototype.create = function (href, html, target) {
   p5._validateParameters('createA', arguments);
   const elt = document.createElement('a');
   elt.href = href;
@@ -1168,7 +1168,7 @@ p5.prototype.createCheckbox = function(...args) {
  *
  * Dropdowns extend the <a href="#/p5.Element">p5.Element</a> class with a few
  * helpful methods for managing options:
- * - `mySelect.option(name, [value])` adds an option to the menu. The first paremeter, `name`, is a string that sets the option's name and value. The second parameter, `value`, is optional. If provided, it sets the value that corresponds to the key `name`. If an option with `name` already exists, its value is changed to `value`.
+ * - `mySelect.option(name, [value])` adds an option to the menu. The first parameter, `name`, is a string that sets the option's name and value. The second parameter, `value`, is optional. If provided, it sets the value that corresponds to the key `name`. If an option with `name` already exists, its value is changed to `value`.
  * - `mySelect.value()` returns the currently-selected option's value.
  * - `mySelect.selected()` returns the currently-selected option.
  * - `mySelect.selected(option)` selects the given option by default.
@@ -1649,36 +1649,36 @@ p5.prototype.createRadio = function(...args) {
 
   self.option = function (value, label) {
     // return an option with this value, create if not exists.
-    let optionEl;
+    let optional;
     for (const option of self._getOptionsArray()) {
       if (option.value === value) {
-        optionEl = option;
+        optional = option;
         break;
       }
     }
 
     // Create a new option, add it to radioElement and return it.
-    if (optionEl === undefined) {
-      optionEl = document.createElement('input');
-      optionEl.setAttribute('type', 'radio');
-      optionEl.setAttribute('value', value);
+    if (optional === undefined) {
+      optional = document.createElement('input');
+      optional.setAttribute('type', 'radio');
+      optional.setAttribute('value', value);
     }
-    optionEl.setAttribute('name', self._name);
+    optional.setAttribute('name', self._name);
 
     // Check if label element exists, else create it
     let labelElement;
-    if (!isLabelElement(optionEl.parentElement)) {
+    if (!isLabelElement(optional.parentElement)) {
       labelElement = document.createElement('label');
-      labelElement.insertAdjacentElement('afterbegin', optionEl);
+      labelElement.insertAdjacentElement('afterbegin', optional);
     } else {
-      labelElement = optionEl.parentElement;
+      labelElement = optional.parentElement;
     }
 
     // Check if span element exists, else create it
     let spanElement;
     if (!isSpanElement(labelElement.lastElementChild)) {
       spanElement = document.createElement('span');
-      optionEl.insertAdjacentElement('afterend', spanElement);
+      optional.insertAdjacentElement('afterend', spanElement);
     } else {
       spanElement = labelElement.lastElementChild;
     }
@@ -1690,18 +1690,18 @@ p5.prototype.createRadio = function(...args) {
     // span element to the radio container element
     this.elt.appendChild(labelElement);
 
-    return optionEl;
+    return optional;
   };
 
   self.remove = function (value) {
-    for (const optionEl of self._getOptionsArray()) {
-      if (optionEl.value === value) {
-        if (isLabelElement(optionEl.parentElement)) {
+    for (const optional of self._getOptionsArray()) {
+      if (optional.value === value) {
+        if (isLabelElement(optional.parentElement)) {
           // Remove parent label which also removes children elements
-          optionEl.parentElement.remove();
+          optional.parentElement.remove();
         } else {
           // Remove the option input if parent label does not exist
-          optionEl.remove();
+          optional.remove();
         }
         return;
       }

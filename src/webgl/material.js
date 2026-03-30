@@ -238,7 +238,7 @@ p5.prototype.loadShader = function (
  * @param {Object} [options] An optional object describing how this shader can
  * be augmented with hooks. It can include:
  *  - `vertex`: An object describing the available vertex shader hooks.
- *  - `fragment`: An object describing the available frament shader hooks.
+ *  - `fragment`: An object describing the available fragment shader hooks.
  * @returns {p5.Shader} new shader object created from the
  * vertex and fragment shaders.
  *

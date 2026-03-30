@@ -23,7 +23,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesCodeReader = () => {};
 } else {
   //list of functions to ignore as they either
-  //are ment to be defined or generate false positive
+  //are meant to be defined or generate false positive
   //outputs
   const ignoreFunction = [
     'setup',

@@ -143,7 +143,7 @@ const Filters = {
   },
 
   /**
-   * Applys a filter function to a canvas.
+   * Applies a filter function to a canvas.
    *
    * The difference between this and the actual filter functions defined below
    * is that the filter functions generally modify the pixel buffer but do

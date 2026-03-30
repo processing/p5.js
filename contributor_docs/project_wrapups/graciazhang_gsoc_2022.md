@@ -48,7 +48,7 @@ In this project, I updated the posts based on the recent submission form first t
 Besides the specific UI/UX changes below, I also proposed an issue in processing/p5.js-website about the overall structural changes to enhance the user experience.[#1250](https://github.com/processing/p5.js-website/issues/1250)
 
 
-![](https://drive.google.com/uc?export=veiw&id=1r-wriIvnOPLL6G-ihrL-9wOSEOKfY7l3)
+![](https://drive.google.com/uc?export=view&id=1r-wriIvnOPLL6G-ihrL-9wOSEOKfY7l3)
 
 
 #### 1)Upcoming Workshops
