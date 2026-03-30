@@ -113,11 +113,6 @@ function primitives3D(p5, fn){
    * The parameter, `callback`, is a function with the drawing instructions for
    * the new <a href="#/p5.Geometry">p5.Geometry</a> object. It will be called
    * once to create the new 3D shape.
-   *
-   * See <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a> for another way to build 3D
-   * shapes.
-   *
    * Note: `buildGeometry()` can only be used in WebGL mode.
    *
    * @method buildGeometry
@@ -321,12 +316,8 @@ function primitives3D(p5, fn){
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can contain lots of data
    * about their vertices, surface normals, colors, and so on. Complex 3D shapes
    * can use lots of memory which is a limited resource in many GPUs. Calling
-   * `freeGeometry()` can improve performance by freeing a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object’s resources from GPU memory.
    * `freeGeometry()` works with <a href="#/p5.Geometry">p5.Geometry</a> objects
-   * created with <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>,
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, and
+   * created with <a href="#/p5/buildGeometry">buildGeometry()</a> and
    * <a href="#/p5/loadModel">loadModel()</a>.
    *
    * The parameter, `geometry`, is the <a href="#/p5.Geometry">p5.Geometry</a>
@@ -340,24 +331,6 @@ function primitives3D(p5, fn){
    *
    * @method freeGeometry
    * @param {p5.Geometry} geometry 3D shape whose resources should be freed.
-   *
-   * @example
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   cone();
-   *   let shape = endGeometry();
-   *
-   *   // Draw the shape.
-   *   model(shape);
-   *
-   *   // Free the shape's resources.
-   *   freeGeometry(shape);
-   * }
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.

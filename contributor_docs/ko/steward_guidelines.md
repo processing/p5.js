@@ -60,7 +60,7 @@
    - 나중에 버그 재현이 가능해 경우 2번로 다시 이동합니다.
 4. p5.js의 동작이 아니라 사용자가 버그 보고서에 제공한 코드에서 버그가 발생한 경우:
    - p5.js의 문서화, 코드 구현 또는 친근한 오류 시스템(friendly error system)을 개선하여 동일한 오류가 발생하지 않도록 할 수 있는지 판단합니다.
-   - 추가 질문이 있으면 [포럼(forum)](https://discourse.processing.org/) 또는 [디스코드(Discord)](https://discord.com/invite/SHQ8dH25r9) 로 리디렉션하고 p5.js에 더 이상 변경사항이 없다면 이슈를 종결(close)하세요.
+   - 추가 질문이 있으면 [포럼(forum)](https://discourse.processing.org/) 또는 [디스코드(Discord)](https://discord.p5js.org) 로 리디렉션하고 p5.js에 더 이상 변경사항이 없다면 이슈를 종결(close)하세요.
 
 
 ### 기능 요청

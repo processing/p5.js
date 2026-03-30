@@ -972,9 +972,7 @@ function loading(p5, fn){
    * The parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
