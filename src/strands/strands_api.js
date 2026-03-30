@@ -284,6 +284,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   }
 
+  // Alias lerp to GLSL mix in strands context
+  const originalLerp = fn.lerp;
+  augmentFn(fn, p5, 'lerp', function (...args) {
+    if (strandsContext.active) {
+      return fn.mix(...args);
+    } else {
+      return originalLerp.apply(this, args);
+    }
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);

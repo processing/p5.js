@@ -1067,6 +1067,46 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('lerp maps to mix in strands context', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // lerp should behave identically to mix inside strands
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.lerp(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+
+    visualTest('mix produces same result as lerp in strands', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // mix directly, should produce identical output to lerp test above
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.mix(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+
     visualSuite('auto-return for shader hooks', () => {
       visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
         p5.createCanvas(50, 50, p5.WEBGL);
