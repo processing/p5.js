@@ -500,6 +500,7 @@ function material(p5, fn) {
    * `loadFilterShader('myShader.js', onLoaded)`.
    *
    * @method loadFilterShader
+   * @beta
    * @submodule p5.strands
    * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is

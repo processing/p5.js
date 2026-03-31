@@ -61,6 +61,13 @@ class Color {
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
 
+  // This property is here where duck typing (checking if obj.isColor) needs
+  // to be used over more standard type checking (obj instanceof Color). This
+  // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+  // where if we `import { Color }` directly, it will be a separate copy of the
+  // Color class from the one imported in the main p5.js bundle.
+  isColor = true;
+
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
   static addColorMode(mode, definition){
@@ -364,7 +371,7 @@ class Color {
    if (format === undefined && this._defaultStringValue !== undefined) {
       return this._defaultStringValue;
    }
-   
+
     let outputFormat = format;
     if (format === '#rrggbb') {
       outputFormat = 'hex';
@@ -377,10 +384,10 @@ class Color {
       colorString = serialize(this._color, {
         format: outputFormat
       });
-      
+
       if (format === '#rrggbb') {
         colorString = String(colorString);
-        if (colorString.length === 4) { 
+        if (colorString.length === 4) {
             const r = colorString[1];
             const g = colorString[2];
             const b = colorString[3];

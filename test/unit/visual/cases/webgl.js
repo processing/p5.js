@@ -1333,6 +1333,39 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    visualTest('setUniform with p5.Vector offsets position', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uOffset = p5.uniformVec2('uOffset');
+        p5.worldInputs.begin();
+        p5.worldInputs.position.xy += uOffset;
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uOffset', p5.createVector(10, -10));
+      p5.noStroke();
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      screenshot();
+    });
+
+    visualTest('setUniform with p5.Color sets final color', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uColor = p5.uniformVec4('uColor');
+        p5.finalColor.begin();
+        p5.finalColor.set(uColor);
+        p5.finalColor.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uColor', p5.color(0, 100, 200));
+      p5.noStroke();
+      p5.circle(0, 0, 30);
+      screenshot();
+    });
   });
 
   visualSuite('background()', function () {

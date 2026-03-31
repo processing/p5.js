@@ -969,7 +969,7 @@ function loading(p5, fn){
   /**
    * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
    *
-   * The parameter, `model`, is the
+   * The first parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
    * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
@@ -977,11 +977,7 @@ function loading(p5, fn){
    *
    * Note: `model()` can only be used in WebGL mode.
    *
-   * @method model
-   * @param  {p5.Geometry} model 3D shape to be drawn.
-   *
-   * @param {Number} [count=1] number of instances to draw.
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1009,8 +1005,9 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1056,8 +1053,9 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1079,6 +1077,51 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
+   * ```
+   *
+   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * all the instances get drawn to the same spot, but you can use
+   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * At large counts, this often runs faster than using a `for` loop.
+   *
+   * ```js example
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawSpaced);
+   * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceID() - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * @method model
+   * @param  {p5.Geometry} model 3D shape to be drawn.
+   *
+   * @param {Number} [count=1] number of instances to draw.
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');
