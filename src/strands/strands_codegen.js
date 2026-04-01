@@ -96,6 +96,11 @@ export function generateShaderCode(strandsContext) {
     }
   }
 
+  // Register instanceID varying if used in a fragment hook
+  if (strandsContext._instanceIDUsedInFragment) {
+    hooksObj.instanceIDVarying = backend.generateInstanceIDVarying();
+  }
+
   hooksObj.vertexDeclarations = [...vertexDeclarations].join('\n');
   hooksObj.fragmentDeclarations = [...fragmentDeclarations].join('\n');
   hooksObj.computeDeclarations = [...computeDeclarations].join('\n');

@@ -6,7 +6,7 @@
 
 import * as constants from '../core/constants';
 import { getStrokeDefs } from '../webgl/enums';
-import { DataType } from '../strands/ir_types.js';
+import { DataType, INSTANCE_ID_VARYING_NAME } from '../strands/ir_types.js';
 
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader} from './shaders/line';
@@ -2647,6 +2647,50 @@ ${hookUniformFields}}
             initStatements = initStatements.replace(/INPUT_VAR/g, inputVarName);
             // Insert after the main function parameter but before any other code (anchored to start)
             postMain = initStatements + postMain;
+          }
+        }
+      }
+
+      // Handle instanceID varying for fragment access
+      if (shader.hooks.instanceIDVarying) {
+        const { name, declaration, source, interpolation } = shader.hooks.instanceIDVarying;
+        const nextLocIndex = this._getNextAvailableLocation(preMain, shaderType);
+        const interpAttr = interpolation ? ` @interpolate(${interpolation})` : '';
+        const [varName, varType] = declaration.split(':').map(s => s.trim());
+        const structMember = `@location(${nextLocIndex})${interpAttr} ${declaration},`;
+
+        if (shaderType === 'vertex') {
+          // Inject into VertexOutput struct
+          preMain = preMain.replace(
+            /struct\s+VertexOutput\s+\{([^}]*)\}/,
+            (match, body) => `struct VertexOutput {${body}\n${structMember}}`
+          );
+          // Add private global
+          preMain += `var<private> ${declaration};\n`;
+          // Assign from built-in instanceID at start of main()
+          postMain = `\n  ${varName} = ${source};\n` + postMain;
+          // Copy to output struct before return
+          const returnMatch = postMain.match(/return\s+(\w+)\s*;/);
+          if (returnMatch) {
+            const outputVarName = returnMatch[1];
+            postMain = postMain.replace(
+              /(return\s+\w+\s*;)/g,
+              `${outputVarName}.${varName} = ${varName};\n  $1`
+            );
+          }
+        } else if (shaderType === 'fragment') {
+          // Inject into FragmentInput struct
+          preMain = preMain.replace(
+            /struct\s+FragmentInput\s+\{([^}]*)\}/,
+            (match, body) => `struct FragmentInput {${body}\n${structMember}}`
+          );
+          // Add private global
+          preMain += `var<private> ${declaration};\n`;
+          // Initialize from input struct at start of main()
+          const inputMatch = main.match(/fn main\s*\((\w+):\s*\w+\)/);
+          if (inputMatch) {
+            const inputVarName = inputMatch[1];
+            postMain = `\n  ${varName} = ${inputVarName}.${varName};\n` + postMain;
           }
         }
       }

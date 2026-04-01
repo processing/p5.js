@@ -58,6 +58,9 @@ class Shader {
       // Stores an array of variable names + types passed between the vertex and fragment shader
       varyingVariables: options.varyingVariables || [],
 
+      // Stores instanceID varying info for forwarding to the fragment shader
+      instanceIDVarying: options.instanceIDVarying || null,
+
       // Stores helper functions to prepend to shaders.
       helpers: options.helpers || {},
 
@@ -422,6 +425,7 @@ class Shader {
       if (key === 'uniforms') continue;
       if (key === 'storageUniforms') continue;
       if (key === 'varyingVariables') continue;
+      if (key === 'instanceIDVarying') continue;
       if (key === 'vertexDeclarations') {
         newHooks.vertex.declarations =
           (newHooks.vertex.declarations || '') + '\n' + hooks[key];
@@ -469,6 +473,7 @@ class Shader {
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
       storageUniforms: Object.assign({}, this.hooks.storageUniforms, hooks.storageUniforms || {}),
       varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
+      instanceIDVarying: hooks.instanceIDVarying || this.hooks.instanceIDVarying || null,
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       compute: Object.assign({}, this.hooks.compute, newHooks.compute || {}),
