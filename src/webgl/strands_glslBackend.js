@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -274,6 +274,13 @@ export const glslBackend = {
           sharedVar.usedInFragment = true;
         }
       }
+
+      // Detect instanceID usage in fragment context and rewrite to varying name
+      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
+        generationContext.strandsContext._instanceIDUsedInFragment = true;
+        return INSTANCE_ID_VARYING_NAME;
+      }
+
       return node.identifier;
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;
@@ -397,5 +404,9 @@ export const glslBackend = {
 
   instanceIdReference() {
     return 'gl_InstanceID';
+  },
+
+  generateInstanceIDVarying() {
+    return { name: INSTANCE_ID_VARYING_NAME, declaration: `int ${INSTANCE_ID_VARYING_NAME}`, source: 'gl_InstanceID', interpolation: 'flat' };
   },
 }

@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -427,6 +427,12 @@ export const wgslBackend = {
         }
       }
 
+      // Detect instanceID usage in fragment context and rewrite to varying name
+      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
+        generationContext.strandsContext._instanceIDUsedInFragment = true;
+        return INSTANCE_ID_VARYING_NAME;
+      }
+
       // Check if this is a uniform variable (but not a texture or storage buffer)
       const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
       if (uniform && uniform.typeInfo.baseType !== 'sampler2D' && uniform.typeInfo.baseType !== 'storage') {
@@ -583,5 +589,9 @@ export const wgslBackend = {
 
   instanceIdReference() {
     return 'instanceID';
+  },
+
+  generateInstanceIDVarying() {
+    return { name: INSTANCE_ID_VARYING_NAME, declaration: `${INSTANCE_ID_VARYING_NAME}: i32`, source: 'i32(instanceID)', interpolation: 'flat' };
   },
 }

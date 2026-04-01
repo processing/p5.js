@@ -1034,6 +1034,33 @@ visualSuite('WebGL', function() {
       p5.model(obj, 25);
       screenshot();
     });
+    visualTest('instanceID in fragment hook colors instances', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const numInstances = 4;
+      const shader = p5.baseMaterialShader().modify(() => {
+        // Vertex hook: position instances in a horizontal row
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const spacing = 12;
+          const offset = (id - (numInstances - 1) / 2.0) * spacing;
+          inputs.position.x += offset;
+          return inputs;
+        });
+        // Fragment hook: color each instance based on instanceID
+        p5.getFinalColor((color) => {
+          const id = p5.instanceID();
+          const t = id / (numInstances - 1.0);
+          color = [t, t, t, 1];
+          return color;
+        });
+      }, { p5, numInstances });
+      p5.background(128);
+      p5.noStroke();
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
+      p5.model(obj, numInstances);
+      screenshot();
+    });
   });
 
   visualSuite('p5.strands', () => {
