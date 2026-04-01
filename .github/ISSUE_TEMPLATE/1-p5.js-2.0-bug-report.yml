@@ -1,7 +1,7 @@
-name: 📃 p5.js 2.0 Bug Report
-description: This template is for submitting a bug report for bugs found in the p5.js 2.0 beta releases.
-title: "[p5.js 2.0 Bug Report]: "
-labels: [p5.js 2.0]
+name: 📃 p5.js 2.0+ Bug Report
+description: This template is for submitting a bug report for bugs found in p5v2!
+title: "[p5.js 2.0+ Bug Report]: "
+labels: [p5.js 2.0+]
 body:
   - type: markdown
     attributes:
@@ -29,6 +29,8 @@ body:
           - label: Typography
           - label: Utilities
           - label: WebGL
+          - label: WebGPU
+          - label: p5.strands
           - label: Build process
           - label: Unit testing
           - label: Internationalization
