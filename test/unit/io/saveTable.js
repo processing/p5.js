@@ -86,12 +86,12 @@ suite('saveTable', function() {
       myp5.saveTable(myTable, 'filename');
       let myBlob = blobContainer.blob;
       let text = await myBlob.text();
-      let myTableStr = myTable.columns.join(',') + '\n';
-      for (let i = 0; i < myTable.rows.length; i++) {
-        myTableStr += myTable.rows[i].arr.join(',') + '\n';
-      }
-
-      assert.strictEqual(text, myTableStr);
+      let expected =
+        'name,age,height\n' +
+        'David,31,80\n' +
+        '"David, Jr.",11,61.5\n' +
+        '"David,\nSr. ""the boss""",95,88\n';
+      assert.strictEqual(text, expected);
     },
     true
   );
