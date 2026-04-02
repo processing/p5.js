@@ -615,7 +615,7 @@ function loading(p5, fn){
                 model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
                   loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
                 model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
-                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector());
+                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector(0, 0, 0));
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
