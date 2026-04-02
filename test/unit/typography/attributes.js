@@ -73,6 +73,16 @@ suite('Typography Attributes', function() {
         myp5.textSize('30');
       });
     });
+    // NEW TEST ADDED
+    test('should trigger FES warning if textSize is 0 or negative', function() {
+      p5.disableFriendlyErrors = false;
+      expect(function() {
+        myp5.textSize(0);
+      }).to.generateFriendlyError();
+      expect(function() {
+        myp5.textSize(-5);
+      }).to.generateFriendlyError();
+    });
   });
 
   suite('p5.prototype.textStyle', function() {
