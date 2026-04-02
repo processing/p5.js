@@ -138,6 +138,24 @@ suite('Touch Events', function() {
   });
 
   suite('touchEnded', function() {
+    test('touches[] should contain changedTouches data inside touchEnded', function() {
+      // During touchend, the W3C spec removes the lifted finger from e.touches
+      // and places it in e.changedTouches only. Verify that p5 surfaces those
+      // positions in the touches[] array so user code can read them.
+      let touchesInsideCallback = null;
+      myp5.touchEnded = function() {
+        touchesInsideCallback = [...myp5.touches];
+      };
+      const endEvent = new TouchEvent('touchend', {
+        touches: [],                // spec: lifted touch is gone from touches
+        changedTouches: [touchObj1] // spec: lifted touch lives here
+      });
+      window.dispatchEvent(endEvent);
+      assert.isNotNull(touchesInsideCallback);
+      assert.strictEqual(touchesInsideCallback.length, 1);
+      assert.strictEqual(touchesInsideCallback[0].id, 36);
+    });
+
     test('touchEnded must run when a touch is registered', function() {
       let count = 0;
       myp5.touchEnded = function() {
