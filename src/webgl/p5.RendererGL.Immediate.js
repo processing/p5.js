@@ -313,6 +313,29 @@ p5.RendererGL.prototype._processVertices = function(mode) {
     this.immediateMode.shapeMode !== constants.LINES;
 
   if (shouldTess) {
+    const vertexCount = this.immediateMode.geometry.vertices.length;
+    const MAX_SAFE_TESSELLATION_VERTICES = 50000;
+
+    if (vertexCount > MAX_SAFE_TESSELLATION_VERTICES) {
+      // If FES is disabled (or minified build), just run tessellation as-is.
+      // Otherwise, prompt the user once to decide whether to continue.
+      if (!p5.disableFriendlyErrors && !this._largeTessellationAcknowledged) {
+        const proceed = window.confirm(
+          '🌸 p5.js says:\n\n' +
+          `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
+          'many vertices can be very slow and may cause your browser to become ' +
+          'unresponsive.\n\n' +
+          'Do you want to continue tessellating this shape?'
+        );
+        if (!proceed) {
+          // User cancelled — draw nothing for this shape.
+          return;
+        }
+        // User approved — skip this prompt for the rest of the session.
+        this._largeTessellationAcknowledged = true;
+      }
+    }
+
     this._tesselateShape();
   }
 };
