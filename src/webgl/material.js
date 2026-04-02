@@ -1081,7 +1081,7 @@ p5.prototype.shader = function (s) {
  *       myNormal = inputs.normal;
  *       return inputs;
  *     }`,
- *     'vec4 getFinalColor': `(vec4 color) {
+ *     'vec4 getFinalColor': `(vec4 color, vec2 texCoord) {
  *       return mix(
  *         vec4(1.0, 1.0, 1.0, 1.0),
  *         color,
@@ -1260,7 +1260,7 @@ p5.prototype.baseMaterialShader = function() {
  *   createCanvas(200, 200, WEBGL);
  *   myShader = baseNormalShader().modify({
  *     'vec3 getWorldNormal': '(vec3 normal) { return abs(normal); }',
- *     'vec4 getFinalColor': `(vec4 color) {
+ *     'vec4 getFinalColor': `(vec4 color, vec2 texCoord) {
  *       // Map the r, g, and b values of the old normal to new colors
  *       // instead of just red, green, and blue:
  *       vec3 newColor =
@@ -1466,7 +1466,7 @@ p5.prototype.baseColorShader = function() {
  * </td></tr>
  * <tr><td>
  *
- * `vec4 getFinalColor`
+ * 'vec4 getFinalColor': '(vec4 color, vec2 texCoord) {
  *
  * </td><td>
  *

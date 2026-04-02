@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="lib/p5.js"></script>
+  <style> body { padding: 20px; font-family: sans-serif; } </style>
+</head>
+<body>
+  <h2>Testing Text Wrap Bug #8649</h2>
+  <script>
+    function setup() {
+      createCanvas(400, 200);
+      noLoop(); // Baar-baar draw karne ki zaroorat nahi hai
+    }
+
+    function draw() {
+      background(220);
+      colorMode(HSB);
+      
+      textSize(13);
+      fill(205, 32, 89);
+      stroke(205, 65, 40);
+      strokeWeight(2);
+      
+      // Pehla text jisme width 60 di hai
+      text("Based means being yourself.", 20, 5, 60);
+      
+      // Dusra text, jiske theek pehle reporter ne textSize(0) kiya hai!
+      textSize(0); 
+      text("Not being scared of what people think about you.", 20, 70, 60);
+    }
+  </script>
+</body>
+</html>

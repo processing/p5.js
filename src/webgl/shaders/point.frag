@@ -2,7 +2,7 @@ precision mediump int;
 uniform vec4 uMaterialColor;
 IN float vStrokeWeight;
 IN vec4 vColor;
-
+IN vec2 vTexCoord;
 void main(){
   HOOK_beforeFragment();
   float mask = 0.0;
@@ -27,6 +27,6 @@ void main(){
 
   // Use the interpolated vertex color (set in vertex shader)
   vec4 baseColor = vColor;
-  OUT_COLOR = HOOK_getFinalColor(vec4(baseColor.rgb, 1.) * baseColor.a);
+  OUT_COLOR = HOOK_getFinalColor(vec4(baseColor.rgb, 1.) * baseColor.a, vTexCoord);
   HOOK_afterFragment();
 }

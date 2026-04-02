@@ -5,11 +5,13 @@ uniform bool uUseVertexColor;
 uniform vec4 uMaterialColor;
 OUT float vStrokeWeight;
 OUT vec4 vColor;
+OUT vec2 vTexCoord;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 
 void main() {
   HOOK_beforeVertex();
+ vTexCoord = vec2(0.0, 0.0);
   vec4 viewModelPosition = vec4(HOOK_getWorldPosition(
     (uModelViewMatrix * vec4(HOOK_getLocalPosition(aPosition), 1.0)).xyz
   ), 1.);

@@ -6,6 +6,7 @@ uniform int uStrokeCap;
 uniform int uStrokeJoin;
 
 IN vec4 vColor;
+IN vec2 vTexCoord;
 IN vec2 vTangent;
 IN vec2 vCenter;
 IN vec2 vPosition;
@@ -69,6 +70,6 @@ void main() {
       discard;
     }
   }
-  OUT_COLOR = HOOK_getFinalColor(vec4(inputs.color.rgb, 1.) * inputs.color.a);
+  OUT_COLOR = HOOK_getFinalColor(vec4(inputs.color.rgb, 1.) * inputs.color.a, vTexCoord);
   HOOK_afterFragment();
 }

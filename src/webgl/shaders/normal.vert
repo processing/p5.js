@@ -13,6 +13,7 @@ uniform bool uUseVertexColor;
 OUT vec3 vVertexNormal;
 OUT highp vec2 vVertTexCoord;
 OUT vec4 vColor;
+OUT vec2 vTexCoord;
 
 void main(void) {
   HOOK_beforeVertex();
@@ -24,6 +25,7 @@ void main(void) {
 
   vVertexNormal = HOOK_getWorldNormal(normalize(uNormalMatrix * HOOK_getLocalNormal(aNormal)));
   vVertTexCoord = HOOK_getUV(aTexCoord);
+  vTexCoord = HOOK_getUV(aTexCoord);
   vColor = HOOK_getVertexColor(uUseVertexColor ? aVertexColor : uMaterialColor);
   HOOK_afterVertex();
 }
