@@ -234,7 +234,7 @@ let magicWord = 'Please';
 
 ## Accessible Canvas Labels
 
-- Use `describe()` to in p5.js example code, to add labels to your canvas so that it’s readable for screen readers.
+- Use `describe()` in p5.js example code to add labels to your canvas so that it’s readable for screen readers.
 
 > Why? It makes examples accessible to screen readers, and models how to write good canvas labels. 
 

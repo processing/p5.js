@@ -500,6 +500,7 @@ function material(p5, fn) {
    * `loadFilterShader('myShader.js', onLoaded)`.
    *
    * @method loadFilterShader
+   * @beta
    * @submodule p5.strands
    * @param {String} filename path to a p5.strands JavaScript file or a GLSL fragment shader file
    * @param {Function} [successCallback] callback to be called once the shader is
@@ -2652,6 +2653,8 @@ function material(p5, fn) {
    *
    * Note: `textureMode()` can only be used in WebGL mode.
    *
+   * Calling `textureMode()` with no arguments returns the current texture mode.
+   *
    * @method  textureMode
    * @param {(IMAGE|NORMAL)} mode either IMAGE or NORMAL.
    *
@@ -2714,7 +2717,14 @@ function material(p5, fn) {
    *   endShape();
    * }
    */
+  /**
+   * @method textureMode
+   * @return {(IMAGE|NORMAL)} The current texture mode, either IMAGE or NORMAL.
+   */
   fn.textureMode = function (mode) {
+    if (typeof mode === 'undefined') { // getter
+      return this._renderer.states.textureMode;
+    }
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
       console.warn(
         `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `,
@@ -2821,6 +2831,9 @@ function material(p5, fn) {
    * the same value as `wrapX`.
    *
    * Note: `textureWrap()` can only be used in WebGL mode.
+   *
+   * Calling `textureWrap()` with no arguments returns an object with the current
+   * mode for x and y directions, as in `{ wrapX: CLAMP, wrapY: REPEAT }`.
    *
    * @method textureWrap
    * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
@@ -2977,13 +2990,31 @@ function material(p5, fn) {
    *   endShape();
    * }
    */
+  /**
+   * @method textureWrap
+   * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
+   */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    this._renderer.states.setValue("textureWrapX", wrapX);
-    this._renderer.states.setValue("textureWrapY", wrapY);
-
-    for (const texture of this._renderer.textures.values()) {
-      texture.setWrapMode(wrapX, wrapY);
+    if (typeof wrapX === 'undefined') { // getter
+      return {
+        x: this._renderer.states.textureWrapX,
+        y: this._renderer.states.textureWrapY
+      };
     }
+    // accept what is returned from the getter
+    if (wrapX.hasOwnProperty('x') && wrapX.hasOwnProperty('y')) {
+      wrapX = wrapX.x;
+      wrapY = wrapX.y;
+    }
+    this._renderer.states.setValue('textureWrapX', wrapX);
+    this._renderer.states.setValue('textureWrapY', wrapY);
+
+    if (this._renderer.textures) {
+      for (const texture of this._renderer.textures.values()) {
+        texture.setWrapMode(wrapX, wrapY);
+      }
+    }
+    return this;
   };
 
   /**

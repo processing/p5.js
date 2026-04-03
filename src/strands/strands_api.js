@@ -284,6 +284,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   }
 
+  // Alias lerp to GLSL mix in strands context
+  const originalLerp = fn.lerp;
+  augmentFn(fn, p5, 'lerp', function (...args) {
+    if (strandsContext.active) {
+      return fn.mix(...args);
+    } else {
+      return originalLerp.apply(this, args);
+    }
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
@@ -330,6 +340,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const noiseSnippet = this._renderer.getNoiseShaderSnippet();
     strandsContext.vertexDeclarations.add(noiseSnippet);
     strandsContext.fragmentDeclarations.add(noiseSnippet);
+    strandsContext.computeDeclarations.add(noiseSnippet);
 
     // Make each input into a strands node so that we can check their dimensions
     const strandsArgs = args.flat().map(arg => p5.strandsNode(arg));
@@ -482,6 +493,53 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     });
   }
+
+  // Storage buffer uniform function for compute shaders
+  fn.uniformStorage = function(name, bufferOrSchema) {
+    let schema = null;
+    let defaultValue = null;
+
+    // If it's a function, evaluate it immediately to infer schema,
+    // then store the function so it gets called each frame.
+    let value = bufferOrSchema;
+    if (typeof bufferOrSchema === 'function') {
+      value = bufferOrSchema();
+      if (value?._schema) {
+        defaultValue = bufferOrSchema;
+      }
+    }
+
+    if (value?._schema) {
+      // Struct storage buffer with pre-computed schema
+      schema = value._schema;
+      if (defaultValue === null) defaultValue = value;
+    } else if (value && typeof value === 'object' && !value._isStorageBuffer) {
+      // Plain object schema template -- only used to infer struct layout, not as a default value
+      schema = strandsContext.renderer?._inferStructSchema(value) ?? null;
+    } else if (value?._isStorageBuffer) {
+      defaultValue = bufferOrSchema;
+    }
+
+    const { id, dimension } = build.variableNode(
+      strandsContext,
+      { baseType: 'storage', dimension: 1 },
+      name
+    );
+    strandsContext.uniforms.push({
+      name,
+      typeInfo: { baseType: 'storage', dimension: 1, schema },
+      defaultValue,
+    });
+
+    // Create StrandsNode with _originalIdentifier set (like varying variables)
+    // This enables proper assignment node creation and ordering preservation
+    const node = createStrandsNode(id, dimension, strandsContext);
+    node._originalIdentifier = name;
+    node._originalBaseType = 'storage';
+    node._originalDimension = 1;
+    node._schema = schema;
+    return node;
+  };
 }
 //////////////////////////////////////////////
 // Per-Hook functions
@@ -600,10 +658,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   const fragmentHooksWithContext = Object.fromEntries(
     Object.entries(shader.hooks.fragment).map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
   );
+  const computeHooksWithContext = Object.fromEntries(
+    Object.entries(shader.hooks.compute).map(([name, hook]) => [name, { ...hook, shaderContext: 'compute' }])
+  );
 
   const availableHooks = {
     ...vertexHooksWithContext,
     ...fragmentHooksWithContext,
+    ...computeHooksWithContext,
   }
   const hookTypes = Object.keys(availableHooks).map(name => shader.hookTypes(name));
 
@@ -633,9 +695,11 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       if (numStructArgs === 1) {
         argIdx = hookType.parameters.findIndex(param => param.type.properties);
       }
+      hook._properties = [];
       for (let i = 0; i < args.length; i++) {
         if (i === argIdx) {
           for (const key of args[argIdx].structProperties || []) {
+            hook._properties.push(key);
             Object.defineProperty(hook, key, {
               get() {
                 return args[argIdx][key];
@@ -650,6 +714,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             hook.set(args[argIdx]);
           }
         } else {
+          hook._properties.push(hookType.parameters[i].name);
           hook[hookType.parameters[i].name] = args[i];
         }
       }
@@ -740,7 +805,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         hookType,
         entryBlockID,
         rootNodeID,
-        shaderContext: hookInfo?.shaderContext, // 'vertex' or 'fragment'
+        shaderContext: hookInfo?.shaderContext, // 'vertex', 'fragment', or 'compute'
       });
       CFG.popBlock(cfg);
     };
