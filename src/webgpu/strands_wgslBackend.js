@@ -1,3 +1,4 @@
+import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
@@ -263,6 +264,10 @@ export const wgslBackend = {
     }
     return primitiveTypeName;
   },
+  getNoiseShaderSnippet() {
+    return noiseWGSL;
+  },
+
   generateHookUniformKey(name, typeInfo) {
     // For sampler2D types, we don't add them to the uniform struct,
     // but we still need them in the shader's hooks object so that

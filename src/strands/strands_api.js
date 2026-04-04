@@ -337,7 +337,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
     // Get noise shader snippet from the current renderer
-    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    const noiseSnippet = strandsContext.backend.getNoiseShaderSnippet();
     strandsContext.vertexDeclarations.add(noiseSnippet);
     strandsContext.fragmentDeclarations.add(noiseSnippet);
     strandsContext.computeDeclarations.add(noiseSnippet);
