@@ -454,9 +454,21 @@ function rendererWebGPU(p5, fn) {
       const _b = args[2] || 0;
       const _a = args[3] || 0;
 
-      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED
-      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
-        this._frameState = FRAME_STATE.UNPROMOTED;
+      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED.
+      // However, if we are still in setup (frameCount == 0), we must promote
+      // so that mainFramebuffer gets the cleared content. This ensures that if
+      // draw() later promotes without a copy, it starts from the correct state
+      // rather than a stale mainFramebuffer.
+      // Note: a mid-draw-loop transition from UNPROMOTED back to PROMOTED
+      // (i.e. calling background() some frames but not others) will still
+      // lose intermediate UNPROMOTED frame content.
+      if (this._frameState !== FRAME_STATE.PROMOTED && !this.activeFramebuffer()) {
+        if (this._pInst.frameCount > 0) {
+          this._frameState = FRAME_STATE.UNPROMOTED;
+        } else {
+          this._promoteToFramebufferWithoutCopy();
+          // clear() then targets mainFramebuffer via activeFramebuffer()
+        }
       }
 
       this._finishActiveRenderPass();
@@ -1143,8 +1155,11 @@ function rendererWebGPU(p5, fn) {
 
     _resetBuffersBeforeDraw() {
       this._finishActiveRenderPass();
+
       // Set state to PENDING - we'll decide on first draw
-      this._frameState = FRAME_STATE.PENDING;
+      if (this._pInst.frameCount > 0) {
+        this._frameState = FRAME_STATE.PENDING;
+      }
 
       // Clear depth buffer but DON'T start any render pass yet
       const activeFramebuffer = this.activeFramebuffer();
@@ -1255,6 +1270,8 @@ function rendererWebGPU(p5, fn) {
       // once we're drawing to the framebuffer, because normally
       // those are reset.
       const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.states.uModelMatrix.set(this.states.uModelMatrix.copy());
+      this.states.uModelMatrix.reset();
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
       this.mainFramebuffer.begin();
@@ -1263,6 +1280,11 @@ function rendererWebGPU(p5, fn) {
     }
 
     _promoteToFramebufferWithoutCopy() {
+      // Already promoted this frame
+      if (this._frameState === FRAME_STATE.PROMOTED) {
+        return;
+      }
+
       // Ensure mainFramebuffer matches canvas size
       if (this.mainFramebuffer.width !== this.width ||
           this.mainFramebuffer.height !== this.height) {
@@ -1277,6 +1299,8 @@ function rendererWebGPU(p5, fn) {
 
       // Preserve transformation state
       const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.states.uModelMatrix.set(this.states.uModelMatrix.copy());
+      this.states.uModelMatrix.reset();
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
       // Begin rendering to mainFramebuffer
@@ -1590,7 +1614,6 @@ function rendererWebGPU(p5, fn) {
         }
         this.flushDraw();
 
-        // this._pInst.background('red');
         this._pInst.push();
         this.states.setValue('enableLighting', false);
         this.states.setValue('activeImageLight', null);
