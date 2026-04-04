@@ -1805,6 +1805,11 @@ function textCore(p5, fn) {
     return { bounds, lines };
   };
 
+  Renderer.prototype._trimEnd = function (str) {
+    // trim trailing linebreaks and whitespace only
+    return str.replace(/[\s\n]+$/, '');
+  };
+
   /*
     Adjust width, height of bounds based on current rectMode
    * @private
@@ -2262,13 +2267,13 @@ function textCore(p5, fn) {
         testLine = `${line + words[widx]}` + splitter;
         testWidth = this._textWidthSingle(testLine);
         if (line.length > 0 && testWidth > maxWidth) {
-          newLines.push(line.trim());
+          newLines.push(this._trimEnd(line));
           line = `${words[widx]}` + splitter;
         } else {
           line = testLine;
         }
       }
-      newLines.push(line.trim());
+      newLines.push(this._trimEnd(line));
     }
     return newLines;
   };
