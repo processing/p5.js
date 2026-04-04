@@ -3836,10 +3836,45 @@ ${hookUniformFields}}
       const WORKGROUP_SIZE_Y = 8;
       const WORKGROUP_SIZE_Z = 1;
 
-      // Calculate number of workgroups needed
-      const workgroupCountX = Math.ceil(x / WORKGROUP_SIZE_X);
-      const workgroupCountY = Math.ceil(y / WORKGROUP_SIZE_Y);
-      const workgroupCountZ = Math.ceil(z / WORKGROUP_SIZE_Z);
+      // auto spreading: if any dimension is too large or for performance optimization,
+      // spread total iteration count across dimensions
+      const totalIterations = x * y * z;
+      const MAX_THREADS_PER_DIM = 65535 * 8;
+
+      let px = x;
+      let py = y;
+      let pz = z;
+
+      // we spread if we exceed GPU limits OR if it involves a large 1D dispatch
+      const exceedsLimits = x > MAX_THREADS_PER_DIM || y > MAX_THREADS_PER_DIM || z > MAX_THREADS_PER_DIM;
+      const isLarge1D = totalIterations > 1024 && y === 1 && z === 1;
+
+      if (exceedsLimits || isLarge1D) {
+        if (totalIterations > 1000000) {
+          // 3D cube type for extreme large counts
+          px = Math.ceil(Math.pow(totalIterations, 1 / 3));
+          py = Math.ceil(Math.pow(totalIterations, 1 / 3));
+          pz = Math.ceil(totalIterations / (px * py));
+        } else {
+          // 2D square type for moderate large counts
+          px = Math.ceil(Math.sqrt(totalIterations));
+          py = Math.ceil(totalIterations / px);
+          pz = 1;
+        }
+
+        if (p5.debug || exceedsLimits) {
+          console.warn(
+            `p5.js: Compute dispatch (${x}, ${y}, ${z}) auto-spread to (${px}, ${py}, ${pz}) ` +
+            `to ${exceedsLimits ? 'stay within GPU limits' : 'optimize performance'}.`
+          );
+        }
+      }
+
+      shader.setUniform('uPhysicalCount', [px, py, pz]);
+
+      const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
+      const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
+      const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();

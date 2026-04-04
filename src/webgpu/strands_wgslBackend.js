@@ -301,9 +301,13 @@ export const wgslBackend = {
       // Generate just a semicolon (unless suppressed)
       generationContext.write(semicolon);
     } else if (node.statementType === StatementType.EARLY_RETURN) {
-      const exprNodeID = node.dependsOn[0];
-      const expr = this.generateExpression(generationContext, dag, exprNodeID);
-      generationContext.write(`return ${expr}${semicolon}`);
+      if (node.dependsOn && node.dependsOn.length > 0) {
+        const exprNodeID = node.dependsOn[0];
+        const expr = this.generateExpression(generationContext, dag, exprNodeID);
+        generationContext.write(`return ${expr}${semicolon}`);
+      } else {
+        generationContext.write(`return${semicolon}`);
+      }
     }
   },
   generateAssignment(generationContext, dag, nodeID) {
