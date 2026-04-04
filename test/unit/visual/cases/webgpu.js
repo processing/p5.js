@@ -1423,4 +1423,33 @@ visualSuite("WebGPU", function () {
       }
     );
   });
+
+  visualSuite('Feedback', function() {
+    visualTest(
+      'Drawing accumulates across frames when background is set in setup',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Set an initial background before the draw loop starts.
+        // This should persist into the first draw frame.
+        p5.background('red');
+
+        return new Promise(resolve => {
+          let frame = 0;
+          p5.draw = function() {
+            // Draw circles without clearing, so they accumulate
+            p5.noStroke();
+            p5.fill('blue');
+            p5.circle(-15 + frame * 15, 0, 10);
+            frame++;
+            if (frame >= 3) {
+              p5.noLoop();
+              screenshot().then(resolve);
+            }
+          };
+          p5.loop();
+        });
+      }
+    );
+  });
 });
