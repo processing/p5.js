@@ -419,50 +419,56 @@ function loading(p5, fn){
     try{
       if (fileType.match(/\.stl$/i)) {
         const { data } = await request(path, 'arrayBuffer');
-        parseSTL(model, data);
+        const cb = () => {
+          parseSTL(model, data);
 
-        if (normalize) {
-          model.normalize();
-        }
+          if (normalize) {
+            model.normalize();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
+          if (flipU) {
+            model.flipU();
+          }
 
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
 
       } else if (fileType.match(/\.obj$/i)) {
         const { data } = await request(path, 'text');
         const lines = data.split('\n');
 
         const parsedMaterials = await getMaterials(lines);
-        parseObj(model, lines, parsedMaterials);
+        const cb = () => {
+          parseObj(model, lines, parsedMaterials);
 
-        if (normalize) {
-          model.normalize();
-        }
-        if (flipU) {
-          model.flipU();
-        }
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
@@ -593,12 +599,10 @@ function loading(p5, fn){
               const vertString = tokens[vertexTokens[tokenInd]];
               let vertParts = vertString.split('/');
 
-              // TODO: Faces can technically use negative numbers to refer to the
-              // previous nth vertex. I haven't seen this used in practice, but
-              // it might be good to implement this in the future.
-
               for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
+                let index = parseInt(vertParts[i]);
+                if (index > 0) index -= 1; // OBJ uses 1-based indexing
+                vertParts[i] = index;
               }
 
               if (!usedVerts[vertString]) {
@@ -607,11 +611,11 @@ function loading(p5, fn){
 
               if (usedVerts[vertString][currentMaterial] === undefined) {
                 const vertIndex = model.vertices.length;
-                model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-                model.uvs.push(loadedVerts.vt[vertParts[1]] ?
-                  loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
-                  loadedVerts.vn[vertParts[2]].copy() : new Vector());
+                model.vertices.push(loadedVerts.v.at(vertParts[0]).copy());
+                model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
+                  loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
+                model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
+                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector());
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
@@ -965,21 +969,15 @@ function loading(p5, fn){
   /**
    * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
    *
-   * The parameter, `model`, is the
+   * The first parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
    *
-   * @method model
-   * @param  {p5.Geometry} model 3D shape to be drawn.
-   *
-   * @param {Number} [count=1] number of instances to draw.
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1007,8 +1005,9 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1054,8 +1053,9 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1077,6 +1077,51 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
+   * ```
+   *
+   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * all the instances get drawn to the same spot, but you can use
+   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * At large counts, this often runs faster than using a `for` loop.
+   *
+   * ```js example
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawSpaced);
+   * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceID() - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * @method model
+   * @param  {p5.Geometry} model 3D shape to be drawn.
+   *
+   * @param {Number} [count=1] number of instances to draw.
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');

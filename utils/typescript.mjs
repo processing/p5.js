@@ -103,7 +103,7 @@ function processStrandsFunctions() {
   // Add uniform functions: uniformFloat, uniformVec2, etc.
   const typeMethods = [];
   for (const type in DataType) {
-    if (type === 'defer') {
+    if (type === 'defer' || type === 'assign_on_use') {
       continue;
     }
 
@@ -805,6 +805,7 @@ p5: P5;
   });
 
   globalDefinitions += '}\n\n';
+  globalDefinitions += 'export default p5;\n\n';
 
   return { instanceDefinitions, globalDefinitions };
 }

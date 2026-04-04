@@ -62,7 +62,7 @@ class XML {
    * Returns the element's name as a `String`.
    *
    * An XML element's name is given by its tag. For example, the element
-   * `&lt;language&gt;JavaScript&lt;/language&gt;` has the name `language`.
+   * `<language>JavaScript</language>` has the name `language`.
    *
    * @return {String} name of the element.
    *
@@ -105,11 +105,11 @@ class XML {
    * Sets the element's tag name.
    *
    * An XML element's name is given by its tag. For example, the element
-   * `&lt;language&gt;JavaScript&lt;/language&gt;` has the name `language`.
+   * `<language>JavaScript</language>` has the name `language`.
    *
    * The parameter, `name`, is the element's new name as a string. For example,
    * calling `myXML.setName('planet')` will make the element's new tag name
-   * `&lt;planet&gt;&lt;/planet&gt;`.
+   * `<planet></planet>`.
    *
    * @param {String} name new tag name of the element.
    *
@@ -251,7 +251,7 @@ class XML {
    *
    * The parameter, `name`, is optional. If a string is passed, as in
    * `myXML.getChildren('cat')`, then the method will only return child elements
-   * with the tag `&lt;cat&gt;`.
+   * with the tag `<cat>`.
    *
    * @param {String} [name] name of the elements to return.
    * @return {p5.XML[]} child elements.
@@ -345,7 +345,7 @@ class XML {
    *
    * The parameter, `name`, is optional. If a string is passed, as in
    * `myXML.getChild('cat')`, then the first child element with the tag
-   * `&lt;cat&gt;` will be returned. If a number is passed, as in
+   * `<cat>` will be returned. If a number is passed, as in
    * `myXML.getChild(1)`, then the child element at that index will be returned.
    *
    * @param {String|Integer} name element name or index.
@@ -480,7 +480,7 @@ class XML {
    *
    * The parameter, `name`, is the child element to remove. If a string is
    * passed, as in `myXML.removeChild('cat')`, then the first child element
-   * with the tag `&lt;cat&gt;` will be removed. If a number is passed, as in
+   * with the tag `<cat>` will be removed. If a number is passed, as in
    * `myXML.removeChild(1)`, then the child element at that index will be
    * removed.
    *
@@ -1034,7 +1034,7 @@ class XML {
    * Sets the element's content.
    *
    * An element's content is the text between its tags. For example, the element
-   * `&lt;language&gt;JavaScript&lt;/language&gt;` has the content `JavaScript`.
+   * `<language>JavaScript</language>` has the content `JavaScript`.
    *
    * The parameter, `content`, is a string with the element's new content.
    *
@@ -1152,7 +1152,7 @@ function xml(p5, fn){
    * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
    * is a standard format for sending data between applications. Like HTML, the
    * XML format is based on tags and attributes, as in
-   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+   * `<time units="s">1234</time>`.
    *
    * Note: Use <a href="#/p5/loadXML">loadXML()</a> to load external XML files.
    *

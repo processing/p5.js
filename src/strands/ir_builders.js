@@ -1,7 +1,7 @@
 import * as DAG from './ir_dag'
 import * as CFG from './ir_cfg'
 import * as FES from './strands_FES'
-import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, } from './ir_types';
+import { NodeType, OpCode, BaseType, DataType, BasePriority, OpCodeToSymbol, typeEquals, booleanOpCode } from './ir_types';
 import { createStrandsNode, StrandsNode } from './strands_node';
 import { strandsBuiltinFunctions } from './strands_builtins';
 
@@ -43,19 +43,29 @@ export function unaryOpNode(strandsContext, nodeOrValue, opCode) {
   const { dag, cfg } = strandsContext;
   let dependsOn;
   let node;
-  if (nodeOrValue instanceof StrandsNode) {
+  if (nodeOrValue?.isStrandsNode) {
     node = nodeOrValue;
   } else {
     const { id, dimension } = primitiveConstructorNode(strandsContext, { baseType: BaseType.FLOAT, dimension: null }, nodeOrValue);
     node = createStrandsNode(id, dimension, strandsContext);
   }
   dependsOn = [node.id];
+
+  const typeInfo = {
+    baseType: dag.baseTypes[node.id],
+    dimension: node.dimension
+  };
+  if (booleanOpCode[opCode]) {
+    typeInfo.baseType = BaseType.BOOL;
+    typeInfo.dimension = 1;
+  }
+
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode,
     dependsOn,
-    baseType: dag.baseTypes[node.id],
-    dimension: node.dimension
+    baseType: typeInfo.baseType,
+    dimension: typeInfo.dimension
   })
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
@@ -76,8 +86,17 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
   let finalRightNodeID = rightStrandsNode.id;
 
   // Check if we have to cast either node
-  const leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
-  const rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+  let leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
+  let rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+
+  // Update ASSIGN_ON_USE nodes to match the type of the other operand
+  if (leftType.baseType === BaseType.ASSIGN_ON_USE && rightType.baseType !== BaseType.ASSIGN_ON_USE) {
+    DAG.propagateTypeToAssignOnUse(dag, leftStrandsNode.id, rightType.baseType, rightType.dimension);
+    leftType = DAG.extractNodeTypeInfo(dag, leftStrandsNode.id);
+  } else if (rightType.baseType === BaseType.ASSIGN_ON_USE && leftType.baseType !== BaseType.ASSIGN_ON_USE) {
+    DAG.propagateTypeToAssignOnUse(dag, rightStrandsNode.id, leftType.baseType, leftType.dimension);
+    rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
+  }
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
@@ -135,6 +154,11 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
       rightStrandsNode = createStrandsNode(casted.id, casted.dimension, strandsContext);
       finalRightNodeID = rightStrandsNode.id;
     }
+  }
+
+  if (booleanOpCode[opCode]) {
+    cast.toType.baseType = BaseType.BOOL;
+    cast.toType.dimension = 1;
   }
 
   const nodeData = DAG.createNodeData({
@@ -224,6 +248,17 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       calculatedDimensions += dimension;
       continue;
     }
+    else if (typeof dep === 'boolean') {
+      // Handle boolean literals - convert to bool type
+      const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType: BaseType.BOOL }, dep);
+      mappedDependencies.push(id);
+      calculatedDimensions += dimension;
+      // Update baseType to BOOL if it was inferred
+      if (baseType !== BaseType.BOOL) {
+        baseType = BaseType.BOOL;
+      }
+      continue;
+    }
     else {
       FES.userError('type error', `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`);
     }
@@ -257,10 +292,29 @@ export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray
 
 export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   const cfg = strandsContext.cfg;
+  dependsOn = (Array.isArray(dependsOn) ? dependsOn : [dependsOn])
+    .flat(Infinity)
+    .map(a => {
+      if (
+        a.isStrandsNode &&
+        a.typeInfo().baseType === BaseType.INT &&
+        // TODO: handle ivec inputs instead of just int scalars
+        a.typeInfo().dimension === 1
+      ) {
+        return castToFloat(strandsContext, a);
+      } else {
+        return a;
+      }
+    });
   const { mappedDependencies, inferredTypeInfo } = mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn);
 
   const finalType = {
-    baseType: typeInfo.baseType,
+    // We might have inferred a non numeric type. Currently this is
+    // just used for booleans. Maybe this needs to be something more robust
+    // if we ever want to support inference of e.g. int vectors?
+    baseType: inferredTypeInfo.baseType === BaseType.BOOL
+      ? BaseType.BOOL
+      : typeInfo.baseType,
     dimension: inferredTypeInfo.dimension
   };
 
@@ -270,6 +324,24 @@ export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
   }
 
   return { id, dimension: finalType.dimension, components: mappedDependencies };
+}
+
+export function castToFloat(strandsContext, dep) {
+  const { id, dimension } = functionCallNode(
+    strandsContext,
+    strandsContext.backend.getTypeName('float', dep.typeInfo().dimension),
+    [dep],
+    {
+      overloads: [{
+        params: [dep.typeInfo()],
+        returnType: {
+          ...dep.typeInfo(),
+          baseType: BaseType.FLOAT,
+        },
+      }],
+    }
+  );
+  return createStrandsNode(id, dimension, strandsContext);
 }
 
 export function structConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {
@@ -491,7 +563,7 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       // This may not be the most efficient way, as we swizzle each component individually,
       // so that .xyz becomes .x, .y, .z
       let scalars = [];
-      if (value instanceof StrandsNode) {
+      if (value?.isStrandsNode) {
         if (value.dimension === 1) {
           scalars = Array(chars.length).fill(value);
         } else if (value.dimension === chars.length) {
@@ -548,4 +620,165 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
   }
   };
   return trap;
+}
+
+export function arrayAccessNode(strandsContext, bufferNode, indexNode, accessMode) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Array access returns a single float
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Binary.ARRAY_ACCESS,
+    dependsOn: [bufferNode.id, index.id],
+    dimension: 1,
+    baseType: BaseType.FLOAT,
+    accessMode // 'read' or 'read_write'
+  });
+
+  const id = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+
+  return { id, dimension: 1 };
+}
+
+export function createStructArrayElementProxy(strandsContext, bufferNode, indexNode, schema) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Create a plain object with getters/setters for each struct field.
+  // When read, a field creates an ARRAY_ACCESS IR node with the field name encoded
+  // in the identifier slot. When written, an ASSIGNMENT IR node is recorded in the CFG.
+  const proxy = {};
+
+  for (const field of schema.fields) {
+    Object.defineProperty(proxy, field.name, {
+      get() {
+        // Encode field name in identifier so WGSL backend can emit buf[idx].field
+        const nodeData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Binary.ARRAY_ACCESS,
+          dependsOn: [bufferNode.id, index.id],
+          dimension: field.dim,
+          baseType: BaseType.FLOAT,
+          identifier: field.name,
+        });
+        const id = DAG.getOrCreateNode(dag, nodeData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+        return createStrandsNode(id, field.dim, strandsContext);
+      },
+      set(val) {
+        // Create access node as assignment target (field name in identifier)
+        const accessData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Binary.ARRAY_ACCESS,
+          dependsOn: [bufferNode.id, index.id],
+          dimension: field.dim,
+          baseType: BaseType.FLOAT,
+          identifier: field.name,
+        });
+        const accessID = DAG.getOrCreateNode(dag, accessData);
+
+        let valueID;
+        if (val?.isStrandsNode) {
+          valueID = val.id;
+        } else {
+          const { id } = primitiveConstructorNode(
+            strandsContext,
+            { baseType: BaseType.FLOAT, dimension: field.dim },
+            val
+          );
+          valueID = id;
+        }
+
+        const assignData = DAG.createNodeData({
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [accessID, valueID],
+          phiBlocks: [],
+        });
+        const assignID = DAG.getOrCreateNode(dag, assignData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignID);
+      },
+      configurable: true,
+    });
+  }
+
+  return proxy;
+}
+
+export function arrayAssignmentNode(strandsContext, bufferNode, indexNode, valueNode) {
+  const { dag, cfg } = strandsContext;
+
+  // Ensure index is a StrandsNode
+  let index;
+  if (indexNode instanceof StrandsNode) {
+    index = indexNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.INT, dimension: 1 },
+      indexNode
+    );
+    index = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Ensure value is a StrandsNode
+  let value;
+  if (valueNode instanceof StrandsNode) {
+    value = valueNode;
+  } else {
+    const { id, dimension } = primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.FLOAT, dimension: 1 },
+      valueNode
+    );
+    value = createStrandsNode(id, dimension, strandsContext);
+  }
+
+  // Create array access node as the assignment target
+  const arrayAccessData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Binary.ARRAY_ACCESS,
+    dependsOn: [bufferNode.id, index.id],
+    dimension: 1,
+    baseType: BaseType.FLOAT
+  });
+  const arrayAccessID = DAG.getOrCreateNode(dag, arrayAccessData);
+
+  // Create assignment node: buffer[index] = value
+  const assignmentData = DAG.createNodeData({
+    nodeType: NodeType.ASSIGNMENT,
+    dependsOn: [arrayAccessID, value.id],
+    phiBlocks: []
+  });
+  const assignmentID = DAG.getOrCreateNode(dag, assignmentData);
+
+  // CRITICAL: Record in CFG to preserve sequential ordering
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
+
+  return { id: assignmentID };
 }

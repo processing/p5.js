@@ -1,4 +1,4 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -73,10 +73,10 @@ const cfgHandlers = {
         // Initialize with default value - WGSL requires initialization
         let defaultValue;
         if (T.dimension === 1) {
-          defaultValue = T.baseType === 'float' ? '0.0' : '0';
+          defaultValue = this.defaultScalarValue(T.baseType);
         } else {
           // For vector types, use constructor with repeated scalar values
-          const scalarDefault = T.baseType === 'float' ? '0.0' : '0';
+          const scalarDefault = this.defaultScalarValue(T.baseType);
           const components = Array(T.dimension).fill(scalarDefault).join(', ');
           defaultValue = `${typeName}(${components})`;
         }
@@ -84,6 +84,15 @@ const cfgHandlers = {
       }
     }
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
+  },
+  defaultScalarValue(baseType) {
+    if (baseType === BaseType.FLOAT) {
+      return '0.0';
+    } else if (baseType === BaseType.BOOL) {
+      return 'false';
+    } else {
+      return '0';
+    }
   },
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
@@ -195,10 +204,10 @@ export const wgslBackend = {
     // Add texture and sampler bindings for sampler2D uniforms to both vertex and fragment declarations
     if (!strandsContext.renderer || !strandsContext.baseShader) return;
 
-    // Get the next available binding index from the renderer
     let bindingIndex = strandsContext.renderer.getNextBindingIndex({
-      vert: strandsContext.baseShader.vertSrc(),
-      frag: strandsContext.baseShader.fragSrc(),
+      vert: strandsContext.baseShader._vertSrc,
+      frag: strandsContext.baseShader._fragSrc,
+      compute: strandsContext.baseShader._computeSrc,
     });
 
     for (const {name, typeInfo} of strandsContext.uniforms) {
@@ -215,6 +224,38 @@ export const wgslBackend = {
       }
     }
   },
+  addStorageBufferBindingsToDeclarations(strandsContext) {
+    if (!strandsContext.renderer || !strandsContext.baseShader) return;
+
+    const isComputeShader = strandsContext.baseShader.shaderType === 'compute';
+    let bindingIndex = strandsContext.renderer.getNextBindingIndex({
+      vert: strandsContext.baseShader._vertSrc,
+      frag: strandsContext.baseShader._fragSrc,
+      compute: strandsContext.baseShader._computeSrc,
+    });
+
+    for (const {name, typeInfo} of strandsContext.uniforms) {
+      if (typeInfo.baseType === 'storage') {
+        const accessMode = isComputeShader ? 'read_write' : 'read';
+        let declaration;
+        if (typeInfo.schema) {
+          const structTypeName = `${name}Element`;
+          declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
+        } else {
+          declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
+        }
+
+        if (isComputeShader) {
+          strandsContext.computeDeclarations.add(declaration);
+        } else {
+          strandsContext.vertexDeclarations.add(declaration);
+          strandsContext.fragmentDeclarations.add(declaration);
+        }
+
+        bindingIndex += 1;
+      }
+    }
+  },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {
@@ -223,9 +264,15 @@ export const wgslBackend = {
     return primitiveTypeName;
   },
   generateHookUniformKey(name, typeInfo) {
-    // For sampler2D types, we don't add them to the uniform struct
-    // Instead, they become separate texture and sampler bindings
+    // For sampler2D types, we don't add them to the uniform struct,
+    // but we still need them in the shader's hooks object so that
+    // they can be set by users.
     if (typeInfo.baseType === 'sampler2D') {
+      return `${name}: sampler2D`; // Signal that this should not be added to uniform struct
+    }
+    // For storage buffers, we don't add them to the uniform struct
+    // Instead, they become separate storage buffer bindings
+    if (typeInfo.baseType === 'storage') {
       return null; // Signal that this should not be added to uniform struct
     }
     return `${name}: ${this.getTypeName(typeInfo.baseType, typeInfo.dimension)}`;
@@ -267,6 +314,17 @@ export const wgslBackend = {
 
     const targetNode = getNodeDataFromID(dag, targetNodeID);
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
+
+    // Check if target is an array access (storage buffer assignment)
+    if (targetNode.opCode === OpCode.Binary.ARRAY_ACCESS) {
+      const [bufferID, indexID] = targetNode.dependsOn;
+      const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+      const indexExpr = this.generateExpression(generationContext, dag, indexID);
+      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+      const fieldSuffix = targetNode.identifier ? `.${targetNode.identifier}` : '';
+      generationContext.write(`${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`);
+      return;
+    }
 
     // Check if target is a swizzle assignment
     if (targetNode.opCode === OpCode.Unary.SWIZZLE) {
@@ -325,6 +383,10 @@ export const wgslBackend = {
     return `var ${tmp}: ${typeName} = ${expr};`;
   },
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+    if (!returnType) {
+      generationContext.write('return;');
+      return;
+    }
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
     if (isStructType(returnType)) {
@@ -365,9 +427,15 @@ export const wgslBackend = {
         }
       }
 
-      // Check if this is a uniform variable (but not a texture)
+      // Detect instanceID usage in fragment context and rewrite to varying name
+      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
+        generationContext.strandsContext._instanceIDUsedInFragment = true;
+        return INSTANCE_ID_VARYING_NAME;
+      }
+
+      // Check if this is a uniform variable (but not a texture or storage buffer)
       const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
-      if (uniform && uniform.typeInfo.baseType !== 'sampler2D') {
+      if (uniform && uniform.typeInfo.baseType !== 'sampler2D' && uniform.typeInfo.baseType !== 'storage') {
         return `hooks.${node.identifier}`;
       }
 
@@ -385,6 +453,13 @@ export const wgslBackend = {
         const T = this.getTypeName(node.baseType, node.dimension);
         const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
         return `${T}(${deps.join(', ')})`;
+      }
+      if (node.opCode === OpCode.Nary.TERNARY) {
+        const [condID, trueID, falseID] = node.dependsOn;
+        const cond = this.generateExpression(generationContext, dag, condID);
+        const trueExpr = this.generateExpression(generationContext, dag, trueID);
+        const falseExpr = this.generateExpression(generationContext, dag, falseID);
+        return `select(${falseExpr}, ${trueExpr}, ${cond})`;
       }
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
         // Convert mod() function calls to % operator in WGSL
@@ -419,6 +494,13 @@ export const wgslBackend = {
         const parentID = node.dependsOn[0];
         const parentExpr = this.generateExpression(generationContext, dag, parentID);
         return `${parentExpr}.${node.swizzle}`;
+      }
+      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+        const [bufferID, indexID] = node.dependsOn;
+        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+        const indexExpr = this.generateExpression(generationContext, dag, indexID);
+        const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
+        return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;
@@ -463,14 +545,7 @@ export const wgslBackend = {
         if (validInputs.length > 0) {
           return this.generateExpression(generationContext, dag, validInputs[0]);
         } else {
-          throw new Error(`No valid inputs for node`)
-          // Fallback: create a default value
-          const typeName = this.getTypeName(node.baseType, node.dimension);
-          if (node.dimension === 1) {
-            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
-          } else {
-            return `${typeName}(0.0)`;
-          }
+          throw new Error('No valid inputs for node');
         }
       }
       case NodeType.ASSIGNMENT:
@@ -514,5 +589,9 @@ export const wgslBackend = {
 
   instanceIdReference() {
     return 'instanceID';
+  },
+
+  generateInstanceIDVarying() {
+    return { name: INSTANCE_ID_VARYING_NAME, declaration: `${INSTANCE_ID_VARYING_NAME}: i32`, source: 'i32(instanceID)', interpolation: 'flat' };
   },
 }

@@ -125,6 +125,14 @@ function rendering(p5, fn){
       args.unshift(renderer);
     }
 
+    if (!renderers[selectedRenderer]) {
+      if (selectedRenderer === constants.WEBGPU) {
+        p5._friendlyError(`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`);
+      } else {
+        p5._friendlyError(`We weren't able to find a renderer called ${selectedRenderer}.`);
+      }
+    }
+
     // Init our graphics renderer
     if(this._renderer) this._renderer.remove();
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
@@ -607,9 +615,9 @@ function rendering(p5, fn){
 
   /**
    * A system variable that provides direct access to the sketch's
-   * `&lt;canvas&gt;` element.
+   * `<canvas>` element.
    *
-   * The `&lt;canvas&gt;` element provides many specialized features that aren't
+   * The `<canvas>` element provides many specialized features that aren't
    * included in the p5.js library. The `drawingContext` system variable
    * provides access to these features by exposing the sketch's
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>

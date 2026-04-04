@@ -61,6 +61,16 @@ visualSuite('WebGL', function() {
       p5.image(fbo, 0, 0);
       screenshot();
     });
+
+    visualTest('Works after perspective() with no args', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(200);
+      p5.perspective();
+      p5.noStroke();
+      p5.lights();
+      p5.sphere(20);
+      screenshot();
+    });
   });
 
   visualSuite('filter', function() {
@@ -245,6 +255,23 @@ visualSuite('WebGL', function() {
         });
       });
     }
+
+    visualTest('On a createGraphics WEBGL buffer', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const g = p5.createGraphics(50, 50, p5.WEBGL);
+      g.background(255);
+      g.noStroke();
+      g.fill('red');
+      g.circle(0, 0, 30);
+
+      g.filter(p5.INVERT);
+
+      p5.imageMode(p5.CENTER);
+      p5.image(g, 0, 0);
+
+      screenshot();
+    });
   });
 
   visualSuite('Lights', function() {
@@ -1007,6 +1034,33 @@ visualSuite('WebGL', function() {
       p5.model(obj, 25);
       screenshot();
     });
+    visualTest('instanceID in fragment hook colors instances', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const numInstances = 4;
+      const shader = p5.baseMaterialShader().modify(() => {
+        // Vertex hook: position instances in a horizontal row
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const spacing = 12;
+          const offset = (id - (numInstances - 1) / 2.0) * spacing;
+          inputs.position.x += offset;
+          return inputs;
+        });
+        // Fragment hook: color each instance based on instanceID
+        p5.getFinalColor((color) => {
+          const id = p5.instanceID();
+          const t = id / (numInstances - 1.0);
+          color = [t, t, t, 1];
+          return color;
+        });
+      }, { p5, numInstances });
+      p5.background(128);
+      p5.noStroke();
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
+      p5.model(obj, numInstances);
+      screenshot();
+    });
   });
 
   visualSuite('p5.strands', () => {
@@ -1037,6 +1091,46 @@ visualSuite('WebGL', function() {
       p5.shader(firstShader);
       p5.noStroke();
       p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('lerp maps to mix in strands context', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // lerp should behave identically to mix inside strands
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.lerp(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+
+    visualTest('mix produces same result as lerp in strands', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // mix directly, should produce identical output to lerp test above
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.mix(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
       screenshot();
     });
 
@@ -1143,6 +1237,161 @@ visualSuite('WebGL', function() {
         p5.circle(0, 0, 40);
         screenshot();
       });
+    });
+
+    visualTest('Strands tutorial', function(p5, screenshot) {
+      // From Luke Plowden's Intro to Strands tutorial
+      // https://beta.p5js.org/tutorials/intro-to-p5-strands/
+
+      function starShaderCallback({ p5 }) {
+        const time = p5.uniformFloat(() => p5.millis());
+        const skyRadius = p5.uniformFloat(90);
+
+        function rand2(st) {
+          return p5.sin((st.x + st.y) * 123.456);
+        }
+
+        function semiSphere() {
+          let id = p5.instanceID();
+          let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
+          let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
+
+          let r = skyRadius;
+          r *= p5.sin(phi);
+          let x = r * p5.sin(phi) * p5.cos(theta);
+          let y = r * 1.5 * p5.cos(phi);
+          let z = r * p5.sin(phi) * p5.sin(theta);
+          return [x, y, z];
+        }
+
+        p5.getWorldInputs((inputs) => {
+          inputs.position += semiSphere();
+          return inputs;
+        });
+
+        p5.getObjectInputs((inputs) => {
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          inputs.position *= size;
+          return inputs;
+        });
+      }
+
+      function pixelateShaderCallback({ p5 }) {
+        const pixelCountX = p5.uniformFloat(() => 100);
+
+        p5.getColor((inputs, canvasContent) => {
+          const aspectRatio = inputs.canvasSize.x / inputs.canvasSize.y;
+          const pixelSize = [pixelCountX, pixelCountX / aspectRatio];
+
+          let coord = inputs.texCoord;
+          coord = p5.floor(coord * pixelSize) / pixelSize;
+
+          let col = p5.getTexture(canvasContent, coord);
+          return col//[coord, 0, 1];
+        });
+      }
+
+      function bloomShaderCallback({ p5, originalImage }) {
+        const preBlur = p5.uniformTexture(() => originalImage);
+
+        getColor((input, canvasContent) => {
+          const blurredCol = p5.getTexture(canvasContent, input.texCoord);
+          const originalCol = p5.getTexture(preBlur, input.texCoord);
+
+          const intensity = p5.max(originalCol, 0.1) * 12.2;
+
+          const bloom = originalCol + blurredCol * intensity;
+          return [bloom.rgb, 1];
+        });
+      }
+
+      p5.createCanvas(200, 200, p5.WEBGL);
+      const stars = p5.buildGeometry(() => p5.sphere(4, 4, 2))
+      const originalImage = p5.createFramebuffer();
+
+      function fresnelShaderCallback({ p5 }) {
+        const fresnelPower = p5.uniformFloat(2);
+        const fresnelBias = p5.uniformFloat(-0.1);
+        const fresnelScale = p5.uniformFloat(2);
+
+        p5.getCameraInputs((inputs) => {
+          let n = p5.normalize(inputs.normal);
+          let v = p5.normalize(-inputs.position);
+          let base = 1.0 - p5.dot(n, v);
+          let fresnel = fresnelScale * p5.pow(base, fresnelPower) + fresnelBias;
+          let col = p5.mix([0, 0, 0], [1, .5, .7], fresnel);
+          inputs.color = [col, 1];
+          return inputs;
+        });
+      }
+
+      const starShader = p5.baseMaterialShader().modify(starShaderCallback, { p5 });
+      const starStrokeShader = p5.baseStrokeShader().modify(starShaderCallback, { p5 })
+      const fresnelShader = p5.baseColorShader().modify(fresnelShaderCallback, { p5 });
+      const bloomShader = p5.baseFilterShader().modify(bloomShaderCallback, { p5, originalImage });
+      const pixelateShader = p5.baseFilterShader().modify(pixelateShaderCallback, { p5 });
+
+      originalImage.begin();
+      p5.background(0);
+
+      p5.push()
+      p5.strokeWeight(2)
+      p5.stroke(255,0,0)
+      p5.fill(255,100, 150)
+      p5.strokeShader(starStrokeShader)
+      p5.shader(starShader);
+      p5.model(stars, 100);
+      p5.pop()
+
+      p5.push()
+      p5.shader(fresnelShader)
+      p5.noStroke()
+      p5.sphere(30);
+      p5.filter(pixelateShader);
+      p5.pop()
+
+      originalImage.end();
+
+      p5.imageMode(p5.CENTER)
+      p5.image(originalImage, 0, 0)
+
+      p5.filter(p5.BLUR, 5)
+      p5.filter(bloomShader);
+
+      screenshot();
+    });
+
+    visualTest('setUniform with p5.Vector offsets position', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uOffset = p5.uniformVec2('uOffset');
+        p5.worldInputs.begin();
+        p5.worldInputs.position.xy += uOffset;
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uOffset', p5.createVector(10, -10));
+      p5.noStroke();
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      screenshot();
+    });
+
+    visualTest('setUniform with p5.Color sets final color', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uColor = p5.uniformVec4('uColor');
+        p5.finalColor.begin();
+        p5.finalColor.set(uColor);
+        p5.finalColor.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uColor', p5.color(0, 100, 200));
+      p5.noStroke();
+      p5.circle(0, 0, 30);
+      screenshot();
     });
   });
 
@@ -1316,7 +1565,7 @@ visualSuite('WebGL', function() {
   visualSuite('Tessellation', function() {
     visualTest('Handles nearly identical consecutive vertices', function(p5, screenshot) {
       p5.createCanvas(400, 400, p5.WEBGL);
-      
+
       const contours = [
         [
           [-3.8642425537109375, -6.120738636363637, 0],
@@ -1355,7 +1604,7 @@ visualSuite('WebGL', function() {
           [-1.8045834628018462, 4.177556818181818, 0]
         ]
       ];
-      
+
       p5.background('red');
       p5.push();
       p5.stroke(0);
