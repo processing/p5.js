@@ -1034,7 +1034,7 @@ class Vector {
    *
    * If only one value is provided, as in `v.div(2)`, then all the components
    * will be divided by 2. If a value isn't provided for a component, it
-   * won't change. For example, `v.div(4, 5)` divides `v.x` by, `v.y` by 5,
+   * won't change. For example, `v.div(4, 5)` divides `v.x` by 4, `v.y` by 5,
    * and `v.z` by 1. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
    *
