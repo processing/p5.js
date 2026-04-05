@@ -172,7 +172,7 @@ class Shader {
    *                 color.a = components.opacity;
    *                 return color;
    *               }
-   * vec4 getFinalColor(vec4 color) { return color; }
+   * vec4 getFinalColor(vec4 color, vec2 texCoord) { return color; }
    * void afterFragment() {}
    * ```
    *

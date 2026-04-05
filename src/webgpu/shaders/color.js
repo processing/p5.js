@@ -119,7 +119,7 @@ ${uniforms}
 @fragment
 fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   HOOK_beforeFragment();
-  var outColor = HOOK_getFinalColor(input.vColor);
+  var outColor = HOOK_getFinalColor(input.vColor, input.vVertTexCoord);
   outColor = vec4<f32>(outColor.rgb * outColor.a, outColor.a);
   HOOK_afterFragment();
   return outColor;
