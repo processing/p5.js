@@ -1,3 +1,4 @@
+import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
@@ -168,6 +169,9 @@ export const glslBackend = {
       return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${param.name}`;
     }).join(', ')}) {`;
     return firstLine;
+  },
+  getNoiseShaderSnippet() {
+    return noiseGLSL;
   },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]

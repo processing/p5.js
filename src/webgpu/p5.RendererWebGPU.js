@@ -14,7 +14,6 @@ import { materialVertexShader, materialFragmentShader } from './shaders/material
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
-import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
@@ -3673,9 +3672,6 @@ ${hookUniformFields}}
       return super.filter(...args);
     }
 
-    getNoiseShaderSnippet() {
-      return noiseWGSL;
-    }
 
 
     baseFilterShader() {
