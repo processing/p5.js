@@ -17,4 +17,46 @@ visualSuite('Typography', function() {
       screenshot();
     });
   });
+
+  visualSuite('JUSTIFIED alignment', function() {
+    visualTest('WORD wrap justified non-final lines', function (p5, screenshot) {
+      p5.createCanvas(300, 160);
+      p5.textSize(16);
+      p5.textAlign(p5.JUSTIFIED, p5.TOP);
+      p5.textWrap(p5.WORD);
+      const s = 'This is a line of text that should justify on non-final lines.';
+      p5.text(s, 10, 10, 280, 140);
+      screenshot();
+    });
+  });
+
+  visualSuite('PRETTY/BALANCE wrap', function() {
+    visualTest('PRETTY wrap LEFT', function (p5, screenshot) {
+      p5.createCanvas(300, 160);
+      p5.textSize(16);
+      p5.textAlign(p5.LEFT, p5.TOP);
+      p5.textWrap(p5.PRETTY);
+      const s = 'Balanced wrapping aims to reduce raggedness of lines.';
+      p5.text(s, 10, 10, 280, 140);
+      screenshot();
+    });
+    visualTest('BALANCE wrap RIGHT', function (p5, screenshot) {
+      p5.createCanvas(300, 160);
+      p5.textSize(16);
+      p5.textAlign(p5.RIGHT, p5.TOP);
+      p5.textWrap(p5.BALANCE);
+      const s = 'Balanced wrapping aims to reduce raggedness of lines.';
+      p5.text(s, 290, 10, 280, 140);
+      screenshot();
+    });
+    visualTest('PRETTY wrap with JUSTIFIED', function (p5, screenshot) {
+      p5.createCanvas(300, 160);
+      p5.textSize(16);
+      p5.textAlign(p5.JUSTIFIED, p5.TOP);
+      p5.textWrap(p5.PRETTY);
+      const s = 'Pretty wrapping combined with justification for non-final lines.';
+      p5.text(s, 10, 10, 280, 140);
+      screenshot();
+    });
+  });
 });
