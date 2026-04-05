@@ -50,7 +50,7 @@ class p5 {
   constructor(sketch, node) {
     // Apply addon defined decorations
     if(p5.decorations.size > 0){
-      decorateClass(p5, p5.decorations);
+      decorateClass(p5, p5.decorations, 'p5');
       p5.decorations.clear();
     }
 
@@ -531,7 +531,6 @@ function createBindGlobal(instance) {
 
 // Generic function to decorate classes
 function decorateClass(Target, decorations, path){
-  path ??= Target.name;
   // Static properties
   for(const key in Target){
     if(!key.startsWith('_')){
