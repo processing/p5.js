@@ -1079,7 +1079,6 @@ function primitives(p5, fn){
    *   rect(-20, -30, 55, 55);
    * }
    */
-
   /**
    * @method rect
    * @param  {Number} x

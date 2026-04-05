@@ -618,5 +618,5 @@ function validateParams(p5, fn, lifecycles) {
 export default validateParams;
 
 if (typeof p5 !== 'undefined') {
-  validateParams(p5, p5.prototype);
+  p5.registerAddon(validateParams);
 }
