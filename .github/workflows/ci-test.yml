@@ -9,6 +9,9 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
@@ -22,10 +25,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       
       - name: Use Node.js 22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22.x
       
@@ -59,7 +64,7 @@ jobs:
           CI: true
       - name: Upload Visual Test Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: visual-test-report
           path: test/unit/visual/visual-report.html
@@ -74,9 +79,10 @@ jobs:
           CI: true
       - name: report test coverage
         if: steps.test.outcome == 'success'
-        run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
-        env:
-          CI: true
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        with:
+          files: coverage/coverage-final.json
+          fail_ci_if_error: false
       - name: fail job if tests failed
         if: steps.test.outcome != 'success'
         run: exit 1
