@@ -763,8 +763,18 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} filterColor
- * @beta
+ * @typedef {Object} FilterColorHook
+ * @property {any} texCoord
+ * @property {any} canvasSize
+ * @property {any} texelSize
+ * @property {any} canvasContent
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FilterColorHook} filterColor
  * @description
  * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
  *
