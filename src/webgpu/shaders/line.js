@@ -362,7 +362,7 @@ fn main(input: StrokeFragmentInput) -> @location(0) vec4<f32> {
       discard;
     }
   }
-  var col = HOOK_getFinalColor(inputs.color);
+  var col = HOOK_getFinalColor(inputs.color, vec2<f32>(0.0, 0.0));
   col = vec4<f32>(col.rgb, 1.0) * col.a;
   HOOK_afterFragment();
   return vec4<f32>(col);

@@ -417,7 +417,7 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
   );
 
   var outColor = HOOK_getFinalColor(
-    HOOK_combineColors(components)
+    HOOK_combineColors(components), input.vTexCoord
   );
   outColor = vec4<f32>(outColor.rgb * outColor.a, outColor.a);
   HOOK_afterFragment();

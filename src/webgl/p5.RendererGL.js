@@ -723,7 +723,7 @@ class RendererGL extends Renderer3D {
                 color.a = components.opacity;
                 return color;
               }`,
-              "vec4 getFinalColor": "(vec4 color) { return color; }",
+              "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -760,7 +760,7 @@ class RendererGL extends Renderer3D {
           },
           fragment: {
             "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "void afterFragment": "() {}",
           },
         }
@@ -788,7 +788,7 @@ class RendererGL extends Renderer3D {
           },
           fragment: {
             "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "void afterFragment": "() {}",
           },
         }
@@ -820,7 +820,7 @@ class RendererGL extends Renderer3D {
           fragment: {
             "void beforeFragment": "() {}",
             "Inputs getPixelInputs": "(Inputs inputs) { return inputs; }",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "bool shouldDiscard": "(bool outside) { return outside; }",
             "void afterFragment": "() {}",
           },
