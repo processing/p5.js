@@ -125,6 +125,14 @@ function rendering(p5, fn){
       args.unshift(renderer);
     }
 
+    if (!renderers[selectedRenderer]) {
+      if (selectedRenderer === constants.WEBGPU) {
+        p5._friendlyError(`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`);
+      } else {
+        p5._friendlyError(`We weren't able to find a renderer called ${selectedRenderer}.`);
+      }
+    }
+
     // Init our graphics renderer
     if(this._renderer) this._renderer.remove();
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);

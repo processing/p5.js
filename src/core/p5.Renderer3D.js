@@ -1,3 +1,8 @@
+/**
+ * @module 3D
+ * @for p5
+ */
+
 import * as constants from "../core/constants";
 import { Graphics } from "../core/p5.Graphics";
 import { Renderer } from './p5.Renderer';
@@ -132,7 +137,7 @@ export class Renderer3D extends Renderer {
     this.states._useShininess = 1;
     this.states._useMetalness = 0;
 
-    this.states.tint = [255, 255, 255, 255];
+    this.states.tint = new Color([1, 1, 1, 1]);
 
     this.states.constantAttenuation = 1;
     this.states.linearAttenuation = 0;
@@ -721,10 +726,10 @@ export class Renderer3D extends Renderer {
     this.states.setValue("enableLighting", false);
 
     //reset tint value for new frame
-    this.states.setValue("tint", [255, 255, 255, 255]);
+    this.states.setValue("tint", new Color([1,1,1,1]));
 
     //Clear depth every frame
-    this._resetBuffersBeforeDraw()
+    this._resetBuffersBeforeDraw();
   }
 
   background(...args) {
@@ -1486,7 +1491,7 @@ export class Renderer3D extends Renderer {
     // works differently and is global p5 state. If the p5 state has
     // been cleared, we also need to clear the value in uSampler to match.
     fillShader.setUniform("uSampler", this.states._tex || empty);
-    fillShader.setUniform("uTint", this.states.tint);
+    fillShader.setUniform("uTint", this.states.tint._getRGBA([255, 255, 255, 255]));
 
     fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
     fillShader.setUniform("uAmbientMatColor", this.states.curAmbientColor);
@@ -1985,8 +1990,594 @@ export class Renderer3D extends Renderer {
   }
 }
 
+const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGPU as the last argument to createCanvas.';
+
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
+
+  /**
+   * Creates a <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`</a>, which is
+   * a block of data that shaders can read from, and compute shaders
+   * can also write to. This is only available in WebGPU mode.
+   *
+   * To read or write the data inside a shader, use
+   * <a href="#/p5/uniformStorage">`uniformStorage()`</a>. To update its contents
+   * from JavaScript, call <a href="#/p5.StorageBuffer/update">`.update()`</a>
+   * on the result with new data.
+   *
+   * Pass an array of objects to store a list of items, each with named
+   * properties. The properties can be numbers, arrays of numbers, vectors
+   * created with <a href="#/p5/createVector">`createVector()`</a>, or colors
+   * created with <a href="#/p5/color">`color()`</a>. Inside the shader, each
+   * item is accessed by index, and its properties are available by name.
+   *
+   * ```js example
+   * let instanceData;
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < count; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-1, 1) * width / 2,
+   *         random(-1, 1) * height / 2,
+   *         0,
+   *       ),
+   *       color: color(
+   *         random(255),
+   *         random(255),
+   *         random(255)
+   *       )
+   *     });
+   *   }
+   *   instanceData = createStorage(data);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawInstances);
+   *   describe('Five spheres at random positions, each a different random color.');
+   * }
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function drawInstances() {
+   *   let data = uniformStorage(instanceData);
+   *   let itemColor = sharedVec4();
+   *
+   *   worldInputs.begin();
+   *   let item = data[instanceID()];
+   *   itemColor = item.color;
+   *   worldInputs.position += item.position;
+   *   worldInputs.end();
+   *
+   *   finalColor.begin();
+   *   finalColor.set(itemColor);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * You can also store a plain list of numbers by passing an array of numbers.
+   * Inside the shader, each number is accessed by index directly. To create an
+   * empty list to be filled in by a compute shader, pass a count instead.
+   *
+   * ```js example
+   * let cells;
+   * let nextCells;
+   * let gameShader;
+   * let displayShader;
+   * const W = 100;
+   * const H = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let initial = new Float32Array(W * H);
+   *   for (let i = 0; i < initial.length; i++) {
+   *     initial[i] = random() > 0.7 ? 1 : 0;
+   *   }
+   *   cells = createStorage(initial);
+   *   nextCells = createStorage(W * H);
+   *
+   *   gameShader = buildComputeShader(simulate);
+   *   displayShader = buildFilterShader(display);
+   *   describe('An animated Game of Life simulation displayed as black and white pixels.');
+   * }
+   *
+   * function simulate() {
+   *   let current = uniformStorage(() => cells);
+   *   let next = uniformStorage(() => nextCells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *   let x = index.x;
+   *   let y = index.y;
+   *
+   *   let n = 0;
+   *   for (let dy = -1; dy <= 1; dy++) {
+   *     for (let dx = -1; dx <= 1; dx++) {
+   *       if (dx != 0 || dy != 0) {
+   *         let nx = (x + dx + w) % w;
+   *         let ny = (y + dy + h) % h;
+   *         n += current[ny * w + nx];
+   *       }
+   *     }
+   *   }
+   *
+   *   let alive = current[y * w + x];
+   *   let nextOutput = 0;
+   *   if (alive == 1) {
+   *     if (abs(n - 2) < 0.1 || abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   } else {
+   *     if (abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   }
+   *   next[y * w + x] = nextOutput;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(() => cells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *
+   *   filterColor.begin();
+   *   let x = floor(filterColor.texCoord.x * w);
+   *   let y = floor(filterColor.texCoord.y * h);
+   *   let alive = data[y * w + x];
+   *   filterColor.set([alive, alive, alive, 1]);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   compute(gameShader, W, H);
+   *   [nextCells, cells] = [cells, nextCells];
+   *   filter(displayShader);
+   * }
+   * ```
+   *
+   * @method createStorage
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
+   *   an array/Float32Array of floats, or an array of objects describing struct elements.
+   * @returns {p5.StorageBuffer} A storage buffer.
+   */
+  fn.createStorage = function (dataOrCount) {
+    if (!this._renderer.createStorage) {
+      p5._friendlyError(
+        `createStorage() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'createStorage'
+      );
+      return;
+    }
+    return this._renderer.createStorage(dataOrCount);
+  };
+
+  /**
+   * Returns the default shader used for compute operations.
+   *
+   * Calling <a href="#/p5/buildComputeShader">`buildComputeShader(shaderFunction)`</a>
+   * is equivalent to calling `baseComputeShader().modify(shaderFunction)`.
+   *
+   * Read <a href="#/p5/buildComputeShader">the `buildComputeShader` reference</a> or
+   * call `baseComputeShader().inspectHooks()` for more information on what you can do with
+   * the base compute shader.
+   *
+   * @method baseComputeShader
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @returns {p5.Shader} The base compute shader.
+   */
+  fn.baseComputeShader = function () {
+    if (!this._renderer.baseComputeShader) {
+      p5._friendlyError(
+        `baseComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'baseComputeShader'
+      );
+      return;
+    }
+    return this._renderer.baseComputeShader();
+  };
+
+  /**
+   * Create a new compute shader using p5.strands.
+   *
+   * A compute shader lets you run many calculations all at once on your GPU. They
+   * are similar to a <a href="#/p5/for>`for` loop,</a> but each iteration of the
+   * loop happens in parallel on the GPU rather than running one after the other.
+   * This makes them ideal for calculations or simulations involving many items.
+   *
+   * You create a compute shader by passing a function to `buildComputeShader`.
+   * The function represents one iteration of a loop.
+   *
+   * The compute shader can be run by calling <a href="#/p5/compute">`compute()`</a>
+   * and passing the shader in, along with the number of iterations in up to three
+   * dimensions. Use the <a href="#/p5/index">`index`</a> vector inside of your
+   * iteration function to refer to the current iteration of the loop. The `x`, `y`,
+   * and `z` properties will count up from zero to the count in each dimension passed
+   * into `compute`.
+   *
+   * A compute shader will read from and write to storage, which is often an array of
+   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a> to construct
+   * initial data. Connect your iteration function to the storage by passing the storage
+   * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
+   *
+   * Often, compute shaders are paired with <a href="#/p5/model">`model(myGeometry, count)`</a>
+   * to draw one instance per object in the storage, and a shader that uses
+   * <a href="#/p5/instanceID">`instanceID()`</a> to position each instance.
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *   particles = createStorage(makeParticles(width / 2, height / 2));
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   *   describe('100 orange particles shooting outward.');
+   * }
+   *
+   * function makeParticles(x, y) {
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     let angle = (i / numParticles) * TWO_PI;
+   *     let speed = random(0.5, 2);
+   *     data.push({
+   *       position: createVector(x, y),
+   *       velocity: createVector(cos(angle) * speed, sin(angle) * speed),
+   *     });
+   *   }
+   *   return data;
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(2);
+   * }
+   *
+   * function simulate() {
+   *   let data = uniformStorage(particles);
+   *   let idx = index.x;
+   *   data[idx].position = data[idx].position + data[idx].velocity;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos - [width / 2, height / 2];
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   if (frameCount % 60 === 0) {
+   *     particles.update(makeParticles(random(width), random(height)));
+   *   }
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255, 200, 50);
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 50;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-40, 40),
+   *         random(-40, 40)
+   *       ),
+   *       velocity: createVector(
+   *         random(-1, 1),
+   *         random(-1, 1)
+   *       ),
+   *     });
+   *   }
+   *   particles = createStorage(data);
+   *
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   *   describe('50 white spheres bouncing around the canvas.');
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(3);
+   * }
+   *
+   * function simulate() {
+   *   let r = 3;
+   *   let data = uniformStorage(particles);
+   *   let idx = index.x;
+   *   let pos = data[idx].position;
+   *   let vel = data[idx].velocity;
+   *   pos = pos + vel;
+   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
+   *     vel.x = -vel.x;
+   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
+   *   }
+   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
+   *     vel.y = -vel.y;
+   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
+   *   }
+   *   data[idx].position = pos;
+   *   data[idx].velocity = vel;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255);
+   *   lights();
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * @method buildComputeShader
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Function} callback A function building a p5.strands compute shader.
+   * @returns {p5.Shader} The compute shader.
+   */
+  fn.buildComputeShader = function (cb, context) {
+    if (!this._renderer.baseComputeShader) {
+      p5._friendlyError(
+        `buildComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'buildComputeShader'
+      );
+      return;
+    }
+    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+  };
+
+  /**
+   * Dispatches a compute shader to run on the GPU.
+   *
+   * The first parameter, `shader`, is a compute shader created with
+   * <a href="#/p5/buildComputeShader">`buildComputeShader`</a>.
+   *
+   * Pass a number for `x` to run a simple loop. Inside the shader's iteration
+   * function, <a href="#/p5/index">`index.x`</a> will count up from 0 to
+   * that number.
+   *
+   * ```js example
+   * let particles;
+   * let computeShader;
+   * let displayShader;
+   * let instance;
+   * const numParticles = 50;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < numParticles; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-40, 40),
+   *         random(-40, 40)
+   *       ),
+   *       velocity: createVector(
+   *         random(-1, 1),
+   *         random(-1, 1)
+   *       ),
+   *     });
+   *   }
+   *   particles = createStorage(data);
+   *
+   *   computeShader = buildComputeShader(simulate);
+   *   displayShader = buildMaterialShader(display);
+   *   instance = buildGeometry(drawParticle);
+   *   describe('50 white spheres bouncing around the canvas.');
+   * }
+   *
+   * function drawParticle() {
+   *   sphere(3);
+   * }
+   *
+   * function simulate() {
+   *   let r = 3;
+   *   let data = uniformStorage(particles);
+   *   let idx = index.x;
+   *   let pos = data[idx].position;
+   *   let vel = data[idx].velocity;
+   *   pos = pos + vel;
+   *   if (pos.x > width/2 - r || pos.x < -height/2 + r) {
+   *     vel.x = -vel.x;
+   *     pos.x = clamp(pos.x, -width/2 + r, width/2 - r);
+   *   }
+   *   if (pos.y > height/2 - r || pos.y < -height/2 + r) {
+   *     vel.y = -vel.y;
+   *     pos.y = clamp(pos.y, -height/2 + r, height/2 - r);
+   *   }
+   *   data[idx].position = pos;
+   *   data[idx].velocity = vel;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(particles);
+   *   worldInputs.begin();
+   *   let pos = data[instanceID()].position;
+   *   worldInputs.position.xy += pos;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(30);
+   *   compute(computeShader, numParticles);
+   *   noStroke();
+   *   fill(255);
+   *   lights();
+   *   shader(displayShader);
+   *   model(instance, numParticles);
+   * }
+   * ```
+   *
+   * You can also pass `y` and `z` to loop in up to three dimensions, using
+   * `index.y` and `index.z` to get the position in each. This is useful for
+   * working with 2D grids, like in the Game of Life example below.
+   *
+   * ```js example
+   * let cells;
+   * let nextCells;
+   * let gameShader;
+   * let displayShader;
+   * const W = 100;
+   * const H = 100;
+   *
+   * async function setup() {
+   *   await createCanvas(100, 100, WEBGPU);
+   *
+   *   let initial = new Float32Array(W * H);
+   *   for (let i = 0; i < initial.length; i++) {
+   *     initial[i] = random() > 0.7 ? 1 : 0;
+   *   }
+   *   cells = createStorage(initial);
+   *   nextCells = createStorage(W * H);
+   *
+   *   gameShader = buildComputeShader(simulate);
+   *   displayShader = buildFilterShader(display);
+   *   describe('An animated Game of Life simulation displayed as black and white pixels.');
+   * }
+   *
+   * function simulate() {
+   *   let current = uniformStorage(() => cells);
+   *   let next = uniformStorage(() => nextCells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *   let x = index.x;
+   *   let y = index.y;
+   *
+   *   let n = 0;
+   *   for (let dy = -1; dy <= 1; dy++) {
+   *     for (let dx = -1; dx <= 1; dx++) {
+   *       if (dx != 0 || dy != 0) {
+   *         let nx = (x + dx + w) % w;
+   *         let ny = (y + dy + h) % h;
+   *         n += current[ny * w + nx];
+   *       }
+   *     }
+   *   }
+   *
+   *   let alive = current[y * w + x];
+   *   let nextOutput = 0;
+   *   if (alive == 1) {
+   *     if (abs(n - 2) < 0.1 || abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   } else {
+   *     if (abs(n - 3) < 0.1) {
+   *       nextOutput = 1;
+   *     }
+   *   }
+   *   next[y * w + x] = nextOutput;
+   * }
+   *
+   * function display() {
+   *   let data = uniformStorage(() => cells);
+   *   let w = uniformInt(() => W);
+   *   let h = uniformInt(() => H);
+   *
+   *   filterColor.begin();
+   *   let x = floor(filterColor.texCoord.x * w);
+   *   let y = floor(filterColor.texCoord.y * h);
+   *   let alive = data[y * w + x];
+   *   filterColor.set([alive, alive, alive, 1]);
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   compute(gameShader, W, H);
+   *   [nextCells, cells] = [cells, nextCells];
+   *   filter(displayShader);
+   * }
+   * ```
+   *
+   * @method compute
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {p5.Shader} shader The compute shader to run.
+   * @param {Number} x Number of invocations in the X dimension.
+   * @param {Number} [y=1] Number of invocations in the Y dimension.
+   * @param {Number} [z=1] Number of invocations in the Z dimension.
+   */
+  fn.compute = function (shader, x, y, z) {
+    if (!this._renderer.compute) {
+      p5._friendlyError(
+        `compute() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'compute'
+      );
+      return;
+    }
+    this._renderer.compute(shader, x, y, z);
+  };
+
+  /**
+   * Information about the current iteration of a compute shader.
+   *
+   * Use it inside a
+   * <a href="#/p5/buildComputeShader">`buildComputeShader()`</a>
+   * function to write a loop that runs in parallel on the GPU.
+   *
+   * `index` is a three-component vector with the current index
+   *  across all dimensions passed to
+   *  <a href="#/p5/compute">`compute()`</a>. For example, use
+   *  `index.x` to get the index when looping in one dimension.
+   *
+   * @property index
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   */
 }
 
 export default renderer3D;

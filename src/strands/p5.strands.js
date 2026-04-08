@@ -40,6 +40,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.backend = backend;
     ctx.active = active;
@@ -61,6 +62,7 @@ function strands(p5, fn) {
     ctx.uniforms = [];
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
     p5.disableFriendlyErrors = ctx.previousFES;
@@ -113,7 +115,10 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
 
-  p5.Shader.prototype.modify = function (shaderModifier, scope = {}) {
+  p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
+    const fnOverrides = {};
+    const windowOverrides = {};
+    const graphicsOverrides = {};
     try {
       if (
         shaderModifier instanceof Function ||
@@ -128,7 +133,8 @@ function strands(p5, fn) {
         });
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
-        const options = { parser: true, srcLocations: false };
+        options.parser = true;
+        options.srcLocations = false;
 
         // 1. Transpile from strands DSL to JS
         let strandsCallback;
@@ -155,11 +161,24 @@ function strands(p5, fn) {
           BlockType.GLOBAL,
         );
         pushBlock(strandsContext.cfg, globalScope);
+        if (options.hook) {
+          strandsContext.renderer._pInst[options.hook].begin();
+          for (const key of strandsContext.renderer._pInst[options.hook]._properties) {
+            const hookProp = strandsContext.renderer._pInst[options.hook][key];
+            fnOverrides[key] = fn[key];
+            fn[key] = hookProp;
+            windowOverrides[key] = window[key];
+            window[key] = hookProp;
+            graphicsOverrides[key] = p5.Graphics.prototype[key];
+            p5.Graphics.prototype[key] = hookProp;
+          }
+        }
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
           strandsCallback();
         }
+        if (options.hook) strandsContext.renderer._pInst[options.hook].end();
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
@@ -172,6 +191,15 @@ function strands(p5, fn) {
         return oldModify.call(this, shaderModifier);
       }
     } finally {
+      for (const key in fnOverrides) {
+        fn[key] = fnOverrides[key];
+      }
+      for (const key in windowOverrides) {
+        window[key] = windowOverrides[key];
+      }
+      for (const key in graphicsOverrides) {
+        p5.Graphics[key] = graphicsOverrides[key];
+      }
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
     }
@@ -187,6 +215,7 @@ if (typeof p5 !== "undefined") {
 /* ------------------------------------------------------------- */
 /**
  * @property {Object} worldInputs
+ * @beta
  * @description
  * A shader hook block that modifies the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/buildColorShader">`buildColorShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
  *
@@ -231,6 +260,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} combineColors
+ * @beta
  * @description
  * A shader hook block that modifies how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to control the final color output of a material. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
@@ -282,7 +312,126 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
+ * @method instanceID
+ * @beta
+ * @description
+ * Returns the index of the current instance when drawing multiple copies of a
+ * shape with <a href="#/p5/model">`model(count)`</a>. The first instance has an
+ * ID of `0`, the second has `1`, and so on.
+ *
+ * This lets each copy of a shape behave differently. For example, you can use
+ * the ID to place instances at different positions, give them different colors,
+ * or animate them at different speeds.
+ *
+ * `instanceID()` can only be used inside a p5.strands shader callback.
+ *
+ * ```js example
+ * let instancesShader;
+ * let instance;
+ * let count = 5;
+ *
+ * function drawInstance() {
+ *   sphere(15);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   instance = buildGeometry(drawInstance);
+ *   instancesShader = buildMaterialShader(drawSpaced);
+ *   describe('Five red spheres arranged in a horizontal line.');
+ * }
+ *
+ * function drawSpaced() {
+ *   worldInputs.begin();
+ *   // Spread spheres evenly across the canvas based on their index
+ *   let spacing = width / count;
+ *   worldInputs.position.x +=
+ *     (instanceID() - (count - 1) / 2) * spacing;
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   shader(instancesShader);
+ *   model(instance, count);
+ * }
+ * ```
+ *
+ * If you are using WebGPU mode, a common pattern is to use `instanceID()` to look up data made with
+ * <a href="#/p5/createStorage">`createStorage()`</a>.
+ * This lets you give each instance different properties.
+ *
+ * ```js example
+ * let instanceData;
+ * let instancesShader;
+ * let instance;
+ * let count = 5;
+ *
+ * async function setup() {
+ *   await createCanvas(200, 200, WEBGPU);
+ *
+ *   let data = [];
+ *   for (let i = 0; i < count; i++) {
+ *     data.push({
+ *       position: createVector(
+ *         random(-1, 1) * width / 2,
+ *         random(-1, 1) * height / 2,
+ *         0,
+ *       ),
+ *       color: color(
+ *         random(255),
+ *         random(255),
+ *         random(255)
+ *       )
+ *     });
+ *   }
+ *   instanceData = createStorage(data);
+ *   instance = buildGeometry(drawInstance);
+ *   instancesShader = buildMaterialShader(drawInstances);
+ *   describe('Five spheres at random positions, each a different random color.');
+ * }
+ *
+ * function drawInstance() {
+ *   sphere(15);
+ * }
+ *
+ * function drawInstances() {
+ *   let data = uniformStorage(instanceData);
+ *   let itemColor = sharedVec4();
+ *
+ *   worldInputs.begin();
+ *   let item = data[instanceID()];
+ *   itemColor = item.color;
+ *   worldInputs.position += item.position;
+ *   worldInputs.end();
+ *
+ *   finalColor.begin();
+ *   finalColor.set(itemColor);
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   lights();
+ *   noStroke();
+ *   shader(instancesShader);
+ *   model(instance, count);
+ * }
+ * ```
+ *
+ * This can be paired with <a href="#/p5/buildComputeShader">`buildComputeShader`</a>
+ * to update the data being read.
+ *
+ * @webgpu
+ * @returns {*} The index of the current instance.
+ */
+
+/**
  * @method smoothstep
+ * @beta
  * @description
  * A shader function that performs smooth Hermite interpolation between `0.0`
  * and `1.0`.
@@ -444,6 +593,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} pixelInputs
+ * @beta
  * @description
  * A shader hook block that modifies the properties of each pixel before the final color is calculated. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust per-pixel data before lighting is applied. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
@@ -531,6 +681,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property finalColor
+ * @beta
  * @description
  * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
@@ -613,6 +764,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} filterColor
+ * @beta
  * @description
  * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
  *
@@ -657,6 +809,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} objectInputs
+ * @beta
  * @description
  * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
  *
@@ -698,6 +851,7 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @property {Object} cameraInputs
+ * @beta
  * @description
  * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.
  *
@@ -740,30 +894,37 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * Retrieves the current color of a given texture at given coordinates.
+ * Declares a storage buffer uniform inside a <a href="#/p5.Shader/modify">modify()</a> callback,
+ * making a <a href="#/p5/createStorage">createStorage()</a> buffer accessible in the shader.
  *
- * The given coordinates should be between [0, 0] representing the top-left of
- * the texture, and [1, 1] representing the bottom-right of the texture.
+ * Pass a `p5.StorageBuffer` (or a function returning one) as the second argument
+ * to set it as the default value, applied automatically each frame. Pass a plain
+ * object with the same field layout as the buffer's struct elements to declare the
+ * schema without binding a specific buffer.
  *
- * The given texture could be, for example:
- * * <a href="#/p5.Image">p5.Image</a>,
- * * a <a href="#/p5.Graphics">p5.Graphics</a>, or
- * * a <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+ * When called without a name, p5.strands automatically uses the name of the
+ * variable it is assigned to as the uniform name.
  *
- * The retrieved color that is returned will behave like a vec4, with components
- * for red, green, blue, and alpha, each between 0.0 and 1.0.
+ * Note: `uniformStorage` is only available when using p5.strands.
  *
- * Linear interpolation is used by default. For Framebuffer sources, you can
- * prevent this by creating the buffer with:
- * ```js
- * createFramebuffer({
- *     textureFiltering: NEAREST
- *  })
- * ```
- * This can be useful if you are using your texture to store data other than color.
- * See <a href="#/p5/createFramebuffer/">createFramebuffer</a>.
- *
- * Note: The `getTexture` function is only available when using p5.strands.
+ * @method uniformStorage
+ * @beta
+ * @webgpu
+ * @webgpuOnly
+ * @submodule p5.strands
+ * @param {String} name The name of the storage buffer uniform in the shader.
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema] A storage buffer to bind,
+ *   a function returning a storage buffer (called each frame), or a plain object
+ *   describing the struct field layout.
+ * @returns {*} A strands node representing the storage buffer.
+ */
+/**
+ * @method uniformStorage
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema]
+ * @returns {*}
+ */
+
+/**
  *
  * @method getTexture
  * @beta
@@ -873,30 +1034,36 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @method getWorldInputs
+ * @beta
  * @param {Function} callback
  */
 
 /**
  * @method getPixelInputs
+ * @beta
  * @param {Function} callback
  */
 
 /**
  * @method getFinalColor
+ * @beta
  * @param {Function} callback
  */
 
 /**
  * @method getColor
+ * @beta
  * @param {Function} callback
  */
 
 /**
  * @method getObjectInputs
+ * @beta
  * @param {Function} callback
  */
 
 /**
  * @method getCameraInputs
+ * @beta
  * @param {Function} callback
  */

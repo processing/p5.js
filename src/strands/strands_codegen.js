@@ -7,24 +7,37 @@ export function generateShaderCode(strandsContext) {
     cfg,
     backend,
     vertexDeclarations,
-    fragmentDeclarations
+    fragmentDeclarations,
+    computeDeclarations
   } = strandsContext;
 
   const hooksObj = {
     uniforms: {},
+    storageUniforms: {},
     varyingVariables: [],
   };
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
-    const key = backend.generateHookUniformKey(name, typeInfo);
-    if (key !== null) {
-      hooksObj.uniforms[key] = defaultValue;
+    if (typeInfo.baseType === 'storage') {
+      if (defaultValue !== null && defaultValue !== undefined) {
+        hooksObj.storageUniforms[name] = defaultValue;
+      }
+    } else {
+      const key = backend.generateHookUniformKey(name, typeInfo);
+      if (key !== null) {
+        hooksObj.uniforms[key] = defaultValue;
+      }
     }
   }
 
   // Add texture bindings to declarations for WebGPU backend
   if (backend.addTextureBindingsToDeclarations) {
     backend.addTextureBindingsToDeclarations(strandsContext);
+  }
+
+  // Add storage buffer bindings to declarations for WebGPU backend
+  if (backend.addStorageBufferBindingsToDeclarations) {
+    backend.addStorageBufferBindingsToDeclarations(strandsContext);
   }
 
   for (const { hookType, rootNodeID, entryBlockID, shaderContext } of strandsContext.hooks) {
@@ -51,6 +64,8 @@ export function generateShaderCode(strandsContext) {
     let returnType;
     if (hookType.returnType.properties) {
       returnType = structType(hookType.returnType);
+    } else if (hookType.returnType.typeName === 'void') {
+      returnType = null;
     } else {
       if (!hookType.returnType.dataType) {
         throw new Error(`Missing dataType for return type ${hookType.returnType.typeName}`);
@@ -58,7 +73,7 @@ export function generateShaderCode(strandsContext) {
       returnType = hookType.returnType.dataType;
     }
 
-    if (rootNodeID) {
+    if (rootNodeID !== undefined) {
       backend.generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType);
     }
     hooksObj[`${hookType.returnType.typeName} ${hookType.name}`] = [firstLine, ...generationContext.codeLines, '}'].join('\n');
@@ -81,8 +96,14 @@ export function generateShaderCode(strandsContext) {
     }
   }
 
+  // Register instanceID varying if used in a fragment hook
+  if (strandsContext._instanceIDUsedInFragment) {
+    hooksObj.instanceIDVarying = backend.generateInstanceIDVarying();
+  }
+
   hooksObj.vertexDeclarations = [...vertexDeclarations].join('\n');
   hooksObj.fragmentDeclarations = [...fragmentDeclarations].join('\n');
+  hooksObj.computeDeclarations = [...computeDeclarations].join('\n');
 
   return hooksObj;
 }

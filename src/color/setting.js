@@ -509,7 +509,7 @@ function setting(p5, fn){
    *
    *   describe('A canvas with a transparent green background.');
    * }
-   * <
+   *
    * @example
    * function setup() {
    *   createCanvas(100, 100);
@@ -580,8 +580,7 @@ function setting(p5, fn){
    * @chainable
    */
   fn.background = function(...args) {
-    this._renderer.background(...args);
-    return this;
+    return this._renderer.background(...args);
   };
 
   /**
@@ -1096,6 +1095,8 @@ function setting(p5, fn){
    * or `HSLA` colors, depending on the current <a href="#/p5/colorMode">colorMode()</a>. The last parameter
    * sets the alpha (transparency) value.
    *
+   * Calling `fill()` without an argument returns the current fill as a <a href="#/p5.Color">p5.Color</a> object.
+   *
    * @method fill
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
    * @param  {Number}        v2      green value if color mode is RGB or saturation value if color mode is HSB.
@@ -1284,9 +1285,12 @@ function setting(p5, fn){
    * @param  {p5.Color}      color   the fill color.
    * @chainable
    */
+  /**
+   * @method fill
+   * @return {p5.Color}      the current fill color.
+   */
   fn.fill = function(...args) {
-    this._renderer.fill(...args);
-    return this;
+    return this._renderer.fill(...args);
   };
 
   /**
@@ -1414,6 +1418,8 @@ function setting(p5, fn){
    * The version of `stroke()` with four parameters interprets them as RGBA, HSBA,
    * or HSLA colors, depending on the current `colorMode()`. The last parameter
    * sets the alpha (transparency) value.
+   *
+   * Calling `stroke()` without an argument returns the current stroke as a <a href="#/p5.Color">p5.Color</a> object.
    *
    * @method stroke
    * @param  {Number}        v1      red value if color mode is RGB or hue value if color mode is HSB.
@@ -1601,9 +1607,12 @@ function setting(p5, fn){
    * @param  {p5.Color}      color   the stroke color.
    * @chainable
    */
+  /**
+   * @method stroke
+   * @return {p5.Color}      the current stroke color.
+   */
   fn.stroke = function(...args) {
-    this._renderer.stroke(...args);
-    return this;
+    return this._renderer.stroke(...args);
   };
 
   /**
@@ -1767,6 +1776,8 @@ function setting(p5, fn){
    *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
    *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
    *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
+   *
+   * Calling `blendMode()` without an argument returns the current blendMode.
    *
    * @example
    * function setup() {
@@ -2136,6 +2147,10 @@ function setting(p5, fn){
    *   describe('A yellow line and a turquoise line form an X on a gray background. The area where they overlap is green.');
    * }
    */
+  /**
+   * @method blendMode
+   * @return {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|REMOVE|SUBTRACT)}      the current blend mode.
+   */
   fn.blendMode = function (mode) {
     // p5._validateParameters('blendMode', arguments);
     if (mode === constants.NORMAL) {
@@ -2145,7 +2160,7 @@ function setting(p5, fn){
       );
       mode = constants.BLEND;
     }
-    this._renderer.blendMode(mode);
+    return this._renderer.blendMode(mode);
   };
 }
 

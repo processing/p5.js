@@ -299,7 +299,10 @@ class FilterRenderer2D {
             'vec4 getColor': `(FilterInputs inputs, in sampler2D canvasContent) {
               return getTexture(canvasContent, inputs.texCoord);
             }`
-          }
+          },
+          hookAliases: {
+            'getColor': ['filterColor'],
+          },
         }
       );
     }

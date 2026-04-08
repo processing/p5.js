@@ -1611,6 +1611,8 @@ function customShapes(p5, fn) {
    * Note: `bezierVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
+   * Calling `bezierOrder()` without an argument returns the current Bézier order.
+   *
    * @method bezierOrder
    * @param {Number} order The new order to set. Can be either 2 or 3, by default 3
    *

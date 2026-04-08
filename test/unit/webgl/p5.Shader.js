@@ -2184,6 +2184,168 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[2], 0, 5);
     });
 
+    test('handle uniformFloat with control flow in callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        // Uniform callback with an if-statement and multiple return paths
+        const pastOneSecond = myp5.uniformFloat(() => {
+          if (myp5.frameCount > 1000) {
+            return 1;
+          }
+          return 0;
+        });
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set(myp5.mix([1, 0, 0, 1], [0, 1, 0, 1], pastOneSecond));
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // frameCount <= 1000 so pastOneSecond = 0, mix returns [1, 0, 0, 1] = red
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle uniformFloat with for loop in callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        // Uniform callback with a for loop accumulating a value
+        const brightness = myp5.uniformFloat(() => {
+          let sum = 0;
+          for (let i = 0; i < 3; i++) {
+            sum += i;
+          }
+          return sum / 10; // 0+1+2=3, 3/10=0.3
+        });
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set([brightness, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // brightness = 0.3, so red channel = 0.3 * 255 ≈ 76
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0.3 * 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle uniformFloat with sub-function call in callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        // Uniform callback that calls a sub-function
+        const brightness = myp5.uniformFloat(() => {
+          const getValue = () => 0.6;
+          return getValue();
+        });
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set([brightness, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // brightness = 0.6, so red channel = 0.6 * 255 ≈ 153
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0.6 * 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle uniformFloat with control flow in non-inline callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        function pastOneSecondValue() {
+          if (myp5.frameCount > 1000) {
+            return 1;
+          }
+          return 0;
+        }
+        const pastOneSecond = myp5.uniformFloat(pastOneSecondValue);
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set(myp5.mix([1, 0, 0, 1], [0, 1, 0, 1], pastOneSecond));
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // frameCount <= 1000 so pastOneSecond = 0, mix returns [1, 0, 0, 1] = red
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle uniformFloat with for loop in non-inline callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        function brightnessValue() {
+          let sum = 0;
+          for (let i = 0; i < 3; i++) {
+            sum += i;
+          }
+          return sum / 10; // 0+1+2=3, 3/10=0.3
+        }
+        const brightness = myp5.uniformFloat(brightnessValue);
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set([brightness, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // brightness = 0.3, so red channel = 0.3 * 255 ≈ 76
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0.3 * 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('handle uniformFloat with sub-function call in non-inline callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(() => {
+        function getValue() {
+          return 0.6;
+        }
+        function brightnessValue() {
+          return getValue();
+        }
+        const brightness = myp5.uniformFloat(brightnessValue);
+
+        myp5.filterColor.begin();
+        myp5.filterColor.set([brightness, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      // brightness = 0.6, so red channel = 0.6 * 255 ≈ 153
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0.6 * 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
     test('handle false .set() in if with content afterwards with flat API', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
