@@ -1,7 +1,6 @@
 /**
  * @module 3D
  * @submodule Camera
- * @requires core
  */
 
 import { Matrix } from '../math/p5.Matrix';

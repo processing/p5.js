@@ -3,7 +3,6 @@
  * @module 3D
  * @submodule Material
  * @for p5
- * @requires core
  */
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);

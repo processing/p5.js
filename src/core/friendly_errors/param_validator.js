@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  */
 import * as constants from '../constants.js';
 import { z } from 'zod/v4';

@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Lights
  * @for p5
- * @requires core
  */
 
 import { Renderer3D } from '../core/p5.Renderer3D';

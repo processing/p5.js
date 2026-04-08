@@ -2,7 +2,6 @@
  * @module Color
  * @submodule Color Conversion
  * @for p5
- * @requires core
  */
 
 /**

@@ -2,7 +2,6 @@
  * @module Shape
  * @submodule Curves
  * @for p5
- * @requires core
  */
 
 function curves(p5, fn){
