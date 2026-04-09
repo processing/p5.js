@@ -34,7 +34,6 @@ const ignoreFunction = [
 ];
 
 export const verifierUtils = {
-
   /**
    * Fetches the contents of a script element in the user's sketch.
    *

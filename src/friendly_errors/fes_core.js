@@ -24,11 +24,9 @@
  */
 import { translator } from '../core/internationalization';
 import errorTable from './browser_errors';
-import * as contants from '../core/constants';
 
-function fesCore(p5, fn){
+function fesCore(p5, fn, lifecycles){
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
-  // See testColors below for all the color codes and names
   const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
   let misusedAtTopLevelCode = null;
   let defineMisusedAtTopLevelCode = null;
@@ -42,7 +40,30 @@ function fesCore(p5, fn){
 
   // Used for internally thrown errors that should not get wrapped by another
   // friendly error handler
-  class FESError extends Error {};
+  class FESError extends Error { };
+
+  lifecycles.presetup = function () {
+    let doFriendlyWelcome = false; // TEMP until we get it all working LM
+    if(doFriendlyWelcome){
+      // p5.js brand - magenta: #ED225D
+      //const astrixBgColor = 'transparent';
+      //const astrixTxtColor = '#ED225D';
+      //const welcomeBgColor = '#ED225D';
+      //const welcomeTextColor = 'white';
+      const welcomeMessage = translator('fes.pre', {
+        message: translator('fes.welcome')
+      });
+      console.log(
+        '    _ \n' +
+          ' /\\| |/\\ \n' +
+          " \\ ` ' /  \n" +
+          ' / , . \\  \n' +
+          ' \\/|_|\\/ ' +
+          '\n\n' +
+          welcomeMessage
+      );
+    }
+  };
 
   if (typeof IS_MINIFIED !== 'undefined') {
     p5._friendlyError =
@@ -50,10 +71,6 @@ function fesCore(p5, fn){
       p5._fesErrorMonitor =
       () => {};
   } else {
-    let doFriendlyWelcome = false; // TEMP until we get it all working LM
-
-    // const errorTable = require('./browser_errors').default;
-
     // -- Borrowed from jQuery 1.11.3 --
     const class2type = {};
     const toString = class2type.toString;
@@ -105,26 +122,6 @@ function fesCore(p5, fn){
       'windowResized'
     ];
 
-    const friendlyWelcome = () => {
-      // p5.js brand - magenta: #ED225D
-      //const astrixBgColor = 'transparent';
-      //const astrixTxtColor = '#ED225D';
-      //const welcomeBgColor = '#ED225D';
-      //const welcomeTextColor = 'white';
-      const welcomeMessage = translator('fes.pre', {
-        message: translator('fes.welcome')
-      });
-      console.log(
-        '    _ \n' +
-          ' /\\| |/\\ \n' +
-          " \\ ` ' /  \n" +
-          ' / , . \\  \n' +
-          ' \\/|_|\\/ ' +
-          '\n\n' +
-          welcomeMessage
-      );
-    };
-
     /**
      * Takes a message and a p5 function func, and adds a link pointing to
      * the reference documentation of func at the end of the message
@@ -149,7 +146,7 @@ function fesCore(p5, fn){
           methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
         //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
-        funcName.startsWith('p5.')  ?
+        funcName.startsWith('p5.') ?
           msgWithReference = `${message} (https://p5js.org/reference/${referenceSection}.${funcName})` :
           msgWithReference = `${message} (https://p5js.org/reference/${referenceSection}/${funcName})`;
       }
@@ -169,15 +166,6 @@ function fesCore(p5, fn){
      * @return console logs
      */
     p5._report = (message, func, color) => {
-      // if p5._fesLogger is set ( i.e we are running tests ), use that
-      // instead of console.log
-      const log =
-        p5._fesLogger == null ? console.log.bind(console) : p5._fesLogger;
-
-      if (doFriendlyWelcome) {
-        friendlyWelcome();
-        doFriendlyWelcome = false;
-      }
       if ('undefined' === getType(color)) {
         color = '#B40033'; // dark magenta
       } else if (getType(color) === 'number') {
@@ -191,9 +179,9 @@ function fesCore(p5, fn){
       const prefixedMsg = translator('fes.pre', { message });
 
       if (ENABLE_FES_STYLING) {
-        log('%c' + prefixedMsg, style.join(';'));
+        console.log('%c' + prefixedMsg, style.join(';'));
       } else {
-        log(prefixedMsg);
+        console.log(prefixedMsg);
       }
     };
 
@@ -227,7 +215,7 @@ function fesCore(p5, fn){
      * @param  {Number|String}  [color]   CSS color code
      */
     p5._friendlyError = function(message, func, color) {
-      if (p5.disableFriendlyErrors) return;
+      // if (p5.disableFriendlyErrors) return;
       p5._report(message, func, color);
     };
 
@@ -244,59 +232,6 @@ function fesCore(p5, fn){
         url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
       });
       console.log(translator('fes.pre', { message }));
-    };
-
-    /**
-     * Measures dissimilarity between two strings by calculating
-     * the Levenshtein distance.
-     *
-     * If the "distance" between them is small enough, it is
-     * reasonable to think that one is the misspelled version of the other.
-     *
-     * Specifically, this uses the Wagner–Fischer algorithm.
-     * @method computeEditDistance
-     * @private
-     * @param {String} w1 the first word
-     * @param {String} w2 the second word
-     *
-     * @returns {Number} the "distance" between the two words, a smaller value
-     *                   indicates that the words are similar
-     */
-    const computeEditDistance = (w1, w2) => {
-      const l1 = w1.length,
-        l2 = w2.length;
-      if (l1 === 0) return w2;
-      if (l2 === 0) return w1;
-
-      let prev = [];
-      let cur = [];
-
-      for (let j = 0; j < l2 + 1; j++) {
-        cur[j] = j;
-      }
-
-      prev = cur;
-
-      for (let i = 1; i < l1 + 1; i++) {
-        cur = [];
-        for (let j = 0; j < l2 + 1; j++) {
-          if (j === 0) {
-            cur[j] = i;
-          } else {
-            let a1 = w1[i - 1],
-              a2 = w2[j - 1];
-            let temp = 999999;
-            let cost = a1.toLowerCase() === a2.toLowerCase() ? 0 : 1;
-            temp = temp > cost + prev[j - 1] ? cost + prev[j - 1] : temp;
-            temp = temp > 1 + cur[j - 1] ? 1 + cur[j - 1] : temp;
-            temp = temp > 1 + prev[j] ? 1 + prev[j] : temp;
-            cur[j] = temp;
-          }
-        }
-        prev = cur;
-      }
-
-      return cur[l2];
     };
 
     /**
@@ -476,10 +411,6 @@ function fesCore(p5, fn){
      * @param {Array} friendlyStack
      */
     const printFriendlyStack = friendlyStack => {
-      const log =
-        p5._fesLogger && typeof p5._fesLogger === 'function'
-          ? p5._fesLogger
-          : console.log.bind(console);
       if (friendlyStack.length > 1) {
         let stacktraceMsg = '';
         friendlyStack.forEach((frame, idx) => {
@@ -500,7 +431,7 @@ function fesCore(p5, fn){
           }
           stacktraceMsg += frameMsg;
         });
-        log(stacktraceMsg);
+        console.log(stacktraceMsg);
       }
     };
 
@@ -967,38 +898,11 @@ function fesCore(p5, fn){
 
     p5._fesErrorMonitor = fesErrorMonitor;
     p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
-
-    // logger for testing purposes.
-    p5._fesLogger = null;
     p5._fesLogCache = {};
 
     window.addEventListener('load', checkForUserDefinedFunctions, false);
     window.addEventListener('error', p5._fesErrorMonitor, false);
     window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
-
-    /**
-     * Prints out all the colors in the color pallete with white text.
-     * For color blindness testing.
-     */
-    /* function testColors() {
-      const str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
-      p5._friendlyError(str, 'print', '#ED225D'); // p5.js magenta
-      p5._friendlyError(str, 'print', '#2D7BB6'); // p5.js blue
-      p5._friendlyError(str, 'print', '#EE9900'); // p5.js orange
-      p5._friendlyError(str, 'print', '#A67F59'); // p5.js light brown
-      p5._friendlyError(str, 'print', '#704F21'); // p5.js gold
-      p5._friendlyError(str, 'print', '#1CC581'); // auto cyan
-      p5._friendlyError(str, 'print', '#FF6625'); // auto orange
-      p5._friendlyError(str, 'print', '#79EB22'); // auto green
-      p5._friendlyError(str, 'print', '#B40033'); // p5.js darkened magenta
-      p5._friendlyError(str, 'print', '#084B7F'); // p5.js darkened blue
-      p5._friendlyError(str, 'print', '#945F00'); // p5.js darkened orange
-      p5._friendlyError(str, 'print', '#6B441D'); // p5.js darkened brown
-      p5._friendlyError(str, 'print', '#2E1B00'); // p5.js darkened gold
-      p5._friendlyError(str, 'print', '#008851'); // auto dark cyan
-      p5._friendlyError(str, 'print', '#C83C00'); // auto dark orange
-      p5._friendlyError(str, 'print', '#4DB200'); // auto dark green
-    } */
   }
 
   // This is a lazily-defined list of p5 symbols that may be
@@ -1019,7 +923,6 @@ function fesCore(p5, fn){
    */
   defineMisusedAtTopLevelCode = () => {
     const uniqueNamesFound = {};
-
     const getSymbols = obj =>
       Object.getOwnPropertyNames(obj)
         .filter(name => {
@@ -1048,13 +951,7 @@ function fesCore(p5, fn){
           return { name, type };
         });
 
-    misusedAtTopLevelCode = [].concat(
-      getSymbols(fn),
-      // At present, p5 only adds its constants to fn during
-      // construction, which may not have happened at the time a
-      // ReferenceError is thrown, so we'll manually add them to our list.
-      getSymbols(contants)
-    );
+    misusedAtTopLevelCode = getSymbols(fn);
 
     // This will ultimately ensure that we report the most specific error
     // possible to the user, e.g. advising them about HALF_PI instead of PI
@@ -1131,9 +1028,6 @@ function fesCore(p5, fn){
     });
   };
 
-  // Exposing this primarily for unit testing.
-  fn._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
-
   if (document.readyState !== 'complete') {
     window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
 
@@ -1150,5 +1044,60 @@ function fesCore(p5, fn){
 export default fesCore;
 
 if (typeof p5 !== 'undefined') {
-  fesCore(p5, p5.prototype);
+  // fesCore(p5, p5.prototype);
+  p5.registerAddon(fesCore);
 }
+
+/**
+ * Measures dissimilarity between two strings by calculating
+ * the Levenshtein distance.
+ *
+ * If the "distance" between them is small enough, it is
+ * reasonable to think that one is the misspelled version of the other.
+ *
+ * Specifically, this uses the Wagner–Fischer algorithm.
+ *
+ * @method computeEditDistance
+ * @private
+ * @param {String} w1 the first word
+ * @param {String} w2 the second word
+ *
+ * @returns {Number} the "distance" between the two words, a smaller value
+ *                   indicates that the words are similar
+ */
+function computeEditDistance(w1, w2) {
+  const l1 = w1.length,
+    l2 = w2.length;
+  if (l1 === 0) return w2;
+  if (l2 === 0) return w1;
+
+  let prev = [];
+  let cur = [];
+
+  for (let j = 0; j < l2 + 1; j++) {
+    cur[j] = j;
+  }
+
+  prev = cur;
+
+  for (let i = 1; i < l1 + 1; i++) {
+    cur = [];
+    for (let j = 0; j < l2 + 1; j++) {
+      if (j === 0) {
+        cur[j] = i;
+      } else {
+        let a1 = w1[i - 1],
+          a2 = w2[j - 1];
+        let temp = 999999;
+        let cost = a1.toLowerCase() === a2.toLowerCase() ? 0 : 1;
+        temp = temp > cost + prev[j - 1] ? cost + prev[j - 1] : temp;
+        temp = temp > 1 + cur[j - 1] ? 1 + cur[j - 1] : temp;
+        temp = temp > 1 + prev[j] ? 1 + prev[j] : temp;
+        cur[j] = temp;
+      }
+    }
+    prev = cur;
+  }
+
+  return cur[l2];
+};
