@@ -15,7 +15,7 @@ color(p5);
 
 // core
 // currently, it only contains the test for parameter validation
-import friendlyErrors from './core/friendly_errors';
+import friendlyErrors from './friendly_errors';
 friendlyErrors(p5);
 
 // data
@@ -64,4 +64,3 @@ import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/
 Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
 
 export default p5;
-

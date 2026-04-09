@@ -2,9 +2,9 @@
  * @for p5
  * @requires core
  */
-import * as constants from '../constants.js';
+import * as constants from '../core/constants.js';
 import { z } from 'zod/v4';
-import dataDoc from '../../../docs/parameterData.json';
+import dataDoc from '../../docs/parameterData.json';
 
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
