@@ -5,7 +5,7 @@
 
 import * as constants from '../core/constants';
 
-/** 
+/**
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
@@ -14,7 +14,7 @@ const prioritizeSmallerDimension = function(currentVectorDimension, args) {
 
   //if (args.length !== currentVectorDimension && args.length !== 1) {
   // TODO how to suppress for valid solo arguments?
-  // p5._friendlyError(
+  // this._friendlyError(
   //  `Operating on two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ${minDimension}D vectors, and any additional values of the longer vector will be ignored.`, 'p5.Vector'
   //);
   //}
@@ -55,7 +55,7 @@ class Vector {
   constructor(...args) {
 
     if (args.length === 0) {
-      p5._friendlyError(
+      this._friendlyError(
         'Requires valid arguments.', 'p5.Vector'
       );
     }
@@ -69,7 +69,7 @@ class Vector {
 
     this.values = [];
     if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
-      p5._friendlyError(
+      this._friendlyError(
         'Arguments contain non-finite numbers',
         target.name
       );
@@ -84,6 +84,9 @@ class Vector {
     // Vector class from the one imported in the main p5.js bundle.
     this.isVector = true;
   }
+
+  // This will get overwritten when exported as part of p5.
+  _friendlyError(_e) {}
 
   get dimensions(){
     return this.values.length;
@@ -123,7 +126,7 @@ class Vector {
     if (index < this.values.length) {
       return this.values[index];
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
         'p5.Vector.setValue'
       );
@@ -148,7 +151,7 @@ class Vector {
     if (index < this.values.length) {
       this.values[index] = value;
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
         'p5.Vector.setValue'
       );
@@ -3051,7 +3054,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.add'
         );
@@ -3098,7 +3101,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.sub'
         );
@@ -3142,7 +3145,7 @@ class Vector {
     if (!target) {
       target = v.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.mult'
         );
@@ -3168,7 +3171,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.rotate'
         );
@@ -3212,7 +3215,7 @@ class Vector {
       target = v.copy();
 
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.div'
         );
@@ -3280,7 +3283,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 4) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.lerp'
         );
@@ -3310,7 +3313,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 4) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.slerp'
         );
@@ -3364,7 +3367,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.normalize'
         );
@@ -3390,7 +3393,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.limit'
         );
@@ -3416,7 +3419,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.setMag'
         );
@@ -3472,7 +3475,7 @@ class Vector {
       target = incidentVector.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.reflect'
         );
@@ -3513,7 +3516,7 @@ class Vector {
     } else if (v1 instanceof Array) {
       v = new Vector().set(v1);
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The v1 parameter should be of type Array or p5.Vector',
         'p5.Vector.equals'
       );
@@ -3600,6 +3603,8 @@ function vector(p5, fn) {
    * }
    */
   p5.Vector = Vector;
+
+  Vector.prototype._friendlyError = p5._friendlyError;
 
   /**
    * The x component of the vector

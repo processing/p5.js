@@ -1,4 +1,4 @@
-import { Vector } from '../../../src/math/p5.Vector.js';
+import { default as vector, Vector } from '../../../src/math/p5.Vector.js';
 import { default as math } from '../../../src/math/math.js';
 import { _defaultEmptyVector, _validatedVectorOperation } from '../../../src/math/patch-vector.js';
 import { vi } from 'vitest';
@@ -7,33 +7,34 @@ import { vi } from 'vitest';
 suite('p5.Vector', function () {
   var v;
 
-  const mockP5 = {};
+  let FESCalled = false;
+  const mockP5 = {
+    _friendlyError: function(msg, func) {
+      FESCalled = true;
+      console.warn(msg);
+    }
+  };
+  const options = { p5: mockP5 };
   const mockP5Prototype = {};
 
   beforeAll(async function () {
     // Makes createVector available
     mockP5.Vector = Vector;
     math(mockP5, mockP5Prototype);
+    vector(mockP5, mockP5Prototype);
 
     // Ensures all decorators are used by unit tests
     mockP5Prototype.createVector = _defaultEmptyVector(
-      mockP5Prototype.createVector
+      mockP5Prototype.createVector,
+      options
     );
 
     // The following mocks simulate the validation decorator
-    Vector.prototype.add = _validatedVectorOperation(false)(Vector.prototype.add);
-    Vector.prototype.sub = _validatedVectorOperation(false)(Vector.prototype.sub);
-    Vector.prototype.mult = _validatedVectorOperation(true)(Vector.prototype.mult);
-    Vector.prototype.rem = _validatedVectorOperation(true)(Vector.prototype.rem);
-    Vector.prototype.div = _validatedVectorOperation(true)(Vector.prototype.div);
-
-    globalThis.FESCalled = false;
-    globalThis.p5 = {
-      _friendlyError: function(msg, func) {
-        globalThis.FESCalled = true;
-        console.warn(msg);
-      }
-    };
+    Vector.prototype.add = _validatedVectorOperation(false)(Vector.prototype.add, options);
+    Vector.prototype.sub = _validatedVectorOperation(false)(Vector.prototype.sub, options);
+    Vector.prototype.mult = _validatedVectorOperation(true)(Vector.prototype.mult, options);
+    Vector.prototype.rem = _validatedVectorOperation(true)(Vector.prototype.rem, options);
+    Vector.prototype.div = _validatedVectorOperation(true)(Vector.prototype.div, options);
   });
 
   afterEach(function () {});
@@ -2091,9 +2092,9 @@ suite('p5.Vector', function () {
     test('should throw friendly error if attempting to get element outside length',
       function () {
         let vect = new Vector(1, 2, 3, 4);
-        globalThis.FESCalled = false;
+        FESCalled = false;
         assert.equal(vect.getValue(5), undefined);
-        assert.equal(globalThis.FESCalled, true);
+        assert.equal(FESCalled, true);
       }
     );
   });
@@ -2111,9 +2112,9 @@ suite('p5.Vector', function () {
     test('should throw friendly error if attempting to set element outside lenght',
       function () {
         let vect = new Vector(1, 2, 3, 4);
-        globalThis.FESCalled = false;
+        FESCalled = false;
         vect.setValue(100, 7);
-        assert.equal(globalThis.FESCalled, true);
+        assert.equal(FESCalled, true);
       }
     );
   });

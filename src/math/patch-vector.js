@@ -4,7 +4,7 @@ import { Vector } from './p5.Vector.js';
  * @private
  * @internal
  */
-export function _defaultEmptyVector(target){
+export function _defaultEmptyVector(target, { p5 }){
   return function(...args){
     if(args.length === 0){
       p5._friendlyError(
@@ -27,7 +27,7 @@ export function _defaultEmptyVector(target){
  * @internal
  */
 export function _validatedVectorOperation(expectsSoloNumberArgument){
-  return function(target){
+  return function(target, { p5 }){
     return function(...args){
       if (args.length === 0) {
         // No arguments? No action
