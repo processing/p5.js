@@ -71,7 +71,7 @@ class Vector {
     if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
       this._friendlyError(
         'Arguments contain non-finite numbers',
-        target.name
+        'p5.Vector'
       );
     } else {
       this.values = args;
