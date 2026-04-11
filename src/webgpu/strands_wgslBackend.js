@@ -1,3 +1,4 @@
+import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
@@ -263,6 +264,10 @@ export const wgslBackend = {
     }
     return primitiveTypeName;
   },
+  getNoiseShaderSnippet() {
+    return noiseWGSL;
+  },
+
   generateHookUniformKey(name, typeInfo) {
     // For sampler2D types, we don't add them to the uniform struct,
     // but we still need them in the shader's hooks object so that
@@ -301,9 +306,13 @@ export const wgslBackend = {
       // Generate just a semicolon (unless suppressed)
       generationContext.write(semicolon);
     } else if (node.statementType === StatementType.EARLY_RETURN) {
-      const exprNodeID = node.dependsOn[0];
-      const expr = this.generateExpression(generationContext, dag, exprNodeID);
-      generationContext.write(`return ${expr}${semicolon}`);
+      if (node.dependsOn && node.dependsOn.length > 0) {
+        const exprNodeID = node.dependsOn[0];
+        const expr = this.generateExpression(generationContext, dag, exprNodeID);
+        generationContext.write(`return ${expr}${semicolon}`);
+      } else {
+        generationContext.write(`return${semicolon}`);
+      }
     }
   },
   generateAssignment(generationContext, dag, nodeID) {

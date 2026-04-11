@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -411,33 +411,44 @@ function validateParams(p5, fn, lifecycles) {
     // of any of them. In this case, aggregate all possible types and print
     // a friendly error message that indicates what the expected types are at
     // which position (position is not 0-indexed, for accessibility reasons).
+
     const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
 
-      error.errors.forEach(err => {
-        const issue = err[0];
-        if (issue) {
-          if (!actualType) {
-            actualType = issue.message;
-          }
+      const collectIssue = issue => {
+        if (!issue) return;
+        if (!actualType) {
+          actualType = issue.message;
+        }
 
-          if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1];
-            expectedTypes.add(issue.expected);
-          }
-          // The case for constants. Since we don't want to print out the actual
-          // constant values in the error message, the error message will
-          // direct users to the documentation.
-          else if (issue.code === 'invalid_value') {
+        if (issue.code === 'invalid_type') {
+          actualType = issue.message.split(', received ')[1];
+          expectedTypes.add(issue.expected);
+        }
+        // The case for constants. Since we don't want to print out the actual
+        // constant values in the error message, the error message will
+        // direct users to the documentation.
+        else if (issue.code === 'invalid_value') {
+          if (Array.isArray(issue.values) && issue.values.every(v => v === Infinity || v === -Infinity)) {
+            expectedTypes.add('number');
+          } else {
             expectedTypes.add('constant (please refer to documentation for allowed values)');
             actualType = args[error.path[0]];
-          } else if (issue.code === 'custom') {
-            const match = issue.message.match(/Input not instance of (\w+)/);
-            if (match) expectedTypes.add(match[1]);
-            actualType = undefined;
           }
+        } else if (issue.code === 'custom') {
+          const match = issue.message.match(/Input not instance of (\w+)/);
+          if (match) expectedTypes.add(match[1]);
+          actualType = undefined;
+        } else if (issue.code === 'invalid_union') {
+          issue.errors.forEach(nestedErr => {
+            nestedErr.forEach(nestedIssue => collectIssue(nestedIssue));
+          });
         }
+      };
+
+      error.errors.forEach(err => {
+        err.forEach(issue => collectIssue(issue));
       });
 
       if (expectedTypes.size > 0) {
@@ -457,6 +468,7 @@ function validateParams(p5, fn, lifecycles) {
 
       return message;
     };
+
 
     switch (currentError.code) {
       case 'invalid_union': {
