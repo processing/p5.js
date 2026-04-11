@@ -50,7 +50,7 @@ class p5 {
   constructor(sketch, node) {
     // Apply addon defined decorations
     if(p5.decorations.size > 0){
-      decorateClass(p5, p5.decorations, 'p5', p5);
+      decorateClass(p5, p5.decorations, 'p5');
       p5.decorations.clear();
     }
 
@@ -520,7 +520,7 @@ function createBindGlobal(instance) {
 }
 
 // Generic function to decorate classes
-function decorateClass(Target, decorations, path, p5){
+function decorateClass(Target, decorations, path){
   path ??= Target.name;
   // Static properties
   for(const key in Target){
@@ -532,8 +532,7 @@ function decorateClass(Target, decorations, path, p5){
             const result = decorator(Target[key], {
               kind: 'method',
               name: key,
-              static: true,
-              p5
+              static: true
             });
             if(result){
               Object.defineProperty(Target, key, {
@@ -546,8 +545,7 @@ function decorateClass(Target, decorations, path, p5){
             const result = decorator(undefined, {
               kind: 'field',
               name: key,
-              static: true,
-              p5
+              static: true
             });
             if(result && typeof result === 'function'){
               Target[key] = result(Target[key]);
@@ -557,7 +555,7 @@ function decorateClass(Target, decorations, path, p5){
       }
 
       if(typeof Target[key] === 'function' && Target[key].prototype){
-        decorateClass(Target[key], decorations, `${path}.${key}`, p5);
+        decorateClass(Target[key], decorations, `${path}.${key}`);
       }
     }
   }
@@ -572,8 +570,7 @@ function decorateClass(Target, decorations, path, p5){
             const result = decorator(Target.prototype[member], {
               kind: 'method',
               name: member,
-              static: false,
-              p5
+              static: false
             });
             if(result) {
               Object.defineProperty(Target.prototype, member, {
@@ -591,8 +588,7 @@ function decorateClass(Target, decorations, path, p5){
               const result = decorator(undefined, {
                 kind: 'field',
                 name: member,
-                static: false,
-                p5
+                static: false
               });
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
@@ -606,14 +602,12 @@ function decorateClass(Target, decorations, path, p5){
               const getterResult = decorator(get, {
                 kind: 'getter',
                 name: member,
-                static: false,
-                p5
+                static: false
               });
               const setterResult = decorator(set, {
                 kind: 'setter',
                 name: member,
-                static: false,
-                p5
+                static: false
               });
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,

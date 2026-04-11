@@ -4,10 +4,10 @@ import { Vector } from './p5.Vector.js';
  * @private
  * @internal
  */
-export function _defaultEmptyVector(target, { p5 }){
+export function _defaultEmptyVector(target){
   return function(...args){
     if(args.length === 0){
-      p5._friendlyError(
+      this._friendlyError(
         'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.',
         'p5.createVector'
       );
@@ -27,7 +27,7 @@ export function _defaultEmptyVector(target, { p5 }){
  * @internal
  */
 export function _validatedVectorOperation(expectsSoloNumberArgument){
-  return function(target, { p5 }){
+  return function(target){
     return function(...args){
       if (args.length === 0) {
         // No arguments? No action
@@ -44,7 +44,7 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
       }
 
       if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
-        p5._friendlyError(
+        this._friendlyError(
           'Arguments contain non-finite numbers',
           target.name
         );
