@@ -18,8 +18,8 @@ jobs:
       INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       # 1. Setup
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - name: Get semver info
@@ -61,7 +61,7 @@ jobs:
 
       # 3. Release p5.js
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v0.1.15
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           prerelease: ${{ steps.semver.outputs.is-prerelease == 'true' }}
@@ -70,7 +70,7 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
       - name: Publish to NPM
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: JS-DevTools/npm-publish@v1
+        uses: JS-DevTools/npm-publish@v4
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: r1
@@ -78,7 +78,7 @@ jobs:
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: processing/p5.js-website
           path: website
@@ -114,7 +114,7 @@ jobs:
       # 5. Update Bower files
       - name: Checkout Bower repo
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: processing/p5.js-release
           path: bower
