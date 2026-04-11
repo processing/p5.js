@@ -2345,7 +2345,7 @@ function rendererWebGPU(p5, fn) {
                 rgb += components.emissive;
                 return vec4<f32>(rgb, components.opacity);
               }`,
-              "vec4f getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4f getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2370,7 +2370,7 @@ function rendererWebGPU(p5, fn) {
             },
             fragment: {
               "void beforeFragment": "() {}",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2396,7 +2396,7 @@ function rendererWebGPU(p5, fn) {
             fragment: {
               "void beforeFragment": "() {}",
               "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "bool shouldDiscard": "(outside: bool) { return outside; };",
               "void afterFragment": "() {}",
             },

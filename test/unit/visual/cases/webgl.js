@@ -1134,6 +1134,20 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('texCoord is available in getFinalColor', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.finalColor.begin();
+        p5.finalColor.set([p5.finalColor.texCoord, 0, 1]);
+        p5.finalColor.end();
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+   
     visualSuite('auto-return for shader hooks', () => {
       visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
         p5.createCanvas(50, 50, p5.WEBGL);
