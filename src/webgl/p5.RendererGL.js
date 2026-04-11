@@ -19,7 +19,6 @@ import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { TypeInfoFromGLSLName } from '../strands/ir_types.js';
 import { getShaderHookTypes } from './shaderHookUtils';
-import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 
 import filterBaseVert from "./shaders/filters/base.vert";
 import lightingShader from "./shaders/lighting.glsl";
@@ -1903,10 +1902,6 @@ class RendererGL extends Renderer3D {
       }
       this.bindFramebuffer(prevFramebuffer);
     }
-  }
-
-  getNoiseShaderSnippet() {
-    return noiseGLSL;
   }
 
 }

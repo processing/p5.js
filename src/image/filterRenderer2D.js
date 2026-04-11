@@ -17,7 +17,6 @@ import filterBaseVert from '../webgl/shaders/filters/base.vert';
 import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
 import { glslBackend } from '../webgl/strands_glslBackend';
 import { getShaderHookTypes } from '../webgl/shaderHookUtils';
-import noiseGLSL from '../webgl/shaders/functions/noise3DGLSL.glsl';
 import { makeFilterShader } from '../core/filterShaders';
 
 class FilterRenderer2D {
@@ -309,9 +308,6 @@ class FilterRenderer2D {
     return this._baseFilterShader;
   }
 
-  getNoiseShaderSnippet() {
-    return noiseGLSL;
-  }
 
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
