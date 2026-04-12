@@ -215,7 +215,14 @@ if (typeof p5 !== "undefined") {
 /* ------------------------------------------------------------- */
 /**
  * @typedef {Object} WorldInputsHook
-*/
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
 /**
  * @property {WorldInputsHook} worldInputs
  * @beta
@@ -263,7 +270,19 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @typedef {Object} CombineColorsHook
-*/
+ * @property {any} baseColor
+ * @property {any} diffuse
+ * @property {any} ambientColor
+ * @property {any} ambient
+ * @property {any} specularColor
+ * @property {any} specular
+ * @property {any} emissive
+ * @property {any} opacity
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
 /**
  * @property {CombineColorsHook} combineColors
  * @beta
@@ -599,7 +618,23 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @typedef {Object} PixelInputsHook
-*/
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} ambientLight
+ * @property {any} ambientMaterial
+ * @property {any} specularMaterial
+ * @property {any} emissiveMaterial
+ * @property {any} color
+ * @property {any} shininess
+ * @property {any} metalness
+ * @property {any} tangent
+ * @property {any} center
+ * @property {any} position
+ * @property {any} strokeWeight
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
 /**
  * @property {PixelInputsHook} pixelInputs
  * @beta
@@ -689,7 +724,15 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property finalColor
+ * @typedef {Object} FinalColorHook
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FinalColorHook} finalColor
  * @beta
  * @description
  * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
@@ -828,7 +871,14 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @typedef {Object} ObjectInputsHook
-*/
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
 /**
  * @property {ObjectInputsHook} objectInputs
  * @beta
@@ -873,7 +923,14 @@ if (typeof p5 !== "undefined") {
 
 /**
  * @typedef {Object} CameraInputsHook
-*/
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
 /**
  * @property {CameraInputsHook} cameraInputs
  * @beta
