@@ -673,6 +673,7 @@ export default p5;
  *
  * @method setup
  * @for p5
+ * @return {void|Promise<void>}
  *
  * @example
  * function setup() {

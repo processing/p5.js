@@ -466,6 +466,85 @@ class Quad extends ShapePrimitive {
   }
 }
 
+/*
+ * TODO: Future enhancement — align with arcVertex proposal (#6459)
+ * Currently stores start/stop angles and mode (OPEN/CHORD/PIE).
+ * For full SVG compatibility and arcs inside beginShape/endShape,
+ * we may want to add an arc-to-vertex variant that matches the
+ * arcVertex() API discussed in #6459.
+ */
+
+class ArcPrimitive extends ShapePrimitive {
+  #x;
+  #y;
+  #w;
+  #h;
+  #start;
+  #stop;
+  #mode;
+  #vertexCapacity = 2;
+
+  constructor(startVertex, endVertex, x, y, w, h, start, stop, mode) {
+    // ShapePrimitive requires at least one vertex; pass a placeholder
+    super(startVertex, endVertex);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+    this.#start = start;
+    this.#stop = stop;
+    this.#mode = mode;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+  get start() { return this.#start; }
+  get stop() { return this.#stop; }
+  get mode() { return this.#mode; }
+  get startVertex() { return this.vertices[0]; }
+  get endVertex() { return this.vertices[1]; }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitArcPrimitive(this);
+  }
+}
+
+class EllipsePrimitive extends ShapePrimitive {
+  #x;
+  #y;
+  #w;
+  #h;
+  #vertexCapacity = 1;
+
+  constructor(centerVertex, x, y, w, h) {
+
+    super(centerVertex);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitEllipsePrimitive(this);
+  }
+}
+
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
@@ -905,6 +984,49 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
+
+  arcPrimitive(x,y,w,h,start,stop,mode){
+    this.beginShape();
+    const centerX = x+w/2;
+    const centerY = y+h/2;
+    const radiusX = w / 2;
+    const radiusY = h / 2;
+
+    const startVertex = this.#createVertex(
+      new Vector(
+        centerX + radiusX * Math.cos(start),
+        centerY + radiusY * Math.sin(start)
+      )
+    );
+
+    const endVertex = this.#createVertex(
+      new Vector(
+        centerX + radiusX * Math.cos(stop),
+        centerY + radiusY * Math.sin(stop)
+      )
+    );
+
+    const primitive = new ArcPrimitive(
+      startVertex,
+      endVertex,
+      x, y, w, h,
+      start,
+      stop,
+      mode
+    );
+    primitive.addToShape(this);
+    this.endShape();
+    return this;
+
+  }
+
+  ellipsePrimitive(x,y,w,h){
+    const centerVertex = this.#createVertex(new Vector(x+w/2,y+h/2));
+
+    const primitive = new EllipsePrimitive(centerVertex, x, y, w, h);
+    return primitive.addToShape(this);
+  }
+
   beginContour(shapeKind = constants.PATH) {
     if (this.at(-1)?.kind === constants.EMPTY_PATH) {
       this.contours.pop();
@@ -1003,6 +1125,12 @@ class PrimitiveVisitor {
   visitArcSegment(arcSegment) {
     throw new Error('Method visitArcSegment() has not been implemented.');
   }
+  visitArcPrimitive(arc) {
+    throw new Error('Method visitArcPrimitive() has not been implemented.');
+  }
+  visitEllipsePrimitive(ellipse) {
+    throw new Error('Method visitEllipsePrimitive() has not been implemented.');
+  }
 
   // isolated primitives
   visitPoint(point) {
@@ -1033,6 +1161,8 @@ class PrimitiveVisitor {
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   path = new Path2D();
+  strokePath = null;
+  fillPath = null;
   strokeWeight;
 
   constructor({ strokeWeight }) {
@@ -1150,6 +1280,59 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.lineTo(v2.position.x, v2.position.y);
       this.path.closePath();
     }
+  }
+  visitArcPrimitive(arc) {
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+    const startX = centerX + radiusX * Math.cos(arc.start);
+    const startY = centerY + radiusY * Math.sin(arc.start);
+
+    const delta = arc.stop - arc.start;
+    const isFullCircle = Math.abs(delta % (2 * Math.PI)) < 0.00001 &&
+      Math.abs(delta) > 0.00001;
+
+    const createPieSlice = ! (
+      arc.mode === constants.CHORD ||
+      arc.mode === constants.OPEN ||
+      isFullCircle
+    );
+
+    if (!this.fillPath) this.fillPath = new Path2D(this.path);
+    if (!this.strokePath) this.strokePath = new Path2D(this.path);
+
+    this.fillPath.moveTo(startX, startY);
+    this.fillPath.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+    if (createPieSlice) {
+      this.fillPath.lineTo(centerX, centerY);
+    }
+    this.fillPath.closePath();
+
+    this.strokePath.moveTo(startX, startY);
+    this.strokePath.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+    if (arc.mode === constants.PIE && createPieSlice) {
+      this.strokePath.lineTo(centerX, centerY);
+    }
+    if (arc.mode === constants.PIE || arc.mode === constants.CHORD) {
+      this.strokePath.closePath();
+    }
+
+    // Still maintain base path just in case
+    this.path.moveTo(startX, startY);
+    this.path.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+  }
+  visitEllipsePrimitive(ellipse) {
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+
+    this.path.moveTo(centerX + radiusX, centerY);
+    this.path.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
   }
   visitQuadStrip(quadStrip) {
     for (let i = 0; i < quadStrip.vertices.length - 3; i += 2) {
@@ -1276,6 +1459,78 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   visitQuadStrip(quadStrip) {
     // WebGL itself interprets the vertices as a strip, no reformatting needed
     this.contours.push(quadStrip.vertices.slice());
+  }
+  visitArcPrimitive(arc) {
+    const startVertex = arc.startVertex;
+    const endVertex = arc.endVertex;
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+    const avgRadius = (radiusX + radiusY) / 2;
+
+    const arcLength = avgRadius * Math.abs(arc.stop - arc.start);
+
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * arcLength));
+    const verts = [];
+    const interpolateVertexProps = (v1, v2, t) => {
+    const props = {};
+    for (const [key, value] of Object.entries(v1)) {
+      if (key === 'position') continue;
+      if (typeof value === 'number' && typeof v2[key] === 'number') {
+        props[key] = value * (1 - t) + v2[key] * t;
+      } else {
+        props[key] = value;
+      }
+    }
+    return props;
+  };
+    if (arc.mode === constants.PIE) {
+      const centerProps = interpolateVertexProps(startVertex, endVertex, 0.5);
+      centerProps.position = new Vector(centerX, centerY);
+      verts.push(new Vertex(centerProps));
+    }
+
+    for (let i = 0; i <= numPoints; i++) {
+      const t = i / numPoints;
+      const angle = arc.start + (arc.stop - arc.start) * t;
+      const vertexProps = interpolateVertexProps(startVertex, endVertex, t);
+
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
+      );
+
+      verts.push(new Vertex(vertexProps));
+    }
+
+    this.contours.push(verts);
+  }
+  visitEllipsePrimitive(ellipse) {
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+    const avgRadius = (radiusX + radiusY) / 2;
+    const perimeter = 2 * Math.PI * avgRadius;
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * perimeter));
+    const verts = [];
+    const centerVertex = ellipse.vertices[0];
+    for (let i = 0; i <= numPoints; i++) {
+      const angle = (2 * Math.PI * i) / numPoints;
+      const vertexProps = {};
+      for (const [key, value] of Object.entries(centerVertex)) {
+        if (key === 'position') continue;
+        vertexProps[key] = value;
+      }
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
+      );
+      verts.push(new Vertex(vertexProps));
+    }
+
+    this.contours.push(verts);
   }
 }
 
@@ -2795,6 +3050,8 @@ export {
   Line,
   Triangle,
   Quad,
+  ArcPrimitive,
+  EllipsePrimitive,
   TriangleFan,
   TriangleStrip,
   QuadStrip,
