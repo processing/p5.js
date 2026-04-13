@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Test noSmooth on main canvas 2D</title>
+  <script src="../../../lib/p5.js"></script>
+  <script>
+    function setup() {
+      createCanvas(100, 100);
+
+      try {
+        noSmooth();
+        console.log("✔ Main Canvas: noSmooth OK");
+      } catch (e) {
+        console.error("❌ Main Canvas: noSmooth ERROR", e);
+      }
+    }
+  </script>
+</head>
+<body></body>
+</html>
