@@ -14,7 +14,6 @@ import { materialVertexShader, materialFragmentShader } from './shaders/material
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
-import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
@@ -2345,7 +2344,7 @@ function rendererWebGPU(p5, fn) {
                 rgb += components.emissive;
                 return vec4<f32>(rgb, components.opacity);
               }`,
-              "vec4f getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4f getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2370,7 +2369,7 @@ function rendererWebGPU(p5, fn) {
             },
             fragment: {
               "void beforeFragment": "() {}",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2396,7 +2395,7 @@ function rendererWebGPU(p5, fn) {
             fragment: {
               "void beforeFragment": "() {}",
               "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "bool shouldDiscard": "(outside: bool) { return outside; };",
               "void afterFragment": "() {}",
             },
@@ -3673,9 +3672,6 @@ ${hookUniformFields}}
       return super.filter(...args);
     }
 
-    getNoiseShaderSnippet() {
-      return noiseWGSL;
-    }
 
 
     baseFilterShader() {
@@ -3836,10 +3832,40 @@ ${hookUniformFields}}
       const WORKGROUP_SIZE_Y = 8;
       const WORKGROUP_SIZE_Z = 1;
 
-      // Calculate number of workgroups needed
-      const workgroupCountX = Math.ceil(x / WORKGROUP_SIZE_X);
-      const workgroupCountY = Math.ceil(y / WORKGROUP_SIZE_Y);
-      const workgroupCountZ = Math.ceil(z / WORKGROUP_SIZE_Z);
+      // auto spreading: if any dimension is too large or for performance optimization,
+      // spread total iteration count across dimensions
+      const totalIterations = x * y * z;
+      const MAX_THREADS_PER_DIM = 65535 * 8;
+
+      let px = x;
+      let py = y;
+      let pz = z;
+
+      // we spread if we exceed GPU limits OR if it involves a large 1D dispatch
+      const exceedsLimits = x > MAX_THREADS_PER_DIM || y > MAX_THREADS_PER_DIM || z > MAX_THREADS_PER_DIM;
+      const isLarge1D = totalIterations > 1024 && y === 1 && z === 1;
+
+      if (exceedsLimits || isLarge1D) {
+        // Always use 2D square spreading (√N × √N).
+        // Benchmarks showed 2D square equals or outperforms 3D cube at every
+        // scale tested, with simpler index reconstruction in the shader.
+        px = Math.ceil(Math.sqrt(totalIterations));
+        py = Math.ceil(totalIterations / px);
+        pz = 1;
+
+        if (p5.debug || exceedsLimits) {
+          console.warn(
+            `p5.js: Compute dispatch (${x}, ${y}, ${z}) auto-spread to (${px}, ${py}, 1) ` +
+            `to ${exceedsLimits ? 'stay within GPU limits' : 'optimize performance'}.`
+          );
+        }
+      }
+
+      shader.setUniform('uPhysicalCount', [px, py, pz]);
+
+      const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
+      const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
+      const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();

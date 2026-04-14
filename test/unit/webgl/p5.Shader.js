@@ -318,7 +318,7 @@ suite('p5.Shader', function() {
         uniforms: {
           'sampler2D myTex': null
         },
-        'vec4 getFinalColor': `(vec4 c) {
+        'vec4 getFinalColor': `(vec4 c, vec2 texCoord) {
           return getTexture(myTex, vec2(0.,0.));
         }`
       });
