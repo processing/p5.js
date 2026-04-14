@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  *
  * This is the main file for the Friendly Error System (FES), containing
  * the core as well as miscellaneous functionality of the FES. Here is a

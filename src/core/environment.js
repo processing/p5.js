@@ -2,8 +2,6 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as C from './constants';

@@ -2,7 +2,6 @@
  * @module Data
  * @submodule Conversion
  * @for p5
- * @requires core
  */
 
 function conversion(p5, fn){

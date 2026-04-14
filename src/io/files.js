@@ -2,7 +2,6 @@
  * @module IO
  * @submodule Input
  * @for p5
- * @requires core
  */
 
 import { Renderer } from '../core/p5.Renderer';
