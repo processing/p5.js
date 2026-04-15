@@ -7331,6 +7331,15 @@
       ]
     },
     {
+      "login": "skyash-dev",
+      "name": "yash",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52105266?v=4",
+      "profile": "http://skyash.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
       "login": "aashu2006",
       "name": "akshat patil",
       "avatar_url": "https://avatars.githubusercontent.com/u/170659176?v=4",
@@ -7346,6 +7355,15 @@
       "profile": "https://github.com/avinxshKD",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "jjnawaaz",
+      "name": "Junaid Nawaz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/124430303?v=4",
+      "profile": "https://github.com/jjnawaaz",
+      "contributions": [
+        "doc"
       ]
     },
     {
@@ -7375,6 +7393,26 @@
       "contributions": [
         "code",
         "test"
+      ]
+    },
+    {
+      "login": "imrinahru",
+      "name": "imrinahru",
+      "avatar_url": "https://avatars.githubusercontent.com/u/120927437?v=4",
+      "profile": "https://github.com/imrinahru",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "Nitin2332",
+      "name": "Nitin Rajpoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175546686?v=4",
+      "profile": "https://github.com/Nitin2332",
+      "contributions": [
+        "code"
       ]
     }
   ],

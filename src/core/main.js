@@ -2,7 +2,6 @@
  * @module Structure
  * @submodule Structure
  * @for p5
- * @requires constants
  */
 
 import * as constants from './constants';
@@ -673,6 +672,7 @@ export default p5;
  *
  * @method setup
  * @for p5
+ * @return {void|Promise<void>}
  *
  * @example
  * function setup() {

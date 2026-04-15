@@ -299,6 +299,14 @@ suite('Calculation', function() {
       result = mockP5Prototype.max([10, 10]);
       assert.equal(result, 10);
     });
+    test('should handle Infinity as a valid argument', function() {
+      result = mockP5Prototype.max(Infinity, 42);
+      assert.equal(result, Infinity);
+    });
+    test('should handle -Infinity as a valid argument', function() {
+      result = mockP5Prototype.max(-Infinity, 42);
+      assert.equal(result, 42);
+    });
   });
 
   suite('p5.prototype.min', function() {
@@ -330,6 +338,14 @@ suite('Calculation', function() {
     test('should return single value from array', function() {
       result = mockP5Prototype.min([10, 10]);
       assert.equal(result, 10);
+    });
+    test('should handle Infinity as a valid argument', function() {
+      result = mockP5Prototype.min(Infinity, 42);
+      assert.equal(result, 42);
+    });
+    test('should handle -Infinity as a valid argument', function() {
+      result = mockP5Prototype.min(-Infinity, 42);
+      assert.equal(result, -Infinity);
     });
   });
 

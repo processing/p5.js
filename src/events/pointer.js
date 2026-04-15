@@ -2,8 +2,6 @@
  * @module Events
  * @submodule Pointer
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function pointer(p5, fn, lifecycles){
@@ -1861,7 +1859,7 @@ function pointer(p5, fn, lifecycles){
     canvas.requestPointerLock =
       canvas.requestPointerLock || canvas.mozRequestPointerLock;
     if (!canvas.requestPointerLock) {
-      console.log('requestPointerLock is not implemented in this browser');
+      p5._friendlyError('requestPointerLock is not implemented in this browser', 'requestPointerLock');
       return false;
     }
     canvas.requestPointerLock();
