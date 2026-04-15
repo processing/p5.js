@@ -1247,6 +1247,75 @@ const ASTCallbacks = {
     delete node.update;
   },
 
+  // Swizzle assignments on storage fields like data[i].velocity.y *= -1 don't work
+  // as plain assignments because data.get(i).velocity returns a StrandsNode without
+  // an onRebind callback, so setting .y on it has no effect on the buffer.
+  //
+  // We detect this case here (ancestor walk is post-order, so by the time this runs
+  // data[i] has already been converted to data.get(i) by the MemberExpression visitor).
+  // buildPropertyPath returns null when it hits a non-Identifier object (like a .get()
+  // call), which distinguishes this from struct-field swizzles like inputs.position.x
+  // where buildPropertyPath returns a non-null path and the phi-node mechanism handles it.
+  //
+  // We rewrite fieldExpr.swizzle = rhs into a read-modify-write:
+  //   let __tmp = fieldExpr
+  //   __tmp.swizzle = rhs      swizzleTrap.set mutates __tmp.id
+  //   fieldExpr = __tmp        proxy setter writes back to the buffer
+  ExpressionStatement(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
+    const assign = node.expression;
+    if (assign?.type !== 'AssignmentExpression') return;
+    const left = assign.left;
+    if (left.type !== 'MemberExpression' || left.computed) return;
+    const propName = left.property.name;
+    if (!propName || !isSwizzle(propName)) return;
+    const fieldExpr = left.object;
+    // A plain identifier (e.g. myVec.y = 5) is handled directly by swizzleTrap.set.
+    if (fieldExpr.type === 'Identifier') return;
+    // A simple dotted path (e.g. inputs.position.x) is handled by the phi-node mechanism.
+    if (buildPropertyPath(fieldExpr) !== null) return;
+
+    const tmpName = `__swizzle_tmp_${blockVarCounter++}`;
+    node.type = 'BlockStatement';
+    node.body = [
+      {
+        type: 'VariableDeclaration',
+        declarations: [{
+          type: 'VariableDeclarator',
+          id: { type: 'Identifier', name: tmpName },
+          init: JSON.parse(JSON.stringify(fieldExpr)),
+        }],
+        kind: 'let',
+      },
+      {
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: {
+            type: 'MemberExpression',
+            object: { type: 'Identifier', name: tmpName },
+            property: { type: 'Identifier', name: propName },
+            computed: false,
+          },
+          right: assign.right,
+        },
+      },
+      {
+        type: 'ExpressionStatement',
+        expression: {
+          type: 'AssignmentExpression',
+          operator: '=',
+          left: JSON.parse(JSON.stringify(fieldExpr)),
+          right: { type: 'Identifier', name: tmpName },
+        },
+      },
+    ];
+    delete node.expression;
+  },
+
   // Helper method to replace identifier references in AST nodes
   replaceIdentifierReferences(node, oldName, newName) {
     if (!node || typeof node !== 'object') return node;
