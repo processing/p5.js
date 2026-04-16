@@ -241,55 +241,9 @@ function rendererWebGPU(p5, fn) {
       stagingBuffer.destroy();
 
       if (this._schema !== null) {
-        return this._unpackStructArray(rawCopy, this._schema);
+        return this._renderer._unpackStructArray(rawCopy, this._schema);
       }
       return rawCopy;
-    }
-
-    // Inverse of _packStructArray reads packed buffer back into plain JS objects
-    // using the same schema layout - fields, stride and offsets
-    _unpackStructArray(floatView, schema) {
-      const { fields, stride } = schema;
-      const dataView = new DataView(floatView.buffer);
-      const count = Math.floor(floatView.byteLength / stride);
-      const result = [];
-
-      for (let i = 0; i < count; i++) {
-        const item = {};
-        const baseOffset = i * stride;
-        for (const field of fields) {
-          const byteOffset = baseOffset + field.offset;
-          const n = field.size / 4;
-
-          if (field.baseType === 'u32') {
-            if (n === 1) {
-              item[field.name] = dataView.getUint32(byteOffset, true);
-            } else {
-              item[field.name] = Array.from({ length: n }, (_, j) =>
-                dataView.getUint32(byteOffset + j * 4, true)
-              );
-            }
-          } else if (field.baseType === 'i32') {
-            if (n === 1) {
-              item[field.name] = dataView.getInt32(byteOffset, true);
-            } else {
-              item[field.name] = Array.from({ length: n }, (_, j) =>
-                dataView.getInt32(byteOffset + j * 4, true)
-              );
-            }
-          } else {
-            const idx = byteOffset / 4;
-            if (n === 1) {
-              item[field.name] = floatView[idx];
-            } else {
-              item[field.name] = Array.from(floatView.slice(idx, idx + n));
-            }
-          }
-        }
-        result.push(item);
-      }
-
-      return result;
     }
   }
 
@@ -3396,6 +3350,52 @@ ${hookUniformFields}}
         }
       }
       return floatView;
+    }
+
+    // Inverse of _packStructArray reads packed buffer back into plain JS objects
+    // using the same schema layout - fields, stride and offsets
+    _unpackStructArray(floatView, schema) {
+      const { fields, stride } = schema;
+      const dataView = new DataView(floatView.buffer);
+      const count = Math.floor(floatView.byteLength / stride);
+      const result = [];
+
+      for (let i = 0; i < count; i++) {
+        const item = {};
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          const byteOffset = baseOffset + field.offset;
+          const n = field.size / 4;
+
+          if (field.baseType === 'u32') {
+            if (n === 1) {
+              item[field.name] = dataView.getUint32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getUint32(byteOffset + j * 4, true)
+              );
+            }
+          } else if (field.baseType === 'i32') {
+            if (n === 1) {
+              item[field.name] = dataView.getInt32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getInt32(byteOffset + j * 4, true)
+              );
+            }
+          } else {
+            const idx = byteOffset / 4;
+            if (n === 1) {
+              item[field.name] = floatView[idx];
+            } else {
+              item[field.name] = Array.from(floatView.slice(idx, idx + n));
+            }
+          }
+        }
+        result.push(item);
+      }
+
+      return result;
     }
 
     createStorage(dataOrCount) {
