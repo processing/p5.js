@@ -725,6 +725,7 @@ if (typeof p5 !== "undefined") {
 /**
  * @typedef {Object} FinalColorHook
  * @property {any} color
+ * @property {any} texCoord
  * @property {function(): undefined} begin
  * @property {function(): undefined} end
  * @property {function(color: any): void} set
@@ -738,6 +739,7 @@ if (typeof p5 !== "undefined") {
  *
  * `finalColor` has the following properties:
  * - `color`: a four-component vector representing the pixel color (red, green, blue, alpha).
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v)
  *
  * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
  *
