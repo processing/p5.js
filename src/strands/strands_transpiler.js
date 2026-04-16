@@ -2,6 +2,7 @@ import { parse } from 'acorn';
 import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
+import * as FES from './strands_FES';
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -98,7 +99,64 @@ function nodeIsVarying(node) {
       )
     );
 }
+// Convert static member expressions into dotted paths such as
+// `loopProtect.protect` so loop-protection calls can be matched reliably.
+function getMemberExpressionPath(node) {
+  if (node?.type === 'Identifier') return node.name;
 
+  // Computed properties like `obj[prop]` are not safe to match as fixed paths.
+  if (node?.type !== 'MemberExpression' || node.computed) return null;
+
+  const objectPath = getMemberExpressionPath(node.object);
+  const propertyName = node.property?.name;
+
+  return objectPath && propertyName
+    ? `${objectPath}.${propertyName}`
+    : null;
+}
+
+// Detect calls added by loop protection before Strands tries to transpile them.
+function isLoopProtectionCall(node) {
+  if (node?.type !== 'CallExpression') return false;
+
+  const path = getMemberExpressionPath(node.callee);
+
+  if (!path) return false;
+
+  return (
+    path === 'loopProtect.protect' ||
+    path.endsWith('.loopProtect') ||
+    path.endsWith('.loopProtect.protect')
+  );
+}
+
+// Scan AST for loop-protection injection and throw with `// noprotect` hint.
+function throwIfLoopProtectionInserted(ast) {
+  let found = false;
+
+  ancestor(ast, {
+    CallExpression(node) {
+      if (isLoopProtectionCall(node)) {
+        found = true;
+      }
+    },
+    LogicalExpression(node) {
+      // Loop protection may appear as the right side of a short-circuit check.
+      if (
+        node.right?.type === 'CallExpression' &&
+        isLoopProtectionCall(node.right)
+      ) {
+        found = true;
+      }
+    }
+  });
+
+  if (found) {
+    FES.internalError(
+      'loop protection error Loop protection code detected. Add `// noprotect` at the top of your sketch and run again.'
+    );
+  }
+}
 // Helper function to check if a statement is a variable declaration with strands control flow init
 function statementContainsStrandsControlFlow(stmt) {
   // Check for variable declarations with strands control flow init
@@ -1696,6 +1754,8 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     ecmaVersion: 2021,
     locations: srcLocations
   });
+
+  throwIfLoopProtectionInserted(ast);
 
   // Pre-pass: collect names of functions passed by reference as uniform callbacks
   const uniformCallbackNames = collectUniformCallbackNames(ast);
