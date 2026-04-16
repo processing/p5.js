@@ -1,6 +1,5 @@
 /**
  * @module Math
- * @requires constants
  */
 
 import * as constants from '../core/constants';

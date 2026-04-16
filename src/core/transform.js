@@ -2,8 +2,6 @@
  * @module Transform
  * @submodule Transform
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function transform(p5, fn){

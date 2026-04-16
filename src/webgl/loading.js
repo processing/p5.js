@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Models
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 import { Geometry } from './p5.Geometry';

@@ -2,8 +2,6 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
- * @requires core
- * @requires color_conversion
  */
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
