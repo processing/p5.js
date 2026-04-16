@@ -173,6 +173,124 @@ function rendererWebGPU(p5, fn) {
         device.queue.writeBuffer(this.buffer, 0, floatData);
       }
     }
+
+    /**
+     * Reads data from a storage buffer back into JavaScript.
+     *
+     * Copies data from the GPU to the CPU using a temporary buffer,
+     * so it must be awaited. Returns a `Float32Array` for number
+     * buffers, or an array of plain objects for struct buffers.
+     * 
+     * Note: This is a GPU -> CPU read, so calling it often (like every frame)
+     * can be slow.
+     *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Float32Array([1, 2, 3, 4]));
+     *   computeShader = buildComputeShader(doubleValues);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Float32Array [2, 4, 6, 8]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 2, 4, 6, 8 to the console.');
+     * }
+     *
+     * function doubleValues() {
+     *   let d = uniformStorage(data);
+     *   let idx = index.x;
+     *   d[idx] = d[idx] * 2;
+     * }
+     * ```
+     *
+     * @method read
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @returns {Promise<Float32Array|Object[]>}
+     */
+    async read() {
+      const device = this._renderer.device;
+      this._renderer.flushDraw();
+
+      const stagingBuffer = device.createBuffer({
+        size: this.size,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+      });
+
+      const commandEncoder = device.createCommandEncoder();
+      commandEncoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, this.size);
+      device.queue.submit([commandEncoder.finish()]);
+
+      await stagingBuffer.mapAsync(GPUMapMode.READ, 0, this.size);
+      const mappedRange = stagingBuffer.getMappedRange(0, this.size);
+
+      // Copy before unmapping because mapped memory becomes invalid after unmap
+      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
+      rawCopy.set(new Float32Array(mappedRange));
+
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      if (this._schema !== null) {
+        return this._unpackStructArray(rawCopy, this._schema);
+      }
+      return rawCopy;
+    }
+
+    // Inverse of _packStructArray reads packed buffer back into plain JS objects
+    // using the same schema layout - fields, stride and offsets
+    _unpackStructArray(floatView, schema) {
+      const { fields, stride } = schema;
+      const dataView = new DataView(floatView.buffer);
+      const count = Math.floor(floatView.byteLength / stride);
+      const result = [];
+
+      for (let i = 0; i < count; i++) {
+        const item = {};
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          const byteOffset = baseOffset + field.offset;
+          const n = field.size / 4;
+
+          if (field.baseType === 'u32') {
+            if (n === 1) {
+              item[field.name] = dataView.getUint32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getUint32(byteOffset + j * 4, true)
+              );
+            }
+          } else if (field.baseType === 'i32') {
+            if (n === 1) {
+              item[field.name] = dataView.getInt32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getInt32(byteOffset + j * 4, true)
+              );
+            }
+          } else {
+            const idx = byteOffset / 4;
+            if (n === 1) {
+              item[field.name] = floatView[idx];
+            } else {
+              item[field.name] = Array.from(floatView.slice(idx, idx + n));
+            }
+          }
+        }
+        result.push(item);
+      }
+
+      return result;
+    }
   }
 
   /**
