@@ -2,7 +2,6 @@
  * @module Data
  * @submodule Utility Functions
  * @for p5
- * @requires core
  */
 
 function utilityFunctions(p5, fn){

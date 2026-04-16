@@ -1,6 +1,5 @@
 /**
  * @module Typography
- * @requires core
  */
 
 import { Renderer } from '../core/p5.Renderer';

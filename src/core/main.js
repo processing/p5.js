@@ -2,7 +2,6 @@
  * @module Structure
  * @submodule Structure
  * @for p5
- * @requires constants
  */
 
 import * as constants from './constants';

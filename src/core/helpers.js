@@ -1,5 +1,4 @@
 /**
- * @requires constants
  */
 
 import * as constants from './constants';

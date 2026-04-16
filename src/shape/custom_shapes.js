@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Custom Shapes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 // REMINDER: remove .js extension (currently using it to run file locally)
