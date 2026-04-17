@@ -631,6 +631,7 @@ function loading(p5, fn){
                   model.vertexColors.push(1);
                 } else {
                   hasColorlessVertices = true;
+                  model.vertexColors.push(-1, -1, -1, -1);
                 }
               } else {
                 face.push(usedVerts[vertString][currentMaterial]);
@@ -652,18 +653,7 @@ function loading(p5, fn){
     if (model.vertexNormals.length === 0) {
       model.computeNormals();
     }
-    if (hasColoredVertices && hasColorlessVertices) {
-      // Mixed model: some faces have a material diffuse color assigned, others do not.
-      // This is common in real-world OBJ exports (e.g. Blender, Sketchfab) where only
-      // some mesh groups have an explicit MTL material. Rather than crashing the sketch,
-      // we degrade gracefully: strip the partial vertex colors so the model renders
-      // with the default fill color instead of corrupted per-vertex coloring.
-      console.warn(
-        'p5.js: This OBJ model has mixed material coloring — some faces have a ' +
-        'material diffuse color and some do not. Vertex colors will not be applied. ' +
-        'Consider assigning a material to every face group in your 3D software, ' +
-        'or use a model where all faces share the same material.'
-      );
+    if (!hasColoredVertices) {
       model.vertexColors = [];
     }
 
