@@ -235,6 +235,30 @@ function replaceReferences(node, tempVarMap) {
   internalReplaceReferences(node);
 }
 
+function replaceIdentifierReferences(node, oldName, newName) {
+  if (!node || typeof node !== 'object') return node;
+
+  const replaceInNode = (n) => {
+    if (!n || typeof n !== 'object') return n;
+    if (n.type === 'Identifier' && n.name === oldName) {
+      return { ...n, name: newName };
+    }
+    const newNode = { ...n };
+    for (const key in n) {
+      if (n.hasOwnProperty(key) && key !== 'parent') {
+        if (Array.isArray(n[key])) {
+          newNode[key] = n[key].map(replaceInNode);
+        } else if (typeof n[key] === 'object') {
+          newNode[key] = replaceInNode(n[key]);
+        }
+      }
+    }
+    return newNode;
+  };
+
+  return replaceInNode(node);
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, state, ancestors) {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
@@ -896,8 +920,8 @@ const ASTCallbacks = {
     // Replace the update expression with the assignment expression
     Object.assign(node, assignmentExpr);
     delete node.prefix;
-    this.BinaryExpression(node.right, state, [...ancestors, node]);
-    this.AssignmentExpression(node, state, ancestors);
+    ASTCallbacks.BinaryExpression(node.right, state, [...ancestors, node]);
+    ASTCallbacks.AssignmentExpression(node, state, ancestors);
   },
   ForStatement(node, state, ancestors) {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
@@ -954,7 +978,7 @@ const ASTCallbacks = {
     // Replace loop variable references with the parameter
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      conditionBody = this.replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
+      conditionBody = replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
     }
     const conditionAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: conditionBody }] };
     conditionBody = conditionAst.body[0].expression;
@@ -972,7 +996,7 @@ const ASTCallbacks = {
       // Replace loop variable references with the parameter
       if (node.init?.type === 'VariableDeclaration') {
         const loopVarName = node.init.declarations[0].id.name;
-        updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
+        updateExpr = replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
       }
       const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
       updateExpr = updateAst.body[0].expression;
@@ -1011,7 +1035,7 @@ const ASTCallbacks = {
     // Replace loop variable references in the body
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      bodyBlock = this.replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
+      bodyBlock = replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
     }
 
     const bodyFunction = {
@@ -1247,33 +1271,8 @@ const ASTCallbacks = {
     delete node.update;
   },
 
-  // Helper method to replace identifier references in AST nodes
-  replaceIdentifierReferences(node, oldName, newName) {
-    if (!node || typeof node !== 'object') return node;
-
-    const replaceInNode = (n) => {
-      if (!n || typeof n !== 'object') return n;
-
-      if (n.type === 'Identifier' && n.name === oldName) {
-        return { ...n, name: newName };
-      }
-
-      // Create a copy and recursively process properties
-      const newNode = { ...n };
-      for (const key in n) {
-        if (n.hasOwnProperty(key) && key !== 'parent') {
-          if (Array.isArray(n[key])) {
-            newNode[key] = n[key].map(replaceInNode);
-          } else if (typeof n[key] === 'object') {
-            newNode[key] = replaceInNode(n[key]);
-          }
-        }
-      }
-      return newNode;
-    };
-
-    return replaceInNode(node);
-  }
+  
+  
 }
 
 // Helper function to check if a function body contains return statements in control flow
