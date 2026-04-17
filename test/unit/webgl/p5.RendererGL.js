@@ -2042,7 +2042,7 @@ suite('p5.RendererGL', function() {
           '_tesselateShape'
         ).mockImplementation(() => {});
 
-        myp5.beginShape(myp5.TESS);
+        myp5.beginShape();
         for (let i = 0; i < 60000; i++) {
           myp5.vertex(i % 100, Math.floor(i / 100), 0);
         }
@@ -2064,7 +2064,7 @@ suite('p5.RendererGL', function() {
           '_tesselateShape'
         ).mockImplementation(() => {});
 
-        myp5.beginShape(myp5.TESS);
+        myp5.beginShape();
         for (let i = 0; i < 60000; i++) {
           myp5.vertex(i % 100, Math.floor(i / 100), 0);
         }
@@ -2073,7 +2073,7 @@ suite('p5.RendererGL', function() {
         expect(confirmSpy).toHaveBeenCalledTimes(1);
         expect(renderer._largeTessellationAcknowledged).toBe(true);
 
-        myp5.beginShape(myp5.TESS);
+        myp5.beginShape();
         for (let i = 0; i < 60000; i++) {
           myp5.vertex(i % 100, Math.floor(i / 100), 0);
         }
@@ -2094,7 +2094,7 @@ suite('p5.RendererGL', function() {
         ).mockImplementation(() => {});
         p5.disableFriendlyErrors = true;
 
-        myp5.beginShape(myp5.TESS);
+        myp5.beginShape();
         for (let i = 0; i < 60000; i++) {
           myp5.vertex(i % 100, Math.floor(i / 100), 0);
         }
@@ -2112,7 +2112,7 @@ suite('p5.RendererGL', function() {
         const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
         const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
-        myp5.beginShape(myp5.TESS);
+        myp5.beginShape();
         myp5.vertex(-10, -10, 0);
         myp5.vertex(10, -10, 0);
         myp5.vertex(10, 10, 0);
