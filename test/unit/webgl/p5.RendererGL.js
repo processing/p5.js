@@ -2032,6 +2032,98 @@ suite('p5.RendererGL', function() {
         [-10, 0, 10]
       );
     });
+
+    suite('large tessellation guard', function() {
+      test('prompts user before tessellating >50k vertices', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+
+        myp5.beginShape(myp5.TESS);
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(confirmSpy.mock.calls[0][0]).toContain('60000');
+        expect(tessSpy).not.toHaveBeenCalled();
+
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('only prompts once when user approves large tessellation', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+
+        myp5.beginShape(myp5.TESS);
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalledTimes(1);
+        expect(renderer._largeTessellationAcknowledged).toBe(true);
+
+        myp5.beginShape(myp5.TESS);
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalledTimes(1);
+
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('skips prompt when p5.disableFriendlyErrors is true', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+        p5.disableFriendlyErrors = true;
+
+        myp5.beginShape(myp5.TESS);
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).not.toHaveBeenCalled();
+        expect(tessSpy).toHaveBeenCalled();
+
+        p5.disableFriendlyErrors = false;
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('works normally for <50k vertices', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+        myp5.beginShape(myp5.TESS);
+        myp5.vertex(-10, -10, 0);
+        myp5.vertex(10, -10, 0);
+        myp5.vertex(10, 10, 0);
+        myp5.vertex(-10, 10, 0);
+        myp5.endShape(myp5.CLOSE);
+
+        expect(confirmSpy).not.toHaveBeenCalled();
+
+        confirmSpy.mockRestore();
+      });
+    });
   });
 
   suite('color interpolation', function() {

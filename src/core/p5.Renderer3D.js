@@ -221,6 +221,8 @@ export class Renderer3D extends Renderer {
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
 
+    this._largeTessellationAcknowledged = false;
+
     this.geometryBufferCache = new GeometryBufferCache(this);
 
     this.curStrokeCap = constants.ROUND;
