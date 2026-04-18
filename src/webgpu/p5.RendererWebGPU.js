@@ -15,6 +15,9 @@ import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
 import noiseWGSL from './shaders/functions/noise3DWGSL';
+import randomWGSL from './shaders/functions/randomWGSL';
+import randomVertWGSL from './shaders/functions/randomVertWGSL';
+import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
@@ -2533,10 +2536,86 @@ function rendererWebGPU(p5, fn) {
       );
 
       let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment|compute)\s*(?:@workgroup_size\([^)]+\)\s*)?)?fn main[^{]+\{)/);
-      if (shaderType === 'vertex') {
-        if (!main.match(/\@builtin\s*\(\s*instance_index\s*\)/)) {
-          main = main.replace(/\)\s*(->|\{)/, ', @builtin(instance_index) instanceID: u32) $1');
+
+      const getBuiltinParamName = (mainSrc, builtinName) => {
+        const match = new RegExp(`@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`).exec(mainSrc);
+        return match ? match[1] : null;
+      };
+
+      const ensureBuiltinParam = (mainSrc, builtinName, fallbackName, typeName) => {
+        const existingName = getBuiltinParamName(mainSrc, builtinName);
+        if (existingName) {
+          return { mainSrc, argName: existingName };
         }
+
+        const hasParams = /\(\s*\S/.test(mainSrc);
+        const injectedMain = mainSrc.replace(
+          /\)\s*(->|\{)/,
+          `${hasParams ? ', ' : ''}@builtin(${builtinName}) ${fallbackName}: ${typeName}) $1`
+        );
+
+        return { mainSrc: injectedMain, argName: fallbackName };
+      };
+
+      const getMainStructParameter = (mainSrc) => {
+        const match = /fn main\s*\(\s*(\w+)\s*:\s*(\w+)/.exec(mainSrc);
+        if (!match) return null;
+        return { inputName: match[1], structName: match[2] };
+      };
+
+      const getStructBuiltinFieldName = (structName, builtinName) => {
+        const structMatch = new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's').exec(preMain);
+        if (!structMatch) return null;
+        const fieldMatch = new RegExp(`@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`, 's').exec(structMatch[1]);
+        return fieldMatch ? fieldMatch[1] : null;
+      };
+
+      const appendHookParams = (params, additionalParams) => {
+        if (additionalParams.length === 0) return params;
+        const hasParams = !/^\(\s*\)$/.test(params);
+        return `${params.slice(0, -1)}${hasParams ? ', ' : ''}${additionalParams.join(', ')})`;
+      };
+
+      let hookExtraParams = [];
+      let hookExtraArgs = [];
+
+      if (shaderType === 'vertex') {
+        const ensuredInstance = ensureBuiltinParam(main, 'instance_index', 'instanceID', 'u32');
+        main = ensuredInstance.mainSrc;
+
+        const ensuredVertex = ensureBuiltinParam(main, 'vertex_index', '_p5VertexId', 'u32');
+        main = ensuredVertex.mainSrc;
+
+        hookExtraParams = ['instanceID: u32', '_p5VertexId: u32'];
+        hookExtraArgs = [ensuredInstance.argName, ensuredVertex.argName];
+      } else if (shaderType === 'fragment') {
+        const directPositionArg = getBuiltinParamName(main, 'position');
+        let fragmentPositionArg = directPositionArg;
+
+        if (!fragmentPositionArg) {
+          const mainStructParam = getMainStructParameter(main);
+          if (mainStructParam) {
+            const positionField = getStructBuiltinFieldName(mainStructParam.structName, 'position');
+            if (positionField) {
+              fragmentPositionArg = `${mainStructParam.inputName}.${positionField}`;
+            }
+          }
+        }
+
+        if (!fragmentPositionArg) {
+          const ensuredPosition = ensureBuiltinParam(main, 'position', '_p5FragPos', 'vec4<f32>');
+          main = ensuredPosition.mainSrc;
+          fragmentPositionArg = ensuredPosition.argName;
+        }
+
+        hookExtraParams = ['_p5FragPos: vec4<f32>'];
+        hookExtraArgs = [fragmentPositionArg];
+      } else if (shaderType === 'compute') {
+        const ensuredGlobalId = ensureBuiltinParam(main, 'global_invocation_id', '_p5GlobalId', 'vec3<u32>');
+        main = ensuredGlobalId.mainSrc;
+
+        hookExtraParams = ['_p5GlobalId: vec3<u32>'];
+        hookExtraArgs = [ensuredGlobalId.argName];
       }
 
       // Inject hook uniforms as a separate struct at a new binding
@@ -2724,11 +2803,7 @@ ${hookUniformFields}}
 
         let [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
 
-        if (shaderType === 'vertex') {
-          // Splice the instance ID in as a final parameter to every WGSL hook function
-          let hasParams = !!params.match(/^\(\s*\S+.*\)$/);
-          params = params.slice(0, -1) + (hasParams ? ', ' : '') + 'instanceID: u32)';
-        }
+        params = appendHookParams(params, hookExtraParams);
 
         if (hookType === 'void') {
           hooks += `fn HOOK_${hookName}${params}${body}\n`;
@@ -2737,40 +2812,45 @@ ${hookUniformFields}}
         }
       }
 
-      // Add the instance ID as a final parameter to each hook call
-      if (shaderType === 'vertex') {
-        const addInstanceIDParam = (src) => {
-          let result = src;
-          let idx = 0;
-          let match;
-          do {
-            match = /HOOK_\w+\(/.exec(result.slice(idx));
-            if (match) {
-              idx += match.index + match[0].length - 1;
-              let nesting = 0;
-              let hasParams = false;
-              while (idx < result.length) {
-                if (result[idx] === '(') {
-                  nesting++;
-                } else if (result[idx] === ')') {
-                  nesting--;
-                } else if (result[idx].match(/\S/)) {
-                  hasParams = true;
-                }
-                idx++;
-                if (nesting === 0) {
-                  break;
-                }
+      // Pass stage-specific builtins from main to each hook call.
+      // Collect ALL HOOK_ calls (including nested ones) then insert
+      // extra args from right to left so position shifts don't
+      // invalidate earlier insertion points.
+      if (hookExtraArgs.length > 0) {
+        const addHookArgs = (src) => {
+          const insertions = [];
+          let searchIdx = 0;
+          let m;
+          while ((m = /HOOK_\w+\(/.exec(src.slice(searchIdx))) !== null) {
+            const openParen = searchIdx + m.index + m[0].length - 1;
+            let pos = openParen + 1;
+            let nesting = 1;
+            let hasParams = false;
+            while (pos < src.length && nesting > 0) {
+              if (src[pos] === '(') nesting++;
+              else if (src[pos] === ')') {
+                nesting--;
+                if (nesting === 0) break;
+              } else if (/\S/.test(src[pos])) {
+                hasParams = true;
               }
-              const insertion = (hasParams ? ', ' : '') + 'instanceID';
-              result = result.slice(0, idx-1) + insertion + result.slice(idx-1);
-              idx += insertion.length;
+              pos++;
             }
-          } while (match);
+            insertions.push({ pos, hasParams });
+            searchIdx = openParen + 1;
+          }
+
+          insertions.sort((a, b) => b.pos - a.pos);
+
+          let result = src;
+          for (const { pos, hasParams } of insertions) {
+            const insertion = (hasParams ? ', ' : '') + hookExtraArgs.join(', ');
+            result = result.slice(0, pos) + insertion + result.slice(pos);
+          }
           return result;
         };
-        preMain = addInstanceIDParam(preMain);
-        postMain = addInstanceIDParam(postMain);
+        preMain = addHookArgs(preMain);
+        postMain = addHookArgs(postMain);
       }
 
       return preMain + '\n' + defines + hooks + main + postMain;
@@ -3652,6 +3732,18 @@ ${hookUniformFields}}
 
     getNoiseShaderSnippet() {
       return noiseWGSL;
+    }
+
+    getRandomFragmentShaderSnippet() {
+      return randomWGSL;
+    }
+
+    getRandomVertexShaderSnippet() {
+      return randomVertWGSL;
+    }
+
+    getRandomComputeShaderSnippet() {
+      return randomComputeWGSL;
     }
 
 

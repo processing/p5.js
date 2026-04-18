@@ -482,6 +482,18 @@ export const wgslBackend = {
         }
 
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
+
+        if (node.identifier === 'random') {
+          const ctx = generationContext.shaderContext;
+          if (ctx === 'fragment') {
+            functionArgs.push('_p5FragPos.xy');
+          } else if (ctx === 'vertex') {
+            functionArgs.push('f32(_p5VertexId)');
+          } else if (ctx === 'compute') {
+            functionArgs.push('_p5GlobalId');
+          }
+        }
+
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }
       if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
