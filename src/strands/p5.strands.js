@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule p5.strands
  * @for p5
- * @requires core
  */
 
 import { transpileStrandsToJS } from "./strands_transpiler";

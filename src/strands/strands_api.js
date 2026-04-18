@@ -219,7 +219,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const nodeData = DAG.createNodeData({
       nodeType: NodeType.STATEMENT,
       statementType: StatementType.EARLY_RETURN,
-      dependsOn: [valueNode.id]
+      dependsOn: value !== undefined ? [valueNode.id] : []
     });
     const earlyReturnID = DAG.getOrCreateNode(dag, nodeData);
     CFG.recordInBasicBlock(cfg, cfg.currentBlock, earlyReturnID);
@@ -339,7 +339,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
     // Get noise shader snippet from the current renderer
-    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    const noiseSnippet = strandsContext.backend.getNoiseShaderSnippet();
     strandsContext.vertexDeclarations.add(noiseSnippet);
     strandsContext.fragmentDeclarations.add(noiseSnippet);
     strandsContext.computeDeclarations.add(noiseSnippet);
@@ -871,17 +871,21 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             return newStruct.id;
           }
         }
+        else if (!expectedReturnType.dataType || expectedReturnType.typeName?.trim() === 'void') {
+          return null;
+        }
         else /*if(isNativeType(expectedReturnType.typeName))*/ {
-          if (!expectedReturnType.dataType) {
-            throw new Error(`Missing dataType for return type ${expectedReturnType.typeName}`);
-          }
           const expectedTypeInfo = expectedReturnType.dataType;
           return enforceReturnTypeMatch(strandsContext, expectedTypeInfo, retNode, hookType.name);
         }
       }
       for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
         const id = handleRetVal(valueNode);
-        dag.dependsOn[earlyReturnID] = [id];
+        if (id !== null) {
+          dag.dependsOn[earlyReturnID] = [id];
+        } else {
+          dag.dependsOn[earlyReturnID] = [];
+        }
       }
       rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;

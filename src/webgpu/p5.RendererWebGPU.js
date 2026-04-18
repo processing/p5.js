@@ -18,6 +18,7 @@ import noiseWGSL from './shaders/functions/noise3DWGSL';
 import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
+
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
@@ -457,9 +458,21 @@ function rendererWebGPU(p5, fn) {
       const _b = args[2] || 0;
       const _a = args[3] || 0;
 
-      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED
-      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
-        this._frameState = FRAME_STATE.UNPROMOTED;
+      // If PENDING and no custom framebuffer, clear means stay UNPROMOTED.
+      // However, if we are still in setup (frameCount == 0), we must promote
+      // so that mainFramebuffer gets the cleared content. This ensures that if
+      // draw() later promotes without a copy, it starts from the correct state
+      // rather than a stale mainFramebuffer.
+      // Note: a mid-draw-loop transition from UNPROMOTED back to PROMOTED
+      // (i.e. calling background() some frames but not others) will still
+      // lose intermediate UNPROMOTED frame content.
+      if (this._frameState !== FRAME_STATE.PROMOTED && !this.activeFramebuffer()) {
+        if (this._pInst.frameCount > 0) {
+          this._frameState = FRAME_STATE.UNPROMOTED;
+        } else {
+          this._promoteToFramebufferWithoutCopy();
+          // clear() then targets mainFramebuffer via activeFramebuffer()
+        }
       }
 
       this._finishActiveRenderPass();
@@ -1146,8 +1159,11 @@ function rendererWebGPU(p5, fn) {
 
     _resetBuffersBeforeDraw() {
       this._finishActiveRenderPass();
+
       // Set state to PENDING - we'll decide on first draw
-      this._frameState = FRAME_STATE.PENDING;
+      if (this._pInst.frameCount > 0) {
+        this._frameState = FRAME_STATE.PENDING;
+      }
 
       // Clear depth buffer but DON'T start any render pass yet
       const activeFramebuffer = this.activeFramebuffer();
@@ -1258,6 +1274,8 @@ function rendererWebGPU(p5, fn) {
       // once we're drawing to the framebuffer, because normally
       // those are reset.
       const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.states.uModelMatrix.set(this.states.uModelMatrix.copy());
+      this.states.uModelMatrix.reset();
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
       this.mainFramebuffer.begin();
@@ -1266,6 +1284,11 @@ function rendererWebGPU(p5, fn) {
     }
 
     _promoteToFramebufferWithoutCopy() {
+      // Already promoted this frame
+      if (this._frameState === FRAME_STATE.PROMOTED) {
+        return;
+      }
+
       // Ensure mainFramebuffer matches canvas size
       if (this.mainFramebuffer.width !== this.width ||
           this.mainFramebuffer.height !== this.height) {
@@ -1280,6 +1303,8 @@ function rendererWebGPU(p5, fn) {
 
       // Preserve transformation state
       const savedModelMatrix = this.states.uModelMatrix.copy();
+      this.states.uModelMatrix.set(this.states.uModelMatrix.copy());
+      this.states.uModelMatrix.reset();
       this.mainFramebuffer.defaultCamera.set(this.states.curCamera);
 
       // Begin rendering to mainFramebuffer
@@ -1593,7 +1618,6 @@ function rendererWebGPU(p5, fn) {
         }
         this.flushDraw();
 
-        // this._pInst.background('red');
         this._pInst.push();
         this.states.setValue('enableLighting', false);
         this.states.setValue('activeImageLight', null);
@@ -2325,7 +2349,7 @@ function rendererWebGPU(p5, fn) {
                 rgb += components.emissive;
                 return vec4<f32>(rgb, components.opacity);
               }`,
-              "vec4f getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4f getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2350,7 +2374,7 @@ function rendererWebGPU(p5, fn) {
             },
             fragment: {
               "void beforeFragment": "() {}",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2376,7 +2400,7 @@ function rendererWebGPU(p5, fn) {
             fragment: {
               "void beforeFragment": "() {}",
               "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "bool shouldDiscard": "(outside: bool) { return outside; };",
               "void afterFragment": "() {}",
             },
@@ -3730,9 +3754,6 @@ ${hookUniformFields}}
       return super.filter(...args);
     }
 
-    getNoiseShaderSnippet() {
-      return noiseWGSL;
-    }
 
     getRandomFragmentShaderSnippet() {
       return randomWGSL;
@@ -3905,10 +3926,40 @@ ${hookUniformFields}}
       const WORKGROUP_SIZE_Y = 8;
       const WORKGROUP_SIZE_Z = 1;
 
-      // Calculate number of workgroups needed
-      const workgroupCountX = Math.ceil(x / WORKGROUP_SIZE_X);
-      const workgroupCountY = Math.ceil(y / WORKGROUP_SIZE_Y);
-      const workgroupCountZ = Math.ceil(z / WORKGROUP_SIZE_Z);
+      // auto spreading: if any dimension is too large or for performance optimization,
+      // spread total iteration count across dimensions
+      const totalIterations = x * y * z;
+      const MAX_THREADS_PER_DIM = 65535 * 8;
+
+      let px = x;
+      let py = y;
+      let pz = z;
+
+      // we spread if we exceed GPU limits OR if it involves a large 1D dispatch
+      const exceedsLimits = x > MAX_THREADS_PER_DIM || y > MAX_THREADS_PER_DIM || z > MAX_THREADS_PER_DIM;
+      const isLarge1D = totalIterations > 1024 && y === 1 && z === 1;
+
+      if (exceedsLimits || isLarge1D) {
+        // Always use 2D square spreading (√N × √N).
+        // Benchmarks showed 2D square equals or outperforms 3D cube at every
+        // scale tested, with simpler index reconstruction in the shader.
+        px = Math.ceil(Math.sqrt(totalIterations));
+        py = Math.ceil(totalIterations / px);
+        pz = 1;
+
+        if (p5.debug || exceedsLimits) {
+          console.warn(
+            `p5.js: Compute dispatch (${x}, ${y}, ${z}) auto-spread to (${px}, ${py}, 1) ` +
+            `to ${exceedsLimits ? 'stay within GPU limits' : 'optimize performance'}.`
+          );
+        }
+      }
+
+      shader.setUniform('uPhysicalCount', [px, py, pz]);
+
+      const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
+      const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
+      const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();

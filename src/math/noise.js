@@ -15,7 +15,6 @@
  * @module Math
  * @submodule Noise
  * @for p5
- * @requires core
  */
 function noise(p5, fn){
   const PERLIN_YWRAPB = 4;

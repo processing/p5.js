@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Pixels
  * @for p5
- * @requires core
  */
 
 import Filters from './filters';

@@ -1422,5 +1422,116 @@ visualSuite("WebGPU", function () {
         await screenshot();
       }
     );
+
+    visualTest(
+      'Compute shader assigns to a swizzle of a struct vector field',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [15, 10] },
+        ]);
+
+        // Negate position.y via swizzle assignment
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          buf[idx].position.y *= -1;
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader assigns to a swizzle of a struct vector field inside an if statement',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [5, 5] },
+        ]);
+
+        // Move by velocity, then negate velocity.y if position.y > 0.
+        // After 1st run: position=[5,5], velocity=[5,-5].
+        // After 2nd run: position=[10,0], velocity=[5,-5].
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          buf[idx].position += buf[idx].velocity;
+          if (buf[idx].position.y > 0) {
+            buf[idx].velocity.y *= -1;
+          }
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+  });
+
+  visualSuite('Feedback', function() {
+    visualTest(
+      'Drawing accumulates across frames when background is set in setup',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Set an initial background before the draw loop starts.
+        // This should persist into the first draw frame.
+        p5.background('red');
+
+        return new Promise(resolve => {
+          let frame = 0;
+          p5.draw = function() {
+            // Draw circles without clearing, so they accumulate
+            p5.noStroke();
+            p5.fill('blue');
+            p5.circle(-15 + frame * 15, 0, 10);
+            frame++;
+            if (frame >= 3) {
+              p5.noLoop();
+              screenshot().then(resolve);
+            }
+          };
+          p5.loop();
+        });
+      }
+    );
   });
 });

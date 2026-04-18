@@ -689,7 +689,28 @@ export function createStructArrayElementProxy(strandsContext, bufferNode, indexN
         });
         const id = DAG.getOrCreateNode(dag, nodeData);
         CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
-        return createStrandsNode(id, field.dim, strandsContext);
+        // When a swizzle assignment fires (e.g. buf[i].vel.y *= -1), onRebind
+        // receives the new vector ID and writes it back to the buffer field,
+        // equivalent to buf[i].vel = newVec.
+        const onRebind = (newFieldID) => {
+          const accessData = DAG.createNodeData({
+            nodeType: NodeType.OPERATION,
+            opCode: OpCode.Binary.ARRAY_ACCESS,
+            dependsOn: [bufferNode.id, index.id],
+            dimension: field.dim,
+            baseType: BaseType.FLOAT,
+            identifier: field.name,
+          });
+          const accessID = DAG.getOrCreateNode(dag, accessData);
+          const assignData = DAG.createNodeData({
+            nodeType: NodeType.ASSIGNMENT,
+            dependsOn: [accessID, newFieldID],
+            phiBlocks: [],
+          });
+          const assignID = DAG.getOrCreateNode(dag, assignData);
+          CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignID);
+        };
+        return createStrandsNode(id, field.dim, strandsContext, onRebind);
       },
       set(val) {
         // Create access node as assignment target (field name in identifier)

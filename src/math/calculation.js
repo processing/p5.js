@@ -2,7 +2,6 @@
  * @module Math
  * @submodule Calculation
  * @for p5
- * @requires core
  */
 
 function calculation(p5, fn){
