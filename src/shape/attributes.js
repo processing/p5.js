@@ -107,8 +107,10 @@ function attributes(p5, fn){
    * In WebGL mode, `noSmooth()` causes all shapes to be drawn with jagged
    * (aliased) edges. The functions don't affect images or fonts.
    *
+   * Note: In WebGPU mode, you must `await` this function.
+   *
    * @method noSmooth
-   * @chainable
+   * @return {void|Promise<void>}
    *
    * @example
    * let heart;
@@ -162,10 +164,10 @@ function attributes(p5, fn){
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = false;
       }
+      return this;
     } else {
-      this.setAttributes('antialias', false);
+      return this.setAttributes('antialias', false);
     }
-    return this;
   };
 
   /**

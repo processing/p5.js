@@ -127,6 +127,13 @@ suite('WebGPU p5.RendererWebGPU', function() {
     });
   });
 
+  suite('noSmooth()', function() {
+    test('disables antialiasing on the main canvas framebuffer', async function() {
+      await myp5.noSmooth();
+      expect(myp5._renderer.mainFramebuffer.antialias).to.equal(false);
+    });
+  });
+
   suite('Stability', function() {
     test('pixelDensity() after setAttributes() should not crash', async function() {
       // This test simulates the issue where a synchronous call (pixelDensity)
