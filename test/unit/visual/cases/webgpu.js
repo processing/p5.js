@@ -273,6 +273,31 @@ visualSuite("WebGPU", function () {
       await screenshot();
     });
 
+    visualTest('filter shaders can sample a texture inside a conditional branch', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill(0);
+      p5.circle(0, 0, 20);
+      // This shader only samples the texture for pixels in the left half of the
+      // canvas, exercising getTexture() inside a non-uniform conditional
+      const conditionalInvert = p5.buildFilterShader(({ p5 }) => {
+        p5.filterColor.begin();
+        if (p5.filterColor.texCoord.x < 0.5) {
+          const col = p5.getTexture(
+            p5.filterColor.canvasContent,
+            p5.filterColor.texCoord
+          );
+          p5.filterColor.set([1 - col.rgb, col.a]);
+        } else {
+          p5.filterColor.set([0, 0, 1, 1]);
+        }
+        p5.filterColor.end();
+      }, { p5 });
+      p5.filter(conditionalInvert);
+      await screenshot();
+    });
+
     visualTest('instanceID in fragment hook colors instances (WebGPU)', async function(p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
       const numInstances = 4;
