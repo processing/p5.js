@@ -586,6 +586,21 @@ visualSuite("WebGPU", function () {
     );
   });
 
+  visualSuite("Rendering attributes", function () {
+    visualTest(
+      "noSmooth() does not crash and disables antialiasing",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.noSmooth();
+        p5.background(0);
+        p5.fill(255);
+        p5.noStroke();
+        p5.circle(0, 0, 30);
+        await screenshot();
+      },
+    );
+  });
+
   visualSuite("Clipping", function () {
     visualTest(
       "Basic clipping with circles",

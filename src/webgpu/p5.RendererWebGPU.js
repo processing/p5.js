@@ -319,7 +319,7 @@ function rendererWebGPU(p5, fn) {
         }
         if (this._pInst._webgpuAttributes[key] !== value) {
           //changing value of previously altered attribute
-          this._webgpuAttributes[key] = value;
+          this._pInst._webgpuAttributes[key] = value;
           unchanged = false;
         }
         //setting all attributes with some change
@@ -2988,7 +2988,7 @@ ${hookUniformFields}}
     }
 
     defaultFramebufferAntialias() {
-      return true;
+      return this._pInst._webgpuAttributes?.antialias !== false;
     }
 
     supportsFramebufferAntialias() {
