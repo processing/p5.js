@@ -524,6 +524,28 @@ visualSuite("WebGPU", function () {
     );
 
     visualTest(
+      "Framebuffer with depth disabled",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const fbo = p5.createFramebuffer({ width: 50, height: 50, depth: false });
+
+        fbo.draw(() => {
+          p5.background(0, 0, 200);
+          p5.fill(255, 200, 0);
+          p5.noStroke();
+          p5.circle(0, 0, 30);
+        });
+
+        p5.background(50);
+        p5.texture(fbo);
+        p5.noStroke();
+        p5.plane(50, 50);
+
+        await screenshot();
+      },
+    );
+
+    visualTest(
       "Fixed-size framebuffer after manual resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
