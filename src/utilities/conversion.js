@@ -227,6 +227,7 @@ p5.prototype.int = function(n, radix = 10) {
   } else if (n instanceof Array) {
     return n.map(n => p5.prototype.int(n, radix));
   }
+  return NaN;
 };
 
 /**
