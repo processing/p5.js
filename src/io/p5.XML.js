@@ -1,7 +1,6 @@
 /**
  * @module IO
  * @submodule Input
- * @requires core
  */
 
 class XML {

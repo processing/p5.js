@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Primitives
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 //some of the functions are adjusted from Three.js(http://threejs.org)
@@ -330,7 +328,7 @@ class Geometry {
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(function()) {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(

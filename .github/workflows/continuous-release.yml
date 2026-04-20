@@ -1,0 +1,55 @@
+name: Publish approved pull requests and latest commit to pkg.pr.new
+on:
+  pull_request:
+    branches:
+      - 'dev-2.0'
+  push:
+    branches:
+      - 'dev-2.0'
+    tags:
+      - '!**'
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  publish:
+    if: github.repository == 'processing/p5.js'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Publish library
+        run: npx pkg-pr-new publish --no-template --json output.json --comment=off
+
+      - name: Include PR info in output file
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          script: |
+            const fs = require('fs');
+            const output = JSON.parse(fs.readFileSync('output.json', 'utf8'));
+            output.workflow = {
+              pull_request: process.env.PR_NUMBER ? {
+                number: process.env.PR_NUMBER
+              } : null
+            };
+            fs.writeFileSync('output.json', JSON.stringify(output));
+
+      - name: Upload output data
+        uses: actions/upload-artifact@v4
+        with:
+          name: output.zip
+          path: output.json

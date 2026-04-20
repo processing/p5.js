@@ -1,4 +1,5 @@
 import * as constants from "../core/constants";
+import { INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { Texture } from "./p5.Texture";
 
 /**
@@ -429,6 +430,20 @@ export function populateGLSLHooks(shader, src, shaderType) {
       }
     }
   }
+
+  // Handle instanceID varying for fragment access
+  if (shader.hooks.instanceIDVarying) {
+    const { declaration, source, interpolation } = shader.hooks.instanceIDVarying;
+    const qualifier = interpolation ? `${interpolation} ` : '';
+    if (shaderType === "vertex") {
+      // Emit flat out declaration and inject assignment into main() body
+      hooks += `${qualifier}OUT ${declaration};\n`;
+      postMain = postMain.replace(/\{/, `{\n  ${declaration.split(' ').pop()} = ${source};`);
+    } else if (shaderType === "fragment") {
+      hooks += `${qualifier}IN ${declaration};\n`;
+    }
+  }
+
   for (const hookDef in shader.hooks.helpers) {
     hooks += `${hookDef}${shader.hooks.helpers[hookDef]}\n`;
   }

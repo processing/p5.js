@@ -2,8 +2,6 @@
  * @module Math
  * @submodule Trigonometry
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -774,7 +772,8 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._toRadians = function(angle) {
-    if (this._angleMode === DEGREES) {
+    // returns undefined if no argument
+    if (typeof angle !== 'undefined' && this._angleMode === DEGREES) {
       return angle * constants.DEG_TO_RAD;
     }
     return angle;

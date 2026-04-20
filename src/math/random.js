@@ -2,7 +2,6 @@
  * @module Math
  * @submodule Random
  * @for p5
- * @requires core
  */
 
 function random(p5, fn){
