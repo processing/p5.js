@@ -204,7 +204,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
       }
     });
 
-    test('reads back struct with vector fields', async function() {
+    test('reads back struct with vector fields as p5.Vector', async function() {
       const input = [
         { position: myp5.createVector(1, 2), speed: 5.0 },
         { position: myp5.createVector(3, 4), speed: 10.0 },
@@ -215,12 +215,14 @@ suite('WebGPU p5.RendererWebGPU', function() {
 
       expect(result).to.be.an('array');
       expect(result.length).to.equal(2);
-      // Vector fields come back as plain arrays
-      expect(result[0].position[0]).to.be.closeTo(1, 0.001);
-      expect(result[0].position[1]).to.be.closeTo(2, 0.001);
+      // Vector fields come back as p5.Vector
+      expect(result[0].position.isVector).to.be.true;
+      expect(result[0].position.x).to.be.closeTo(1, 0.001);
+      expect(result[0].position.y).to.be.closeTo(2, 0.001);
       expect(result[0].speed).to.be.closeTo(5.0, 0.001);
-      expect(result[1].position[0]).to.be.closeTo(3, 0.001);
-      expect(result[1].position[1]).to.be.closeTo(4, 0.001);
+      expect(result[1].position.isVector).to.be.true;
+      expect(result[1].position.x).to.be.closeTo(3, 0.001);
+      expect(result[1].position.y).to.be.closeTo(4, 0.001);
       expect(result[1].speed).to.be.closeTo(10.0, 0.001);
     });
 

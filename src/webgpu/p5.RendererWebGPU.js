@@ -3313,12 +3313,16 @@ ${hookUniformFields}}
 
       let maxEnd = 0;
       let maxAlign = 1;
-      const fields = entries.map(([name]) => {
+      const fields = entries.map(([name, value]) => {
         const el = elements[name];
         maxEnd = Math.max(maxEnd, el.offsetEnd);
         // Alignment for scalars/vectors: <=4 -> 4, <=8 -> 8, else 16
         const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
         maxAlign = Math.max(maxAlign, align);
+        // Track original JS type for reconstruction during readback
+        const kind = value?.isVector ? 'vector'
+          : value?.isColor ? 'color'
+          : undefined;
         return {
           name,
           baseType: el.baseType,
@@ -3326,6 +3330,7 @@ ${hookUniformFields}}
           offset: el.offset,
           packInPlace: el.packInPlace ?? false,
           dim: el.size / 4,
+          kind,
         };
       });
 
@@ -3388,7 +3393,20 @@ ${hookUniformFields}}
             if (n === 1) {
               item[field.name] = floatView[idx];
             } else {
-              item[field.name] = Array.from(floatView.slice(idx, idx + n));
+              const values = Array.from(floatView.slice(idx, idx + n));
+              if (field.kind === 'vector') {
+                item[field.name] = this._pInst.createVector(...values);
+              } else if (field.kind === 'color') {
+                // Color was packed as normalized RGBA [0-1] via _getRGBA([1,1,1,1])
+                // Scale back to the current colorMode range
+                const maxes = this.states.colorMaxes[this.states.colorMode];
+                item[field.name] = this._pInst.color(
+                  values[0] * maxes[0], values[1] * maxes[1],
+                  values[2] * maxes[2], values[3] * maxes[3]
+                );
+              } else {
+                item[field.name] = values;
+              }
             }
           }
         }
