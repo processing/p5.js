@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Interaction
  * @for p5
- * @requires core
  */
 
 import * as constants from '../core/constants';

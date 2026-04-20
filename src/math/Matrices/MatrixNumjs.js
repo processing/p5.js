@@ -3,7 +3,6 @@ import { Vector } from '../p5.Vector';
 import { MatrixInterface } from './MatrixInterface';
 
 /**
- * @requires constants
  * @todo see methods below needing further implementation.
  * future consideration: implement SIMD optimizations
  * when browser compatibility becomes available
