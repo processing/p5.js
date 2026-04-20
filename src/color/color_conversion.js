@@ -112,8 +112,9 @@ p5.ColorConversion = {
       val = li + sat - li * sat;
     }
 
-    // Convert saturation.
-    sat = 2 * (val - li) / val;
+    // Convert saturation. When val is 0 (black) there is no hue or
+    // saturation; keep sat at 0 instead of dividing by zero (NaN).
+    sat = val === 0 ? 0 : 2 * (val - li) / val;
 
     // Hue and alpha stay the same.
     return [hue, sat, val, hsla[3]];
