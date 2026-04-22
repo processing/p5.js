@@ -45,6 +45,10 @@ export class ShapeBuilder {
     this.bufferStrides = { ...INITIAL_BUFFER_STRIDES };
   }
 
+  friendlyErrorsDisabled() {
+    return false;
+  }
+
   constructFromContours(shape, contours) {
     if (this._useUserVertexProperties){
       this._resetUserVertexProperties();
@@ -151,24 +155,22 @@ export class ShapeBuilder {
       const vertexCount = this.geometry.vertices.length;
       const MAX_SAFE_TESSELLATION_VERTICES = 50000;
 
-      if (vertexCount > MAX_SAFE_TESSELLATION_VERTICES) {
-        const p5Class = this.renderer._pInst.constructor;
-        if (
-          !p5Class.disableFriendlyErrors &&
-          !this.renderer._largeTessellationAcknowledged
-        ) {
-          const proceed = window.confirm(
-            '🌸 p5.js says:\n\n' +
-            `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
-            'many vertices can be very slow and may cause your browser to become ' +
-            'unresponsive.\n\n' +
-            'Do you want to continue tessellating this shape?'
-          );
-          if (!proceed) {
-            return;
-          }
-          this.renderer._largeTessellationAcknowledged = true;
+      if (
+        vertexCount > MAX_SAFE_TESSELLATION_VERTICES &&
+        !this.friendlyErrorsDisabled() &&
+        !this.renderer._largeTessellationAcknowledged
+      ) {
+        const proceed = window.confirm(
+          '🌸 p5.js says:\n\n' +
+          `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
+          'many vertices can be very slow and may cause your browser to become ' +
+          'unresponsive.\n\n' +
+          'Do you want to continue tessellating this shape?'
+        );
+        if (!proceed) {
+          return;
         }
+        this.renderer._largeTessellationAcknowledged = true;
       }
 
       this.isProcessingVertices = true;

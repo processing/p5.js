@@ -1997,6 +1997,10 @@ const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGP
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
 
+  ShapeBuilder.prototype.friendlyErrorsDisabled = function() {
+    return Boolean(p5.disableFriendlyErrors);
+  };
+
   /**
    * Creates a <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`</a>, which is
    * a block of data that shaders can read from, and compute shaders
