@@ -235,6 +235,35 @@ function replaceReferences(node, tempVarMap) {
   internalReplaceReferences(node);
 }
 
+// Shared handler for both BinaryExpression and LogicalExpression —
+// both follow the same operator-to-method-call transformation pattern.
+function transformBinaryOrLogical(node, state, ancestors) {
+  if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    return;
+  }
+  const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
+  if (unsafeTypes.includes(node.left.type)) {
+    node.left = {
+      type: 'CallExpression',
+      callee: {
+        type: 'Identifier',
+        name: '__p5.strandsNode',
+      },
+      arguments: [node.left]
+    };
+  }
+  node.type = 'CallExpression';
+  node.callee = {
+    type: 'MemberExpression',
+    object: node.left,
+    property: {
+      type: 'Identifier',
+      name: replaceBinaryOperator(node.operator),
+    },
+  };
+  node.arguments = [node.right];
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, state, ancestors) {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
@@ -509,72 +538,10 @@ const ASTCallbacks = {
       }
     }
   },
-  BinaryExpression(node, state, ancestors) {
-    // Don't convert uniform default values to node methods, as
-    // they should be evaluated at runtime, not compiled.
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
-      return;
-    }
-    // If the left hand side of an expression is one of these types,
-    // we should construct a node from it.
-    const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
-    if (unsafeTypes.includes(node.left.type)) {
-      const leftReplacementNode = {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsNode',
-        },
-        arguments: [node.left]
-      }
-      node.left = leftReplacementNode;
-    }
-    // Replace the binary operator with a call expression
-    // in other words a call to BaseNode.mult(), .div() etc.
-    node.type = 'CallExpression';
-    node.callee = {
-      type: 'MemberExpression',
-      object: node.left,
-      property: {
-        type: 'Identifier',
-        name: replaceBinaryOperator(node.operator),
-      },
-    };
-    node.arguments = [node.right];
-  },
-  LogicalExpression(node, state, ancestors) {
-    // Don't convert uniform default values to node methods, as
-    // they should be evaluated at runtime, not compiled.
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
-      return;
-    }
-    // If the left hand side of an expression is one of these types,
-    // we should construct a node from it.
-    const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
-    if (unsafeTypes.includes(node.left.type)) {
-      const leftReplacementNode = {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsNode',
-        },
-        arguments: [node.left]
-      }
-      node.left = leftReplacementNode;
-    }
-    // Replace the logical operator with a call expression
-    // in other words a call to BaseNode.or(), .and() etc.
-    node.type = 'CallExpression';
-    node.callee = {
-      type: 'MemberExpression',
-      object: node.left,
-      property: {
-        type: 'Identifier',
-        name: replaceBinaryOperator(node.operator),
-      },
-    };
-    node.arguments = [node.right];
-  },
+  BinaryExpression: transformBinaryOrLogical,
+  LogicalExpression: transformBinaryOrLogical,
+
+
   ConditionalExpression(node, state, ancestors) {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
       return;
