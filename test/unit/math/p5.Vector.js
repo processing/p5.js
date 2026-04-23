@@ -5,7 +5,8 @@ suite('p5.Vector', function () {
   var v;
 
   const mockP5 = {
-    _validateParameters: vi.fn()
+    _validateParameters: vi.fn(),
+    _friendlyError: vi.fn()
   };
   const mockP5Prototype = {};
 
@@ -2071,6 +2072,23 @@ suite('p5.Vector', function () {
       expect(target.values).toEqual([
         -4.10759023698152e-16, -2.23606797749979, 2
       ]);
+    });
+    suite('deprecation warnings', function () {
+      test('array() should trigger deprecation warning', function () {
+        v = new mockP5.Vector(1, 2, 3);
+        v.array();
+        expect(mockP5._friendlyError).toHaveBeenCalledWith(
+          'array() is deprecated and will be removed in a future version of p5.js; use the more flexible v.values instead of v.array()',
+          'p5.Vector.array'
+        );
+      });
+
+      test('static array() should delegate to instance array()', function () {
+        v = new mockP5.Vector(1, 2, 3);
+        const spy = vi.spyOn(v, 'array');
+        mockP5.Vector.array(v);
+        expect(spy).toHaveBeenCalled();
+      });
     });
   });
 });
