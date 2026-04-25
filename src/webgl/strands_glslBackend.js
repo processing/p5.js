@@ -1,4 +1,6 @@
 import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
+import randomGLSL from './shaders/functions/randomGLSL.glsl';
+import randomVertGLSL from './shaders/functions/randomVertGLSL.glsl';
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
@@ -172,6 +174,12 @@ export const glslBackend = {
   },
   getNoiseShaderSnippet() {
     return noiseGLSL;
+  },
+  getRandomFragmentShaderSnippet() {
+    return randomGLSL;
+  },
+  getRandomVertexShaderSnippet() {
+    return randomVertGLSL;
   },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]

@@ -399,14 +399,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return originalRandom.apply(this, args);
     }
 
-    const randomVertSnippet = this._renderer.getRandomVertexShaderSnippet();
-    const randomFragSnippet = this._renderer.getRandomFragmentShaderSnippet();
+    const randomVertSnippet = strandsContext.backend.getRandomVertexShaderSnippet();
+    const randomFragSnippet = strandsContext.backend.getRandomFragmentShaderSnippet();
 
     strandsContext.vertexDeclarations.add(randomVertSnippet);
     strandsContext.fragmentDeclarations.add(randomFragSnippet);
 
-    if (this._renderer.getRandomComputeShaderSnippet) {
-      const randomComputeSnippet = this._renderer.getRandomComputeShaderSnippet();
+    if (strandsContext.backend.getRandomComputeShaderSnippet) {
+      const randomComputeSnippet = strandsContext.backend.getRandomComputeShaderSnippet();
       strandsContext.computeDeclarations.add(randomComputeSnippet);
     }
 

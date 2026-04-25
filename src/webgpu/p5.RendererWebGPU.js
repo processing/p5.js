@@ -14,10 +14,6 @@ import { materialVertexShader, materialFragmentShader } from './shaders/material
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
-import noiseWGSL from './shaders/functions/noise3DWGSL';
-import randomWGSL from './shaders/functions/randomWGSL';
-import randomVertWGSL from './shaders/functions/randomVertWGSL';
-import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
 
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
@@ -2745,10 +2741,9 @@ ${hookUniformFields}}
             initStatements += `  ${varName} = INPUT_VAR.${varName};\n`;
           }
 
-          // Find the input parameter name from the main function signature (anchored to start)
-          const inputMatch = main.match(/fn main\s*\((\w+):\s*\w+\)/);
-          if (inputMatch) {
-            const inputVarName = inputMatch[1];
+          const mainStructParam = getMainStructParameter(main);
+          if (mainStructParam) {
+            const inputVarName = mainStructParam.inputName;
             initStatements = initStatements.replace(/INPUT_VAR/g, inputVarName);
             // Insert after the main function parameter but before any other code (anchored to start)
             postMain = initStatements + postMain;
@@ -2792,9 +2787,9 @@ ${hookUniformFields}}
           // Add private global
           preMain += `var<private> ${declaration};\n`;
           // Initialize from input struct at start of main()
-          const inputMatch = main.match(/fn main\s*\((\w+):\s*\w+\)/);
-          if (inputMatch) {
-            const inputVarName = inputMatch[1];
+          const mainStructParam = getMainStructParameter(main);
+          if (mainStructParam) {
+            const inputVarName = mainStructParam.inputName;
             postMain = `\n  ${varName} = ${inputVarName}.${varName};\n` + postMain;
           }
         }
@@ -3754,19 +3749,6 @@ ${hookUniformFields}}
       }
 
       return super.filter(...args);
-    }
-
-
-    getRandomFragmentShaderSnippet() {
-      return randomWGSL;
-    }
-
-    getRandomVertexShaderSnippet() {
-      return randomVertWGSL;
-    }
-
-    getRandomComputeShaderSnippet() {
-      return randomComputeWGSL;
     }
 
 

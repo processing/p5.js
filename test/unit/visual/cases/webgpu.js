@@ -325,6 +325,23 @@ visualSuite("WebGPU", function () {
       p5.model(obj, numInstances);
       await screenshot();
     });
+
+    visualTest('random() colors a basic shader (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      await screenshot();
+    });
   });
 
 

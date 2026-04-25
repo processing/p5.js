@@ -1,4 +1,7 @@
 import noiseWGSL from './shaders/functions/noise3DWGSL.js';
+import randomWGSL from './shaders/functions/randomWGSL';
+import randomVertWGSL from './shaders/functions/randomVertWGSL';
+import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
 import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
@@ -266,6 +269,15 @@ export const wgslBackend = {
   },
   getNoiseShaderSnippet() {
     return noiseWGSL;
+  },
+  getRandomFragmentShaderSnippet() {
+    return randomWGSL;
+  },
+  getRandomVertexShaderSnippet() {
+    return randomVertWGSL;
+  },
+  getRandomComputeShaderSnippet() {
+    return randomComputeWGSL;
   },
 
   generateHookUniformKey(name, typeInfo) {
