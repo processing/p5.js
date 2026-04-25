@@ -596,12 +596,25 @@ export const wgslBackend = {
     const samplerVariable = build.variableNode(strandsContext, { baseType: BaseType.SAMPLER, dimension: 1 }, samplerIdentifier);
     const samplerNode = createStrandsNode(samplerVariable.id, samplerVariable.dimension, strandsContext);
 
-    // Create the augmented args: [texture, sampler, coords]
-    const augmentedArgs = [textureArg, samplerNode, coordsArg];
+    // Create a LOD literal node (0.0) so we can use textureSampleLevel instead
+    // of textureSample. textureSample doesn't let you use uniform values in control
+    // flow, whereas textureSampleLevel does. While we don't have mipmaps, we don't
+    // miss out.
+    // TODO: if we *do* add mipmap support, update this logic -- we'd need to hoist
+    // the texture lookup out of the control flow.
+    const lodLiteral = build.scalarLiteralNode(
+      strandsContext,
+      { dimension: 1, baseType: BaseType.FLOAT },
+      0.0
+    );
+    const lodNode = createStrandsNode(lodLiteral.id, lodLiteral.dimension, strandsContext);
 
-    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSample', augmentedArgs, {
+    // Create the augmented args: [texture, sampler, coords, lod]
+    const augmentedArgs = [textureArg, samplerNode, coordsArg, lodNode];
+
+    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSampleLevel', augmentedArgs, {
       overloads: [{
-        params: [DataType.sampler2D, DataType.sampler, DataType.float2],
+        params: [DataType.sampler2D, DataType.sampler, DataType.float2, DataType.float1],
         returnType: DataType.float4
       }]
     });
