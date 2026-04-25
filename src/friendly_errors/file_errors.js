@@ -4,6 +4,8 @@
  */
 import { translator } from '../core/internationalization';
 
+// NOTE: build this into the IO request utility that addons can
+//       directly use to get FES of IO automatically
 function fileErrors(p5, fn){
   // mapping used by `_friendlyFileLoadError`
   const fileLoadErrorCases = (num, filePath) => {
