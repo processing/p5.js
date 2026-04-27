@@ -173,6 +173,78 @@ function rendererWebGPU(p5, fn) {
         device.queue.writeBuffer(this.buffer, 0, floatData);
       }
     }
+
+    /**
+     * Reads data from a storage buffer back into JavaScript.
+     *
+     * Copies data from the GPU to the CPU using a temporary buffer,
+     * so it must be awaited. Returns a `Float32Array` for number
+     * buffers, or an array of plain objects for struct buffers.
+     * 
+     * Note: This is a GPU -> CPU read, so calling it often (like every frame)
+     * can be slow.
+     *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Float32Array([1, 2, 3, 4]));
+     *   computeShader = buildComputeShader(doubleValues);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Float32Array [2, 4, 6, 8]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 2, 4, 6, 8 to the console.');
+     * }
+     *
+     * function doubleValues() {
+     *   let d = uniformStorage(data);
+     *   let idx = index.x;
+     *   d[idx] = d[idx] * 2;
+     * }
+     * ```
+     *
+     * @method read
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @returns {Promise<Float32Array|Object[]>}
+     */
+    async read() {
+      const device = this._renderer.device;
+      this._renderer.flushDraw();
+
+      const stagingBuffer = device.createBuffer({
+        size: this.size,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+      });
+
+      const commandEncoder = device.createCommandEncoder();
+      commandEncoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, this.size);
+      device.queue.submit([commandEncoder.finish()]);
+
+      await stagingBuffer.mapAsync(GPUMapMode.READ, 0, this.size);
+      const mappedRange = stagingBuffer.getMappedRange(0, this.size);
+
+      // Copy before unmapping because mapped memory becomes invalid after unmap
+      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
+      rawCopy.set(new Float32Array(mappedRange));
+
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      if (this._schema !== null) {
+        return this._renderer._unpackStructArray(rawCopy, this._schema);
+      }
+      return rawCopy;
+    }
   }
 
   /**
@@ -3243,12 +3315,16 @@ ${hookUniformFields}}
 
       let maxEnd = 0;
       let maxAlign = 1;
-      const fields = entries.map(([name]) => {
+      const fields = entries.map(([name, value]) => {
         const el = elements[name];
         maxEnd = Math.max(maxEnd, el.offsetEnd);
         // Alignment for scalars/vectors: <=4 -> 4, <=8 -> 8, else 16
         const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
         maxAlign = Math.max(maxAlign, align);
+        // Track original JS type for reconstruction during readback
+        const kind = value?.isVector ? 'vector'
+          : value?.isColor ? 'color'
+          : undefined;
         return {
           name,
           baseType: el.baseType,
@@ -3256,6 +3332,7 @@ ${hookUniformFields}}
           offset: el.offset,
           packInPlace: el.packInPlace ?? false,
           dim: el.size / 4,
+          kind,
         };
       });
 
@@ -3280,6 +3357,65 @@ ${hookUniformFields}}
         }
       }
       return floatView;
+    }
+
+    // Inverse of _packStructArray reads packed buffer back into plain JS objects
+    // using the same schema layout - fields, stride and offsets
+    _unpackStructArray(floatView, schema) {
+      const { fields, stride } = schema;
+      const dataView = new DataView(floatView.buffer);
+      const count = Math.floor(floatView.byteLength / stride);
+      const result = [];
+
+      for (let i = 0; i < count; i++) {
+        const item = {};
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          const byteOffset = baseOffset + field.offset;
+          const n = field.size / 4;
+
+          if (field.baseType === 'u32') {
+            if (n === 1) {
+              item[field.name] = dataView.getUint32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getUint32(byteOffset + j * 4, true)
+              );
+            }
+          } else if (field.baseType === 'i32') {
+            if (n === 1) {
+              item[field.name] = dataView.getInt32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getInt32(byteOffset + j * 4, true)
+              );
+            }
+          } else {
+            const idx = byteOffset / 4;
+            if (n === 1) {
+              item[field.name] = floatView[idx];
+            } else {
+              const values = Array.from(floatView.slice(idx, idx + n));
+              if (field.kind === 'vector') {
+                item[field.name] = this._pInst.createVector(...values);
+              } else if (field.kind === 'color') {
+                // Color was packed as normalized RGBA [0-1] via _getRGBA([1,1,1,1])
+                // Scale back to the current colorMode range
+                const maxes = this.states.colorMaxes[this.states.colorMode];
+                item[field.name] = this._pInst.color(
+                  values[0] * maxes[0], values[1] * maxes[1],
+                  values[2] * maxes[2], values[3] * maxes[3]
+                );
+              } else {
+                item[field.name] = values;
+              }
+            }
+          }
+        }
+        result.push(item);
+      }
+
+      return result;
     }
 
     createStorage(dataOrCount) {
