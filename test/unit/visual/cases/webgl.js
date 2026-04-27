@@ -1506,6 +1506,17 @@ visualSuite('WebGL', function() {
     });
   });
 
+  visualSuite('2D Shapes', function() {
+    visualTest('rect() rounded into a circle', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill('red');
+      p5.rect(-20, -20, 40, 40, 20);
+      screenshot();
+    });
+  });
+
   visualSuite('3D Primitives', function() {
     visualTest('cylinder() renders correctly', function(p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
