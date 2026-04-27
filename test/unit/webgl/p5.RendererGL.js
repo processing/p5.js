@@ -3016,5 +3016,20 @@ suite('p5.RendererGL', function() {
 
       expect(widthAt20).toBeGreaterThan(widthAt12);
     });
+
+    test('fontWidth restores correctly when font is unset inside push/pop', async function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const font = await myp5.loadFont('test/unit/assets/acmesa.ttf');
+      myp5.textFont(font);
+      myp5.textSize(12);
+      myp5.push();
+      myp5.textFont('sans-serif'); // unset loaded font
+      myp5.pop();
+      // After pop, should be back to size 12 with loaded font
+      const widthAfterPop = myp5.fontWidth('X');
+      myp5.textSize(20);
+      const widthAt20 = myp5.fontWidth('X');
+      expect(widthAfterPop).toBeLessThan(widthAt20);
+    });
   });
 });

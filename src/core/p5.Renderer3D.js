@@ -160,6 +160,7 @@ export class Renderer3D extends Renderer {
 
     // clipping
     this._clipDepths = [];
+    this._textContextSavedStack = [];
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
@@ -1329,9 +1330,11 @@ export class Renderer3D extends Renderer {
 
   push() {
     super.push()
-    if (this.states.textFont?.font) {
-      this.textDrawingContext()?.save()
+    const saved = !!(this.states.textFont?.font);
+    if (saved) {
+      this.textDrawingContext().save()
     }
+    this._textContextSavedStack.push(saved);
   }
 
   pop(...args) {
@@ -1341,8 +1344,8 @@ export class Renderer3D extends Renderer {
     ) {
       this._clearClip();
     }
-    if (this.states.textFont?.font) {
-      this.textDrawingContext()?.restore()
+    if (this._textContextSavedStack.pop()) {
+      this.textDrawingContext().restore()
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
