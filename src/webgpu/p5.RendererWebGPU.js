@@ -391,7 +391,7 @@ function rendererWebGPU(p5, fn) {
         }
         if (this._pInst._webgpuAttributes[key] !== value) {
           //changing value of previously altered attribute
-          this._webgpuAttributes[key] = value;
+          this._pInst._webgpuAttributes[key] = value;
           unchanged = false;
         }
         //setting all attributes with some change
@@ -754,9 +754,9 @@ function rendererWebGPU(p5, fn) {
         1;  // No MSAA needed when blitting already-antialiased textures to canvas
       const sampleCount = this._getValidSampleCount(requestedSampleCount);
 
-      const depthFormat = activeFramebuffer && activeFramebuffer.useDepth ?
-        this._getWebGPUDepthFormat(activeFramebuffer) :
-        this.depthFormat;
+      const depthFormat = activeFramebuffer
+        ? (activeFramebuffer.useDepth ? this._getWebGPUDepthFormat(activeFramebuffer) : undefined)
+        : this.depthFormat;
 
       const drawTarget = this.drawTarget();
       const clipping = this._clipping;
@@ -833,25 +833,27 @@ function rendererWebGPU(p5, fn) {
             },
             primitive: { topology },
             multisample: { count: sampleCount },
-            depthStencil: {
-              format: depthFormat,
-              depthWriteEnabled: !clipping,
-              depthCompare: 'less-equal',
-              stencilFront: {
-                compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                failOp: 'keep',
-                depthFailOp: 'keep',
-                passOp: clipping ? 'replace' : 'keep',
+            ...(depthFormat ? {
+              depthStencil: {
+                format: depthFormat,
+                depthWriteEnabled: !clipping,
+                depthCompare: 'less-equal',
+                stencilFront: {
+                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
+                  failOp: 'keep',
+                  depthFailOp: 'keep',
+                  passOp: clipping ? 'replace' : 'keep',
+                },
+                stencilBack: {
+                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
+                  failOp: 'keep',
+                  depthFailOp: 'keep',
+                  passOp: clipping ? 'replace' : 'keep',
+                },
+                stencilReadMask: 0xFF,
+                stencilWriteMask: clipping ? 0xFF : 0x00,
               },
-              stencilBack: {
-                compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                failOp: 'keep',
-                depthFailOp: 'keep',
-                passOp: clipping ? 'replace' : 'keep',
-              },
-              stencilReadMask: 0xFF,
-              stencilWriteMask: clipping ? 0xFF : 0x00,
-            },
+            } : {}),
           });
           shader._pipelineCache.set(key, pipeline);
         }
@@ -3058,7 +3060,7 @@ ${hookUniformFields}}
     }
 
     defaultFramebufferAntialias() {
-      return true;
+      return this._pInst._webgpuAttributes?.antialias !== false;
     }
 
     supportsFramebufferAntialias() {
@@ -3988,13 +3990,6 @@ ${hookUniformFields}}
         px = Math.ceil(Math.sqrt(totalIterations));
         py = Math.ceil(totalIterations / px);
         pz = 1;
-
-        if (p5.debug || exceedsLimits) {
-          console.warn(
-            `p5.js: Compute dispatch (${x}, ${y}, ${z}) auto-spread to (${px}, ${py}, 1) ` +
-            `to ${exceedsLimits ? 'stay within GPU limits' : 'optimize performance'}.`
-          );
-        }
       }
 
       shader.setUniform('uPhysicalCount', [px, py, pz]);
