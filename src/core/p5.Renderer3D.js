@@ -160,6 +160,7 @@ export class Renderer3D extends Renderer {
 
     // clipping
     this._clipDepths = [];
+    this._textContextSavedStack = [];
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
@@ -220,6 +221,8 @@ export class Renderer3D extends Renderer {
 
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
+
+    this._largeTessellationAcknowledged = false;
 
     this.geometryBufferCache = new GeometryBufferCache(this);
 
@@ -1327,12 +1330,24 @@ export class Renderer3D extends Renderer {
     return this;
   }
 
+  push() {
+    super.push()
+    const saved = !!(this.states.textFont?.font);
+    if (saved) {
+      this.textDrawingContext().save()
+    }
+    this._textContextSavedStack.push(saved);
+  }
+
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+    }
+    if (this._textContextSavedStack.pop()) {
+      this.textDrawingContext().restore()
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
@@ -1994,6 +2009,10 @@ const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGP
 
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
+
+  ShapeBuilder.prototype.friendlyErrorsDisabled = function() {
+    return Boolean(p5.disableFriendlyErrors);
+  };
 
   /**
    * Creates a <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`</a>, which is
