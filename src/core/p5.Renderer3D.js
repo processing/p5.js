@@ -1327,12 +1327,22 @@ export class Renderer3D extends Renderer {
     return this;
   }
 
+  push() {
+    super.push()
+    if (this.states.textFont?.font) {
+      this.textDrawingContext()?.save()
+    }
+  }
+
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+    }
+    if (this.states.textFont?.font) {
+      this.textDrawingContext()?.restore()
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();

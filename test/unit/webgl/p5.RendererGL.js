@@ -2998,4 +2998,23 @@ suite('p5.RendererGL', function() {
       expect(myp5.get(5, 5)).toEqual([255, 0, 0, 255]);
     });
   });
+
+  suite('fontWidth', function() {
+    test('respects textSize changes across push/pop', async function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const font = await myp5.loadFont('test/unit/assets/acmesa.ttf');
+
+      myp5.push();
+      myp5.textFont(font);
+      myp5.textSize(12);
+      myp5.push();
+      myp5.textSize(20);
+      const widthAt20 = myp5.fontWidth('X');
+      myp5.pop();
+      const widthAt12 = myp5.fontWidth('X');
+      myp5.pop();
+
+      expect(widthAt20).toBeGreaterThan(widthAt12);
+    });
+  });
 });
