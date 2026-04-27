@@ -160,6 +160,7 @@ export class Renderer3D extends Renderer {
 
     // clipping
     this._clipDepths = [];
+    this._textContextSavedStack = [];
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
@@ -1327,12 +1328,24 @@ export class Renderer3D extends Renderer {
     return this;
   }
 
+  push() {
+    super.push()
+    const saved = !!(this.states.textFont?.font);
+    if (saved) {
+      this.textDrawingContext().save()
+    }
+    this._textContextSavedStack.push(saved);
+  }
+
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+    }
+    if (this._textContextSavedStack.pop()) {
+      this.textDrawingContext().restore()
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
