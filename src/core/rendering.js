@@ -45,10 +45,12 @@ function rendering(p5, fn){
    * system variable to check what version is being used, or call
    * `setAttributes({ version: 1 })` to create a WebGL1 context.
    *
+   * Note: In WebGPU mode, you must `await` this function.
+   *
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
    * @param  {Number} [height] height of the canvas. Defaults to 100.
-   * @param  {(P2D|WEBGL|P2DHDR|WEBGPU)} [renderer] either P2D, WEBGL, or WEBGPU. Defaults to `P2D`.
+   * @param  {(P2D|WEBGL|P2DHDR)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
    * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
    * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
    *
@@ -105,6 +107,14 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
+   */
+  /**
+   * @method createCanvas
+   * @param  {Number} width
+   * @param  {Number} height
+   * @param  {WEBGPU} renderer
+   * @param  {HTMLCanvasElement} [canvas]
+   * @return {Promise<p5.Renderer>}
    */
   /**
    * @method createCanvas
