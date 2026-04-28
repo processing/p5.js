@@ -495,6 +495,46 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
 });
 
 
+    test('map() works inside a strands modify callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(0.25, 0, 1, 0, 1);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 64, 5);
+      assert.approximately(pixelColor[1], 64, 5);
+      assert.approximately(pixelColor[2], 64, 5);
+    });
+
+    test('map() with withinBounds clamps the result inside strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(2.0, 0, 1, 0, 1, true);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 255, 5);
+      assert.approximately(pixelColor[2], 255, 5);
+    });
+
     test('handle custom uniform names with automatic values', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(() => {
