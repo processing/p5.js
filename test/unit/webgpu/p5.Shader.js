@@ -1228,5 +1228,46 @@ suite('WebGPU p5.Shader', function() {
         });
       }
     });
+
+    suite('compute shaders', () => {
+      test('handle early return in void compute hook', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        // This test verifies that buildComputeShader and p5.compute
+        // correctly handle void hooks with early returns without crashing
+        // the strands compiler or hitting type errors.
+        expect(() => {
+          const computeShader = myp5.buildComputeShader(() => {
+            const id = myp5.index.x;
+            if (id > 10) {
+              return; // Early return in void hook
+            }
+          }, { myp5 });
+
+          myp5.compute(computeShader, 1);
+        }).not.toThrow();
+      });
+
+      test('early return in void compute hook stops execution', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const data = myp5.createStorage([0]);
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const buf = myp5.uniformStorage();
+          const id = myp5.index.x;
+          if (id == 0) {
+            buf[0] = 1.0;
+            return;
+            buf[0] = 2.0; // Should not execute
+          }
+        }, { myp5 });
+
+        computeShader.setUniform('buf', data);
+
+        expect(() => {
+          myp5.compute(computeShader, 1);
+        }).not.toThrow();
+      });
+    });
   });
 });

@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Models
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 import { Geometry } from './p5.Geometry';
@@ -631,6 +629,7 @@ function loading(p5, fn){
                   model.vertexColors.push(1);
                 } else {
                   hasColorlessVertices = true;
+                  model.vertexColors.push(-1, -1, -1, -1);
                 }
               } else {
                 face.push(usedVerts[vertString][currentMaterial]);
@@ -652,9 +651,8 @@ function loading(p5, fn){
     if (model.vertexNormals.length === 0) {
       model.computeNormals();
     }
-    if (hasColoredVertices === hasColorlessVertices) {
-      // If both are true or both are false, throw an error because the model is inconsistent
-      throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+    if (!hasColoredVertices) {
+      model.vertexColors = [];
     }
 
     return model;

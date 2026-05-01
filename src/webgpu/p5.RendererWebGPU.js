@@ -14,7 +14,6 @@ import { materialVertexShader, materialFragmentShader } from './shaders/material
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
-import noiseWGSL from './shaders/functions/noise3DWGSL';
 import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
 import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
@@ -174,6 +173,78 @@ function rendererWebGPU(p5, fn) {
         device.queue.writeBuffer(this.buffer, 0, floatData);
       }
     }
+
+    /**
+     * Reads data from a storage buffer back into JavaScript.
+     *
+     * Copies data from the GPU to the CPU using a temporary buffer,
+     * so it must be awaited. Returns a `Float32Array` for number
+     * buffers, or an array of plain objects for struct buffers.
+     * 
+     * Note: This is a GPU -> CPU read, so calling it often (like every frame)
+     * can be slow.
+     *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Float32Array([1, 2, 3, 4]));
+     *   computeShader = buildComputeShader(doubleValues);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Float32Array [2, 4, 6, 8]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 2, 4, 6, 8 to the console.');
+     * }
+     *
+     * function doubleValues() {
+     *   let d = uniformStorage(data);
+     *   let idx = index.x;
+     *   d[idx] = d[idx] * 2;
+     * }
+     * ```
+     *
+     * @method read
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @returns {Promise<Float32Array|Object[]>}
+     */
+    async read() {
+      const device = this._renderer.device;
+      this._renderer.flushDraw();
+
+      const stagingBuffer = device.createBuffer({
+        size: this.size,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+      });
+
+      const commandEncoder = device.createCommandEncoder();
+      commandEncoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, this.size);
+      device.queue.submit([commandEncoder.finish()]);
+
+      await stagingBuffer.mapAsync(GPUMapMode.READ, 0, this.size);
+      const mappedRange = stagingBuffer.getMappedRange(0, this.size);
+
+      // Copy before unmapping because mapped memory becomes invalid after unmap
+      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
+      rawCopy.set(new Float32Array(mappedRange));
+
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      if (this._schema !== null) {
+        return this._renderer._unpackStructArray(rawCopy, this._schema);
+      }
+      return rawCopy;
+    }
   }
 
   /**
@@ -320,7 +391,7 @@ function rendererWebGPU(p5, fn) {
         }
         if (this._pInst._webgpuAttributes[key] !== value) {
           //changing value of previously altered attribute
-          this._webgpuAttributes[key] = value;
+          this._pInst._webgpuAttributes[key] = value;
           unchanged = false;
         }
         //setting all attributes with some change
@@ -683,9 +754,9 @@ function rendererWebGPU(p5, fn) {
         1;  // No MSAA needed when blitting already-antialiased textures to canvas
       const sampleCount = this._getValidSampleCount(requestedSampleCount);
 
-      const depthFormat = activeFramebuffer && activeFramebuffer.useDepth ?
-        this._getWebGPUDepthFormat(activeFramebuffer) :
-        this.depthFormat;
+      const depthFormat = activeFramebuffer
+        ? (activeFramebuffer.useDepth ? this._getWebGPUDepthFormat(activeFramebuffer) : undefined)
+        : this.depthFormat;
 
       const drawTarget = this.drawTarget();
       const clipping = this._clipping;
@@ -762,25 +833,27 @@ function rendererWebGPU(p5, fn) {
             },
             primitive: { topology },
             multisample: { count: sampleCount },
-            depthStencil: {
-              format: depthFormat,
-              depthWriteEnabled: !clipping,
-              depthCompare: 'less-equal',
-              stencilFront: {
-                compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                failOp: 'keep',
-                depthFailOp: 'keep',
-                passOp: clipping ? 'replace' : 'keep',
+            ...(depthFormat ? {
+              depthStencil: {
+                format: depthFormat,
+                depthWriteEnabled: !clipping,
+                depthCompare: 'less-equal',
+                stencilFront: {
+                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
+                  failOp: 'keep',
+                  depthFailOp: 'keep',
+                  passOp: clipping ? 'replace' : 'keep',
+                },
+                stencilBack: {
+                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
+                  failOp: 'keep',
+                  depthFailOp: 'keep',
+                  passOp: clipping ? 'replace' : 'keep',
+                },
+                stencilReadMask: 0xFF,
+                stencilWriteMask: clipping ? 0xFF : 0x00,
               },
-              stencilBack: {
-                compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                failOp: 'keep',
-                depthFailOp: 'keep',
-                passOp: clipping ? 'replace' : 'keep',
-              },
-              stencilReadMask: 0xFF,
-              stencilWriteMask: clipping ? 0xFF : 0x00,
-            },
+            } : {}),
           });
           shader._pipelineCache.set(key, pipeline);
         }
@@ -2345,7 +2418,7 @@ function rendererWebGPU(p5, fn) {
                 rgb += components.emissive;
                 return vec4<f32>(rgb, components.opacity);
               }`,
-              "vec4f getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4f getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2370,7 +2443,7 @@ function rendererWebGPU(p5, fn) {
             },
             fragment: {
               "void beforeFragment": "() {}",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -2396,7 +2469,7 @@ function rendererWebGPU(p5, fn) {
             fragment: {
               "void beforeFragment": "() {}",
               "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>) { return color; }",
+              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
               "bool shouldDiscard": "(outside: bool) { return outside; };",
               "void afterFragment": "() {}",
             },
@@ -2987,7 +3060,7 @@ ${hookUniformFields}}
     }
 
     defaultFramebufferAntialias() {
-      return true;
+      return this._pInst._webgpuAttributes?.antialias !== false;
     }
 
     supportsFramebufferAntialias() {
@@ -3242,12 +3315,16 @@ ${hookUniformFields}}
 
       let maxEnd = 0;
       let maxAlign = 1;
-      const fields = entries.map(([name]) => {
+      const fields = entries.map(([name, value]) => {
         const el = elements[name];
         maxEnd = Math.max(maxEnd, el.offsetEnd);
         // Alignment for scalars/vectors: <=4 -> 4, <=8 -> 8, else 16
         const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
         maxAlign = Math.max(maxAlign, align);
+        // Track original JS type for reconstruction during readback
+        const kind = value?.isVector ? 'vector'
+          : value?.isColor ? 'color'
+          : undefined;
         return {
           name,
           baseType: el.baseType,
@@ -3255,6 +3332,7 @@ ${hookUniformFields}}
           offset: el.offset,
           packInPlace: el.packInPlace ?? false,
           dim: el.size / 4,
+          kind,
         };
       });
 
@@ -3279,6 +3357,65 @@ ${hookUniformFields}}
         }
       }
       return floatView;
+    }
+
+    // Inverse of _packStructArray reads packed buffer back into plain JS objects
+    // using the same schema layout - fields, stride and offsets
+    _unpackStructArray(floatView, schema) {
+      const { fields, stride } = schema;
+      const dataView = new DataView(floatView.buffer);
+      const count = Math.floor(floatView.byteLength / stride);
+      const result = [];
+
+      for (let i = 0; i < count; i++) {
+        const item = {};
+        const baseOffset = i * stride;
+        for (const field of fields) {
+          const byteOffset = baseOffset + field.offset;
+          const n = field.size / 4;
+
+          if (field.baseType === 'u32') {
+            if (n === 1) {
+              item[field.name] = dataView.getUint32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getUint32(byteOffset + j * 4, true)
+              );
+            }
+          } else if (field.baseType === 'i32') {
+            if (n === 1) {
+              item[field.name] = dataView.getInt32(byteOffset, true);
+            } else {
+              item[field.name] = Array.from({ length: n }, (_, j) =>
+                dataView.getInt32(byteOffset + j * 4, true)
+              );
+            }
+          } else {
+            const idx = byteOffset / 4;
+            if (n === 1) {
+              item[field.name] = floatView[idx];
+            } else {
+              const values = Array.from(floatView.slice(idx, idx + n));
+              if (field.kind === 'vector') {
+                item[field.name] = this._pInst.createVector(...values);
+              } else if (field.kind === 'color') {
+                // Color was packed as normalized RGBA [0-1] via _getRGBA([1,1,1,1])
+                // Scale back to the current colorMode range
+                const maxes = this.states.colorMaxes[this.states.colorMode];
+                item[field.name] = this._pInst.color(
+                  values[0] * maxes[0], values[1] * maxes[1],
+                  values[2] * maxes[2], values[3] * maxes[3]
+                );
+              } else {
+                item[field.name] = values;
+              }
+            }
+          }
+        }
+        result.push(item);
+      }
+
+      return result;
     }
 
     createStorage(dataOrCount) {
@@ -3673,9 +3810,6 @@ ${hookUniformFields}}
       return super.filter(...args);
     }
 
-    getNoiseShaderSnippet() {
-      return noiseWGSL;
-    }
 
 
     baseFilterShader() {
@@ -3836,10 +3970,33 @@ ${hookUniformFields}}
       const WORKGROUP_SIZE_Y = 8;
       const WORKGROUP_SIZE_Z = 1;
 
-      // Calculate number of workgroups needed
-      const workgroupCountX = Math.ceil(x / WORKGROUP_SIZE_X);
-      const workgroupCountY = Math.ceil(y / WORKGROUP_SIZE_Y);
-      const workgroupCountZ = Math.ceil(z / WORKGROUP_SIZE_Z);
+      // auto spreading: if any dimension is too large or for performance optimization,
+      // spread total iteration count across dimensions
+      const totalIterations = x * y * z;
+      const MAX_THREADS_PER_DIM = 65535 * 8;
+
+      let px = x;
+      let py = y;
+      let pz = z;
+
+      // we spread if we exceed GPU limits OR if it involves a large 1D dispatch
+      const exceedsLimits = x > MAX_THREADS_PER_DIM || y > MAX_THREADS_PER_DIM || z > MAX_THREADS_PER_DIM;
+      const isLarge1D = totalIterations > 1024 && y === 1 && z === 1;
+
+      if (exceedsLimits || isLarge1D) {
+        // Always use 2D square spreading (√N × √N).
+        // Benchmarks showed 2D square equals or outperforms 3D cube at every
+        // scale tested, with simpler index reconstruction in the shader.
+        px = Math.ceil(Math.sqrt(totalIterations));
+        py = Math.ceil(totalIterations / px);
+        pz = 1;
+      }
+
+      shader.setUniform('uPhysicalCount', [px, py, pz]);
+
+      const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
+      const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
+      const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();

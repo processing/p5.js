@@ -2,8 +2,6 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import { Color } from './p5.Color';

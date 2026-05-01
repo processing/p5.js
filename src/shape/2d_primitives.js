@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 2D Primitives
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';

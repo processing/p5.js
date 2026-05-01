@@ -2,7 +2,6 @@
  * @module Events
  * @submodule Acceleration
  * @for p5
- * @requires core
  * @main Events
  */
 
