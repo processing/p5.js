@@ -59,7 +59,7 @@ La mayoría de la actividad en los repositorios de GitHub de p5.js (también con
 
 <em>'Issues'</em> es el nombre común que se le da a una publicación en GitHub que apunta a describir, como lo dice su nombre, un problema.  Los <em>Issues</em> pueden ser reportes de error, solicitudes para añadir un nueva funcionalidad, una discusión, o cualquier publicación que se relacione con el desarrollo de la biblioteca de p5.js. Cualquiera con una cuenta de GitHub puede añadir comentarios debajo de cada <em>Issue</em>, ¡incluyendo bots! Este es el lugar donde los contribuidores discuten temas relacionados con el desarrollo del proyecto dentro del repositorio.
 
-Mientras un <em>Issue</em> puede ser creado por diferentes razones, usualmente utilizamos la creación de un <em>Issue</em> para discutir el desarrollo del  código fuente de p5.js. Temas como la corrección de errores de tu propio código, invitación de colaboradores a tu proyecto, u otros temas no relacionados, deben ser discutidos ya sea en el [foro](https://discourse.processing.com) o en otras plataformas de comunicación como [Discord](https://discord.gg/SHQ8dH25r9).
+Mientras un <em>Issue</em> puede ser creado por diferentes razones, usualmente utilizamos la creación de un <em>Issue</em> para discutir el desarrollo del  código fuente de p5.js. Temas como la corrección de errores de tu propio código, invitación de colaboradores a tu proyecto, u otros temas no relacionados, deben ser discutidos ya sea en el [foro](https://discourse.processing.com) o en otras plataformas de comunicación como [Discord](https://discord.p5js.org).
 
 ¡Hemos creado plantillas fáciles de usar que puede ayudarte a determinar si un tema es adecuado para ser publicado como un <em>Issue</em> en GitHub, o si sería más apropiado publicarlo en otro lugar!
 
@@ -294,7 +294,7 @@ Algunos de los archivos y carpetas clave que encontrarás en la carpeta de p5.js
 
 - `src` - Aquí es donde reside todo el código que eventualmente se combina en los archivos finales p5.js y p5.min.js.
 - [`test`](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) - En esta carpeta se encuentran las pruebas unitarias y el código para probar todos los ejemplos de documentación.
-- `tasks` - Donde se encuentra el código de compilación detallado y personalizado. `Gruntfile.js` - Este es el archivo de configuración de compilación principal.
+- `tasks` - Donde se encuentra el código de compilación detallado y personalizado.
 - `contributor_docs` - Aquí es donde reside la documentación y toda la demás documentación para las, los y les colaboradores.
 
 Los demás archivos y carpetas son principalmente configuraciones u otros tipos de archivos de soporte; en la mayoría de los casos, no debería ser necesario realizar ninguna modificación.

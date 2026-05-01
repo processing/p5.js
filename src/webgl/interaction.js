@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Interaction
  * @for p5
- * @requires core
  */
 
 import * as constants from '../core/constants';
@@ -69,14 +68,12 @@ function interaction(p5, fn){
    * @param  {Number} [sensitivityX] sensitivity to movement along the x-axis. Defaults to 1.
    * @param  {Number} [sensitivityY] sensitivity to movement along the y-axis. Defaults to 1.
    * @param  {Number} [sensitivityZ] sensitivity to movement along the z-axis. Defaults to 1.
-   * @param  {Object} [options] object with two optional properties, `disableTouchActions`
-   *                            and `freeRotation`. Both are `Boolean`s. `disableTouchActions`
-   *                            defaults to `true` and `freeRotation` defaults to `false`.
+   * @param  {Object} [options] Settings for orbitControl:
+   * @param {Boolean} [options.disableTouchActions=true] Prevent accidental interactions with the page while orbiting.
+   * @param {Boolean} [options.freeRotation=false] Rotate in the drag direction instead of on principal axes.
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -97,11 +94,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -123,11 +117,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -156,8 +147,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    */
 
   // implementation based on three.js 'orbitControls':
@@ -521,8 +510,6 @@ function interaction(p5, fn){
    * @method debugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -546,11 +533,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -575,11 +559,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -607,11 +588,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -645,8 +623,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -726,8 +702,6 @@ function interaction(p5, fn){
    * @method noDebugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -755,8 +729,6 @@ function interaction(p5, fn){
    * function doubleClicked() {
    *   noDebugMode();
    * }
-   * </code>
-   * </div>
    */
   fn.noDebugMode = function() {
     this._assert3d('noDebugMode');

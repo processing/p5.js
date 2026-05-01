@@ -57,7 +57,7 @@ export const P2DHDR = 'p2d-hdr';
  *
  * To learn more about WEBGL mode, check out <a href="https://p5js.org/tutorials/#webgl">all the interactive WEBGL tutorials</a> in the "Tutorials" section of this website, or read the wiki article <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">"Getting started with WebGL in p5"</a>.
  *
- * @typedef {unique symbol} WEBGL
+ * @typedef {'webgl'} WEBGL
  * @property {WEBGL} WEBGL
  * @final
  */
@@ -66,11 +66,18 @@ export const WEBGL = 'webgl';
  * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
  * which can be used to determine what capabilities the rendering environment
  * has.
- * @typedef {unique symbol} WEBGL2
+ * @typedef {'webgl2'} WEBGL2
  * @property {WEBGL2} WEBGL2
  * @final
  */
 export const WEBGL2 = 'webgl2';
+
+/**
+ * A constant used for creating a WebGPU rendering context
+ * @property {'webgpu'} WEBGPU
+ * @final
+ */
+export const WEBGPU = 'webgpu';
 
 // ENVIRONMENT
 /**
@@ -139,8 +146,6 @@ export const WAIT = 'wait';
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -151,11 +156,8 @@ export const WAIT = 'wait';
  *
  *   describe('The bottom-right quarter of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -175,11 +177,8 @@ export const WAIT = 'wait';
  *
  *   describe('Two black lines on a gray background. One line extends from the center to the right. The other line extends from the center to the bottom.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -209,8 +208,6 @@ export const WAIT = 'wait';
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const HALF_PI = _PI / 2;
 
@@ -228,8 +225,6 @@ export const HALF_PI = _PI / 2;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -240,11 +235,8 @@ export const HALF_PI = _PI / 2;
  *
  *   describe('The bottom half of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -264,11 +256,8 @@ export const HALF_PI = _PI / 2;
  *
  *   describe('A horizontal black line on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -298,8 +287,6 @@ export const HALF_PI = _PI / 2;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const PI = _PI;
 
@@ -318,8 +305,6 @@ export const PI = _PI;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -330,11 +315,8 @@ export const PI = _PI;
  *
  *   describe('A one-eighth slice of a circle drawn in white on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -354,11 +336,8 @@ export const PI = _PI;
  *
  *   describe('Two black lines that form a "V" opening towards the bottom-right corner of a gray square.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -388,8 +367,6 @@ export const PI = _PI;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 20);
  * }
- * </code>
- * </div>
  */
 export const QUARTER_PI = _PI / 4;
 
@@ -408,8 +385,6 @@ export const QUARTER_PI = _PI / 4;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -420,11 +395,8 @@ export const QUARTER_PI = _PI / 4;
  *
  *   describe('A white circle drawn on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -449,11 +421,8 @@ export const QUARTER_PI = _PI / 4;
  *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
  *   );
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -483,8 +452,6 @@ export const QUARTER_PI = _PI / 4;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 10);
  * }
- * </code>
- * </div>
  */
 export const TAU = _PI * 2;
 
@@ -503,8 +470,6 @@ export const TAU = _PI * 2;
  * @final
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -515,11 +480,8 @@ export const TAU = _PI * 2;
  *
  *   describe('A white circle drawn on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -544,11 +506,8 @@ export const TAU = _PI * 2;
  *     'Two horizontal black lines on a gray background. A thick line extends from the center toward the right. A thin line extends from the end of the thick line.'
  *   );
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -578,98 +537,19 @@ export const TAU = _PI * 2;
  *   fill(0, 0, 255);
  *   circle(x2, 0, 10);
  * }
- * </code>
- * </div>
  */
 export const TWO_PI = _PI * 2;
 
 /**
- * A `String` constant that's used to set the
- * <a href="#/p5/angleMode">angleMode()</a>.
- *
- * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
- * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
- * Calling `angleMode(DEGREES)` ensures that angles are measured in units of
- * degrees.
- *
- * Note: `TWO_PI` radians equals 360˚.
- *
- * @typedef {unique symbol} DEGREES
- * @property {DEGREES} DEGREES
+ * @property {Number} DEG_TO_RAD
  * @final
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Draw a red arc from 0 to HALF_PI radians.
- *   fill(255, 0, 0);
- *   arc(50, 50, 80, 80, 0, HALF_PI);
- *
- *   // Use degrees.
- *   angleMode(DEGREES);
- *
- *   // Draw a blue arc from 90˚ to 180˚.
- *   fill(0, 0, 255);
- *   arc(50, 50, 80, 80, 90, 180);
- *
- *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
- * }
- * </code>
- * </div>
  */
-// export const DEGREES = Symbol('degrees');
+export const DEG_TO_RAD = _PI / 180.0;
 
 /**
- * A `String` constant that's used to set the
- * <a href="#/p5/angleMode">angleMode()</a>.
- *
- * By default, functions such as <a href="#/p5/rotate">rotate()</a> and
- * <a href="#/p5/sin">sin()</a> expect angles measured in units of radians.
- * Calling `angleMode(RADIANS)` ensures that angles are measured in units of
- * radians. Doing so can be useful if the
- * <a href="#/p5/angleMode">angleMode()</a> has been set to
- * <a href="#/p5/DEGREES">DEGREES</a>.
- *
- * Note: `TWO_PI` radians equals 360˚.
- *
- * @typedef {unique symbol} RADIANS
- * @property {RADIANS} RADIANS
+ * @property {Number} RAD_TO_DEG
  * @final
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100);
- *
- *   background(200);
- *
- *   // Use degrees.
- *   angleMode(DEGREES);
- *
- *   // Draw a red arc from 0˚ to 90˚.
- *   fill(255, 0, 0);
- *   arc(50, 50, 80, 80, 0, 90);
- *
- *   // Use radians.
- *   angleMode(RADIANS);
- *
- *   // Draw a blue arc from HALF_PI to PI.
- *   fill(0, 0, 255);
- *   arc(50, 50, 80, 80, HALF_PI, PI);
- *
- *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
- * }
- * </code>
- * </div>
  */
-// export const RADIANS = Symbol('radians');
-export const DEG_TO_RAD = _PI / 180.0;
 export const RAD_TO_DEG = 180.0 / _PI;
 
 // SHAPE
@@ -740,7 +620,7 @@ export const POINTS = 0x0000;
  */
 export const LINES = 0x0001;
 /**
- * @property {0x0003} LINE_STRIP
+ * @typedef {0x0003} LINE_STRIP
  * @property {LINE_STRIP} LINE_STRIP
  * @final
  */
@@ -831,7 +711,7 @@ export const PIE = 'pie';
 export const PROJECT = 'square'; // PEND: careful this is counterintuitive
 /**
  * @typedef {'butt'} SQUARE
- * @property {SQUERE} SQUARE
+ * @property {SQUARE} SQUARE
  * @final
  */
 export const SQUARE = 'butt';
@@ -1218,6 +1098,13 @@ export const IMAGE = 'image';
 
 // WEBGL TEXTURE WRAP AND FILTERING
 // LINEAR already exists above
+/**
+ * @typedef {'linear_mipmap'} LINEAR_MIPMAP
+ * @property {LINEAR_MIPMAP} LINEAR_MIPMAP
+ * @final
+ * @private
+ */
+export const LINEAR_MIPMAP = 'linear_mipmap';
 /**
  * @typedef {'nearest'} NEAREST
  * @property {NEAREST} NEAREST

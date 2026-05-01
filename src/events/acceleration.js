@@ -2,11 +2,24 @@
  * @module Events
  * @submodule Acceleration
  * @for p5
- * @requires core
  * @main Events
  */
 
-function acceleration(p5, fn){
+function acceleration(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      'deviceorientation',
+      'devicemotion'
+    ];
+
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
+  };
+
   /**
    * The system variable deviceOrientation always contains the orientation of
    * the device. The value of this variable will either be set 'landscape'
@@ -26,8 +39,6 @@ function acceleration(p5, fn){
    * @property {Number} accelerationX
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -36,8 +47,6 @@ function acceleration(p5, fn){
    *   ellipse(width / 2, height / 2, accelerationX);
    *   describe('Magnitude of device acceleration is displayed as ellipse size.');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationX = 0;
 
@@ -48,8 +57,6 @@ function acceleration(p5, fn){
    * @property {Number} accelerationY
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -58,8 +65,6 @@ function acceleration(p5, fn){
    *   ellipse(width / 2, height / 2, accelerationY);
    *   describe('Magnitude of device acceleration is displayed as ellipse size');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationY = 0;
 
@@ -71,8 +76,6 @@ function acceleration(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -81,8 +84,6 @@ function acceleration(p5, fn){
    *   ellipse(width / 2, height / 2, accelerationZ);
    *   describe('Magnitude of device acceleration is displayed as ellipse size');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationZ = 0;
 
@@ -140,8 +141,6 @@ function acceleration(p5, fn){
    * @property {Number} rotationX
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * let rotationX = 0;            // Angle in degrees
    *
    * function setup() {
@@ -155,8 +154,6 @@ function acceleration(p5, fn){
    *   box(60);                         // Draw 3D cube (60 units wide)
    *   rotationX = (rotationX + 2) % 360; // Increment rotation (2° per frame)
    * }
-   * </code>
-   * </div>
    */
   fn.rotationX = 0;
 
@@ -173,8 +170,6 @@ function acceleration(p5, fn){
    * @property {Number} rotationY
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * let rotationY = 0;            // Angle in degrees
    *
    * function setup() {
@@ -188,8 +183,6 @@ function acceleration(p5, fn){
    *   box(60);                         // Draw 3D cube (60 units wide)
    *   rotationY = (rotationY + 2) % 360; // Increment rotation (2° per frame)
    * }
-   * </code>
-   * </div>
    */
   fn.rotationY = 0;
 
@@ -207,8 +200,6 @@ function acceleration(p5, fn){
    * unexpected behaviour.
    *
    * @example
-   * <div>
-   * <code>
    * let rotationZ = 0;          // Angle in degrees
    *
    * function setup() {
@@ -222,8 +213,6 @@ function acceleration(p5, fn){
    *   box(60);                         // Draw 3D cube
    *   rotationZ = (rotationZ + 2) % 360; // Increment rotation angle
    * }
-   * </code>
-   * </div>
    *
    * @property {Number} rotationZ
    * @readOnly
@@ -240,8 +229,7 @@ function acceleration(p5, fn){
    * pRotationX can also be used with rotationX to determine the rotate
    * direction of the device along the X-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationX - pRotationX < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -266,8 +254,6 @@ function acceleration(p5, fn){
    *
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationX
    * @readOnly
@@ -284,8 +270,7 @@ function acceleration(p5, fn){
    * pRotationY can also be used with rotationY to determine the rotate
    * direction of the device along the Y-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationY - pRotationY < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -309,8 +294,6 @@ function acceleration(p5, fn){
    * }
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationY
    * @readOnly
@@ -327,8 +310,7 @@ function acceleration(p5, fn){
    * pRotationZ can also be used with rotationZ to determine the rotate
    * direction of the device along the Z-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationZ - pRotationZ < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -348,8 +330,6 @@ function acceleration(p5, fn){
    * }
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationZ
    * @readOnly
@@ -381,8 +361,6 @@ function acceleration(p5, fn){
    * @property {String} turnAxis
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees in the
    * // X-axis to change the value.
@@ -405,8 +383,6 @@ function acceleration(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.turnAxis = undefined;
 
@@ -420,8 +396,7 @@ function acceleration(p5, fn){
    * @method setMoveThreshold
    * @param {Number} value The threshold value
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // You will need to move the device incrementally further
    * // the closer the square's color gets to white in order to change the value.
@@ -446,12 +421,8 @@ function acceleration(p5, fn){
    *   }
    *   setMoveThreshold(threshold);
    * }
-   * </code>
-   * </div>
    */
-
   fn.setMoveThreshold = function (val) {
-    // p5._validateParameters('setMoveThreshold', arguments);
     move_threshold = val;
   };
 
@@ -462,8 +433,7 @@ function acceleration(p5, fn){
    * @method setShakeThreshold
    * @param {Number} value The threshold value
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // You will need to shake the device more firmly
    * // the closer the box's fill gets to white in order to change the value.
@@ -488,12 +458,8 @@ function acceleration(p5, fn){
    *   }
    *   setShakeThreshold(threshold);
    * }
-   * </code>
-   * </div>
    */
-
   fn.setShakeThreshold = function (val) {
-    // p5._validateParameters('setShakeThreshold', arguments);
     shake_threshold = val;
   };
 
@@ -504,8 +470,7 @@ function acceleration(p5, fn){
    *
    * @method deviceMoved
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Move the device around
    * // to change the value.
@@ -523,8 +488,6 @@ function acceleration(p5, fn){
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -537,8 +500,7 @@ function acceleration(p5, fn){
    *
    * @method deviceTurned
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees
    * // to change the value.
@@ -557,10 +519,8 @@ function acceleration(p5, fn){
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
-   * <div>
-   * <code>
+   *
+   * @example
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees in the
    * // X-axis to change the value.
@@ -581,8 +541,6 @@ function acceleration(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -593,8 +551,7 @@ function acceleration(p5, fn){
    *
    * @method deviceShaken
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Shake the device to change the value.
    *
@@ -605,16 +562,14 @@ function acceleration(p5, fn){
    *   describe(`50-by-50 black rect in center of canvas.
    *     turns white on mobile when device shakes`);
    * }
+   *
    * function deviceShaken() {
    *   value = value + 5;
    *   if (value > 255) {
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
    */
-
   fn._ondeviceorientation = function (e) {
     this._updatePRotations();
 
@@ -624,6 +579,7 @@ function acceleration(p5, fn){
     this.rotationZ = this._fromDegrees(e.alpha);
     this._handleMotion();
   };
+
   fn._ondevicemotion = function (e) {
     this._updatePAccelerations();
     this.accelerationX = e.acceleration.x * 2;
@@ -631,26 +587,33 @@ function acceleration(p5, fn){
     this.accelerationZ = e.acceleration.z * 2;
     this._handleMotion();
   };
+
   fn._handleMotion = function () {
-    if (window.orientation === 90 || window.orientation === -90) {
+    if (
+      screen.orientation.type === 'landscape-primary' ||
+      screen.orientation.type === 'landscape-secondary'
+    ) {
       this.deviceOrientation = 'landscape';
-    } else if (window.orientation === 0) {
+    } else if (
+      screen.orientation.type === 'portrait-primary' ||
+      screen.orientation.type === 'portrait-secondary'
+    ) {
       this.deviceOrientation = 'portrait';
-    } else if (window.orientation === undefined) {
+    } else {
       this.deviceOrientation = 'undefined';
     }
-    const context = this._isGlobal ? window : this;
-    if (typeof context.deviceMoved === 'function') {
+
+    if (typeof this._customActions.deviceMoved === 'function') {
       if (
         Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
         Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
       ) {
-        context.deviceMoved();
+        this._customActions.deviceMoved();
       }
     }
 
-    if (typeof context.deviceTurned === 'function') {
+    if (typeof this._customActions.deviceTurned === 'function') {
       // The angles given by rotationX etc is from range [-180 to 180].
       // The following will convert them to [0 to 360] for ease of calculation
       // of cases when the angles wrapped around.
@@ -671,7 +634,7 @@ function acceleration(p5, fn){
       if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
         wSAX = wRX;
         this.turnAxis = 'X';
-        context.deviceTurned();
+        this._customActions.deviceTurned();
       }
       this.pRotateDirectionX = rotateDirectionX;
       startAngleX = wSAX - 180;
@@ -691,7 +654,7 @@ function acceleration(p5, fn){
       if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
         wSAY = wRY;
         this.turnAxis = 'Y';
-        context.deviceTurned();
+        this._customActions.deviceTurned();
       }
       this.pRotateDirectionY = rotateDirectionY;
       startAngleY = wSAY - 180;
@@ -720,21 +683,25 @@ function acceleration(p5, fn){
       ) {
         startAngleZ = rotZ;
         this.turnAxis = 'Z';
-        context.deviceTurned();
+        this._customActions.deviceTurned();
       }
       this.pRotateDirectionZ = rotateDirectionZ;
       this.turnAxis = undefined;
     }
-    if (typeof context.deviceShaken === 'function') {
+    if (typeof this._customActions.deviceShaken === 'function') {
       let accelerationChangeX;
       let accelerationChangeY;
       // Add accelerationChangeZ if acceleration change on Z is needed
       if (this.pAccelerationX !== null) {
-        accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);
-        accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
+        accelerationChangeX = Math.abs(
+          this.accelerationX - this.pAccelerationX
+        );
+        accelerationChangeY = Math.abs(
+          this.accelerationY - this.pAccelerationY
+        );
       }
       if (accelerationChangeX + accelerationChangeY > shake_threshold) {
-        context.deviceShaken();
+        this._customActions.deviceShaken();
       }
     }
   };

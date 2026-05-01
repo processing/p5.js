@@ -5,7 +5,6 @@
  */
 
 import * as constants from './constants';
-import { RGB, HSB, HSL } from '../color/creating_reading';
 import primitives2D from '../shape/2d_primitives';
 import attributes from '../shape/attributes';
 import curves from '../shape/curves';
@@ -30,12 +29,17 @@ class Graphics {
     const r = renderer || constants.P2D;
 
     this._pInst = pInst;
-    this._renderer = new renderers[r](this._pInst, w, h, false, canvas);
+    this._renderer = new renderers[r](this, w, h, false, canvas);
 
     this._initializeInstanceVariables(this);
 
     this._renderer._applyDefaults();
     return this;
+  }
+
+  // This is to correctly extend the p5.Element interface
+  get elt() {
+    return this.canvas;
   }
 
   get deltaTime(){
@@ -87,10 +91,7 @@ class Graphics {
    * values each time <a href="#/p5/draw">draw()</a> executes. `p5.Graphics`
    * objects must reset these values manually by calling `myGraphics.reset()`.
    *
-   *
    * @example
-   * <div>
-   * <code>
    * let pg;
    *
    * function setup() {
@@ -127,11 +128,8 @@ class Graphics {
    *     pg.reset();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -159,11 +157,8 @@ class Graphics {
    *   // Reset the p5.Graphics object automatically.
    *   pg.reset();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -200,11 +195,8 @@ class Graphics {
    *     pg.reset();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pg;
    *
    * function setup() {
@@ -236,8 +228,6 @@ class Graphics {
    *   // Reset the p5.Graphics object automatically.
    *   pg.reset();
    * }
-   * </code>
-   * </div>
    */
   reset() {
     this._renderer.resetMatrix();
@@ -250,7 +240,7 @@ class Graphics {
    * Removes the graphics buffer from the web page.
    *
    * Calling `myGraphics.remove()` removes the graphics buffer's
-   * `&lt;canvas&gt;` element from the web page. The graphics buffer also uses
+   * `<canvas>` element from the web page. The graphics buffer also uses
    * a bit of memory on the CPU that can be freed like so:
    *
    * ```js
@@ -267,8 +257,6 @@ class Graphics {
    * collected.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the p5.Graphics object.
    *
    * let pg;
@@ -303,14 +291,11 @@ class Graphics {
    *   pg.remove();
    *   pg = undefined;
    * }
-   * </code>
-   * </div>
    */
   remove() {
     this._renderer.remove();
     this._renderer = undefined;
   }
-
 
   /**
    * Creates a new <a href="#/p5.Framebuffer">p5.Framebuffer</a> object with
@@ -342,11 +327,19 @@ class Graphics {
    * automatically match the graphics buffer and must be changed manually.
    *
    * @param {Object} [options] configuration options.
+   * @param {UNSIGNED_BYTE|FLOAT|HALF_FLOAT} [options.format=UNSIGNED_BYTE] The data format of the texture.
+   * @param {RGB|RGBA} [options.channels=RGBA] What color channels to include in the texture.
+   * @param {Boolean} [options.depth=true] Whether to store depth information in the framebuffer.
+   * @param {UNSIGNED_INT|FLOAT} [options.depthFormat=FLOAT] The format to store depth values in.
+   * @param {Boolean} [options.stencil=true] Whether to include a stencil buffer (required for clipping.)
+   * @param {Boolean|Number} [options.antialias] Whether to antialias when drawing to this framebuffer. Either a boolean, or the number of antialias samples to use.
+   * @param {Number} [options.width] The width of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.height] The height of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.density] The pixel density of the framebuffer. By default, it will match the main canvas.
+   * @param {LINEAR|NEAREST} [options.textureFiltering=LINEAR] The strategy used when reading values in the framebuffer in between pixels.
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and hold a mouse button to change shapes.
    *
    * let pg;
@@ -444,11 +437,8 @@ class Graphics {
    *   // Start drawing to the box p5.Framebuffer.
    *   boxLayer.end();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and hold a mouse button to change shapes.
    *
    * let pg;
@@ -550,8 +540,6 @@ class Graphics {
    *   // Start drawing to the box p5.Framebuffer.
    *   boxLayer.end();
    * }
-   * </code>
-   * </div>
    */
   createFramebuffer(options) {
     return new Framebuffer(this._renderer, options);
@@ -609,11 +597,9 @@ function graphics(p5, fn){
    * @param {Number} h            height height of the graphics buffer in pixels.
    * @param {(P2D|WEBGL|P2DHDR)} renderer   the renderer to use, either P2D or WEBGL.
    * @param {p5} [pInst]          sketch instance.
-   * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
+   * @param {HTMLCanvasElement} [canvas]     existing `<canvas>` element to use.
    *
    * @example
-   * <div>
-   * <code>
    * let pg;
    *
    * function setup() {
@@ -635,11 +621,8 @@ function graphics(p5, fn){
    *   // Display the p5.Graphics object.
    *   image(pg, 25, 25);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the canvas to display the graphics buffer.
    *
    * let pg;
@@ -668,8 +651,6 @@ function graphics(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    */
   p5.Graphics = Graphics;
 

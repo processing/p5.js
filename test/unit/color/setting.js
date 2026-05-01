@@ -70,7 +70,7 @@ suite('color/Setting', function() {
             }
           }
         })
-      }
+      };
     });
 
     afterEach(() => {
@@ -153,12 +153,18 @@ suite('color/Setting', function() {
 
     test('should set fill strength', function() {
       my3D.erase(125);
-      assert.deepEqual(my3D._renderer.states.curFillColor, [1, 1, 1, 125 / 255]);
+      assert.deepEqual(
+        my3D._renderer.states.curFillColor,
+        [1, 1, 1, 125 / 255]
+      );
     });
 
     test('should set stroke strength', function() {
       my3D.erase(255, 50);
-      assert.deepEqual(my3D._renderer.states.curStrokeColor, [1, 1, 1, 50 / 255]);
+      assert.deepEqual(
+        my3D._renderer.states.curStrokeColor,
+        [1, 1, 1, 50 / 255]
+      );
     });
 
     test('should set default values when no arguments', function() {

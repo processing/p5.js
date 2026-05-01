@@ -62,7 +62,7 @@ The majority of the activity on p5.js' GitHub repositories (repo for short) happ
 
 While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed
 
-either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.gg/SHQ8dH25r9).
+either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.p5js.org).
 
 We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
 
@@ -303,7 +303,6 @@ Some of the key files and folders you will be in the p5.js folder are as follows
 - `src` - Where all the code that eventually gets combined into the final p5.js and p5.min.js files lives
 - [`test`](./unit_testing.md) - Where unit tests and code for testing all documentation examples lives
 - `tasks` - Where detailed and custom build code lives
-- `Gruntfile.js` - This is the main build configuration file
 - `contributor_docs` - Where the documentation and all other contributor documentation lives
 
 The other files and folders are either configurations or other kinds of support files; in most cases, you shouldn't need to make any modifications.

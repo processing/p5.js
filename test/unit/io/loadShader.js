@@ -27,7 +27,7 @@ suite('loadShader', function() {
   test('error callback is called for vert shader', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadShader(invalidFile, fragFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -38,7 +38,7 @@ suite('loadShader', function() {
   test('error callback is called for frag shader', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadShader(vertFile, invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -51,7 +51,7 @@ suite('loadShader', function() {
       mockP5Prototype.loadShader(vertFile, fragFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -63,7 +63,7 @@ suite('loadShader', function() {
   });
 
   test('passes an object with correct data to callback', async function() {
-    await mockP5Prototype.loadShader(vertFile, fragFile, (shader) => {
+    await mockP5Prototype.loadShader(vertFile, fragFile, shader => {
       assert.instanceOf(shader, Shader);
     });
   });

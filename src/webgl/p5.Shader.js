@@ -3,22 +3,38 @@
  * @module 3D
  * @submodule Material
  * @for p5
- * @requires core
  */
 
-import { Texture } from './p5.Texture';
-
+const TypedArray = Object.getPrototypeOf(Uint8Array);
 class Shader {
   constructor(renderer, vertSrc, fragSrc, options = {}) {
-    // TODO: adapt this to not take ids, but rather,
-    // to take the source for a vertex and fragment shader
-    // to enable custom shaders at some later date
     this._renderer = renderer;
-    this._vertSrc = vertSrc;
-    this._fragSrc = fragSrc;
+
+    // Detect compute shader: first arg is STRING and second is undefined OR an options object
+    if (
+      typeof vertSrc === 'string' && (
+        fragSrc === undefined || (typeof fragSrc === 'object' && !Array.isArray(fragSrc))
+      )
+    ) {
+      // Compute shader
+      this.shaderType = 'compute';
+      this._computeSrc = vertSrc;
+      this._vertSrc = null;
+      this._fragSrc = null;
+      // If fragSrc is an options object, use it
+      if (typeof fragSrc === 'object') {
+        options = fragSrc;
+      }
+    } else {
+      // Render shader - shaderType will be set later during binding ('fill', 'stroke', etc.)
+      this._vertSrc = vertSrc;
+      this._fragSrc = fragSrc;
+      this._computeSrc = null;
+    }
+
     this._vertShader = -1;
     this._fragShader = -1;
-    this._glProgram = 0;
+    this._compiled = false;
     this._loadedAttributes = false;
     this.attributes = {};
     this._loadedUniforms = false;
@@ -32,8 +48,17 @@ class Shader {
       // Stores uniforms + default values.
       uniforms: options.uniforms || {},
 
+      // Compute shader storage uniforms + default values
+      storageUniforms: options.storageUniforms || {},
+
       // Stores custom uniform + helper declarations as a string.
       declarations: options.declarations,
+
+      // Stores an array of variable names + types passed between the vertex and fragment shader
+      varyingVariables: options.varyingVariables || [],
+
+      // Stores instanceID varying info for forwarding to the fragment shader
+      instanceIDVarying: options.instanceIDVarying || null,
 
       // Stores helper functions to prepend to shaders.
       helpers: options.helpers || {},
@@ -41,131 +66,27 @@ class Shader {
       // Stores the hook implementations
       vertex: options.vertex || {},
       fragment: options.fragment || {},
+      compute: options.compute || {},
+
+      hookAliases: options.hookAliases || {},
 
       // Stores whether or not the hook implementation has been modified
       // from the default. This is supplied automatically by calling
       // yourShader.modify(...).
       modified: {
         vertex: (options.modified && options.modified.vertex) || {},
-        fragment: (options.modified && options.modified.fragment) || {}
+        fragment: (options.modified && options.modified.fragment) || {},
+        compute: (options.modified && options.modified.compute) || {},
       }
     };
   }
 
   hookTypes(hookName) {
-    let fullSrc = this._vertSrc;
-    let body = this.hooks.vertex[hookName];
-    if (!body) {
-      body = this.hooks.fragment[hookName];
-      fullSrc = this._fragSrc;
-    }
-    if (!body) {
-      throw new Error(`Can't find hook ${hookName}!`);
-    }
-    const nameParts = hookName.split(/\s+/g);
-    const functionName = nameParts.pop();
-    const returnType = nameParts.pop();
-    const returnQualifiers = [...nameParts];
-
-    const parameterMatch = /\(([^\)]*)\)/.exec(body);
-    if (!parameterMatch) {
-      throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
-    }
-
-    const structProperties = structName => {
-      const structDefMatch = new RegExp(`struct\\s+${structName}\\s*\{([^\}]*)\}`).exec(fullSrc);
-      if (!structDefMatch) return undefined;
-
-      const properties = [];
-      for (const defSrc of structDefMatch[1].split(';')) {
-        // E.g. `int var1, var2;` or `MyStruct prop;`
-        const parts = defSrc.trim().split(/\s+|,/g);
-        const typeName = parts.shift();
-        const names = [...parts];
-        const typeProperties = structProperties(typeName);
-        for (const name of names) {
-          properties.push({
-            name,
-            type: {
-              typeName,
-              qualifiers: [],
-              properties: typeProperties,
-            },
-          });
-        }
-      }
-      return properties;
-    };
-
-    const parameters = parameterMatch[1].split(',').map(paramString => {
-      // e.g. `int prop` or `in sampler2D prop` or `const float prop`
-      const parts = paramString.trim().split(/\s+/g);
-      const name = parts.pop();
-      const typeName = parts.pop();
-      const qualifiers = [...parts];
-      const properties = structProperties(typeName);
-      return {
-        name,
-        type: {
-          typeName,
-          qualifiers,
-          properties,
-        }
-      }
-    });
-
-    return {
-      name: functionName,
-      returnType: {
-        typeName: returnType,
-        qualifiers: returnQualifiers,
-        properties: structProperties(returnType)
-      },
-      parameters
-    };
+    return this._renderer.getShaderHookTypes(this, hookName);
   }
 
   shaderSrc(src, shaderType) {
-    const main = 'void main';
-    let [preMain, postMain] = src.split(main);
-
-    let hooks = '';
-    let defines = '';
-    for (const key in this.hooks.uniforms) {
-      hooks += `uniform ${key};\n`;
-    }
-    if (this.hooks.declarations) {
-      hooks += this.hooks.declarations + '\n';
-    }
-    if (this.hooks[shaderType].declarations) {
-      hooks += this.hooks[shaderType].declarations + '\n';
-    }
-    for (const hookDef in this.hooks.helpers) {
-      hooks += `${hookDef}${this.hooks.helpers[hookDef]}\n`;
-    }
-    for (const hookDef in this.hooks[shaderType]) {
-      if (hookDef === 'declarations') continue;
-      const [hookType, hookName] = hookDef.split(' ');
-
-      // Add a #define so that if the shader wants to use preprocessor directives to
-      // optimize away the extra function calls in main, it can do so
-      if (this.hooks.modified[shaderType][hookDef]) {
-        defines += '#define AUGMENTED_HOOK_' + hookName + '\n';
-      }
-
-      hooks +=
-        hookType + ' HOOK_' + hookName + this.hooks[shaderType][hookDef] + '\n';
-    }
-
-    // Allow shaders to specify the location of hook #define statements. Normally these
-    // go after function definitions, but one might want to have them defined earlier
-    // in order to only conditionally make uniforms.
-    if (preMain.indexOf('#define HOOK_DEFINES') !== -1) {
-      preMain = preMain.replace('#define HOOK_DEFINES', '\n' + defines + '\n');
-      defines = '';
-    }
-
-    return preMain + '\n' + defines + hooks + main + postMain;
+    return this._renderer.populateHooks(this, src, shaderType);
   }
 
   /**
@@ -187,11 +108,18 @@ class Shader {
   }
 
   vertSrc() {
+    if (this.shaderType === 'compute') return null;
     return this.shaderSrc(this._vertSrc, 'vertex');
   }
 
   fragSrc() {
+    if (this.shaderType === 'compute') return null;
     return this.shaderSrc(this._fragSrc, 'fragment');
+  }
+
+  computeSrc() {
+    if (this.shaderType !== 'compute') return null;
+    return this.shaderSrc(this._computeSrc, 'compute');
   }
 
   /**
@@ -243,29 +171,40 @@ class Shader {
    *                 color.a = components.opacity;
    *                 return color;
    *               }
-   * vec4 getFinalColor(vec4 color) { return color; }
+   * vec4 getFinalColor(vec4 color, vec2 texCoord) { return color; }
    * void afterFragment() {}
    * ```
    *
    * @beta
    */
   inspectHooks() {
-    console.log('==== Vertex shader hooks: ====');
-    for (const key in this.hooks.vertex) {
-      console.log(
-        (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.vertex[key]
-      );
-    }
-    console.log('');
-    console.log('==== Fragment shader hooks: ====');
-    for (const key in this.hooks.fragment) {
-      console.log(
-        (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
-          key +
-          this.hooks.fragment[key]
-      );
+    if (this.shaderType === 'compute') {
+      console.log('==== Compute shader hooks: ====');
+      for (const key in this.hooks.compute) {
+        console.log(
+          (this.hooks.modified.compute[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.compute[key]
+        );
+      }
+    } else {
+      console.log('==== Vertex shader hooks: ====');
+      for (const key in this.hooks.vertex) {
+        console.log(
+          (this.hooks.modified.vertex[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.vertex[key]
+        );
+      }
+      console.log('');
+      console.log('==== Fragment shader hooks: ====');
+      for (const key in this.hooks.fragment) {
+        console.log(
+          (this.hooks.modified.fragment[key] ? '[MODIFIED] ' : '') +
+            key +
+            this.hooks.fragment[key]
+        );
+      }
     }
     console.log('');
     console.log('==== Helper functions: ====');
@@ -279,13 +218,118 @@ class Shader {
    * of shader code replacing default behaviour.
    *
    * Each shader may let you override bits of its behavior. Each bit is called
-   * a *hook.* A hook is either for the *vertex* shader, if it affects the
-   * position of vertices, or in the *fragment* shader, if it affects the pixel
-   * color. You can inspect the different hooks available by calling
+   * a *hook.* For example, a hook can let you adjust positions of vertices, or
+   * the color of a pixel. You can inspect the different hooks available by calling
    * <a href="#/p5.Shader/inspectHooks">`yourShader.inspectHooks()`</a>. You can
    * also read the reference for the default material, normal material, color, line, and point shaders to
    * see what hooks they have available.
    *
+   * `modify()` can be passed a function as a parameter. Inside, you can override hooks
+   * by calling them as functions. Each hook will take in a callback that takes in inputs
+   * and is expected to return an output. For example, here is a function that changes the
+   * material color to red:
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [inputs.texCoord, 0, 1];
+   *       return inputs;
+   *     });
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   noStroke();
+   *   shader(myShader); // Apply the custom shader
+   *   plane(width, height); // Draw a plane with the shader applied
+   * }
+   * ```
+   *
+   * In addition to calling hooks, you can create uniforms, which are special variables
+   * used to pass data from p5.js into the shader. They can be created by calling `uniform` + the
+   * type of the data, such as `uniformFloat` for a number or `uniformVector2` for a two-component vector.
+   * They take in a function that returns the data for the variable. You can then reference these
+   * variables in your hooks, and their values will update every time you apply
+   * the shader with the result of your function.
+   *
+   * Move the mouse over this sketch to increase the moveCounter which will be passed to the shader as a uniform.
+   *
+   * ```js example
+   * let myShader;
+   * //count of frames in which mouse has been moved
+   * let moveCounter = 0;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = baseMaterialShader().modify(() => {
+   *     // Get the move counter from our sketch
+   *     let count = uniformFloat(() => moveCounter);
+   *
+   *     getPixelInputs((inputs) => {
+   *       inputs.color = [
+   *         inputs.texCoord,
+   *         sin(count/100) / 2 + 0.5,
+   *         1,
+   *       ];
+   *       return inputs;
+   *     });
+   *   });
+   * }
+   *
+   * function mouseDragged(){
+   *   moveCounter += 1;
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   noStroke(255);
+   *   shader(myShader); // Apply the custom shader
+   *   plane(width, height); // Draw a plane with the shader applied
+   * }
+   * ```
+   *
+   * p5.strands functions are special, since they get turned into a shader instead of being
+   * run like the rest of your code. They only have access to p5.js functions, and variables
+   * you declare inside the `modify` callback. If you need access to local variables, you
+   * can pass them into `modify` with an optional second parameter, `variables`. These will
+   * then be passed into your function as an argument. If you are
+   * using instance mode, you will need to pass your sketch object in this way.
+   *
+   * If you are also using a build system for your sketch, variable names may be changed as
+   * part of minification. When creating a uniform, you can pass the name of the uniform in
+   * as a first parameter to ensure it doesn't get changed.
+   *
+   * ```js example
+   * new p5((sketch) => {
+   *   let myShader;
+   *
+   *   sketch.setup = function() {
+   *     sketch.createCanvas(200, 200, sketch.WEBGL);
+   *     myShader = sketch.baseMaterialShader().modify(({ sketch }) => {
+   *       let b = sketch.uniformFloat('b');
+   *       sketch.getPixelInputs((inputs) => {
+   *         inputs.color = [inputs.texCoord, b, 1];
+   *         return inputs;
+   *       });
+   *     }, { sketch });
+   *   }
+   *
+   *   sketch.draw = function() {
+   *     sketch.background(255);
+   *     sketch.noStroke();
+   *     myShader.setUniform('b', 0.5);
+   *     sketch.shader(myShader); // Apply the custom shader
+   *     sketch.plane(sketch.width, sketch.height); // Draw a plane with the shader applied
+   *   }
+   * });
+   * ```
+   *
+   * You can also write GLSL directly in `modify` if you need direct access. To do so,
    * `modify()` takes one parameter, `hooks`, an object with the hooks you want
    * to override. Each key of the `hooks` object is the name
    * of a hook, and the value is a string with the GLSL code for your hook.
@@ -298,18 +342,7 @@ class Shader {
    * a default value as its value. These will be automatically set when the shader is set
    * with `shader(yourShader)`.
    *
-   * You can also add a `declarations` key, where the value is a GLSL string declaring
-   * custom uniform variables, globals, and functions shared
-   * between hooks. To add declarations just in a vertex or fragment shader, add
-   * `vertexDeclarations` and `fragmentDeclarations` keys.
-   *
-   * @beta
-   * @param {Object} [hooks] The hooks in the shader to replace.
-   * @returns {p5.Shader}
-   *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -334,12 +367,14 @@ class Shader {
    *   fill('red');      // Set fill color to red
    *   sphere(50);       // Draw a sphere with the shader applied
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * @example
-   * <div modernizr='webgl'>
-   * <code>
+   * You can also add a `declarations` key, where the value is a GLSL string declaring
+   * custom uniform variables, globals, and functions shared
+   * between hooks. To add declarations just in a vertex or fragment shader, add
+   * `vertexDeclarations` and `fragmentDeclarations` keys.
+   *
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -364,35 +399,54 @@ class Shader {
    *   fill('red');
    *   sphere(50);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * @beta
+   * @param {Function} callback A function with p5.strands code to modify the shader.
+   * @param {Object} [variables] An optional object with local variables p5.strands
+   * should have access to.
+   * @returns {p5.Shader}
+   */
+  /**
+   * @param {Object} [hooks] The hooks in the shader to replace.
+   * @returns {p5.Shader}
    */
   modify(hooks) {
     // p5._validateParameters('p5.Shader.modify', arguments);
     const newHooks = {
       vertex: {},
       fragment: {},
+      compute: {},
       helpers: {}
     };
     for (const key in hooks) {
       if (key === 'declarations') continue;
       if (key === 'uniforms') continue;
+      if (key === 'storageUniforms') continue;
+      if (key === 'varyingVariables') continue;
+      if (key === 'instanceIDVarying') continue;
       if (key === 'vertexDeclarations') {
         newHooks.vertex.declarations =
           (newHooks.vertex.declarations || '') + '\n' + hooks[key];
       } else if (key === 'fragmentDeclarations') {
         newHooks.fragment.declarations =
           (newHooks.fragment.declarations || '') + '\n' + hooks[key];
+      } else if (key === 'computeDeclarations') {
+        newHooks.compute.declarations =
+          (newHooks.compute.declarations || '') + '\n' + hooks[key];
       } else if (this.hooks.vertex[key]) {
         newHooks.vertex[key] = hooks[key];
       } else if (this.hooks.fragment[key]) {
         newHooks.fragment[key] = hooks[key];
+      } else if (this.hooks.compute[key]) {
+        newHooks.compute[key] = hooks[key];
       } else {
         newHooks.helpers[key] = hooks[key];
       }
     }
     const modifiedVertex = Object.assign({}, this.hooks.modified.vertex);
     const modifiedFragment = Object.assign({}, this.hooks.modified.fragment);
+    const modifiedCompute = Object.assign({}, this.hooks.modified.compute);
     for (const key in newHooks.vertex || {}) {
       if (key === 'declarations') continue;
       modifiedVertex[key] = true;
@@ -401,19 +455,37 @@ class Shader {
       if (key === 'declarations') continue;
       modifiedFragment[key] = true;
     }
+    for (const key in newHooks.compute || {}) {
+      if (key === 'declarations') continue;
+      modifiedCompute[key] = true;
+    }
 
-    return new Shader(this._renderer, this._vertSrc, this._fragSrc, {
+    const args = [this._renderer];
+    if (this.shaderType === 'compute') {
+      args.push(this._computeSrc);
+    } else {
+      args.push(this._vertSrc, this._fragSrc);
+    }
+    args.push({
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
+      storageUniforms: Object.assign({}, this.hooks.storageUniforms, hooks.storageUniforms || {}),
+      varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
+      instanceIDVarying: hooks.instanceIDVarying || this.hooks.instanceIDVarying || null,
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
+      compute: Object.assign({}, this.hooks.compute, newHooks.compute || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
+      hookAliases: Object.assign({}, this.hooks.hookAliases, newHooks.hookAliases || {}),
       modified: {
         vertex: modifiedVertex,
-        fragment: modifiedFragment
+        fragment: modifiedFragment,
+        compute: modifiedCompute,
       }
     });
+
+    return new Shader(...args);
   }
 
   /**
@@ -425,68 +497,25 @@ class Shader {
    * @private
    */
   init() {
-    if (this._glProgram === 0 /* or context is stale? */) {
-      const gl = this._renderer.GL;
-
-      // @todo: once custom shading is allowed,
-      // friendly error messages should be used here to share
-      // compiler and linker errors.
-
-      //set up the shader by
-      // 1. creating and getting a gl id for the shader program,
-      // 2. compliling its vertex & fragment sources,
-      // 3. linking the vertex and fragment shaders
-      this._vertShader = gl.createShader(gl.VERTEX_SHADER);
-      //load in our default vertex shader
-      gl.shaderSource(this._vertShader, this.vertSrc());
-      gl.compileShader(this._vertShader);
-      // if our vertex shader failed compilation?
-      if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-        const glError = gl.getShaderInfoLog(this._vertShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
-          console.error(glError);
-        } else {
-          throw glError;
-          p5._friendlyError(
-            `Yikes! An error occurred compiling the vertex shader:${glError}`
-          );
-        }
-        return null;
-      }
-
-      this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-      //load in our material frag shader
-      gl.shaderSource(this._fragShader, this.fragSrc());
-      gl.compileShader(this._fragShader);
-      // if our frag shader failed compilation?
-      if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-        const glError = gl.getShaderInfoLog(this._fragShader);
-        if (typeof IS_MINIFIED !== 'undefined') {
-          console.error(glError);
-        } else {
-          throw glError;
-          p5._friendlyError(
-            `Darn! An error occurred compiling the fragment shader:${glError}`
-          );
-        }
-        return null;
-      }
-
-      this._glProgram = gl.createProgram();
-      gl.attachShader(this._glProgram, this._vertShader);
-      gl.attachShader(this._glProgram, this._fragShader);
-      gl.linkProgram(this._glProgram);
-      if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
-        p5._friendlyError(
-          `Snap! Error linking shader program: ${gl.getProgramInfoLog(
-            this._glProgram
-          )}`
+    // If the shader is uninitialized or context was lost
+    if (!this._initialized) {
+      try {
+        this._renderer._initShader(this); // Backend-specific shader init
+      } catch (err) {
+        throw new Error(
+          `Whoops! Something went wrong initializing the shader:\n${err.message || err}`
         );
       }
 
-      this._loadAttributes();
+      if (this.shaderType !== 'compute') {
+        this._loadAttributes();
+      }
       this._loadUniforms();
+      this._renderer._finalizeShader(this);
+
+      this._initialized = true;
     }
+
     return this;
   }
 
@@ -495,7 +524,7 @@ class Shader {
    */
   setDefaultUniforms() {
     for (const key in this.hooks.uniforms) {
-      const [, name] = key.split(' ');
+      const name = this._renderer.uniformNameFromHookKey(key);
       const initializer = this.hooks.uniforms[key];
       let value;
       if (initializer instanceof Function) {
@@ -504,6 +533,13 @@ class Shader {
         value = initializer;
       }
 
+      if (value !== undefined && value !== null) {
+        this.setUniform(name, value);
+      }
+    }
+    for (const name in this.hooks.storageUniforms) {
+      const initializer = this.hooks.storageUniforms[name];
+      const value = initializer instanceof Function ? initializer() : initializer;
       if (value !== undefined && value !== null) {
         this.setUniform(name, value);
       }
@@ -541,8 +577,6 @@ class Shader {
    * @returns {p5.Shader} new shader compiled for the target context.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -613,11 +647,8 @@ class Shader {
    *   // Draw the p5.Graphics object to the main canvas.
    *   image(pg, -25, -25);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -686,15 +717,16 @@ class Shader {
    *   // Draw the box.
    *   box(50);
    * }
-   * </code>
-   * </div>
    */
   copyToContext(context) {
-    const shader = new Shader(
-      context._renderer,
-      this._vertSrc,
-      this._fragSrc
-    );
+    const args = [context._renderer];
+    if (this.shaderType === 'compute') {
+      args.push(this._computeSrc);
+    } else {
+      args.push(this._vertSrc, this._fragSrc);
+    }
+    args.push(this.hooks);
+    const shader = new Shader(...args);
     shader.ensureCompiledOnContext(context._renderer);
     return shader;
   }
@@ -703,16 +735,15 @@ class Shader {
    * @private
    */
   ensureCompiledOnContext(context) {
-    if (this._glProgram !== 0 && this._renderer !== context) {
+    if (this._compiled && this._renderer !== context) {
       throw new Error(
         'The shader being run is attached to a different context. Do you need to copy it to this context first with .copyToContext()?'
       );
-    } else if (this._glProgram === 0) {
+    } else if (!this._compiled) {
       this._renderer = context?._renderer?.filterRenderer?._renderer || context;
       this.init();
     }
   }
-
 
   /**
    * Queries the active attributes for this shader and loads
@@ -723,28 +754,7 @@ class Shader {
     if (this._loadedAttributes) {
       return;
     }
-
-    this.attributes = {};
-
-    const gl = this._renderer.GL;
-
-    const numAttributes = gl.getProgramParameter(
-      this._glProgram,
-      gl.ACTIVE_ATTRIBUTES
-    );
-    for (let i = 0; i < numAttributes; ++i) {
-      const attributeInfo = gl.getActiveAttrib(this._glProgram, i);
-      const name = attributeInfo.name;
-      const location = gl.getAttribLocation(this._glProgram, name);
-      const attribute = {};
-      attribute.name = name;
-      attribute.location = location;
-      attribute.index = i;
-      attribute.type = attributeInfo.type;
-      attribute.size = attributeInfo.size;
-      this.attributes[name] = attribute;
-    }
-
+    this.attributes = this._renderer._getShaderAttributes(this);
     this._loadedAttributes = true;
   }
 
@@ -758,68 +768,41 @@ class Shader {
       return;
     }
 
-    const gl = this._renderer.GL;
+    this.uniforms = {};
+    this.samplers = [];
 
-    // Inspect shader and cache uniform info
-    const numUniforms = gl.getProgramParameter(
-      this._glProgram,
-      gl.ACTIVE_UNIFORMS
-    );
+    const uniformMetadata = this._renderer.getUniformMetadata(this);
 
-    let samplerIndex = 0;
-    for (let i = 0; i < numUniforms; ++i) {
-      const uniformInfo = gl.getActiveUniform(this._glProgram, i);
-      const uniform = {};
-      uniform.location = gl.getUniformLocation(
-        this._glProgram,
-        uniformInfo.name
-      );
-      uniform.size = uniformInfo.size;
-      let uniformName = uniformInfo.name;
-      //uniforms that are arrays have their name returned as
-      //someUniform[0] which is a bit silly so we trim it
-      //off here. The size property tells us that its an array
-      //so we dont lose any information by doing this
-      if (uniformInfo.size > 1) {
-        uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
-      }
-      uniform.name = uniformName;
-      uniform.type = uniformInfo.type;
-      uniform._cachedData = undefined;
-      if (uniform.type === gl.SAMPLER_2D) {
-        uniform.samplerIndex = samplerIndex;
-        samplerIndex++;
+    for (const meta of uniformMetadata) {
+      const uniform = {
+        ...meta,
+        _cachedData: undefined,
+      };
+
+      if (uniform.isSampler) {
         this.samplers.push(uniform);
       }
 
-      uniform.isArray =
-        uniformInfo.size > 1 ||
-        uniform.type === gl.FLOAT_MAT3 ||
-        uniform.type === gl.FLOAT_MAT4 ||
-        uniform.type === gl.FLOAT_VEC2 ||
-        uniform.type === gl.FLOAT_VEC3 ||
-        uniform.type === gl.FLOAT_VEC4 ||
-        uniform.type === gl.INT_VEC2 ||
-        uniform.type === gl.INT_VEC4 ||
-        uniform.type === gl.INT_VEC3;
-
-      this.uniforms[uniformName] = uniform;
+      this.uniforms[uniform.name] = uniform;
     }
-    this._loadedUniforms = true;
-  }
 
-  compile() {
-    // TODO
+    this._loadedUniforms = true;
   }
 
   /**
    * initializes (if needed) and binds the shader program.
    * @private
    */
-  bindShader() {
+  bindShader(shaderType, options) {
+    if (this.shaderType && this.shaderType !== shaderType) {
+      throw new Error(
+        `You've already used this shader as a ${this.shaderType} shader, but are now using it as a ${shaderType}.`
+      );
+    }
+    this.shaderType = shaderType;
     this.init();
     if (!this._bound) {
-      this.useProgram();
+      this.useProgram(options);
       this._bound = true;
     }
   }
@@ -836,17 +819,21 @@ class Shader {
     return this;
   }
 
+  /**
+   * @private
+   */
   bindTextures() {
-    const gl = this._renderer.GL;
-
     const empty = this._renderer._getEmptyTexture();
 
     for (const uniform of this.samplers) {
+      if (uniform.noData) continue;
       let tex = uniform.texture;
       if (
         tex === undefined ||
         (
-          false &&
+          // Make sure we unbind a framebuffer uniform if it's the same
+          // framebuffer that is actvely being drawn to in order to
+          // prevent a feedback cycle
           tex.isFramebufferTexture &&
           !tex.src.framebuffer.antialias &&
           tex.src.framebuffer === this._renderer.activeFramebuffer()
@@ -857,30 +844,17 @@ class Shader {
         // so we supply a default texture instead.
         uniform.texture = tex = empty;
       }
-      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      tex.bindTexture();
-      tex.update();
-      gl.uniform1i(uniform.location, uniform.samplerIndex);
+      this._renderer._updateTexture(uniform, tex);
     }
   }
 
-  updateTextures() {
-    for (const uniform of this.samplers) {
-      const tex = uniform.texture;
-      if (tex) {
-        tex.update();
-      }
-    }
-  }
-
+  /**
+   * @private
+   */
   unbindTextures() {
-    const gl = this._renderer.GL;
-    const empty = this._renderer._getEmptyTexture();
     for (const uniform of this.samplers) {
       if (uniform.texture?.isFramebufferTexture) {
-        gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-        empty.bindTexture();
-        gl.uniform1i(uniform.location, uniform.samplerIndex);
+        this._renderer._unbindFramebufferTexture(uniform);
       }
     }
   }
@@ -889,10 +863,9 @@ class Shader {
    * @chainable
    * @private
    */
-  useProgram() {
-    const gl = this._renderer.GL;
+  useProgram(options) {
     if (this._renderer._curShader !== this) {
-      gl.useProgram(this._glProgram);
+      this._renderer._useShader(this);
       this._renderer._curShader = this;
     }
     return this;
@@ -919,12 +892,10 @@ class Shader {
    * @chainable
    * @param {String} uniformName name of the uniform. Must match the name
    *                             used in the vertex and fragment shaders.
-   * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture}
+   * @param {Boolean|p5.Vector|p5.Color|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer}
    * data value to assign to the uniform. Must match the uniform’s data type.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -977,11 +948,8 @@ class Shader {
    *
    *   describe('A cyan square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1041,11 +1009,8 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1129,8 +1094,6 @@ class Shader {
    *   // Add a plane as a drawing surface.
    *   plane(100, 100);
    * }
-   * </code>
-   * </div>
    */
   setUniform(uniformName, data) {
     this.init();
@@ -1139,7 +1102,16 @@ class Shader {
     if (!uniform) {
       return;
     }
-    const gl = this._renderer.GL;
+
+    // In p5.strands-related code, where some of the code may be in
+    // p5.webgpu.js instead of the main p5.js build, we generally use
+    // duck typing instead of instanceof to avoid accidentally importing
+    // and comparing against a separate copy of p5 classes
+    if (data?.isVector) {
+      data = data.values.length !== data.dimensions ? data.values.slice(0, data.dimensions) : data.values;
+    } else if (data?.isColor) {
+      data = data._getRGBA([1, 1, 1, 1]);
+    }
 
     if (uniform.isArray) {
       if (
@@ -1153,148 +1125,18 @@ class Shader {
     } else if (uniform._cachedData && uniform._cachedData === data) {
       return;
     } else {
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) || data instanceof TypedArray) {
+        if (uniform._cachedData && this._renderer._arraysEqual(uniform._cachedData, data)) {
+          return;
+        }
         uniform._cachedData = data.slice(0);
       } else {
+        if (uniform._cachedData === data) return;
         uniform._cachedData = data;
       }
     }
 
-    const location = uniform.location;
-
-    this.useProgram();
-
-    switch (uniform.type) {
-      case gl.BOOL:
-        if (data === true) {
-          gl.uniform1i(location, 1);
-        } else {
-          gl.uniform1i(location, 0);
-        }
-        break;
-      case gl.INT:
-        if (uniform.size > 1) {
-          data.length && gl.uniform1iv(location, data);
-        } else {
-          gl.uniform1i(location, data);
-        }
-        break;
-      case gl.FLOAT:
-        if (uniform.size > 1) {
-          data.length && gl.uniform1fv(location, data);
-        } else {
-          gl.uniform1f(location, data);
-        }
-        break;
-      case gl.FLOAT_MAT3:
-        gl.uniformMatrix3fv(location, false, data);
-        break;
-      case gl.FLOAT_MAT4:
-        gl.uniformMatrix4fv(location, false, data);
-        break;
-      case gl.FLOAT_VEC2:
-        if (uniform.size > 1) {
-          data.length && gl.uniform2fv(location, data);
-        } else {
-          gl.uniform2f(location, data[0], data[1]);
-        }
-        break;
-      case gl.FLOAT_VEC3:
-        if (uniform.size > 1) {
-          data.length && gl.uniform3fv(location, data);
-        } else {
-          gl.uniform3f(location, data[0], data[1], data[2]);
-        }
-        break;
-      case gl.FLOAT_VEC4:
-        if (uniform.size > 1) {
-          data.length && gl.uniform4fv(location, data);
-        } else {
-          gl.uniform4f(location, data[0], data[1], data[2], data[3]);
-        }
-        break;
-      case gl.INT_VEC2:
-        if (uniform.size > 1) {
-          data.length && gl.uniform2iv(location, data);
-        } else {
-          gl.uniform2i(location, data[0], data[1]);
-        }
-        break;
-      case gl.INT_VEC3:
-        if (uniform.size > 1) {
-          data.length && gl.uniform3iv(location, data);
-        } else {
-          gl.uniform3i(location, data[0], data[1], data[2]);
-        }
-        break;
-      case gl.INT_VEC4:
-        if (uniform.size > 1) {
-          data.length && gl.uniform4iv(location, data);
-        } else {
-          gl.uniform4i(location, data[0], data[1], data[2], data[3]);
-        }
-        break;
-      case gl.SAMPLER_2D:
-        if (typeof data == 'number') {
-          if (
-            data < gl.TEXTURE0 ||
-            data > gl.TEXTURE31 ||
-            data !== Math.ceil(data)
-          ) {
-            console.log(
-              '🌸 p5.js says: ' +
-                "You're trying to use a number as the data for a texture." +
-                'Please use a texture.'
-            );
-            return this;
-          }
-          gl.activeTexture(data);
-          gl.uniform1i(location, data);
-        } else {
-          gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-          uniform.texture =
-            data instanceof Texture ? data : this._renderer.getTexture(data);
-          gl.uniform1i(location, uniform.samplerIndex);
-          if (uniform.texture.src.gifProperties) {
-            uniform.texture.src._animateGif(this._renderer._pInst);
-          }
-        }
-        break;
-      case gl.SAMPLER_CUBE:
-      case gl.SAMPLER_3D:
-      case gl.SAMPLER_2D_SHADOW:
-      case gl.SAMPLER_2D_ARRAY:
-      case gl.SAMPLER_2D_ARRAY_SHADOW:
-      case gl.SAMPLER_CUBE_SHADOW:
-      case gl.INT_SAMPLER_2D:
-      case gl.INT_SAMPLER_3D:
-      case gl.INT_SAMPLER_CUBE:
-      case gl.INT_SAMPLER_2D_ARRAY:
-      case gl.UNSIGNED_INT_SAMPLER_2D:
-      case gl.UNSIGNED_INT_SAMPLER_3D:
-      case gl.UNSIGNED_INT_SAMPLER_CUBE:
-      case gl.UNSIGNED_INT_SAMPLER_2D_ARRAY:
-        if (typeof data !== 'number') {
-          break;
-        }
-        if (
-          data < gl.TEXTURE0 ||
-          data > gl.TEXTURE31 ||
-          data !== Math.ceil(data)
-        ) {
-          console.log(
-            '🌸 p5.js says: ' +
-              "You're trying to use a number as the data for a texture." +
-              'Please use a texture.'
-          );
-          break;
-        }
-        gl.activeTexture(data);
-        gl.uniform1i(location, data);
-        break;
-      //@todo complete all types
-    }
-    return this;
+    this._renderer.updateUniformValue(this, uniform, data);
   }
 
   /**
@@ -1311,45 +1153,12 @@ class Shader {
           `The attribute "${attr.name}"passed to enableAttrib does not belong to this shader.`
         );
       }
-      const loc = attr.location;
-      if (loc !== -1) {
-        const gl = this._renderer.GL;
-        // Enable register even if it is disabled
-        if (!this._renderer.registerEnabled.has(loc)) {
-          gl.enableVertexAttribArray(loc);
-          // Record register availability
-          this._renderer.registerEnabled.add(loc);
-        }
-        this._renderer.GL.vertexAttribPointer(
-          loc,
-          size,
-          type || gl.FLOAT,
-          normalized || false,
-          stride || 0,
-          offset || 0
-        );
+
+      if (attr.location !== -1) {
+        this._renderer._enableAttrib(this, attr, size, type, normalized, stride, offset);
       }
     }
     return this;
-  }
-
-  /**
-   * Once all buffers have been bound, this checks to see if there are any
-   * remaining active attributes, likely left over from previous renders,
-   * and disables them so that they don't affect rendering.
-   * @private
-   */
-  disableRemainingAttributes() {
-    for (const location of this._renderer.registerEnabled.values()) {
-      if (
-        !Object.keys(this.attributes).some(
-          key => this.attributes[key].location === location
-        )
-      ) {
-        this._renderer.GL.disableVertexAttribArray(location);
-        this._renderer.registerEnabled.delete(location);
-      }
-    }
   }
 };
 
@@ -1412,8 +1221,6 @@ function shader(p5, fn){
    *  - `fragment`: An object describing the available frament shader hooks.
    *
    * @example
-   * <div>
-   * <code>
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -1462,11 +1269,8 @@ function shader(p5, fn){
    *
    *   describe('A yellow square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * let mandelbrot;
@@ -1491,8 +1295,6 @@ function shader(p5, fn){
    *   // Add a quad as a display surface for the shader.
    *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
    * }
-   * </code>
-   * </div>
    */
   p5.Shader = Shader;
 }

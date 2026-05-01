@@ -725,20 +725,23 @@ suite('p5.Camera', function() {
       test('ortho() sets renderer uPMatrix', function() {
         myCam.ortho(-10, 10, -10, 10, 0, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
+        assert.deepCloseTo(
+          myCam.projMatrix.mat4,
+          myp5._renderer.states.uPMatrix.mat4
+        );
       });
 
       test('ortho() sets projection matrix correctly', function() {
         // expectedMatrix array needs to match Float32Array type of
         // p5.Camera projMatrix's mat4 array for deepCloseTo to work
-        /* eslint-disable indent */
+
         var expectedMatrix = new Float32Array([
-           1,  0,  0,  0,
-           0, -1,  0,  0,
-           0,  0, -1,  0,
+          1,  0,  0,  0,
+          0, -1,  0,  0,
+          0,  0, -1,  0,
           -0, -0, -1,  1
         ]);
-        /* eslint-enable indent */
+
 
         myCam.ortho(-1, 1, -1, 1, 0, 2);
 
@@ -765,7 +768,10 @@ suite('p5.Camera', function() {
       test('perspective() sets renderer uPMatrix', function() {
         myCam.perspective(Math.PI / 3.0, 1, 1, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
+        assert.deepCloseTo(
+          myCam.projMatrix.mat4,
+          myp5._renderer.states.uPMatrix.mat4
+        );
       });
       test('perspective() sets projection matrix correctly', function() {
         var expectedMatrix = new Float32Array([
@@ -802,17 +808,20 @@ suite('p5.Camera', function() {
       test('frustum() sets renderer uPMatrix', function() {
         myCam.frustum(-10, 10, -20, 20, -100, 100);
 
-        assert.deepCloseTo(myCam.projMatrix.mat4, myp5._renderer.states.uPMatrix.mat4);
+        assert.deepCloseTo(
+          myCam.projMatrix.mat4,
+          myp5._renderer.states.uPMatrix.mat4
+        );
       });
       test('frustum() sets projection matrix correctly', function() {
-        /* eslint-disable indent */
+
         var expectedMatrix = new Float32Array([
           -2,  0,  0,  0,
-           0,  2,  0,  0,
-           0,  0, -0, -1,
-           0,  0,  2,  0
+          0,  2,  0,  0,
+          0,  0, -0, -1,
+          0,  0,  2,  0
         ]);
-        /* eslint-enable indent */
+
 
         myCam.frustum(-1, 1, -1, 1, -2, 2);
 

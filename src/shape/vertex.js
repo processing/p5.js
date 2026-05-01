@@ -2,11 +2,7 @@
  * @module Shape
  * @submodule Custom Shapes
  * @for p5
- * @requires core
- * @requires constants
  */
-
-import * as constants from '../core/constants';
 
 function vertex(p5, fn){
   /**
@@ -50,8 +46,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -71,11 +65,8 @@ function vertex(p5, fn){
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -96,11 +87,8 @@ function vertex(p5, fn){
    *
    *   describe('Four black dots that form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -121,11 +109,8 @@ function vertex(p5, fn){
    *
    *   describe('Two horizontal black lines on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -148,11 +133,8 @@ function vertex(p5, fn){
    *
    *   describe('Three black lines form a sideways U shape on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -176,11 +158,8 @@ function vertex(p5, fn){
    *
    *   describe('A black outline of a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -205,11 +184,8 @@ function vertex(p5, fn){
    *
    *   describe('Two white triangles drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -233,11 +209,8 @@ function vertex(p5, fn){
    *
    *   describe('Five white triangles that are interleaved drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -260,11 +233,8 @@ function vertex(p5, fn){
    *
    *   describe('Four white triangles form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -291,11 +261,8 @@ function vertex(p5, fn){
    *
    *   describe('Two white rectangles drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -320,11 +287,8 @@ function vertex(p5, fn){
    *
    *   describe('Three white rectangles that share edges are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -350,11 +314,8 @@ function vertex(p5, fn){
    *
    *   describe('A blocky C shape drawn in white on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag with the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -393,8 +354,6 @@ function vertex(p5, fn){
    *   // Connect the first and last vertices.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.beginShape = function(kind) {
     // p5._validateParameters('beginShape', arguments);
@@ -416,14 +375,14 @@ function vertex(p5, fn){
    * a number of `bezierVertex()` calls that is a multiple of the parameter
    * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
    * But shapes can mix different types of vertices, so if there
-   * are some previous vertices, then the initial anchor is not needed, 
-   * only the multiples of 3 (or the Bézier order) calls to 
+   * are some previous vertices, then the initial anchor is not needed,
+   * only the multiples of 3 (or the Bézier order) calls to
    *  `bezierVertex` for each curve.
-   * 
+   *
    * Each curve of order 3 requires three calls to `bezierVertex`, so
    * 2 curves would need 7 calls to `bezierVertex()`:
    * (1 one initial anchor point, two sets of 3 curves describing the curves)
-   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2. 
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2.
    *
    * Bézier curves can also be drawn in 3D using WebGL mode.
    *
@@ -437,8 +396,6 @@ function vertex(p5, fn){
    * @param  {Number} [v]
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -463,11 +420,8 @@ function vertex(p5, fn){
    *
    *   describe('A black C curve on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -512,11 +466,8 @@ function vertex(p5, fn){
    *     'A gray square with three curves. A black curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the mouse near the red dot in the top-right corner
    * // and drag to change the curve's shape.
    *
@@ -590,11 +541,8 @@ function vertex(p5, fn){
    *     y2 = mouseY;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -610,7 +558,7 @@ function vertex(p5, fn){
    *   bezierVertex(80, 0);
    *   bezierVertex(80, 75);
    *   bezierVertex(30, 75);
-   * 
+   *
    *   bezierVertex(50, 80);
    *   bezierVertex(60, 25);
    *   bezierVertex(30, 20);
@@ -620,11 +568,8 @@ function vertex(p5, fn){
    *
    *   describe('A crescent moon shape drawn in white on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -646,11 +591,11 @@ function vertex(p5, fn){
    *   // Draw the first moon.
    *   beginShape();
    *   bezierVertex(-20, -30, 0);
-   * 
+   *
    *   bezierVertex(30, -50, 0);
    *   bezierVertex(30, 25, 0);
    *   bezierVertex(-20, 25, 0);
-   * 
+   *
    *   bezierVertex(0, 30, 0);
    *   bezierVertex(10, -25, 0);
    *   bezierVertex(-20, -30, 0);
@@ -658,23 +603,20 @@ function vertex(p5, fn){
    *
    *   // Draw the second moon.
    *   beginShape();
-   * 
+   *
    *   bezierVertex(-20, -30, -20);
-   * 
+   *
    *   bezierVertex(30, -50, -20);
    *   bezierVertex(30, 25, -20);
    *   bezierVertex(-20, 25, -20);
-   * 
+   *
    *   bezierVertex(0, 30, -20);
    *   bezierVertex(10, -25, -20);
    *   bezierVertex(-20, -30, -20);
-   * 
+   *
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method bezierVertex
    * @param  {Number} x
@@ -688,8 +630,8 @@ function vertex(p5, fn){
   };
 
   /**
-   * Concludes the vertices of a custom shape. 
-   * 
+   * Concludes the vertices of a custom shape.
+   *
    * The <a href="#/p5/beginShape">beginShape()</a> and `endShape()` functions
    * allow for creating custom shapes in 2D or 3D.
    * <a href="#/p5/beginShape">beginShape()</a> begins adding vertices to a
@@ -700,7 +642,7 @@ function vertex(p5, fn){
    * in `endShape(CLOSE)`, then the first and last vertices will be connected.
    * When CLOSE mode is used for splines (with `splineVeertex()`), the shape is ended smoothly.
    *
-   * 
+   *
    * The second parameter, `count`, is also optional. In WebGL mode, it’s more
    * efficient to draw many copies of the same shape using a technique called
    * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html" target="_blank">instancing</a>.
@@ -731,8 +673,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -759,33 +699,55 @@ function vertex(p5, fn){
    *     'Two sets of black lines drawn on a gray background. The three lines on the left form a right triangle. The two lines on the right form a right angle.'
    *   );
    * }
-   * </code>
-   * </div>
-   * 
-   * <div>
-   * <code>
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(200, 100);
+   *
+   *   background(240);
+   *
+   *   noFill();
+   *   stroke(0);
+   *
+   *   // Open shape (left)
+   *   beginShape();
+   *   vertex(20, 20);
+   *   vertex(80, 20);
+   *   vertex(80, 80);
+   *   endShape();  // Not closed
+   *
+   *   // Closed shape (right)
+   *   beginShape();
+   *   vertex(120, 20);
+   *   vertex(180, 20);
+   *   vertex(180, 80);
+   *   endShape(CLOSE);  // Closed
+   *
+   *   describe(
+   *     'Two right-angled shapes on a light gray background. The left shape is open with three lines. The right shape is closed, forming a triangle.'
+   *   );
+   * }
+   *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
-   * 
+   *
    *   beginShape();
-   * 
+   *
    *   splineVertex(32, 91);
    *   splineVertex(21, 17);
    *   splineVertex(68, 19);
    *   splineVertex(82, 91);
-   * 
+   *
    *   endShape(CLOSE);
-   * 
+   *
    *   describe(
    *     'A curvy four-sided slightly lopsided blob.'
    *   );
    * }
-   * </div>
-   * </code>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -870,8 +832,6 @@ function vertex(p5, fn){
    *
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
-   * </code>
-   * </div>
    */
   fn.endShape = function(mode, count = 1) {
     // p5._validateParameters('endShape', arguments);
@@ -941,8 +901,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -971,11 +929,8 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -1010,11 +965,8 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -1054,10 +1006,7 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method normal
    * @param  {Number} x x-component of the vertex normal.
@@ -1102,8 +1051,6 @@ function vertex(p5, fn){
    * @param {Number|Number[]} data the data tied to the vertex attribute.
    *
    * @example
-   * <div>
-   * <code>
    * const vertSrc = `#version 300 es
    *  precision mediump float;
    *  uniform mat4 uModelViewMatrix;
@@ -1158,11 +1105,8 @@ function vertex(p5, fn){
    *   }
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myShader;
    * const cols = 10;
    * const rows = 10;
@@ -1238,8 +1182,6 @@ function vertex(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');

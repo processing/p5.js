@@ -2,7 +2,6 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
  */
 
 function outputs(p5, fn){
@@ -40,8 +39,6 @@ function outputs(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Add the text description.
    *   textOutput();
@@ -56,11 +53,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Add the text description and
    *   // display it for debugging.
@@ -76,16 +70,12 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
-   * 
+   *
    * function draw() {
    *   // Add the text description.
    *   textOutput();
@@ -101,16 +91,12 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
-   * 
+   *
    * function draw() {
    *   // Add the text description and
    *   // display it for debugging.
@@ -127,8 +113,6 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    */
   fn.textOutput = function(display) {
     // p5._validateParameters('textOutput', arguments);
@@ -184,8 +168,6 @@ function outputs(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either FALLBACK or LABEL.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Add the grid description.
    *   gridOutput();
@@ -200,11 +182,8 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Add the grid description and
    *   // display it for debugging.
@@ -220,16 +199,12 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle and a blue square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    * }
-   * 
+   *
    * function draw() {
    *   // Add the grid description.
    *   gridOutput();
@@ -245,16 +220,12 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * }
-   * 
+   *
    * function draw() {
    *   // Add the grid description and
    *   // display it for debugging.
@@ -271,11 +242,7 @@ function outputs(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red circle moves from left to right above a blue square.');
    * }
-   * </code>
-   * </div>
    */
-
-
   fn.gridOutput = function(display) {
     // p5._validateParameters('gridOutput', arguments);
     //if gridOutput is already true
@@ -513,7 +480,7 @@ function outputs(p5, fn){
     if (!this.ingredients.shapes[f]) {
       this.ingredients.shapes[f] = [include];
       //if other shapes of this type have been created
-    } else if (this.ingredients.shapes[f] !== [include]) {
+    } else{
       //for every shape of this type
       for (let y in this.ingredients.shapes[f]) {
         //compare it with current shape and if it already exists make add false
@@ -561,7 +528,8 @@ function outputs(p5, fn){
 
   //gets position of shape in the canvas
   fn._getPos = function (x, y) {
-    const { x: transformedX, y: transformedY } = this.worldToScreen(new p5.Vector(x, y));
+    const { x: transformedX, y: transformedY } =
+      this.worldToScreen(new p5.Vector(x, y));
     const canvasWidth = this.width;
     const canvasHeight = this.height;
     if (transformedX < 0.4 * canvasWidth) {

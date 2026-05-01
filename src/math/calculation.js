@@ -2,7 +2,6 @@
  * @module Math
  * @submodule Calculation
  * @for p5
- * @requires core
  */
 
 function calculation(p5, fn){
@@ -18,8 +17,6 @@ function calculation(p5, fn){
    * @return {Number}   absolute value of given number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -39,8 +36,6 @@ function calculation(p5, fn){
    *   // from the middle.
    *   rect(0, 100 - h, 100, h);
    * }
-   * </code>
-   * </div>
    */
   fn.abs = Math.abs;
 
@@ -56,8 +51,6 @@ function calculation(p5, fn){
    * @return {Integer}   rounded up number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -82,8 +75,6 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
    * }
-   * </code>
-   * </div>
    */
   fn.ceil = Math.ceil;
 
@@ -97,8 +88,6 @@ function calculation(p5, fn){
    * @return {Number}      constrained number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -114,11 +103,8 @@ function calculation(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -143,8 +129,6 @@ function calculation(p5, fn){
    *   fill(0);
    *   circle(xc, 67, 9);
    * }
-   * </code>
-   * </div>
    */
   fn.constrain = function(n, low, high) {
     // p5._validateParameters('constrain', arguments);
@@ -171,8 +155,6 @@ function calculation(p5, fn){
    * @return {Number}    distance between the two points.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -202,8 +184,6 @@ function calculation(p5, fn){
    *
    *   describe('Two dots connected by a horizontal line. The number 80 is written above the center of the line.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method dist
@@ -237,8 +217,6 @@ function calculation(p5, fn){
    * @return {Number}   e^n
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -262,11 +240,8 @@ function calculation(p5, fn){
    *
    *   describe('A series of circles that grow exponentially from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -287,8 +262,6 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.exp = Math.exp;
 
@@ -301,8 +274,6 @@ function calculation(p5, fn){
    * @return {Integer}  rounded down number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -325,8 +296,6 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
    * }
-   * </code>
-   * </div>
    */
   fn.floor = Math.floor;
 
@@ -350,8 +319,6 @@ function calculation(p5, fn){
    * @return {Number}       lerped value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -379,11 +346,8 @@ function calculation(p5, fn){
    *
    *   describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let x = 50;
    * let y = 50;
    * let targetX = 50;
@@ -413,8 +377,6 @@ function calculation(p5, fn){
    *   x = mouseX;
    *   y = mouseY;
    * }
-   * </code>
-   * </div>
    */
   fn.lerp = function(start, stop, amt) {
     // p5._validateParameters('lerp', arguments);
@@ -432,8 +394,6 @@ function calculation(p5, fn){
    * @return {Number}   natural logarithm of n.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -449,11 +409,8 @@ function calculation(p5, fn){
    *
    *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is about five times larger.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -474,8 +431,6 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.log = Math.log;
 
@@ -501,8 +456,6 @@ function calculation(p5, fn){
    * @return {Number}   magnitude of vector.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -524,8 +477,6 @@ function calculation(p5, fn){
    *
    *   describe('A diagonal line is drawn from the top left of the canvas. The number 50 is written at the end of the line.');
    * }
-   * </code>
-   * </div>
    */
   fn.mag = function(x, y) {
     // p5._validateParameters('mag', arguments);
@@ -557,8 +508,6 @@ function calculation(p5, fn){
    * @return {Number}        remapped number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -577,11 +526,8 @@ function calculation(p5, fn){
    *   // Draw the bottom line.
    *   line(0, 75, 0, x);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -600,8 +546,6 @@ function calculation(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, 20);
    * }
-   * </code>
-   * </div>
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
@@ -631,8 +575,6 @@ function calculation(p5, fn){
    * @return {Number}             maximum number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -650,11 +592,8 @@ function calculation(p5, fn){
    *
    *   describe('The number 20 written in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -675,8 +614,6 @@ function calculation(p5, fn){
    *
    *   describe('The number 20 written in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method max
@@ -714,8 +651,6 @@ function calculation(p5, fn){
    * @return {Number}             minimum number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -733,11 +668,8 @@ function calculation(p5, fn){
    *
    *   describe('The number 5 written in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -758,8 +690,6 @@ function calculation(p5, fn){
    *
    *   describe('The number 5 written in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method min
@@ -799,8 +729,6 @@ function calculation(p5, fn){
    * @return {Number}       normalized number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -817,8 +745,6 @@ function calculation(p5, fn){
    *   // Paint the background.
    *   background(redValue, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   fn.norm = function(n, start, stop) {
     // p5._validateParameters('norm', arguments);
@@ -838,8 +764,6 @@ function calculation(p5, fn){
    * @return {Number}   n^e.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -866,8 +790,6 @@ function calculation(p5, fn){
    *
    *   describe('A series of circles that grow exponentially from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    */
   fn.pow = Math.pow;
 
@@ -886,8 +808,6 @@ function calculation(p5, fn){
    * @return {Integer}  rounded number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -905,11 +825,8 @@ function calculation(p5, fn){
    *
    *   describe('The number 4 written in middle of the canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -927,8 +844,6 @@ function calculation(p5, fn){
    *
    *   describe('The number 12.78 written in middle of canvas.');
    * }
-   * </code>
-   * </div>
    */
   fn.round = function(n, decimals) {
     if (!decimals) {
@@ -951,8 +866,6 @@ function calculation(p5, fn){
    * @return {Number}   squared number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -968,11 +881,8 @@ function calculation(p5, fn){
    *
    *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is four times larger.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -993,8 +903,6 @@ function calculation(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.sq = n => n * n;
 
@@ -1011,8 +919,6 @@ function calculation(p5, fn){
    * @return {Number}   square root of number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1028,11 +934,8 @@ function calculation(p5, fn){
    *
    *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is ten times larger.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1053,8 +956,6 @@ function calculation(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.sqrt = Math.sqrt;
 
@@ -1069,8 +970,6 @@ function calculation(p5, fn){
    * @returns {Number} fractional part of n.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1090,8 +989,6 @@ function calculation(p5, fn){
    *
    *   describe('The number 56.78 written above the number 0.78.');
    * }
-   * </code>
-   * </div>
    */
   fn.fract = function(toConvert) {
     // p5._validateParameters('fract', arguments);

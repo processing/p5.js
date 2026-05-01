@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Models
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 import { Geometry } from './p5.Geometry';
@@ -99,15 +97,13 @@ function loading(p5, fn){
    * @method loadModel
    * @param  {String|Request} path      path of the model to be loaded.
    * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
-   * @param  {Boolean} normalize        if `true`, scale the model to fit the canvas.
+   * @param  {Boolean} [normalize]        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
    * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -130,11 +126,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -158,11 +151,8 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -192,11 +182,8 @@ function loading(p5, fn){
    *   shape = data;
    *   console.log(shape.gid);
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -231,11 +218,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -270,11 +254,8 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -315,8 +296,6 @@ function loading(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method loadModel
@@ -338,7 +317,13 @@ function loading(p5, fn){
    * @param  {Boolean} [options.flipV]
    * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
    */
-  fn.loadModel = async function (path, fileType, normalize, successCallback, failureCallback) {
+  fn.loadModel = async function (
+    path,
+    fileType,
+    normalize,
+    successCallback,
+    failureCallback
+  ) {
     // p5._validateParameters('loadModel', arguments);
 
     let flipU = false;
@@ -432,50 +417,56 @@ function loading(p5, fn){
     try{
       if (fileType.match(/\.stl$/i)) {
         const { data } = await request(path, 'arrayBuffer');
-        parseSTL(model, data);
+        const cb = () => {
+          parseSTL(model, data);
 
-        if (normalize) {
-          model.normalize();
-        }
+          if (normalize) {
+            model.normalize();
+          }
 
-        if (flipU) {
-          model.flipU();
-        }
+          if (flipU) {
+            model.flipU();
+          }
 
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
 
       } else if (fileType.match(/\.obj$/i)) {
         const { data } = await request(path, 'text');
         const lines = data.split('\n');
 
         const parsedMaterials = await getMaterials(lines);
-        parseObj(model, lines, parsedMaterials);
+        const cb = () => {
+          parseObj(model, lines, parsedMaterials);
 
-        if (normalize) {
-          model.normalize();
-        }
-        if (flipU) {
-          model.flipU();
-        }
-        if (flipV) {
-          model.flipV();
-        }
-        model._makeTriangleEdges();
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
 
-        if (successCallback) {
-          return successCallback(model);
-        } else {
-          return model;
-        }
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
@@ -494,7 +485,7 @@ function loading(p5, fn){
     let currentMaterial = null;
     let materials = {};
 
-    const { data } = await request(mtlPath, "text");
+    const { data } = await request(mtlPath, 'text');
     const lines = data.split('\n');
 
     for (let line = 0; line < lines.length; ++line) {
@@ -606,12 +597,10 @@ function loading(p5, fn){
               const vertString = tokens[vertexTokens[tokenInd]];
               let vertParts = vertString.split('/');
 
-              // TODO: Faces can technically use negative numbers to refer to the
-              // previous nth vertex. I haven't seen this used in practice, but
-              // it might be good to implement this in the future.
-
               for (let i = 0; i < vertParts.length; i++) {
-                vertParts[i] = parseInt(vertParts[i]) - 1;
+                let index = parseInt(vertParts[i]);
+                if (index > 0) index -= 1; // OBJ uses 1-based indexing
+                vertParts[i] = index;
               }
 
               if (!usedVerts[vertString]) {
@@ -620,11 +609,11 @@ function loading(p5, fn){
 
               if (usedVerts[vertString][currentMaterial] === undefined) {
                 const vertIndex = model.vertices.length;
-                model.vertices.push(loadedVerts.v[vertParts[0]].copy());
-                model.uvs.push(loadedVerts.vt[vertParts[1]] ?
-                  loadedVerts.vt[vertParts[1]].slice() : [0, 0]);
-                model.vertexNormals.push(loadedVerts.vn[vertParts[2]] ?
-                  loadedVerts.vn[vertParts[2]].copy() : new Vector());
+                model.vertices.push(loadedVerts.v.at(vertParts[0]).copy());
+                model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
+                  loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
+                model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
+                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector());
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
@@ -640,6 +629,7 @@ function loading(p5, fn){
                   model.vertexColors.push(1);
                 } else {
                   hasColorlessVertices = true;
+                  model.vertexColors.push(-1, -1, -1, -1);
                 }
               } else {
                 face.push(usedVerts[vertString][currentMaterial]);
@@ -661,9 +651,8 @@ function loading(p5, fn){
     if (model.vertexNormals.length === 0) {
       model.computeNormals();
     }
-    if (hasColoredVertices === hasColorlessVertices) {
-      // If both are true or both are false, throw an error because the model is inconsistent
-      throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+    if (!hasColoredVertices) {
+      model.vertexColors = [];
     }
 
     return model;
@@ -847,7 +836,11 @@ function loading(p5, fn){
       const line = lines[iterator].trim();
       const parts = line.split(' ');
 
-      for (let partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+      for (
+        let partsiterator = 0;
+        partsiterator < parts.length;
+        ++partsiterator
+      ) {
         if (parts[partsiterator] === '') {
           // Ignoring multiple whitespaces
           parts.splice(partsiterator, 1);
@@ -974,23 +967,15 @@ function loading(p5, fn){
   /**
    * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
    *
-   * The parameter, `model`, is the
+   * The first parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
    *
-   * @method model
-   * @param  {p5.Geometry} model 3D shape to be drawn.
-   *
-   * @param {Number} count number of instances to draw.
-   * @example
-   * <div>
-   * <code>
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1018,11 +1003,9 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1068,11 +1051,9 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1094,8 +1075,51 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * all the instances get drawn to the same spot, but you can use
+   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * At large counts, this often runs faster than using a `for` loop.
+   *
+   * ```js example
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawSpaced);
+   * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceID() - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * @method model
+   * @param  {p5.Geometry} model 3D shape to be drawn.
+   *
+   * @param {Number} [count=1] number of instances to draw.
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');
@@ -1127,7 +1151,7 @@ function loading(p5, fn){
    * @param  {String} modelString         String of the object to be loaded
    * @param  {String} [fileType]          The file extension of the model
    *                                      (<code>.stl</code>, <code>.obj</code>).
-   * @param  {Boolean} normalize        If true, scale the model to a
+   * @param  {Boolean} [normalize]        If true, scale the model to a
    *                                      standardized size when loading
    * @param  {function(p5.Geometry)} [successCallback] Function to be called
    *                                     once the model is loaded. Will be passed
@@ -1137,8 +1161,6 @@ function loading(p5, fn){
    * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
    *
    * @example
-   * <div>
-   * <code>
    * const octahedron_model = `
    * v 0.000000E+00 0.000000E+00 40.0000
    * v 22.5000 22.5000 0.000000E+00
@@ -1169,9 +1191,7 @@ function loading(p5, fn){
    *   rotateX(frameCount * 0.01);
    *   rotateY(frameCount * 0.01);
    *   model(octahedron);
-   *}
-   * </code>
-   * </div>
+   * }
    */
   /**
    * @method createModel

@@ -19,8 +19,8 @@ suite('outputs', function() {
     });
 
     test('should not break for webgl', async function() {
-      await new Promise((res) => {
-        new p5((p) => {
+      await new Promise(res => {
+        new p5(p => {
           p.setup = function() {
             p.createCanvas(50, 50, p.WEBGL);
             p.textOutput();
@@ -32,8 +32,8 @@ suite('outputs', function() {
     });
 
     test('should not break for webgl', async function() {
-      await new Promise((res) => {
-        new p5((p) => {
+      await new Promise(res => {
+        new p5(p => {
           p.setup = function() {
             p.createCanvas(50, 50, p.WEBGL);
             p.gridOutput();

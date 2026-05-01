@@ -19,7 +19,7 @@ suite('loadBytes', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadBytes(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -32,7 +32,7 @@ suite('loadBytes', function() {
       mockP5Prototype.loadBytes(validFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -54,7 +54,7 @@ suite('loadBytes', function() {
   });
 
   test('passes athe correct object to success callback',  async () => {
-    await mockP5Prototype.loadBytes(validFile, (data) => {
+    await mockP5Prototype.loadBytes(validFile, data => {
       assert.instanceOf(data, Uint8Array);
 
       // Validate data

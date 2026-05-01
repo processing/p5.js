@@ -42,7 +42,7 @@ suite('DOM', function() {
     });
 
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should return only one p5.element if match is found', function() {
@@ -149,7 +149,7 @@ suite('DOM', function() {
     });
 
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should return an array', function() {
@@ -309,7 +309,7 @@ suite('DOM', function() {
   // Add/remove elements
   suite('p5.prototype.createDiv', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -331,7 +331,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createP', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -353,7 +353,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createSpan', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -377,7 +377,7 @@ suite('DOM', function() {
     const imagePath = '/test/unit/assets/cat.jpg';
 
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -420,7 +420,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createA', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should return a p5.Element of anchor type', () => {
@@ -447,7 +447,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createSlider', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should return a p5.Element of slider type', () => {
@@ -476,7 +476,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createButton', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should return a p5.Element of button type', function() {
@@ -499,7 +499,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createCheckbox', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     // helper functions
@@ -567,7 +567,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createSelect', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const createHTMLSelect = options => {
@@ -691,7 +691,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createRadio', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     // Helper functions
@@ -855,7 +855,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createColorPicker', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -900,7 +900,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createInput', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -932,7 +932,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createFileInput', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const emptyCallback = () => {};
@@ -1003,7 +1003,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.createElement', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const testData = {
@@ -1035,7 +1035,7 @@ suite('DOM', function() {
 
   suite('p5.prototype.removeElements', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should remove all elements created by p5 except Canvas', function() {
@@ -1059,7 +1059,7 @@ suite('DOM', function() {
   // p5.Element.prototype.addClass
   suite('p5.Element.prototype.addClass', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1093,7 +1093,7 @@ suite('DOM', function() {
   // p5.Element.prototype.removeClass
   suite('p5.Element.prototype.removeClass', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1132,7 +1132,7 @@ suite('DOM', function() {
   // p5.Element.prototype.hasClass
   suite('p5.Element.prototype.hasClass', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1165,7 +1165,7 @@ suite('DOM', function() {
   // p5.Element.prototype.toggleClass
   suite('p5.Element.prototype.toggleClass', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1204,7 +1204,7 @@ suite('DOM', function() {
   // p5.Element.prototype.child
   suite('p5.Element.prototype.child', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1266,7 +1266,7 @@ suite('DOM', function() {
   // p5.Element.prototype.center
   suite('p5.Element.prototype.center', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1290,7 +1290,7 @@ suite('DOM', function() {
   // p5.Element.prototype.html
   suite('p5.Element.prototype.html', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -1347,7 +1347,7 @@ suite('DOM', function() {
   // p5.Element.prototype.position
   suite('p5.Element.prototype.position', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {

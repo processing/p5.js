@@ -2,13 +2,32 @@
  * @module Events
  * @submodule Pointer
  * @for p5
- * @requires core
- * @requires constants
  */
 
-import * as constants from '../core/constants';
+function pointer(p5, fn, lifecycles){
+  lifecycles.presetup = function(){
+    const events = [
+      'pointerdown',
+      'pointerup',
+      'pointermove',
+      'dragend',
+      'dragover',
+      'click',
+      'dblclick',
+      'wheel'
+    ];
+    for(const event of events){
+      window.addEventListener(event, this[`_on${event}`].bind(this), {
+        passive: false,
+        signal: this._removeSignal
+      });
+    }
 
-function pointer(p5, fn){
+    window.addEventListener('blur', () => {
+      this.mouseIsPressed = false;
+    }, { signal: this._removeSignal });
+  };
+
   /**
    * A `Number` system variable that tracks the mouse's horizontal movement.
    *
@@ -24,8 +43,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -49,8 +66,6 @@ function pointer(p5, fn){
    *     text('<<', 50, 50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.movedX = 0;
 
@@ -69,8 +84,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -94,10 +107,9 @@ function pointer(p5, fn){
    *     text('▲', 50, 50);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.movedY = 0;
+
   /*
    * This is a flag which is false until the first time
    * we receive a mouse event. The pmouseX and pmouseY
@@ -109,13 +121,9 @@ function pointer(p5, fn){
   /**
    * A `Number` system variable that tracks the mouse's horizontal position.
    *
-   * In 2D mode, `mouseX` keeps track of the mouse's position relative to the
+   * `mouseX` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. For example, if the mouse is 50 pixels from
    * the left edge of the canvas, then `mouseX` will be 50.
-   *
-   * In WebGL mode, `mouseX` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse is 50 pixels to the right
-   * of the canvas' center, then `mouseX` will be 50.
    *
    * If touch is used instead of the mouse, then `mouseX` will hold the
    * x-coordinate of the most recent touch point.
@@ -124,8 +132,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -138,11 +144,8 @@ function pointer(p5, fn){
    *   // Draw a vertical line that follows the mouse's x-coordinate.
    *   line(mouseX, 0, mouseX, 100);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -157,13 +160,10 @@ function pointer(p5, fn){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -180,11 +180,8 @@ function pointer(p5, fn){
    *   // Draw the line.
    *   line(mx, -50, mx, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -208,23 +205,17 @@ function pointer(p5, fn){
    *   fill(0);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseX = 0;
 
   /**
    * A `Number` system variable that tracks the mouse's vertical position.
    *
-   * In 2D mode, `mouseY` keeps track of the mouse's position relative to the
+   * `mouseY` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. For example, if the mouse is 50 pixels from
    * the top edge of the canvas, then `mouseY` will be 50.
-   *
-   * In WebGL mode, `mouseY` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse is 50 pixels below the
-   * canvas' center, then `mouseY` will be 50.
    *
    * If touch is used instead of the mouse, then `mouseY` will hold the
    * y-coordinate of the most recent touch point.
@@ -233,8 +224,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -247,11 +236,8 @@ function pointer(p5, fn){
    *   // Draw a horizontal line that follows the mouse's y-coordinate.
    *   line(0, mouseY, 100, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -266,13 +252,10 @@ function pointer(p5, fn){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 50, 50);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -289,11 +272,8 @@ function pointer(p5, fn){
    *   // Draw the line.
    *   line(-50, my, 50, my);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let font;
    *
    * async function setup() {
@@ -317,10 +297,8 @@ function pointer(p5, fn){
    *   fill(0);
    *
    *   // Display the mouse's coordinates.
-   *   text(`x: ${mouseX} y: ${mouseY}`, 0, 0);
+   *   text(`x: ${int(mouseX)} y: ${int(mouseY)}`, 0, 0);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseY = 0;
 
@@ -328,15 +306,11 @@ function pointer(p5, fn){
    * A `Number` system variable that tracks the mouse's previous horizontal
    * position.
    *
-   * In 2D mode, `pmouseX` keeps track of the mouse's position relative to the
+   * `pmouseX` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. Its value is
    * <a href="#/p5/mouseX">mouseX</a> from the previous frame. For example, if
    * the mouse was 50 pixels from the left edge of the canvas during the last
    * frame, then `pmouseX` will be 50.
-   *
-   * In WebGL mode, `pmouseX` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse was 50 pixels to the right
-   * of the canvas' center during the last frame, then `pmouseX` will be 50.
    *
    * If touch is used instead of the mouse, then `pmouseX` will hold the
    * x-coordinate of the last touch point.
@@ -348,8 +322,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -364,11 +336,8 @@ function pointer(p5, fn){
    *
    *   line(pmouseX, pmouseY, mouseX, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -388,8 +357,6 @@ function pointer(p5, fn){
    *   // Draw the line.
    *   line(pmx, pmy, mx, my);
    * }
-   * </code>
-   * </div>
    */
   fn.pmouseX = 0;
 
@@ -397,15 +364,11 @@ function pointer(p5, fn){
    * A `Number` system variable that tracks the mouse's previous vertical
    * position.
    *
-   * In 2D mode, `pmouseY` keeps track of the mouse's position relative to the
+   * `pmouseY` keeps track of the mouse's position relative to the
    * top-left corner of the canvas. Its value is
    * <a href="#/p5/mouseY">mouseY</a> from the previous frame. For example, if
    * the mouse was 50 pixels from the top edge of the canvas during the last
    * frame, then `pmouseY` will be 50.
-   *
-   * In WebGL mode, `pmouseY` keeps track of the mouse's position relative to the
-   * center of the canvas. For example, if the mouse was 50 pixels below the
-   * canvas' center during the last frame, then `pmouseY` will be 50.
    *
    * If touch is used instead of the mouse, then `pmouseY` will hold the
    * y-coordinate of the last touch point.
@@ -417,8 +380,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -433,11 +394,8 @@ function pointer(p5, fn){
    *
    *   line(pmouseX, pmouseY, mouseX, mouseY);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -457,8 +415,6 @@ function pointer(p5, fn){
    *   // Draw the line.
    *   line(pmx, pmy, mx, my);
    * }
-   * </code>
-   * </div>
    */
   fn.pmouseY = 0;
 
@@ -480,8 +436,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -496,10 +450,8 @@ function pointer(p5, fn){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates within the browser window.
-   *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
+   *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.winMouseX = 0;
 
@@ -521,8 +473,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -537,10 +487,8 @@ function pointer(p5, fn){
    *   textSize(16);
    *
    *   // Display the mouse's coordinates within the browser window.
-   *   text(`x: ${winMouseX} y: ${winMouseY}`, 50, 50);
+   *   text(`x: ${int(winMouseX)} y: ${int(winMouseY)}`, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.winMouseY = 0;
 
@@ -567,8 +515,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -587,11 +533,8 @@ function pointer(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create the canvas and set its position.
    *   let cnv = createCanvas(100, 100);
@@ -610,8 +553,6 @@ function pointer(p5, fn){
    *   // Display pwinMouseX.
    *   text(pwinMouseX, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.pwinMouseX = 0;
 
@@ -638,8 +579,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -658,11 +597,8 @@ function pointer(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create the canvas and set its position.
    *   let cnv = createCanvas(100, 100);
@@ -681,8 +617,6 @@ function pointer(p5, fn){
    *   // Display pwinMouseY.
    *   text(pwinMouseY, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.pwinMouseY = 0;
 
@@ -706,8 +640,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(200, 200);
    *
@@ -728,11 +660,8 @@ function pointer(p5, fn){
    *   text(`Right: ${mouseButton.right}`, width / 2, height / 2);
    *   text(`Center: ${mouseButton.center}`, width / 2, height / 2 + 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -756,8 +685,6 @@ function pointer(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.mouseButton = {
     left: false,
@@ -765,7 +692,7 @@ function pointer(p5, fn){
     center: false
   };
 
-   /**
+  /**
    * An `Array` of all the current touch points on a touchscreen device.
    *
    * The `touches` array is empty by default. When the user touches their
@@ -800,8 +727,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // On a touchscreen device, touch the canvas using one or more fingers
    * // at the same time.
    *
@@ -821,11 +746,8 @@ function pointer(p5, fn){
    *     circle(touch.x, touch.y, 40);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // On a touchscreen device, touch the canvas using one or more fingers
    * // at the same time.
    *
@@ -845,11 +767,9 @@ function pointer(p5, fn){
    *     text(`${touch.x}, ${touch.y}`, touch.x, touch.y - 40);
    *   }
    * }
-   * </code>
-   * </div>
    */
-   fn.touches = [];
-   fn._activePointers = new Map();
+  fn.touches = [];
+  fn._activePointers = new Map();
 
   /**
    * A `Boolean` system variable that's `true` if the mouse is pressed and
@@ -859,8 +779,6 @@ function pointer(p5, fn){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -879,11 +797,8 @@ function pointer(p5, fn){
    *   // Display the mouseIsPressed variable.
    *   text(mouseIsPressed, 25, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -905,8 +820,6 @@ function pointer(p5, fn){
    *   // Draw the square.
    *   square(25, 25, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.mouseIsPressed = false;
 
@@ -916,13 +829,13 @@ function pointer(p5, fn){
       const sx = canvas.scrollWidth / this.width || 1;
       const sy = canvas.scrollHeight / this.height || 1;
 
-      if (e.pointerType == 'touch') {
-          const touches = [];
-          for (const touch of this._activePointers.values()) {
-            touches.push(getTouchInfo(canvas, sx, sy, touch));
-          }
-          this.touches = touches;
-      } 
+      if (e.pointerType === 'touch') {
+        const touches = [];
+        for (const touch of this._activePointers.values()) {
+          touches.push(getTouchInfo(canvas, sx, sy, touch));
+        }
+        this.touches = touches;
+      }
 
       const mousePos = getMouseInfo(canvas, sx, sy, e);
       this.movedX = e.movementX || 0;
@@ -932,12 +845,12 @@ function pointer(p5, fn){
       this.winMouseX = mousePos.winX;
       this.winMouseY = mousePos.winY;
 
-       if (!this._hasMouseInteracted) {
-          this._updateMouseCoords();
-          this._hasMouseInteracted = true;
-       }
+      if (!this._hasMouseInteracted) {
+        this._updateMouseCoords();
+        this._hasMouseInteracted = true;
+      }
     }
- };
+  };
 
   fn._updateMouseCoords = function() {
     this.pmouseX = this.mouseX;
@@ -950,36 +863,39 @@ function pointer(p5, fn){
   function getMouseInfo(canvas, sx, sy, evt) {
     const rect = canvas.getBoundingClientRect();
     return {
-       x: (evt.clientX - rect.left) / sx,
-       y: (evt.clientY - rect.top) / sy,
-       winX: evt.clientX,
-       winY: evt.clientY,
+      x: (evt.clientX - rect.left) / sx,
+      y: (evt.clientY - rect.top) / sy,
+      winX: evt.clientX,
+      winY: evt.clientY
     };
- }
+  }
 
- function getTouchInfo(canvas, sx, sy, touch) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-     x: (touch.clientX - rect.left) / sx,
-     y: (touch.clientY - rect.top) / sy,
-     winX: touch.clientX,
-     winY: touch.clientY,
-     id: touch.pointerId,
+  function getTouchInfo(canvas, sx, sy, touch) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (touch.clientX - rect.left) / sx,
+      y: (touch.clientY - rect.top) / sy,
+      winX: touch.clientX,
+      winY: touch.clientY,
+      id: touch.pointerId
+    };
+  }
+
+  fn._setMouseButton = function(e) {
+    // Check all active touches to determine button states
+    this.mouseButton.left = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 1) !== 0
+      );
+    this.mouseButton.center = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 4) !== 0
+      );
+    this.mouseButton.right = Array.from(this._activePointers.values())
+      .some(touch =>
+        (touch.buttons & 2) !== 0
+      );
   };
-}
-
-fn._setMouseButton = function(e) {
-  // Check all active touches to determine button states
-  this.mouseButton.left = Array.from(this._activePointers.values()).some(touch => 
-    (touch.buttons & 1) !== 0
-  );
-  this.mouseButton.center = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 4) !== 0
-  );
-  this.mouseButton.right = Array.from(this._activePointers.values()).some(touch =>
-    (touch.buttons & 2) !== 0
-  );
-};
 
   /**
    * A function that's called when the mouse moves.
@@ -1030,8 +946,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1063,8 +977,6 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -1118,8 +1030,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1151,28 +1061,30 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onpointermove = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
-    
 
-      if (!this.mouseIsPressed && typeof context.mouseMoved === 'function') {
-        executeDefault = context.mouseMoved(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
-      } else if (this.mouseIsPressed && typeof context.mouseDragged === 'function') {
-        executeDefault = context.mouseDragged(e);
-        if (executeDefault === false) {
-          e.preventDefault();
-        }
+    if (
+      !this.mouseIsPressed &&
+      typeof this._customActions.mouseMoved === 'function'
+    ) {
+      executeDefault = this._customActions.mouseMoved(e);
+      if (executeDefault === false) {
+        e.preventDefault();
       }
+    } else if (
+      this.mouseIsPressed &&
+      typeof this._customActions.mouseDragged === 'function'
+    ) {
+      executeDefault = this._customActions.mouseDragged(e);
+      if (executeDefault === false) {
+        e.preventDefault();
+      }
+    }
   };
 
   /**
@@ -1233,8 +1145,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1266,11 +1176,8 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1314,11 +1221,8 @@ fn._setMouseButton = function(e) {
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onpointerdown = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = true;
 
@@ -1326,12 +1230,12 @@ fn._setMouseButton = function(e) {
     this._setMouseButton(e);
     this._updatePointerCoords(e);
 
-    if (typeof context.mousePressed === 'function') {
-      executeDefault = context.mousePressed(e);
+    if (typeof this._customActions.mousePressed === 'function') {
+      executeDefault = this._customActions.mousePressed(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } 
+    }
   };
 
   /**
@@ -1393,8 +1297,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1426,11 +1328,8 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1474,11 +1373,8 @@ fn._setMouseButton = function(e) {
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onpointerup = function(e) {
-    const context = this._isGlobal ? window : this;
     let executeDefault;
     this.mouseIsPressed = false;
 
@@ -1486,9 +1382,9 @@ fn._setMouseButton = function(e) {
     this._setMouseButton(e);
 
     this._updatePointerCoords(e);
-   
-    if (typeof context.mouseReleased === 'function') {
-      executeDefault = context.mouseReleased(e);
+
+    if (typeof this._customActions.mouseReleased === 'function') {
+      executeDefault = this._customActions.mouseReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1558,8 +1454,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1590,11 +1484,8 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1638,13 +1529,10 @@ fn._setMouseButton = function(e) {
    *   fill('orange');
    *   strokeWeight(10);
    * }
-   * </code>
-   * </div>
    */
   fn._onclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.mouseClicked === 'function') {
-      const executeDefault = context.mouseClicked(e);
+    if (typeof this._customActions.mouseClicked === 'function') {
+      const executeDefault = this._customActions.mouseClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1703,8 +1591,6 @@ fn._setMouseButton = function(e) {
    * @param  {MouseEvent} [event] optional `MouseEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let value = 0;
    *
    * function setup() {
@@ -1735,11 +1621,8 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let value = 0;
    *
    * function setup() {
@@ -1768,14 +1651,11 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
 
   fn._ondblclick = function(e) {
-    const context = this._isGlobal ? window : this;
-    if (typeof context.doubleClicked === 'function') {
-      const executeDefault = context.doubleClicked(e);
+    if (typeof this._customActions.doubleClicked === 'function') {
+      const executeDefault = this._customActions.doubleClicked(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1855,8 +1735,6 @@ fn._setMouseButton = function(e) {
    * @param  {WheelEvent} [event] optional `WheelEvent` argument.
    *
    * @example
-   * <div>
-   * <code>
    * let circleSize = 0;
    *
    * function setup() {
@@ -1880,11 +1758,8 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let direction = '';
    *
    * function setup() {
@@ -1917,15 +1792,12 @@ fn._setMouseButton = function(e) {
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onwheel = function(e) {
-    const context = this._isGlobal ? window : this;
     this._mouseWheelDeltaY = e.deltaY;
-    if (typeof context.mouseWheel === 'function') {
+    if (typeof this._customActions.mouseWheel === 'function') {
       e.delta = e.deltaY;
-      const executeDefault = context.mouseWheel(e);
+      const executeDefault = this._customActions.mouseWheel(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
@@ -1952,8 +1824,6 @@ fn._setMouseButton = function(e) {
    * @method requestPointerLock
    *
    * @example
-   * <div>
-   * <code>
    * let score = 0;
    *
    * function setup() {
@@ -1982,8 +1852,6 @@ fn._setMouseButton = function(e) {
    * function doubleClicked() {
    *   requestPointerLock();
    * }
-   * </code>
-   * </div>
    */
   fn.requestPointerLock = function() {
     // pointer lock object forking for cross browser
@@ -1991,7 +1859,7 @@ fn._setMouseButton = function(e) {
     canvas.requestPointerLock =
       canvas.requestPointerLock || canvas.mozRequestPointerLock;
     if (!canvas.requestPointerLock) {
-      console.log('requestPointerLock is not implemented in this browser');
+      p5._friendlyError('requestPointerLock is not implemented in this browser', 'requestPointerLock');
       return false;
     }
     canvas.requestPointerLock();
@@ -2014,8 +1882,6 @@ fn._setMouseButton = function(e) {
    * @method exitPointerLock
    *
    * @example
-   * <div>
-   * <code>
    * let isLocked = false;
    *
    * function setup() {
@@ -2051,8 +1917,6 @@ fn._setMouseButton = function(e) {
    *     isLocked = true;
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.exitPointerLock = function() {
     document.exitPointerLock();

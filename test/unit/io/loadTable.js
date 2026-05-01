@@ -23,7 +23,7 @@ suite('loadTable', function() {
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
       mockP5Prototype.loadTable(invalidFile, () => {
-        reject("Success callback executed");
+        reject('Success callback executed');
       }, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
@@ -36,7 +36,7 @@ suite('loadTable', function() {
       mockP5Prototype.loadTable(validFile, () => {
         // Wait a bit so that if both callbacks are executed we will get an error.
         setTimeout(resolve, 50);
-      }, (err) => {
+      }, err => {
         reject(`Error callback called: ${err.toString()}`);
       });
     });
@@ -50,7 +50,7 @@ suite('loadTable', function() {
   });
 
   test('passes an object with correct data to success callback', async () => {
-    await mockP5Prototype.loadTable(validFile, (table) => {
+    await mockP5Prototype.loadTable(validFile, table => {
       assert.equal(table.getRowCount(), 4);
       assert.strictEqual(table.getRow(1).getString(0), 'David');
       assert.strictEqual(table.getRow(1).getNum(1), 31);
@@ -84,6 +84,7 @@ suite('loadTable', function() {
     // TODO: Current parsing does not handle quoted fields
     const table = await mockP5Prototype.loadTable(validFile);
     assert.equal(table.getRowCount(), 4);
-    assert.equal(table.getRow(3).get(0), 'David,\nSr. "the boss"');
+    const value = table.getRow(3).get(0).replace(/\r\n/g, '\n');
+    assert.equal(value, 'David,\nSr. "the boss"');
   });
 });

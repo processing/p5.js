@@ -1,13 +1,12 @@
 /**
  * @module Math
- * @requires constants
  * @todo see methods below needing further implementation.
  * future consideration: implement SIMD optimizations
  * when browser compatibility becomes available
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/
  *   Reference/Global_Objects/SIMD
  */
-import { Matrix } from "./Matrices/Matrix";
+import { Matrix } from './Matrices/Matrix';
 // import { MatrixNumjs as Matrix } from './Matrices/MatrixNumjs'
 
 function matrix(p5, fn) {
@@ -68,8 +67,9 @@ function matrix(p5, fn) {
    * const vector = new Vector(1, 2, 3);
    * const result = matrix.multiplyPoint(vector);
    *
+   * @example
+   * // META:norender
    * // p5.js script example
-   * <div class="norender"><code>
    * function setup() {
    *
    *   // Create a 4x4 identity matrix
@@ -103,7 +103,6 @@ function matrix(p5, fn) {
    *   const transformedVector = matrix.multiplyPoint(vector);
    *   console.log("Transformed Vector:", transformedVector.toString());
    * }
-   * </code></div>
    */
   p5.Matrix = Matrix;
 }
@@ -111,6 +110,6 @@ function matrix(p5, fn) {
 export default matrix;
 export { Matrix };
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   matrix(p5, p5.prototype);
 }

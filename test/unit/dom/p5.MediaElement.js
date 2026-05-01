@@ -2,12 +2,14 @@ import { vi } from 'vitest';
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import { default as media, MediaElement } from '../../../src/dom/p5.MediaElement';
 import { Element } from '../../../src/dom/p5.Element';
+import { default as pixels } from '../../../src/image/pixels';
 
 suite('p5.MediaElement', () => {
   beforeAll(() => {
     media(mockP5, mockP5Prototype);
+    pixels(mockP5, mockP5Prototype);
     navigator.mediaDevices.getUserMedia = vi.fn()
-      .mockResolvedValue("stream-value");
+      .mockResolvedValue('stream-value');
   });
 
   afterAll(() => {
@@ -16,7 +18,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createVideo', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const mediaSources = [
@@ -151,7 +153,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createAudio', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     const mediaSources = [
@@ -203,7 +205,7 @@ suite('p5.MediaElement', () => {
 
   suite('p5.prototype.createCapture', function() {
     afterEach(function() {
-      document.body.innerHTML = "";
+      document.body.innerHTML = '';
     });
 
     test('should be a function', function() {
@@ -233,6 +235,24 @@ suite('p5.MediaElement', () => {
       const testElement = mockP5Prototype.createCapture(mockP5Prototype.VIDEO);
       // Weird check, setter accepts : playinline, getter accepts playInline
       assert.isTrue(testElement.elt.playsInline);
+    });
+  });
+
+  suite('p5.MediaElement.copy', function () {
+    beforeAll(() => {
+      globalThis.p5 = { prototype: mockP5Prototype };
+    });
+
+    afterAll(() => {
+      delete globalThis.p5;
+      document.body.innerHTML = '';
+    });
+
+    test('should not throw an error', function() {
+      const testElement = mockP5Prototype.createVideo('/test/unit/assets/nyan_cat.gif');
+      assert.doesNotThrow(() => {
+        testElement.copy(0, 0, 10, 10, 0, 0, 10, 10);
+      });
     });
   });
 });

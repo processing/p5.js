@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Image
  * @for p5
- * @requires core
  */
 
 /**
@@ -37,8 +36,6 @@ function image(p5, fn){
    * @return {p5.Image}       new <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -65,11 +62,8 @@ function image(p5, fn){
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -103,11 +97,8 @@ function image(p5, fn){
    *
    *   describe('A square with a horizontal color gradient that transitions from gray to black.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -144,8 +135,6 @@ function image(p5, fn){
    *
    *   describe('A black square drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   fn.createImage = function(width, height) {
     // p5._validateParameters('createImage', arguments);
@@ -176,9 +165,8 @@ function image(p5, fn){
    *  @param  {String} [filename]  file name. Defaults to 'untitled'.
    *  @param  {String} [extension] file extension, either 'png', 'webp', or 'jpg'. Defaults to 'png'.
    *
-   *  @example
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *   background(255);
@@ -188,11 +176,9 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -203,11 +189,9 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -218,11 +202,9 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -233,11 +215,9 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -248,11 +228,9 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -263,8 +241,6 @@ function image(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    */
   /**
    *  @method saveCanvas
@@ -386,12 +362,13 @@ function image(p5, fn){
 
     // Now to build the global palette
     // Sort all the unique palettes in descending order of their occurrence
-    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
-      a,
-      b
-    ) {
-      return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
-    });
+    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames)
+      .sort(function(
+        a,
+        b
+      ) {
+        return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+      });
 
     // The initial global palette is the one with the most occurrence
     const globalPalette = palettesSortedByFreq[0]
@@ -449,7 +426,12 @@ function image(p5, fn){
       loop: loopLimit,
       palette: new Uint32Array(globalPalette)
     };
-    const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+    const gifWriter = new omggif.GifWriter(
+      buffer,
+      pImg.width,
+      pImg.height,
+      opts
+    );
     let previousFrame = {};
 
     // Pass 2
@@ -596,14 +578,12 @@ function image(p5, fn){
    * @param  {Number}   duration  duration in seconds to record. This parameter will be constrained to be less or equal to 15.
    * @param  {Number}   framerate number of frames to save per second. This parameter will be constrained to be less or equal to 22.
    * @param  {function(Array)} [callback] callback function that will be executed
-                                    to handle the image data. This function
-                                    should accept an array as argument. The
-                                    array will contain the specified number of
-                                    frames of objects. Each object has three
-                                    properties: `imageData`, `filename`, and `extension`.
+   *                                to handle the image data. This function
+   *                                should accept an array as argument. The
+   *                                array will contain the specified number of
+   *                                frames of objects. Each object has three
+   *                                properties: `imageData`, `filename`, and `extension`.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -623,11 +603,8 @@ function image(p5, fn){
    *     saveFrames('frame', 'png', 1, 5);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -652,8 +629,6 @@ function image(p5, fn){
    *     print(frame);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.saveFrames = function(fName, ext, _duration, _fps, callback) {
     // p5._validateParameters('saveFrames', arguments);

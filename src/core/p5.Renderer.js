@@ -4,6 +4,16 @@
  * @for p5
  */
 
+/**
+ * `pInst` may be:
+ *
+ *  The main sketch-wide `p5` instance (global canvas), or
+ *  an off-screen `p5.Graphics` wrapper.
+ *
+ * Therefore a renderer must only call properties / methods that exist
+ * on both objects.
+ */
+
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
@@ -35,6 +45,11 @@ class Renderer {
     rectMode: constants.CORNER,
     ellipseMode: constants.CENTER,
     strokeWeight: 1,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
 
     textFont: { family: 'sans-serif' },
     textLeading: 15,
@@ -42,24 +57,27 @@ class Renderer {
     textSize: 12,
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
-    bezierOrder: 3,
-    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
     textWrap: constants.WORD,
-
-    // added v2.0
-    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStyle: constants.NORMAL, // v1: was textStyle
     fontStretch: constants.NORMAL,
     fontWeight: constants.NORMAL,
     lineHeight: constants.NORMAL,
     fontVariant: constants.NORMAL,
     direction: 'inherit'
-  }
+  };
 
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    if (isMainCanvas) {
+      this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+    } else {
+      
+      const parentDensity = pInst._pInst?._renderer?._pixelDensity;
+      this._pixelDensity = parentDensity || Math.ceil(window.devicePixelRatio) || 1;
+    }
 
     this.width = w;
     this.height = h;
@@ -140,7 +158,8 @@ class Renderer {
 
   bezierVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.bezierVertex(position, textureCoordinates);
@@ -168,7 +187,8 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.splineVertex(position, textureCoordinates);
@@ -202,12 +222,13 @@ class Renderer {
   }
 
   drawShape(shape, count) {
-    throw new Error('Unimplemented')
+    throw new Error('Unimplemented');
   }
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+    const textureCoordinates = this.getSupportedIndividualVertexProperties()
+      .textureCoordinates
       ? new Vector(u, v)
       : undefined;
     this.currentShape.vertex(position, textureCoordinates);
@@ -307,9 +328,12 @@ class Renderer {
   }
 
   fill(...args) {
-    this.states.setValue('fillSet', true);
-    this.states.setValue('fillColor', this._pInst.color(...args));
-    this.updateShapeVertexProperties();
+    if (args.length > 0) {
+      this.states.setValue('fillSet', true);
+      this.states.setValue('fillColor', this._pInst.color(...args));
+      this.updateShapeVertexProperties();
+    }
+    return this.states.fillColor;
   }
 
   noFill() {
@@ -317,14 +341,16 @@ class Renderer {
   }
 
   strokeWeight(w) {
-    if (w === undefined) {
+    if (typeof w === 'undefined') {
       return this.states.strokeWeight;
-    } else {
-      this.states.setValue('strokeWeight', w);
     }
+    this.states.setValue('strokeWeight', w);
   }
 
   stroke(...args) {
+    if (args.length === 0) {
+      return this.states.strokeColor;
+    }
     this.states.setValue('strokeSet', true);
     this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
@@ -335,13 +361,13 @@ class Renderer {
   }
 
   getCommonVertexProperties() {
-    return {}
+    return {};
   }
 
   getSupportedIndividualVertexProperties() {
     return {
-      textureCoordinates: false,
-    }
+      textureCoordinates: false
+    };
   }
 
   updateShapeProperties(modified) {
@@ -355,7 +381,7 @@ class Renderer {
 
   updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    if (!modified || Object.keys(modified).some((k) => k in props)) {
+    if (!modified || Object.keys(modified).some(k => k in props)) {
       const shape = this.currentShape;
       for (const key in props) {
         shape[key](props[key]);
@@ -367,6 +393,29 @@ class Renderer {
     return this;
   }
 
+  finishDraw() {
+    // Default no-op implementation
+    // Override in specific renderers as needed
+  }
+
+  ///////////////////////////////
+  //// TEXT SUPPORT METHODS
+  //////////////////////////////
+
+  _middleAlignOffset = function() {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
+  };
 };
 
 function renderer(p5, fn){

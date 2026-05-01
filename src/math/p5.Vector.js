@@ -1,9 +1,8 @@
 /**
  * @module Math
- * @requires constants
  */
 
-import * as constants from "../core/constants";
+import * as constants from '../core/constants';
 
 /// HELPERS FOR REMAINDER METHOD
 const calculateRemainder2D = function (xComponent, yComponent) {
@@ -33,12 +32,12 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let values = args.map((arg) => arg || 0);
-    if (typeof args[0] === "function") {
+    let values = args; // .map(arg => arg || 0);
+    if (typeof args[0] === 'function') {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      values = args.slice(2).map((arg) => arg || 0);
+      values = args.slice(2); // .map(arg => arg || 0);
     }
     let dimensions = values.length; // TODO: make default 3 if no arguments
     if (dimensions === 0) {
@@ -48,6 +47,13 @@ class Vector {
       this.dimensions = dimensions;
       this._values = values;
     }
+
+    // This property is here where duck typing (checking if obj.isVector) needs
+    // to be used over more standard type checking (obj instanceof Vector). This
+    // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+    // where if we `import { Vector }` directly, it will be a separate copy of the
+    // Vector class from the one imported in the main p5.js bundle.
+    this.isVector = true;
   }
 
   /**
@@ -121,8 +127,8 @@ class Vector {
       return this._values[index];
     } else {
       p5._friendlyError(
-        "The index parameter is trying to set a value outside the bounds of the vector",
-        "p5.Vector.setValue"
+        'The index parameter is trying to set a value outside the bounds of the vector',
+        'p5.Vector.setValue'
       );
     }
   }
@@ -146,8 +152,8 @@ class Vector {
       this._values[index] = value;
     } else {
       p5._friendlyError(
-        "The index parameter is trying to set a value outside the bounds of the vector",
-        "p5.Vector.setValue"
+        'The index parameter is trying to set a value outside the bounds of the vector',
+        'p5.Vector.setValue'
       );
     }
   }
@@ -260,19 +266,16 @@ class Vector {
    * @return {String} string representation of the vector.
    *
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   let v = createVector(20, 30);
    *
-   *   // Prints 'p5.Vector Object : [20, 30, 0]'.
+   *   // Prints 'vector[20, 30, 0]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    */
   toString() {
-    return `[${this.values.join(", ")}]`;
+    return `vector[${this._values.join(', ')}]`;
   }
 
   /**
@@ -292,8 +295,6 @@ class Vector {
    * @param {Number} [z] z component of the vector.
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -325,8 +326,6 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector|Number[]} value vector to set.
@@ -334,13 +333,13 @@ class Vector {
    */
   set(...args) {
     if (args[0] instanceof Vector) {
-      this.values = args[0].values.slice();
+      this._values = args[0].values.slice();
     } else if (Array.isArray(args[0])) {
-      this.values = args[0].map((arg) => arg || 0);
+      this._values = args[0].map(arg => arg || 0);
     } else {
-      this.values = args.map((arg) => arg || 0);
+      this._values = args.map(arg => arg || 0);
     }
-    this.dimensions = this.values.length;
+    this.dimensions = this._values.length;
     return this;
   }
 
@@ -350,8 +349,6 @@ class Vector {
    * @return {p5.Vector} copy of the <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100 ,100);
    *
@@ -369,14 +366,12 @@ class Vector {
    *
    *   describe('A black point drawn in the middle of a gray square.');
    * }
-   * </code>
-   * </div>
    */
   copy() {
     if (this.isPInst) {
-      return new Vector(this._fromRadians, this._toRadians, ...this.values);
+      return new Vector(this._fromRadians, this._toRadians, ...this._values);
     } else {
-      return new Vector(...this.values);
+      return new Vector(...this._values);
     }
   }
 
@@ -403,8 +398,6 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -436,11 +429,8 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -464,11 +454,8 @@ class Vector {
    *
    *   describe('Three black dots in a diagonal line from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -507,8 +494,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector|Number[]} value The vector to add
@@ -521,7 +506,7 @@ class Vector {
       args = args[0];
     }
     args.forEach((value, index) => {
-      this.values[index] = (this.values[index] || 0) + (value || 0);
+      this._values[index] = (this._values[index] || 0) + (value || 0);
     });
     return this;
   }
@@ -549,8 +534,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -561,11 +545,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 0, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -576,11 +558,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 5]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -591,11 +571,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4, 5);
@@ -607,11 +585,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 5);
@@ -623,11 +599,9 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4, 5);
@@ -639,8 +613,6 @@ class Vector {
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v3.toString());
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector | Number[]}  value  divisor vector.
@@ -660,7 +632,7 @@ class Vector {
         );
       }
     } else if (Array.isArray(x)) {
-      if (x.every((element) => Number.isFinite(element))) {
+      if (x.every(element => Number.isFinite(element))) {
         if (x.length === 2) {
           return calculateRemainder2D.call(this, x[0], x[1]);
         }
@@ -677,7 +649,7 @@ class Vector {
       }
     } else if (arguments.length === 2) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every((element) => Number.isFinite(element))) {
+      if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 2) {
           return calculateRemainder2D.call(
             this,
@@ -688,7 +660,7 @@ class Vector {
       }
     } else if (arguments.length === 3) {
       const vectorComponents = [...arguments];
-      if (vectorComponents.every((element) => Number.isFinite(element))) {
+      if (vectorComponents.every(element => Number.isFinite(element))) {
         if (vectorComponents.length === 3) {
           return calculateRemainder3D.call(
             this,
@@ -722,8 +694,6 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -755,11 +725,8 @@ class Vector {
    *
    *   describe('Four black dots arranged in a square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -780,11 +747,8 @@ class Vector {
    *
    *   describe('Three black dots in a diagonal line from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -823,8 +787,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector|Number[]} value the vector to subtract
@@ -833,15 +795,15 @@ class Vector {
   sub(...args) {
     if (args[0] instanceof Vector) {
       args[0].values.forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     } else if (Array.isArray(args[0])) {
       args[0].forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     } else {
       args.forEach((value, index) => {
-        this.values[index] -= value || 0;
+        this._values[index] -= value || 0;
       });
     }
     return this;
@@ -864,12 +826,9 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
    * originals.
    *
-   * @method mult
    * @param  {Number} n The number to multiply with the vector
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -889,11 +848,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   strokeWeight(5);
    *
@@ -908,11 +864,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -933,11 +886,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -958,11 +908,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -985,11 +932,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1024,8 +968,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Number} x number to multiply with the x component of the vector.
@@ -1044,35 +986,35 @@ class Vector {
   mult(...args) {
     if (args.length === 1 && args[0] instanceof Vector) {
       const v = args[0];
-      const maxLen = Math.min(this.values.length, v.values.length);
+      const maxLen = Math.min(this._values.length, v.values.length);
       for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(v.values[i]) && typeof v.values[i] === "number") {
+        if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
           this._values[i] *= v.values[i];
         } else {
           console.warn(
-            "p5.Vector.prototype.mult:",
-            "v contains components that are either undefined or not finite numbers"
+            'p5.Vector.prototype.mult:',
+            'v contains components that are either undefined or not finite numbers'
           );
           return this;
         }
       }
     } else if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
-      const maxLen = Math.min(this.values.length, arr.length);
+      const maxLen = Math.min(this._values.length, arr.length);
       for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(arr[i]) && typeof arr[i] === "number") {
+        if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
           this._values[i] *= arr[i];
         } else {
           console.warn(
-            "p5.Vector.prototype.mult:",
-            "arr contains elements that are either undefined or not finite numbers"
+            'p5.Vector.prototype.mult:',
+            'arr contains elements that are either undefined or not finite numbers'
           );
           return this;
         }
       }
     } else if (
       args.length === 1 &&
-      typeof args[0] === "number" &&
+      typeof args[0] === 'number' &&
       Number.isFinite(args[0])
     ) {
       for (let i = 0; i < this._values.length; i++) {
@@ -1091,7 +1033,7 @@ class Vector {
    *
    * If only one value is provided, as in `v.div(2)`, then all the components
    * will be divided by 2. If a value isn't provided for a component, it
-   * won't change. For example, `v.div(4, 5)` divides `v.x` by, `v.y` by 5,
+   * won't change. For example, `v.div(4, 5)` divides `v.x` by 4, `v.y` by 5,
    * and `v.z` by 1. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
    *
@@ -1102,8 +1044,6 @@ class Vector {
    * @param  {Number}    n The number to divide the vector by
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1123,11 +1063,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1147,11 +1084,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1172,11 +1106,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1197,11 +1128,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1224,11 +1152,8 @@ class Vector {
    *
    *   describe('Two black dots drawn on a gray square. One dot is in the top left corner and the other is in the bottom center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function draw() {
    *   background(200);
    *
@@ -1259,8 +1184,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Number} x number to divide with the x component of the vector.
@@ -1282,18 +1205,18 @@ class Vector {
       const v = args[0];
       if (
         v._values.every(
-          (val) => Number.isFinite(val) && typeof val === "number"
+          val => Number.isFinite(val) && typeof val === 'number'
         )
       ) {
-        if (v._values.some((val) => val === 0)) {
-          console.warn("p5.Vector.prototype.div:", "divide by 0");
+        if (v._values.some(val => val === 0)) {
+          console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
         this._values = this._values.map((val, i) => val / v._values[i]);
       } else {
         console.warn(
-          "p5.Vector.prototype.div:",
-          "vector contains components that are either undefined or not finite numbers"
+          'p5.Vector.prototype.div:',
+          'vector contains components that are either undefined or not finite numbers'
         );
       }
       return this;
@@ -1301,31 +1224,31 @@ class Vector {
 
     if (args.length === 1 && Array.isArray(args[0])) {
       const arr = args[0];
-      if (arr.every((val) => Number.isFinite(val) && typeof val === "number")) {
-        if (arr.some((val) => val === 0)) {
-          console.warn("p5.Vector.prototype.div:", "divide by 0");
+      if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
+        if (arr.some(val => val === 0)) {
+          console.warn('p5.Vector.prototype.div:', 'divide by 0');
           return this;
         }
         this._values = this._values.map((val, i) => val / arr[i]);
       } else {
         console.warn(
-          "p5.Vector.prototype.div:",
-          "array contains components that are either undefined or not finite numbers"
+          'p5.Vector.prototype.div:',
+          'array contains components that are either undefined or not finite numbers'
         );
       }
       return this;
     }
 
-    if (args.every((val) => Number.isFinite(val) && typeof val === "number")) {
-      if (args.some((val) => val === 0)) {
-        console.warn("p5.Vector.prototype.div:", "divide by 0");
+    if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
+      if (args.some(val => val === 0)) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
       this._values = this._values.map((val, i) => val / args[0]);
     } else {
       console.warn(
-        "p5.Vector.prototype.div:",
-        "arguments contain components that are either undefined or not finite numbers"
+        'p5.Vector.prototype.div:',
+        'arguments contain components that are either undefined or not finite numbers'
       );
     }
 
@@ -1341,8 +1264,6 @@ class Vector {
    * @return {Number} magnitude of the vector.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1364,8 +1285,6 @@ class Vector {
    *
    *   describe('A diagonal black line extends from the top left corner of a gray square. The number 50 is written at the end of the line.');
    * }
-   * </code>
-   * </div>
    */
   mag() {
     return Math.sqrt(this.magSq());
@@ -1376,8 +1295,6 @@ class Vector {
    *
    * @return {Number} squared magnitude of the vector.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1399,8 +1316,6 @@ class Vector {
    *
    *   describe('A diagonal black line extends from the top left corner of a gray square. The number 2500 is written at the end of the line.');
    * }
-   * </code>
-   * </div>
    */
   magSq() {
     return this._values.reduce(
@@ -1433,8 +1348,7 @@ class Vector {
    * @return {Number}     dot product.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(3, 4);
@@ -1446,11 +1360,9 @@ class Vector {
    *   // Prints "9" to the console.
    *   print(dp);
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1462,11 +1374,8 @@ class Vector {
    *   // Prints "0" to the console.
    *   print(dp);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1506,8 +1415,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
@@ -1536,8 +1443,7 @@ class Vector {
    * @return {p5.Vector}   cross product as a <a href="#/p5.Vector">p5.Vector</a>.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1549,11 +1455,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
    *   print(cp.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v1 = createVector(1, 0);
@@ -1565,8 +1469,6 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
    *   print(cp.toString());
    * }
-   * </code>
-   * </div>
    */
   cross(v) {
     const x = this.y * v.z - this.z * v.y;
@@ -1591,14 +1493,12 @@ class Vector {
    * Use <a href="#/p5/dist">dist()</a> to calculate the distance between points
    * using coordinates as in `dist(x1, y1, x2, y2)`.
    *
-   * @method dist
    * @submodule p5.Vector
    * @param  {p5.Vector} v x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}      distance.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1614,11 +1514,9 @@ class Vector {
    *   // Prints "1.414..." to the console.
    *   print(d);
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1634,11 +1532,8 @@ class Vector {
    *   // Prints "1.414..." to the console.
    *   print(d);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1684,8 +1579,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   dist(v) {
     return v.copy().sub(this).mag();
@@ -1702,8 +1595,7 @@ class Vector {
    * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1718,11 +1610,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1739,11 +1629,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0.445..., 0.890..., 0.089...]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1788,8 +1675,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   normalize() {
     const len = this.mag();
@@ -1810,8 +1695,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(10, 20, 2);
@@ -1822,11 +1706,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(10, 20, 2);
@@ -1837,11 +1719,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [2.227..., 4.454..., 0.445...]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1884,8 +1763,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   limit(max) {
     const mSq = this.magSq();
@@ -1907,8 +1784,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(3, 4, 0);
@@ -1922,11 +1798,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [6, 8, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 4, 0);
@@ -1940,11 +1814,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [6, 8, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1981,8 +1852,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   setMag(n) {
     return this.normalize().mult(n);
@@ -2004,8 +1873,7 @@ class Vector {
    * @return {Number} angle of rotation.
    *
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1);
@@ -2019,11 +1887,9 @@ class Vector {
    *   // Prints "45" to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class = "norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1);
@@ -2037,11 +1903,8 @@ class Vector {
    *   // Prints "45" to the console.
    *   print(p5.Vector.heading(v));
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2086,8 +1949,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   heading() {
     const h = Math.atan2(this.y, this.x);
@@ -2108,8 +1969,7 @@ class Vector {
    * @param  {Number}    angle angle of rotation.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(0, 1);
@@ -2123,11 +1983,9 @@ class Vector {
    *   // Prints "3.141..." to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2144,11 +2002,8 @@ class Vector {
    *   // Prints "180" to the console.
    *   print(v.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2186,8 +2041,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   setHeading(a) {
     if (this.isPInst) a = this._toRadians(a);
@@ -2214,8 +2067,7 @@ class Vector {
    * @param  {Number}    angle angle of rotation.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 0);
@@ -2229,11 +2081,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2250,11 +2100,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 0);
@@ -2267,11 +2115,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2288,11 +2134,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, 1, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let v0;
    * let v1;
    *
@@ -2330,8 +2173,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   rotate(a) {
     let newHeading = this.heading() + a;
@@ -2356,8 +2197,7 @@ class Vector {
    * @param  {p5.Vector}    value x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>.
    * @return {Number}       angle between the vectors.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 0);
@@ -2369,11 +2209,9 @@ class Vector {
    *   // Prints "-1.570..." to the console.
    *   print(v1.angleBetween(v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2387,11 +2225,9 @@ class Vector {
    *   // Prints "-90" to the console.
    *   print(v1.angleBetween(v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 0);
@@ -2403,11 +2239,9 @@ class Vector {
    *   // Prints "-1.570..." to the console.
    *   print(p5.Vector.angleBetween(v1, v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Use degrees.
    *   angleMode(DEGREES);
@@ -2422,11 +2256,8 @@ class Vector {
    *   // Prints "-90" to the console.
    *   print(p5.Vector.angleBetween(v1, v0));
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2475,8 +2306,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   angleBetween(v) {
     const magSqMult = this.magSq() * v.magSq();
@@ -2515,8 +2344,7 @@ class Vector {
    * @chainable
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 1, 1);
@@ -2528,11 +2356,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v0.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
@@ -2543,11 +2369,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 1, 1);
@@ -2559,11 +2383,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
    *   print(v2.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2604,8 +2425,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
@@ -2645,8 +2464,7 @@ class Vector {
    * @return {p5.Vector}
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 0);
@@ -2675,11 +2493,9 @@ class Vector {
    *   // Prints "0.785..." to the console.
    *   print(v0.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v0 = createVector(3, 0);
@@ -2708,11 +2524,8 @@ class Vector {
    *   // Prints "0.785..." to the console.
    *   print(v3.heading());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2754,8 +2567,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   slerp(v, amt) {
     // edge cases.
@@ -2841,8 +2652,7 @@ class Vector {
    *                                    to reflect about.
    * @chainable
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a normal vector.
    *   let n = createVector(0, 1);
@@ -2855,11 +2665,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [4, -6, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a normal vector.
    *   let n = createVector(0, 1);
@@ -2873,11 +2681,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [4, -6, 0]" to the console.
    *   print(v1.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2928,8 +2733,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   reflect(surfaceNormal) {
     const surfaceNormalCopy = Vector.normalize(surfaceNormal);
@@ -2941,8 +2744,7 @@ class Vector {
    *
    * @return {Number[]} array with the vector's components.
    * @example
-   * <div class = "norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(20, 30);
@@ -2950,8 +2752,6 @@ class Vector {
    *   // Prints "[20, 30, 0]" to the console.
    *   print(v.array());
    * }
-   * </code>
-   * </div>
    */
   array() {
     return [this.x || 0, this.y || 0, this.z || 0];
@@ -2978,8 +2778,7 @@ class Vector {
    * @param {Number} [z] z component of the vector.
    * @return {Boolean} whether the vectors are equal.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(10, 20, 30);
@@ -2992,11 +2791,9 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(v0.equals(v2));
    * }
-   * </code>
-   * </div>
    *
-   * <div class = "norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(5, 10, 20);
@@ -3009,11 +2806,9 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(v0.equals(v2.x, v2.y, v2.z));
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
    *   let v0 = createVector(10, 20, 30);
@@ -3026,8 +2821,6 @@ class Vector {
    *   // Prints "false" to the console.
    *   print(p5.Vector.equals(v0, v2));
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param {p5.Vector|Array} value vector to compare.
@@ -3060,7 +2853,6 @@ class Vector {
    *
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON
    *
-   * @method clampToZero
    * @return {p5.Vector} with components very close to zero replaced with zero.
    * @chainable
    */
@@ -3090,8 +2882,7 @@ class Vector {
    * @return {p5.Vector}       new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngle(0);
@@ -3099,11 +2890,9 @@ class Vector {
    *   // Prints "p5.Vector Object : [1, 0, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div class="norender">
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngle(0, 30);
@@ -3111,11 +2900,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [30, 0, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3148,14 +2934,12 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   static fromAngle(angle, length) {
-    if (typeof length === "undefined") {
+    if (typeof length === 'undefined') {
       length = 1;
     }
-    return new Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+    return new Vector(length * Math.cos(angle), length * Math.sin(angle));
   }
 
   /**
@@ -3169,8 +2953,7 @@ class Vector {
    * @return {p5.Vector}          new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.fromAngles(0, 0);
@@ -3178,11 +2961,8 @@ class Vector {
    *   // Prints "p5.Vector Object : [0, -1, 0]" to the console.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -3210,11 +2990,9 @@ class Vector {
    *   // Draw the sphere.
    *   sphere(35);
    * }
-   * </code>
-   * </div>
    */
   static fromAngles(theta, phi, length) {
-    if (typeof length === "undefined") {
+    if (typeof length === 'undefined') {
       length = 1;
     }
     const cosPhi = Math.cos(phi);
@@ -3235,21 +3013,17 @@ class Vector {
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random2D();
    *
-   *   // Prints "p5.Vector Object : [x, y, 0]" to the console
+   *   // Prints "p5.Vector Object : [x, y]" to the console
    *   // where x and y are small random numbers.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3289,8 +3063,6 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   static random2D() {
     return this.fromAngle(Math.random() * constants.TWO_PI);
@@ -3302,8 +3074,7 @@ class Vector {
    * @static
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = p5.Vector.random3D();
@@ -3312,8 +3083,6 @@ class Vector {
    *   // where x, y, and z are small random numbers.
    *   print(v.toString());
    * }
-   * </code>
-   * </div>
    */
   static random3D() {
     const angle = Math.random() * constants.TWO_PI;
@@ -3347,8 +3116,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.add"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.add'
         );
       }
     } else {
@@ -3394,8 +3163,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.sub"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.sub'
         );
       }
     } else {
@@ -3438,8 +3207,8 @@ class Vector {
       target = v.copy();
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.mult"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.mult'
         );
       }
     } else {
@@ -3464,8 +3233,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.rotate"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.rotate'
         );
       }
       target.set(v);
@@ -3508,8 +3277,8 @@ class Vector {
 
       if (arguments.length === 3) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.div"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.div'
         );
       }
     } else {
@@ -3539,7 +3308,7 @@ class Vector {
    * @static
    * @param  {p5.Vector} v1 first <a href="#/p5.Vector">p5.Vector</a>.
    * @param  {p5.Vector} v2 second <a href="#/p5.Vector">p5.Vector</a>.
-   * @return {Number}     cross product.
+   * @return {p5.Vector}     cross product.
    */
   static cross(v1, v2) {
     return v1.cross(v2);
@@ -3576,8 +3345,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.lerp"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.lerp'
         );
       }
     } else {
@@ -3606,8 +3375,8 @@ class Vector {
       target = v1.copy();
       if (arguments.length === 4) {
         p5._friendlyError(
-          "The target parameter is undefined, it should be of type p5.Vector",
-          "p5.Vector.slerp"
+          'The target parameter is undefined, it should be of type p5.Vector',
+          'p5.Vector.slerp'
         );
       }
     } else {
@@ -3660,8 +3429,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.normalize"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.normalize'
         );
       }
       target.set(v);
@@ -3686,8 +3455,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.limit"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.limit'
         );
       }
       target.set(v);
@@ -3712,8 +3481,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.setMag"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.setMag'
         );
       }
       target.set(v);
@@ -3768,8 +3537,8 @@ class Vector {
     } else {
       if (!(target instanceof Vector)) {
         p5._friendlyError(
-          "The target parameter should be of type p5.Vector",
-          "p5.Vector.reflect"
+          'The target parameter should be of type p5.Vector',
+          'p5.Vector.reflect'
         );
       }
       target.set(incidentVector);
@@ -3809,8 +3578,8 @@ class Vector {
       v = new Vector().set(v1);
     } else {
       p5._friendlyError(
-        "The v1 parameter should be of type Array or p5.Vector",
-        "p5.Vector.equals"
+        'The v1 parameter should be of type Array or p5.Vector',
+        'p5.Vector.equals'
       );
     }
     return v.equals(v2);
@@ -3842,8 +3611,6 @@ function vector(p5, fn) {
    * @param {Number} [y] y component of the vector.
    * @param {Number} [z] z component of the vector.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -3864,11 +3631,8 @@ function vector(p5, fn) {
    *
    *   describe('Two black dots on a gray square, one at the top left and the other at the bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pos;
    * let vel;
    *
@@ -3898,8 +3662,6 @@ function vector(p5, fn) {
    *   strokeWeight(5);
    *   point(pos);
    * }
-   * </code>
-   * </div>
    */
   p5.Vector = Vector;
 
@@ -3931,6 +3693,6 @@ function vector(p5, fn) {
 export default vector;
 export { Vector };
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   vector(p5, p5.prototype);
 }

@@ -71,8 +71,6 @@ function file(p5, fn){
    * @param {File} file wrapped file.
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -102,11 +100,8 @@ function file(p5, fn){
    *   // Display the p5.File's size in bytes.
    *   text(file.size, 10, 90);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use the file input to select an image to
    * // load and display.
    * let img;
@@ -144,8 +139,6 @@ function file(p5, fn){
    *     img = null;
    *   }
    * }
-   * </code>
-   * </div>
    */
   p5.File = File;
 
@@ -155,10 +148,8 @@ function file(p5, fn){
    * object. All `File` properties and methods are accessible.
    *
    * @for p5.File
-   * @property file
+   * @property {File} file
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -188,8 +179,6 @@ function file(p5, fn){
    *   // Display the p5.File's size in bytes.
    *   text(file.size, 10, 90);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -200,10 +189,8 @@ function file(p5, fn){
    * For example, `'image'` and `'text'` are both MIME types.
    *
    * @for p5.File
-   * @property type
+   * @property {String} type
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -226,8 +213,6 @@ function file(p5, fn){
    *   // Display the p5.File's type.
    *   text(`This is file's type is: ${file.type}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -237,12 +222,10 @@ function file(p5, fn){
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types" target="_blank">MIME type</a>
    * may have a subtype such as ``png`` or ``jpeg``.
    *
-   * @property subtype
+   * @property {String} subtype
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -266,19 +249,15 @@ function file(p5, fn){
    *   // Display the p5.File's subtype.
    *   text(`This is file's subtype is: ${file.subtype}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
    * The file name as a string.
    *
-   * @property name
+   * @property {String} name
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a
    * // file and display its info.
    *
@@ -302,19 +281,15 @@ function file(p5, fn){
    *   // Display the p5.File's name.
    *   text(`This is file's name is: ${file.name}`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
    * The number of bytes in the file.
    *
-   * @property size
+   * @property {Number} size
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -337,8 +312,6 @@ function file(p5, fn){
    *   // Display the p5.File's size.
    *   text(`This is file has ${file.size} bytes.`, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -347,12 +320,10 @@ function file(p5, fn){
    * Data can be either image data, text contents, or a parsed object in the
    * case of JSON and <a href="#/p5.XML">p5.XML</a> objects.
    *
-   * @property data
+   * @property {any} data
    * @for p5.File
    *
    * @example
-   * <div>
-   * <code>
    * // Use the file input to load a file and display its info.
    *
    * function setup() {
@@ -375,8 +346,6 @@ function file(p5, fn){
    *   // Display the p5.File's data, which looks like a random string of characters.
    *   text(file.data, 10, 10, 80, 80);
    * }
-   * </code>
-   * </div>
    */
 }
 

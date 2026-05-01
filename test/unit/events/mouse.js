@@ -251,6 +251,13 @@ suite.todo('Mouse Events', function() {
       window.dispatchEvent(new MouseEvent('mousedown'));
       assert.strictEqual(myp5.mouseIsPressed, true);
     });
+
+    test('mouseIsPressed should reset to false on blur', function() {
+      window.dispatchEvent(new PointerEvent('pointerdown'));
+      assert.strictEqual(myp5.mouseIsPressed, true);
+      window.dispatchEvent(new Event('blur'));
+      assert.strictEqual(myp5.mouseIsPressed, false);
+    });
   });
 
   suite('mouseMoved', function() {

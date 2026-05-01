@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Loading & Displaying
  * @for p5
- * @requires core
  */
 
 import canvas from '../core/helpers';
@@ -47,8 +46,6 @@ function loadingDisplaying(p5, fn){
    * @return {Promise<p5.Image>}   the <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * // Load the image and create a p5.Image object.
@@ -61,11 +58,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads.
    *   await loadImage('assets/laDefense.jpg', handleImage);
@@ -77,11 +71,8 @@ function loadingDisplaying(p5, fn){
    * function handleImage(img) {
    *   image(img, 0, 0);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
@@ -99,8 +90,6 @@ function loadingDisplaying(p5, fn){
    * function handleError(event) {
    *   console.error('Oops!', event);
    * }
-   * </code>
-   * </div>
    */
   fn.loadImage = async function(
     path,
@@ -146,13 +135,15 @@ function loadingDisplaying(p5, fn){
         pImg.drawingContext.drawImage(img, 0, 0);
       }
 
-      pImg.modified = true;
-
-      if(successCallback){
-        return successCallback(pImg);
-      }else{
-        return pImg;
-      }
+      const cb = () => {
+        pImg.modified = true;
+        if(successCallback){
+          return successCallback(pImg);
+        }else{
+          return pImg;
+        }
+      };
+      return this._internal ? this._internal(cb) : cb();
 
     } catch(err) {
       p5._friendlyFileLoadError(0, path);
@@ -183,16 +174,13 @@ function loadingDisplaying(p5, fn){
    * @param  {String} filename file name of gif.
    * @param  {Number} duration duration in seconds to capture from the sketch.
    * @param  {Object} [options] an object that can contain five more properties:
-   *                  `delay`, a Number specifying how much time to wait before recording;
-   *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds’;
-   *                  `silent`, a Boolean that defines presence of progress notifications. By default it’s `false`;
-   *                  `notificationDuration`, a Number that defines how long in seconds the final notification
-   *                  will live. By default it's `0`, meaning the notification will never be removed;
-   *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it’s `'progressBar’`.
+   * @param {Number} [options.delay=0] How much time to wait before recording.
+   * @param {'seconds'|'frames'} [options.units='seconds'] The units of the duration and delay.
+   * @param {Boolean} [options.silent=false] Whether to show progress notifications.
+   * @param {Number} [options.notificationDuration=0] How long in seconds the final notification will live, or 0 for it to remain permanently.
+   * @param {String} [options.notificationID='progressBar'] The id to give to the notification's DOM element.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -216,11 +204,8 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,8 +230,6 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5, { delay: 1 });
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.saveGif = async function(
     fileName,
@@ -256,7 +239,8 @@ function loadingDisplaying(p5, fn){
       units: 'seconds',
       silent: false,
       notificationDuration: 0,
-      notificationID: 'progressBar'
+      notificationID: 'progressBar',
+      reset: true
     }
   ) {
     // validate parameters
@@ -273,7 +257,7 @@ function loadingDisplaying(p5, fn){
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-
+    const resetAnimation = (options && options.reset !== undefined) ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -300,7 +284,11 @@ function loadingDisplaying(p5, fn){
     // get the project's framerate
     let _frameRate = this._targetFrameRate;
     // if it is undefined or some non useful value, assume it's 60
-    if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    if (
+      _frameRate === Infinity ||
+      _frameRate === undefined ||
+      _frameRate === 0
+    ) {
       _frameRate = 60;
     }
 
@@ -320,11 +308,19 @@ function loadingDisplaying(p5, fn){
     // that duration translates to
     const nFrames = units === 'seconds' ? duration * _frameRate : duration;
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
-    const totalNumberOfFrames = nFrames + nFramesDelay;
 
     // initialize variables for the frames processing
-    let frameIterator = nFramesDelay;
-    this.frameCount = frameIterator;
+    let frameIterator;
+    let totalNumberOfFrames;
+
+    if (resetAnimation) {
+      frameIterator = nFramesDelay;
+      this.frameCount = frameIterator;
+      totalNumberOfFrames = nFrames + nFramesDelay;
+    } else {
+      frameIterator = this.frameCount + nFramesDelay;
+      totalNumberOfFrames = frameIterator + nFrames;
+    }
 
     const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
@@ -353,7 +349,9 @@ function loadingDisplaying(p5, fn){
       // if we have a WEBGL context, initialize the pixels array
       // and the gl context to use them inside the loop
       gl = this.drawingContext;
-      pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
     }
 
     // stop the loop since we are going to manually redraw
@@ -365,7 +363,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-    await Promise.resolve();
+    await new Promise(requestAnimationFrame);
 
     while (frameIterator < totalNumberOfFrames) {
       /*
@@ -375,7 +373,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
-
+      await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
@@ -796,7 +794,12 @@ function loadingDisplaying(p5, fn){
    */
   function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
     if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+      const { x, y, w, h } = _imageCover(
+        xAlign, yAlign,
+        dw, dh,
+        sx, sy,
+        sw, sh
+      );
       sx = x;
       sy = y;
       sw = w;
@@ -910,8 +913,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}   [height] height to draw the image.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -927,11 +928,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image has dark gray borders on its left and top.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -947,11 +945,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image is drawn in the top left corner of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -967,11 +962,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a gridded ceiling drawn in the center of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -986,11 +978,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of an astronaut on the moon. The top and bottom borders of the image are dark gray.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1006,8 +995,6 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A pixelated image of the underside of a white umbrella with a gridded ceiling above.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method image
@@ -1098,7 +1085,11 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
+    let vals = canvas.modeAdjust(
+      _dx, _dy,
+      _dw, _dh,
+      this._renderer.states.imageMode
+    );
     vals = _imageFit(
       fit,
       xAlign,
@@ -1146,6 +1137,9 @@ function loadingDisplaying(p5, fn){
    * sets the alpha value. For example, `tint(255, 0, 0, 100)` will give images
    * a red tint and make them transparent.
    *
+   * Calling `tint()` without an argument returns the current tint as a 
+   * <a href="#/p5.Color">p5.Color</a> object.
+   *
    * @method tint
    * @param  {Number}        v1      red or hue value.
    * @param  {Number}        v2      green or saturation value.
@@ -1153,8 +1147,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}        [alpha]
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1173,11 +1165,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1196,13 +1185,10 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
-   **
+   *
    * async function setup() {
    *   // Load the image.
    *   img = await loadImage('assets/laDefense.jpg');
@@ -1219,11 +1205,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a transparent red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1242,34 +1225,37 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right is transparent.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method tint
    * @param  {String}        value   CSS color string.
    */
-
   /**
    * @method tint
    * @param  {Number}        gray   grayscale value.
    * @param  {Number}        [alpha]
    */
-
   /**
    * @method tint
    * @param  {Number[]}      values  array containing the red, green, blue &
    *                                 alpha components of the color.
    */
-
   /**
    * @method tint
    * @param  {p5.Color}      color   the tint color
    */
+  /**
+   * @method tint
+   * @return {p5.Color}      the current tint color
+   */
   fn.tint = function(...args) {
-    // p5._validateParameters('tint', args);
-    const c = this.color(...args);
-    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+    if (args.length === 0) {
+      return this._renderer.states.tint; // getter
+    }
+    else {
+      this._renderer.states.setValue('tint', this.color(...args));
+      return this;
+    }
   };
 
   /**
@@ -1280,8 +1266,6 @@ function loadingDisplaying(p5, fn){
    * @method noTint
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1302,11 +1286,10 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the left has a red tint.');
    * }
-   * </code>
-   * </div>
    */
   fn.noTint = function() {
     this._renderer.states.setValue('tint', null);
+    return this;
   };
 
   /**
@@ -1338,13 +1321,12 @@ function loadingDisplaying(p5, fn){
    * <a href="#/p5/image">image()</a> as the x- and y-coordinates of the image's
    * center. The next parameters are its width and height.
    *
+   * Calling `imageMode()` without an argument returns the current image mode, either `CORNER`, `CORNERS`, or `CENTER`.
+   *
    * @method imageMode
    * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1363,11 +1345,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn at the top left of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1386,11 +1365,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a brick wall is drawn on a gray square. The image is squeezed into a small rectangular area.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1409,11 +1385,16 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn on a gray square.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method imageMode
+   * @return {(CORNER|CORNERS|CENTER)}      the current image mode
    */
   fn.imageMode = function(m) {
     // p5._validateParameters('imageMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer.states.imageMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||

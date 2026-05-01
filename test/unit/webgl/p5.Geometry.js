@@ -302,5 +302,31 @@ suite('p5.Geometry', function() {
       myp5.model(geom);
       assert.deepEqual(myp5.get(5, 5), [0, 0, 255, 255]);
     });
+
+    test('buildGeometry() with no fill works', () => {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const geom = myp5.buildGeometry(() => {
+        myp5.noFill();
+        myp5.beginShape();
+        myp5.vertex(0, 0);
+        myp5.vertex(0, 5);
+        myp5.vertex(5, 10);
+        myp5.endShape();
+      });
+      expect(geom.vertices.length).toBeGreaterThan(0);
+      expect(geom.faces.length).toEqual(0);
+    });
+
+    test('buildGeometry() with just a line works', () => {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const geom = myp5.buildGeometry(() => {
+        myp5.beginShape();
+        myp5.vertex(0, 0);
+        myp5.vertex(0, 10);
+        myp5.endShape();
+      });
+      expect(geom.vertices.length).toBeGreaterThan(0);
+      expect(geom.faces.length).toEqual(0);
+    });
   });
 });

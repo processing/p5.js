@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Primitives
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 //some of the functions are adjusted from Three.js(http://threejs.org)
@@ -11,6 +9,7 @@
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
 import { Vector } from '../math/p5.Vector';
+import { downloadFile } from '../io/utilities';
 
 class Geometry {
   constructor(detailX, detailY, callback, renderer) {
@@ -70,103 +69,99 @@ class Geometry {
   }
 
   /**
- * Calculates the position and size of the smallest box that contains the geometry.
- *
- * A bounding box is the smallest rectangular prism that contains the entire
- * geometry. It's defined by the box's minimum and maximum coordinates along
- * each axis, as well as the size (length) and offset (center).
- *
- * Calling `myGeometry.calculateBoundingBox()` returns an object with four
- * properties that describe the bounding box:
- *
- * ```js
- * // Get myGeometry's bounding box.
- * let bbox = myGeometry.calculateBoundingBox();
- *
- * // Print the bounding box to the console.
- * console.log(bbox);
- *
- * // {
- * //  // The minimum coordinate along each axis.
- * //  min: { x: -1, y: -2, z: -3 },
- * //
- * //  // The maximum coordinate along each axis.
- * //  max: { x: 1, y: 2, z: 3},
- * //
- * //  // The size (length) along each axis.
- * //  size: { x: 2, y: 4, z: 6},
- * //
- * //  // The offset (center) along each axis.
- * //  offset: { x: 0, y: 0, z: 0}
- * // }
- * ```
- *
- * @returns {Object} bounding box of the geometry.
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let particles;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a new p5.Geometry object with random spheres.
- *   particles = buildGeometry(createParticles);
- *
- *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the particles.
- *   noStroke();
- *   fill(255);
- *
- *   // Draw the particles.
- *   model(particles);
- *
- *   // Calculate the bounding box.
- *   let bbox = particles.calculateBoundingBox();
- *
- *   // Translate to the bounding box's center.
- *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
- *
- *   // Style the bounding box.
- *   stroke(255);
- *   noFill();
- *
- *   // Draw the bounding box.
- *   box(bbox.size.x, bbox.size.y, bbox.size.z);
- * }
- *
- * function createParticles() {
- *   for (let i = 0; i < 10; i += 1) {
- *     // Calculate random coordinates.
- *     let x = randomGaussian(0, 15);
- *     let y = randomGaussian(0, 15);
- *     let z = randomGaussian(0, 15);
- *
- *     push();
- *     // Translate to the particle's coordinates.
- *     translate(x, y, z);
- *     // Draw the particle.
- *     sphere(3);
- *     pop();
- *   }
- * }
- * </code>
- * </div>
- */
+   * Calculates the position and size of the smallest box that contains the geometry.
+   *
+   * A bounding box is the smallest rectangular prism that contains the entire
+   * geometry. It's defined by the box's minimum and maximum coordinates along
+   * each axis, as well as the size (length) and offset (center).
+   *
+   * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+   * properties that describe the bounding box:
+   *
+   * ```js
+   * // Get myGeometry's bounding box.
+   * let bbox = myGeometry.calculateBoundingBox();
+   *
+   * // Print the bounding box to the console.
+   * console.log(bbox);
+   *
+   * // {
+   * //  // The minimum coordinate along each axis.
+   * //  min: { x: -1, y: -2, z: -3 },
+   * //
+   * //  // The maximum coordinate along each axis.
+   * //  max: { x: 1, y: 2, z: 3},
+   * //
+   * //  // The size (length) along each axis.
+   * //  size: { x: 2, y: 4, z: 6},
+   * //
+   * //  // The offset (center) along each axis.
+   * //  offset: { x: 0, y: 0, z: 0}
+   * // }
+   * ```
+   *
+   * @returns {Object} bounding box of the geometry.
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let particles;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a new p5.Geometry object with random spheres.
+   *   particles = buildGeometry(createParticles);
+   *
+   *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the particles.
+   *   noStroke();
+   *   fill(255);
+   *
+   *   // Draw the particles.
+   *   model(particles);
+   *
+   *   // Calculate the bounding box.
+   *   let bbox = particles.calculateBoundingBox();
+   *
+   *   // Translate to the bounding box's center.
+   *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+   *
+   *   // Style the bounding box.
+   *   stroke(255);
+   *   noFill();
+   *
+   *   // Draw the bounding box.
+   *   box(bbox.size.x, bbox.size.y, bbox.size.z);
+   * }
+   *
+   * function createParticles() {
+   *   for (let i = 0; i < 10; i += 1) {
+   *     // Calculate random coordinates.
+   *     let x = randomGaussian(0, 15);
+   *     let y = randomGaussian(0, 15);
+   *     let z = randomGaussian(0, 15);
+   *
+   *     push();
+   *     // Translate to the particle's coordinates.
+   *     translate(x, y, z);
+   *     // Draw the particle.
+   *     sphere(3);
+   *     pop();
+   *   }
+   * }
+   */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
@@ -205,6 +200,9 @@ class Geometry {
   }
 
   reset() {
+    // Notify renderer that geometry is being reset (for buffer cleanup)
+    this.renderer?.onReset?.(this);
+
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
@@ -264,8 +262,6 @@ class Geometry {
    * <a href="#/p5/fill">fill()</a> function to apply color to the geometry.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -309,8 +305,6 @@ class Geometry {
    *     'Three squares drawn against a gray background. Red squares are at the center and the bottom-right. A blue square is at the top-right.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   clearColors() {
     this.vertexColors = [];
@@ -330,13 +324,11 @@ class Geometry {
    * @param {String} [fileName='model.obj'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.obj'.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(function()) {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -363,8 +355,6 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
   saveObj(fileName = 'model.obj') {
     let objStr= '';
@@ -413,7 +403,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName , 'obj');
+    downloadFile(blob, fileName , 'obj');
 
   }
 
@@ -431,11 +421,9 @@ class Geometry {
    * @method saveStl
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
-   * controls whether or not a binary .stl file is saved. It defaults to false.
+   * @param {Object} [options] Optional settings.
+   * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn1;
    * let saveBtn2;
@@ -474,8 +462,6 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
   saveStl(fileName = 'model.stl', { binary = false } = {}){
     let modelOutput;
@@ -536,7 +522,7 @@ class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName, 'stl');
+    downloadFile(blob, fileName, 'stl');
   }
 
   /**
@@ -576,8 +562,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -617,8 +601,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipU() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -668,8 +650,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -709,8 +689,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -757,8 +735,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -800,11 +776,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -848,8 +821,6 @@ class Geometry {
    *   // Compute the faces array.
    *   this.computeFaces();
    * }
-   * </code>
-   * </div>
    */
   computeFaces() {
     this.faces.length = 0;
@@ -926,8 +897,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -988,11 +957,8 @@ class Geometry {
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1037,11 +1003,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1088,11 +1051,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1139,11 +1099,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1193,8 +1150,6 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
@@ -1349,8 +1304,6 @@ class Geometry {
 
   /**
    * @example
-   * <div>
-   * <code>
    * let tetrahedron;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
@@ -1378,6 +1331,7 @@ class Geometry {
    *   tetrahedron.faces.push([1, 2, 3]);
    *   tetrahedron.makeEdgesFromFaces();
    * }
+   *
    * function draw() {
    *   background(200);
    *   strokeWeight(2);
@@ -1385,8 +1339,6 @@ class Geometry {
    *   rotateY(millis() * 0.001);
    *   model(tetrahedron);
    * }
-   * </code>
-   * </div>
    */
   makeEdgesFromFaces() {
     this._makeTriangleEdges();
@@ -1419,6 +1371,7 @@ class Geometry {
     for (let i = 0; i < this.edges.length; i++) {
       const prevEdge = this.edges[i - 1];
       const currEdge = this.edges[i];
+      const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
       const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
@@ -1439,10 +1392,12 @@ class Geometry {
           (currEdge[1] + 1) * 4
         )
         : [0, 0, 0, 0];
-      const dir = end
-        .copy()
-        .sub(begin)
-        .normalize();
+      const dir = isPoint
+        ? new Vector(0, 1, 0)
+        : end
+          .copy()
+          .sub(begin)
+          .normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1462,6 +1417,9 @@ class Geometry {
               this._addJoin(begin, lastValidDir, dir, fromColor);
             }
           }
+        } else if (isPoint) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          this._addCap(begin, dir, fromColor);
         } else {
           // Start a new line
           if (dirOK && !connected.has(currEdge[0])) {
@@ -1483,7 +1441,7 @@ class Geometry {
               });
             }
           }
-          if (lastValidDir && !connected.has(prevEdge[1])) {
+          if (!isPoint && lastValidDir && !connected.has(prevEdge[1])) {
             const existingCap = potentialCaps.get(prevEdge[1]);
             if (existingCap) {
               this._addJoin(
@@ -1671,8 +1629,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let myGeometry;
    *
    * function setup() {
@@ -1705,8 +1661,6 @@ class Geometry {
    *   // Draw the torus.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
   normalize() {
     if (this.vertices.length > 0) {
@@ -1761,8 +1715,6 @@ class Geometry {
    * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
    *
    * @example
-   * <div>
-   * <code>
    * let geo;
    *
    * function cartesianToSpherical(x, y, z) {
@@ -1832,8 +1784,6 @@ class Geometry {
    *   // Draw the geometry
    *   model(geo);
    * }
-   * </code>
-   * </div>
    *
    * @param {String} propertyName the name of the vertex property.
    * @param {Number|Number[]} data the data tied to the vertex property.
@@ -1952,11 +1902,9 @@ function geometry(p5, fn){
    * @class p5.Geometry
    * @param  {Integer} [detailX] number of vertices along the x-axis.
    * @param  {Integer} [detailY] number of vertices along the y-axis.
-   * @param {function} [callback] function to call once the geometry is created.
+   * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1987,11 +1935,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2031,11 +1976,8 @@ function geometry(p5, fn){
    *   // left to top to right.
    *   this.faces.push([0, 1, 2]);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2078,11 +2020,8 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * // Adapted from Paul Wheeler's wonderful p5.Geometry tutorial.
@@ -2159,8 +2098,6 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    */
   p5.Geometry = Geometry;
 
@@ -2179,8 +2116,6 @@ function geometry(p5, fn){
    * @name vertices
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2211,11 +2146,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2263,8 +2195,6 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2283,8 +2213,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2345,11 +2273,8 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2394,8 +2319,6 @@ function geometry(p5, fn){
    *   // Display the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2430,8 +2353,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2481,8 +2402,6 @@ function geometry(p5, fn){
    *
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2505,8 +2424,6 @@ function geometry(p5, fn){
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2546,8 +2463,13 @@ function geometry(p5, fn){
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
+   */
+
+  /**
+   * A unique identifier for this geometry. The renderer will use this to cache resources.
+   *
+   * @property {String} gid
+   * @for p5.Geometry
    */
 }
 

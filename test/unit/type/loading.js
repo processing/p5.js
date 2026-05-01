@@ -15,7 +15,7 @@ suite('Loading Fonts', function () {
   });
 
   // tests ////////////////////////////////////////////////
-  const fontFile = '/unit/assets/acmesa.ttf';
+  const fontFile = 'test/unit/assets/acmesa.ttf';
 
   test('loadFont on zlib compressed fonts works', async () => {
     const font = await myp5.loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUFjIg1_i6t8kCHKm459Wx7xQYXK0vOoz6jq6R8aXw.woff');
@@ -41,7 +41,7 @@ suite('Loading Fonts', function () {
   }));
 
   test.skip('loadFont.callback', async () => new Promise(done => {
-    myp5.loadFont(fontFile, (pFont) => {
+    myp5.loadFont(fontFile, pFont => {
       assert.ok(pFont, 'acmesa.ttf loaded');
       assert.equal(pFont.name, 'A.C.M.E. Secret Agent');
       assert.isTrue(pFont instanceof p5.Font);

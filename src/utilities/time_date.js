@@ -2,7 +2,6 @@
  * @module IO
  * @submodule Time & Date
  * @for p5
- * @requires core
  */
 
 function timeDate(p5, fn){
@@ -13,8 +12,6 @@ function timeDate(p5, fn){
    * @return {Integer} current day between 1 and 31.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -33,8 +30,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current day: ${d}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.day = function() {
     return new Date().getDate();
@@ -47,8 +42,6 @@ function timeDate(p5, fn){
    * @return {Integer} current hour between 0 and 23.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -67,8 +60,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current hour: ${h}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.hour = function() {
     return new Date().getHours();
@@ -81,8 +72,6 @@ function timeDate(p5, fn){
    * @return {Integer} current minute between 0 and 59.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -101,8 +90,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current minute: ${m}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.minute = function() {
     return new Date().getMinutes();
@@ -125,8 +112,6 @@ function timeDate(p5, fn){
    * @return {Number} number of milliseconds since starting the sketch.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -147,11 +132,8 @@ function timeDate(p5, fn){
    *     `The text 'Startup time: ${round(ms, 2)} ms' written in black on a gray background.`
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -172,11 +154,8 @@ function timeDate(p5, fn){
    *   // Display how long the sketch has run.
    *   text(`Running time: ${nf(s, 1, 1)} sec`, 5, 50, 90);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -195,11 +174,8 @@ function timeDate(p5, fn){
    *   // Draw the circle.
    *   circle(x, 50, 30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Load the GeoJSON.
    *   await loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
@@ -222,8 +198,6 @@ function timeDate(p5, fn){
    *     `The text "It took ${round(ms, 2)} ms to load the data" written in black on a gray background.`
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.millis = function() {
     if (this._millisStart === -1) {
@@ -241,8 +215,6 @@ function timeDate(p5, fn){
    * @return {Integer} current month between 1 and 12.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -261,8 +233,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current month: ${m}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.month = function() {
     //January is 0!
@@ -276,8 +246,6 @@ function timeDate(p5, fn){
    * @return {Integer} current second between 0 and 59.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -296,8 +264,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current second: ${s}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.second = function() {
     return new Date().getSeconds();
@@ -310,8 +276,6 @@ function timeDate(p5, fn){
    * @return {Integer} current year.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -330,8 +294,6 @@ function timeDate(p5, fn){
    *
    *   describe(`The text 'Current year: ${y}' written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    */
   fn.year = function() {
     return new Date().getFullYear();

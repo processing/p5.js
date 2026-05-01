@@ -29,12 +29,18 @@ suite('light', function() {
     test('specularColor is initialised and set properly', function() {
       assert.deepEqual(myp5._renderer.states.specularColors, [1, 1, 1]);
       assert.deepEqual(myp5._renderer.states.pointLightSpecularColors, []);
-      assert.deepEqual(myp5._renderer.states.directionalLightSpecularColors, []);
+      assert.deepEqual(
+        myp5._renderer.states.directionalLightSpecularColors,
+        []
+      );
       myp5.specularColor(255, 0, 0);
       assert.deepEqual(myp5._renderer.states.specularColors, [1, 0, 0]);
       myp5.pointLight(255, 0, 0, 1, 0, 0);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
-      assert.deepEqual(myp5._renderer.states.pointLightSpecularColors, [1, 0, 0]);
+      assert.deepEqual(
+        myp5._renderer.states.pointLightSpecularColors,
+        [1, 0, 0]
+      );
       assert.deepEqual(myp5._renderer.states.directionalLightSpecularColors, [
         1,
         0,
@@ -55,7 +61,10 @@ suite('light', function() {
       assert.deepEqual([], myp5._renderer.states.pointLightSpecularColors);
       assert.deepEqual([], myp5._renderer.states.pointLightPositions);
       assert.deepEqual([], myp5._renderer.states.directionalLightDiffuseColors);
-      assert.deepEqual([], myp5._renderer.states.directionalLightSpecularColors);
+      assert.deepEqual(
+        [],
+        myp5._renderer.states.directionalLightSpecularColors
+      );
       assert.deepEqual([], myp5._renderer.states.directionalLightDirections);
       assert.deepEqual([1, 1, 1], myp5._renderer.states.specularColors);
       assert.deepEqual([], myp5._renderer.states.spotLightDiffuseColors);
@@ -67,6 +76,7 @@ suite('light', function() {
   });
 
   suite('spotlight inputs', function() {
+    beforeEach(() => myp5.noLights());
     let angle = Math.PI / 4;
     let defaultAngle = Math.cos(Math.PI / 3);
     let cosAngle = Math.cos(angle);
@@ -86,7 +96,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, positions, directions);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -98,7 +111,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, positions, directions, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -110,7 +126,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, positions, directions, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -121,7 +140,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, positions, directions);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -132,7 +154,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, 1, 2, 3, directions);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -143,7 +168,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(color, positions, 0, 1, 0);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -154,7 +182,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, positions, directions, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -165,7 +196,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, 1, 2, 3, directions, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -176,7 +210,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(color, positions, 0, 1, 0, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -187,7 +224,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, positions, directions, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -198,7 +238,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(color, 1, 2, 3, directions, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -209,7 +252,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(color, positions, 0, 1, 0, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -219,7 +265,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, 1, 2, 3, directions);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -229,7 +278,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(255, 0, 255, positions, 0, 1, 0);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -239,7 +291,10 @@ suite('light', function() {
       let color = myp5.color(255, 0, 255);
       myp5.spotLight(color, 1, 2, 3, 0, 1, 0);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -249,7 +304,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, 1, 2, 3, directions, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -259,7 +317,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(255, 0, 255, positions, 0, 1, 0, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -269,7 +330,10 @@ suite('light', function() {
       let color = myp5.color(255, 0, 255);
       myp5.spotLight(color, 1, 2, 3, 0, 1, 0, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -279,7 +343,10 @@ suite('light', function() {
       let directions = new p5.Vector(0, 1, 0);
       myp5.spotLight(255, 0, 255, 1, 2, 3, directions, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -289,7 +356,10 @@ suite('light', function() {
       let positions = new p5.Vector(1, 2, 3);
       myp5.spotLight(255, 0, 255, positions, 0, 1, 0, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -299,7 +369,10 @@ suite('light', function() {
       let color = myp5.color(255, 0, 255);
       myp5.spotLight(color, 1, 2, 3, 0, 1, 0, angle, conc);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -308,7 +381,10 @@ suite('light', function() {
     test('c1,c2,c3,p1,p2,p3,r1,r2,r3', function() {
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [defaultAngle]);
@@ -317,7 +393,10 @@ suite('light', function() {
     test('c1,c2,c3,p1,p2,p3,r1,r2,r3,angle', function() {
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, angle);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);
@@ -326,7 +405,10 @@ suite('light', function() {
     test('c1,c2,c3,p1,p2,p3,r1,r2,r3,angle,conc', function() {
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, angle, 7);
       assert.deepEqual(myp5._renderer.states.spotLightDiffuseColors, [1, 0, 1]);
-      assert.deepEqual(myp5._renderer.states.spotLightSpecularColors, [1, 1, 1]);
+      assert.deepEqual(
+        myp5._renderer.states.spotLightSpecularColors,
+        [1, 1, 1]
+      );
       assert.deepEqual(myp5._renderer.states.spotLightPositions, [1, 2, 3]);
       assert.deepEqual(myp5._renderer.states.spotLightDirections, [0, 1, 0]);
       assert.deepEqual(myp5._renderer.states.spotLightAngle, [cosAngle]);

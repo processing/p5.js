@@ -2,11 +2,10 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
- * @requires core
- * @requires color_conversion
  */
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+
 
 import {
   ColorSpace,
@@ -25,7 +24,8 @@ import {
 
   OKLab,
   OKLCH as OKLCHSpace,
-
+  contrastWCAG21,
+  contrastAPCA,
   P3
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
@@ -39,18 +39,32 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
   return result;
 }
 
-const serializationMap = {};
+const toHexComponent = (v) => {
+  const vInt = ~~(v * 255);
+  const hex = vInt.toString(16)
+  if (hex.length < 2) {
+    return '0' + hex
+  } else {
+    return hex
+  }
+}
+
+const serializationMap = new Map();
+
+
+
 
 class Color {
-  // Reference to underlying color object depending on implementation
-  // Not meant to be used publicly unless the implementation is known for sure
-  _color;
-  // Color mode of the Color object, uses p5 color modes
-  mode;
-
   static colorMap = {};
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
+
+  // This property is here where duck typing (checking if obj.isColor) needs
+  // to be used over more standard type checking (obj instanceof Color). This
+  // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+  // where if we `import { Color }` directly, it will be a separate copy of the
+  // Color class from the one imported in the main p5.js bundle.
+  isColor = true;
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
@@ -59,7 +73,8 @@ class Color {
     Color.colorMap[mode] = definition.id;
 
     // Get colorjs maxes
-    Color.#colorjsMaxes[mode] = Object.values(definition.coords).reduce((acc, v) => {
+    Color.#colorjsMaxes[mode] = Object.values(definition.coords)
+      .reduce((acc, v) => {
         acc.push(v.refRange || v.range);
         return acc;
       }, []);
@@ -71,39 +86,47 @@ class Color {
 
   constructor(vals, colorMode, colorMaxes, { clamp = false } = {}) {
     // This changes with the color object
-    this.mode = colorMode || RGB;
+    this._cachedMode = colorMode || RGB;
 
     if(vals instanceof Color){
       // Received Color object to be used for color mode conversion
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         Color.colorMap[vals.mode];
-      this._color = to(vals._color, mode);
-      this.mode = mode;
+      this._initialize = () => {
+        this._cachedColor = to(vals._color, mode);
+        this._cachedMode = mode;
+      };
 
     }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
       // Received color.js object to be used internally
       const mode = colorMode ?
         Color.colorMap[colorMode] :
         vals.spaceId;
-      this._color = to(vals, mode);
-      this.mode = colorMode || Object.entries(Color.colorMap).find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
+      this._initialize = () => {
+        this._cachedColor = to(vals, mode);
+        this._cachedMode = colorMode || Object.entries(Color.colorMap)
+          .find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+      };
 
     } else if(typeof vals[0] === 'string') {
       // Received string
-      try{
-        this._color = parse(vals[0]);
-        const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
-          return val === this._color.spaceId;
-        });
-        this.mode = mode;
-        this._color = to(this._color, this._color.spaceId);
-      }catch(err){
-        // TODO: Invalid color string
-        throw new Error('Invalid color string');
-      }
+      this._defaultStringValue = vals[0];
+      this._initialize = () => {
+        try{
+          this._cachedColor = parse(vals[0]);
+          const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
+            return val === this._cachedColor.spaceId;
+          });
+          this._cachedMode = mode;
+          this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
+        }catch(err){
+          // TODO: Invalid color string
+          throw new Error('Invalid color string');
+        }
+      };
 
     }else{
       // Received individual channel values
@@ -112,16 +135,30 @@ class Color {
       if(colorMaxes){
         // NOTE: need to consider different number of arguments (eg. CMYK)
         if(vals.length === 4){
-          mappedVals = Color.mapColorRange(vals, this.mode, colorMaxes, clamp);
+          mappedVals = Color.mapColorRange(vals, this._cachedMode, colorMaxes, clamp);
         }else if(vals.length === 3){
-          mappedVals = Color.mapColorRange([vals[0], vals[1], vals[2]], this.mode, colorMaxes, clamp);
+          mappedVals = Color.mapColorRange(
+            [vals[0], vals[1], vals[2]],
+            this._cachedMode,
+            colorMaxes,
+            clamp
+          );
           mappedVals.push(1);
         }else if(vals.length === 2){
           // Grayscale with alpha
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](vals[0], colorMaxes, clamp);
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
+              vals[0],
+              colorMaxes,
+              clamp
+            );
           }else{
-            mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes, clamp);
+            mappedVals = Color.mapColorRange(
+              [vals[0], vals[0], vals[0]],
+              this._cachedMode,
+              colorMaxes,
+              clamp
+            );
           }
           const alphaMaxes = Array.isArray(colorMaxes[colorMaxes.length-1]) ?
             colorMaxes[colorMaxes.length-1] :
@@ -138,10 +175,19 @@ class Color {
           );
         }else if(vals.length === 1){
           // Grayscale only
-          if(Color.#grayscaleMap[this.mode]){
-            mappedVals = Color.#grayscaleMap[this.mode](vals[0], colorMaxes, clamp);
+          if(Color.#grayscaleMap[this._cachedMode]){
+            mappedVals = Color.#grayscaleMap[this._cachedMode](
+              vals[0],
+              colorMaxes,
+              clamp
+            );
           }else{
-            mappedVals = Color.mapColorRange([vals[0], vals[0], vals[0]], this.mode, colorMaxes, clamp);
+            mappedVals = Color.mapColorRange(
+              [vals[0], vals[0], vals[0]],
+              this._cachedMode,
+              colorMaxes,
+              clamp
+            );
           }
           mappedVals.push(1);
         }else{
@@ -150,22 +196,57 @@ class Color {
       }else{
         mappedVals = vals;
       }
+      if (this._cachedMode === RGB) {
+        if (mappedVals[3] === 1) {
+          // Faster for the browser to parse than rgba
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]);
+        } else {
+          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]) + toHexComponent(mappedVals[3]);;
+        }
+      }
 
-      const space = Color.colorMap[this.mode] || console.error('Invalid color mode');
-      const coords = mappedVals.slice(0, 3);
+      this._initialize = () => {
+        const space = Color.colorMap[this._cachedMode] || console.error('Invalid color mode');
+        const coords = mappedVals.slice(0, 3);
 
-      const color = {
-        space,
-        coords,
-        alpha: mappedVals[3]
+        const color = {
+          space,
+          coords,
+          alpha: mappedVals[3]
+        };
+        this._cachedColor = to(color, space);
       };
-      this._color = to(color, space);
     }
+  }
+
+  // Color mode of the Color object, uses p5 color modes
+  get mode() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedMode;
+  }
+  // Reference to underlying color object depending on implementation
+  // Not meant to be used publicly unless the implementation is known for sure
+  get _color() {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    return this._cachedColor;
+  }
+  set _color(newColor) {
+    if (this._initialize) {
+      this._initialize();
+      this._initialize = undefined;
+    }
+    this._cachedColor = newColor;
   }
 
   // Convert from p5 color range to color.js color range
   static mapColorRange(origin, mode, maxes, clamp){
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -175,14 +256,19 @@ class Color {
     const colorjsMaxes = Color.#colorjsMaxes[mode];
 
     return origin.map((channel, i) => {
-      const newval = map(channel, p5Maxes[i][0], p5Maxes[i][1], colorjsMaxes[i][0], colorjsMaxes[i][1], clamp);
+      const newval = map(
+        channel,
+        p5Maxes[i][0], p5Maxes[i][1],
+        colorjsMaxes[i][0], colorjsMaxes[i][1],
+        clamp
+      );
       return newval;
     });
   }
 
   // Convert from color.js color range to p5 color range
   static unmapColorRange(origin, mode, maxes){
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -192,7 +278,11 @@ class Color {
     const colorjsMaxes = Color.#colorjsMaxes[mode];
 
     return origin.map((channel, i) => {
-      const newval = map(channel, colorjsMaxes[i][0], colorjsMaxes[i][1], p5Maxes[i][0], p5Maxes[i][1]);
+      const newval = map(
+        channel,
+        colorjsMaxes[i][0], colorjsMaxes[i][1],
+        p5Maxes[i][0], p5Maxes[i][1]
+      );
       return newval;
     });
   }
@@ -219,7 +309,8 @@ class Color {
         spaceIndex+1 < this._color.space.path.length ||
         spaceIndex+1 < color._color.space.path.length
       ) &&
-      this._color.space.path[spaceIndex+1] === color._color.space.path[spaceIndex+1]
+      this._color.space.path[spaceIndex+1] ===
+        color._color.space.path[spaceIndex+1]
     ){
       spaceIndex += 1;
     }
@@ -256,8 +347,6 @@ class Color {
    * @return {String} the formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -275,21 +364,157 @@ class Color {
    *
    *   describe('The text "#9932cc" written in purple on a gray background.');
    * }
-   * </code>
-   * </div>
    */
-  toString(format) {
-    const key = `${this._color.space.id}-${this._color.coords.join(",")}-${this._color.alpha}-${format}`;
-    let colorString = serializationMap[key];
+ toString(format) {
+   if (format === undefined && this._defaultStringValue !== undefined) {
+      return this._defaultStringValue;
+   }
 
-    if(!colorString){
+    let outputFormat = format;
+    if (format === '#rrggbb') {
+      outputFormat = 'hex';
+    }
+
+    const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}-${format}`;
+    let colorString = serializationMap.get(key);
+
+    if (!colorString) {
       colorString = serialize(this._color, {
-        format
+        format: outputFormat
       });
-      serializationMap[key] = colorString;
+
+      if (format === '#rrggbb') {
+        colorString = String(colorString);
+        if (colorString.length === 4) {
+            const r = colorString[1];
+            const g = colorString[2];
+            const b = colorString[3];
+            colorString = `#${r}${r}${g}${g}${b}${b}`;
+        }
+        if (colorString.length > 7) {
+            colorString = colorString.slice(0, 7);
+        }
+        colorString = colorString.toLowerCase();
+      }
+
+      if (serializationMap.size > 1000) {
+        serializationMap.delete(serializationMap.keys().next().value)
+      }
+      serializationMap.set(key, colorString);
     }
     return colorString;
   }
+  /**
+   * Checks the contrast between two colors. This method returns a boolean
+   * value to indicate if the two color has enough contrast. `true` means that
+   * the colors has enough contrast to be used as background color and body
+   * text color. `false` means there is not enough contrast.
+   *
+   * A second argument can be passed to the method, `options` , which defines
+   * the algorithm to be used. The algorithms currently supported are
+   * WCAG 2.1 (`'WCAG21'`) or APCA (`'APCA'`). The default is WCAG 2.1. If a
+   * value of `'all'` is passed to the `options` argument, an object containing
+   * more details is returned. The details object will include the calculated
+   * contrast value of the colors and different passing criteria.
+   *
+   * For more details about color contrast, you can check out
+   * <a href="https://colorjs.io/docs/contrast">this page from color.js</a>, and the
+   * <a href="https://webaim.org/resources/contrastchecker/">WebAIM color contrast checker.</a>
+   *
+   * @param {Color} other
+   * @returns {boolean|object}
+   * @example
+   * let bgColor, fg1Color, fg2Color, msg1, msg2;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fg1Color = color(100);
+   *   fg2Color = color(220);
+   *
+   *   if(bgColor.contrast(fg1Color)){
+   *     msg1 = 'good';
+   *   }else{
+   *     msg1 = 'bad';
+   *   }
+   *
+   *   if(bgColor.contrast(fg2Color)){
+   *     msg2 = 'good';
+   *   }else{
+   *     msg2 = 'bad';
+   *   }
+   *
+   *   describe('A black canvas with a faint grey word saying "bad" at the top left and a brighter light grey word saying "good" in the middle of the canvas.');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(18);
+   *
+   *   fill(fg1Color);
+   *   text(msg1, 10, 30);
+   *
+   *   fill(fg2Color);
+   *   text(msg2, 10, 60);
+   * }
+   *
+   * @example
+   * let bgColor, fgColor, contrast;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   bgColor = color(0);
+   *   fgColor = color(200);
+   *   contrast = bgColor.contrast(fgColor, 'all');
+   *
+   *   describe('A black canvas with four short lines of grey text that respectively says: "WCAG 2.1", "12.55", "APCA", and "-73.30".');
+   * }
+   *
+   * function draw(){
+   *   background(bgColor);
+   *
+   *   textSize(14);
+   *
+   *   fill(fgColor);
+   *   text('WCAG 2.1', 10, 25);
+   *   text(nf(contrast.WCAG21.value, 0, 2), 10, 40);
+   *
+   *   text('APCA', 10, 70);
+   *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
+   * }
+   */
+  contrast(other_color, options='WCAG21') {
+    if(options !== 'all'){
+      let contrastVal, minimum;
+      switch(options){
+        case 'WCAG21':
+          contrastVal = contrastWCAG21(this._color, other_color._color);
+          minimum = 4.5;
+          break;
+        case 'APCA':
+          contrastVal = Math.abs(contrastAPCA(this._color, other_color._color));
+          minimum = 75;
+          break;
+        default:
+          return null;
+      }
+
+      return contrastVal >= minimum;
+    }else{
+      const wcag21Value = contrastWCAG21(this._color, other_color._color);
+      const apcaValue = contrastAPCA(this._color, other_color._color);
+      return {
+        WCAG21: {
+          value: wcag21Value,
+          passedMinimum: wcag21Value >= 4.5,
+          passedAAA: wcag21Value >= 7
+        },
+        APCA: {
+          value: apcaValue,
+          passedMinimum: Math.abs(apcaValue) >= 75
+        }
+      };
+    }
+  };
 
   /**
    * Sets the red component of a color.
@@ -300,8 +525,6 @@ class Color {
    * @param {Number} red the new red value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -324,10 +547,9 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is teal.');
    * }
-   * </code>
-   * </div>
    */
   setRed(new_red, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -355,8 +577,6 @@ class Color {
    * @param {Number} green the new green value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -379,10 +599,9 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is yellow.');
    * }
-   * </code>
-   * </div>
    */
   setGreen(new_green, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -410,8 +629,6 @@ class Color {
    * @param {Number} blue the new blue value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -434,10 +651,9 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is pale fuchsia.');
    * }
-   * </code>
-   * </div>
-   **/
+   */
   setBlue(new_blue, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -466,8 +682,6 @@ class Color {
    * @param {Number} alpha the new alpha value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -490,10 +704,9 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is faded pink.');
    * }
-   * </code>
-   * </div>
    */
   setAlpha(new_alpha, max=[0, 1]) {
+    this._defaultStringValue = undefined;
     if(!Array.isArray(max)){
       max = [0, max];
     }
@@ -516,12 +729,16 @@ class Color {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
-        return v
+        return v;
       }
     });
 
     coords = coords.map((coord, i) => {
-      return map(coord, colorjsMaxes[i][0], colorjsMaxes[i][1], rangeMaxes[i][0], rangeMaxes[i][1]);
+      return map(
+        coord,
+        colorjsMaxes[i][0], colorjsMaxes[i][1],
+        rangeMaxes[i][0], rangeMaxes[i][1]
+      );
     });
 
     return coords;
@@ -538,7 +755,11 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       const colorjsMax = Color.#colorjsMaxes[this.mode][0];
-      return map(this._color.coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[0],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][0];
@@ -546,6 +767,11 @@ class Color {
     }
   }
 
+  /**
+   * This function extracts the green value from a color object and
+   * returns it in the range 0–255 by default. When `colorMode()` is given to an
+   * RBG value, the green value within the givin range is returned
+   */
   _getGreen(max=[0, 1]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -553,7 +779,11 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       const colorjsMax = Color.#colorjsMaxes[this.mode][1];
-      return map(this._color.coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[1],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][1];
@@ -568,7 +798,11 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
-      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[2],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][2];
@@ -598,7 +832,11 @@ class Color {
 
     if(this.mode === HSB || this.mode === HSL){
       const colorjsMax = Color.#colorjsMaxes[this.mode][0];
-      return map(this._color.coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[0],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][0];
@@ -618,7 +856,11 @@ class Color {
 
     if(this.mode === HSB || this.mode === HSL){
       const colorjsMax = Color.#colorjsMaxes[this.mode][1];
-      return map(this._color.coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[1],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][1];
@@ -626,6 +868,13 @@ class Color {
     }
   }
 
+  /**
+   * Brightness obtains the HSB brightness value from either a p5.Color object,
+   * an array of color components, or a CSS color string.Depending on value,
+   * when `colorMode()` is set to HSB, this function will return the
+   * brightness value in the range. By default, this function will return
+   * the HSB brightness within the range 0 - 100.
+   */
   _getBrightness(max=[0, 100]) {
     if(!Array.isArray(max)){
       max = [0, max];
@@ -633,7 +882,11 @@ class Color {
 
     if(this.mode === HSB){
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
-      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[2],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'HSB', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSB][2];
@@ -648,7 +901,11 @@ class Color {
 
     if(this.mode === HSL){
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
-      return map(this._color.coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        this._color.coords[2],
+        colorjsMax[0], colorjsMax[1],
+        max[0], max[1]
+      );
     }else{
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][2];
@@ -679,17 +936,21 @@ function color(p5, fn, lifecycles){
    * instance of this class.
    *
    * @class p5.Color
-   * @param {p5} [pInst]                      pointer to p5 instance.
+   * @param {p5} pInst                      pointer to p5 instance.
    *
    * @param {Number[]|String} vals            an array containing the color values
    *                                          for red, green, blue and alpha channel
    *                                          or CSS color.
    */
+  /**
+   * @class p5.Color
+   * @param {Number[]|String} vals
+   */
   p5.Color = Color;
 
   sRGB.fromGray = P3.fromGray = function(val, maxes, clamp){
     // Use blue max
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -703,7 +964,7 @@ function color(p5, fn, lifecycles){
 
   HSBSpace.fromGray = HSLSpace.fromGray = function(val, maxes, clamp){
     // Use brightness max
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -717,7 +978,7 @@ function color(p5, fn, lifecycles){
 
   HWBSpace.fromGray = function(val, maxes, clamp){
     // Use Whiteness and Blackness to create number line
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -747,7 +1008,7 @@ function color(p5, fn, lifecycles){
   OKLCHSpace.fromGray =
   function(val, maxes, clamp){
     // Use lightness max
-    const p5Maxes = maxes.map((max) => {
+    const p5Maxes = maxes.map(max => {
       if(!Array.isArray(max)){
         return [0, max];
       }else{
@@ -781,7 +1042,7 @@ function color(p5, fn, lifecycles){
       p5.Color.prototype['set' + method] = function(newval, max){
         max = max || pInst?._renderer?.states?.colorMaxes?.[RGB][i];
         return setCopy.call(this, newval, max);
-      }
+      };
     }
 
     // Decorate get methods
@@ -789,14 +1050,20 @@ function color(p5, fn, lifecycles){
       const getCopy = p5.Color.prototype['_get' + channel];
       p5.Color.prototype['_get' + channel] = function(max){
         if(Object.keys(modes).includes(this.mode)){
-          max = max || pInst?._renderer?.states?.colorMaxes?.[this.mode][modes[this.mode]];
+          max = max ||
+            pInst?._renderer?.states?.colorMaxes?.[this.mode][modes[this.mode]];
         }else{
           const defaultMode = Object.keys(modes)[0];
-          max = max || pInst?._renderer?.states?.colorMaxes?.[defaultMode][modes[defaultMode]];
+          max = max ||
+            pInst
+              ?._renderer
+              ?.states
+              ?.colorMaxes
+              ?.[defaultMode][modes[defaultMode]];
         }
 
         return getCopy.call(this, max);
-      }
+      };
     }
 
     decorateGet('Red', {
@@ -844,7 +1111,7 @@ function color(p5, fn, lifecycles){
 }
 
 export default color;
-export { Color }
+export { Color };
 
 if(typeof p5 !== 'undefined'){
   color(p5, p5.prototype);

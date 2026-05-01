@@ -1,4 +1,4 @@
-import { visualSuite, visualTest } from "../visualTest";
+import { visualSuite, visualTest } from '../visualTest';
 
 /*
   Helper function that draws a shape using the specified shape mode
