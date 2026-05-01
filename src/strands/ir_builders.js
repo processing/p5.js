@@ -517,130 +517,130 @@ export function swizzleNode(strandsContext, parentNode, swizzle) {
 }
 
 export function swizzleTrap(id, dimension, strandsContext, onRebind) {
-    const swizzleSets = [
-      ['x', 'y', 'z', 'w'],
-      ['r', 'g', 'b', 'a'],
-      ['s', 't', 'p', 'q']
-    ].map(s => s.slice(0, dimension));
-    const canonicalComponents = swizzleSets[0];
-    const numericIndexToSwizzle = (property) => {
-      const propString = typeof property === 'string' || typeof property === 'number'
-        ? property.toString()
-        : null;
-      if (propString === null || !/^\d+$/.test(propString)) {
-        return null;
-      }
-      const index = Number(propString);
-      if (index < 0 || index >= canonicalComponents.length) {
-        return null;
-      }
-      return canonicalComponents[index];
-    };
-    const trap = {
-      get(target, property, receiver) {
-        if (property in target) {
-          return Reflect.get(...arguments);
-        } else {
-          const numericSwizzle = numericIndexToSwizzle(property);
-          if (numericSwizzle) {
-            const node = swizzleNode(strandsContext, target, numericSwizzle);
+  const swizzleSets = [
+    ['x', 'y', 'z', 'w'],
+    ['r', 'g', 'b', 'a'],
+    ['s', 't', 'p', 'q']
+  ].map(s => s.slice(0, dimension));
+  const canonicalComponents = swizzleSets[0];
+  const numericIndexToSwizzle = (property) => {
+    const propString = typeof property === 'string' || typeof property === 'number'
+      ? property.toString()
+      : null;
+    if (propString === null || !/^\d+$/.test(propString)) {
+      return null;
+    }
+    const index = Number(propString);
+    if (index < 0 || index >= canonicalComponents.length) {
+      return null;
+    }
+    return canonicalComponents[index];
+  };
+  const trap = {
+    get(target, property, receiver) {
+      if (property in target) {
+        return Reflect.get(...arguments);
+      } else {
+        const numericSwizzle = numericIndexToSwizzle(property);
+        if (numericSwizzle) {
+          const node = swizzleNode(strandsContext, target, numericSwizzle);
+          return createStrandsNode(node.id, node.dimension, strandsContext);
+        }
+        for (const set of swizzleSets) {
+          if ([...property.toString()].every(char => set.includes(char))) {
+            const swizzle = [...property].map(char => {
+              const index = set.indexOf(char);
+              return swizzleSets[0][index];
+            }).join('');
+            const node = swizzleNode(strandsContext, target, swizzle);
             return createStrandsNode(node.id, node.dimension, strandsContext);
           }
-          for (const set of swizzleSets) {
-            if ([...property.toString()].every(char => set.includes(char))) {
-              const swizzle = [...property].map(char => {
-                const index = set.indexOf(char);
-                return swizzleSets[0][index];
-              }).join('');
-              const node = swizzleNode(strandsContext, target, swizzle);
-              return createStrandsNode(node.id, node.dimension, strandsContext);
-            }
-          }
         }
+      }
     },
-  set(target, property, value, receiver) {
-    const numericSwizzle = numericIndexToSwizzle(property);
-    if (numericSwizzle) {
-      property = numericSwizzle;
-    }
-    for (const swizzleSet of swizzleSets) {
-      const chars = [...property];
-      const valid =
-        chars.every(c => swizzleSet.includes(c)) &&
-        new Set(chars).size === chars.length &&
-        target.dimension >= chars.length;
-      if (!valid) continue;
-
-      const dim = target.dimension;
-
-      // lanes are the underlying values of the target vector
-      //  e.g. lane 0 holds the value aliased by 'x', 'r', and 's'
-      // the lanes array is in the 'correct' order
-      const lanes = new Array(dim);
-      for (let i = 0; i < dim; i++) {
-        const { id, dimension } = swizzleNode(strandsContext, target, 'xyzw'[i]);
-        lanes[i] = createStrandsNode(id, dimension, strandsContext);
+    set(target, property, value, receiver) {
+      const numericSwizzle = numericIndexToSwizzle(property);
+      if (numericSwizzle) {
+        property = numericSwizzle;
       }
+      for (const swizzleSet of swizzleSets) {
+        const chars = [...property];
+        const valid =
+          chars.every(c => swizzleSet.includes(c)) &&
+          new Set(chars).size === chars.length &&
+          target.dimension >= chars.length;
+        if (!valid) continue;
 
-      // The scalars array contains the individual components of the users values.
-      // This may not be the most efficient way, as we swizzle each component individually,
-      // so that .xyz becomes .x, .y, .z
-      let scalars = [];
-      if (value?.isStrandsNode) {
-        if (value.dimension === 1) {
-          scalars = Array(chars.length).fill(value);
-        } else if (value.dimension === chars.length) {
-          for (let k = 0; k < chars.length; k++) {
-            const { id, dimension } = swizzleNode(strandsContext, value, 'xyzw'[k]);
-            scalars.push(createStrandsNode(id, dimension, strandsContext));
+        const dim = target.dimension;
+
+        // lanes are the underlying values of the target vector
+        //  e.g. lane 0 holds the value aliased by 'x', 'r', and 's'
+        // the lanes array is in the 'correct' order
+        const lanes = new Array(dim);
+        for (let i = 0; i < dim; i++) {
+          const { id, dimension } = swizzleNode(strandsContext, target, 'xyzw'[i]);
+          lanes[i] = createStrandsNode(id, dimension, strandsContext);
+        }
+
+        // The scalars array contains the individual components of the users values.
+        // This may not be the most efficient way, as we swizzle each component individually,
+        // so that .xyz becomes .x, .y, .z
+        let scalars = [];
+        if (value?.isStrandsNode) {
+          if (value.dimension === 1) {
+            scalars = Array(chars.length).fill(value);
+          } else if (value.dimension === chars.length) {
+            for (let k = 0; k < chars.length; k++) {
+              const { id, dimension } = swizzleNode(strandsContext, value, 'xyzw'[k]);
+              scalars.push(createStrandsNode(id, dimension, strandsContext));
+            }
+          } else {
+            FES.userError('type error', `Swizzle assignment: RHS vector does not match LHS vector (need ${chars.length}, got ${value.dimension}).`);
           }
+        } else if (Array.isArray(value)) {
+          const flat = value.flat(Infinity);
+          if (flat.length === 1) {
+            scalars = Array(chars.length).fill(flat[0]);
+          } else if (flat.length === chars.length) {
+            scalars = flat;
+          } else {
+            FES.userError('type error', `Swizzle assignment: RHS length ${flat.length} does not match ${chars.length}.`);
+          }
+        } else if (typeof value === 'number') {
+          scalars = Array(chars.length).fill(value);
         } else {
-          FES.userError('type error', `Swizzle assignment: RHS vector does not match LHS vector (need ${chars.length}, got ${value.dimension}).`);
+          FES.userError('type error', `Unsupported RHS for swizzle assignment: ${value}`);
         }
-      } else if (Array.isArray(value)) {
-        const flat = value.flat(Infinity);
-        if (flat.length === 1) {
-          scalars = Array(chars.length).fill(flat[0]);
-        } else if (flat.length === chars.length) {
-          scalars = flat;
-        } else {
-          FES.userError('type error', `Swizzle assignment: RHS length ${flat.length} does not match ${chars.length}.`);
+
+        // The canonical index refers to the actual value's position in the vector lanes
+        // i.e. we are finding (3,2,1) from .zyx
+        // We set the correct value in the lanes array
+        for (let j = 0; j < chars.length; j++) {
+          const canonicalIndex = swizzleSet.indexOf(chars[j]);
+          lanes[canonicalIndex] = scalars[j];
         }
-      } else if (typeof value === 'number') {
-        scalars = Array(chars.length).fill(value);
-      } else {
-        FES.userError('type error', `Unsupported RHS for swizzle assignment: ${value}`);
+
+        const orig = DAG.getNodeDataFromID(strandsContext.dag, target.id);
+        const baseType = orig?.baseType ?? BaseType.FLOAT;
+        const { id: newID } = primitiveConstructorNode(
+          strandsContext,
+          { baseType, dimension: dim },
+          lanes
+        );
+
+        target.id = newID;
+
+        // If we swizzle assign on a struct component i.e.
+        //   inputs.position.rg = [1, 2]
+        // The onRebind callback will update the structs components so that it refers to the new values,
+        // and make a new ID for the struct with these new values
+        if (typeof onRebind === 'function') {
+          onRebind(newID);
+        }
+        return true;
       }
-
-      // The canonical index refers to the actual value's position in the vector lanes
-      // i.e. we are finding (3,2,1) from .zyx
-      // We set the correct value in the lanes array
-      for (let j = 0; j < chars.length; j++) {
-        const canonicalIndex = swizzleSet.indexOf(chars[j]);
-        lanes[canonicalIndex] = scalars[j];
-      }
-
-      const orig = DAG.getNodeDataFromID(strandsContext.dag, target.id);
-      const baseType = orig?.baseType ?? BaseType.FLOAT;
-      const { id: newID } = primitiveConstructorNode(
-        strandsContext,
-        { baseType, dimension: dim },
-        lanes
-      );
-
-      target.id = newID;
-
-      // If we swizzle assign on a struct component i.e.
-      //   inputs.position.rg = [1, 2]
-      // The onRebind callback will update the structs components so that it refers to the new values,
-      // and make a new ID for the struct with these new values
-      if (typeof onRebind === 'function') {
-        onRebind(newID);
-      }
-      return true;
+      return Reflect.set(...arguments);
     }
-    return Reflect.set(...arguments);
-  }
   };
   return trap;
 }
