@@ -253,5 +253,27 @@ suite('WebGPU p5.RendererWebGPU', function() {
         expect(result[i]).to.be.closeTo(input[i] * 2, 0.001);
       }
     });
+
+    test('reads back data modified through a storage alias in a compute shader', async function() {
+      const input = new Float32Array([1, 2, 3, 4]);
+      const buf = myp5.createStorage(input);
+
+      const computeShader = myp5.buildComputeShader(() => {
+        const data = myp5.uniformStorage();
+        const alias = data;
+        const idx = myp5.index.x;
+        alias[idx] = alias[idx] * 2;
+      }, { myp5 });
+
+      computeShader.setUniform('data', buf);
+      myp5.compute(computeShader, 4);
+
+      const result = await buf.read();
+
+      expect(result).to.be.instanceOf(Float32Array);
+      for (let i = 0; i < input.length; i++) {
+        expect(result[i]).to.be.closeTo(input[i] * 2, 0.001);
+      }
+    });
   });
 });

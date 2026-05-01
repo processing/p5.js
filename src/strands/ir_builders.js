@@ -522,11 +522,30 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
       ['r', 'g', 'b', 'a'],
       ['s', 't', 'p', 'q']
     ].map(s => s.slice(0, dimension));
+    const canonicalComponents = swizzleSets[0];
+    const numericIndexToSwizzle = (property) => {
+      const propString = typeof property === 'string' || typeof property === 'number'
+        ? property.toString()
+        : null;
+      if (propString === null || !/^\d+$/.test(propString)) {
+        return null;
+      }
+      const index = Number(propString);
+      if (index < 0 || index >= canonicalComponents.length) {
+        return null;
+      }
+      return canonicalComponents[index];
+    };
     const trap = {
       get(target, property, receiver) {
         if (property in target) {
           return Reflect.get(...arguments);
         } else {
+          const numericSwizzle = numericIndexToSwizzle(property);
+          if (numericSwizzle) {
+            const node = swizzleNode(strandsContext, target, numericSwizzle);
+            return createStrandsNode(node.id, node.dimension, strandsContext);
+          }
           for (const set of swizzleSets) {
             if ([...property.toString()].every(char => set.includes(char))) {
               const swizzle = [...property].map(char => {
@@ -540,6 +559,10 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
         }
     },
   set(target, property, value, receiver) {
+    const numericSwizzle = numericIndexToSwizzle(property);
+    if (numericSwizzle) {
+      property = numericSwizzle;
+    }
     for (const swizzleSet of swizzleSets) {
       const chars = [...property];
       const valid =

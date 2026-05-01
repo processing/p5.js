@@ -40,6 +40,21 @@ function nodeIsUniform(ancestor) {
     );
 }
 
+function nodeIsUniformStorage(node) {
+  return node && node.type === 'CallExpression'
+    && (
+      (
+        // Global mode
+        node.callee?.type === 'Identifier' &&
+        node.callee?.name === 'uniformStorage'
+      ) || (
+        // Instance mode
+        node.callee?.type === 'MemberExpression' &&
+        node.callee?.property?.name === 'uniformStorage'
+      )
+    );
+}
+
 function nodeIsUniformCallbackFn(node, names) {
   if (!names?.size) return false;
   if (node.type === 'FunctionDeclaration' && names.has(node.id?.name)) return true;
@@ -82,6 +97,143 @@ function collectUniformCallbackNames(ast) {
     }
   });
   return names;
+}
+
+function markStorageBindings(ast) {
+  const lookupStorageBinding = (scopeStack, name) => {
+    for (let i = scopeStack.length - 1; i >= 0; i--) {
+      if (scopeStack[i].has(name)) {
+        return scopeStack[i].get(name);
+      }
+    }
+    return false;
+  };
+
+  const declareStorageBinding = (scopeStack, name, isStorage) => {
+    scopeStack[scopeStack.length - 1].set(name, isStorage);
+  };
+
+  const assignStorageBinding = (scopeStack, name, isStorage) => {
+    for (let i = scopeStack.length - 1; i >= 0; i--) {
+      if (scopeStack[i].has(name)) {
+        scopeStack[i].set(name, isStorage);
+        return;
+      }
+    }
+    scopeStack[scopeStack.length - 1].set(name, isStorage);
+  };
+
+  const expressionIsStorageBound = (node, scopeStack) => {
+    if (!node) return false;
+    if (nodeIsUniformStorage(node)) return true;
+    if (node.type === 'Identifier') {
+      return lookupStorageBinding(scopeStack, node.name);
+    }
+    return false;
+  };
+
+  recursive(ast, { scopeStack: [new Map()] }, {
+    Program(node, state, c) {
+      for (const statement of node.body) {
+        c(statement, state);
+      }
+    },
+    BlockStatement(node, state, c) {
+      state.scopeStack.push(new Map());
+      for (const statement of node.body) {
+        c(statement, state);
+      }
+      state.scopeStack.pop();
+    },
+    FunctionDeclaration(node, state, c) {
+      if (node.id?.name) {
+        declareStorageBinding(state.scopeStack, node.id.name, false);
+      }
+      state.scopeStack.push(new Map());
+      for (const param of node.params) {
+        if (param.type === 'Identifier') {
+          declareStorageBinding(state.scopeStack, param.name, false);
+        }
+      }
+      if (node.body) c(node.body, state);
+      state.scopeStack.pop();
+    },
+    FunctionExpression(node, state, c) {
+      state.scopeStack.push(new Map());
+      if (node.id?.name) {
+        declareStorageBinding(state.scopeStack, node.id.name, false);
+      }
+      for (const param of node.params) {
+        if (param.type === 'Identifier') {
+          declareStorageBinding(state.scopeStack, param.name, false);
+        }
+      }
+      if (node.body) c(node.body, state);
+      state.scopeStack.pop();
+    },
+    ArrowFunctionExpression(node, state, c) {
+      state.scopeStack.push(new Map());
+      for (const param of node.params) {
+        if (param.type === 'Identifier') {
+          declareStorageBinding(state.scopeStack, param.name, false);
+        }
+      }
+      if (node.body) c(node.body, state);
+      state.scopeStack.pop();
+    },
+    VariableDeclaration(node, state, c) {
+      for (const declaration of node.declarations) {
+        c(declaration, state);
+      }
+    },
+    VariableDeclarator(node, state, c) {
+      if (node.init) c(node.init, state);
+      if (node.id.type === 'Identifier') {
+        declareStorageBinding(
+          state.scopeStack,
+          node.id.name,
+          expressionIsStorageBound(node.init, state.scopeStack)
+        );
+      }
+    },
+    AssignmentExpression(node, state, c) {
+      if (node.left.type === 'MemberExpression') {
+        c(node.left.object, state);
+        if (node.left.property) c(node.left.property, state);
+      } else {
+        c(node.left, state);
+      }
+      if (node.right) c(node.right, state);
+
+      if (node.operator === '=') {
+        if (node.left.type === 'Identifier') {
+          assignStorageBinding(
+            state.scopeStack,
+            node.left.name,
+            expressionIsStorageBound(node.right, state.scopeStack)
+          );
+        } else if (
+          node.left.type === 'MemberExpression' &&
+          node.left.computed &&
+          node.left.object.type === 'Identifier' &&
+          lookupStorageBinding(state.scopeStack, node.left.object.name)
+        ) {
+          node._p5StorageSet = true;
+        }
+      }
+    },
+    MemberExpression(node, state, c) {
+      if (
+        node.computed &&
+        node.object.type === 'Identifier' &&
+        lookupStorageBinding(state.scopeStack, node.object.name)
+      ) {
+        node._p5StorageGet = true;
+      }
+      c(node.object, state);
+      if (node.property) c(node.property, state);
+    }
+  });
 }
 
 function nodeIsVarying(node) {
@@ -358,7 +510,7 @@ const ASTCallbacks = {
     ) {
       return;
     }
-    if (node.computed) {
+    if (node.computed && node._p5StorageGet) {
       const callee = node.object;
       const member = node.property;
       node.computed = undefined;
@@ -499,7 +651,7 @@ const ASTCallbacks = {
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
     else if (node.left.type === 'MemberExpression') {
-      if (node.left.computed) {
+      if (node.left.computed && node._p5StorageSet) {
         const source = node.left;
         const value = node.right;
         const callee = source.object;
@@ -1238,8 +1390,8 @@ const ASTCallbacks = {
     delete node.update;
   },
 
-  
-  
+
+
 }
 
 // Helper function to check if a function body contains return statements in control flow
@@ -1665,6 +1817,9 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
 
   // Pre-pass: collect names of functions passed by reference as uniform callbacks
   const uniformCallbackNames = collectUniformCallbackNames(ast);
+
+  // Pre-pass: mark identifiers and computed accesses tied to storage bindings
+  markStorageBindings(ast);
 
   // First pass: transform .set() calls in control flow to use intermediate variables
   transformSetCallsInControlFlow(ast, uniformCallbackNames);

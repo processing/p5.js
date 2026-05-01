@@ -41,6 +41,30 @@ suite('WebGPU p5.Shader', function() {
       }).not.toThrowError();
     });
 
+    test('does not rewrite ordinary array indexing to storage access', async () => {
+      await myp5.createCanvas(10, 10, myp5.WEBGPU);
+      const myShader = myp5.baseMaterialShader().modify(() => {
+        function palette() {
+          return [0.25, 0.75];
+        }
+
+        myp5.getPixelInputs(inputs => {
+          const values = palette();
+          inputs.color = [values[0], values[1], 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(myShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = await myp5.get(5, 5);
+      assert.approximately(pixelColor[0], 64, 5);
+      assert.approximately(pixelColor[1], 191, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
