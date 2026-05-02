@@ -238,15 +238,6 @@ function ErrorStackParser() {
 
 // End borrow
 
-// wrapper exposing ErrorStackParser
-function stacktrace(p5, fn){
-  p5._getErrorStackParser = function getErrorStackParser() {
-    return new ErrorStackParser();
-  };
-}
-
-export default stacktrace;
-
-if (typeof p5 !== 'undefined') {
-  stacktrace(p5, p5.prototype);
+export function getErrorStackParser() {
+  return new ErrorStackParser();
 }

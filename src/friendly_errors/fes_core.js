@@ -24,6 +24,7 @@
  */
 import { translator } from '../core/internationalization';
 import errorTable from './browser_errors';
+import { getErrorStackParser } from './stacktrace';
 
 function fesCore(p5, fn, lifecycles){
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
@@ -337,7 +338,7 @@ function fesCore(p5, fn, lifecycles){
         symbol => symbol.name !== errSym
       );
       if (matchedSymbols.length !== 0) {
-        const parsed = p5._getErrorStackParser().parse(error);
+        const parsed = getErrorStackParser().parse(error);
         let locationObj;
         if (
           parsed &&
