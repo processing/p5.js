@@ -10,10 +10,12 @@ TL.addTranslations(['en', 'en-US', 'en-GB'], {
     '${minArgs}_[*]': 'Expected at most ${minArgs} arguments, but received fewer in ${functionName}(). ${referenceLink}'
   },
   paramType: 'Expected ${expectedType} at the ${position} parameter, but received ${actualType} in ${functionName}.',
+  redeclare: '${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}',
   referenceLink: 'For more information, see ${referenceURL}.',
   ordinalFirst: 'first',
   typeString: 'string',
-  typeBoolean: 'boolean'
+  typeBoolean: 'boolean',
+  typeFunction: 'function'
 });
 
 TL.addTranslations(['zh', 'zh-CN', 'zh-Hans', 'zh-Hans-CN'], {
@@ -24,10 +26,12 @@ TL.addTranslations(['zh', 'zh-CN', 'zh-Hans', 'zh-Hans-CN'], {
     '${minArgs}_[*]': '预期最多会收到 ${minArgs} 个参数，但 ${functionName}() 函数中接收到的参数却更多。${referenceLink}'
   },
   paramType: '${position}参数应为${expectedType}，但 ${functionName} 函数中接收到的是${actualType}。',
+  redeclare: '第 ${line} 行的${errorType} “${name}” 被重复声明，与 p5.js ${errorType}冲突。p5.js 参考：${url}',
   referenceLink: '有关更多信息，请参阅 ${referenceURL}。',
   ordinalFirst: '第一个',
   typeString: '字符串',
-  typeBoolean: '布尔值'
+  typeBoolean: '布尔值',
+  typeFunction: '函数'
 });
 
 export class FES {
