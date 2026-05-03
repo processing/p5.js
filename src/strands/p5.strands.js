@@ -49,6 +49,7 @@ function strands(p5, fn) {
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
+    ctx._randomSeed = null;
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -64,6 +65,7 @@ function strands(p5, fn) {
     ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
+    ctx._randomSeed = null;
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
