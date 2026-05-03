@@ -2043,17 +2043,13 @@ class Vector {
    * }
    */
   setHeading(a) {
-    if (this.isPInst) a = this._toRadians(a);
-    if (this.y === undefined || (this.z !== undefined && this.z !== 0)) {
-      const p5inst = this.isPInst ? this._pInst : (typeof p5 !== 'undefined' ? p5 : null);
-      if (p5inst && p5inst._friendlyError) {
-        p5inst._friendlyError(
-          'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
-          'For 3D or higher-dimensional vectors, use rotate() or another ' +
-          'appropriate method instead.',
-          'p5.Vector.setHeading'
-        );
-      }
+    if (this.dimensions < 2 || this._values.slice(2).some(v => v !== 0)) {
+      p5._friendlyError(
+        'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
+        'For 3D or higher-dimensional vectors, use rotate() or another ' +
+        'appropriate method instead.',
+        'p5.Vector.setHeading'
+      );
       return this;
     }
     const m = this.mag();
