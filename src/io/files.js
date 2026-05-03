@@ -2,7 +2,6 @@
  * @module IO
  * @submodule Input
  * @for p5
- * @requires core
  */
 
 import { Renderer } from '../core/p5.Renderer';
@@ -278,8 +277,11 @@ function files(p5, fn){
 
     try{
       const { data } = await request(path, 'json');
-      if (successCallback) return successCallback(data);
-      return data;
+      const cb = () => {
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       p5._friendlyFileLoadError(5, path);
       if(errorCallback) {
@@ -414,10 +416,12 @@ function files(p5, fn){
 
     try{
       let { data } = await request(path, 'text');
-      data = data.split(/\r?\n/);
-
-      if (successCallback) return successCallback(data);
-      return data;
+      const cb = () => {
+        data = data.split(/\r?\n/);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       p5._friendlyFileLoadError(3, path);
       if(errorCallback) {
@@ -501,28 +505,30 @@ function files(p5, fn){
 
     try{
       let { data } = await request(path, 'text');
+      const cb = () => {
+        let ret = new p5.Table();
+        data = parse(data, {
+          separator
+        });
 
-      let ret = new p5.Table();
-      data = parse(data, {
-        separator
-      });
+        if(header){
+          ret.columns = data.shift();
+        }else{
+          ret.columns = Array(data[0].length).fill(null);
+        }
 
-      if(header){
-        ret.columns = data.shift();
-      }else{
-        ret.columns = Array(data[0].length).fill(null);
-      }
+        data.forEach(line => {
+          const row = new p5.TableRow(line);
+          ret.addRow(row);
+        });
 
-      data.forEach(line => {
-        const row = new p5.TableRow(line);
-        ret.addRow(row);
-      });
-
-      if (successCallback) {
-        return successCallback(ret);
-      } else {
-        return ret;
-      }
+        if (successCallback) {
+          return successCallback(ret);
+        } else {
+          return ret;
+        }
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       p5._friendlyFileLoadError(2, path);
       if(errorCallback) {
@@ -540,7 +546,7 @@ function files(p5, fn){
    * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
    * is a standard format for sending data between applications. Like HTML, the
    * XML format is based on tags and attributes, as in
-   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+   * `<time units="s">1234</time>`.
    *
    * The first parameter, `path`, is always a string with the path to the file.
    * Paths to local files should be relative, as in
@@ -686,11 +692,13 @@ function files(p5, fn){
       const parser = new DOMParser();
 
       let { data } = await request(path, 'text');
-      const parsedDOM = parser.parseFromString(data, 'application/xml');
-      data = new p5.XML(parsedDOM);
-
-      if (successCallback) return successCallback(data);
-      return data;
+      const cb = () => {
+        const parsedDOM = parser.parseFromString(data, 'application/xml');
+        data = new p5.XML(parsedDOM);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       p5._friendlyFileLoadError(1, path);
       if(errorCallback) {
@@ -734,9 +742,12 @@ function files(p5, fn){
   fn.loadBytes = async function (path, successCallback, errorCallback) {
     try{
       let { data } = await request(path, 'arrayBuffer');
-      data = new Uint8Array(data);
-      if (successCallback) return successCallback(data);
-      return data;
+      const cb = () => {
+        data = new Uint8Array(data);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       p5._friendlyFileLoadError(6, path);
       if(errorCallback) {
@@ -789,8 +800,11 @@ function files(p5, fn){
   fn.loadBlob = async function(path, successCallback, errorCallback) {
     try{
       const { data } = await request(path, 'blob');
-      if (successCallback) return successCallback(data);
-      return data;
+      const cb = () => {
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
     } catch(err) {
       if(errorCallback) {
         return errorCallback(err);

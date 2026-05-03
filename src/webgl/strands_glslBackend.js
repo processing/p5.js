@@ -1,4 +1,5 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType } from "../strands/ir_types";
+import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -169,6 +170,9 @@ export const glslBackend = {
     }).join(', ')}) {`;
     return firstLine;
   },
+  getNoiseShaderSnippet() {
+    return noiseGLSL;
+  },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {
@@ -231,6 +235,10 @@ export const glslBackend = {
     return `${typeName} ${tmp} = ${expr};`;
   },
   generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+    if (!returnType) {
+      generationContext.write('return;');
+      return;
+    }
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
     if (isStructType(returnType)) {
@@ -270,6 +278,13 @@ export const glslBackend = {
           sharedVar.usedInFragment = true;
         }
       }
+
+      // Detect instanceID usage in fragment context and rewrite to varying name
+      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
+        generationContext.strandsContext._instanceIDUsedInFragment = true;
+        return INSTANCE_ID_VARYING_NAME;
+      }
+
       return node.identifier;
       case NodeType.OPERATION:
       const useParantheses = node.usedBy.length > 0;
@@ -288,6 +303,13 @@ export const glslBackend = {
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
         return `${node.identifier}(${functionArgs.join(', ')})`;
+      }
+      if (node.opCode === OpCode.Nary.TERNARY) {
+        const [condID, trueID, falseID] = node.dependsOn;
+        const cond = this.generateExpression(generationContext, dag, condID);
+        const trueExpr = this.generateExpression(generationContext, dag, trueID);
+        const falseExpr = this.generateExpression(generationContext, dag, falseID);
+        return `(${cond} ? ${trueExpr} : ${falseExpr})`;
       }
       if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
         const [lID, rID] = node.dependsOn;
@@ -386,5 +408,9 @@ export const glslBackend = {
 
   instanceIdReference() {
     return 'gl_InstanceID';
+  },
+
+  generateInstanceIDVarying() {
+    return { name: INSTANCE_ID_VARYING_NAME, declaration: `int ${INSTANCE_ID_VARYING_NAME}`, source: 'gl_InstanceID', interpolation: 'flat' };
   },
 }

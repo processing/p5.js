@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  */
 import * as constants from '../constants.js';
 import { z } from 'zod/v4';
@@ -64,7 +63,7 @@ function validateParams(p5, fn, lifecycles) {
     'Boolean': z.boolean(),
     'Function': z.function(),
     'Integer': z.number().int(),
-    'Number': z.number(),
+    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
   };
@@ -411,33 +410,44 @@ function validateParams(p5, fn, lifecycles) {
     // of any of them. In this case, aggregate all possible types and print
     // a friendly error message that indicates what the expected types are at
     // which position (position is not 0-indexed, for accessibility reasons).
+
     const processUnionError = error => {
       const expectedTypes = new Set();
       let actualType;
 
-      error.errors.forEach(err => {
-        const issue = err[0];
-        if (issue) {
-          if (!actualType) {
-            actualType = issue.message;
-          }
+      const collectIssue = issue => {
+        if (!issue) return;
+        if (!actualType) {
+          actualType = issue.message;
+        }
 
-          if (issue.code === 'invalid_type') {
-            actualType = issue.message.split(', received ')[1];
-            expectedTypes.add(issue.expected);
-          }
-          // The case for constants. Since we don't want to print out the actual
-          // constant values in the error message, the error message will
-          // direct users to the documentation.
-          else if (issue.code === 'invalid_value') {
+        if (issue.code === 'invalid_type') {
+          actualType = issue.message.split(', received ')[1];
+          expectedTypes.add(issue.expected);
+        }
+        // The case for constants. Since we don't want to print out the actual
+        // constant values in the error message, the error message will
+        // direct users to the documentation.
+        else if (issue.code === 'invalid_value') {
+          if (Array.isArray(issue.values) && issue.values.every(v => v === Infinity || v === -Infinity)) {
+            expectedTypes.add('number');
+          } else {
             expectedTypes.add('constant (please refer to documentation for allowed values)');
             actualType = args[error.path[0]];
-          } else if (issue.code === 'custom') {
-            const match = issue.message.match(/Input not instance of (\w+)/);
-            if (match) expectedTypes.add(match[1]);
-            actualType = undefined;
           }
+        } else if (issue.code === 'custom') {
+          const match = issue.message.match(/Input not instance of (\w+)/);
+          if (match) expectedTypes.add(match[1]);
+          actualType = undefined;
+        } else if (issue.code === 'invalid_union') {
+          issue.errors.forEach(nestedErr => {
+            nestedErr.forEach(nestedIssue => collectIssue(nestedIssue));
+          });
         }
+      };
+
+      error.errors.forEach(err => {
+        err.forEach(issue => collectIssue(issue));
       });
 
       if (expectedTypes.size > 0) {
@@ -457,6 +467,7 @@ function validateParams(p5, fn, lifecycles) {
 
       return message;
     };
+
 
     switch (currentError.code) {
       case 'invalid_union': {
@@ -573,15 +584,40 @@ function validateParams(p5, fn, lifecycles) {
 
   fn._validate = validate; // TEMP: For unit tests
 
-  p5.decorateHelper(
-    /^(?!_).+$/,
-    function(target, { name }){
-      return function(...args){
-        if (!p5.disableFriendlyErrors && !p5.disableParameterValidator) {
-          validate(name, args);
-        }
-        return target.apply(this, args);
-      };
+  // Suppress FES param checking for the duration of a callback.
+  // Use this to wrap internal p5 calls that happen after an await.
+  // NOTE: shares the same _isUserCall flag logic as the decorator below.
+  fn._internal = function(callback) {
+    const wasInternalCall = this._isUserCall;
+    this._isUserCall = true;
+    try {
+      return callback();
+    } finally {
+      this._isUserCall = wasInternalCall;
+    }
+  };
+
+  // Skip FES validation for nested (internal) calls.
+  // NOTE: shares the same _isUserCall flag logic as _internal() above.
+  p5.registerDecorator(
+    ({ path }) => {
+      return path.startsWith('p5.prototype');
+    },
+    function(target, { kind, name }){
+      if(kind === 'method'){
+        return function(...args){
+          const wasInternalCall = this._isUserCall;
+          this._isUserCall = true;
+          try {
+            if (!wasInternalCall && !p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+              validate(name, args);
+            }
+            return target.apply(this, args);
+          } finally {
+            this._isUserCall = wasInternalCall;
+          }
+        };
+      }
     }
   );
 
@@ -593,5 +629,5 @@ function validateParams(p5, fn, lifecycles) {
 export default validateParams;
 
 if (typeof p5 !== 'undefined') {
-  validateParams(p5, p5.prototype);
+  p5.registerAddon(validateParams);
 }

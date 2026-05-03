@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  *
  * This is the main file for the Friendly Error System (FES), containing
  * the core as well as miscellaneous functionality of the FES. Here is a
@@ -26,7 +25,7 @@ import { translator } from '../internationalization';
 import errorTable from './browser_errors';
 import * as contants from '../constants';
 
-function fesCore(p5, fn){
+function fesCore(p5, fn, lifecycles){
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
   // See testColors below for all the color codes and names
   const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
@@ -972,9 +971,11 @@ function fesCore(p5, fn){
     p5._fesLogger = null;
     p5._fesLogCache = {};
 
-    window.addEventListener('load', checkForUserDefinedFunctions, false);
-    window.addEventListener('error', p5._fesErrorMonitor, false);
-    window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
+    lifecycles.presetup = function () {
+      window.addEventListener('load', checkForUserDefinedFunctions, false);
+      window.addEventListener('error', p5._fesErrorMonitor, false);
+      window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
+    };
 
     /**
      * Prints out all the colors in the color pallete with white text.
@@ -1134,7 +1135,7 @@ function fesCore(p5, fn){
   // Exposing this primarily for unit testing.
   fn._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
 
-  if (document.readyState !== 'complete') {
+  if (typeof document !== 'undefined' && document.readyState !== 'complete') {
     window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
 
     // Our job is only to catch ReferenceErrors that are thrown when
@@ -1150,5 +1151,5 @@ function fesCore(p5, fn){
 export default fesCore;
 
 if (typeof p5 !== 'undefined') {
-  fesCore(p5, p5.prototype);
+  p5.registerAddon(fesCore);
 }

@@ -1578,9 +1578,11 @@ function font(p5, fn) {
         throw err;
       }
     }
-    if (success) return success(pfont);
-
-    return pfont;
+    const cb = () => {
+      if (success) return success(pfont);
+      return pfont;
+    };
+    return this._internal ? this._internal(cb) : cb();
   };
 };
 

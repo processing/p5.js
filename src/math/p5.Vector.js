@@ -1,6 +1,5 @@
 /**
  * @module Math
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -48,6 +47,13 @@ class Vector {
       this.dimensions = dimensions;
       this._values = values;
     }
+
+    // This property is here where duck typing (checking if obj.isVector) needs
+    // to be used over more standard type checking (obj instanceof Vector). This
+    // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+    // where if we `import { Vector }` directly, it will be a separate copy of the
+    // Vector class from the one imported in the main p5.js bundle.
+    this.isVector = true;
   }
 
   /**
@@ -1027,7 +1033,7 @@ class Vector {
    *
    * If only one value is provided, as in `v.div(2)`, then all the components
    * will be divided by 2. If a value isn't provided for a component, it
-   * won't change. For example, `v.div(4, 5)` divides `v.x` by, `v.y` by 5,
+   * won't change. For example, `v.div(4, 5)` divides `v.x` by 4, `v.y` by 5,
    * and `v.z` by 1. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
    *

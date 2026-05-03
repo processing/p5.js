@@ -2,8 +2,6 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import { Color } from './p5.Color';
@@ -1384,11 +1382,11 @@ function creatingReading(p5, fn){
    * values. 0 is equal to the first color, 0.1 is very near the first color,
    * 0.5 is halfway between the two colors, and so on. Negative numbers are set
    * to 0. Numbers greater than 1 are set to 1. This differs from the behavior of
-   * <a href="#/lerp">lerp</a>. It's necessary because numbers outside of the
+   * <a href="#/p5/lerp">lerp</a>. It's necessary because numbers outside of the
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/colorMode">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a>.
    *
    * @method lerpColor
    * @param  {p5.Color} c1  interpolate from this color.
