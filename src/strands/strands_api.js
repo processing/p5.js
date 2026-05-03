@@ -385,7 +385,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   strandsContext._randomSeed = null;
-  strandsContext._randomCallCount = 0;
 
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
@@ -425,35 +424,31 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
 
-    const callIndex = strandsContext._randomCallCount++;
-
-    const nodeArgs = [seedNode, callIndex];
+    // The shader-side random() owns a private per-invocation counter, so a
+    // single AST node still produces distinct values across runtime loop
+    // iterations. We just pass the seed.
+    const nodeArgs = [seedNode];
+    const randomOverloads = [{
+      params: [DataType.float1],
+      returnType: DataType.float1,
+    }];
 
     if (args.length === 0) {
       const { id, dimension } = build.functionCallNode(strandsContext, 'random', nodeArgs, {
-        overloads: [{
-          params: [DataType.float1, DataType.float1],
-          returnType: DataType.float1,
-        }]
+        overloads: randomOverloads,
       });
       return createStrandsNode(id, dimension, strandsContext);
     } else if (args.length === 1) {
       // random(max) → [0, max)
       const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
-        overloads: [{
-          params: [DataType.float1, DataType.float1],
-          returnType: DataType.float1,
-        }]
+        overloads: randomOverloads,
       });
       const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
       return rawStrandsNode.mult(p5.strandsNode(args[0]));
     } else if (args.length === 2) {
       // random(min, max) → [min, max)
       const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
-        overloads: [{
-          params: [DataType.float1, DataType.float1],
-          returnType: DataType.float1,
-        }]
+        overloads: randomOverloads,
       });
       const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
       const minNode = p5.strandsNode(args[0]);
