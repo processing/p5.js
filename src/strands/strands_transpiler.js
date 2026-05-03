@@ -288,6 +288,79 @@ function transformBinaryOrLogical(node, state, ancestors) {
   node.arguments = [node.right];
 }
 
+// Shared helper used by both IfStatement and ForStatement handlers.
+// Adds temp variable copies, replaces references, and appends a return
+// statement to a branch/loop function body.
+// sourcePrefix: the root identifier to read from ('vars' for loops,
+// null for if-branches where we read directly from the outer variable).
+function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
+  if (functionBody.type !== 'BlockStatement') return;
+
+  const tempVarMap = new Map();
+  const copyStatements = [];
+
+  for (const varPath of varsToReturn) {
+    const parts = varPath.split('.');
+    const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+    tempVarMap.set(varPath, tempName);
+
+    // If sourcePrefix is set (loop case), read from vars.x.y
+    // Otherwise (if-branch case), read directly from x.y
+    let sourceExpr = sourcePrefix
+      ? { type: 'Identifier', name: sourcePrefix }
+      : { type: 'Identifier', name: parts[0] };
+
+    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    for (const part of pathParts) {
+      sourceExpr = {
+        type: 'MemberExpression',
+        object: sourceExpr,
+        property: { type: 'Identifier', name: part },
+        computed: false
+      };
+    }
+
+    copyStatements.push({
+      type: 'VariableDeclaration',
+      declarations: [{
+        type: 'VariableDeclarator',
+        id: { type: 'Identifier', name: tempName },
+        init: {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: sourceExpr,
+            property: { type: 'Identifier', name: 'copy' },
+            computed: false
+          },
+          arguments: []
+        }
+      }],
+      kind: 'let'
+    });
+  }
+
+  functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
+  functionBody.body.unshift(...copyStatements);
+
+  const returnObj = {
+    type: 'ObjectExpression',
+    properties: Array.from(varsToReturn).map(varPath => ({
+      type: 'Property',
+      key: { type: 'Literal', value: varPath },
+      value: { type: 'Identifier', name: tempVarMap.get(varPath) },
+      kind: 'init',
+      computed: false,
+      shorthand: false
+    }))
+  };
+
+  functionBody.body.push({
+    type: 'ReturnStatement',
+    argument: returnObj
+  });
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, state, ancestors) {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
@@ -689,70 +762,6 @@ const ASTCallbacks = {
     analyzeBranch(thenFunction.body);
     analyzeBranch(elseFunction.body);
     if (assignedVars.size > 0) {
-      // Add copying, reference replacement, and return statements to branch functions
-      const addCopyingAndReturn = (functionBody, varsToReturn) => {
-        if (functionBody.type === 'BlockStatement') {
-          // Create temporary variables and copy statements
-          const tempVarMap = new Map(); // property path -> temp name
-          const copyStatements = [];
-          for (const varPath of varsToReturn) {
-            const parts = varPath.split('.');
-            const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
-            tempVarMap.set(varPath, tempName);
-
-            // Build the member expression for the property path
-            let sourceExpr = { type: 'Identifier', name: parts[0] };
-            for (let i = 1; i < parts.length; i++) {
-              sourceExpr = {
-                type: 'MemberExpression',
-                object: sourceExpr,
-                property: { type: 'Identifier', name: parts[i] },
-                computed: false
-              };
-            }
-
-            // let tempName = propertyPath.copy()
-            copyStatements.push({
-              type: 'VariableDeclaration',
-              declarations: [{
-                type: 'VariableDeclarator',
-                id: { type: 'Identifier', name: tempName },
-                init: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'MemberExpression',
-                    object: sourceExpr,
-                    property: { type: 'Identifier', name: 'copy' },
-                    computed: false
-                  },
-                  arguments: []
-                }
-              }],
-              kind: 'let'
-            });
-          }
-          // Apply reference replacement to all statements
-          functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
-          // Insert copy statements at the beginning
-          functionBody.body.unshift(...copyStatements);
-          // Add return statement with flat object using property paths as keys
-          const returnObj = {
-            type: 'ObjectExpression',
-            properties: Array.from(varsToReturn).map(varPath => ({
-              type: 'Property',
-              key: { type: 'Literal', value: varPath },
-              value: { type: 'Identifier', name: tempVarMap.get(varPath) },
-              kind: 'init',
-              computed: false,
-              shorthand: false
-            }))
-          };
-          functionBody.body.push({
-            type: 'ReturnStatement',
-            argument: returnObj
-          });
-        }
-      };
       addCopyingAndReturn(thenFunction.body, assignedVars);
       addCopyingAndReturn(elseFunction.body, assignedVars);
       // Create a block variable to capture the return value
@@ -1057,73 +1066,8 @@ const ASTCallbacks = {
     });
 
     if (assignedVars.size > 0) {
-      // Add copying, reference replacement, and return statements similar to if statements
-      const addCopyingAndReturn = (functionBody, varsToReturn) => {
-        if (functionBody.type === 'BlockStatement') {
-          const tempVarMap = new Map();
-          const copyStatements = [];
 
-          for (const varPath of varsToReturn) {
-            const parts = varPath.split('.');
-            const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
-            tempVarMap.set(varPath, tempName);
-
-            // Build the member expression for vars.propertyPath
-            // e.g., vars.inputs.color or vars.x
-            let sourceExpr = { type: 'Identifier', name: 'vars' };
-            for (const part of parts) {
-              sourceExpr = {
-                type: 'MemberExpression',
-                object: sourceExpr,
-                property: { type: 'Identifier', name: part },
-                computed: false
-              };
-            }
-
-            copyStatements.push({
-              type: 'VariableDeclaration',
-              declarations: [{
-                type: 'VariableDeclarator',
-                id: { type: 'Identifier', name: tempName },
-                init: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'MemberExpression',
-                    object: sourceExpr,
-                    property: { type: 'Identifier', name: 'copy' },
-                    computed: false
-                  },
-                  arguments: []
-                }
-              }],
-              kind: 'let'
-            });
-          }
-
-          functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
-          functionBody.body.unshift(...copyStatements);
-
-          // Add return statement with flat object using property paths as keys
-          const returnObj = {
-            type: 'ObjectExpression',
-            properties: Array.from(varsToReturn).map(varPath => ({
-              type: 'Property',
-              key: { type: 'Literal', value: varPath },
-              value: { type: 'Identifier', name: tempVarMap.get(varPath) },
-              kind: 'init',
-              computed: false,
-              shorthand: false
-            }))
-          };
-
-          functionBody.body.push({
-            type: 'ReturnStatement',
-            argument: returnObj
-          });
-        }
-      };
-
-      addCopyingAndReturn(bodyFunction.body, assignedVars);
+      addCopyingAndReturn(bodyFunction.body, assignedVars, 'vars');
 
       // Create block variable and assignments similar to if statements
       const blockVar = `__block_${blockVarCounter++}`;
