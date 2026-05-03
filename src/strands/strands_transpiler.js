@@ -1597,6 +1597,33 @@ function transformHelperFunctionEarlyReturns(ast, names) {
   }
 }
 
+/**
+ * Transpiles a p5.strands callback into executable JavaScript by applying
+ * a multi-pass AST transformation pipeline.
+ *
+ * Pipeline stages:
+ *
+ * 1. Collect uniform callback names
+ *    - Identifies functions passed into uniform() so they are excluded from transformation
+ *
+ * 2. transformSetCallsInControlFlow
+ *    - Rewrites `.set()` calls inside control flow into intermediate variable assignments
+ *
+ * 3. Non-control-flow transformations
+ *    - Applies ASTCallbacks to transform expressions, assignments, etc.
+ *    - Skips IfStatement and ForStatement (handled later)
+ *
+ * 4. transformHelperFunctionEarlyReturns
+ *    - Converts early returns in helper functions into a single return value pattern
+ *
+ * 5. Control flow transformation (post-order)
+ *    - Transforms IfStatement → __p5.strandsIf
+ *    - Transforms ForStatement → __p5.strandsFor
+ *    - Handles variable propagation across branches/loops
+ *
+ * This staged approach ensures correct ordering and avoids transformation conflicts.
+ */
+
 export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   // Reset counters at the start of each transpilation
   blockVarCounter = 0;
