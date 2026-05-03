@@ -11,9 +11,7 @@ import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 import { DefaultFill, textCoreConstants } from '../type/textCore';
 
-
 const styleEmpty = 'rgba(0,0,0,0)';
-// const alphaThreshold = 0.00125; // minimum visible
 
 class Renderer2D extends Renderer {
   constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
@@ -30,7 +28,9 @@ class Renderer2D extends Renderer {
       this.canvas.style.display = 'none';
     }
 
-    this.elt.id = 'defaultCanvas0';
+    if(!this.elt.id){
+      this.elt.id = `defaultCanvas${p5.sketchCount++}`;
+    }
     this.elt.classList.add('p5Canvas');
 
     // Extend renderer with methods of p5.Element with getters
