@@ -304,9 +304,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const start1Node = p5.strandsNode(start1);
     const stop1Node = p5.strandsNode(stop1);
     const t = nNode.sub(start1Node).div(stop1Node.sub(start1Node));
-    const result = fn.mix(start2, stop2, t);
+    const result = this.mix(start2, stop2, t);
     if (withinBounds) {
-      return fn.clamp(result, fn.min(start2, stop2), fn.max(start2, stop2));
+      return this.clamp(result, this.min(start2, stop2), this.max(start2, stop2));
     }
     return result;
   });
