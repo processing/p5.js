@@ -569,6 +569,13 @@ const ASTCallbacks = {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
       return;
     }
+
+    if (node.elements.length < 2 || node.elements.length > 4) {
+      throw new Error(
+        `Array literals in shader functions are transpiled to vectors and must have 2-4 elements (got ${node.elements.length}).`
+      );
+    }
+
     const original = JSON.parse(JSON.stringify(node));
     node.type = 'CallExpression';
     node.callee = {
@@ -1240,8 +1247,8 @@ const ASTCallbacks = {
     delete node.update;
   },
 
-  
-  
+
+
 }
 
 // Helper function to check if a function body contains return statements in control flow

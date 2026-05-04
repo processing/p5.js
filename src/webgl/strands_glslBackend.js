@@ -330,6 +330,12 @@ export const glslBackend = {
         const parentExpr = this.generateExpression(generationContext, dag, parentID);
         return `${parentExpr}.${node.swizzle}`;
       }
+      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+        const [bufferID, indexID] = node.dependsOn;
+        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+        const indexExpr = this.generateExpression(generationContext, dag, indexID);
+        return `${bufferExpr}[${indexExpr}]`;
+      }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;
         const left  = this.generateExpression(generationContext, dag, lID);
