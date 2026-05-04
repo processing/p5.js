@@ -140,12 +140,6 @@ npm run docs
 
 ### p5.js: npm run docs
 
-You can run it locally and observe the outputs.
-```bash
-npm run docs
-```
-
-
 In turn this command runs the following single-line command:
 
 ```bash
@@ -155,11 +149,15 @@ In turn this command runs the following single-line command:
     && node ./utils/convert.mjs"
 ```
 
-This is actually _two_ commands in sequence: First, `documentation build ...`, and then - if the first command was successful `node ./utils/convert.mjs`.  We'll look at these in turn.
+This is actually _two_ commands in sequence: 
+* First, `documentation build ...`, and then - if the first command was successful
+* `node ./utils/convert.mjs`.  
+
+We'll look at these in turn.
 
 #### Step 1: `documentation build...` command
 
-This command turns JSDoc comment blocks across all the javascript files into a single structured json file ready for further processing.
+This command turns JSDoc comment blocks across all the javascript files into a single structured JSON file ready for further processing.
 
 In more detail:
 
@@ -169,7 +167,7 @@ documentation build
     -o ./docs/data.json 
 ```
 
-`documentation build` is the [standard way](https://github.com/documentationjs/documentation?tab=readme-ov-file) to invoke the tool [documentation.js](https://documentation.js.org/) to build documentation.
+`documentation build` is the [standard way](https://github.com/documentationjs/documentation?tab=readme-ov-file#user-guide) to invoke the tool [documentation.js](https://documentation.js.org/) to build documentation.
 
 Next we tell it which files to work on.
 
@@ -180,14 +178,13 @@ Examples of files which will match:
 * `src/image/pixels.js`
 * `src/color/color_spaces/hsb.js`
 
-* The `-o` is used to specify the output file.
-* `documentation.js`'s default output format is JSON, so JSON content is written into the output file.
+The `-o` is used to specify the output file.  `documentation.js`'s default output format is JSON, so JSON content is written into the output file.
 
-It's important to note this output does not generate HTML pages, even though that's a common use for tools like documentation.js.
+Aside: It's important to note that the tool _does not_ generate HTML pages, even though that's a common use for tools like documentation.js.
 
-This initial JSON file will be converted further by the next process, to prepare the data for the website build process.
+This generated JSON file will be converted further by the next step, to prepare the data for the website build process.
 
-It will _also_ be used by another build process to build the types - see [the type-generation process](#type-gen-process)
+It will _also_ be used by other build processes - e.g. to build the types - see [the type-generation process](#type-gen-process).
 
 You can run this command yourself locally and inspect the output file to see the gathered data.
 
@@ -375,6 +372,4 @@ graph TD
 
 ## Contributing to this document
 
-Notice any errors or places for improvement?  Please consider contributing to this document!  
-It lives at [/contributor_docs/reference_generation_process.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/reference_generation_process.md) in the p5.js repo.  
-Alternatively, [let us know](https://github.com/processing/p5.js/issues)!
+Notice any errors or places for improvement?  Please consider contributing to this document!  It lives at [/contributor_docs/reference_generation_process.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/reference_generation_process.md) in the p5.js repo.  Alternatively, [let us know](https://github.com/processing/p5.js/issues)!
