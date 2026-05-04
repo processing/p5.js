@@ -1,7 +1,6 @@
 /**
  * @module Math
  * @for p5
- * @requires core
  */
 
 function math(p5, fn) {

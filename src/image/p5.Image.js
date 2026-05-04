@@ -1,9 +1,6 @@
 /**
  * @module Image
  * @submodule Image
- * @requires core
- * @requires constants
- * @requires filters
  */
 
 /**

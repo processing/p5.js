@@ -2,8 +2,6 @@
  * @module Math
  * @submodule Trigonometry
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';

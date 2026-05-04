@@ -2,7 +2,6 @@
  * @module Structure
  * @submodule Structure
  * @for p5
- * @requires core
  */
 
 function structure(p5, fn){
