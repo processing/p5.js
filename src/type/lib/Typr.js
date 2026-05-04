@@ -323,7 +323,7 @@ Typr["B"] = {
     }
     return s;
   },
-  _tdec: window["TextDecoder"] ? new window["TextDecoder"]() : null,
+  _tdec: globalThis["TextDecoder"] ? new globalThis["TextDecoder"]() : null,
   readUTF8: function (buff, p, l) {
     var tdec = Typr["B"]._tdec;
     if (tdec && p == 0 && l == buff.length) return tdec["decode"](buff);

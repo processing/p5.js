@@ -1076,6 +1076,23 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('random() colors a basic shader', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      screenshot();
+    });
+
     visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       let firstShader;
       function firstShaderCallback() {

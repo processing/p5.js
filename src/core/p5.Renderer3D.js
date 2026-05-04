@@ -480,10 +480,6 @@ export class Renderer3D extends Renderer {
    * combining them with `buildGeometry()` once and then drawing that will run
    * faster than repeatedly drawing the individual pieces.
    *
-   * One can also draw shapes directly between
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
-   * function.
    * @param {Function} callback A function that draws shapes.
    * @returns {p5.Geometry} The model that was built from the callback function.
    */
