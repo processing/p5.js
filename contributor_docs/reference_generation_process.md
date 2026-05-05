@@ -249,12 +249,19 @@ Once the p5.js `npm run docs` script has finished, the p5.js-website's `npm run 
 
 #### Summary: 
 
-Loads the generated `./docs/reference/data.json`
-Generates an MDX file for each entry in the data (e.g. each p5 function or p5 variable gets its own .mdx file).
-That's it!  (The Astro web app will read these MDX files at runtime.)
+* Loads the generated `./docs/reference/data.json`
+* Generates an MDX file for each entry in the data (e.g. each p5 function or p5 variable gets its own .mdx file).
+* That's all!  The production of these MDX files is as far as `npm run build:reference` goes.  
 
-#### More detail:
+Who consumes this work?
 
+  * For developers, the astro dev server can now read these MDX files directly to show a preview of the website.
+  * In CI, a separate step will commit the MDX files into git.
+  * In CI, a separate step will run `astro build` to convert the MDX files into HTML.
+  
+#### More detail on MDX generation:
+
+From the input `./docs/reference/data.json`...
 
 For each module:
   * generates the file path to which generated pages will be stored
