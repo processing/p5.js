@@ -2043,8 +2043,16 @@ class Vector {
    * }
    */
   setHeading(a) {
-    if (this.isPInst) a = this._toRadians(a);
-    let m = this.mag();
+    if (this.dimensions < 2 || this._values.slice(2).some(v => v !== 0)) {
+      p5._friendlyError(
+        'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
+        'For 3D or higher-dimensional vectors, use rotate() or another ' +
+        'appropriate method instead.',
+        'p5.Vector.setHeading'
+      );
+      return this;
+    }
+    const m = this.mag();
     this.x = m * Math.cos(a);
     this.y = m * Math.sin(a);
     return this;

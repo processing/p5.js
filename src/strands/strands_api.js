@@ -335,6 +335,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
+  const originalRandom = fn.random;
+  const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
   strandsContext._noiseOctaves = null;
@@ -397,6 +399,84 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }]
     });
     return createStrandsNode(id, dimension, strandsContext);
+  });
+
+  strandsContext._randomSeed = null;
+
+  augmentFn(fn, p5, 'randomSeed', function (seed) {
+    if (!strandsContext.active) {
+      return originalRandomSeed.apply(this, arguments);
+    }
+    strandsContext._randomSeed = seed;
+  });
+
+  augmentFn(fn, p5, 'random', function (...args) {
+    if (!strandsContext.active) {
+      return originalRandom.apply(this, args);
+    }
+
+    const randomVertSnippet = strandsContext.backend.getRandomVertexShaderSnippet();
+    const randomFragSnippet = strandsContext.backend.getRandomFragmentShaderSnippet();
+
+    strandsContext.vertexDeclarations.add(randomVertSnippet);
+    strandsContext.fragmentDeclarations.add(randomFragSnippet);
+
+    if (strandsContext.backend.getRandomComputeShaderSnippet) {
+      const randomComputeSnippet = strandsContext.backend.getRandomComputeShaderSnippet();
+      strandsContext.computeDeclarations.add(randomComputeSnippet);
+    }
+
+    let seedNode;
+    if (strandsContext._randomSeed !== null && strandsContext._randomSeed.isStrandsNode) {
+      seedNode = strandsContext._randomSeed;
+    } else {
+      const userSeed = strandsContext._randomSeed;
+      seedNode = getOrCreateUniformNode(
+        strandsContext,
+        '_p5_randomSeed',
+        DataType.float1,
+        userSeed !== null
+          ? () => userSeed
+          : () => performance.now(),
+      );
+    }
+
+    // The shader-side random() owns a private per-invocation counter, so a
+    // single AST node still produces distinct values across runtime loop
+    // iterations. We just pass the seed.
+    const nodeArgs = [seedNode];
+    const randomOverloads = [{
+      params: [DataType.float1],
+      returnType: DataType.float1,
+    }];
+
+    if (args.length === 0) {
+      const { id, dimension } = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      return createStrandsNode(id, dimension, strandsContext);
+    } else if (args.length === 1) {
+      // random(max) → [0, max)
+      const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
+      return rawStrandsNode.mult(p5.strandsNode(args[0]));
+    } else if (args.length === 2) {
+      // random(min, max) → [min, max)
+      const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
+      const minNode = p5.strandsNode(args[0]);
+      const maxNode = p5.strandsNode(args[1]);
+      // min + raw * (max - min)
+      return rawStrandsNode.mult(maxNode.sub(minNode)).add(minNode);
+    } else {
+      p5._friendlyError(
+        `It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`
+      );
+    }
   });
 
   augmentFn(fn, p5, 'millis', function (...args) {

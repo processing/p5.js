@@ -2032,6 +2032,98 @@ suite('p5.RendererGL', function() {
         [-10, 0, 10]
       );
     });
+
+    suite('large tessellation guard', function() {
+      test('prompts user before tessellating >50k vertices', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+
+        myp5.beginShape();
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(confirmSpy.mock.calls[0][0]).toContain('60000');
+        expect(tessSpy).not.toHaveBeenCalled();
+
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('only prompts once when user approves large tessellation', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+
+        myp5.beginShape();
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalledTimes(1);
+        expect(renderer._largeTessellationAcknowledged).toBe(true);
+
+        myp5.beginShape();
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).toHaveBeenCalledTimes(1);
+
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('skips prompt when p5.disableFriendlyErrors is true', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+        const tessSpy = vi.spyOn(
+          renderer.shapeBuilder,
+          '_tesselateShape'
+        ).mockImplementation(() => {});
+        p5.disableFriendlyErrors = true;
+
+        myp5.beginShape();
+        for (let i = 0; i < 60000; i++) {
+          myp5.vertex(i % 100, Math.floor(i / 100), 0);
+        }
+        myp5.endShape();
+
+        expect(confirmSpy).not.toHaveBeenCalled();
+        expect(tessSpy).toHaveBeenCalled();
+
+        p5.disableFriendlyErrors = false;
+        confirmSpy.mockRestore();
+        tessSpy.mockRestore();
+      });
+
+      test('works normally for <50k vertices', function() {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+        myp5.beginShape();
+        myp5.vertex(-10, -10, 0);
+        myp5.vertex(10, -10, 0);
+        myp5.vertex(10, 10, 0);
+        myp5.vertex(-10, 10, 0);
+        myp5.endShape(myp5.CLOSE);
+
+        expect(confirmSpy).not.toHaveBeenCalled();
+
+        confirmSpy.mockRestore();
+      });
+    });
   });
 
   suite('color interpolation', function() {
@@ -2996,6 +3088,40 @@ suite('p5.RendererGL', function() {
       const geom = myp5.buildGeometry(() => myp5.circle(0, 0, 10));
       myp5.model(geom);
       expect(myp5.get(5, 5)).toEqual([255, 0, 0, 255]);
+    });
+  });
+
+  suite('fontWidth', function() {
+    test('respects textSize changes across push/pop', async function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const font = await myp5.loadFont('test/unit/assets/acmesa.ttf');
+
+      myp5.push();
+      myp5.textFont(font);
+      myp5.textSize(12);
+      myp5.push();
+      myp5.textSize(20);
+      const widthAt20 = myp5.fontWidth('X');
+      myp5.pop();
+      const widthAt12 = myp5.fontWidth('X');
+      myp5.pop();
+
+      expect(widthAt20).toBeGreaterThan(widthAt12);
+    });
+
+    test('fontWidth restores correctly when font is unset inside push/pop', async function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const font = await myp5.loadFont('test/unit/assets/acmesa.ttf');
+      myp5.textFont(font);
+      myp5.textSize(12);
+      myp5.push();
+      myp5.textFont('sans-serif'); // unset loaded font
+      myp5.pop();
+      // After pop, should be back to size 12 with loaded font
+      const widthAfterPop = myp5.fontWidth('X');
+      myp5.textSize(20);
+      const widthAt20 = myp5.fontWidth('X');
+      expect(widthAfterPop).toBeLessThan(widthAt20);
     });
   });
 });

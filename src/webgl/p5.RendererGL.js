@@ -529,7 +529,7 @@ class RendererGL extends Renderer3D {
 
   /**
    * Loads the pixels data for this canvas into the pixels[] attribute.
-   * Note that updatePixels() and set() do not work.
+   * Note that set() does not work.
    * Any pixel manipulation must be done directly to the pixels[] array.
    *
    * @private

@@ -17,6 +17,8 @@ import filterBaseVert from '../webgl/shaders/filters/base.vert';
 import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
 import { glslBackend } from '../webgl/strands_glslBackend';
 import { getShaderHookTypes } from '../webgl/shaderHookUtils';
+import randomGLSL from '../webgl/shaders/functions/randomGLSL.glsl';
+import randomVertGLSL from '../webgl/shaders/functions/randomVertGLSL.glsl';
 import { makeFilterShader } from '../core/filterShaders';
 
 class FilterRenderer2D {
@@ -308,6 +310,14 @@ class FilterRenderer2D {
     return this._baseFilterShader;
   }
 
+
+  getRandomFragmentShaderSnippet() {
+    return randomGLSL;
+  }
+
+  getRandomVertexShaderSnippet() {
+    return randomVertGLSL;
+  }
 
   /**
    * Set the current filter operation and parameter. If a customShader is provided,

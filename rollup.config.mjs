@@ -193,7 +193,7 @@ export default [
       format: 'es',
       dir: 'dist'
     },
-    external: /node_modules/,
+    external: /node_modules\/(?!gifenc)/,
     plugins
   },
   ...generateModuleBuild()

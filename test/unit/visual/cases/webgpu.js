@@ -273,6 +273,31 @@ visualSuite("WebGPU", function () {
       await screenshot();
     });
 
+    visualTest('filter shaders can sample a texture inside a conditional branch', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill(0);
+      p5.circle(0, 0, 20);
+      // This shader only samples the texture for pixels in the left half of the
+      // canvas, exercising getTexture() inside a non-uniform conditional
+      const conditionalInvert = p5.buildFilterShader(({ p5 }) => {
+        p5.filterColor.begin();
+        if (p5.filterColor.texCoord.x < 0.5) {
+          const col = p5.getTexture(
+            p5.filterColor.canvasContent,
+            p5.filterColor.texCoord
+          );
+          p5.filterColor.set([1 - col.rgb, col.a]);
+        } else {
+          p5.filterColor.set([0, 0, 1, 1]);
+        }
+        p5.filterColor.end();
+      }, { p5 });
+      p5.filter(conditionalInvert);
+      await screenshot();
+    });
+
     visualTest('instanceID in fragment hook colors instances (WebGPU)', async function(p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
       const numInstances = 4;
@@ -298,6 +323,45 @@ visualSuite("WebGPU", function () {
       p5.shader(shader);
       const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
       p5.model(obj, numInstances);
+      await screenshot();
+    });
+
+    visualTest('random() colors a basic shader (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      await screenshot();
+    });
+
+    visualTest('random() in a fragment loop averages to gray (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.randomSeed(7);
+        p5.getPixelInputs(inputs => {
+          let sum = p5.float(0.0);
+          for (let i = 0; i < 20; i++) {
+            sum = sum + p5.random();
+          }
+          const avg = sum / 20;
+          inputs.color = [avg, avg, avg, 1.0];
+          return inputs;
+        });
+      }, { p5 });
+
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
       await screenshot();
     });
   });
@@ -524,6 +588,28 @@ visualSuite("WebGPU", function () {
     );
 
     visualTest(
+      "Framebuffer with depth disabled",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const fbo = p5.createFramebuffer({ width: 50, height: 50, depth: false });
+
+        fbo.draw(() => {
+          p5.background(0, 0, 200);
+          p5.fill(255, 200, 0);
+          p5.noStroke();
+          p5.circle(0, 0, 30);
+        });
+
+        p5.background(50);
+        p5.texture(fbo);
+        p5.noStroke();
+        p5.plane(50, 50);
+
+        await screenshot();
+      },
+    );
+
+    visualTest(
       "Fixed-size framebuffer after manual resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
@@ -559,6 +645,21 @@ visualSuite("WebGPU", function () {
         p5.noStroke();
         p5.plane(35, 25);
 
+        await screenshot();
+      },
+    );
+  });
+
+  visualSuite("Rendering attributes", function () {
+    visualTest(
+      "noSmooth() does not crash and disables antialiasing",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.noSmooth();
+        p5.background(0);
+        p5.fill(255);
+        p5.noStroke();
+        p5.circle(0, 0, 30);
         await screenshot();
       },
     );

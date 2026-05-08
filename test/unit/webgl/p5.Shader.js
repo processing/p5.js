@@ -2495,6 +2495,20 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   });
 
   suite('p5.strands error messages', () => {
+    const expectLoopProtectionError = run => {
+      let err;
+
+      try {
+        run();
+      } catch (e) {
+        err = e;
+      }
+
+      assert.instanceOf(err, Error);
+      assert.include(err.message, 'Loop protection');
+      assert.include(err.message, '// noprotect');
+    };
+
     afterEach(() => {
       mockUserError.mockClear();
     });
@@ -2568,6 +2582,41 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.include(errMsg, 'ternary');
       assert.include(errMsg, 'float1');
       assert.include(errMsg, 'float4');
+    });
+
+    test('shows a helpful error for web editor loop protection', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      expectLoopProtectionError(() => {
+        myp5.baseFilterShader().modify(() => {
+          myp5.filterColor.begin();
+          {
+            loopProtect.protect({ line: 11, reset: true });
+            for (let i = 0; i < 10; i++) {
+              if (loopProtect.protect({ line: 11 })) {
+                break;
+              }
+            }
+          }
+          myp5.filterColor.set([1, 0, 0, 1]);
+          myp5.filterColor.end();
+        }, { myp5 });
+      });
+    });
+
+    test('shows a helpful error for OpenProcessing loop protection', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      expectLoopProtectionError(() => {
+        myp5.baseFilterShader().modify(() => {
+          myp5.filterColor.begin();
+          for (let i = 0; i < 10; i++) {
+            window.$OP && $OP.loopProtect({ line: 11, ch: 2 });
+          }
+          myp5.filterColor.set([1, 0, 0, 1]);
+          myp5.filterColor.end();
+        }, { myp5 });
+      });
     });
   });
 });
