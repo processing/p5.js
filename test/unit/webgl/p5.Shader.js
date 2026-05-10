@@ -495,6 +495,128 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
 });
 
 
+    test('map() works inside a strands modify callback', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(0.25, 0, 1, 0, 1);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 64, 5);
+      assert.approximately(pixelColor[1], 64, 5);
+      assert.approximately(pixelColor[2], 64, 5);
+    });
+
+    test('map() with withinBounds clamps the result inside strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(2.0, 0, 1, 0, 1, true);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 255, 5);
+      assert.approximately(pixelColor[2], 255, 5);
+    });
+
+    test('map() shrinks a wider input range into a narrower output range', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(5, 0, 10, 0, 1);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 128, 5);
+      assert.approximately(pixelColor[1], 128, 5);
+      assert.approximately(pixelColor[2], 128, 5);
+    });
+
+    test('map() handles offset output ranges correctly', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(0.5, 0, 1, 0.2, 0.8);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 128, 5);
+      assert.approximately(pixelColor[1], 128, 5);
+      assert.approximately(pixelColor[2], 128, 5);
+    });
+
+    test('map() handles a negative input range', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(0, -1, 1, 0, 1);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 128, 5);
+      assert.approximately(pixelColor[1], 128, 5);
+      assert.approximately(pixelColor[2], 128, 5);
+    });
+
+    test('map() remaps texCoord.x into a horizontal gradient', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const v = myp5.map(inputs.texCoord.x, 0, 1, 0.2, 0.8);
+          inputs.color = [v, v, v, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const left = myp5.get(2, 25);
+      const middle = myp5.get(25, 25);
+      const right = myp5.get(47, 25);
+      assert.approximately(left[0], 51, 10);
+      assert.approximately(middle[0], 128, 10);
+      assert.approximately(right[0], 204, 10);
+    });
+
     test('handle custom uniform names with automatic values', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(() => {
