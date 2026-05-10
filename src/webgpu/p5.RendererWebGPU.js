@@ -248,14 +248,12 @@ function rendererWebGPU(p5, fn) {
     }
 
     /**
-     * Updates a single element in the buffer at the given index without
-     * rewriting the entire buffer. This is more efficient than `update()`
-     * when only one element needs to change.
+     * Updates a single element in the buffer at a given index. Use this
+     * when only a small number of elements need to change. If you need to
+     * replace all the data at once, use
+     * <a href="#/p5.StorageBuffer/update">`update()`</a> instead.
      *
-     * Uses WebGPU's `GPUQueue.writeBuffer()` with a byte offset, so the
-     * cost is proportional to one element rather than the whole buffer.
-     *
-     * ```js example
+     * ```js
      * let buf;
      *
      * async function setup() {
