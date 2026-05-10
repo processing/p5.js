@@ -1113,6 +1113,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Kathrina-dev"><img src="https://avatars.githubusercontent.com/u/178802899?v=4?s=64" width="64px;" alt="Kathrina Elangbam"/><br /><sub><b>Kathrina Elangbam</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Kathrina-dev" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Jianru-Lin"><img src="https://avatars.githubusercontent.com/u/1057486?v=4?s=64" width="64px;" alt="Jianru Lin"/><br /><sub><b>Jianru Lin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Jianru-Lin" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/kushal1061"><img src="https://avatars.githubusercontent.com/u/177997075?v=4?s=64" width="64px;" alt="Kushalpal Bishnoi"/><br /><sub><b>Kushalpal Bishnoi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kushal1061" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/harshiltewari2004"><img src="https://avatars.githubusercontent.com/u/197800028?v=4?s=64" width="64px;" alt="harshiltewari2004"/><br /><sub><b>harshiltewari2004</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=harshiltewari2004" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
