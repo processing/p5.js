@@ -2690,14 +2690,15 @@ class Vector {
    * Returns the vector's components as an array of numbers.
    *
    * @return {Number[]} array with the vector's components.
+   * @deprecated To retrieve vector components, use `v.values`
    * @example
    * // META:norender
    * function setup() {
    *   // Create a p5.Vector object.
    *   let v = createVector(20, 30);
    *
-   *   // Prints "[20, 30, 0]" to the console.
-   *   print(v.array());
+   *   // Prints "[20, 30]" to the console.
+   *   print(v.values);
    * }
    */
   array() {
