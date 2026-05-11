@@ -253,7 +253,7 @@ function rendererWebGPU(p5, fn) {
      * replace all the data at once, use
      * <a href="#/p5.StorageBuffer/update">`update()`</a> instead.
      *
-     * ```js example
+     * ```js
      * let buf;
      *
      * async function setup() {
@@ -269,7 +269,7 @@ function rendererWebGPU(p5, fn) {
      * }
      * ```
      *
-     * ```js example
+     * ```js
      * let particles;
      * const numParticles = 100;
      *
