@@ -10,14 +10,6 @@ import * as constants from '../core/constants';
  */
 const prioritizeSmallerDimension = function(currentVectorDimension, args) {
   return Math.min(currentVectorDimension, args.length);
-
-  //if (args.length !== currentVectorDimension && args.length !== 1) {
-  // TODO how to suppress for valid solo arguments?
-  // this._friendlyError(
-  //  `Operating on two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ${minDimension}D vectors, and any additional values of the longer vector will be ignored.`, 'p5.Vector'
-  //);
-  //}
-  //return minDimension;
 };
 
 
@@ -36,7 +28,7 @@ class Vector {
    *
    * You can add (`add()`), multiply (`mult()`), divide (`div()`), and subtract (`sub()`)
    * vectors from each other, and calculate remainder (`rem()`). Only use these functions
-   * on vectors when they are the same size: for example, both 2D, or both 3D.
+   * on vectors when they are the same size: both 2-dimensional, or both 3-dimensional.
    * When an operation uses two vectors of different sizes, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    *
@@ -87,6 +79,12 @@ class Vector {
   // This will get overwritten when exported as part of p5.
   _friendlyError(_e) {}
 
+
+  /**
+   * Gets how many dimensions the vector has.
+   *
+   * @returns {Number} The number of dimensions. Can be 1, 2, or 3.
+   */
   get dimensions(){
     return this.values.length;
   }
@@ -382,9 +380,10 @@ class Vector {
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
    * an array of numbers, as in `v.add([1, 2, 3])`.
    *
-   * Add vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are added, the smaller dimension will be
-   * used, any additional values of the longer vector will be ignored.
+   * Add vectors only when they are the same size: both 2-dimensional, or
+   * both 3-dimensional. When two vectors of different sizes are added, the
+   * smaller dimension will be used, any additional values of the longer
+   * vector will be ignored.
    * For example, adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
    *
    * Calling `add()` with no arguments, as in `v.add()`, has no effect.
@@ -1984,7 +1983,7 @@ class Vector {
     if (this.dimensions < 2 || (
       this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
     ) {
-      p5._friendlyError(
+      p5._friendlyError(  
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
         'For 3D or higher-dimensional vectors, use rotate() or another ' +
         'appropriate method instead.',
