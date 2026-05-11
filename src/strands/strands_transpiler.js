@@ -571,7 +571,8 @@ const ASTCallbacks = {
     }
 
     if (node.elements.length < 2 || node.elements.length > 4) {
-      throw new Error(
+      FES.userError(
+        'type error',
         `Array literals in shader functions are transpiled to vectors and must have 2-4 elements (got ${node.elements.length}).`
       );
     }
