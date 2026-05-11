@@ -253,7 +253,7 @@ function rendererWebGPU(p5, fn) {
      * replace all the data at once, use
      * <a href="#/p5.StorageBuffer/update">`update()`</a> instead.
      *
-     * ```js
+     * ```js example
      * let buf;
      *
      * async function setup() {
@@ -277,12 +277,16 @@ function rendererWebGPU(p5, fn) {
      *   await createCanvas(100, 100, WEBGPU);
      *   particles = createStorage(makeParticles());
      *
-     *   // Struct buffer: replace particle 42 without touching others
+     *   // Replace particle 42 without touching the others
      *   particles.set(42, {
      *     position: createVector(0, 0),
      *     velocity: createVector(1, 0),
      *   });
-     *   describe('Updates a single particle in a storage buffer.');
+     *
+     *   // Read back to confirm the update
+     *   let result = await particles.read();
+     *   print(result[42].position.x, result[42].position.y); // 0, 0
+     *   describe('Prints the position of particle 42 after updating it.');
      * }
      *
      * function makeParticles() {
