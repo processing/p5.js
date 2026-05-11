@@ -1372,6 +1372,9 @@ class Vector {
    * The cross product is a vector that points straight out of the plane created
    * by two vectors. The cross product's magnitude is the area of the parallelogram
    * formed by the original two vectors.
+   * 
+   * The cross product is defined on 3-dimensional vectors, and will use the `x`, `y`,
+   * and `z` components. This method should only be used with 3D vectors.
    *
    * The static version of `cross()`, as in `p5.Vector.cross(v1, v2)`, is the same
    * as calling `v1.cross(v2)`.
@@ -2690,6 +2693,7 @@ class Vector {
    * Returns the vector's components as an array of numbers.
    *
    * @return {Number[]} array with the vector's components.
+   * @deprecated To retrieve vector components, use `v.values`
    * @example
    * // META:norender
    * function setup() {
