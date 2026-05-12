@@ -1,5 +1,5 @@
 import p5 from '../core/main';
-import { initialize as initTranslator } from './internationalization';
+// import { initialize as initTranslator } from './internationalization';
 
 /**
  * This file setup global mode automatic instantiation
@@ -54,5 +54,5 @@ export const waitForDocumentReady = () =>
 
 // only load translations if we're using the full, un-minified library
 export const waitingForTranslator =
-  typeof IS_MINIFIED === 'undefined' ? initTranslator() :
+  // typeof IS_MINIFIED === 'undefined' ? initTranslator() :
     Promise.resolve();

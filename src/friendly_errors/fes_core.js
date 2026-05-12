@@ -22,9 +22,10 @@
  * sequence of each function, please look at the FES Reference + Dev Notes:
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
-import { translator } from '../core/internationalization';
+// import { translator } from '../core/internationalization';
 import errorTable from './browser_errors';
 import { getErrorStackParser } from './stacktrace';
+import { TL, FES } from './fes';
 
 function fesCore(p5, fn, lifecycles){
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
@@ -176,14 +177,15 @@ function fesCore(p5, fn, lifecycles){
 
       // Add a link to the reference docs of func at the end of the message
       message = mapToReference(message, func);
-      let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
-      const prefixedMsg = translator('fes.pre', { message });
-
-      if (ENABLE_FES_STYLING) {
-        console.log('%c' + prefixedMsg, style.join(';'));
-      } else {
-        console.log(prefixedMsg);
-      }
+      // let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
+      // const prefixedMsg = translator('fes.pre', { message });
+      // const prefixedMsg = TL.tl``;
+      FES.log(message);
+      // if (ENABLE_FES_STYLING) {
+      //   console.log('%c' + prefixedMsg, style.join(';'));
+      // } else {
+      //   console.log(prefixedMsg);
+      // }
     };
 
     /**
@@ -227,13 +229,13 @@ function fesCore(p5, fn, lifecycles){
      * @method _friendlyAutoplayError
      * @private
      */
-    p5._friendlyAutoplayError = function(src) {
-      const message = translator('fes.autoplay', {
-        src,
-        url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
-      });
-      console.log(translator('fes.pre', { message }));
-    };
+    // p5._friendlyAutoplayError = function(src) {
+    //   const message = translator('fes.autoplay', {
+    //     src,
+    //     url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+    //   });
+    //   console.log(translator('fes.pre', { message }));
+    // };
 
     /**
      * Whether or not p5.js is running in an environment where `preload` will be
@@ -269,7 +271,11 @@ function fesCore(p5, fn, lifecycles){
       const fnNames = entryPoints;
 
       if (context.preload && !p5.isPreloadSupported()) {
-        p5._error(context, translator('fes.preloadDisabled'));
+        p5._error(
+          context,
+          // translator('fes.preloadDisabled')
+          TL.tl`The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.`
+        );
       }
 
       const fxns = {};
@@ -289,10 +295,11 @@ function fesCore(p5, fn, lifecycles){
           !context[fxns[lowercase]] &&
           typeof context[prop] === 'function'
         ) {
-          const msg = translator('fes.checkUserDefinedFns', {
-            name: prop,
-            actualName: fxns[lowercase]
-          });
+          // const msg = translator('fes.checkUserDefinedFns', {
+          //   name: prop,
+          //   actualName: fxns[lowercase]
+          // });
+          const msg = TL.tl`It seems that you may have accidentally written ${prop} instead of ${fxns[lowercase]}. Please correct it if it's not intentional.`;
 
           p5._friendlyError(msg, fxns[lowercase]);
         }
@@ -361,13 +368,14 @@ function fesCore(p5, fn, lifecycles){
           // To be used when there is only one closest match. The count parameter
           // allows i18n to pick between the keys "fes.misspelling" and
           // "fes.misspelling_plural"
-          msg = translator('fes.misspelling', {
-            name: errSym,
-            actualName: matchedSymbols[0].name,
-            type: matchedSymbols[0].type,
-            location: locationObj ? translator('fes.location', locationObj) : '',
-            count: matchedSymbols.length
-          });
+          // msg = translator('fes.misspelling', {
+          //   name: errSym,
+          //   actualName: matchedSymbols[0].name,
+          //   type: matchedSymbols[0].type,
+          //   location: locationObj ? translator('fes.location', locationObj) : '',
+          //   count: matchedSymbols.length
+          // });
+          msg = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} It seems that you may have accidentally written "${errSym}"" instead of "${matchedSymbols[0].name}". Please correct it to ${matchedSymbols[0].name} if you wish to use the ${matchedSymbols[0].type} from p5.js.`;
         } else {
           // To be used when there are multiple closest matches. Gives each
           // suggestion on its own line, the function name followed by a link to
@@ -380,12 +388,13 @@ function fesCore(p5, fn, lifecycles){
             })
             .join('\n');
 
-          msg = translator('fes.misspelling', {
-            name: errSym,
-            suggestions,
-            location: locationObj ? translator('fes.location', locationObj) : '',
-            count: matchedSymbols.length
-          });
+          // msg = translator('fes.misspelling', {
+          //   name: errSym,
+          //   suggestions,
+          //   location: locationObj ? translator('fes.location', locationObj) : '',
+          //   count: matchedSymbols.length
+          // });
+          msg = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} It seems that you may have accidentally written "${errSym}".\nYou may have meant one of the following: \n${suggestions}`;
         }
 
         // If there is only one closest match, tell _friendlyError to also add
@@ -426,9 +435,11 @@ function fesCore(p5, fn, lifecycles){
               file: frame.fileName.split('/').slice(-1)
             };
           if (idx === 0) {
-            frameMsg = translator('fes.globalErrors.stackTop', translationObj);
+            // frameMsg = translator('fes.globalErrors.stackTop', translationObj);
+            frameMsg = TL.tl`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
           } else {
-            frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
+            // frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
+            frameMsg = TL.tl`└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
           }
           stacktraceMsg += frameMsg;
         });
@@ -555,26 +566,31 @@ function fesCore(p5, fn, lifecycles){
           currentEntryPoint === 'preload' &&
           fn._preloadMethods[func] == null
         ) {
+          // TODO: we don't need this anymore
+          const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5.js library when "${func}" was called. If not stated otherwise, it might be due to "${func}" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function.`;
           p5._friendlyError(
-            translator('fes.wrongPreload', {
-              func,
-              location: locationObj
-                ? translator('fes.location', locationObj)
-                : '',
-              error: error.message
-            }),
+            // translator('fes.wrongPreload', {
+            //   func,
+            //   location: locationObj
+            //     ? translator('fes.location', locationObj)
+            //     : '',
+            //   error: error.message
+            // }),
+            message,
             'preload'
           );
         } else {
           // Library error
+          const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
           p5._friendlyError(
-            translator('fes.libraryError', {
-              func,
-              location: locationObj
-                ? translator('fes.location', locationObj)
-                : '',
-              error: error.message
-            }),
+            // translator('fes.libraryError', {
+            //   func,
+            //   location: locationObj
+            //     ? translator('fes.location', locationObj)
+            //     : '',
+            //   error: error.message
+            // }),
+            message,
             func
           );
         }
@@ -651,20 +667,22 @@ function fesCore(p5, fn, lifecycles){
       if (!matchedError) return;
 
       // Try and get the location from the top element of the stack
-      let locationObj;
+      // let locationObj;
+      let locationStr = '';
       if (
         stacktrace &&
         stacktrace[0].fileName &&
         stacktrace[0].lineNumber &&
         stacktrace[0].columnNumber
       ) {
-        locationObj = {
-          location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
-            stacktrace[0].columnNumber
-          }`,
-          file: stacktrace[0].fileName.split('/').slice(-1),
-          line: friendlyStack[0].lineNumber
-        };
+        // locationObj = {
+        //   location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+        //     stacktrace[0].columnNumber
+        //   }`,
+        //   file: stacktrace[0].fileName.split('/').slice(-1),
+        //   line: friendlyStack[0].lineNumber
+        // };
+        locationStr = TL.tl`[${stacktrace[0].fileName.split('/').slice(-1)}, line ${friendlyStack[0].lineNumber}]`;
       }
 
       switch (error.name) {
@@ -679,9 +697,10 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.syntax.invalidToken', {
-                  url
-                })
+                // translator('fes.globalErrors.syntax.invalidToken', {
+                //   url
+                // })
+                TL.tl`\nSyntax Error - Found a symbol that JavaScript doesn't recognize or didn't expect at it's place.\n\n+ More info: ${url}`
               );
               break;
             }
@@ -691,9 +710,10 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.syntax.unexpectedToken', {
-                  url
-                })
+                // translator('fes.globalErrors.syntax.unexpectedToken', {
+                //   url
+                // })
+                TL.tl`\nSyntax Error - Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\n\n+ More info: ${url}`
               );
               break;
             }
@@ -705,10 +725,11 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.syntax.redeclaredVariable', {
-                  symbol: errSym,
-                  url
-                })
+                // translator('fes.globalErrors.syntax.redeclaredVariable', {
+                //   symbol: errSym,
+                //   url
+                // })
+                TL.tl`\nSyntax Error - "${errSym}" is being redeclared. JavaScript doesn't allow declaring a variable more than once. Check the line number in error for redeclaration of the variable.\n\n+ More info: ${url}`
               );
               break;
             }
@@ -718,9 +739,10 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.syntax.missingInitializer', {
-                  url
-                })
+                // translator('fes.globalErrors.syntax.missingInitializer', {
+                //   url
+                // })
+                TL.tl`\nSyntax Error - A const variable is declared but not initialized. In JavaScript, an initializer for a const is required. A value must be specified in the same statement in which the variable is declared. Check the line number in the error and assign the const variable a value.\n\n+ More info: ${url}`
               );
               break;
             }
@@ -733,9 +755,10 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.syntax.badReturnOrYield', {
-                  url
-                })
+                // translator('fes.globalErrors.syntax.badReturnOrYield', {
+                //   url
+                // })
+                TL.tl`\nSyntax Error - return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\n\n+ More info: ${url}`
               );
               break;
             }
@@ -758,13 +781,14 @@ function fesCore(p5, fn, lifecycles){
               // of a p5 property/function
               let url = 'https://p5js.org/examples/data-variable-scope.html';
               p5._friendlyError(
-                translator('fes.globalErrors.reference.notDefined', {
-                  url,
-                  symbol: errSym,
-                  location: locationObj
-                    ? translator('fes.location', locationObj)
-                    : ''
-                })
+                // translator('fes.globalErrors.reference.notDefined', {
+                //   url,
+                //   symbol: errSym,
+                //   location: locationObj
+                //     ? translator('fes.location', locationObj)
+                //     : ''
+                // })
+                TL.tl`\n${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`
               );
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -778,13 +802,14 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.reference.cannotAccess', {
-                  url,
-                  symbol: errSym,
-                  location: locationObj
-                    ? translator('fes.location', locationObj)
-                    : ''
-                })
+                // translator('fes.globalErrors.reference.cannotAccess', {
+                //   url,
+                //   symbol: errSym,
+                //   location: locationObj
+                //     ? translator('fes.location', locationObj)
+                //     : ''
+                // })
+                TL.tl`\n${locationStr} "${errSym} is used before declaration. Make sure you have declared the variable before using it.\n\n+ More info: ${url}`
               );
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -806,12 +831,12 @@ function fesCore(p5, fn, lifecycles){
 
               // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
               let translationObj = {
-                url,
+                // url,
                 symbol: splitSym[splitSym.length - 1],
                 obj: splitSym.slice(0, splitSym.length - 1).join('.'),
-                location: locationObj
-                  ? translator('fes.location', locationObj)
-                  : ''
+                // location: locationObj
+                //   ? translator('fes.location', locationObj)
+                //   : ''
               };
 
               // There are two cases to handle here. When the function is called
@@ -819,11 +844,13 @@ function fesCore(p5, fn, lifecycles){
               // Both have different explanations.
               if (splitSym.length > 1) {
                 p5._friendlyError(
-                  translator('fes.globalErrors.type.notfuncObj', translationObj)
+                  // translator('fes.globalErrors.type.notfuncObj', translationObj)
+                  TL.tl`\n${locationStr} "${translationObj.symbol}" could not be called as a function.\nVerify whether "${translationObj.obj}" has "${translationObj.symbol}" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`
                 );
               } else {
                 p5._friendlyError(
-                  translator('fes.globalErrors.type.notfunc', translationObj)
+                  // translator('fes.globalErrors.type.notfunc', translationObj)
+                  TL.tl`\n${locationStr} "${translationObj.symbol}" could not be called as a function.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`
                 );
               }
 
@@ -840,13 +867,14 @@ function fesCore(p5, fn, lifecycles){
               /*let url2 =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';*/
               p5._friendlyError(
-                translator('fes.globalErrors.type.readFromNull', {
-                  url,
-                  symbol: errSym,
-                  location: locationObj
-                    ? translator('fes.location', locationObj)
-                    : ''
-                })
+                // translator('fes.globalErrors.type.readFromNull', {
+                //   url,
+                //   symbol: errSym,
+                //   location: locationObj
+                //     ? translator('fes.location', locationObj)
+                //     : ''
+                // })
+                TL.tl`\n${locationStr} The property of null can't be read. In javascript the value null indicates that an object has no value.\n\n+ More info: ${url}`
               );
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -862,13 +890,14 @@ function fesCore(p5, fn, lifecycles){
               /*let url2 =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';*/
               p5._friendlyError(
-                translator('fes.globalErrors.type.readFromUndefined', {
-                  url,
-                  symbol: errSym,
-                  location: locationObj
-                    ? translator('fes.location', locationObj)
-                    : ''
-                })
+                // translator('fes.globalErrors.type.readFromUndefined', {
+                //   url,
+                //   symbol: errSym,
+                //   location: locationObj
+                //     ? translator('fes.location', locationObj)
+                //     : ''
+                // })
+                TL.tl`\n${locationStr} Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\n\n + More info: ${url}`
               );
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -881,12 +910,13 @@ function fesCore(p5, fn, lifecycles){
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
               p5._friendlyError(
-                translator('fes.globalErrors.type.constAssign', {
-                  url,
-                  location: locationObj
-                    ? translator('fes.location', locationObj)
-                    : ''
-                })
+                // translator('fes.globalErrors.type.constAssign', {
+                //   url,
+                //   location: locationObj
+                //     ? translator('fes.location', locationObj)
+                //     : ''
+                // })
+                TL.tl`\n${locationStr} A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n\n+ More info: ${url}`
               );
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -1009,21 +1039,11 @@ function fesCore(p5, fn, lifecycles){
       if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
         const symbolName =
           symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
-        if (typeof IS_MINIFIED !== 'undefined') {
-          log(
-            `Did you just try to use p5.js's ${symbolName} ${
-              symbol.type
-            }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
-          );
-        } else {
-          log(
-            translator('fes.misusedTopLevel', {
-              symbolName,
-              symbolType: symbol.type,
-              url: FAQ_URL
-            })
-          );
-        }
+        log(
+          TL.tl`Did you just try to use p5.js's ${symbolName} ${
+            symbol.type
+          }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+        );
         return true;
       }
     });
@@ -1102,3 +1122,11 @@ function computeEditDistance(w1, w2) {
 
   return cur[l2];
 };
+
+// export function friendlyAutoplayError(src) {
+//   const message = translator('fes.autoplay', {
+//     src,
+//     url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+//   });
+//   console.log(translator('fes.pre', { message }));
+// }
