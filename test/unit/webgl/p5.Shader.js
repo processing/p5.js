@@ -679,6 +679,107 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[2], 153, 5);
     });
 
+    suite('array indexing on non-storage vectors (#8756)', () => {
+      afterEach(() => {
+        mockUserError.mockClear();
+      });
+
+      test('indexing into array returned from helper function works in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const myShader = myp5.baseMaterialShader().modify(() => {
+          const brightness = myp5.uniformFloat();
+          function getArr() {
+            return [1, 2];
+          }
+          const arr = getArr();
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [arr[0] * brightness, arr[1], 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        expect(() => {
+          myp5.shader(myShader);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
+
+      test('inline literal indexing [1, 2][0] works in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const myShader = myp5.baseMaterialShader().modify(() => {
+          const brightness = myp5.uniformFloat();
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [[1, 2][0] * brightness, 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        expect(() => {
+          myp5.shader(myShader);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
+
+      test('array literal with 1 element throws descriptive error in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            const arr = [1];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+        }).toThrowError('and must have 2-4 elements (got 1)');
+      });
+
+      test('array literal with 5 elements throws descriptive error in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3, 4, 5];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+        }).toThrowError('and must have 2-4 elements (got 5)');
+      });
+
+      test('valid array lengths 2, 3, 4 work in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          const s2 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s2);
+          myp5.plane(myp5.width, myp5.height);
+
+          const s3 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s3);
+          myp5.plane(myp5.width, myp5.height);
+
+          const s4 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3, 4];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s4);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);

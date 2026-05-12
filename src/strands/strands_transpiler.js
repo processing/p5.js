@@ -566,6 +566,14 @@ const ASTCallbacks = {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
       return;
     }
+
+    if (node.elements.length < 2 || node.elements.length > 4) {
+      FES.userError(
+        'type error',
+        `Array literals in shader functions are transpiled to vectors and must have 2-4 elements (got ${node.elements.length}).`
+      );
+    }
+
     const original = JSON.parse(JSON.stringify(node));
     node.type = 'CallExpression';
     node.callee = {
