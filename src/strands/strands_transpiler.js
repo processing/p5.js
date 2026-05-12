@@ -1679,34 +1679,30 @@ function transformHelperFunctionEarlyReturns(ast, names) {
  * This staged approach ensures correct ordering and avoids transformation conflicts.
  */
 
-export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
-  // Reset counters at the start of each transpilation
-  blockVarCounter = 0;
-  loopVarCounter = 0;
+// Wraps each callback with a uniform context guard, eliminating the need
+// to repeat the early-return check at the top of every handler.
+function makeGuardedCallbacks(callbacks) {
+  const guarded = {};
+  for (const [name, fn] of Object.entries(callbacks)) {
+    guarded[name] = (node, state, ancestors) => {
+      if (ancestors.some(a =>
+        nodeIsUniform(a) ||
+        nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )) return;
+      return fn(node, state, ancestors);
+    };
+  }
+  return guarded;
+}
 
-  const ast = parse(sourceString, {
-    ecmaVersion: 2021,
-    locations: srcLocations
-  });
-
-  throwIfLoopProtectionInserted(ast);
-
-  // Pre-pass: collect names of functions passed by reference as uniform callbacks
-  const uniformCallbackNames = collectUniformCallbackNames(ast);
-
-  // First pass: transform .set() calls in control flow to use intermediate variables
-  transformSetCallsInControlFlow(ast, uniformCallbackNames);
-
-  // Second pass: transform everything except if/for statements using normal ancestor traversal
-  const nonControlFlowCallbacks = { ...ASTCallbacks };
+function runNonControlFlowPass(ast, uniformCallbackNames) {
+  const nonControlFlowCallbacks = ({ ...ASTCallbacks });
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
   ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
+}
 
-  // Third pass: transform helper functions with early returns to use __returnValue pattern
-  transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
-
-  // Fourth pass: transform if/for statements in post-order using recursive traversal
+function runControlFlowPass(ast, uniformCallbackNames) {
   const postOrderControlFlowTransform = {
     CallExpression(node, state, c) {
       if (nodeIsUniform(node)) { return; }
@@ -1721,48 +1717,41 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
       if (
         state.uniformCallbackNames?.has(node.id?.name) &&
         (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
-      ) {
-        return;
-      }
+      ) { return; }
       if (node.init) c(node.init, state);
     },
     IfStatement(node, state, c) {
       state.inControlFlow++;
-      // First recursively process children
       if (node.test) c(node.test, state);
       if (node.consequent) c(node.consequent, state);
       if (node.alternate) c(node.alternate, state);
-      // Then apply the transformation to this node
       ASTCallbacks.IfStatement(node, state, []);
       state.inControlFlow--;
     },
     ForStatement(node, state, c) {
       state.inControlFlow++;
-      // First recursively process children
       if (node.init) c(node.init, state);
       if (node.test) c(node.test, state);
       if (node.update) c(node.update, state);
       if (node.body) c(node.body, state);
-      // Then apply the transformation to this node
       ASTCallbacks.ForStatement(node, state, []);
       state.inControlFlow--;
     },
     ReturnStatement(node, state, c) {
       if (!state.inControlFlow) return;
-      // Convert return statement to strandsEarlyReturn call
       node.type = 'ExpressionStatement';
       node.expression = {
         type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsEarlyReturn'
-        },
+        callee: { type: 'Identifier', name: '__p5.strandsEarlyReturn' },
         arguments: node.argument ? [node.argument] : []
       };
       delete node.argument;
     }
   };
   recursive(ast, { varyings: {}, inControlFlow: 0, uniformCallbackNames }, postOrderControlFlowTransform);
+}
+
+function buildStrandsCallback(p5, ast, scope) {
   const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
   const match = /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
@@ -1782,15 +1771,11 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   }
   const body = match[2];
   try {
-    const internalStrandsCallback = new Function(
-        // Create a parameter called __p5, not just p5, because users of instance mode
-        // may pass in a variable called p5 as a scope variable. If we rely on a variable called
-        // p5, then the scope variable called p5 might accidentally override internal function
-        // calls to p5 static methods.
-      '__p5',
-      ...paramNames,
-      body,
-    );
+    const internalStrandsCallback = new Function('__p5', ...paramNames, body);
+    // Create a parameter called __p5, not just p5, because users of instance mode
+    // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+    // p5, then the scope variable called p5 might accidentally override internal function
+    // calls to p5 static methods.
     return () => internalStrandsCallback(p5, ...paramVals);
   } catch (e) {
     console.error(e);
@@ -1798,4 +1783,32 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     console.log(body);
     throw new Error('Error transpiling p5.strands callback!');
   }
+}
+
+
+
+export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+  blockVarCounter = 0;
+  loopVarCounter = 0;
+
+  const ast = parse(sourceString, { ecmaVersion: 2021, locations: srcLocations });
+
+  throwIfLoopProtectionInserted(ast);
+
+  // Pre-pass: collect names of functions passed by reference as uniform callbacks
+  const uniformCallbackNames = collectUniformCallbackNames(ast);
+
+  // Pass 1: transform .set() calls in control flow to use intermediate variables
+  transformSetCallsInControlFlow(ast, uniformCallbackNames);
+
+  // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
+  runNonControlFlowPass(ast, uniformCallbackNames);
+
+  // Pass 3: transform helper functions with early returns to use __returnValue pattern
+  transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
+
+  // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
+  runControlFlowPass(ast, uniformCallbackNames);
+
+  return buildStrandsCallback(p5, ast, scope);
 }
