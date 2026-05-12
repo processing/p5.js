@@ -294,6 +294,23 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   });
 
+  const originalMap = fn.map;
+  augmentFn(fn, p5, 'map', function (...args) {
+    if (!strandsContext.active) {
+      return originalMap.apply(this, args);
+    }
+    const [n, start1, stop1, start2, stop2, withinBounds] = args;
+    const nNode = p5.strandsNode(n);
+    const start1Node = p5.strandsNode(start1);
+    const stop1Node = p5.strandsNode(stop1);
+    const t = nNode.sub(start1Node).div(stop1Node.sub(start1Node));
+    const result = this.mix(start2, stop2, t);
+    if (withinBounds) {
+      return this.clamp(result, this.min(start2, stop2), this.max(start2, stop2));
+    }
+    return result;
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
