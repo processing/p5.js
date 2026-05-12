@@ -459,6 +459,21 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
+    test('buildFilterShader can use numeric constants from scope', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      const constants = { val: 100 };
+      const myShader = myp5.buildFilterShader(({ constants }) => {
+        filterColor.begin();
+        let c = 0;
+        c += constants.val / 255;
+        filterColor.set([c, c, c, 1]);
+        filterColor.end();
+      }, { constants });
+      expect(() => {
+        myp5.filter(myShader);
+      }).not.toThrowError();
+    });
+
     test('buildMaterialShader forwards scope to modify', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       expect(() => {

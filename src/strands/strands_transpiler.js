@@ -323,17 +323,14 @@ function transformBinaryOrLogical(node, state, ancestors) {
   if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
     return;
   }
-  const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
-  if (unsafeTypes.includes(node.left.type)) {
-    node.left = {
-      type: 'CallExpression',
-      callee: {
-        type: 'Identifier',
-        name: '__p5.strandsNode',
-      },
-      arguments: [node.left]
-    };
-  }
+  node.left = {
+    type: 'CallExpression',
+    callee: {
+      type: 'Identifier',
+      name: '__p5.strandsNode',
+    },
+    arguments: [node.left]
+  };
   node.type = 'CallExpression';
   node.callee = {
     type: 'MemberExpression',
@@ -1240,8 +1237,8 @@ const ASTCallbacks = {
     delete node.update;
   },
 
-  
-  
+
+
 }
 
 // Helper function to check if a function body contains return statements in control flow
