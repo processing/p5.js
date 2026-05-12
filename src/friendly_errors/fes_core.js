@@ -44,26 +44,26 @@ function fesCore(p5, fn, lifecycles){
   class FESError extends Error { };
 
   lifecycles.presetup = function () {
-    let doFriendlyWelcome = false; // TEMP until we get it all working LM
-    if(doFriendlyWelcome){
-      // p5.js brand - magenta: #ED225D
-      //const astrixBgColor = 'transparent';
-      //const astrixTxtColor = '#ED225D';
-      //const welcomeBgColor = '#ED225D';
-      //const welcomeTextColor = 'white';
-      const welcomeMessage = translator('fes.pre', {
-        message: translator('fes.welcome')
-      });
-      console.log(
-        '    _ \n' +
-          ' /\\| |/\\ \n' +
-          " \\ ` ' /  \n" +
-          ' / , . \\  \n' +
-          ' \\/|_|\\/ ' +
-          '\n\n' +
-          welcomeMessage
-      );
-    }
+    // let doFriendlyWelcome = false; // TEMP until we get it all working LM
+    // if(doFriendlyWelcome){
+    //   // p5.js brand - magenta: #ED225D
+    //   //const astrixBgColor = 'transparent';
+    //   //const astrixTxtColor = '#ED225D';
+    //   //const welcomeBgColor = '#ED225D';
+    //   //const welcomeTextColor = 'white';
+    //   const welcomeMessage = translator('fes.pre', {
+    //     message: translator('fes.welcome')
+    //   });
+    //   console.log(
+    //     '    _ \n' +
+    //       ' /\\| |/\\ \n' +
+    //       " \\ ` ' /  \n" +
+    //       ' / , . \\  \n' +
+    //       ' \\/|_|\\/ ' +
+    //       '\n\n' +
+    //       welcomeMessage
+    //   );
+    // }
   };
 
   if (typeof IS_MINIFIED !== 'undefined') {
@@ -479,7 +479,7 @@ function fesCore(p5, fn, lifecycles){
       try {
         throw new Error();
       } catch (testError) {
-        const testStacktrace = p5._getErrorStackParser().parse(testError);
+        const testStacktrace = getErrorStackParser().parse(testError);
         p5FileName = testStacktrace[0].fileName;
       }
 
@@ -619,7 +619,7 @@ function fesCore(p5, fn, lifecycles){
       }
       if (!error) return;
 
-      let stacktrace = p5._getErrorStackParser().parse(error);
+      let stacktrace = getErrorStackParser().parse(error);
       // process the stacktrace from the browser and simplify it to give
       // friendlyStack.
       let [isInternal, friendlyStack] = processStack(error, stacktrace);

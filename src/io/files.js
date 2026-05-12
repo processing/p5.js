@@ -9,6 +9,7 @@ import { Renderer } from '../core/p5.Renderer';
 import { Graphics } from '../core/p5.Graphics';
 import { parse } from './csv';
 import { downloadFile, _checkFileExtension } from './utilities';
+import { FES, TL } from '../friendly_errors/fes';
 
 class HTTPError extends Error {
   status;
@@ -16,7 +17,8 @@ class HTTPError extends Error {
   ok;
 }
 
-export async function request(path, type){
+export async function request(path, type) {
+  let errorFileType = TL.tl`file`;
   try {
     const res = await fetch(path);
 
@@ -24,9 +26,11 @@ export async function request(path, type){
       let data;
       switch(type) {
         case 'json':
+          errorFileType = TL.tl`JSON file`;
           data = await res.json();
           break;
         case 'text':
+          errorFileType = TL.tl`text file`;
           data = await res.text();
           break;
         case 'arrayBuffer':
@@ -36,13 +40,7 @@ export async function request(path, type){
           data = await res.blob();
           break;
         case 'bytes':
-          // TODO: Chrome does not implement res.bytes() yet
-          if(res.bytes){
-            data = await res.bytes();
-          }else{
-            const d = await res.arrayBuffer();
-            data = new Uint8Array(d);
-          }
+          data = await res.bytes();
           break;
         default:
           throw new Error('Unsupported response type');
@@ -64,7 +62,10 @@ export async function request(path, type){
     if (err instanceof TypeError) {
       console.log('You may have encountered a CORS error');
     } else if (err instanceof HTTPError) {
-      console.log('You have encountered a HTTP error');
+      const infoURL = 'https://github.com/processing/p5.js/wiki/Local-server';
+      FES.log(TL.tl`It looks like there was a problem loading your ${errorFileType}. Try checking if the file path (${path}) is correct, hosting the file online, or running a local server.
+
++ More info: ${infoURL}`);
     } else if (err instanceof SyntaxError) {
       console.log('There is an error parsing the response to requested data structure');
     }
@@ -274,8 +275,6 @@ function files(p5, fn){
    * }
    */
   fn.loadJSON = async function (path, successCallback, errorCallback) {
-    // p5._validateParameters('loadJSON', arguments);
-
     try{
       const { data } = await request(path, 'json');
       const cb = () => {
@@ -283,8 +282,8 @@ function files(p5, fn){
         return data;
       };
       return this._internal ? this._internal(cb) : cb();
-    } catch(err) {
-      p5._friendlyFileLoadError(5, path);
+    } catch (err) {
+      // p5._friendlyFileLoadError(5, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {
@@ -424,7 +423,7 @@ function files(p5, fn){
       };
       return this._internal ? this._internal(cb) : cb();
     } catch(err) {
-      p5._friendlyFileLoadError(3, path);
+      // p5._friendlyFileLoadError(3, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {
@@ -531,7 +530,7 @@ function files(p5, fn){
       };
       return this._internal ? this._internal(cb) : cb();
     } catch(err) {
-      p5._friendlyFileLoadError(2, path);
+      // p5._friendlyFileLoadError(2, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {
@@ -701,7 +700,7 @@ function files(p5, fn){
       };
       return this._internal ? this._internal(cb) : cb();
     } catch(err) {
-      p5._friendlyFileLoadError(1, path);
+      // p5._friendlyFileLoadError(1, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {
@@ -750,7 +749,7 @@ function files(p5, fn){
       };
       return this._internal ? this._internal(cb) : cb();
     } catch(err) {
-      p5._friendlyFileLoadError(6, path);
+      // p5._friendlyFileLoadError(6, path);
       if(errorCallback) {
         return errorCallback(err);
       } else {

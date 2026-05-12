@@ -471,7 +471,7 @@ function loading(p5, fn){
         return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
-      p5._friendlyFileLoadError(3, path);
+      // p5._friendlyFileLoadError(3, path);
       if(failureCallback) {
         return failureCallback(err);
       } else {
@@ -1266,7 +1266,7 @@ function loading(p5, fn){
         return;
       }
     } else {
-      p5._friendlyFileLoadError(3, modelString);
+      // p5._friendlyFileLoadError(3, modelString);
       if (failureCallback) {
         failureCallback();
       } else {

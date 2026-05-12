@@ -147,7 +147,9 @@ function loadingDisplaying(p5, fn){
       return this._internal ? this._internal(cb) : cb();
 
     } catch(err) {
-      p5._friendlyFileLoadError(0, path);
+      // p5._friendlyFileLoadError(0, path);
+      // TODO: Additional general error message specific to image error
+      //       File error is already taken cared of by `request`
       if (typeof failureCallback === 'function') {
         return failureCallback(err);
       } else {
@@ -615,7 +617,8 @@ function loadingDisplaying(p5, fn){
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
-        p5._friendlyFileLoadError(8, pImg.src);
+        // p5._friendlyFileLoadError(8, pImg.src);
+        p5.FES.log(p5.FES.tl`There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.`);
         throw e;
       }
     };
@@ -1138,7 +1141,7 @@ function loadingDisplaying(p5, fn){
    * sets the alpha value. For example, `tint(255, 0, 0, 100)` will give images
    * a red tint and make them transparent.
    *
-   * Calling `tint()` without an argument returns the current tint as a 
+   * Calling `tint()` without an argument returns the current tint as a
    * <a href="#/p5.Color">p5.Color</a> object.
    *
    * @method tint
