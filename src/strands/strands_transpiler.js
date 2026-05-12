@@ -1699,7 +1699,7 @@ function makeGuardedCallbacks(callbacks) {
 }
 
 function runNonControlFlowPass(ast, uniformCallbackNames) {
-  const nonControlFlowCallbacks = makeGuardedCallbacks({ ...ASTCallbacks });
+  const nonControlFlowCallbacks = ({ ...ASTCallbacks });
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
   ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
@@ -1775,6 +1775,10 @@ function buildStrandsCallback(p5, ast, scope) {
   const body = match[2];
   try {
     const internalStrandsCallback = new Function('__p5', ...paramNames, body);
+    // Create a parameter called __p5, not just p5, because users of instance mode
+    // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+    // p5, then the scope variable called p5 might accidentally override internal function
+    // calls to p5 static methods.
     return () => internalStrandsCallback(p5, ...paramVals);
   } catch (e) {
     console.error(e);
