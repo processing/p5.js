@@ -44,7 +44,7 @@ class FilterRenderer2D {
       console.error('WebGL not supported, cannot apply filter.');
       return;
     }
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     this.textures = new Map();
 
@@ -382,7 +382,7 @@ class FilterRenderer2D {
 
   get canvasTexture() {
     if (!this._canvasTexture) {
-      this._canvasTexture = new Texture(this._renderer, this.parentRenderer.wrappedElt);
+      this._canvasTexture = new Texture(this._renderer, this.parentRenderer);
     }
     return this._canvasTexture;
   }
