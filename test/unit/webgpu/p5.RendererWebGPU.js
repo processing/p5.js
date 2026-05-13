@@ -254,4 +254,71 @@ suite('WebGPU p5.RendererWebGPU', function() {
       }
     });
   });
+
+  suite('StorageBuffer.set()', function() {
+    test('updates a single float value at the given index', async function() {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      buf.set(2, 9.5);
+
+      const result = await buf.read();
+
+      expect(result[0]).to.be.closeTo(1, 0.001);
+      expect(result[1]).to.be.closeTo(2, 0.001);
+      expect(result[2]).to.be.closeTo(9.5, 0.001); // only this changed
+      expect(result[3]).to.be.closeTo(4, 0.001);
+    });
+
+    test('updates a single struct element without touching neighbours', async function() {
+      const input = [
+        { x: 1.0, y: 2.0 },
+        { x: 3.0, y: 4.0 },
+        { x: 5.0, y: 6.0 },
+      ];
+      const buf = myp5.createStorage(input);
+
+      // Replace only the middle element
+      buf.set(1, { x: 99.0, y: 88.0 });
+
+      const result = await buf.read();
+
+      expect(result.length).to.be.at.least(3);
+      // Element 0 unchanged
+      expect(result[0].x).to.be.closeTo(1.0, 0.001);
+      expect(result[0].y).to.be.closeTo(2.0, 0.001);
+      // Element 1 updated
+      expect(result[1].x).to.be.closeTo(99.0, 0.001);
+      expect(result[1].y).to.be.closeTo(88.0, 0.001);
+      // Element 2 unchanged
+      expect(result[2].x).to.be.closeTo(5.0, 0.001);
+      expect(result[2].y).to.be.closeTo(6.0, 0.001);
+    });
+
+    test('set() then read() reflects the new value immediately', async function() {
+      const buf = myp5.createStorage(new Float32Array([0, 0, 0]));
+      buf.set(0, 42);
+
+      const result = await buf.read();
+      expect(result[0]).to.be.closeTo(42, 0.001);
+    });
+
+    test('throws on out-of-bounds index for float buffer', function() {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3]));
+      expect(() => buf.set(10, 5.0)).to.throw();
+    });
+
+    test('throws on out-of-bounds index for struct buffer', function() {
+      const buf = myp5.createStorage([{ x: 1.0 }, { x: 2.0 }]);
+      expect(() => buf.set(99, { x: 3.0 })).to.throw();
+    });
+
+    test('throws when passing a non-number to a float buffer', function() {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3]));
+      expect(() => buf.set(0, { x: 1 })).to.throw();
+    });
+
+    test('throws when passing a non-object to a struct buffer', function() {
+      const buf = myp5.createStorage([{ x: 1.0 }, { x: 2.0 }]);
+      expect(() => buf.set(0, 42)).to.throw();
+    });
+  });
 });
