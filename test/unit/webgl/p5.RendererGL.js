@@ -3089,6 +3089,23 @@ suite('p5.RendererGL', function() {
       myp5.model(geom);
       expect(myp5.get(5, 5)).toEqual([255, 0, 0, 255]);
     });
+    test('does not throw with a large number of vertices', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      // Enough triangles to exceed the ~65k argument limit of Function.prototype.apply,
+      // which would cause a stack overflow if vertices were spread into push() calls.
+      const numTriangles = 30000;
+      expect(() => {
+        myp5.buildGeometry(() => {
+          myp5.beginShape(myp5.TRIANGLES);
+          for (let i = 0; i < numTriangles; i++) {
+            myp5.vertex(0, 0, 0);
+            myp5.vertex(1, 0, 0);
+            myp5.vertex(0, 1, 0);
+          }
+          myp5.endShape();
+        });
+      }).not.toThrow();
+    });
   });
 
   suite('fontWidth', function() {
