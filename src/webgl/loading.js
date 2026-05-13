@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Models
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 import { Geometry } from './p5.Geometry';
@@ -615,7 +613,7 @@ function loading(p5, fn){
                 model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
                   loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
                 model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
-                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector());
+                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector(0, 0, 0));
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
@@ -631,6 +629,7 @@ function loading(p5, fn){
                   model.vertexColors.push(1);
                 } else {
                   hasColorlessVertices = true;
+                  model.vertexColors.push(-1, -1, -1, -1);
                 }
               } else {
                 face.push(usedVerts[vertString][currentMaterial]);
@@ -652,9 +651,8 @@ function loading(p5, fn){
     if (model.vertexNormals.length === 0) {
       model.computeNormals();
     }
-    if (hasColoredVertices === hasColorlessVertices) {
-      // If both are true or both are false, throw an error because the model is inconsistent
-      throw new Error('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+    if (!hasColoredVertices) {
+      model.vertexColors = [];
     }
 
     return model;
@@ -969,21 +967,15 @@ function loading(p5, fn){
   /**
    * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
    *
-   * The parameter, `model`, is the
+   * The first parameter, `model`, is the
    * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, or
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>. They can also be loaded from
+   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
    *
-   * @method model
-   * @param  {p5.Geometry} model 3D shape to be drawn.
-   *
-   * @param {Number} [count=1] number of instances to draw.
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1011,8 +1003,9 @@ function loading(p5, fn){
    * function createShape() {
    *   cone();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1058,8 +1051,9 @@ function loading(p5, fn){
    *   cylinder(3, 20);
    *   pop();
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let shape;
@@ -1081,6 +1075,51 @@ function loading(p5, fn){
    *   // Draw the shape.
    *   model(shape);
    * }
+   * ```
+   *
+   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * all the instances get drawn to the same spot, but you can use
+   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * At large counts, this often runs faster than using a `for` loop.
+   *
+   * ```js example
+   * let instancesShader;
+   * let instance;
+   * let count = 5;
+   *
+   * function drawInstance() {
+   *   sphere(15);
+   * }
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   instance = buildGeometry(drawInstance);
+   *   instancesShader = buildMaterialShader(drawSpaced);
+   * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceID() - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(instancesShader);
+   *   model(instance, count);
+   * }
+   * ```
+   *
+   * @method model
+   * @param  {p5.Geometry} model 3D shape to be drawn.
+   *
+   * @param {Number} [count=1] number of instances to draw.
    */
   fn.model = function (model, count = 1) {
     this._assert3d('model');

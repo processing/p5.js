@@ -2,8 +2,6 @@
  * @module Events
  * @submodule Pointer
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function pointer(p5, fn, lifecycles){

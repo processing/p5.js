@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Primitives
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 //some of the functions are adjusted from Three.js(http://threejs.org)
@@ -330,7 +328,7 @@ class Geometry {
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(function()) {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -1205,7 +1203,7 @@ class Geometry {
     // initialize the vertexNormals array with empty vectors
     vertexNormals.length = 0;
     for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals.push(new Vector());
+      vertexNormals.push(new Vector(0, 0, 0));
     }
 
     // loop through all the faces adding its normal to the normal

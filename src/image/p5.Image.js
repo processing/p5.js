@@ -1,9 +1,6 @@
 /**
  * @module Image
  * @submodule Image
- * @requires core
- * @requires constants
- * @requires filters
  */
 
 /**
@@ -30,6 +27,9 @@ class Image {
     this._modified = false;
     this.pixels = [];
   }
+
+  // This will get overwritten when exported as part of p5.
+  _friendlyError(_e) {}
 
   /**
    * Gets or sets the pixel density for high pixel density displays.
@@ -1605,7 +1605,7 @@ class Image {
         props.displayIndex = index;
         this.drawingContext.putImageData(props.frames[index].image, 0, 0);
       } else {
-        p5._friendlyError(
+        this._friendlyError(
           'Cannot set GIF to a frame number that is higher than total number of frames or below zero.',
           'setFrame'
         );
@@ -2104,6 +2104,8 @@ function image(p5, fn){
    * @param {Number} height
    */
   p5.Image = Image;
+
+  Image.prototype._friendlyError = p5._friendlyError;
 
   /**
    * The image's width in pixels.

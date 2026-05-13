@@ -240,7 +240,7 @@ class Graphics {
    * Removes the graphics buffer from the web page.
    *
    * Calling `myGraphics.remove()` removes the graphics buffer's
-   * `&lt;canvas&gt;` element from the web page. The graphics buffer also uses
+   * `<canvas>` element from the web page. The graphics buffer also uses
    * a bit of memory on the CPU that can be freed like so:
    *
    * ```js
@@ -597,7 +597,7 @@ function graphics(p5, fn){
    * @param {Number} h            height height of the graphics buffer in pixels.
    * @param {(P2D|WEBGL|P2DHDR)} renderer   the renderer to use, either P2D or WEBGL.
    * @param {p5} [pInst]          sketch instance.
-   * @param {HTMLCanvasElement} [canvas]     existing `&lt;canvas&gt;` element to use.
+   * @param {HTMLCanvasElement} [canvas]     existing `<canvas>` element to use.
    *
    * @example
    * let pg;

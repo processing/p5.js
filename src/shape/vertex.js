@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Custom Shapes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function vertex(p5, fn){

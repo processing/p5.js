@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Interaction
  * @for p5
- * @requires core
  */
 
 import * as constants from '../core/constants';
@@ -370,8 +369,11 @@ function interaction(p5, fn){
       // accelerate rotate velocity
       this._renderer.rotateVelocity.add(
         deltaTheta * rotateAccelerationFactor,
-        deltaPhi * rotateAccelerationFactor
+        deltaPhi * rotateAccelerationFactor,
+        0
       );
+
+      //console.log("added");
     }
     if (this._renderer.rotateVelocity.magSq() > 0.000001) {
       // if freeRotation is true, the camera always rotates freely in the direction the pointer moves
@@ -390,8 +392,10 @@ function interaction(p5, fn){
       }
       // damping
       this._renderer.rotateVelocity.mult(damping);
+      //console.log("multiplied", damping,  this._renderer.rotateVelocity);
+
     } else {
-      this._renderer.rotateVelocity.set(0, 0);
+      this._renderer.rotateVelocity.set(0, 0, 0);
     }
 
     // move process

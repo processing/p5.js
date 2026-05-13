@@ -29,7 +29,8 @@ allRawData.forEach(entry => {
   if (entry.kind === 'constant' || entry.kind === 'typedef') {
     constantsLookup.add(entry.name);
     if (entry.kind === 'typedef') {
-      typedefs[entry.name] = entry.type;
+      // Store the full entry so we have access to both .type and .properties
+      typedefs[entry.name] = entry;
     }
   }
 });
@@ -242,15 +243,29 @@ function convertTypeToTypeScript(typeNode, options = {}) {
         }
       }
 
-      // Check if this is a p5 constant - use typeof since they're defined as values
+      // Check if this is a p5 constant/typedef
       if (constantsLookup.has(typeName)) {
+        const typedefEntry = typedefs[typeName];
+
+        // Use interface name for object-shaped typedefs in all contexts
+        if (typedefEntry && hasTypedefProperties(typedefEntry)) {
+          if (inGlobalMode) {
+            return `P5.${typeName}`;
+          } else if (isInsideNamespace) {
+            return typeName;
+          } else {
+            return `p5.${typeName}`;
+          }
+        }
+
+        // Fallback to typeof or primitive resolution for alias-style typedefs
         if (inGlobalMode) {
           return `typeof P5.${typeName}`;
-        } else if (typedefs[typeName]) {
+        } else if (typedefEntry) {
           if (isConstantDef) {
-            return convertTypeToTypeScript(typedefs[typeName], options);
+            return convertTypeToTypeScript(typedefEntry.type, options);
           } else {
-            return `typeof p5.${typeName}`
+            return `typeof p5.${typeName}`;
           }
         } else {
           return `Symbol`;
@@ -328,6 +343,105 @@ function convertTypeToTypeScript(typeNode, options = {}) {
     default:
       return 'any';
   }
+}
+
+// Check if typedef represents a real object shape
+function hasTypedefProperties(typedefEntry) {
+  if (!Array.isArray(typedefEntry.properties) || typedefEntry.properties.length === 0) {
+    return false;
+  }
+  // Reject self-referential single-property typedefs
+  if (
+    typedefEntry.properties.length === 1 &&
+    typedefEntry.properties[0].name === typedefEntry.name
+  ) {
+    return false;
+  }
+  return true;
+}
+
+// Convert JSDoc FunctionType into a TypeScript function signature string
+function convertFunctionTypeForInterface(typeNode, options) {
+  const params = (typeNode.params || [])
+    .map((param, i) => {
+      let typeObj;
+      let paramName;
+      if (param.type === 'ParameterType') {
+        typeObj = param.expression;
+        paramName = param.name ?? `p${i}`;
+      } else if (typeof param.type === 'object' && param.type !== null) {
+        typeObj = param.type;
+        paramName = param.name ?? `p${i}`;
+      } else {
+        // param itself is a plain type node
+        typeObj = param;
+        paramName = `p${i}`;
+      }
+      const paramType = convertTypeToTypeScript(typeObj, options);
+      return `${paramName}: ${paramType}`;
+    })
+    .join(', ');
+
+  const returnType = typeNode.result
+    ? convertTypeToTypeScript(typeNode.result, options)
+    : 'void';
+
+  // Normalise 'undefined' return to 'void' for idiomatic TypeScript
+  const normalisedReturn = returnType === 'undefined' ? 'void' : returnType;
+
+  return `(${params}) => ${normalisedReturn}`;
+}
+
+// Generate a TypeScript interface from a typedef with @property fields
+function generateTypedefInterface(name, typedefEntry, options = {}, indent = 2) {
+  const pad = ' '.repeat(indent);
+  const innerPad = ' '.repeat(indent + 2);
+  let output = '';
+
+  if (typedefEntry.description) {
+    const descStr = typeof typedefEntry.description === 'string'
+      ? typedefEntry.description
+      : descriptionStringForTypeScript(typedefEntry.description);
+    if (descStr) {
+      output += `${pad}/**\n`;
+      output += formatJSDocComment(descStr, indent) + '\n';
+      output += `${pad} */\n`;
+    }
+  }
+
+  output += `${pad}interface ${name} {\n`;
+
+  for (const prop of typedefEntry.properties) {
+    // Each prop: { name, type, description, optional }
+    const propName = prop.name;
+    const rawType = prop.type;
+    const isOptional = prop.optional || rawType?.type === 'OptionalType';
+    const optMark = isOptional ? '?' : '';
+
+    if (prop.description) {
+      const propDescStr = typeof prop.description === 'string'
+        ? prop.description.trim()
+        : descriptionStringForTypeScript(prop.description);
+      if (propDescStr) {
+        output += `${innerPad}/** ${propDescStr} */\n`;
+      }
+    }
+
+    if (rawType?.type === 'FunctionType') {
+      // Render FunctionType properties as method signatures instead of arrow properties
+      const sig = convertFunctionTypeForInterface(rawType, options);
+      const arrowIdx = sig.lastIndexOf('=>');
+      const paramsPart = sig.substring(0, arrowIdx).trim();
+      const retPart = sig.substring(arrowIdx + 2).trim();
+      output += `${innerPad}${propName}${paramsPart}: ${retPart};\n`;
+    } else {
+      const tsType = rawType ? convertTypeToTypeScript(rawType, options) : 'any';
+      output += `${innerPad}${propName}${optMark}: ${tsType};\n`;
+    }
+  }
+
+  output += `${pad}}\n\n`;
+  return output;
 }
 
 // Strategy for TypeScript output
@@ -606,6 +720,10 @@ function generateTypeDefinitions() {
       if (seenConstants.has(item.name)) {
         return false;
       }
+      // Skip typedefs that have real object shapes
+      if (typedefs[item.name] && hasTypedefProperties(typedefs[item.name])) {
+        return false;
+      }
       seenConstants.add(item.name);
       return true;
     }
@@ -667,12 +785,19 @@ function generateTypeDefinitions() {
 
   output += '\n';
 
-
   p5Constants.forEach(constant => {
     output += `${mutableProperties.has(constant.name) ? 'let' : 'const'} ${constant.name}: typeof __${constant.name};\n`;
   });
 
   output += '\n';
+
+  // Emit interfaces for typedefs that define object shapes
+  const namespaceOptions = { isInsideNamespace: true };
+  for (const [name, typedefEntry] of Object.entries(typedefs)) {
+    if (hasTypedefProperties(typedefEntry)) {
+      output += generateTypedefInterface(name, typedefEntry, namespaceOptions, 2);
+    }
+  }
 
   // Generate other classes in namespace
   Object.values(processed.classes).forEach(classData => {
@@ -749,6 +874,14 @@ p5: P5;
   });
 
   globalDefinitions += '\n';
+
+  // Mirror typedef interfaces for global-mode usage
+  const globalNamespaceOptions = { isInsideNamespace: true, inGlobalMode: true };
+  for (const [name, typedefEntry] of Object.entries(typedefs)) {
+    if (hasTypedefProperties(typedefEntry)) {
+      globalDefinitions += generateTypedefInterface(name, typedefEntry, globalNamespaceOptions, 2);
+    }
+  }
 
   // Add all real classes as both types and constructors
   Object.values(processed.classes).forEach(classData => {

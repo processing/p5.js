@@ -2,6 +2,7 @@ import { parse } from 'acorn';
 import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
+import * as FES from './strands_FES';
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -40,6 +41,50 @@ function nodeIsUniform(ancestor) {
     );
 }
 
+function nodeIsUniformCallbackFn(node, names) {
+  if (!names?.size) return false;
+  if (node.type === 'FunctionDeclaration' && names.has(node.id?.name)) return true;
+  if (
+    node.type === 'VariableDeclarator' && names.has(node.id?.name) &&
+    (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function collectUniformCallbackNames(ast) {
+  // Sub-pass 1: collect all named function definitions
+  const namedFunctions = new Set();
+  ancestor(ast, {
+    FunctionDeclaration(node) {
+      if (node.id) namedFunctions.add(node.id.name);
+    },
+    VariableDeclarator(node) {
+      if (
+        node.id?.type === 'Identifier' &&
+        (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
+      ) {
+        namedFunctions.add(node.id.name);
+      }
+    }
+  });
+  // Sub-pass 2: find which of those names are passed as uniform call arguments
+  const names = new Set();
+  ancestor(ast, {
+    CallExpression(node) {
+      if (nodeIsUniform(node)) {
+        for (const arg of node.arguments) {
+          if (arg.type === 'Identifier' && namedFunctions.has(arg.name)) {
+            names.add(arg.name);
+          }
+        }
+      }
+    }
+  });
+  return names;
+}
+
 function nodeIsVarying(node) {
   return node && node.type === 'CallExpression'
     && (
@@ -54,7 +99,64 @@ function nodeIsVarying(node) {
       )
     );
 }
+// Convert static member expressions into dotted paths such as
+// `loopProtect.protect` so loop-protection calls can be matched reliably.
+function getMemberExpressionPath(node) {
+  if (node?.type === 'Identifier') return node.name;
 
+  // Computed properties like `obj[prop]` are not safe to match as fixed paths.
+  if (node?.type !== 'MemberExpression' || node.computed) return null;
+
+  const objectPath = getMemberExpressionPath(node.object);
+  const propertyName = node.property?.name;
+
+  return objectPath && propertyName
+    ? `${objectPath}.${propertyName}`
+    : null;
+}
+
+// Detect calls added by loop protection before Strands tries to transpile them.
+function isLoopProtectionCall(node) {
+  if (node?.type !== 'CallExpression') return false;
+
+  const path = getMemberExpressionPath(node.callee);
+
+  if (!path) return false;
+
+  return (
+    path === 'loopProtect.protect' ||
+    path.endsWith('.loopProtect') ||
+    path.endsWith('.loopProtect.protect')
+  );
+}
+
+// Scan AST for loop-protection injection and throw with `// noprotect` hint.
+function throwIfLoopProtectionInserted(ast) {
+  let found = false;
+
+  ancestor(ast, {
+    CallExpression(node) {
+      if (isLoopProtectionCall(node)) {
+        found = true;
+      }
+    },
+    LogicalExpression(node) {
+      // Loop protection may appear as the right side of a short-circuit check.
+      if (
+        node.right?.type === 'CallExpression' &&
+        isLoopProtectionCall(node.right)
+      ) {
+        found = true;
+      }
+    }
+  });
+
+  if (found) {
+    FES.internalError(
+      'loop protection error Loop protection code detected. Add `// noprotect` at the top of your sketch and run again.'
+    );
+  }
+}
 // Helper function to check if a statement is a variable declaration with strands control flow init
 function statementContainsStrandsControlFlow(stmt) {
   // Check for variable declarations with strands control flow init
@@ -191,9 +293,134 @@ function replaceReferences(node, tempVarMap) {
   internalReplaceReferences(node);
 }
 
+function replaceIdentifierReferences(node, oldName, newName) {
+  if (!node || typeof node !== 'object') return node;
+
+  const replaceInNode = (n) => {
+    if (!n || typeof n !== 'object') return n;
+    if (n.type === 'Identifier' && n.name === oldName) {
+      return { ...n, name: newName };
+    }
+    const newNode = { ...n };
+    for (const key in n) {
+      if (n.hasOwnProperty(key) && key !== 'parent') {
+        if (Array.isArray(n[key])) {
+          newNode[key] = n[key].map(replaceInNode);
+        } else if (typeof n[key] === 'object') {
+          newNode[key] = replaceInNode(n[key]);
+        }
+      }
+    }
+    return newNode;
+  };
+
+  return replaceInNode(node);
+}
+
+// Shared handler for both BinaryExpression and LogicalExpression —
+// both follow the same operator-to-method-call transformation pattern.
+function transformBinaryOrLogical(node, state, ancestors) {
+  if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    return;
+  }
+  node.left = {
+    type: 'CallExpression',
+    callee: {
+      type: 'Identifier',
+      name: '__p5.strandsNode',
+    },
+    arguments: [node.left]
+  };
+  node.type = 'CallExpression';
+  node.callee = {
+    type: 'MemberExpression',
+    object: node.left,
+    property: {
+      type: 'Identifier',
+      name: replaceBinaryOperator(node.operator),
+    },
+  };
+  node.arguments = [node.right];
+}
+
+// Shared helper used by both IfStatement and ForStatement handlers.
+// Adds temp variable copies, replaces references, and appends a return
+// statement to a branch/loop function body.
+// sourcePrefix: the root identifier to read from ('vars' for loops,
+// null for if-branches where we read directly from the outer variable).
+function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
+  if (functionBody.type !== 'BlockStatement') return;
+
+  const tempVarMap = new Map();
+  const copyStatements = [];
+
+  for (const varPath of varsToReturn) {
+    const parts = varPath.split('.');
+    const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
+    tempVarMap.set(varPath, tempName);
+
+    // If sourcePrefix is set (loop case), read from vars.x.y
+    // Otherwise (if-branch case), read directly from x.y
+    let sourceExpr = sourcePrefix
+      ? { type: 'Identifier', name: sourcePrefix }
+      : { type: 'Identifier', name: parts[0] };
+
+    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    for (const part of pathParts) {
+      sourceExpr = {
+        type: 'MemberExpression',
+        object: sourceExpr,
+        property: { type: 'Identifier', name: part },
+        computed: false
+      };
+    }
+
+    copyStatements.push({
+      type: 'VariableDeclaration',
+      declarations: [{
+        type: 'VariableDeclarator',
+        id: { type: 'Identifier', name: tempName },
+        init: {
+          type: 'CallExpression',
+          callee: {
+            type: 'MemberExpression',
+            object: sourceExpr,
+            property: { type: 'Identifier', name: 'copy' },
+            computed: false
+          },
+          arguments: []
+        }
+      }],
+      kind: 'let'
+    });
+  }
+
+  functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
+  functionBody.body.unshift(...copyStatements);
+
+  const returnObj = {
+    type: 'ObjectExpression',
+    properties: Array.from(varsToReturn).map(varPath => ({
+      type: 'Property',
+      key: { type: 'Literal', value: varPath },
+      value: { type: 'Identifier', name: tempVarMap.get(varPath) },
+      kind: 'init',
+      computed: false,
+      shorthand: false
+    }))
+  };
+
+  functionBody.body.push({
+    type: 'ReturnStatement',
+    argument: returnObj
+  });
+}
+
 const ASTCallbacks = {
-  UnaryExpression(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  UnaryExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
     const unaryFnName = UnarySymbolToName[node.operator];
     const standardReplacement = (node) => {
       node.type = 'CallExpression'
@@ -212,7 +439,7 @@ const ASTCallbacks = {
       ];
       let isSwizzle = swizzleSets.some(set =>
         [...property].every(char => set.includes(char))
-      ) && node.argument.type === 'MemberExpression';
+      ) && node.argument.type === 'MemberExpression' && !node.argument.computed;
       if (isSwizzle) {
         node.type = 'MemberExpression';
         node.object = {
@@ -236,8 +463,10 @@ const ASTCallbacks = {
     delete node.argument;
     delete node.operator;
   },
-  BreakStatement(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  BreakStatement(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
     node.callee = {
       type: 'Identifier',
       name: '__p5.break'
@@ -245,8 +474,39 @@ const ASTCallbacks = {
     node.arguments = [];
     node.type = 'CallExpression';
   },
-  VariableDeclarator(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  MemberExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
+    // Skip sets -- these will be converted to .set() method
+    // calls at the AssignmentExpression level
+    if (
+      ancestors.at(-2)?.type === 'AssignmentExpression' &&
+      ancestors.at(-2).left === node
+    ) {
+      return;
+    }
+    if (node.computed) {
+      const callee = node.object;
+      const member = node.property;
+      node.computed = undefined;
+      node.object = undefined;
+      node.callee = {
+        type: 'MemberExpression',
+        object: callee,
+        property: {
+          type: 'Identifier',
+          name: 'get',
+        }
+      };
+      node.arguments = [member];
+      node.type = 'CallExpression';
+    }
+  },
+  VariableDeclarator(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
     if (nodeIsUniform(node.init)) {
       // Only inject the variable name if the first argument isn't already a string
       if (node.init.arguments.length === 0 ||
@@ -271,16 +531,18 @@ const ASTCallbacks = {
           value: node.id.name
         }
         node.init.arguments.unshift(varyingNameLiteral);
-        _state.varyings[node.id.name] = varyingNameLiteral;
+        state.varyings[node.id.name] = varyingNameLiteral;
       } else {
         // Still track it as a varying even if name wasn't injected
-        _state.varyings[node.id.name] = node.init.arguments[0];
+        state.varyings[node.id.name] = node.init.arguments[0];
       }
     }
   },
-  Identifier(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
-    if (_state.varyings[node.name]
+  Identifier(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
+    if (state.varyings[node.name]
       && !ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)
     ) {
       node.type = 'CallExpression';
@@ -300,8 +562,18 @@ const ASTCallbacks = {
   },
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
-  ArrayExpression(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  ArrayExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
+
+    if (node.elements.length < 2 || node.elements.length > 4) {
+      FES.userError(
+        'type error',
+        `Array literals in shader functions are transpiled to vectors and must have 2-4 elements (got ${node.elements.length}).`
+      );
+    }
+
     const original = JSON.parse(JSON.stringify(node));
     node.type = 'CallExpression';
     node.callee = {
@@ -310,8 +582,10 @@ const ASTCallbacks = {
     };
     node.arguments = [original];
   },
-  AssignmentExpression(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  AssignmentExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
     if (node.operator !== '=') {
       const methodName = replaceBinaryOperator(node.operator.replace('=',''));
@@ -340,7 +614,7 @@ const ASTCallbacks = {
       node.right = rightReplacementNode;
     }
     // Handle direct varying variable assignment: myVarying = value
-    if (_state.varyings[node.left.name]) {
+    if (state.varyings[node.left.name]) {
       node.type = 'ExpressionStatement';
       node.expression = {
         type: 'CallExpression',
@@ -361,10 +635,31 @@ const ASTCallbacks = {
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
     else if (node.left.type === 'MemberExpression') {
+      if (node.left.computed) {
+        const source = node.left;
+        const value = node.right;
+        const callee = source.object;
+        const member = source.property;
+        node.right = undefined;
+        node.left = undefined;
+        node.operator = undefined;
+        node.callee = {
+          type: 'MemberExpression',
+          object: callee,
+          property: {
+            type: 'Identifier',
+            name: 'set'
+          }
+        };
+        node.arguments = [member, value];
+        node.type = 'CallExpression';
+        return;
+      }
+
       let varyingName = null;
 
       // Check if it's a direct identifier: myVarying.xyz
-      if (node.left.object.type === 'Identifier' && _state.varyings[node.left.object.name]) {
+      if (node.left.object.type === 'Identifier' && state.varyings[node.left.object.name]) {
         varyingName = node.left.object.name;
       }
       // Check if it's a getValue() call: myVarying.getValue().xyz
@@ -372,7 +667,7 @@ const ASTCallbacks = {
                node.left.object.callee?.type === 'MemberExpression' &&
                node.left.object.callee.property?.name === 'getValue' &&
                node.left.object.callee.object?.type === 'Identifier' &&
-               _state.varyings[node.left.object.callee.object.name]) {
+               state.varyings[node.left.object.callee.object.name]) {
         varyingName = node.left.object.callee.object.name;
       }
 
@@ -403,70 +698,30 @@ const ASTCallbacks = {
       }
     }
   },
-  BinaryExpression(node, _state, ancestors) {
-    // Don't convert uniform default values to node methods, as
-    // they should be evaluated at runtime, not compiled.
-    if (ancestors.some(nodeIsUniform)) { return; }
-    // If the left hand side of an expression is one of these types,
-    // we should construct a node from it.
-    const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
-    if (unsafeTypes.includes(node.left.type)) {
-      const leftReplacementNode = {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsNode',
-        },
-        arguments: [node.left]
-      }
-      node.left = leftReplacementNode;
+  BinaryExpression: transformBinaryOrLogical,
+  LogicalExpression: transformBinaryOrLogical,
+
+
+  ConditionalExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
     }
-    // Replace the binary operator with a call expression
-    // in other words a call to BaseNode.mult(), .div() etc.
+    // Transform condition ? consequent : alternate
+    // into __p5.strandsTernary(condition, consequent, alternate)
+    const test = node.test;
+    const consequent = node.consequent;
+    const alternate = node.alternate;
     node.type = 'CallExpression';
-    node.callee = {
-      type: 'MemberExpression',
-      object: node.left,
-      property: {
-        type: 'Identifier',
-        name: replaceBinaryOperator(node.operator),
-      },
-    };
-    node.arguments = [node.right];
+    node.callee = { type: 'Identifier', name: '__p5.strandsTernary' };
+    node.arguments = [test, consequent, alternate];
+    delete node.test;
+    delete node.consequent;
+    delete node.alternate;
   },
-  LogicalExpression(node, _state, ancestors) {
-    // Don't convert uniform default values to node methods, as
-    // they should be evaluated at runtime, not compiled.
-    if (ancestors.some(nodeIsUniform)) { return; }
-    // If the left hand side of an expression is one of these types,
-    // we should construct a node from it.
-    const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
-    if (unsafeTypes.includes(node.left.type)) {
-      const leftReplacementNode = {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsNode',
-        },
-        arguments: [node.left]
-      }
-      node.left = leftReplacementNode;
+  IfStatement(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
     }
-    // Replace the logical operator with a call expression
-    // in other words a call to BaseNode.or(), .and() etc.
-    node.type = 'CallExpression';
-    node.callee = {
-      type: 'MemberExpression',
-      object: node.left,
-      property: {
-        type: 'Identifier',
-        name: replaceBinaryOperator(node.operator),
-      },
-    };
-    node.arguments = [node.right];
-  },
-  IfStatement(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
     // Transform if statement into strandsIf() call
     // The condition is evaluated directly, not wrapped in a function
     const condition = node.test;
@@ -570,70 +825,6 @@ const ASTCallbacks = {
     analyzeBranch(thenFunction.body);
     analyzeBranch(elseFunction.body);
     if (assignedVars.size > 0) {
-      // Add copying, reference replacement, and return statements to branch functions
-      const addCopyingAndReturn = (functionBody, varsToReturn) => {
-        if (functionBody.type === 'BlockStatement') {
-          // Create temporary variables and copy statements
-          const tempVarMap = new Map(); // property path -> temp name
-          const copyStatements = [];
-          for (const varPath of varsToReturn) {
-            const parts = varPath.split('.');
-            const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
-            tempVarMap.set(varPath, tempName);
-
-            // Build the member expression for the property path
-            let sourceExpr = { type: 'Identifier', name: parts[0] };
-            for (let i = 1; i < parts.length; i++) {
-              sourceExpr = {
-                type: 'MemberExpression',
-                object: sourceExpr,
-                property: { type: 'Identifier', name: parts[i] },
-                computed: false
-              };
-            }
-
-            // let tempName = propertyPath.copy()
-            copyStatements.push({
-              type: 'VariableDeclaration',
-              declarations: [{
-                type: 'VariableDeclarator',
-                id: { type: 'Identifier', name: tempName },
-                init: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'MemberExpression',
-                    object: sourceExpr,
-                    property: { type: 'Identifier', name: 'copy' },
-                    computed: false
-                  },
-                  arguments: []
-                }
-              }],
-              kind: 'let'
-            });
-          }
-          // Apply reference replacement to all statements
-          functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
-          // Insert copy statements at the beginning
-          functionBody.body.unshift(...copyStatements);
-          // Add return statement with flat object using property paths as keys
-          const returnObj = {
-            type: 'ObjectExpression',
-            properties: Array.from(varsToReturn).map(varPath => ({
-              type: 'Property',
-              key: { type: 'Literal', value: varPath },
-              value: { type: 'Identifier', name: tempVarMap.get(varPath) },
-              kind: 'init',
-              computed: false,
-              shorthand: false
-            }))
-          };
-          functionBody.body.push({
-            type: 'ReturnStatement',
-            argument: returnObj
-          });
-        }
-      };
       addCopyingAndReturn(thenFunction.body, assignedVars);
       addCopyingAndReturn(elseFunction.body, assignedVars);
       // Create a block variable to capture the return value
@@ -734,8 +925,10 @@ const ASTCallbacks = {
     delete node.consequent;
     delete node.alternate;
   },
-  UpdateExpression(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  UpdateExpression(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
 
     // Transform ++var, var++, --var, var-- into assignment expressions
     let operator;
@@ -766,11 +959,13 @@ const ASTCallbacks = {
     // Replace the update expression with the assignment expression
     Object.assign(node, assignmentExpr);
     delete node.prefix;
-    this.BinaryExpression(node.right, _state, [...ancestors, node]);
-    this.AssignmentExpression(node, _state, ancestors);
+    ASTCallbacks.BinaryExpression(node.right, state, [...ancestors, node]);
+    ASTCallbacks.AssignmentExpression(node, state, ancestors);
   },
-  ForStatement(node, _state, ancestors) {
-    if (ancestors.some(nodeIsUniform)) { return; }
+  ForStatement(node, state, ancestors) {
+    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+      return;
+    }
 
     // Transform for statement into strandsFor() call
     // for (init; test; update) body -> strandsFor(initCb, conditionCb, updateCb, bodyCb, initialVars)
@@ -822,7 +1017,7 @@ const ASTCallbacks = {
     // Replace loop variable references with the parameter
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      conditionBody = this.replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
+      conditionBody = replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
     }
     const conditionAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: conditionBody }] };
     conditionBody = conditionAst.body[0].expression;
@@ -840,7 +1035,7 @@ const ASTCallbacks = {
       // Replace loop variable references with the parameter
       if (node.init?.type === 'VariableDeclaration') {
         const loopVarName = node.init.declarations[0].id.name;
-        updateExpr = this.replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
+        updateExpr = replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
       }
       const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
       updateExpr = updateAst.body[0].expression;
@@ -879,7 +1074,7 @@ const ASTCallbacks = {
     // Replace loop variable references in the body
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      bodyBlock = this.replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
+      bodyBlock = replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
     }
 
     const bodyFunction = {
@@ -934,73 +1129,8 @@ const ASTCallbacks = {
     });
 
     if (assignedVars.size > 0) {
-      // Add copying, reference replacement, and return statements similar to if statements
-      const addCopyingAndReturn = (functionBody, varsToReturn) => {
-        if (functionBody.type === 'BlockStatement') {
-          const tempVarMap = new Map();
-          const copyStatements = [];
 
-          for (const varPath of varsToReturn) {
-            const parts = varPath.split('.');
-            const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
-            tempVarMap.set(varPath, tempName);
-
-            // Build the member expression for vars.propertyPath
-            // e.g., vars.inputs.color or vars.x
-            let sourceExpr = { type: 'Identifier', name: 'vars' };
-            for (const part of parts) {
-              sourceExpr = {
-                type: 'MemberExpression',
-                object: sourceExpr,
-                property: { type: 'Identifier', name: part },
-                computed: false
-              };
-            }
-
-            copyStatements.push({
-              type: 'VariableDeclaration',
-              declarations: [{
-                type: 'VariableDeclarator',
-                id: { type: 'Identifier', name: tempName },
-                init: {
-                  type: 'CallExpression',
-                  callee: {
-                    type: 'MemberExpression',
-                    object: sourceExpr,
-                    property: { type: 'Identifier', name: 'copy' },
-                    computed: false
-                  },
-                  arguments: []
-                }
-              }],
-              kind: 'let'
-            });
-          }
-
-          functionBody.body.forEach(node => replaceReferences(node, tempVarMap));
-          functionBody.body.unshift(...copyStatements);
-
-          // Add return statement with flat object using property paths as keys
-          const returnObj = {
-            type: 'ObjectExpression',
-            properties: Array.from(varsToReturn).map(varPath => ({
-              type: 'Property',
-              key: { type: 'Literal', value: varPath },
-              value: { type: 'Identifier', name: tempVarMap.get(varPath) },
-              kind: 'init',
-              computed: false,
-              shorthand: false
-            }))
-          };
-
-          functionBody.body.push({
-            type: 'ReturnStatement',
-            argument: returnObj
-          });
-        }
-      };
-
-      addCopyingAndReturn(bodyFunction.body, assignedVars);
+      addCopyingAndReturn(bodyFunction.body, assignedVars, 'vars');
 
       // Create block variable and assignments similar to if statements
       const blockVar = `__block_${blockVarCounter++}`;
@@ -1115,33 +1245,8 @@ const ASTCallbacks = {
     delete node.update;
   },
 
-  // Helper method to replace identifier references in AST nodes
-  replaceIdentifierReferences(node, oldName, newName) {
-    if (!node || typeof node !== 'object') return node;
 
-    const replaceInNode = (n) => {
-      if (!n || typeof n !== 'object') return n;
 
-      if (n.type === 'Identifier' && n.name === oldName) {
-        return { ...n, name: newName };
-      }
-
-      // Create a copy and recursively process properties
-      const newNode = { ...n };
-      for (const key in n) {
-        if (n.hasOwnProperty(key) && key !== 'parent') {
-          if (Array.isArray(n[key])) {
-            newNode[key] = n[key].map(replaceInNode);
-          } else if (typeof n[key] === 'object') {
-            newNode[key] = replaceInNode(n[key]);
-          }
-        }
-      }
-      return newNode;
-    };
-
-    return replaceInNode(node);
-  }
 }
 
 // Helper function to check if a function body contains return statements in control flow
@@ -1476,22 +1581,31 @@ function transformFunctionSetCalls(functionNode) {
 }
 
 // Main transformation pass: find and transform functions with .set() calls in control flow
-function transformSetCallsInControlFlow(ast) {
+function transformSetCallsInControlFlow(ast, names) {
   const functionsToTransform = [];
 
   // Collect functions that have .set() calls in control flow
   const collectFunctions = {
     ArrowFunctionExpression(node, ancestors) {
+      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+        return;
+      }
       if (functionHasSetInControlFlow(node)) {
         functionsToTransform.push(node);
       }
     },
     FunctionExpression(node, ancestors) {
+      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+        return;
+      }
       if (functionHasSetInControlFlow(node)) {
         functionsToTransform.push(node);
       }
     },
     FunctionDeclaration(node, ancestors) {
+      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+        return;
+      }
       if (functionHasSetInControlFlow(node)) {
         functionsToTransform.push(node);
       }
@@ -1507,12 +1621,15 @@ function transformSetCallsInControlFlow(ast) {
 }
 
 // Main transformation pass: find and transform helper functions with early returns
-function transformHelperFunctionEarlyReturns(ast) {
+function transformHelperFunctionEarlyReturns(ast, names) {
   const helperFunctionsToTransform = [];
 
   // Collect helper functions that need transformation
   const collectHelperFunctions = {
     VariableDeclarator(node, ancestors) {
+      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+        return;
+      }
       const init = node.init;
       if (init && (init.type === 'ArrowFunctionExpression' || init.type === 'FunctionExpression')) {
         if (functionHasEarlyReturns(init)) {
@@ -1521,6 +1638,9 @@ function transformHelperFunctionEarlyReturns(ast) {
       }
     },
     FunctionDeclaration(node, ancestors) {
+      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+        return;
+      }
       if (functionHasEarlyReturns(node)) {
         helperFunctionsToTransform.push(node);
       }
@@ -1540,67 +1660,106 @@ function transformHelperFunctionEarlyReturns(ast) {
   }
 }
 
-export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
-  // Reset counters at the start of each transpilation
-  blockVarCounter = 0;
-  loopVarCounter = 0;
+/**
+ * Transpiles a p5.strands callback into executable JavaScript by applying
+ * a multi-pass AST transformation pipeline.
+ *
+ * Pipeline stages:
+ *
+ * 1. Collect uniform callback names
+ *    - Identifies functions passed into uniform() so they are excluded from transformation
+ *
+ * 2. transformSetCallsInControlFlow
+ *    - Rewrites `.set()` calls inside control flow into intermediate variable assignments
+ *
+ * 3. Non-control-flow transformations
+ *    - Applies ASTCallbacks to transform expressions, assignments, etc.
+ *    - Skips IfStatement and ForStatement (handled later)
+ *
+ * 4. transformHelperFunctionEarlyReturns
+ *    - Converts early returns in helper functions into a single return value pattern
+ *
+ * 5. Control flow transformation (post-order)
+ *    - Transforms IfStatement → __p5.strandsIf
+ *    - Transforms ForStatement → __p5.strandsFor
+ *    - Handles variable propagation across branches/loops
+ *
+ * This staged approach ensures correct ordering and avoids transformation conflicts.
+ */
 
-  const ast = parse(sourceString, {
-    ecmaVersion: 2021,
-    locations: srcLocations
-  });
+// Wraps each callback with a uniform context guard, eliminating the need
+// to repeat the early-return check at the top of every handler.
+function makeGuardedCallbacks(callbacks) {
+  const guarded = {};
+  for (const [name, fn] of Object.entries(callbacks)) {
+    guarded[name] = (node, state, ancestors) => {
+      if (ancestors.some(a =>
+        nodeIsUniform(a) ||
+        nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )) return;
+      return fn(node, state, ancestors);
+    };
+  }
+  return guarded;
+}
 
-  // First pass: transform .set() calls in control flow to use intermediate variables
-  transformSetCallsInControlFlow(ast);
-
-  // Second pass: transform everything except if/for statements using normal ancestor traversal
-  const nonControlFlowCallbacks = { ...ASTCallbacks };
+function runNonControlFlowPass(ast, uniformCallbackNames) {
+  const nonControlFlowCallbacks = ({ ...ASTCallbacks });
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
-  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {} });
+  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
+}
 
-  // Third pass: transform helper functions with early returns to use __returnValue pattern
-  transformHelperFunctionEarlyReturns(ast);
-
-  // Fourth pass: transform if/for statements in post-order using recursive traversal
+function runControlFlowPass(ast, uniformCallbackNames) {
   const postOrderControlFlowTransform = {
+    CallExpression(node, state, c) {
+      if (nodeIsUniform(node)) { return; }
+      if (node.callee) c(node.callee, state);
+      for (const arg of node.arguments) c(arg, state);
+    },
+    FunctionDeclaration(node, state, c) {
+      if (state.uniformCallbackNames?.has(node.id?.name)) return;
+      if (node.body) c(node.body, state);
+    },
+    VariableDeclarator(node, state, c) {
+      if (
+        state.uniformCallbackNames?.has(node.id?.name) &&
+        (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
+      ) { return; }
+      if (node.init) c(node.init, state);
+    },
     IfStatement(node, state, c) {
       state.inControlFlow++;
-      // First recursively process children
       if (node.test) c(node.test, state);
       if (node.consequent) c(node.consequent, state);
       if (node.alternate) c(node.alternate, state);
-      // Then apply the transformation to this node
       ASTCallbacks.IfStatement(node, state, []);
       state.inControlFlow--;
     },
     ForStatement(node, state, c) {
       state.inControlFlow++;
-      // First recursively process children
       if (node.init) c(node.init, state);
       if (node.test) c(node.test, state);
       if (node.update) c(node.update, state);
       if (node.body) c(node.body, state);
-      // Then apply the transformation to this node
       ASTCallbacks.ForStatement(node, state, []);
       state.inControlFlow--;
     },
     ReturnStatement(node, state, c) {
       if (!state.inControlFlow) return;
-      // Convert return statement to strandsEarlyReturn call
       node.type = 'ExpressionStatement';
       node.expression = {
         type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: '__p5.strandsEarlyReturn'
-        },
+        callee: { type: 'Identifier', name: '__p5.strandsEarlyReturn' },
         arguments: node.argument ? [node.argument] : []
       };
       delete node.argument;
     }
   };
-  recursive(ast, { varyings: {}, inControlFlow: 0 }, postOrderControlFlowTransform);
+  recursive(ast, { varyings: {}, inControlFlow: 0, uniformCallbackNames }, postOrderControlFlowTransform);
+}
+
+function buildStrandsCallback(p5, ast, scope) {
   const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
   const match = /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
@@ -1620,15 +1779,11 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   }
   const body = match[2];
   try {
-    const internalStrandsCallback = new Function(
-        // Create a parameter called __p5, not just p5, because users of instance mode
-        // may pass in a variable called p5 as a scope variable. If we rely on a variable called
-        // p5, then the scope variable called p5 might accidentally override internal function
-        // calls to p5 static methods.
-      '__p5',
-      ...paramNames,
-      body,
-    );
+    const internalStrandsCallback = new Function('__p5', ...paramNames, body);
+    // Create a parameter called __p5, not just p5, because users of instance mode
+    // may pass in a variable called p5 as a scope variable. If we rely on a variable called
+    // p5, then the scope variable called p5 might accidentally override internal function
+    // calls to p5 static methods.
     return () => internalStrandsCallback(p5, ...paramVals);
   } catch (e) {
     console.error(e);
@@ -1636,4 +1791,32 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
     console.log(body);
     throw new Error('Error transpiling p5.strands callback!');
   }
+}
+
+
+
+export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+  blockVarCounter = 0;
+  loopVarCounter = 0;
+
+  const ast = parse(sourceString, { ecmaVersion: 2021, locations: srcLocations });
+
+  throwIfLoopProtectionInserted(ast);
+
+  // Pre-pass: collect names of functions passed by reference as uniform callbacks
+  const uniformCallbackNames = collectUniformCallbackNames(ast);
+
+  // Pass 1: transform .set() calls in control flow to use intermediate variables
+  transformSetCallsInControlFlow(ast, uniformCallbackNames);
+
+  // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
+  runNonControlFlowPass(ast, uniformCallbackNames);
+
+  // Pass 3: transform helper functions with early returns to use __returnValue pattern
+  transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
+
+  // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
+  runControlFlowPass(ast, uniformCallbackNames);
+
+  return buildStrandsCallback(p5, ast, scope);
 }

@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 3D Primitives
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 import * as constants from '../core/constants';
@@ -113,11 +111,6 @@ function primitives3D(p5, fn){
    * The parameter, `callback`, is a function with the drawing instructions for
    * the new <a href="#/p5.Geometry">p5.Geometry</a> object. It will be called
    * once to create the new 3D shape.
-   *
-   * See <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a> for another way to build 3D
-   * shapes.
-   *
    * Note: `buildGeometry()` can only be used in WebGL mode.
    *
    * @method buildGeometry
@@ -321,12 +314,8 @@ function primitives3D(p5, fn){
    * <a href="#/p5.Geometry">p5.Geometry</a> objects can contain lots of data
    * about their vertices, surface normals, colors, and so on. Complex 3D shapes
    * can use lots of memory which is a limited resource in many GPUs. Calling
-   * `freeGeometry()` can improve performance by freeing a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object’s resources from GPU memory.
    * `freeGeometry()` works with <a href="#/p5.Geometry">p5.Geometry</a> objects
-   * created with <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a>,
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>, and
+   * created with <a href="#/p5/buildGeometry">buildGeometry()</a> and
    * <a href="#/p5/loadModel">loadModel()</a>.
    *
    * The parameter, `geometry`, is the <a href="#/p5.Geometry">p5.Geometry</a>
@@ -340,24 +329,6 @@ function primitives3D(p5, fn){
    *
    * @method freeGeometry
    * @param {p5.Geometry} geometry 3D shape whose resources should be freed.
-   *
-   * @example
-   * function setup() {
-   *   createCanvas(100, 100, WEBGL);
-   *
-   *   background(200);
-   *
-   *   // Create a p5.Geometry object.
-   *   beginGeometry();
-   *   cone();
-   *   let shape = endGeometry();
-   *
-   *   // Draw the shape.
-   *   model(shape);
-   *
-   *   // Free the shape's resources.
-   *   freeGeometry(shape);
-   * }
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -1821,33 +1792,38 @@ function primitives3D(p5, fn){
       const prevMode = this.states.textureMode;
       this.states.setValue('textureMode', constants.NORMAL);
       const prevOrder = this.bezierOrder();
-      this.bezierOrder(2);
+      this.bezierOrder(3);
       this.beginShape();
       const addUVs = (x, y) => [x, y, 0, (x - x1)/width, (y - y1)/height];
+      const rr = 0.5523; // kappa: 4*(sqrt(2)-1)/3, handle ratio for cubic bezier circle approximation
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
-        this.bezierVertex(...addUVs(x2, y1));
+        this.bezierVertex(...addUVs(x2 - tr + tr * rr, y1));
+        this.bezierVertex(...addUVs(x2, y1 + tr - tr * rr));
         this.bezierVertex(...addUVs(x2, y1 + tr));
       } else {
         this.vertex(...addUVs(x2, y1));
       }
       if (br !== 0) {
         this.vertex(...addUVs(x2, y2 - br));
-        this.bezierVertex(...addUVs(x2, y2));
+        this.bezierVertex(...addUVs(x2, y2 - br + br * rr));
+        this.bezierVertex(...addUVs(x2 - br + rr * br, y2));
         this.bezierVertex(...addUVs(x2 - br, y2));
       } else {
         this.vertex(...addUVs(x2, y2));
       }
       if (bl !== 0) {
         this.vertex(...addUVs(x1 + bl, y2));
-        this.bezierVertex(...addUVs(x1, y2));
+        this.bezierVertex(...addUVs(x1 + bl - bl * rr, y2));
+        this.bezierVertex(...addUVs(x1, y2 - bl + bl * rr));
         this.bezierVertex(...addUVs(x1, y2 - bl));
       } else {
         this.vertex(...addUVs(x1, y2));
       }
       if (tl !== 0) {
         this.vertex(...addUVs(x1, y1 + tl));
-        this.bezierVertex(...addUVs(x1, y1));
+        this.bezierVertex(...addUVs(x1, y1 + tl - tl * rr));
+        this.bezierVertex(...addUVs(x1 + tl - tl * rr, y1));
         this.bezierVertex(...addUVs(x1 + tl, y1));
       } else {
         this.vertex(...addUVs(x1, y1));

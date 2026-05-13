@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Image
  * @for p5
- * @requires core
  */
 
 /**
