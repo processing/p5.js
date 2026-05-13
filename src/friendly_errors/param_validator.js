@@ -3,7 +3,7 @@
  * @requires core
  */
 import * as constants from '../core/constants.js';
-import { z } from 'zod/v4';
+import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
 import { FES } from './fes.js';
 
@@ -64,7 +64,7 @@ function validateParams(p5, fn, lifecycles) {
     'Array': z.array(z.any()),
     'Boolean': z.boolean(),
     'Function': z.function(),
-    'Integer': z.number().int(),
+    'Integer': z.number().check(z.int()),
     'Number': z.number(),
     'Object': z.object({}),
     'String': z.string()
@@ -239,7 +239,7 @@ function validateParams(p5, fn, lifecycles) {
       }
 
       if (isOptional) {
-        schema = schema.optional();
+        schema = z.optional(schema);
       }
       return { schema, rest: isRest };
     };
@@ -311,7 +311,7 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
    */
   const findClosestSchema = function (schema, args) {
-    if (!(schema instanceof z.ZodUnion)) {
+    if (!(schema instanceof z.ZodMiniUnion)) {
       return schema;
     }
 
@@ -319,7 +319,7 @@ function validateParams(p5, fn, lifecycles) {
     // Lower score means closer match.
     const scoreSchema = schema => {
       let score = Infinity;
-      if (!(schema instanceof z.ZodTuple)) {
+      if (!(schema instanceof z.ZodMiniTuple)) {
         console.warn('Schema below is not a tuple: ');
         printZodSchema(schema);
         return score;
@@ -329,7 +329,7 @@ function validateParams(p5, fn, lifecycles) {
       const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
       const numRequiredSchemaItems = schemaItems
-        .filter(item => !item.isOptional())
+        .filter(item => !item.safeParse(undefined).success)
         .length;
 
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
